@@ -9,24 +9,6 @@
 {% set pageId = 'exclusions-page' %}
 {% set jsBackLink = true %}
 
-{# Find common slots between multiple weeks which should be disabled #}
-{% set disabledSlots = [] %}
-{% if scheduleWeeks > 1 %}
-    {% for day in dailySlots %}
-        {% for week in day.weeks %}
-            {% if week.weekNumber > 1 %}
-                {% for previousWeek in day.weeks.slice(0, week.weekNumber - 1) %}
-                    {% for slot in week.slots %}
-                        {% if slot in previousWeek.slots %}
-                            {% set disabledSlots = (disabledSlots.push(day.day + slot), disabledSlots) %}
-                        {% endif %}
-                    {% endfor %}
-                {% endfor %}
-            {% endif %}
-        {% endfor %}
-    {% endfor %}
-{% endif %}
-
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -49,77 +31,71 @@
         <div class="govuk-grid-column-full">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <div class="govuk-grid-row govuk-!-margin-top-6">
+
+                <div class="govuk-grid-row">
+                {% for weekNumber, weekSlots in weeklySlots %}
+                    <div class="govuk-grid-column-one-half">
                     {% if scheduleWeeks > 1 %}
-                        {% for week in range(1, scheduleWeeks + 1) %}
-                            <div class="govuk-grid-column-one-half">
-                                <span class="govuk-heading-l govuk-!-margin-bottom-6">
-                                    Week {{ week }}
-                                    {{ govukTag({
-                                        text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
-                                    }) if currentWeek == week }}
-                                </span>
-                            </div>
-                        {% endfor %}
+                        <h2 class="govuk-heading-l govuk-!-margin-bottom-6">
+                            Week {{ weekNumber }}
+                            {{ govukTag({
+                                text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
+                            }) if currentWeek == weekNumber }}
+                        </h2>
                     {% endif %}
-                </div>
-
-
-                {% for day in dailySlots %}
-                    <div class="govuk-grid-row">
-                        {% for week in day.weeks %}
-                            {% set weekNumber = loop.index %}
-                            <div class="govuk-grid-column-one-half">
-                                {% if week.slots | length %}
-                                    {% set exclusionsForDay = exclusions | filter('weekNumber', weekNumber) | filter(day.day | lower, true) %}
-                                    {% for timeSlot in ['AM', 'PM', 'ED'] %}
-                                        {% if (day.day + timeSlot) in disabledSlots %}
-                                            <input type='hidden' name='week{{ weekNumber }}[{{ day.day | lower }}]' value='{{ timeSlot | lower }}'/>
-                                        {% endif %}
-                                    {% endfor %}
-                                    {{ govukCheckboxes({
-                                        name: "week" + weekNumber + "[" + day.day | lower + "]",
-                                        fieldset: {
-                                            legend: {
-                                                text: day.day | toTitleCase,
-                                                classes: "govuk-fieldset__legend--m"
-                                            }
-                                        },
-                                        items: [
-                                            {
-                                                value: "am",
-                                                text: "AM session",
-                                                checked: not exclusionsForDay | filter('timeSlot', 'AM') | length,
-                                                disabled: (day.day + 'AM') in disabledSlots
-                                            } if 'AM' in week.slots,
-                                            {
-                                                value: "pm",
-                                                text: "PM session",
-                                                checked: not exclusionsForDay | filter('timeSlot', 'PM') | length,
-                                                disabled: (day.day + 'PM') in disabledSlots
-                                            } if 'PM' in week.slots,
-                                            {
-                                                value: "ed",
-                                                text: "ED session",
-                                                checked: not exclusionsForDay | filter('timeSlot', 'ED') | length,
-                                                disabled: (day.day + 'ED') in disabledSlots
-                                            } if 'ED' in week.slots
-                                        ]
-                                    }) }}
-                                {% else %}
-                                    <span class='govuk-heading-m'>{{ day.day | toTitleCase }}</span>
-                                    <p class='govuk-body'>Not scheduled to run</p>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
+                    {% for daySlots in weekSlots %}
+                        <div>
+                            {% if daySlots.slots | length %}
+                                {% set exclusionsForDay = exclusions | filter('weekNumber', weekNumber | int) | filter(daySlots.day | lower, true) %}
+                                {% for timeSlot in ['AM', 'PM', 'ED'] %}
+                                    {% if (daySlots.day + timeSlot) in disabledSlots %}
+                                        <input type='hidden' name='week{{ weekNumber }}[{{ daySlots.day | lower }}]' value='{{ timeSlot | lower }}'/>
+                                    {% endif %}
+                                {% endfor %}
+                                {{ govukCheckboxes({
+                                    name: "week" + weekNumber + "[" + daySlots.day | lower + "]",
+                                    fieldset: {
+                                        legend: {
+                                            text: daySlots.day | toTitleCase,
+                                            classes: "govuk-fieldset__legend--m"
+                                        }
+                                    },
+                                    items: [
+                                        {
+                                            value: "am",
+                                            text: "AM session",
+                                            checked: not exclusionsForDay | filter('timeSlot', 'AM') | length,
+                                            disabled: (daySlots.day + 'AM') in disabledSlots
+                                        } if 'AM' in daySlots.slots,
+                                        {
+                                            value: "pm",
+                                            text: "PM session",
+                                            checked: not exclusionsForDay | filter('timeSlot', 'PM') | length,
+                                            disabled: (daySlots.day + 'PM') in disabledSlots
+                                        } if 'PM' in daySlots.slots,
+                                        {
+                                            value: "ed",
+                                            text: "ED session",
+                                            checked: not exclusionsForDay | filter('timeSlot', 'ED') | length,
+                                            disabled: (daySlots.day + 'ED') in disabledSlots
+                                        } if 'ED' in daySlots.slots
+                                    ]
+                                }) }}
+                            {% else %}
+                                <span class='govuk-heading-m'>{{ daySlots.day | toTitleCase }}</span>
+                                <p class='govuk-body'>Not scheduled to run</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
                     </div>
                 {% endfor %}
+                </div>
 
                 <div class="govuk-button-group govuk-!-margin-top-6">
                     {{ govukButton({
                         text: "Continue"
                     }) }}
-                    {% if session.req.params.mode != 'edit' and not session.req.query.preserveHistory %}
+                    {% if session.req.params.mode == 'create' and not session.req.query.preserveHistory %}
                         <a class="govuk-link" href="cancel">Cancel</a>
                     {% endif %}
                 </div>

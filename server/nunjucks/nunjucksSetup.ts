@@ -180,8 +180,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
-  njkEnv.addGlobal('exclusionsFeatureToggleEnabled', config.exclusionsFeatureToggleEnabled)
-  njkEnv.addGlobal('zeroPayFeatureToggleEnabled', config.zeroPayFeatureToggleEnabled)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

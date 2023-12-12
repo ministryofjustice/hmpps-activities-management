@@ -62,12 +62,10 @@ describe('Unlock list routes - planned events', () => {
       req = {
         query: {
           date: '2022-01-01',
-          slot: 'am',
-          location: 'A',
         },
         session: {
           unlockListJourney: {
-            location: 'A',
+            locationKey: 'A',
             timeSlot: 'am',
             // No filters supplied in session
           },
@@ -98,7 +96,7 @@ describe('Unlock list routes - planned events', () => {
         new Date('2022-01-01'),
         'am',
         'A',
-        ['A-Wing', 'B-Wing', 'C-Wing'],
+        ['A', 'B', 'C'],
         'With',
         'Both',
         res.locals.user,
@@ -106,8 +104,15 @@ describe('Unlock list routes - planned events', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         date: '2022-01-01',
-        location: 'A',
-        subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
+        location: {
+          name: 'A-Wing',
+          key: 'A',
+          children: [
+            { name: 'A-Wing', key: 'A', children: [] },
+            { name: 'B-Wing', key: 'B', children: [] },
+            { name: 'C-Wing', key: 'C', children: [] },
+          ],
+        },
         timeSlot: 'am',
         unlockListItems,
         movementCounts: {
@@ -121,16 +126,14 @@ describe('Unlock list routes - planned events', () => {
       req = {
         query: {
           date: '2022-01-01',
-          slot: 'am',
-          location: 'A',
         },
         session: {
           unlockListJourney: {
-            location: 'A',
+            locationKey: 'A',
             timeSlot: 'am',
             stayingOrLeavingFilter: 'Leaving',
             activityFilter: 'With',
-            subLocationFilters: ['A-Wing'],
+            subLocationFilters: ['A'],
           },
         },
       } as unknown as Request
@@ -155,7 +158,7 @@ describe('Unlock list routes - planned events', () => {
         new Date('2022-01-01'),
         'am',
         'A',
-        ['A-Wing'],
+        ['A'],
         'With',
         'Leaving',
         res.locals.user,
@@ -167,8 +170,15 @@ describe('Unlock list routes - planned events', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         date: '2022-01-01',
-        location: 'A',
-        subLocations: ['A-Wing', 'B-Wing', 'C-Wing'],
+        location: {
+          name: 'A-Wing',
+          key: 'A',
+          children: [
+            { name: 'A-Wing', key: 'A', children: [] },
+            { name: 'B-Wing', key: 'B', children: [] },
+            { name: 'C-Wing', key: 'C', children: [] },
+          ],
+        },
         timeSlot: 'am',
         unlockListItems,
         movementCounts: {

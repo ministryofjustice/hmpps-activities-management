@@ -21,7 +21,7 @@
             <tr class="govuk-table__row"><td>
                 <div class="govuk-grid-row govuk-!-margin-bottom-1">
                     <div class="govuk-grid-column-two-thirds govuk-!-print-grid-column-one-half govuk-!-margin-bottom-1">
-                        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ location }} - Unlock list</h1>
+                        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ location.name }} - Unlock list</h1>
                         <div class="govuk-caption-l govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ timeSlot | upper }} session</div>
                         <div class="govuk-caption-l">{{ date |formatDate('cccc d LLLL y') }}</div>
                         <div class="govuk-!-margin-top-2">
@@ -47,13 +47,13 @@
         </thead>
         <tbody class="govuk-table__body"><tr class="govuk-table__row"><td>
             {% set filterOptionsHtml %}
-                {% if subLocations | length %}
+                {% if location.children | length %}
                     {% set locationFilters = [] %}
-                    {% for location in subLocations %}
+                    {% for subLocation in location.children %}
                         {% set locationFilters = (locationFilters.push({
-                            value: location,
-                            text: location,
-                            checked: location in session.unlockListJourney.subLocationFilters
+                            value: subLocation.key,
+                            text: subLocation.name,
+                            checked: subLocation.key in session.unlockListJourney.subLocationFilters
                         }), locationFilters) %}
                     {% endfor %}
 

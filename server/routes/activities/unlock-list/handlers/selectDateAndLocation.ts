@@ -39,7 +39,7 @@ export class DateAndLocation {
 
   @Expose()
   @IsNotEmpty({ message: 'Select a location' })
-  location: string
+  locationKey: string
 }
 
 export default class SelectDateAndLocationRoutes {
@@ -54,11 +54,11 @@ export default class SelectDateAndLocationRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { activitySlot, location, datePresetOption, date } = req.body
+    const { activitySlot, locationKey, datePresetOption, date } = req.body
 
     req.session.unlockListJourney = {
       timeSlot: activitySlot,
-      location,
+      locationKey,
     }
 
     const selectedDate = this.getDateValue(datePresetOption, date)

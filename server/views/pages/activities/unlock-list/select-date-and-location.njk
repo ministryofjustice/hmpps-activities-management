@@ -105,15 +105,15 @@
                 {% endfor %}
 
                 {{ govukRadios({
-                    idPrefix: "location",
-                    name: "location",
+                    idPrefix: "locationKey",
+                    name: "locationKey",
                     fieldset: {
                         legend: {
                             text: "Locations",
                             classes: "govuk-fieldset__legend--m"
                         }
                     },
-                    errorMessage: validationErrors | findError('location'),
+                    errorMessage: validationErrors | findError('locationKey'),
                     items: items
                 }) }}
 
