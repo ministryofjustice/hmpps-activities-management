@@ -62,12 +62,10 @@ describe('Unlock list routes - planned events', () => {
       req = {
         query: {
           date: '2022-01-01',
-          slot: 'am',
-          location: 'A',
         },
         session: {
           unlockListJourney: {
-            location: 'A',
+            locationKey: 'A',
             timeSlot: 'am',
             // No filters supplied in session
           },
@@ -106,8 +104,15 @@ describe('Unlock list routes - planned events', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         date: '2022-01-01',
-        location: 'A',
-        subLocations: ['A', 'B', 'C'],
+        location: {
+          name: 'A-Wing',
+          key: 'A',
+          children: [
+            { name: 'A-Wing', key: 'A', children: [] },
+            { name: 'B-Wing', key: 'B', children: [] },
+            { name: 'C-Wing', key: 'C', children: [] },
+          ],
+        },
         timeSlot: 'am',
         unlockListItems,
         movementCounts: {
@@ -121,12 +126,10 @@ describe('Unlock list routes - planned events', () => {
       req = {
         query: {
           date: '2022-01-01',
-          slot: 'am',
-          location: 'A',
         },
         session: {
           unlockListJourney: {
-            location: 'A',
+            locationKey: 'A',
             timeSlot: 'am',
             stayingOrLeavingFilter: 'Leaving',
             activityFilter: 'With',
@@ -167,8 +170,15 @@ describe('Unlock list routes - planned events', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {
         date: '2022-01-01',
-        location: 'A',
-        subLocations: ['A', 'B', 'C'],
+        location: {
+          name: 'A-Wing',
+          key: 'A',
+          children: [
+            { name: 'A-Wing', key: 'A', children: [] },
+            { name: 'B-Wing', key: 'B', children: [] },
+            { name: 'C-Wing', key: 'C', children: [] },
+          ],
+        },
         timeSlot: 'am',
         unlockListItems,
         movementCounts: {

@@ -72,7 +72,7 @@ describe('Unlock list routes - select date and location', () => {
       req.body = {
         datePresetOption: 'today',
         activitySlot: 'am',
-        location: 'here',
+        locationKey: 'here',
       }
       const todaysDate = format(new Date(), 'yyyy-MM-dd')
 
@@ -80,14 +80,14 @@ describe('Unlock list routes - select date and location', () => {
 
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${todaysDate}`)
       expect(req.session.unlockListJourney.timeSlot).toEqual('am')
-      expect(req.session.unlockListJourney.location).toEqual('here')
+      expect(req.session.unlockListJourney.locationKey).toEqual('here')
     })
 
     it("redirect with the expected query params for when tomorrow's date is selected", async () => {
       req.body = {
         datePresetOption: 'tomorrow',
         activitySlot: 'am',
-        location: 'here',
+        locationKey: 'here',
       }
       const tomorrowsDate = format(addDays(new Date(), 1), 'yyyy-MM-dd')
 
@@ -95,7 +95,7 @@ describe('Unlock list routes - select date and location', () => {
 
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${tomorrowsDate}`)
       expect(req.session.unlockListJourney.timeSlot).toEqual('am')
-      expect(req.session.unlockListJourney.location).toEqual('here')
+      expect(req.session.unlockListJourney.locationKey).toEqual('here')
     })
 
     it('redirects with the expected query params for when a custom date is selected', async () => {
@@ -103,14 +103,14 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: new Date('2022-12-01'),
         activitySlot: 'am',
-        location: 'here',
+        locationKey: 'here',
       }
 
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=2022-12-01`)
       expect(req.session.unlockListJourney.timeSlot).toEqual('am')
-      expect(req.session.unlockListJourney.location).toEqual('here')
+      expect(req.session.unlockListJourney.locationKey).toEqual('here')
     })
   })
 
@@ -124,7 +124,7 @@ describe('Unlock list routes - select date and location', () => {
       expect(errors).toEqual([
         { property: 'datePresetOption', error: 'Select a date' },
         { property: 'activitySlot', error: 'Select a time' },
-        { property: 'location', error: 'Select a location' },
+        { property: 'locationKey', error: 'Select a location' },
       ])
     })
 
@@ -140,7 +140,7 @@ describe('Unlock list routes - select date and location', () => {
       expect(errors).toEqual([
         { property: 'datePresetOption', error: 'Select a date' },
         { property: 'activitySlot', error: 'Select a time' },
-        { property: 'location', error: 'Select a location' },
+        { property: 'locationKey', error: 'Select a location' },
       ])
     })
 
@@ -149,7 +149,7 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: {},
         activitySlot: 'am',
-        location: 'some location',
+        locationKey: 'some location',
       }
 
       const requestObject = plainToInstance(DateAndLocation, body)
@@ -163,7 +163,7 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: '2022/2/31',
         activitySlot: 'am',
-        location: 'here',
+        locationKey: 'here',
       }
 
       const requestObject = plainToInstance(DateAndLocation, body)
@@ -178,7 +178,7 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: formatDatePickerDate(dateIn59Days),
         activitySlot: 'am',
-        location: 'here',
+        locationKey: 'here',
       }
 
       const requestObject = plainToInstance(DateAndLocation, body)
@@ -193,7 +193,7 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: formatDatePickerDate(dateIn60Days),
         activitySlot: 'am',
-        location: 'here',
+        locationKey: 'here',
       }
 
       const requestObject = plainToInstance(DateAndLocation, body)
@@ -208,7 +208,7 @@ describe('Unlock list routes - select date and location', () => {
         datePresetOption: 'other',
         date: formatDatePickerDate(dateIn61Days),
         activitySlot: 'am',
-        location: 'some location',
+        locationKey: 'some location',
       }
 
       const requestObject = plainToInstance(DateAndLocation, body)
