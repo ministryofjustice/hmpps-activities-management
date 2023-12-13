@@ -11,10 +11,7 @@ export default function setUpFrontendComponents({ frontendComponentApiClient }: 
       // Frontend components API is only used when feature toggle is provided
       if (config.frontendComponentsApiToggleEnabled) {
         const { user } = res.locals
-        const [header, footer] = await Promise.all([
-          frontendComponentApiClient.getComponent('header', user),
-          frontendComponentApiClient.getComponent('footer', user),
-        ])
+        const { header, footer } = await frontendComponentApiClient.getComponents(['header', 'footer'], user)
         res.locals.feComponents = {
           header: header.html,
           footer: footer.html,

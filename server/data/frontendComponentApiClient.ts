@@ -2,6 +2,8 @@ import AbstractHmppsRestClient from './abstractHmppsRestClient'
 import config, { ApiConfig } from '../config'
 import { ServiceUser } from '../@types/express'
 
+type AvailableComponent = 'header' | 'footer'
+
 interface Component {
   html: string
   css: string[]
@@ -13,9 +15,10 @@ export default class FrontendComponentApiClient extends AbstractHmppsRestClient 
     super('Frontend Component API', config.apis.frontendComponents as ApiConfig)
   }
 
-  getComponent(component: 'header' | 'footer', user: ServiceUser): Promise<Component> {
+  getComponents(components: AvailableComponent[], user: ServiceUser): Promise<Record<AvailableComponent, Component>> {
     return this.get({
-      path: `/${component}`,
+      path: `/components`,
+      query: `component=${components.join('&component=')}`,
       headers: { 'x-user-token': user.token },
       authToken: user.token,
     })
