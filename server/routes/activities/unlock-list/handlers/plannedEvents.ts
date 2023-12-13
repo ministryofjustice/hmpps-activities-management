@@ -47,7 +47,7 @@ export default class PlannedEventsRoutes {
     }
 
     this.metricsService.trackEvent(
-      MetricsEvent.CREATE_UNLOCK_LIST(unlockDate, timeSlot, locationKey, unlockListItems.length, res.locals.user),
+      MetricsEvent.CREATE_UNLOCK_LIST(unlockDate, timeSlot, location.name, unlockListItems.length, res.locals.user),
     )
 
     res.render('pages/activities/unlock-list/planned-events', {
