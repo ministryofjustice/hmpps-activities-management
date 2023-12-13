@@ -23,7 +23,20 @@
                 cellLocation: prisoner.cellLocation,
                 link: true
             }),
-            attributes: { 'data-qa': 'appointment-' + appointment.id + '-prisoner' }
+            attributes: { 'data-qa': 'appointment-' + appointment.id + '-prisoner' },
+            classes: "govuk-!-display-none-print"
+        }, {
+                    html: '<span class="print-checkbox"></span>',
+                    classes: "print-only"
+        }, {
+            text: prisoner | fullName | toTitleCase | prisonerName(false),
+            classes: "print-only"
+        }, {
+            text: prisoner.prisonerNumber,
+            classes: "print-only"
+        }, {
+            text: prisoner.cellLocation,
+            classes: "print-only"
         }, {
             text: appointment.startTime,
             attributes: {
@@ -45,7 +58,7 @@
                 class="govuk-link--no-visited-state">
                 View' + (' and manage' if appointment.isCancelled == false and appointment.isExpired == false) + '<span class="govuk-visually-hidden"> appointment ' + appointment.id + '</span>
             </a>',
-            classes: 'govuk-!-text-align-right',
+            classes: 'govuk-!-text-align-right govuk-!-display-none-print',
             attributes: { 'data-qa': 'view-and-edit-appointment-' + appointment.id }
         }
     ]), appointmentTableRows) %}
@@ -53,10 +66,20 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ appointmentSet.appointmentName }} – set overview</h1>
-            <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ appointmentSet.startDate | toDate | formatDate }}</span>
+        <div class="govuk-grid-column-two-thirds appointment-details__attendee-list">
+            <div class="govuk-!-display-none-print">
+                <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
+                <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{ appointmentSet.appointmentName }} – set overview</h1>
+                <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ appointmentSet.startDate | toDate | formatDate }}</span>
+            </div>
+            <div class="govuk-grid-row print-only">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-l govuk-!-margin-0">{{ appointmentSet.appointmentName }}</h1>
+                    <span class="govuk-caption-l">{{ appointmentSet.startDate | toDate | formatDate }}</span>
+                    <span class="govuk-caption-l">{{ appointmentSet.internalLocation.description }}</span>
+                    <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ appointmentSet.appointments | length + (" attendee" if appointmentSet.appointments.length == 1 else " attendees") }}</h2>
+                </div>
+            </div>
 
             {{ govukSummaryList({
                 card: {
@@ -81,7 +104,17 @@
                         }
                     }
                 ],
-                attributes: { 'data-qa': 'appointment-set-details' }
+                attributes: {
+                    'data-qa': 'appointment-set-details'
+                },
+                classes: 'govuk-!-display-none-print'
+            }) }}
+
+            {{ govukButton({
+                attributes: { id: 'print-movement-list' },
+                text: "Print attendance list",
+                classes: "govuk-button--blue govuk-!-margin-bottom-2 js-print no-js-hidden govuk-!-display-none-print",
+                preventDoubleClick: true
             }) }}
 
             <div class="govuk-summary-card">
@@ -102,7 +135,20 @@
                         head: [
                             {
                                 text: "Name of attendee",
-                                attributes: { "aria-sort": "none" }
+                                attributes: { "aria-sort": "none" },
+                                classes: "govuk-!-display-none-print"
+                            }, {
+                                text: "Attended",
+                                classes: "print-only"
+                            }, {
+                                text: "Name",
+                                classes: "print-only"
+                            }, {
+                                text: "Prison number",
+                                classes: "print-only"
+                            }, {
+                                text: "Cell location",
+                                classes: "print-only"
                             }, {
                                 text: "Start time",
                                 attributes: { "aria-sort": "ascending" }
