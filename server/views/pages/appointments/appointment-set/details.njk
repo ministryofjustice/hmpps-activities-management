@@ -111,8 +111,19 @@
             }) }}
 
             {{ govukButton({
-                attributes: { id: 'print-movement-list' },
+                id: 'print-movement-list',
                 text: "Print attendance list",
+                attributes: {
+                    'data-track-click-event': 'SAA-Appointment-Set-Attendee-List-Printed',
+                    'data-track-event-properties': { 
+                        user: user.username,
+                        prisonCode: user.activeCaseLoad.caseLoadId,
+                        appointmentSetId: appointmentSet.id
+                    } | dump,
+                    'data-track-event-measurements': {
+                        appointmentCount: appointmentSet.appointments | length
+                    } | dump
+                },
                 classes: "govuk-button--blue govuk-!-margin-bottom-2 js-print no-js-hidden govuk-!-display-none-print",
                 preventDoubleClick: true
             }) }}
