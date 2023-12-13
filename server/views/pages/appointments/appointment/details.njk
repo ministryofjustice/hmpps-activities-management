@@ -247,7 +247,19 @@
         <div class="govuk-grid-column-two-thirds appointment-details__attendee-list">
             <div class="govuk-button-group govuk-!-margin-0 govuk-!-display-none-print">
                 {{ govukButton({
-                    attributes: { id: 'print-movement-list' },
+                    attributes: { 
+                        id: 'print-movement-list',
+                        'data-track-click-event': 'SAA-Appointment-Attendee-List-Printed',
+                        'data-track-event-properties': { 
+                            user: user.username,
+                            prisonCode: user.activeCaseLoad.caseLoadId,
+                            appointmentSeriesId: appointment.appointmentSeries.id,
+                            appointmentId: appointment.id
+                        } | dump,
+                        'data-track-event-measurements': {
+                            attendeeCount: appointment.attendees | length
+                        } | dump
+                    },
                     text: "Print attendance list",
                     classes: "govuk-button--blue govuk-!-margin-bottom-2 js-print no-js-hidden",
                     preventDoubleClick: true

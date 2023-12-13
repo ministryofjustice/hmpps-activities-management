@@ -153,7 +153,20 @@
                             <div class="moj-action-bar__filter"></div>
                             {{ mojButtonMenu({
                                 items: [{
-                                    attributes: { id: 'print-unlock' },
+                                    attributes: { 
+                                        id: 'print-unlock',
+                                        'data-track-click-event': 'SAA-Unlock-List-Printed',
+                                        'data-track-event-properties': {
+                                            user: user.username,
+                                            prisonCode: user.activeCaseLoad.caseLoadId,
+                                            unlockDate: date,
+                                            timePeriod: timeSlot,
+                                            location: location
+                                        } | dump,
+                                        'data-track-event-measurements': {
+                                            prisonerCount: unlockListItems | length
+                                        } | dump
+                                    },
                                     text: "Print this unlock list",
                                     classes: "govuk-button--blue js-print no-js-hidden",
                                     preventDoubleClick: true
