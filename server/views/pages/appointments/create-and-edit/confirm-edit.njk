@@ -37,7 +37,8 @@
                 }) }}
 
                 {{ govukButton({
-                    text: getConfirmAppointmentEditCta(session.appointmentJourney, session.editAppointmentJourney)
+                    text: getConfirmAppointmentEditCta(session.appointmentJourney, session.editAppointmentJourney),
+                    preventDoubleClick: true
                 }) }}
             </form>
         </div>

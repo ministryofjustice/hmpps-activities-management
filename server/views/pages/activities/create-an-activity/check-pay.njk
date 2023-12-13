@@ -99,7 +99,8 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Confirm"
+                        text: "Confirm",
+                        preventDoubleClick: true
                     }) if flatPay | length > 0 or incentiveLevelPays | length > 0 }}
                     {{ govukButton({
                         text: "Add another pay rate",
