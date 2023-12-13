@@ -1,28 +1,22 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
-import { IsIn, IsNotEmpty, ValidateIf } from 'class-validator'
-
-enum RequesterEnum {
-  PRISONER = 'PRISONER',
-  GUIDANCE_STAFF = 'GUIDANCE_STAFF',
-  OTHER = 'OTHER',
-}
+import { IsIn, ValidateIf } from 'class-validator'
+import WaitlistRequester from '../../../../../enum/waitlistRequester'
 
 export class Requester {
   @Expose()
-  @IsIn(Object.values(RequesterEnum), { message: 'Select who made the application' })
-  requester: RequesterEnum
+  @IsIn(WaitlistRequester.codes(), { message: 'Select who made the application' })
+  requester: string
 
   @Expose()
-  @ValidateIf(o => o.requester === RequesterEnum.OTHER)
-  @IsNotEmpty({ message: 'Select who made the application' })
+  @ValidateIf(o => o.requester === WaitlistRequester.SOMEONE_ELSE.code)
+  @IsIn(WaitlistRequester.codes(), { message: 'Select who made the application' })
   otherRequester: string
 }
 
 export default class RequesterRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     return res.render(`pages/activities/waitlist-application/requester`, {
-      RequesterEnum,
       prisonerName: req.session.waitListApplicationJourney.prisoner.name,
     })
   }
@@ -30,14 +24,8 @@ export default class RequesterRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { requester, otherRequester } = req.body
 
-    if (requester === RequesterEnum.OTHER) {
-      req.session.waitListApplicationJourney.requester = otherRequester
-    } else {
-      req.session.waitListApplicationJourney.requester =
-        requester === RequesterEnum.PRISONER
-          ? 'Self-requested'
-          : 'IAG or CXK careers information, advice and guidance staff'
-    }
+    req.session.waitListApplicationJourney.requester =
+      requester !== WaitlistRequester.SOMEONE_ELSE.code ? requester : otherRequester
 
     return res.redirectOrReturn(`status`)
   }

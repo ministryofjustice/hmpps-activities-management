@@ -4,6 +4,7 @@ import PrisonService from '../../../../../services/prisonService'
 import { asString, convertToTitleCase, getScheduleIdFromActivity, parseDate } from '../../../../../utils/utils'
 import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
+import WaitlistRequester from '../../../../../enum/waitlistRequester'
 
 export default class ViewApplicationRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
@@ -56,7 +57,7 @@ export default class ViewApplicationRoutes {
       prisoner: req.session.waitListApplicationJourney.prisoner,
       requestDate: parseDate(application.requestedDate),
       activityName: activity.description,
-      requester: application.requestedBy,
+      requester: WaitlistRequester.valueOf(application.requestedBy),
       comment: application.comments,
       status: application.status,
       statusUpdatedTime: application.statusUpdatedTime,

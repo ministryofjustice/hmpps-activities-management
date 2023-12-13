@@ -55,6 +55,7 @@ import ServiceName from '../enum/serviceName'
 import DateOption from '../enum/dateOption'
 import { PrisonerStatus } from '../@types/prisonApiImportCustom'
 import { isoDateToDatePickerDate, parseIsoDate } from '../utils/datePickerUtils'
+import WaitlistRequester from '../enum/waitlistRequester'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -167,6 +168,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('EventSource', EventSource)
   njkEnv.addGlobal('DateOption', DateOption)
   njkEnv.addGlobal('TimeSlot', TimeSlot)
+  njkEnv.addGlobal('WaitlistRequester', WaitlistRequester)
   njkEnv.addGlobal('PrisonerStatus', PrisonerStatus)
   njkEnv.addGlobal('AppointmentFrequency', AppointmentFrequency)
   njkEnv.addGlobal('AppointmentType', AppointmentType)

@@ -12,6 +12,7 @@ import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import { Slots } from '../../create-an-activity/journey'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
+import WaitlistRequester from '../../../../enum/waitlistRequester'
 
 type Filters = {
   candidateQuery: string
@@ -238,7 +239,7 @@ export default class AllocationDashboardRoutes {
           prisonerNumber: inmate.prisonerNumber,
           cellLocation: inmate.cellLocation,
           requestDate: parseDate(w.requestedDate),
-          requestedBy: w.requestedBy,
+          requestedBy: WaitlistRequester.valueOf(w.requestedBy),
           status: w.status,
           otherAllocations: otherAllocations?.map(a => ({
             activityId: a.activityId,
