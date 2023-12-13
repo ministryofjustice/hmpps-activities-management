@@ -56,7 +56,8 @@
                     }) }}
                 </div>
                 {{ govukButton({
-                    text: "Update education levels" if session.req.params.mode == 'edit' else "Confirm" 
+                    text: "Update education levels" if session.req.params.mode == 'edit' else "Confirm",
+                    preventDoubleClick: true
                 }) }}
             </form>
         </div>

@@ -181,6 +181,7 @@
 
                     {{ govukButton({
                         text: getAppointmentEditApplyToCta(session.appointmentJourney, session.editAppointmentJourney) if isCtaAcceptAndSave else "Continue",
+                        preventDoubleClick: true,
                         attributes: { 'data-qa': 'top-cta' }
                     }) if prisonerSchedules.length > 10 }}
 
@@ -234,6 +235,7 @@
 
                     {{ govukButton({
                         attributes: { 'data-qa': 'bottom-cta' },
+                        preventDoubleClick: true,
                         text: getAppointmentEditApplyToCta(session.appointmentJourney, session.editAppointmentJourney) if isCtaAcceptAndSave else "Continue"
                     }) }}
                 </form>

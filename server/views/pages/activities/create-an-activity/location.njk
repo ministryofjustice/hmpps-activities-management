@@ -76,9 +76,10 @@
                         iconFallbackText: "Warning"
                     }) }}
                     <div class="govuk-button-group">
-                      {{ govukButton({
-                        text: "Update activity location"
-                      }) }}
+                        {{ govukButton({
+                            text: "Update activity location",
+                            preventDoubleClick: true
+                        }) }}
                         <a class="govuk-link js-backlink" href="/">Cancel</a>
                     </div>
                 {% else %}
