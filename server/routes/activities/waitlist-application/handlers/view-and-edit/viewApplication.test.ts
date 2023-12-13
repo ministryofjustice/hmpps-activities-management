@@ -55,7 +55,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
           prisonerNumber: 'ABC123',
           creationTime: '2023-08-16',
           requestedDate: '2023-07-31',
-          requestedBy: 'Self-requested',
+          requestedBy: 'PRISONER',
           comments: 'test comment',
           statusUpdatedTime: null,
         } as WaitingListApplication)
@@ -93,7 +93,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
           activityId: 1,
           activityName: 'Test activity',
         },
-        requester: 'Self-requested',
+        requester: 'PRISONER',
         status: 'PENDING',
         comment: 'test comment',
         createdTime: '2023-08-16',
@@ -126,7 +126,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
           prisonerNumber: 'ABC123',
           creationTime: '2023-08-16',
           requestedDate: '2023-07-31',
-          requestedBy: 'Self-requested',
+          requestedBy: 'PRISONER',
           comments: 'test comment',
         } as WaitingListApplication)
 
@@ -173,7 +173,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
           prisonerNumber: 'ABC123',
           creationTime: '2023-08-16',
           requestedDate: '2023-07-31',
-          requestedBy: 'Self-requested',
+          requestedBy: 'PRISONER',
           comments: 'test comment',
         } as WaitingListApplication)
 

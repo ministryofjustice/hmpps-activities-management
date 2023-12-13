@@ -8,6 +8,7 @@ import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePicker
 import { Prisoner } from '../../../../@types/activities'
 import { WaitingListStatus } from '../../../../enum/waitingListStatus'
 import IsValidDate from '../../../../validators/isValidDate'
+import WaitlistRequester from '../../../../enum/waitlistRequester'
 
 export class DashboardFrom {
   @Transform(({ value }) => parseDatePickerDate(value))
@@ -66,6 +67,7 @@ export default class DashboardRoutes {
 
     const applications = applicationResults?.content.map(waitlistApplication => ({
       ...waitlistApplication,
+      requestedBy: WaitlistRequester.valueOf(waitlistApplication.requestedBy),
       activity: activities.find(act => act.id === waitlistApplication.activityId),
       prisoner: prisoners.find(p => p.prisonerNumber === waitlistApplication.prisonerNumber),
     }))

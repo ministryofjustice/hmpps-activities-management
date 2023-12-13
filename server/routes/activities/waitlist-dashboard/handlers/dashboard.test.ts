@@ -40,6 +40,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
     prisonerNumber: 'ABC1234',
     activityId: 1,
     scheduleId: 2,
+    requestedBy: 'OMU_STAFF',
   } as WaitingListApplication
 
   const waitingListSearchResults = {
@@ -111,6 +112,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
           applications: [
             {
               ...waitingListApplication,
+              requestedBy: 'Offender Management Unit',
               prisoner,
               activity,
             },
@@ -174,6 +176,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
           applications: [
             {
               ...waitingListApplication,
+              requestedBy: 'Offender Management Unit',
               prisoner,
               activity,
             },

@@ -211,7 +211,7 @@ describe('Route Handlers - Allocation dashboard', () => {
             prisonerNumber: 'A0013DZ',
             status: 'PENDING',
             requestedDate: '2023-08-07',
-            requestedBy: 'Activities Management',
+            requestedBy: 'PRISONER',
           },
         ] as WaitingListApplication[])
     })
@@ -305,7 +305,7 @@ describe('Route Handlers - Allocation dashboard', () => {
               ],
               prisonerNumber: 'A0013DZ',
               requestDate: new Date(2023, 7, 7),
-              requestedBy: 'Activities Management',
+              requestedBy: 'Self-requested',
               status: 'PENDING',
               waitlistApplicationId: 1,
               currentIncentive: 'Standard',

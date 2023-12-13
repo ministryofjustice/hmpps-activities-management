@@ -33,11 +33,6 @@ describe('Route Handlers - Waitlist application - Requester', () => {
     it('should render the requester template', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/requester`, {
-        RequesterEnum: {
-          PRISONER: 'PRISONER',
-          GUIDANCE_STAFF: 'GUIDANCE_STAFF',
-          OTHER: 'OTHER',
-        },
         prisonerName: 'Alan Key',
       })
     })
@@ -51,7 +46,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.requester).toEqual('Self-requested')
+      expect(req.session.waitListApplicationJourney.requester).toEqual('PRISONER')
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`status`)
     })
 
@@ -62,21 +57,19 @@ describe('Route Handlers - Waitlist application - Requester', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.requester).toEqual(
-        'IAG or CXK careers information, advice and guidance staff',
-      )
+      expect(req.session.waitListApplicationJourney.requester).toEqual('GUIDANCE_STAFF')
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`status`)
     })
 
-    it('should set the requester in session if OTHER is selected', async () => {
+    it('should set the requester in session if SOMEONE_ELSE is selected', async () => {
       req.body = {
-        requester: 'OTHER',
-        otherRequester: 'Activity leader',
+        requester: 'SOMEONE_ELSE',
+        otherRequester: 'ACTIVITY_LEADER',
       }
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.requester).toEqual('Activity leader')
+      expect(req.session.waitListApplicationJourney.requester).toEqual('ACTIVITY_LEADER')
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`status`)
     })
   })
@@ -104,7 +97,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
 
     it('validation fails if an alternative requester is not selected', async () => {
       const body = {
-        requester: 'OTHER',
+        requester: 'SOMEONE_ELSE',
       }
 
       const requestObject = plainToInstance(Requester, body)
@@ -126,14 +119,26 @@ describe('Route Handlers - Waitlist application - Requester', () => {
 
     it('validation passes if other requester is provided', async () => {
       const body = {
-        requester: 'OTHER',
-        otherRequester: 'Activity leader',
+        requester: 'SOMEONE_ELSE',
+        otherRequester: 'ACTIVITY_LEADER',
       }
 
       const requestObject = plainToInstance(Requester, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors.length).toEqual(0)
+    })
+
+    it('validation fails if a bad value is entered for otherRequester', async () => {
+      const body = {
+        requester: 'SOMEONE_ELSE',
+        otherRequester: 'bad value',
+      }
+
+      const requestObject = plainToInstance(Requester, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'otherRequester', error: 'Select who made the application' }])
     })
   })
 })

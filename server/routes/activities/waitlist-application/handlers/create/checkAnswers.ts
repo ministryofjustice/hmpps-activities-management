@@ -3,6 +3,7 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import { WaitingListApplicationRequest } from '../../../../../@types/activitiesAPI/types'
 import MetricsEvent from '../../../../../data/metricsEvent'
 import MetricsService from '../../../../../services/metricsService'
+import WaitlistRequester from '../../../../../enum/waitlistRequester'
 
 export default class CheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly metricsService: MetricsService) {}
@@ -14,7 +15,7 @@ export default class CheckAnswersRoutes {
       prisoner,
       requestDate,
       activityName: activity.activityName,
-      requester,
+      requester: WaitlistRequester.valueOf(requester),
       comment,
       status,
     })
