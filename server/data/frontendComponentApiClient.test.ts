@@ -22,17 +22,18 @@ describe('frontendComponentApiClient', () => {
 
   describe('getComponent', () => {
     it('should return data from api', async () => {
-      const response = { data: 'data' }
+      const response = { header: 'testHeader', footer: 'testFooter' }
 
       fakeFrontendComponentApi
-        .get('/header')
+        .get('/components?component=header&component=footer')
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('x-user-token', `token`)
         .reply(200, response)
 
-      const output = await frontendComponentApiClient.getComponent('header', user)
+      const { header, footer } = await frontendComponentApiClient.getComponents(['header', 'footer'], user)
 
-      expect(output).toEqual(response)
+      expect(header).toEqual('testHeader')
+      expect(footer).toEqual('testFooter')
       expect(nock.isDone()).toBe(true)
     })
   })

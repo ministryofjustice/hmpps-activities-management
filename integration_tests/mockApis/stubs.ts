@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
-import headerJson from '../fixtures/frontendComponents/header.json'
-import footerJson from '../fixtures/frontendComponents/footer.json'
+import frontendComponentJson from '../fixtures/frontendComponents/frontendComponent.json'
 
 import { stubFor, getMatchingRequests } from './wiremock'
 
@@ -232,29 +231,16 @@ const stubRolloutPlan = () =>
     },
   })
 
-const header = () =>
+const frontendComponents = () =>
   stubFor({
     request: {
       method: 'GET',
-      urlPattern: '/header',
+      urlPattern: '/components?component=header&component=footer',
     },
     response: {
       status: 200,
       headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      jsonBody: headerJson,
-    },
-  })
-
-const footer = () =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern: '/footer',
-    },
-    response: {
-      status: 200,
-      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      jsonBody: footerJson,
+      jsonBody: frontendComponentJson,
     },
   })
 
@@ -266,8 +252,7 @@ export default {
   stubSignIn: (firstname = 'john', lastname = 'smith') =>
     Promise.all([
       favicon(),
-      header(),
-      footer(),
+      frontendComponents(),
       authRedirect(),
       signOut(),
       manageAccountDetails(),
