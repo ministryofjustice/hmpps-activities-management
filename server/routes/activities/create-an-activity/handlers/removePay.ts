@@ -64,23 +64,12 @@ export default class RemovePayRoutes {
       rate: p.rate,
     }))
 
-    const incentiveLevels = await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user)
-
-    const minimumIncentiveLevel =
-      incentiveLevels.find(l => req.session.createJourney.pay.find(p => p.incentiveLevel === l.levelName)) ??
-      incentiveLevels[0]
-
-    req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.levelCode
-    req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.levelName
-
     const updatedActivity = {
       pay: updatedPayRates,
-      minimumIncentiveNomisCode: req.session.createJourney.minimumIncentiveNomisCode,
-      minimumIncentiveLevel: req.session.createJourney.minimumIncentiveLevel,
     } as ActivityUpdateRequest
     await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, updatedActivity)
-    const successMessage = `You've updated the pay for ${req.session.createJourney.name}`
 
+    const successMessage = `You've updated the pay for ${req.session.createJourney.name}`
     return res.redirectWithSuccess('check-pay?preserveHistory=true', 'Activity updated', successMessage)
   }
 }

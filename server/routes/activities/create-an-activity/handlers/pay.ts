@@ -171,17 +171,9 @@ export default class PayRoutes {
       rate: p.rate,
     }))
 
-    const minimumIncentiveLevel =
-      incentiveLevels.find(l => updatedPayRates.find(p => p.incentiveLevel === l.levelName)) ?? incentiveLevels[0]
-
-    req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.levelCode
-    req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.levelName
-
     const updatedActivity = {
       paid: true,
       pay: updatedPayRates,
-      minimumIncentiveNomisCode: req.session.createJourney.minimumIncentiveNomisCode,
-      minimumIncentiveLevel: req.session.createJourney.minimumIncentiveLevel,
     } as ActivityUpdateRequest
     await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, updatedActivity)
 

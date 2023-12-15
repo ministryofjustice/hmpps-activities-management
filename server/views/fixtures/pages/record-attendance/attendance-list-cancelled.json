@@ -38,8 +38,6 @@
           "description": "Such as classes in English, maths, construction or barbering"
         },
         "riskLevel": "high",
-        "minimumIncentiveNomisCode": "BAS",
-        "minimumIncentiveLevel": "Basic",
         "minimumEducationLevel": [],
         "endDate": null,
         "capacity": 6,

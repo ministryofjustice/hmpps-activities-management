@@ -29,22 +29,11 @@ export default class PayOption {
       req.session.createJourney.pay = []
       req.session.createJourney.flat = []
 
-      const minimumIncentiveLevel = await this.prisonService.getMinimumIncentiveLevel(
-        user.activeCaseLoadId,
-        user,
-        [],
-        [],
-      )
-      req.session.createJourney.minimumIncentiveNomisCode = minimumIncentiveLevel.levelCode
-      req.session.createJourney.minimumIncentiveLevel = minimumIncentiveLevel.levelName
-
       if (req.params.mode === 'edit') {
         const { activityId } = req.session.createJourney
 
         const activity = {
           paid: req.session.createJourney.paid,
-          minimumIncentiveLevel: req.session.createJourney.minimumIncentiveLevel,
-          minimumIncentiveNomisCode: req.session.createJourney.minimumIncentiveNomisCode,
           pay: [],
         } as ActivityUpdateRequest
 

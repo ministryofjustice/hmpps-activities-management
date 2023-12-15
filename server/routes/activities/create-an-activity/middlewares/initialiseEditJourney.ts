@@ -27,7 +27,6 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
       riskLevel: activity.riskLevel,
       startDate: activity.startDate,
       endDate: activity.endDate,
-      minimumIncentiveLevel: activity.minimumIncentiveLevel,
       scheduleWeeks: schedule.scheduleWeeks,
       slots: mapActivityModelSlotsToJourney(schedule.slots),
       runsOnBankHoliday: schedule.runsOnBankHoliday,

@@ -176,8 +176,7 @@
           "name": "Education",
           "description": "Such as classes in English, maths, construction and computer skills"
         },
-        "riskLevel": null,
-        "minimumIncentiveLevel": null
+        "riskLevel": null
       },
       "scheduleWeeks": 1,
       "slots": [
@@ -354,8 +353,7 @@
           "name": "Education",
           "description": "Such as classes in English, maths, construction and computer skills"
         },
-        "riskLevel": null,
-        "minimumIncentiveLevel": null
+        "riskLevel": null
       },
       "slots": [
         {
@@ -507,8 +505,7 @@
           "name": "Education",
           "description": "Such as classes in English, maths, construction and computer skills"
         },
-        "riskLevel": null,
-        "minimumIncentiveLevel": null
+        "riskLevel": null
       },
       "slots": [
         {
@@ -660,8 +657,7 @@
           "name": "Education",
           "description": "Such as classes in English, maths, construction and computer skills"
         },
-        "riskLevel": null,
-        "minimumIncentiveLevel": null
+        "riskLevel": null
       },
       "slots": [
         {
@@ -816,7 +812,6 @@
   "startDate": "2022-10-10",
   "endDate": null,
   "riskLevel": "low",
-  "minimumIncentiveLevel": "Basic",
   "createdTime": "2022-10-10T09:00:00",
   "createdBy": "SEED USER"
 }
