@@ -234,10 +234,10 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           ],
         }
 
-        expect(activitiesService.updateActivity).toBeCalledWith(
-          res.locals.user.activeCaseLoadId,
+        expect(activitiesService.updateActivity).toHaveBeenCalledWith(
           req.session.createJourney.activityId,
           expectedActivityUpdate,
+          res.locals.user,
         )
 
         expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(

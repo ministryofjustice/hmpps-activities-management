@@ -128,7 +128,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
         pay: [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 2, rate: 150 }],
       } as ActivityUpdateRequest
 
-      expect(activitiesService.updateActivity).toHaveBeenCalledWith('MDI', 1, updatedActivity)
+      expect(activitiesService.updateActivity).toHaveBeenCalledWith(1, updatedActivity, res.locals.user)
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'check-pay?preserveHistory=true',
         'Activity updated',

@@ -30,7 +30,7 @@ export default class OrganiserRoutes {
         tierCode: req.session.createJourney.tierCode,
       } as ActivityUpdateRequest
 
-      await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
+      await this.activitiesService.updateActivity(activityId, activity, user)
       const successMessage = `We've updated the organiser for ${req.session.createJourney.name}`
 
       const returnTo = `/activities/view/${req.session.createJourney.activityId}`

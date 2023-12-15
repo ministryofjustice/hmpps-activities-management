@@ -80,10 +80,14 @@ describe('Route Handlers - Create an activity - Organiser', () => {
 
       await handler.POST(req, res)
 
-      expect(activitiesService.updateActivity).toBeCalledWith(user.activeCaseLoadId, 1, {
-        organiserCode: Organiser.PRISONER,
-        tierCode: EventTier.FOUNDATION,
-      })
+      expect(activitiesService.updateActivity).toHaveBeenCalledWith(
+        1,
+        {
+          organiserCode: Organiser.PRISONER,
+          tierCode: EventTier.FOUNDATION,
+        },
+        user,
+      )
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',

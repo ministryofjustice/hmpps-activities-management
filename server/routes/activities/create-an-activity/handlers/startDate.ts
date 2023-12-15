@@ -52,7 +52,7 @@ export default class StartDateRoutes {
       const { user } = res.locals
       const { activityId, name, startDate } = req.session.createJourney
       const activity = { startDate } as ActivityUpdateRequest
-      await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
+      await this.activitiesService.updateActivity(activityId, activity, user)
 
       const successMessage = `You've updated the start date for ${name}`
       res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)

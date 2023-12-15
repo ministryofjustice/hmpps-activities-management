@@ -137,20 +137,24 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  patchActivityUpdate(prisonCode: string, activityId: number, updateBody: ActivityUpdateRequest): Promise<Activity> {
+  patchActivityUpdate(activityId: number, updateBody: ActivityUpdateRequest, user: ServiceUser): Promise<Activity> {
     return this.patch({
-      path: `/activities/${prisonCode}/activityId/${activityId}`,
+      path: `/activities/${user.activeCaseLoadId}/activityId/${activityId}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: updateBody,
     })
   }
 
   patchAllocationUpdate(
-    prisonCode: string,
     allocationId: number,
     updateBody: AllocationUpdateRequest,
+    user: ServiceUser,
   ): Promise<Allocation> {
     return this.patch({
-      path: `/allocations/${prisonCode}/allocationId/${allocationId}`,
+      path: `/allocations/${user.activeCaseLoadId}/allocationId/${allocationId}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: updateBody,
     })
   }
@@ -214,7 +218,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getPrisonRolloutPlan(prisonCode: string): Promise<RolloutPrisonPlan> {
     return this.get({
       path: `/rollout/${prisonCode}`,
-    }).then(res => res as RolloutPrisonPlan)
+    })
   }
 
   async getRolledOutPrisons(): Promise<RolloutPrisonPlan[]> {
@@ -244,6 +248,8 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       {
         path: '/attendances',
         data: attendanceUpdates,
+        authToken: user.token,
+        headers: CASELOAD_HEADER(user.activeCaseLoadId),
       },
       user,
     )

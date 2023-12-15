@@ -37,7 +37,7 @@ export default class RemoveDateOptionRoutes {
 
     if (req.params.mode === 'edit') {
       const allocationUpdate = { removeEndDate: true }
-      await this.activitiesService.updateAllocation(user.activeCaseLoadId, +allocationId, allocationUpdate)
+      await this.activitiesService.updateAllocation(+allocationId, allocationUpdate, user)
 
       const successMessage = `You have removed the end date for this allocation`
       return res.redirectWithSuccess(

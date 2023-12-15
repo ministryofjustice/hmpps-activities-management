@@ -130,9 +130,13 @@ describe('Route Handlers - Allocate - Pay band', () => {
 
       await handler.POST(req, res)
 
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(res.locals.user.activeCaseLoadId, 1, {
-        payBandId: 2,
-      })
+      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(
+        1,
+        {
+          payBandId: 2,
+        },
+        res.locals.user,
+      )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         `/activities/allocations/view/1`,
         'Allocation updated',

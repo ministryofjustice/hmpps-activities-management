@@ -65,14 +65,13 @@ export default class LocationRoutes {
 
     if (req.params.mode === 'edit') {
       const { activityId } = req.session.createJourney
-      const prisonCode = user.activeCaseLoadId
       const activity = {
         inCell: req.session.createJourney.inCell,
         onWing: req.session.createJourney.onWing,
         offWing: req.session.createJourney.offWing,
         locationId: req.session.createJourney.location?.id,
       } as ActivityUpdateRequest
-      await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+      await this.activitiesService.updateActivity(activityId, activity, user)
       const successMessage = `You've updated the location for ${req.session.createJourney.name}`
 
       const returnTo = `/activities/view/${activityId}`

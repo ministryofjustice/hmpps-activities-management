@@ -109,22 +109,26 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
 
       await handler.POST(req, res)
 
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith('LEI', 1, {
-        exclusions: [
-          {
-            weekNumber: 2,
-            timeSlot: 'AM',
-            monday: true,
-            tuesday: false,
-            wednesday: false,
-            thursday: true,
-            friday: false,
-            saturday: false,
-            sunday: false,
-            daysOfWeek: ['MONDAY', 'THURSDAY'],
-          },
-        ],
-      })
+      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(
+        1,
+        {
+          exclusions: [
+            {
+              weekNumber: 2,
+              timeSlot: 'AM',
+              monday: true,
+              tuesday: false,
+              wednesday: false,
+              thursday: true,
+              friday: false,
+              saturday: false,
+              sunday: false,
+              daysOfWeek: ['MONDAY', 'THURSDAY'],
+            },
+          ],
+        },
+        res.locals.user,
+      )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/allocations/view/1',
         'Allocation updated',
@@ -138,22 +142,26 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
 
       await handler.POST(req, res)
 
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith('LEI', 1, {
-        exclusions: [
-          {
-            weekNumber: 2,
-            timeSlot: 'AM',
-            monday: true,
-            tuesday: false,
-            wednesday: false,
-            thursday: true,
-            friday: false,
-            saturday: false,
-            sunday: false,
-            daysOfWeek: ['MONDAY', 'THURSDAY'],
-          },
-        ],
-      })
+      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(
+        1,
+        {
+          exclusions: [
+            {
+              weekNumber: 2,
+              timeSlot: 'AM',
+              monday: true,
+              tuesday: false,
+              wednesday: false,
+              thursday: true,
+              friday: false,
+              saturday: false,
+              sunday: false,
+              daysOfWeek: ['MONDAY', 'THURSDAY'],
+            },
+          ],
+        },
+        res.locals.user,
+      )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/exclusions/prisoner/ABC123',
         'You have changed when John Smith should attend Test Activity',

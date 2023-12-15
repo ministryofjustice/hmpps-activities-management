@@ -42,13 +42,12 @@ export default class CategoryRoutes {
 
     if (req.params.mode === 'edit') {
       const { activityId } = req.session.createJourney
-      const prisonCode = user.activeCaseLoadId
       const activity = {
         categoryId: req.session.createJourney.category.id,
         tierCode: req.session.createJourney.tierCode,
       } as ActivityUpdateRequest
 
-      await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+      await this.activitiesService.updateActivity(activityId, activity, user)
       const successMessage = `You've updated the category for ${req.session.createJourney.name}`
 
       const returnTo = `/activities/view/${req.session.createJourney.activityId}`

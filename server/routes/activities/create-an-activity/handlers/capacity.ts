@@ -33,7 +33,7 @@ export default class CapacityRoutes {
       const { user } = res.locals
       const { activityId, capacity } = req.session.createJourney
       const activity = { capacity } as ActivityUpdateRequest
-      await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
+      await this.activitiesService.updateActivity(activityId, activity, user)
       const successMessage = `You've updated the capacity for ${req.session.createJourney.name}`
 
       const returnTo = `/activities/view/${req.session.createJourney.activityId}`

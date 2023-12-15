@@ -178,7 +178,7 @@ export default class PayRoutes {
       paid: true,
       pay: updatedPayRates,
     } as ActivityUpdateRequest
-    await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, updatedActivity)
+    await this.activitiesService.updateActivity(activityId, updatedActivity, user)
 
     const activity = await this.activitiesService.getActivity(+activityId, res.locals.user)
     req.session.createJourney.allocations = activity.schedules.flatMap(s =>

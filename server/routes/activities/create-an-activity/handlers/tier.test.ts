@@ -105,9 +105,13 @@ describe('Route Handlers - Create an activity - Tier', () => {
 
       await handler.POST(req, res)
 
-      expect(activitiesService.updateActivity).toBeCalledWith(user.activeCaseLoadId, 1, {
-        tierCode: EventTier.TIER_1,
-      })
+      expect(activitiesService.updateActivity).toHaveBeenCalledWith(
+        1,
+        {
+          tierCode: EventTier.TIER_1,
+        },
+        user,
+      )
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
