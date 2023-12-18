@@ -4,6 +4,7 @@
 {% from "components/alertsList.njk" import alertsList %}
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
@@ -96,6 +97,12 @@
                     {% endif %}
                 </li>
             </ul>
+
+            {% if instance.date | toDate > now and not instance.cancelled %}
+                {{ govukInsetText({
+                    text: 'You cannot record attendance for this session until, ' + instance.date | formatDate
+                }) }}
+            {% endif %}
         </div>
         <div class="govuk-grid-column-one-third">
             <div class="print-only">
