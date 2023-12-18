@@ -42,5 +42,15 @@
                 "data-qa": "record-attendance-card"
             }) }}
         </div>
+
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "href": "/activities/waitlist-dashboard",
+                "clickable": "true",
+                "heading": "View waitlist applications",
+                "description": "Check if someone has made an application, and if it has been approved or rejected, or is still pending.",
+                "data-qa": "view-waitlists"
+            }) }}
+        </div>
     </div>
 {% endblock %}

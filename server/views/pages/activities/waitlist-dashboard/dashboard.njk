@@ -15,11 +15,19 @@
 {% set pageTitle = "Waitlist - Dashboard" %}
 {% set jsBackLink = true %}
 
+{% set editable = 'ROLE_ACTIVITY_HUB' in user.roles %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Waitlist dashboard</h1>
-            <p class="govuk-body">Select an application to view or edit it, and to change the status.</p>
+            <p class="govuk-body">
+                {% if editable %}
+                    Select an application to view or edit it, and to change the status.
+                {% else %}
+                    Select an application to view it.
+                {% endif %}
+            </p>
             <p class="govuk-body">Where an application is ‘Approved’, select it to allocate the prisoner to the activity.</p>
         </div>
     </div>
@@ -129,7 +137,7 @@
                         {% set rows = (rows.push({
                             visuallyHiddenText: 'Select ' + application.prisoner | fullName,
                             value: application.id,
-                            selectable: 'ROLE_ACTIVITY_HUB' in user.roles,
+                            selectable: true,
                             forbiddenActionId: 'waitlist-action-1' if application.status != 'APPROVED',
                             items: [
                                 {
@@ -183,13 +191,13 @@
                         rows: rows,
                         actions: [
                             {
-                                text: 'View or edit application',
+                                text: 'View' + (' or edit' if editable) + ' application',
                                 formAction: 'waitlist-dashboard/view-application'
                             },
                             {
                                 text: 'Allocate',
                                 formAction: 'waitlist-dashboard/allocate'
-                            }
+                            } if editable
                         ],
                         itemsDescription: 'application',
                         itemsDescriptionPlural: 'applications',
