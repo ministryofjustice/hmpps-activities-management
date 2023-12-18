@@ -2,7 +2,7 @@ import express, { Router } from 'express'
 
 import healthcheck from '../services/healthCheck'
 import { Services } from '../services'
-import rolledOutPrison from '../services/rolledOutPrision'
+import rolledOutPrison from '../services/rolledOutPrisonService'
 
 export default function setUpHealthChecks({ activitiesService }: Services): Router {
   const router = express.Router()

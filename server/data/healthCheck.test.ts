@@ -3,7 +3,7 @@ import { when } from 'jest-when'
 import { Request, Response } from 'express'
 import { serviceCheckFactory } from './healthCheck'
 import { AgentConfig } from '../config'
-import activeRolledPrisons from '../services/rolledOutPrision'
+import activeRolledPrisons from '../services/rolledOutPrisonService'
 import { RolloutPrisonPlan } from '../@types/activitiesAPI/types'
 import ActivitiesService from '../services/activitiesService'
 
