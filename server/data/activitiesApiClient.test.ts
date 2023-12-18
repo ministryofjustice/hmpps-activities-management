@@ -214,6 +214,16 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getRolloutPrisons', () => {
+    it('should return list of all rolled out prisons from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi.get('/rollout').matchHeader('authorization', `Bearer accessToken`).reply(200, response)
+      const output = await activitiesApiClient.getRolledOutPrisons()
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getAttendees', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }

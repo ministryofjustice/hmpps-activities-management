@@ -167,6 +167,30 @@ describe('Activities Service', () => {
     })
   })
 
+  describe('getRolledOutPrisons', () => {
+    it('should fetch rolled out prisons', async () => {
+      const mockResponse = [
+        { prisonCode: 'MDI', activitiesRolledOut: true, appointmentsRolledOut: true },
+        { prisonCode: 'LEI', activitiesRolledOut: true, appointmentsRolledOut: false },
+      ]
+      activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
+
+      const result = await activitiesService.getRolledOutPrisons()
+
+      expect(result).toEqual(mockResponse)
+      expect(activitiesApiClient.getRolledOutPrisons).toHaveBeenCalled()
+    })
+
+    it('should handle an empty response', async () => {
+      activitiesApiClient.getRolledOutPrisons.mockResolvedValue([])
+
+      const result = await activitiesService.getRolledOutPrisons()
+
+      expect(result).toEqual([])
+      expect(activitiesApiClient.getRolledOutPrisons).toHaveBeenCalled()
+    })
+  })
+
   describe('getDefaultScheduleOfActivity', () => {
     it('should fetch the default schedule from an activity', async () => {
       const activity = {

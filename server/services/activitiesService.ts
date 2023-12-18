@@ -261,6 +261,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getPrisonRolloutPlan(prisonCode)
   }
 
+  getRolledOutPrisons() {
+    return this.activitiesApiClient.getRolledOutPrisons()
+  }
+
   async getAllAttendance(sessionDate: Date, user: ServiceUser): Promise<AllAttendance[]> {
     return this.activitiesApiClient.getAllAttendance(sessionDate, user)
   }

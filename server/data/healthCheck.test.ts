@@ -1,6 +1,14 @@
 import nock from 'nock'
+import { when } from 'jest-when'
+import { Request, Response } from 'express'
 import { serviceCheckFactory } from './healthCheck'
 import { AgentConfig } from '../config'
+import activeRolledPrisons from '../services/rolledOutPrision'
+import { RolloutPrisonPlan } from '../@types/activitiesAPI/types'
+import ActivitiesService from '../services/activitiesService'
+
+jest.mock('../services/activitiesService')
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Service healthcheck', () => {
   const healthcheck = serviceCheckFactory('externalService', 'http://test-service.com/ping', new AgentConfig(), {
@@ -33,6 +41,60 @@ describe('Service healthcheck', () => {
       fakeServiceApi.get('/ping').thrice().reply(500)
 
       await expect(healthcheck()).rejects.toThrow('Internal Server Error')
+    })
+  })
+
+  describe('Check unhealthy', () => {
+    it('Should throw error from api', async () => {
+      fakeServiceApi.get('/ping').thrice().reply(500)
+
+      await expect(healthcheck()).rejects.toThrow('Internal Server Error')
+    })
+  })
+
+  describe('Check rolled out Prisons', () => {
+    let req: Request
+    const res: Response = {
+      json: jest.fn(),
+    } as unknown as Response
+
+    it('should return agencies with both activities and appointments rolled out', async () => {
+      when(activitiesService.getRolledOutPrisons).mockResolvedValue([
+        { prisonCode: 'MDI', activitiesRolledOut: true, appointmentsRolledOut: true },
+        { prisonCode: 'LEI', activitiesRolledOut: false, appointmentsRolledOut: true },
+      ] as RolloutPrisonPlan[])
+
+      const handler = activeRolledPrisons(activitiesService)
+
+      await handler(req, res)
+
+      expect(res.json).toHaveBeenCalledWith({ activeAgencies: ['MDI'] })
+    })
+
+    it('should return an empty array when no agencies have both activities and appointments rolled out', async () => {
+      when(activitiesService.getRolledOutPrisons).mockResolvedValue([
+        { prisonCode: 'MDI', activitiesRolledOut: false, appointmentsRolledOut: true },
+        { prisonCode: 'LEI', activitiesRolledOut: false, appointmentsRolledOut: true },
+      ] as RolloutPrisonPlan[])
+
+      const handler = activeRolledPrisons(activitiesService)
+
+      await handler(req, res)
+
+      expect(res.json).toHaveBeenCalledWith({ activeAgencies: [] })
+    })
+
+    it('should return all agencies when all have both activities and appointments rolled out', async () => {
+      when(activitiesService.getRolledOutPrisons).mockResolvedValue([
+        { prisonCode: 'MDI', activitiesRolledOut: true, appointmentsRolledOut: true },
+        { prisonCode: 'LPI', activitiesRolledOut: true, appointmentsRolledOut: true },
+      ] as RolloutPrisonPlan[])
+
+      const handler = activeRolledPrisons(activitiesService)
+
+      await handler(req, res)
+
+      expect(res.json).toHaveBeenCalledWith({ activeAgencies: ['MDI', 'LPI'] })
     })
   })
 
