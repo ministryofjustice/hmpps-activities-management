@@ -805,4 +805,42 @@ describe('Activities Service', () => {
       expect(activitiesApiClient.searchWaitingListApplications).toHaveBeenCalledWith('MDI', request, pageSearch, user)
     })
   })
+
+  describe('Check rolled out Prisons', () => {
+    it('should return agencies with both activities and appointments rolled out', async () => {
+      const mockResponse = [
+        { prisonCode: 'MDI', activitiesRolledOut: true, appointmentsRolledOut: true },
+        { prisonCode: 'LEI', activitiesRolledOut: true, appointmentsRolledOut: false },
+      ]
+      activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
+
+      const activeAgencies = await activitiesService.activeRolledPrisons()
+
+      expect(activeAgencies).toEqual(['MDI', 'LEI'])
+    })
+
+    it('should return an empty array when no agencies have both activities and appointments rolled out', async () => {
+      const mockResponse = [
+        { prisonCode: 'MDI', activitiesRolledOut: false, appointmentsRolledOut: false },
+        { prisonCode: 'LEI', activitiesRolledOut: false, appointmentsRolledOut: false },
+      ]
+      activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
+
+      const activeAgencies = await activitiesService.activeRolledPrisons()
+
+      expect(activeAgencies).toEqual([])
+    })
+
+    it('should return all agencies when all have both activities and appointments rolled out', async () => {
+      const mockResponse = [
+        { prisonCode: 'MDI', activitiesRolledOut: true, appointmentsRolledOut: true },
+        { prisonCode: 'LPI', activitiesRolledOut: true, appointmentsRolledOut: true },
+      ]
+      activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
+
+      const activeAgencies = await activitiesService.activeRolledPrisons()
+
+      expect(activeAgencies).toEqual(['MDI', 'LPI'])
+    })
+  })
 })

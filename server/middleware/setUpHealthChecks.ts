@@ -2,7 +2,6 @@ import express, { Router } from 'express'
 
 import healthcheck from '../services/healthCheck'
 import { Services } from '../services'
-import rolledOutPrison from '../services/rolledOutPrisonService'
 
 export default function setUpHealthChecks({ activitiesService }: Services): Router {
   const router = express.Router()
@@ -16,7 +15,11 @@ export default function setUpHealthChecks({ activitiesService }: Services): Rout
     })
   })
 
-  router.get('/info', rolledOutPrison(activitiesService))
+  router.get('/info', (req, res) => {
+    activitiesService.activeRolledPrisons().then(activeAgencies => {
+      res.json({ activeAgencies })
+    })
+  })
 
   router.get('/ping', (req, res) =>
     res.send({
