@@ -107,7 +107,7 @@
                     </div>
                 {% else %}
                     {{ govukInsetText({
-                        text: 'The start date of this activity is ' + session.createJourney.startDate | parseIsoDate | formatDate("EEEE d MMMM yyyy", false)
+                        text: 'The start date of this activity is ' + session.createJourney.startDate | parseIsoDate | formatDate
                     }) }}
 
                     {{ govukButton({

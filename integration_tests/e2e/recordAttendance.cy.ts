@@ -58,7 +58,7 @@ context('Record attendance', () => {
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(today))
-    selectPeriodPage.submit()
+    selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
     activitiesPage.activityRows().should('have.length', 4)
@@ -82,7 +82,7 @@ context('Record attendance', () => {
 
     const cancelSessionConfirmPage = Page.verifyOnPage(CancelSessionConfirm)
     cancelSessionConfirmPage.selectConfirmation('Yes')
-    cancelSessionConfirmPage.continue()
+    cancelSessionConfirmPage.confirm()
 
     Page.verifyOnPage(AttendanceListPage)
     attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Cancelled')
@@ -100,7 +100,7 @@ context('Record attendance', () => {
 
     const uncancelSessionConfirmPage = Page.verifyOnPage(UncancelSessionConfirm)
     uncancelSessionConfirmPage.selectReason('Yes')
-    uncancelSessionConfirmPage.continue()
+    uncancelSessionConfirmPage.confirm()
 
     Page.verifyOnPage(AttendanceListPage)
     attendanceListPage.assertNotificationContents('Session no longer cancelled')

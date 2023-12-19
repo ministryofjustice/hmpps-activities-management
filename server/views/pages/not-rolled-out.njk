@@ -11,7 +11,7 @@
             <p class="govuk-body">
                 The {{ serviceName }} service will be available at {{ user.activeCaseLoad.description }}
                 {% if rolloutDate %}
-                    on {{ rolloutDate | formatDate('EEEE d MMMM yyyy') }}.
+                    on {{ rolloutDate | formatDate }}.
                 {% else %}
                     soon. We'll let you know when it's coming.
                 {% endif %}
