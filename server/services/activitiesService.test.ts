@@ -807,7 +807,7 @@ describe('Activities Service', () => {
   })
 
   describe('Check rolled out Prisons', () => {
-    it('should return agencies with both either one of activities or appointments are rolled out', async () => {
+    it('should return all agencies when one of either appointments or activities is rolled out', async () => {
       const mockResponse = [
         { prisonCode: 'MDI', activitiesRolledOut: false, appointmentsRolledOut: true },
         { prisonCode: 'LEI', activitiesRolledOut: true, appointmentsRolledOut: false },
@@ -819,7 +819,7 @@ describe('Activities Service', () => {
       expect(activeAgencies).toEqual(['MDI', 'LEI'])
     })
 
-    it('should return an empty array when no agencies have activities and appointments not rolled out', async () => {
+    it('should return an empty array if no activities or appointments have been rolled out.', async () => {
       const mockResponse = [
         { prisonCode: 'MDI', activitiesRolledOut: false, appointmentsRolledOut: false },
         { prisonCode: 'LEI', activitiesRolledOut: false, appointmentsRolledOut: false },
