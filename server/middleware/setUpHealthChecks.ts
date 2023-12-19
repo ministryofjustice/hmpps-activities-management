@@ -1,8 +1,9 @@
 import express, { Router } from 'express'
 
 import healthcheck from '../services/healthCheck'
+import { Services } from '../services'
 
-export default function setUpHealthChecks(): Router {
+export default function setUpHealthChecks({ activitiesService }: Services): Router {
   const router = express.Router()
 
   router.get('/health', (req, res) => {
@@ -11,6 +12,12 @@ export default function setUpHealthChecks(): Router {
         res.status(503)
       }
       res.json(result)
+    })
+  })
+
+  router.get('/info', (req, res) => {
+    activitiesService.activeRolledPrisons().then(activeAgencies => {
+      res.json({ activeAgencies })
     })
   })
 

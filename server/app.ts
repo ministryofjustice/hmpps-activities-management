@@ -36,7 +36,7 @@ export default function createApp(services: Services, dataAccess: DataAccess): e
   app.set('port', process.env.PORT || 3000)
 
   app.use(metricsMiddleware)
-  app.use(setUpHealthChecks())
+  app.use(setUpHealthChecks(services))
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
   app.use(nunjucksSetup(app, services))

@@ -261,6 +261,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getPrisonRolloutPlan(prisonCode)
   }
 
+  getRolledOutPrisons() {
+    return this.activitiesApiClient.getRolledOutPrisons()
+  }
+
   async getAllAttendance(sessionDate: Date, user: ServiceUser): Promise<AllAttendance[]> {
     return this.activitiesApiClient.getAllAttendance(sessionDate, user)
   }
@@ -392,5 +396,10 @@ export default class ActivitiesService {
     user: ServiceUser,
   ) {
     return this.activitiesApiClient.searchWaitingListApplications(prisonCode, searchRequest, pageOptions, user)
+  }
+
+  async activeRolledPrisons(): Promise<string[]> {
+    const r = await this.getRolledOutPrisons()
+    return r.filter(item => item.activitiesRolledOut || item.appointmentsRolledOut).map(item => item.prisonCode)
   }
 }
