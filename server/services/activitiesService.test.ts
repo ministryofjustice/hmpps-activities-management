@@ -807,9 +807,9 @@ describe('Activities Service', () => {
   })
 
   describe('Check rolled out Prisons', () => {
-    it('should return agencies with both activities and appointments rolled out', async () => {
+    it('should return agencies with both either one of activities or appointments are rolled out', async () => {
       const mockResponse = [
-        { prisonCode: 'MDI', activitiesRolledOut: true, appointmentsRolledOut: true },
+        { prisonCode: 'MDI', activitiesRolledOut: false, appointmentsRolledOut: true },
         { prisonCode: 'LEI', activitiesRolledOut: true, appointmentsRolledOut: false },
       ]
       activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
@@ -819,7 +819,7 @@ describe('Activities Service', () => {
       expect(activeAgencies).toEqual(['MDI', 'LEI'])
     })
 
-    it('should return an empty array when no agencies have both activities and appointments rolled out', async () => {
+    it('should return an empty array when no agencies have activities and appointments not rolled out', async () => {
       const mockResponse = [
         { prisonCode: 'MDI', activitiesRolledOut: false, appointmentsRolledOut: false },
         { prisonCode: 'LEI', activitiesRolledOut: false, appointmentsRolledOut: false },
@@ -831,7 +831,7 @@ describe('Activities Service', () => {
       expect(activeAgencies).toEqual([])
     })
 
-    it('should return all agencies when all have both activities and appointments rolled out', async () => {
+    it('should return all agencies when both activities and appointments are rolled out', async () => {
       const mockResponse = [
         { prisonCode: 'MDI', activitiesRolledOut: true, appointmentsRolledOut: true },
         { prisonCode: 'LPI', activitiesRolledOut: true, appointmentsRolledOut: true },
