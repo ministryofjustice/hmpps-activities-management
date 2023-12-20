@@ -42,7 +42,7 @@ export interface paths {
      * @description
      *
      * Requires one of the following roles:
-     * * ROLE_QUEUE_ADMIN
+     * * ACTIVITY_QUEUE_ADMIN
      */
     put: operations['retryDlq']
   }
@@ -54,7 +54,7 @@ export interface paths {
      * @description
      *
      * Requires one of the following roles:
-     * * ROLE_QUEUE_ADMIN
+     * * ACTIVITY_QUEUE_ADMIN
      */
     put: operations['purgeQueue']
   }
@@ -534,6 +534,16 @@ export interface paths {
      */
     get: operations['attendanceSummary']
   }
+  '/rollout': {
+    /**
+     * Get all rollout prisons
+     * @description Returns a list of all rolled out prisons.
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_ADMIN
+     */
+    get: operations['getRolledOutPrisons']
+  }
   '/rollout/{prisonCode}': {
     /**
      * Get a prison's rollout plan by prison code
@@ -549,7 +559,7 @@ export interface paths {
      * @description
      *
      * Requires one of the following roles:
-     * * ROLE_QUEUE_ADMIN
+     * * ACTIVITY_QUEUE_ADMIN
      */
     get: operations['getDlqMessages']
   }
@@ -1575,12 +1585,12 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      /** Format: int32 */
-      pageSize?: number
+      paged?: boolean
       unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
-      paged?: boolean
+      /** Format: int32 */
+      pageSize?: number
     }
     PagedWaitingListApplication: {
       /** Format: int32 */
@@ -1595,15 +1605,15 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
     WaitingListApplication: {
@@ -2070,7 +2080,7 @@ export interface components {
       status: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
       plannedDeallocation?: components['schemas']['PlannedDeallocation']
       /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
-      exclusions?: components['schemas']['Slot'][]
+      exclusions: components['schemas']['Slot'][]
       /** @description The name of the prisoner. Included only if includePrisonerSummary = true */
       prisonerName?: string
       /** @description The cell location of the prisoner. Included only if includePrisonerSummary = true */
@@ -2705,6 +2715,7 @@ export interface components {
         | 'PRISONER_ALLOCATED'
         | 'PRISONER_DEALLOCATED'
         | 'PRISONER_DECLINED_FROM_WAITING_LIST'
+        | 'PRISONER_REMOVED_FROM_WAITING_LIST'
         | 'PRISONER_SUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_UNSUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_MERGE'
@@ -2771,6 +2782,7 @@ export interface components {
         | 'PRISONER_ALLOCATED'
         | 'PRISONER_DEALLOCATED'
         | 'PRISONER_DECLINED_FROM_WAITING_LIST'
+        | 'PRISONER_REMOVED_FROM_WAITING_LIST'
         | 'PRISONER_SUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_UNSUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_MERGE'
@@ -4887,8 +4899,15 @@ export interface components {
       education?: components['schemas']['EducationSuitability']
       releaseDate?: components['schemas']['ReleaseDateSuitability']
       nonAssociation?: components['schemas']['NonAssociationSuitability']
-      /** @description The prisoner's allocations with pay rates */
+      /** @description The prisoner's currently active allocations with pay rates */
       allocations: components['schemas']['AllocationPayRate'][]
+      /** @description The prisoner's previous allocations to this activity where they have been deallocated by a member of staff, with an optional case note */
+      previousDeallocations: components['schemas']['DeallocationCaseNote'][]
+    }
+    /** @description Ended allocation details with optional deallocation case note text */
+    DeallocationCaseNote: {
+      allocation: components['schemas']['Allocation']
+      caseNoteText?: string
     }
     /** @description The prisoner's education levels */
     Education: {
@@ -5072,9 +5091,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Describes one instance of an activity schedule */
@@ -6565,7 +6584,7 @@ export interface operations {
    * @description
    *
    * Requires one of the following roles:
-   * * ROLE_QUEUE_ADMIN
+   * * ACTIVITY_QUEUE_ADMIN
    */
   retryDlq: {
     parameters: {
@@ -6596,7 +6615,7 @@ export interface operations {
    * @description
    *
    * Requires one of the following roles:
-   * * ROLE_QUEUE_ADMIN
+   * * ACTIVITY_QUEUE_ADMIN
    */
   purgeQueue: {
     parameters: {
@@ -8531,6 +8550,35 @@ export interface operations {
     }
   }
   /**
+   * Get all rollout prisons
+   * @description Returns a list of all rolled out prisons.
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_ADMIN
+   */
+  getRolledOutPrisons: {
+    responses: {
+      /** @description List of prisons that are rolled out */
+      200: {
+        content: {
+          'application/json': components['schemas']['RolloutPrisonPlan'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Get a prison's rollout plan by prison code
    * @description Returns a single prison and its activities management service rollout plan by its unique code.
    *
@@ -8568,7 +8616,7 @@ export interface operations {
    * @description
    *
    * Requires one of the following roles:
-   * * ROLE_QUEUE_ADMIN
+   * * ACTIVITY_QUEUE_ADMIN
    */
   getDlqMessages: {
     parameters: {

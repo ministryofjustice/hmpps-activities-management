@@ -12,6 +12,10 @@
   }
 }
 
+.govuk-table__cell--no-border {
+  border-bottom: none;
+}
+
 .action-column {
   min-width: 70px;
 }

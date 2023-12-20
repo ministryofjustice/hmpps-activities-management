@@ -14,6 +14,7 @@ export default class BeforeYouAllocateRoutes {
 
   GET = async (req: Request, res: Response) => {
     const { user } = res.locals
+
     const { prisonerNumber } = req.session.allocateJourney.inmate
     const { scheduleId } = req.session.allocateJourney.activity
 
