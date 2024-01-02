@@ -9,6 +9,4 @@ export default class SelectPeriodPage extends Page {
     cy.get('#datePresetOption-3').click()
     this.selectDatePickerDate(date)
   }
-
-  submit = () => cy.get('button').contains('Submit').click()
 }

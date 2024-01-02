@@ -22,7 +22,7 @@
                     <div class="govuk-grid-column-two-thirds govuk-!-print-grid-column-one-half govuk-!-margin-bottom-1">
                         <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ location.name }} - Unlock list</h1>
                         <div class="govuk-caption-l govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ timeSlot | upper }} session</div>
-                        <div class="govuk-caption-l">{{ date |formatDate('cccc d LLLL y') }}</div>
+                        <div class="govuk-caption-l">{{ date | formatDate }}</div>
                         <div class="govuk-!-margin-top-2">
                             <div class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
                                 {{ unlockListItems.length }} people to unlock

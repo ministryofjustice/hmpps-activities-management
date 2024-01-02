@@ -211,7 +211,7 @@
                     text: "Start date"
                 },
                 value: {
-                    text: schedule.startDate | toDate | formatDate('EEEE d MMMM yyyy')
+                    text: schedule.startDate | toDate | formatDate
                 },
                 actions: {
                     items: [
@@ -233,7 +233,7 @@
                     text: "End date"
                 },
                 value: {
-                    text: schedule.endDate | toDate | formatDate('EEEE d MMMM yyyy') if schedule.endDate else "None set"
+                    text: schedule.endDate | toDate | formatDate if schedule.endDate else "None set"
                 },
                 actions: {
                     items: [
