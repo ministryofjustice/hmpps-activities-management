@@ -28,6 +28,7 @@ describe('Route Handlers - Allocate - Start', () => {
       locals: {
         user: {
           username: 'joebloggs',
+          activeCaseLoadId: 'LEI',
         },
       },
       render: jest.fn(),
@@ -42,7 +43,7 @@ describe('Route Handlers - Allocate - Start', () => {
   })
 
   describe('GET', () => {
-    it('should populate the session with journey data and redirect to the pay band page', async () => {
+    it('should populate the session with journey data and redirect to the before you allocate page', async () => {
       when(prisonService.getInmateByPrisonerNumber)
         .calledWith(atLeast('ABC123'))
         .mockResolvedValue({
@@ -50,6 +51,7 @@ describe('Route Handlers - Allocate - Start', () => {
           firstName: 'Joe',
           lastName: 'Bloggs',
           cellLocation: '1-2-001',
+          prisonId: 'LEI',
         } as Prisoner)
 
       when(prisonService.getPrisonerIepSummary)
@@ -99,6 +101,22 @@ describe('Route Handlers - Allocate - Start', () => {
         MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
       )
       expect(res.redirect).toHaveBeenCalledWith('../before-you-allocate')
+    })
+
+    it('should populate the session with journey data and redirect to the allocation error page if prisoner is in another prison', async () => {
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValue({
+          prisonerNumber: 'ABC123',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
+          cellLocation: '1-2-001',
+          prisonId: 'MDI',
+        } as Prisoner)
+
+      await handler.GET(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('../error/temporary-release')
     })
   })
 })
