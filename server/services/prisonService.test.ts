@@ -10,7 +10,6 @@ import activityLocations from './fixtures/activity_locations_1.json'
 import IncentivesApiClient from '../data/incentivesApiClient'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
 import { IncentiveLevel } from '../@types/incentivesApi/types'
-import { ActivityPay } from '../@types/activitiesAPI/types'
 
 jest.mock('../data/prisonApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -49,37 +48,6 @@ describe('Prison Service', () => {
 
       expect(actualResult).toEqual([{ id: 1, active: false }])
       expect(incentivesApiClient.getIncentiveLevels).toHaveBeenCalledWith('MDI', user)
-    })
-  })
-
-  describe('getMinimumIncentiveLevel', () => {
-    const pay = [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 1 } }] as ActivityPay[]
-    const flatPay = [{ incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 2 } }] as ActivityPay[]
-
-    beforeEach(() => {
-      const apiResponse = [
-        { levelCode: 'BAS', levelName: 'Basic' },
-        { levelCode: 'STD', levelName: 'Standard' },
-        { levelCode: 'ENH', levelName: 'Enhanced' },
-      ] as IncentiveLevel[]
-
-      incentivesApiClient.getIncentiveLevels.mockReset()
-      when(incentivesApiClient.getIncentiveLevels).calledWith(atLeast('MDI')).mockResolvedValue(apiResponse)
-    })
-
-    it("should get prison's minimum incentive level if no pay rates provided", async () => {
-      const actualResult = await prisonService.getMinimumIncentiveLevel('MDI', user, [], [])
-      expect(actualResult).toEqual({ levelCode: 'BAS', levelName: 'Basic' })
-    })
-
-    it("should get prison's minimum incentive level if pay rate provided", async () => {
-      const actualResult = await prisonService.getMinimumIncentiveLevel('MDI', user, pay, [])
-      expect(actualResult).toEqual({ levelCode: 'STD', levelName: 'Standard' })
-    })
-
-    it("should get prison's minimum incentive level if pay and flat rate provided", async () => {
-      const actualResult = await prisonService.getMinimumIncentiveLevel('MDI', user, pay, flatPay)
-      expect(actualResult).toEqual({ levelCode: 'BAS', levelName: 'Basic' })
     })
   })
 

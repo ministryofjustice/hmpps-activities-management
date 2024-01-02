@@ -1,10 +1,8 @@
 import { Request, Response } from 'express'
-import { when } from 'jest-when'
 import RemovePayRoutes from './removePay'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { CreateAnActivityJourney } from '../journey'
-import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
@@ -124,21 +122,14 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       req.params = { mode: 'edit' }
       req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
 
-      when(prisonService.getIncentiveLevels).mockResolvedValue([
-        { levelCode: 'BAS', levelName: 'Basic' },
-        { levelCode: 'STD', levelName: 'Standard' },
-      ] as IncentiveLevel[])
-
       await handler.POST(req, res)
 
       const updatedActivity = {
         pay: [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 2, rate: 150 }],
-        minimumIncentiveNomisCode: 'STD',
-        minimumIncentiveLevel: 'Standard',
       } as ActivityUpdateRequest
 
-      expect(activitiesService.updateActivity).toBeCalledWith('MDI', 1, updatedActivity)
-      expect(res.redirectWithSuccess).toBeCalledWith(
+      expect(activitiesService.updateActivity).toHaveBeenCalledWith('MDI', 1, updatedActivity)
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'check-pay?preserveHistory=true',
         'Activity updated',
         `You've updated the pay for ${req.session.createJourney.name}`,

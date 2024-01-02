@@ -85,8 +85,6 @@ describe('Route Handlers - Allocation dashboard', () => {
           eligibilityRules: [],
           endDate: '2022-12-31',
           inCell: false,
-          minimumIncentiveNomisCode: 'BAS',
-          minimumIncentiveLevel: 'Basic',
           outsideWork: false,
           pay: [{ incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 }],
           payPerSession: 'H',

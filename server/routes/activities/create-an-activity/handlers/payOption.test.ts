@@ -1,12 +1,10 @@
 import { Request, Response } from 'express'
 
-import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import PayOption, { PayOptionForm } from './payOption'
 import { YesNo } from '../../../../@types/activities'
-import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -58,7 +56,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
   })
 
   describe('POST', () => {
-    it('should default minimum incentive level and redirect to qualifications page when activity is unpaid', async () => {
+    it('should remove pay and redirect to qualifications page when unpaid is selected', async () => {
       req.body.paid = YesNo.NO
 
       req.session.createJourney.pay = [
@@ -77,14 +75,10 @@ describe('Route Handlers - Create an activity - Pay option', () => {
         },
       ] as ActivityPay[]
 
-      when(prisonService.getMinimumIncentiveLevel)
-        .calledWith('MDI', res.locals.user, [], [])
-        .mockResolvedValueOnce({ levelCode: 'BAS', levelName: 'Basic' } as IncentiveLevel)
-
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Basic')
-      expect(req.session.createJourney.minimumIncentiveNomisCode).toEqual('BAS')
+      expect(req.session.createJourney.pay).toHaveLength(0)
+      expect(req.session.createJourney.flat).toHaveLength(0)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('qualification')
     })
@@ -125,16 +119,10 @@ describe('Route Handlers - Create an activity - Pay option', () => {
       it('should update activity to unpaid and show success message if no pay selected', async () => {
         req.body.paid = YesNo.NO
 
-        when(prisonService.getMinimumIncentiveLevel)
-          .calledWith('MDI', res.locals.user, [], [])
-          .mockResolvedValueOnce({ levelCode: 'BAS', levelName: 'Basic' } as IncentiveLevel)
-
         await handler.POST(req, res)
 
         const activityUpdateRequest = {
           paid: false,
-          minimumIncentiveLevel: 'Basic',
-          minimumIncentiveNomisCode: 'BAS',
           pay: [],
         } as ActivityUpdateRequest
 

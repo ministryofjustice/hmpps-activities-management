@@ -50,8 +50,6 @@ describe('Route Handlers - Allocation dashboard', () => {
     eligibilityRules: [],
     endDate: toDateString(nextWeek),
     inCell: false,
-    minimumIncentiveNomisCode: 'BAS',
-    minimumIncentiveLevel: 'Basic',
     outsideWork: false,
     pay: [],
     payPerSession: 'H',

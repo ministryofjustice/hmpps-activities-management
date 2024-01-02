@@ -33,8 +33,7 @@
           "name": "Education",
           "description": "Such as classes in English, maths, construction and computer skills"
         },
-        "riskLevel": null,
-        "minimumIncentiveLevel": null
+        "riskLevel": null
       },
       "slots": [
         {
@@ -135,8 +134,7 @@
           "name": "Education",
           "description": "Such as classes in English, maths, construction and computer skills"
         },
-        "riskLevel": null,
-        "minimumIncentiveLevel": null
+        "riskLevel": null
       },
       "slots": [
         {
@@ -184,8 +182,7 @@
           "name": "Gym, sport and fitness",
           "description": "Such as sport clubs, like football, fitness classes and gym sessions"
         },
-        "riskLevel": null,
-        "minimumIncentiveLevel": null
+        "riskLevel": null
       },
       "slots": [
         {
@@ -239,8 +236,7 @@
           "name": "Gym, sport and fitness",
           "description": "Such as sport clubs, like football, fitness classes and gym sessions"
         },
-        "riskLevel": null,
-        "minimumIncentiveLevel": null
+        "riskLevel": null
       },
       "slots": [
         {

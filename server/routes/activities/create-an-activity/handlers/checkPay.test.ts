@@ -1,16 +1,8 @@
 import { Request, Response } from 'express'
 
-import { when } from 'jest-when'
 import PrisonService from '../../../../services/prisonService'
 import CheckPayRoutes from './checkPay'
-import atLeast from '../../../../../jest.setup'
-import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
-import ActivitiesService from '../../../../services/activitiesService'
-import activity from '../../../../services/fixtures/activity_1.json'
-import { Activity } from '../../../../@types/activitiesAPI/types'
-import { CreateAnActivityJourney } from '../journey'
 
-jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../utils/helpers/incentiveLevelPayMappingUtil', () => {
   return function factory() {
@@ -25,11 +17,10 @@ jest.mock('../../../../utils/helpers/incentiveLevelPayMappingUtil', () => {
   }
 })
 
-const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create an activity - Check pay', () => {
-  const handler = new CheckPayRoutes(activitiesService, prisonService)
+  const handler = new CheckPayRoutes(prisonService)
   let req: Request
   let res: Response
 
@@ -110,66 +101,9 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       expect(res.validationFailed).toHaveBeenCalledWith('', 'Add at least one pay rate')
     })
 
-    it('should add the minimum incentive level to the session and redirect', async () => {
-      when(prisonService.getMinimumIncentiveLevel)
-        .calledWith(atLeast('MDI', res.locals.user, req.session.createJourney.pay))
-        .mockResolvedValueOnce({ levelCode: 'STD', levelName: 'Standard' } as IncentiveLevel)
-
+    it('should redirect to qualification page', async () => {
       await handler.POST(req, res)
-      expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Standard')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('qualification')
-    })
-
-    it('should save entered pay in database', async () => {
-      const updatedActivity = {
-        pay: [
-          {
-            incentiveNomisCode: 'BAS',
-            incentiveLevel: 'Basic',
-            payBandId: 1,
-            rate: 1,
-          },
-        ],
-        minimumIncentiveLevel: 'Basic',
-        minimumIncentiveNomisCode: 'BAS',
-      }
-
-      const updatedPay = [
-        {
-          incentiveNomisCode: 'BAS',
-          incentiveLevel: 'Basic',
-          prisonPayBand: { id: 1 },
-          rate: 1,
-        },
-      ]
-
-      when(prisonService.getMinimumIncentiveLevel)
-        .calledWith(atLeast('MDI', res.locals.user, updatedPay))
-        .mockResolvedValueOnce({ levelCode: 'BAS', levelName: 'Basic' } as IncentiveLevel)
-
-      when(activitiesService.updateActivity)
-        .calledWith(atLeast(updatedActivity))
-        .mockResolvedValueOnce(activity as unknown as Activity)
-
-      req.session.createJourney = {
-        activityId: 1,
-        name: 'Maths Level 1',
-        pay: updatedPay,
-        minimumIncentiveLevel: 'Standard',
-        minimumIncentiveNomisCode: 'STD',
-      } as CreateAnActivityJourney
-      req.params.mode = 'edit'
-
-      await handler.POST(req, res)
-
-      expect(req.session.createJourney.minimumIncentiveLevel).toEqual('Basic')
-      expect(req.session.createJourney.minimumIncentiveNomisCode).toEqual('BAS')
-
-      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-        '/activities/view/1',
-        'Activity updated',
-        "You've updated the pay for Maths Level 1",
-      )
     })
   })
 })

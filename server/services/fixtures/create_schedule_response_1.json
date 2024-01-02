@@ -23,9 +23,7 @@
       "name": "Gym, sport and fitness",
       "description": "Such as sport clubs, like football, fitness classes and gym sessions"
     },
-    "riskLevel": "high",
-    "minimumIncentiveNomisCode": "BAS",
-    "minimumIncentiveLevel": "Basic"
+    "riskLevel": "high"
   },
   "slots": [
     {

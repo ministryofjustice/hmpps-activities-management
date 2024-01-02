@@ -89,7 +89,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
   })
 
   describe('POST', () => {
-    it('should add the minimum incentive level to the session and redirect', async () => {
+    it('should add the minimum education level to the session and redirect', async () => {
       await handler.POST(req, res)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('start-date')
     })

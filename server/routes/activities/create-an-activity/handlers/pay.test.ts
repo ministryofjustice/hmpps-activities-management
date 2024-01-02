@@ -300,8 +300,6 @@ describe('Route Handlers - Create an activity - Pay', () => {
           { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', payBandId: 3, rate: 150 },
           { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 3, rate: 150 },
         ] as unknown as ActivityPay[],
-        minimumIncentiveNomisCode: 'BAS',
-        minimumIncentiveLevel: 'Basic',
       } as unknown as ActivityUpdateRequest
 
       expect(activitiesService.updateActivity).toHaveBeenCalledWith('MDI', 1, updatedActivity)

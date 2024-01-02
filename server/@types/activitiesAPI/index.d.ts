@@ -2322,11 +2322,6 @@ export interface components {
        */
       payPerSession: 'H' | 'F'
       /**
-       * @description The NOMIS code for the minimum incentive level for this activity
-       * @example BAS
-       */
-      minimumIncentiveLevel: string
-      /**
        * @description Whether the schedule runs on bank holidays
        * @example true
        */
@@ -3470,16 +3465,6 @@ export interface components {
        */
       riskLevel: string
       /**
-       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
-       * @example BAS
-       */
-      minimumIncentiveNomisCode: string
-      /**
-       * @description The minimum incentive/earned privilege level for this activity
-       * @example Basic
-       */
-      minimumIncentiveLevel: string
-      /**
        * Format: date
        * @description The future date on which this activity will start. From this date, any schedules will be created as real, planned instances
        * @example 2022-12-23
@@ -3668,16 +3653,6 @@ export interface components {
        */
       riskLevel: string
       /**
-       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
-       * @example BAS
-       */
-      minimumIncentiveNomisCode: string
-      /**
-       * @description The minimum incentive/earned privilege level for this activity
-       * @example Basic
-       */
-      minimumIncentiveLevel: string
-      /**
        * Format: date-time
        * @description The date and time when this activity was created
        */
@@ -3807,16 +3782,6 @@ export interface components {
        * @example high
        */
       riskLevel: string
-      /**
-       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
-       * @example BAS
-       */
-      minimumIncentiveNomisCode: string
-      /**
-       * @description The minimum incentive/earned privilege level for this activity
-       * @example Basic
-       */
-      minimumIncentiveLevel: string
       /** @description The list of minimum education levels that can apply to this activity */
       minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevel'][]
       /**
@@ -4554,16 +4519,6 @@ export interface components {
        * @example 2022-12-23
        */
       endDate?: string
-      /**
-       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
-       * @example BAS
-       */
-      minimumIncentiveNomisCode?: string
-      /**
-       * @description The minimum incentive/earned privilege level for this activity
-       * @example Basic
-       */
-      minimumIncentiveLevel?: string
       /**
        * @description Whether the schedule runs on bank holidays
        * @example true
