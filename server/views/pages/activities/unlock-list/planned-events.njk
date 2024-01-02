@@ -161,7 +161,7 @@
                                             prisonCode: user.activeCaseLoad.caseLoadId,
                                             unlockDate: date,
                                             timePeriod: timeSlot,
-                                            location: location
+                                            location: location.name
                                         } | dump,
                                         'data-track-event-measurements': {
                                             prisonerCount: unlockListItems | length
