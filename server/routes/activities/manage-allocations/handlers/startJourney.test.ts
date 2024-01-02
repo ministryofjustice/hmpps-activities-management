@@ -28,6 +28,7 @@ describe('Route Handlers - Allocate - Start', () => {
       locals: {
         user: {
           username: 'joebloggs',
+          activeCaseLoadId: 'LEI',
         },
       },
       render: jest.fn(),
@@ -42,14 +43,16 @@ describe('Route Handlers - Allocate - Start', () => {
   })
 
   describe('GET', () => {
-    it('should populate the session with journey data and redirect to the pay band page', async () => {
+    it('should populate the session with journey data and redirect to the before you allocate page', async () => {
       when(prisonService.getInmate)
         .calledWith(atLeast('ABC123'))
-        .mockResolvedValue({
+        .mockResolvedValueOnce({
           offenderNo: 'ABC123',
           firstName: 'Joe',
           lastName: 'Bloggs',
           assignedLivingUnit: { description: '1-2-001' },
+          activeFlag: true,
+          agencyId: 'LEI',
         } as InmateDetail)
 
       when(prisonService.getPrisonerIepSummary)
@@ -99,6 +102,40 @@ describe('Route Handlers - Allocate - Start', () => {
         MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
       )
       expect(res.redirect).toHaveBeenCalledWith('../before-you-allocate')
+    })
+
+    it('should populate the session with journey data and redirect to the allocation error page if prisoner not activie in prison', async () => {
+      when(prisonService.getInmate)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValueOnce({
+          offenderNo: 'ABC123',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
+          assignedLivingUnit: { description: '1-2-001' },
+          activeFlag: false,
+          agencyId: 'LEI',
+        } as InmateDetail)
+
+      await handler.GET(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('../error/temporary-release')
+    })
+
+    it('should populate the session with journey data and redirect to the allocation error page if prisoner is in another prison', async () => {
+      when(prisonService.getInmate)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValueOnce({
+          offenderNo: 'ABC123',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
+          assignedLivingUnit: { description: '1-2-001' },
+          activeFlag: true,
+          agencyId: 'MDI',
+        } as InmateDetail)
+
+      await handler.GET(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('../error/temporary-release')
     })
   })
 })
