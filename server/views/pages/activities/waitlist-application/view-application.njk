@@ -8,6 +8,8 @@
 {% set pageTitle = applicationName + " - Waitlist - View application" %}
 {% set pageId = 'view-application-page' %}
 
+{% set editable = 'ROLE_ACTIVITY_HUB' in user.roles and isMostRecent and isNotAlreadyAllocated %}
+
 {% block content %}
     {% if not isNotAlreadyAllocated %}
         <div class="govuk-grid-row">
@@ -63,7 +65,7 @@
                                     visuallyHiddenText: "status"
                                 }
                             ]
-                        } if isMostRecent and isNotAlreadyAllocated
+                        } if editable
                     },
                     {
                         key: {
@@ -88,7 +90,7 @@
                                     visuallyHiddenText: "requester"
                                 }
                             ]
-                        } if isMostRecent and isNotAlreadyAllocated
+                        } if editable
                     },
                     {
                         key: {
@@ -105,7 +107,7 @@
                                     visuallyHiddenText: "request date"
                                 }
                             ]
-                        } if isMostRecent and isNotAlreadyAllocated
+                        } if editable
                     },
                     {
                         key: {
@@ -122,7 +124,7 @@
                                     visuallyHiddenText: "comment"
                                 }
                             ]
-                        } if isMostRecent and isNotAlreadyAllocated
+                        } if editable
                     }
                 ]
             }) }}
