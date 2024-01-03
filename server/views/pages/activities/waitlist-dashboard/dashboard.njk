@@ -21,14 +21,13 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Waitlist dashboard</h1>
-            <p class="govuk-body">
                 {% if editable %}
-                    Select an application to view or edit it, and to change the status.
+                    <p class="govuk-body">Select an application to view or edit it, and to change the status.</p>
+                    <p class="govuk-body">Where an application is ‘Approved’, select it to allocate the prisoner to the activity.</p>
                 {% else %}
-                    Select an application to view it.
+                    <p class="govuk-body">Select an application to view it.</p>
                 {% endif %}
             </p>
-            <p class="govuk-body">Where an application is ‘Approved’, select it to allocate the prisoner to the activity.</p>
         </div>
     </div>
     <div class="govuk-grid-row">
