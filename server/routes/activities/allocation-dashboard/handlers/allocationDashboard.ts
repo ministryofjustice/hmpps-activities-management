@@ -92,6 +92,8 @@ export default class AllocationDashboardRoutes {
 
     const richStartDate = parseDate(activity.schedules[0].startDate)
 
+    const activeAllocations = activity.schedules[0].allocations.filter(a => a.status === 'ACTIVE').length
+
     res.render('pages/activities/allocation-dashboard/allocation-dashboard', {
       activity,
       schedule: activity.schedules[0],
@@ -106,6 +108,7 @@ export default class AllocationDashboardRoutes {
       dailySlots: activitySessionToDailyTimeSlots(activity.schedules[0].scheduleWeeks, slots),
       currentWeek: calcCurrentWeek(richStartDate, activity.schedules[0].scheduleWeeks),
       scheduleWeeks: activity.schedules[0].scheduleWeeks,
+      activeAllocations,
     })
   }
 
