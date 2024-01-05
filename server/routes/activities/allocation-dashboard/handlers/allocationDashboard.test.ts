@@ -336,6 +336,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           },
           suitableForIep: 'All Incentive Levels',
           suitableForWra: 'Low or Medium or High',
+          activeAllocations: 3,
         }),
       )
     })

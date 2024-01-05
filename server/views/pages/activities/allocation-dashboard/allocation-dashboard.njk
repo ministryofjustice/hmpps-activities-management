@@ -49,10 +49,18 @@
                         ],
                         [
                             {
-                                text: "Allocated:"
+                                text: "Allocated and due to attend:"
                             },
                             {
-                                text: schedule.activity.allocated
+                                text: activeAllocations
+                            }
+                        ],
+                        [
+                            {
+                                text: "Allocated but not started yet:"
+                            },
+                            {
+                                text: schedule.activity.allocated - activeAllocations
                             }
                         ],
                         [
