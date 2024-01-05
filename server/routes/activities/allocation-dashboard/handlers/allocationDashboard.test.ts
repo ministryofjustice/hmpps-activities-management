@@ -124,6 +124,7 @@ describe('Route Handlers - Allocation dashboard', () => {
             prisonerName: 'Joe Bloggs',
             cellLocation: 'MDI-1-1-101',
             earliestReleaseDate: { releaseDate: '2023-12-25' },
+            isUnemployment: false,
           },
           {
             id: 2,
@@ -133,10 +134,11 @@ describe('Route Handlers - Allocation dashboard', () => {
             prisonerName: 'John Smith',
             cellLocation: 'MDI-1-1-103',
             earliestReleaseDate: { releaseDate: '2023-12-26' },
+            isUnemployment: false,
           },
         ] as Allocation[])
       when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(atLeast(['A0013DZ']))
+        .calledWith(atLeast(['A0013DZ', 'B2222CD']))
         .mockResolvedValue([
           {
             prisonerNumber: 'A0013DZ',
@@ -149,6 +151,18 @@ describe('Route Handlers - Allocation dashboard', () => {
                 alertCode: 'RME',
               },
             ],
+            currentIncentive: {
+              level: {
+                description: 'Standard',
+              },
+            },
+          },
+          {
+            prisonerNumber: 'B2222CD',
+            firstName: 'JOE',
+            lastName: 'BLOGGS',
+            cellLocation: 'MDI-4-2-010',
+            alerts: [],
             currentIncentive: {
               level: {
                 description: 'Standard',
@@ -175,7 +189,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           },
         ] as PrisonerAllocations[])
       when(activitiesService.getActivePrisonPrisonerAllocations)
-        .calledWith(atLeast(['A0013DZ']))
+        .calledWith(atLeast(['A0013DZ', 'B2222CD']))
         .mockResolvedValue([
           {
             prisonerNumber: 'A0013DZ',
@@ -183,6 +197,10 @@ describe('Route Handlers - Allocation dashboard', () => {
               { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
               { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
             ],
+          },
+          {
+            prisonerNumber: 'B2222CD',
+            allocations: [{ activityId: 3, scheduleId: 3, scheduleDescription: 'unemployed', isUnemployment: true }],
           },
         ] as PrisonerAllocations[])
       when(activitiesService.getActivityCandidates)
@@ -207,6 +225,14 @@ describe('Route Handlers - Allocation dashboard', () => {
             id: 1,
             scheduleId: 1,
             prisonerNumber: 'A0013DZ',
+            status: 'PENDING',
+            requestedDate: '2023-08-07',
+            requestedBy: 'PRISONER',
+          },
+          {
+            id: 2,
+            scheduleId: 1,
+            prisonerNumber: 'B2222CD',
             status: 'PENDING',
             requestedDate: '2023-08-07',
             requestedBy: 'PRISONER',
@@ -290,7 +316,7 @@ describe('Route Handlers - Allocation dashboard', () => {
               earliestReleaseDate: { releaseDate: '2023-12-26' },
             },
           ],
-          waitlistSize: 1,
+          waitlistSize: 2,
           waitlistedPrisoners: [
             {
               cellLocation: 'MDI-4-2-009',
@@ -299,6 +325,7 @@ describe('Route Handlers - Allocation dashboard', () => {
                 {
                   activityId: 2,
                   scheduleName: 'other schedule',
+                  isUnemployment: false,
                 },
               ],
               prisonerNumber: 'A0013DZ',
@@ -313,6 +340,24 @@ describe('Route Handlers - Allocation dashboard', () => {
                   alertType: 'R',
                 },
               ],
+            },
+            {
+              cellLocation: 'MDI-4-2-010',
+              name: 'JOE BLOGGS',
+              otherAllocations: [
+                {
+                  activityId: 3,
+                  scheduleName: 'unemployed',
+                  isUnemployment: true,
+                },
+              ],
+              prisonerNumber: 'B2222CD',
+              requestDate: new Date(2023, 7, 7),
+              requestedBy: 'Self-requested',
+              status: 'PENDING',
+              waitlistApplicationId: 2,
+              currentIncentive: 'Standard',
+              alerts: [],
             },
           ],
           pagedCandidates: {
@@ -483,6 +528,12 @@ describe('Route Handlers - Allocation dashboard', () => {
           filters: expect.objectContaining({
             employmentFilter: 'In work',
           }),
+          waitlistSize: 2,
+          waitlistedPrisoners: [
+            expect.objectContaining({
+              prisonerNumber: 'A0013DZ',
+            }),
+          ],
         }),
       )
       expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
@@ -508,6 +559,15 @@ describe('Route Handlers - Allocation dashboard', () => {
           filters: expect.objectContaining({
             employmentFilter: 'Everyone',
           }),
+          waitlistSize: 2,
+          waitlistedPrisoners: expect.arrayContaining([
+            expect.objectContaining({
+              prisonerNumber: 'A0013DZ',
+            }),
+            expect.objectContaining({
+              prisonerNumber: 'B2222CD',
+            }),
+          ]),
         }),
       )
       expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
@@ -533,6 +593,12 @@ describe('Route Handlers - Allocation dashboard', () => {
           filters: expect.objectContaining({
             employmentFilter: 'Not in work',
           }),
+          waitlistSize: 2,
+          waitlistedPrisoners: [
+            expect.objectContaining({
+              prisonerNumber: 'B2222CD',
+            }),
+          ],
         }),
       )
       expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
