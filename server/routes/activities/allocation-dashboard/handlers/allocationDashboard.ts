@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateIf } from 'class-validator'
+import { compareAsc } from 'date-fns'
 import PrisonService from '../../../../services/prisonService'
 import ActivityService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
@@ -279,6 +280,7 @@ export default class AllocationDashboardRoutes {
           filters.incentiveLevelFilter.split(', ').includes(inmate.currentIncentive) ||
           filters.incentiveLevelFilter === inmate.currentIncentive,
       )
+      .sort((a1, a2) => compareAsc(a1.requestDate, a2.requestDate))
 
     return {
       waitlistedPrisoners: filteredWaitlist,
