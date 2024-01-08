@@ -170,7 +170,7 @@
                     },
                     html: '
                             <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-                                <a href="activities/' + activity.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state">' + (activity.summary | escape) + '</a>
+                                <a href="activities/' + activity.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (activity.summary | escape) + '<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
                             </h2>
                             <div>' + activityCancelledTag(activity.cancelled) + '</div>'
                 },

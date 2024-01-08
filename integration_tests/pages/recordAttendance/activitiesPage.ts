@@ -13,5 +13,11 @@ export default class ActivitiesPage extends Page {
         return Cypress.$.makeArray($el)
       })
 
-  selectActivityWithName = (activityName: string) => this.activityRows().find(`a:contains(${activityName})`).click()
+  selectActivityWithName = (activityName: string) =>
+    this.activityRows()
+      .find(`a:contains(${activityName})`)
+      .then(e => {
+        const activityUrl = e.prop('href')
+        cy.visit(activityUrl)
+      })
 }
