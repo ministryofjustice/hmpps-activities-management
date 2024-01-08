@@ -14,24 +14,28 @@ export default function createErrorHandler(production: boolean) {
       error,
     )
 
-    if (error.status === 401) {
-      logger.info('Logging user out')
-      return res.redirect('/sign-out')
+    switch (error.status) {
+      case 400: {
+        const badRequest = JSON.parse(error.text) as BadRequest
+        return res.validationFailed('', badRequest?.developerMessage)
+      }
+      case 401:
+        logger.info('Logging user out')
+        return res.redirect('/sign-out')
+      case 404:
+        res.status(404)
+        return res.render('pages/404')
+      default: {
+        // If error status not matched default to a 500 error and show a generic error page
+        const status = error.status || 500
+        res.status(status)
+
+        return res.render('pages/error', {
+          message: production ? 'Sorry, there is a problem with the service' : error.message,
+          status,
+          stack: production ? null : error.stack,
+        })
+      }
     }
-
-    if (error.status === 400) {
-      const badRequest = JSON.parse(error.text) as BadRequest
-
-      // TODO: Get the offending field name from the API message
-      return res.validationFailed('', badRequest.developerMessage)
-    }
-
-    res.status(error.status || 500)
-
-    return res.render('pages/error', {
-      message: production ? 'Something went wrong. The error has been logged. Please try again' : error.message,
-      status: error.status,
-      stack: production ? null : error.stack,
-    })
   }
 }

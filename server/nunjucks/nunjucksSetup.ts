@@ -183,6 +183,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
+  njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

@@ -56,6 +56,19 @@ describe('Error Handler', () => {
     })
   })
 
+  it('should display not found error if 404', () => {
+    const handler = createErrorHandler(false)
+
+    error = {
+      status: 404,
+      message: 'not found',
+    } as HTTPError
+
+    handler(error, req, res, jest.fn)
+
+    expect(res.render).toHaveBeenCalledWith('pages/404')
+  })
+
   it('should add 400 messages to flash validation messages and redirect back', () => {
     const handler = createErrorHandler(false)
 
@@ -102,7 +115,7 @@ describe('Error Handler', () => {
     handler(error, req, res, jest.fn)
 
     expect(res.render).toHaveBeenCalledWith('pages/error', {
-      message: 'Something went wrong. The error has been logged. Please try again',
+      message: 'Sorry, there is a problem with the service',
       status: 500,
       stack: null,
     })
@@ -120,7 +133,8 @@ describe('Error Handler', () => {
     handler(error, req, res, jest.fn)
 
     expect(res.render).toHaveBeenCalledWith('pages/error', {
-      message: 'Something went wrong. The error has been logged. Please try again',
+      message: 'Sorry, there is a problem with the service',
+      status: 500,
       stack: null,
     })
     expect(res.status).toHaveBeenCalledWith(500)

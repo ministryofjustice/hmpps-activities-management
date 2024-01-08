@@ -5,9 +5,16 @@
 {% set jsBackLink = true %}
 
 {% block content %}
-
   <h1>{{ message }}</h1>
-  <h2>{{ status }}</h2>
-  <pre class="stacktrace">{{ stack }}</pre>
 
+  {% if isProduction %}
+    <p class="govuk-body">The problem has been logged. You can try again.</p>
+
+    <p class="govuk-body"><a href="{{ reportAFaultUrl }}" target="_blank">You can also report a fault<span class="govuk-visually-hidden"> (opens in new tab)</span></a>. This will help us fix the problem.</p>
+
+    <a href="{{ dpsUrl }}" class="govuk-button">Go to Digital Prison Services</a>
+  {% else %}
+    {% if status %}<h2>{{ status }}</h2>{% endif %}
+    {% if stack %}<pre class="stacktrace">{{ stack }}</pre>{% endif %}
+  {% endif %}
 {% endblock %}

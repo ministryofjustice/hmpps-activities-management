@@ -29,7 +29,7 @@ describe('authRoute', () => {
 
     authRole(['ROLE_ACTIVITY_HUB'])(req, res, next)
 
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it("should deny user if they don't have required role for route", () => {
@@ -40,12 +40,7 @@ describe('authRoute', () => {
 
     authRole(['ROLE_ACTIVITY_HUB'])(req, res, next)
 
-    expect(res.render).toBeCalledWith(
-      'pages/error',
-      expect.objectContaining({
-        message: 'Unauthorised access',
-      }),
-    )
-    expect(res.status).toBeCalledWith(401)
+    expect(res.render).toHaveBeenCalledWith('pages/403')
+    expect(res.status).toHaveBeenCalledWith(403)
   })
 })
