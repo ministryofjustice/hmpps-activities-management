@@ -248,6 +248,7 @@ export default class AllocationDashboardRoutes {
           otherAllocations: otherAllocations?.map(a => ({
             activityId: a.activityId,
             scheduleName: a.scheduleDescription,
+            isUnemployment: a.isUnemployment,
           })),
           alerts: inmate.alerts.filter(a => a.alertType === 'R' && ['RLO', 'RME', 'RHI'].includes(a.alertCode)),
           currentIncentive: inmate.currentIncentive?.level?.description,
@@ -263,8 +264,10 @@ export default class AllocationDashboardRoutes {
         inmate =>
           !filters.employmentFilter ||
           filters.employmentFilter === 'Everyone' ||
-          (inmate.otherAllocations.length > 0 && filters.employmentFilter === 'In work') ||
-          (inmate.otherAllocations.length === 0 && filters.employmentFilter === 'Not in work'),
+          (inmate.otherAllocations.filter(a => !a.isUnemployment).length > 0 &&
+            filters.employmentFilter === 'In work') ||
+          (inmate.otherAllocations.filter(a => !a.isUnemployment).length === 0 &&
+            filters.employmentFilter === 'Not in work'),
       )
       .filter(
         inmate =>
