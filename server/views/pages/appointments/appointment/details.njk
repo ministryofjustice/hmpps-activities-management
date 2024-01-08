@@ -12,7 +12,8 @@
 
 {% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
 {% set pageId = 'appointment-details-page' %}
-{% set jsBackLink = true %}
+{% set hardBackLinkText = 'Go to Appointments Dashboard' %}
+{% set hardBackLinkHref = '/appointments/search?startDate=' + appointments.startDate %}
 
 {% set appointmentLink = '/appointments/' + appointment.id  %}
 
