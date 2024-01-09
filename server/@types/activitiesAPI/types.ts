@@ -56,6 +56,7 @@ export type EventAcknowledgeRequest = components['schemas']['EventAcknowledgeReq
 export type DeallocationReason = components['schemas']['DeallocationReason']
 export type PrisonerDeallocationRequest = components['schemas']['PrisonerDeallocationRequest']
 export type DeallocationReasonCode = components['schemas']['PrisonerDeallocationRequest']['reasonCode']
+export type AddCaseNoteRequest = components['schemas']['AddCaseNoteRequest']
 export type AllocationSuitability = components['schemas']['AllocationSuitability']
 export type ActivityPay = components['schemas']['ActivityPay']
 export type WaitingListApplicationRequest = components['schemas']['WaitingListApplicationRequest']

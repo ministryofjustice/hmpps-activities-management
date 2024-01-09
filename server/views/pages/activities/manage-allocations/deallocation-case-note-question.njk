@@ -1,0 +1,53 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Allocation - Deallocation Case Note" %}
+{% set pageId = 'deallocation-case-note-note-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <h1 class='govuk-heading-xl'>Do you want to add a case note about why {{ session.allocateJourney.inmate.prisonerName }} is being removed?</h1>
+
+                <p class='govuk-hint'>
+                    This information can help others make decisions about allocating the prisoner to the same activity in the future.
+                </p>
+                <p class='govuk-hint'>
+                    It will also be available to other staff in the prison, like key workers and prison offender managers, on the case notes page.
+                </p>
+
+                {{ govukRadios({
+                    classes: "govuk-radios--inline",
+                    name: "choice",
+                    fieldset: {
+                        legend: {
+                            text: "Choice",
+                            isPageHeading: false,
+                            classes: "govuk-visually-hidden"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('choice'),
+                    items: [
+                        {
+                            value: "yes",
+                            text: "Yes"
+                        },
+                        {
+                            value: "no",
+                            text: "No"
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({ text: "Continue" }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

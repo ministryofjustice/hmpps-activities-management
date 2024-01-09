@@ -22,15 +22,23 @@ export default class CheckAnswersRoutes {
     const currentWeek = calcCurrentWeek(parseDate(activity.startDate), schedule.scheduleWeeks)
 
     res.render('pages/activities/manage-allocations/check-answers', {
-      deallocationReason: deallocationReasons.find(r => r.code === deallocationReason)?.description,
+      deallocationReason: deallocationReasons.find(r => r.code === deallocationReason),
       dailySlots,
       currentWeek,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { inmate, inmates, activity, startDate, endDate, deallocationReason, updatedExclusions } =
-      req.session.allocateJourney
+    const {
+      inmate,
+      inmates,
+      activity,
+      startDate,
+      endDate,
+      deallocationReason,
+      deallocationCaseNote,
+      updatedExclusions,
+    } = req.session.allocateJourney
     const { user } = res.locals
 
     if (req.params.mode === 'create') {
@@ -50,6 +58,7 @@ export default class CheckAnswersRoutes {
         activity.scheduleId,
         inmates.map(p => p.prisonerNumber),
         deallocationReason as DeallocationReasonCode,
+        deallocationCaseNote,
         endDate,
         user,
       )

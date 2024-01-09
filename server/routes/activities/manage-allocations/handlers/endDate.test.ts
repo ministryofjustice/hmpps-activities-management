@@ -75,18 +75,6 @@ describe('Route Handlers - Edit allocation - End date', () => {
       expect(res.redirectOrReturn).toHaveBeenCalledWith('exclusions')
     })
 
-    it('should redirect to the deallocate reason page in edit mode', async () => {
-      req.params.mode = 'edit'
-
-      const endDate = startOfToday()
-      req.body = { endDate }
-
-      await handler.POST(req, res)
-
-      expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('reason')
-    })
-
     it('should redirect to the deallocate reason page in remove mode', async () => {
       req.params.mode = 'remove'
 

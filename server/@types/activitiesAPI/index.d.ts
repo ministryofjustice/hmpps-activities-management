@@ -955,6 +955,16 @@ export type webhooks = Record<string, never>
 
 export interface components {
   schemas: {
+    /** @description Describes a case note to be added to a prisoner's profile */
+    AddCaseNoteRequest: {
+      /**
+       * @description Case Note Type
+       * @example GEN
+       */
+      type: string
+      /** @description The text which will appear on the case note. */
+      text: string
+    }
     /** @description The prisoner deallocation request details */
     PrisonerDeallocationRequest: {
       /** @description The prisoner or prisoners to be deallocated. Must be allocated to the schedule affected by the request. */
@@ -979,6 +989,7 @@ export interface components {
        * @example 2023-05-24
        */
       endDate: string
+      caseNote?: components['schemas']['AddCaseNoteRequest']
     }
     ErrorResponse: {
       /** Format: int32 */
@@ -1593,10 +1604,10 @@ export interface components {
       pageSize?: number
     }
     PagedWaitingListApplication: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -1605,9 +1616,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
@@ -2869,7 +2880,6 @@ export interface components {
        *     time between the times defined by the prison for that time slot when this search parameter is supplied.
        *
        * @example PM
-       * @enum {string}
        */
       timeSlots?: ('AM' | 'PM' | 'ED')[]
       /**
@@ -5079,10 +5089,10 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -5091,9 +5101,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Describes one instance of an activity schedule */

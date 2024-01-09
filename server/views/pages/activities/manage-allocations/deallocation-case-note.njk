@@ -1,0 +1,66 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Allocation - Deallocation Case Note" %}
+{% set pageId = 'deallocation-case-note-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <h1 class='govuk-heading-xl'>Add a case note for {{ session.allocateJourney.inmate.prisonerName }}</h1>
+
+                {{ govukRadios({
+                    name: "type",
+                    fieldset: {
+                        legend: {
+                            text: "Case note type",
+                            isPageHeading: false,
+                            classes: "govuk-visually-hidden"
+                        }
+                    },
+                    hint: {
+                        text: 'Select the type of case note'
+                    },
+                    errorMessage: validationErrors | findError('type'),
+                    items: [
+                        {
+                            value: "GEN",
+                            text: "General",
+                            checked: formResponses.type == 'GEN' or session.allocateJourney.deallocationCaseNote.type == 'GEN'
+                        },
+                        {
+                            value: "NEG",
+                            text: "Negative",
+                            checked: formResponses.type == 'NEG' or session.allocateJourney.deallocationCaseNote.type == 'NEG'
+                        }
+                    ]
+                }) }}
+
+                {{ govukCharacterCount({
+                    label: {
+                        text: "Enter the case note"
+                    },
+                    id: 'text',
+                    name: "text",
+                    maxlength: 4000,
+                    errorMessage: validationErrors | findError("text"),
+                    value: formResponses.text or session.allocateJourney.deallocationCaseNote.text
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({ text: "Continue" }) }}
+                    {% if not session.req.query.preserveHistory %}
+                        <a class="govuk-link" href="cancel">Cancel</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -55,7 +55,7 @@ export default class EndDateRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.allocateJourney.endDate = formatIsoDate(req.body.endDate)
-    if (req.params.mode === 'edit' || req.params.mode === 'remove') {
+    if (req.params.mode === 'remove') {
       return res.redirectOrReturn(`reason`)
     }
     if (req.session.allocateJourney.activity.paid) {

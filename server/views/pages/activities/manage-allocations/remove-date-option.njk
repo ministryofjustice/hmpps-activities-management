@@ -1,6 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {% set pageTitle = applicationName + " - Edit allocation - Remove Date option" %}
@@ -17,35 +18,46 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukRadios({
-                    classes: "govuk-radios",
-                    name: "endDateOption",
-                    fieldset: {
-                        legend: {
-                            text: "Do you want to change or remove the end date for this allocation?",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--xl"
-                        }
-                    },
-                    items: [
-                        {
-                            value: "change",
-                            text: "Change the date",
-                            checked: endDateOption == "change"
+                {% if session.req.params.mode == 'edit' %}
+                    <h1 class='govuk-heading-xl'>Are you sure you want to remove the end date for this allocation?</h1>
+                    <input type='hidden' name='endDateOption' value='remove'>
+                    {{ govukInsetText({
+                        text: "The prisoner will stay on the activity."
+                    }) }}
+                {% else %}
+                    {{ govukRadios({
+                        classes: "govuk-radios",
+                        name: "endDateOption",
+                        fieldset: {
+                            legend: {
+                                text: "Do you want to change or remove the end date for this allocation?",
+                                isPageHeading: true,
+                                classes: "govuk-fieldset__legend--xl"
+                            }
                         },
-                        {
-                            value: "remove",
-                            text: "Remove it, they will stay on the activity",
-                            checked: endDateOption == "remove"
-                        }
-                    ],
-                    errorMessage: validationErrors | findError('endDateOption')
-                }) }}
+                        items: [
+                            {
+                                value: "change",
+                                text: "Change the date",
+                                checked: endDateOption == "change"
+                            },
+                            {
+                                value: "remove",
+                                text: "Remove it, they will stay on the activity",
+                                checked: endDateOption == "remove"
+                            }
+                        ],
+                        errorMessage: validationErrors | findError('endDateOption')
+                    }) }}
+                {% endif %}
 
-                {{ govukButton({
-                    text: "Continue",
-                    preventDoubleClick: true
-                }) }}
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue",
+                        preventDoubleClick: true
+                    }) }}
+                    <a class="govuk-link" href="{{ 'check-answers' if session.req.params.mode == 'create' else '/activities/allocations/view/' + session.req.params.allocationId }}">Cancel</a>
+                </div>
             </form>
         </div>
     </div>

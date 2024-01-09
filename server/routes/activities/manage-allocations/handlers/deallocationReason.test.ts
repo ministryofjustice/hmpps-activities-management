@@ -24,7 +24,7 @@ describe('Route Handlers - Deallocation reason', () => {
         user: {},
       },
       render: jest.fn(),
-      redirectWithSuccess: jest.fn(),
+      redirectOrReturn: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
 
@@ -36,9 +36,14 @@ describe('Route Handlers - Deallocation reason', () => {
           inmate: {
             prisonerNumber: 'ABC123',
           },
+          inmates: [{ prisonerNumber: 'ABC123' }],
           activity: {
             activityId: 1,
             scheduleId: 1,
+          },
+          deallocationCaseNote: {
+            type: 'GEN',
+            text: 'Preset case note',
           },
         },
       },
@@ -58,27 +63,25 @@ describe('Route Handlers - Deallocation reason', () => {
   })
 
   describe('POST', () => {
-    it('redirect with success when form submitted in edit mode', async () => {
-      req.params.mode = 'edit'
+    it('redirect to case note when reason for deallocation is eligible', async () => {
       req.body = {
         deallocationReason: 'OTHER',
       }
 
       await handler.POST(req, res)
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        `/activities/allocations/view/1`,
-        'Allocation updated',
-        "You've updated the reason for ending this allocation",
-      )
+
+      expect(req.session.allocateJourney.deallocationReason).toEqual('OTHER')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('case-note-question')
     })
 
-    it('redirect with success when form submitted in remove mode', async () => {
-      req.params.mode = 'remove'
+    it('redirect to check answers when reason for deallocation is ineligible', async () => {
       req.body = {
-        deallocationReason: 'OTHER',
+        deallocationReason: 'HEALTH',
       }
-
       await handler.POST(req, res)
+
+      expect(req.session.allocateJourney.deallocationReason).toEqual('HEALTH')
+      expect(req.session.allocateJourney.deallocationCaseNote).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })

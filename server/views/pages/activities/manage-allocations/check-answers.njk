@@ -134,6 +134,15 @@
             {% endif %}
 
             {% if session.req.params.mode == 'remove' %}
+                {% set eligibleForCaseNote = true if
+                    (
+                        deallocationReason.code == 'WITHDRAWN_STAFF' or
+                        deallocationReason.code == 'DISMISSED' or
+                        deallocationReason.code == 'SECURITY' or
+                        deallocationReason.code == 'OTHER'
+                    ) and session.allocateJourney.inmates | length == 1
+                %}
+
                 {{ govukSummaryList({
                     rows: [
                         {
@@ -163,7 +172,7 @@
                                 text: "Reason for allocation ending"
                             },
                             value: {
-                                text: deallocationReason
+                                text: deallocationReason.description
                             },
                             actions: {
                                 items: [
@@ -175,19 +184,55 @@
                                     }
                                 ]
                             }
-                        }
+                        },
+                        {
+                            key: {
+                                text: "Case note type"
+                            },
+                            value: {
+                                text: "General" if session.allocateJourney.deallocationCaseNote.type == 'GEN' else "Negative"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "case-note?preserveHistory=true",
+                                        classes: 'govuk-link--no-visited-state',
+                                        text: "Change",
+                                        visuallyHiddenText: "change deallocation case note type"
+                                    }
+                                ]
+                            }
+                        } if eligibleForCaseNote and session.allocateJourney.deallocationCaseNote,
+                        {
+                            key: {
+                                text: "Case note"
+                            },
+                            value: {
+                                text: session.allocateJourney.deallocationCaseNote.text or "None"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "case-note?preserveHistory=true",
+                                        classes: 'govuk-link--no-visited-state',
+                                        text: "Change",
+                                        visuallyHiddenText: "change deallocation case note"
+                                    }
+                                ]
+                            }
+                        } if eligibleForCaseNote
                     ]
                 }) }}
             {% endif %}
 
-            <form method="POST" data-module="form-spinner" data-loading-text="Allocating prisoner">
+            <form method="POST" data-module="form-spinner" data-loading-text="{{ 'Removing prisoner' if session.req.params.mode == 'remove' else 'Allocating prisoner' }}">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
                     {{ govukButton({ 
                         text: "Confirm this allocation" if session.req.params.mode == 'create' else "Confirm and remove",
                         preventDoubleClick: true
                     }) }}
-                    <a href="cancel" class="govuk-link govuk-link--no-visited-state">Cancel and return to the list of candidates</a>
+                    <a href="cancel" class="govuk-link govuk-link--no-visited-state">{{ 'Cancel' + (' and return to the list of candidates' if session.req.params.mode == 'create')}}</a>
                 </div>
             </form>
         </div>
