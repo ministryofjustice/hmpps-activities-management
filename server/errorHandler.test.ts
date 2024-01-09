@@ -44,16 +44,24 @@ describe('Error Handler', () => {
     error = {
       status: 403,
       message: 'forbidden',
-      stack: 'stacktrace',
     } as HTTPError
 
     handler(error, req, res, jest.fn)
 
-    expect(res.render).toHaveBeenCalledWith('pages/error', {
-      message: 'forbidden',
+    expect(res.render).toHaveBeenCalledWith('pages/403')
+  })
+
+  it('should display forbidden error if 403', () => {
+    const handler = createErrorHandler(false)
+
+    error = {
       status: 403,
-      stack: 'stacktrace',
-    })
+      message: 'forbidden',
+    } as HTTPError
+
+    handler(error, req, res, jest.fn)
+
+    expect(res.render).toHaveBeenCalledWith('pages/403')
   })
 
   it('should display not found error if 404', () => {

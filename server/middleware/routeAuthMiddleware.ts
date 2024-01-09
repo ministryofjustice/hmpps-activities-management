@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction, Router } from 'express'
+import createHttpError from 'http-errors'
 import config from '../config'
 import { ServiceUser } from '../@types/express'
 
@@ -16,7 +17,6 @@ export function authRole(roles: string[]) {
 
     if (roles.find(role => user.roles.includes(role))) return next()
 
-    res.status(403)
-    return res.render('pages/403')
+    return next(createHttpError.Forbidden())
   }
 }
