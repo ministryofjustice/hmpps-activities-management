@@ -191,18 +191,6 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('getDefaultScheduleOfActivity', () => {
-    it('should fetch the default schedule from an activity', async () => {
-      const activity = {
-        schedules: [{ id: 110 }, { id: 111 }, { id: 112 }],
-      } as unknown as Activity
-
-      await activitiesService.getDefaultScheduleOfActivity(activity, user)
-
-      expect(activitiesApiClient.getActivitySchedule).toHaveBeenCalledWith(110, user)
-    })
-  })
-
   describe('getActivitySchedule', () => {
     it('should fetch activity schedule by id using the activities API', async () => {
       when(activitiesApiClient.getActivitySchedule)

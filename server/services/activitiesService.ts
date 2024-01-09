@@ -4,7 +4,6 @@ import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
   ActivitySchedule,
-  ActivityScheduleLite,
   Allocation,
   AttendanceUpdateRequest,
   LocationGroup,
@@ -146,10 +145,6 @@ export default class ActivitiesService {
       prisonerNumbers,
       user,
     )
-  }
-
-  async getDefaultScheduleOfActivity(activity: Activity, user: ServiceUser): Promise<ActivityScheduleLite> {
-    return this.getActivitySchedule(activity.schedules[0].id, user)
   }
 
   async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
