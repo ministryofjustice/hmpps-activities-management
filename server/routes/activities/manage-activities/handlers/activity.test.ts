@@ -8,7 +8,7 @@ import PrisonService from '../../../../services/prisonService'
 import atLeast from '../../../../../jest.setup'
 
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
-import { Activity, ActivityScheduleLite } from '../../../../@types/activitiesAPI/types'
+import { Activity } from '../../../../@types/activitiesAPI/types'
 import { toDateString } from '../../../../utils/utils'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
 import { organiserDescriptions } from '../../../../enum/eventOrganisers'
@@ -53,10 +53,6 @@ describe('Route Handlers - View Activity', () => {
   } as unknown as Activity
 
   when(activitiesService.getActivity).calledWith(atLeast(1)).mockResolvedValueOnce(mockActivity)
-
-  when(activitiesService.getDefaultScheduleOfActivity).mockResolvedValue(
-    activitySchedule as unknown as ActivityScheduleLite,
-  )
 
   beforeEach(() => {
     res = {
