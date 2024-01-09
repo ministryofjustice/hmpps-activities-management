@@ -2871,7 +2871,7 @@ export interface components {
        * @example PM
        * @enum {string}
        */
-      timeSlot?: 'AM' | 'PM' | 'ED'
+      timeSlots?: ('AM' | 'PM' | 'ED')[]
       /**
        * @description
        *     The NOMIS reference code to match with the appointments. Will restrict the search results to appointments

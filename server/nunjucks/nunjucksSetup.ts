@@ -3,7 +3,6 @@ import nunjucks, { Environment } from 'nunjucks'
 import express, { Router } from 'express'
 import path from 'path'
 import { addDays, addMonths, addWeeks, addYears, startOfDay, subDays, subMonths, subWeeks } from 'date-fns'
-import { flatMap, sortBy } from 'lodash'
 import {
   addDefaultSelectedValue,
   buildErrorSummaryList,
@@ -32,6 +31,8 @@ import {
   setAttribute,
   removeUndefined,
   filterObjects,
+  flatMap,
+  excludeArrayObject,
 } from '../utils/utils'
 import config from '../config'
 import applicationVersion from '../applicationVersion'
@@ -158,7 +159,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('startOfDay', startOfDay)
   njkEnv.addFilter('filter', filterObjects)
   njkEnv.addFilter('flatMap', flatMap)
-  njkEnv.addFilter('sortBy', sortBy)
+  njkEnv.addFilter('excludeArray', excludeArrayObject)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)

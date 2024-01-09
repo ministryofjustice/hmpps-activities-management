@@ -16,7 +16,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
       username: '',
     },
     startDate: formatIsoDate(new Date()),
-    timeSlot: TimeSlot.AM,
+    timeSlots: ['am'],
     appointmentNameFilters: [{}],
     appointmentName: '',
     locations: [{}],
@@ -36,7 +36,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
         username: 'test.user',
       },
       startDate: formatIsoDate(new Date()),
-      timeSlot: TimeSlot.AM,
+      timeSlots: ['am', 'pm'],
       appointmentNameFilters: ['Chaplaincy', 'Medical - Doctor', 'Gym - Weights'],
       appointmentName: 'Medical - Doctor',
       locations: [
@@ -207,7 +207,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
   it('clear filters does not appear if only start date filter is applied', () => {
     const tomorrow = addDays(new Date(), 1)
 
-    const $ = cheerio.load(compiledTemplate.render({ startDate: formatIsoDate(tomorrow) }))
+    const $ = cheerio.load(compiledTemplate.render({ startDate: formatIsoDate(tomorrow), timeSlots: [] }))
 
     expect($("a:contains('Clear filters')").length).toEqual(0)
   })
@@ -234,7 +234,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     [TimeSlot.PM, 'Afternoon (PM)'],
     [TimeSlot.ED, 'Evening (ED)'],
   ])('should select correct time period filter %s %s', (timeSlot, expectedText) => {
-    viewContext.timeSlot = timeSlot
+    viewContext.timeSlots = [timeSlot]
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -244,10 +244,10 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${formatIsoDate(
         new Date(),
-      )}&timeSlot=&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=A1234BC&createdBy=all`,
+      )}&timeSlots=&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=A1234BC&createdBy=all`,
     )
 
-    const checked = $("[name='timeSlot']:checked")
+    const checked = $("[name='timeSlots']:checked")
     expect(checked.length).toEqual(1)
     expect(checked.val()).toEqual(timeSlot)
     expect(
@@ -266,7 +266,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${formatIsoDate(
         new Date(),
-      )}&timeSlot=am&appointmentName=&locationId=26151&prisonerNumber=A1234BC&createdBy=all`,
+      )}&timeSlots=am,pm&appointmentName=&locationId=26151&prisonerNumber=A1234BC&createdBy=all`,
     )
 
     const selected = $("[name='appointmentName'] > option:selected")
@@ -283,7 +283,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${formatIsoDate(
         new Date(),
-      )}&timeSlot=am&appointmentName=Medical - Doctor&locationId=&prisonerNumber=A1234BC&createdBy=all`,
+      )}&timeSlots=am,pm&appointmentName=Medical - Doctor&locationId=&prisonerNumber=A1234BC&createdBy=all`,
     )
 
     const selected = $("[name='locationId'] > option:selected")
@@ -300,7 +300,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${formatIsoDate(
         new Date(),
-      )}&timeSlot=am&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=&createdBy=all`,
+      )}&timeSlots=am,pm&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=&createdBy=all`,
     )
 
     expect($("[name='prisonerNumber']").val()).toEqual('A1234BC')
@@ -320,7 +320,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     expect(removeFilterLink.attr('href')).toEqual(
       `?startDate=${formatIsoDate(
         new Date(),
-      )}&timeSlot=am&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=A1234BC&createdBy=`,
+      )}&timeSlots=am,pm&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=A1234BC&createdBy=`,
     )
 
     const checked = $("[name='createdBy']:checked")
