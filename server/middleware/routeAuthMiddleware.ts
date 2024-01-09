@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction, Router } from 'express'
+import createHttpError from 'http-errors'
 import config from '../config'
 import { ServiceUser } from '../@types/express'
 
@@ -16,14 +17,6 @@ export function authRole(roles: string[]) {
 
     if (roles.find(role => user.roles.includes(role))) return next()
 
-    res.status(401)
-    return res.render('pages/error', {
-      message: 'Unauthorised access',
-      status: 401,
-      stack:
-        `Active user '${user.username}' does not have the required role to access this resource.\n\n` +
-        `Authorised roles:\n` +
-        `${roles.join('\n')}`,
-    })
+    return next(createHttpError.Forbidden())
   }
 }

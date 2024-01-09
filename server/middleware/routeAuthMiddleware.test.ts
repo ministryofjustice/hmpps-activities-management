@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import createHttpError from 'http-errors'
 import { authRole } from './routeAuthMiddleware'
 import { ServiceUser } from '../@types/express'
 
@@ -13,8 +14,6 @@ beforeEach(() => {
     locals: {
       user: {},
     },
-    status: jest.fn(),
-    render: jest.fn(),
   } as unknown as Response
 
   req = { session: {} } as Request
@@ -29,7 +28,7 @@ describe('authRoute', () => {
 
     authRole(['ROLE_ACTIVITY_HUB'])(req, res, next)
 
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it("should deny user if they don't have required role for route", () => {
@@ -40,12 +39,6 @@ describe('authRoute', () => {
 
     authRole(['ROLE_ACTIVITY_HUB'])(req, res, next)
 
-    expect(res.render).toBeCalledWith(
-      'pages/error',
-      expect.objectContaining({
-        message: 'Unauthorised access',
-      }),
-    )
-    expect(res.status).toBeCalledWith(401)
+    expect(next).toHaveBeenCalledWith(createHttpError.Forbidden())
   })
 })
