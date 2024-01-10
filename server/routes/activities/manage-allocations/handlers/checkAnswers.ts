@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
-import { DeallocationReasonCode } from '../../../../@types/activitiesAPI/types'
+import { AddCaseNoteRequest, DeallocationReasonCode } from '../../../../@types/activitiesAPI/types'
 import activitySessionToDailyTimeSlots, {
   activitySlotsMinusExclusions,
 } from '../../../../utils/helpers/activityTimeSlotMappers'
@@ -58,7 +58,7 @@ export default class CheckAnswersRoutes {
         activity.scheduleId,
         inmates.map(p => p.prisonerNumber),
         deallocationReason as DeallocationReasonCode,
-        deallocationCaseNote,
+        deallocationCaseNote as AddCaseNoteRequest,
         endDate,
         user,
       )
