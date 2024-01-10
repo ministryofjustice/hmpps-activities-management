@@ -83,5 +83,17 @@ describe('Route Handlers - Deallocation case note', () => {
 
       expect(errors).toEqual([{ property: 'type', error: 'Select the type of case note' }])
     })
+
+    it('validation fails if the text is too long', async () => {
+      const body = {
+        type: 'GEN',
+        text: 'T'.repeat(4001),
+      }
+
+      const requestObject = plainToInstance(DeallocationCaseNote, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'text', error: 'Case note must be 4000 characters or less' }])
+    })
   })
 })

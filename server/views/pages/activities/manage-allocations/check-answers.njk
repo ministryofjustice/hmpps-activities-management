@@ -135,12 +135,8 @@
 
             {% if session.req.params.mode == 'remove' %}
                 {% set eligibleForCaseNote = true if
-                    (
-                        deallocationReason.code == 'WITHDRAWN_STAFF' or
-                        deallocationReason.code == 'DISMISSED' or
-                        deallocationReason.code == 'SECURITY' or
-                        deallocationReason.code == 'OTHER'
-                    ) and session.allocateJourney.inmates | length == 1
+                    deallocationReason.code in ['WITHDRAWN_STAFF', 'DISMISSED', 'SECURITY', 'OTHER')
+                        and session.allocateJourney.inmates | length == 1
                 %}
 
                 {{ govukSummaryList({
