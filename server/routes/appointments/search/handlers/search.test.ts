@@ -195,6 +195,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
     it('should render the default search view with categories, locations and search results', async () => {
       req.query = {
         startDate: formatIsoDate(today),
+        timeslots: [],
       }
 
       when(activitiesService.searchAppointments)
@@ -202,7 +203,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
           'MDI',
           {
             startDate: formatIsoDate(today),
-            timeSlot: null,
+            timeSlots: [],
             internalLocationId: null,
             createdBy: null,
           },
@@ -214,7 +215,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/search/results', {
         startDate: formatIsoDate(today),
-        timeSlot: '',
+        timeSlots: [],
         appointmentNameFilters,
         appointmentName: '',
         locations,
@@ -236,7 +237,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
     it('should render fully filtered search view with categories, locations and search results', async () => {
       req.query = {
         startDate: formatIsoDate(today),
-        timeSlot: TimeSlot.PM,
+        timeSlots: ['PM'],
         appointmentName: 'Medical - Doctor',
         locationId: '26151',
         prisonerNumber: 'A1111AA',
@@ -248,7 +249,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
           'MDI',
           {
             startDate: formatIsoDate(today),
-            timeSlot: TimeSlot.PM as unknown as 'AM' | 'PM' | 'ED',
+            timeSlots: ['PM'],
             internalLocationId: 26151,
             createdBy: user.username,
           },
@@ -260,7 +261,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/search/results', {
         startDate: formatIsoDate(today),
-        timeSlot: TimeSlot.PM,
+        timeSlots: ['PM'],
         appointmentNameFilters,
         appointmentName: 'Medical - Doctor',
         locations,
@@ -290,7 +291,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
           'MDI',
           {
             startDate: formatIsoDate(today),
-            timeSlot: null,
+            timeSlots: null,
             internalLocationId: null,
             createdBy: null,
           },
@@ -319,7 +320,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
           'MDI',
           {
             startDate: formatIsoDate(today),
-            timeSlot: null,
+            timeSlots: null,
             internalLocationId: null,
             createdBy: null,
           },
@@ -347,7 +348,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `?startDate=${formatIsoDate(new Date())}&timeSlot=&appointmentName=&locationId=&prisonerNumber=&createdBy=`,
+        `?startDate=${formatIsoDate(new Date())}&timeSlots=&appointmentName=&locationId=&prisonerNumber=&createdBy=`,
       )
     })
 
@@ -364,9 +365,11 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        `?startDate=${formatIsoDate(new Date())}&timeSlot=${
-          TimeSlot.PM
-        }&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=A1234BC&createdBy=${user.username}`,
+        `?startDate=${formatIsoDate(
+          new Date(),
+        )}&timeSlots=&appointmentName=Medical - Doctor&locationId=26151&prisonerNumber=A1234BC&createdBy=${
+          user.username
+        }`,
       )
     })
   })

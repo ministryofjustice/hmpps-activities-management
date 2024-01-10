@@ -32,6 +32,7 @@ import {
   setAttribute,
   removeUndefined,
   filterObjects,
+  excludeArrayObject,
 } from '../utils/utils'
 import config from '../config'
 import applicationVersion from '../applicationVersion'
@@ -159,6 +160,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('filter', filterObjects)
   njkEnv.addFilter('flatMap', flatMap)
   njkEnv.addFilter('sortBy', sortBy)
+  njkEnv.addFilter('excludeArray', excludeArrayObject)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)

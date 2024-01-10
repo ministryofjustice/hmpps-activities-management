@@ -6,7 +6,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentSearchRequest } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import { formatIsoDate, isValidIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
-import { asString } from '../../../../utils/utils'
+import { asString, convertToArray } from '../../../../utils/utils'
 import IsValidDate from '../../../../validators/isValidDate'
 
 export class Search {
@@ -22,15 +22,17 @@ export default class SearchRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { startDate, timeSlot, appointmentName, locationId, prisonerNumber, createdBy } = req.query
+    const { startDate, timeSlots, appointmentName, locationId, prisonerNumber, createdBy } = req.query
 
     if (!isValidIsoDate(startDate as string)) {
       return res.redirect(`?startDate=${formatIsoDate(new Date())}`)
     }
 
+    const timeSlotAsEnum = asString(timeSlots).length > 0 ? asString(timeSlots).split(',') : []
+
     const request = {
       startDate,
-      timeSlot: timeSlot || null,
+      timeSlots: timeSlotAsEnum,
       internalLocationId: locationId ? +locationId : null,
       createdBy: createdBy && createdBy !== 'all' ? createdBy : null,
     } as AppointmentSearchRequest
@@ -72,7 +74,7 @@ export default class SearchRoutes {
 
     return res.render('pages/appointments/search/results', {
       startDate,
-      timeSlot: timeSlot ?? '',
+      timeSlots: timeSlotAsEnum ?? '',
       appointmentNameFilters,
       appointmentName: appointmentName ?? '',
       locations,
@@ -85,10 +87,10 @@ export default class SearchRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { startDate, timeSlot, appointmentName, locationId, prisonerNumber, createdBy } = req.body
+    const { startDate, timeSlots, appointmentName, locationId, prisonerNumber, createdBy } = req.body
 
     return res.redirect(
-      `?startDate=${formatIsoDate(startDate)}&timeSlot=${timeSlot ?? ''}&appointmentName=${
+      `?startDate=${formatIsoDate(startDate)}&timeSlots=${convertToArray(timeSlots) ?? ''}&appointmentName=${
         appointmentName ?? ''
       }&locationId=${locationId ?? ''}&prisonerNumber=${prisonerNumber ?? ''}&createdBy=${createdBy ?? ''}`,
     )
