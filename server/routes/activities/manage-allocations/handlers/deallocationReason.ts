@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AllocationUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
 export class DeallocationReason {
   @Expose()
@@ -24,23 +23,14 @@ export default class DeallocationReasonRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { deallocationReason } = req.body
-    const { allocationId } = req.params
-    const { endDate } = req.session.allocateJourney
-    const { user } = res.locals
+    const caseNoteEligibleReasonCodes = ['WITHDRAWN_STAFF', 'DISMISSED', 'SECURITY', 'OTHER']
 
     req.session.allocateJourney.deallocationReason = deallocationReason
 
-    if (req.params.mode === 'edit') {
-      const allocationUpdate = { endDate, reasonCode: deallocationReason } as AllocationUpdateRequest
-      await this.activitiesService.updateAllocation(user.activeCaseLoadId, +allocationId, allocationUpdate)
-
-      const successMessage = `You've updated the reason for ending this allocation`
-      return res.redirectWithSuccess(
-        `/activities/allocations/view/${allocationId}`,
-        'Allocation updated',
-        successMessage,
-      )
+    if (req.session.allocateJourney.inmates.length === 1 && caseNoteEligibleReasonCodes.includes(deallocationReason)) {
+      return res.redirectOrReturn('case-note-question')
     }
+    req.session.allocateJourney.deallocationCaseNote = null
     return res.redirect('check-answers')
   }
 }

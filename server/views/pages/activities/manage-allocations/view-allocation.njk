@@ -47,19 +47,14 @@
                     <dd class="govuk-summary-list__value">
                         {{ allocation.endDate | formatDate if allocation.endDate else "No date set " }}
                     </dd>
-                    <dd class="govuk-summary-list__actions">
-                        {% if allocation.endDate %}
+                    {% if allocation.endDate %}
+                        <dd class="govuk-summary-list__actions">
                             <a href="../edit/{{ allocation.id }}/remove-end-date-option"
                                class="govuk-link govuk-link--no-visited-state">
-                                Change
+                                Remove
                             </a>
-                        {% else %}
-                            <a href="../edit/{{ allocation.id }}/end-date"
-                               class="govuk-link govuk-link--no-visited-state">
-                                Change
-                            </a>
-                        {% endif %}
-                    </dd>
+                        </dd>
+                    {% endif %}
                 </div>
                 {% if allocation.endDate %}
                     <div class="govuk-summary-list__row">
@@ -68,12 +63,6 @@
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {{ allocation.plannedDeallocation.plannedReason.description }}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a href="../edit/{{ allocation.id }}/reason"
-                               class="govuk-link govuk-link--no-visited-state">
-                                Change
-                            </a>
                         </dd>
                     </div>
                 {% endif %}

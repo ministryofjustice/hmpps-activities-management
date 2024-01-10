@@ -44,6 +44,7 @@ import {
   WaitingListSearchRequest,
   WaitingListSearchParams,
   Slot,
+  AddCaseNoteRequest,
 } from '../@types/activitiesAPI/types'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
 
@@ -311,10 +312,11 @@ export default class ActivitiesService {
     scheduleId: number,
     prisonerNumbers: string[],
     reasonCode: DeallocationReasonCode,
+    caseNote: AddCaseNoteRequest,
     endDate: string,
     user: ServiceUser,
   ) {
-    const request: PrisonerDeallocationRequest = { prisonerNumbers, reasonCode, endDate }
+    const request: PrisonerDeallocationRequest = { prisonerNumbers, reasonCode, caseNote, endDate }
     return this.activitiesApiClient.deallocateFromActivity(scheduleId, request, user)
   }
 

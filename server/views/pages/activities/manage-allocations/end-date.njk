@@ -42,7 +42,7 @@
 
                 <div class="govuk-button-group">
                     {{ govukButton({ text: "Continue" }) }}
-                    {% if session.req.params.mode != 'edit' and not session.req.query.preserveHistory %}
+                    {% if not session.req.query.preserveHistory %}
                         <a class="govuk-link" href="cancel">Cancel</a>
                     {% endif %}
                 </div>

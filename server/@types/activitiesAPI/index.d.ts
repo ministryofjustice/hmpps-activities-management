@@ -955,6 +955,17 @@ export type webhooks = Record<string, never>
 
 export interface components {
   schemas: {
+    /** @description Describes a case note to be added to a prisoner's profile */
+    AddCaseNoteRequest: {
+      /**
+       * @description Case Note Type
+       * @example GEN
+       * @enum {string}
+       */
+      type: 'GEN' | 'NEG'
+      /** @description The text which will appear on the case note. */
+      text: string
+    }
     /** @description The prisoner deallocation request details */
     PrisonerDeallocationRequest: {
       /** @description The prisoner or prisoners to be deallocated. Must be allocated to the schedule affected by the request. */
@@ -979,6 +990,7 @@ export interface components {
        * @example 2023-05-24
        */
       endDate: string
+      caseNote?: components['schemas']['AddCaseNoteRequest']
     }
     ErrorResponse: {
       /** Format: int32 */
@@ -1585,12 +1597,12 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      paged?: boolean
-      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
+      paged?: boolean
+      unpaged?: boolean
     }
     PagedWaitingListApplication: {
       /** Format: int32 */
@@ -1612,8 +1624,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
     WaitingListApplication: {
@@ -2869,7 +2881,6 @@ export interface components {
        *     time between the times defined by the prison for that time slot when this search parameter is supplied.
        *
        * @example PM
-       * @enum {string}
        */
       timeSlots?: ('AM' | 'PM' | 'ED')[]
       /**
@@ -8169,6 +8180,10 @@ export interface operations {
    */
   getScheduleId: {
     parameters: {
+      query?: {
+        /** @description If provided will filter earliest sessions >= the given date. Format YYYY-MM-DD, otherwise defaults to 4 weeks prior to the current date. */
+        earliestSessionDate?: string
+      }
       header?: {
         'Caseload-Id'?: string
       }

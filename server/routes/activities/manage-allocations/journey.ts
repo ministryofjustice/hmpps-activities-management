@@ -34,4 +34,8 @@ export type AllocateToActivityJourney = {
   latestAllocationStartDate?: string
   exclusions?: Array<Slot>
   updatedExclusions?: Array<Slot>
+  deallocationCaseNote?: {
+    type: string
+    text: string
+  }
 }
