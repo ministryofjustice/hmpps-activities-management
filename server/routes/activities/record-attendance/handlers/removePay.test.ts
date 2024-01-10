@@ -1,11 +1,14 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { format } from 'date-fns'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { Attendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import RemovePayRoutes from './removePay'
+import RemovePayRoutes, { RemovePay } from './removePay'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -120,6 +123,72 @@ describe('Route Handlers - Remove Pay', () => {
       }
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`/activities/attendance/activities/1/attendance-details/1`)
+    })
+  })
+
+  describe('Validation', () => {
+    it('should pass validation when remove pay option is set to "no"', async () => {
+      const body = {
+        removePayOption: 'no',
+      }
+
+      const requestObject = plainToInstance(RemovePay, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([])
+    })
+
+    it('should pass validation when remove pay option is set to "yes" and case note entered', async () => {
+      const body = {
+        removePayOption: 'yes',
+        caseNote: 'case note',
+      }
+
+      const requestObject = plainToInstance(RemovePay, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([])
+    })
+
+    it('should fail validation when remove pay option not provided', async () => {
+      const body = {}
+
+      const requestObject = plainToInstance(RemovePay, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: "Confirm if you want to remove this person's pay or not",
+            property: 'removePayOption',
+          },
+        ]),
+      )
+    })
+
+    it('should fail validation when remove pay option set to "yes" but no case note provided', async () => {
+      const body = {
+        removePayOption: 'yes',
+      }
+
+      const requestObject = plainToInstance(RemovePay, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(expect.arrayContaining([{ error: 'Enter a case note', property: 'caseNote' }]))
+    })
+
+    it('should fail validation when remove pay option set to "yes" but case note exceeds character limit', async () => {
+      const body = {
+        removePayOption: 'yes',
+        caseNote: 'a'.repeat(4001),
+      }
+
+      const requestObject = plainToInstance(RemovePay, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([{ error: 'Case note must be 4,000 characters or less', property: 'caseNote' }]),
+      )
     })
   })
 })

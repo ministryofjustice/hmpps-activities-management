@@ -23,11 +23,13 @@
                       text: "Yes",
                       conditional: {
                           html: nestedCaseNote()
-                      }
+                      },
+                      checked: "yes" == formResponses.removePayOption
                     },
                     {
                       value: "no",
-                      text: "No"
+                      text: "No",
+                      checked: "no" == formResponses.removePayOption
                     }
                   ]
                 }) }}
@@ -48,6 +50,8 @@
         },
         name: "caseNote",
         id: "caseNote",
-        maxlength: "4000"
+        value: formResponses.caseNote,
+        maxlength: "4000",
+        errorMessage: validationErrors | findError('caseNote')
     }) }}
 {% endmacro %}

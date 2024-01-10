@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
-import { IsIn } from 'class-validator'
+import { IsIn, IsNotEmpty, MaxLength, ValidateIf } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import AttendanceReason from '../../../../enum/attendanceReason'
@@ -15,6 +15,11 @@ export class RemovePay {
   @Expose()
   @IsIn(Object.values(RemovePayOptions), { message: "Confirm if you want to remove this person's pay or not" })
   removePayOption: string
+
+  @ValidateIf(o => o.removePayOption === RemovePayOptions.YES)
+  @IsNotEmpty({ message: 'Enter a case note' })
+  @MaxLength(4000, { message: 'Case note must be 4,000 characters or less' })
+  caseNote: string
 }
 export default class RemovePayRoutes {
   constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
@@ -24,9 +29,10 @@ export default class RemovePayRoutes {
     const { id } = req.params
     const { attendanceId } = req.params
 
-    const instance = await this.activitiesService.getScheduledActivity(+id, user)
-
-    const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId)
+    const [instance, attendance] = await Promise.all([
+      this.activitiesService.getScheduledActivity(+id, user),
+      this.activitiesService.getAttendanceDetails(+attendanceId),
+    ])
 
     const attendee = await this.prisonService
       .getInmateByPrisonerNumber(attendance.prisonerNumber, user)
