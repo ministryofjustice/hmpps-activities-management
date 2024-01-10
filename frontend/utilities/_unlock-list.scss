@@ -56,6 +56,10 @@
   }
 
   @include govuk-media-query($media-type: print) {
+    .govuk-tag {
+      margin: 0
+    }
+
     hr {
       margin: 2px 0;
     }

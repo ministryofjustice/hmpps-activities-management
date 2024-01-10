@@ -3,7 +3,6 @@ import { resetStubs } from './integration_tests/mockApis/wiremock'
 import stubs from './integration_tests/mockApis/stubs'
 
 export default defineConfig({
-  chromeWebSecurity: false,
   fixturesFolder: 'integration_tests/fixtures',
   screenshotsFolder: 'integration_tests/screenshots',
   videosFolder: 'integration_tests/videos',
@@ -11,7 +10,6 @@ export default defineConfig({
   reporterOptions: {
     configFile: 'reporter-config.json',
   },
-  videoUploadOnPasses: false,
   taskTimeout: 60000,
   e2e: {
     // We've imported your old cypress plugins here.

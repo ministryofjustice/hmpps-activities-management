@@ -21,6 +21,7 @@ export const parseDatePickerDate = (datePickerDate: string): Date => {
 }
 
 export const parseIsoDate = (isoDate: string): Date => {
+  if (!isoDate) return null
   const date = parse(isoDate, 'yyyy-MM-dd', startOfToday())
 
   if (!isValid(date)) return new Date(NaN)
@@ -50,7 +51,6 @@ export const datePickerDateToIsoDate = (datePickerDate: string): string => {
 
 export const isoDateToDatePickerDate = (isoDate: string): string => {
   const date = parseIsoDate(isoDate)
-
   return formatDatePickerDate(date)
 }
 
