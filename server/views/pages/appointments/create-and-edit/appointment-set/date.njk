@@ -33,7 +33,8 @@
                     value: formResponses.startDate or ((session.editAppointmentJourney.startDate or session.appointmentJourney.startDate) | isoDateToDatePickerDate)
                 }) }}
                 {{ govukButton({
-                    text: "Confirm and save" if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT else "Continue"
+                    text: "Confirm and save" if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT else "Continue",
+                    preventDoubleClick: true
                 }) }}
             </form>
         </div>

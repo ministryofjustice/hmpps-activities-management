@@ -217,6 +217,12 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     }).then(res => res as RolloutPrisonPlan)
   }
 
+  async getRolledOutPrisons(): Promise<RolloutPrisonPlan[]> {
+    return this.get({
+      path: `/rollout`,
+    }).then(res => res as RolloutPrisonPlan[])
+  }
+
   async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
     return this.get({
       path: `/schedules/${id}`,

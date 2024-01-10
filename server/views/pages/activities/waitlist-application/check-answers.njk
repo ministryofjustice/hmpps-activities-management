@@ -13,7 +13,7 @@
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">Log an activity application</span>
 
-            <form method="POST">
+            <form method="POST" data-module="form-spinner" data-loading-text="Logging application">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 <h1 class='govuk-heading-xl'>Check and confirm application details</h1>
@@ -121,7 +121,8 @@
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Continue"
+                        text: "Log activity application",
+                        preventDoubleClick: true
                     }) }}
                 </div>
             </form>

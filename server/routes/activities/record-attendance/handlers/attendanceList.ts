@@ -75,14 +75,19 @@ export default class AttendanceListRoutes {
 
     res.render('pages/activities/record-attendance/attendance-list', {
       instance,
+      isPayable: instance.activitySchedule.activity.paid,
       attendance,
       attendanceSummary: getAttendanceSummary(instance.attendances),
     })
   }
 
   ATTENDED = async (req: Request, res: Response): Promise<void> => {
+    const instanceId = +req.params.id
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
     const { user } = res.locals
+
+    const instance = await this.activitiesService.getScheduledActivity(instanceId, user)
+    const isPaid = instance.activitySchedule.activity.paid
 
     const selectedAttendanceIds: number[] = []
     selectedAttendances.forEach(selectAttendee => selectedAttendanceIds.push(Number(selectAttendee.split('-')[0])))
@@ -92,7 +97,7 @@ export default class AttendanceListRoutes {
       prisonCode: user.activeCaseLoadId,
       status: AttendanceStatus.COMPLETED,
       attendanceReason: AttendanceReason.ATTENDED,
-      issuePayment: true,
+      issuePayment: isPaid,
     }))
 
     await this.activitiesService.updateAttendances(attendances, user)

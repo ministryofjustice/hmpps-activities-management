@@ -31,22 +31,24 @@
                     errorMessage: validationErrors | findError('requester'),
                     items: [
                         {
-                            value: RequesterEnum.PRISONER,
+                            value: WaitlistRequester.PRISONER.code,
                             text:  prisonerName,
-                            checked: session.waitListApplicationJourney.requester == 'Self-requested'
+                            checked: session.waitListApplicationJourney.requester == WaitlistRequester.PRISONER.code
                         },
                         {
-                            value: RequesterEnum.GUIDANCE_STAFF,
-                            text: 'IAG or CXK careers information, advice and guidance staff',
-                            checked: session.waitListApplicationJourney.requester == 'IAG or CXK careers information, advice and guidance staff'
+                            value: WaitlistRequester.GUIDANCE_STAFF.code,
+                            text: WaitlistRequester.GUIDANCE_STAFF.description,
+                            checked: session.waitListApplicationJourney.requester == WaitlistRequester.GUIDANCE_STAFF.code
                         },
                         {
-                            value: RequesterEnum.OTHER,
-                            text: 'Someone else, for example a member of staff, an activity leader or an orderly',
-                            checked: formResponses.requester == RequesterEnum.OTHER or
-                                     (session.waitListApplicationJourney.requester and
-                                     session.waitListApplicationJourney.requester != 'Self-requested' and
-                                     session.waitListApplicationJourney.requester != 'IAG or CXK careers information, advice and guidance staff'),
+                            value: WaitlistRequester.SOMEONE_ELSE.code,
+                            text:  WaitlistRequester.SOMEONE_ELSE.description,
+                            checked: formResponses.requester == WaitlistRequester.SOMEONE_ELSE or
+                                     (
+                                         session.waitListApplicationJourney.requester and
+                                         session.waitListApplicationJourney.requester != WaitlistRequester.PRISONER.code and
+                                         session.waitListApplicationJourney.requester != WaitlistRequester.GUIDANCE_STAFF.code
+                                     ),
                             conditional: {
                                 html: govukSelect({
                                     id: "otherRequester",
@@ -64,54 +66,54 @@
                                             selected: true
                                         },
                                         {
-                                            value: "Education staff",
-                                            text: "Education staff",
-                                            selected: session.waitListApplicationJourney.requester == "Education staff"
+                                            value: WaitlistRequester.EDUCATION_STAFF.code,
+                                            text: WaitlistRequester.EDUCATION_STAFF.description,
+                                            selected: session.waitListApplicationJourney.requester == WaitlistRequester.EDUCATION_STAFF.code
                                         },
                                         {
-                                            value: "Workshop staff",
-                                            text: "Workshop staff",
-                                            selected: session.waitListApplicationJourney.requester == "Workshop staff"
+                                            value: WaitlistRequester.WORKSHOP_STAFF.code,
+                                            text: WaitlistRequester.WORKSHOP_STAFF.description,
+                                            selected: session.waitListApplicationJourney.requester == WaitlistRequester.WORKSHOP_STAFF.code
                                         },
                                         {
-                                            value: "Activity leader",
-                                            text: "Activity leader",
-                                            selected: session.waitListApplicationJourney.requester == "Activity leader"
+                                            value: WaitlistRequester.ACTIVITY_LEADER.code,
+                                            text: WaitlistRequester.ACTIVITY_LEADER.description,
+                                            selected: session.waitListApplicationJourney.requester == WaitlistRequester.ACTIVITY_LEADER.code
                                         },
                                         {
-                                            value: "Mental health staff",
-                                            text: "Mental health staff",
-                                            selected: session.waitListApplicationJourney.requester == "Mental health staff"
+                                            value: WaitlistRequester.MENTAL_HEALTH_STAFF.code,
+                                            text: WaitlistRequester.MENTAL_HEALTH_STAFF.description,
+                                            selected: session.waitListApplicationJourney.requester == WaitlistRequester.MENTAL_HEALTH_STAFF.code
                                         },
                                         {
-                                            value: "Offender Management Unit",
-                                            text: "Offender Management Unit",
-                                            selected: session.waitListApplicationJourney.requester == "Offender Management Unit"
+                                            value: WaitlistRequester.OMU_STAFF.code,
+                                            text: WaitlistRequester.OMU_STAFF.description,
+                                            selected: session.waitListApplicationJourney.requester == WaitlistRequester.OMU_STAFF.code
                                         },
                                         {
-                                            value: "Wing staff",
-                                            text: "Wing staff",
-                                            selected: session.waitListApplicationJourney.requester == "Wing staff"
+                                            value: WaitlistRequester.WING_STAFF.code,
+                                            text: WaitlistRequester.WING_STAFF.description,
+                                            selected: session.waitListApplicationJourney.requester == WaitlistRequester.WING_STAFF.code
                                         },
                                         {
-                                            value: "Keyworker or POM",
-                                            text: "Keyworker or POM",
-                                            selected: session.waitListApplicationJourney.requester == "Keyworker or POM"
+                                            value: WaitlistRequester.POM_STAFF.code,
+                                            text: WaitlistRequester.POM_STAFF.description,
+                                            selected: session.waitListApplicationJourney.requester == WaitlistRequester.POM_STAFF.code
                                         },
                                         {
-                                            value: "Reception staff",
-                                            text: "Reception staff",
-                                            selected: session.waitListApplicationJourney.requester == "Reception staff"
+                                            value: WaitlistRequester.RECP_STAFF.code,
+                                            text: WaitlistRequester.RECP_STAFF.description,
+                                            selected: session.waitListApplicationJourney.requester == WaitlistRequester.RECP_STAFF.code
                                         },
                                         {
-                                            value: "Orderly or Red Band",
-                                            text: "Orderly or Red Band",
-                                            selected: session.waitListApplicationJourney.requester == "Orderly or Red Band"
+                                            value: WaitlistRequester.RED_BAND.code,
+                                            text: WaitlistRequester.RED_BAND.description,
+                                            selected: session.waitListApplicationJourney.requester == WaitlistRequester.RED_BAND.code
                                         },
                                         {
-                                            value: "Other",
-                                            text: "Other",
-                                            selected: session.waitListApplicationJourney.requester == "Other"
+                                            value: WaitlistRequester.OTHER.code,
+                                            text: WaitlistRequester.OTHER.description,
+                                            selected: session.waitListApplicationJourney.requester == WaitlistRequester.OTHER.code
                                         }
                                     ]
                                 })
@@ -122,7 +124,8 @@
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Update requester details"
+                        text: "Update requester details",
+                        preventDoubleClick: true
                     }) }}
                 </div>
             </form>

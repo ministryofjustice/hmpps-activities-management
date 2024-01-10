@@ -104,8 +104,7 @@
                         {
                             key: { text: "Pay rate" },
                             value: {
-                                html: '<div>' + session.allocateJourney.inmate.incentiveLevel + ' incentive level:</div>'
-                                + '<div>' + session.allocateJourney.inmate.payBand.alias + ' - ' + session.allocateJourney.inmate.payBand.rate | toMoney + '</div>'
+                                html: payRate(session.allocateJourney.inmate.payBand, session.allocateJourney.inmate.incentiveLevel)
                             },
                             actions: {
                                 items: [{
@@ -114,7 +113,7 @@
                                     text: "Change",
                                     visuallyHiddenText: "change pay rate"
                                 }]
-                            }
+                            } if session.allocateJourney.inmate.payBand
                         },
                         {
                             key: { text: "Schedule" },
@@ -129,7 +128,7 @@
                                     visuallyHiddenText: "change schedule"
                                 }]
                             }
-                        } if exclusionsFeatureToggleEnabled
+                        }
                     ]
                 }) }}
             {% endif %}
@@ -181,13 +180,25 @@
                 }) }}
             {% endif %}
 
-            <form method="POST">
+            <form method="POST" data-module="form-spinner" data-loading-text="Allocating prisoner">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
-                    {{ govukButton({ text: "Confirm this allocation" if session.req.params.mode == 'create' else "Confirm and remove" }) }}
+                    {{ govukButton({ 
+                        text: "Confirm this allocation" if session.req.params.mode == 'create' else "Confirm and remove",
+                        preventDoubleClick: true
+                    }) }}
                     <a href="cancel" class="govuk-link govuk-link--no-visited-state">Cancel and return to the list of candidates</a>
                 </div>
             </form>
         </div>
     </div>
 {% endblock %}
+
+{% macro payRate(payBand, incentiveLevel) %}
+    {% if payBand %}
+        <div>{{ incentiveLevel }} incentive level:</div>
+        <div>{{ payBand.alias }} - {{ payBand.rate | toMoney }}</div>
+    {% else %}
+        No pay rate for this activity
+    {% endif %}
+{% endmacro %}

@@ -59,16 +59,14 @@
             }) }}
         </div>
 
-        {% if exclusionsFeatureToggleEnabled %}
-            <div class="govuk-grid-column-one-third card-group__item">
-                {{ card({
-                    "href": "/activities/exclusions/select-prisoner",
-                    "clickable": "true",
-                    "heading": "Change someone's activity schedule",
-                    "description": "Modify a prisoner’s schedule. Exclude people from sessions so they are not due to attend more than one activity at a time.",
-                    "data-qa": "exclusions"
-                }) }}
-            </div>
-        {% endif %}
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "href": "/activities/exclusions/select-prisoner",
+                "clickable": "true",
+                "heading": "Change someone's activity schedule",
+                "description": "Modify a prisoner’s schedule. Exclude people from sessions so they are not due to attend more than one activity at a time.",
+                "data-qa": "exclusions"
+            }) }}
+        </div>
     </div>
 {% endblock %}

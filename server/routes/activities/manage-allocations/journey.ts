@@ -25,6 +25,8 @@ export type AllocateToActivityJourney = {
     offWing?: boolean
     startDate: string
     endDate?: string
+    scheduleWeeks?: number
+    paid?: boolean
   }
   startDate?: string
   endDate?: string

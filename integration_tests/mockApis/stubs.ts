@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import frontendComponentJson from '../fixtures/frontendComponents/frontendComponent.json'
 
 import { stubFor, getMatchingRequests } from './wiremock'
 
@@ -230,6 +231,19 @@ const stubRolloutPlan = () =>
     },
   })
 
+const frontendComponents = () =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: '/components?component=header&component=footer',
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody: frontendComponentJson,
+    },
+  })
+
 export default {
   getSignInUrl,
   stubAuthPing: authPing,
@@ -238,6 +252,7 @@ export default {
   stubSignIn: (firstname = 'john', lastname = 'smith') =>
     Promise.all([
       favicon(),
+      frontendComponents(),
       authRedirect(),
       signOut(),
       manageAccountDetails(),

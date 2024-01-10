@@ -1,6 +1,6 @@
 export type UnlockListJourney = {
   timeSlot?: string
-  location?: string
+  locationKey?: string
   subLocationFilters?: string[]
   activityFilter?: string
   stayingOrLeavingFilter?: string

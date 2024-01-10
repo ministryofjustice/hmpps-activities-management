@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Type } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import {
   ValidateNested,
   ValidateIf,
@@ -23,14 +23,17 @@ export class NotAttendedData {
 
   prisonerName: string
 
+  @Transform(({ value }) => value !== 'false')
+  isPayable: boolean
+
   @IsEnum(AttendanceReason, { message: args => `Select an absence reason for ${getPrisonerName(args)}` })
   notAttendedReason: AttendanceReason
 
-  @ValidateIf(o => AttendanceReason.SICK === o.notAttendedReason)
+  @ValidateIf(o => AttendanceReason.SICK === o.notAttendedReason && o.isPayable)
   @IsEnum(YesNo, { message: (args: ValidationArguments) => `Select if ${getPrisonerName(args)} should be paid` })
   sickPay?: YesNo
 
-  @ValidateIf(o => AttendanceReason.REST === o.notAttendedReason)
+  @ValidateIf(o => AttendanceReason.REST === o.notAttendedReason && o.isPayable)
   @IsEnum(YesNo, { message: (args: ValidationArguments) => `Select if ${getPrisonerName(args)} should be paid` })
   restPay?: YesNo
 
@@ -39,7 +42,7 @@ export class NotAttendedData {
   @MaxLength(100, { message: 'Absence reason must be $constraint1 characters or less' })
   otherAbsenceReason?: string
 
-  @ValidateIf(o => AttendanceReason.OTHER === o.notAttendedReason)
+  @ValidateIf(o => AttendanceReason.OTHER === o.notAttendedReason && o.isPayable)
   @IsEnum(YesNo, {
     message: (args: ValidationArguments) =>
       `Select if this is an acceptable absence for ${getPrisonerName(args)} and they should be paid`,
@@ -102,22 +105,35 @@ export default class NotAttendedReasonRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const instanceId = req.params.id
     const { selectedPrisoners } = req.session.notAttendedJourney
 
-    const notAttendedReasons = (await this.activitiesService.getAttendanceReasons(user))
+    const [attendanceReasons, instance] = await Promise.all([
+      this.activitiesService.getAttendanceReasons(user),
+      this.activitiesService.getScheduledActivity(+instanceId, user),
+    ])
+
+    const notAttendedReasons = attendanceReasons
       .filter(r => r.displayInAbsence)
       .sort((r1, r2) => r1.displaySequence - r2.displaySequence)
+
+    const isPayable = instance.activitySchedule.activity.paid
 
     res.render('pages/activities/record-attendance/not-attended-reason', {
       notAttendedReasons,
       selectedPrisoners,
+      isPayable,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const instanceId = req.params.id
     const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
     const { selectedPrisoners, activityInstance } = req.session.notAttendedJourney
+
+    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
+    const isPaid = instance.activitySchedule.activity.paid
 
     const attendanceUpdates = selectedPrisoners.map(selectedPrisoner => {
       const prisonerAttendance = notAttendedData.find(a => a.prisonerNumber === selectedPrisoner.prisonerNumber)
@@ -129,7 +145,7 @@ export default class NotAttendedReasonRoutes {
         status: AttendanceStatus.COMPLETED,
         attendanceReason: prisonerAttendance.notAttendedReason,
         comment: prisonerAttendance.getMoreDetails(),
-        issuePayment: prisonerAttendance.getIssuePayment(),
+        issuePayment: prisonerAttendance.getIssuePayment() && isPaid,
         caseNote: prisonerAttendance.getCaseNote(activityInstance),
         incentiveLevelWarningIssued: prisonerAttendance.getIncentiveLevelWarning(),
         otherAbsenceReason: prisonerAttendance.getOtherAbsenceReason(),

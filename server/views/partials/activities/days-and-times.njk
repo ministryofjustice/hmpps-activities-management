@@ -1,9 +1,9 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
-{% macro daysAndTimes(dailySlots, showUnscheduled=true, boldDays=true) %}
+{% macro daysAndTimes(dailySlots, showIndividualUnscheduled=true, boldDays=true) %}
     {% set dayRows = [] %}
     {% for day in dailySlots %}
-        {% if showUnscheduled or day.slots | length %}
+        {% if showIndividualUnscheduled or day.slots | length %}
             {% set scheduleText %}
                 {% set comma = joiner(', ') %}
                 {% for slot in day.slots -%}
@@ -27,7 +27,7 @@
         {% endif %}
     {% endfor %}
 
-    {% if not dailySlots | flatMap('slots') | length %}
+    {% if not dailySlots | flatMap('slots') | length and not showIndividualUnscheduled %}
         <div class='govuk-hint govuk-!-margin-bottom-0'>Not scheduled</div>
     {% endif %}
 

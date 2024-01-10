@@ -436,5 +436,3 @@ export const scheduledEventSort = (data: ScheduledEvent[]): ScheduledEvent[] => 
 
 export const filterObjects = (objects: object[], iteratee: string, eq: unknown): object[] =>
   objects.filter(o => o[iteratee] === eq)
-
-export const flatMap = (objects: object[], iteratee: string): object[] => _.flatMap(objects, iteratee)

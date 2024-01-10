@@ -18,7 +18,7 @@ jest.mock('../data/incentivesApiClient')
 describe('Prison Service', () => {
   const prisonApiClient = new PrisonApiClient()
   const prisonerSearchApiClient = new PrisonerSearchApiClient()
-  const incentivesApiClient = new IncentivesApiClient()
+  const incentivesApiClient = new IncentivesApiClient() as jest.Mocked<IncentivesApiClient>
   const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient)
 
   const user = {

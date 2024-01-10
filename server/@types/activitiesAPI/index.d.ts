@@ -42,7 +42,7 @@ export interface paths {
      * @description
      *
      * Requires one of the following roles:
-     * * ROLE_QUEUE_ADMIN
+     * * ACTIVITY_QUEUE_ADMIN
      */
     put: operations['retryDlq']
   }
@@ -54,7 +54,7 @@ export interface paths {
      * @description
      *
      * Requires one of the following roles:
-     * * ROLE_QUEUE_ADMIN
+     * * ACTIVITY_QUEUE_ADMIN
      */
     put: operations['purgeQueue']
   }
@@ -534,6 +534,16 @@ export interface paths {
      */
     get: operations['attendanceSummary']
   }
+  '/rollout': {
+    /**
+     * Get all rollout prisons
+     * @description Returns a list of all rolled out prisons.
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_ADMIN
+     */
+    get: operations['getRolledOutPrisons']
+  }
   '/rollout/{prisonCode}': {
     /**
      * Get a prison's rollout plan by prison code
@@ -549,7 +559,7 @@ export interface paths {
      * @description
      *
      * Requires one of the following roles:
-     * * ROLE_QUEUE_ADMIN
+     * * ACTIVITY_QUEUE_ADMIN
      */
     get: operations['getDlqMessages']
   }
@@ -1055,7 +1065,7 @@ export interface components {
        */
       comment?: string
       /**
-       * @description Should payment be issued for SICK, REST or OTHER
+       * @description Should payment be issued for SICK, REST or OTHER. Will be ignored if the activity is unpaid.
        * @example true
        */
       issuePayment?: boolean
@@ -1575,12 +1585,12 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      /** Format: int32 */
-      pageSize?: number
+      paged?: boolean
       unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
-      paged?: boolean
+      /** Format: int32 */
+      pageSize?: number
     }
     PagedWaitingListApplication: {
       /** Format: int32 */
@@ -1595,15 +1605,15 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
     WaitingListApplication: {
@@ -1709,10 +1719,10 @@ export interface components {
       prisonerNumber: string
       /**
        * Format: int64
-       * @description Where a prison uses pay bands to differentiate earnings, this is the pay band code given to this prisoner
+       * @description Where a prison uses pay bands to differentiate earnings, this is the pay band code given to this prisoner. Can be null for unpaid activities.
        * @example 1
        */
-      payBandId: number
+      payBandId?: number
       /**
        * Format: date
        * @description The future date when the prisoner will start the activity
@@ -2013,7 +2023,7 @@ export interface components {
       scheduleDescription: string
       /** @description Indicates whether this allocation is to an activity within the 'Not in work' category */
       isUnemployment: boolean
-      prisonPayBand: components['schemas']['PrisonPayBand']
+      prisonPayBand?: components['schemas']['PrisonPayBand']
       /**
        * Format: date
        * @description The date when the prisoner will start the activity
@@ -2070,7 +2080,7 @@ export interface components {
       status: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
       plannedDeallocation?: components['schemas']['PlannedDeallocation']
       /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
-      exclusions?: components['schemas']['Slot'][]
+      exclusions: components['schemas']['Slot'][]
       /** @description The name of the prisoner. Included only if includePrisonerSummary = true */
       prisonerName?: string
       /** @description The cell location of the prisoner. Included only if includePrisonerSummary = true */
@@ -2321,11 +2331,6 @@ export interface components {
        * @enum {string}
        */
       payPerSession: 'H' | 'F'
-      /**
-       * @description The NOMIS code for the minimum incentive level for this activity
-       * @example BAS
-       */
-      minimumIncentiveLevel: string
       /**
        * @description Whether the schedule runs on bank holidays
        * @example true
@@ -2710,6 +2715,7 @@ export interface components {
         | 'PRISONER_ALLOCATED'
         | 'PRISONER_DEALLOCATED'
         | 'PRISONER_DECLINED_FROM_WAITING_LIST'
+        | 'PRISONER_REMOVED_FROM_WAITING_LIST'
         | 'PRISONER_SUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_UNSUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_MERGE'
@@ -2776,6 +2782,7 @@ export interface components {
         | 'PRISONER_ALLOCATED'
         | 'PRISONER_DEALLOCATED'
         | 'PRISONER_DECLINED_FROM_WAITING_LIST'
+        | 'PRISONER_REMOVED_FROM_WAITING_LIST'
         | 'PRISONER_SUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_UNSUSPENDED_FROM_ACTIVITY'
         | 'PRISONER_MERGE'
@@ -3418,6 +3425,11 @@ export interface components {
        */
       outsideWork: boolean
       /**
+       * @description Flag to indicate if the activity is a paid activity. It true then pay rates are required, if false then no pay rates should be provided
+       * @example true
+       */
+      paid: boolean
+      /**
        * @description Indicates whether the activity session is a (F)ull day or a (H)alf day (for payment purposes).
        * @example H
        * @enum {string}
@@ -3464,16 +3476,6 @@ export interface components {
        * @example high
        */
       riskLevel: string
-      /**
-       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
-       * @example BAS
-       */
-      minimumIncentiveNomisCode: string
-      /**
-       * @description The minimum incentive/earned privilege level for this activity
-       * @example Basic
-       */
-      minimumIncentiveLevel: string
       /**
        * Format: date
        * @description The future date on which this activity will start. From this date, any schedules will be created as real, planned instances
@@ -3663,16 +3665,6 @@ export interface components {
        */
       riskLevel: string
       /**
-       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
-       * @example BAS
-       */
-      minimumIncentiveNomisCode: string
-      /**
-       * @description The minimum incentive/earned privilege level for this activity
-       * @example Basic
-       */
-      minimumIncentiveLevel: string
-      /**
        * Format: date-time
        * @description The date and time when this activity was created
        */
@@ -3694,6 +3686,11 @@ export interface components {
       updatedBy?: string
       /** @description The list of minimum education levels that can apply to this activity */
       minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevel'][]
+      /**
+       * @description Whether the activity is a paid activity
+       * @example true
+       */
+      paid: boolean
     }
     /** @description Describes a top-level activity category */
     ActivityCategory: {
@@ -3797,16 +3794,6 @@ export interface components {
        * @example high
        */
       riskLevel: string
-      /**
-       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
-       * @example BAS
-       */
-      minimumIncentiveNomisCode: string
-      /**
-       * @description The minimum incentive/earned privilege level for this activity
-       * @example Basic
-       */
-      minimumIncentiveLevel: string
       /** @description The list of minimum education levels that can apply to this activity */
       minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevel'][]
       /**
@@ -3836,6 +3823,11 @@ export interface components {
        * @enum {string}
        */
       activityState: 'ARCHIVED' | 'LIVE'
+      /**
+       * @description Whether the activity is a paid activity
+       * @example true
+       */
+      paid: boolean
     }
     /** @description Describes the minimum education levels which apply to an activity */
     ActivityMinimumEducationLevel: {
@@ -4126,6 +4118,11 @@ export interface components {
        * @example true
        */
       editable: boolean
+      /**
+       * @description Flag to indicate if the attendance is payable
+       * @example true
+       */
+      payable: boolean
     }
     /** @description An attendance record for a prisoner, can be marked or unmarked */
     AttendanceHistory: {
@@ -4535,16 +4532,6 @@ export interface components {
        */
       endDate?: string
       /**
-       * @description The NOMIS code for the minimum incentive/earned privilege level for this activity
-       * @example BAS
-       */
-      minimumIncentiveNomisCode?: string
-      /**
-       * @description The minimum incentive/earned privilege level for this activity
-       * @example Basic
-       */
-      minimumIncentiveLevel?: string
-      /**
        * @description Whether the schedule runs on bank holidays
        * @example true
        */
@@ -4588,7 +4575,7 @@ export interface components {
       attendanceRequired?: boolean
       /** @description The list of minimum education levels that apply to this activity */
       minimumEducationLevel?: components['schemas']['ActivityMinimumEducationLevelCreateRequest'][]
-      /** @description The list of pay rates that can apply to this activity */
+      /** @description The list of pay rates that can apply to this activity. Must be null or empty if the activity is unpaid */
       pay?: components['schemas']['ActivityPayCreateRequest'][]
       /**
        * Format: int32
@@ -4604,6 +4591,11 @@ export interface components {
        * @example true
        */
       removeEndDate: boolean
+      /**
+       * @description Flag to indicate if the activity is a paid activity or not. If true then pay rates are required, if false then no pay rates should be provided. Cannot be updated if already allocated.
+       * @example true
+       */
+      paid?: boolean
     }
     /** @description A list of paid attendance counts for each booking in the prison on the date */
     AttendanceReconciliationResponse: {
@@ -4907,8 +4899,15 @@ export interface components {
       education?: components['schemas']['EducationSuitability']
       releaseDate?: components['schemas']['ReleaseDateSuitability']
       nonAssociation?: components['schemas']['NonAssociationSuitability']
-      /** @description The prisoner's allocations with pay rates */
+      /** @description The prisoner's currently active allocations with pay rates */
       allocations: components['schemas']['AllocationPayRate'][]
+      /** @description The prisoner's previous allocations to this activity where they have been deallocated by a member of staff, with an optional case note */
+      previousDeallocations: components['schemas']['DeallocationCaseNote'][]
+    }
+    /** @description Ended allocation details with optional deallocation case note text */
+    DeallocationCaseNote: {
+      allocation: components['schemas']['Allocation']
+      caseNoteText?: string
     }
     /** @description The prisoner's education levels */
     Education: {
@@ -5092,9 +5091,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Describes one instance of an activity schedule */
@@ -6585,7 +6584,7 @@ export interface operations {
    * @description
    *
    * Requires one of the following roles:
-   * * ROLE_QUEUE_ADMIN
+   * * ACTIVITY_QUEUE_ADMIN
    */
   retryDlq: {
     parameters: {
@@ -6616,7 +6615,7 @@ export interface operations {
    * @description
    *
    * Requires one of the following roles:
-   * * ROLE_QUEUE_ADMIN
+   * * ACTIVITY_QUEUE_ADMIN
    */
   purgeQueue: {
     parameters: {
@@ -8551,6 +8550,35 @@ export interface operations {
     }
   }
   /**
+   * Get all rollout prisons
+   * @description Returns a list of all rolled out prisons.
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_ADMIN
+   */
+  getRolledOutPrisons: {
+    responses: {
+      /** @description List of prisons that are rolled out */
+      200: {
+        content: {
+          'application/json': components['schemas']['RolloutPrisonPlan'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Get a prison's rollout plan by prison code
    * @description Returns a single prison and its activities management service rollout plan by its unique code.
    *
@@ -8588,7 +8616,7 @@ export interface operations {
    * @description
    *
    * Requires one of the following roles:
-   * * ROLE_QUEUE_ADMIN
+   * * ACTIVITY_QUEUE_ADMIN
    */
   getDlqMessages: {
     parameters: {

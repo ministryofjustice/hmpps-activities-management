@@ -50,8 +50,7 @@ export default class CheckAnswersRoutes {
       tierCode: createJourney.tierCode,
       organiserCode: createJourney.organiserCode,
       riskLevel: createJourney.riskLevel,
-      minimumIncentiveNomisCode: createJourney.minimumIncentiveNomisCode,
-      minimumIncentiveLevel: createJourney.minimumIncentiveLevel,
+      paid: createJourney.paid,
       pay: createJourney.pay.map(pay => ({
         incentiveNomisCode: pay.incentiveNomisCode,
         incentiveLevel: pay.incentiveLevel,

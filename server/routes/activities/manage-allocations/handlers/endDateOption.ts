@@ -21,6 +21,10 @@ export default class EndDateOptionRoutes {
     if (req.body.endDateOption === 'yes') {
       return res.redirectOrReturn(`end-date`)
     }
-    return res.redirectOrReturn(`pay-band`)
+    if (req.session.allocateJourney.activity.paid) {
+      return res.redirectOrReturn(`pay-band`)
+    }
+
+    return res.redirectOrReturn('exclusions')
   }
 }

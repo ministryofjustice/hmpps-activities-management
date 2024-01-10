@@ -139,7 +139,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: "check-pay?preserveHistory=true",
+                                    href: ("check-pay" if session.createJourney.paid else "pay-option") + "?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change pay rates"
                                 }
@@ -280,12 +280,13 @@
                 ]
             }) }}
 
-            <form method="POST">
+            <form method="POST" data-module="form-spinner" data-loading-text="Creating activity">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Create activity"
+                        text: "Create activity",
+                        preventDoubleClick: true
                     }) }}
                 </div>
             </form>
@@ -294,21 +295,29 @@
 {% endblock %}
 
 {% macro paySummary(incentiveLevelPays) %}
-    {% for incentiveLevelPay in incentiveLevelPays %}
-        <div class="govuk-!-margin-bottom-2">
-            <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
-            {% for pay in incentiveLevelPay.pays %}
-                <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
+    {% if session.createJourney.paid %}
+        {% if incentiveLevelPays | length or session.createJourney.flat | length %}
+            {% for incentiveLevelPay in incentiveLevelPays %}
+                <div class="govuk-!-margin-bottom-2">
+                    <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
+                    {% for pay in incentiveLevelPay.pays %}
+                        <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
+                    {% endfor %}
+                </div>
             {% endfor %}
-        </div>
-    {% endfor %}
-    {% if session.createJourney.flat | length %}
-        <div class="govuk-!-margin-bottom-2">
-            <div class="govuk-!-font-weight-bold">Flat rate pay</div>
-            {% for flatRate in session.createJourney.flat %}
-                <div>{{ flatRate.prisonPayBand.alias }}: {{ flatRate.rate | toMoney }}</div>
-            {% endfor %}
-        </div>
+            {% if session.createJourney.flat | length %}
+                <div class="govuk-!-margin-bottom-2">
+                    <div class="govuk-!-font-weight-bold">Flat rate pay</div>
+                    {% for flatRate in session.createJourney.flat %}
+                        <div>{{ flatRate.prisonPayBand.alias }}: {{ flatRate.rate | toMoney }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% else %}
+            None added yet
+        {% endif %}
+    {% else %}
+        People are not paid for this activity
     {% endif %}
 {% endmacro %}
 

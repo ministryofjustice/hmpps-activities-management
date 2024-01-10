@@ -1,21 +1,17 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
+import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import { parseDate } from '../../../../utils/utils'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import TimeSlot from '../../../../enum/timeSlot'
-import { mapActivityScheduleSlotsToSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
-import { AllocationUpdateRequest, Slot } from '../../../../@types/activitiesAPI/types'
-
-type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
-
-interface DailyTimeSlots {
-  day: string
-  weeks: {
-    weekNumber: number
-    slots: TimeSlot[]
-  }[]
-}
+import {
+  DayOfWeek,
+  calculateUniqueSlots,
+  mapActivityScheduleSlotsToSlots,
+  mapSlotsToCompleteWeeklyTimeSlots,
+} from '../../../../utils/helpers/activityTimeSlotMappers'
+import { Slot } from '../../../../@types/activitiesAPI/types'
 
 class Slots {
   @Expose()
@@ -66,21 +62,30 @@ export default class ExclusionRoutes {
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
     const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
-    const dailySlots = this.mapSlotsToDailyTimeSlots(slots)
+
+    const weeklySlots = mapSlotsToCompleteWeeklyTimeSlots(slots, schedule.scheduleWeeks)
+
+    // Add all slots to an array
+    const daySlotsList = Object.values(weeklySlots).flatMap(dailySlots =>
+      dailySlots.flatMap(daySlots => daySlots.slots.map(slot => `${daySlots.day}${slot}`)),
+    )
+    // Find day slots with more than one occurance
+    const disabledSlots = _.uniq(daySlotsList.filter(s => daySlotsList.filter(s2 => s2 === s).length > 1))
 
     res.render('pages/activities/manage-allocations/exclusions', {
       prisonerName: inmate.prisonerName,
       scheduleWeeks: schedule.scheduleWeeks,
       currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
-      dailySlots,
+      weeklySlots,
       exclusions,
+      disabledSlots,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { mode, allocationId } = req.params
-    const { activity, inmate } = req.session.allocateJourney
+    const { mode } = req.params
+    const { activity } = req.session.allocateJourney
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
     const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
@@ -90,62 +95,14 @@ export default class ExclusionRoutes {
       return res.validationFailed('slots', 'Select at least one session')
     }
 
-    const updatedExclusions = this.calculateExclusions(slots, updatedSlots)
+    const updatedExclusions = calculateUniqueSlots(slots, updatedSlots)
     req.session.allocateJourney.updatedExclusions = updatedExclusions
 
     if (mode === 'create') {
       return res.redirect('check-answers')
     }
 
-    const allocation = { exclusions: updatedExclusions } as AllocationUpdateRequest
-
-    await this.activitiesService.updateAllocation(user.activeCaseLoadId, +allocationId, allocation)
-
-    if (mode === 'edit') {
-      const successMessage = `You've updated the exclusions for this allocation`
-      return res.redirectWithSuccess(
-        `/activities/allocations/view/${allocationId}`,
-        'Allocation updated',
-        successMessage,
-      )
-    }
-
-    // mode === 'exclude'
-    return res.redirectWithSuccess(
-      `/activities/exclusions/prisoner/${inmate.prisonerNumber}`,
-      `You have updated when ${inmate.prisonerName} should attend ${activity.name}`,
-    )
-  }
-
-  private mapSlotsToDailyTimeSlots(slots: Slot[]): DailyTimeSlots[] {
-    const daysOfWeek = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
-
-    // Group slots by day
-    const slotsByDay: { [key: string]: Slot[] } = {}
-    daysOfWeek.forEach(day => {
-      slotsByDay[day] = slots.filter(slot => slot[day.toLowerCase()])
-    })
-
-    // Find the maximum number of weeks among all days
-    const maxWeeks = Math.max(...Object.values(slotsByDay).flatMap(s => s.map(slot => slot.weekNumber)), 0)
-
-    // Create DailyTimeSlots for each day
-    return daysOfWeek
-      .map(day => ({
-        day,
-        weeks: Array.from({ length: maxWeeks }, (_, index) => {
-          const weekNumber = index + 1
-          const timeSlots = (slotsByDay[day] || [])
-            .filter(slot => slot.weekNumber === weekNumber)
-            .map(slot => slot.timeSlot)
-
-          return {
-            weekNumber,
-            slots: (timeSlots || []) as TimeSlot[], // Ensure slots is an empty array if no slots are found
-          }
-        }),
-      }))
-      .filter(dts => dts.weeks.some(w => w.slots.length > 0))
+    return res.redirect('confirm-exclusions')
   }
 
   private mapBodyToSlots(body: Schedule): Slot[] {
@@ -179,26 +136,5 @@ export default class ExclusionRoutes {
           : undefined
       })
       .filter(s => s?.daysOfWeek?.length > 0)
-  }
-
-  private calculateExclusions(slots: Slot[], updatedSlots: Slot[]): Slot[] {
-    return slots
-      .map(slot => {
-        const updatedSlot = updatedSlots.find(us => us.weekNumber === slot.weekNumber && us.timeSlot === slot.timeSlot)
-        return updatedSlot
-          ? {
-              ...slot,
-              monday: slot.monday && !updatedSlot.monday,
-              tuesday: slot.tuesday && !updatedSlot.tuesday,
-              wednesday: slot.wednesday && !updatedSlot.wednesday,
-              thursday: slot.thursday && !updatedSlot.thursday,
-              friday: slot.friday && !updatedSlot.friday,
-              saturday: slot.saturday && !updatedSlot.saturday,
-              sunday: slot.sunday && !updatedSlot.sunday,
-              daysOfWeek: slot.daysOfWeek.filter(d => !updatedSlot.daysOfWeek.includes(d)),
-            }
-          : slot
-      })
-      .filter(s => s.daysOfWeek.length > 0)
   }
 }

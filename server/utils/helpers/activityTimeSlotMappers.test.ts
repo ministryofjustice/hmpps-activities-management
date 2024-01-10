@@ -1,7 +1,10 @@
 import { CreateAnActivityJourney } from '../../routes/activities/create-an-activity/journey'
 import activitySessionToDailyTimeSlots, {
   activitySlotsMinusExclusions,
+  calculateUniqueSlots,
   mapActivityScheduleSlotsToSlots,
+  mapSlotsToCompleteWeeklyTimeSlots,
+  mapSlotsToWeeklyTimeSlots,
 } from './activityTimeSlotMappers'
 import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
 
@@ -137,6 +140,229 @@ describe('Activity session slots to daily time slots mapper', () => {
         saturdayFlag: true,
         sundayFlag: false,
         daysOfWeek: ['Tue', 'Thu', 'Sat'],
+      },
+    ])
+  })
+})
+
+describe('mapSlotsToWeeklyTimeSlots', () => {
+  it('should map activity slots to weekly time slots', () => {
+    const slots = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['THURSDAY', 'FRIDAY'],
+      },
+      {
+        weekNumber: 2,
+        timeSlot: 'PM',
+        monday: true,
+        tuesday: false,
+        wednesday: true,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'WEDNESDAY'],
+      },
+    ] as Slot[]
+
+    const weeklyTimeSlots = mapSlotsToWeeklyTimeSlots(slots)
+
+    expect(weeklyTimeSlots).toEqual({
+      1: [
+        {
+          day: 'MONDAY',
+          slots: ['AM'],
+        },
+        {
+          day: 'THURSDAY',
+          slots: ['PM'],
+        },
+        {
+          day: 'FRIDAY',
+          slots: ['PM'],
+        },
+      ],
+      2: [
+        {
+          day: 'MONDAY',
+          slots: ['PM'],
+        },
+        {
+          day: 'WEDNESDAY',
+          slots: ['PM'],
+        },
+      ],
+    })
+  })
+})
+
+describe('mapSlotsToCompleteWeeklyTimeSlots', () => {
+  it('should map activity slots to weekly time slots', () => {
+    const slots = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['THURSDAY', 'FRIDAY'],
+      },
+    ] as Slot[]
+
+    const weeklyTimeSlots = mapSlotsToCompleteWeeklyTimeSlots(slots, 2)
+
+    expect(weeklyTimeSlots).toEqual({
+      1: [
+        {
+          day: 'MONDAY',
+          slots: ['AM'],
+        },
+        {
+          day: 'THURSDAY',
+          slots: ['PM'],
+        },
+        {
+          day: 'FRIDAY',
+          slots: ['PM'],
+        },
+      ],
+      2: [
+        {
+          day: 'MONDAY',
+          slots: [],
+        },
+        {
+          day: 'THURSDAY',
+          slots: [],
+        },
+        {
+          day: 'FRIDAY',
+          slots: [],
+        },
+      ],
+    })
+  })
+})
+
+describe('calculateUniqueSlots', () => {
+  it('should find slots unique to the first slot array', () => {
+    const slotsA = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['THURSDAY', 'FRIDAY'],
+      },
+      {
+        weekNumber: 2,
+        timeSlot: 'PM',
+        monday: true,
+        tuesday: false,
+        wednesday: true,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'WEDNESDAY'],
+      },
+    ] as Slot[]
+
+    const slotsB = [
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: true,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['THURSDAY', 'FRIDAY'],
+      },
+      {
+        weekNumber: 2,
+        timeSlot: 'PM',
+        monday: true,
+        tuesday: false,
+        wednesday: true,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'WEDNESDAY'],
+      },
+    ] as Slot[]
+
+    const uniqueSlots = calculateUniqueSlots(slotsA, slotsB)
+
+    expect(uniqueSlots).toEqual([
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY'],
       },
     ])
   })

@@ -3,6 +3,7 @@ import nunjucks, { Environment } from 'nunjucks'
 import express, { Router } from 'express'
 import path from 'path'
 import { addDays, addMonths, addWeeks, addYears, startOfDay, subDays, subMonths, subWeeks } from 'date-fns'
+import { flatMap, sortBy } from 'lodash'
 import {
   addDefaultSelectedValue,
   buildErrorSummaryList,
@@ -31,7 +32,6 @@ import {
   setAttribute,
   removeUndefined,
   filterObjects,
-  flatMap,
 } from '../utils/utils'
 import config from '../config'
 import applicationVersion from '../applicationVersion'
@@ -55,6 +55,7 @@ import ServiceName from '../enum/serviceName'
 import DateOption from '../enum/dateOption'
 import { PrisonerStatus } from '../@types/prisonApiImportCustom'
 import { isoDateToDatePickerDate, parseIsoDate } from '../utils/datePickerUtils'
+import WaitlistRequester from '../enum/waitlistRequester'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -157,6 +158,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('startOfDay', startOfDay)
   njkEnv.addFilter('filter', filterObjects)
   njkEnv.addFilter('flatMap', flatMap)
+  njkEnv.addFilter('sortBy', sortBy)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
@@ -167,6 +169,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('EventSource', EventSource)
   njkEnv.addGlobal('DateOption', DateOption)
   njkEnv.addGlobal('TimeSlot', TimeSlot)
+  njkEnv.addGlobal('WaitlistRequester', WaitlistRequester)
   njkEnv.addGlobal('PrisonerStatus', PrisonerStatus)
   njkEnv.addGlobal('AppointmentFrequency', AppointmentFrequency)
   njkEnv.addGlobal('AppointmentType', AppointmentType)
@@ -180,7 +183,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
-  njkEnv.addGlobal('exclusionsFeatureToggleEnabled', config.exclusionsFeatureToggleEnabled)
+  njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

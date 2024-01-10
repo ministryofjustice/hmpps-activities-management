@@ -42,6 +42,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
             name: 'Test Activity',
           },
           exclusions: [],
+          updatedExclusions: [],
         },
       },
     } as unknown as Request
@@ -56,6 +57,20 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         slots: [
           {
             id: 1,
+            weekNumber: 1,
+            startTime: '09:00',
+            endTime: '12:00',
+            mondayFlag: true,
+            tuesdayFlag: false,
+            wednesdayFlag: false,
+            thursdayFlag: false,
+            fridayFlag: false,
+            saturdayFlag: false,
+            sundayFlag: false,
+            daysOfWeek: ['Mon'],
+          },
+          {
+            id: 2,
             weekNumber: 2,
             startTime: '09:00',
             endTime: '12:00',
@@ -77,100 +92,70 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/exclusions', {
         currentWeek: calcCurrentWeek(new Date('2022-01-01'), 2),
-        dailySlots: [
-          {
-            day: 'MONDAY',
-            weeks: [
-              {
-                slots: [],
-                weekNumber: 1,
-              },
-              {
-                slots: ['AM'],
-                weekNumber: 2,
-              },
-            ],
-          },
-          {
-            day: 'TUESDAY',
-            weeks: [
-              {
-                slots: [],
-                weekNumber: 1,
-              },
-              {
-                slots: ['AM'],
-                weekNumber: 2,
-              },
-            ],
-          },
-          {
-            day: 'WEDNESDAY',
-            weeks: [
-              {
-                slots: [],
-                weekNumber: 1,
-              },
-              {
-                slots: ['AM'],
-                weekNumber: 2,
-              },
-            ],
-          },
-          {
-            day: 'THURSDAY',
-            weeks: [
-              {
-                slots: [],
-                weekNumber: 1,
-              },
-              {
-                slots: ['AM'],
-                weekNumber: 2,
-              },
-            ],
-          },
-          {
-            day: 'FRIDAY',
-            weeks: [
-              {
-                slots: [],
-                weekNumber: 1,
-              },
-              {
-                slots: ['AM'],
-                weekNumber: 2,
-              },
-            ],
-          },
-          {
-            day: 'SATURDAY',
-            weeks: [
-              {
-                slots: [],
-                weekNumber: 1,
-              },
-              {
-                slots: ['AM'],
-                weekNumber: 2,
-              },
-            ],
-          },
-          {
-            day: 'SUNDAY',
-            weeks: [
-              {
-                slots: [],
-                weekNumber: 1,
-              },
-              {
-                slots: ['AM'],
-                weekNumber: 2,
-              },
-            ],
-          },
-        ],
+        weeklySlots: {
+          1: [
+            {
+              day: 'MONDAY',
+              slots: ['AM'],
+            },
+            {
+              day: 'TUESDAY',
+              slots: [],
+            },
+            {
+              day: 'WEDNESDAY',
+              slots: [],
+            },
+            {
+              day: 'THURSDAY',
+              slots: [],
+            },
+            {
+              day: 'FRIDAY',
+              slots: [],
+            },
+            {
+              day: 'SATURDAY',
+              slots: [],
+            },
+            {
+              day: 'SUNDAY',
+              slots: [],
+            },
+          ],
+          2: [
+            {
+              day: 'MONDAY',
+              slots: ['AM'],
+            },
+            {
+              day: 'TUESDAY',
+              slots: ['AM'],
+            },
+            {
+              day: 'WEDNESDAY',
+              slots: ['AM'],
+            },
+            {
+              day: 'THURSDAY',
+              slots: ['AM'],
+            },
+            {
+              day: 'FRIDAY',
+              slots: ['AM'],
+            },
+            {
+              day: 'SATURDAY',
+              slots: ['AM'],
+            },
+            {
+              day: 'SUNDAY',
+              slots: ['AM'],
+            },
+          ],
+        },
         exclusions: [],
+        disabledSlots: ['MONDAYAM'],
         prisonerName: 'John Smith',
         scheduleWeeks: 2,
       })
@@ -195,6 +180,18 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       await handler.POST(req, res)
       expect(req.session.allocateJourney.updatedExclusions).toEqual([
         {
+          weekNumber: 1,
+          timeSlot: 'AM',
+          monday: true,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['MONDAY'],
+        },
+        {
           weekNumber: 2,
           timeSlot: 'AM',
           monday: false,
@@ -210,7 +207,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
 
-    it('should update the exclusions on the allocation and redirect when in edit mode', async () => {
+    it('should update the exclusions in session and redirect when in create mode', async () => {
       req.params.mode = 'edit'
       req.params.allocationId = '1'
 
@@ -220,63 +217,38 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         },
       }
 
+      expect(req.session.allocateJourney.updatedExclusions).toHaveLength(0)
+
       await handler.POST(req, res)
 
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith('LEI', 1, {
-        exclusions: [
-          {
-            weekNumber: 2,
-            timeSlot: 'AM',
-            monday: false,
-            tuesday: true,
-            wednesday: true,
-            thursday: true,
-            friday: true,
-            saturday: true,
-            sunday: true,
-            daysOfWeek: ['TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
-          },
-        ],
-      })
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/activities/allocations/view/1',
-        'Allocation updated',
-        "You've updated the exclusions for this allocation",
-      )
-    })
-
-    it('should update the exclusions on the allocation and redirect when in exclude mode', async () => {
-      req.params.mode = 'exclude'
-      req.params.allocationId = '1'
-
-      req.body = {
-        week2: {
-          monday: ['am'],
+      expect(req.session.allocateJourney.updatedExclusions).toEqual([
+        {
+          weekNumber: 1,
+          timeSlot: 'AM',
+          monday: true,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['MONDAY'],
         },
-      }
+        {
+          weekNumber: 2,
+          timeSlot: 'AM',
+          monday: false,
+          tuesday: true,
+          wednesday: true,
+          thursday: true,
+          friday: true,
+          saturday: true,
+          sunday: true,
+          daysOfWeek: ['TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
+        },
+      ])
 
-      await handler.POST(req, res)
-
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith('LEI', 1, {
-        exclusions: [
-          {
-            weekNumber: 2,
-            timeSlot: 'AM',
-            monday: false,
-            tuesday: true,
-            wednesday: true,
-            thursday: true,
-            friday: true,
-            saturday: true,
-            sunday: true,
-            daysOfWeek: ['TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
-          },
-        ],
-      })
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/activities/exclusions/prisoner/ABC123',
-        'You have updated when John Smith should attend Test Activity',
-      )
+      expect(res.redirect).toHaveBeenCalledWith('confirm-exclusions')
     })
   })
 })

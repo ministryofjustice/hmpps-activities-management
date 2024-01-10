@@ -31,10 +31,9 @@ export type CreateAnActivityJourney = {
   riskLevel?: string
   minimumPayRate?: number
   maximumPayRate?: number
+  paid?: boolean
   pay?: ActivityPay[]
   flat?: ActivityPay[]
-  minimumIncentiveNomisCode?: string
-  minimumIncentiveLevel?: string
   qualificationOption?: string
   educationLevels?: Array<{
     studyAreaCode: string

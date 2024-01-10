@@ -49,7 +49,7 @@ context('Record non attendance', () => {
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(2023, 1, 2))
-    selectPeriodPage.submit()
+    selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
     activitiesPage.activityRows().should('have.length', 4)

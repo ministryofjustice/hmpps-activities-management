@@ -82,47 +82,44 @@
                         Pay rate
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        <div>{{ pay.incentiveLevel }} incentive level:</div>
-                        <div>{{ (pay.prisonPayBand.alias + ' - ' + pay.rate | toMoney) if pay else '£0' }}</div>
+                        {{ payRate(pay) }}
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         {% if isOnlyPay %}
                             <div>No alternative</div>
                             <div>pay rates</div>
-                        {% else %}
+                        {% elseif pay.prisonPayBand %}
                             <a href="../edit/{{ allocation.id }}/pay-band"
                                class="govuk-link govuk-link--no-visited-state">
                                 Change
-                            </a>
+                            </a>                            
                         {% endif %}
                     </dd>
                 </div>
-                {% if exclusionsFeatureToggleEnabled %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Schedule
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {% for week, slots in dailySlots %}
-                                {% if dailySlots | length > 1 %}
-                                    <div class='govuk-heading-s govuk-!-margin-bottom-1'>
-                                        Week {{ week }}
-                                        {{ govukTag({
-                                            text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
-                                        }) if currentWeek == week }}
-                                    </div>
-                                {% endif %}
-                                {{ daysAndTimes(slots, false, false) }}
-                            {% endfor %}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a href="../edit/{{ allocation.id }}/exclusions"
-                               class="govuk-link govuk-link--no-visited-state">
-                                Change
-                            </a>
-                        </dd>
-                    </div>
-                {% endif %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Schedule
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {% for week, slots in dailySlots %}
+                            {% if dailySlots | length > 1 %}
+                                <div class='govuk-heading-s govuk-!-margin-bottom-1'>
+                                    Week {{ week }}
+                                    {{ govukTag({
+                                        text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
+                                    }) if currentWeek == week }}
+                                </div>
+                            {% endif %}
+                            {{ daysAndTimes(slots, false, false) }}
+                        {% endfor %}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a href="../edit/{{ allocation.id }}/exclusions"
+                           class="govuk-link govuk-link--no-visited-state">
+                            Change
+                        </a>
+                    </dd>
+                </div>
             </dl>
             <div class="govuk-button-group">
                 {{ govukButton({
@@ -133,3 +130,12 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro payRate(payBand) %}
+    {% if pay.prisonPayBand %}
+        <div>{{ pay.incentiveLevel }} incentive level:</div>
+        <div>{{ (pay.prisonPayBand.alias + ' - ' + pay.rate | toMoney) if pay else '£0' }}</div>
+    {% else %}
+        No pay rate for this activity
+    {% endif %}
+{% endmacro %}

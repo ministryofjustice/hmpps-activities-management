@@ -1,6 +1,10 @@
 import nock from 'nock'
 import { serviceCheckFactory } from './healthCheck'
 import { AgentConfig } from '../config'
+import ActivitiesService from '../services/activitiesService'
+
+jest.mock('../services/activitiesService')
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Service healthcheck', () => {
   const healthcheck = serviceCheckFactory('externalService', 'http://test-service.com/ping', new AgentConfig(), {
@@ -25,6 +29,14 @@ describe('Service healthcheck', () => {
 
       const output = await healthcheck()
       expect(output).toEqual('OK')
+    })
+  })
+
+  describe('Check unhealthy', () => {
+    it('Should throw error from api', async () => {
+      fakeServiceApi.get('/ping').thrice().reply(500)
+
+      await expect(healthcheck()).rejects.toThrow('Internal Server Error')
     })
   })
 
@@ -78,6 +90,17 @@ describe('Service healthcheck', () => {
         .reply(200, { failure: 'three' })
 
       await expect(healthcheck()).rejects.toThrow('Response timeout of 100ms exceeded')
+    })
+  })
+
+  describe('/info route', () => {
+    it('should return the correct JSON response', async () => {
+      activitiesService.activeRolledPrisons.mockResolvedValue(['MDI', 'LPI'])
+
+      fakeServiceApi.get('/info').reply(200, ['MDI', 'LPI'])
+
+      const response = await activitiesService.activeRolledPrisons()
+      expect(response).toEqual(['MDI', 'LPI'])
     })
   })
 })

@@ -1,18 +1,12 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../../services/activitiesService'
-
-enum RequesterEnum {
-  PRISONER = 'PRISONER',
-  GUIDANCE_STAFF = 'GUIDANCE_STAFF',
-  OTHER = 'OTHER',
-}
+import WaitlistRequester from '../../../../../enum/waitlistRequester'
 
 export default class EditRequesterRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     return res.render(`pages/activities/waitlist-application/edit-requester`, {
-      RequesterEnum,
       prisonerName: req.session.waitListApplicationJourney.prisoner.name,
     })
   }
@@ -22,15 +16,7 @@ export default class EditRequesterRoutes {
     const { user } = res.locals
     const { requester, otherRequester } = req.body
 
-    let requestedBy
-    if (requester === RequesterEnum.OTHER) {
-      requestedBy = otherRequester
-    } else {
-      requestedBy =
-        requester === RequesterEnum.PRISONER
-          ? 'Self-requested'
-          : 'IAG or CXK careers information, advice and guidance staff'
-    }
+    const requestedBy = requester !== WaitlistRequester.SOMEONE_ELSE.code ? requester : otherRequester
 
     await this.activitiesService.patchWaitlistApplication(+applicationId, { requestedBy }, user)
 

@@ -24,8 +24,7 @@
         "name": "Education",
         "description": "Such as classes in English, maths, construction and computer skills"
       },
-      "riskLevel": null,
-      "minimumIncentiveLevel": null
+      "riskLevel": null
     },
     "slots": [
       {
@@ -63,8 +62,7 @@
         "name": "Education",
         "description": "Such as classes in English, maths, construction and computer skills"
       },
-      "riskLevel": null,
-      "minimumIncentiveLevel": null
+      "riskLevel": null
     },
     "slots": [
       {
@@ -102,8 +100,7 @@
         "name": "Education",
         "description": "Such as classes in English, maths, construction and computer skills"
       },
-      "riskLevel": null,
-      "minimumIncentiveLevel": null
+      "riskLevel": null
     },
     "slots": [
       {
@@ -141,8 +138,7 @@
         "name": "Education",
         "description": "Such as classes in English, maths, construction and computer skills"
       },
-      "riskLevel": null,
-      "minimumIncentiveLevel": null
+      "riskLevel": null
     },
     "slots": [
       {

@@ -23,10 +23,11 @@ import PayBandPage from '../pages/allocateToActivity/payBand'
 import CheckAnswersPage from '../pages/allocateToActivity/checkAnswers'
 import CancelPage from '../pages/allocateToActivity/cancel'
 import ConfirmationPage from '../pages/allocateToActivity/confirmation'
-import AllocationDashboard from '../pages/allocateToActivity/AllocationDashboard'
+import AllocationDashboard from '../pages/allocateToActivity/allocationDashboard'
 import ManageActivitiesDashboardPage from '../pages/activities/manageActivitiesDashboard'
-import BeforeYouAllocate from '../pages/allocateToActivity/before-you-allocate'
+import BeforeYouAllocate from '../pages/allocateToActivity/beforeYouAllocate'
 import ActivitiesIndexPage from '../pages/activities'
+import ExclusionsPage from '../pages/allocateToActivity/exclusions'
 
 context('Allocate to activity', () => {
   beforeEach(() => {
@@ -69,7 +70,7 @@ context('Allocate to activity', () => {
     activitiesPage.selectActivityWithName('English level 1')
 
     const allocatePage = Page.verifyOnPage(AllocationDashboard)
-    allocatePage.allocatedPeopleRows().should('have.length', 1)
+    allocatePage.allocatedPeopleRows().should('have.length', 2)
     allocatePage.tabWithTitle('Entry level English 1 schedule').click()
     allocatePage.activeTimeSlots().should('have.length', 1)
 
@@ -99,7 +100,10 @@ context('Allocate to activity', () => {
 
     const payBandPage = Page.verifyOnPage(PayBandPage)
     payBandPage.selectPayBand('Medium - £1.75')
-    payBandPage.confirmPay()
+    payBandPage.continue()
+
+    const exclusionsPage = Page.verifyOnPage(ExclusionsPage)
+    exclusionsPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.cancel()

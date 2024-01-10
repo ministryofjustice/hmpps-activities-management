@@ -26,6 +26,7 @@ import ConfirmCapacityRoutes from './handlers/confirmCapacity'
 import CheckPayRoutes from './handlers/checkPay'
 import TierRoutes, { TierForm } from './handlers/tier'
 import OrganiserRoutes, { OrganiserForm } from './handlers/organiser'
+import PayOption, { PayOptionForm } from './handlers/payOption'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -39,9 +40,10 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const tierHandler = new TierRoutes(activitiesService)
   const organiserHandler = new OrganiserRoutes(activitiesService)
   const riskLevelHandler = new RiskLevelRoutes(activitiesService)
+  const payOption = new PayOption(activitiesService, prisonService)
   const payRateTypeHandler = new PayRateTypeRoutes()
   const payHandler = new PayRoutes(prisonService, activitiesService)
-  const checkPayHandler = new CheckPayRoutes(activitiesService, prisonService)
+  const checkPayHandler = new CheckPayRoutes(prisonService)
   const removePayHandler = new RemovePayRoutes(activitiesService, prisonService)
   const removeFlatRateHandler = new RemoveFlatRateRoutes()
   const qualificationHandler = new QualificationRoutes()
@@ -68,6 +70,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/organiser', organiserHandler.POST, OrganiserForm)
   get('/risk-level', riskLevelHandler.GET, true)
   post('/risk-level', riskLevelHandler.POST, RiskLevel)
+  get('/pay-option', payOption.GET, true)
+  post('/pay-option', payOption.POST, PayOptionForm)
   get('/pay-rate-type', payRateTypeHandler.GET, true)
   post('/pay-rate-type', payRateTypeHandler.POST, PayRateType)
   get('/pay/:payRateType', payHandler.GET, true)

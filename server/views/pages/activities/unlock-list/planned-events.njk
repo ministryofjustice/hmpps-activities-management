@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
@@ -21,9 +20,9 @@
             <tr class="govuk-table__row"><td>
                 <div class="govuk-grid-row govuk-!-margin-bottom-1">
                     <div class="govuk-grid-column-two-thirds govuk-!-print-grid-column-one-half govuk-!-margin-bottom-1">
-                        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ location }} - Unlock list</h1>
+                        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ location.name }} - Unlock list</h1>
                         <div class="govuk-caption-l govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ timeSlot | upper }} session</div>
-                        <div class="govuk-caption-l">{{ date |formatDate('cccc d LLLL y') }}</div>
+                        <div class="govuk-caption-l">{{ date | formatDate }}</div>
                         <div class="govuk-!-margin-top-2">
                             <div class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
                                 {{ unlockListItems.length }} people to unlock
@@ -47,13 +46,13 @@
         </thead>
         <tbody class="govuk-table__body"><tr class="govuk-table__row"><td>
             {% set filterOptionsHtml %}
-                {% if subLocations | length %}
+                {% if location.children | length %}
                     {% set locationFilters = [] %}
-                    {% for location in subLocations %}
+                    {% for subLocation in location.children %}
                         {% set locationFilters = (locationFilters.push({
-                            value: location,
-                            text: location,
-                            checked: location in session.unlockListJourney.subLocationFilters
+                            value: subLocation.key,
+                            text: subLocation.name,
+                            checked: subLocation.key in session.unlockListJourney.subLocationFilters
                         }), locationFilters) %}
                     {% endfor %}
 
@@ -154,7 +153,20 @@
                             <div class="moj-action-bar__filter"></div>
                             {{ mojButtonMenu({
                                 items: [{
-                                    attributes: { id: 'print-unlock' },
+                                    attributes: { 
+                                        id: 'print-unlock',
+                                        'data-track-click-event': 'SAA-Unlock-List-Printed',
+                                        'data-track-event-properties': {
+                                            user: user.username,
+                                            prisonCode: user.activeCaseLoad.caseLoadId,
+                                            unlockDate: date,
+                                            timePeriod: timeSlot,
+                                            location: location.name
+                                        } | dump,
+                                        'data-track-event-measurements': {
+                                            prisonerCount: unlockListItems | length
+                                        } | dump
+                                    },
                                     text: "Print this unlock list",
                                     classes: "govuk-button--blue js-print no-js-hidden",
                                     preventDoubleClick: true

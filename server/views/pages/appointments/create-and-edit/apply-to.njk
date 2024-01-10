@@ -48,7 +48,8 @@
                 {% endif %}
 
                 {{ govukButton({
-                    text: getAppointmentEditApplyToCta(session.appointmentJourney, session.editAppointmentJourney)
+                    text: getAppointmentEditApplyToCta(session.appointmentJourney, session.editAppointmentJourney),
+                    preventDoubleClick: true
                 }) }}
             </form>
         </div>

@@ -58,6 +58,9 @@ export default class EndDateRoutes {
     if (req.params.mode === 'edit' || req.params.mode === 'remove') {
       return res.redirectOrReturn(`reason`)
     }
-    return res.redirectOrReturn('pay-band')
+    if (req.session.allocateJourney.activity.paid) {
+      return res.redirectOrReturn('pay-band')
+    }
+    return res.redirectOrReturn('exclusions')
   }
 }

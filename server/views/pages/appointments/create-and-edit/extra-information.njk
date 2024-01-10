@@ -20,18 +20,43 @@
       {{ appointmentTypeCaption(session) }}
       {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
         <h1 class="govuk-heading-l">
-            <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information (optional)</label>
+            {% if session.appointmentJourney.category.code == 'VLB' %}
+                         <label class="govuk-label govuk-label--l" for="extraInformation">Enter the court name and any extra information</label>
+                {% else %}
+                        <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information (optional)</label>
+             {% endif %}
         </h1>
         <p class="govuk-body" data-qa="first-paragraph">
-            Add or edit any important information for who’s attending about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.
-        </p>
+            {% if session.appointmentJourney.category.code == 'VLB' %}
+                 Enter the court the booking is for, plus:
+                 <ul>
+                     <li class='govuk-list govuk-list--bullet'> details of any briefings before or after the hearing </li>
+                     <li class='govuk-list govuk-list--bullet'> other important information for who's attending about how to prepare for their appointment </li>
+                 </ul>
+               <p> This will be printed on the prisioner's movement slip. </p>
+            {% else %}
+                   Add or edit any important information for who’s attending about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.
+            {% endif %}
       {% else %}
         <h1 class="govuk-heading-l">
-            <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information (optional)</label>
+            {% if session.appointmentJourney.category.code == 'VLB' %}
+                 <label class="govuk-label govuk-label--l" for="extraInformation">Enter the court name and any extra information</label>
+            {% else %}
+                <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information (optional)</label>
+            {% endif %}
         </h1>
-        <p class="govuk-body" data-qa="first-paragraph">
-            Add any important information for who’s attending about how to prepare for their appointment. It will be printed on their movement slip.
-        </p>
+            <p class="govuk-body" data-qa="first-paragraph">
+                {% if session.appointmentJourney.category.code == 'VLB' %}
+                         Enter the court the booking is for, plus:
+                         <ul>
+                             <li class='govuk-list govuk-list--bullet'> details of any briefings before or after the hearing </li>
+                             <li class='govuk-list govuk-list--bullet'> other important information for who's attending about how to prepare for their appointment </li>
+                         </ul>
+                      <p> This will be printed on the prisoner's movement slip. </p>
+                    {% else %}
+                          Add any important information for who’s attending about how to prepare for their appointment. It will be printed on their movement slip.
+                {% endif %}
+            </p>
       {% endif %}
       <p class="govuk-body">
           Wing staff will see the words ‘Extra information’ on the printed unlock list, but for confidentiality the full message will be viewable only in the appointment details within this service.
@@ -40,15 +65,18 @@
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
         <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="4000">
           <div class="govuk-form-group">
-            <textarea class="govuk-textarea govuk-js-character-count" id="extraInformation" name="extraInformation" rows="5" aria-describedby="extra-information-info">{{ formResponses.extraInformation or session.appointmentJourney.extraInformation }}</textarea>
-          </div>
-          <div id="extra-information-info" class="govuk-hint govuk-character-count__message">
-            You can enter up to 4000 characters
+            {{ govukCharacterCount({
+                id: "extraInformation",
+                name: "extraInformation",
+                errorMessage: validationErrors | findError("extraInformation"),
+                value: formResponses.extraInformation or session.appointmentJourney.extraInformation,
+                maxlength: "4000"
+            }) }}
           </div>
         </div>
-
         {{ govukButton({
-          text: "Update extra information" if isCtaAcceptAndSave else "Continue"
+          text: "Update extra information" if isCtaAcceptAndSave else "Continue",
+          preventDoubleClick: true
         }) }}
       </form>
     </div>

@@ -112,8 +112,6 @@
   "startDate": "14/01/2023",
   "endDate": null,
   "riskLevel": "high",
-  "minimumIncentiveNomisCode": "BAS",
-  "minimumIncentiveLevel": "Basic",
   "createdTime": "14/01/2023 10:55",
   "createdBy": "SCH_ACTIVITY",
   "minimumEducationLevel": [{ "educationLevelCode": "1", "educationLevelDescription": "" }],
@@ -147,8 +145,6 @@
           "description": "Such as classes in English, maths, construction or barbering"
         },
         "riskLevel": "low",
-        "minimumIncentiveNomisCode": "BAS",
-        "minimumIncentiveLevel": "Basic",
         "minimumEducationLevel": []
       },
       "slots": [

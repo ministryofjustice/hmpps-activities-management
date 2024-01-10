@@ -93,7 +93,6 @@ describe('initialiseEditJourney', () => {
     summary: 'activity summary',
     startDate: '2022-01-01',
     endDate: '2023-12-01',
-    minimumIncentiveLevel: 'Basic',
     pay: [
       {
         id: 123456,
@@ -134,7 +133,6 @@ describe('initialiseEditJourney', () => {
       riskLevel: activity.riskLevel,
       startDate: activity.startDate,
       endDate: activity.endDate,
-      minimumIncentiveLevel: activity.minimumIncentiveLevel,
       scheduleWeeks: schedule.scheduleWeeks,
       slots: mapActivityModelSlotsToJourney(schedule.slots),
       runsOnBankHoliday: schedule.runsOnBankHoliday,

@@ -103,12 +103,14 @@ export default class MetricsEvent {
     })
   }
 
-  static CREATE_UNLOCK_LIST(date: Date, timeslot: string, location: string, user: ServiceUser) {
-    return new MetricsEvent(MetricsEventType.CREATE_UNLOCK_LIST, user).addProperties({
-      unlockDate: formatIsoDate(date),
-      timePeriod: timeslot,
-      location,
-    })
+  static CREATE_UNLOCK_LIST(date: Date, timeslot: string, location: string, prisonerCount: number, user: ServiceUser) {
+    return new MetricsEvent(MetricsEventType.CREATE_UNLOCK_LIST, user)
+      .addProperties({
+        unlockDate: formatIsoDate(date),
+        timePeriod: timeslot,
+        location,
+      })
+      .addMeasurement('prisonerCount', prisonerCount)
   }
 
   static CREATE_APPOINTMENT_JOURNEY_STARTED(req: Request, user: ServiceUser) {

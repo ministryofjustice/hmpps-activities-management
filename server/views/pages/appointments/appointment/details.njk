@@ -12,7 +12,8 @@
 
 {% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
 {% set pageId = 'appointment-details-page' %}
-{% set jsBackLink = true %}
+{% set hardBackLinkText = 'Go to Appointments Dashboard' %}
+{% set hardBackLinkHref = '/appointments/search?startDate=' + appointments.startDate %}
 
 {% set appointmentLink = '/appointments/' + appointment.id  %}
 
@@ -247,7 +248,19 @@
         <div class="govuk-grid-column-two-thirds appointment-details__attendee-list">
             <div class="govuk-button-group govuk-!-margin-0 govuk-!-display-none-print">
                 {{ govukButton({
-                    attributes: { id: 'print-movement-list' },
+                    attributes: { 
+                        id: 'print-movement-list',
+                        'data-track-click-event': 'SAA-Appointment-Attendee-List-Printed',
+                        'data-track-event-properties': { 
+                            user: user.username,
+                            prisonCode: user.activeCaseLoad.caseLoadId,
+                            appointmentSeriesId: appointment.appointmentSeries.id,
+                            appointmentId: appointment.id
+                        } | dump,
+                        'data-track-event-measurements': {
+                            attendeeCount: appointment.attendees | length
+                        } | dump
+                    },
                     text: "Print attendance list",
                     classes: "govuk-button--blue govuk-!-margin-bottom-2 js-print no-js-hidden",
                     preventDoubleClick: true

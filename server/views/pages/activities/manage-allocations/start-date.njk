@@ -33,7 +33,8 @@
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Continue"
+                        text: "Continue" if session.req.params.mode != 'edit' else "Confirm",
+                        preventDoubleClick: true
                     }) }}
                     {% if session.req.params.mode != 'edit' and not session.req.query.preserveHistory %}
                         <a class="govuk-link js-backlink" href="cancel">Cancel</a>

@@ -1,7 +1,6 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
-{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
@@ -9,7 +8,8 @@
 
 {% set pageTitle = appointmentSeries.appointmentName + ' series overview' %}
 {% set pageId = 'appointment-series-details-page' %}
-{% set jsBackLink = true %}
+{% set hardBackLinkText = 'Go to Appointments Dashboard' %}
+{% set hardBackLinkHref = '/appointments/search?startDate=' + appointmentSeries.appointments[0].startDate %}
 
 {% set appointmentTableRows = [] %}
 {% for appointment in appointmentSeries.appointments %}
@@ -20,7 +20,7 @@
             classes: "govuk-!-font-weight-regular govuk-!-text-align-right",
             attributes: { 'data-qa': 'appointment-sequence-no-' + appointment.sequenceNumber }
         }, {
-            text: appointmentDate | formatDate('d MMM yyyy'),
+            text: appointmentDate | formatDate,
             attributes: { 'data-qa': 'appointment-date-' + appointment.sequenceNumber }
         }, {
             html: (govukTag({ text: "Edited" }) if appointment.isEdited) +

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateIf } from 'class-validator'
+import { compareAsc } from 'date-fns'
 import PrisonService from '../../../../services/prisonService'
 import ActivityService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
@@ -12,6 +13,7 @@ import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import { Slots } from '../../create-an-activity/journey'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
+import WaitlistRequester from '../../../../enum/waitlistRequester'
 
 type Filters = {
   candidateQuery: string
@@ -54,7 +56,7 @@ export default class AllocationDashboardRoutes {
       this.prisonService.getIncentiveLevels(user.activeCaseLoad.caseLoadId, user),
     ])
 
-    const suitableForIep = this.getSuitableForIep(activity.pay, incentiveLevels)
+    const suitableForIep = this.getSuitableForIep(activity.pay, activity.paid, incentiveLevels)
     const suitableForWra = this.getSuitableForWra(activity.riskLevel)
 
     if (
@@ -91,6 +93,8 @@ export default class AllocationDashboardRoutes {
 
     const richStartDate = parseDate(activity.schedules[0].startDate)
 
+    const activeAllocations = activity.schedules[0].allocations.filter(a => a.status === 'ACTIVE').length
+
     res.render('pages/activities/allocation-dashboard/allocation-dashboard', {
       activity,
       schedule: activity.schedules[0],
@@ -105,6 +109,7 @@ export default class AllocationDashboardRoutes {
       dailySlots: activitySessionToDailyTimeSlots(activity.schedules[0].scheduleWeeks, slots),
       currentWeek: calcCurrentWeek(richStartDate, activity.schedules[0].scheduleWeeks),
       scheduleWeeks: activity.schedules[0].scheduleWeeks,
+      activeAllocations,
     })
   }
 
@@ -125,7 +130,7 @@ export default class AllocationDashboardRoutes {
       this.activitiesService.getActivity(+req.params.activityId, user),
     ])
 
-    if (!activity.pay.map(p => p.incentiveLevel).includes(iepSummary.iepLevel)) {
+    if (!activity.pay.map(p => p.incentiveLevel).includes(iepSummary.iepLevel) && activity.paid) {
       return res.validationFailed('selectedAllocation', 'No suitable pay rate exists for this candidate')
     }
 
@@ -166,8 +171,10 @@ export default class AllocationDashboardRoutes {
     }
   }
 
-  private getSuitableForIep = (pay: ActivityPay[], iepLevels: IncentiveLevel[]) => {
-    const suitableIepLevels = iepLevels.filter(i => pay.map(p => p.incentiveNomisCode).includes(i.levelCode))
+  private getSuitableForIep = (pay: ActivityPay[], paidActivity: boolean, iepLevels: IncentiveLevel[]) => {
+    const suitableIepLevels = iepLevels.filter(
+      i => pay.map(p => p.incentiveNomisCode).includes(i.levelCode) || !paidActivity,
+    )
     if (suitableIepLevels.length === iepLevels.length) return 'All Incentive Levels'
     return suitableIepLevels.map(i => i.levelName).join(', ')
   }
@@ -236,11 +243,12 @@ export default class AllocationDashboardRoutes {
           prisonerNumber: inmate.prisonerNumber,
           cellLocation: inmate.cellLocation,
           requestDate: parseDate(w.requestedDate),
-          requestedBy: w.requestedBy,
+          requestedBy: WaitlistRequester.valueOf(w.requestedBy),
           status: w.status,
           otherAllocations: otherAllocations?.map(a => ({
             activityId: a.activityId,
             scheduleName: a.scheduleDescription,
+            isUnemployment: a.isUnemployment,
           })),
           alerts: inmate.alerts.filter(a => a.alertType === 'R' && ['RLO', 'RME', 'RHI'].includes(a.alertCode)),
           currentIncentive: inmate.currentIncentive?.level?.description,
@@ -256,8 +264,10 @@ export default class AllocationDashboardRoutes {
         inmate =>
           !filters.employmentFilter ||
           filters.employmentFilter === 'Everyone' ||
-          (inmate.otherAllocations.length > 0 && filters.employmentFilter === 'In work') ||
-          (inmate.otherAllocations.length === 0 && filters.employmentFilter === 'Not in work'),
+          (inmate.otherAllocations.filter(a => !a.isUnemployment).length > 0 &&
+            filters.employmentFilter === 'In work') ||
+          (inmate.otherAllocations.filter(a => !a.isUnemployment).length === 0 &&
+            filters.employmentFilter === 'Not in work'),
       )
       .filter(
         inmate =>
@@ -273,6 +283,7 @@ export default class AllocationDashboardRoutes {
           filters.incentiveLevelFilter.split(', ').includes(inmate.currentIncentive) ||
           filters.incentiveLevelFilter === inmate.currentIncentive,
       )
+      .sort((a1, a2) => compareAsc(a1.requestDate, a2.requestDate))
 
     return {
       waitlistedPrisoners: filteredWaitlist,

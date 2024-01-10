@@ -33,7 +33,8 @@
                 {% if session.req.params.mode == 'edit' %}
                     <div class="govuk-button-group">
                         {{ govukButton({
-                            text: "Update start date"
+                            text: "Update start date",
+                            preventDoubleClick: true
                         }) }}
                         <a class="govuk-link js-backlink" href="/">Cancel</a>
                     </div>

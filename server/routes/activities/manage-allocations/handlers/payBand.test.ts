@@ -26,7 +26,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
         },
       },
       render: jest.fn(),
-      redirect: jest.fn(),
+      redirectOrReturn: jest.fn(),
       redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
@@ -119,7 +119,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
         alias: 'Enhanced rate 2',
         rate: 150,
       })
-      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('exclusions')
     })
 
     it('edit mode should edit the allocation and redirect with success', async () => {

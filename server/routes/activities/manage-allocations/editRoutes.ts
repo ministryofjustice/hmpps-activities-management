@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import createHttpError from 'http-errors'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import { Services } from '../../../services'
 import PayBandRoutes, { PayBand } from './handlers/payBand'
@@ -10,7 +9,7 @@ import EndDateRoutes, { EndDate } from './handlers/endDate'
 import RemoveDateOptionRoutes, { RemoveDateOption } from './handlers/removeDateOption'
 import DeallocationReasonRoutes, { DeallocationReason } from './handlers/deallocationReason'
 import ExclusionRoutes, { Schedule } from './handlers/exclusions'
-import config from '../../../config'
+import ConfirmExclusionsRoutes from './handlers/confirmExclusions'
 
 export default function Index({ activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -25,6 +24,7 @@ export default function Index({ activitiesService }: Services): Router {
   const removeDateOptionHandler = new RemoveDateOptionRoutes(activitiesService)
   const payBandHandler = new PayBandRoutes(activitiesService)
   const exclusionsHandler = new ExclusionRoutes(activitiesService)
+  const confirmExclusionsHandler = new ConfirmExclusionsRoutes(activitiesService)
 
   get('/start-date', startDateHandler.GET, true)
   post('/start-date', startDateHandler.POST, StartDate)
@@ -36,12 +36,10 @@ export default function Index({ activitiesService }: Services): Router {
   post('/remove-end-date-option', removeDateOptionHandler.POST, RemoveDateOption)
   get('/pay-band', payBandHandler.GET, true)
   post('/pay-band', payBandHandler.POST, PayBand)
-
-  // Exclusion routes are only accessible when running locally or when feature toggle is provided
-  router.use((req, res, next) => (!config.exclusionsFeatureToggleEnabled ? next(createHttpError.NotFound()) : next()))
-
   get('/exclusions', exclusionsHandler.GET, true)
   post('/exclusions', exclusionsHandler.POST, Schedule)
+  get('/confirm-exclusions', confirmExclusionsHandler.GET, true)
+  post('/confirm-exclusions', confirmExclusionsHandler.POST)
 
   return router
 }

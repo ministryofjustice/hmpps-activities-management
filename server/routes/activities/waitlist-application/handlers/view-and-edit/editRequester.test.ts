@@ -32,11 +32,6 @@ describe('Route Handlers - Waitlist application - Edit Requester', () => {
     it('should render the edit requester template', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-requester`, {
-        RequesterEnum: {
-          PRISONER: 'PRISONER',
-          GUIDANCE_STAFF: 'GUIDANCE_STAFF',
-          OTHER: 'OTHER',
-        },
         prisonerName: 'Alan Key',
       })
     })
@@ -52,7 +47,7 @@ describe('Route Handlers - Waitlist application - Edit Requester', () => {
 
       expect(activitiesService.patchWaitlistApplication).toHaveBeenCalledWith(
         1,
-        { requestedBy: 'Self-requested' },
+        { requestedBy: 'PRISONER' },
         { username: 'joebloggs' },
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -70,7 +65,7 @@ describe('Route Handlers - Waitlist application - Edit Requester', () => {
 
       expect(activitiesService.patchWaitlistApplication).toHaveBeenCalledWith(
         1,
-        { requestedBy: 'IAG or CXK careers information, advice and guidance staff' },
+        { requestedBy: 'GUIDANCE_STAFF' },
         { username: 'joebloggs' },
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
@@ -79,17 +74,17 @@ describe('Route Handlers - Waitlist application - Edit Requester', () => {
       )
     })
 
-    it('should set the requester in session if OTHER is selected', async () => {
+    it('should set the requester in session if SOMEONE_ELSE is selected', async () => {
       req.body = {
-        requester: 'OTHER',
-        otherRequester: 'Activity leader',
+        requester: 'SOMEONE_ELSE',
+        otherRequester: 'ACTIVITY_LEADER',
       }
 
       await handler.POST(req, res)
 
       expect(activitiesService.patchWaitlistApplication).toHaveBeenCalledWith(
         1,
-        { requestedBy: 'Activity leader' },
+        { requestedBy: 'ACTIVITY_LEADER' },
         { username: 'joebloggs' },
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(

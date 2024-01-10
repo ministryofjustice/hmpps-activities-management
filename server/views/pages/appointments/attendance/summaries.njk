@@ -25,8 +25,8 @@
 {% endmacro %}
 
 {% macro summaryLink(summary) %}
-    <a href="/appointments/{{ summary.id }}/attendance" class="govuk-link--no-visited-state">
-        {{ summary.appointmentName }}
+    <a href="/appointments/{{ summary.id }}/attendance" class="govuk-link--no-visited-state" target="_blank">
+        {{ summary.appointmentName }}<span class="govuk-visually-hidden"> (opens in new tab)</span>
     </a>
 {% endmacro %}
 

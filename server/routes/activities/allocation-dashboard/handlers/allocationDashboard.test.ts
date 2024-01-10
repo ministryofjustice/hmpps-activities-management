@@ -50,8 +50,6 @@ describe('Route Handlers - Allocation dashboard', () => {
     eligibilityRules: [],
     endDate: toDateString(nextWeek),
     inCell: false,
-    minimumIncentiveNomisCode: 'BAS',
-    minimumIncentiveLevel: 'Basic',
     outsideWork: false,
     pay: [],
     payPerSession: 'H',
@@ -104,6 +102,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
         .mockResolvedValue({
+          paid: true,
           pay: [{ incentiveNomisCode: 'BAS' }, { incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
           schedules: [activitySchedule],
         } as unknown as Activity)
@@ -125,6 +124,7 @@ describe('Route Handlers - Allocation dashboard', () => {
             prisonerName: 'Joe Bloggs',
             cellLocation: 'MDI-1-1-101',
             earliestReleaseDate: { releaseDate: '2023-12-25' },
+            isUnemployment: false,
           },
           {
             id: 2,
@@ -134,10 +134,11 @@ describe('Route Handlers - Allocation dashboard', () => {
             prisonerName: 'John Smith',
             cellLocation: 'MDI-1-1-103',
             earliestReleaseDate: { releaseDate: '2023-12-26' },
+            isUnemployment: false,
           },
         ] as Allocation[])
       when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(atLeast(['A0013DZ']))
+        .calledWith(atLeast(['A0013DZ', 'B2222CD']))
         .mockResolvedValue([
           {
             prisonerNumber: 'A0013DZ',
@@ -150,6 +151,18 @@ describe('Route Handlers - Allocation dashboard', () => {
                 alertCode: 'RME',
               },
             ],
+            currentIncentive: {
+              level: {
+                description: 'Standard',
+              },
+            },
+          },
+          {
+            prisonerNumber: 'B2222CD',
+            firstName: 'JOE',
+            lastName: 'BLOGGS',
+            cellLocation: 'MDI-4-2-010',
+            alerts: [],
             currentIncentive: {
               level: {
                 description: 'Standard',
@@ -176,7 +189,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           },
         ] as PrisonerAllocations[])
       when(activitiesService.getActivePrisonPrisonerAllocations)
-        .calledWith(atLeast(['A0013DZ']))
+        .calledWith(atLeast(['A0013DZ', 'B2222CD']))
         .mockResolvedValue([
           {
             prisonerNumber: 'A0013DZ',
@@ -184,6 +197,10 @@ describe('Route Handlers - Allocation dashboard', () => {
               { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
               { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
             ],
+          },
+          {
+            prisonerNumber: 'B2222CD',
+            allocations: [{ activityId: 3, scheduleId: 3, scheduleDescription: 'unemployed', isUnemployment: true }],
           },
         ] as PrisonerAllocations[])
       when(activitiesService.getActivityCandidates)
@@ -210,7 +227,15 @@ describe('Route Handlers - Allocation dashboard', () => {
             prisonerNumber: 'A0013DZ',
             status: 'PENDING',
             requestedDate: '2023-08-07',
-            requestedBy: 'Activities Management',
+            requestedBy: 'PRISONER',
+          },
+          {
+            id: 2,
+            scheduleId: 1,
+            prisonerNumber: 'B2222CD',
+            status: 'PENDING',
+            requestedDate: '2023-08-07',
+            requestedBy: 'PRISONER',
           },
         ] as WaitingListApplication[])
     })
@@ -291,7 +316,7 @@ describe('Route Handlers - Allocation dashboard', () => {
               earliestReleaseDate: { releaseDate: '2023-12-26' },
             },
           ],
-          waitlistSize: 1,
+          waitlistSize: 2,
           waitlistedPrisoners: [
             {
               cellLocation: 'MDI-4-2-009',
@@ -300,11 +325,12 @@ describe('Route Handlers - Allocation dashboard', () => {
                 {
                   activityId: 2,
                   scheduleName: 'other schedule',
+                  isUnemployment: false,
                 },
               ],
               prisonerNumber: 'A0013DZ',
               requestDate: new Date(2023, 7, 7),
-              requestedBy: 'Activities Management',
+              requestedBy: 'Self-requested',
               status: 'PENDING',
               waitlistApplicationId: 1,
               currentIncentive: 'Standard',
@@ -314,6 +340,24 @@ describe('Route Handlers - Allocation dashboard', () => {
                   alertType: 'R',
                 },
               ],
+            },
+            {
+              cellLocation: 'MDI-4-2-010',
+              name: 'JOE BLOGGS',
+              otherAllocations: [
+                {
+                  activityId: 3,
+                  scheduleName: 'unemployed',
+                  isUnemployment: true,
+                },
+              ],
+              prisonerNumber: 'B2222CD',
+              requestDate: new Date(2023, 7, 7),
+              requestedBy: 'Self-requested',
+              status: 'PENDING',
+              waitlistApplicationId: 2,
+              currentIncentive: 'Standard',
+              alerts: [],
             },
           ],
           pagedCandidates: {
@@ -337,6 +381,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           },
           suitableForIep: 'All Incentive Levels',
           suitableForWra: 'Low or Medium or High',
+          activeAllocations: 3,
         }),
       )
     })
@@ -347,6 +392,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
         .mockResolvedValue({
+          paid: true,
           pay: [{ incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
           schedules: [activitySchedule],
         } as unknown as Activity)
@@ -482,6 +528,12 @@ describe('Route Handlers - Allocation dashboard', () => {
           filters: expect.objectContaining({
             employmentFilter: 'In work',
           }),
+          waitlistSize: 2,
+          waitlistedPrisoners: [
+            expect.objectContaining({
+              prisonerNumber: 'A0013DZ',
+            }),
+          ],
         }),
       )
       expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
@@ -507,6 +559,15 @@ describe('Route Handlers - Allocation dashboard', () => {
           filters: expect.objectContaining({
             employmentFilter: 'Everyone',
           }),
+          waitlistSize: 2,
+          waitlistedPrisoners: expect.arrayContaining([
+            expect.objectContaining({
+              prisonerNumber: 'A0013DZ',
+            }),
+            expect.objectContaining({
+              prisonerNumber: 'B2222CD',
+            }),
+          ]),
         }),
       )
       expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
@@ -532,6 +593,12 @@ describe('Route Handlers - Allocation dashboard', () => {
           filters: expect.objectContaining({
             employmentFilter: 'Not in work',
           }),
+          waitlistSize: 2,
+          waitlistedPrisoners: [
+            expect.objectContaining({
+              prisonerNumber: 'B2222CD',
+            }),
+          ],
         }),
       )
       expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
@@ -617,7 +684,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       activitiesService.getActivity = jest.fn()
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
-        .mockResolvedValue({ pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }] } as Activity)
+        .mockResolvedValue({ paid: true, pay: [{ incentiveLevel: 'STD' }, { incentiveLevel: 'ENH' }] } as Activity)
 
       prisonService.getPrisonerIepSummary = jest.fn()
       when(prisonService.getPrisonerIepSummary)

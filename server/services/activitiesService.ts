@@ -4,7 +4,6 @@ import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
   ActivitySchedule,
-  ActivityScheduleLite,
   Allocation,
   AttendanceUpdateRequest,
   LocationGroup,
@@ -90,7 +89,7 @@ export default class ActivitiesService {
   allocateToSchedule(
     scheduleId: number,
     prisonerNumber: string,
-    payBandId: number,
+    payBandId: number | null,
     user: ServiceUser,
     startDate: string,
     endDate: string,
@@ -146,10 +145,6 @@ export default class ActivitiesService {
       prisonerNumbers,
       user,
     )
-  }
-
-  async getDefaultScheduleOfActivity(activity: Activity, user: ServiceUser): Promise<ActivityScheduleLite> {
-    return this.getActivitySchedule(activity.schedules[0].id, user)
   }
 
   async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
@@ -259,6 +254,10 @@ export default class ActivitiesService {
 
   getPrisonRolloutPlan(prisonCode: string) {
     return this.activitiesApiClient.getPrisonRolloutPlan(prisonCode)
+  }
+
+  getRolledOutPrisons() {
+    return this.activitiesApiClient.getRolledOutPrisons()
   }
 
   async getAllAttendance(sessionDate: Date, user: ServiceUser): Promise<AllAttendance[]> {
@@ -392,5 +391,10 @@ export default class ActivitiesService {
     user: ServiceUser,
   ) {
     return this.activitiesApiClient.searchWaitingListApplications(prisonCode, searchRequest, pageOptions, user)
+  }
+
+  async activeRolledPrisons(): Promise<string[]> {
+    const r = await this.getRolledOutPrisons()
+    return r.filter(item => item.activitiesRolledOut || item.appointmentsRolledOut).map(item => item.prisonCode)
   }
 }
