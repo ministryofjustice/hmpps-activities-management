@@ -16,12 +16,12 @@
 
             <p class="govuk-body">You can allocate them to {{ session.allocateJourney.activity.name }} when they are back in.</p>
 
-            <form>
+            <div class="govuk-button-group">
                 {{ govukButton({
                     classes: 'js-backlink',
                     text: "Return to waitlist applications"
                 }) }}
-            </form>
+            </div>
         </div>
     </div>
 {% endblock %}
