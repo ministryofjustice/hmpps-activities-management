@@ -44,7 +44,10 @@ export class SelectedAllocations {
 }
 
 export default class AllocationDashboardRoutes {
-  constructor(private readonly prisonService: PrisonService, private readonly activitiesService: ActivityService) {}
+  constructor(
+    private readonly prisonService: PrisonService,
+    private readonly activitiesService: ActivityService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals

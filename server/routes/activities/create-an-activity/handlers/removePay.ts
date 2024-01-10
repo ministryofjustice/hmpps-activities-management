@@ -12,7 +12,10 @@ export class ConfirmRemoveOptions {
 }
 
 export default class RemovePayRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { iep } = req.query

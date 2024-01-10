@@ -10,7 +10,10 @@ import { PrisonerStatus } from '../../../../@types/prisonApiImportCustom'
 import { dateFromDateOption, formatIsoDate } from '../../../../utils/datePickerUtils'
 
 export default class LocationEventsRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   private RELEVANT_ALERT_CODES = ['HA', 'PEEP', 'XEL', 'XCU']
 
@@ -109,7 +112,7 @@ export default class LocationEventsRoutes {
               } as MovementListPrisonerEvents
             })
             .filter(pe => pe),
-        } as MovementListLocation),
+        }) as MovementListLocation,
     )
 
     return res.render('pages/activities/movement-list/location-events', {

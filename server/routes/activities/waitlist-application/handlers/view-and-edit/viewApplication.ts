@@ -7,7 +7,10 @@ import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/typ
 import WaitlistRequester from '../../../../../enum/waitlistRequester'
 
 export default class ViewApplicationRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { applicationId } = req.params

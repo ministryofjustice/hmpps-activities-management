@@ -8,7 +8,10 @@ import { dateFromDateOption } from '../../../../utils/datePickerUtils'
 import { AppointmentAttendanceSummary } from '../../../../@types/activitiesAPI/types'
 
 export default class SummariesRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals

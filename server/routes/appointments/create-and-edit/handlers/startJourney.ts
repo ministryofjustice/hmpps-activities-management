@@ -13,7 +13,10 @@ import EventOrganiser from '../../../../enum/eventOrganisers'
 import EventTier from '../../../../enum/eventTiers'
 
 export default class StartJourneyRoutes {
-  constructor(private readonly prisonService: PrisonService, private readonly metricsService: MetricsService) {}
+  constructor(
+    private readonly prisonService: PrisonService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   INDIVIDUAL = async (req: Request, res: Response): Promise<void> => {
     req.session.appointmentJourney = {

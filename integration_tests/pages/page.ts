@@ -9,7 +9,10 @@ export default abstract class Page {
     return new constructor()
   }
 
-  protected constructor(private readonly pageId: string, private readonly pauseAxeOnThisPage = false) {
+  protected constructor(
+    private readonly pageId: string,
+    private readonly pauseAxeOnThisPage = false,
+  ) {
     this.checkOnPage()
 
     if (!pauseAxeOnThisPage) {
