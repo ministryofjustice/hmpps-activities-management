@@ -40,7 +40,7 @@ export default class PayOption {
           pay: [],
         } as ActivityUpdateRequest
 
-        await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
+        await this.activitiesService.updateActivity(activityId, activity, user)
         const successMessage = `You've updated pay for ${req.session.createJourney.name}. People will now not be paid for attending.`
 
         const returnTo = `/activities/view/${req.session.createJourney.activityId}`

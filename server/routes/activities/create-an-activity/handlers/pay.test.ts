@@ -302,7 +302,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
         ] as unknown as ActivityPay[],
       } as unknown as ActivityUpdateRequest
 
-      expect(activitiesService.updateActivity).toHaveBeenCalledWith('MDI', 1, updatedActivity)
+      expect(activitiesService.updateActivity).toHaveBeenCalledWith(1, updatedActivity, res.locals.user)
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../check-pay?preserveHistory=true',
         'Activity updated',

@@ -81,9 +81,13 @@ describe('Route Handlers - Allocation - Remove Date option', () => {
 
       await handler.POST(req, res)
 
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(res.locals.user.activeCaseLoadId, 1, {
-        removeEndDate: true,
-      })
+      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(
+        1,
+        {
+          removeEndDate: true,
+        },
+        res.locals.user,
+      )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         `/activities/allocations/view/1`,
         'Allocation updated',

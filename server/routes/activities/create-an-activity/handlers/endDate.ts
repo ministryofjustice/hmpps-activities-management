@@ -54,7 +54,7 @@ export default class EndDateRoutes {
       const { user } = res.locals
       const { activityId, name, endDate } = req.session.createJourney
       const activity = { endDate, removeEndDate: !endDate } as ActivityUpdateRequest
-      await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
+      await this.activitiesService.updateActivity(activityId, activity, user)
 
       const successMessage = `You've updated the end date for ${name}`
       res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)

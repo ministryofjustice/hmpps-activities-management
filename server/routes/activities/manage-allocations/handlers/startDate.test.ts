@@ -62,9 +62,13 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       req.body = { startDate: new Date() }
       await handler.POST(req, res)
 
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(res.locals.user.activeCaseLoadId, 1, {
-        startDate: formatIsoDate(new Date()),
-      })
+      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(
+        1,
+        {
+          startDate: formatIsoDate(new Date()),
+        },
+        res.locals.user,
+      )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         `/activities/allocations/view/1`,
         'Allocation updated',

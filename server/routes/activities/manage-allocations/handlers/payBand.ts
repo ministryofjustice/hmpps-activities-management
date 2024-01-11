@@ -38,7 +38,7 @@ export default class PayBandRoutes {
         payBandId: +payBand,
       } as AllocationUpdateRequest
 
-      await this.activitiesService.updateAllocation(user.activeCaseLoadId, +allocationId, allocation)
+      await this.activitiesService.updateAllocation(+allocationId, allocation, user)
 
       const successMessage = `You've updated the pay rate for this allocation`
       return res.redirectWithSuccess(

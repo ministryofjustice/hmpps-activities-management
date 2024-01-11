@@ -126,7 +126,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
           pay: [],
         } as ActivityUpdateRequest
 
-        expect(activitiesService.updateActivity).toHaveBeenCalledWith('MDI', 2, activityUpdateRequest)
+        expect(activitiesService.updateActivity).toHaveBeenCalledWith(2, activityUpdateRequest, res.locals.user)
 
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           '/activities/view/2',

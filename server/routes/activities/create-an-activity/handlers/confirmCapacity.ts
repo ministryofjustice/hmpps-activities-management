@@ -13,7 +13,7 @@ export default class ConfirmCapacityRoutes {
     const { user } = res.locals
     const { activityId, capacity } = req.session.createJourney
     const activity = { capacity } as ActivityUpdateRequest
-    await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
+    await this.activitiesService.updateActivity(activityId, activity, user)
 
     res.redirectWithSuccess(
       `/activities/view/${req.session.createJourney.activityId}`,
