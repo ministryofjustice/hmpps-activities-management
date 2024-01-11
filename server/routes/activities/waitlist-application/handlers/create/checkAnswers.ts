@@ -6,7 +6,10 @@ import MetricsService from '../../../../../services/metricsService'
 import WaitlistRequester from '../../../../../enum/waitlistRequester'
 
 export default class CheckAnswersRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly metricsService: MetricsService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { prisoner, requestDate, activity, requester, comment, status } = req.session.waitListApplicationJourney

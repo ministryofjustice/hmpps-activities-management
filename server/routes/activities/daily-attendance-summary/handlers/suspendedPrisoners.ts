@@ -7,7 +7,10 @@ import PrisonService from '../../../../services/prisonService'
 import activityLocationDescription from '../../../../utils/activityLocationDescription'
 
 export default class SuspendedPrisonersRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals

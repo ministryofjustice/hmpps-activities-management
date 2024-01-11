@@ -46,7 +46,10 @@ export class Pay {
 export default class PayRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
 
-  constructor(private readonly prisonService: PrisonService, private readonly activitiesService: ActivitiesService) {
+  constructor(
+    private readonly prisonService: PrisonService,
+    private readonly activitiesService: ActivitiesService,
+  ) {
     this.helper = new IncentiveLevelPayMappingUtil(prisonService)
   }
 

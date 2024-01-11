@@ -312,13 +312,6 @@ $calendar-bottom-border-width: 1px;
 
       vertical-align: middle;
 
-      // IE8 fallback of icon
-      @include govuk-if-ie8 {
-        display: inline-block;
-        max-height: 20px;
-        line-height: 1;
-      }
-
       // Create inner chevron arrow
       &:after {
         content: "";
@@ -340,13 +333,6 @@ $calendar-bottom-border-width: 1px;
 
         border-top: govuk-px-to-rem(2px) solid;
         border-right: govuk-px-to-rem(2px) solid;
-
-        // IE8 fallback of icon with HTML symbol
-        @include govuk-if-ie8 {
-          content: "\25B2"; // "▲"
-          position: relative;
-          border: 0;
-        }
       }
     }
 
@@ -355,16 +341,6 @@ $calendar-bottom-border-width: 1px;
       -webkit-transform: rotate(180deg);
       -ms-transform: rotate(180deg);
       transform: rotate(180deg);
-
-      // IE8 fallback of arrow icon
-      @include govuk-if-ie8 {
-        &:after {
-          content: "\25BC"; // "▼"
-          -webkit-transform: none;
-          -ms-transform: none;
-          transform: none;
-        }
-      }
     }
 
     .calendar__section-button {

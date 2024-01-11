@@ -10,7 +10,10 @@ import activitySessionToDailyTimeSlots, {
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 
 export default class ViewAllocationRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals

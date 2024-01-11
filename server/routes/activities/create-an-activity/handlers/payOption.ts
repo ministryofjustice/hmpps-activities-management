@@ -13,7 +13,10 @@ export class PayOptionForm {
 }
 
 export default class PayOption {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> =>
     res.render('pages/activities/create-an-activity/pay-option')

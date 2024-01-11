@@ -3,7 +3,10 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 
 export default class AttendanceDetailsRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
