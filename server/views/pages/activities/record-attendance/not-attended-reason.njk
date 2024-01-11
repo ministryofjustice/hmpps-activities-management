@@ -194,7 +194,7 @@
                     {% endfor %}
                     {% if selectedPrisoners | length > 1 %}
                         <hr class="govuk-!-margin-bottom-6" />
-                        <h2 class="govuk-fieldset__legend--m govuk-!-margin-bottom-0">{{ prisoner.prisonerName | toTitleCase | prisonerName }}</h2>
+                        <h2 class="govuk-heading-m govuk-!-margin-bottom-0">{{ prisoner.prisonerName | toTitleCase | prisonerName }}</h2>
                         <div class="govuk-hint">{{ prisoner.prisonerNumber }}</div>
                     {% else %}
                         <h1 class="govuk-heading-l">Select a reason why {{ prisoner.prisonerName | toTitleCase }} did not attend</h1>
