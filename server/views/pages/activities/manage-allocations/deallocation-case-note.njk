@@ -20,13 +20,9 @@
                     name: "type",
                     fieldset: {
                         legend: {
-                            text: "Case note type",
-                            isPageHeading: false,
-                            classes: "govuk-visually-hidden"
+                            text: 'Select the type of case note',
+                            isPageHeading: false
                         }
-                    },
-                    hint: {
-                        text: 'Select the type of case note'
                     },
                     errorMessage: validationErrors | findError('type'),
                     items: [
@@ -49,7 +45,7 @@
                     },
                     id: 'text',
                     name: "text",
-                    maxlength: 4000,
+                    maxlength: 3800,
                     errorMessage: validationErrors | findError("text"),
                     value: formResponses.text or session.allocateJourney.deallocationCaseNote.text
                 }) }}

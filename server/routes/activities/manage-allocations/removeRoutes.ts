@@ -23,7 +23,7 @@ export default function Index({ activitiesService, metricsService }: Services): 
   const cancelHandler = new CancelRoutes()
   const endDateHandler = new EndDateRoutes()
   const deallocationReasonHandler = new DeallocationReasonRoutes(activitiesService)
-  const caseNoteHandler = new DeallocationCaseNoteRoutes()
+  const caseNoteHandler = new DeallocationCaseNoteRoutes(activitiesService)
   const caseNoteQuestionHandler = new DeallocationCaseNoteQuestionRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes(metricsService)

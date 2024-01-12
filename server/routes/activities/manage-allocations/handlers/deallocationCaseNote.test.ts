@@ -1,12 +1,20 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import DeallocationCaseNoteRoutes, { DeallocationCaseNote } from './deallocationCaseNote'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import ActivitiesService from '../../../../services/activitiesService'
+import atLeast from '../../../../../jest.setup'
+import { ActivitySchedule, DeallocationReason } from '../../../../@types/activitiesAPI/types'
+
+jest.mock('../../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Deallocation case note', () => {
-  const handler = new DeallocationCaseNoteRoutes()
+  const handler = new DeallocationCaseNoteRoutes(activitiesService)
 
   let req: Request
   let res: Response
@@ -25,6 +33,7 @@ describe('Route Handlers - Deallocation case note', () => {
       session: {
         allocateJourney: {
           endDate: formatIsoDate(new Date()),
+          deallocationReason: 'SECURITY',
           inmate: {
             prisonerNumber: 'ABC123',
           },
@@ -46,6 +55,13 @@ describe('Route Handlers - Deallocation case note', () => {
 
   describe('POST', () => {
     it('redirect when form submitted', async () => {
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(1))
+        .mockResolvedValue({ activity: { summary: 'Maths' } } as ActivitySchedule)
+      when(activitiesService.getDeallocationReasons).mockResolvedValue([
+        { code: 'SECURITY', description: 'Security' } as DeallocationReason,
+      ])
+
       req.body = {
         type: 'GEN',
         text: 'Test case note',
@@ -54,7 +70,9 @@ describe('Route Handlers - Deallocation case note', () => {
       await handler.POST(req, res)
 
       expect(req.session.allocateJourney.deallocationCaseNote.type).toEqual('GEN')
-      expect(req.session.allocateJourney.deallocationCaseNote.text).toEqual('Test case note')
+      expect(req.session.allocateJourney.deallocationCaseNote.text).toEqual(
+        'Deallocated from activity - Security - Maths\n\nTest case note',
+      )
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })
@@ -87,13 +105,13 @@ describe('Route Handlers - Deallocation case note', () => {
     it('validation fails if the text is too long', async () => {
       const body = {
         type: 'GEN',
-        text: 'T'.repeat(4001),
+        text: 'T'.repeat(3801),
       }
 
       const requestObject = plainToInstance(DeallocationCaseNote, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'text', error: 'Case note must be 4000 characters or less' }])
+      expect(errors).toEqual([{ property: 'text', error: 'Case note must be 3800 characters or less' }])
     })
   })
 })
