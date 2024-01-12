@@ -238,7 +238,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($(".moj-filter__selected > h3:contains('Time period')").length).toEqual(1)
+    expect($(".moj-filter__selected > h3:contains('Session')").length).toEqual(1)
     const removeFilterLink = $(`a.moj-filter__tag:contains('${expectedText}')`)
     expect(removeFilterLink.text().trim()).toEqual(`Remove this filter ${expectedText}`)
     expect(removeFilterLink.attr('href')).toEqual(

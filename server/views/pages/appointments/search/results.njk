@@ -99,7 +99,7 @@
     {% if (selectedDateAndTime.length > 0) %}
         {% set selectedFilterCategories = (selectedFilterCategories.push({
             heading: {
-                text: 'Time period'
+                text: 'Session'
             },
             items: selectedDateAndTime
         }), selectedFilterCategories) %}
@@ -196,12 +196,12 @@
               fieldset: {
                   legend: {
                       text: "Session",
-                      classes: "govuk-fieldset__legend--m"
+                      classes: "govuk-fieldset__legend--s"
                   }
               },
               errorMessage: validationErrors | findError('timeSlots'),
               formGroup: {
-               classes: 'govuk-!-margin-bottom-0'
+               classes: 'govuk-!-margin-bottom-4'
               },
               items: [
                   {

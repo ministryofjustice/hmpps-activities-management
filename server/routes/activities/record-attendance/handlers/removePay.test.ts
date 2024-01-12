@@ -8,7 +8,7 @@ import { Attendance, ScheduledActivity } from '../../../../@types/activitiesAPI/
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import RemovePayRoutes, { RemovePay } from './removePay'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 
@@ -152,7 +152,9 @@ describe('Route Handlers - Remove Pay', () => {
             attendanceReason: AttendanceReason.ATTENDED,
             issuePayment: false,
             payAmount: null as number,
-            caseNote: 'Pay removed - Maths level 1 - Houseblock 1 - Friday, 12 January 2024 - 10:00\n\ntest case note',
+            caseNote: `Pay removed - Maths level 1 - Houseblock 1 - ${formatDate(
+              format(new Date(), 'yyyy-MM-dd'),
+            )} - 10:00\n\ntest case note`,
           },
         ],
         { activeCaseLoadId: 'MDI', username: 'joebloggs' },
