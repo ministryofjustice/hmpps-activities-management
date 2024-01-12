@@ -5,6 +5,8 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
+import { ScheduledActivity } from '../../../../@types/activitiesAPI/types'
+import { formatDate } from '../../../../utils/utils'
 
 enum RemovePayOptions {
   YES = 'yes',
@@ -18,7 +20,7 @@ export class RemovePay {
 
   @ValidateIf(o => o.removePayOption === RemovePayOptions.YES)
   @IsNotEmpty({ message: 'Enter a case note' })
-  @MaxLength(4000, { message: 'Case note must be 4,000 characters or less' })
+  @MaxLength(3800, { message: 'Case note must be $constraint1 characters or less' })
   caseNote: string
 }
 export default class RemovePayRoutes {
@@ -49,6 +51,8 @@ export default class RemovePayRoutes {
     const { id } = req.params
     const { attendanceId } = req.params
     if (req.body.removePayOption === 'yes') {
+      const instance = await this.activitiesService.getScheduledActivity(+id, user)
+
       const attendances = [
         {
           id: +attendanceId,
@@ -57,11 +61,25 @@ export default class RemovePayRoutes {
           attendanceReason: AttendanceReason.ATTENDED,
           issuePayment: false,
           payAmount: null as number,
-          caseNote: req.body.caseNote,
+          caseNote: this.getCaseNote(instance, req.body.caseNote),
         },
       ]
       await this.activitiesService.updateAttendances(attendances, user)
     }
     return res.redirect(`/activities/attendance/activities/${id}/attendance-details/${attendanceId}`)
   }
+
+  private getCaseNote = (activityInstance: ScheduledActivity, caseNote: string) =>
+    caseNote
+      ? [
+          'Pay removed',
+          activityInstance.activitySchedule.activity.summary,
+          activityInstance.activitySchedule.internalLocation?.description,
+          formatDate(activityInstance.date),
+          `${activityInstance.startTime}\n\n${caseNote}`,
+        ]
+          .filter(Boolean)
+          .join(' - ')
+          .slice(0, 4000)
+      : null
 }
