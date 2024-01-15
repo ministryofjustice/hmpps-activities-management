@@ -17,11 +17,11 @@
     {% for attendee in appointment.attendees %}
         {% set prisoner = attendee.prisoner %}
         {% set attendeeListRows = (attendeeListRows.push([
-           {
+            {
                 html: '<span class="print-checkbox"></span>',
                 classes: "print-only"
-           },
-             {
+            },
+            {
                 html: showProfileLink({
                     name: prisoner | fullName,
                     prisonerNumber: prisoner.prisonerNumber,
@@ -72,10 +72,10 @@
         <div class="govuk-summary-card__content">
             {{ govukTable({
                 head: [
-                 {
+                    {
                         text: "Attended",
                         classes: "print-only"
-                 },
+                    },
                     {
                         text: "Attendee",
                         classes: "govuk-!-display-none-print",
@@ -89,10 +89,12 @@
                     {
                         text: "Name",
                         classes: "print-only"
-                    }, {
+                    },
+                    {
                         text: "Prison number",
                         classes: "print-only"
-                    }, {
+                    },
+                    {
                         text: "Cell location",
                         classes: "print-only"
                     },
