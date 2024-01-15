@@ -4,7 +4,7 @@ import { IsNotEmpty } from 'class-validator'
 
 export class EndDateOption {
   @Expose()
-  @IsNotEmpty({ message: 'Choose whether you want to set the end date.' })
+  @IsNotEmpty({ message: 'Select if you want to enter an end date or not' })
   endDateOption: string
 }
 

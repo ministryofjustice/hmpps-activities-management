@@ -127,7 +127,7 @@ describe('Route Handlers - Remove Pay', () => {
         .calledWith(1, res.locals.user)
         .mockResolvedValue({
           id: 1,
-          date: format(new Date(), 'yyyy-MM-dd'),
+          date: '2024-01-12',
           startTime: '10:00',
           endTime: '11:00',
           activitySchedule: {
