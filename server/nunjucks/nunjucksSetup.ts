@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import nunjucks, { Environment } from 'nunjucks'
 import express, { Router } from 'express'
+import setUpNunjucksFilters from '@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/setUpNunjucksFilters'
 import path from 'path'
 import { addDays, addMonths, addWeeks, addYears, startOfDay, subDays, subMonths, subWeeks } from 'date-fns'
 import { flatMap, sortBy } from 'lodash'
@@ -107,6 +108,8 @@ export function registerNunjucks(app?: express.Express): Environment {
       'node_modules/govuk-frontend/components/',
       'node_modules/@ministryofjustice/frontend/',
       'node_modules/@ministryofjustice/frontend/moj/components/',
+      'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/',
+      'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/components/',
     ],
     {
       autoescape: true,
@@ -114,6 +117,8 @@ export function registerNunjucks(app?: express.Express): Environment {
       watch: process.env.NODE_ENV === 'live-development',
     },
   )
+
+  setUpNunjucksFilters(njkEnv)
 
   // Only register nunjucks helpers/filters here - they should be implemented and unit tested elsewhere
   njkEnv.addFilter('fullName', fullName)

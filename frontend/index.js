@@ -2,6 +2,7 @@ import $ from 'jquery'
 import * as GOVUKFrontend from 'govuk-frontend'
 import * as MOJFrontend from '@ministryofjustice/frontend'
 import * as ActivitiesFrontend from './all'
+import '@ministryofjustice/hmpps-digital-prison-reporting-frontend'
 import './components/table-sort-fixed-rows/fixed-rows'
 import './application-insights-setup'
 
