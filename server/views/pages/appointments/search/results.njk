@@ -60,7 +60,10 @@
             attributes: { 'data-qa': 'result-location-' + index }
         }, {
             html: attendees(result.attendees, prisonersDetails),
-            attributes: { 'data-qa': 'result-prisoner-count-' + index }
+            attributes: { 
+                'data-qa': 'result-prisoner-count-' + index,
+                "data-sort-value": prisonersDetails[result.attendees[0].prisonerNumber] | firstNameLastName | prisonerName(false) if result.attendees | length == 1 else result.attendees.length
+            }
         }, {
             text: result.sequenceNumber + " of " + result.maxSequenceNumber,
             classes: 'govuk-!-text-align-right',
