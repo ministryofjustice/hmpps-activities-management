@@ -6,7 +6,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 
 export class BankHolidayOption {
   @Expose()
-  @IsNotEmpty({ message: 'Choose whether you want the schedule to run on a bank holiday.' })
+  @IsNotEmpty({ message: 'Select if the activity will run on bank holidays' })
   runsOnBankHoliday: boolean
 }
 
