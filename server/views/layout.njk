@@ -41,8 +41,7 @@
 {% endblock %}
 
 {% block bodyEnd %}
-  {# Run JavaScript at end of the
-  <body>, to avoid blocking the initial render. #}
+  {# Run JavaScript at end of the <body> to avoid blocking the initial render. #}
   <script nonce="{{ cspNonce }}">
     window.applicationInsightsConnectionString = '{{ applicationInsightsConnectionString }}'
     window.applicationInsightsRoleName = '{{ applicationInsightsRoleName }}'
@@ -52,4 +51,8 @@
   {% for js in feComponents.jsIncludes %}
     <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
   {% endfor %}
+
+  {# Digital prison reporting JS #}
+  <script src="/assets/dpr/js/client.js" nonce="{{cspNonce}}"></script>
+
 {% endblock %}
