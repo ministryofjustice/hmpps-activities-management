@@ -64,7 +64,7 @@ export default class StartDateRoutes {
 
     if (req.params.mode === 'edit') {
       const allocationUpdate = { startDate: formatIsoDate(req.body.startDate) }
-      await this.activitiesService.updateAllocation(user.activeCaseLoadId, +allocationId, allocationUpdate)
+      await this.activitiesService.updateAllocation(+allocationId, allocationUpdate, user)
 
       const successMessage = `You've updated the start date for this allocation`
       return res.redirectWithSuccess(

@@ -10,8 +10,10 @@ import ActivitiesApiClient from '../data/activitiesApiClient'
 jest.mock('../data/hmppsAuthClient')
 jest.mock('../data/prisonApiClient')
 jest.mock('../data/activitiesApiClient')
-jest.mock('jwt-decode', () => () => ({
-  authorities: ['ROLE_ACTIVITY_HUB'],
+jest.mock('jwt-decode', () => ({
+  jwtDecode: () => ({
+    authorities: ['ROLE_ACTIVITY_HUB'],
+  }),
 }))
 
 const user = { authSource: 'nomis' } as ServiceUser

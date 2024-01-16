@@ -80,7 +80,7 @@ describe('Route Handlers - Allocation - End Date option', () => {
       const requestObject = plainToInstance(EndDateOption, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'endDateOption', error: 'Choose whether you want to set the end date.' }])
+      expect(errors).toEqual([{ property: 'endDateOption', error: 'Select if you want to enter an end date or not' }])
     })
   })
 })

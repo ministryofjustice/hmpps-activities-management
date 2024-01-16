@@ -13,7 +13,10 @@ export class PayOptionForm {
 }
 
 export default class PayOption {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> =>
     res.render('pages/activities/create-an-activity/pay-option')
@@ -37,7 +40,7 @@ export default class PayOption {
           pay: [],
         } as ActivityUpdateRequest
 
-        await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, activity)
+        await this.activitiesService.updateActivity(activityId, activity, user)
         const successMessage = `You've updated pay for ${req.session.createJourney.name}. People will now not be paid for attending.`
 
         const returnTo = `/activities/view/${req.session.createJourney.activityId}`

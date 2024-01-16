@@ -11,17 +11,16 @@ module.exports = grunt => {
           'no-source-map': '',
           quiet: true,
           style: process.env.NODE_ENV === 'live-development' ? 'expanded' : 'compressed',
-          loadPath: ['.', 'node_modules/govuk-frontend', 'node_modules/@ministryofjustice/frontend'],
+          loadPath: ['.', 'node_modules/govuk-frontend/dist', 'node_modules/@ministryofjustice/frontend'],
         },
         files: {
           'assets/stylesheets/application.css': 'frontend/application.scss',
-          'assets/stylesheets/application-ie8.css': 'frontend/application-ie8.scss',
         },
       },
     },
     rollup: {
       options: {
-        format: 'umd',
+        format: 'es',
         name: 'ActivitiesFrontend',
         plugins: [nodeResolve(), commonjs()],
       },
@@ -43,7 +42,7 @@ module.exports = grunt => {
         files: [
           {
             expand: true,
-            cwd: 'node_modules/govuk-frontend/govuk/assets',
+            cwd: 'node_modules/govuk-frontend/dist/govuk/assets',
             src: ['./**/*'],
             dest: 'assets/',
           },

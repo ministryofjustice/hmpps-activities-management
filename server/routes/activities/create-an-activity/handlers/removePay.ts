@@ -12,7 +12,10 @@ export class ConfirmRemoveOptions {
 }
 
 export default class RemovePayRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { iep } = req.query
@@ -67,7 +70,7 @@ export default class RemovePayRoutes {
     const updatedActivity = {
       pay: updatedPayRates,
     } as ActivityUpdateRequest
-    await this.activitiesService.updateActivity(user.activeCaseLoadId, activityId, updatedActivity)
+    await this.activitiesService.updateActivity(activityId, updatedActivity, user)
 
     const successMessage = `You've updated the pay for ${req.session.createJourney.name}`
     return res.redirectWithSuccess('check-pay?preserveHistory=true', 'Activity updated', successMessage)

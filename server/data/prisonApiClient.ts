@@ -18,7 +18,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
   }
 
   async getInmateDetail(nomsId: string, user: ServiceUser): Promise<InmateDetail> {
-    return this.get({ path: `/api/offenders/${nomsId}` }, user)
+    return this.get({ path: `/api/offenders/${nomsId}`, authToken: user.token })
   }
 
   async getUser(user: ServiceUser): Promise<PrisonApiUserDetail> {

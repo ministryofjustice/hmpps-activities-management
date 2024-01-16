@@ -7,7 +7,10 @@ import { convertToNumberArray } from '../../../../utils/utils'
 const ITEMS_PER_PAGE = 10
 
 export default class ChangeOfCircumstanceRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals

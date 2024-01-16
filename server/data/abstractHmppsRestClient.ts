@@ -26,7 +26,10 @@ export default abstract class AbstractHmppsRestClient {
 
   private tokenStore: TokenStore
 
-  protected constructor(private readonly name: string, private readonly apiConfig: ApiConfig) {
+  protected constructor(
+    private readonly name: string,
+    private readonly apiConfig: ApiConfig,
+  ) {
     this.agent = apiConfig.url.startsWith('https') ? new HttpsAgent(apiConfig.agent) : new Agent(apiConfig.agent)
     this.tokenStore = new TokenStore(createRedisClient())
   }

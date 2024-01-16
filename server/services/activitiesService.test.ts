@@ -533,9 +533,17 @@ describe('Activities Service', () => {
         prisonerNumbers: ['123456'],
         reasonCode: 'PERSONAL',
         endDate: '2023-05-31',
+        caseNote: { type: 'GEN', text: 'test case note' },
       }
 
-      await activitiesService.deallocateFromActivity(1, ['123456'], 'PERSONAL', '2023-05-31', user)
+      await activitiesService.deallocateFromActivity(
+        1,
+        ['123456'],
+        'PERSONAL',
+        { type: 'GEN', text: 'test case note' },
+        '2023-05-31',
+        user,
+      )
       expect(activitiesApiClient.deallocateFromActivity).toHaveBeenCalledWith(1, body, user)
     })
   })

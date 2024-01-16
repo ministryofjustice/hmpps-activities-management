@@ -77,6 +77,7 @@ export class NotAttendedData {
         ]
           .filter(Boolean)
           .join(' - ')
+          .slice(0, 4000)
       : null
 
   getIssuePayment() {

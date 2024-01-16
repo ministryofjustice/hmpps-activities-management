@@ -1,4 +1,5 @@
-import enGBLocale, { addDays, format, formatISO, parseISO, subDays } from 'date-fns'
+import { addDays, format, formatISO, parseISO, subDays } from 'date-fns'
+import { enGB } from 'date-fns/locale/en-GB'
 import {
   compare,
   comparePrisoners,
@@ -99,19 +100,19 @@ describe('utils', () => {
 
   describe('getCurrentPeriod', () => {
     it('returns AM if time is post midnight', () => {
-      expect(getCurrentPeriod(+format(parseISO('2019-08-11T00:00:01.000'), 'H', { locale: enGBLocale }))).toEqual('AM')
+      expect(getCurrentPeriod(+format(parseISO('2019-08-11T00:00:01.000'), 'H', { locale: enGB }))).toEqual('AM')
     })
 
     it('returns AM if time is pre 12 noon', () => {
-      expect(getCurrentPeriod(+format(parseISO('2019-08-11T11:59:59.000'), 'H', { locale: enGBLocale }))).toEqual('AM')
+      expect(getCurrentPeriod(+format(parseISO('2019-08-11T11:59:59.000'), 'H', { locale: enGB }))).toEqual('AM')
     })
 
     it('returns PM if time is post 12 noon and before 5PM', () => {
-      expect(getCurrentPeriod(+format(parseISO('2019-08-11T16:59:59.000'), 'H', { locale: enGBLocale }))).toEqual('PM')
+      expect(getCurrentPeriod(+format(parseISO('2019-08-11T16:59:59.000'), 'H', { locale: enGB }))).toEqual('PM')
     })
 
     it('returns ED if time is post 5pm and before midnight', () => {
-      expect(getCurrentPeriod(+format(parseISO('2019-08-11T23:59:59.000'), 'H', { locale: enGBLocale }))).toEqual('ED')
+      expect(getCurrentPeriod(+format(parseISO('2019-08-11T23:59:59.000'), 'H', { locale: enGB }))).toEqual('ED')
     })
   })
 

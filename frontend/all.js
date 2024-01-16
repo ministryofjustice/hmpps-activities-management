@@ -27,9 +27,9 @@ function initAll() {
     new Card($card)
   })
 
-  var $multiSelects = document.querySelectorAll('[data-module="activities-sticky-select"]')
-  nodeListForEach($multiSelects, function ($multiSelect) {
-    new StickySelect($multiSelect)
+  var $stickySelects = document.querySelectorAll('[data-module="activities-sticky-select"]')
+  nodeListForEach($stickySelects, function ($stickySelect) {
+    new StickySelect($stickySelect)
   })
 
   var $autoCompleteElements = document.getElementsByName('autocompleteElements')

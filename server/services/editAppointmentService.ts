@@ -29,7 +29,10 @@ import MetricsEvent from '../data/metricsEvent'
 import { parseIsoDate } from '../utils/datePickerUtils'
 
 export default class EditAppointmentService {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly metricsService: MetricsService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   async redirectOrEdit(req: Request, res: Response, property: string) {
     const { appointmentId } = req.params

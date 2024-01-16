@@ -2,6 +2,7 @@
 
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
@@ -86,19 +87,19 @@
     {% set selectedFilterCategories = [] %}
 
     {% set selectedDateAndTime = [] %}
-    {% if (timeSlot) %}
+    {% for slot in timeSlots %}
         {% set selectedDateAndTime = (selectedDateAndTime.push({
-            href: '?startDate=' + startDate + '&timeSlot=' + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
-            text: ("Morning (AM)" if timeSlot == TimeSlot.AM) +
-                  ("Afternoon (PM)" if timeSlot == TimeSlot.PM) +
-                  ("Evening (ED)" if timeSlot == TimeSlot.ED)
-        }), selectedDateAndTime) %}
-    {% endif %}
+                    href: '?startDate=' + startDate + '&timeSlots=' + timeSlots | excludeArray(slot) | join(",") + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
+                    text: ("Morning (AM)" if slot == TimeSlot.AM) +
+                          ("Afternoon (PM)" if slot == TimeSlot.PM) +
+                          ("Evening (ED)" if slot == TimeSlot.ED)
+                }), selectedDateAndTime) %}
+    {% endfor %}
 
     {% if (selectedDateAndTime.length > 0) %}
         {% set selectedFilterCategories = (selectedFilterCategories.push({
             heading: {
-                text: 'Time period'
+                text: 'Session'
             },
             items: selectedDateAndTime
         }), selectedFilterCategories) %}
@@ -116,7 +117,7 @@
                     text: 'Appointment name'
                 },
                 items: [{
-                    href: '?startDate=' + startDate + '&timeSlot=' + timeSlot + '&appointmentName=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
+                    href: '?startDate=' + startDate + '&timeSlots=' + timeSlots + '&appointmentName=' + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
                     text: appointmentNameFilter
                 }]
             }), selectedFilterCategories) %}
@@ -132,7 +133,7 @@
                     text: 'Location'
                 },
                 items: [{
-                    href: '?startDate=' + startDate + '&timeSlot=' + timeSlot + '&appointmentName=' + appointmentName + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
+                    href: '?startDate=' + startDate + '&timeSlots=' + timeSlots + '&appointmentName=' + appointmentName + '&locationId=' + '&prisonerNumber=' + prisonerNumber + '&createdBy=' + createdBy,
                     text: location.description
                 }]
             }), selectedFilterCategories) %}
@@ -145,7 +146,7 @@
                 text: 'Prison number'
             },
             items: [{
-                href: '?startDate=' + startDate + '&timeSlot=' + timeSlot + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy,
+                href: '?startDate=' + startDate + '&timeSlots=' + timeSlots + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + '&createdBy=' + createdBy,
                 text: prisonerNumber
             }]
         }), selectedFilterCategories) %}
@@ -157,7 +158,7 @@
                 text: 'Created by'
             },
             items: [{
-                href: '?startDate=' + startDate + '&timeSlot=' + timeSlot + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=',
+                href: '?startDate=' + startDate + '&timeSlots=' + timeSlots + '&appointmentName=' + appointmentName + '&locationId=' + locationId + '&prisonerNumber=' + prisonerNumber + '&createdBy=',
                 text: ("Myself" if createdBy == user.username) +
                 ("All appointment creators" if createdBy == "all")
             }]
@@ -189,34 +190,37 @@
             value: formResponses.startDate or (startDate | isoDateToDatePickerDate)
         }) }}
 
-        {{ govukRadios({
-            name: "timeSlot",
-            classes: "govuk-radios--small",
-            fieldset: {
-                legend: {
-                    text: "Time period",
-                    classes: "govuk-fieldset__legend--s"
-                }
-            },
-            errorMessage: validationErrors | findError('timeSlot'),
-            items: [
-                {
-                    value: TimeSlot.AM,
-                    text: "Morning (AM)",
-                    checked: (formResponses.timeSlot or timeSlot) == TimeSlot.AM
-                },
-                {
-                    value: TimeSlot.PM,
-                    text: "Afternoon (PM)",
-                    checked: (formResponses.timeSlot or timeSlot) == TimeSlot.PM
-                },
-                {
-                    value: TimeSlot.ED,
-                    text: "Evening (ED)",
-                    checked: (formResponses.timeSlot or timeSlot) == TimeSlot.ED
-                }
-            ]
-        }) }}
+        {{ govukCheckboxes({
+              name: "timeSlots",
+              classes: "govuk-checkboxes--small",
+              fieldset: {
+                  legend: {
+                      text: "Session",
+                      classes: "govuk-fieldset__legend--s"
+                  }
+              },
+              errorMessage: validationErrors | findError('timeSlots'),
+              formGroup: {
+               classes: 'govuk-!-margin-bottom-4'
+              },
+              items: [
+                  {
+                      value: TimeSlot.AM,
+                      text: "Morning (AM)",
+                      checked: TimeSlot.AM in (timeSlots)
+                  },
+                  {
+                      value: TimeSlot.PM,
+                      text: "Afternoon (PM)",
+                      checked: TimeSlot.PM in (timeSlots)
+                  },
+                  {
+                      value: TimeSlot.ED,
+                      text: "Evening (ED)",
+                      checked: TimeSlot.ED in (timeSlots)
+                  }
+              ]
+       }) }}
 
         {{ govukSelect({
             id: "appointmentName",

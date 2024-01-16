@@ -7,7 +7,10 @@ import MetricsService from '../../../../../services/metricsService'
 import MetricsEvent from '../../../../../data/metricsEvent'
 
 export default class StartJourneyRoutes {
-  constructor(private readonly prisonService: PrisonService, private readonly metricsService: MetricsService) {}
+  constructor(
+    private readonly prisonService: PrisonService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { prisonerNumber } = req.params

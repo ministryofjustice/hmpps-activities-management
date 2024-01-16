@@ -28,7 +28,7 @@ export default class ConfirmExclusionsRoutes {
 
     if (newSlots.length > 0 || removedSlots.length > 0) {
       const allocation = { exclusions: updatedExclusions } as AllocationUpdateRequest
-      await this.activitiesService.updateAllocation(user.activeCaseLoadId, +allocationId, allocation)
+      await this.activitiesService.updateAllocation(+allocationId, allocation, user)
 
       const successMessage = `You have changed when ${inmate.prisonerName} should attend ${activity.name}`
 

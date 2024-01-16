@@ -48,7 +48,7 @@
     window.applicationInsightsRoleName = '{{ applicationInsightsRoleName }}'
     window.authenticatedUser = '{{ user.username }}'
   </script>
-  <script src="/assets/javascript/activities.min.js"></script>
+  <script type="module" src="/assets/javascript/activities.min.js"></script>
   {% for js in feComponents.jsIncludes %}
     <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
   {% endfor %}

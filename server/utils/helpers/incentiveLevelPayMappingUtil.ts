@@ -49,7 +49,7 @@ export default class IncentiveLevelPayMappingUtil {
                     .description === iepPay.incentiveLevel,
               ).length,
             })),
-          } as IepPay),
+          }) as IepPay,
       )
       .value()
   }

@@ -24,11 +24,10 @@ export default class NameRoutes {
     if (req.params.mode === 'edit') {
       const { user } = res.locals
       const { activityId } = req.session.createJourney
-      const prisonCode = user.activeCaseLoadId
       const activity = {
         summary: req.session.createJourney.name,
       } as ActivityUpdateRequest
-      await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+      await this.activitiesService.updateActivity(activityId, activity, user)
       const successMessage = `You've updated the activity name for ${req.session.createJourney.name}`
 
       const returnTo = `/activities/view/${req.session.createJourney.activityId}`

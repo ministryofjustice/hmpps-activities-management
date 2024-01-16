@@ -31,7 +31,10 @@ export default class WaitlistRequester {
     'Someone else, for example a member of staff, an activity leader or an orderly',
   )
 
-  private constructor(public readonly code: string, public readonly description: string) {}
+  private constructor(
+    public readonly code: string,
+    public readonly description: string,
+  ) {}
 
   static valueOf(code: string) {
     return Object.values(this).find(w => w.code === code).description

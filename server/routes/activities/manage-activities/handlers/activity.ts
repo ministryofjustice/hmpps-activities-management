@@ -12,7 +12,10 @@ import { organiserDescriptions } from '../../../../enum/eventOrganisers'
 export default class ActivityRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
 
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {
     this.helper = new IncentiveLevelPayMappingUtil(prisonService)
   }
 

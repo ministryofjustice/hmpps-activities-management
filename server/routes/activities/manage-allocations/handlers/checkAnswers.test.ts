@@ -52,6 +52,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
           deallocationReason: 'COMPLETED',
           endDate: '2023-02-01',
           updatedExclusions: [],
+          deallocationCaseNote: { type: 'GEN', text: 'test case note' },
         },
       },
     } as unknown as Request
@@ -73,7 +74,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/check-answers', {
-        deallocationReason: 'Completed',
+        deallocationReason: { code: 'COMPLETED', description: 'Completed' },
         currentWeek: 1,
         dailySlots: {
           '1': [
@@ -127,12 +128,17 @@ describe('Route Handlers - Allocate - Check answers', () => {
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
 
-    it('should create the allocation and redirect to confirmation page when in remove mode', async () => {
+    it('should deallocate and redirect to confirmation page when in remove mode', async () => {
       req.params.mode = 'remove'
       await handler.POST(req, res)
-      expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(1, ['ABC123'], 'COMPLETED', '2023-02-01', {
-        username: 'joebloggs',
-      })
+      expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(
+        1,
+        ['ABC123'],
+        'COMPLETED',
+        { type: 'GEN', text: 'test case note' },
+        '2023-02-01',
+        { username: 'joebloggs' },
+      )
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
   })

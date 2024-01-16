@@ -29,7 +29,7 @@ describe('prisonApiClient', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
 
-      fakePrisonApi.get('/api/offenders/ABC123').matchHeader('authorization', `Bearer accessToken`).reply(200, response)
+      fakePrisonApi.get('/api/offenders/ABC123').matchHeader('authorization', `Bearer token`).reply(200, response)
 
       const output = await prisonApiClient.getInmateDetail('ABC123', user)
 

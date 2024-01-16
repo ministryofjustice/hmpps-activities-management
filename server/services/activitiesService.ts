@@ -44,6 +44,7 @@ import {
   WaitingListSearchRequest,
   WaitingListSearchParams,
   Slot,
+  AddCaseNoteRequest,
 } from '../@types/activitiesAPI/types'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
 
@@ -78,12 +79,12 @@ export default class ActivitiesService {
     return this.activitiesApiClient.postActivityCreation(createBody, user)
   }
 
-  updateActivity(prisonCode: string, activityId: number, updateBody: ActivityUpdateRequest) {
-    return this.activitiesApiClient.patchActivityUpdate(prisonCode, activityId, updateBody)
+  updateActivity(activityId: number, updateBody: ActivityUpdateRequest, user: ServiceUser) {
+    return this.activitiesApiClient.patchActivityUpdate(activityId, updateBody, user)
   }
 
-  updateAllocation(prisonCode: string, allocationId: number, updateBody: AllocationUpdateRequest) {
-    return this.activitiesApiClient.patchAllocationUpdate(prisonCode, allocationId, updateBody)
+  updateAllocation(allocationId: number, updateBody: AllocationUpdateRequest, user: ServiceUser) {
+    return this.activitiesApiClient.patchAllocationUpdate(allocationId, updateBody, user)
   }
 
   allocateToSchedule(
@@ -311,10 +312,11 @@ export default class ActivitiesService {
     scheduleId: number,
     prisonerNumbers: string[],
     reasonCode: DeallocationReasonCode,
+    caseNote: AddCaseNoteRequest,
     endDate: string,
     user: ServiceUser,
   ) {
-    const request: PrisonerDeallocationRequest = { prisonerNumbers, reasonCode, endDate }
+    const request: PrisonerDeallocationRequest = { prisonerNumbers, reasonCode, caseNote, endDate }
     return this.activitiesApiClient.deallocateFromActivity(scheduleId, request, user)
   }
 

@@ -128,15 +128,19 @@ export default {
       roles: [Roles.ACTIVITY_HUB],
     },
     {
-      route: '/activities/schedule',
+      route: '/activities/:mode(create|edit|view)',
       roles: [Roles.ACTIVITY_HUB],
     },
     {
-      route: '/activities/create',
+      route: '/activities/dashboard',
       roles: [Roles.ACTIVITY_HUB],
     },
     {
       route: '/activities/allocate',
+      roles: [Roles.ACTIVITY_HUB],
+    },
+    {
+      route: '/activities/exclusions',
       roles: [Roles.ACTIVITY_HUB],
     },
     {

@@ -1,10 +1,12 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
-import { IsIn } from 'class-validator'
+import { IsIn, IsNotEmpty, MaxLength, ValidateIf } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
+import { ScheduledActivity } from '../../../../@types/activitiesAPI/types'
+import { formatDate } from '../../../../utils/utils'
 
 enum RemovePayOptions {
   YES = 'yes',
@@ -15,18 +17,27 @@ export class RemovePay {
   @Expose()
   @IsIn(Object.values(RemovePayOptions), { message: "Confirm if you want to remove this person's pay or not" })
   removePayOption: string
+
+  @ValidateIf(o => o.removePayOption === RemovePayOptions.YES)
+  @IsNotEmpty({ message: 'Enter a case note' })
+  @MaxLength(3800, { message: 'Case note must be $constraint1 characters or less' })
+  caseNote: string
 }
 export default class RemovePayRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { id } = req.params
     const { attendanceId } = req.params
 
-    const instance = await this.activitiesService.getScheduledActivity(+id, user)
-
-    const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId)
+    const [instance, attendance] = await Promise.all([
+      this.activitiesService.getScheduledActivity(+id, user),
+      this.activitiesService.getAttendanceDetails(+attendanceId),
+    ])
 
     const attendee = await this.prisonService
       .getInmateByPrisonerNumber(attendance.prisonerNumber, user)
@@ -40,6 +51,8 @@ export default class RemovePayRoutes {
     const { id } = req.params
     const { attendanceId } = req.params
     if (req.body.removePayOption === 'yes') {
+      const instance = await this.activitiesService.getScheduledActivity(+id, user)
+
       const attendances = [
         {
           id: +attendanceId,
@@ -48,11 +61,25 @@ export default class RemovePayRoutes {
           attendanceReason: AttendanceReason.ATTENDED,
           issuePayment: false,
           payAmount: null as number,
-          caseNote: req.body.caseNote,
+          caseNote: this.getCaseNote(instance, req.body.caseNote),
         },
       ]
       await this.activitiesService.updateAttendances(attendances, user)
     }
     return res.redirect(`/activities/attendance/activities/${id}/attendance-details/${attendanceId}`)
   }
+
+  private getCaseNote = (activityInstance: ScheduledActivity, caseNote: string) =>
+    caseNote
+      ? [
+          'Pay removed',
+          activityInstance.activitySchedule.activity.summary,
+          activityInstance.activitySchedule.internalLocation?.description,
+          formatDate(activityInstance.date),
+          `${activityInstance.startTime}\n\n${caseNote}`,
+        ]
+          .filter(Boolean)
+          .join(' - ')
+          .slice(0, 4000)
+      : null
 }

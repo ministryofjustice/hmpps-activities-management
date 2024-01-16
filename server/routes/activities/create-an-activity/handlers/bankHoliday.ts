@@ -6,7 +6,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 
 export class BankHolidayOption {
   @Expose()
-  @IsNotEmpty({ message: 'Choose whether you want the schedule to run on a bank holiday.' })
+  @IsNotEmpty({ message: 'Select if the activity will run on bank holidays' })
   runsOnBankHoliday: boolean
 }
 
@@ -22,11 +22,10 @@ export default class BankHolidayOptionRoutes {
     if (req.params.mode === 'edit') {
       const { user } = res.locals
       const { activityId } = req.session.createJourney
-      const prisonCode = user.activeCaseLoadId
       const activity = {
         runsOnBankHoliday: req.session.createJourney.runsOnBankHoliday,
       } as ActivityUpdateRequest
-      await this.activitiesService.updateActivity(prisonCode, activityId, activity)
+      await this.activitiesService.updateActivity(activityId, activity, user)
       const successMessage = `You've updated the bank holiday option for ${req.session.createJourney.name}`
 
       const returnTo = `/activities/view/${req.session.createJourney.activityId}`

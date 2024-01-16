@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,dot-notation */
-import enGBLocale, {
+import {
   areIntervalsOverlapping,
   endOfDay,
   format,
@@ -13,6 +13,7 @@ import enGBLocale, {
   parse,
   parseISO,
 } from 'date-fns'
+import { enGB } from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
 import _ from 'lodash'
 import { FieldValidationError } from '../middleware/validationMiddleware'
@@ -104,7 +105,7 @@ export const parseISODate = (date: string) => {
 
 export const switchDateFormat = (displayDate: string, fromFormat = 'dd/MM/yyyy') => {
   if (displayDate) {
-    return formatISO(parse(displayDate, fromFormat, new Date(), { locale: enGBLocale }), { representation: 'date' })
+    return formatISO(parse(displayDate, fromFormat, new Date(), { locale: enGB }), { representation: 'date' })
   }
   return displayDate
 }
@@ -436,3 +437,7 @@ export const scheduledEventSort = (data: ScheduledEvent[]): ScheduledEvent[] => 
 
 export const filterObjects = (objects: object[], iteratee: string, eq: unknown): object[] =>
   objects.filter(o => o[iteratee] === eq)
+
+export const excludeArrayObject = (objects: object[], iteratee: object): object[] => {
+  return objects.filter(o => o !== iteratee)
+}
