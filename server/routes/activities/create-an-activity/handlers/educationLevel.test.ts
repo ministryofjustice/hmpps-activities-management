@@ -202,7 +202,9 @@ describe('Route Handlers - Create an activity - Education Level', () => {
       const requestObject = plainToInstance(EducationLevel, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(expect.arrayContaining([{ error: 'Select a study area', property: 'studyAreaCode' }]))
+      expect(errors).toEqual(
+        expect.arrayContaining([{ error: 'Select a subject or skill', property: 'studyAreaCode' }]),
+      )
     })
 
     it('validation fails when education level not provided', async () => {
@@ -237,7 +239,12 @@ describe('Route Handlers - Create an activity - Education Level', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
-        expect.arrayContaining([{ error: 'Education already exists on this activity', property: 'eduLevelCode' }]),
+        expect.arrayContaining([
+          {
+            error: 'Enter a different education level or qualification. This one has already been added',
+            property: 'eduLevelCode',
+          },
+        ]),
       )
     })
   })

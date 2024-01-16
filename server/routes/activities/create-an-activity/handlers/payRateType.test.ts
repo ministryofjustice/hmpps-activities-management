@@ -69,7 +69,13 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
       const requestObject = plainToInstance(PayRateType, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'payRateTypeOption', error: 'Choose what type of rate you want to create.' }])
+      expect(errors).toEqual([
+        {
+          property: 'payRateTypeOption',
+          error:
+            'Select if you want to create a pay rate for a single incentive level or a flat rate for all incentive levels',
+        },
+      ])
     })
   })
 })

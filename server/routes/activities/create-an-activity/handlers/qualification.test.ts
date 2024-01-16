@@ -69,7 +69,9 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
       const requestObject = plainToInstance(Qualification, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'qualificationOption', error: 'Do people need education levels' }])
+      expect(errors).toEqual([
+        { property: 'qualificationOption', error: 'Select which education levels or qualifications are required' },
+      ])
     })
 
     it('validation fails if a bad value is entered', async () => {
@@ -80,7 +82,9 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
       const requestObject = plainToInstance(Qualification, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'qualificationOption', error: 'Do people need education levels' }])
+      expect(errors).toEqual([
+        { property: 'qualificationOption', error: 'Select which education levels or qualifications are required' },
+      ])
     })
 
     it('passes validation', async () => {
