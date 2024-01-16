@@ -7,12 +7,14 @@ import { ServiceUser } from '../../../../@types/express'
 
 export class EducationLevel {
   @Expose()
-  @IsNotEmpty({ message: 'Select a study area' })
+  @IsNotEmpty({ message: 'Select a subject or skill' })
   studyAreaCode: string
 
   @Expose()
   @IsNotEmpty({ message: 'Select an education level' })
-  @EducationNotDuplicated({ message: 'Education already exists on this activity' })
+  @EducationNotDuplicated({
+    message: 'Enter a different education level or qualification. This one has already been added',
+  })
   eduLevelCode: string
 }
 
