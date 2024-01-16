@@ -106,54 +106,14 @@
 {% endblock %}
 
 {% macro renderEventTypeTag(event) %}
-    {% if 'non-association' in event.eventType %}
-        {{
-            govukTag({
-                text: "NON-ASSOCIATION",
-                classes: "govuk-tag--orange"
-            })
-        }}
-    {% elseif 'iep-review' in event.eventType %}
-        {{
-            govukTag({
-                text: "IEP STATUS",
-                classes: "govuk-tag--green"
-            })
-        }}
-    {% elseif 'activities-changed' in event.eventType %}
-        {{
-        govukTag({
-            text: "RELEASE",
-            classes: "govuk-tag--green"
-        })
-        }}
-    {% elseif 'appointments-changed' in event.eventType %}
-        {{
-        govukTag({
-            text: "RELEASE",
-            classes: "govuk-tag--green"
-        })
-        }}
-    {% elseif 'prisoner.released' in event.eventType %}
-        {{
-        govukTag({
-            text: "RELEASE",
-            classes: "govuk-tag--green"
-        })
-        }}
-    {% elseif '' in event.eventType %}
-        {{
-            govukTag({
-                text: "CELL-MOVE",
-                classes: "govuk-tag--blue"
-            })
-        }}
-    {% else %}
-        {{
-            govukTag({
-                text: "UNKNOWN-EVENT",
-                classes: "govuk-tag--red"
-            })
-        }}
-    {% endif %}
+    {% set options = 
+        ({ text: "Non-association", classes: "govuk-tag--orange" } if 'non-association' in event.eventType) or
+        ({ text: "IEP status", classes: "govuk-tag--green" } if 'iep-review' in event.eventType) or
+        ({ text: "Release", classes: "govuk-tag--green" } if 'activities-changed' in event.eventType or 'appointments-changed' in event.eventType or 'prisoner.released' in event.eventType) or
+        ({ text: "Cell-move", classes: "govuk-tag--blue" } if '' in event.eventType) or
+        { text: "Unknown-event", classes: "govuk-tag--red"} %}
+
+    {% set options = options | setAttribute('classes', options.classes + " govuk-!-font-size-16") %}
+
+    {{ govukTag(options) }}
 {% endmacro %}
