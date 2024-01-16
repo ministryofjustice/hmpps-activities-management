@@ -75,7 +75,7 @@
                     }),
                     attributes: {
                         'data-qa': 'prisoner-' + loop.index + '-name-and-number',
-                        "data-sort-value": prisoner | fullName | toTitleCase | prisonerName(false)
+                        "data-sort-value": prisoner | fullName | prisonerName(false)
                     }
                 },
                 {
@@ -105,13 +105,16 @@
             name: 'prisonNumbers',
             head: [
                 {
-                    text: "Name"
+                    text: "Name",
+                    attributes: { "aria-sort": "ascending" }
                 },
                 {
-                    text: "Cell location"
+                    text: "Cell location",
+                    attributes: { "aria-sort": "none" }
                 },
                 {
-                    text: "Attendance"
+                    text: "Attendance",
+                    attributes: { "aria-sort": "none" }
                 }
             ],
             rows: attendeeListRows,
