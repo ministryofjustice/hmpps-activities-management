@@ -124,7 +124,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       const requestObject = plainToInstance(StartDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'startDate', error: 'Activity start date must be in the future' }])
+      expect(errors).toEqual([{ property: 'startDate', error: 'Enter a date in the future' }])
     })
 
     it('validation fails if start date is today', async () => {
@@ -136,7 +136,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       const requestObject = plainToInstance(StartDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'startDate', error: 'Activity start date must be in the future' }])
+      expect(errors).toEqual([{ property: 'startDate', error: 'Enter a date in the future' }])
     })
 
     it('validation fails if start date is after end date', async () => {
@@ -156,7 +156,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       expect(errors).toEqual([
         {
           property: 'startDate',
-          error: `Enter a date on or before the activity end date, ${formatDatePickerDate(today)}`,
+          error: `Enter a date on or before the activity’s scheduled end date, ${formatDatePickerDate(today)}`,
         },
       ])
     })

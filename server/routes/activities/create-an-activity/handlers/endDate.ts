@@ -35,7 +35,9 @@ export class EndDate {
   @DateValidator((date, { createJourney }) => date >= parseIsoDate(createJourney.startDate), {
     message: ({ object }) => {
       const { createJourney } = object as { createJourney: CreateAnActivityJourney }
-      return `Enter a date on or after the activity start date, ${isoDateToDatePickerDate(createJourney?.startDate)}`
+      return `Enter a date on or after the activity’s scheduled start date, ${isoDateToDatePickerDate(
+        createJourney?.startDate,
+      )}`
     },
   })
   @IsValidDate({ message: 'Enter a valid end date' })
