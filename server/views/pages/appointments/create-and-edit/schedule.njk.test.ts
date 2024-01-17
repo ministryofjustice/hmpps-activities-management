@@ -741,16 +741,16 @@ describe('Views - Appointments Management - Schedule', () => {
           $(`[data-qa=schedule-card-title-prison-number-${prisonerSchedule.prisoner.number}] > ul > li:eq(0)`)
             .text()
             .trim(),
-        ).toEqual(`${convertToTitleCase(prisonerSchedule.prisoner.name)}, ${prisonerSchedule.prisoner.number}`)
+        ).toEqual(
+          `Proposed time: ${padNumber(prisonerSchedule.startTime.hour)}:${padNumber(
+            prisonerSchedule.startTime.minute,
+          )} to ${padNumber(prisonerSchedule.endTime.hour)}:${padNumber(prisonerSchedule.endTime.minute)}`,
+        )
         expect(
           $(`[data-qa=schedule-card-title-prison-number-${prisonerSchedule.prisoner.number}] > ul > li:eq(1)`)
             .text()
             .trim(),
-        ).toEqual(
-          `${padNumber(prisonerSchedule.startTime.hour)}:${padNumber(prisonerSchedule.startTime.minute)} to ${padNumber(
-            prisonerSchedule.endTime.hour,
-          )}:${padNumber(prisonerSchedule.endTime.minute)}`,
-        )
+        ).toEqual(`${convertToTitleCase(prisonerSchedule.prisoner.name)}, ${prisonerSchedule.prisoner.number}`)
       })
     })
 
