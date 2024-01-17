@@ -1,5 +1,16 @@
 .appointment-schedule{
-  .govuk-summary-card__actions{
+  .govuk-summary-card__actions {
     align-content: space-between;
+
+    &--stacked {
+      display: flex;
+      flex-direction: column;
+      row-gap: govuk-spacing(1);
+
+      .govuk-summary-card__action {
+        padding: 0;
+        border: none;
+      }
+    }
   }
 }
