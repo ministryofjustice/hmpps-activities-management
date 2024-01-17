@@ -1,5 +1,8 @@
 import { Request, Response } from 'express'
-import RemovePayRoutes from './removePay'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
+import RemovePayRoutes, { ConfirmRemoveOptions } from './removePay'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { CreateAnActivityJourney } from '../journey'
@@ -133,6 +136,46 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
         'check-pay?preserveHistory=true',
         'Activity updated',
         `You've updated the pay for ${req.session.createJourney.name}`,
+      )
+    })
+  })
+
+  describe('Validation', () => {
+    it('should pass validation when remove pay option is set to "no"', async () => {
+      const body = {
+        choice: 'no',
+      }
+
+      const requestObject = plainToInstance(ConfirmRemoveOptions, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([])
+    })
+
+    it('should pass validation when remove pay option is set to "yes"', async () => {
+      const body = {
+        choice: 'yes',
+      }
+
+      const requestObject = plainToInstance(ConfirmRemoveOptions, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([])
+    })
+
+    it('should fail validation when remove pay option not provided', async () => {
+      const body = {}
+
+      const requestObject = plainToInstance(ConfirmRemoveOptions, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: 'Confirm if you want to delete the pay rate or not',
+            property: 'choice',
+          },
+        ]),
       )
     })
   })
