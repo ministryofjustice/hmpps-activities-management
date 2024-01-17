@@ -4,7 +4,10 @@ import { IsNotEmpty } from 'class-validator'
 
 export class PayRateType {
   @Expose()
-  @IsNotEmpty({ message: 'Choose what type of rate you want to create.' })
+  @IsNotEmpty({
+    message:
+      'Select if you want to create a pay rate for a single incentive level or a flat rate for all incentive levels',
+  })
   payRateTypeOption: string
 }
 

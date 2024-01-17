@@ -72,7 +72,6 @@
     <div class='sticky-select' {% if selectable %} data-module='activities-sticky-select' {% endif %} {% if params.id %} id={{params.id}} {% endif %}>
         {{ govukTable({
             attributes: {
-                'data-module': 'moj-multi-select',
                 'data-multi-select-checkbox': '#' + selectAllId
             },
             caption: params.caption,

@@ -56,7 +56,7 @@ describe('Route Handlers - Create an activity schedule - End date option', () =>
       const requestObject = plainToInstance(EndDateOption, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'endDateOption', error: 'Choose whether you want to specify an end date.' }])
+      expect(errors).toEqual([{ property: 'endDateOption', error: 'Select if you want to enter an end date' }])
     })
   })
 })

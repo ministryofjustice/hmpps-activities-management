@@ -66,7 +66,6 @@
             visuallyHiddenText: 'Select ' + prisoner | fullName | toTitleCase | prisonerName(false),
             value: prisoner.prisonerNumber,
             selectable: true,
-
             items: [
                 {
                     html: showProfileLink({
@@ -78,12 +77,14 @@
                         'data-qa': 'prisoner-' + loop.index + '-name-and-number',
                         "data-sort-value": prisoner | fullName | toTitleCase | prisonerName(false)
                     }
-                }, {
+                },
+                {
                     text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status),
                     attributes: {
                         'data-qa': 'prisoner-' + loop.index + '-location'
                     }
-                }, {
+                },
+                {
                     html: attendanceTag(attendee),
                     attributes: {
                         'data-qa': 'prisoner-' + loop.index + '-attendance'
@@ -104,14 +105,13 @@
             name: 'prisonNumbers',
             head: [
                 {
-                    text: "Name",
-                    attributes: { "aria-sort": "ascending" }
-                }, {
-                    text: "Cell location",
-                    attributes: { "aria-sort": "none" }
-                }, {
-                    text: "Attendance",
-                    attributes: { "aria-sort": "none" }
+                    text: "Name"
+                },
+                {
+                    text: "Cell location"
+                },
+                {
+                    text: "Attendance"
                 }
             ],
             rows: attendeeListRows,
@@ -119,7 +119,8 @@
                 {
                     text: 'Mark as attended',
                     formAction: 'attend'
-                }, {
+                },
+                {
                     text: 'Mark as not attended',
                     formAction: 'non-attend'
                 }

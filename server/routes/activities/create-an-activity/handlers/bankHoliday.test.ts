@@ -100,7 +100,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'runsOnBankHoliday', error: 'Choose whether you want the schedule to run on a bank holiday.' },
+        { property: 'runsOnBankHoliday', error: 'Select if the activity will run on bank holidays' },
       ])
     })
   })

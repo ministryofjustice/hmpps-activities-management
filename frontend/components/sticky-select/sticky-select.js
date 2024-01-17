@@ -3,6 +3,16 @@ import { nodeListForEach } from '../../utils'
 function StickySelect(container) {
   this.container = container
 
+  var $table = container.querySelector('.govuk-table')
+  new MOJFrontend.MultiSelect({
+    container: $table.querySelector($table.getAttribute('data-multi-select-checkbox')),
+    checkboxes: $table.querySelectorAll('tbody .govuk-checkboxes__input'),
+  })
+
+  new MOJFrontend.SortableTable({
+    table: $table,
+  })
+
   this.toggleAllButton = this.container.querySelector('#checkboxes-all')
   this.checkboxes = this.container.querySelectorAll('tbody .govuk-checkboxes__input')
   this.radios = this.container.querySelectorAll('tbody .govuk-radios__input')
