@@ -100,5 +100,16 @@ describe('Route Handlers - Deallocation reason', () => {
         { property: 'deallocationReason', error: "Select why you're taking this person off the activity" },
       ])
     })
+
+    it('should succeed validation if deallocation reason is provided', async () => {
+      const body = {
+        deallocationReason: 'HEALTH',
+      }
+
+      const requestObject = plainToInstance(DeallocationReason, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
+    })
   })
 })
