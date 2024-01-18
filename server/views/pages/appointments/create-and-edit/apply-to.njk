@@ -30,7 +30,7 @@
 
             {{ addPrisonerList(session.editAppointmentJourney.addPrisoners) }}
 
-            <form method="POST">
+            <form method="POST" data-module="form-spinner" data-loading-text="Preparing your appointments" >
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
                     name: "applyTo",
