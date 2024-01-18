@@ -10,7 +10,7 @@ enum Options {
 
 export class RemoveDateOption {
   @Expose()
-  @IsIn(Object.values(Options), { message: 'Choose whether you want to change or remove the end date.' })
+  @IsIn(Object.values(Options), { message: 'Select if you want to change the allocation end date or remove it' })
   endDateOption: string
 }
 
