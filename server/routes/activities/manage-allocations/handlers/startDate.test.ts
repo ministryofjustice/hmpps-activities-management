@@ -133,7 +133,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'startDate', error: "Enter a date after today's date" }])
+      expect(errors).toEqual([{ property: 'startDate', error: 'Enter a date in the future' }])
     })
 
     it('validation fails if start date is before activity start date', async () => {
