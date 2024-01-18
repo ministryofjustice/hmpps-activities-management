@@ -1,8 +1,11 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import DeallocationReasonRoutes from './deallocationReason'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
+import DeallocationReasonRoutes, { DeallocationReason } from './deallocationReason'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -83,6 +86,19 @@ describe('Route Handlers - Deallocation reason', () => {
       expect(req.session.allocateJourney.deallocationReason).toEqual('HEALTH')
       expect(req.session.allocateJourney.deallocationCaseNote).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
+    })
+  })
+
+  describe('validation', () => {
+    it('should fail validation if no deallocation reason is provided', async () => {
+      const body = {}
+
+      const requestObject = plainToInstance(DeallocationReason, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([
+        { property: 'deallocationReason', error: "Select why you're taking this person off the activity" },
+      ])
     })
   })
 })

@@ -5,7 +5,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 
 export class DeallocationReason {
   @Expose()
-  @IsNotEmpty({ message: 'Select a reason for deallocation' })
+  @IsNotEmpty({ message: "Select why you're taking this person off the activity" })
   deallocationReason: string
 }
 
