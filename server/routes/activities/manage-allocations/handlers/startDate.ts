@@ -16,7 +16,7 @@ import IsValidDate from '../../../../validators/isValidDate'
 export class StartDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
-  @DateValidator(date => date > startOfToday(), { message: "Enter a date after today's date" })
+  @DateValidator(date => date > startOfToday(), { message: 'Enter a date in the future' })
   @DateValidator((date, { allocateJourney }) => date >= parseIsoDate(allocateJourney.activity.startDate), {
     message: (args: ValidationArguments) => {
       const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
