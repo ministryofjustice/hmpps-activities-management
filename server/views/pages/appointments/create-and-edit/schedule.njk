@@ -197,15 +197,17 @@
                         {% else %}
                             <div class="govuk-summary-card appointment-schedule">
                                 <div class="govuk-summary-card__title-wrapper">
-                                    <h2 class="govuk-summary-card__title" data-qa="schedule-card-title-prison-number-{{ prisoner.number }}">
+                                    <h3 class="govuk-summary-card__title" data-qa="schedule-card-title-prison-number-{{ prisoner.number }}">
                                         <ul class='govuk-list'>
-                                            <li><strong>{{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }}</strong></li>
                                             {% if session.appointmentJourney.type == AppointmentType.SET %}
-                                                <li>{{ prisonerSchedule.startTime.hour | padNumber + ":" + prisonerSchedule.startTime.minute | padNumber }} to {{ prisonerSchedule.endTime.hour | padNumber + ":" + prisonerSchedule.endTime.minute | padNumber }}</li>
+                                                <li><strong>Proposed time: {{ prisonerSchedule.startTime.hour | padNumber + ":" + prisonerSchedule.startTime.minute | padNumber }} to {{ prisonerSchedule.endTime.hour | padNumber + ":" + prisonerSchedule.endTime.minute | padNumber }}</strong></li>
+                                                <li>{{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }}</li>
+                                            {% else %}
+                                                <li><strong>{{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }}</strong></li>
                                             {% endif %}
                                         </ul>
-                                    </h2>
-                                    <ul class="govuk-summary-card__actions" data-qa="schedule-card-actions-prison-number-{{ prisoner.number }}">
+                                    </h3>
+                                    <ul class="govuk-summary-card__actions govuk-summary-card__actions--stacked" data-qa="schedule-card-actions-prison-number-{{ prisoner.number }}">
                                         {% if session.appointmentJourney.type == AppointmentType.SET %}
                                             <li class="govuk-summary-card__action">
                                                 <a class="govuk-link govuk-link--no-visited-state" href="appointment-set-times?preserveHistory=true" data-qa="change-appointment-time-prison-number-{{ prisoner.number }}">

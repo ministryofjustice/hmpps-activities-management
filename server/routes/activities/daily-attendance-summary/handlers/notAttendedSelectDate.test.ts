@@ -22,7 +22,7 @@ describe('Not attended routes - select date', () => {
       redirect: jest.fn(),
     } as unknown as Response
 
-    req = {} as unknown as Request
+    req = { session: {} } as unknown as Request
     jest.resetAllMocks()
   })
 
@@ -37,6 +37,17 @@ describe('Not attended routes - select date', () => {
   })
 
   describe('POST', () => {
+    it('sets attendanceSummaryJourney to null', async () => {
+      req.session.attendanceSummaryJourney = {}
+      req.body = {
+        datePresetOption: 'today',
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.attendanceSummaryJourney).toEqual(null)
+    })
+
     it("redirects to not attended list with today's date", async () => {
       const today = new Date()
 

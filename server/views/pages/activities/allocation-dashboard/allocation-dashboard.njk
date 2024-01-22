@@ -187,31 +187,27 @@
             </ul>
         {% endset %}
 
-        {% set currentlyAllocatedHtml %}
+        {% set prisonerDetailsHtml %}
             <div class="govuk-!-margin-bottom-0">
                 <a href='{{ dpsUrl }}/prisoner/{{ row.prisonerNumber }}'
                    class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">{{ row.name | toTitleCase | prisonerName }}
                 </a>
             </div>
-            <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.prisonerNumber }} </div>
-            {% if row.cellLocation == 'CSWAP' %}
-                <div class="govuk-hint govuk-!-margin-bottom-1"> --</div>
-            {% else %}
-                <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.cellLocation }}</div>
-            {% endif %}
+            <div class="govuk-hint govuk-!-margin-bottom-1">{{ row.prisonerNumber }}</div>
         {% endset %}
 
-        {% set suspendedTagHtml %}
-
+        {% set allocatedDatesHtml %}
+            <div>{{ row.startDate | formatDate('d MMMM yyyy')}}</div>
+            {% if row.endDate %}
+                <div>to {{ row.endDate | formatDate('d MMMM yyyy') }}</div>
+            {% endif %}
             {% if row.status == 'AUTO_SUSPENDED' or  row.status == 'SUSPENDED' %}
+                <hr class="mid-grey-tint-20-hr dash-border">
                 {{ govukTag({
                     text: "Suspended",
                     classes: "govuk-tag--red"
                 }) }}
             {% endif %}
-            <div>
-                {{ row.startDate | formatDate('d MMMM yyyy') + (' to ' + row.endDate | formatDate('d MMMM yyyy') if row.endDate) }}
-            </div>
         {% endset %}
 
         {% set rows = (rows.push({
@@ -220,16 +216,28 @@
             selectable: true,
             items: [
                 {
-                    html: currentlyAllocatedHtml
+                    html: prisonerDetailsHtml,
+                    attributes: {
+                        "data-sort-value": row.name | prisonerName(false)
+                    }
                 },
                 {
-                    html: suspendedTagHtml
+                    text: '--' if row.cellLocation == 'CSWAP' else row.cellLocation
+                },
+                {
+                    html: allocatedDatesHtml,
+                    attributes: {
+                        "data-sort-value": row.startDate | formatDate('yyyy-MM-dd')
+                    }
                 },
                 {
                     html: otherAllocationsHtml
                 },
                 {
-                    html: earliestReleaseDate(row.earliestReleaseDate)
+                    html: earliestReleaseDate(row.earliestReleaseDate),
+                    attributes: {
+                        "data-sort-value": row.earliestReleaseDate.releaseDate | formatDate('yyyy-MM-dd')
+                    }
                 }
             ]
         }), rows) %}
@@ -245,16 +253,23 @@
             name: 'selectedAllocations',
             head: [
                 {
-                    text: "Prisoner details"
+                    text: "Prisoner details",
+                    attributes: { "aria-sort": "ascending" }
                 },
                 {
-                    text: "Allocation start and end"
+                    text: "Cell location",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "Allocation start and end",
+                    attributes: { "aria-sort": "none" }
                 },
                 {
                     text: "Other allocations"
                 },
                 {
-                    text: "Earliest release date"
+                    text: "Earliest release date",
+                    attributes: { "aria-sort": "none" }
                 }
             ],
             rows: rows,
@@ -439,10 +454,16 @@
                         </div>
                         <div class="govuk-hint govuk-!-margin-bottom-1">' + row.prisonerNumber + '</div>
                         <div class="govuk-hint govuk-!-margin-bottom-1">' + row.cellLocation + '</div>
-                    '
+                    ',
+                    attributes: {
+                        "data-sort-value": row.name | prisonerName(false)
+                    }
                 },
                 {
-                    text: row.requestDate | formatDate('d MMMM yyyy')
+                    text: row.requestDate | formatDate('d MMMM yyyy'),
+                    attributes: {
+                        "data-sort-value": row.requestDate | formatDate('yyyy-MM-dd')
+                    }
                 },
                 {
                     text: row.requestedBy
@@ -451,7 +472,10 @@
                     html: currentAllocationsHtml
                 },
                 {
-                    text: waitlistStatusBadge(row.status)
+                    text: waitlistStatusBadge(row.status),
+                    attributes: {
+                     "data-sort-value": row.status
+                    }
                 }
             ]
         }), rows) %}
@@ -467,20 +491,24 @@
             name: 'selectedWaitlistApplication',
             head: [
                 {
-                    text: "Name"
+                    text: "Name",
+                    attributes: { "aria-sort": "none" }
                 },
                 {
-                    text: "Request date"
+                    text: "Request date",
+                    attributes: { "aria-sort": "ascending" }
                 },
                 {
-                    text: "Requester"
+                    text: "Requester",
+                    attributes: { "aria-sort": "none" }
                 },
                 {
                     text: "Current allocations"
                 },
                 {
                     text: "Status",
-                    classes: 'min-width--110'
+                    classes: 'min-width--110',
+                    attributes: { "aria-sort": "none" }
                 }
             ],
             rows: rows,

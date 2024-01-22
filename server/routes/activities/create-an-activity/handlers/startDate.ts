@@ -16,7 +16,7 @@ import IsValidDate from '../../../../validators/isValidDate'
 export class StartDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
-  @DateValidator(thisDate => thisDate > startOfToday(), { message: 'Activity start date must be in the future' })
+  @DateValidator(thisDate => thisDate > startOfToday(), { message: 'Enter a date in the future' })
   @DateValidator(
     (date, { createJourney }) => {
       const allocationDate = createJourney?.earliestAllocationStartDate
@@ -34,7 +34,7 @@ export class StartDate {
     message: ({ object }) => {
       const { createJourney } = object as { createJourney: CreateAnActivityJourney }
       const activityEndDate = isoDateToDatePickerDate(createJourney?.endDate)
-      return `Enter a date on or before the activity end date, ${activityEndDate}`
+      return `Enter a date on or before the activity’s scheduled end date, ${activityEndDate}`
     },
   })
   @IsValidDate({ message: 'Enter a valid start date' })

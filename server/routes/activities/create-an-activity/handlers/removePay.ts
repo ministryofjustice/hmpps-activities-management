@@ -7,7 +7,7 @@ import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
 export class ConfirmRemoveOptions {
   @Expose()
-  @IsIn(['yes', 'no'], { message: 'Select either yes or no' })
+  @IsIn(['yes', 'no'], { message: 'Confirm if you want to delete the pay rate or not' })
   choice: string
 }
 

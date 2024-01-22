@@ -187,7 +187,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       expect(errors).toEqual([
         {
           property: 'endDate',
-          error: `Enter a date on or after the activity start date, ${formatDatePickerDate(nextWeek)}`,
+          error: `Enter a date on or after the activity’s scheduled start date, ${formatDatePickerDate(nextWeek)}`,
         },
       ])
     })

@@ -106,7 +106,7 @@ describe('Route Handlers - Allocation - Remove Date option', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'endDateOption', error: 'Choose whether you want to change or remove the end date.' },
+        { property: 'endDateOption', error: 'Select if you want to change the allocation end date or remove it' },
       ])
     })
   })
