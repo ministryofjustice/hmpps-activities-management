@@ -38,6 +38,8 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
       return {
         prisonerName: convertToTitleCase(`${p.firstName} ${p.lastName}`),
         prisonerNumber: p.prisonerNumber,
+        prisonCode: p.prisonId,
+        status: p.status,
         cellLocation: p.cellLocation,
         incentiveLevel: p.currentIncentive?.level?.description,
         payBand: payBand

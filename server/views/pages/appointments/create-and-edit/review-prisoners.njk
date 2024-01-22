@@ -8,6 +8,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
     {% set pageTitle = appointmentJourneyTitle("no attendees added" if prisoners.length == 0 else "Review additional attendee" + ("s" if prisoners.length > 1), session.appointmentJourney) %}
@@ -66,7 +67,7 @@
                             link: true
                         })
                     }, {
-                        text: prisoner.cellLocation
+                        text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoad.caseLoadId)
                     }, {
                         html: '<a href="review-prisoners/' + prisoner.number + '/remove' + ('?preserveHistory=true' if preserveHistory else '') + '"
                             class="govuk-link--no-visited-state">

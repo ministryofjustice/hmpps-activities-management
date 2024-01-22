@@ -61,6 +61,8 @@ export default class AppointmentSetUploadRoutes {
         prisoner: {
           number: prisonerDetails.prisonerNumber,
           name: `${prisonerDetails.firstName} ${prisonerDetails.lastName}`,
+          prisonCode: prisonerDetails.prisonId,
+          status: prisonerDetails.status,
           cellLocation: prisonerDetails.cellLocation,
         },
         startTime: instance.startTime,

@@ -7,6 +7,7 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = applicationName + " - Review changes in circumstances" %}
 {% set pageId = 'change-of-circumstance-page' %}
@@ -37,7 +38,7 @@
                         }
                     },
                     {
-                        text: event.cellLocation
+                        text: statusBasedCellLocation(event.cellLocation, event.prisonerStatus, event.prisonerPrisonCode == user.activeCaseLoad.caseLoadId)
                     },
                     {
                         text: event.eventTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMMM yyyy hh:mm a', false)

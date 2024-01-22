@@ -2095,6 +2095,8 @@ export interface components {
       exclusions: components['schemas']['Slot'][]
       /** @description The name of the prisoner. Included only if includePrisonerSummary = true */
       prisonerName?: string
+      prisonerStatus?: string
+      prisonerPrisonCode?: string
       /** @description The cell location of the prisoner. Included only if includePrisonerSummary = true */
       cellLocation?: string
       earliestReleaseDate?: components['schemas']['EarliestReleaseDate']
@@ -6106,6 +6108,7 @@ export interface components {
        * @example SKI
        */
       prisonCode: string
+      status: string
       /**
        * @description
        *     The prisoner's residential cell location when inside the prison.

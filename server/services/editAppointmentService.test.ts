@@ -1019,11 +1019,15 @@ describe('Edit Appointment Service', () => {
             number: 'A1234BC',
             name: 'TEST PRISONER1',
             cellLocation: '1-1-1',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           },
           {
             number: 'B2345CD',
             name: 'TEST PRISONER2',
             cellLocation: '1-1-1',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           },
         ]
 
@@ -1070,6 +1074,8 @@ describe('Edit Appointment Service', () => {
             number: `A${i}BC`,
             name: 'TEST PRISONER',
             cellLocation: '1-1-1',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           }))
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)

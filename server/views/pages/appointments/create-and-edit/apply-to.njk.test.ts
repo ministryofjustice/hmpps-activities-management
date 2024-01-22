@@ -44,6 +44,7 @@ describe('Views - Appointments Management - Apply to', () => {
     property: '',
     frequencyText: null as string,
     applyToOptions,
+    user: {},
   }
 
   const njkEnv = registerNunjucks()
@@ -51,6 +52,11 @@ describe('Views - Appointments Management - Apply to', () => {
   beforeEach(() => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
+      user: {
+        activeCaseLoad: {
+          caseLoadId: 'MDI',
+        },
+      },
       session: {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
@@ -93,6 +99,8 @@ describe('Views - Appointments Management - Apply to', () => {
         number: 'A1234BC',
         name: 'TEST PRISONER',
         cellLocation: '1-1-1',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       },
     ]
 
@@ -107,11 +115,15 @@ describe('Views - Appointments Management - Apply to', () => {
         number: 'A1234BC',
         name: 'TEST PRISONER1',
         cellLocation: '1-1-1',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       },
       {
         number: 'B2345CD',
         name: 'TEST PRISONER2',
         cellLocation: '2-2-2',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       },
     ]
 
@@ -139,6 +151,8 @@ describe('Views - Appointments Management - Apply to', () => {
         number: 'A1234BC',
         name: 'TEST PRISONER',
         cellLocation: '1-1-1',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       },
     ]
 
@@ -155,6 +169,7 @@ describe('Views - Appointments Management - Apply to', () => {
       lastName: 'PRISONER',
       prisonCode: 'TPR',
       cellLocation: '1-1-1',
+      status: 'ACTIVE IN',
     }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))

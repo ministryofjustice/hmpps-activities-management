@@ -82,6 +82,8 @@ export default class StartJourneyRoutes {
       {
         number: prisoner.prisonerNumber,
         name: `${prisoner.firstName} ${prisoner.lastName}`,
+        prisonCode: prisoner.prisonId,
+        status: prisoner.status,
         cellLocation: prisoner.cellLocation,
       },
     ]
@@ -161,6 +163,8 @@ export default class StartJourneyRoutes {
           attendee.prisoner.lastName !== 'UNKNOWN'
             ? `${attendee.prisoner.firstName} ${attendee.prisoner.lastName}`
             : null,
+        prisonCode: attendee.prisoner.prisonCode,
+        status: attendee.prisoner.status,
         cellLocation: attendee.prisoner.cellLocation,
       })),
       category: appointment.category,

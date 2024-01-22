@@ -28,7 +28,7 @@
             {{ appointmentTypeCaption(session) }}
             <h1 class="govuk-heading-l">Which appointments do you want to {{ editMessage }}?</h1>
 
-            {{ addPrisonerList(session.editAppointmentJourney.addPrisoners) }}
+            {{ addPrisonerList(session.editAppointmentJourney.addPrisoners, user) }}
 
             <form method="POST" data-module="form-spinner" data-loading-text="Preparing your appointments" >
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

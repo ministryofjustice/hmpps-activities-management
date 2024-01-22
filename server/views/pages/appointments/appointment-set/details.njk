@@ -7,6 +7,7 @@
 
 {% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = appointmentSet.appointmentName + ' – set overview' %}
 {% set pageId = 'appointment-set-details-page' %}
@@ -20,7 +21,7 @@
             html: showProfileLink({
                 name: prisoner | fullName,
                 prisonerNumber: prisoner.prisonerNumber,
-                cellLocation: prisoner.cellLocation,
+                cellLocation: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoad.caseLoadId),
                 link: true
             }),
             attributes: { 'data-qa': 'appointment-' + appointment.id + '-prisoner' },
@@ -35,7 +36,7 @@
             text: prisoner.prisonerNumber,
             classes: "print-only"
         }, {
-            text: prisoner.cellLocation,
+            text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoad.caseLoadId),
             classes: "print-only"
         }, {
             text: appointment.startTime,

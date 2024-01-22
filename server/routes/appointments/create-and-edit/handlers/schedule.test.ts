@@ -124,6 +124,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
       ]
 
@@ -137,6 +139,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
               number: 'A1234BC',
               name: 'TEST01 PRISONER01',
               cellLocation: '1-1-1',
+              prisonCode: 'MDI',
+              status: 'ACTIVE IN',
             },
             scheduledEvents: [
               { prisonerNumber: 'A1234BC', summary: 'Activity for A1234BC' },
@@ -158,6 +162,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
       ]
 
@@ -176,6 +182,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
               number: 'A1234BC',
               name: 'TEST01 PRISONER01',
               cellLocation: '1-1-1',
+              prisonCode: 'MDI',
+              status: 'ACTIVE IN',
             },
             scheduledEvents: [
               { prisonerNumber: 'A1234BC', summary: 'Activity for A1234BC' },
@@ -198,6 +206,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
       ]
 
@@ -216,6 +226,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
               number: 'A1234BC',
               name: 'TEST01 PRISONER01',
               cellLocation: '1-1-1',
+              prisonCode: 'MDI',
+              status: 'ACTIVE IN',
             },
             scheduledEvents: [
               { prisonerNumber: 'A1234BC', summary: 'Activity for A1234BC' },
@@ -247,6 +259,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
             number: 'B2345CD',
             name: 'TEST02 PRISONER02',
             cellLocation: '2-2-2',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           },
         },
       ]
@@ -266,6 +280,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
               number: 'B2345CD',
               name: 'TEST02 PRISONER02',
               cellLocation: '2-2-2',
+              prisonCode: 'MDI',
+              status: 'ACTIVE IN',
             },
             startTime: {
               hour: 9,
@@ -298,6 +314,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         number: 'A1234BC',
         name: 'TEST01 PRISONER01',
         cellLocation: '1-1-1',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       }
       req.session.appointmentJourney.prisoners = [prisoner]
 
@@ -337,6 +355,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
       ]
 
@@ -358,6 +378,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
               number: 'A1234BC',
               name: 'TEST01 PRISONER01',
               cellLocation: '1-1-1',
+              prisonCode: 'MDI',
+              status: 'ACTIVE IN',
             },
             scheduledEvents: [],
           },
@@ -379,6 +401,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
       ]
       await handler.EDIT(req, res)
@@ -427,11 +451,15 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           number: 'A1234BC',
           name: '',
           cellLocation: '',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
         {
           number: 'B2345CD',
           name: '',
           cellLocation: '',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
       ]
 
@@ -454,6 +482,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           number: 'A1234BC',
           name: '',
           cellLocation: '',
+          prisonCode: 'MDI',
+          status: 'ACTIVE IN',
         },
       ])
       expect(res.redirect).toBeCalledWith('../../schedule')
@@ -466,11 +496,15 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
         {
           number: 'B2345CD',
           name: 'TEST02 PRISONER02',
           cellLocation: '2-2-2',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
       ]
       req.params.prisonNumber = 'B2345CD'
@@ -491,6 +525,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
           cellLocation: '1-1-1',
+          prisonCode: 'MDI',
+          status: 'ACTIVE IN',
         },
       ])
       expect(res.redirect).toBeCalledWith('../../schedule')
@@ -504,6 +540,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
             number: 'A1234BC',
             name: '',
             cellLocation: '',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           },
         },
         {
@@ -511,6 +549,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
             number: 'B2345CD',
             name: '',
             cellLocation: '',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           },
         },
       ]
@@ -535,6 +575,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
             number: 'A1234BC',
             name: '',
             cellLocation: '',
+            prisonCode: 'MDI',
+            status: 'ACTIVE IN',
           },
         },
       ])

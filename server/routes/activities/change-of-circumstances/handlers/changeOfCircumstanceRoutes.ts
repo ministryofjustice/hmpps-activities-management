@@ -36,6 +36,8 @@ export default class ChangeOfCircumstanceRoutes {
       return {
         ...item,
         name: `${prisoner?.lastName}, ${prisoner?.firstName}` || '',
+        prisonerStatus: prisoner?.status,
+        prisonerPrisonCode: prisoner?.prisonId,
         cellLocation: prisoner?.cellLocation || '',
       }
     })

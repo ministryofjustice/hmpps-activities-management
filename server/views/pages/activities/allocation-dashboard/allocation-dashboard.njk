@@ -11,6 +11,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
 {% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = applicationName + " - Allocate" %}
 {% set pageId = 'allocation-dashboard-page' %}
@@ -218,7 +219,7 @@
                     }
                 },
                 {
-                    text: '--' if row.cellLocation == 'CSWAP' else row.cellLocation
+                    text: statusBasedCellLocation(row.cellLocation, row.prisonerStatus, row.prisonerPrisonCode == user.activeCaseLoad.caseLoadId)
                 },
                 {
                     html: allocatedDatesHtml,
@@ -445,7 +446,7 @@
                     html: showProfileLink({
                         name: row.name,
                         prisonerNumber: row.prisonerNumber,
-                        cellLocation: row.cellLocation,
+                        cellLocation: statusBasedCellLocation(row.cellLocation, row.prisonerStatus, row.prisonerPrisonCode == user.activeCaseLoad.caseLoadId),
                         link: true
                     }),
                     attributes: {
@@ -680,7 +681,7 @@
                         link: true
                     }),
                     attributes: {
-                        "data-sort-value": row.name
+                        "data-sort-value": row.name | prisonerName(false)
                     }
                 },
                 {

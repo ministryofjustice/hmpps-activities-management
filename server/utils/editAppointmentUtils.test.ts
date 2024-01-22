@@ -430,6 +430,8 @@ describe('Edit Appointment Utils', () => {
           number: 'A1234BC',
           name: 'TEST PRISONER',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
       ]
 
@@ -450,11 +452,15 @@ describe('Edit Appointment Utils', () => {
           number: 'A1234BC',
           name: 'TEST PRISONER1',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
         {
           number: 'B2345CD',
           name: 'TEST PRISONER2',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
       ]
 
@@ -471,6 +477,7 @@ describe('Edit Appointment Utils', () => {
         lastName: 'PRISONER',
         prisonCode: 'MDI',
         cellLocation: '1-1-1',
+        status: 'ACTIVE IN',
       }
 
       expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
@@ -690,6 +697,8 @@ describe('Edit Appointment Utils', () => {
           number: 'A1234BC',
           name: 'TEST PRISONER',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
       ]
 
@@ -709,11 +718,15 @@ describe('Edit Appointment Utils', () => {
           number: 'A1234BC',
           name: 'TEST PRISONER1',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
         {
           number: 'B2345CD',
           name: 'TEST PRISONER2',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
       ]
 
@@ -733,8 +746,9 @@ describe('Edit Appointment Utils', () => {
         bookingId: 1,
         firstName: 'TEST',
         lastName: 'PRISONER',
-        prisonCode: 'MDI',
         cellLocation: '1-1-1',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       }
 
       const options = getAppointmentApplyToOptions(req)

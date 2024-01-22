@@ -17,7 +17,7 @@
             {{ appointmentTypeCaption(session) }}
             <h1 class="govuk-heading-l">Are you sure you want to {{ editMessage }} this appointment – {{ startDate | formatDate }}?</h1>
 
-            {{ addPrisonerList(session.editAppointmentJourney.addPrisoners) }}
+            {{ addPrisonerList(session.editAppointmentJourney.addPrisoners, user) }}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

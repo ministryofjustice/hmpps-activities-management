@@ -11,6 +11,7 @@
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = "Waitlist - Dashboard" %}
 {% set jsBackLink = true %}
@@ -143,7 +144,7 @@
                                     html: showProfileLink({
                                         name: application.prisoner | fullName,
                                         prisonerNumber: application.prisoner.prisonerNumber,
-                                        cellLocation: application.prisoner.cellLocation,
+                                        cellLocation: statusBasedCellLocation(application.prisoner.cellLocation, application.prisoner.status, application.prisoner.prisonId == user.activeCaseLoad.caseLoadId),
                                         link: true
                                     })
                                 },

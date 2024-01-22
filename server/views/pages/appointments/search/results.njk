@@ -21,7 +21,7 @@
         {{ showProfileLink({
             name: prisonerDetails | firstNameLastName,
             prisonerNumber: prisonerDetails.prisonerNumber or attendees[0].prisonerNumber,
-            cellLocation: prisonerDetails.cellLocation or "UNKNOWN",
+            cellLocation: prisonerDetails.cellLocation,
             link: true,
             classes: 'hmpps-inline-block'
         }) }}

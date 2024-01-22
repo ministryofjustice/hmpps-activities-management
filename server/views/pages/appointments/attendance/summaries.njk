@@ -3,19 +3,20 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = "Appointment attendance summaries" %}
 {% set pageId = 'appointment-attendance-summaries-page' %}
 {% set hardBackLinkText = "Choose a different date" %}
 {% set hardBackLinkHref = "select-date" %}
 
-{% macro attendees(attendees) %}
+{% macro attendees(attendees, prisonerDetails, user) %}
     {% if attendees | length == 1 %}
         {% set prisonerDetails = prisonersDetails[attendees[0].prisonerNumber] %}
         {{ showProfileLink({
             name: prisonerDetails | firstNameLastName,
             prisonerNumber: prisonerDetails.prisonerNumber or attendees[0].prisonerNumber,
-            cellLocation: prisonerDetails.cellLocation or "UNKNOWN",
+            cellLocation: statusBasedCellLocation(prisonerDetails.cellLocation, prisonerDetails.status, prisonerDetails.prisonId == user.activeCaseLoad.caseLoadId),
             link: true,
             classes: 'hmpps-inline-block'
         }) }}
@@ -46,7 +47,7 @@
             text: summary.startTime + (" to " + summary.endTime if summary.endTime),
             attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-time' }
         }, {
-            text: attendees(summary.attendees, prisonersDetails),
+            text: attendees(summary.attendees, prisonersDetails, user),
             attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-attendee-count',
                 "data-sort-value": summary.attendees
             }

@@ -5,10 +5,10 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { asString } from '../../../../utils/utils'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
-import { Prisoner } from '../../../../@types/activities'
 import { WaitingListStatus } from '../../../../enum/waitingListStatus'
 import IsValidDate from '../../../../validators/isValidDate'
 import WaitlistRequester from '../../../../enum/waitlistRequester'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 
 export class DashboardFrom {
   @Transform(({ value }) => parseDatePickerDate(value))
