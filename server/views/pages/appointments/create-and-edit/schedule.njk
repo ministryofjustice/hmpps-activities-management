@@ -252,11 +252,13 @@
         {% for scheduledEvent in scheduledEvents %}
             {% set scheduledEventRows = (scheduledEventRows.push([
                 {
-                    text: timeText(scheduledEvent)
+                    text: timeText(scheduledEvent),
+                     classes: "no-break"
                 }, {
                     text: scheduledEvent.summary | trim
                 }, {
-                    text: eventTypeText(scheduledEvent)
+                    text: eventTypeText(scheduledEvent),
+                    classes: "no-break"
                 }, {
                     text: locationText(scheduledEvent)
                 }
