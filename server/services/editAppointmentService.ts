@@ -3,10 +3,9 @@ import { plainToInstance } from 'class-transformer'
 import ActivitiesService from './activitiesService'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
-import { AppointmentCancellationReason, AppointmentApplyTo } from '../@types/appointments'
+import { AppointmentApplyTo } from '../@types/appointments'
 import { AppointmentCancelRequest, AppointmentUpdateRequest } from '../@types/activitiesAPI/types'
 import SimpleTime from '../commonValidationTypes/simpleTime'
-import { formatDate } from '../utils/utils'
 import { YesNo } from '../@types/activities'
 import {
   getAppointmentEditMessage,
@@ -26,7 +25,6 @@ import {
 import config from '../config'
 import MetricsService from './metricsService'
 import MetricsEvent from '../data/metricsEvent'
-import { parseIsoDate } from '../utils/datePickerUtils'
 
 export default class EditAppointmentService {
   constructor(
@@ -65,8 +63,7 @@ export default class EditAppointmentService {
     const { appointmentId } = req.params
 
     if (editAppointmentJourney.cancellationReason) {
-      const { repeat } = appointmentJourney
-      const { cancellationReason, appointmentSeries, appointmentSet } = editAppointmentJourney
+      const { cancellationReason } = editAppointmentJourney
 
       const cancelRequest: AppointmentCancelRequest = {
         cancellationReasonId: +cancellationReason,
@@ -78,42 +75,6 @@ export default class EditAppointmentService {
       this.metricsService.trackEvent(
         MetricsEvent.CANCEL_APPOINTMENT_JOURNEY_COMPLETED(+appointmentId, applyTo, req, res.locals.user),
       )
-
-      // For delete requests we can't redirect back to the appointment page. Instead, we should provide a more specific
-      // error message and redirect back to a relevant page
-      if (cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
-        if (appointmentSet) {
-          const successHeading = `You've ${this.getEditedMessage(
-            appointmentJourney,
-            editAppointmentJourney,
-          )} appointment for ${appointmentJourney.prisoners[0].number} from this set`
-
-          const appointmentSetId = appointmentSet.id
-
-          this.clearSession(req)
-
-          return res.redirectWithSuccess(`/appointments/set/${appointmentSetId}`, successHeading)
-        }
-        if (repeat === YesNo.YES) {
-          const successHeading = `You've ${this.getEditedMessage(
-            appointmentJourney,
-            editAppointmentJourney,
-          )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo, true)}`
-
-          const appointmentSeriesId = appointmentSeries.id
-
-          this.clearSession(req)
-
-          return res.redirectWithSuccess(`/appointments/series/${appointmentSeriesId}`, successHeading)
-        }
-        const successHeading = `You've ${this.getEditedMessage(appointmentJourney, editAppointmentJourney)} the ${
-          appointmentJourney.appointmentName
-        } appointment - ${formatDate(parseIsoDate(appointmentJourney.startDate), 'EEEE, d MMMM yyyy')}`
-
-        this.clearSession(req)
-
-        return res.redirectWithSuccess(`/appointments`, successHeading)
-      }
 
       this.clearSession(req)
 

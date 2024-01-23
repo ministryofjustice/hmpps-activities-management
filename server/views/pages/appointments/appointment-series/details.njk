@@ -23,13 +23,14 @@
             text: appointmentDate | formatDate,
             attributes: { 'data-qa': 'appointment-date-' + appointment.sequenceNumber }
         }, {
-            html: (govukTag({ text: "Edited" }) if appointment.isEdited) +
-                  (govukTag({ text: "Cancelled" }) if appointment.isCancelled),
+            html: (govukTag({ text: "Deleted", classes: "govuk-tag--red" }) if appointment.isDeleted) or
+                  (govukTag({ text: "Cancelled"  }) if appointment.isCancelled) or
+                  (govukTag({ text: "Edited" }) if appointment.isEdited),
             attributes: { 'data-qa': 'appointment-status-' + appointment.sequenceNumber }
         }, {
             html: '<a href="/appointments/' + appointment.id + '"
                 class="govuk-link--no-visited-state">' +
-                ('Manage details' if not appointment.isExpired and not appointment.isCancelled else 'View') +
+                ('Manage details' if not appointment.isExpired and not appointment.isCancelled and not appointment.isDeleted else 'View') +
                 '<span class="govuk-visually-hidden">' + (' of' if not appointment.isExpired and not appointment.isCancelled) + ' appointment on ' + (appointmentDate | formatDate('d MMM yyyy')) + '</span>
             </a>',
             classes: 'govuk-!-text-align-right',

@@ -33,7 +33,6 @@ const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 describe('Edit Appointment Service', () => {
   const service = new EditAppointmentService(activitiesService, metricsService)
   const weekTomorrow = addDays(new Date(), 8)
-  const weekTomorrowFormatted = formatDate(weekTomorrow, 'EEEE, d MMMM yyyy')
   let req: Request
   let res: Response
   const journeyId = uuidv4()
@@ -254,10 +253,7 @@ describe('Edit Appointment Service', () => {
         expect(req.session.appointmentJourney).toBeNull()
         expect(req.session.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
-        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments`,
-          `You've deleted the Category appointment - ${weekTomorrowFormatted}`,
-        )
+        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
       it('when deleting appointment from set', async () => {
@@ -300,10 +296,7 @@ describe('Edit Appointment Service', () => {
         expect(req.session.appointmentJourney).toBeNull()
         expect(req.session.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
-        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/set/1`,
-          `You've deleted appointment for A1111A from this set`,
-        )
+        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
       it('when deleting appointment from series', async () => {
@@ -336,10 +329,7 @@ describe('Edit Appointment Service', () => {
         expect(req.session.appointmentJourney).toBeNull()
         expect(req.session.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
-        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/series/1`,
-          `You've deleted appointment 2 of 4 in this series`,
-        )
+        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
       it('when changing the location', async () => {
@@ -775,10 +765,7 @@ describe('Edit Appointment Service', () => {
         expect(req.session.appointmentJourney).toBeNull()
         expect(req.session.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
-        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/series/1`,
-          "You've deleted appointments 2 to 4 in this series",
-        )
+        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
       it('when changing the location', async () => {
@@ -897,10 +884,7 @@ describe('Edit Appointment Service', () => {
         expect(req.session.appointmentJourney).toBeNull()
         expect(req.session.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
-        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/appointments/series/1`,
-          "You've deleted appointments 1 to 4 in this series",
-        )
+        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
       it('when changing the location', async () => {

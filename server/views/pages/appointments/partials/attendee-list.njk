@@ -4,7 +4,7 @@
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% macro attendeeActions(appointment, attendee) %}
-    {% if appointment.attendees.length > 1 and appointment.isCancelled == false and appointment.isExpired == false %}
+    {% if appointment.attendees.length > 1 and not appointment.isDeleted and appointment.isCancelled == false and appointment.isExpired == false %}
         <a href="/appointments/{{ appointment.id }}/edit/start/{{ attendee.prisoner.prisonerNumber }}/remove" class="govuk-link govuk-link--no-visited-state">
             Remove <span class="govuk-visually-hidden"> prisoner {{ attendee.prisoner.prisonerNumber }}</span>
         </a>
@@ -58,16 +58,18 @@
     <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper" data-qa="prisoner-list-title">
             <h2 class="govuk-summary-card__title">{{ appointment.attendees | length + (" attendee" if appointment.attendees.length == 1 else " attendees") }}</h2>
-            <ul class="govuk-summary-card__actions">
-                <li class="govuk-summary-card__action">
-                    <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/attendance" }}" data-qa="add-prisoners">Record attendance</a>
-                </li>
-                {% if appointment.appointmentType == AppointmentType.GROUP and appointment.isExpired == false %}
+            {% if not appointment.isCancelled and not appointment.isDeleted %}
+                <ul class="govuk-summary-card__actions">
                     <li class="govuk-summary-card__action">
-                        <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/edit/start/prisoners/add" }}" data-qa="add-prisoners">Add attendees</a>
+                        <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/attendance" }}" data-qa="add-prisoners">Record attendance</a>
                     </li>
-                {% endif %}
-            </ul>
+                    {% if appointment.appointmentType == AppointmentType.GROUP and appointment.isExpired == false %}
+                        <li class="govuk-summary-card__action">
+                            <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/edit/start/prisoners/add" }}" data-qa="add-prisoners">Add attendees</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            {% endif %}
         </div>
         <div class="govuk-summary-card__content">
             {{ govukTable({
