@@ -11,7 +11,7 @@
     {% endif %}
 {% endmacro %}
 
-{% macro attendeeList(appointment) %}
+{% macro attendeeList(appointment, user) %}
     {% set appointmentLink = '/appointments/' + appointment.id  %}
     {% set attendeeListRows = [] %}
     {% for attendee in appointment.attendees %}
@@ -31,9 +31,9 @@
                 attributes: { 'data-qa': 'prisoner-' + loop.index + '-name-and-number-and-cell-location', "data-sort-value": prisoner | fullName | prisonerName(false) }
             },
             {
-                text: prisoner.cellLocation,
+                text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoad.caseLoadId),
                 classes: 'govuk-!-display-none-print',
-                attributes: { id: 'prisoner-cell-location',"data-sort-value": prisoner.cellLocation, "data-qa": "prisoner-cell-location" }
+                attributes: { id: 'prisoner-cell-location', "data-qa": "prisoner-cell-location" }
             },
             {
               text: prisoner | fullName | toTitleCase | prisonerName(false),
@@ -44,7 +44,7 @@
                 classes: 'print-only'
             },
             {
-                text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status),
+                text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoad.caseLoadId),
                 classes: 'print-only'
             },
             {

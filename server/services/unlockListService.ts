@@ -53,8 +53,7 @@ export default class UnlockListService {
       return {
         prisonerNumber: prisoner.prisonerNumber,
         bookingId: prisoner?.bookingId,
-        firstName: prisoner.firstName,
-        lastName: prisoner.lastName,
+        prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
         cellLocation: prisoner?.cellLocation,
         category: prisoner?.category,
         incentiveLevel: prisoner?.currentIncentive,

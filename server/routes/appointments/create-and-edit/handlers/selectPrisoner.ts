@@ -72,7 +72,9 @@ export default class SelectPrisonerRoutes {
     const prisonerData = {
       number: prisoner.prisonerNumber,
       name: `${prisoner.firstName} ${prisoner.lastName}`,
+      prisonCode: prisoner.prisonId,
       cellLocation: prisoner.cellLocation,
+      status: prisoner.status,
     }
 
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {

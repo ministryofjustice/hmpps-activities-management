@@ -78,6 +78,8 @@ describe('Route Handlers - Create Appointment - Name', () => {
           number: 'A1234BC',
           name: 'TEST PRISONER',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         },
       ]
 

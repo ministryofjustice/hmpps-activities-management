@@ -4,6 +4,7 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/activities/days-and-times.njk" import daysAndTimes %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Check answers" %}
 {% set pageId = 'check-answers-page' %}
@@ -26,7 +27,7 @@
                     <ul class="govuk-list">
                         <li>{{ session.allocateJourney.inmate.prisonerName }}</li>
                         <li>{{ session.allocateJourney.inmate.prisonerNumber }}</li>
-                        <li>{{ session.allocateJourney.inmate.cellLocation }}</li>
+                        <li>{{ statusBasedCellLocation(session.allocateJourney.inmate.cellLocation, session.allocateJourney.inmate.status, session.allocateJourney.inmate.prisonCode == user.activeCaseLoad.caseLoadId) }}</li>
                     </ul>
                 {% else %}
                     <ul class="govuk-list">

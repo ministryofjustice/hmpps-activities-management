@@ -22,6 +22,8 @@ export type AppointmentJourney = {
   prisoners?: {
     number: string
     name: string
+    prisonCode: string
+    status: string
     cellLocation: string
   }[]
   category?: {

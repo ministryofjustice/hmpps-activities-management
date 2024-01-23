@@ -3,6 +3,8 @@ import { Slot } from '../../../@types/activitiesAPI/types'
 type Inmate = {
   prisonerName: string
   prisonerNumber: string
+  prisonCode: string
+  status: string
   cellLocation?: string
   incentiveLevel?: string
   payBand?: {

@@ -18,6 +18,7 @@ describe('Views - Appointments Management - Confirm Edit', () => {
   const weekTomorrow = addDays(new Date(), 8)
   let compiledTemplate: Template
   let viewContext = {
+    user: {},
     session: {
       appointmentJourney: {} as unknown as AppointmentJourney,
       editAppointmentJourney: {} as unknown as EditAppointmentJourney,
@@ -31,6 +32,11 @@ describe('Views - Appointments Management - Confirm Edit', () => {
   beforeEach(() => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
+      user: {
+        activeCaseLoad: {
+          caseLoadId: 'MDI',
+        },
+      },
       session: {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
@@ -67,6 +73,8 @@ describe('Views - Appointments Management - Confirm Edit', () => {
         number: 'A1234BC',
         name: 'TEST PRISONER',
         cellLocation: '1-1-1',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       },
     ]
 
@@ -81,11 +89,15 @@ describe('Views - Appointments Management - Confirm Edit', () => {
         number: 'A1234BC',
         name: 'TEST PRISONER1',
         cellLocation: '1-1-1',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       },
       {
         number: 'B2345CD',
         name: 'TEST PRISONER2',
         cellLocation: '2-2-2',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       },
     ]
 

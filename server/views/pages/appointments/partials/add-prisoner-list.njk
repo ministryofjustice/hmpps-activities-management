@@ -1,7 +1,8 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
-{% macro addPrisonerList(prisoners) %}
+{% macro addPrisonerList(prisoners, user) %}
     {% if prisoners.length > 1 %}
         {% set prisonersList = [] %}
         {% set index = 0 %}
@@ -16,7 +17,7 @@
                     text: prisoner.number,
                     attributes: { 'data-qa': 'prisoner-number-' + index }
                 }, {
-                    text: prisoner.cellLocation,
+                    text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoad.caseLoadId),
                     attributes: { 'data-qa': 'prisoner-cell-location-' + index }
                 }
             ]), prisonersList) %}

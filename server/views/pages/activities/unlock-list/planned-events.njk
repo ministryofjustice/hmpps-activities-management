@@ -181,13 +181,17 @@
                                 {
                                     attributes: { 
                                         id: 'activity-' + loop.index, 
-                                        "data-sort-value": item.lastName + " " + item.firstName
+                                        "data-sort-value": item.prisonerName | prisonerName(false)
                                     },
-                                    html: prisonerProfile(item),
+                                    html: showProfileLink({
+                                        name: item.prisonerName,
+                                        prisonerNumber: item.prisonerNumber,
+                                        link: true
+                                    }),
                                     classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
                                 },
                                 {
-                                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": item.cellLocation },
+                                    attributes: { id: 'cell-location-' + loop.index },
                                     text: item.cellLocation,
                                     classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
                                 },
@@ -272,10 +276,3 @@
         </tfoot>
     </table>
 {% endblock %}
-
-{% macro prisonerProfile(item) %}
-    <a href="{{ dpsUrl }}/prisoner/{{ item.prisonerNumber }}" target="_blank" class="govuk-link govuk-link--no-visited-state">
-        {{ (item.firstName + " " + item.lastName) | toTitleCase | prisonerName }}
-    </a>
-    <div class="govuk-body-s govuk-!-margin-0" data-qa="prisoner-number">{{ item.prisonerNumber }}</div>
-{% endmacro %}

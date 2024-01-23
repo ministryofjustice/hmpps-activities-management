@@ -31,6 +31,8 @@ export default class StartJourneyRoutes {
       {
         prisonerNumber: inmate.offenderNo,
         prisonerName: convertToTitleCase(`${inmate.firstName} ${inmate.lastName}`),
+        prisonCode: inmate.agencyId,
+        status: inmate.status,
         cellLocation: inmate.assignedLivingUnit?.description,
         incentiveLevel: iepSummary?.iepLevel,
       },

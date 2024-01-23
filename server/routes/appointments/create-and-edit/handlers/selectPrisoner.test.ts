@@ -141,6 +141,8 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
             number: 'X9876YZ',
             name: 'James Johnson',
             cellLocation: '2-2-2',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           },
         ],
       }
@@ -181,6 +183,8 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
             number: 'X9876YZ',
             name: 'James Johnson',
             cellLocation: '2-2-2',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           },
         ],
       }
@@ -213,6 +217,8 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
             number: 'X9876YZ',
             name: 'James Johnson',
             cellLocation: '2-2-2',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           },
         ],
       }
@@ -222,6 +228,8 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         firstName: 'John',
         lastName: 'Smith',
         cellLocation: '1-1-1',
+        prisonId: 'MDI',
+        status: 'ACTIVE IN',
       } as Prisoner
 
       when(prisonService.getInmateByPrisonerNumber)
@@ -235,11 +243,15 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
           number: 'X9876YZ',
           name: 'James Johnson',
           cellLocation: '2-2-2',
+          prisonCode: 'MDI',
+          status: 'ACTIVE IN',
         },
         {
           number: 'A1234BC',
           name: 'John Smith',
           cellLocation: '1-1-1',
+          prisonCode: 'MDI',
+          status: 'ACTIVE IN',
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
@@ -258,6 +270,8 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
             number: 'X9876YZ',
             name: 'James Johnson',
             cellLocation: '2-2-2',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           },
         ],
       }

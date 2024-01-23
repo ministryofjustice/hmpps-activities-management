@@ -34,7 +34,9 @@ export type EditAppointmentJourney = {
   addPrisoners?: {
     number: string
     name: string
+    prisonCode: string
     cellLocation: string
+    status: string
   }[]
   removePrisoner?: PrisonerSummary
   cancellationReason?: AppointmentCancellationReason

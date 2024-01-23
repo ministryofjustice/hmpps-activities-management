@@ -77,6 +77,8 @@ describe('Route Handlers - Create Appointment - Repeat Frequency and Count', () 
           number: `A12${i}BC`,
           name: 'Test Prisoner',
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         }))
 
       await handler.POST(req, res)

@@ -50,6 +50,7 @@ export default class SuspendedPrisonersRoutes {
           prisonerNumber: prisoner.prisonerNumber,
           prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
           status: prisoner.status,
+          prisonCode: prisoner.prisonId,
           cellLocation: prisoner.cellLocation,
           sessions: _.sortBy(
             attendances.map(a => {

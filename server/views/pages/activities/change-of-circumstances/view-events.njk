@@ -6,6 +6,8 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "components/sticky-select.njk" import stickySelect %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = applicationName + " - Review changes in circumstances" %}
 {% set pageId = 'change-of-circumstance-page' %}
@@ -26,20 +28,17 @@
                 selectable: event.acknowledgedBy === null,
                 items: [
                     {
-                        html: '
-                            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-                                <a href="' + dpsUrl + '/prisoner/' + event.prisonerNumber + '"
-                                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + event.name | toTitleCase + '
-                                </a>
-                            </h2>
-                            <div class="govuk-hint govuk-!-margin-bottom-1 govuk-!-font-size-14">' + event.prisonerNumber + '</div>
-                          ',
+                        html: showProfileLink({
+                            name: event.name,
+                            prisonerNumber: event.prisonerNumber,
+                            link: true
+                        }),
                         attributes: {
                             "data-qa": "prisoner-details"
                         }
                     },
                     {
-                        text: event.cellLocation
+                        text: statusBasedCellLocation(event.cellLocation, event.prisonerStatus, event.prisonerPrisonCode == user.activeCaseLoad.caseLoadId)
                     },
                     {
                         text: event.eventTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMMM yyyy hh:mm a', false)
