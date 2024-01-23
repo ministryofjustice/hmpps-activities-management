@@ -1605,10 +1605,10 @@ export interface components {
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -1617,15 +1617,15 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
     WaitingListApplication: {
@@ -2095,7 +2095,15 @@ export interface components {
       exclusions: components['schemas']['Slot'][]
       /** @description The name of the prisoner. Included only if includePrisonerSummary = true */
       prisonerName?: string
+      /**
+       * @description The status of the prisoner. Included only if includePrisonerSummary = true
+       * @example ACTIVE IN
+       */
       prisonerStatus?: string
+      /**
+       * @description The prison code of the prison which of the prisoner currently resides. Included only if includePrisonerSummary = true
+       * @example MDI
+       */
       prisonerPrisonCode?: string
       /** @description The cell location of the prisoner. Included only if includePrisonerSummary = true */
       cellLocation?: string
@@ -5092,10 +5100,10 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -5104,9 +5112,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Describes one instance of an activity schedule */
@@ -6102,13 +6110,17 @@ export interface components {
        */
       lastName: string
       /**
+       * @description The prisoner's status at their current prison
+       * @example ACTIVE IN
+       */
+      status: string
+      /**
        * @description
        *     The NOMIS AGENCY_LOCATIONS.AGY_LOC_ID value for mapping to NOMIS.
        *
        * @example SKI
        */
       prisonCode: string
-      status: string
       /**
        * @description
        *     The prisoner's residential cell location when inside the prison.
