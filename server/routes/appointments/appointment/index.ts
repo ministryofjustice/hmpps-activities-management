@@ -7,11 +7,11 @@ import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
 import { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 
-export default function Index({ activitiesService, metricsService }: Services): Router {
+export default function Index({ activitiesService, metricsService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) =>
-    router.get(path, fetchAppointment(activitiesService), asyncMiddleware(handler))
+    router.get(path, fetchAppointment(activitiesService, prisonService), asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 

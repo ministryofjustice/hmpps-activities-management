@@ -116,7 +116,7 @@ export default function Create({ prisonService, activitiesService, metricsServic
   post('/check-answers', checkAnswersRoutes.POST)
   router.get(
     '/confirmation/:appointmentId',
-    fetchAppointment(activitiesService),
+    fetchAppointment(activitiesService, prisonService),
     emptyAppointmentJourneyHandler(true),
     asyncMiddleware(confirmationRoutes.GET),
   )
