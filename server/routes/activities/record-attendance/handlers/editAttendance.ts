@@ -16,7 +16,9 @@ enum EditAttendanceOptions {
 
 export class EditAttendance {
   @Expose()
-  @IsIn(Object.values(EditAttendanceOptions), { message: 'Select an attendance option' })
+  @IsIn(Object.values(EditAttendanceOptions), {
+    message: 'Select if you want to change the attendance, leave it or reset it',
+  })
   attendanceOption: string
 }
 

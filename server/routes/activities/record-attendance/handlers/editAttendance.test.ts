@@ -1,11 +1,14 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
 import { format } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import { Attendance, PrisonerScheduledEvents, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import EditAttendanceRoutes from './editAttendance'
+import EditAttendanceRoutes, { EditAttendance } from './editAttendance'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -241,6 +244,28 @@ describe('Route Handlers - Edit Attendance', () => {
       expect(res.redirect).toHaveBeenCalledWith(
         `/activities/attendance/activities/1/attendance-details/1/reset-attendance`,
       )
+    })
+  })
+
+  describe('Validation', () => {
+    it('validation fails when confirmation value not selected', async () => {
+      const body = {}
+
+      const requestObject = plainToInstance(EditAttendance, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      expect(errors).toEqual([
+        { property: 'attendanceOption', error: 'Select if you want to change the attendance, leave it or reset it' },
+      ])
+    })
+
+    it('validation should pass when valid confirmation option selected', async () => {
+      const body = {
+        attendanceOption: 'reset',
+      }
+
+      const requestObject = plainToInstance(EditAttendance, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      expect(errors).toHaveLength(0)
     })
   })
 })
