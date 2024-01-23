@@ -252,8 +252,7 @@
         {% for scheduledEvent in scheduledEvents %}
             {% set scheduledEventRows = (scheduledEventRows.push([
                 {
-                    text: timeText(scheduledEvent),
-                     classes: "no-break"
+                    text: timeText(scheduledEvent)
                 }, {
                     text: scheduledEvent.summary | trim
                 }, {
