@@ -5,7 +5,7 @@ import ActivitiesService from '../../../../../services/activitiesService'
 
 export class UncancelConfirmForm {
   @Expose()
-  @IsIn(['yes', 'no'], { message: 'Please confirm you want to uncancel the session' })
+  @IsIn(['yes', 'no'], { message: 'Confirm if you want to uncancel the session or not' })
   confirm: string
 }
 

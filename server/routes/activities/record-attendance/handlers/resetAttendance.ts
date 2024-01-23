@@ -9,7 +9,7 @@ import { convertToTitleCase } from '../../../../utils/utils'
 
 export class ResetAttendance {
   @Expose()
-  @IsEnum(YesNo, { message: "Select 'Yes' to confirm or 'No' to cancel" })
+  @IsEnum(YesNo, { message: "Confirm if you want to reset this person's attendance record or not" })
   confirm: YesNo
 }
 

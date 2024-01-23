@@ -13,7 +13,7 @@ export enum DateOptions {
 }
 
 export class NotAttendedDate {
-  @IsEnum(DateOptions, { message: 'Select a date option' })
+  @IsEnum(DateOptions, { message: 'Select a date' })
   datePresetOption: DateOptions
 
   @ValidateIf(o => o.datePresetOption === DateOptions.OTHER)

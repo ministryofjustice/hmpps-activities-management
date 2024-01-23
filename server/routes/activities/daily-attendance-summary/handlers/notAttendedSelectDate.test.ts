@@ -99,7 +99,7 @@ describe('Not attended routes - select date', () => {
       const requestObject = plainToInstance(NotAttendedDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date option' }])
+      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date' }])
     })
 
     it('validation fails if invalid values are entered', async () => {
@@ -110,7 +110,7 @@ describe('Not attended routes - select date', () => {
       const requestObject = plainToInstance(NotAttendedDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date option' }])
+      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date' }])
     })
 
     it('validation fails if date option is other and a date is not provided', async () => {
