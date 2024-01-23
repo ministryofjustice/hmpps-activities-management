@@ -128,7 +128,9 @@ describe('Route Handlers - Reset Attendance', () => {
 
       const requestObject = plainToInstance(ResetAttendance, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-      expect(errors).toEqual([{ property: 'confirm', error: "Select 'Yes' to confirm or 'No' to cancel" }])
+      expect(errors).toEqual([
+        { property: 'confirm', error: "Confirm if you want to reset this person's attendance record or not" },
+      ])
     })
 
     it('validation should pass when valid confirmation option selected', async () => {
