@@ -11,7 +11,7 @@
     {% endif %}
 {% endmacro %}
 
-{% macro attendeeList(appointment) %}
+{% macro attendeeList(appointment, user) %}
     {% set appointmentLink = '/appointments/' + appointment.id  %}
     {% set attendeeListRows = [] %}
     {% for attendee in appointment.attendees %}
