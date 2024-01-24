@@ -133,23 +133,26 @@ const stubAuthUser = (name: string) =>
         staffId: 231232,
         username: 'USER1',
         active: true,
+        activeCaseLoadId: 'MDI',
         name,
       },
     },
   })
 
-const stubAuthUserRoles = () =>
+const stubPrisonInformation = () =>
   stubFor({
     request: {
       method: 'GET',
-      urlPattern: '/auth/api/user/me/roles',
+      urlPattern: '/prisons/id/MDI',
     },
     response: {
       status: 200,
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: [{ roleCode: 'SOME_USER_ROLE' }],
+      jsonBody: {
+        prisonName: 'Moorland',
+      },
     },
   })
 
@@ -176,45 +179,6 @@ const stubVerifyToken = (active = true) =>
       status: 200,
       headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       jsonBody: { active },
-    },
-  })
-
-const stubNomisUser = (firstName: string, lastName: string) =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern: '/api/users/me',
-    },
-    response: {
-      status: 200,
-      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      jsonBody: {
-        accountStatus: 'ACTIVE',
-        active: true,
-        activeCaseLoadId: 'MDI',
-        expiredFlag: false,
-        firstName,
-        lastName,
-        lockedFlag: false,
-        staffId: 231232,
-        username: 'USER1',
-      },
-    },
-  })
-
-const stubCaseload = () =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern: '/api/users/me/caseLoads',
-    },
-    response: {
-      status: 200,
-      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      jsonBody: [
-        { caseLoadId: 'MDI', description: 'Moorland (HMP & YOI)', currentlyActive: true },
-        { caseLoadId: 'LEI', description: 'Leeds (HMP)', currentlyActive: false },
-      ],
     },
   })
 
@@ -249,7 +213,7 @@ export default {
   stubAuthPing: authPing,
   stubTokenVerificationPing,
   stubVerifyToken,
-  stubSignIn: (firstname = 'john', lastname = 'smith') =>
+  stubSignIn: (name = 'john smith') =>
     Promise.all([
       favicon(),
       frontendComponents(),
@@ -258,10 +222,8 @@ export default {
       manageAccountDetails(),
       token(),
       stubVerifyToken(),
-      stubAuthUser(`${firstname} ${lastname}`),
-      stubAuthUserRoles(),
-      stubNomisUser(firstname, lastname),
-      stubCaseload(),
+      stubAuthUser(name),
+      stubPrisonInformation(),
       stubRolloutPlan(),
     ]),
 }
