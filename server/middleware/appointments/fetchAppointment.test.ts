@@ -1,9 +1,11 @@
 import type { Request, Response } from 'express'
 import { when } from 'jest-when'
+import { startOfTomorrow } from 'date-fns'
 import { AppointmentDetails } from '../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../@types/express'
 import ActivitiesService from '../../services/activitiesService'
 import fetchAppointment from './fetchAppointment'
+import { toDateString } from '../../utils/utils'
 
 jest.mock('../../services/activitiesService')
 
@@ -27,6 +29,7 @@ describe('fetchAppointment', () => {
       locals: {
         user: {
           displayName: 'Joe Bloggs',
+          activeCaseLoadId: 'PVI',
         } as ServiceUser,
       },
     } as unknown as Response
@@ -61,23 +64,30 @@ describe('fetchAppointment', () => {
 
   it('should order attendee list by lastname, firstname', async () => {
     const appointmentDetails = {
+      startDate: toDateString(new Date()),
       attendees: [
         {
           prisoner: {
             firstName: 'C',
             lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
           },
         },
         {
           prisoner: {
             firstName: 'B',
             lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
           },
         },
         {
           prisoner: {
             firstName: 'B',
             lastName: 'A',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
           },
         },
       ],
@@ -90,23 +100,221 @@ describe('fetchAppointment', () => {
     await middleware(req, res, next)
 
     expect(req.appointment).toEqual({
+      startDate: toDateString(new Date()),
       attendees: [
         {
           prisoner: {
             firstName: 'B',
             lastName: 'A',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
           },
         },
         {
           prisoner: {
             firstName: 'B',
             lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
           },
         },
         {
           prisoner: {
             firstName: 'C',
             lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
+          },
+        },
+      ],
+    })
+    expect(next).toBeCalledTimes(1)
+  })
+
+  it('should exclude inactive prisoners at the prison from today', async () => {
+    const appointmentDetails = {
+      startDate: toDateString(new Date()),
+      attendees: [
+        {
+          prisoner: {
+            firstName: 'C',
+            lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'INACTIVE OUT',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'A',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
+          },
+        },
+      ],
+    } as unknown as AppointmentDetails
+
+    when(activitiesServiceMock.getAppointmentDetails)
+      .calledWith(123, res.locals.user)
+      .mockResolvedValue(appointmentDetails)
+
+    await middleware(req, res, next)
+
+    expect(req.appointment).toEqual({
+      startDate: toDateString(new Date()),
+      attendees: [
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'A',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'C',
+            lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
+          },
+        },
+      ],
+    })
+    expect(next).toBeCalledTimes(1)
+  })
+
+  it('should exclude inactive prisoners at the prison in future', async () => {
+    const appointmentDetails = {
+      startDate: toDateString(startOfTomorrow()),
+      attendees: [
+        {
+          prisoner: {
+            firstName: 'C',
+            lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'INACTIVE OUT',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'A',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
+          },
+        },
+      ],
+    } as unknown as AppointmentDetails
+
+    when(activitiesServiceMock.getAppointmentDetails)
+      .calledWith(123, res.locals.user)
+      .mockResolvedValue(appointmentDetails)
+
+    await middleware(req, res, next)
+
+    expect(req.appointment).toEqual({
+      startDate: toDateString(startOfTomorrow()),
+      attendees: [
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'A',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'C',
+            lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
+          },
+        },
+      ],
+    })
+    expect(next).toBeCalledTimes(1)
+  })
+
+  it('should include inactive prisoners at the prison for date in past', async () => {
+    const appointmentDetails = {
+      startDate: '2024-01-23',
+      attendees: [
+        {
+          prisoner: {
+            firstName: 'C',
+            lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'INACTIVE OUT',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'A',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
+          },
+        },
+      ],
+    } as unknown as AppointmentDetails
+
+    when(activitiesServiceMock.getAppointmentDetails)
+      .calledWith(123, res.locals.user)
+      .mockResolvedValue(appointmentDetails)
+
+    await middleware(req, res, next)
+
+    expect(req.appointment).toEqual({
+      startDate: '2024-01-23',
+      attendees: [
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'A',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'B',
+            lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'INACTIVE OUT',
+          },
+        },
+        {
+          prisoner: {
+            firstName: 'C',
+            lastName: 'C',
+            prisonCode: 'PVI',
+            status: 'ACTIVE IN',
           },
         },
       ],

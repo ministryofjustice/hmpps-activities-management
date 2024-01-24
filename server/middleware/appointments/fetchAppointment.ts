@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express'
+import { startOfToday } from 'date-fns'
 import logger from '../../../logger'
 import ActivitiesService from '../../services/activitiesService'
-import { compareStrings, convertToTitleCase, fullName, prisonerName } from '../../utils/utils'
+import { compareStrings, convertToTitleCase, fullName, prisonerName, toDate } from '../../utils/utils'
 
 export default (activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
@@ -11,6 +12,14 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
     try {
       if (appointment?.id !== appointmentId) {
         req.appointment = await activitiesService.getAppointmentDetails(appointmentId, user)
+
+        // Exclude prisoners from appointment details if not active in prisoner from current date onwards.
+        if (toDate(req.appointment.startDate) >= startOfToday()) {
+          req.appointment.attendees = req.appointment.attendees.filter(
+            a => a.prisoner.prisonCode === user.activeCaseLoadId && a.prisoner.status !== 'INACTIVE OUT',
+          )
+        }
+
         req.appointment.attendees = req.appointment.attendees.sort((a, b) =>
           compareStrings(
             prisonerName(convertToTitleCase(fullName(a.prisoner)), false),
