@@ -199,7 +199,7 @@ const frontendComponents = () =>
   stubFor({
     request: {
       method: 'GET',
-      urlPattern: '/components?component=header&component=footer',
+      urlPattern: '/components\\?component=header&component=footer',
     },
     response: {
       status: 200,
