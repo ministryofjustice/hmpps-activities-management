@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { startOfToday, subMonths } from 'date-fns'
+import { startOfToday } from 'date-fns'
 import { Transform } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
@@ -30,7 +30,7 @@ export default class DashboardRoutes {
     const { user } = res.locals
     const { dateFrom, dateTo, activity, status, query, page } = req.query
 
-    const startDateFilter = dateFrom ? asString(dateFrom) : formatIsoDate(subMonths(startOfToday(), 1))
+    const startDateFilter = dateFrom ? asString(dateFrom) : '2023-09-30'
     const endDateFilter = dateTo ? asString(dateTo) : formatIsoDate(startOfToday())
     const activityFilter = activity ? +activity : null
     let statusFilter = [WaitingListStatus.PENDING, WaitingListStatus.APPROVED]
