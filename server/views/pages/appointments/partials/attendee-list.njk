@@ -31,7 +31,7 @@
                 attributes: { 'data-qa': 'prisoner-' + loop.index + '-name-and-number-and-cell-location', "data-sort-value": prisoner | fullName | prisonerName(false) }
             },
             {
-                text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoad.caseLoadId),
+                text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
                 classes: 'govuk-!-display-none-print',
                 attributes: { id: 'prisoner-cell-location', "data-qa": "prisoner-cell-location" }
             },
@@ -44,7 +44,7 @@
                 classes: 'print-only'
             },
             {
-                text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoad.caseLoadId),
+                text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
                 classes: 'print-only'
             },
             {

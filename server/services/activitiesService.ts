@@ -216,7 +216,7 @@ export default class ActivitiesService {
   async uncancelScheduledActivity(scheduleInstanceId: number, user: ServiceUser) {
     const uncancelScheduledInstanceRequest: UncancelScheduledInstanceRequest = {
       username: user.username,
-      displayName: `${user.firstName} ${user.lastName}`,
+      displayName: user.displayName,
     }
     return this.activitiesApiClient.putUncancelScheduledActivity(
       scheduleInstanceId,

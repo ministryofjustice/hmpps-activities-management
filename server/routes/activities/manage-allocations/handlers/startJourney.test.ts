@@ -4,11 +4,11 @@ import atLeast from '../../../../../jest.setup'
 import ActivitiesService from '../../../../services/activitiesService'
 import StartJourneyRoutes from './startJourney'
 import PrisonService from '../../../../services/prisonService'
-import { InmateDetail } from '../../../../@types/prisonApiImport/types'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 import { IepSummary } from '../../../../@types/incentivesApi/types'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
@@ -43,14 +43,14 @@ describe('Route Handlers - Allocate - Start', () => {
 
   describe('GET', () => {
     it('should populate the session with journey data and redirect to the pay band page', async () => {
-      when(prisonService.getInmate)
+      when(prisonService.getInmateByPrisonerNumber)
         .calledWith(atLeast('ABC123'))
         .mockResolvedValue({
-          offenderNo: 'ABC123',
+          prisonerNumber: 'ABC123',
           firstName: 'Joe',
           lastName: 'Bloggs',
-          assignedLivingUnit: { description: '1-2-001' },
-        } as InmateDetail)
+          cellLocation: '1-2-001',
+        } as Prisoner)
 
       when(prisonService.getPrisonerIepSummary)
         .calledWith(atLeast('ABC123'))

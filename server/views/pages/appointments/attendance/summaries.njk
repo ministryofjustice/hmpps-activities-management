@@ -16,7 +16,7 @@
         {{ showProfileLink({
             name: prisonerDetails | firstNameLastName,
             prisonerNumber: prisonerDetails.prisonerNumber or attendees[0].prisonerNumber,
-            cellLocation: statusBasedCellLocation(prisonerDetails.cellLocation, prisonerDetails.status, prisonerDetails.prisonId == user.activeCaseLoad.caseLoadId),
+            cellLocation: statusBasedCellLocation(prisonerDetails.cellLocation, prisonerDetails.status, prisonerDetails.prisonId == user.activeCaseLoadId),
             link: true,
             classes: 'hmpps-inline-block'
         }) }}

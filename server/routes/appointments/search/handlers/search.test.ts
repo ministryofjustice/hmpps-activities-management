@@ -24,7 +24,7 @@ const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonS
 
 describe('Route Handlers - Appointments Management - Search Results', () => {
   const handler = new SearchRoutes(activitiesService, prisonService)
-  const user = { activeCaseLoadId: 'MDI', username: 'USER1', firstName: 'John', lastName: 'Smith' } as ServiceUser
+  const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
   let req: Request
   let res: Response
   const today = new Date()

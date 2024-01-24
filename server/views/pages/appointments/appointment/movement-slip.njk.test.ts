@@ -13,9 +13,7 @@ describe('Views - Appointments Management - Appointment Movement Slip', () => {
   let compiledTemplate: Template
   const viewContext = {
     user: {
-      activeCaseLoad: {
-        description: 'Moorland (HMP & YOI)',
-      },
+      activeCaseLoadDescription: 'Moorland (HMP & YOI)',
     },
     appointment: {} as AppointmentDetails,
     now: new Date(),

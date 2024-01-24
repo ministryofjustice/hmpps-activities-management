@@ -67,7 +67,7 @@
                             link: true
                         })
                     }, {
-                        text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoad.caseLoadId)
+                        text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId)
                     }, {
                         html: '<a href="review-prisoners/' + prisoner.number + '/remove' + ('?preserveHistory=true' if preserveHistory else '') + '"
                             class="govuk-link--no-visited-state">

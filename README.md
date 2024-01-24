@@ -88,6 +88,7 @@ TOKEN_VERIFICATION_API_URL=https://token-verification-api-dev.prison.service.jus
 ACTIVITIES_API_URL=https://activities-api-dev.prison.service.justice.gov.uk
 PRISON_API_URL=https://prison-api-dev.prison.service.justice.gov.uk
 PRISONER_SEARCH_API_URL=https://prisoner-search-dev.prison.service.justice.gov.uk
+PRISON_REGISTER_API_URL=https://prison-register-dev.hmpps.service.justice.gov.uk
 INCENTIVES_API_URL=https://incentives-api-dev.hmpps.service.justice.gov.uk
 FRONTEND_COMPONENT_API_URL=https://frontend-components-dev.hmpps.service.justice.gov.uk
 API_CLIENT_ID=<ask the team>
