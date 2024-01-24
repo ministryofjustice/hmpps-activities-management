@@ -31,7 +31,7 @@
                             html: showProfileLink({
                                 name: appointment.prisoner.name,
                                 prisonerNumber: appointment.prisoner.number,
-                                cellLocation: statusBasedCellLocation(appointment.prisoner.cellLocation, appointment.prisoner.status, appointment.prisoner.prisonCode == user.activeCaseLoad.caseLoadId),
+                                cellLocation: statusBasedCellLocation(appointment.prisoner.cellLocation, appointment.prisoner.status, appointment.prisoner.prisonCode == user.activeCaseLoadId),
                                 link: true
                             })
                         }, {

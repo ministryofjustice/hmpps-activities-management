@@ -3,10 +3,9 @@ import atLeast from '../../jest.setup'
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import PrisonService from './prisonService'
-import { AgencyPrisonerPayProfile, InmateDetail, ReferenceCode } from '../@types/prisonApiImport/types'
+import { AgencyPrisonerPayProfile, ReferenceCode } from '../@types/prisonApiImport/types'
 import { PagePrisoner, Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
-import activityLocations from './fixtures/activity_locations_1.json'
 import IncentivesApiClient from '../data/incentivesApiClient'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
 import { IncentiveLevel } from '../@types/incentivesApi/types'
@@ -24,19 +23,6 @@ describe('Prison Service', () => {
   const user = {
     activeCaseLoadId: 'MDI',
   } as ServiceUser
-
-  describe('getInmate', () => {
-    it('should get inmate detail from prison API', async () => {
-      const expectedResult = { data: 'response' } as unknown as InmateDetail
-
-      when(prisonApiClient.getInmateDetail).calledWith(atLeast('ABC123')).mockResolvedValue(expectedResult)
-
-      const actualResult = await prisonService.getInmate('ABC123', user)
-
-      expect(actualResult).toEqual(expectedResult)
-      expect(prisonApiClient.getInmateDetail).toHaveBeenCalledWith('ABC123', user)
-    })
-  })
 
   describe('getIncentiveLevels', () => {
     it('should get the prisons incentive levels from incentives API', async () => {
@@ -111,15 +97,6 @@ describe('Prison Service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(prisonApiClient.getEventLocations).toHaveBeenCalledWith('MDI', user)
-    })
-  })
-
-  describe('searchActivityLocations', () => {
-    it('should search activity locations using prisoner search API', async () => {
-      when(prisonApiClient.searchActivityLocations).calledWith(atLeast('10001')).mockResolvedValue(activityLocations)
-      const locations = await prisonService.searchActivityLocations('EDI', '10001', '2022-08-01', user)
-      expect(locations.length).toEqual(3)
-      expect(prisonApiClient.searchActivityLocations).toHaveBeenCalledWith('EDI', '10001', '2022-08-01', user)
     })
   })
 

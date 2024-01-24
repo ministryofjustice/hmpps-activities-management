@@ -219,7 +219,7 @@
                     }
                 },
                 {
-                    text: statusBasedCellLocation(row.cellLocation, row.prisonerStatus, row.prisonerPrisonCode == user.activeCaseLoad.caseLoadId)
+                    text: statusBasedCellLocation(row.cellLocation, row.prisonerStatus, row.prisonerPrisonCode == user.activeCaseLoadId)
                 },
                 {
                     html: allocatedDatesHtml,
@@ -446,7 +446,7 @@
                     html: showProfileLink({
                         name: row.name,
                         prisonerNumber: row.prisonerNumber,
-                        cellLocation: statusBasedCellLocation(row.cellLocation, row.prisonerStatus, row.prisonerPrisonCode == user.activeCaseLoad.caseLoadId),
+                        cellLocation: statusBasedCellLocation(row.cellLocation, row.prisonerStatus, row.prisonerPrisonCode == user.activeCaseLoadId),
                         link: true
                     }),
                     attributes: {

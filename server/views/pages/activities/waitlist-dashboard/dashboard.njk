@@ -144,7 +144,7 @@
                                     html: showProfileLink({
                                         name: application.prisoner | fullName,
                                         prisonerNumber: application.prisoner.prisonerNumber,
-                                        cellLocation: statusBasedCellLocation(application.prisoner.cellLocation, application.prisoner.status, application.prisoner.prisonId == user.activeCaseLoad.caseLoadId),
+                                        cellLocation: statusBasedCellLocation(application.prisoner.cellLocation, application.prisoner.status, application.prisoner.prisonId == user.activeCaseLoadId),
                                         link: true
                                     })
                                 },

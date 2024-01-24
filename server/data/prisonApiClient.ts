@@ -1,14 +1,7 @@
 import config, { ApiConfig } from '../config'
 
 import AbstractHmppsRestClient from './abstractHmppsRestClient'
-import {
-  InmateDetail,
-  PrisonApiUserDetail,
-  CaseLoad,
-  InmateBasicDetails,
-  ReferenceCode,
-  AgencyPrisonerPayProfile,
-} from '../@types/prisonApiImport/types'
+import { InmateDetail, ReferenceCode, AgencyPrisonerPayProfile } from '../@types/prisonApiImport/types'
 import { ServiceUser } from '../@types/express'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
 
@@ -21,50 +14,9 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     return this.get({ path: `/api/offenders/${nomsId}`, authToken: user.token })
   }
 
-  async getUser(user: ServiceUser): Promise<PrisonApiUserDetail> {
-    return this.get({ path: '/api/users/me', authToken: user.token })
-  }
-
-  async getUserByUsername(username: string, user: ServiceUser): Promise<PrisonApiUserDetail> {
-    return this.get({ path: `/api/users/${username}`, authToken: user.token })
-  }
-
-  async getUserCaseLoads(user: ServiceUser): Promise<CaseLoad[]> {
-    return this.get({ path: '/api/users/me/caseLoads', authToken: user.token })
-  }
-
   async getEventLocations(prisonCode: string, user: ServiceUser): Promise<LocationLenient[]> {
     return this.get({
       path: `/api/agencies/${prisonCode}/eventLocations`,
-      authToken: user.token,
-    })
-  }
-
-  async getLocationsForEventType(prisonCode: string, eventType: string, user: ServiceUser): Promise<LocationLenient[]> {
-    return this.get({
-      path: `/api/agencies/${prisonCode}/locations`,
-      query: { eventType },
-      authToken: user.token,
-    })
-  }
-
-  async searchActivityLocations(
-    prisonCode: string,
-    date: string,
-    period: string,
-    user: ServiceUser,
-  ): Promise<LocationLenient[]> {
-    return this.get({
-      path: `/api/agencies/${prisonCode}/eventLocationsBooked`,
-      query: { bookedOnDay: date, timeSlot: period },
-      authToken: user.token,
-    })
-  }
-
-  async getInmateDetails(offenderNumbers: string[], user: ServiceUser): Promise<InmateBasicDetails[]> {
-    return this.post({
-      path: `/api/bookings/offenders`,
-      data: offenderNumbers,
       authToken: user.token,
     })
   }

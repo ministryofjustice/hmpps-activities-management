@@ -10,6 +10,7 @@ export default function services() {
   const {
     hmppsAuthClient,
     prisonApiClient,
+    prisonRegisterApiClient,
     prisonerSearchApiClient,
     incentivesApiClient,
     activitiesApiClient,
@@ -17,7 +18,7 @@ export default function services() {
   } = dataAccess()
 
   return {
-    userService: new UserService(hmppsAuthClient, prisonApiClient, activitiesApiClient),
+    userService: new UserService(hmppsAuthClient, prisonRegisterApiClient, activitiesApiClient),
     prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient),
     activitiesService: new ActivitiesService(activitiesApiClient),
     ukBankHolidayService: new BankHolidayService(),

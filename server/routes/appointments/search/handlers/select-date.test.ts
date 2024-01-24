@@ -9,7 +9,7 @@ jest.mock('../../../../services/activitiesService')
 
 describe('Route Handlers - Appointments Management - Search Select date', () => {
   const handler = new SelectDateRoutes()
-  const user = { activeCaseLoadId: 'MDI', username: 'USER1', firstName: 'John', lastName: 'Smith' } as ServiceUser
+  const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
   let req: Request
   let res: Response
 

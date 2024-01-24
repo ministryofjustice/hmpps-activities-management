@@ -56,7 +56,7 @@ export default class AllocationDashboardRoutes {
 
     const [activity, incentiveLevels]: [Activity, IncentiveLevel[]] = await Promise.all([
       this.activitiesService.getActivity(+activityId, user),
-      this.prisonService.getIncentiveLevels(user.activeCaseLoad.caseLoadId, user),
+      this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user),
     ])
 
     const suitableForIep = this.getSuitableForIep(activity.pay, activity.paid, incentiveLevels)

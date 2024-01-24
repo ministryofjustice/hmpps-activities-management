@@ -7,7 +7,7 @@ import getAttendanceReasons from '../fixtures/activitiesApi/getAttendanceReasons
 import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance93.json'
 import getAttendeesForScheduledInstance from '../fixtures/activitiesApi/getAttendeesScheduledInstance93.json'
 import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
-import getInmateDetails from '../fixtures/prisonApi/getInmateDetailsForNonAttendance.json'
+import getInmateDetails from '../fixtures/prisonerSearchApi/getInmateDetailsForNonAttendance.json'
 import NotAttendedReasonPage from '../pages/recordAttendance/notAttendedReason'
 import getCategories from '../fixtures/activitiesApi/getCategories.json'
 import getAttendanceSummary from '../fixtures/activitiesApi/getAttendanceSummary.json'

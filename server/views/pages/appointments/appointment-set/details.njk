@@ -21,7 +21,7 @@
             html: showProfileLink({
                 name: prisoner | fullName,
                 prisonerNumber: prisoner.prisonerNumber,
-                cellLocation: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoad.caseLoadId),
+                cellLocation: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
                 link: true
             }),
             attributes: { 'data-qa': 'appointment-' + appointment.id + '-prisoner' },
@@ -36,7 +36,7 @@
             text: prisoner.prisonerNumber,
             classes: "print-only"
         }, {
-            text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoad.caseLoadId),
+            text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
             classes: "print-only"
         }, {
             text: appointment.startTime,
@@ -118,7 +118,7 @@
                     'data-track-click-event': 'SAA-Appointment-Set-Attendee-List-Printed',
                     'data-track-event-properties': { 
                         user: user.username,
-                        prisonCode: user.activeCaseLoad.caseLoadId,
+                        prisonCode: user.activeCaseLoadId,
                         appointmentSetId: appointmentSet.id
                     } | dump,
                     'data-track-event-measurements': {

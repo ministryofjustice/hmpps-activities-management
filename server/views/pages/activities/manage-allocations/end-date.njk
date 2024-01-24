@@ -59,7 +59,7 @@
                                 text: inmate.prisonerNumber
                             },
                             {
-                                text: statusBasedCellLocation(inmate.cellLocation, inmate.status, inmate.prisonCode == user.activeCaseLoad.caseLoadId)
+                                text: statusBasedCellLocation(inmate.cellLocation, inmate.status, inmate.prisonCode == user.activeCaseLoadId)
                             }
                         ]), rows) %}
                     {% endfor %}

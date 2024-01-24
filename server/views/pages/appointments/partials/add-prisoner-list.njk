@@ -17,7 +17,7 @@
                     text: prisoner.number,
                     attributes: { 'data-qa': 'prisoner-number-' + index }
                 }, {
-                    text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoad.caseLoadId),
+                    text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
                     attributes: { 'data-qa': 'prisoner-cell-location-' + index }
                 }
             ]), prisonersList) %}

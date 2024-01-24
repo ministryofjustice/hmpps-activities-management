@@ -1,5 +1,4 @@
 import { HmppsAuthUser } from '../hmppsAuth'
-import { CaseLoad, PrisonApiUserDetail } from '../prisonApiImport/types'
 import { AllocateToActivityJourney } from '../../routes/activities/manage-allocations/journey'
 import { CreateAnActivityJourney } from '../../routes/activities/create-an-activity/journey'
 import { AppointmentJourney } from '../../routes/appointments/create-and-edit/appointmentJourney'
@@ -24,8 +23,6 @@ declare module 'express-session' {
     returnTo: string
     nowInMinutes: number
     user: ServiceUser
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    data: any
     // The following session data properties are overridden by the populateJourney middleware.
     // That middleware redirects the getter and setter to use the sessionDataMap below. As a result,
     // these properties are virtual and are not directly set. They exist to allow pre-existing access
@@ -86,12 +83,10 @@ export declare global {
 }
 
 export type ServiceUser = Express.User &
-  HmppsAuthUser &
-  PrisonApiUserDetail & {
+  HmppsAuthUser & {
     displayName: string
-    allCaseLoads: CaseLoad[]
-    activeCaseLoad?: CaseLoad
+    roles: string[]
+    activeCaseLoadDescription: string
     isActivitiesRolledOut: boolean
     isAppointmentsRolledOut: boolean
-    roles: string[]
   }

@@ -5,9 +5,9 @@ import ActivitiesService from '../../../../services/activitiesService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import { initJourneyMetrics } from '../../../../utils/metricsUtils'
 import MetricsService from '../../../../services/metricsService'
-import { InmateDetail } from '../../../../@types/prisonApiImport/types'
 import { IepSummary } from '../../../../@types/incentivesApi/types'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 
 export default class StartJourneyRoutes {
   constructor(
@@ -21,19 +21,19 @@ export default class StartJourneyRoutes {
     const { prisonerNumber } = req.params
     const { user } = res.locals
 
-    const [inmate, iepSummary, schedule]: [InmateDetail, IepSummary, ActivitySchedule] = await Promise.all([
-      this.prisonService.getInmate(prisonerNumber, user),
+    const [inmate, iepSummary, schedule]: [Prisoner, IepSummary, ActivitySchedule] = await Promise.all([
+      this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user),
       this.prisonService.getPrisonerIepSummary(prisonerNumber, user),
       this.activitiesService.getActivitySchedule(+scheduleId, user),
     ])
 
     const inmates = [
       {
-        prisonerNumber: inmate.offenderNo,
+        prisonerNumber: inmate.prisonerNumber,
         prisonerName: convertToTitleCase(`${inmate.firstName} ${inmate.lastName}`),
-        prisonCode: inmate.agencyId,
+        prisonCode: inmate.prisonId,
         status: inmate.status,
-        cellLocation: inmate.assignedLivingUnit?.description,
+        cellLocation: inmate.cellLocation,
         incentiveLevel: iepSummary?.iepLevel,
       },
     ]

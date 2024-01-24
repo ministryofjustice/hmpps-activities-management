@@ -27,7 +27,7 @@
                     <ul class="govuk-list">
                         <li>{{ session.allocateJourney.inmate.prisonerName }}</li>
                         <li>{{ session.allocateJourney.inmate.prisonerNumber }}</li>
-                        <li>{{ statusBasedCellLocation(session.allocateJourney.inmate.cellLocation, session.allocateJourney.inmate.status, session.allocateJourney.inmate.prisonCode == user.activeCaseLoad.caseLoadId) }}</li>
+                        <li>{{ statusBasedCellLocation(session.allocateJourney.inmate.cellLocation, session.allocateJourney.inmate.status, session.allocateJourney.inmate.prisonCode == user.activeCaseLoadId) }}</li>
                     </ul>
                 {% else %}
                     <ul class="govuk-list">
