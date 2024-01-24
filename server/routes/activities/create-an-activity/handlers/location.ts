@@ -35,7 +35,7 @@ export default class LocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const locations = await this.prisonService.getEventLocations(user.activeCaseLoad.caseLoadId, user)
+    const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'locationId')
 
     res.render('pages/activities/create-an-activity/location', {
@@ -49,7 +49,7 @@ export default class LocationRoutes {
 
     if (locationType === LocationType.OUT_OF_CELL) {
       const locationResult = await this.prisonService
-        .getEventLocations(user.activeCaseLoad.caseLoadId, user)
+        .getEventLocations(user.activeCaseLoadId, user)
         .then(locations => locations.find(l => l.locationId === location))
 
       req.session.createJourney.location = {

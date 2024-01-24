@@ -53,9 +53,7 @@ describe('Views - Appointments Management - Apply to', () => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
       user: {
-        activeCaseLoad: {
-          caseLoadId: 'MDI',
-        },
+        activeCaseLoadId: 'MDI',
       },
       session: {
         appointmentJourney: {

@@ -16,6 +16,7 @@ generic-service:
     PRISONER_SEARCH_API_URL: "https://prisoner-search.prison.service.justice.gov.uk"
     INCENTIVES_API_URL: "https://incentives-api.hmpps.service.justice.gov.uk"
     FRONTEND_COMPONENT_API_URL: "https://frontend-components.hmpps.service.justice.gov.uk"
+    PRISON_REGISTER_API_URL: "https://prison-register.hmpps.service.justice.gov.uk"
 
   allowlist:
     groups:

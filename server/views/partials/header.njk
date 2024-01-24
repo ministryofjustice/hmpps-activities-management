@@ -15,14 +15,8 @@
       <nav aria-label="Caseload navigation">
         <ul class="hmpps-header__navigation">
           <li class="hmpps-header__navigation__item">
-            <span class="hmpps-header__text" data-qa=header-active-caseload>{{ user.activeCaseLoad.description }}</span>
+            <span class="hmpps-header__text" data-qa=header-active-caseload>{{ user.activeCaseLoadDescription }}</span>
           </li>
-
-          {% if user.allCaseLoads.length > 1 %}
-            <li class="hmpps-header__navigation__item">
-              <a class="hmpps-header__link" href="{{ dpsUrl }}/change-caseload" data-qa=header-change-location>Change location</a>
-            </li>
-          {% endif %}
         </ul>
       </nav>
     </div>

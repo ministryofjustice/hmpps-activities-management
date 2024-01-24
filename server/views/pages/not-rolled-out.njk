@@ -6,10 +6,10 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-xl">The {{ serviceName }} service is not available at {{ user.activeCaseLoad.description }} yet</h1>
+            <h1 class="govuk-heading-xl">The {{ serviceName }} service is not available at {{ user.activeCaseLoadDescription }} yet</h1>
 
             <p class="govuk-body">
-                The {{ serviceName }} service will be available at {{ user.activeCaseLoad.description }}
+                The {{ serviceName }} service will be available at {{ user.activeCaseLoadDescription }}
                 {% if rolloutDate %}
                     on {{ rolloutDate | formatDate }}.
                 {% else %}

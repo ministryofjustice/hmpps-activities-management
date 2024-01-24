@@ -13,7 +13,7 @@ import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePicke
 jest.mock('../../../../services/editAppointmentService')
 
 const tomorrow = addDays(new Date(), 1)
-const user = { activeCaseLoadId: 'MDI', username: 'USER1', firstName: 'John', lastName: 'Smith' } as ServiceUser
+const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
 
 describe('Route Handlers - Appointment Journey - Date and Time', () => {
   const handler = new DateAndTimeRoutes()
