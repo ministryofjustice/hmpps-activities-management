@@ -5,7 +5,5 @@ export default class AppointmentsManagementPage extends Page {
     super('appointments-management-page')
   }
 
-  createIndividualAppointmentCard = (): Cypress.Chainable => cy.get('[data-qa=create-individual-appointment-card]')
-
   createGroupAppointmentCard = (): Cypress.Chainable => cy.get('[data-qa=create-group-appointment-card]')
 }

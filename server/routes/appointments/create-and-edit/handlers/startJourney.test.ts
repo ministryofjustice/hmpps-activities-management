@@ -113,31 +113,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
     jest.resetAllMocks()
   })
 
-  describe('INDIVIDUAL', () => {
-    it('should populate the session with individual appointment journey type and redirect to select prisoner page', async () => {
-      await handler.INDIVIDUAL(req, res)
-
-      expect(req.session.appointmentJourney).toEqual({
-        mode: AppointmentJourneyMode.CREATE,
-        type: AppointmentType.INDIVIDUAL,
-        createJourneyComplete: false,
-      })
-      expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.appointmentSetJourney).toBeUndefined()
-
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toEqual('startLink')
-
-      expect(metricsService.trackEvent).toBeCalledWith(
-        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
-          .addProperty('journeyId', journeyId)
-          .addProperty('journeySource', 'startLink'),
-      )
-
-      expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
-    })
-  })
-
   describe('GROUP', () => {
     it('should populate the session with group appointment journey type and redirect to how to add prisoners page', async () => {
       await handler.GROUP(req, res)

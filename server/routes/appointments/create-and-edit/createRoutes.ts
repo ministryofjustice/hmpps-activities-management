@@ -63,7 +63,6 @@ export default function Create({ prisonService, activitiesService, metricsServic
   const appointmentSetTimesRoutes = new AppointmentSetTimesRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
 
-  get('/start-individual', startJourneyRoutes.INDIVIDUAL)
   get('/start-group', startJourneyRoutes.GROUP)
   get('/start-set', startJourneyRoutes.SET)
   get('/start-prisoner/:prisonNumber', startJourneyRoutes.PRISONER)
