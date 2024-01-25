@@ -71,7 +71,7 @@
                                     text: "Change",
                                     visuallyHiddenText: "change tier"
                                 }
-                            ] if activity.category.code != 'SAA_NOT_IN_WORK'
+                            ] if not activityEnded and activity.category.code != 'SAA_NOT_IN_WORK'
                         }
                     },
                     {
@@ -89,7 +89,7 @@
                                     visuallyHiddenText: "change organiser"
                                 }
                             ]
-                        }
+                        } if not activityEnded 
                     } if organiser
                 ]
             }) }}
