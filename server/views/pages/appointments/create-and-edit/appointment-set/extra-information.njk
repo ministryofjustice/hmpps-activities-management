@@ -28,7 +28,7 @@
                             html: showProfileLink({
                                 name: appointment.prisoner.name,
                                 prisonerNumber: appointment.prisoner.number,
-                                link: true
+                                inCaseLoad: appointment.prisoner.prisonCode == user.activeCaseLoadId
                             }),
                             classes: 'govuk-table__cell--vertical-align-top',
                             attributes: {

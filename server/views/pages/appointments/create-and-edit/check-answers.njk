@@ -5,7 +5,6 @@
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
-{% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% set pageTitle = appointmentJourneyTitle("Check and confirm set" if session.appointmentJourney.type == AppointmentType.SET else "Check and confirm appointment details", session.appointmentJourney) %}
@@ -21,12 +20,11 @@
                 text: "Attendee"
             },
             value: {
-                html: appointmentPrisonerSummary(
-                    prisoner.name,
-                    prisoner.number,
-                    prisoner.cellLocation,
-                    dpsUrl
-                )
+                html: showProfileLink({
+                    name: prisoner.name,
+                    prisonerNumber: prisoner.number,
+                    cellLocation: prisoner.cellLocation
+                })
             },
             actions: {
                 items: [
@@ -355,8 +353,7 @@
                 html: showProfileLink({
                     name: prisoner.name,
                     prisonerNumber: prisoner.number,
-                    cellLocation: prisoner.cellLocation,
-                    link: true
+                    cellLocation: prisoner.cellLocation
                 })
             }
         }), prisonerListRows) %}
@@ -394,8 +391,7 @@
                     html: showProfileLink({
                         name: appointment.prisoner.name,
                         prisonerNumber: appointment.prisoner.number,
-                        cellLocation: appointment.prisoner.cellLocation,
-                        link: true
+                        cellLocation: appointment.prisoner.cellLocation
                     })
                 }
             }, {

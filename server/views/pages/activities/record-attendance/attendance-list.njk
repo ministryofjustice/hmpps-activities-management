@@ -11,6 +11,7 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/attendance/otherEvent.njk" import otherEvent %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
@@ -130,13 +131,11 @@
                     classes: 'govuk-table_cell print-only'
                 },
                 {
-                    html: '<a href="' + dpsUrl + '/prisoner/' + attendee.prisoner.prisonerNumber + '"
-                                class="govuk-link govuk-link--no-visited-state"
-                                target="_blank"
-                                rel="noopener noreferrer">
-                                ' + attendee.prisoner | firstNameLastName | toTitleCase | prisonerName + ' <span class="govuk-visually-hidden">(opens in new tab)</span>
-                            </a>
-                            <div class="govuk-hint govuk-!-margin-bottom-0 govuk-!-font-size-16">' + attendee.prisoner.prisonerNumber + '</div>',
+                    html: showProfileLink({
+                        name: attendee.prisoner | firstNameLastName,
+                        prisonerNumber: attendee.prisoner.prisonerNumber,
+                        inCaseLoad: attendee.prisoner.prisonId == user.activeCaseLoadId
+                    }),
                     attributes: {
                         "data-qa": "prisoner-details",
                         "data-sort-value": attendee.prisoner | firstNameLastName | prisonerName(false)

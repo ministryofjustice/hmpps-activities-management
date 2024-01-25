@@ -9,9 +9,12 @@
         {% for prisoner in prisoners %}
             {% set prisonersList = (prisonersList.push([
                 {
-                    html: '<a href="' + dpsUrl + '/prisoner/' + prisoner.number + '" target="_blank" class="govuk-link govuk-link--no-visited-state">' +
-                              (prisoner.name | toTitleCase | prisonerName) +
-                          '</a>',
+                    html: showProfileLink({
+                        name: prisoner.name,
+                        prisonerNumber: prisoner.number,
+                        inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId,
+                        showPrisonerNumber: false
+                    }),
                     attributes: { 'data-qa': 'prisoner-name-' + index }
                 }, {
                     text: prisoner.number,

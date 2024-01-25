@@ -64,7 +64,7 @@
                         html: showProfileLink({
                             name: prisoner.name,
                             prisonerNumber: prisoner.number,
-                            link: true
+                            inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId
                         })
                     }, {
                         text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId)

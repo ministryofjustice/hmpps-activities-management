@@ -184,7 +184,7 @@ describe('Views - Appointments Management - Schedule', () => {
     })
 
     it('should display individual prisoners details with change link', () => {
-      expect(getIndividualPrisonerValueElement('prisoner-name').text().trim()).toEqual('Test Prisoner')
+      expect(getIndividualPrisonerValueElement('prisoner-name').text().trim()).toEqual('Prisoner, Test')
       expect(getIndividualPrisonerValueElement('prisoner-number').text().trim()).toEqual('A1234BC')
       expect(getIndividualPrisonerValueElement('prisoner-cell-location').text().trim()).toEqual('1-1-1')
       expect($('[data-qa=change-prisoner]').attr('href')).toEqual(

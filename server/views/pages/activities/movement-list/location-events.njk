@@ -87,7 +87,7 @@
                     html: showProfileLink({
                         name: prisonerEvents.firstName + " " + prisonerEvents.lastName,
                         prisonerNumber: prisonerEvents.prisonerNumber,
-                        link: true
+                        inCaseLoad: prisonerEvents.prisonId == user.activeCaseLoadId
                     }),
                     attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-name-and-number', "data-sort-value": (prisonerEvents.firstName + " " + prisonerEvents.lastName) | toTitleCase | prisonerName(false) }
                 }, {
