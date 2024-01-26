@@ -6029,7 +6029,7 @@ export interface components {
        *
        * @example false
        */
-      isDeleted?: boolean
+      isDeleted: boolean
       /**
        * Format: date-time
        * @description
@@ -6404,7 +6404,7 @@ export interface components {
        *
        * @example false
        */
-      isDeleted?: boolean
+      isDeleted: boolean
     }
     /** @description A basic activity, schedule and category for use where limited IDs only are required */
     ActivityBasic: {
