@@ -22,7 +22,7 @@
                 name: prisoner | fullName,
                 prisonerNumber: prisoner.prisonerNumber,
                 cellLocation: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
-                link: true
+                inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId
             }),
             attributes: { 'data-qa': 'appointment-' + appointment.id + '-prisoner' },
             classes: "govuk-!-display-none-print"

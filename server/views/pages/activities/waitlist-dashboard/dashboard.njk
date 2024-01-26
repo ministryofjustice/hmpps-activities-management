@@ -145,7 +145,7 @@
                                         name: application.prisoner | fullName,
                                         prisonerNumber: application.prisoner.prisonerNumber,
                                         cellLocation: statusBasedCellLocation(application.prisoner.cellLocation, application.prisoner.status, application.prisoner.prisonId == user.activeCaseLoadId),
-                                        link: true
+                                        inCaseLoad: application.prisoner.prisonId == user.activeCaseLoadId
                                     })
                                 },
                                 {

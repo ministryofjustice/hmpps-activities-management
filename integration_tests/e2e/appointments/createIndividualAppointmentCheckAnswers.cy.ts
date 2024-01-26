@@ -113,7 +113,7 @@ context('Create individual appointment - check answers change links', () => {
 
     // Verify initial answers
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
-    checkAnswersPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    checkAnswersPage.assertPrisonerSummary('Gregs, Stephen', 'A8644DY', '1-3')
     checkAnswersPage.assertCategory('Chaplaincy')
     checkAnswersPage.assertLocation('Chapel')
     checkAnswersPage.assertStartDate(tomorrow)
@@ -135,7 +135,7 @@ context('Create individual appointment - check answers change links', () => {
     Page.verifyOnPage(SchedulePage)
     schedulePage.continue()
 
-    checkAnswersPage.assertPrisonerSummary('David Winchurch', 'A1350DZ', '2-2-024')
+    checkAnswersPage.assertPrisonerSummary('Winchurch, David', 'A1350DZ', '2-2-024')
 
     checkAnswersPage.changeName()
     Page.verifyOnPage(NamePage)

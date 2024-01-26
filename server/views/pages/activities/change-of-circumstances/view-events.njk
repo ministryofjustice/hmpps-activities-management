@@ -31,7 +31,7 @@
                         html: showProfileLink({
                             name: event.name,
                             prisonerNumber: event.prisonerNumber,
-                            link: true
+                            inCaseLoad: event.prisonerPrisonCode == user.activeCaseLoadId
                         }),
                         attributes: {
                             "data-qa": "prisoner-details"

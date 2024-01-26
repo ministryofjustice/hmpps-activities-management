@@ -25,7 +25,7 @@
                 html: showProfileLink({
                     name: prisoner | fullName,
                     prisonerNumber: prisoner.prisonerNumber,
-                    link: true
+                    inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId
                 }),
                 classes: 'govuk-!-display-none-print',
                 attributes: { 'data-qa': 'prisoner-' + loop.index + '-name-and-number-and-cell-location', "data-sort-value": prisoner | fullName | prisonerName(false) }

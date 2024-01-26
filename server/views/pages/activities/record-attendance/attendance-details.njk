@@ -269,12 +269,13 @@
                     }) }}
                 {% endif %}
 
-                <p class="govuk-body govuk-!-display-none-print no-js-hidden">
-                    <a href="{{ dpsUrl }}/prisoner/{{ attendance.prisonerNumber }}"
-                       class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the prisoner's profile
-                    </a>
-                </p>
-
+                {% if attendee.prisonId == user.activeCaseLoadId %}
+                    <p class="govuk-body govuk-!-display-none-print no-js-hidden">
+                        <a href="{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">
+                            View the prisoner's profile
+                        </a>
+                    </p>
+                {% endif %}
             </form>
         </div>
     </div>
