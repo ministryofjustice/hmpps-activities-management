@@ -100,12 +100,13 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         isCtaAcceptAndSave: false,
         prisonerSchedules: [],
-        appointmentId: req.params.appointmentId,
+        appointmentId: '1',
       })
     })
 
     it('should render the schedule view with CTA save', async () => {
-      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
+      req.params.appointmentId = '1'
+      req.session.appointmentJourney.type = AppointmentType.GROUP
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
       await handler.GET(req, res)
@@ -113,11 +114,12 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
         prisonerSchedules: [],
         isCtaAcceptAndSave: true,
+        appointmentId: '1',
       })
     })
 
-    it('should render the schedule view with prisoner schedules', async () => {
-      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
+    it('should render the schedule view with prisoner schedule for new prisoners', async () => {
+      req.session.appointmentJourney.type = AppointmentType.GROUP
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.session.editAppointmentJourney.addPrisoners = [
         {
@@ -155,51 +157,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
       })
     })
 
-    it('use appointment journey prisoners for type = INDIVIDUAL', async () => {
-      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
-      req.session.appointmentJourney.prisoners = [
-        {
-          number: 'A1234BC',
-          name: 'TEST01 PRISONER01',
-          cellLocation: '1-1-1',
-          status: 'ACTIVE IN',
-          prisonCode: 'MDI',
-        },
-      ]
-
-      await handler.GET(req, res)
-
-      expect(activitiesService.getScheduledEventsForPrisoners).toHaveBeenCalledWith(
-        tomorrow,
-        ['A1234BC'],
-        res.locals.user,
-      )
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        prisonerSchedules: [
-          {
-            prisoner: {
-              number: 'A1234BC',
-              name: 'TEST01 PRISONER01',
-              cellLocation: '1-1-1',
-              prisonCode: 'MDI',
-              status: 'ACTIVE IN',
-            },
-            scheduledEvents: [
-              { prisonerNumber: 'A1234BC', summary: 'Activity for A1234BC' },
-              { prisonerNumber: 'A1234BC', summary: 'Appointments for A1234BC' },
-              { prisonerNumber: 'A1234BC', summary: 'Court hearing for A1234BC' },
-              { prisonerNumber: 'A1234BC', summary: 'Visit for A1234BC' },
-              { prisonerNumber: 'A1234BC', summary: 'External transfer for A1234BC' },
-              { prisonerNumber: 'A1234BC', summary: 'Adjudication for A1234BC' },
-            ],
-          },
-        ],
-        isCtaAcceptAndSave: false,
-      })
-    })
-
-    it('use appointment journey prisoners for type = GROUP', async () => {
+    it('should render schedule information for appointment journey prisoners', async () => {
       req.session.appointmentJourney.type = AppointmentType.GROUP
       req.session.appointmentJourney.prisoners = [
         {
@@ -346,47 +304,6 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         }),
       )
     })
-
-    it('should render the schedule view with accept and save button', async () => {
-      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-      req.session.appointmentJourney.prisoners = [
-        {
-          number: 'A1234BC',
-          name: 'TEST01 PRISONER01',
-          cellLocation: '1-1-1',
-          status: 'ACTIVE IN',
-          prisonCode: 'MDI',
-        },
-      ]
-
-      when(activitiesService.getScheduledEventsForPrisoners).mockResolvedValue({
-        activities: [],
-        appointments: [],
-        courtHearings: [],
-        visits: [],
-        externalTransfers: [],
-        adjudications: [],
-      })
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
-        prisonerSchedules: [
-          {
-            prisoner: {
-              number: 'A1234BC',
-              name: 'TEST01 PRISONER01',
-              cellLocation: '1-1-1',
-              prisonCode: 'MDI',
-              status: 'ACTIVE IN',
-            },
-            scheduledEvents: [],
-          },
-        ],
-        isCtaAcceptAndSave: true,
-      })
-    })
   })
 
   describe('EDIT', () => {
@@ -422,12 +339,6 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     ])('$description', ({ createJourneyComplete, redirectMethod }) => {
       beforeEach(() => {
         req.session.appointmentJourney.createJourneyComplete = createJourneyComplete
-      })
-
-      it('should redirect to extra information page for type = INDIVIDUAL', async () => {
-        req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
-        await handler.POST(req, res)
-        expect(res[redirectMethod]).toHaveBeenCalledWith('extra-information')
       })
 
       it('should redirect to extra information page for type = GROUP', async () => {

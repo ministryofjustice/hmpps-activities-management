@@ -50,7 +50,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
     it('should redirect back to appointment details page when the edit appointment journey data is not in session', async () => {
       req.session.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
-        type: AppointmentType.INDIVIDUAL,
+        type: AppointmentType.GROUP,
         appointmentName: 'appointment name',
       }
       req.session.editAppointmentJourney = null
@@ -62,7 +62,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
     it('should continue if both journeys data exists in session', async () => {
       req.session.appointmentJourney = {
         mode: AppointmentJourneyMode.CREATE,
-        type: AppointmentType.INDIVIDUAL,
+        type: AppointmentType.GROUP,
         appointmentName: 'appointment name',
       }
       req.session.editAppointmentJourney = {

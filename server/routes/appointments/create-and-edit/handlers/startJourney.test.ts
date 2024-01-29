@@ -172,7 +172,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       req.params.prisonNumber = 'A1234BC'
     })
 
-    it('should populate the session with group appointment journey type and redirect to select prisoner page', async () => {
+    it('should populate the session with group appointment journey type and redirect to select prisoner page if prisoner number not found', async () => {
       when(prisonService.getInmateByPrisonerNumber).calledWith('A1234BC', res.locals.user).mockResolvedValue(null)
       await handler.PRISONER(req, res)
 
@@ -197,7 +197,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner?query=A1234BC')
     })
 
-    it('should populate the session with individual appointment journey type and redirect to review prisoners page', async () => {
+    it('should populate the session with group appointment journey type and redirect to review prisoners page if prisoner number found', async () => {
       const prisonerInfo = {
         prisonerNumber: 'A1234BC',
         firstName: 'John',

@@ -11,7 +11,7 @@ describe('Views - Create Appointment - Repeat', () => {
   let compiledTemplate: Template
   let viewContext = {
     session: {
-      appointmentJourney: { type: AppointmentType.INDIVIDUAL } as AppointmentJourney,
+      appointmentJourney: { type: AppointmentType.GROUP } as AppointmentJourney,
     },
     formResponses: {},
   }
@@ -22,7 +22,7 @@ describe('Views - Create Appointment - Repeat', () => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
       session: {
-        appointmentJourney: { type: AppointmentType.INDIVIDUAL } as AppointmentJourney,
+        appointmentJourney: { type: AppointmentType.GROUP } as AppointmentJourney,
       },
       formResponses: {},
     }
@@ -71,14 +71,6 @@ describe('Views - Create Appointment - Repeat', () => {
     const checked = $("[name='repeat']:checked")
     expect(checked.length).toEqual(1)
     expect(checked.val()).toEqual(YesNo.NO.toString())
-  })
-
-  describe('Individual Appointment', () => {
-    it('should display journey title', () => {
-      const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-      expect($('[data-qa=caption]').text()).toBe('Schedule an appointment')
-    })
   })
 
   describe('Group Appointment', () => {
