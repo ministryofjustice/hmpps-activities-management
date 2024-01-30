@@ -541,44 +541,7 @@ describe('Route Handlers - Non Attendance', () => {
       })
     })
 
-    it('should not set case note when attendance reason not "REFUSED"', async () => {
-      const request = {
-        notAttendedData: [
-          {
-            prisonerNumber: 'ABC123',
-            prisonerName: 'Joe Bloggs',
-            isPayable: 'true',
-            notAttendedReason: AttendanceReasons.SICK,
-            caseNote: 'case note',
-          },
-        ],
-      }
-
-      const requestObject = plainToInstance(NotAttendedForm, request)
-      expect(requestObject.notAttendedData[0].getCaseNote(req.session.notAttendedJourney.activityInstance)).toBeNull()
-    })
-
-    it('should set case note when attendance reason is "REFUSED"', async () => {
-      const request = {
-        notAttendedData: [
-          {
-            prisonerNumber: 'ABC123',
-            prisonerName: 'Joe Bloggs',
-            isPayable: 'true',
-            notAttendedReason: AttendanceReasons.REFUSED,
-            caseNote: 'case note',
-          },
-        ],
-      }
-
-      const requestObject = plainToInstance(NotAttendedForm, request)
-      expect(requestObject.notAttendedData[0].getCaseNote(req.session.notAttendedJourney.activityInstance)).toEqual(
-        'Refused to attend - Test activity - Room 1 - Wednesday, 25 October 2023 - 09:00 \n\ncase note',
-      )
-    })
-
     it('should set case note when attendance reason is "REFUSED" and location is undefined', async () => {
-      req.session.notAttendedJourney.activityInstance.activitySchedule.internalLocation = undefined
       const request = {
         notAttendedData: [
           {
@@ -592,9 +555,7 @@ describe('Route Handlers - Non Attendance', () => {
       }
 
       const requestObject = plainToInstance(NotAttendedForm, request)
-      expect(requestObject.notAttendedData[0].getCaseNote(req.session.notAttendedJourney.activityInstance)).toEqual(
-        'Refused to attend - Test activity - Wednesday, 25 October 2023 - 09:00 \n\ncase note',
-      )
+      expect(requestObject.notAttendedData[0].caseNote).toEqual('case note')
     })
 
     it('should not issue payment if attendance reason is "REFUSED"', async () => {

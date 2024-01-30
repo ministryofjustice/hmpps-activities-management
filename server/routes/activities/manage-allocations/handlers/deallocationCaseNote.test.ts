@@ -1,20 +1,12 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { when } from 'jest-when'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import DeallocationCaseNoteRoutes, { DeallocationCaseNote } from './deallocationCaseNote'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import ActivitiesService from '../../../../services/activitiesService'
-import atLeast from '../../../../../jest.setup'
-import { ActivitySchedule, DeallocationReason } from '../../../../@types/activitiesAPI/types'
-
-jest.mock('../../../../services/activitiesService')
-
-const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Deallocation case note', () => {
-  const handler = new DeallocationCaseNoteRoutes(activitiesService)
+  const handler = new DeallocationCaseNoteRoutes()
 
   let req: Request
   let res: Response
@@ -55,13 +47,6 @@ describe('Route Handlers - Deallocation case note', () => {
 
   describe('POST', () => {
     it('redirect when form submitted', async () => {
-      when(activitiesService.getActivitySchedule)
-        .calledWith(atLeast(1))
-        .mockResolvedValue({ activity: { summary: 'Maths' } } as ActivitySchedule)
-      when(activitiesService.getDeallocationReasons).mockResolvedValue([
-        { code: 'SECURITY', description: 'Security' } as DeallocationReason,
-      ])
-
       req.body = {
         type: 'GEN',
         text: 'Test case note',
@@ -70,9 +55,7 @@ describe('Route Handlers - Deallocation case note', () => {
       await handler.POST(req, res)
 
       expect(req.session.allocateJourney.deallocationCaseNote.type).toEqual('GEN')
-      expect(req.session.allocateJourney.deallocationCaseNote.text).toEqual(
-        'Deallocated from activity - Security - Maths\n\nTest case note',
-      )
+      expect(req.session.allocateJourney.deallocationCaseNote.text).toEqual('Test case note')
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })

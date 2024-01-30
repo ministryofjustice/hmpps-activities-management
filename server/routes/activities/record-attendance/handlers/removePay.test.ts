@@ -152,7 +152,7 @@ describe('Route Handlers - Remove Pay', () => {
             attendanceReason: AttendanceReason.ATTENDED,
             issuePayment: false,
             payAmount: null as number,
-            caseNote: 'Pay removed - Maths level 1 - Houseblock 1 - Friday, 12 January 2024 - 10:00\n\ntest case note',
+            caseNote: 'test case note',
           },
         ],
         { activeCaseLoadId: 'MDI', username: 'joebloggs' },

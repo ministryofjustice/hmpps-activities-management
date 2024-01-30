@@ -123,9 +123,8 @@ export default class AttendanceListRoutes {
     const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
 
     req.session.notAttendedJourney = {
-      activityInstance: instance,
+      selectedPrisoners: [],
     }
-    req.session.notAttendedJourney.selectedPrisoners = []
 
     const otherScheduledEvents = await this.activitiesService
       .getScheduledEventsForPrisoners(toDate(instance.date), selectedPrisoners, user)
