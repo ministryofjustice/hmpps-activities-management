@@ -4,6 +4,7 @@ import fetchAppointmentSeries from './fetchAppointmentSeries'
 import { AppointmentSeriesDetails } from '../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../@types/express'
 import ActivitiesService from '../../services/activitiesService'
+import { AppointmentType } from '../../routes/appointments/create-and-edit/appointmentJourney'
 
 jest.mock('../../services/activitiesService')
 
@@ -46,7 +47,7 @@ describe('fetchAppointmentSeries', () => {
       startDate: '2023-04-13',
       startTime: '09:00',
       endTime: '10:30',
-      appointmentType: 'INDIVIDUAL',
+      appointmentType: AppointmentType.GROUP,
     } as unknown as AppointmentSeriesDetails
 
     when(activitiesServiceMock.getAppointmentSeriesDetails)

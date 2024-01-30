@@ -42,7 +42,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
     req = {
       session: {
         appointmentJourney: {
-          type: AppointmentType.INDIVIDUAL,
+          type: AppointmentType.GROUP,
           prisoners: [
             {
               number: 'A1234BC',
@@ -98,7 +98,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
 
     beforeEach(() => {
       expectedRequest = {
-        appointmentType: 'INDIVIDUAL',
+        appointmentType: 'GROUP',
         categoryCode: 'MEDO',
         prisonCode: 'TPR',
         internalLocationId: 32,
@@ -113,7 +113,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
 
       expectedResponse = {
         id: 15,
-        appointmentType: 'INDIVIDUAL',
+        appointmentType: 'GROUP',
         prisonCode: 'TPR',
         categoryCode: 'MEDO',
         internalLocationId: 32,

@@ -32,7 +32,7 @@ describe('emptyAppointmentJourneyHandler', () => {
     })
 
     it('should continue if journey data exists in session', async () => {
-      req.session.appointmentJourney = { mode: AppointmentJourneyMode.CREATE, type: AppointmentType.INDIVIDUAL }
+      req.session.appointmentJourney = { mode: AppointmentJourneyMode.CREATE, type: AppointmentType.GROUP }
       await middleware(req, res, next)
 
       expect(res.redirect).not.toHaveBeenCalled()

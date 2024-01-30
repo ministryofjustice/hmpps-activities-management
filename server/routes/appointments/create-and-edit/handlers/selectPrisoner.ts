@@ -83,8 +83,6 @@ export default class SelectPrisonerRoutes {
     } else if (req.session.appointmentJourney.type === AppointmentType.GROUP) {
       if (req.session.appointmentJourney.prisoners.find(p => p.number === prisonerData.number)) return true
       req.session.appointmentJourney.prisoners.push(prisonerData)
-    } else if (req.session.appointmentJourney.type === AppointmentType.INDIVIDUAL) {
-      req.session.appointmentJourney.prisoners = [prisonerData]
     }
 
     return true

@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty, MaxLength } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AppointmentType } from '../appointmentJourney'
 
 export class Name {
   @Expose()
@@ -18,20 +17,10 @@ export default class NameRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { appointmentJourney } = req.session
-
-    let backLinkHref = 'review-prisoners'
-    if (appointmentJourney.type === AppointmentType.INDIVIDUAL) {
-      if (appointmentJourney.prisoners?.length > 0) {
-        backLinkHref = `select-prisoner?query=${appointmentJourney.prisoners[0].number}`
-      } else {
-        backLinkHref = 'select-prisoner'
-      }
-    }
 
     const categories = await this.activitiesService.getAppointmentCategories(user)
 
-    res.render(`pages/appointments/create-and-edit/name`, { backLinkHref, categories })
+    res.render(`pages/appointments/create-and-edit/name`, { categories })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

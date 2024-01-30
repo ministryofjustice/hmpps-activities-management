@@ -24,7 +24,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
       appointment: {
         id: 10,
         appointmentSeries: { id: 5 },
-        appointmentType: AppointmentType.INDIVIDUAL,
+        appointmentType: AppointmentType.GROUP,
         attendees: [
           {
             prisoner: {
