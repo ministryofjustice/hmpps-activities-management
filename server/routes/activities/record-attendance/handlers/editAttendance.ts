@@ -83,9 +83,6 @@ export default class EditAttendanceRoutes {
         name: `${i.firstName} ${i.lastName}`,
         otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
       }))
-      req.session.notAttendedJourney = {
-        activityInstance: instance,
-      }
       req.session.notAttendedJourney.selectedPrisoners = [
         {
           attendanceId: +attendanceId,
