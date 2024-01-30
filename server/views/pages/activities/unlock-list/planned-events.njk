@@ -132,6 +132,25 @@
                     ]
                 }) }}
 
+                {{ govukCheckboxes({
+                    idPrefix: 'showAlerts',
+                    name: 'showAlerts',
+                    classes: "govuk-checkboxes--small",
+                    fieldset: {
+                        legend: {
+                            text: 'Relevant alerts',
+                            classes: 'govuk-fieldset__legend--m'
+                        }
+                    },
+                    items:[
+                        {
+                            value: 'true',
+                            text: 'Include alerts',
+                            checked: true == session.unlockListJourney.showAlerts
+                        }
+                    ]
+                }) }}
+
                 <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
                     Apply filters
                 </button>
@@ -193,12 +212,15 @@
                                     attributes: { id: 'cell-location-' + loop.index },
                                     text: item.cellLocation,
                                     classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
-                                },
-                                {
-                                    html: alertsList({ alerts: item.alerts, category: item.category }),
-                                    classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
                                 }
                             ), row) %}
+
+                            {% if session.unlockListJourney.showAlerts %}
+                                {% set row = (row.push({
+                                    html: alertsList({ alerts: item.alerts, category: item.category }),
+                                    classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
+                                }), row) %}
+                            {% endif %}
 
                             {% set row = (row.push(
                                 {
@@ -214,6 +236,54 @@
 
                             {% set rows = (rows.push(row), rows) %}
                         {% endfor %}
+
+                        {% set headRows = [
+                            {
+                                text: "Name",
+                                attributes: { "aria-sort": "none" },
+                                classes: 'govuk-table__header'
+                            },
+                            {
+                                text: "Cell location",
+                                attributes: { "aria-sort": "ascending" },
+                                classes: 'govuk-table__header'
+                            }
+                        ] %}
+
+                        {% if session.unlockListJourney.showAlerts %}
+                            {% set headRows = (headRows.push(
+                                {
+                                    text: "Relevant alerts",
+                                    classes: 'govuk-table__header'
+                                }
+                            ), headRows) %}
+                        {% endif %}
+
+                        {% set headRows = (headRows.push(
+                            {
+                                html: "Event details",
+                                attributes: { "aria-sort": "none", colspan: 4 },
+                                classes: 'govuk-table__header govuk-!-display-none-print ' + ('hmpps-width-40-percent' if session.unlockListJourney.showAlerts else 'hmpps-width-50-percent')
+                            },
+                            {
+                                html: "Event details",
+                                attributes: { "aria-sort": "none" },
+                                classes: 'govuk-table__header print-only ' + ('hmpps-width-30-percent' if session.unlockListJourney.showAlerts else 'hmpps-width-40-percent')
+                            },
+                            {
+                                html: "<span><span class=\"text-underline\">R</span>efused</span>",
+                                classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
+                            },
+                            {
+                                html: "<span>Rest in <span class=\"text-underline\">C</span>ell</span>",
+                                classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
+                            },
+                            {
+                                html: "<span><span class=\"text-underline\">U</span>nlocked</span>",
+                                classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
+                            }
+                        ), headRows) %}
+
                         {{ govukTable({
                             attributes: {
                                 id: 'unlock-list-table',
@@ -222,44 +292,7 @@
                             caption: "Prisoners",
                             classes: "fixed-layout-table alternating-row-shading",
                             captionClasses: "govuk-visually-hidden",
-                            head: [
-                                {
-                                    text: "Name",
-                                    attributes: { "aria-sort": "none" },
-                                    classes: 'govuk-table__header'
-                                },
-                                {
-                                    text: "Cell location",
-                                    attributes: { "aria-sort": "ascending" },
-                                    classes: 'govuk-table__header'
-                                },
-                                {
-                                    text: "Relevant alerts",
-                                    classes: 'govuk-table__header'
-                                },
-                                {
-                                    html: "Event details",
-                                    attributes: { "aria-sort": "none", colspan: 4 },
-                                    classes: 'govuk-table__header govuk-!-display-none-print hmpps-width-40-percent'
-                                },
-                                {
-                                    html: "Event details",
-                                    attributes: { "aria-sort": "none" },
-                                    classes: 'govuk-table__header print-only hmpps-width-30-percent'
-                                },
-                                {
-                                    html: "<span><span class=\"text-underline\">R</span>efused</span>",
-                                    classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
-                                },
-                                {
-                                    html: "<span>Rest in <span class=\"text-underline\">C</span>ell</span>",
-                                    classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
-                                },
-                                {
-                                    html: "<span><span class=\"text-underline\">U</span>nlocked</span>",
-                                    classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
-                                }
-                            ],
+                            head: headRows,
                             rows: rows
                         }) }}
                     </div>
