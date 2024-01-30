@@ -35,8 +35,7 @@ export type AllocationsSummary = {
 export type UnlockListItem = {
   prisonerNumber: string
   bookingId: number
-  firstName: string
-  lastName: string
+  prisonerName: string
   displayName?: string
   locationGroup?: string
   locationSubGroup: string

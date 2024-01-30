@@ -216,6 +216,7 @@ describe('Unlock list service', () => {
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
         'Both',
+        null,
         user,
       )
 
@@ -256,6 +257,7 @@ describe('Unlock list service', () => {
         ['C-Wing'],
         'Both',
         'Both',
+        null,
         user,
       )
 
@@ -285,6 +287,7 @@ describe('Unlock list service', () => {
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'With',
         'Both',
+        null,
         user,
       )
 
@@ -303,6 +306,7 @@ describe('Unlock list service', () => {
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
         'Both',
+        null,
         user,
       )
 
@@ -322,6 +326,7 @@ describe('Unlock list service', () => {
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
         'Leaving',
+        null,
         user,
       )
 
@@ -340,6 +345,7 @@ describe('Unlock list service', () => {
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
         'Staying',
+        null,
         user,
       )
 
@@ -358,6 +364,7 @@ describe('Unlock list service', () => {
         ['A-Wing'],
         'Both',
         'Leaving',
+        null,
         user,
       )
 
@@ -376,6 +383,7 @@ describe('Unlock list service', () => {
         [],
         'Both',
         'Both',
+        null,
         user,
       )
 

@@ -20,7 +20,8 @@ describe('Route Handlers - applyFilters', () => {
           subLocationFilters: ['Original location'],
           activityFilter: 'Original activity filter',
           stayingOrLeavingFilter: 'Original staying or leaving filter',
-          showAlerts: true,
+          showAlerts: false,
+          searchTerm: '',
         },
       },
     } as unknown as Request
@@ -33,6 +34,7 @@ describe('Route Handlers - applyFilters', () => {
         activityFilter: 'With',
         stayingOrLeavingFilter: 'Staying',
         showAlerts: 'true',
+        searchTerm: 'search term',
       }
 
       await handler.APPLY(req, res)
@@ -42,6 +44,7 @@ describe('Route Handlers - applyFilters', () => {
         activityFilter: 'With',
         stayingOrLeavingFilter: 'Staying',
         showAlerts: true,
+        searchTerm: 'search term',
       })
     })
 
@@ -56,6 +59,7 @@ describe('Route Handlers - applyFilters', () => {
         activityFilter: 'Original activity filter',
         stayingOrLeavingFilter: 'Original staying or leaving filter',
         showAlerts: false,
+        searchTerm: '',
       })
     })
 
@@ -68,6 +72,7 @@ describe('Route Handlers - applyFilters', () => {
         activityFilter: 'Original activity filter',
         stayingOrLeavingFilter: 'Original staying or leaving filter',
         showAlerts: false,
+        searchTerm: '',
       })
     })
   })
