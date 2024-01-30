@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import { startOfToday, subMonths } from 'date-fns'
+import { startOfToday } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -83,7 +83,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
       req.query = {}
 
       const filters = {
-        applicationDateFrom: formatIsoDate(subMonths(startOfToday(), 1)),
+        applicationDateFrom: '2023-09-30',
         applicationDateTo: formatIsoDate(startOfToday()),
         activityId: null,
         status: [WaitingListStatus.PENDING, WaitingListStatus.APPROVED],

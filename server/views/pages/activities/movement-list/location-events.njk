@@ -19,14 +19,14 @@
             {% for event in events %}
                 {% if not loop.first %}<hr class="dashed-mid-grey-tint-20-hr" />{% endif %}
 
-                {% if event.eventType == EventType.ACTIVITY %}
+                {% if event.eventType == EventType.ACTIVITY and event.eventSource =='SAA' %}
                     <div>
                         <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list"
                            class="govuk-link govuk-link--no-visited-state" target="_blank">
                             {{ event.summary | trim }}
                         </a>
                     </div>
-                {% elseif event.eventType == EventType.APPOINTMENT%}
+                {% elseif event.eventType == EventType.APPOINTMENT and event.eventSource =='SAA' %}
                     <div>
                         <a href="/appointments/{{ event.appointmentId }}"
                            class="govuk-link govuk-link--no-visited-state" target="_blank">
@@ -87,7 +87,7 @@
                     html: showProfileLink({
                         name: prisonerEvents.firstName + " " + prisonerEvents.lastName,
                         prisonerNumber: prisonerEvents.prisonerNumber,
-                        link: true
+                        inCaseLoad: prisonerEvents.prisonId == user.activeCaseLoadId
                     }),
                     attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-name-and-number', "data-sort-value": (prisonerEvents.firstName + " " + prisonerEvents.lastName) | toTitleCase | prisonerName(false) }
                 }, {

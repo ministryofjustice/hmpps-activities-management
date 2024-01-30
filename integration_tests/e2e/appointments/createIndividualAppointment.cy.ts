@@ -104,7 +104,7 @@ context('Create individual appointment', () => {
     extraInformationPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
-    checkAnswersPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    checkAnswersPage.assertPrisonerSummary('Gregs, Stephen', 'A8644DY', '1-3')
     checkAnswersPage.assertCategory('Chaplaincy')
     checkAnswersPage.assertTier('Tier 2')
     checkAnswersPage.assertHost('Prison staff')

@@ -5,7 +5,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
-{% from "partials/appointmentPrisonerSummary.njk" import appointmentPrisonerSummary %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% if session.appointmentJourney.type == AppointmentType.SET %}
     {% set pageTitle = appointmentJourneyTitle("No attendees for set" if prisoners.length == 0 else "Avoid clashes", session.appointmentJourney) %}
@@ -60,12 +60,11 @@
                                     text: "Attendee"
                                 },
                                 value: {
-                                    html: appointmentPrisonerSummary(
-                                        session.appointmentJourney.prisoners[0].name,
-                                        session.appointmentJourney.prisoners[0].number,
-                                        session.appointmentJourney.prisoners[0].cellLocation,
-                                        dpsUrl
-                                    )
+                                    html: showProfileLink({
+                                        name: session.appointmentJourney.prisoners[0].name,
+                                        prisonerNumber: session.appointmentJourney.prisoners[0].number,
+                                        cellLocation: session.appointmentJourney.prisoners[0].cellLocation
+                                    })
                                 },
                                 actions: {
                                     items: [

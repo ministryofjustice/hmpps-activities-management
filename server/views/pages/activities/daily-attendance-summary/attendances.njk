@@ -8,6 +8,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
 {% from "partials/searchInput.njk" import searchInput %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = applicationName + " - Daily attendance list" %}
@@ -116,28 +117,28 @@
                             label: "Daily summary",
                             id: "day-tab",
                             panel: {
-                                html: summaryHtml("DAY", "daily", activityDate)
+                                html: summaryHtml("DAY", "daily", activityDate, user)
                             }
                         },
                         {
                             label: "AM session",
                             id: "am-tab",
                             panel: {
-                                html: summaryHtml("AM", "morning", activityDate)
+                                html: summaryHtml("AM", "morning", activityDate, user)
                             }
                         },
                         {
                             label: "PM session",
                             id: "pm-tab",
                             panel: {
-                                html: summaryHtml("PM", "afternoon", activityDate)
+                                html: summaryHtml("PM", "afternoon", activityDate, user)
                             }
                         },
                         {
                             label: "ED session",
                             id: "ed-tab",
                             panel: {
-                                html: summaryHtml("ED", "evening", activityDate)
+                                html: summaryHtml("ED", "evening", activityDate, user)
                             }
                         }
                     ]
@@ -147,7 +148,7 @@
     </div>
 {% endblock %}
 
-{% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
+{% macro summaryHtml(timeSlot, timeSlotDescription, activityDate, user) %}
     {% set attendanceRows = [] %}
     {% for attendee in attendees %}
         {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
@@ -157,14 +158,14 @@
                     html: showProfileLink({
                         name: attendee.name,
                         prisonerNumber: attendee.prisonerNumber,
-                        link: false if attendee.status == 'INACTIVE OUT' else true,
+                        inCaseLoad: attendee.prisonCode == user.activeCaseLoadId,
                         classes: 'hmpps-inline-block'
                     }),
                     classes: 'govuk-table_cell'
                 },
                 {
                     attributes: { id: 'cell-location-' + loop.index, "data-sort-value": attendee.location },
-                    html: renderLocation(attendee.location, attendee.status),
+                    html: statusBasedCellLocation(attendee.location, attendee.status, attendee.prisonCode == user.activeCaseLoadId),
                     classes: 'govuk-table_cell'
                 },
                 {
@@ -251,11 +252,3 @@
         }) }}
     {% endif %}
 {% endmacro %}
-
-  {% macro renderLocation(location, status) %}
-     {% if (location == 'CSWAP' and status == 'ACTIVE OUT') or status == 'INACTIVE OUT' %}
-          --
-     {% else %}
-         {{ location }}
-     {% endif %}
-  {% endmacro %}

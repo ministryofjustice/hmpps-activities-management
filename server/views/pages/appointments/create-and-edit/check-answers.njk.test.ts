@@ -129,7 +129,7 @@ describe('Views - Create Appointment - Check Answers', () => {
 
   describe('Individual Appointment', () => {
     it('should display prisoner details', () => {
-      expect(getIndividualPrisonerValueElement('prisoner-name').text().trim()).toEqual('Lee Jacobson')
+      expect(getIndividualPrisonerValueElement('prisoner-name').text().trim()).toEqual('Jacobson, Lee')
     })
   })
 

@@ -32,7 +32,7 @@
                                 name: appointment.prisoner.name,
                                 prisonerNumber: appointment.prisoner.number,
                                 cellLocation: statusBasedCellLocation(appointment.prisoner.cellLocation, appointment.prisoner.status, appointment.prisoner.prisonCode == user.activeCaseLoadId),
-                                link: true
+                                inCaseLoad: appointment.prisoner.prisonCode == user.activeCaseLoadId
                             })
                         }, {
                             html: timePicker({

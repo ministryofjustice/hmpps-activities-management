@@ -167,7 +167,7 @@
                     html: showProfileLink({
                         name: suspendedPrisoner.prisonerName,
                         prisonerNumber: suspendedPrisoner.prisonerNumber,
-                        link: false if suspendedPrisoner.status == 'INACTIVE OUT' else true,
+                        inCaseLoad: suspendedPrisoner.prisonCode == user.activeCaseLoadId,
                         classes: 'hmpps-inline-block'
                     }),
                     classes: 'govuk-table_cell'

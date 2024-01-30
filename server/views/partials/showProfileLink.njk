@@ -2,7 +2,7 @@
     <div {{ "class=" + options.classes if options.classes }} data-qa="prisoner-summary">
       <div data-qa="prisoner-name">
         {% set name = options.name | toTitleCase | prisonerName(options.link) or 'No matching name' %}
-        {% if options.link and options.name %}
+        {% if options.name and (true if options.inCaseLoad == undefined else options.inCaseLoad) %}
           <a href="{{ dpsUrl }}/prisoner/{{ options.prisonerNumber }}"
             target="_blank"
             class="govuk-link govuk-link--no-visited-state">
@@ -12,7 +12,7 @@
           {{ name }}
         {% endif %}
       </div>
-      {% if options.prisonerNumber %}
+      {% if options.prisonerNumber and (true if options.showPrisonerNumber == undefined else options.showPrisonerNumber) %}
         <div class="govuk-body-s govuk-!-margin-0" data-qa="prisoner-number">{{ options.prisonerNumber }}</div>
       {% endif %}
       {% if options.cellLocation %}
