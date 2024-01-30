@@ -278,12 +278,12 @@ describe('Activities Service', () => {
         extraInformation: 'This appointment will help adjusting to life outside of prison',
         customName: 'Appointment description',
         prisonerNumbers: ['A1234BC'],
-        appointmentType: AppointmentType.INDIVIDUAL,
+        appointmentType: AppointmentType.GROUP,
       } as AppointmentSeriesCreateRequest
 
       const expectedResponse = {
         id: 12345,
-        appointmentType: 'INDIVIDUAL',
+        appointmentType: 'GROUP',
         prisonCode: 'SKI',
         categoryCode: 'CHAP',
         internalLocationId: 123,

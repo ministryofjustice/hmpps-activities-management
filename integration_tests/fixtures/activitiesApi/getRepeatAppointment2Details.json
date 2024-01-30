@@ -23,7 +23,7 @@
   "startDate": "2023-03-01",
   "startTime": "14:00",
   "endTime": "15:30",
-  "appointmentType": "INDIVIDUAL",
+  "appointmentType": "GROUP",
   "extraInformation": "Appointment extra information",
   "isEdited": false,
   "isCancelled": false,

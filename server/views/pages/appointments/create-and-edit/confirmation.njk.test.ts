@@ -26,7 +26,7 @@ describe('Views - Create Appointment - Confirmation', () => {
   it('should not display repeat frequency or number of appointments when no schedule is defined', () => {
     viewContext.appointment = {
       appointmentSeries: { schedule: null },
-      appointmentType: AppointmentType.INDIVIDUAL,
+      appointmentType: AppointmentType.GROUP,
       startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
       attendees: [
         {
@@ -41,7 +41,7 @@ describe('Views - Create Appointment - Confirmation', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
-      `You have successfully scheduled an appointment for Test Prisoner on ${format(tomorrow, 'EEEE, d MMMM yyyy')}.`,
+      `You have successfully scheduled an appointment for 1 person on ${format(tomorrow, 'EEEE, d MMMM yyyy')}.`,
     )
   })
 
@@ -56,7 +56,7 @@ describe('Views - Create Appointment - Confirmation', () => {
     ({ frequency, expectedText }) => {
       viewContext.appointment = {
         appointmentSeries: { schedule: { frequency, numberOfAppointments: 6 } },
-        appointmentType: AppointmentType.INDIVIDUAL,
+        appointmentType: AppointmentType.GROUP,
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
         attendees: [
           {
@@ -71,7 +71,7 @@ describe('Views - Create Appointment - Confirmation', () => {
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 
       expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
-        `You have successfully scheduled an appointment for Test Prisoner starting on ${format(
+        `You have successfully scheduled an appointment for 1 person starting on ${format(
           tomorrow,
           'EEEE, d MMMM yyyy',
         )}. It will repeat ${expectedText} for 6 appointments`,

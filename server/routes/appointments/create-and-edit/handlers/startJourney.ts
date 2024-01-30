@@ -18,19 +18,6 @@ export default class StartJourneyRoutes {
     private readonly metricsService: MetricsService,
   ) {}
 
-  INDIVIDUAL = async (req: Request, res: Response): Promise<void> => {
-    req.session.appointmentJourney = {
-      mode: AppointmentJourneyMode.CREATE,
-      type: AppointmentType.INDIVIDUAL,
-      createJourneyComplete: false,
-    }
-
-    initJourneyMetrics(req, 'startLink')
-    this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED(req, res.locals.user))
-
-    return res.redirect(`select-prisoner`)
-  }
-
   GROUP = async (req: Request, res: Response): Promise<void> => {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,

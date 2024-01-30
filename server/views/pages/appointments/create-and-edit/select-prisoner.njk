@@ -21,9 +21,6 @@
 {% block content %}
     {{ appointmentTypeCaption(session) }}
     {% set defaultPrisonerNumber = formResponses.query if formResponses.query != undefined else query %}
-    {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
-        {% set defaultPrisonerNumber = defaultPrisonerNumber or session.appointmentJourney.prisoners[0].number %}
-    {% endif %}
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
