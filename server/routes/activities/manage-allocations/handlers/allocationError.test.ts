@@ -5,7 +5,11 @@ import AllocationErrorRoutes from './allocationError'
 describe('Route Handlers - Allocation error', () => {
   const handler = new AllocationErrorRoutes()
 
-  let req: Request
+  const req = {
+    params: {
+      errorType: 'transferred',
+    },
+  } as unknown as Request
   const res = {
     render: jest.fn(),
   } as unknown as Response
@@ -13,7 +17,9 @@ describe('Route Handlers - Allocation error', () => {
   describe('GET', () => {
     it('should render error page', async () => {
       handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/allocation-error')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/allocation-error', {
+        errorType: 'transferred',
+      })
     })
   })
 })

@@ -81,6 +81,7 @@ describe('Route Handlers - Allocate - Start', () => {
             prisonerName: 'Joe Bloggs',
             cellLocation: '1-2-001',
             incentiveLevel: 'Standard',
+            prisonCode: 'LEI',
           },
         ],
         inmate: {
@@ -88,6 +89,7 @@ describe('Route Handlers - Allocate - Start', () => {
           prisonerName: 'Joe Bloggs',
           cellLocation: '1-2-001',
           incentiveLevel: 'Standard',
+          prisonCode: 'LEI',
         },
         activity: {
           activityId: 1,
@@ -106,7 +108,7 @@ describe('Route Handlers - Allocate - Start', () => {
     it('should populate the session with journey data and redirect to the allocation error page if prisoner is in another prison', async () => {
       when(prisonService.getInmateByPrisonerNumber)
         .calledWith(atLeast('ABC123'))
-        .mockResolvedValue({
+        .mockResolvedValueOnce({
           prisonerNumber: 'ABC123',
           firstName: 'Joe',
           lastName: 'Bloggs',
@@ -116,7 +118,7 @@ describe('Route Handlers - Allocate - Start', () => {
 
       await handler.GET(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('../error/temporary-release')
+      expect(res.redirect).toHaveBeenCalledWith('../error/transferred')
     })
   })
 })
