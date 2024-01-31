@@ -52,12 +52,13 @@
             }
         }, {
             html: (govukTag({ text: "Edited" }) if appointment.isEdited) +
-            (govukTag({ text: "Cancelled" }) if appointment.isCancelled),
+            (govukTag({ text: "Cancelled" }) if appointment.isCancelled) +
+            (govukTag({ text: "Deleted", classes: "govuk-tag--red" }) if appointment.isDeleted),
             attributes: { 'data-qa': 'appointment-' + appointment.id + '-status' }
         }, {
             html: '<a href="/appointments/' + appointment.id + '"
                 class="govuk-link--no-visited-state">
-                View' + (' and manage' if appointment.isCancelled == false and appointment.isExpired == false) + '<span class="govuk-visually-hidden"> appointment ' + appointment.id + '</span>
+                View' + (' and manage' if not appointment.isCancelled and not appointment.isDeleted and not appointment.isExpired) + '<span class="govuk-visually-hidden"> appointment ' + appointment.id + '</span>
             </a>',
             classes: 'govuk-!-text-align-right govuk-!-display-none-print',
             attributes: { 'data-qa': 'view-and-edit-appointment-' + appointment.id }

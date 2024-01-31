@@ -1254,6 +1254,13 @@ export interface components {
       cancelledBy?: string
       /**
        * @description
+       *     Indicates that this appointment has been deleted and removed from scheduled events.
+       *
+       * @example false
+       */
+      isDeleted: boolean
+      /**
+       * @description
        *     The prisoner or prisoners attending this appointment. Single appointments such as medical will have one
        *     attendee. A group appointment e.g. gym or chaplaincy sessions will have more than one attendee.
        *     Attendees are at the appointment level supporting alteration of attendees in any future appointment.
@@ -6017,6 +6024,13 @@ export interface components {
        */
       isCancelled: boolean
       /**
+       * @description
+       *     Indicates that this appointment has been deleted and removed from scheduled events.
+       *
+       * @example false
+       */
+      isDeleted: boolean
+      /**
        * Format: date-time
        * @description
        *     The date and time this appointment was cancelled.
@@ -6384,6 +6398,13 @@ export interface components {
        * @example false
        */
       isCancelled: boolean
+      /**
+       * @description
+       *     Indicates that this appointment has been deleted and removed from scheduled events.
+       *
+       * @example false
+       */
+      isDeleted: boolean
     }
     /** @description A basic activity, schedule and category for use where limited IDs only are required */
     ActivityBasic: {
