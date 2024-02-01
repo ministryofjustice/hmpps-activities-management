@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty, MaxLength } from 'class-validator'
+import { convertToTitleCase } from '../../../../utils/utils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 
@@ -19,10 +20,21 @@ export default class NameRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
     const { category } = req.session.createJourney
-    req.session.createJourney.name = req.body.name
+    req.session.createJourney.name = convertToTitleCase(req.body.name)
+
+    const activities = await this.activitiesService.getActivities(true, user)
+    const activityNames = activities.map(({ activityName }) => activityName)
+    const duplicateName = activityNames.find(activity => activity === req.session.createJourney.name)
+
+    if (req.params.mode === 'edit' && duplicateName) {
+      return res.validationFailed(
+        'name',
+        `You need to enter a different name - there is already ${req.session.createJourney.name} for this prison`,
+      )
+    }
     if (req.params.mode === 'edit') {
-      const { user } = res.locals
       const { activityId } = req.session.createJourney
       const activity = {
         summary: req.session.createJourney.name,
@@ -32,11 +44,15 @@ export default class NameRoutes {
 
       const returnTo = `/activities/view/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo
-      res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
-    } else {
+      return res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
+    }
+    {
+      if (duplicateName)
+        return res.validationFailed('name', 'Enter a different name. There is already an activity with this name')
+
       // If not in work no need to ask for activity tier
       const nextRoute = category?.code === 'SAA_NOT_IN_WORK' ? 'risk-level' : 'tier'
-      res.redirectOrReturn(nextRoute)
+      return res.redirectOrReturn(nextRoute)
     }
   }
 }

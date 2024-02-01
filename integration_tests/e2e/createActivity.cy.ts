@@ -11,6 +11,7 @@ import QualificationPage from '../pages/createActivity/qualification'
 import EducationLevelPage from '../pages/createActivity/educationLevel'
 import CheckEducationLevelsPage from '../pages/createActivity/checkEducationLevels'
 import getCategories from '../fixtures/activitiesApi/getCategories.json'
+import getActivities from '../fixtures/activitiesApi/getActivities.json'
 import moorlandPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 import moorlandIncentiveLevels from '../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
 import educationLevels from '../fixtures/prisonApi/educationLevels.json'
@@ -40,6 +41,7 @@ context('Create activity', () => {
     cy.signIn()
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
+    cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/EDU_LEVEL/codes', educationLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/STUDY_AREA/codes', studyAreas)
