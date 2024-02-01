@@ -5,9 +5,10 @@ import ActivitiesService from '../../../../services/activitiesService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import { initJourneyMetrics } from '../../../../utils/metricsUtils'
 import MetricsService from '../../../../services/metricsService'
-import { InmateDetail } from '../../../../@types/prisonApiImport/types'
 import { IepSummary } from '../../../../@types/incentivesApi/types'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import { ServiceUser } from '../../../../@types/express'
 
 export default class StartJourneyRoutes {
   constructor(
@@ -19,19 +20,21 @@ export default class StartJourneyRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { scheduleId, source } = req.query
     const { prisonerNumber } = req.params
-    const { user } = res.locals
+    const user = res.locals.user as ServiceUser
 
-    const [inmate, iepSummary, schedule]: [InmateDetail, IepSummary, ActivitySchedule] = await Promise.all([
-      this.prisonService.getInmate(prisonerNumber, user),
+    const [inmate, iepSummary, schedule]: [Prisoner, IepSummary, ActivitySchedule] = await Promise.all([
+      this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user),
       this.prisonService.getPrisonerIepSummary(prisonerNumber, user),
       this.activitiesService.getActivitySchedule(+scheduleId, user),
     ])
 
     const inmates = [
       {
-        prisonerNumber: inmate.offenderNo,
+        prisonerNumber: inmate.prisonerNumber,
         prisonerName: convertToTitleCase(`${inmate.firstName} ${inmate.lastName}`),
-        cellLocation: inmate.assignedLivingUnit?.description,
+        prisonCode: inmate.prisonId,
+        status: inmate.status,
+        cellLocation: inmate.cellLocation,
         incentiveLevel: iepSummary?.iepLevel,
       },
     ]
@@ -56,11 +59,16 @@ export default class StartJourneyRoutes {
       updatedExclusions: [],
     }
 
+    // Before allocating check if the prisoner is in this prison
+    if (inmate.prisonId !== user.activeCaseLoadId) {
+      return res.redirect('../error/transferred')
+    }
+
     initJourneyMetrics(req, asString(source))
     this.metricsServices.trackEvent(
       MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
     )
 
-    res.redirect(`../before-you-allocate`)
+    return res.redirect(`../before-you-allocate`)
   }
 }

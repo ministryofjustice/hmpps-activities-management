@@ -18,19 +18,6 @@ export default class StartJourneyRoutes {
     private readonly metricsService: MetricsService,
   ) {}
 
-  INDIVIDUAL = async (req: Request, res: Response): Promise<void> => {
-    req.session.appointmentJourney = {
-      mode: AppointmentJourneyMode.CREATE,
-      type: AppointmentType.INDIVIDUAL,
-      createJourneyComplete: false,
-    }
-
-    initJourneyMetrics(req, 'startLink')
-    this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED(req, res.locals.user))
-
-    return res.redirect(`select-prisoner`)
-  }
-
   GROUP = async (req: Request, res: Response): Promise<void> => {
     req.session.appointmentJourney = {
       mode: AppointmentJourneyMode.CREATE,
@@ -82,6 +69,8 @@ export default class StartJourneyRoutes {
       {
         number: prisoner.prisonerNumber,
         name: `${prisoner.firstName} ${prisoner.lastName}`,
+        prisonCode: prisoner.prisonId,
+        status: prisoner.status,
         cellLocation: prisoner.cellLocation,
       },
     ]
@@ -161,6 +150,8 @@ export default class StartJourneyRoutes {
           attendee.prisoner.lastName !== 'UNKNOWN'
             ? `${attendee.prisoner.firstName} ${attendee.prisoner.lastName}`
             : null,
+        prisonCode: attendee.prisoner.prisonCode,
+        status: attendee.prisoner.status,
         cellLocation: attendee.prisoner.cellLocation,
       })),
       category: appointment.category,

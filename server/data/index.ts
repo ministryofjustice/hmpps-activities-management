@@ -11,6 +11,7 @@ const appInsightsClient = buildAppInsightsClient()
 import HmppsAuthClient from './hmppsAuthClient'
 import PrisonApiClient from './prisonApiClient'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
+import PrisonRegisterApiClient from './prisonRegisterApiClient'
 import ActivitiesApiClient from './activitiesApiClient'
 import IncentivesApiClient from './incentivesApiClient'
 import FrontendComponentApiClient from './frontendComponentApiClient'
@@ -20,6 +21,7 @@ export default function dataAccess() {
     hmppsAuthClient: new HmppsAuthClient(),
     prisonApiClient: new PrisonApiClient(),
     prisonerSearchApiClient: new PrisonerSearchApiClient(),
+    prisonRegisterApiClient: new PrisonRegisterApiClient(),
     incentivesApiClient: new IncentivesApiClient(),
     activitiesApiClient: new ActivitiesApiClient(),
     frontendComponentApiClient: new FrontendComponentApiClient(),

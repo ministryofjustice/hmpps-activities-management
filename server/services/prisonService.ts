@@ -1,12 +1,7 @@
 import _ from 'lodash'
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
-import {
-  InmateDetail,
-  InmateBasicDetails,
-  ReferenceCode,
-  AgencyPrisonerPayProfile,
-} from '../@types/prisonApiImport/types'
+import { InmateDetail, ReferenceCode, AgencyPrisonerPayProfile } from '../@types/prisonApiImport/types'
 import { PagePrisoner, Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 
@@ -60,23 +55,6 @@ export default class PrisonService {
 
   async getEventLocations(prisonCode: string, user: ServiceUser): Promise<LocationLenient[]> {
     return this.prisonApiClient.getEventLocations(prisonCode, user)
-  }
-
-  async getLocationsForEventType(prisonCode: string, eventType: string, user: ServiceUser): Promise<LocationLenient[]> {
-    return this.prisonApiClient.getLocationsForEventType(prisonCode, eventType, user)
-  }
-
-  async searchActivityLocations(
-    prisonCode: string,
-    date: string,
-    period: string,
-    user: ServiceUser,
-  ): Promise<LocationLenient[]> {
-    return this.prisonApiClient.searchActivityLocations(prisonCode, date, period, user)
-  }
-
-  async getInmateDetails(offenderNumbers: string[], user: ServiceUser): Promise<InmateBasicDetails[]> {
-    return this.prisonApiClient.getInmateDetails(offenderNumbers, user)
   }
 
   async getReferenceCodes(domain: string, user: ServiceUser): Promise<ReferenceCode[]> {

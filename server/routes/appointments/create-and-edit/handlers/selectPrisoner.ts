@@ -72,7 +72,9 @@ export default class SelectPrisonerRoutes {
     const prisonerData = {
       number: prisoner.prisonerNumber,
       name: `${prisoner.firstName} ${prisoner.lastName}`,
+      prisonCode: prisoner.prisonId,
       cellLocation: prisoner.cellLocation,
+      status: prisoner.status,
     }
 
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
@@ -81,8 +83,6 @@ export default class SelectPrisonerRoutes {
     } else if (req.session.appointmentJourney.type === AppointmentType.GROUP) {
       if (req.session.appointmentJourney.prisoners.find(p => p.number === prisonerData.number)) return true
       req.session.appointmentJourney.prisoners.push(prisonerData)
-    } else if (req.session.appointmentJourney.type === AppointmentType.INDIVIDUAL) {
-      req.session.appointmentJourney.prisoners = [prisonerData]
     }
 
     return true

@@ -12,9 +12,8 @@ import {
 import ActivitiesService from '../../../../services/activitiesService'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
-import { convertToTitleCase, formatDate } from '../../../../utils/utils'
+import { convertToTitleCase } from '../../../../utils/utils'
 import { YesNo } from '../../../../@types/activities'
-import { ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 
 const getPrisonerName = (args: ValidationArguments) => (args.object as NotAttendedData)?.prisonerName
 
@@ -65,20 +64,6 @@ export class NotAttendedData {
       `Select if there should be an incentive level warning for ${getPrisonerName(args)}`,
   })
   incentiveLevelWarningIssued?: YesNo
-
-  getCaseNote = (activityInstance: ScheduledActivity) =>
-    this.notAttendedReason === AttendanceReason.REFUSED
-      ? [
-          'Refused to attend',
-          activityInstance.activitySchedule.activity.summary,
-          activityInstance.activitySchedule.internalLocation?.description,
-          formatDate(activityInstance.date),
-          `${activityInstance.startTime} \n\n${this.caseNote}`,
-        ]
-          .filter(Boolean)
-          .join(' - ')
-          .slice(0, 4000)
-      : null
 
   getIssuePayment() {
     if (this.sickPay === YesNo.YES && this.notAttendedReason === AttendanceReason.SICK) return true
@@ -131,7 +116,7 @@ export default class NotAttendedReasonRoutes {
     const { user } = res.locals
     const instanceId = req.params.id
     const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
-    const { selectedPrisoners, activityInstance } = req.session.notAttendedJourney
+    const { selectedPrisoners } = req.session.notAttendedJourney
 
     const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
     const isPaid = instance.activitySchedule.activity.paid
@@ -147,7 +132,7 @@ export default class NotAttendedReasonRoutes {
         attendanceReason: prisonerAttendance.notAttendedReason,
         comment: prisonerAttendance.getMoreDetails(),
         issuePayment: prisonerAttendance.getIssuePayment() && isPaid,
-        caseNote: prisonerAttendance.getCaseNote(activityInstance),
+        caseNote: prisonerAttendance.caseNote,
         incentiveLevelWarningIssued: prisonerAttendance.getIncentiveLevelWarning(),
         otherAbsenceReason: prisonerAttendance.getOtherAbsenceReason(),
       }

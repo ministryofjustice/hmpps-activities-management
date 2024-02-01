@@ -58,40 +58,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
   })
 
   describe('GET', () => {
-    it('should render the name view with back to select prisoner page', async () => {
-      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
-
-      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/name', {
-        backLinkHref: 'select-prisoner',
-        categories,
-      })
-    })
-
-    it('should render the name view with back to select prisoner page with prisoner selected', async () => {
-      req.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
-      req.session.appointmentJourney.prisoners = [
-        {
-          number: 'A1234BC',
-          name: 'TEST PRISONER',
-          cellLocation: '1-1-1',
-        },
-      ]
-
-      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/name', {
-        backLinkHref: 'select-prisoner?query=A1234BC',
-        categories,
-      })
-    })
-
-    it('should render the name view with back to review prisoners page', async () => {
+    it('should render the name view', async () => {
       req.session.appointmentJourney.type = AppointmentType.GROUP
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
@@ -99,20 +66,6 @@ describe('Route Handlers - Create Appointment - Name', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/name', {
-        backLinkHref: 'review-prisoners',
-        categories,
-      })
-    })
-
-    it('should render the name view with back link for type = SET', async () => {
-      req.session.appointmentJourney.type = AppointmentType.SET
-
-      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/name', {
-        backLinkHref: 'review-prisoners',
         categories,
       })
     })

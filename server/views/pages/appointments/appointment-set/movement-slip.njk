@@ -28,7 +28,7 @@
         </div>
     </div>
     {% for appointment in appointmentSet.appointments %}
-        {{ appointmentMovementSlip(appointment, user.activeCaseLoad.description, now) }}
+        {{ appointmentMovementSlip(appointment, user.activeCaseLoadDescription, now) }}
     {% endfor %}
 {% endblock %}
 

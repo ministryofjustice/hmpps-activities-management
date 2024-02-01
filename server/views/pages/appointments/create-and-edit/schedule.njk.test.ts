@@ -163,7 +163,7 @@ describe('Views - Appointments Management - Schedule', () => {
     beforeEach(() => {
       viewContext.session.appointmentJourney.type = AppointmentType.INDIVIDUAL
       viewContext.session.appointmentJourney.prisoners = [
-        { number: 'A1234BC', name: 'TEST PRISONER', cellLocation: '1-1-1' },
+        { number: 'A1234BC', name: 'TEST PRISONER', cellLocation: '1-1-1', status: 'ACTIVE IN', prisonCode: 'MDI' },
       ]
       viewContext.session.appointmentJourney.startTime = {
         hour: 9,
@@ -184,7 +184,7 @@ describe('Views - Appointments Management - Schedule', () => {
     })
 
     it('should display individual prisoners details with change link', () => {
-      expect(getIndividualPrisonerValueElement('prisoner-name').text().trim()).toEqual('Test Prisoner')
+      expect(getIndividualPrisonerValueElement('prisoner-name').text().trim()).toEqual('Prisoner, Test')
       expect(getIndividualPrisonerValueElement('prisoner-number').text().trim()).toEqual('A1234BC')
       expect(getIndividualPrisonerValueElement('prisoner-cell-location').text().trim()).toEqual('1-1-1')
       expect($('[data-qa=change-prisoner]').attr('href')).toEqual(
@@ -352,16 +352,22 @@ describe('Views - Appointments Management - Schedule', () => {
     beforeEach(() => {
       viewContext.session.appointmentJourney.type = AppointmentType.GROUP
       viewContext.session.appointmentJourney.prisoners = [
-        { number: 'A1234BC', name: 'TEST01 PRISONER01', cellLocation: '1-1-1' },
-        { number: 'B2345CD', name: 'TEST02 PRISONER02', cellLocation: '1-1-2' },
-        { number: 'C3456DE', name: 'TEST03 PRISONER03', cellLocation: '1-1-3' },
-        { number: 'D4567EF', name: 'TEST04 PRISONER04', cellLocation: '1-1-4' },
-        { number: 'E5678FG', name: 'TEST05 PRISONER05', cellLocation: '1-1-5' },
-        { number: 'F6789GH', name: 'TEST06 PRISONER06', cellLocation: '1-1-6' },
-        { number: 'G7891HI', name: 'TEST07 PRISONER07', cellLocation: '1-1-7' },
-        { number: 'H8912IJ', name: 'TEST08 PRISONER08', cellLocation: '1-1-8' },
-        { number: 'I9123JK', name: 'TEST09 PRISONER09', cellLocation: '1-1-9' },
-        { number: 'J1234KL', name: 'TEST10 PRISONER10', cellLocation: '1-1-10' },
+        { number: 'A1234BC', name: 'TEST01 PRISONER01', cellLocation: '1-1-1', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'B2345CD', name: 'TEST02 PRISONER02', cellLocation: '1-1-2', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'C3456DE', name: 'TEST03 PRISONER03', cellLocation: '1-1-3', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'D4567EF', name: 'TEST04 PRISONER04', cellLocation: '1-1-4', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'E5678FG', name: 'TEST05 PRISONER05', cellLocation: '1-1-5', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'F6789GH', name: 'TEST06 PRISONER06', cellLocation: '1-1-6', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'G7891HI', name: 'TEST07 PRISONER07', cellLocation: '1-1-7', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'H8912IJ', name: 'TEST08 PRISONER08', cellLocation: '1-1-8', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'I9123JK', name: 'TEST09 PRISONER09', cellLocation: '1-1-9', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        {
+          number: 'J1234KL',
+          name: 'TEST10 PRISONER10',
+          cellLocation: '1-1-10',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
+        },
       ]
       viewContext.session.appointmentJourney.startTime = {
         hour: 14,
@@ -415,6 +421,8 @@ describe('Views - Appointments Management - Schedule', () => {
         number: 'K2345LM',
         name: 'TEST11 PRISONER11',
         cellLocation: '1-1-11',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       })
       viewContext.prisonerSchedules.push({
         prisoner: viewContext.session.appointmentJourney.prisoners[10],
@@ -611,52 +619,112 @@ describe('Views - Appointments Management - Schedule', () => {
         {
           startTime: { hour: 9, minute: 0 },
           endTime: { hour: 9, minute: 15 },
-          prisoner: { number: 'A1234BC', name: 'TEST01 PRISONER01', cellLocation: '1-1-1' },
+          prisoner: {
+            number: 'A1234BC',
+            name: 'TEST01 PRISONER01',
+            cellLocation: '1-1-1',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
+          },
         },
         {
           startTime: { hour: 9, minute: 15 },
           endTime: { hour: 9, minute: 30 },
-          prisoner: { number: 'B2345CD', name: 'TEST02 PRISONER02', cellLocation: '1-1-2' },
+          prisoner: {
+            number: 'B2345CD',
+            name: 'TEST02 PRISONER02',
+            cellLocation: '1-1-2',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
+          },
         },
         {
           startTime: { hour: 9, minute: 30 },
           endTime: { hour: 9, minute: 45 },
-          prisoner: { number: 'C3456DE', name: 'TEST03 PRISONER03', cellLocation: '1-1-3' },
+          prisoner: {
+            number: 'C3456DE',
+            name: 'TEST03 PRISONER03',
+            cellLocation: '1-1-3',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
+          },
         },
         {
           startTime: { hour: 9, minute: 45 },
           endTime: { hour: 10, minute: 0 },
-          prisoner: { number: 'D4567EF', name: 'TEST04 PRISONER04', cellLocation: '1-1-4' },
+          prisoner: {
+            number: 'D4567EF',
+            name: 'TEST04 PRISONER04',
+            cellLocation: '1-1-4',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
+          },
         },
         {
           startTime: { hour: 10, minute: 0 },
           endTime: { hour: 10, minute: 15 },
-          prisoner: { number: 'E5678FG', name: 'TEST05 PRISONER05', cellLocation: '1-1-5' },
+          prisoner: {
+            number: 'E5678FG',
+            name: 'TEST05 PRISONER05',
+            cellLocation: '1-1-5',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
+          },
         },
         {
           startTime: { hour: 10, minute: 15 },
           endTime: { hour: 10, minute: 30 },
-          prisoner: { number: 'F6789GH', name: 'TEST06 PRISONER06', cellLocation: '1-1-6' },
+          prisoner: {
+            number: 'F6789GH',
+            name: 'TEST06 PRISONER06',
+            cellLocation: '1-1-6',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
+          },
         },
         {
           startTime: { hour: 10, minute: 30 },
           endTime: { hour: 10, minute: 45 },
-          prisoner: { number: 'G7891HI', name: 'TEST07 PRISONER07', cellLocation: '1-1-7' },
+          prisoner: {
+            number: 'G7891HI',
+            name: 'TEST07 PRISONER07',
+            cellLocation: '1-1-7',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
+          },
         },
         {
           startTime: { hour: 10, minute: 45 },
           endTime: { hour: 11, minute: 0 },
-          prisoner: { number: 'H8912IJ', name: 'TEST08 PRISONER08', cellLocation: '1-1-8' },
+          prisoner: {
+            number: 'H8912IJ',
+            name: 'TEST08 PRISONER08',
+            cellLocation: '1-1-8',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
+          },
         },
         {
           startTime: { hour: 11, minute: 0 },
           endTime: { hour: 11, minute: 15 },
-          prisoner: { number: 'I9123JK', name: 'TEST09 PRISONER09', cellLocation: '1-1-9' },
+          prisoner: {
+            number: 'I9123JK',
+            name: 'TEST09 PRISONER09',
+            cellLocation: '1-1-9',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
+          },
         },
         {
           startTime: { hour: 11, minute: 15 },
           endTime: { hour: 11, minute: 30 },
-          prisoner: { number: 'J1234KL', name: 'TEST10 PRISONER10', cellLocation: '1-1-10' },
+          prisoner: {
+            number: 'J1234KL',
+            name: 'TEST10 PRISONER10',
+            cellLocation: '1-1-10',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
+          },
         },
       ]
       viewContext.prisonerSchedules = viewContext.session.appointmentSetJourney.appointments.map(appointment => ({
@@ -697,7 +765,13 @@ describe('Views - Appointments Management - Schedule', () => {
       viewContext.session.appointmentSetJourney.appointments.push({
         startTime: { hour: 11, minute: 30 },
         endTime: { hour: 11, minute: 45 },
-        prisoner: { number: 'K2345LM', name: 'TEST11 PRISONER11', cellLocation: '1-1-11' },
+        prisoner: {
+          number: 'K2345LM',
+          name: 'TEST11 PRISONER11',
+          cellLocation: '1-1-11',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
+        },
       })
       viewContext.prisonerSchedules.push({
         prisoner: viewContext.session.appointmentSetJourney.appointments[10].prisoner,
@@ -923,16 +997,22 @@ describe('Views - Appointments Management - Schedule', () => {
         },
       } as AppointmentJourney
       viewContext.session.appointmentJourney.prisoners = [
-        { number: 'A1234BC', name: 'TEST01 PRISONER01', cellLocation: '1-1-1' },
-        { number: 'B2345CD', name: 'TEST02 PRISONER02', cellLocation: '1-1-2' },
-        { number: 'C3456DE', name: 'TEST03 PRISONER03', cellLocation: '1-1-3' },
-        { number: 'D4567EF', name: 'TEST04 PRISONER04', cellLocation: '1-1-4' },
-        { number: 'E5678FG', name: 'TEST05 PRISONER05', cellLocation: '1-1-5' },
-        { number: 'F6789GH', name: 'TEST06 PRISONER06', cellLocation: '1-1-6' },
-        { number: 'G7891HI', name: 'TEST07 PRISONER07', cellLocation: '1-1-7' },
-        { number: 'H8912IJ', name: 'TEST08 PRISONER08', cellLocation: '1-1-8' },
-        { number: 'I9123JK', name: 'TEST09 PRISONER09', cellLocation: '1-1-9' },
-        { number: 'J1234KL', name: 'TEST10 PRISONER10', cellLocation: '1-1-10' },
+        { number: 'A1234BC', name: 'TEST01 PRISONER01', cellLocation: '1-1-1', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'B2345CD', name: 'TEST02 PRISONER02', cellLocation: '1-1-2', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'C3456DE', name: 'TEST03 PRISONER03', cellLocation: '1-1-3', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'D4567EF', name: 'TEST04 PRISONER04', cellLocation: '1-1-4', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'E5678FG', name: 'TEST05 PRISONER05', cellLocation: '1-1-5', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'F6789GH', name: 'TEST06 PRISONER06', cellLocation: '1-1-6', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'G7891HI', name: 'TEST07 PRISONER07', cellLocation: '1-1-7', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'H8912IJ', name: 'TEST08 PRISONER08', cellLocation: '1-1-8', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        { number: 'I9123JK', name: 'TEST09 PRISONER09', cellLocation: '1-1-9', status: 'ACTIVE IN', prisonCode: 'MDI' },
+        {
+          number: 'J1234KL',
+          name: 'TEST10 PRISONER10',
+          cellLocation: '1-1-10',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
+        },
       ]
       viewContext.prisonerSchedules = viewContext.session.appointmentJourney.prisoners.map(prisoner => ({
         prisoner,
@@ -949,6 +1029,8 @@ describe('Views - Appointments Management - Schedule', () => {
             number: 'A1234BC',
             name: 'TEST01 PRISONER01',
             cellLocation: '1-1-1',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           },
         ]
         viewContext.prisonerSchedules = viewContext.session.editAppointmentJourney.addPrisoners.map(prisoner => ({
@@ -992,6 +1074,8 @@ describe('Views - Appointments Management - Schedule', () => {
           number: `A1234BC${i}`,
           name: `TEST PRISONER${i}`,
           cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         }))
         viewContext.prisonerSchedules = viewContext.session.editAppointmentJourney.addPrisoners.map(v => ({
           prisoner: v,
@@ -1018,6 +1102,8 @@ describe('Views - Appointments Management - Schedule', () => {
           number: 'K2345LM',
           name: 'TEST11 PRISONER11',
           cellLocation: '1-1-11',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         })
         viewContext.prisonerSchedules.push({
           prisoner: viewContext.session.appointmentJourney.prisoners[10],
@@ -1082,6 +1168,8 @@ describe('Views - Appointments Management - Schedule', () => {
           number: 'K2345LM',
           name: 'TEST11 PRISONER11',
           cellLocation: '1-1-11',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         })
         viewContext.prisonerSchedules.push({
           prisoner: viewContext.session.appointmentJourney.prisoners[10],
@@ -1147,6 +1235,8 @@ describe('Views - Appointments Management - Schedule', () => {
           number: 'K2345LM',
           name: 'TEST11 PRISONER11',
           cellLocation: '1-1-11',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
         })
         viewContext.prisonerSchedules.push({
           prisoner: viewContext.session.appointmentJourney.prisoners[10],

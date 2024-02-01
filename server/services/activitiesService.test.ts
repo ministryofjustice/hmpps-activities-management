@@ -53,7 +53,7 @@ describe('Activities Service', () => {
   const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
   const activitiesService = new ActivitiesService(activitiesApiClient)
 
-  const user = { activeCaseLoadId: 'MDI', username: 'USER1', firstName: 'John', lastName: 'Smith' } as ServiceUser
+  const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
 
   const mockedLocationGroups = [{ name: 'Houseblock 1', key: 'Houseblock 1', children: [] }] as LocationGroup[]
 
@@ -278,12 +278,12 @@ describe('Activities Service', () => {
         extraInformation: 'This appointment will help adjusting to life outside of prison',
         customName: 'Appointment description',
         prisonerNumbers: ['A1234BC'],
-        appointmentType: AppointmentType.INDIVIDUAL,
+        appointmentType: AppointmentType.GROUP,
       } as AppointmentSeriesCreateRequest
 
       const expectedResponse = {
         id: 12345,
-        appointmentType: 'INDIVIDUAL',
+        appointmentType: 'GROUP',
         prisonCode: 'SKI',
         categoryCode: 'CHAP',
         internalLocationId: 123,

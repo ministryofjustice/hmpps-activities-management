@@ -23,8 +23,10 @@ import { formatDate } from '../../../server/utils/utils'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
+import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
+import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
 
-context('Create individual appointment - back links', () => {
+context('Create group appointment - back links', () => {
   const tomorrow = addDays(new Date(), 1)
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
   // To pass validation we must ensure the appointment details start date is set to tomorrow
@@ -50,20 +52,28 @@ context('Create individual appointment - back links', () => {
     cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
   })
 
-  it('Create individual appointment - back links', () => {
+  it('Create group appointment - back links', () => {
     // Move through the journey to final page with back link
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()
 
     Page.verifyOnPage(AppointmentsManagementPage)
-    cy.visit('/appointments/create/start-individual')
+    cy.visit('/appointments/create/start-group')
 
-    let selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
+    const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
+    howToAddPrisonersPage.selectHowToAdd('Search for them one by one')
+    howToAddPrisonersPage.continue()
+
+    const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A8644DY')
     selectPrisonerPage.searchButton().click()
 
-    selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
+    Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.continueButton().click()
+
+    const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
+    reviewPrisonersPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)
     namePage.selectCategory('Chaplaincy')
@@ -126,12 +136,17 @@ context('Create individual appointment - back links', () => {
     Page.verifyOnPage(NamePage)
     namePage.assertSelectedCategory('Chaplaincy')
 
+    reviewPrisonersPage.back()
+    reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
+
     namePage.back()
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.assertEnteredPrisonerNumber('A8644DY')
 
     // Continue to extra information page
     selectPrisonerPage.continue()
+    reviewPrisonersPage.continue()
     namePage.continue()
     tierPage.continue()
     hostPage.continue()
@@ -144,11 +159,10 @@ context('Create individual appointment - back links', () => {
     extraInformationPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
-    checkAnswersPage.assertNoBackLink()
 
     // Back links from check answers
-    checkAnswersPage.changePrisoner()
-    Page.verifyOnPage(SelectPrisonerPage)
+    checkAnswersPage.changePrisoners()
+    reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     selectPrisonerPage.back()
     Page.verifyOnPage(CheckAnswersPage)
 

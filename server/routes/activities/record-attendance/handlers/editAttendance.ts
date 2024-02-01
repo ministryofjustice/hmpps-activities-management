@@ -84,16 +84,15 @@ export default class EditAttendanceRoutes {
         otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
       }))
       req.session.notAttendedJourney = {
-        activityInstance: instance,
+        selectedPrisoners: [
+          {
+            attendanceId: +attendanceId,
+            prisonerNumber: attendance.prisonerNumber,
+            prisonerName: attendee.name,
+            otherEvents: attendee.otherEvents,
+          },
+        ],
       }
-      req.session.notAttendedJourney.selectedPrisoners = [
-        {
-          attendanceId: +attendanceId,
-          prisonerNumber: attendance.prisonerNumber,
-          prisonerName: attendee.name,
-          otherEvents: attendee.otherEvents,
-        },
-      ]
       return res.redirect(`/activities/attendance/activities/${id}/not-attended-reason?preserveHistory=true`)
     }
 

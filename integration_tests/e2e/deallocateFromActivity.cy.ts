@@ -4,7 +4,7 @@ import getAllocations from '../fixtures/activitiesApi/getAllocations.json'
 import prisonerAllocations from '../fixtures/activitiesApi/prisonerAllocations.json'
 import getSchedule from '../fixtures/activitiesApi/getSchedule.json'
 import moorlandIncentiveLevels from '../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
-import getInmateDetails from '../fixtures/prisonApi/getInmateDetailsForDeallocation.json'
+import getInmateDetails from '../fixtures/prisonerSearchApi/getInmateDetailsForDeallocation.json'
 import getActivity from '../fixtures/activitiesApi/getActivity.json'
 import getDeallocationReasons from '../fixtures/activitiesApi/getDeallocationReasons.json'
 import getMdiPrisonPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
@@ -44,7 +44,7 @@ context('Deallocation from activity', () => {
 
   it('should click through deallocate from activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().should('contain.text', 'Allocate people, unlock and attend')
+    indexPage.activitiesCard().should('contain.text', 'Activities, unlock and attendance')
     indexPage.activitiesCard().click()
 
     const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)

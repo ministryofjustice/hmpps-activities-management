@@ -5,7 +5,7 @@ import getAllocations from '../fixtures/activitiesApi/getAllocations.json'
 import prisonerAllocations from '../fixtures/activitiesApi/prisonerAllocations.json'
 import getSchedule from '../fixtures/activitiesApi/getSchedule.json'
 import moorlandIncentiveLevels from '../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
-import getInmateDetails from '../fixtures/prisonApi/getInmateDetails.json'
+import getInmateDetails from '../fixtures/prisonerSearchApi/getPrisoner-MDI-A5015DY.json'
 import getPrisonerIepSummary from '../fixtures/incentivesApi/getPrisonerIepSummary.json'
 import getActivity from '../fixtures/activitiesApi/getActivity.json'
 import getDeallocationReasons from '../fixtures/activitiesApi/getDeallocationReasons.json'
@@ -43,7 +43,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', JSON.parse('[]'))
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
-    cy.stubEndpoint('GET', '/api/offenders/A5015DY', getInmateDetails)
+    cy.stubEndpoint('GET', '/prisoner/A5015DY', getInmateDetails)
     cy.stubEndpoint('GET', '/incentive-reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/activities/2', getActivity)
     cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
@@ -54,7 +54,7 @@ context('Allocate to activity', () => {
 
   it('should click through allocate to activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().should('contain.text', 'Allocate people, unlock and attend')
+    indexPage.activitiesCard().should('contain.text', 'Activities, unlock and attendance')
     indexPage.activitiesCard().click()
 
     const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)

@@ -75,6 +75,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
           firstName: 'TEST01',
           lastName: 'PRISONER01',
           cellLocation: '1-1-1',
+          prisonCode: 'MDI',
+          status: 'ACTIVE IN',
         },
       },
       {
@@ -83,6 +85,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
           firstName: 'TEST02',
           lastName: 'PRISONER02',
           cellLocation: '2-2-2',
+          prisonCode: 'MDI',
+          status: 'ACTIVE IN',
         },
       },
     ],
@@ -107,31 +111,6 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
   afterEach(() => {
     jest.resetAllMocks()
-  })
-
-  describe('INDIVIDUAL', () => {
-    it('should populate the session with individual appointment journey type and redirect to select prisoner page', async () => {
-      await handler.INDIVIDUAL(req, res)
-
-      expect(req.session.appointmentJourney).toEqual({
-        mode: AppointmentJourneyMode.CREATE,
-        type: AppointmentType.INDIVIDUAL,
-        createJourneyComplete: false,
-      })
-      expect(req.session.editAppointmentJourney).toBeUndefined()
-      expect(req.session.appointmentSetJourney).toBeUndefined()
-
-      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
-      expect(req.session.journeyMetrics.source).toEqual('startLink')
-
-      expect(metricsService.trackEvent).toBeCalledWith(
-        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
-          .addProperty('journeyId', journeyId)
-          .addProperty('journeySource', 'startLink'),
-      )
-
-      expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
-    })
   })
 
   describe('GROUP', () => {
@@ -193,7 +172,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       req.params.prisonNumber = 'A1234BC'
     })
 
-    it('should populate the session with group appointment journey type and redirect to select prisoner page', async () => {
+    it('should populate the session with group appointment journey type and redirect to select prisoner page if prisoner number not found', async () => {
       when(prisonService.getInmateByPrisonerNumber).calledWith('A1234BC', res.locals.user).mockResolvedValue(null)
       await handler.PRISONER(req, res)
 
@@ -218,7 +197,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner?query=A1234BC')
     })
 
-    it('should populate the session with individual appointment journey type and redirect to review prisoners page', async () => {
+    it('should populate the session with group appointment journey type and redirect to review prisoners page if prisoner number found', async () => {
       const prisonerInfo = {
         prisonerNumber: 'A1234BC',
         firstName: 'John',
@@ -313,11 +292,15 @@ describe('Route Handlers - Create Appointment - Start', () => {
             number: 'A1234BC',
             name: 'TEST01 PRISONER01',
             cellLocation: '1-1-1',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           },
           {
             number: 'B2345CD',
             name: 'TEST02 PRISONER02',
             cellLocation: '2-2-2',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
           },
         ],
         category: {
@@ -447,6 +430,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
           firstName: 'TEST02',
           lastName: 'PRISONER02',
           cellLocation: '2-2-2',
+          prisonCode: 'MDI',
+          status: 'ACTIVE IN',
         },
       } as EditAppointmentJourney
 
@@ -502,6 +487,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
           firstName: 'TEST01',
           lastName: 'PRISONER01',
           cellLocation: '1-1-1',
+          prisonCode: 'MDI',
+          status: 'ACTIVE IN',
         },
       } as EditAppointmentJourney
 

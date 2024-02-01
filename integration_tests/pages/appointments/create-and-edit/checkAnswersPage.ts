@@ -53,7 +53,7 @@ export default class CheckAnswersPage extends Page {
 
   assertExtraInformation = (comment: string) => this.assertExtraDetail('Extra information', comment)
 
-  changePrisoner = () => cy.get('[data-qa=change-prisoner]').click()
+  changePrisoners = () => cy.get('[data-qa=change-prisoners]').click()
 
   changeName = () => cy.get('[data-qa=change-name]').click()
 

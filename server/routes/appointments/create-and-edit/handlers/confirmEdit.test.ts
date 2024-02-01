@@ -27,7 +27,7 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
       session: {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
-          type: AppointmentType.INDIVIDUAL,
+          type: AppointmentType.GROUP,
           startDate: formatIsoDate(weekTomorrow),
         },
         editAppointmentJourney: {

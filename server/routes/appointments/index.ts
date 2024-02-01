@@ -34,7 +34,6 @@ export default function routes(services: Services): Router {
   // Create appointment journey routes. These are the starting points for the three appointment type creation journeys.
   // They use the startNewJourney middleware which adds a unique journeyId into the url after the /create/ path segment
   // then redirects to that new url
-  router.get('/create/start-individual', appointmentsStartNewJourney('/create/'))
   router.get('/create/start-group', appointmentsStartNewJourney('/create/'))
   router.get('/create/start-set', appointmentsStartNewJourney('/create/'))
   router.get('/create/start-prisoner/:prisonNumber', appointmentsStartNewJourney('/create/'))

@@ -35,8 +35,6 @@ const getPrisonerDetailsValueElement = (heading: string) =>
 
 const getFrequencyValueElement = () => getSchedulingInformationValueElement('Frequency')
 const getNumberOfAppointmentsValueElement = () => getSchedulingInformationValueElement('Number of appointments')
-const getIndividualPrisonerValueElement = (qaAttr: string) =>
-  getAppointmentDetailsValueElement('Attendee').find(`[data-qa="${qaAttr}"]`)
 const getPrisonerListValueElement = (qaAttr: string, index: number) =>
   $(getPrisonerDetailsValueElement('Name of attendee').find(`[data-qa="${qaAttr}"]`).get(index))
 
@@ -56,7 +54,7 @@ describe('Views - Create Appointment - Check Answers', () => {
       session: {
         appointmentJourney: {
           mode: AppointmentJourneyMode.CREATE,
-          type: AppointmentType.INDIVIDUAL,
+          type: AppointmentType.GROUP,
           prisoners: [
             {
               name: 'Lee Jacobson',
@@ -125,12 +123,6 @@ describe('Views - Create Appointment - Check Answers', () => {
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect(getNumberOfAppointmentsValueElement().text().trim()).toEqual('6')
-  })
-
-  describe('Individual Appointment', () => {
-    it('should display prisoner details', () => {
-      expect(getIndividualPrisonerValueElement('prisoner-name').text().trim()).toEqual('Lee Jacobson')
-    })
   })
 
   describe('Group Appointment', () => {

@@ -36,9 +36,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
   const user = {
     username: 'joebloggs',
-    activeCaseLoad: {
-      caseLoadId: 'MDI',
-    },
+    activeCaseLoadId: 'MDI',
   }
 
   const mockActivity = {

@@ -11,11 +11,14 @@ export class Filters {
 
   @Expose()
   stayingOrLeavingFilter?: string
+
+  @Expose()
+  showAlerts?: string
 }
 
 export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
-    const { locationFilters, activityFilter, stayingOrLeavingFilter } = req.body
+    const { locationFilters, activityFilter, stayingOrLeavingFilter, showAlerts } = req.body
 
     if (locationFilters) {
       req.session.unlockListJourney.subLocationFilters = locationFilters
@@ -28,6 +31,8 @@ export default class ApplyFiltersRoutes {
     if (stayingOrLeavingFilter) {
       req.session.unlockListJourney.stayingOrLeavingFilter = stayingOrLeavingFilter
     }
+
+    req.session.unlockListJourney.showAlerts = showAlerts === 'true'
 
     res.redirect('back')
   }

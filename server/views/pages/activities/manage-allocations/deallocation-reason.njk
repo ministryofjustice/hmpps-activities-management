@@ -4,6 +4,7 @@
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = applicationName + " - Deallocate from an activity - Deallocation reason" %}
 {% set pageId = 'deallocation-reason-page' %}
@@ -66,7 +67,7 @@
                                 text: inmate.prisonerNumber
                             },
                             {
-                                text: inmate.cellLocation
+                                text: statusBasedCellLocation(inmate.cellLocation, inmate.status, inmate.prisonCode == user.activeCaseLoadId)
                             }
                         ]), rows) %}
                     {% endfor %}

@@ -71,7 +71,7 @@
                     html: showProfileLink({
                         name: prisoner | fullName,
                         prisonerNumber: prisoner.prisonerNumber,
-                        link: true
+                        inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId
                     }),
                     attributes: {
                         'data-qa': 'prisoner-' + loop.index + '-name-and-number',
@@ -79,7 +79,7 @@
                     }
                 },
                 {
-                    text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status),
+                    text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
                     attributes: {
                         'data-qa': 'prisoner-' + loop.index + '-location'
                     }

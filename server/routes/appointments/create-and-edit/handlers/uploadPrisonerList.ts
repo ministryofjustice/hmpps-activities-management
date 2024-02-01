@@ -50,7 +50,9 @@ export default class UploadPrisonerListRoutes {
     existingPrisoners: {
       number: string
       name: string
+      prisonCode: string
       cellLocation: string
+      status: string
     }[],
   ) => {
     const prisonerListCsvFile = req.file
@@ -68,7 +70,9 @@ export default class UploadPrisonerListRoutes {
       .map(prisoner => ({
         number: prisoner.prisonerNumber,
         name: `${prisoner.firstName} ${prisoner.lastName}`,
+        prisonCode: prisoner.prisonId,
         cellLocation: prisoner.cellLocation,
+        status: prisoner.status,
       }))
 
     const prisonerNumbersFound = prisoners.map(prisoner => prisoner.number)

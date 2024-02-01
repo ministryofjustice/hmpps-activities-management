@@ -2,41 +2,48 @@ import { jwtDecode } from 'jwt-decode'
 import { convertToTitleCase } from '../utils/utils'
 import HmppsAuthClient from '../data/hmppsAuthClient'
 import { ServiceUser } from '../@types/express'
-import PrisonApiClient from '../data/prisonApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
+import PrisonRegisterApiClient from '../data/prisonRegisterApiClient'
+import { RolloutPrisonPlan } from '../@types/activitiesAPI/types'
+import { Prison } from '../@types/prisonRegisterApiImport/types'
 import { HmppsAuthUser } from '../@types/hmppsAuth'
-import { CaseLoad, PrisonApiUserDetail } from '../@types/prisonApiImport/types'
 
 export default class UserService {
   constructor(
     private readonly hmppsAuthClient: HmppsAuthClient,
-    private readonly prisonApiClient: PrisonApiClient,
+    private readonly prisonRegisterApiClient: PrisonRegisterApiClient,
     private readonly activitiesApiClient: ActivitiesApiClient,
   ) {}
 
-  async getUser(user: ServiceUser): Promise<ServiceUser> {
-    const [hmppsAuthUser, nomisUser, userCaseLoads]: [HmppsAuthUser, PrisonApiUserDetail, CaseLoad[]] =
-      await Promise.all([
-        this.hmppsAuthClient.getUser(user),
-        this.prisonApiClient.getUser(user),
-        this.prisonApiClient.getUserCaseLoads(user),
-      ])
-
+  async getUser(user: Express.User, userInSession: ServiceUser): Promise<ServiceUser> {
+    const hmppsAuthUser = await this.hmppsAuthClient.getUser(user)
     const { authorities: roles = [] } = jwtDecode(user.token) as { authorities?: string[] }
 
-    const activeCaseLoad = userCaseLoads?.find(c => c.currentlyActive)
-    const rolloutPlan = await this.activitiesApiClient.getPrisonRolloutPlan(nomisUser.activeCaseLoadId)
+    const updatedActiveCaseLoadInformation =
+      hmppsAuthUser.activeCaseLoadId !== userInSession?.activeCaseLoadId
+        ? await this.fetchActiveCaseLoadInformation(hmppsAuthUser)
+        : undefined
 
     return {
+      ...userInSession,
       ...user,
       ...hmppsAuthUser,
-      ...nomisUser,
-      displayName: convertToTitleCase(hmppsAuthUser.name),
-      allCaseLoads: userCaseLoads,
-      activeCaseLoad,
+      ...updatedActiveCaseLoadInformation,
       roles,
-      isActivitiesRolledOut: rolloutPlan?.activitiesRolledOut || false,
-      isAppointmentsRolledOut: rolloutPlan?.appointmentsRolledOut || false,
+      displayName: convertToTitleCase(hmppsAuthUser.name),
+    }
+  }
+
+  private fetchActiveCaseLoadInformation = async (user: HmppsAuthUser) => {
+    const [rolloutPlan, activePrisonInformation]: [RolloutPrisonPlan, Prison] = await Promise.all([
+      this.activitiesApiClient.getPrisonRolloutPlan(user.activeCaseLoadId),
+      this.prisonRegisterApiClient.getPrisonInformation(user.activeCaseLoadId, user as ServiceUser),
+    ])
+
+    return {
+      activeCaseLoadDescription: activePrisonInformation.prisonName,
+      isActivitiesRolledOut: rolloutPlan.activitiesRolledOut,
+      isAppointmentsRolledOut: rolloutPlan.appointmentsRolledOut,
     }
   }
 }

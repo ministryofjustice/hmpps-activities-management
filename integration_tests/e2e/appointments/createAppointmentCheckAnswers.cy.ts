@@ -25,8 +25,10 @@ import RepeatFrequencyAndCountPage from '../../pages/appointments/create-and-edi
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
+import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
+import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
 
-context('Create individual appointment - check answers change links', () => {
+context('Create group appointment - check answers change links', () => {
   const tomorrow = addDays(new Date(), 1)
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
   const dayAfterTomorrow = addDays(new Date(), 2)
@@ -64,13 +66,17 @@ context('Create individual appointment - check answers change links', () => {
     cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
   })
 
-  it('Create individual appointment - check answers change links', () => {
+  it('Create group appointment - check answers change links', () => {
     // Move through the journey to check answers page
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()
 
     Page.verifyOnPage(AppointmentsManagementPage)
-    cy.visit('/appointments/create/start-individual')
+    cy.visit('/appointments/create/start-group')
+
+    const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
+    howToAddPrisonersPage.selectHowToAdd('Search for them one by one')
+    howToAddPrisonersPage.continue()
 
     const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A8644DY')
@@ -78,6 +84,10 @@ context('Create individual appointment - check answers change links', () => {
 
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.continueButton().click()
+
+    const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
+    reviewPrisonersPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)
     namePage.selectCategory('Chaplaincy')
@@ -113,7 +123,7 @@ context('Create individual appointment - check answers change links', () => {
 
     // Verify initial answers
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
-    checkAnswersPage.assertPrisonerSummary('Stephen Gregs', 'A8644DY', '1-3')
+    checkAnswersPage.assertPrisonerSummary('Gregs, Stephen', 'A8644DY', '1-3')
     checkAnswersPage.assertCategory('Chaplaincy')
     checkAnswersPage.assertLocation('Chapel')
     checkAnswersPage.assertStartDate(tomorrow)
@@ -123,19 +133,32 @@ context('Create individual appointment - check answers change links', () => {
     checkAnswersPage.assertExtraInformation('')
 
     // Change each answer
-    checkAnswersPage.changePrisoner()
+    checkAnswersPage.changePrisoners()
+
+    Page.verifyOnPage(ReviewPrisonersPage)
+    reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
+    reviewPrisonersPage.addAnotherPrisoner()
+
+    Page.verifyOnPage(HowToAddPrisonersPage)
+    howToAddPrisonersPage.selectHowToAdd('Search for them one by one')
+    howToAddPrisonersPage.continue()
+
     Page.verifyOnPage(SelectPrisonerPage)
-    selectPrisonerPage.assertEnteredPrisonerNumber('A8644DY')
     selectPrisonerPage.enterPrisonerNumber('A1350DZ')
     selectPrisonerPage.searchButton().click()
 
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.continueButton().click()
 
+    Page.verifyOnPage(ReviewPrisonersPage)
+    reviewPrisonersPage.assertPrisonerInList('Winchurch, David')
+    reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
+    reviewPrisonersPage.continue()
+
     Page.verifyOnPage(SchedulePage)
     schedulePage.continue()
 
-    checkAnswersPage.assertPrisonerSummary('David Winchurch', 'A1350DZ', '2-2-024')
+    checkAnswersPage.assertPrisonerSummary('Winchurch, David', 'A1350DZ', '2-2-024')
 
     checkAnswersPage.changeName()
     Page.verifyOnPage(NamePage)
@@ -204,7 +227,7 @@ context('Create individual appointment - check answers change links', () => {
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.assertMessageEquals(
-      `You have successfully scheduled an appointment for David Winchurch on ${formatDate(
+      `You have successfully scheduled an appointment for 1 person on ${formatDate(
         dayAfterTomorrow,
         'EEEE, d MMMM yyyy',
       )}.`,

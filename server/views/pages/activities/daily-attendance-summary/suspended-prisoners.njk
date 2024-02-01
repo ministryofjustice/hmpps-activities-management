@@ -7,6 +7,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/searchInput.njk" import searchInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = applicationName + " - Suspended Prisoners" %}
 {% set pageId = 'suspended-prisoners-detail-page' %}
@@ -166,14 +167,14 @@
                     html: showProfileLink({
                         name: suspendedPrisoner.prisonerName,
                         prisonerNumber: suspendedPrisoner.prisonerNumber,
-                        link: false if suspendedPrisoner.status == 'INACTIVE OUT' else true,
+                        inCaseLoad: suspendedPrisoner.prisonCode == user.activeCaseLoadId,
                         classes: 'hmpps-inline-block'
                     }),
                     classes: 'govuk-table_cell'
                 },
                 {
-                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": suspendedPrisoner.cellLocation },
-                    text: suspendedPrisoner.cellLocation or '--',
+                    attributes: { id: 'cell-location-' + loop.index },
+                    text: statusBasedCellLocation(suspendedPrisoner.cellLocation, suspendedPrisoner.status, suspendedPrisoner.prisonCode == user.activeCaseLoadId),
                     classes: 'govuk-table_cell'
                 },
                 {

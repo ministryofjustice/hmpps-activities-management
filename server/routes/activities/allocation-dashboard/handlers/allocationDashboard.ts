@@ -56,7 +56,7 @@ export default class AllocationDashboardRoutes {
 
     const [activity, incentiveLevels]: [Activity, IncentiveLevel[]] = await Promise.all([
       this.activitiesService.getActivity(+activityId, user),
-      this.prisonService.getIncentiveLevels(user.activeCaseLoad.caseLoadId, user),
+      this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user),
     ])
 
     const suitableForIep = this.getSuitableForIep(activity.pay, activity.paid, incentiveLevels)
@@ -208,6 +208,8 @@ export default class AllocationDashboardRoutes {
         allocationId: allocation.id,
         name: allocation.prisonerName,
         prisonerNumber: allocation.prisonerNumber,
+        prisonerPrisonCode: allocation.prisonerPrisonCode,
+        prisonerStatus: allocation.prisonerStatus,
         cellLocation: allocation.cellLocation,
         earliestReleaseDate: allocation.earliestReleaseDate,
         startDate: parseDate(allocation.startDate),
@@ -244,6 +246,8 @@ export default class AllocationDashboardRoutes {
           waitlistApplicationId: w.id,
           name: `${inmate.firstName} ${inmate.lastName}`,
           prisonerNumber: inmate.prisonerNumber,
+          prisonerPrisonCode: inmate.prisonId,
+          prisonerStatus: inmate.status,
           cellLocation: inmate.cellLocation,
           requestDate: parseDate(w.requestedDate),
           requestedBy: WaitlistRequester.valueOf(w.requestedBy),

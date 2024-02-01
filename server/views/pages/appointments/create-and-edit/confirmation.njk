@@ -14,9 +14,7 @@
                 titleText: "Set of back-to-backs scheduled" if appointmentSet else "Appointment scheduled"
             }) }}
             <p class="govuk-body" data-qa="message">
-                {% if appointment.appointmentType == AppointmentType.INDIVIDUAL %}
-                    You have successfully scheduled an appointment for {{ appointment.attendees[0].prisoner | fullName | toTitleCase }}
-                {% elseif appointment.appointmentType == AppointmentType.GROUP %}
+                {% if appointment.appointmentType == AppointmentType.GROUP %}
                     You have successfully scheduled an appointment for {{ appointment.attendees | length }} {{ "person" if appointment.attendees.length == 1 else "people" }}
                 {% endif %}
 

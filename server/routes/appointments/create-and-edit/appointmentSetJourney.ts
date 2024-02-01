@@ -11,6 +11,8 @@ export type AppointmentSetJourney = {
     prisoner?: {
       number: string
       name: string
+      status: string
+      prisonCode: string
       cellLocation: string
     }
     extraInformation?: string

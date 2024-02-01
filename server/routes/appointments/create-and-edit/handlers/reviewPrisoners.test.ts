@@ -51,11 +51,15 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           number: 'A1234BC',
           name: '',
           cellLocation: '',
+          status: '',
+          prisonCode: '',
         },
         {
           number: 'B2345CD',
           name: '',
           cellLocation: '',
+          status: '',
+          prisonCode: '',
         },
       ]
       req.session.appointmentJourney.prisoners = prisoners
@@ -74,6 +78,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
             number: 'A1234BC',
             name: '',
             cellLocation: '',
+            status: '',
+            prisonCode: '',
           },
         },
         {
@@ -81,6 +87,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
             number: 'B2345CD',
             name: '',
             cellLocation: '',
+            status: '',
+            prisonCode: '',
           },
         },
       ]
@@ -92,11 +100,15 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
             number: 'A1234BC',
             name: '',
             cellLocation: '',
+            prisonCode: '',
+            status: '',
           },
           {
             number: 'B2345CD',
             name: '',
             cellLocation: '',
+            prisonCode: '',
+            status: '',
           },
         ],
       })
@@ -121,11 +133,15 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           number: 'A1234BC',
           name: '',
           cellLocation: '',
+          status: '',
+          prisonCode: '',
         },
         {
           number: 'B2345CD',
           name: '',
           cellLocation: '',
+          status: '',
+          prisonCode: '',
         },
       ]
       req.session.editAppointmentJourney.addPrisoners = prisoners
@@ -151,11 +167,15 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           number: 'A1234BC',
           name: '',
           cellLocation: '',
+          status: '',
+          prisonCode: '',
         },
         {
           number: 'B2345CD',
           name: '',
           cellLocation: '',
+          status: '',
+          prisonCode: '',
         },
       ]
       req.session.appointmentJourney.prisoners = prisoners
@@ -198,11 +218,15 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           number: 'A1234BC',
           name: '',
           cellLocation: '',
+          status: '',
+          prisonCode: '',
         },
         {
           number: 'B2345CD',
           name: '',
           cellLocation: '',
+          status: '',
+          prisonCode: '',
         },
       ]
 
@@ -217,6 +241,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           number: 'A1234BC',
           name: '',
           cellLocation: '',
+          prisonCode: '',
+          status: '',
         },
       ])
       expect(res.redirect).toBeCalledWith('../../review-prisoners')
@@ -230,6 +256,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
             number: 'A1234BC',
             name: '',
             cellLocation: '',
+            status: '',
+            prisonCode: '',
           },
         },
         {
@@ -237,6 +265,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
             number: 'B2345CD',
             name: '',
             cellLocation: '',
+            status: '',
+            prisonCode: '',
           },
         },
       ]
@@ -253,6 +283,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
             number: 'A1234BC',
             name: '',
             cellLocation: '',
+            prisonCode: '',
+            status: '',
           },
         },
       ])

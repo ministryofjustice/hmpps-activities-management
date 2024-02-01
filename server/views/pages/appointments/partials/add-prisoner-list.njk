@@ -1,22 +1,26 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
-{% macro addPrisonerList(prisoners) %}
+{% macro addPrisonerList(prisoners, user) %}
     {% if prisoners.length > 1 %}
         {% set prisonersList = [] %}
         {% set index = 0 %}
         {% for prisoner in prisoners %}
             {% set prisonersList = (prisonersList.push([
                 {
-                    html: '<a href="' + dpsUrl + '/prisoner/' + prisoner.number + '" target="_blank" class="govuk-link govuk-link--no-visited-state">' +
-                              (prisoner.name | toTitleCase | prisonerName) +
-                          '</a>',
+                    html: showProfileLink({
+                        name: prisoner.name,
+                        prisonerNumber: prisoner.number,
+                        inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId,
+                        showPrisonerNumber: false
+                    }),
                     attributes: { 'data-qa': 'prisoner-name-' + index }
                 }, {
                     text: prisoner.number,
                     attributes: { 'data-qa': 'prisoner-number-' + index }
                 }, {
-                    text: prisoner.cellLocation,
+                    text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
                     attributes: { 'data-qa': 'prisoner-cell-location-' + index }
                 }
             ]), prisonersList) %}

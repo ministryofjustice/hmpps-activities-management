@@ -4,11 +4,11 @@ import atLeast from '../../../../../jest.setup'
 import ActivitiesService from '../../../../services/activitiesService'
 import StartJourneyRoutes from './startJourney'
 import PrisonService from '../../../../services/prisonService'
-import { InmateDetail } from '../../../../@types/prisonApiImport/types'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 import { IepSummary } from '../../../../@types/incentivesApi/types'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
@@ -28,6 +28,7 @@ describe('Route Handlers - Allocate - Start', () => {
       locals: {
         user: {
           username: 'joebloggs',
+          activeCaseLoadId: 'LEI',
         },
       },
       render: jest.fn(),
@@ -42,15 +43,16 @@ describe('Route Handlers - Allocate - Start', () => {
   })
 
   describe('GET', () => {
-    it('should populate the session with journey data and redirect to the pay band page', async () => {
-      when(prisonService.getInmate)
+    it('should populate the session with journey data and redirect to the before you allocate page', async () => {
+      when(prisonService.getInmateByPrisonerNumber)
         .calledWith(atLeast('ABC123'))
         .mockResolvedValue({
-          offenderNo: 'ABC123',
+          prisonerNumber: 'ABC123',
           firstName: 'Joe',
           lastName: 'Bloggs',
-          assignedLivingUnit: { description: '1-2-001' },
-        } as InmateDetail)
+          cellLocation: '1-2-001',
+          prisonId: 'LEI',
+        } as Prisoner)
 
       when(prisonService.getPrisonerIepSummary)
         .calledWith(atLeast('ABC123'))
@@ -79,6 +81,7 @@ describe('Route Handlers - Allocate - Start', () => {
             prisonerName: 'Joe Bloggs',
             cellLocation: '1-2-001',
             incentiveLevel: 'Standard',
+            prisonCode: 'LEI',
           },
         ],
         inmate: {
@@ -86,6 +89,7 @@ describe('Route Handlers - Allocate - Start', () => {
           prisonerName: 'Joe Bloggs',
           cellLocation: '1-2-001',
           incentiveLevel: 'Standard',
+          prisonCode: 'LEI',
         },
         activity: {
           activityId: 1,
@@ -99,6 +103,22 @@ describe('Route Handlers - Allocate - Start', () => {
         MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
       )
       expect(res.redirect).toHaveBeenCalledWith('../before-you-allocate')
+    })
+
+    it('should populate the session with journey data and redirect to the allocation error page if prisoner is in another prison', async () => {
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValueOnce({
+          prisonerNumber: 'ABC123',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
+          cellLocation: '1-2-001',
+          prisonId: 'MDI',
+        } as Prisoner)
+
+      await handler.GET(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('../error/transferred')
     })
   })
 })

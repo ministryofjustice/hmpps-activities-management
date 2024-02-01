@@ -18,6 +18,7 @@ describe('Views - Appointments Management - Confirm Edit', () => {
   const weekTomorrow = addDays(new Date(), 8)
   let compiledTemplate: Template
   let viewContext = {
+    user: {},
     session: {
       appointmentJourney: {} as unknown as AppointmentJourney,
       editAppointmentJourney: {} as unknown as EditAppointmentJourney,
@@ -31,6 +32,9 @@ describe('Views - Appointments Management - Confirm Edit', () => {
   beforeEach(() => {
     compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
     viewContext = {
+      user: {
+        activeCaseLoadId: 'MDI',
+      },
       session: {
         appointmentJourney: {
           mode: AppointmentJourneyMode.EDIT,
@@ -67,6 +71,8 @@ describe('Views - Appointments Management - Confirm Edit', () => {
         number: 'A1234BC',
         name: 'TEST PRISONER',
         cellLocation: '1-1-1',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       },
     ]
 
@@ -81,11 +87,15 @@ describe('Views - Appointments Management - Confirm Edit', () => {
         number: 'A1234BC',
         name: 'TEST PRISONER1',
         cellLocation: '1-1-1',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       },
       {
         number: 'B2345CD',
         name: 'TEST PRISONER2',
         cellLocation: '2-2-2',
+        status: 'ACTIVE IN',
+        prisonCode: 'MDI',
       },
     ]
 
@@ -93,14 +103,14 @@ describe('Views - Appointments Management - Confirm Edit', () => {
 
     expect($('[data-qa=prisoners-list-table]').length).toEqual(1)
     expect($('[data-qa=prisoner-name-0]').text().trim()).toEqual('Prisoner1, Test')
-    let prisonerDpsLink = $('[data-qa=prisoner-name-0] > a')
+    let prisonerDpsLink = $('[data-qa=prisoner-name-0] > div > div > a')
     expect(prisonerDpsLink.attr('href')).toEqual('https://digital-dev.prison.service.justice.gov.uk/prisoner/A1234BC')
     expect(prisonerDpsLink.attr('target')).toEqual('_blank')
     expect($('[data-qa=prisoner-number-0]').text().trim()).toEqual('A1234BC')
     expect($('[data-qa=prisoner-cell-location-0]').text().trim()).toEqual('1-1-1')
 
     expect($('[data-qa=prisoner-name-1]').text().trim()).toEqual('Prisoner2, Test')
-    prisonerDpsLink = $('[data-qa=prisoner-name-1] > a')
+    prisonerDpsLink = $('[data-qa=prisoner-name-1] > div > div > a')
     expect(prisonerDpsLink.attr('href')).toEqual('https://digital-dev.prison.service.justice.gov.uk/prisoner/B2345CD')
     expect(prisonerDpsLink.attr('target')).toEqual('_blank')
     expect($('[data-qa=prisoner-number-1]').text().trim()).toEqual('B2345CD')

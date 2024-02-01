@@ -1,6 +1,6 @@
-{% macro statusBasedCellLocation(cellLocation, status) -%}
-  {% if (cellLocation == 'CSWAP' and status == PrisonerStatus.ACTIVE_OUT) or status == PrisonerStatus.INACTIVE_OUT %}
-    -
+{% macro statusBasedCellLocation(cellLocation, status, samePrisonCode) -%}
+  {% if not samePrisonCode or (cellLocation == 'CSWAP' and status == PrisonerStatus.ACTIVE_OUT) or status == PrisonerStatus.INACTIVE_OUT %}
+    Out of prison
   {% else %}
     {{ cellLocation or '-' }}
   {% endif %}

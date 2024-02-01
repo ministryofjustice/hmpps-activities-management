@@ -25,6 +25,7 @@ export default class PlannedEventsRoutes {
     req.session.unlockListJourney.stayingOrLeavingFilter ??= 'Both'
     req.session.unlockListJourney.activityFilter ??= 'With'
     req.session.unlockListJourney.subLocationFilters ??= location.children.map(c => c.key)
+    req.session.unlockListJourney.showAlerts ??= true
 
     const unlockDate = date ? toDate(asString(date)) : new Date()
 

@@ -8,8 +8,10 @@
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "components/searchBar.njk" import searchBar %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
 {% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = applicationName + " - Allocate" %}
 {% set pageId = 'allocation-dashboard-page' %}
@@ -187,15 +189,6 @@
             </ul>
         {% endset %}
 
-        {% set prisonerDetailsHtml %}
-            <div class="govuk-!-margin-bottom-0">
-                <a href='{{ dpsUrl }}/prisoner/{{ row.prisonerNumber }}'
-                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">{{ row.name | toTitleCase | prisonerName }}
-                </a>
-            </div>
-            <div class="govuk-hint govuk-!-margin-bottom-1">{{ row.prisonerNumber }}</div>
-        {% endset %}
-
         {% set allocatedDatesHtml %}
             <div>{{ row.startDate | formatDate('d MMMM yyyy')}}</div>
             {% if row.endDate %}
@@ -216,13 +209,17 @@
             selectable: true,
             items: [
                 {
-                    html: prisonerDetailsHtml,
+                    html: showProfileLink({
+                        name: row.name,
+                        prisonerNumber: row.prisonerNumber,
+                        inCaseLoad: row.prisonerPrisonCode == user.activeCaseLoadId
+                    }),
                     attributes: {
                         "data-sort-value": row.name | prisonerName(false)
                     }
                 },
                 {
-                    text: '--' if row.cellLocation == 'CSWAP' else row.cellLocation
+                    text: statusBasedCellLocation(row.cellLocation, row.prisonerStatus, row.prisonerPrisonCode == user.activeCaseLoadId)
                 },
                 {
                     html: allocatedDatesHtml,
@@ -446,15 +443,12 @@
             forbiddenActionId: 'waitlist-action-1' if row.status != 'APPROVED',
             items: [
                 {
-                    html: '
-                        <div class="govuk-!-margin-bottom-0">
-                            <a href="' + dpsUrl + '/prisoner/' + row.prisonerNumber + '"
-                               class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">' + row.name | toTitleCase | prisonerName + '
-                            </a>
-                        </div>
-                        <div class="govuk-hint govuk-!-margin-bottom-1">' + row.prisonerNumber + '</div>
-                        <div class="govuk-hint govuk-!-margin-bottom-1">' + row.cellLocation + '</div>
-                    ',
+                    html: showProfileLink({
+                        name: row.name,
+                        prisonerNumber: row.prisonerNumber,
+                        cellLocation: statusBasedCellLocation(row.cellLocation, row.prisonerStatus, row.prisonerPrisonCode == user.activeCaseLoadId),
+                        inCaseLoad: row.prisonerPrisonCode == user.activeCaseLoadId
+                    }),
                     attributes: {
                         "data-sort-value": row.name | prisonerName(false)
                     }
@@ -674,28 +668,19 @@
                 {% endfor %}
             </ul>
         {% endset %}
-        {% set candidatesHtml %}
-            <div class="govuk-!-margin-bottom-0">
-                <a href='{{ dpsUrl }}/prisoner/{{ row.prisonerNumber }}'
-                   class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">{{ row.name | toTitleCase | prisonerName }}
-                </a>
-            </div>
-            <div class="govuk-hint govuk-!-margin-bottom-1"> {{ row.prisonerNumber }}</div>
-            {% if row.cellLocation == 'CSWAP' %}
-                <div class="govuk-hint govuk-!-margin-bottom-1">--</div>
-            {% else %}
-                <div class="govuk-hint govuk-!-margin-bottom-1">{{ row.cellLocation }}</div>
-            {% endif %}
-        {% endset %}
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + row.name | toTitleCase,
             value: row.prisonerNumber,
             selectable: true,
             items: [
                 {
-                    html: candidatesHtml,
+                    html: showProfileLink({
+                        name: row.name,
+                        prisonerNumber: row.prisonerNumber,
+                        cellLocation: row.cellLocation
+                    }),
                     attributes: {
-                        "data-sort-value": row.name
+                        "data-sort-value": row.name | prisonerName(false)
                     }
                 },
                 {

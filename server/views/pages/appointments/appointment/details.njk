@@ -17,10 +17,21 @@
 
 {% set appointmentLink = '/appointments/' + appointment.id  %}
 
+{% set editable = not appointment.isCancelled and not appointment.isDeleted and not appointment.isExpired %}
+
 {% block content %}
     <div class="govuk-grid-row govuk-!-display-none-print">
         <div class="govuk-grid-column-two-thirds">
-            {% if appointment.isCancelled %}
+            {% if appointment.isDeleted %}
+                {% set deletedAppointmentHeadingHtml %}
+                    <h3 class="govuk-notification-banner__heading">Appointment deleted</h3>
+                    <p class="govuk-body">This appointment was deleted by {{ appointment.cancelledBy | fullName | toTitleCase | initialiseName }} on {{ appointment.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
+                {% endset %}
+                {{ govukNotificationBanner({
+                    type: 'important',
+                    html: deletedAppointmentHeadingHtml
+                }) }}
+            {% elseif appointment.isCancelled %}
                 {% set cancelledAppointmentHeadingHtml %}
                     <h3 class="govuk-notification-banner__heading">Appointment cancelled</h3>
                     <p class="govuk-body">This appointment was cancelled by {{ appointment.cancelledBy | fullName | toTitleCase | initialiseName }} on {{ appointment.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
@@ -97,7 +108,7 @@
                                 attributes: { 'data-qa': 'cancel-appointment' }
                             }
                         ]
-                    } if appointment.isCancelled == false and appointment.isExpired == false
+                    } if editable
                 },
                 rows: [
                     {
@@ -123,7 +134,7 @@
                                     attributes: { 'data-qa': 'change-tier' }
                                 }
                             ]
-                        } if appointment.isCancelled == false and appointment.isExpired == false
+                        } if editable
                     }, {
                         key: {
                             text: "Host"
@@ -140,7 +151,7 @@
                                     attributes: { 'data-qa': 'change-host' }
                                 }
                             ]
-                        } if appointment.isCancelled == false and appointment.isExpired == false
+                        } if editable
                     } if appointment.organiser,
                     {
                         key: {
@@ -158,7 +169,7 @@
                                     attributes: { 'data-qa': 'change-location' }
                                 }
                             ]
-                        } if appointment.isCancelled == false and appointment.isExpired == false
+                        } if editable
                     }, {
                         key: {
                             text: "Date"
@@ -175,7 +186,7 @@
                                     attributes: { 'data-qa': 'change-date' }
                                 }
                             ]
-                        } if appointment.isCancelled == false and appointment.isExpired == false
+                        } if editable
                     }, {
                         key: {
                             text: "Start time"
@@ -192,7 +203,7 @@
                                     attributes: { 'data-qa': 'change-start-time' }
                                 }
                             ]
-                        } if appointment.isCancelled == false and appointment.isExpired == false
+                        } if editable
                     }, {
                         key: {
                             text: "End time"
@@ -209,7 +220,7 @@
                                     attributes: { 'data-qa': 'change-end-time' }
                                 }
                             ]
-                        } if appointment.isCancelled == false and appointment.isExpired == false
+                        } if editable
                     }, {
                         key: {
                             text: "Extra information"
@@ -226,7 +237,7 @@
                                     attributes: { 'data-qa': 'change-extra-information' }
                                 }
                             ]
-                        } if appointment.isCancelled == false and appointment.isExpired == false
+                        } if editable
                     }
                 ],
                 attributes: { 'data-qa': 'appointment-details' }
@@ -244,42 +255,44 @@
         </div>
     </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds appointment-details__attendee-list">
-            <div class="govuk-button-group govuk-!-margin-0 govuk-!-display-none-print">
-                {{ govukButton({
-                    attributes: { 
-                        id: 'print-movement-list',
-                        'data-track-click-event': 'SAA-Appointment-Attendee-List-Printed',
-                        'data-track-event-properties': { 
-                            user: user.username,
-                            prisonCode: user.activeCaseLoad.caseLoadId,
-                            appointmentSeriesId: appointment.appointmentSeries.id,
-                            appointmentId: appointment.id
-                        } | dump,
-                        'data-track-event-measurements': {
-                            attendeeCount: appointment.attendees | length
-                        } | dump
-                    },
-                    text: "Print attendance list",
-                    classes: "govuk-button--blue govuk-!-margin-bottom-2 js-print no-js-hidden",
-                    preventDoubleClick: true
-                }) }}
-
-                {% if appointment.isExpired == false %}
+    {% if not appointment.isCancelled and not appointment.isDeleted %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds appointment-details__attendee-list">
+                <div class="govuk-button-group govuk-!-margin-0 govuk-!-display-none-print">
                     {{ govukButton({
-                        attributes: { id: 'print-movement-slips', target: "_blank", 'data-qa': 'print-movement-slips' },
-                        text: "Print movement slip" + ("s" if appointment.attendees.length > 1 ) ,
-                        classes: "govuk-button--blue govuk-link govuk-link--no-visited-state",
-                        preventDoubleClick: true,
-                        href: appointmentLink + '/movement-slip'
+                        attributes: { 
+                            id: 'print-movement-list',
+                            'data-track-click-event': 'SAA-Appointment-Attendee-List-Printed',
+                            'data-track-event-properties': { 
+                                user: user.username,
+                                prisonCode: user.activeCaseLoadId,
+                                appointmentSeriesId: appointment.appointmentSeries.id,
+                                appointmentId: appointment.id
+                            } | dump,
+                            'data-track-event-measurements': {
+                                attendeeCount: appointment.attendees | length
+                            } | dump
+                        },
+                        text: "Print attendance list",
+                        classes: "govuk-button--blue govuk-!-margin-bottom-2 js-print no-js-hidden",
+                        preventDoubleClick: true
                     }) }}
-                {% endif %}
-            </div>
 
-            {{ attendeeList(appointment) }}
+                    {% if appointment.isExpired == false %}
+                        {{ govukButton({
+                            attributes: { id: 'print-movement-slips', target: "_blank", 'data-qa': 'print-movement-slips' },
+                            text: "Print movement slip" + ("s" if appointment.attendees.length > 1 ) ,
+                            classes: "govuk-button--blue govuk-link govuk-link--no-visited-state",
+                            preventDoubleClick: true,
+                            href: appointmentLink + '/movement-slip'
+                        }) }}
+                    {% endif %}
+                </div>
+
+                {{ attendeeList(appointment, user) }}
+            </div>
         </div>
-    </div>
+    {% endif %}
 
     <div class="govuk-grid-row govuk-!-display-none-print">
         <div class="govuk-grid-column-two-thirds">

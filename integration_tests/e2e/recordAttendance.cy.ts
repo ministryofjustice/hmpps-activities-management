@@ -12,7 +12,7 @@ import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance
 import getAttendeesForScheduledInstance from '../fixtures/activitiesApi/getAttendeesScheduledInstance93.json'
 import getCancelledScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance-cancelled.json'
 import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
-import getInmateDetails from '../fixtures/prisonApi/getInmateDetailsForAttendance.json'
+import getInmateDetails from '../fixtures/prisonerSearchApi/getInmateDetailsForAttendance.json'
 import getCategories from '../fixtures/activitiesApi/getCategories.json'
 import AttendanceDashboardPage from '../pages/recordAttendance/attendanceDashboard'
 import ActivitiesIndexPage from '../pages/activities'
@@ -45,7 +45,7 @@ context('Record attendance', () => {
 
   it('should click through record attendance journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().should('contain.text', 'Allocate people, unlock and attend')
+    indexPage.activitiesCard().should('contain.text', 'Activities, unlock and attendance')
     indexPage.activitiesCard().click()
 
     const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
