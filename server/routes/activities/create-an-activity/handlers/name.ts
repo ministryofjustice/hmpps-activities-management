@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty, MaxLength } from 'class-validator'
-import { convertToTitleCase } from '../../../../utils/utils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 
@@ -22,12 +21,14 @@ export default class NameRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { category } = req.session.createJourney
-    req.session.createJourney.name = convertToTitleCase(req.body.name)
+    req.session.createJourney.name = req.body.name
 
     const activities = await this.activitiesService.getActivities(true, user)
-    const activityNames = activities.map(({ activityName }) => activityName)
-    const duplicateName = activityNames.find(activity => activity === req.session.createJourney.name)
-
+    const activityNames = activities.map(activity => ({ name: activity.activityName, id: activity.id }))
+    const duplicateName = activityNames.find(
+      activity =>
+        activity.name === req.session.createJourney.name && activity.id !== req.session.createJourney.activityId,
+    )
     if (req.params.mode === 'edit' && duplicateName) {
       return res.validationFailed(
         'name',
@@ -47,7 +48,7 @@ export default class NameRoutes {
       return res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     }
     {
-      if (duplicateName)
+      if (activityNames.find(activity => activity.name === req.session.createJourney.name))
         return res.validationFailed('name', 'Enter a different name. There is already an activity with this name')
 
       // If not in work no need to ask for activity tier

@@ -81,7 +81,7 @@ describe('Route Handlers - Create an activity - Name', () => {
 
     it('should save entered name in session and redirect to risk level page if category "not in work"', async () => {
       req.body = {
-        name: 'Maths level 1',
+        name: 'Maths Level 1',
       }
       req.session.createJourney.category = {
         id: 1,
@@ -123,24 +123,24 @@ describe('Route Handlers - Create an activity - Name', () => {
       expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
-        "You've updated the activity name for Updated Activity Name",
+        "You've updated the activity name for updated activity name",
       )
     })
 
-    it('should correct case activity name input error', async () => {
-      req.body = {
-        name: 'MAThs level 1',
-      }
-
-      await handler.POST(req, res)
-
-      expect(req.session.createJourney.name).toEqual('Maths Level 1')
-    })
-
-    it('should call duplicate activity name validation', async () => {
-      req.body = {
-        name: 'Gym Induction',
-      }
+    it('should call duplicate activity name validation upon creating new activity name', async () => {
+      req = {
+        session: {
+          createJourney: {
+            activityId: undefined,
+          },
+        },
+        params: {
+          mode: 'create',
+        },
+        body: {
+          name: 'Gym Induction',
+        },
+      } as unknown as Request
 
       await handler.POST(req, res)
 
@@ -149,6 +149,27 @@ describe('Route Handlers - Create an activity - Name', () => {
         'name',
         'Enter a different name. There is already an activity with this name',
       )
+    })
+
+    it('should not call validation upon editing existing activity with the same name and activity ID', async () => {
+      req = {
+        session: {
+          createJourney: {
+            activityId: 6,
+          },
+        },
+        params: {
+          mode: 'edit',
+        },
+        body: {
+          name: 'Gym Induction',
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.name).toEqual('Gym Induction')
+      expect(res.validationFailed).toHaveBeenCalledTimes(0)
     })
   })
 
