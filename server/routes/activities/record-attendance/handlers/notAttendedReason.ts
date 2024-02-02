@@ -78,6 +78,8 @@ export class NotAttendedData {
   getMoreDetails = () => (this.notAttendedReason === AttendanceReason.SICK ? this.moreDetail : null)
 
   getOtherAbsenceReason = () => (this.notAttendedReason === AttendanceReason.OTHER ? this.otherAbsenceReason : null)
+
+  getCaseNote = () => (this.notAttendedReason === AttendanceReason.REFUSED ? this.caseNote : null)
 }
 
 export class NotAttendedForm {
@@ -132,7 +134,7 @@ export default class NotAttendedReasonRoutes {
         attendanceReason: prisonerAttendance.notAttendedReason,
         comment: prisonerAttendance.getMoreDetails(),
         issuePayment: prisonerAttendance.getIssuePayment() && isPaid,
-        caseNote: prisonerAttendance.caseNote,
+        caseNote: prisonerAttendance.getCaseNote(),
         incentiveLevelWarningIssued: prisonerAttendance.getIncentiveLevelWarning(),
         otherAbsenceReason: prisonerAttendance.getOtherAbsenceReason(),
       }
