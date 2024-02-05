@@ -47,12 +47,10 @@
     window.applicationInsightsRoleName = '{{ applicationInsightsRoleName }}'
     window.authenticatedUser = '{{ user.username }}'
   </script>
+  {# Jquery is required by dpr-frontend #}
+  <script src="/assets/jquery.js"></script>
   <script type="module" src="/assets/javascript/activities.min.js"></script>
   {% for js in feComponents.jsIncludes %}
     <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
   {% endfor %}
-
-  {# Digital prison reporting JS #}
-  <script src="/assets/dpr/js/client.js" nonce="{{cspNonce}}"></script>
-
 {% endblock %}
