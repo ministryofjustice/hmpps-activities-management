@@ -26,10 +26,11 @@ export default class PlannedEventsRoutes {
     req.session.unlockListJourney.activityFilter ??= 'With'
     req.session.unlockListJourney.subLocationFilters ??= location.children.map(c => c.key)
     req.session.unlockListJourney.showAlerts ??= true
+    req.session.unlockListJourney.searchTerm ??= ''
 
     const unlockDate = date ? toDate(asString(date)) : new Date()
 
-    const { subLocationFilters, activityFilter, stayingOrLeavingFilter } = req.session.unlockListJourney
+    const { subLocationFilters, activityFilter, stayingOrLeavingFilter, searchTerm } = req.session.unlockListJourney
 
     const unlockListItems = await this.unlockListService.getFilteredUnlockList(
       unlockDate,
@@ -38,6 +39,7 @@ export default class PlannedEventsRoutes {
       subLocationFilters,
       activityFilter,
       stayingOrLeavingFilter,
+      searchTerm,
       user,
     )
 

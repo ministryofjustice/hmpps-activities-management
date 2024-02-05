@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
+import { asString } from '../../../../utils/utils'
 
 export class Filters {
   @Expose()
@@ -18,7 +19,7 @@ export class Filters {
 
 export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
-    const { locationFilters, activityFilter, stayingOrLeavingFilter, showAlerts } = req.body
+    const { locationFilters, activityFilter, stayingOrLeavingFilter, showAlerts, searchTerm } = req.body
 
     if (locationFilters) {
       req.session.unlockListJourney.subLocationFilters = locationFilters
@@ -33,6 +34,8 @@ export default class ApplyFiltersRoutes {
     }
 
     req.session.unlockListJourney.showAlerts = showAlerts === 'true'
+
+    req.session.unlockListJourney.searchTerm = asString(searchTerm)
 
     res.redirect('back')
   }

@@ -19,6 +19,7 @@ export default class UnlockListService {
     subLocationFilters: string[],
     activityFilter: string,
     stayingOrLeavingFilter: string,
+    searchTerm: string,
     user: ServiceUser,
   ): Promise<UnlockListItem[]> {
     const prison = user.activeCaseLoadId
@@ -101,6 +102,8 @@ export default class UnlockListService {
       } as UnlockListItem
     })
 
+    const searchTermLowerCase = searchTerm?.toLowerCase()
+
     return unlockListItems
       .filter(
         i =>
@@ -113,6 +116,13 @@ export default class UnlockListService {
           stayingOrLeavingFilter === 'Both' ||
           (stayingOrLeavingFilter === 'Leaving' && i.isLeavingWing) ||
           (stayingOrLeavingFilter === 'Staying' && !i.isLeavingWing),
+      )
+      .filter(
+        i =>
+          !searchTermLowerCase ||
+          i.prisonerName?.toLowerCase().includes(searchTermLowerCase) ||
+          i.prisonerNumber?.toLowerCase().includes(searchTermLowerCase) ||
+          i.events?.find(e => e.summary?.toLowerCase().includes(searchTermLowerCase)),
       )
   }
 

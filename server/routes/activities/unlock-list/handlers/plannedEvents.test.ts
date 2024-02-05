@@ -99,6 +99,7 @@ describe('Unlock list routes - planned events', () => {
         ['A', 'B', 'C'],
         'With',
         'Both',
+        '',
         res.locals.user,
       )
 
@@ -134,6 +135,7 @@ describe('Unlock list routes - planned events', () => {
             stayingOrLeavingFilter: 'Leaving',
             activityFilter: 'With',
             subLocationFilters: ['A'],
+            searchTerm: 'search term',
           },
         },
       } as unknown as Request
@@ -161,6 +163,7 @@ describe('Unlock list routes - planned events', () => {
         ['A'],
         'With',
         'Leaving',
+        'search term',
         res.locals.user,
       )
 
