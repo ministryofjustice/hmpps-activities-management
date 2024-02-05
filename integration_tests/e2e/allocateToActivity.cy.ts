@@ -45,7 +45,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('GET', '/prisoner/A5015DY', getInmateDetails)
     cy.stubEndpoint('GET', '/incentive-reviews/prisoner/A5015DY', getPrisonerIepSummary)
-    cy.stubEndpoint('GET', '/activities/2', getActivity)
+    cy.stubEndpoint('GET', '/activities/2/filtered', getActivity)
     cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
     cy.stubEndpoint('POST', '/schedules/2/allocations')
