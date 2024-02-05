@@ -59,7 +59,7 @@ describe('activitiesApiClient', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
       fakeActivitiesApi
-        .get('/activities/1')
+        .get('/activities/1/filtered')
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)

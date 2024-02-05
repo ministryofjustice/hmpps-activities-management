@@ -77,6 +77,7 @@
   "dependencies": {
     "@hmcts/uk-bank-holidays": "^1.0.2",
     "@microsoft/applicationinsights-web": "^3.0.7",
+    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^1",
     "@ministryofjustice/frontend": "^2.0.0",
     "@types/express-serve-static-core": "^4.17.41",
     "@types/lodash": "^4.14.202",

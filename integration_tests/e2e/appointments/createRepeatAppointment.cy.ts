@@ -77,10 +77,13 @@ context('Create group appointment', () => {
 
   it('Should complete create group appointment journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.appointmentsManagementCard().should('contain.text', 'Schedule and edit appointments')
+    indexPage.appointmentsManagementCard().should('contain.text', 'Appointments scheduling and attendance')
     indexPage
       .appointmentsManagementCard()
-      .should('contain.text', 'Create and manage appointments. Print movement slips.')
+      .should(
+        'contain.text',
+        'Create, manage and edit appointments. Print movement slips. Record appointment attendance.',
+      )
     indexPage.appointmentsManagementCard().click()
 
     const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)

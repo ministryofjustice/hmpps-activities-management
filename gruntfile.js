@@ -11,7 +11,12 @@ module.exports = grunt => {
           'no-source-map': '',
           quiet: true,
           style: process.env.NODE_ENV === 'live-development' ? 'expanded' : 'compressed',
-          loadPath: ['.', 'node_modules/govuk-frontend/dist', 'node_modules/@ministryofjustice/frontend'],
+          loadPath: [
+            '.',
+            'node_modules/govuk-frontend/dist',
+            'node_modules/@ministryofjustice/frontend',
+            'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend',
+          ],
         },
         files: {
           'assets/stylesheets/application.css': 'frontend/application.scss',
@@ -51,6 +56,12 @@ module.exports = grunt => {
             cwd: 'node_modules/@ministryofjustice/frontend/moj/assets',
             src: ['./**/*'],
             dest: 'assets/',
+          },
+          {
+            expand: true,
+            cwd: 'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/assets/images/',
+            src: ['./**/*'],
+            dest: 'assets/dpr/images/',
           },
           {
             expand: true,
