@@ -70,7 +70,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
 
   getActivity(activityId: number, user: ServiceUser): Promise<Activity> {
     return this.get({
-      path: `/activities/${activityId}`,
+      path: `/activities/${activityId}/filtered`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
