@@ -444,6 +444,16 @@ export interface paths {
      */
     get: operations['getAttendanceSync']
   }
+  '/subject-access-request': {
+    /**
+     * Provides content for a prisoner to satisfy the needs of a subject access request on their behalf
+     * @description
+     *
+     * Requires one of the following roles:
+     * * SAR_DATA_ACCESS
+     */
+    get: operations['getSarContentByReference']
+  }
   '/schedules/{scheduleId}': {
     /**
      * Get an activity schedule by its id
@@ -875,18 +885,6 @@ export interface paths {
      */
     get: operations['getCategories']
   }
-  '/activities/{activityId}': {
-    /**
-     * Get an activity by its id
-     * @description Returns a single activity and its details by its unique identifier.
-     *
-     * Requires one of the following roles:
-     * * PRISON
-     * * ACTIVITY_ADMIN
-     * * NOMIS_ACTIVITIES
-     */
-    get: operations['getActivityById']
-  }
   '/activities/{activityId}/schedules': {
     /**
      * Get the capacity and number of allocated slots in an activity
@@ -906,6 +904,7 @@ export interface paths {
      * Requires one of the following roles:
      * * PRISON
      * * ACTIVITY_ADMIN
+     * * NOMIS_ACTIVITIES
      */
     get: operations['getActivityByIdWithFilters']
   }
@@ -1631,8 +1630,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
     WaitingListApplication: {
@@ -4756,6 +4755,74 @@ export interface components {
        * @example true
        */
       issuePayment?: boolean
+    }
+    /** @description All of the allocations for the prisoner for the period */
+    SarAllocation: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this allocation
+       * @example 123456
+       */
+      allocationId: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description The status of the allocation
+       * @example ACTIVE
+       */
+      prisonerStatus: string
+      /**
+       * Format: date
+       * @description The start date of the allocation
+       * @example 2022-01-01
+       */
+      startDate: string
+      /**
+       * Format: date
+       * @description The end date of the allocation, can be null
+       * @example 2024-01-01
+       */
+      endDate?: string
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
+       */
+      activityId: number
+      /**
+       * @description A brief summary description of this activity
+       * @example Maths level 1
+       */
+      activitySummary: string
+      /**
+       * @description The pay band for the allocation, can be null e.g. unpaid activity
+       * @example Pay band 1 (lowest)
+       */
+      payBand?: string
+    }
+    SubjectAccessRequestContent: {
+      /**
+       * @description The prisoner number (Nomis ID)
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      /**
+       * Format: date
+       * @description The from date for the request
+       * @example 2022-01-01
+       */
+      fromDate: string
+      /**
+       * Format: date
+       * @description The to date for the request
+       * @example 2024-01-01
+       */
+      toDate: string
+      /** @description All of the allocations for the prisoner for the period */
+      allocations: components['schemas']['SarAllocation'][]
     }
     /** @description Describes a pay rate applied to an activity */
     ActivityPayLite: {
@@ -8206,6 +8273,65 @@ export interface operations {
     }
   }
   /**
+   * Provides content for a prisoner to satisfy the needs of a subject access request on their behalf
+   * @description
+   *
+   * Requires one of the following roles:
+   * * SAR_DATA_ACCESS
+   */
+  getSarContentByReference: {
+    parameters: {
+      query?: {
+        /** @description NOMIS Prison Reference Number */
+        prn?: string
+        /** @description nDelius Case Reference Number */
+        crn?: string
+        /** @description Optional parameter denoting minimum date of event occurrence which should be returned in the response */
+        fromDate?: string
+        /** @description Optional parameter denoting maximum date of event occurrence which should be returned in the response */
+        toDate?: string
+      }
+    }
+    responses: {
+      /** @description Request successfully processed - content found */
+      200: {
+        content: {
+          'application/json': components['schemas']['SubjectAccessRequestContent']
+        }
+      }
+      /** @description Request successfully processed - no content found */
+      204: {
+        content: {
+          'application/json': Record<string, never>
+        }
+      }
+      /** @description Subject Identifier is not recognised by this service */
+      209: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The client does not have authorisation to make this request */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unexpected error occurred */
+      500: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Get an activity schedule by its id
    * @description Returns a single activity schedule by its unique identifier.
    *
@@ -9779,51 +9905,6 @@ export interface operations {
     }
   }
   /**
-   * Get an activity by its id
-   * @description Returns a single activity and its details by its unique identifier.
-   *
-   * Requires one of the following roles:
-   * * PRISON
-   * * ACTIVITY_ADMIN
-   * * NOMIS_ACTIVITIES
-   */
-  getActivityById: {
-    parameters: {
-      header?: {
-        'Caseload-Id'?: string
-      }
-      path: {
-        activityId: number
-      }
-    }
-    responses: {
-      /** @description Activity found */
-      200: {
-        content: {
-          'application/json': components['schemas']['Activity']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description The activity for this ID was not found. */
-      404: {
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
    * Get the capacity and number of allocated slots in an activity
    * @description
    *
@@ -9871,12 +9952,16 @@ export interface operations {
    * Requires one of the following roles:
    * * PRISON
    * * ACTIVITY_ADMIN
+   * * NOMIS_ACTIVITIES
    */
   getActivityByIdWithFilters: {
     parameters: {
       query?: {
         /** @description The date of the earliest scheduled instances to include. Defaults to newer than 1 month ago. */
         earliestSessionDate?: string
+      }
+      header?: {
+        'Caseload-Id'?: string
       }
       path: {
         activityId: number
