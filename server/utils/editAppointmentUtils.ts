@@ -196,11 +196,9 @@ export const getAppointmentApplyToOptions = (req: Request) => {
   const applyToOptions = [
     {
       applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
-      description: `Just this one - ${formatDate(
-        parseIsoDate(appointmentJourney.startDate),
-        'EEEE, d MMMM yyyy',
-      )} (${getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)
-        ?.sequenceNumber} of ${getLastAppointment(editAppointmentJourney)?.sequenceNumber})`,
+      description: `Just this one - ${formatDate(parseIsoDate(appointmentJourney.startDate), 'EEEE, d MMMM yyyy')} (${
+        getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)?.sequenceNumber
+      } of ${getLastAppointment(editAppointmentJourney)?.sequenceNumber})`,
     },
   ] as AppointmentApplyToOption[]
 

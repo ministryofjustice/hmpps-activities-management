@@ -239,8 +239,8 @@ describe('Route Handlers - Non Attendance', () => {
       }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
-      const errors = await validate(requestObject).then(
-        errs => errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
+      const errors = await validate(requestObject).then(errs =>
+        errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
       )
       expect(errors.length).toEqual(1)
       expect(errors[0]).toEqual({
@@ -261,8 +261,8 @@ describe('Route Handlers - Non Attendance', () => {
       }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
-      const errors = await validate(requestObject).then(
-        errs => errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
+      const errors = await validate(requestObject).then(errs =>
+        errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
       )
       expect(errors.length).toEqual(1)
       expect(errors[0]).toEqual({
@@ -284,8 +284,8 @@ describe('Route Handlers - Non Attendance', () => {
       }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
-      const errors = await validate(requestObject).then(
-        errs => errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
+      const errors = await validate(requestObject).then(errs =>
+        errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
       )
       expect(errors.length).toEqual(1)
       expect(errors[0]).toEqual({
@@ -307,8 +307,8 @@ describe('Route Handlers - Non Attendance', () => {
       }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
-      const errors = await validate(requestObject).then(
-        errs => errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
+      const errors = await validate(requestObject).then(errs =>
+        errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
       )
       expect(errors.length).toEqual(1)
       expect(errors[0]).toEqual({
@@ -331,8 +331,8 @@ describe('Route Handlers - Non Attendance', () => {
       }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
-      const errors = await validate(requestObject).then(
-        errs => errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
+      const errors = await validate(requestObject).then(errs =>
+        errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
       )
       expect(errors.length).toEqual(1)
       expect(errors[0]).toEqual({
@@ -407,8 +407,8 @@ describe('Route Handlers - Non Attendance', () => {
       }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
-      const errors = await validate(requestObject).then(
-        errs => errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
+      const errors = await validate(requestObject).then(errs =>
+        errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
       )
       expect(errors.length).toEqual(1)
       expect(errors[0]).toEqual({
@@ -432,8 +432,8 @@ describe('Route Handlers - Non Attendance', () => {
       }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
-      const errors = await validate(requestObject).then(
-        errs => errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
+      const errors = await validate(requestObject).then(errs =>
+        errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
       )
       expect(errors.length).toEqual(1)
       expect(errors[0]).toEqual({
@@ -457,8 +457,8 @@ describe('Route Handlers - Non Attendance', () => {
       }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
-      const errors = await validate(requestObject).then(
-        errs => errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
+      const errors = await validate(requestObject).then(errs =>
+        errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
       )
       expect(errors.length).toEqual(1)
       expect(errors[0]).toEqual({
@@ -482,8 +482,8 @@ describe('Route Handlers - Non Attendance', () => {
       }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
-      const errors = await validate(requestObject).then(
-        errs => errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
+      const errors = await validate(requestObject).then(errs =>
+        errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
       )
       expect(errors.length).toEqual(1)
       expect(errors[0]).toEqual({
@@ -507,8 +507,8 @@ describe('Route Handlers - Non Attendance', () => {
       }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
-      const errors = await validate(requestObject).then(
-        errs => errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
+      const errors = await validate(requestObject).then(errs =>
+        errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
       )
       expect(errors.length).toEqual(1)
       expect(errors[0]).toEqual({
@@ -531,8 +531,8 @@ describe('Route Handlers - Non Attendance', () => {
       }
 
       const requestObject = plainToInstance(NotAttendedForm, badRequest)
-      const errors = await validate(requestObject).then(
-        errs => errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
+      const errors = await validate(requestObject).then(errs =>
+        errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
       )
       expect(errors.length).toEqual(1)
       expect(errors[0]).toEqual({
