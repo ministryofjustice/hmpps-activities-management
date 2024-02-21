@@ -1,4 +1,8 @@
 .unlock-list {
+  @media print {
+    zoom: 75%
+  }
+
   #unlock-list-table {
     margin-bottom: 10px;
   }
