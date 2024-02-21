@@ -25,6 +25,15 @@ export type AppointmentJourney = {
     prisonCode: string
     status: string
     cellLocation: string
+    alertCodes?: {
+      category: string
+      alerts: {
+        alertCode: string
+        alertType: string
+      }[]
+    }[]
+    alertDescriptions?: string[]
+    profileAlertExists?: boolean
   }[]
   category?: {
     code: string
@@ -53,6 +62,5 @@ export type AppointmentJourney = {
   frequency?: AppointmentFrequency
   numberOfAppointments?: number
   extraInformation?: string
-
   fromPrisonNumberProfile?: string
 }

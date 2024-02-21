@@ -1,22 +1,13 @@
 import { Request, Response } from 'express'
-import { when } from 'jest-when'
-import ReviewPrisoners from './reviewPrisoners'
-import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
-import MetricsService from '../../../../services/metricsService'
-import MetricsEvent from '../../../../data/metricsEvent'
-import PrisonService from '../../../../services/prisonService'
-import { Alert } from '../../../../@types/prisonApiImport/types'
+import { AppointmentType } from '../appointmentJourney'
+import ReviewPrisonersAlertsRoutes from './reviewPrisonersAlerts'
 
 jest.mock('../../../../services/metricsService')
 
-const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
-
-describe('Route Handlers - Create Appointment - Review Prisoners', () => {
-  const handler = new ReviewPrisoners(metricsService, prisonService)
+describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => {
+  const handler = new ReviewPrisonersAlertsRoutes()
   let req: Request
   let res: Response
-  const appointmentId = '2'
 
   beforeEach(() => {
     res = {
@@ -46,12 +37,10 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       params: {},
       query: {},
     } as unknown as Request
-
-    prisonService.getPrisonerAlerts = jest.fn()
   })
 
   describe('GET', () => {
-    it('should render the review prisoners view with back to how to add prisoners', async () => {
+    it('should render the review prisoners alerts view with back to how to add prisoners', async () => {
       const prisoners = [
         {
           number: 'A1234BC',
@@ -70,13 +59,13 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       ]
       req.session.appointmentJourney.prisoners = prisoners
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners-alerts', {
         backLinkHref: 'how-to-add-prisoners',
         prisoners,
       })
     })
 
-    it('should render the review prisoners view with back to upload appointment set', async () => {
+    it('should render the review prisoners alerts view with back to upload appointment set', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
       req.session.appointmentSetJourney.appointments = [
         {
@@ -86,9 +75,6 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
             cellLocation: '',
             status: '',
             prisonCode: '',
-            alertCodes: [],
-            alertDescriptions: [],
-            profileAlertExists: false,
           },
         },
         {
@@ -98,14 +84,11 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
             cellLocation: '',
             status: '',
             prisonCode: '',
-            alertCodes: [],
-            alertDescriptions: [],
-            profileAlertExists: false,
           },
         },
       ]
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners-alerts', {
         backLinkHref: 'upload-appointment-set',
         prisoners: [
           {
@@ -114,9 +97,6 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
             cellLocation: '',
             prisonCode: '',
             status: '',
-            alertCodes: [],
-            alertDescriptions: [],
-            profileAlertExists: false,
           },
           {
             number: 'B2345CD',
@@ -124,61 +104,21 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
             cellLocation: '',
             prisonCode: '',
             status: '',
-            alertCodes: [],
-            alertDescriptions: [],
-            profileAlertExists: false,
           },
         ],
       })
     })
 
-    it('should render the review prisoners view with back to prisoner profile', async () => {
+    it('should render the review prisoners alerts view with back to prisoner profile', async () => {
       req.session.appointmentJourney.fromPrisonNumberProfile = 'A1234BC'
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners-alerts', {
         backLinkHref: 'https://digital-dev.prison.service.justice.gov.uk/prisoner/A1234BC',
         prisoners: [],
       })
     })
 
-    it('should render the review prisoners view with ids, added prisoners and back to how to add prisoners', async () => {
-      req.params = {
-        appointmentId,
-      }
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-      const prisoners = [
-        {
-          number: 'A1234BC',
-          name: '',
-          cellLocation: '',
-          status: '',
-          prisonCode: '',
-        },
-        {
-          number: 'B2345CD',
-          name: '',
-          cellLocation: '',
-          status: '',
-          prisonCode: '',
-        },
-      ]
-      req.session.editAppointmentJourney.addPrisoners = prisoners
-      await handler.GET(req, res)
-      expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
-          req.session.appointmentJourney.mode,
-          'attendees',
-          res.locals.user,
-        ),
-      )
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
-        appointmentId,
-        backLinkHref: 'how-to-add-prisoners',
-        prisoners,
-      })
-    })
-
-    it('should render the review prisoners view with preserve history', async () => {
+    it('should render the review prisoners alerts view with preserve history', async () => {
       req.query = { preserveHistory: 'true' }
       const prisoners = [
         {
@@ -198,7 +138,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       ]
       req.session.appointmentJourney.prisoners = prisoners
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners-alerts', {
         backLinkHref: 'how-to-add-prisoners',
         preserveHistory: 'true',
         prisoners,
@@ -211,29 +151,12 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       req.body = {
         howToAdd: 'SEARCH',
       }
-
-      when(prisonService.getPrisonerAlerts).mockResolvedValue([] as Alert[])
-
       await handler.POST(req, res)
       expect(res.redirectOrReturn).toBeCalledWith('name')
     })
 
-    it('should redirect or return to prisoner review page', async () => {
-      req.body = {
-        howToAdd: 'SEARCH',
-      }
-
-      when(prisonService.getPrisonerAlerts).mockResolvedValue([{ alertCode: 'XA' }] as Alert[])
-
-      await handler.POST(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('review-prisoners-alerts')
-    })
-
     it('should populate return to with schedule', async () => {
       req.query = { preserveHistory: 'true' }
-
-      when(prisonService.getPrisonerAlerts).mockResolvedValue([] as Alert[])
-
       await handler.POST(req, res)
       expect(req.session.returnTo).toEqual('schedule?preserveHistory=true')
     })
@@ -241,22 +164,13 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
   describe('EDIT', () => {
     it('should redirect to the schedule page', async () => {
-      when(prisonService.getPrisonerAlerts).mockResolvedValue([] as Alert[])
-
       await handler.EDIT(req, res)
       expect(res.redirect).toBeCalledWith('../../schedule')
-    })
-
-    it('should redirect to the review prisoner alerts page', async () => {
-      when(prisonService.getPrisonerAlerts).mockResolvedValue([{ alertCode: 'XA' }] as Alert[])
-
-      await handler.EDIT(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('review-prisoners-alerts')
     })
   })
 
   describe('REMOVE', () => {
-    it('should remove prisoner and redirect back to GET', async () => {
+    it('should remove review prisoner alerts and redirect back to GET', async () => {
       req.session.appointmentJourney.prisoners = [
         {
           number: 'A1234BC',

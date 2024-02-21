@@ -14,6 +14,15 @@ export type AppointmentSetJourney = {
       status: string
       prisonCode: string
       cellLocation: string
+      alertCodes?: {
+        category: string
+        alerts: {
+          alertCode: string
+          alertType: string
+        }[]
+      }[]
+      alertDescriptions?: string[]
+      profileAlertExists?: boolean
     }
     extraInformation?: string
   }[]

@@ -38,6 +38,15 @@ export type EditAppointmentJourney = {
     prisonCode: string
     cellLocation: string
     status: string
+    alertCodes?: {
+      category: string
+      alerts: {
+        alertCode: string
+        alertType: string
+      }[]
+    }[]
+    alertDescriptions?: string[]
+    profileAlertExists?: boolean
   }[]
   removePrisoner?: PrisonerSummary
   cancellationReason?: AppointmentCancellationReason
