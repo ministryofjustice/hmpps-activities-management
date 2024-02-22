@@ -15,7 +15,7 @@
 
 {% macro nestedReasonData(index, reason, prisoner, validationErrors, formResponses) %}
     {% if reason.code === "SICK" %}
-       {{ govukRadios({
+        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
                 text: "Should they be paid?"
@@ -165,7 +165,7 @@
                 {% for prisoner in selectedPrisoners %}
                     {% set hasActivityClash = false %}
                     {% for event in prisoner.otherEvents %}
-                        {% if event.eventType == "ACTIVITY" %}
+                        {% if event.eventType == "ACTIVITY" or event.eventType == "APPOINTMENT" %}
                             {% set hasActivityClash = true %}
                         {% endif %}
                     {% endfor %}
@@ -178,7 +178,7 @@
 
                     {% set notAttendedReasonOptions = [] %}
                      {% for notAttendedReason in notAttendedReasons %}
-                        {% if (notAttendedReason.code != "CLASH") or (prisoner.otherEvents|length and not hasActivityClash) %}
+                        {% if (notAttendedReason.code != "CLASH") or (prisoner.otherEvents | length and hasActivityClash) %}
                             {% set conditionalOptionsHtml = nestedReasonData(prisonerIndex, notAttendedReason, prisoner, validationErrors, formResponses) | trim %}
                             {% set notAttendedReasonOptions = (notAttendedReasonOptions.push(
                                  {
