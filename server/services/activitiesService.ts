@@ -51,7 +51,7 @@ import { SessionCancellationRequest } from '../routes/activities/record-attendan
 export default class ActivitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
 
-  getActivity(activityId: number, user: ServiceUser): Promise<Activity> {
+  async getActivity(activityId: number, user: ServiceUser): Promise<Activity> {
     return this.activitiesApiClient.getActivity(activityId, user)
   }
 

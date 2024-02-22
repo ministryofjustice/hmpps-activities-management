@@ -184,6 +184,23 @@
                         },
                         {
                             key: {
+                                text: "Do you want to add a case note?"
+                            },
+                            value: {
+                                text: "Yes" if session.allocateJourney.deallocationCaseNote else "No"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "case-note-question?preserveHistory=true",
+                                        classes: 'govuk-link--no-visited-state',
+                                        text: "Change"
+                                    }
+                                ]
+                            }
+                        } if eligibleForCaseNote,
+                        {
+                            key: {
                                 text: "Case note type"
                             },
                             value: {
@@ -205,7 +222,7 @@
                                 text: "Case note"
                             },
                             value: {
-                                text: session.allocateJourney.deallocationCaseNote.text or "None"
+                                text: session.allocateJourney.deallocationCaseNote.text
                             },
                             actions: {
                                 items: [
@@ -217,7 +234,7 @@
                                     }
                                 ]
                             }
-                        } if eligibleForCaseNote
+                        } if eligibleForCaseNote and session.allocateJourney.deallocationCaseNote
                     ]
                 }) }}
             {% endif %}

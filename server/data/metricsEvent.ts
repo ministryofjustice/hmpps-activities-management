@@ -8,6 +8,7 @@ import { isApplyToQuestionRequired } from '../utils/editAppointmentUtils'
 import { AppointmentApplyTo, AppointmentCancellationReason } from '../@types/appointments'
 import { MetricsEventType } from '../@types/metricsEvents'
 import { formatIsoDate } from '../utils/datePickerUtils'
+import { SuspendJourney } from '../routes/activities/suspensions/journey'
 
 export default class MetricsEvent {
   properties: Record<string, string | number>
@@ -84,6 +85,15 @@ export default class MetricsEvent {
       prisonerNumber: allocation.inmate.prisonerNumber,
       activityId: allocation.activity.activityId?.toString(),
       startDate: allocation.startDate,
+    })
+  }
+
+  static SUSPEND_ALLOCATION_JOURNEY_COMPLETED(suspension: SuspendJourney, user: ServiceUser) {
+    const event = new MetricsEvent(MetricsEventType.SUSPEND_ALLOCATION_JOURNEY_COMPLETED, user)
+    return event.addProperties({
+      prisonerNumber: suspension.inmate.prisonerNumber,
+      allocationIds: suspension.allocations.map(a => a.allocationId).join(),
+      suspendFrom: suspension.suspendFrom,
     })
   }
 

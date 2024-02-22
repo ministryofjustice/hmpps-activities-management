@@ -1,18 +1,19 @@
 {% extends "layout.njk" %}
 
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/activities/days-and-times.njk" import daysAndTimes %}
 {% from "partials/activities/suspension-badge.njk" import suspensionBadge %}
 
-{% set pageTitle = applicationName + " - Exclusions - View allocations" %}
+{% set pageTitle = applicationName + " - Suspensions - View allocations" %}
 {% set pageId = 'view-allocations-page' %}
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">Change someone's activity schedule</span>
+        <div class="govuk-grid-column-three-quarters">
+            <span class="govuk-caption-xl">Manage suspensions from activities</span>
             <h1 class="govuk-heading-xl">{{ prisonerName }}'s activities</h1>
 
             {% if activities | length == 0 %}
@@ -20,12 +21,12 @@
                     text: prisonerName + " does not have any allocations."
                 }) }}
             {% else %}
-                {{ govukInsetText({
-                    text: "You're seeing only sessions when each activity is scheduled to run."
-                }) }}
+
+                <p class='govuk-body'>{{ prisonerName }} is currently allocated to {{ activities | length }} activities.</p>
+                <p class='govuk-body'>Select an activity to suspend {{ prisonerName }} from attending, or to end their suspension.</p>
 
                 {% set rows = [] %}
-                {% for activity in activities %}
+                {% for activity in activities | sortBy('activityName') %}
                     {% set slotsHtml %}
                         {% for week, slots in activity.scheduledSlots %}
                             {% if activity.scheduledSlots | length > 1 %}
@@ -52,9 +53,14 @@
                             actions: {
                                 items: [
                                     {
-                                        href: '/activities/allocations/exclude/' + activity.allocation.id + '/exclusions',
-                                        text: "Change",
-                                        visuallyHiddenText: "Change schedule for " + activity.activityName
+                                        href: '#',
+                                        text: "View or end suspension",
+                                        visuallyHiddenText: "View or end suspension from " + activity.activityName
+                                    } if activity.allocation.plannedSuspension else
+                                    {
+                                        href: '../suspend/' + session.req.params.prisonerNumber + '/suspend-from?allocationIds=' + activity.allocation.id,
+                                        text: "Suspend from activity",
+                                        visuallyHiddenText: "Suspend from " + activity.activityName
                                     }
                                 ]
                             }
@@ -63,13 +69,29 @@
                 {% endfor %}
 
                 {{ govukSummaryList({
+                    classes: 'govuk-summary-list--equal-widths',
                     rows: rows
                 }) }}
 
             {% endif %}
 
             <div class="govuk-button-group">
-                <a class="govuk-link govuk-link--no-visited-state" href="../select-prisoner">Find another prisoner to change their activity schedule</a>
+                {% if activities | length > 1 %}
+                    {% if activities | flatMap('allocation.plannedSuspension') | removeUndefined | length < activities | length %}
+                        {{ govukButton({
+                            text: "Suspend from all activities",
+                            href: '../suspend/' + session.req.params.prisonerNumber + '/suspend-from?allocationIds=' + activities | flatMap('allocation.id'),
+                            classes: "govuk-button--warning"
+                        }) }}
+                    {% else %}
+                        {{ govukButton({
+                            text: "End all suspensions",
+                            href: '#',
+                            classes: "govuk-button--warning"
+                        }) }}
+                    {% endif %}
+                {% endif %}
+                <a class="govuk-link govuk-link--no-visited-state" href="../select-prisoner">Find another prisoner to manage their suspensions</a>
             </div>
         </div>
     </div>

@@ -1,0 +1,130 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Suspensions - Check answers" %}
+{% set pageId = 'check-answers-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">Manage suspensions from activities</span>
+            <h1 class="govuk-heading-xl">Check and confirm suspension details</h1>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% set prisonerDetailsHtml %}
+                <ul class="govuk-list">
+                    <li>{{ session.suspendJourney.inmate.prisonerName }}</li>
+                    <li>{{ session.suspendJourney.inmate.prisonerNumber }}</li>
+                </ul>
+            {% endset %}
+
+            {% set activitiesText %}
+                {% if session.suspendJourney.allocations | length == 1 %}
+                    {{ session.suspendJourney.allocations[0].activityName | safe }}
+                {% else %}
+                    All activities
+                {% endif %}
+            {% endset %}
+
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: { text: "Prisoner" },
+                        value: { html: prisonerDetailsHtml }
+                    },
+                    {
+                        key: { text: "Suspended activity" },
+                        value: { text: activitiesText }
+                    },
+                    {
+                        key: { text: "Start of suspension" },
+                        value: {
+                            text: (
+                                ("Immediately" if session.suspendJourney.suspendFrom == now | toDateString) or
+                                ("From tomorrow: " + session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom == now | addDays(1) | toDateString) or
+                                (session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom > now | addDays(1) | toDateString)
+                            )
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "suspend-from?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Do you want to add a case note?"
+                        },
+                        value: {
+                            text: "Yes" if session.suspendJourney.caseNote else "No"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "case-note-question?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Case note type"
+                        },
+                        value: {
+                            text: "General" if session.suspendJourney.caseNote.type == 'GEN' else "Negative"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "case-note?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change",
+                                    visuallyHiddenText: "change case note type"
+                                }
+                            ]
+                        }
+                    } if session.suspendJourney.caseNote,
+                    {
+                        key: {
+                            text: "Case note"
+                        },
+                        value: {
+                            text: session.suspendJourney.caseNote.text
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "case-note?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change",
+                                    visuallyHiddenText: "change deallocation case note"
+                                }
+                            ]
+                        }
+                    } if session.suspendJourney.caseNote
+                ]
+            }) }}
+
+            <form method="POST" data-module="form-spinner" data-loading-text="Suspending prisoner">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <div class="govuk-button-group">
+                    {{ govukButton({ 
+                        text: "Confirm and suspend",
+                        preventDoubleClick: true
+                    }) }}
+                    <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

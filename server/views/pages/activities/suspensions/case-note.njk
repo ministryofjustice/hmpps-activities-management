@@ -1,0 +1,63 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Suspensions - Case Note" %}
+{% set pageId = 'case-note-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">Manage suspensions from activities</span>
+            <h1 class='govuk-heading-xl'>Add a case note for {{ session.suspendJourney.inmate.prisonerName | safe }}</h1>
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    name: "type",
+                    fieldset: {
+                        legend: {
+                            text: 'Select the type of case note',
+                            isPageHeading: false
+                        }
+                    },
+                    errorMessage: validationErrors | findError('type'),
+                    items: [
+                        {
+                            value: "GEN",
+                            text: "General",
+                            checked: formResponses.type == 'GEN' or session.suspendJourney.caseNote.type == 'GEN'
+                        },
+                        {
+                            value: "NEG",
+                            text: "Negative",
+                            checked: formResponses.type == 'NEG' or session.suspendJourney.caseNote.type == 'NEG'
+                        }
+                    ]
+                }) }}
+
+                {{ govukCharacterCount({
+                    label: {
+                        text: "Enter the case note"
+                    },
+                    id: 'text',
+                    name: "text",
+                    maxlength: 3800,
+                    errorMessage: validationErrors | findError("text"),
+                    value: formResponses.text or session.suspendJourney.caseNote.text
+                }) }}
+
+                <div class='govuk-button-group'>
+                    {{ govukButton({ text: "Continue"}) }}
+                    {% if not session.req.query.preserveHistory %}
+                        <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

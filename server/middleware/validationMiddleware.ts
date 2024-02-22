@@ -22,6 +22,7 @@ function validationMiddleware(type: new () => object): RequestHandler {
       createJourney: req.session.createJourney,
       notAttendedJourney: req.session.notAttendedJourney,
       allocateJourney: req.session.allocateJourney,
+      suspendJourney: req.session.suspendJourney,
       waitListApplicationJourney: req.session.waitListApplicationJourney,
       appointmentJourney: req.session.appointmentJourney,
     })
