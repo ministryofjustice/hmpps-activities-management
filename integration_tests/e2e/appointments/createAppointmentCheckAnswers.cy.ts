@@ -102,6 +102,7 @@ context('Create group appointment - check answers change links', () => {
     hostPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
+    locationPage.selectSearchForLocation()
     locationPage.selectLocation('Chapel')
     locationPage.continue()
 

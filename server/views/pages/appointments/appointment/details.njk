@@ -158,7 +158,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: appointment.internalLocation.description
+                            text: locationText(appointment)
                         },
                         actions: {
                             items: [
@@ -338,3 +338,12 @@
         </div>
     </div>
 {% endblock %}
+
+
+{% macro locationText(appointment) %}
+    {% if appointment.inCell %}
+        {{ "In cell" }}
+    {% else %}
+        {{ appointment.internalLocation.description }}
+    {% endif %}
+{% endmacro %}

@@ -37,6 +37,7 @@ export type AppointmentJourney = {
     id: number
     description: string
   }
+  inCell?: boolean
   startDate?: string
   startTime?: {
     hour: number
