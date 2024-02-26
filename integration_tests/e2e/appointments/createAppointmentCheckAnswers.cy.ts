@@ -93,7 +93,6 @@ context('Create group appointment - check answers change links', () => {
     reviewPrisonersPage.continue()
 
     const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
-
     reviewPrisonerAlertsPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)
