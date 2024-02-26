@@ -25,6 +25,8 @@ import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
+import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlerts.json'
+import ReviewPrisonerAlertsPage from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
 
 context('Create group appointment - back links', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -50,6 +52,7 @@ context('Create group appointment - back links', () => {
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
     cy.stubEndpoint('GET', '/appointment-series/10/details', getAppointmentSeriesDetails)
     cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
+    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts?', getOffenderAlerts)
   })
 
   it('Create group appointment - back links', () => {
@@ -71,9 +74,12 @@ context('Create group appointment - back links', () => {
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.continueButton().click()
 
-    const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    let reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
     reviewPrisonersPage.continue()
+
+    let reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+    reviewPrisonerAlertsPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)
     namePage.selectCategory('Chaplaincy')
@@ -138,6 +144,9 @@ context('Create group appointment - back links', () => {
     Page.verifyOnPage(NamePage)
     namePage.assertSelectedCategory('Chaplaincy')
 
+    reviewPrisonerAlertsPage.back()
+    reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+
     reviewPrisonersPage.back()
     reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
@@ -149,6 +158,7 @@ context('Create group appointment - back links', () => {
     // Continue to extra information page
     selectPrisonerPage.continue()
     reviewPrisonersPage.continue()
+    reviewPrisonerAlertsPage.continue()
     namePage.continue()
     tierPage.continue()
     hostPage.continue()

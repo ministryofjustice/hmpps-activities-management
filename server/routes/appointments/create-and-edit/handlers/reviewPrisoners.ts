@@ -131,13 +131,11 @@ export default class ReviewPrisonerRoutes {
         prisonerCode,
         res.locals.user,
       )
-
       if (pAlerts.length > 0) {
         req.session.appointmentJourney.prisoners = req.session.appointmentJourney.prisoners.map(offender => {
           const relevantAlerts = pAlerts.filter(
             alert => alert.offenderNo === offender.number && !alert.expired && alert.active,
           )
-
           // Group alerts by category
           const alertsGroupedByCategory = relevantAlerts.reduce((acc, alert) => {
             const categoryKey = alert.alertType

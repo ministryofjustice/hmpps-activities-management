@@ -27,6 +27,8 @@ import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
+import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlerts.json'
+import ReviewPrisonerAlertsPage from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
 
 context('Create group appointment - check answers change links', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -64,6 +66,7 @@ context('Create group appointment - check answers change links', () => {
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
     cy.stubEndpoint('GET', '/appointment-series/10/details', getAppointmentSeriesDetails)
     cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
+    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts?', getOffenderAlerts)
   })
 
   it('Create group appointment - check answers change links', () => {
@@ -88,6 +91,9 @@ context('Create group appointment - check answers change links', () => {
     const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
     reviewPrisonersPage.continue()
+
+    const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+    reviewPrisonerAlertsPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)
     namePage.selectCategory('Chaplaincy')
