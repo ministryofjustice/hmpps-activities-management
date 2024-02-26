@@ -152,10 +152,10 @@
                                     text: application.activity.activityName
                                 },
                                 {
-                                    text: application.requestedDate | formatDate('d MMMM yyyy')
+                                    html: application.requestedDate | formatDate('d MMMM yyyy') + "<br/>" + application.requestedBy
                                 },
                                 {
-                                    text: application.requestedBy
+                                    text: application.prisoner.releaseDate | formatDate('d MMMM yyyy')
                                 },
                                 {
                                     html: waitlistStatusBadge(application.status)
@@ -179,10 +179,10 @@
                                 text: "Activity"
                             },
                             {
-                                text: "Request date"
+                                text: "Request date and requester"
                             },
                             {
-                                text: "Requester"
+                                text: "Release date"
                             },
                             {
                                 text: "Status"
