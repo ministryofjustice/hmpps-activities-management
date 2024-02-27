@@ -454,13 +454,13 @@
                     }
                 },
                 {
-                    text: row.requestDate | formatDate('d MMMM yyyy'),
+                    html: row.requestDate | formatDate('d MMMM yyyy') + "<br/>" + row.requestedBy,
                     attributes: {
                         "data-sort-value": row.requestDate | formatDate('yyyy-MM-dd')
                     }
                 },
                 {
-                    text: row.requestedBy
+                    text: row.prisonerReleaseDate | formatDate('d MMMM yyyy')
                 },
                 {
                     html: currentAllocationsHtml
@@ -489,11 +489,11 @@
                     attributes: { "aria-sort": "none" }
                 },
                 {
-                    text: "Request date",
+                    text: "Request date and requester",
                     attributes: { "aria-sort": "ascending" }
                 },
                 {
-                    text: "Requester",
+                    text: "Release date",
                     attributes: { "aria-sort": "none" }
                 },
                 {

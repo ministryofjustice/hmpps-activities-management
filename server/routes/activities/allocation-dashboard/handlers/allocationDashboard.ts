@@ -248,6 +248,7 @@ export default class AllocationDashboardRoutes {
           prisonerNumber: inmate.prisonerNumber,
           prisonerPrisonCode: inmate.prisonId,
           prisonerStatus: inmate.status,
+          prisonerReleaseDate: inmate.releaseDate,
           cellLocation: inmate.cellLocation,
           requestDate: parseDate(w.requestedDate),
           requestedBy: WaitlistRequester.valueOf(w.requestedBy),

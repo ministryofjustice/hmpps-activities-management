@@ -140,6 +140,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         .mockResolvedValue([
           {
             prisonerNumber: 'A0013DZ',
+            releaseDate: '2025-01-04',
             firstName: 'RODNEY',
             lastName: 'REINDEER',
             cellLocation: 'MDI-4-2-009',
@@ -327,6 +328,7 @@ describe('Route Handlers - Allocation dashboard', () => {
                 },
               ],
               prisonerNumber: 'A0013DZ',
+              prisonerReleaseDate: '2025-01-04',
               requestDate: new Date(2023, 7, 7),
               requestedBy: 'Self-requested',
               status: 'PENDING',
