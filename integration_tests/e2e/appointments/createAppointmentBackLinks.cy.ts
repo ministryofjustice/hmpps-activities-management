@@ -79,6 +79,7 @@ context('Create group appointment - back links', () => {
     reviewPrisonersPage.continue()
 
     let reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+    reviewPrisonerAlertsPage.assertNoAlerts('There is 1 attendees remaining on the appointment list')
     reviewPrisonerAlertsPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)

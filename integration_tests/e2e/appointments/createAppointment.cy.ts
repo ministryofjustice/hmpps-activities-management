@@ -120,6 +120,13 @@ context('Create group appointment', () => {
     reviewPrisonersPage.continue()
 
     const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+    reviewPrisonerAlertsPage.assertPrisonerInList('Lee Jacobson')
+    reviewPrisonerAlertsPage.assertAlertInList(
+      'Arsonist',
+      'No 1 to 1 with this prisoner',
+      'Terrorism Act or Related Offence',
+    )
+    reviewPrisonerAlertsPage.assertBadgesInList('Arsonist', 'TACT', 'No one-to-one')
     reviewPrisonerAlertsPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)

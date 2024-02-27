@@ -61,7 +61,6 @@ export default class ReviewPrisonerRoutes {
         prisonerCode,
         res.locals.user,
       )
-
       if (prisonerAlertsSet.length > 0) {
         req.session.appointmentSetJourney.appointments = req.session.appointmentSetJourney.appointments.map(
           appointment => {
@@ -137,39 +136,7 @@ export default class ReviewPrisonerRoutes {
             alert => alert.offenderNo === offender.number && !alert.expired && alert.active,
           )
           // Group alerts by category
-          const alertsGroupedByCategory = relevantAlerts.reduce((acc, alert) => {
-            const categoryKey = alert.alertType
-            // Find the category object in the accumulator or create a new one
-            const categoryObj = acc.find(item => item.category === categoryKey)
-            if (categoryObj) {
-              // Add the alert to the existing category
-              categoryObj.alerts.push({
-                alertCode: alert.alertCode,
-                alertType: alert.alertType,
-              })
-              // Sort alerts within the category by alertCode
-              categoryObj.alerts.sort(
-                (
-                  a: { alertCode: string },
-                  b: {
-                    alertCode: string
-                  },
-                ) => a.alertCode.localeCompare(b.alertCode),
-              )
-            } else {
-              // Create a new category object
-              acc.push({
-                category: categoryKey,
-                alerts: [
-                  {
-                    alertCode: alert.alertCode,
-                    alertType: alert.alertType,
-                  },
-                ],
-              })
-            }
-            return acc
-          }, [])
+          const alertsGroupedByCategory = this.groupAlertsByCategory(relevantAlerts)
 
           const allAlertDescriptions = relevantAlerts
             .map(alert => alert.alertCodeDescription)
@@ -205,39 +172,7 @@ export default class ReviewPrisonerRoutes {
             alert => alert.offenderNo === offender.number && !alert.expired && alert.active,
           )
           // Group alerts by category
-          const alertsGroupedByCategory = relevantAlerts.reduce((acc, alert) => {
-            const categoryKey = alert.alertType
-            // Find the category object in the accumulator or create a new one
-            const categoryObj = acc.find(item => item.category === categoryKey)
-            if (categoryObj) {
-              // Add the alert to the existing category
-              categoryObj.alerts.push({
-                alertCode: alert.alertCode,
-                alertType: alert.alertType,
-              })
-              // Sort alerts within the category by alertCode
-              categoryObj.alerts.sort(
-                (
-                  a: { alertCode: string },
-                  b: {
-                    alertCode: string
-                  },
-                ) => a.alertCode.localeCompare(b.alertCode),
-              )
-            } else {
-              // Create a new category object
-              acc.push({
-                category: categoryKey,
-                alerts: [
-                  {
-                    alertCode: alert.alertCode,
-                    alertType: alert.alertType,
-                  },
-                ],
-              })
-            }
-            return acc
-          }, [])
+          const alertsGroupedByCategory = this.groupAlertsByCategory(relevantAlerts)
           const allAlertDescriptions = relevantAlerts
             .map(alert => alert.alertCodeDescription)
             .sort((a, b) => a.localeCompare(b))
@@ -284,5 +219,42 @@ export default class ReviewPrisonerRoutes {
     )
 
     res.redirect('../../review-prisoners-alerts')
+  }
+
+  private groupAlertsByCategory(relevantAlerts: Alert[]) {
+    const alertsGroupedByCategory = relevantAlerts.reduce((acc, alert) => {
+      const categoryKey = alert.alertType
+      // Find the category object in the accumulator or create a new one
+      const categoryObj = acc.find(item => item.category === categoryKey)
+      if (categoryObj) {
+        // Add the alert to the existing category
+        categoryObj.alerts.push({
+          alertCode: alert.alertCode,
+          alertType: alert.alertType,
+        })
+        // Sort alerts within the category by alertCode
+        categoryObj.alerts.sort(
+          (
+            a: { alertCode: string },
+            b: {
+              alertCode: string
+            },
+          ) => a.alertCode.localeCompare(b.alertCode),
+        )
+      } else {
+        // Create a new category object
+        acc.push({
+          category: categoryKey,
+          alerts: [
+            {
+              alertCode: alert.alertCode,
+              alertType: alert.alertType,
+            },
+          ],
+        })
+      }
+      return acc
+    }, [])
+    return alertsGroupedByCategory
   }
 }
