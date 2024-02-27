@@ -78,7 +78,7 @@ export default class CheckAnswersRoutes {
       tierCode: appointmentJourney.tierCode,
       organiserCode: appointmentJourney.organiserCode,
       customName: appointmentJourney.customName,
-      internalLocationId: appointmentJourney.location.id,
+      internalLocationId: appointmentJourney.location?.id,
       inCell: appointmentJourney.inCell,
       startDate: appointmentJourney.startDate,
       appointments: appointmentSetJourney.appointments.map(appointment => ({

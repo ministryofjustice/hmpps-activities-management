@@ -10,6 +10,8 @@
 {% from "pages/appointments/partials/attendee-list.njk" import attendeeList %}
 {% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
 
+{% from "partials/appointments/location-text.njk" import locationText %}
+
 {% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
 {% set pageId = 'appointment-details-page' %}
 {% set hardBackLinkText = 'Go to Appointments Dashboard' %}
@@ -250,7 +252,7 @@
             <h1 class="govuk-heading-l govuk-!-margin-0">{{ appointment.appointmentName }}</h1>
             <span class="govuk-caption-l">{{ appointment.startDate | toDate | formatDate }}</span>
             <span class="govuk-caption-l">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }}</span>
-            <span class="govuk-caption-l">{{ appointment.internalLocation.description }}</span>
+            <span class="govuk-caption-l">{{ locationText(appointment) }}</span>
             <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ appointment.attendees | length + (" attendee" if appointment.attendees.length == 1 else " attendees") }}</h2>
         </div>
     </div>
@@ -338,12 +340,3 @@
         </div>
     </div>
 {% endblock %}
-
-
-{% macro locationText(appointment) %}
-    {% if appointment.inCell %}
-        {{ "In cell" }}
-    {% else %}
-        {{ appointment.internalLocation.description }}
-    {% endif %}
-{% endmacro %}
