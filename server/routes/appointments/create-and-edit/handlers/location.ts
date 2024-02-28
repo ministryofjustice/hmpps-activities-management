@@ -1,13 +1,20 @@
 import { Request, Response } from 'express'
-import { Expose, Type } from 'class-transformer'
-import { IsNotEmpty, IsNumber } from 'class-validator'
+import { Expose, Transform, Type } from 'class-transformer'
+import { IsEnum, IsNotEmpty, IsNumber, ValidateIf } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
+import { LocationType } from '../../../activities/create-an-activity/handlers/location'
 
 export class Location {
   @Expose()
+  @IsEnum(LocationType, { message: 'Select whether location is in-cell or out of cell' })
+  @Transform(({ value }) => LocationType[value])
+  locationType: LocationType
+
+  @Expose()
+  @ValidateIf(l => l.locationType === LocationType.OUT_OF_CELL)
   @Type(() => Number)
   @IsNotEmpty({ message: 'Start typing the appointment location and select it from the list' })
   @IsNumber({ allowNaN: false }, { message: 'Start typing the appointment location and select it from the list' })
@@ -34,14 +41,21 @@ export default class LocationRoutes {
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
     const { appointmentJourney } = req.session
+    const { locationType } = req.body
 
-    const location = await this.getLocation(req, res)
-    if (!location) return
+    if (locationType === LocationType.OUT_OF_CELL) {
+      const location = await this.getLocation(req, res)
+      if (!location) return
 
-    appointmentJourney.location = {
-      id: location.id,
-      description: location.description,
+      appointmentJourney.location = {
+        id: location.id,
+        description: location.description,
+      }
+    } else {
+      appointmentJourney.location = null
     }
+
+    appointmentJourney.inCell = locationType === LocationType.IN_CELL
 
     if (req.session.appointmentJourney.type === AppointmentType.SET) {
       res.redirectOrReturn(`appointment-set-date`)
@@ -51,13 +65,21 @@ export default class LocationRoutes {
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    const location = await this.getLocation(req, res)
-    if (!location) return
+    const { locationType } = req.body
 
-    req.session.editAppointmentJourney.location = {
-      id: location.id,
-      description: location.description,
+    if (locationType === LocationType.OUT_OF_CELL) {
+      const location = await this.getLocation(req, res)
+      if (!location) return
+
+      req.session.editAppointmentJourney.location = {
+        id: location.id,
+        description: location.description,
+      }
+    } else {
+      req.session.editAppointmentJourney.location = null
     }
+
+    req.session.editAppointmentJourney.inCell = locationType === LocationType.IN_CELL
 
     await this.editAppointmentService.redirectOrEdit(req, res, 'location')
   }

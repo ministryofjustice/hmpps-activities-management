@@ -9,6 +9,7 @@ import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { AppointmentLocationSummary } from '../../../../@types/activitiesAPI/types'
 import EditAppointmentService from '../../../../services/editAppointmentService'
+import { LocationType } from '../../../activities/create-an-activity/handlers/location'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/editAppointmentService')
@@ -97,6 +98,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
   describe('CREATE', () => {
     it('should save selected location in session and redirect to date and time page', async () => {
       req.body = {
+        locationType: LocationType.OUT_OF_CELL,
         locationId: 26149,
       }
 
@@ -114,6 +116,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
     it('should save selected location in session and redirect to appointment set date page', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
       req.body = {
+        locationType: LocationType.OUT_OF_CELL,
         locationId: 26149,
       }
 
@@ -130,6 +133,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
     it('validation fails when selected location is not found', async () => {
       req.body = {
+        locationType: LocationType.OUT_OF_CELL,
         locationId: -1,
       }
 
@@ -174,6 +178,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
     it('validation fails when selected location is not found', async () => {
       req.body = {
+        locationType: LocationType.OUT_OF_CELL,
         locationId: -1,
       }
 
@@ -190,7 +195,9 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
   describe('Validation', () => {
     it('validation fails when no location id is selected', async () => {
-      const body = {}
+      const body = {
+        locationType: LocationType.OUT_OF_CELL,
+      }
 
       const requestObject = plainToInstance(Location, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -204,6 +211,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
     it('validation fails when selected location id is not a number', async () => {
       const body = {
+        locationType: LocationType.OUT_OF_CELL,
         locationId: 'NaN',
       }
 
@@ -219,7 +227,46 @@ describe('Route Handlers - Create Appointment - Location', () => {
 
     it('passes validation when valid location id is selected', async () => {
       const body = {
+        locationType: LocationType.OUT_OF_CELL,
         locationId: '1',
+      }
+
+      const requestObject = plainToInstance(Location, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
+    })
+
+    it('validation fails when selected location type is not selected', async () => {
+      const body = {
+        locationId: '1',
+      }
+
+      const requestObject = plainToInstance(Location, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          { property: 'locationType', error: 'Select whether location is in-cell or out of cell' },
+        ]),
+      )
+    })
+
+    it('passes validation when location is in cell', async () => {
+      const body = {
+        locationType: LocationType.IN_CELL,
+      }
+
+      const requestObject = plainToInstance(Location, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
+    })
+
+    it('passes validation when location is in cell even with an invalid location id', async () => {
+      const body = {
+        locationType: LocationType.IN_CELL,
+        locationId: 'NaN',
       }
 
       const requestObject = plainToInstance(Location, body)
