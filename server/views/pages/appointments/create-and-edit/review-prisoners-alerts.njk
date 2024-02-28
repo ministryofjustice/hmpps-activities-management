@@ -83,16 +83,7 @@
                             of {{ prisoners.length }} attendees you're adding.</p>
                     {% endif %}
                 {% else %}
-
-                    {% if doesProfileAlertsExists %}
-                        <h1 class="govuk-heading-l">Review attendee alerts</h1>
-                        {{ govukWarningText({
-                            text: "Check an attendee's prisoner profile for full details on alerts",
-                            iconFallbackText: "Warning"
-                        }) }}
-                    {% else %}
-                        <h1 class="govuk-heading-l">You've removed all people with alerts</h1>
-                    {% endif %}
+                    
                     {% if session.appointmentJourney.type == AppointmentType.EDIT %}
                         <p class="govuk-body">You're still adding {{ prisoners.length }} people</p>
                     {% else %}
