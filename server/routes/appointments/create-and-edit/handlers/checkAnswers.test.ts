@@ -58,6 +58,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
             id: 32,
             description: 'Interview Room',
           },
+          inCell: false,
           startDate: '2023-04-23',
           startTime: {
             hour: 9,

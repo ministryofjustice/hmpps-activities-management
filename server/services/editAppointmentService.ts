@@ -92,7 +92,8 @@ export default class EditAppointmentService {
     }
 
     if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
-      request.internalLocationId = editAppointmentJourney.location.id
+      request.internalLocationId = editAppointmentJourney.location?.id
+      request.inCell = editAppointmentJourney.inCell
     }
 
     if (hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)) {

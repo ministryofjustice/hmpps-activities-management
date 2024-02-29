@@ -1,5 +1,6 @@
 {% extends "layout.njk" %}
 
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
@@ -29,24 +30,38 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session) }}
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ govukSelect({
-                    id: "locationId",
-                    name: "locationId",
-                    label: {
-                        text: pageHeading,
-                        classes: "govuk-label--l",
-                        isPageHeading: true
-                    },
-                    hint: {
-                        text: "Start typing a location and select from the list."
-                    },
-                    errorMessage: validationErrors | findError('locationId'),
-                    items: options,
-                    value: formResponses.locationId or session.appointmentJourney.location.id
+                {{ govukRadios({
+                    id: "location-type",
+                    name: "locationType",
+                    items: [
+                        {
+                            value: "OUT_OF_CELL",
+                            text: "Search for a location",
+                            checked: session.appointmentJourney.location.id,
+                            conditional: {
+                                html: govukSelect({
+                                    id: "locationId",
+                                    name: "locationId",
+                                    label: {
+                                        text: "Start typing a location and select from the list of options."
+                                    },
+                                    errorMessage: validationErrors | findError('locationId'),
+                                    value: formResponses.locationId or session.appointmentJourney.location.id,
+                                    items: options
+                                })
+                            }
+                        },
+                        {
+                            value: "IN_CELL",
+                            text: "In cell",
+                            checked: session.appointmentJourney.inCell
+                        }
+                    ]
                 }) }}
-
                 {{ govukButton({
                     text: "Update location" if isCtaAcceptAndSave else "Continue",
                     preventDoubleClick: true
