@@ -8,7 +8,7 @@ import MetricsService from './metricsService'
 
 export default function services() {
   const {
-    hmppsAuthClient,
+    manageUsersApiClient,
     prisonApiClient,
     prisonRegisterApiClient,
     prisonerSearchApiClient,
@@ -18,7 +18,7 @@ export default function services() {
   } = dataAccess()
 
   return {
-    userService: new UserService(hmppsAuthClient, prisonRegisterApiClient, activitiesApiClient),
+    userService: new UserService(manageUsersApiClient, prisonRegisterApiClient, activitiesApiClient),
     prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient),
     activitiesService: new ActivitiesService(activitiesApiClient),
     ukBankHolidayService: new BankHolidayService(),
