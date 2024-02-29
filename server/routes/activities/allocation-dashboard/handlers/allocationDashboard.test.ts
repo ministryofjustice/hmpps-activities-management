@@ -140,7 +140,6 @@ describe('Route Handlers - Allocation dashboard', () => {
         .mockResolvedValue([
           {
             prisonerNumber: 'A0013DZ',
-            releaseDate: '2025-01-04',
             firstName: 'RODNEY',
             lastName: 'REINDEER',
             cellLocation: 'MDI-4-2-009',
@@ -227,6 +226,14 @@ describe('Route Handlers - Allocation dashboard', () => {
             status: 'PENDING',
             requestedDate: '2023-08-07',
             requestedBy: 'PRISONER',
+            earliestReleaseDate: {
+              releaseDate: '2024-02-16',
+              isIndeterminateSentence: true,
+              isRemand: false,
+              isTariffDate: false,
+              isImmigrationDetainee: false,
+              isConvictedUnsentenced: false,
+            },
           },
           {
             id: 2,
@@ -235,6 +242,14 @@ describe('Route Handlers - Allocation dashboard', () => {
             status: 'PENDING',
             requestedDate: '2023-08-07',
             requestedBy: 'PRISONER',
+            earliestReleaseDate: {
+              releaseDate: '2025-11-29',
+              isIndeterminateSentence: false,
+              isRemand: true,
+              isTariffDate: false,
+              isImmigrationDetainee: false,
+              isConvictedUnsentenced: false,
+            },
           },
         ] as WaitingListApplication[])
     })
@@ -328,12 +343,19 @@ describe('Route Handlers - Allocation dashboard', () => {
                 },
               ],
               prisonerNumber: 'A0013DZ',
-              prisonerReleaseDate: '2025-01-04',
               requestDate: new Date(2023, 7, 7),
               requestedBy: 'Self-requested',
               status: 'PENDING',
               waitlistApplicationId: 1,
               currentIncentive: 'Standard',
+              earliestReleaseDate: {
+                releaseDate: '2024-02-16',
+                isIndeterminateSentence: true,
+                isRemand: false,
+                isTariffDate: false,
+                isImmigrationDetainee: false,
+                isConvictedUnsentenced: false,
+              },
               alerts: [
                 {
                   alertCode: 'RME',
@@ -357,6 +379,14 @@ describe('Route Handlers - Allocation dashboard', () => {
               status: 'PENDING',
               waitlistApplicationId: 2,
               currentIncentive: 'Standard',
+              earliestReleaseDate: {
+                releaseDate: '2025-11-29',
+                isIndeterminateSentence: false,
+                isRemand: true,
+                isTariffDate: false,
+                isImmigrationDetainee: false,
+                isConvictedUnsentenced: false,
+              },
               alerts: [],
             },
           ],
