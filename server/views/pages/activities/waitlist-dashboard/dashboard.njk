@@ -11,7 +11,7 @@
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
-{% from "partials/showRequester.njk" import showRequester %}
+{% from "partials/splitLine.njk" import splitLine %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = "Waitlist - Dashboard" %}
@@ -153,7 +153,7 @@
                                     text: application.activity.activityName
                                 },
                                 {
-                                    html: showRequester(application.requestedBy, application.requestedDate)
+                                    html: splitLine(application.requestedDate, application.requestedBy)
                                 },
                                 {
                                     text: application.prisoner.releaseDate | formatDate('d MMMM yyyy')

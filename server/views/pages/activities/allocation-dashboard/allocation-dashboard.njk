@@ -8,7 +8,7 @@
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "components/searchBar.njk" import searchBar %}
-{% from "partials/showRequester.njk" import showRequester %}
+{% from "partials/splitLine.njk" import splitLine %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
 {% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
@@ -455,7 +455,7 @@
                     }
                 },
                 {
-                    html: showRequester(row.requestedBy, row.requestDate),
+                    html: splitLine(row.requestDate, row.requestedBy),
                     attributes: {
                         "data-sort-value": row.requestDate | formatDate('yyyy-MM-dd')
                     }
