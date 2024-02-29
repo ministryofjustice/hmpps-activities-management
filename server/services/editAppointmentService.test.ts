@@ -71,6 +71,10 @@ describe('Edit Appointment Service', () => {
         } as unknown as AppointmentJourney,
         editAppointmentJourney: {
           numberOfAppointments: 4,
+          location: {
+            id: 1,
+            description: 'Location',
+          },
           appointments: [
             {
               sequenceNumber: 1,

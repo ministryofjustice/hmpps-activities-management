@@ -5,6 +5,7 @@
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "partials/appointment/location-text.njk" import locationDescription %}
 
 {% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
 {% set pageId = 'appointment-attendance-page' %}
@@ -32,7 +33,7 @@
             <h1 class="govuk-heading-l govuk-!-margin-0" data-qa='heading'>{{ appointment.appointmentName }}</h1>
             <span class="govuk-caption-l" data-qa="date-caption">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }} ({{ appointment.startTime | getTimeSlotFromTime | upper }})</span>
             <span class="govuk-caption-l" data-qa="date-caption">{{ appointment.startDate | toDate | formatDate }}</span>
-            <span class="govuk-caption-l govuk-!-margin-bottom-4">{{ appointment.internalLocation.description }}</span>
+            <span class="govuk-caption-l govuk-!-margin-bottom-4">{{ locationText(appointment) }}</span>
 
             <p class="govuk-body">
                 <a href="/appointments/{{ appointment.id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View this appointment</a>

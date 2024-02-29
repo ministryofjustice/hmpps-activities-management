@@ -68,6 +68,14 @@
     } if session.appointmentJourney.organiserCode
 ] %}
 
+{% macro locationText(journey) %}
+    {% if journey.inCell %}
+        {{ "In cell" }}
+    {% else %}
+        {{ journey.location.description }}
+    {% endif %}
+{% endmacro %}
+
 {% set schedulingInformationRows = [] %}
 {% set schedulingInformationRows = (schedulingInformationRows.push(
     {
@@ -75,7 +83,7 @@
             text: "Location"
         },
         value: {
-            text: session.appointmentJourney.location.description
+            text: locationText(session.appointmentJourney)
         },
         actions: {
             items: [

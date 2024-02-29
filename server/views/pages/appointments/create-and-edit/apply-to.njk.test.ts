@@ -67,6 +67,10 @@ describe('Views - Appointments Management - Apply to', () => {
           frequency: AppointmentFrequency.DAILY,
         },
         editAppointmentJourney: {
+          location: {
+            id: 123,
+            description: 'Original location',
+          },
           numberOfAppointments: 3,
           appointments: [
             {

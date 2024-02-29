@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio'
+import { CheerioAPI } from 'cheerio'
 import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
 import { addDays } from 'date-fns'
@@ -8,6 +9,12 @@ import { formatDate } from '../../../../utils/utils'
 import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 
 const view = fs.readFileSync('server/views/pages/appointments/appointment/details.njk')
+
+let $: CheerioAPI
+const getAppointmentDetailsValueElement = (heading: string) =>
+  $(`[data-qa=appointment-details] > .govuk-summary-list__row > .govuk-summary-list__key:contains("${heading}")`)
+    .parent()
+    .find('.govuk-summary-list__value')
 
 describe('Views - Appointments Management - Appointment Details', () => {
   let compiledTemplate: Template
@@ -48,19 +55,19 @@ describe('Views - Appointments Management - Appointment Details', () => {
   it('should display name in heading', () => {
     viewContext.appointment.appointmentName = 'Test Category'
 
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=heading]').text().trim()).toBe('Test Category')
   })
 
   it('should display date in sub heading', () => {
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=date-caption]').text().trim()).toBe(formatDate(tomorrow, 'EEEE, d MMMM yyyy'))
   })
 
   it('print movement slip link should open in new tab', () => {
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=print-movement-slips]').attr('target')).toBe('_blank')
   })
@@ -74,10 +81,26 @@ describe('Views - Appointments Management - Appointment Details', () => {
       lastName: 'Bloggs',
     }
 
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    $ = cheerio.load(compiledTemplate.render(viewContext))
     expect(
       $('[data-qa=appointment-history] .govuk-summary-list__key:contains("Last edited by")').next().text().trim(),
     ).toBe('J. Bloggs')
+  })
+
+  it('should display location as in cell', () => {
+    viewContext.appointment.inCell = true
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getAppointmentDetailsValueElement('Location').text().trim()).toBe('In cell')
+  })
+
+  it('should display location as internal location', () => {
+    viewContext.appointment.internalLocation = { id: 0, prisonCode: 'RSI', description: 'Wing A' }
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getAppointmentDetailsValueElement('Location').text().trim()).toBe('Wing A')
   })
 
   it('should show number of attendees for group appointments', () => {
@@ -114,7 +137,8 @@ describe('Views - Appointments Management - Appointment Details', () => {
       } as AppointmentDetails,
     }
 
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
     expect($('[data-qa=prisoner-list-title]').text().trim()).toContain('2 attendees')
   })
 })
