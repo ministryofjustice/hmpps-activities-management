@@ -1,4 +1,3 @@
-import { HmppsAuthUser } from '../hmppsAuth'
 import { AllocateToActivityJourney } from '../../routes/activities/manage-allocations/journey'
 import { CreateAnActivityJourney } from '../../routes/activities/create-an-activity/journey'
 import { AppointmentJourney } from '../../routes/appointments/create-and-edit/appointmentJourney'
@@ -14,6 +13,7 @@ import { AppointmentSetJourney } from '../../routes/appointments/create-and-edit
 import { AttendanceSummaryJourney } from '../../routes/activities/daily-attendance-summary/journey'
 import { UnlockListJourney } from '../../routes/activities/unlock-list/journey'
 import { WaitListApplicationJourney } from '../../routes/activities/waitlist-application/journey'
+import { UserDetails } from '../manageUsersApiImport/types'
 
 export default {}
 
@@ -83,7 +83,7 @@ export declare global {
 }
 
 export type ServiceUser = Express.User &
-  HmppsAuthUser & {
+  UserDetails & {
     displayName: string
     roles: string[]
     activeCaseLoadDescription: string

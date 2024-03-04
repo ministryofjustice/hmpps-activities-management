@@ -8,7 +8,7 @@ import { initialiseAppInsights, buildAppInsightsClient } from '../utils/azureApp
 initialiseAppInsights()
 const appInsightsClient = buildAppInsightsClient()
 
-import HmppsAuthClient from './hmppsAuthClient'
+import ManageUsersApiClient from './manageUsersApiClient'
 import PrisonApiClient from './prisonApiClient'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
 import PrisonRegisterApiClient from './prisonRegisterApiClient'
@@ -18,7 +18,7 @@ import FrontendComponentApiClient from './frontendComponentApiClient'
 
 export default function dataAccess() {
   return {
-    hmppsAuthClient: new HmppsAuthClient(),
+    manageUsersApiClient: new ManageUsersApiClient(),
     prisonApiClient: new PrisonApiClient(),
     prisonerSearchApiClient: new PrisonerSearchApiClient(),
     prisonRegisterApiClient: new PrisonRegisterApiClient(),
