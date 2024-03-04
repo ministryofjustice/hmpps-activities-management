@@ -25,7 +25,13 @@ export default class SuspendedPrisonersRoutes {
     const scheduledActivities = await this.activitiesService.getScheduledActivitiesAtPrison(activityDate, user)
     const suspendedAttendances = await this.activitiesService
       .getAllAttendance(activityDate, user)
-      .then(r => r.filter(a => a.attendanceReasonCode === AttendanceReason.SUSPENDED))
+      .then(r =>
+        r.filter(
+          a =>
+            a.attendanceReasonCode === AttendanceReason.SUSPENDED ||
+            a.attendanceReasonCode === AttendanceReason.AUTO_SUSPENDED,
+        ),
+      )
 
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(
       _.uniq(suspendedAttendances.map(a => a.prisonerNumber)),
