@@ -87,6 +87,13 @@ export interface paths {
      */
     post: operations['searchWaitingLists']
   }
+  '/utility/publish-events': {
+    /**
+     * Publish an event to the domain events SNS topic.
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
+    post: operations['publishDomainEvent']
+  }
   '/schedules/{scheduleId}/allocations': {
     /**
      * Get a list of activity schedule allocations
@@ -1590,12 +1597,12 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
+      paged?: boolean
+      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
-      paged?: boolean
-      unpaged?: boolean
     }
     PagedWaitingListApplication: {
       /** Format: int64 */
@@ -1617,8 +1624,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
     WaitingListApplication: {
@@ -1714,7 +1721,35 @@ export interface components {
        * @example Jane Doe
        */
       updatedBy?: string
-      earliestReleaseDate?: components['schemas']['EarliestReleaseDate']
+      earliestReleaseDate: components['schemas']['EarliestReleaseDate']
+    }
+    /** @description Describes an event to be published to the domain events SNS topic */
+    PublishEventUtilityModel: {
+      /**
+       * @description The outbound event to be published
+       * @enum {string}
+       */
+      outboundEvent:
+        | 'ACTIVITY_SCHEDULE_CREATED'
+        | 'ACTIVITY_SCHEDULE_UPDATED'
+        | 'ACTIVITY_SCHEDULED_INSTANCE_AMENDED'
+        | 'PRISONER_ALLOCATED'
+        | 'PRISONER_ALLOCATION_AMENDED'
+        | 'PRISONER_ATTENDANCE_CREATED'
+        | 'PRISONER_ATTENDANCE_AMENDED'
+        | 'PRISONER_ATTENDANCE_EXPIRED'
+        | 'APPOINTMENT_INSTANCE_CREATED'
+        | 'APPOINTMENT_INSTANCE_UPDATED'
+        | 'APPOINTMENT_INSTANCE_DELETED'
+        | 'APPOINTMENT_INSTANCE_CANCELLED'
+      /**
+       * @description A list of entity identifiers to be published with the event
+       * @example [
+       *   1,
+       *   2
+       * ]
+       */
+      identifiers: number[]
     }
     /** @description The prisoner allocation request details */
     PrisonerAllocationRequest: {
@@ -7000,6 +7035,25 @@ export interface operations {
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Publish an event to the domain events SNS topic.
+   * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+   */
+  publishDomainEvent: {
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PublishEventUtilityModel']
+      }
+    }
+    responses: {
+      /** @description Created */
+      201: {
+        content: {
+          'text/plain': string
         }
       }
     }
