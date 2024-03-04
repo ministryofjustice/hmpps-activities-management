@@ -45,7 +45,7 @@
                     <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
                 {% endif %}
 
-                {% if event.suspended %}
+                {% if event.suspended or event.autoSuspended %}
                     <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Prisoner suspended', classes: 'govuk-tag--red-border govuk-tag--small' }) }}</div>
                 {% endif %}
 
