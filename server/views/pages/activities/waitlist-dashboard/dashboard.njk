@@ -11,6 +11,7 @@
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
+{% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
 {% from "partials/splitLine.njk" import splitLine %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
@@ -156,7 +157,7 @@
                                     html: splitLine(application.requestedDate, application.requestedBy)
                                 },
                                 {
-                                    text: application.prisoner.releaseDate | formatDate('d MMMM yyyy')
+                                    html: earliestReleaseDate(application.earliestReleaseDate)
                                 },
                                 {
                                     html: waitlistStatusBadge(application.status)
