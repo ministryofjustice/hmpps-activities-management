@@ -35,10 +35,6 @@ export default class UserService {
     }
   }
 
-  async getUserByUsername(username: string, user: ServiceUser): Promise<UserDetails> {
-    return this.manageUsersApiClient.getUserByUsername(username, user)
-  }
-
   async getUserMap(usernames: string[], user: ServiceUser): Promise<Map<string, UserDetails>> {
     const users = await Promise.all(
       _.uniq(usernames)

@@ -7,6 +7,7 @@ import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
+import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 
 const view = fs.readFileSync('server/views/pages/appointments/appointment/details.njk')
 
@@ -19,8 +20,9 @@ const getAppointmentDetailsValueElement = (heading: string) =>
 describe('Views - Appointments Management - Appointment Details', () => {
   let compiledTemplate: Template
   const tomorrow = addDays(new Date(), 1)
-  let viewContext: { appointment: AppointmentDetails } = {
+  let viewContext: { appointment: AppointmentDetails; userMap: Map<string, UserDetails> } = {
     appointment: {} as AppointmentDetails,
+    userMap: {} as Map<string, UserDetails>,
   }
 
   const njkEnv = registerNunjucks()
@@ -49,6 +51,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
         isExpired: false,
         createdTime: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentDetails,
+      userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as unknown as Map<string, UserDetails>,
     }
   })
 
@@ -130,6 +133,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
         isExpired: false,
         createdTime: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentDetails,
+      userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as unknown as Map<string, UserDetails>,
     }
 
     $ = cheerio.load(compiledTemplate.render(viewContext))

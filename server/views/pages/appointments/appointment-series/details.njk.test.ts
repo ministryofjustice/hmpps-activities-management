@@ -7,6 +7,7 @@ import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentSeriesDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 import { AppointmentFrequency } from '../../../../@types/appointments'
+import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 
 const view = fs.readFileSync('server/views/pages/appointments/appointment-series/details.njk')
 
@@ -24,6 +25,7 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
   let compiledTemplate: Template
   let viewContext = {
     appointmentSeries: {} as AppointmentSeriesDetails,
+    userMap: {} as Map<string, UserDetails>,
   }
 
   const njkEnv = registerNunjucks()
@@ -36,6 +38,7 @@ describe('Views - Appointments Management - Appointment Series Details', () => {
         startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
         createdTime: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentSeriesDetails,
+      userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as unknown as Map<string, UserDetails>,
     }
   })
 
