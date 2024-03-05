@@ -5,7 +5,7 @@
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
-{% from "partials/appointment/location-text.njk" import locationDescription %}
+{% from "partials/appointments/location-text.njk" import locationText %}
 
 {% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
 {% set pageId = 'appointment-attendance-page' %}
