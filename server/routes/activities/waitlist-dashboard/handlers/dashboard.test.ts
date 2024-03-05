@@ -41,6 +41,14 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
     activityId: 1,
     scheduleId: 2,
     requestedBy: 'OMU_STAFF',
+    earliestReleaseDate: {
+      releaseDate: '2025-02-13',
+      isIndeterminateSentence: false,
+      isTariffDate: false,
+      isRemand: true,
+      isImmigrationDetainee: false,
+      isConvictedUnsentenced: false,
+    },
   } as WaitingListApplication
 
   const waitingListSearchResults = {
