@@ -6,15 +6,20 @@ import { Attendance, ScheduledActivity } from '../../../../@types/activitiesAPI/
 import AttendanceDetailsRoutes from './attendanceDetails'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import UserService from '../../../../services/userService'
+import atLeast from '../../../../../jest.setup'
+import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
+jest.mock('../../../../services/userService')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
+const userService = new UserService(null, null, null) as jest.Mocked<UserService>
 
 describe('Route Handlers - View and Edit Attendance', () => {
-  const handler = new AttendanceDetailsRoutes(activitiesService, prisonService)
+  const handler = new AttendanceDetailsRoutes(activitiesService, prisonService, userService)
 
   let req: Request
   let res: Response
@@ -41,6 +46,15 @@ describe('Route Handlers - View and Edit Attendance', () => {
 
   describe('GET', () => {
     it('should render with the expected view', async () => {
+      when(userService.getUserMap)
+        .calledWith(atLeast(['joebloggs', 'jsmith']))
+        .mockResolvedValue(
+          new Map([
+            ['joebloggs', { name: 'Joe Bloggs' }],
+            ['jsmith', { name: 'John Smith' }],
+          ]) as Map<string, UserDetails>,
+        )
+
       when(activitiesService.getScheduledActivity)
         .calledWith(1, res.locals.user)
         .mockResolvedValue({
@@ -66,6 +80,13 @@ describe('Route Handlers - View and Edit Attendance', () => {
           prisonerNumber: 'ABC321',
           status: 'COMPLETED',
           attendanceReason: { code: 'ATTENDED' },
+          recordedBy: 'joebloggs',
+          attendanceHistory: [
+            {
+              attendanceReason: { code: 'REST' },
+              recordedBy: 'jsmith',
+            },
+          ],
         } as Attendance)
 
       when(prisonService.getInmateByPrisonerNumber)
@@ -102,11 +123,22 @@ describe('Route Handlers - View and Edit Attendance', () => {
           id: 1,
           prisonerNumber: 'ABC321',
           status: 'COMPLETED',
+          recordedBy: 'joebloggs',
+          attendanceHistory: [
+            {
+              attendanceReason: { code: 'REST' },
+              recordedBy: 'jsmith',
+            },
+          ],
         },
         attendee: {
           name: 'Alan Key',
         },
         activity: { summary: 'Maths level 1' },
+        userMap: new Map([
+          ['joebloggs', { name: 'Joe Bloggs' }],
+          ['jsmith', { name: 'John Smith' }],
+        ]) as Map<string, UserDetails>,
       })
     })
   })
