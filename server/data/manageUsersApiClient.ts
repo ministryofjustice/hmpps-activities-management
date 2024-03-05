@@ -12,4 +12,8 @@ export default class ManageUsersApiClient extends AbstractHmppsRestClient {
   getUser(user: Express.User): Promise<UserDetails> {
     return this.get({ path: `/users/${user.username}` })
   }
+
+  getUserByUsername(username: string, user: Express.User): Promise<UserDetails> {
+    return this.get({ path: `/users/${username}`, authToken: user.token })
+  }
 }

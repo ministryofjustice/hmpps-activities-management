@@ -96,7 +96,7 @@
                             text: "Created by"
                         },
                         value: {
-                            text: serviceUserName(appointmentSet.createdBy)
+                            text: serviceUserName(userMap.get(appointmentSet.createdBy))
                         }
                     }, {
                         key: {
@@ -186,4 +186,3 @@
         </div>
     </div>
 {% endblock %}
-

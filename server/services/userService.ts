@@ -1,4 +1,5 @@
 import { jwtDecode } from 'jwt-decode'
+import _ from 'lodash'
 import { convertToTitleCase } from '../utils/utils'
 import ManageUsersApiClient from '../data/manageUsersApiClient'
 import { ServiceUser } from '../@types/express'
@@ -32,6 +33,19 @@ export default class UserService {
       roles,
       displayName: convertToTitleCase(userDetails.name),
     }
+  }
+
+  async getUserByUsername(username: string, user: ServiceUser): Promise<UserDetails> {
+    return this.manageUsersApiClient.getUserByUsername(username, user)
+  }
+
+  async getUserMap(usernames: string[], user: ServiceUser): Promise<Map<string, UserDetails>> {
+    const users = await Promise.all(
+      _.uniq(usernames)
+        .filter(Boolean)
+        .map(u => this.manageUsersApiClient.getUserByUsername(u, user)),
+    )
+    return new Map(users.map(u => [u.username, u]))
   }
 
   private fetchActiveCaseLoadInformation = async (user: UserDetails) => {

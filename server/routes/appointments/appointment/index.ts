@@ -7,7 +7,7 @@ import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
 import { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 
-export default function Index({ activitiesService, metricsService }: Services): Router {
+export default function Index({ activitiesService, userService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) =>
@@ -15,9 +15,9 @@ export default function Index({ activitiesService, metricsService }: Services): 
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  const appointmentDetailsRoutes = new AppointmentDetailsRoutes()
+  const appointmentDetailsRoutes = new AppointmentDetailsRoutes(userService)
   const appointmentMovementSlipRoutes = new AppointmentMovementSlipRoutes(metricsService)
-  const appointmentAttendanceRoutes = new AppointmentAttendanceRoutes(activitiesService)
+  const appointmentAttendanceRoutes = new AppointmentAttendanceRoutes(activitiesService, userService)
 
   get('/', appointmentDetailsRoutes.GET)
   get('/movement-slip', appointmentMovementSlipRoutes.GET)

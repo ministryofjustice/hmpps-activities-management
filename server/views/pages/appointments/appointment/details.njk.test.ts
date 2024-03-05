@@ -74,12 +74,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
 
   it('should show updated by if appointment has been updated', () => {
     viewContext.appointment.updatedTime = formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss")
-    viewContext.appointment.updatedBy = {
-      id: 123,
-      username: 'joebloggs',
-      firstName: 'Joe',
-      lastName: 'Bloggs',
-    }
+    viewContext.appointment.updatedBy = 'joebloggs'
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
     expect(

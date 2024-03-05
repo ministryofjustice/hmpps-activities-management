@@ -27,7 +27,7 @@
             {% if appointment.isDeleted %}
                 {% set deletedAppointmentHeadingHtml %}
                     <h3 class="govuk-notification-banner__heading">Appointment deleted</h3>
-                    <p class="govuk-body">This appointment was deleted by {{ appointment.cancelledBy | fullName | toTitleCase | initialiseName }} on {{ appointment.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
+                    <p class="govuk-body">This appointment was deleted by {{ serviceUserName(userMap.get(appointment.cancelledBy)) }} on {{ appointment.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
                 {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',
@@ -36,7 +36,7 @@
             {% elseif appointment.isCancelled %}
                 {% set cancelledAppointmentHeadingHtml %}
                     <h3 class="govuk-notification-banner__heading">Appointment cancelled</h3>
-                    <p class="govuk-body">This appointment was cancelled by {{ appointment.cancelledBy | fullName | toTitleCase | initialiseName }} on {{ appointment.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
+                    <p class="govuk-body">This appointment was cancelled by {{ serviceUserName(userMap.get(appointment.cancelledBy)) }} on {{ appointment.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
                 {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',
@@ -310,7 +310,7 @@
                         text: "Created by"
                     },
                         value: {
-                            text: serviceUserName(appointment.createdBy)
+                            text: serviceUserName(userMap.get(appointment.createdBy))
                         }
                     }, {
                         key: {
@@ -324,7 +324,7 @@
                             text: "Last edited by"
                         },
                         value: {
-                            text: serviceUserName(appointment.updatedBy)
+                            text: serviceUserName(userMap.get(appointment.updatedBy))
                         }
                     } if appointment.updatedBy, {
                         key: {
