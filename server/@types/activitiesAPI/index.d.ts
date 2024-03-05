@@ -37,27 +37,6 @@ export interface paths {
      */
     put: operations['cancelScheduledInstance']
   }
-  '/queue-admin/retry-dlq/{dlqName}': {
-    /**
-     * @description
-     *
-     * Requires one of the following roles:
-     * * ACTIVITY_QUEUE_ADMIN
-     */
-    put: operations['retryDlq']
-  }
-  '/queue-admin/retry-all-dlqs': {
-    put: operations['retryAllDlqs']
-  }
-  '/queue-admin/purge-queue/{queueName}': {
-    /**
-     * @description
-     *
-     * Requires one of the following roles:
-     * * ACTIVITY_QUEUE_ADMIN
-     */
-    put: operations['purgeQueue']
-  }
   '/attendances': {
     /**
      * Updates attendance records.
@@ -107,6 +86,13 @@ export interface paths {
      * * ACTIVITY_ADMIN
      */
     post: operations['searchWaitingLists']
+  }
+  '/utility/publish-events': {
+    /**
+     * Publish an event to the domain events SNS topic.
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
+    post: operations['publishDomainEvent']
   }
   '/schedules/{scheduleId}/allocations': {
     /**
@@ -444,6 +430,16 @@ export interface paths {
      */
     get: operations['getAttendanceSync']
   }
+  '/subject-access-request': {
+    /**
+     * Provides content for a prisoner to satisfy the needs of a subject access request on their behalf
+     * @description
+     *
+     * Requires one of the following roles:
+     * * SAR_DATA_ACCESS
+     */
+    get: operations['getSarContentByReference']
+  }
   '/schedules/{scheduleId}': {
     /**
      * Get an activity schedule by its id
@@ -553,15 +549,6 @@ export interface paths {
      * * ACTIVITY_ADMIN
      */
     get: operations['getPrisonByCode']
-  }
-  '/queue-admin/get-dlq-messages/{dlqName}': {
-    /**
-     * @description
-     *
-     * Requires one of the following roles:
-     * * ACTIVITY_QUEUE_ADMIN
-     */
-    get: operations['getDlqMessages']
   }
   '/prisons/{prisonCode}/scheduled-instances': {
     /**
@@ -878,6 +865,7 @@ export interface paths {
   '/activities/{activityId}': {
     /**
      * Get an activity by its id
+     * @deprecated
      * @description Returns a single activity and its details by its unique identifier.
      *
      * Requires one of the following roles:
@@ -906,6 +894,7 @@ export interface paths {
      * Requires one of the following roles:
      * * PRISON
      * * ACTIVITY_ADMIN
+     * * NOMIS_ACTIVITIES
      */
     get: operations['getActivityByIdWithFilters']
   }
@@ -1031,21 +1020,6 @@ export interface components {
        * @example Resume tomorrow
        */
       comment?: string
-    }
-    DlqMessage: {
-      body: {
-        [key: string]: Record<string, never>
-      }
-      messageId: string
-    }
-    RetryDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-      messages: components['schemas']['DlqMessage'][]
-    }
-    PurgeQueueResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
     }
     /** @description Request object for updating an attendance record */
     AttendanceUpdateRequest: {
@@ -1600,16 +1574,35 @@ export interface components {
        */
       status?: ('PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED')[]
     }
+    /** @description Summary of a prisoner's sentence and resulting earliest release date */
+    EarliestReleaseDate: {
+      /**
+       * Format: date
+       * @description The prisoner's earliest release date
+       * @example 2027-09-20
+       */
+      releaseDate?: string
+      /** @description The prisoner's earliest release date is the tariff date */
+      isTariffDate: boolean
+      /** @description The prisoner's sentence is indeterminate */
+      isIndeterminateSentence: boolean
+      /** @description The prisoner is an immigration detainee */
+      isImmigrationDetainee: boolean
+      /** @description The prisoner is convicted and unsentenced */
+      isConvictedUnsentenced: boolean
+      /** @description The prisoner is on remand */
+      isRemand: boolean
+    }
     PageableObject: {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
+      paged?: boolean
+      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
-      paged?: boolean
-      unpaged?: boolean
     }
     PagedWaitingListApplication: {
       /** Format: int64 */
@@ -1728,6 +1721,35 @@ export interface components {
        * @example Jane Doe
        */
       updatedBy?: string
+      earliestReleaseDate: components['schemas']['EarliestReleaseDate']
+    }
+    /** @description Describes an event to be published to the domain events SNS topic */
+    PublishEventUtilityModel: {
+      /**
+       * @description The outbound event to be published
+       * @enum {string}
+       */
+      outboundEvent:
+        | 'ACTIVITY_SCHEDULE_CREATED'
+        | 'ACTIVITY_SCHEDULE_UPDATED'
+        | 'ACTIVITY_SCHEDULED_INSTANCE_AMENDED'
+        | 'PRISONER_ALLOCATED'
+        | 'PRISONER_ALLOCATION_AMENDED'
+        | 'PRISONER_ATTENDANCE_CREATED'
+        | 'PRISONER_ATTENDANCE_AMENDED'
+        | 'PRISONER_ATTENDANCE_EXPIRED'
+        | 'APPOINTMENT_INSTANCE_CREATED'
+        | 'APPOINTMENT_INSTANCE_UPDATED'
+        | 'APPOINTMENT_INSTANCE_DELETED'
+        | 'APPOINTMENT_INSTANCE_CANCELLED'
+      /**
+       * @description A list of entity identifiers to be published with the event
+       * @example [
+       *   1,
+       *   2
+       * ]
+       */
+      identifiers: number[]
     }
     /** @description The prisoner allocation request details */
     PrisonerAllocationRequest: {
@@ -2131,25 +2153,6 @@ export interface components {
        * @example Released from prison
        */
       description: string
-    }
-    /** @description Summary of a prisoner's sentence and resulting earliest release date */
-    EarliestReleaseDate: {
-      /**
-       * Format: date
-       * @description The prisoner's earliest release date
-       * @example 2027-09-20
-       */
-      releaseDate?: string
-      /** @description The prisoner's earliest release date is the tariff date */
-      isTariffDate: boolean
-      /** @description The prisoner's sentence is indeterminate */
-      isIndeterminateSentence: boolean
-      /** @description The prisoner is an immigration detainee */
-      isImmigrationDetainee: boolean
-      /** @description The prisoner is convicted and unsentenced */
-      isConvictedUnsentenced: boolean
-      /** @description The prisoner is on remand */
-      isRemand: boolean
     }
     /** @description Describes one instance of a planned deallocation */
     PlannedDeallocation: {
@@ -4524,6 +4527,19 @@ export interface components {
       payBandId?: number
       /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
       exclusions?: components['schemas']['Slot'][]
+      /**
+       * Format: date
+       * @description The date when the prisoner will be suspended from the activity
+       * @example 2023-09-10
+       */
+      suspendFrom?: string
+      suspensionCaseNote?: components['schemas']['AddCaseNoteRequest']
+      /**
+       * Format: date
+       * @description The date when the prisoner will be suspended from the activity
+       * @example 2023-09-10
+       */
+      suspendUntil?: string
     }
     /** @description The update request with the new activity details */
     ActivityUpdateRequest: {
@@ -4756,6 +4772,209 @@ export interface components {
        * @example true
        */
       issuePayment?: boolean
+    }
+    /** @description All of the allocations for the prisoner for the period */
+    SarAllocation: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this allocation
+       * @example 123456
+       */
+      allocationId: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description The status of the allocation
+       * @example ACTIVE
+       */
+      prisonerStatus: string
+      /**
+       * Format: date
+       * @description The start date of the allocation
+       * @example 2022-01-01
+       */
+      startDate: string
+      /**
+       * Format: date
+       * @description The end date of the allocation, can be null
+       * @example 2024-01-01
+       */
+      endDate?: string
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this activity
+       * @example 123456
+       */
+      activityId: number
+      /**
+       * @description A brief summary description of this activity
+       * @example Maths level 1
+       */
+      activitySummary: string
+      /**
+       * @description The pay band for the allocation, can be null e.g. unpaid activity
+       * @example Pay band 1 (lowest)
+       */
+      payBand?: string
+      /**
+       * Format: date
+       * @description The date the allocation entry was created
+       * @example 2022-01-01
+       */
+      createdDate: string
+    }
+    /** @description All of the appointments for the prisoner for the period */
+    SarAppointment: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this appointment
+       * @example 123456
+       */
+      appointmentId: number
+      /**
+       * @description The prison code where this appointment takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description The category code of the appointment
+       * @example CHAP
+       */
+      categoryCode: string
+      /**
+       * Format: date
+       * @description The start date of the appointment
+       * @example 2022-01-01
+       */
+      startDate: string
+      /**
+       * Format: partial-time
+       * @description The start time of the appointment
+       * @example 12:30
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time of the appointment, can be null
+       * @example 10:15
+       */
+      endTime?: string
+      /**
+       * @description Any extra information about the appointment, can be null
+       * @example Discuss God
+       */
+      extraInformation?: string
+      /**
+       * @description The attendance of the appointment
+       * @example Yes
+       * @enum {string}
+       */
+      attended: 'Yes' | 'No' | 'Unmarked'
+      /**
+       * Format: date
+       * @description The date the appointment entry was created
+       * @example 2022-01-01
+       */
+      createdDate: string
+    }
+    /** @description All of the attendances for the prisoner for the period */
+    SarAttendanceSummary: {
+      /**
+       * @description The summary reason for a recorded prisoner attendance
+       * @example ATTENDED
+       */
+      attendanceReasonCode: string
+      /**
+       * Format: int32
+       * @description A count of attendance for a given reason
+       * @example 3
+       */
+      count: number
+    }
+    /** @description Waiting list applications for a prisoner */
+    SarWaitingList: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this waiting list entry
+       * @example 123456
+       */
+      waitingListId: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example PVI
+       */
+      prisonCode: string
+      /**
+       * @description A brief summary description of this activity
+       * @example Maths level 1
+       */
+      activitySummary: string
+      /**
+       * Format: date
+       * @description The date the application was added to the waiting list entry
+       * @example 2022-01-01
+       */
+      applicationDate: string
+      /**
+       * @description The identity of the requester of the activity
+       * @example Prison staff
+       */
+      originator: string
+      /**
+       * @description The status of the waiting list entry
+       * @example ACTIVE
+       */
+      status: string
+      /**
+       * Format: date
+       * @description The date the waiting list entry was last updated, can be null
+       * @example 2022-01-01
+       */
+      statusDate?: string
+      /**
+       * @description The comments associated with this waiting list entry, can be null
+       * @example OK to proceed
+       */
+      comments?: string
+      /**
+       * Format: date
+       * @description The date the waiting list entry was created
+       * @example 2022-01-01
+       */
+      createdDate: string
+    }
+    SubjectAccessRequestContent: {
+      content: components['schemas']['SubjectAccessRequestData']
+    }
+    SubjectAccessRequestData: {
+      /**
+       * @description The prisoner number (Nomis ID)
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      /**
+       * Format: date
+       * @description The from date for the request
+       * @example 2022-01-01
+       */
+      fromDate: string
+      /**
+       * Format: date
+       * @description The to date for the request
+       * @example 2024-01-01
+       */
+      toDate: string
+      /** @description All of the allocations for the prisoner for the period */
+      allocations: components['schemas']['SarAllocation'][]
+      /** @description All of the attendances for the prisoner for the period */
+      attendanceSummary: components['schemas']['SarAttendanceSummary'][]
+      /** @description Waiting list applications for a prisoner */
+      waitingListApplications: components['schemas']['SarWaitingList'][]
+      /** @description All of the appointments for the prisoner for the period */
+      appointments: components['schemas']['SarAppointment'][]
     }
     /** @description Describes a pay rate applied to an activity */
     ActivityPayLite: {
@@ -5423,13 +5642,6 @@ export interface components {
        * @example 2022-09-30
        */
       appointmentsRolloutDate?: string
-    }
-    GetDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-      /** Format: int32 */
-      messagesReturnedCount: number
-      messages: components['schemas']['DlqMessage'][]
     }
     /** @description Summarises an activity */
     ActivitySummary: {
@@ -6628,58 +6840,6 @@ export interface operations {
     }
   }
   /**
-   * @description
-   *
-   * Requires one of the following roles:
-   * * ACTIVITY_QUEUE_ADMIN
-   */
-  retryDlq: {
-    parameters: {
-      path: {
-        dlqName: string
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['RetryDlqResult']
-        }
-      }
-    }
-  }
-  retryAllDlqs: {
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['RetryDlqResult'][]
-        }
-      }
-    }
-  }
-  /**
-   * @description
-   *
-   * Requires one of the following roles:
-   * * ACTIVITY_QUEUE_ADMIN
-   */
-  purgeQueue: {
-    parameters: {
-      path: {
-        queueName: string
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['PurgeQueueResult']
-        }
-      }
-    }
-  }
-  /**
    * Updates attendance records.
    * @description Updates the given attendance records with the supplied update request details.
    *
@@ -6875,6 +7035,25 @@ export interface operations {
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Publish an event to the domain events SNS topic.
+   * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+   */
+  publishDomainEvent: {
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PublishEventUtilityModel']
+      }
+    }
+    responses: {
+      /** @description Created */
+      201: {
+        content: {
+          'text/plain': string
         }
       }
     }
@@ -7371,8 +7550,10 @@ export interface operations {
       query?: {
         /** @description If true will run the activate pending allocations process. Defaults to false. */
         withActivate?: boolean
-        /** @description If true will run the deallocate allocations process. Defaults to false. */
-        withDeallocate?: boolean
+        /** @description If true will run the deallocate allocations that are ending process. Defaults to false. */
+        withDeallocateEnding?: boolean
+        /** @description If true will run the deallocate allocations that are expiring process. Defaults to false. */
+        withDeallocateExpiring?: boolean
       }
     }
     responses: {
@@ -8206,6 +8387,65 @@ export interface operations {
     }
   }
   /**
+   * Provides content for a prisoner to satisfy the needs of a subject access request on their behalf
+   * @description
+   *
+   * Requires one of the following roles:
+   * * SAR_DATA_ACCESS
+   */
+  getSarContentByReference: {
+    parameters: {
+      query?: {
+        /** @description NOMIS Prison Reference Number */
+        prn?: string
+        /** @description nDelius Case Reference Number */
+        crn?: string
+        /** @description Optional parameter denoting minimum date of event occurrence which should be returned in the response */
+        fromDate?: string
+        /** @description Optional parameter denoting maximum date of event occurrence which should be returned in the response */
+        toDate?: string
+      }
+    }
+    responses: {
+      /** @description Request successfully processed - content found */
+      200: {
+        content: {
+          'application/json': components['schemas']['SubjectAccessRequestContent']
+        }
+      }
+      /** @description Request successfully processed - no content found */
+      204: {
+        content: {
+          'application/json': Record<string, never>
+        }
+      }
+      /** @description Subject Identifier is not recognised by this service */
+      209: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The client does not have authorisation to make this request */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unexpected error occurred */
+      500: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
    * Get an activity schedule by its id
    * @description Returns a single activity schedule by its unique identifier.
    *
@@ -8659,30 +8899,6 @@ export interface operations {
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * @description
-   *
-   * Requires one of the following roles:
-   * * ACTIVITY_QUEUE_ADMIN
-   */
-  getDlqMessages: {
-    parameters: {
-      query?: {
-        maxMessages?: number
-      }
-      path: {
-        dlqName: string
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['GetDlqResult']
         }
       }
     }
@@ -9780,6 +9996,7 @@ export interface operations {
   }
   /**
    * Get an activity by its id
+   * @deprecated
    * @description Returns a single activity and its details by its unique identifier.
    *
    * Requires one of the following roles:
@@ -9871,6 +10088,7 @@ export interface operations {
    * Requires one of the following roles:
    * * PRISON
    * * ACTIVITY_ADMIN
+   * * NOMIS_ACTIVITIES
    */
   getActivityByIdWithFilters: {
     parameters: {

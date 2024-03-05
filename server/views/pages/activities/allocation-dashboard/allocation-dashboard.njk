@@ -8,6 +8,7 @@
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "components/searchBar.njk" import searchBar %}
+{% from "partials/splitLine.njk" import splitLine %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
 {% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
@@ -454,13 +455,13 @@
                     }
                 },
                 {
-                    text: row.requestDate | formatDate('d MMMM yyyy'),
+                    html: splitLine(row.requestDate, row.requestedBy),
                     attributes: {
                         "data-sort-value": row.requestDate | formatDate('yyyy-MM-dd')
                     }
                 },
                 {
-                    text: row.requestedBy
+                    html: earliestReleaseDate(row.earliestReleaseDate)
                 },
                 {
                     html: currentAllocationsHtml
@@ -489,11 +490,11 @@
                     attributes: { "aria-sort": "none" }
                 },
                 {
-                    text: "Request date",
+                    text: "Request date and requester",
                     attributes: { "aria-sort": "ascending" }
                 },
                 {
-                    text: "Requester",
+                    text: "Release date",
                     attributes: { "aria-sort": "none" }
                 },
                 {
