@@ -37,27 +37,6 @@ export interface paths {
      */
     put: operations['cancelScheduledInstance']
   }
-  '/queue-admin/retry-dlq/{dlqName}': {
-    /**
-     * @description
-     *
-     * Requires one of the following roles:
-     * * ACTIVITY_QUEUE_ADMIN
-     */
-    put: operations['retryDlq']
-  }
-  '/queue-admin/retry-all-dlqs': {
-    put: operations['retryAllDlqs']
-  }
-  '/queue-admin/purge-queue/{queueName}': {
-    /**
-     * @description
-     *
-     * Requires one of the following roles:
-     * * ACTIVITY_QUEUE_ADMIN
-     */
-    put: operations['purgeQueue']
-  }
   '/attendances': {
     /**
      * Updates attendance records.
@@ -571,15 +550,6 @@ export interface paths {
      */
     get: operations['getPrisonByCode']
   }
-  '/queue-admin/get-dlq-messages/{dlqName}': {
-    /**
-     * @description
-     *
-     * Requires one of the following roles:
-     * * ACTIVITY_QUEUE_ADMIN
-     */
-    get: operations['getDlqMessages']
-  }
   '/prisons/{prisonCode}/scheduled-instances': {
     /**
      * Get a list of scheduled instances for a prison, date range (max 3 months) and time slot (AM, PM or ED - optional)
@@ -1050,21 +1020,6 @@ export interface components {
        * @example Resume tomorrow
        */
       comment?: string
-    }
-    DlqMessage: {
-      body: {
-        [key: string]: Record<string, never>
-      }
-      messageId: string
-    }
-    RetryDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-      messages: components['schemas']['DlqMessage'][]
-    }
-    PurgeQueueResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
     }
     /** @description Request object for updating an attendance record */
     AttendanceUpdateRequest: {
@@ -1619,6 +1574,25 @@ export interface components {
        */
       status?: ('PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED')[]
     }
+    /** @description Summary of a prisoner's sentence and resulting earliest release date */
+    EarliestReleaseDate: {
+      /**
+       * Format: date
+       * @description The prisoner's earliest release date
+       * @example 2027-09-20
+       */
+      releaseDate?: string
+      /** @description The prisoner's earliest release date is the tariff date */
+      isTariffDate: boolean
+      /** @description The prisoner's sentence is indeterminate */
+      isIndeterminateSentence: boolean
+      /** @description The prisoner is an immigration detainee */
+      isImmigrationDetainee: boolean
+      /** @description The prisoner is convicted and unsentenced */
+      isConvictedUnsentenced: boolean
+      /** @description The prisoner is on remand */
+      isRemand: boolean
+    }
     PageableObject: {
       /** Format: int64 */
       offset?: number
@@ -1747,6 +1721,35 @@ export interface components {
        * @example Jane Doe
        */
       updatedBy?: string
+      earliestReleaseDate: components['schemas']['EarliestReleaseDate']
+    }
+    /** @description Describes an event to be published to the domain events SNS topic */
+    PublishEventUtilityModel: {
+      /**
+       * @description The outbound event to be published
+       * @enum {string}
+       */
+      outboundEvent:
+        | 'ACTIVITY_SCHEDULE_CREATED'
+        | 'ACTIVITY_SCHEDULE_UPDATED'
+        | 'ACTIVITY_SCHEDULED_INSTANCE_AMENDED'
+        | 'PRISONER_ALLOCATED'
+        | 'PRISONER_ALLOCATION_AMENDED'
+        | 'PRISONER_ATTENDANCE_CREATED'
+        | 'PRISONER_ATTENDANCE_AMENDED'
+        | 'PRISONER_ATTENDANCE_EXPIRED'
+        | 'APPOINTMENT_INSTANCE_CREATED'
+        | 'APPOINTMENT_INSTANCE_UPDATED'
+        | 'APPOINTMENT_INSTANCE_DELETED'
+        | 'APPOINTMENT_INSTANCE_CANCELLED'
+      /**
+       * @description A list of entity identifiers to be published with the event
+       * @example [
+       *   1,
+       *   2
+       * ]
+       */
+      identifiers: number[]
     }
     /** @description Describes an event to be published to the domain events SNS topic */
     PublishEventUtilityModel: {
@@ -2178,25 +2181,6 @@ export interface components {
        * @example Released from prison
        */
       description: string
-    }
-    /** @description Summary of a prisoner's sentence and resulting earliest release date */
-    EarliestReleaseDate: {
-      /**
-       * Format: date
-       * @description The prisoner's earliest release date
-       * @example 2027-09-20
-       */
-      releaseDate?: string
-      /** @description The prisoner's earliest release date is the tariff date */
-      isTariffDate: boolean
-      /** @description The prisoner's sentence is indeterminate */
-      isIndeterminateSentence: boolean
-      /** @description The prisoner is an immigration detainee */
-      isImmigrationDetainee: boolean
-      /** @description The prisoner is convicted and unsentenced */
-      isConvictedUnsentenced: boolean
-      /** @description The prisoner is on remand */
-      isRemand: boolean
     }
     /** @description Describes one instance of a planned deallocation */
     PlannedDeallocation: {
@@ -5687,13 +5671,6 @@ export interface components {
        */
       appointmentsRolloutDate?: string
     }
-    GetDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-      /** Format: int32 */
-      messagesReturnedCount: number
-      messages: components['schemas']['DlqMessage'][]
-    }
     /** @description Summarises an activity */
     ActivitySummary: {
       /**
@@ -6897,58 +6874,6 @@ export interface operations {
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * @description
-   *
-   * Requires one of the following roles:
-   * * ACTIVITY_QUEUE_ADMIN
-   */
-  retryDlq: {
-    parameters: {
-      path: {
-        dlqName: string
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['RetryDlqResult']
-        }
-      }
-    }
-  }
-  retryAllDlqs: {
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['RetryDlqResult'][]
-        }
-      }
-    }
-  }
-  /**
-   * @description
-   *
-   * Requires one of the following roles:
-   * * ACTIVITY_QUEUE_ADMIN
-   */
-  purgeQueue: {
-    parameters: {
-      path: {
-        queueName: string
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['PurgeQueueResult']
         }
       }
     }
@@ -9013,30 +8938,6 @@ export interface operations {
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * @description
-   *
-   * Requires one of the following roles:
-   * * ACTIVITY_QUEUE_ADMIN
-   */
-  getDlqMessages: {
-    parameters: {
-      query?: {
-        maxMessages?: number
-      }
-      path: {
-        dlqName: string
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['GetDlqResult']
         }
       }
     }
