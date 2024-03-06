@@ -8,6 +8,7 @@
 {% from "components/alertsList.njk" import alertsList %}
 {% from "partials/showUnlockEvents.njk" import showUnlockEvents %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% set pageTitle = applicationName + " - Planned events" %}
 {% set pageId = "planned-events-page" %}
@@ -32,6 +33,15 @@
                             </div>
                             <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.stayingOnWing }}
                                 staying on wing
+                            </div>
+                        </div>
+                        <div class="search-input search-input--inline-search govuk-!-margin-top-6 govuk-!-display-none-print">
+                            <div class="search-input__form-inputs">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label govuk-label--s" for="searchTerm">Search by prisoner name, prison number, or by event name</label>
+                                    <input class="govuk-input" id="searchTerm" name="searchTerm" type="search" form="filter-form" value="{{ session.unlockListJourney.searchTerm }}">
+                                </div>
+                                <button type="submit" class="govuk-button" data-module="govuk-button" form="filter-form">Search</button>
                             </div>
                         </div>
                     </div>
@@ -132,6 +142,25 @@
                     ]
                 }) }}
 
+                {{ govukCheckboxes({
+                    idPrefix: 'showAlerts',
+                    name: 'showAlerts',
+                    classes: "govuk-checkboxes--small",
+                    fieldset: {
+                        legend: {
+                            text: 'Relevant alerts',
+                            classes: 'govuk-fieldset__legend--m'
+                        }
+                    },
+                    items:[
+                        {
+                            value: 'true',
+                            text: 'Include alerts',
+                            checked: true == session.unlockListJourney.showAlerts
+                        }
+                    ]
+                }) }}
+
                 <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
                     Apply filters
                 </button>
@@ -174,55 +203,52 @@
                             }) }}
                         </div>
 
-                        {% set rows = [] %}
-                        {% for item in unlockListItems %}
-                            {% set row = [] %}
-                            {% set row = (row.push(
-                                {
-                                    attributes: { 
-                                        id: 'activity-' + loop.index, 
-                                        "data-sort-value": item.prisonerName | prisonerName(false)
+                        {% if unlockListItems | length > 0 %}
+                            {% set rows = [] %}
+                            {% for item in unlockListItems %}
+                                {% set row = [] %}
+                                {% set row = (row.push(
+                                    {
+                                        attributes: { 
+                                            id: 'activity-' + loop.index, 
+                                            "data-sort-value": item.prisonerName | prisonerName(false)
+                                        },
+                                        html: showProfileLink({
+                                            name: item.prisonerName,
+                                            prisonerNumber: item.prisonerNumber
+                                        }),
+                                        classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
                                     },
-                                    html: showProfileLink({
-                                        name: item.prisonerName,
-                                        prisonerNumber: item.prisonerNumber
-                                    }),
-                                    classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
-                                },
-                                {
-                                    attributes: { id: 'cell-location-' + loop.index },
-                                    text: item.cellLocation,
-                                    classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
-                                },
-                                {
-                                    html: alertsList({ alerts: item.alerts, category: item.category }),
-                                    classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
-                                }
-                            ), row) %}
+                                    {
+                                        attributes: { id: 'cell-location-' + loop.index },
+                                        text: item.cellLocation,
+                                        classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
+                                    }
+                                ), row) %}
 
-                            {% set row = (row.push(
-                                {
-                                    attributes: { 
-                                        id: 'activity-' + loop.index,
-                                        "data-sort-value": (item.events[0].summary) | lower,
-                                        colspan: 4
-                                    },
-                                    html: showUnlockEvents(item.events),
-                                    classes: 'govuk-table__cell govuk-table__cell--vertical-align-top govuk-!-padding-right-0'
-                                }
-                            ), row) %}
+                                {% if session.unlockListJourney.showAlerts %}
+                                    {% set row = (row.push({
+                                        html: alertsList({ alerts: item.alerts, category: item.category }),
+                                        classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
+                                    }), row) %}
+                                {% endif %}
 
-                            {% set rows = (rows.push(row), rows) %}
-                        {% endfor %}
-                        {{ govukTable({
-                            attributes: {
-                                id: 'unlock-list-table',
-                                'data-module': 'moj-sortable-table'
-                            },
-                            caption: "Prisoners",
-                            classes: "fixed-layout-table alternating-row-shading",
-                            captionClasses: "govuk-visually-hidden",
-                            head: [
+                                {% set row = (row.push(
+                                    {
+                                        attributes: { 
+                                            id: 'activity-' + loop.index,
+                                            "data-sort-value": (item.events[0].summary) | lower,
+                                            colspan: 4
+                                        },
+                                        html: showUnlockEvents(item.events),
+                                        classes: 'govuk-table__cell govuk-table__cell--vertical-align-top govuk-!-padding-right-0'
+                                    }
+                                ), row) %}
+
+                                {% set rows = (rows.push(row), rows) %}
+                            {% endfor %}
+
+                            {% set headRows = [
                                 {
                                     text: "Name",
                                     attributes: { "aria-sort": "none" },
@@ -232,20 +258,28 @@
                                     text: "Cell location",
                                     attributes: { "aria-sort": "ascending" },
                                     classes: 'govuk-table__header'
-                                },
-                                {
-                                    text: "Relevant alerts",
-                                    classes: 'govuk-table__header'
-                                },
+                                }
+                            ] %}
+
+                            {% if session.unlockListJourney.showAlerts %}
+                                {% set headRows = (headRows.push(
+                                    {
+                                        text: "Relevant alerts",
+                                        classes: 'govuk-table__header'
+                                    }
+                                ), headRows) %}
+                            {% endif %}
+
+                            {% set headRows = (headRows.push(
                                 {
                                     html: "Event details",
                                     attributes: { "aria-sort": "none", colspan: 4 },
-                                    classes: 'govuk-table__header govuk-!-display-none-print hmpps-width-40-percent'
+                                    classes: 'govuk-table__header govuk-!-display-none-print ' + ('hmpps-width-40-percent' if session.unlockListJourney.showAlerts else 'hmpps-width-50-percent')
                                 },
                                 {
                                     html: "Event details",
                                     attributes: { "aria-sort": "none" },
-                                    classes: 'govuk-table__header print-only hmpps-width-30-percent'
+                                    classes: 'govuk-table__header print-only ' + ('hmpps-width-30-percent' if session.unlockListJourney.showAlerts else 'hmpps-width-40-percent')
                                 },
                                 {
                                     html: "<span><span class=\"text-underline\">R</span>efused</span>",
@@ -259,9 +293,31 @@
                                     html: "<span><span class=\"text-underline\">U</span>nlocked</span>",
                                     classes: 'govuk-table__header hmpps-table__header--angled-table-header checkbox-width print-only'
                                 }
-                            ],
-                            rows: rows
-                        }) }}
+                            ), headRows) %}
+
+                            {{ govukTable({
+                                attributes: {
+                                    id: 'unlock-list-table',
+                                    'data-module': 'moj-sortable-table'
+                                },
+                                caption: "Prisoners",
+                                classes: "fixed-layout-table alternating-row-shading",
+                                captionClasses: "govuk-visually-hidden",
+                                head: headRows,
+                                rows: rows
+                            }) }}
+                        {% elseif session.unlockListJourney.searchTerm %}
+                            {{ govukWarningText({
+                                text: "There are no matching search results.",
+                                iconFallbackText: "Warning",
+                                classes: "govuk-!-margin-top-4"
+                            }) }}
+                            <p class="govuk-body">You can:</p>
+                            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+                                <li>try a different search</li>
+                                <li>check the filters, to make sure the person or event is included</li>
+                            </ul>
+                        {% endif %}
                     </div>
                 </form>
             </div>

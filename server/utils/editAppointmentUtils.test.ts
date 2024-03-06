@@ -20,6 +20,7 @@ import {
   getRepeatFrequencyText,
   getConfirmAppointmentEditCta,
   getAppointmentEditApplyToCta,
+  hasAppointmentLocationChanged,
 } from './editAppointmentUtils'
 import { formatIsoDate } from './datePickerUtils'
 import EventTier from '../enum/eventTiers'
@@ -60,6 +61,10 @@ describe('Edit Appointment Utils', () => {
         } as unknown as AppointmentJourney,
         editAppointmentJourney: {
           numberOfAppointments: 4,
+          location: {
+            id: 1,
+            description: 'Location',
+          },
           appointments: [
             {
               sequenceNumber: 1,
@@ -225,21 +230,50 @@ describe('Edit Appointment Utils', () => {
       )
     })
 
-    it('when changing the location', () => {
-      req.session.editAppointmentJourney.location = {
-        id: 2,
-        description: 'Updated location',
-      }
+    describe('when changing for location messages', () => {
+      beforeEach(() => {
+        req.session.editAppointmentJourney.location = {
+          id: 2,
+          description: 'Updated location',
+        }
+      })
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'change the location for',
-      )
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update location',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update location',
-      )
+      it('then the appointment edit message contains the location change ', () => {
+        expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+          'change the location for',
+        )
+      })
+
+      it('then the confirm appointment edit cta contains the location change ', () => {
+        expect(
+          getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        ).toEqual('Update location')
+      })
+
+      it('then the get appointment edit apply to cta contains the location change ', () => {
+        expect(
+          getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        ).toEqual('Update location')
+      })
+    })
+
+    describe('when checking for location changes', () => {
+      it.each([
+        ['location id changes to in cell', { id: 1 }, undefined, false, true, true],
+        ['location id remains unchanged', { id: 1 }, { id: 1 }, true, false, false],
+        ['location changes from in cell to id', undefined, { id: 1 }, true, false, true],
+        ['location remains in cell', undefined, undefined, true, true, false],
+        ['location remains unchanged', undefined, undefined, undefined, undefined, false],
+      ])('%s', (_, oldLocation, newLocation, oldInCell, newInCell, expected) => {
+        req.session.appointmentJourney.location = !oldLocation ? undefined : { ...oldLocation, description: '' }
+        req.session.editAppointmentJourney.location = !newLocation ? undefined : { ...newLocation, description: '' }
+        req.session.appointmentJourney.inCell = oldInCell
+        req.session.editAppointmentJourney.inCell = newInCell
+
+        expect(hasAppointmentLocationChanged(req.session.appointmentJourney, req.session.editAppointmentJourney)).toBe(
+          expected,
+        )
+      })
     })
 
     it('when changing the start date', () => {

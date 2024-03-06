@@ -11,6 +11,8 @@
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
+{% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
+{% from "partials/splitLine.njk" import splitLine %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = "Waitlist - Dashboard" %}
@@ -152,10 +154,10 @@
                                     text: application.activity.activityName
                                 },
                                 {
-                                    text: application.requestedDate | formatDate('d MMMM yyyy')
+                                    html: splitLine(application.requestedDate, application.requestedBy)
                                 },
                                 {
-                                    text: application.requestedBy
+                                    html: earliestReleaseDate(application.earliestReleaseDate)
                                 },
                                 {
                                     html: waitlistStatusBadge(application.status)
@@ -179,10 +181,10 @@
                                 text: "Activity"
                             },
                             {
-                                text: "Request date"
+                                text: "Request date and requester"
                             },
                             {
-                                text: "Requester"
+                                text: "Release date"
                             },
                             {
                                 text: "Status"

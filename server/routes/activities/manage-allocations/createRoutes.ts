@@ -14,6 +14,7 @@ import EndDateRoutes, { EndDate } from './handlers/endDate'
 import RemoveDateOptionRoutes, { RemoveDateOption } from './handlers/removeDateOption'
 import PayBandRoutes, { PayBand } from './handlers/payBand'
 import ExclusionRoutes, { Schedule } from './handlers/exclusions'
+import AllocationErrorRoutes from './handlers/allocationError'
 
 export default function Index({ activitiesService, prisonService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -33,6 +34,7 @@ export default function Index({ activitiesService, prisonService, metricsService
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const cancelHandler = new CancelRoutes()
   const confirmationHandler = new ConfirmationRoutes(metricsService)
+  const errorHandler = new AllocationErrorRoutes()
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
   get('/before-you-allocate', beforeYouAllocateHandler.GET, true)
@@ -54,6 +56,8 @@ export default function Index({ activitiesService, prisonService, metricsService
   get('/cancel', cancelHandler.GET, true)
   post('/cancel', cancelHandler.POST, ConfirmCancelOptions)
   get('/confirmation', confirmationHandler.GET, true)
+
+  get('/error/:errorType(transferred)', errorHandler.GET, true)
 
   return router
 }

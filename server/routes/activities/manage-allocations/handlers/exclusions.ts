@@ -91,10 +91,6 @@ export default class ExclusionRoutes {
     const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
     const updatedSlots = this.mapBodyToSlots(req.body)
 
-    if (updatedSlots.length === 0) {
-      return res.validationFailed('slots', 'Select at least one session')
-    }
-
     const updatedExclusions = calculateUniqueSlots(slots, updatedSlots)
     req.session.allocateJourney.updatedExclusions = updatedExclusions
 

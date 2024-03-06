@@ -1,13 +1,14 @@
 import { when } from 'jest-when'
 import UserService from './userService'
-import HmppsAuthClient from '../data/hmppsAuthClient'
-import { HmppsAuthUser } from '../@types/hmppsAuth'
+import ManageUsersApiClient from '../data/manageUsersApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonRegisterApiClient from '../data/prisonRegisterApiClient'
 import { Prison } from '../@types/prisonRegisterApiImport/types'
 import { ServiceUser } from '../@types/express'
+import { UserDetails } from '../@types/manageUsersApiImport/types'
+import atLeast from '../../jest.setup'
 
-jest.mock('../data/hmppsAuthClient')
+jest.mock('../data/manageUsersApiClient')
 jest.mock('../data/prisonRegisterApiClient')
 jest.mock('../data/activitiesApiClient')
 jest.mock('jwt-decode', () => ({
@@ -19,18 +20,18 @@ jest.mock('jwt-decode', () => ({
 const user = { authSource: 'nomis' } as Express.User
 
 describe('User service', () => {
-  let hmppsAuthClient: jest.Mocked<HmppsAuthClient>
+  let manageUsersApiClient: jest.Mocked<ManageUsersApiClient>
   let prisonRegisterApiClient: jest.Mocked<PrisonRegisterApiClient>
   let activitiesApiClient: jest.Mocked<ActivitiesApiClient>
   let userService: UserService
 
   beforeEach(() => {
-    hmppsAuthClient = new HmppsAuthClient() as jest.Mocked<HmppsAuthClient>
+    manageUsersApiClient = new ManageUsersApiClient() as jest.Mocked<ManageUsersApiClient>
     prisonRegisterApiClient = new PrisonRegisterApiClient() as jest.Mocked<PrisonRegisterApiClient>
     activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
-    userService = new UserService(hmppsAuthClient, prisonRegisterApiClient, activitiesApiClient)
+    userService = new UserService(manageUsersApiClient, prisonRegisterApiClient, activitiesApiClient)
 
-    when(hmppsAuthClient.getUser).mockResolvedValue({ name: 'john smith', activeCaseLoadId: 'MDI' } as HmppsAuthUser)
+    when(manageUsersApiClient.getUser).mockResolvedValue({ name: 'john smith', activeCaseLoadId: 'MDI' } as UserDetails)
     when(prisonRegisterApiClient.getPrisonInformation).mockResolvedValue({ prisonName: 'HMP Moorland' } as Prison)
     when(activitiesApiClient.getPrisonRolloutPlan).mockResolvedValue({
       prisonCode: 'MDI',
@@ -50,7 +51,7 @@ describe('User service', () => {
       expect(activitiesApiClient.getPrisonRolloutPlan).toHaveBeenCalled()
       expect(prisonRegisterApiClient.getPrisonInformation).toHaveBeenCalled()
 
-      expect(hmppsAuthClient.getUser).toHaveBeenCalled()
+      expect(manageUsersApiClient.getUser).toHaveBeenCalled()
       expect(result.displayName).toEqual('John Smith')
       expect(result.roles).toEqual(['ROLE_ACTIVITY_HUB'])
       expect(result.activeCaseLoadId).toEqual('MDI')
@@ -72,7 +73,7 @@ describe('User service', () => {
       expect(activitiesApiClient.getPrisonRolloutPlan).not.toHaveBeenCalled()
       expect(prisonRegisterApiClient.getPrisonInformation).not.toHaveBeenCalled()
 
-      expect(hmppsAuthClient.getUser).toHaveBeenCalled()
+      expect(manageUsersApiClient.getUser).toHaveBeenCalled()
       expect(result.displayName).toEqual('John Smith')
       expect(result.roles).toEqual(['ROLE_ACTIVITY_HUB'])
       expect(result.activeCaseLoadId).toEqual('MDI')
@@ -94,13 +95,40 @@ describe('User service', () => {
       expect(activitiesApiClient.getPrisonRolloutPlan).toHaveBeenCalled()
       expect(prisonRegisterApiClient.getPrisonInformation).toHaveBeenCalled()
 
-      expect(hmppsAuthClient.getUser).toHaveBeenCalled()
+      expect(manageUsersApiClient.getUser).toHaveBeenCalled()
       expect(result.displayName).toEqual('John Smith')
       expect(result.roles).toEqual(['ROLE_ACTIVITY_HUB'])
       expect(result.activeCaseLoadId).toEqual('MDI')
       expect(result.activeCaseLoadDescription).toEqual('HMP Moorland')
       expect(result.isActivitiesRolledOut).toEqual(true)
       expect(result.isAppointmentsRolledOut).toEqual(true)
+    })
+  })
+
+  describe('getUserMap', () => {
+    it('Retrieves user information for a list of usernames', async () => {
+      const usernames = ['jbloggs', null, undefined, 'jbloggs', 'jsmith']
+
+      when(manageUsersApiClient.getUserByUsername)
+        .calledWith(atLeast('jbloggs'))
+        .mockResolvedValue({ name: 'Joe Bloggs', username: 'jbloggs' } as UserDetails)
+
+      when(manageUsersApiClient.getUserByUsername)
+        .calledWith(atLeast('jsmith'))
+        .mockResolvedValue({ name: 'John Smith', username: 'jsmith' } as UserDetails)
+
+      const result = await userService.getUserMap(usernames, user as ServiceUser)
+
+      expect(result).toEqual(
+        new Map([
+          ['jbloggs', { name: 'Joe Bloggs', username: 'jbloggs' }],
+          ['jsmith', { name: 'John Smith', username: 'jsmith' }],
+        ]),
+      )
+
+      expect(manageUsersApiClient.getUserByUsername).toHaveBeenCalledTimes(2)
+      expect(manageUsersApiClient.getUserByUsername).toHaveBeenCalledWith('jsmith', { authSource: 'nomis' })
+      expect(manageUsersApiClient.getUserByUsername).toHaveBeenCalledWith('jbloggs', { authSource: 'nomis' })
     })
   })
 })

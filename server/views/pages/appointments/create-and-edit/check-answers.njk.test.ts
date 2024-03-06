@@ -88,6 +88,22 @@ describe('Views - Create Appointment - Check Answers', () => {
     expect(getAppointmentDetailsValueElement('Appointment name').text().trim()).toBe('Bible studies (Chaplaincy)')
   })
 
+  it('should display location as in cell', () => {
+    viewContext.session.appointmentJourney.inCell = true
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getSchedulingInformationValueElement('Location').text().trim()).toBe('In cell')
+  })
+
+  it('should display location as internal location', () => {
+    viewContext.session.appointmentJourney.location = { id: 123, description: 'Wing A' }
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getSchedulingInformationValueElement('Location').text().trim()).toBe('Wing A')
+  })
+
   it('should display appointment tier & organiser information', () => {
     $ = cheerio.load(compiledTemplate.render(viewContext))
 

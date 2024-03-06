@@ -8,7 +8,9 @@
 {% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
 
 {% from "pages/appointments/partials/attendee-list.njk" import attendeeList %}
-{% from "pages/appointments/partials/service-user-name.njk" import serviceUserName %}
+{% from "partials/service-user-name.njk" import serviceUserName %}
+
+{% from "partials/appointments/location-text.njk" import locationText %}
 
 {% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
 {% set pageId = 'appointment-details-page' %}
@@ -25,7 +27,7 @@
             {% if appointment.isDeleted %}
                 {% set deletedAppointmentHeadingHtml %}
                     <h3 class="govuk-notification-banner__heading">Appointment deleted</h3>
-                    <p class="govuk-body">This appointment was deleted by {{ appointment.cancelledBy | fullName | toTitleCase | initialiseName }} on {{ appointment.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
+                    <p class="govuk-body">This appointment was deleted by {{ serviceUserName(userMap.get(appointment.cancelledBy)) }} on {{ appointment.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
                 {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',
@@ -34,7 +36,7 @@
             {% elseif appointment.isCancelled %}
                 {% set cancelledAppointmentHeadingHtml %}
                     <h3 class="govuk-notification-banner__heading">Appointment cancelled</h3>
-                    <p class="govuk-body">This appointment was cancelled by {{ appointment.cancelledBy | fullName | toTitleCase | initialiseName }} on {{ appointment.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
+                    <p class="govuk-body">This appointment was cancelled by {{ serviceUserName(userMap.get(appointment.cancelledBy)) }} on {{ appointment.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }}</p>
                 {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',
@@ -158,7 +160,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: appointment.internalLocation.description
+                            text: locationText(appointment)
                         },
                         actions: {
                             items: [
@@ -250,7 +252,7 @@
             <h1 class="govuk-heading-l govuk-!-margin-0">{{ appointment.appointmentName }}</h1>
             <span class="govuk-caption-l">{{ appointment.startDate | toDate | formatDate }}</span>
             <span class="govuk-caption-l">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }}</span>
-            <span class="govuk-caption-l">{{ appointment.internalLocation.description }}</span>
+            <span class="govuk-caption-l">{{ locationText(appointment) }}</span>
             <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ appointment.attendees | length + (" attendee" if appointment.attendees.length == 1 else " attendees") }}</h2>
         </div>
     </div>
@@ -308,7 +310,7 @@
                         text: "Created by"
                     },
                         value: {
-                            text: serviceUserName(appointment.createdBy)
+                            text: serviceUserName(userMap.get(appointment.createdBy))
                         }
                     }, {
                         key: {
@@ -322,7 +324,7 @@
                             text: "Last edited by"
                         },
                         value: {
-                            text: serviceUserName(appointment.updatedBy)
+                            text: serviceUserName(userMap.get(appointment.updatedBy))
                         }
                     } if appointment.updatedBy, {
                         key: {

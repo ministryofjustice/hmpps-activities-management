@@ -7,15 +7,15 @@ orbs:
 parameters:
   alerts-slack-channel:
     type: string
-    default: farsight-alerts
+    default: activities-and-appointments-alerts
 
   releases-slack-channel:
     type: string
-    default: farsight-alerts
+    default: activities-and-appointments-alerts
 
   node-version:
     type: string
-    default: 20.9-browsers
+    default: 20.11-browsers
 
 jobs:
   build:

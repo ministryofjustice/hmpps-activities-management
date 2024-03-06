@@ -69,7 +69,7 @@
         {% set rows = unselectableRows %}
     {% endif %}
 
-    <div class='sticky-select' {% if selectable %} data-module='activities-sticky-select' {% endif %} {% if params.id %} id={{params.id}} {% endif %}>
+    <div class='sticky-select' data-module='activities-sticky-select' {% if params.id %} id={{params.id}} {% endif %}>
         {{ govukTable({
             attributes: {
                 'data-multi-select-checkbox': '#' + selectAllId

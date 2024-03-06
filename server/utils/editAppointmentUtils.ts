@@ -196,11 +196,9 @@ export const getAppointmentApplyToOptions = (req: Request) => {
   const applyToOptions = [
     {
       applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
-      description: `Just this one - ${formatDate(
-        parseIsoDate(appointmentJourney.startDate),
-        'EEEE, d MMMM yyyy',
-      )} (${getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)
-        ?.sequenceNumber} of ${getLastAppointment(editAppointmentJourney)?.sequenceNumber})`,
+      description: `Just this one - ${formatDate(parseIsoDate(appointmentJourney.startDate), 'EEEE, d MMMM yyyy')} (${
+        getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)?.sequenceNumber
+      } of ${getLastAppointment(editAppointmentJourney)?.sequenceNumber})`,
     },
   ] as AppointmentApplyToOption[]
 
@@ -364,7 +362,20 @@ export const hasAppointmentOrganiserChanged = (
 export const hasAppointmentLocationChanged = (
   appointmentJourney: AppointmentJourney,
   editAppointmentJourney: EditAppointmentJourney,
-) => editAppointmentJourney.location && appointmentJourney.location.id !== editAppointmentJourney.location.id
+) => {
+  const oldLocationId = appointmentJourney.location?.id
+  const newLocationId = editAppointmentJourney.location?.id
+  const oldInCell = appointmentJourney.inCell
+  const newInCell = editAppointmentJourney.inCell
+
+  if (newLocationId) {
+    return oldLocationId !== newLocationId
+  }
+  if (newInCell) {
+    return newInCell !== oldInCell
+  }
+  return false
+}
 
 export const hasAppointmentStartDateChanged = (
   appointmentJourney: AppointmentJourney,

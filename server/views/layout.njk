@@ -41,13 +41,14 @@
 {% endblock %}
 
 {% block bodyEnd %}
-  {# Run JavaScript at end of the
-  <body>, to avoid blocking the initial render. #}
+  {# Run JavaScript at end of the <body> to avoid blocking the initial render. #}
   <script nonce="{{ cspNonce }}">
     window.applicationInsightsConnectionString = '{{ applicationInsightsConnectionString }}'
     window.applicationInsightsRoleName = '{{ applicationInsightsRoleName }}'
     window.authenticatedUser = '{{ user.username }}'
   </script>
+  {# Jquery is required by dpr-frontend #}
+  <script src="/assets/jquery.js"></script>
   <script type="module" src="/assets/javascript/activities.min.js"></script>
   {% for js in feComponents.jsIncludes %}
     <script src="{{ js }}" nonce="{{ cspNonce }}"></script>

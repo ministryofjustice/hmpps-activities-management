@@ -1,5 +1,5 @@
 import dataAccess from './index'
-import HmppsAuthClient from './hmppsAuthClient'
+import ManageUsersApiClient from './manageUsersApiClient'
 import PrisonApiClient from './prisonApiClient'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
 import PrisonRegisterApiClient from './prisonRegisterApiClient'
@@ -11,7 +11,7 @@ describe('DataAccess', () => {
   test('The correct rest clients are instantiated', () => {
     const clients = dataAccess()
     expect(Object.values(clients).length).toBe(8)
-    expect(clients.hmppsAuthClient).toBeInstanceOf(HmppsAuthClient)
+    expect(clients.manageUsersApiClient).toBeInstanceOf(ManageUsersApiClient)
     expect(clients.prisonApiClient).toBeInstanceOf(PrisonApiClient)
     expect(clients.prisonerSearchApiClient).toBeInstanceOf(PrisonerSearchApiClient)
     expect(clients.prisonRegisterApiClient).toBeInstanceOf(PrisonRegisterApiClient)

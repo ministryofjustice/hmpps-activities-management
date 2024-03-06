@@ -1,0 +1,29 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - Allocation error" %}
+{% set pageId = 'allocation-error-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <span class="govuk-caption-l">{{ session.allocateJourney.activity.name }}</span>
+            <h1 class="govuk-heading-xl">{{ session.allocateJourney.inmate.prisonerName }} cannot be allocated at the moment</h1>
+
+            {% if errorType == 'transferred'%}
+                <p class="govuk-body">{{ session.allocateJourney.inmate.prisonerName }} is currently active in another prison, so cannot be allocated.</p>
+
+                <p class="govuk-body">You can allocate them to {{ session.allocateJourney.activity.name }} when they are back.</p>
+            {% endif %}
+
+            <form>
+                {{ govukButton({
+                    classes: 'js-backlink',
+                    text: "Return to waitlist applications"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -163,13 +163,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
   })
 
   describe('POST', () => {
-    it('should throw validation error if no slots are selected', async () => {
-      req.body = {}
-      await handler.POST(req, res)
-      expect(res.validationFailed).toHaveBeenCalledWith('slots', 'Select at least one session')
-      expect(activitiesService.updateAllocation).not.toHaveBeenCalled()
-    })
-
     it('should update the exclusions on the allocation and redirect when in create mode', async () => {
       req.params.mode = 'create'
       req.body = {
@@ -245,6 +238,46 @@ describe('Route Handlers - Allocation - Exclusions', () => {
           saturday: true,
           sunday: true,
           daysOfWeek: ['TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
+        },
+      ])
+
+      expect(res.redirect).toHaveBeenCalledWith('confirm-exclusions')
+    })
+
+    it('should allow zero slots to be selected', async () => {
+      req.params.mode = 'edit'
+      req.params.allocationId = '1'
+
+      req.body = {}
+
+      expect(req.session.allocateJourney.updatedExclusions).toHaveLength(0)
+
+      await handler.POST(req, res)
+
+      expect(req.session.allocateJourney.updatedExclusions).toEqual([
+        {
+          weekNumber: 1,
+          timeSlot: 'AM',
+          monday: true,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['MONDAY'],
+        },
+        {
+          weekNumber: 2,
+          timeSlot: 'AM',
+          monday: true,
+          tuesday: true,
+          wednesday: true,
+          thursday: true,
+          friday: true,
+          saturday: true,
+          sunday: true,
+          daysOfWeek: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
         },
       ])
 

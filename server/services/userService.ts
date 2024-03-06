@@ -1,40 +1,50 @@
 import { jwtDecode } from 'jwt-decode'
+import _ from 'lodash'
 import { convertToTitleCase } from '../utils/utils'
-import HmppsAuthClient from '../data/hmppsAuthClient'
+import ManageUsersApiClient from '../data/manageUsersApiClient'
 import { ServiceUser } from '../@types/express'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonRegisterApiClient from '../data/prisonRegisterApiClient'
 import { RolloutPrisonPlan } from '../@types/activitiesAPI/types'
 import { Prison } from '../@types/prisonRegisterApiImport/types'
-import { HmppsAuthUser } from '../@types/hmppsAuth'
+import { UserDetails } from '../@types/manageUsersApiImport/types'
 
 export default class UserService {
   constructor(
-    private readonly hmppsAuthClient: HmppsAuthClient,
+    private readonly manageUsersApiClient: ManageUsersApiClient,
     private readonly prisonRegisterApiClient: PrisonRegisterApiClient,
     private readonly activitiesApiClient: ActivitiesApiClient,
   ) {}
 
   async getUser(user: Express.User, userInSession: ServiceUser): Promise<ServiceUser> {
-    const hmppsAuthUser = await this.hmppsAuthClient.getUser(user)
+    const userDetails = await this.manageUsersApiClient.getUser(user)
     const { authorities: roles = [] } = jwtDecode(user.token) as { authorities?: string[] }
 
     const updatedActiveCaseLoadInformation =
-      hmppsAuthUser.activeCaseLoadId !== userInSession?.activeCaseLoadId
-        ? await this.fetchActiveCaseLoadInformation(hmppsAuthUser)
+      userDetails.activeCaseLoadId !== userInSession?.activeCaseLoadId
+        ? await this.fetchActiveCaseLoadInformation(userDetails)
         : undefined
 
     return {
       ...userInSession,
       ...user,
-      ...hmppsAuthUser,
+      ...userDetails,
       ...updatedActiveCaseLoadInformation,
       roles,
-      displayName: convertToTitleCase(hmppsAuthUser.name),
+      displayName: convertToTitleCase(userDetails.name),
     }
   }
 
-  private fetchActiveCaseLoadInformation = async (user: HmppsAuthUser) => {
+  async getUserMap(usernames: string[], user: ServiceUser): Promise<Map<string, UserDetails>> {
+    const users = await Promise.all(
+      _.uniq(usernames)
+        .filter(Boolean)
+        .map(u => this.manageUsersApiClient.getUserByUsername(u, user)),
+    )
+    return new Map(users.map(u => [u.username, u]))
+  }
+
+  private fetchActiveCaseLoadInformation = async (user: UserDetails) => {
     const [rolloutPlan, activePrisonInformation]: [RolloutPrisonPlan, Prison] = await Promise.all([
       this.activitiesApiClient.getPrisonRolloutPlan(user.activeCaseLoadId),
       this.prisonRegisterApiClient.getPrisonInformation(user.activeCaseLoadId, user as ServiceUser),

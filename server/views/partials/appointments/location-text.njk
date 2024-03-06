@@ -1,0 +1,7 @@
+{% macro locationText(appointment) %}
+    {% if appointment.inCell %}
+        {{ "In cell" }}
+    {% else %}
+        {{ appointment.internalLocation.description }}
+    {% endif %}
+{% endmacro %}

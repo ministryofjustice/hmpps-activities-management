@@ -4,13 +4,16 @@ import AppointmentAttendanceRoutes from './appointmentAttendance'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentDetails, AppointmentAttendeeSummary } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
+import UserService from '../../../../services/userService'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/userService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const userService = new UserService(null, null, null) as jest.Mocked<UserService>
 
 describe('Route Handlers - Record Appointment Attendance', () => {
-  const handler = new AppointmentAttendanceRoutes(activitiesService)
+  const handler = new AppointmentAttendanceRoutes(activitiesService, userService)
   let req: Request
   let res: Response
 

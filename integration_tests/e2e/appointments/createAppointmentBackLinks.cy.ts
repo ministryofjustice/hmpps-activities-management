@@ -88,6 +88,7 @@ context('Create group appointment - back links', () => {
     hostPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
+    locationPage.selectSearchForLocation()
     locationPage.selectLocation('Chapel')
     locationPage.continue()
 
@@ -122,6 +123,7 @@ context('Create group appointment - back links', () => {
 
     dateAndTimePage.back()
     Page.verifyOnPage(LocationPage)
+    locationPage.selectSearchForLocation()
     locationPage.assertSelectedLocation('Chapel')
 
     locationPage.back()

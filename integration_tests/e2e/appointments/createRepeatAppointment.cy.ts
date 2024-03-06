@@ -73,14 +73,18 @@ context('Create group appointment', () => {
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
     cy.stubEndpoint('GET', '/appointment-series/10/details', getRepeatGroupAppointmentSeriesDetails)
     cy.stubEndpoint('GET', '/appointments/11/details', getRepeatGroupAppointment1Details)
+    cy.stubEndpoint('GET', '/users/jsmith', JSON.parse('{"name": "John Smith", "username": "jsmith"}'))
   })
 
   it('Should complete create group appointment journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.appointmentsManagementCard().should('contain.text', 'Schedule and edit appointments')
+    indexPage.appointmentsManagementCard().should('contain.text', 'Appointments scheduling and attendance')
     indexPage
       .appointmentsManagementCard()
-      .should('contain.text', 'Create and manage appointments. Print movement slips.')
+      .should(
+        'contain.text',
+        'Create, manage and edit appointments. Print movement slips. Record appointment attendance.',
+      )
     indexPage.appointmentsManagementCard().click()
 
     const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
@@ -134,6 +138,7 @@ context('Create group appointment', () => {
     hostPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
+    locationPage.selectSearchForLocation()
     locationPage.selectLocation('Chapel')
     locationPage.continue()
 

@@ -2,6 +2,7 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/service-user-name.njk" import serviceUserName %}
 
 {% set pageTitle = "Activities Management - Record Attendance" %}
 {% set pageId = 'attendance-view-details-page' %}
@@ -113,7 +114,7 @@
          text: "Reset by" if attendance.status === 'WAITING' else "Recorded by"
         },
         value: {
-         text: attendance.recordedBy
+         text: serviceUserName(userMap.get(attendance.recordedBy))
         }
     },
     {
@@ -240,7 +241,7 @@
                                  text: "Recorded by"
                                 },
                                 value: {
-                                 text: attendanceHistory.recordedBy
+                                 text: serviceUserName(userMap.get(attendanceHistory.recordedBy))
                                 }
                             }, {
                                 key: {
