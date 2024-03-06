@@ -59,7 +59,7 @@ describe('Route Handlers - Suspended prisoners list', () => {
         sessionDate: '2022-10-10',
         timeSlot: 'AM',
         status: 'COMPLETED',
-        attendanceReasonCode: 'SUSPENDED',
+        attendanceReasonCode: 'AUTO_SUSPENDED',
         issuePayment: false,
         prisonerNumber: 'ABC123',
         scheduledInstanceId: 2,

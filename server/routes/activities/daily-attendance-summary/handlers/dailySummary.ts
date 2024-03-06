@@ -172,7 +172,10 @@ export default class DailySummaryRoutes {
             totalUnpaidRest.DAY += 1
             totalUnpaidRest[attendance.timeSlot] += 1
           }
-          if (attendance.attendanceReasonCode === AttendanceReason.SUSPENDED) {
+          if (
+            attendance.attendanceReasonCode === AttendanceReason.SUSPENDED ||
+            attendance.attendanceReasonCode === AttendanceReason.AUTO_SUSPENDED
+          ) {
             totalUnpaidSuspended.DAY += 1
             totalUnpaidSuspended[attendance.timeSlot] += 1
           }
@@ -211,7 +214,11 @@ export default class DailySummaryRoutes {
 
   private getSuspendedPrisonerCount = (attendances: AllAttendance[]) => {
     const suspendedPrisoners = _.uniqWith(
-      attendances.filter(a => a.attendanceReasonCode === AttendanceReason.SUSPENDED),
+      attendances.filter(
+        a =>
+          a.attendanceReasonCode === AttendanceReason.SUSPENDED ||
+          a.attendanceReasonCode === AttendanceReason.AUTO_SUSPENDED,
+      ),
       (a, b) => a.prisonerNumber === b.prisonerNumber && a.timeSlot === b.timeSlot,
     )
 

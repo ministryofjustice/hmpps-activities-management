@@ -1779,6 +1779,34 @@ export interface components {
        */
       identifiers: number[]
     }
+    /** @description Describes an event to be published to the domain events SNS topic */
+    PublishEventUtilityModel: {
+      /**
+       * @description The outbound event to be published
+       * @enum {string}
+       */
+      outboundEvent:
+        | 'ACTIVITY_SCHEDULE_CREATED'
+        | 'ACTIVITY_SCHEDULE_UPDATED'
+        | 'ACTIVITY_SCHEDULED_INSTANCE_AMENDED'
+        | 'PRISONER_ALLOCATED'
+        | 'PRISONER_ALLOCATION_AMENDED'
+        | 'PRISONER_ATTENDANCE_CREATED'
+        | 'PRISONER_ATTENDANCE_AMENDED'
+        | 'PRISONER_ATTENDANCE_EXPIRED'
+        | 'APPOINTMENT_INSTANCE_CREATED'
+        | 'APPOINTMENT_INSTANCE_UPDATED'
+        | 'APPOINTMENT_INSTANCE_DELETED'
+        | 'APPOINTMENT_INSTANCE_CANCELLED'
+      /**
+       * @description A list of entity identifiers to be published with the event
+       * @example [
+       *   1,
+       *   2
+       * ]
+       */
+      identifiers: number[]
+    }
     /** @description The prisoner allocation request details */
     PrisonerAllocationRequest: {
       /**
@@ -2001,6 +2029,11 @@ export interface components {
        * @example false
        */
       suspended: boolean
+      /**
+       * @description Set to true if this prisoner is auto-suspended for this event (only applies to activities)
+       * @example false
+       */
+      autoSuspended: boolean
       /**
        * @description The prisoner number
        * @example GF10101
@@ -5529,6 +5562,11 @@ export interface components {
        * @example false
        */
       suspended: boolean
+      /**
+       * @description Set to true if this prisoner is auto-suspended from the scheduled event
+       * @example false
+       */
+      autoSuspended: boolean
     }
     /** @description Attendance summary details */
     AttendanceSummaryDetails: {
