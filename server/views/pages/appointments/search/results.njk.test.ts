@@ -103,9 +103,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
             code: 'TEST2',
             description: 'Test Category 2',
           },
-          internalLocation: {
-            description: 'Test Location 2',
-          },
+          inCell: true,
           startDate: '2022-12-01',
           startTime: '13:00',
           endTime: '14:30',
@@ -174,7 +172,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
 
     expect($('[data-qa=result-time-1]').text().trim()).toEqual('13:00 to 14:30')
     expect($('[data-qa=result-appointment-name-1]').text().trim()).toEqual('Test appointment name 2 (Test Category 2)')
-    expect($('[data-qa=result-location-1]').text().trim()).toEqual('Test Location 2')
+    expect($('[data-qa=result-location-1]').text().trim()).toEqual('In cell')
     expect($('[data-qa=result-prisoner-count-1]').text().trim()).toEqual('3')
     expect($('[data-qa=result-sequence-number-1]').text().trim()).toEqual('2 of 6')
     expect($('[data-qa=view-and-edit-result-1] > a').text()).toContain('View')

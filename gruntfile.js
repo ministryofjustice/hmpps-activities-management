@@ -82,7 +82,7 @@ module.exports = grunt => {
           {
             expand: true,
             cwd: 'server/views',
-            src: ['./**/*'],
+            src: ['./**/*.njk'],
             dest: 'dist/server/views/',
           },
         ],
