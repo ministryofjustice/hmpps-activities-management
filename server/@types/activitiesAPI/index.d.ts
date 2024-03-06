@@ -37,27 +37,6 @@ export interface paths {
      */
     put: operations['cancelScheduledInstance']
   }
-  '/queue-admin/retry-dlq/{dlqName}': {
-    /**
-     * @description
-     *
-     * Requires one of the following roles:
-     * * ACTIVITY_QUEUE_ADMIN
-     */
-    put: operations['retryDlq']
-  }
-  '/queue-admin/retry-all-dlqs': {
-    put: operations['retryAllDlqs']
-  }
-  '/queue-admin/purge-queue/{queueName}': {
-    /**
-     * @description
-     *
-     * Requires one of the following roles:
-     * * ACTIVITY_QUEUE_ADMIN
-     */
-    put: operations['purgeQueue']
-  }
   '/attendances': {
     /**
      * Updates attendance records.
@@ -571,15 +550,6 @@ export interface paths {
      */
     get: operations['getPrisonByCode']
   }
-  '/queue-admin/get-dlq-messages/{dlqName}': {
-    /**
-     * @description
-     *
-     * Requires one of the following roles:
-     * * ACTIVITY_QUEUE_ADMIN
-     */
-    get: operations['getDlqMessages']
-  }
   '/prisons/{prisonCode}/scheduled-instances': {
     /**
      * Get a list of scheduled instances for a prison, date range (max 3 months) and time slot (AM, PM or ED - optional)
@@ -1050,21 +1020,6 @@ export interface components {
        * @example Resume tomorrow
        */
       comment?: string
-    }
-    DlqMessage: {
-      body: {
-        [key: string]: Record<string, never>
-      }
-      messageId: string
-    }
-    RetryDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-      messages: components['schemas']['DlqMessage'][]
-    }
-    PurgeQueueResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
     }
     /** @description Request object for updating an attendance record */
     AttendanceUpdateRequest: {
@@ -1619,22 +1574,41 @@ export interface components {
        */
       status?: ('PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED')[]
     }
+    /** @description Summary of a prisoner's sentence and resulting earliest release date */
+    EarliestReleaseDate: {
+      /**
+       * Format: date
+       * @description The prisoner's earliest release date
+       * @example 2027-09-20
+       */
+      releaseDate?: string
+      /** @description The prisoner's earliest release date is the tariff date */
+      isTariffDate: boolean
+      /** @description The prisoner's sentence is indeterminate */
+      isIndeterminateSentence: boolean
+      /** @description The prisoner is an immigration detainee */
+      isImmigrationDetainee: boolean
+      /** @description The prisoner is convicted and unsentenced */
+      isConvictedUnsentenced: boolean
+      /** @description The prisoner is on remand */
+      isRemand: boolean
+    }
     PageableObject: {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
+      paged?: boolean
+      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
-      paged?: boolean
-      unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -1643,9 +1617,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
@@ -1747,6 +1721,63 @@ export interface components {
        * @example Jane Doe
        */
       updatedBy?: string
+      earliestReleaseDate: components['schemas']['EarliestReleaseDate']
+    }
+    /** @description Describes an event to be published to the domain events SNS topic */
+    PublishEventUtilityModel: {
+      /**
+       * @description The outbound event to be published
+       * @enum {string}
+       */
+      outboundEvent:
+        | 'ACTIVITY_SCHEDULE_CREATED'
+        | 'ACTIVITY_SCHEDULE_UPDATED'
+        | 'ACTIVITY_SCHEDULED_INSTANCE_AMENDED'
+        | 'PRISONER_ALLOCATED'
+        | 'PRISONER_ALLOCATION_AMENDED'
+        | 'PRISONER_ATTENDANCE_CREATED'
+        | 'PRISONER_ATTENDANCE_AMENDED'
+        | 'PRISONER_ATTENDANCE_EXPIRED'
+        | 'APPOINTMENT_INSTANCE_CREATED'
+        | 'APPOINTMENT_INSTANCE_UPDATED'
+        | 'APPOINTMENT_INSTANCE_DELETED'
+        | 'APPOINTMENT_INSTANCE_CANCELLED'
+      /**
+       * @description A list of entity identifiers to be published with the event
+       * @example [
+       *   1,
+       *   2
+       * ]
+       */
+      identifiers: number[]
+    }
+    /** @description Describes an event to be published to the domain events SNS topic */
+    PublishEventUtilityModel: {
+      /**
+       * @description The outbound event to be published
+       * @enum {string}
+       */
+      outboundEvent:
+        | 'ACTIVITY_SCHEDULE_CREATED'
+        | 'ACTIVITY_SCHEDULE_UPDATED'
+        | 'ACTIVITY_SCHEDULED_INSTANCE_AMENDED'
+        | 'PRISONER_ALLOCATED'
+        | 'PRISONER_ALLOCATION_AMENDED'
+        | 'PRISONER_ATTENDANCE_CREATED'
+        | 'PRISONER_ATTENDANCE_AMENDED'
+        | 'PRISONER_ATTENDANCE_EXPIRED'
+        | 'APPOINTMENT_INSTANCE_CREATED'
+        | 'APPOINTMENT_INSTANCE_UPDATED'
+        | 'APPOINTMENT_INSTANCE_DELETED'
+        | 'APPOINTMENT_INSTANCE_CANCELLED'
+      /**
+       * @description A list of entity identifiers to be published with the event
+       * @example [
+       *   1,
+       *   2
+       * ]
+       */
+      identifiers: number[]
     }
     /** @description Describes an event to be published to the domain events SNS topic */
     PublishEventUtilityModel: {
@@ -2183,25 +2214,6 @@ export interface components {
        * @example Released from prison
        */
       description: string
-    }
-    /** @description Summary of a prisoner's sentence and resulting earliest release date */
-    EarliestReleaseDate: {
-      /**
-       * Format: date
-       * @description The prisoner's earliest release date
-       * @example 2027-09-20
-       */
-      releaseDate?: string
-      /** @description The prisoner's earliest release date is the tariff date */
-      isTariffDate: boolean
-      /** @description The prisoner's sentence is indeterminate */
-      isIndeterminateSentence: boolean
-      /** @description The prisoner is an immigration detainee */
-      isImmigrationDetainee: boolean
-      /** @description The prisoner is convicted and unsentenced */
-      isConvictedUnsentenced: boolean
-      /** @description The prisoner is on remand */
-      isRemand: boolean
     }
     /** @description Describes one instance of a planned deallocation */
     PlannedDeallocation: {
@@ -5375,10 +5387,10 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -5387,9 +5399,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Describes one instance of an activity schedule */
@@ -5696,13 +5708,6 @@ export interface components {
        * @example 2022-09-30
        */
       appointmentsRolloutDate?: string
-    }
-    GetDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-      /** Format: int32 */
-      messagesReturnedCount: number
-      messages: components['schemas']['DlqMessage'][]
     }
     /** @description Summarises an activity */
     ActivitySummary: {
@@ -6166,7 +6171,14 @@ export interface components {
        *     recent date and time it was recorded. A null value means that the prisoner's attendance has not been recorded yet.
        */
       attendanceRecordedTime?: string
-      attendanceRecordedBy?: components['schemas']['UserSummary']
+      /**
+       * @description
+       *     The username of the user that last recorded attendance. Note that attendance records can be updated and this is the
+       *     most recent user that marked attendance. A null value means that the prisoner's attendance has not been recorded yet.
+       *
+       * @example AAA01U
+       */
+      attendanceRecordedBy?: string
     }
     /**
      * @description
@@ -6272,7 +6284,11 @@ export interface components {
        * @description The date and time this appointment was created. Will not change
        */
       createdTime: string
-      createdBy: components['schemas']['UserSummary']
+      /**
+       * @description
+       *     The username of the user that created this appointment
+       */
+      createdBy: string
       /**
        * @description
        *     Indicates that this appointment has been independently changed from the original state it was in when
@@ -6288,7 +6304,12 @@ export interface components {
        *     Will be null if this appointment has not been altered since it was created
        */
       updatedTime?: string
-      updatedBy?: components['schemas']['UserSummary']
+      /**
+       * @description
+       *     The username of the user that last edited this appointment.
+       *     Will be null if this appointment has not been altered since it was created
+       */
+      updatedBy?: string
       /**
        * @description
        *     Indicates that this appointment has been cancelled
@@ -6310,7 +6331,12 @@ export interface components {
        *     Will be null if this appointment has not been cancelled
        */
       cancelledTime?: string
-      cancelledBy?: components['schemas']['UserSummary']
+      /**
+       * @description
+       *     The username of the user who cancelled this appointment.
+       *     Will be null if this appointment has not been cancelled
+       */
+      cancelledBy?: string
     }
     /**
      * @description
@@ -6418,34 +6444,6 @@ export interface components {
     }
     /**
      * @description
-     *     The summary of the user that last edited one or more appointments in this series.
-     *     Will be null if no appointments in the series have been altered since they were created
-     */
-    UserSummary: {
-      /**
-       * Format: int64
-       * @description The NOMIS STAFF_MEMBERS.STAFF_ID value for mapping to NOMIS.
-       * @example 36
-       */
-      id: number
-      /**
-       * @description The NOMIS STAFF_USER_ACCOUNTS.USERNAME value for mapping to NOMIS
-       * @example AAA01U
-       */
-      username: string
-      /**
-       * @description The user's first name
-       * @example Alice
-       */
-      firstName: string
-      /**
-       * @description The user's last name
-       * @example Akbar
-       */
-      lastName: string
-    }
-    /**
-     * @description
      *   Described on the UI as an "Appointment set" or "set of back-to-back appointments".
      *   Contains the full details of the initial property values common to all appointments in the set for display purposes.
      *   The properties at this level cannot be changed via the API.
@@ -6498,7 +6496,11 @@ export interface components {
        * @description The date and time this appointment set was created. Will not change
        */
       createdTime: string
-      createdBy: components['schemas']['UserSummary']
+      /**
+       * @description
+       *     The username of the user that created this appointment set
+       */
+      createdBy: string
       /**
        * Format: date-time
        * @description
@@ -6506,7 +6508,12 @@ export interface components {
        *     Will be null if no appointments in the set have been altered since they were created
        */
       updatedTime?: string
-      updatedBy?: components['schemas']['UserSummary']
+      /**
+       * @description
+       *     The username of the user that last edited one or more appointments in this set.
+       *     Will be null if no appointments in the set have been altered since they were created
+       */
+      updatedBy?: string
     }
     /**
      * @description
@@ -6597,7 +6604,11 @@ export interface components {
        * @description The date and time this appointment series was created. Will not change
        */
       createdTime: string
-      createdBy: components['schemas']['UserSummary']
+      /**
+       * @description
+       *     The username of the user that created this appointment series
+       */
+      createdBy: string
       /**
        * Format: date-time
        * @description
@@ -6605,7 +6616,12 @@ export interface components {
        *     Will be null if no appointments in the series have been altered since they were created
        */
       updatedTime?: string
-      updatedBy?: components['schemas']['UserSummary']
+      /**
+       * @description
+       *     The username of the user that last edited one or more appointments in this series.
+       *     Will be null if no appointments in the series have been altered since they were created
+       */
+      updatedBy?: string
       /**
        * @description
        *     Summary of the individual appointment or appointments in this series both expired and scheduled.
@@ -6896,58 +6912,6 @@ export interface operations {
       404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * @description
-   *
-   * Requires one of the following roles:
-   * * ACTIVITY_QUEUE_ADMIN
-   */
-  retryDlq: {
-    parameters: {
-      path: {
-        dlqName: string
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['RetryDlqResult']
-        }
-      }
-    }
-  }
-  retryAllDlqs: {
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['RetryDlqResult'][]
-        }
-      }
-    }
-  }
-  /**
-   * @description
-   *
-   * Requires one of the following roles:
-   * * ACTIVITY_QUEUE_ADMIN
-   */
-  purgeQueue: {
-    parameters: {
-      path: {
-        queueName: string
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['PurgeQueueResult']
         }
       }
     }
@@ -9012,30 +8976,6 @@ export interface operations {
       403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  /**
-   * @description
-   *
-   * Requires one of the following roles:
-   * * ACTIVITY_QUEUE_ADMIN
-   */
-  getDlqMessages: {
-    parameters: {
-      query?: {
-        maxMessages?: number
-      }
-      path: {
-        dlqName: string
-      }
-    }
-    responses: {
-      /** @description OK */
-      200: {
-        content: {
-          '*/*': components['schemas']['GetDlqResult']
         }
       }
     }

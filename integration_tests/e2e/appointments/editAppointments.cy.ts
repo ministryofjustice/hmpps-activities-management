@@ -36,6 +36,7 @@ context('Edit appointment', () => {
       getScheduledEvents,
     )
     cy.stubEndpoint('PATCH', '/appointments/12')
+    cy.stubEndpoint('GET', '/users/jsmith', JSON.parse('{"name": "John Smith", "username": "jsmith"}'))
 
     cy.visit('/appointments/12')
   })

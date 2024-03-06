@@ -73,6 +73,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
     cy.stubEndpoint('GET', '/appointment-series/10/details', getRepeatGroupAppointmentSeriesDetails)
     cy.stubEndpoint('GET', '/appointments/11/details', getRepeatGroupAppointment1Details)
+    cy.stubEndpoint('GET', '/users/jsmith', JSON.parse('{"name": "John Smith", "username": "jsmith"}'))
   })
 
   it('Should complete create group appointment journey', () => {

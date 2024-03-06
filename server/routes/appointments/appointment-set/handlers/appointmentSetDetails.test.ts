@@ -1,9 +1,17 @@
 import { Request, Response } from 'express'
+import { when } from 'jest-when'
 import AppointmentSetDetailsRoutes from './appointmentSetDetails'
 import { AppointmentDetails, AppointmentSetDetails } from '../../../../@types/activitiesAPI/types'
+import UserService from '../../../../services/userService'
+import atLeast from '../../../../../jest.setup'
+import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
+
+jest.mock('../../../../services/userService')
+
+const userService = new UserService(null, null, null) as jest.Mocked<UserService>
 
 describe('Route Handlers - Appointment Set Details', () => {
-  const handler = new AppointmentSetDetailsRoutes()
+  const handler = new AppointmentSetDetailsRoutes(userService)
   let req: Request
   let res: Response
 
@@ -24,8 +32,13 @@ describe('Route Handlers - Appointment Set Details', () => {
       },
       appointmentSet: {
         appointments: [],
+        createdBy: 'joebloggs',
       } as unknown as AppointmentSetDetails,
     } as unknown as Request
+
+    when(userService.getUserMap)
+      .calledWith(atLeast(['joebloggs']))
+      .mockResolvedValue(new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>)
   })
 
   afterEach(() => {
@@ -39,6 +52,7 @@ describe('Route Handlers - Appointment Set Details', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-set/details', {
         appointmentSet: req.appointmentSet,
         showPrintMovementSlipsLink: false,
+        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
       })
     })
 
@@ -63,6 +77,7 @@ describe('Route Handlers - Appointment Set Details', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-set/details', {
         appointmentSet: req.appointmentSet,
         showPrintMovementSlipsLink: true,
+        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
       })
     })
 
@@ -87,6 +102,7 @@ describe('Route Handlers - Appointment Set Details', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-set/details', {
         appointmentSet: req.appointmentSet,
         showPrintMovementSlipsLink: false,
+        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
       })
     })
   })

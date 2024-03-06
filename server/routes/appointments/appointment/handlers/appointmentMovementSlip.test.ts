@@ -38,10 +38,7 @@ describe('Route Handlers - Movement Slip', () => {
     isEdited: false,
     isCancelled: false,
     createdTime: '2023-02-17T10:22:04',
-    createdBy: {
-      firstName: 'John',
-      lastName: 'Smith',
-    },
+    createdBy: 'jsmith',
     updatedTime: null,
     updatedBy: null,
     attendees: [{ prisoner: { prisonerNumber: 'A1350DZ' } }],

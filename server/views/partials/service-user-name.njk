@@ -2,6 +2,6 @@
   {% if user.username == 'PRISONER_MANAGER_API' %}
     DPS user
   {% else %}
-    {{ user | fullName | toTitleCase | initialiseName or "Unknown user" }}
+    {{ user.name | toTitleCase | initialiseName or "Unknown user" }}
   {% endif %}
 {% endmacro %}

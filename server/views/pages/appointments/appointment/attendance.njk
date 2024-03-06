@@ -3,6 +3,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "components/sticky-select.njk" import stickySelect %}
+{% from "partials/service-user-name.njk" import serviceUserName %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "partials/appointments/location-text.njk" import locationText %}
@@ -11,7 +12,7 @@
 {% set pageId = 'appointment-attendance-page' %}
 {% set jsBackLink = true %}
 
-{% macro attendanceTag(attendance) %}
+{% macro attendanceTag(attendance, userMap) %}
     {% if attendance.attended === null %}
         Not recorded yet
     {% else %}
@@ -21,7 +22,7 @@
             {{ govukTag({ text: 'Did not attend', classes: 'govuk-tag--red' }) }}
         {% endif %}
         <div class='govuk-hint govuk-!-margin-0'>
-            {{ 'Recorded by ' + attendance.attendanceRecordedBy | fullName | toTitleCase | initialiseName + ' at ' + attendance.attendanceRecordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}
+            {{ 'Recorded by ' + serviceUserName(userMap.get(attendance.attendanceRecordedBy)) + ' at ' + attendance.attendanceRecordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}
         </div>
     {% endif %}
 {% endmacro %}
@@ -86,7 +87,7 @@
                     }
                 },
                 {
-                    html: attendanceTag(attendee),
+                    html: attendanceTag(attendee, userMap),
                     attributes: {
                         'data-qa': 'prisoner-' + loop.index + '-attendance'
                     }
