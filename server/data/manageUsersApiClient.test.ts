@@ -34,4 +34,17 @@ describe('manageUsersApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('getUserByUsername', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+
+      fakeManageUsersApi.get('/users/jbloggs').matchHeader('authorization', `Bearer token-1`).reply(200, response)
+
+      const output = await manageUsersApiClient.getUserByUsername('jbloggs', user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

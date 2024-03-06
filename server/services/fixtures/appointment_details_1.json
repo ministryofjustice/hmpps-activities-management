@@ -24,12 +24,7 @@
   "isEdited": false,
   "isCancelled": false,
   "createdTime": "2023-02-20T10:00:00",
-  "createdBy": {
-    "id": 486797,
-    "username": "AAA01U",
-    "firstName": "TEST",
-    "lastName": "USER"
-  },
+  "createdBy": "TEST USER",
   "updatedTime": null,
   "updatedBy": null,
   "attendees": [

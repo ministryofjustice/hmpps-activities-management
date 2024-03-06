@@ -3,6 +3,7 @@ import { Expose, Transform } from 'class-transformer'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import UserService from '../../../../services/userService'
 
 export class AppointmentAttendance {
   @Expose()
@@ -12,13 +13,21 @@ export class AppointmentAttendance {
 }
 
 export default class AppointmentAttendanceRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly userService: UserService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointment } = req
+    const { user } = res.locals
+
+    const recordedBy = appointment.attendees.map(a => a.attendanceRecordedBy).filter(Boolean)
+    const userMap = await this.userService.getUserMap(recordedBy, user)
 
     res.render('pages/appointments/appointment/attendance', {
       appointment,
+      userMap,
       attendanceSummary: this.getAttendanceSummary(appointment),
     })
   }

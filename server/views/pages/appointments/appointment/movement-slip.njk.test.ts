@@ -58,10 +58,7 @@ describe('Views - Appointments Management - Appointment Movement Slip', () => {
       isEdited: false,
       isCancelled: false,
       createdTime: '2023-02-17T10:22:04',
-      createdBy: {
-        firstName: 'John',
-        lastName: 'Smith',
-      },
+      createdBy: 'JSMITH',
       updatedTime: null,
       updatedBy: null,
     } as AppointmentDetails
