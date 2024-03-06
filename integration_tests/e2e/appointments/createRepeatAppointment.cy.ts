@@ -29,8 +29,6 @@ import ExtraInformationPage from '../../pages/appointments/create-and-edit/extra
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
-import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlerts.json'
-import ReviewPrisonerAlertsPage from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -75,7 +73,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
     cy.stubEndpoint('GET', '/appointment-series/10/details', getRepeatGroupAppointmentSeriesDetails)
     cy.stubEndpoint('GET', '/appointments/11/details', getRepeatGroupAppointment1Details)
-    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts?', getOffenderAlerts)
+    cy.stubEndpoint('GET', '/users/jsmith', JSON.parse('{"name": "John Smith", "username": "jsmith"}'))
   })
 
   it('Should complete create group appointment journey', () => {
@@ -126,16 +124,6 @@ context('Create group appointment', () => {
     reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Jacobson, Lee')
     reviewPrisonersPage.continue()
-
-    const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
-    reviewPrisonerAlertsPage.assertPrisonerInList('Lee Jacobson')
-    reviewPrisonerAlertsPage.assertAlertInList(
-      'Arsonist',
-      'No 1 to 1 with this prisoner',
-      'Terrorism Act or Related Offence',
-    )
-    reviewPrisonerAlertsPage.assertBadgesInList('Arsonist', 'TACT', 'No one-to-one')
-    reviewPrisonerAlertsPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)
     namePage.selectCategory('Chaplaincy')
