@@ -1,11 +1,19 @@
 import { Request, Response } from 'express'
 import { addHours, subMinutes } from 'date-fns'
+import { when } from 'jest-when'
 import AppointmentSeriesDetailsRoutes from './appointmentSeriesDetails'
 import { AppointmentSeriesDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
+import UserService from '../../../../services/userService'
+import atLeast from '../../../../../jest.setup'
+import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
+
+jest.mock('../../../../services/userService')
+
+const userService = new UserService(null, null, null) as jest.Mocked<UserService>
 
 describe('Route Handlers - Appointment Series Details', () => {
-  const handler = new AppointmentSeriesDetailsRoutes()
+  const handler = new AppointmentSeriesDetailsRoutes(userService)
   let req: Request
   let res: Response
 
@@ -35,8 +43,13 @@ describe('Route Handlers - Appointment Series Details', () => {
             sequenceNumber: 2,
           },
         ],
+        createdBy: 'joebloggs',
       } as unknown as AppointmentSeriesDetails,
     } as unknown as Request
+
+    when(userService.getUserMap)
+      .calledWith(atLeast(['joebloggs']))
+      .mockResolvedValue(new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>)
   })
 
   afterEach(() => {
@@ -49,6 +62,7 @@ describe('Route Handlers - Appointment Series Details', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-series/details', {
         appointmentSeries: req.appointmentSeries,
+        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
       })
     })
 
@@ -66,6 +80,7 @@ describe('Route Handlers - Appointment Series Details', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment-series/details', {
         appointmentSeries: req.appointmentSeries,
+        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
       })
     })
   })

@@ -29,12 +29,7 @@
   "isCancelled": false,
   "isExpired": false,
   "createdTime": "2023-02-20T10:00:00",
-  "createdBy": {
-    "id": 231232,
-    "username": "USER1",
-    "firstName": "john",
-    "lastName": "smith"
-  },
+  "createdBy": "jsmith",
   "updatedTime": null,
   "updatedBy": null,
   "attendees": [

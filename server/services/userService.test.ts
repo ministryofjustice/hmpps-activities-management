@@ -6,6 +6,7 @@ import PrisonRegisterApiClient from '../data/prisonRegisterApiClient'
 import { Prison } from '../@types/prisonRegisterApiImport/types'
 import { ServiceUser } from '../@types/express'
 import { UserDetails } from '../@types/manageUsersApiImport/types'
+import atLeast from '../../jest.setup'
 
 jest.mock('../data/manageUsersApiClient')
 jest.mock('../data/prisonRegisterApiClient')
@@ -101,6 +102,33 @@ describe('User service', () => {
       expect(result.activeCaseLoadDescription).toEqual('HMP Moorland')
       expect(result.isActivitiesRolledOut).toEqual(true)
       expect(result.isAppointmentsRolledOut).toEqual(true)
+    })
+  })
+
+  describe('getUserMap', () => {
+    it('Retrieves user information for a list of usernames', async () => {
+      const usernames = ['jbloggs', null, undefined, 'jbloggs', 'jsmith']
+
+      when(manageUsersApiClient.getUserByUsername)
+        .calledWith(atLeast('jbloggs'))
+        .mockResolvedValue({ name: 'Joe Bloggs', username: 'jbloggs' } as UserDetails)
+
+      when(manageUsersApiClient.getUserByUsername)
+        .calledWith(atLeast('jsmith'))
+        .mockResolvedValue({ name: 'John Smith', username: 'jsmith' } as UserDetails)
+
+      const result = await userService.getUserMap(usernames, user as ServiceUser)
+
+      expect(result).toEqual(
+        new Map([
+          ['jbloggs', { name: 'Joe Bloggs', username: 'jbloggs' }],
+          ['jsmith', { name: 'John Smith', username: 'jsmith' }],
+        ]),
+      )
+
+      expect(manageUsersApiClient.getUserByUsername).toHaveBeenCalledTimes(2)
+      expect(manageUsersApiClient.getUserByUsername).toHaveBeenCalledWith('jsmith', { authSource: 'nomis' })
+      expect(manageUsersApiClient.getUserByUsername).toHaveBeenCalledWith('jbloggs', { authSource: 'nomis' })
     })
   })
 })

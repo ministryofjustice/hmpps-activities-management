@@ -1,0 +1,48 @@
+[
+  {
+    "appointmentSeriesId": 1,
+    "appointmentId": 1,
+    "appointmentType": "INDIVIDUAL",
+    "attendees": [
+      {
+        "prisonerNumber": "A1350DZ"
+      }
+    ],
+    "appointmentName": "Chaplaincy",
+    "category": {
+      "code": "CHAP",
+      "description": "Chaplaincy"
+    },
+    "internalLocation": {
+      "description": "Test Location 1"
+    },
+    "startDate": "2023-05-26",
+    "startTime": "09:30",
+    "endTime": "11:00",
+    "isRepeat": false,
+    "sequenceNumber": 1,
+    "maxSequenceNumber": 1
+  },
+  {
+    "appointmentSeriesId": 1,
+    "appointmentId": 2,
+    "appointmentType": "INDIVIDUAL",
+    "attendees": [
+      {
+        "prisonerNumber": "A8644DY"
+      }
+    ],
+    "appointmentName": "Chaplaincy",
+    "category": {
+      "code": "CHAP",
+      "description": "Chaplaincy"
+    },
+    "inCell": true,
+    "startDate": "2023-05-26",
+    "startTime": "09:30",
+    "endTime": "11:00",
+    "isRepeat": false,
+    "sequenceNumber": 1,
+    "maxSequenceNumber": 1
+  }
+]

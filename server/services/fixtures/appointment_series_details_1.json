@@ -16,12 +16,7 @@
   "endTime": "10:30",
   "extraInformation": "This appointment will help adjusting to life outside of prison",
   "createdTime": "2023-02-17T17:34:03",
-  "createdBy": {
-    "id": 486797,
-    "username": "AAA01U",
-    "firstName": "TEST",
-    "lastName": "USER"
-  },
+  "createdBy": "TEST USER",
   "updatedTime": null,
   "updatedBy": null,
   "appointments": [

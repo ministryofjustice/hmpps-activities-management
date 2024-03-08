@@ -51,6 +51,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
     cy.stubEndpoint('GET', '/appointment-series/10/details', getAppointmentSeriesDetails)
     cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
+    cy.stubEndpoint('GET', '/users/jsmith', JSON.parse('{"name": "John Smith", "username": "jsmith"}'))
   })
 
   it('Should create an in cell appointment journey', () => {
