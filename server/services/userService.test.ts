@@ -130,5 +130,22 @@ describe('User service', () => {
       expect(manageUsersApiClient.getUserByUsername).toHaveBeenCalledWith('jsmith', { authSource: 'nomis' })
       expect(manageUsersApiClient.getUserByUsername).toHaveBeenCalledWith('jbloggs', { authSource: 'nomis' })
     })
+
+    it('Returns service name as a User object if service name is provided as a username', async () => {
+      const usernames = ['Activities Management Service']
+
+      const result = await userService.getUserMap(usernames, user as ServiceUser)
+
+      expect(result).toEqual(
+        new Map([
+          [
+            'Activities Management Service',
+            { name: 'Activities Management Service', username: 'Activities Management Service' },
+          ],
+        ]),
+      )
+
+      expect(manageUsersApiClient.getUserByUsername).not.toHaveBeenCalled()
+    })
   })
 })

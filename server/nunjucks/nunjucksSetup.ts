@@ -58,6 +58,7 @@ import DateOption from '../enum/dateOption'
 import { PrisonerStatus } from '../@types/prisonApiImportCustom'
 import { isoDateToDatePickerDate, parseIsoDate } from '../utils/datePickerUtils'
 import WaitlistRequester from '../enum/waitlistRequester'
+import { SERVICE_AS_USERNAME } from '../services/userService'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -170,6 +171,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
 
+  njkEnv.addGlobal('ServiceAsUsername', SERVICE_AS_USERNAME)
   njkEnv.addGlobal('ServiceName', ServiceName)
   njkEnv.addGlobal('YesNo', YesNo)
   njkEnv.addGlobal('EventType', EventType)
