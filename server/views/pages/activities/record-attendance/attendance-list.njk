@@ -233,12 +233,12 @@
             pagination: {
                 previous: {
                     title: 'Previous session',
-                    label: instance.previousScheduledInstanceDate | toDate | formatDate('dd MMMM yyyy'),
+                    label: instance.previousScheduledInstanceDate | toDate | formatDate('d MMMM yyyy'),
                     href: '/activities/attendance/activities/' + instance.previousScheduledInstanceId + '/attendance-list'
                 } if instance.previousScheduledInstanceId,
                 next: {
                     title: 'Next session',
-                    label: instance.nextScheduledInstanceDate | toDate | formatDate('dd MMMM yyyy'),
+                    label: instance.nextScheduledInstanceDate | toDate | formatDate('d MMMM yyyy'),
                     href: '/activities/attendance/activities/' + instance.nextScheduledInstanceId + '/attendance-list'
                 } if instance.nextScheduledInstanceId
             }
