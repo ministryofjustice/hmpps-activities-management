@@ -9,6 +9,8 @@ import { RolloutPrisonPlan } from '../@types/activitiesAPI/types'
 import { Prison } from '../@types/prisonRegisterApiImport/types'
 import { UserDetails } from '../@types/manageUsersApiImport/types'
 
+export const SERVICE_AS_USERNAME = 'Activities Management Service'
+
 export default class UserService {
   constructor(
     private readonly manageUsersApiClient: ManageUsersApiClient,
@@ -39,7 +41,12 @@ export default class UserService {
     const users = await Promise.all(
       _.uniq(usernames)
         .filter(Boolean)
-        .map(u => this.manageUsersApiClient.getUserByUsername(u, user)),
+        .map(u => {
+          if (u === SERVICE_AS_USERNAME) {
+            return { username: SERVICE_AS_USERNAME, name: SERVICE_AS_USERNAME } as UserDetails
+          }
+          return this.manageUsersApiClient.getUserByUsername(u, user)
+        }),
     )
     return new Map(users.map(u => [u.username, u]))
   }
