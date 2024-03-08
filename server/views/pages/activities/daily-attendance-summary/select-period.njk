@@ -30,12 +30,12 @@
                     items: [
                         {
                             value: "today",
-                            text: "Today - " + now | formatDate('dd MMMM yyyy'),
+                            text: "Today - " + now | formatDate('d MMMM yyyy'),
                             checked: formResponses.datePresetOption == 'today'
                         },
                         {
                             value: "yesterday",
-                            text: "Yesterday - " + (now - 86400000) | formatDate('dd MMMM yyyy'),
+                            text: "Yesterday - " + (now - 86400000) | formatDate('d MMMM yyyy'),
                             checked: formResponses.datePresetOption == 'yesterday'
                         },
                         {
