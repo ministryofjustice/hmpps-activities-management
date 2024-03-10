@@ -75,6 +75,7 @@ export default class SelectPrisonerRoutes {
       prisonCode: prisoner.prisonId,
       cellLocation: prisoner.cellLocation,
       status: prisoner.status,
+      category: prisoner.category,
     }
 
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {

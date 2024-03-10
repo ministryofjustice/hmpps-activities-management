@@ -25,7 +25,7 @@ import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
-import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlerts.json'
+import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlertsA8644DY.json'
 import ReviewPrisonerAlertsPage from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
 
 context('Create group appointment - back links', () => {
@@ -52,7 +52,7 @@ context('Create group appointment - back links', () => {
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
     cy.stubEndpoint('GET', '/appointment-series/10/details', getAppointmentSeriesDetails)
     cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
-    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts?', getOffenderAlerts)
+    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlerts)
   })
 
   it('Create group appointment - back links', () => {
@@ -74,11 +74,12 @@ context('Create group appointment - back links', () => {
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.continueButton().click()
 
-    let reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
     reviewPrisonersPage.continue()
 
-    let reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+    const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+    reviewPrisonerAlertsPage.assertNoAlerts("You're reviewing 1 people with alerts out of a total of 1 attendees.")
     reviewPrisonerAlertsPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)
@@ -144,14 +145,14 @@ context('Create group appointment - back links', () => {
     Page.verifyOnPage(NamePage)
     namePage.assertSelectedCategory('Chaplaincy')
 
-    reviewPrisonerAlertsPage.back()
-    reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+    namePage.back()
+    Page.verifyOnPage(ReviewPrisonerAlertsPage)
 
     reviewPrisonersPage.back()
-    reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
 
-    namePage.back()
+    reviewPrisonersPage.back()
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.assertEnteredPrisonerNumber('A8644DY')
 
@@ -174,7 +175,7 @@ context('Create group appointment - back links', () => {
 
     // Back links from check answers
     checkAnswersPage.changePrisoners()
-    reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    Page.verifyOnPage(ReviewPrisonersPage)
     selectPrisonerPage.back()
     Page.verifyOnPage(CheckAnswersPage)
 

@@ -23,6 +23,7 @@ import CancellationReasonRoutes, { CancellationReason } from './handlers/cancell
 import TierRoutes, { TierForm } from './handlers/tier'
 import HostRoutes, { HostForm } from './handlers/host'
 import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
+import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 
 export default function Edit({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -34,6 +35,7 @@ export default function Edit({ prisonService, activitiesService, metricsService 
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService)
+  const prisonerAlertsService = new PrisonerAlertsService(prisonService)
   const tierRoutes = new TierRoutes(editAppointmentService)
   const hostRoutes = new HostRoutes(editAppointmentService)
   const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
@@ -99,8 +101,8 @@ export default function Edit({ prisonService, activitiesService, metricsService 
   const howToAddPrisoners = new HowToAddPrisoners()
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
-  const reviewPrisoners = new ReviewPrisoners(metricsService, prisonService)
-  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes()
+  const reviewPrisoners = new ReviewPrisoners(metricsService, prisonerAlertsService)
+  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
 
   router.get(
     '/start/prisoners/add',
@@ -122,9 +124,10 @@ export default function Edit({ prisonService, activitiesService, metricsService 
   )
   get('/prisoners/add/review-prisoners', reviewPrisoners.GET, true)
   post('/prisoners/add/review-prisoners', reviewPrisoners.EDIT)
+  get('/prisoners/add/review-prisoners/:prisonNumber/remove', reviewPrisoners.EDIT_REMOVE, true)
   get('/prisoners/add/review-prisoners-alerts', reviewPrisonerAlerts.GET, true)
   post('/prisoners/add/review-prisoners-alerts', reviewPrisonerAlerts.EDIT)
-  get('/prisoners/add/review-prisoners/:prisonNumber/remove', reviewPrisoners.EDIT_REMOVE, true)
+  get('/prisoners/add/review-prisoners-alerts/:prisonNumber/remove', reviewPrisonerAlerts.EDIT_REMOVE, true)
   get('/prisoners/add/confirm', confirmEditRoutes.GET, true)
   post('/prisoners/add/confirm', confirmEditRoutes.POST, ConfirmEdit)
   get('/prisoners/add/apply-to', applyToRoutes.GET, true)

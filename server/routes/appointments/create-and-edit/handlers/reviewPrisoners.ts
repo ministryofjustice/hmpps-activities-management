@@ -3,20 +3,19 @@ import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import config from '../../../../config'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
-import PrisonService from '../../../../services/prisonService'
-import { profileAlertCodes } from './alertFlagValues'
-import { Alert } from '../../../../@types/prisonApiImport/types'
+import PrisonerAlertsService from '../../../../services/prisonerAlertsService'
+import { AppointmentPrisonerDetails } from '../appointmentPrisonerDetails'
 
 export default class ReviewPrisonerRoutes {
   constructor(
     private readonly metricsService: MetricsService,
-    private readonly prisonService: PrisonService,
+    private readonly prisonerAlertsService: PrisonerAlertsService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { appointmentId } = req.params
-    const { appointmentJourney, appointmentSetJourney, editAppointmentJourney } = req.session
+    const { appointmentJourney } = req.session
     const { preserveHistory } = req.query
 
     let backLinkHref =
@@ -25,17 +24,12 @@ export default class ReviewPrisonerRoutes {
       backLinkHref = `${config.dpsUrl}/prisoner/${appointmentJourney.fromPrisonNumberProfile}`
     }
 
-    let prisoners
     if (appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
-      prisoners = editAppointmentJourney.addPrisoners
-
       const metricsEvent = MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(appointmentJourney.mode, 'attendees', user)
       this.metricsService.trackEvent(metricsEvent)
-    } else if (appointmentJourney.type === AppointmentType.SET) {
-      prisoners = appointmentSetJourney.appointments.map(appointment => appointment.prisoner)
-    } else {
-      prisoners = appointmentJourney.prisoners
     }
+
+    const prisoners = ReviewPrisonerRoutes.getPrisoners(req)
 
     res.render('pages/appointments/create-and-edit/review-prisoners', {
       appointmentId,
@@ -45,154 +39,45 @@ export default class ReviewPrisonerRoutes {
     })
   }
 
+  private static getPrisoners(req: Request): AppointmentPrisonerDetails[] {
+    const { appointmentJourney, appointmentSetJourney, editAppointmentJourney } = req.session
+
+    if (appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
+      return editAppointmentJourney.addPrisoners
+    }
+    if (appointmentJourney.type === AppointmentType.SET) {
+      return appointmentSetJourney.appointments.map(appointment => appointment.prisoner)
+    }
+    return appointmentJourney.prisoners
+  }
+
   POST = async (req: Request, res: Response): Promise<void> => {
     if (req.query.preserveHistory) {
       req.session.returnTo = 'schedule?preserveHistory=true'
     }
+    res.redirectOrReturn(await this.getNextPageInJourney(req, res))
+  }
 
-    const prisonerCode = res.locals.user.activeCaseLoadId
-    if (req.session.appointmentJourney.type === AppointmentType.SET) {
-      // Call POST Prison API endpoint
-      const offenderNumbersSet = req.session.appointmentSetJourney.appointments
-        .map(value => value.prisoner)
-        .map(value => value.number)
-      const prisonerAlertsSet = await this.prisonService.getPrisonerAlerts(
-        offenderNumbersSet,
-        prisonerCode,
-        res.locals.user,
-      )
-      if (prisonerAlertsSet.length > 0) {
-        req.session.appointmentSetJourney.appointments = req.session.appointmentSetJourney.appointments.map(
-          appointment => {
-            const relevantSetAlerts = prisonerAlertsSet.filter(
-              alert => alert.offenderNo === appointment.prisoner.number && !alert.expired && alert.active,
-            )
+  private async getNextPageInJourney(req: Request, res: Response): Promise<string> {
+    const prisonCode = res.locals.user.activeCaseLoadId
+    const prisoners = ReviewPrisonerRoutes.getPrisoners(req)
+    const prisonerAlertsDetails = await this.prisonerAlertsService.getAlertDetails(
+      prisoners,
+      prisonCode,
+      res.locals.user,
+    )
 
-            // Group alerts by category
-            const alertsGroupedByCategory = relevantSetAlerts.reduce((acc, alert) => {
-              const categoryKey = alert.alertType
-              // Find the category object in the accumulator or create a new one
-              const categoryObj = acc.find(item => item.category === categoryKey)
-              if (categoryObj) {
-                // Add the alert to the existing category
-                categoryObj.alerts.push({
-                  alertCode: alert.alertCode,
-                  alertType: alert.alertType,
-                })
-                // Sort alerts within the category by alertCode
-                categoryObj.alerts.sort(
-                  (
-                    a: { alertCode: string },
-                    b: {
-                      alertCode: string
-                    },
-                  ) => a.alertCode.localeCompare(b.alertCode),
-                )
-              } else {
-                // Create a new category object
-                acc.push({
-                  category: categoryKey,
-                  alerts: [
-                    {
-                      alertCode: alert.alertCode,
-                      alertType: alert.alertType,
-                    },
-                  ],
-                })
-              }
-              return acc
-            }, [])
-
-            const allAlertDescriptions = relevantSetAlerts
-              .map(alert => alert.alertCodeDescription)
-              .sort((a, b) => a.localeCompare(b))
-            const alertExists = relevantSetAlerts.some(alert => profileAlertCodes.includes(alert.alertCode)) || false
-
-            // Update the prisoner object within each appointment
-            return {
-              ...appointment,
-              prisoner: {
-                ...appointment.prisoner,
-                alertCodes: alertsGroupedByCategory,
-                alertDescriptions: allAlertDescriptions,
-                profileAlertExists: alertExists,
-              },
-            }
-          },
-        )
-
-        return res.redirectOrReturn('review-prisoners-alerts')
+    if (prisonerAlertsDetails.numPrisonersWithAlerts === 0) {
+      if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
+        return '../../schedule'
       }
-    } else {
-      const offenderNumbers: string[] = req.session.appointmentJourney.prisoners.map(value => value.number)
-      const pAlerts: Alert[] = await this.prisonService.getPrisonerAlerts(
-        offenderNumbers,
-        prisonerCode,
-        res.locals.user,
-      )
-      if (pAlerts.length > 0) {
-        req.session.appointmentJourney.prisoners = req.session.appointmentJourney.prisoners.map(offender => {
-          const relevantAlerts = pAlerts.filter(
-            alert => alert.offenderNo === offender.number && !alert.expired && alert.active,
-          )
-          // Group alerts by category
-          const alertsGroupedByCategory = this.groupAlertsByCategory(relevantAlerts)
-
-          const allAlertDescriptions = relevantAlerts
-            .map(alert => alert.alertCodeDescription)
-            .sort((a, b) => a.localeCompare(b))
-          const alertExists = relevantAlerts.some(alert => profileAlertCodes.includes(alert.alertCode)) || false
-          return {
-            number: offender.number,
-            name: offender.name,
-            status: offender.status,
-            prisonCode: offender.prisonCode,
-            cellLocation: offender.cellLocation,
-            alertCodes: alertsGroupedByCategory,
-            alertDescriptions: allAlertDescriptions,
-            profileAlertExists: alertExists,
-          }
-        })
-        return res.redirectOrReturn('review-prisoners-alerts')
-      }
+      return 'name'
     }
-    return res.redirectOrReturn('name')
+    return 'review-prisoners-alerts'
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    // Call POST Prison API endpoint
-    const offenderNumbers = req.session.editAppointmentJourney.addPrisoners.map(value => value.number)
-    const prisonerCode = res.locals.user.activeCaseLoadId
-    const prisonerAlerts = await this.prisonService.getPrisonerAlerts(offenderNumbers, prisonerCode, res.locals.user)
-
-    if (prisonerAlerts.length > 0) {
-      req.session.editAppointmentJourney.addPrisoners = req.session.editAppointmentJourney.addPrisoners.map(
-        offender => {
-          const relevantAlerts = prisonerAlerts.filter(
-            alert => alert.offenderNo === offender.number && !alert.expired && alert.active,
-          )
-          // Group alerts by category
-          const alertsGroupedByCategory = this.groupAlertsByCategory(relevantAlerts)
-          const allAlertDescriptions = relevantAlerts
-            .map(alert => alert.alertCodeDescription)
-            .sort((a, b) => a.localeCompare(b))
-          const alertExists = relevantAlerts.some(alert => profileAlertCodes.includes(alert.alertCode)) || false
-          return {
-            number: offender.number,
-            name: offender.name,
-            status: offender.status,
-            prisonCode: offender.prisonCode,
-            cellLocation: offender.cellLocation,
-            alertCodes: alertsGroupedByCategory,
-            alertDescriptions: allAlertDescriptions,
-            profileAlertExists: alertExists,
-          }
-        },
-      )
-      return res.redirectOrReturn('review-prisoners-alerts')
-    }
-
-    return res.redirect('../../schedule')
+    res.redirect(await this.getNextPageInJourney(req, res))
   }
 
   REMOVE = async (req: Request, res: Response): Promise<void> => {
@@ -208,7 +93,7 @@ export default class ReviewPrisonerRoutes {
       )
     }
 
-    res.redirect(`../../review-prisoners-alerts${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
+    res.redirect(`../../review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 
   EDIT_REMOVE = async (req: Request, res: Response): Promise<void> => {
@@ -218,43 +103,6 @@ export default class ReviewPrisonerRoutes {
       prisoner => prisoner.number !== prisonNumber,
     )
 
-    res.redirect('../../review-prisoners-alerts')
-  }
-
-  private groupAlertsByCategory(relevantAlerts: Alert[]) {
-    const alertsGroupedByCategory = relevantAlerts.reduce((acc, alert) => {
-      const categoryKey = alert.alertType
-      // Find the category object in the accumulator or create a new one
-      const categoryObj = acc.find(item => item.category === categoryKey)
-      if (categoryObj) {
-        // Add the alert to the existing category
-        categoryObj.alerts.push({
-          alertCode: alert.alertCode,
-          alertType: alert.alertType,
-        })
-        // Sort alerts within the category by alertCode
-        categoryObj.alerts.sort(
-          (
-            a: { alertCode: string },
-            b: {
-              alertCode: string
-            },
-          ) => a.alertCode.localeCompare(b.alertCode),
-        )
-      } else {
-        // Create a new category object
-        acc.push({
-          category: categoryKey,
-          alerts: [
-            {
-              alertCode: alert.alertCode,
-              alertType: alert.alertType,
-            },
-          ],
-        })
-      }
-      return acc
-    }, [])
-    return alertsGroupedByCategory
+    res.redirect('../../review-prisoners')
   }
 }

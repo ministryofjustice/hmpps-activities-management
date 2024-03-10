@@ -1,8 +1,11 @@
 import { Request, Response } from 'express'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import config from '../../../../config'
+import PrisonerAlertsService from '../../../../services/prisonerAlertsService'
 
 export default class ReviewPrisonersAlertsRoutes {
+  constructor(private readonly prisonerAlertsService: PrisonerAlertsService) {}
+
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId } = req.params
     const { appointmentJourney, appointmentSetJourney, editAppointmentJourney } = req.session
@@ -23,11 +26,17 @@ export default class ReviewPrisonersAlertsRoutes {
       prisoners = appointmentJourney.prisoners
     }
 
+    const prisonerAlertsDetails = await this.prisonerAlertsService.getAlertDetails(
+      prisoners,
+      res.locals.user.activeCaseLoadId,
+      res.locals.user,
+    )
+
     res.render('pages/appointments/create-and-edit/review-prisoners-alerts', {
       appointmentId,
       backLinkHref,
       preserveHistory,
-      prisoners,
+      prisonerAlertsDetails,
     })
   }
 

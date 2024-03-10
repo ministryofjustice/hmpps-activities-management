@@ -44,7 +44,7 @@
         {% if 'XRF' in alertCodes %}
             <li class='alert-status alert-status--risk-females'>Risk to females</li>
         {% endif %}
-        {% if 'XSA' in alertCodes %}
+        {% if 'XSA' in alertCodes or 'SA' in alertCodes %}
             <li class='alert-status alert-status--assault'>Staff assaulter</li>
         {% endif %}
         {% if 'XTACT' in alertCodes %}
@@ -90,10 +90,10 @@
         {% if 'RCDR' in alertCodes %}
             <li class='alert-status alert-status--quarantined'>Quarantined</li>
         {% endif %}
-        {% if 'RCDR' in alertCodes %}
+        {% if 'URCU' in alertCodes %}
             <li class='alert-status alert-status--reverse-cohorting-unit'>Reverse Cohorting Unit</li>
         {% endif %}
-        {% if 'RCDR' in alertCodes %}
+        {% if 'UPIU' in alertCodes %}
             <li class='alert-status alert-status--protective-isolation-unit'>Protective Isolation Unit</li>
         {% endif %}
         {% if 'USU' in alertCodes %}
@@ -104,6 +104,15 @@
         {% endif %}
         {% if 'PVN' in alertCodes %}
             <li class='alert-status alert-status--multicase alert-status--visor'>ViSOR</li>
+        {% endif %}
+        {% if 'RKS' in alertCodes %}
+            <li class='alert-status alert-status--risk-to-known-adults'>Risk to known adults</li>
+        {% endif %}
+        {% if 'VIP' in alertCodes %}
+            <li class='alert-status alert-status--isolated-prisoner'>Isolated</li>
+        {% endif %}
+        {% if 'HID' in alertCodes %}
+            <li class='alert-status alert-status--medical'>Hidden disability</li>
         {% endif %}
     </ul>
 {% endmacro %}

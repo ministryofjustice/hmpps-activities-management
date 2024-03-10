@@ -27,7 +27,7 @@ import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
-import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlerts.json'
+import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlertsA8644DY.json'
 import ReviewPrisonerAlertsPage from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
 
 context('Create group appointment - check answers change links', () => {

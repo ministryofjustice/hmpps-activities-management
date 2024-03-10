@@ -30,7 +30,12 @@ import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlerts.json'
-import ReviewPrisonerAlertsPage from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
+import ReviewPrisonerAlertsPage, {
+  arsonistBadge,
+  catABadge,
+  noOneToOneBadge,
+  tactBadge,
+} from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -129,6 +134,13 @@ context('Create group appointment', () => {
     reviewPrisonersPage.continue()
 
     const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+    reviewPrisonerAlertsPage.assertPrisonerInList('Lee Jacobson')
+    reviewPrisonerAlertsPage.assertBadges(arsonistBadge, catABadge, noOneToOneBadge, tactBadge)
+    reviewPrisonerAlertsPage.assertAlertDescriptions(
+      'Arsonist',
+      'No 1 to 1 with this prisoner',
+      'Terrorism Act or Related Offence',
+    )
     reviewPrisonerAlertsPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)
@@ -144,6 +156,7 @@ context('Create group appointment', () => {
     hostPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
+    locationPage.selectSearchForLocation()
     locationPage.selectLocation('Chapel')
     locationPage.continue()
 

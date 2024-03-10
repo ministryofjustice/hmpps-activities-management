@@ -2,6 +2,7 @@ import { YesNo } from '../../../@types/activities'
 import { AppointmentFrequency } from '../../../@types/appointments'
 import EventOrganiser from '../../../enum/eventOrganisers'
 import EventTier from '../../../enum/eventTiers'
+import { AppointmentPrisonerDetails } from './appointmentPrisonerDetails'
 
 export enum AppointmentType {
   INDIVIDUAL = 'INDIVIDUAL',
@@ -19,22 +20,7 @@ export type AppointmentJourney = {
   type: AppointmentType
   createJourneyComplete?: boolean
   appointmentName?: string
-  prisoners?: {
-    number: string
-    name: string
-    prisonCode: string
-    status: string
-    cellLocation: string
-    alertCodes?: {
-      category: string
-      alerts: {
-        alertCode: string
-        alertType: string
-      }[]
-    }[]
-    alertDescriptions?: string[]
-    profileAlertExists?: boolean
-  }[]
+  prisoners?: AppointmentPrisonerDetails[]
   category?: {
     code: string
     description: string

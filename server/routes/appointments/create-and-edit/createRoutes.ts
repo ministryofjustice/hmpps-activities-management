@@ -32,6 +32,7 @@ import ScheduleRoutes from './handlers/schedule'
 import TierRoutes, { TierForm } from './handlers/tier'
 import HostRoutes, { HostForm } from './handlers/host'
 import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
+import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 
 export default function Create({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -42,6 +43,7 @@ export default function Create({ prisonService, activitiesService, metricsServic
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
+  const prisonerAlertsService = new PrisonerAlertsService(prisonService)
   const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService)
   const selectPrisonerRoutes = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
@@ -58,12 +60,12 @@ export default function Create({ prisonService, activitiesService, metricsServic
   const checkAnswersRoutes = new CheckAnswersRoutes(activitiesService)
   const confirmationRoutes = new ConfirmationRoutes(metricsService)
   const howToAddPrisonerRoutes = new HowToAddPrisonerRoutes()
-  const reviewPrisonerRoutes = new ReviewPrisonerRoutes(metricsService, prisonService)
+  const reviewPrisonerRoutes = new ReviewPrisonerRoutes(metricsService, prisonerAlertsService)
   const appointmentSetUploadRoutes = new AppointmentSetUploadRoutes(new PrisonerListCsvParser(), prisonService)
   const appointmentSetDateRoutes = new AppointmentSetDateRoutes()
   const appointmentSetTimesRoutes = new AppointmentSetTimesRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
-  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes()
+  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
 
   get('/start-group', startJourneyRoutes.GROUP)
   get('/start-set', startJourneyRoutes.SET)
@@ -125,9 +127,10 @@ export default function Create({ prisonService, activitiesService, metricsServic
   post('/how-to-add-prisoners', howToAddPrisonerRoutes.POST, HowToAddPrisonersForm)
   get('/review-prisoners', reviewPrisonerRoutes.GET, true)
   post('/review-prisoners', reviewPrisonerRoutes.POST)
+  get('/review-prisoners/:prisonNumber/remove', reviewPrisonerRoutes.REMOVE, true)
   post('/review-prisoners-alerts', reviewPrisonerAlerts.POST) // continue to
   get('/review-prisoners-alerts', reviewPrisonerAlerts.GET, true)
-  get('/review-prisoners/:prisonNumber/remove', reviewPrisonerRoutes.REMOVE, true)
+  get('/review-prisoners-alerts/:prisonNumber/remove', reviewPrisonerAlerts.REMOVE, true)
   get('/appointment-set-date', appointmentSetDateRoutes.GET, true)
   post('/appointment-set-date', appointmentSetDateRoutes.POST, AppointmentSetDate)
   get('/appointment-set-times', appointmentSetTimesRoutes.GET, true)
