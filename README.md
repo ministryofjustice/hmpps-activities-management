@@ -86,6 +86,7 @@ Create a `.env` file containing the following environment variables:
 HMPPS_AUTH_URL=https://sign-in-dev.hmpps.service.justice.gov.uk/auth
 TOKEN_VERIFICATION_API_URL=https://token-verification-api-dev.prison.service.justice.gov.uk
 ACTIVITIES_API_URL=https://activities-api-dev.prison.service.justice.gov.uk
+CASE_NOTES_API_URL=https://dev.offender-case-notes.service.justice.gov.uk
 PRISON_API_URL=https://prison-api-dev.prison.service.justice.gov.uk
 PRISONER_SEARCH_API_URL=https://prisoner-search-dev.prison.service.justice.gov.uk
 PRISON_REGISTER_API_URL=https://prison-register-dev.hmpps.service.justice.gov.uk
