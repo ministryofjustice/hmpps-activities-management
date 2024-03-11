@@ -16,7 +16,7 @@
             <div>Error. Check sentence details</div>
         {% endif %}
     {% else %}
-        <div>{{ erd.releaseDate | formatDate('dd MMMM yyyy') }}</div>
+        <div>{{ erd.releaseDate | formatDate('d MMMM yyyy') }}</div>
         {% if erd.isTariffDate %}
             <div class='govuk-hint govuk-!-margin-bottom-0'>Tariff date</div>
         {% endif %}
