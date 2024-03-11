@@ -28,6 +28,7 @@ describe('Route Handlers - Create an activity - Name', () => {
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirectOrReturnWithSuccess: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -46,20 +47,41 @@ describe('Route Handlers - Create an activity - Name', () => {
   })
 
   describe('POST', () => {
+    beforeEach(() => {
+      when(activitiesService.getActivities)
+        .calledWith(atLeast(true))
+        .mockResolvedValue([
+          {
+            id: 6,
+            activityName: 'Gym Induction',
+            category: {
+              id: 5,
+              code: 'SAA_INDUCTION',
+              name: 'Induction',
+              description: 'Such as gym induction, education assessments or health and safety workshops',
+            },
+            capacity: 102,
+            allocated: 69,
+            waitlisted: 1,
+            createdTime: '2023-07-20T16:05:16',
+            activityState: 'LIVE',
+          },
+        ])
+    })
     it('should save entered name in session and redirect to tier page', async () => {
       req.body = {
-        name: 'Maths level 1',
+        name: 'Maths Level 1',
       }
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.name).toEqual('Maths level 1')
+      expect(req.session.createJourney.name).toEqual('Maths Level 1')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('tier')
     })
 
     it('should save entered name in session and redirect to risk level page if category "not in work"', async () => {
       req.body = {
-        name: 'Maths level 1',
+        name: 'Maths Level 1',
       }
       req.session.createJourney.category = {
         id: 1,
@@ -69,13 +91,13 @@ describe('Route Handlers - Create an activity - Name', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.name).toEqual('Maths level 1')
+      expect(req.session.createJourney.name).toEqual('Maths Level 1')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('risk-level')
     })
 
     it('should save entered activity name in database', async () => {
       const updatedActivity = {
-        summary: 'updated activity name',
+        summary: 'Updated Activity Name',
       }
 
       when(activitiesService.updateActivity)
@@ -103,6 +125,51 @@ describe('Route Handlers - Create an activity - Name', () => {
         'Activity updated',
         "You've updated the activity name for updated activity name",
       )
+    })
+
+    it('should call duplicate activity name validation upon creating new activity name', async () => {
+      req = {
+        session: {
+          createJourney: {
+            activityId: undefined,
+          },
+        },
+        params: {
+          mode: 'create',
+        },
+        body: {
+          name: 'Gym Induction',
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.name).toEqual('Gym Induction')
+      expect(res.validationFailed).toHaveBeenCalledWith(
+        'name',
+        'Enter a different name. There is already an activity with this name',
+      )
+    })
+
+    it('should not call validation upon editing existing activity with the same name and activity ID', async () => {
+      req = {
+        session: {
+          createJourney: {
+            activityId: 6,
+          },
+        },
+        params: {
+          mode: 'edit',
+        },
+        body: {
+          name: 'Gym Induction',
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.name).toEqual('Gym Induction')
+      expect(res.validationFailed).toHaveBeenCalledTimes(0)
     })
   })
 
