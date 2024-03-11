@@ -13,6 +13,11 @@ This service requires the following dependent services:
 * `prisoner-offender-search` - prisoner search API
 * `prison-api` - prisoner detail API
 
+## Alerts
+
+- Details of relevant alerts can be obtained from the `hmpps-prodiner-profile` repository [here](https://github.com/ministryofjustice/hmpps-prisoner-profile/blob/main/server/data/alertFlags/alertFlags.ts).
+- The icons for badges can be obtained from the `digital-prison-services` repository [here](https://github.com/ministryofjustice/digital-prison-services/tree/main/static/images).
+
 ## Running the application
 
 Ensure you have the appropriate tools locally:
