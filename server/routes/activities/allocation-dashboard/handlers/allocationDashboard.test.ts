@@ -123,6 +123,7 @@ describe('Route Handlers - Allocation dashboard', () => {
             cellLocation: 'MDI-1-1-101',
             earliestReleaseDate: { releaseDate: '2023-12-25' },
             isUnemployment: false,
+            plannedSuspension: { plannedStartDate: '2025-04-20' },
           },
           {
             id: 2,
@@ -305,6 +306,7 @@ describe('Route Handlers - Allocation dashboard', () => {
               startDate: new Date(2023, 1, 17),
               endDate: null,
               name: 'Joe Bloggs',
+              plannedSuspension: { plannedStartDate: '2025-04-20' },
               otherAllocations: [
                 {
                   activityId: 2,

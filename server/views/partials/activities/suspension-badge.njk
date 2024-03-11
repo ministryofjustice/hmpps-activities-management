@@ -1,0 +1,30 @@
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% macro suspensionBadge(allocationStatus, plannedSuspension, now) %}
+    {% if allocationStatus == 'SUSPENDED' %}
+        <hr class="mid-grey-tint-20-hr dash-border">
+        {{ govukTag({
+            text: "Suspended",
+            classes: "govuk-tag--red"
+        }) }}
+    {% elseif allocationStatus == 'AUTO_SUSPENDED' %}
+        <hr class="mid-grey-tint-20-hr dash-border">
+        {{ govukTag({
+            text: "Temporarily absent",
+            classes: "govuk-tag--red"
+        }) }}
+    {% elseif plannedSuspension.plannedStartDate > now | formatDate('yyyy-MM-dd') %}
+        <hr class="mid-grey-tint-20-hr dash-border">
+        {% set html %}
+            <div>Suspended</div>
+            <div class='govuk-!-font-size-16'>
+                From {{ plannedSuspension.plannedStartDate | formatDate('d MMMM yyyy') }}
+            </div>
+        {% endset %}
+
+        {{ govukTag({
+            html: html,
+            classes: "govuk-tag--red"
+        }) }}
+    {% endif %}
+{% endmacro %}

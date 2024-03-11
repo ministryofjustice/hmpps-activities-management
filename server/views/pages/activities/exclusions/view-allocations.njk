@@ -4,6 +4,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/activities/days-and-times.njk" import daysAndTimes %}
+{% from "partials/activities/suspension-badge.njk" import suspensionBadge %}
 
 {% set pageTitle = applicationName + " - Exclusions - View allocations" %}
 {% set pageId = 'view-allocations-page' %}
@@ -42,7 +43,8 @@
                     {% set rows = (rows.push(
                         {
                             key: {
-                                text: activity.activityName
+                                html: '<div class="govuk-!-margin-bottom-3">' + activity.activityName + '</div>' +
+                                suspensionBadge(activity.allocation.status, activity.allocation.plannedSuspension, now)
                             },
                             value: {
                                 html: slotsHtml
@@ -50,7 +52,7 @@
                             actions: {
                                 items: [
                                     {
-                                        href: '/activities/allocations/exclude/' + activity.allocationId + '/exclusions',
+                                        href: '/activities/allocations/exclude/' + activity.allocation.id + '/exclusions',
                                         text: "Change",
                                         visuallyHiddenText: "Change schedule for " + activity.activityName
                                     }
