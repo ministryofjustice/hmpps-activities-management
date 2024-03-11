@@ -133,29 +133,33 @@
                                 </ul>
                             </div>
                             <div class="govuk-summary-card__content">
+                                {% set alertsListItems = '' %}
+                                {% for item in prisoner.alertDescriptions %}
+                                    {% set alertsListItems %}
+                                        {{ alertsListItems | safe }} <li> {{ item }} </li>
+                                    {% endset %}
+                                {% endfor %}
                                 {% if prisoner.hasBadgeAlerts %}
                                     <span> {{ alertsList({ alerts: prisoner.alerts, category: prisoner.category }) }} </span>
                                     <div class="govuk-!-margin-bottom-2"></div>
-                                    {% if prisoner.alerts.length == 1 %}
+                                    {% if prisoner.alertDescriptions.length == 1 %}
                                         {{ govukDetails({
                                             summaryText: "View " + prisoner.alertDescriptions.length + " alert",
                                             html: '<ul class="govuk-list" data-qa="alert-descriptions">' +
-                                            '<li>' + (prisoner.alertDescriptions | join('</li><li>')) + '</li>' +
+                                            alertsListItems +
                                             '</ul>'
                                         }) }}
                                     {% else %}
                                         {{ govukDetails({
                                             summaryText: "View all " + prisoner.alertDescriptions.length + " alerts",
                                             html: '<ul class="govuk-list govuk-list--bullet" data-qa="alert-descriptions">' +
-                                            '<li>' + (prisoner.alertDescriptions | join('</li><li>')) + '</li>' +
+                                            alertsListItems +
                                             '</ul>'
                                         }) }}
                                     {% endif %}
                                 {% else %}
                                     <ul class="govuk-list govuk-list--bullet" data-qa="alert-descriptions">
-                                        {% for description in prisoner.alertDescriptions %}
-                                            <li>{{ description }}</li>
-                                        {% endfor %}
+                                        {{ alertsListItems | safe }}
                                     </ul>
                                 {% endif %}
                             </div>

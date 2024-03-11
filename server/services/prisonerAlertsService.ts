@@ -76,7 +76,7 @@ export default class PrisonerAlertsService {
         .map(alert => alert.alertCodeDescription)
         .sort((a, b) => a.localeCompare(b))
 
-      const hasRelevantCategories = this.categoriesWithBadges.has(prisoner.category)
+      const isCategoryRelevant = this.categoriesWithBadges.has(prisoner.category)
 
       if (prisonerAlerts.length > 0) {
         numPrisonersWithAlerts += 1
@@ -86,13 +86,20 @@ export default class PrisonerAlertsService {
         ...prisoner,
         alerts: prisonerAlerts,
         alertDescriptions: prisonerAlertDescriptions,
-        hasRelevantCategories,
-        hasBadgeAlerts:
-          hasRelevantCategories || relevantAlerts.some(alert => this.alertsWithBadges.has(alert.alertCode)),
+        hasRelevantCategories: isCategoryRelevant,
+        hasBadgeAlerts: isCategoryRelevant || relevantAlerts.some(alert => this.alertsWithBadges.has(alert.alertCode)),
       })
     })
 
-    prisonersWithAlerts.sort((a, b) => (a.alerts.length > b.alerts.length ? -1 : 1))
+    prisonersWithAlerts.sort((a, b) => {
+      if (a.alerts.length === b.alerts.length) {
+        if (a.hasBadgeAlerts === b.hasBadgeAlerts) {
+          return 0
+        }
+        return a.hasBadgeAlerts ? -1 : 1
+      }
+      return a.alerts.length > b.alerts.length ? -1 : 1
+    })
 
     return {
       numPrisonersWithAlerts,

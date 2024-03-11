@@ -2,7 +2,11 @@ import { when } from 'jest-when'
 import atLeast from '../../jest.setup'
 import PrisonService from './prisonService'
 import { ServiceUser } from '../@types/express'
-import PrisonerAlertsService, { PrisonerAlertDetails, PrisonerDetails } from './prisonerAlertsService'
+import PrisonerAlertsService, {
+  PrisonerAlertDetails,
+  PrisonerAlertResults,
+  PrisonerDetails,
+} from './prisonerAlertsService'
 import { Alert } from '../@types/prisonApiImport/types'
 
 jest.mock('./prisonService')
@@ -17,9 +21,11 @@ describe('Prisoner Alerts Service', () => {
 
   let prisonerMaggie: PrisonerDetails
   let prisonerDave: PrisonerDetails
+
   let tectAlertForMaggie: Partial<Alert>
   let xcuAlertForMaggie: Partial<Alert>
   let peepAlertForDave: Partial<Alert>
+
   let maggieResult: PrisonerAlertDetails
   let daveResult: PrisonerAlertDetails
 
@@ -259,6 +265,74 @@ describe('Prisoner Alerts Service', () => {
     const expectedResults = {
       numPrisonersWithAlerts: 0,
       prisoners: [daveResult, maggieResult],
+    }
+
+    expect(actualResults).toEqual(expectedResults)
+  })
+
+  it('should sort alerts correctly', async () => {
+    const prisonerAlan = {
+      number: 'D1111D',
+      name: 'Alan Jones',
+      category: 'A',
+    }
+
+    const prisonerAlice = {
+      number: 'E1111E',
+      name: 'Alice Robins',
+    }
+
+    const ocgAlertForAlice = {
+      offenderNo: 'E1111E',
+      active: true,
+      expired: false,
+      alertCode: 'OCG',
+      alertCodeDescription: 'OCG Nominal',
+    }
+
+    const alanResult = {
+      number: prisonerAlan.number,
+      name: prisonerAlan.name,
+      category: prisonerAlan.category,
+      alerts: [] as PrisonerAlertResults[],
+      alertDescriptions: [] as string[],
+      hasBadgeAlerts: true,
+      hasRelevantCategories: true,
+    }
+
+    const aliceResult = {
+      number: prisonerAlice.number,
+      name: prisonerAlice.name,
+      alerts: [
+        {
+          alertCode: ocgAlertForAlice.alertCode,
+        },
+      ],
+      alertDescriptions: [ocgAlertForAlice.alertCodeDescription],
+      hasBadgeAlerts: false,
+      hasRelevantCategories: false,
+    }
+
+    const prisoners = [prisonerAlice, prisonerDave, prisonerMaggie, prisonerAlan]
+
+    const expectedOffenderNumbers = prisoners.map(prisoner => prisoner.number)
+
+    const apiResponse = [
+      peepAlertForDave,
+      tectAlertForMaggie,
+      xcuAlertForMaggie,
+      ocgAlertForAlice,
+    ] as unknown as Alert[]
+
+    when(prisonService.getPrisonerAlerts)
+      .calledWith(atLeast(expectedOffenderNumbers, 'MDI', user))
+      .mockResolvedValue(apiResponse)
+
+    const actualResults = await prisonerAlertsService.getAlertDetails(prisoners, 'MDI', user)
+
+    const expectedResults = {
+      numPrisonersWithAlerts: 3,
+      prisoners: [maggieResult, daveResult, aliceResult, alanResult],
     }
 
     expect(actualResults).toEqual(expectedResults)
