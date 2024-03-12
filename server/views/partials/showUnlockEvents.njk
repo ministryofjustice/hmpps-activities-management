@@ -30,8 +30,12 @@
                     {% endif %}
                 </div>
 
-                {% if event.suspended or event.autoSuspended %}
-                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Prisoner suspended', classes: 'govuk-tag--red-border govuk-tag--small' }) }}</div>
+                {% if event.suspended %}
+                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Prisoner suspended', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
+                {% endif %}
+
+                {% if event.autoSuspended %}
+                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Temporarily absent', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
                 {% endif %}
 
                 {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}

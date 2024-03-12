@@ -2181,6 +2181,7 @@ export interface components {
        */
       status: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
       plannedDeallocation?: components['schemas']['PlannedDeallocation']
+      plannedSuspension?: components['schemas']['PlannedSuspension']
       /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
       exclusions: components['schemas']['Slot'][]
       /** @description The name of the prisoner. Included only if includePrisonerSummary = true */
@@ -2238,6 +2239,37 @@ export interface components {
       /**
        * Format: date-time
        * @description The system time when the de-allocation plan was made
+       */
+      plannedAt: string
+    }
+    /** @description Describes one instance of a planned suspension */
+    PlannedSuspension: {
+      /**
+       * Format: date
+       * @description The planned start date of the suspension
+       * @example 2023-07-31
+       */
+      plannedStartDate: string
+      /**
+       * Format: date
+       * @description The planned end date of the suspension
+       * @example 2023-07-31
+       */
+      plannedEndDate?: string
+      /**
+       * Format: int64
+       * @description The optional case note identifier which was added to the prisoner's profile along with the suspension
+       * @example 123456
+       */
+      caseNoteId?: number
+      /**
+       * @description The username of the person who planned the suspension
+       * @example ADMIN
+       */
+      plannedBy: string
+      /**
+       * Format: date-time
+       * @description The system time when the suspension plan was made
        */
       plannedAt: string
     }

@@ -283,17 +283,17 @@
 
     <div class="govuk-grid-row govuk-!-margin-bottom-3">
         <div class="govuk-grid-column-full">
-            <h3 class="govuk-heading-l">Suspended prisoners</h3>
+            <h3 class="govuk-heading-l">Prisoners suspended or temporarily absent</h3>
         </div>
 
         {{ stat({
-            heading: 'Suspended',
+            heading: 'Suspended or temporarily absent',
             number: suspendedPrisonerCount[timeSlot],
             visuallyHiddenText: 'prisoners',
             forceDisplay: true,
             link: {
                 href: "suspended-prisoners?date=" + activityDate | formatDate('yyyy-MM-dd'),
-                text: 'All suspensions'
+                text: 'All suspended or temporarily absent'
             } if suspendedPrisonerCount[timeSlot] > 0
         }) }}
     </div>

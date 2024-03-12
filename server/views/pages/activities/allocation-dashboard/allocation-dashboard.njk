@@ -11,6 +11,7 @@
 {% from "partials/splitLine.njk" import splitLine %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
+{% from "partials/activities/suspension-badge.njk" import suspensionBadge %}
 {% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
@@ -195,13 +196,7 @@
             {% if row.endDate %}
                 <div>to {{ row.endDate | formatDate('d MMMM yyyy') }}</div>
             {% endif %}
-            {% if row.status == 'AUTO_SUSPENDED' or  row.status == 'SUSPENDED' %}
-                <hr class="mid-grey-tint-20-hr dash-border">
-                {{ govukTag({
-                    text: "Suspended",
-                    classes: "govuk-tag--red"
-                }) }}
-            {% endif %}
+            {{ suspensionBadge(row.status, row.plannedSuspension, now) }}
         {% endset %}
 
         {% set rows = (rows.push({
