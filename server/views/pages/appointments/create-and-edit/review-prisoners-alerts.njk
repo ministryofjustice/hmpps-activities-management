@@ -1,0 +1,183 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "components/alertsList.njk" import alertsList %}
+{% from "moj/components/badge/macro.njk" import mojBadge -%}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% set prisoners = prisonerAlertsDetails.prisoners %}
+{% set numPrisonersWithAlerts = prisonerAlertsDetails.numPrisonersWithAlerts %}
+
+{% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+    {% set pageTitle = appointmentJourneyTitle("no attendees added" if prisoners.length == 0 else "Review additional attendee" + ("s" if prisoners.length > 1), session.appointmentJourney) %}
+{% else %}
+    {% if session.appointmentJourney.type == AppointmentType.SET %}
+        {% set pageTitle = appointmentJourneyTitle("No attendees for set" if prisoners.length == 0 else "Review back-to-backs list", session.appointmentJourney) %}
+    {% else %}
+        {% set pageTitle = appointmentJourneyTitle("No attendees" if prisoners.length == 0 else "Review attendee list", session.appointmentJourney) %}
+    {% endif %}
+{% endif %}
+
+
+{% set pageId = 'appointment-review-prisoner-alert-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session) }}
+            {% if prisoners.length == 0 %}
+                {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+                    <h1 class="govuk-heading-l">There are no attendees to add</h1>
+                    <p class="govuk-body">You’ve removed the last new attendee.</p>
+                    <p class="govuk-body">You can <a href="/appointments/{{ appointmentId }}"
+                                                     class="govuk-link govuk-link--no-visited-state">return to the appointment
+                            details</a> or add someone else to continue updating.</p>
+                {% elseif session.appointmentJourney.type == AppointmentType.SET %}
+                    <h1 class="govuk-heading-l">There are no attendees for this set</h1>
+                    <p class="govuk-body">You’ve removed the last attendee for this set of appointments.</p>
+                    <p class="govuk-body">You need to add a new list of prison numbers to continue scheduling the set of
+                        back-to-backs.</p>
+                {% else %}
+                    <h1 class="govuk-heading-l">There are no attendees for this appointment</h1>
+                    <p class="govuk-body">You’ve removed the last attendee for this appointment.</p>
+                    <p class="govuk-body">If you want to continue scheduling this appointment, you must add someone.</p>
+                {% endif %}
+            {% else %}
+                {# There are prisoners #}
+                {% if (session.appointmentJourney.mode == AppointmentJourneyMode.EDIT) %}
+                    {% if numPrisonersWithAlerts > 0 %}
+                        <h1 class="govuk-heading-l">Review attendee alerts</h1>
+                        {{ govukWarningText({
+                            text: "Check an attendee's prisoner profile for full details on alerts",
+                            iconFallbackText: "Warning"
+                        }) }}
+                        <p class="govuk-body"> You're reviewing {{ numPrisonersWithAlerts }} {% if prisoners.length == 1 %} person {% else %} people {% endif %}with alerts out of a total
+                            of {{ prisoners.length }} attendees you're adding.</p>
+                    {% else %}
+                        <h1 class="govuk-heading-l">You've removed all people with alerts</h1>
+                        <p class="govuk-body">You're still adding {{ prisoners.length }} {% if prisoners.length == 1 %} person{% else %} people{% endif %}.</p>
+                    {% endif %}
+                {% else %}
+                    {% if numPrisonersWithAlerts > 0 %}
+                        <h1 class="govuk-heading-l">Review attendee alerts</h1>
+                        {{ govukWarningText({
+                            text: "Check an attendee's prisoner profile for full details on alerts",
+                            iconFallbackText: "Warning"
+                        }) }}
+                        <p class="govuk-body"> You're reviewing {{ numPrisonersWithAlerts }} people with alerts out of a total
+                            of {{ prisoners.length }} attendees.</p>
+                    {% else %}
+                        <h1 class="govuk-heading-l">You've removed all people with alerts</h1>
+                        <p class="govuk-body">
+                            There {% if prisoners.length == 1 %} is {% else %} are {% endif %} {{ prisoners.length }} attendees remaining on the appointment list</p>
+                    {% endif %}
+                    {% if session.appointmentJourney.type == AppointmentType.EDIT %}
+                        <p class="govuk-body">You're still adding {{ prisoners.length }} people</p>
+                    {% endif %}
+                {% endif %}
+                {% if prisoners.length > 10 %}
+                    <form method="POST">
+                        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                        <div class="govuk-button-group">
+                            {{ govukButton({
+                                text: "Continue"
+                            }) }}
+                        </div>
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
+            {% if prisoners.length == 0 %}
+                {{ govukButton({
+                    text: ("Add a new list" if session.appointmentJourney.type == AppointmentType.SET else "Add someone to the list"),
+                    href: ("upload-appointment-set" if session.appointmentJourney.type == AppointmentType.SET else "how-to-add-prisoners") + ('?preserveHistory=true' if preserveHistory else ''),
+                    attributes: { 'data-qa': 'add-prisoner-primary' }
+                }) }}
+            {% else %}
+                {% for prisoner in prisoners %}
+                    {% if prisoner.hasRelevantCategories or prisoner.alerts.length > 0 %}
+                        <div class="govuk-summary-card appointment-schedule">
+                            <div class="govuk-summary-card__title-wrapper">
+                                <h2 class="govuk-summary-card__title"
+                                    data-qa="schedule-card-title-prison-number-{{ prisoner.number }}">
+                                    <ul class='govuk-list'>
+                                        <li class="govuk-summary-card__action govuk-!-font-weight-bold">
+                                            <a href="{{ dpsUrl }}/prisoner/{{ prisoner.number }}"
+                                               target="_blank"
+                                               class="govuk-link govuk-link--no-visited-state">
+                                                {{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}
+                                                , {{ prisoner.number }}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </h2>
+                                <ul class="govuk-summary-card__actions govuk-summary-card__actions--stacked"
+                                    data-qa="schedule-card-actions-prison-number-{{ prisoner.number }}">
+                                    <li class="govuk-summary-card__action">
+                                        <a href="review-prisoners-alerts/{{ prisoner.number }}/remove{{ '?preserveHistory=true' if preserveHistory else '' }}"
+                                           class="govuk-link--no-visited-state">
+                                            Remove attendee
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="govuk-summary-card__content">
+                                {% set alertsListItems = '' %}
+                                {% for item in prisoner.alertDescriptions %}
+                                    {% set alertsListItems %}
+                                        {{ alertsListItems | safe }} <li> {{ item }} </li>
+                                    {% endset %}
+                                {% endfor %}
+                                {% if prisoner.hasBadgeAlerts %}
+                                    <div class="govuk-!-margin-bottom-2"> {{ alertsList({ alerts: prisoner.alerts, category: prisoner.category }) }} </div>
+                                    {% if prisoner.alertDescriptions.length == 1 %}
+                                        {{ govukDetails({
+                                            summaryText: "View " + prisoner.alertDescriptions.length + " alert",
+                                            html: '<ul class="govuk-list" data-qa="alert-descriptions">' +
+                                            alertsListItems +
+                                            '</ul>'
+                                        }) }}
+                                    {% else %}
+                                        {{ govukDetails({
+                                            summaryText: "View all " + prisoner.alertDescriptions.length + " alerts",
+                                            html: '<ul class="govuk-list govuk-list--bullet" data-qa="alert-descriptions">' +
+                                            alertsListItems +
+                                            '</ul>'
+                                        }) }}
+                                    {% endif %}
+                                {% else %}
+                                    <ul class="govuk-list govuk-list--bullet" data-qa="alert-descriptions">
+                                        {{ alertsListItems | safe }}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+
+                <form method="POST">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                    {% if prisoners.length > 0 %}
+                        <div class="govuk-button-group">
+                            {{ govukButton({
+                                text: "Continue"
+                            }) }}
+                        </div>
+                    {% endif %}
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

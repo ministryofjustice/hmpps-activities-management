@@ -2,6 +2,7 @@ import { AppointmentSeriesSummary, AppointmentSetSummary, PrisonerSummary } from
 import { AppointmentCancellationReason } from '../../../@types/appointments'
 import EventOrganiser from '../../../enum/eventOrganisers'
 import EventTier from '../../../enum/eventTiers'
+import { AppointmentPrisonerDetails } from './appointmentPrisonerDetails'
 
 export type EditAppointmentJourney = {
   numberOfAppointments: number
@@ -32,13 +33,7 @@ export type EditAppointmentJourney = {
     date: Date
   }
   extraInformation?: string
-  addPrisoners?: {
-    number: string
-    name: string
-    prisonCode: string
-    cellLocation: string
-    status: string
-  }[]
+  addPrisoners?: AppointmentPrisonerDetails[]
   removePrisoner?: PrisonerSummary
   cancellationReason?: AppointmentCancellationReason
 }

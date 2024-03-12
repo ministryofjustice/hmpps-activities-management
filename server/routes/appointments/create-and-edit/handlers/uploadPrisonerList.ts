@@ -70,6 +70,7 @@ export default class UploadPrisonerListRoutes {
       .map(prisoner => ({
         number: prisoner.prisonerNumber,
         name: `${prisoner.firstName} ${prisoner.lastName}`,
+        category: prisoner.category,
         prisonCode: prisoner.prisonId,
         cellLocation: prisoner.cellLocation,
         status: prisoner.status,

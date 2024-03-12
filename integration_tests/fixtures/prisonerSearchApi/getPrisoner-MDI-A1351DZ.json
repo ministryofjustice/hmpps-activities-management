@@ -16,6 +16,7 @@
   "prisonId": "MDI",
   "prisonName": "Moorland (HMP & YOI)",
   "cellLocation": "1-3-004",
+  "category": "A",
   "aliases": [],
   "alerts": [],
   "legalStatus": "SENTENCED",

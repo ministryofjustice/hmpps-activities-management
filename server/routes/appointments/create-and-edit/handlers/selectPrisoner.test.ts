@@ -154,6 +154,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         cellLocation: '1-1-1',
         prisonId: 'MDI',
         status: 'ACTIVE IN',
+        category: 'B',
       } as Prisoner
 
       when(prisonService.getInmateByPrisonerNumber)
@@ -169,6 +170,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
           cellLocation: '2-2-2',
           prisonCode: 'MDI',
           status: 'ACTIVE IN',
+          category: undefined,
         },
         {
           number: 'A1234BC',
@@ -176,6 +178,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
           cellLocation: '1-1-1',
           prisonCode: 'MDI',
           status: 'ACTIVE IN',
+          category: 'B',
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
@@ -196,6 +199,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
             cellLocation: '2-2-2',
             status: 'ACTIVE IN',
             prisonCode: 'MDI',
+            category: 'A',
           },
         ],
       }
@@ -205,6 +209,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         firstName: 'James',
         lastName: 'Johnson',
         cellLocation: '2-2-2',
+        category: 'A',
       } as Prisoner
 
       when(prisonService.getInmateByPrisonerNumber)
@@ -230,6 +235,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
             number: 'X9876YZ',
             name: 'James Johnson',
             cellLocation: '2-2-2',
+            category: 'F',
           },
         ],
       } as EditAppointmentJourney
@@ -239,6 +245,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         firstName: 'John',
         lastName: 'Smith',
         cellLocation: '1-1-1',
+        category: 'G',
       } as Prisoner
 
       when(prisonService.getInmateByPrisonerNumber)
@@ -252,11 +259,13 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
           number: 'X9876YZ',
           name: 'James Johnson',
           cellLocation: '2-2-2',
+          category: 'F',
         },
         {
           number: 'A1234BC',
           name: 'John Smith',
           cellLocation: '1-1-1',
+          category: 'G',
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')

@@ -219,6 +219,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
             prisonId: 'TPR',
             cellLocation: '1-1-1',
             status: 'ACTIVE IN',
+            category: 'A',
           },
           {
             prisonerNumber: 'B2345CD',
@@ -239,6 +240,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
           cellLocation: '1-1-1',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
+          category: 'A',
         },
         {
           number: 'B2345CD',
@@ -246,6 +248,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
           cellLocation: '2-2-2',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
+          category: undefined,
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
@@ -270,6 +273,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
             prisonId: 'TPR',
             cellLocation: '1-1-1',
             status: 'ACTIVE IN',
+            category: 'H',
           },
           {
             prisonerNumber: 'B2345CD',
@@ -278,6 +282,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
             prisonId: 'TPR',
             cellLocation: '2-2-2',
             status: 'ACTIVE IN',
+            category: 'P',
           },
         ] as Prisoner[])
 
@@ -290,6 +295,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
           cellLocation: '1-1-1',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
+          category: 'H',
         },
         {
           number: 'B2345CD',
@@ -297,6 +303,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
           cellLocation: '2-2-2',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
+          category: 'P',
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners?preserveHistory=true')
@@ -314,6 +321,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
           cellLocation: '1-1-1',
           status: 'ACTIVE IN',
           prisonCode: 'TPR',
+          category: 'A',
         },
       ]
 
@@ -330,6 +338,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
             prisonId: 'TPR',
             cellLocation: '2-2-2',
             status: 'ACTIVE IN',
+            category: 'P',
           },
         ] as Prisoner[])
 
@@ -342,6 +351,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
           cellLocation: '1-1-1',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
+          category: 'A',
         },
         {
           number: 'B2345CD',
@@ -349,6 +359,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
           cellLocation: '2-2-2',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
+          category: 'P',
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
@@ -382,6 +393,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
             prisonId: 'TPR',
             cellLocation: '1-1-1',
             status: 'ACTIVE IN',
+            category: 'H',
           },
           {
             prisonerNumber: 'B2345CD',
@@ -402,6 +414,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
           cellLocation: '1-1-1',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
+          category: 'H',
         },
         {
           number: 'B2345CD',
@@ -440,6 +453,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
             prisonId: 'TPR',
             cellLocation: '2-2-2',
             status: 'ACTIVE IN',
+            category: 'H',
           },
         ] as Prisoner[])
 
@@ -452,6 +466,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
           cellLocation: '1-1-1',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
+          category: undefined,
         },
         {
           number: 'B2345CD',
@@ -459,6 +474,7 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
           cellLocation: '2-2-2',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
+          category: 'H',
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
