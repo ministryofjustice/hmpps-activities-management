@@ -1,3 +1,5 @@
+import { AppointmentPrisonerDetails } from './appointmentPrisonerDetails'
+
 export type AppointmentSetJourney = {
   appointments?: {
     startTime?: {
@@ -8,13 +10,7 @@ export type AppointmentSetJourney = {
       hour: number
       minute: number
     }
-    prisoner?: {
-      number: string
-      name: string
-      status: string
-      prisonCode: string
-      cellLocation: string
-    }
+    prisoner?: AppointmentPrisonerDetails
     extraInformation?: string
   }[]
 }

@@ -3,14 +3,19 @@ import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import config from '../../../../config'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
+import PrisonerAlertsService from '../../../../services/prisonerAlertsService'
+import { AppointmentPrisonerDetails } from '../appointmentPrisonerDetails'
 
 export default class ReviewPrisonerRoutes {
-  constructor(private readonly metricsService: MetricsService) {}
+  constructor(
+    private readonly metricsService: MetricsService,
+    private readonly prisonerAlertsService: PrisonerAlertsService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { appointmentId } = req.params
-    const { appointmentJourney, appointmentSetJourney, editAppointmentJourney } = req.session
+    const { appointmentJourney } = req.session
     const { preserveHistory } = req.query
 
     let backLinkHref =
@@ -19,17 +24,12 @@ export default class ReviewPrisonerRoutes {
       backLinkHref = `${config.dpsUrl}/prisoner/${appointmentJourney.fromPrisonNumberProfile}`
     }
 
-    let prisoners
     if (appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
-      prisoners = editAppointmentJourney.addPrisoners
-
       const metricsEvent = MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(appointmentJourney.mode, 'attendees', user)
       this.metricsService.trackEvent(metricsEvent)
-    } else if (appointmentJourney.type === AppointmentType.SET) {
-      prisoners = appointmentSetJourney.appointments.map(appointment => appointment.prisoner)
-    } else {
-      prisoners = appointmentJourney.prisoners
     }
+
+    const prisoners = ReviewPrisonerRoutes.getPrisoners(req)
 
     res.render('pages/appointments/create-and-edit/review-prisoners', {
       appointmentId,
@@ -39,16 +39,45 @@ export default class ReviewPrisonerRoutes {
     })
   }
 
+  private static getPrisoners(req: Request): AppointmentPrisonerDetails[] {
+    const { appointmentJourney, appointmentSetJourney, editAppointmentJourney } = req.session
+
+    if (appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
+      return editAppointmentJourney.addPrisoners
+    }
+    if (appointmentJourney.type === AppointmentType.SET) {
+      return appointmentSetJourney.appointments.map(appointment => appointment.prisoner)
+    }
+    return appointmentJourney.prisoners
+  }
+
   POST = async (req: Request, res: Response): Promise<void> => {
     if (req.query.preserveHistory) {
       req.session.returnTo = 'schedule?preserveHistory=true'
     }
+    res.redirectOrReturn(await this.getNextPageInJourney(req, res))
+  }
 
-    res.redirectOrReturn('name')
+  private async getNextPageInJourney(req: Request, res: Response): Promise<string> {
+    const prisonCode = res.locals.user.activeCaseLoadId
+    const prisoners = ReviewPrisonerRoutes.getPrisoners(req)
+    const prisonerAlertsDetails = await this.prisonerAlertsService.getAlertDetails(
+      prisoners,
+      prisonCode,
+      res.locals.user,
+    )
+
+    if (prisonerAlertsDetails.numPrisonersWithAlerts === 0) {
+      if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
+        return '../../schedule'
+      }
+      return 'name'
+    }
+    return 'review-prisoners-alerts'
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    return res.redirect('../../schedule')
+    res.redirect(await this.getNextPageInJourney(req, res))
   }
 
   REMOVE = async (req: Request, res: Response): Promise<void> => {

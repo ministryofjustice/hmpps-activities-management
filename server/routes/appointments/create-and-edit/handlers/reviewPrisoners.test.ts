@@ -1,15 +1,20 @@
 import { Request, Response } from 'express'
+import { when } from 'jest-when'
 import ReviewPrisoners from './reviewPrisoners'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
+import PrisonerAlertsService, { PrisonerAlertResults } from '../../../../services/prisonerAlertsService'
+import { AppointmentPrisonerDetails } from '../appointmentPrisonerDetails'
 
 jest.mock('../../../../services/metricsService')
+jest.mock('../../../../services/prisonerAlertsService')
 
 const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
+const prisonerAlertsService = new PrisonerAlertsService(null) as jest.Mocked<PrisonerAlertsService>
 
 describe('Route Handlers - Create Appointment - Review Prisoners', () => {
-  const handler = new ReviewPrisoners(metricsService)
+  const handler = new ReviewPrisoners(metricsService, prisonerAlertsService)
   let req: Request
   let res: Response
   const appointmentId = '2'
@@ -189,10 +194,26 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
   })
 
   describe('POST', () => {
-    it('should redirect or return to name page', async () => {
+    beforeEach(() => {
       req.body = {
         howToAdd: 'SEARCH',
       }
+    })
+
+    it('should redirect or return to review alerts page if there are any alerts', async () => {
+      when(prisonerAlertsService.getAlertDetails)
+        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
+        .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 1 } as PrisonerAlertResults))
+
+      await handler.POST(req, res)
+      expect(res.redirectOrReturn).toBeCalledWith('review-prisoners-alerts')
+    })
+
+    it('should redirect or return to review alerts page there are no alerts', async () => {
+      when(prisonerAlertsService.getAlertDetails)
+        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
+        .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
+
       await handler.POST(req, res)
       expect(res.redirectOrReturn).toBeCalledWith('name')
     })
@@ -205,8 +226,45 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
   })
 
   describe('EDIT', () => {
-    it('should redirect to the schedule page', async () => {
+    const prisoners: AppointmentPrisonerDetails[] = [
+      {
+        number: 'A1234BC',
+        name: '',
+        cellLocation: '',
+        status: '',
+        prisonCode: '',
+      },
+      {
+        number: 'B2345CD',
+        name: '',
+        cellLocation: '',
+        status: '',
+        prisonCode: '',
+      },
+    ]
+
+    beforeEach(() => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.session.editAppointmentJourney.addPrisoners = prisoners
+    })
+
+    it('should redirect or return to review alerts page if there are any alerts', async () => {
+      when(prisonerAlertsService.getAlertDetails)
+        .calledWith(prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
+        .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 1 } as PrisonerAlertResults))
+
       await handler.EDIT(req, res)
+
+      expect(res.redirect).toBeCalledWith('review-prisoners-alerts')
+    })
+
+    it('should redirect to the alerts page if there are no alerts', async () => {
+      when(prisonerAlertsService.getAlertDetails)
+        .calledWith(prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
+        .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
+
+      await handler.EDIT(req, res)
+
       expect(res.redirect).toBeCalledWith('../../schedule')
     })
   })
