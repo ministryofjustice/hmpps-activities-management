@@ -112,14 +112,14 @@
                                 <h2 class="govuk-summary-card__title"
                                     data-qa="schedule-card-title-prison-number-{{ prisoner.number }}">
                                     <ul class='govuk-list'>
-                                        <li class="govuk-summary-card__action"><strong>
-                                                <a href="{{ dpsUrl }}/prisoner/{{ prisoner.number }}"
-                                                   target="_blank"
-                                                   class="govuk-link govuk-link--no-visited-state">
-                                                    {{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}
-                                                    , {{ prisoner.number }}
-                                                </a>
-                                            </strong></li>
+                                        <li class="govuk-summary-card__action govuk-!-font-weight-bold">
+                                            <a href="{{ dpsUrl }}/prisoner/{{ prisoner.number }}"
+                                               target="_blank"
+                                               class="govuk-link govuk-link--no-visited-state">
+                                                {{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}
+                                                , {{ prisoner.number }}
+                                            </a>
+                                        </li>
                                     </ul>
                                 </h2>
                                 <ul class="govuk-summary-card__actions govuk-summary-card__actions--stacked"
