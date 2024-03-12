@@ -34,6 +34,7 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  // TODO: Move to prisonSearchApiClient once alerts endpoint is available
   async getPrisonersAlerts(offenderNumbers: string[], prisonCode: string, user: ServiceUser): Promise<Alert[]> {
     return this.post({
       path: `/api/bookings/offenderNo/${prisonCode}/alerts`,
