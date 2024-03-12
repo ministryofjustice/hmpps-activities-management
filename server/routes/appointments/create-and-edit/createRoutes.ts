@@ -128,7 +128,7 @@ export default function Create({ prisonService, activitiesService, metricsServic
   get('/review-prisoners', reviewPrisonerRoutes.GET, true)
   post('/review-prisoners', reviewPrisonerRoutes.POST)
   get('/review-prisoners/:prisonNumber/remove', reviewPrisonerRoutes.REMOVE, true)
-  post('/review-prisoners-alerts', reviewPrisonerAlerts.POST) // continue to
+  post('/review-prisoners-alerts', reviewPrisonerAlerts.POST)
   get('/review-prisoners-alerts', reviewPrisonerAlerts.GET, true)
   get('/review-prisoners-alerts/:prisonNumber/remove', reviewPrisonerAlerts.REMOVE, true)
   get('/appointment-set-date', appointmentSetDateRoutes.GET, true)
