@@ -25,6 +25,8 @@ import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrison
 import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A8644DY.json'
 import getAppointmentSeriesDetails from '../../fixtures/activitiesApi/getAppointmentSeriesDetails.json'
 import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
+import ReviewPrisonerAlertsPage from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
+import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlertsA8644DY.json'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -52,6 +54,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('GET', '/appointment-series/10/details', getAppointmentSeriesDetails)
     cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
     cy.stubEndpoint('GET', '/users/jsmith', JSON.parse('{"name": "John Smith", "username": "jsmith"}'))
+    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlerts)
   })
 
   it('Should create an in cell appointment journey', () => {
@@ -85,6 +88,10 @@ context('Create group appointment', () => {
     const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
     reviewPrisonersPage.continue()
+
+    const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+
+    reviewPrisonerAlertsPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)
     namePage.selectCategory('Chaplaincy')

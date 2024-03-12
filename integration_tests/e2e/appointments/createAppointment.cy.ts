@@ -14,8 +14,15 @@ import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsM
 import getAppointmentSeries from '../../fixtures/activitiesApi/getAppointmentSeries.json'
 import getGroupAppointmentSeriesDetails from '../../fixtures/activitiesApi/getGroupAppointmentSeriesDetails.json'
 import getGroupAppointmentDetails from '../../fixtures/activitiesApi/getGroupAppointmentDetails.json'
+import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlerts.json'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
+import ReviewPrisonerAlertsPage, {
+  arsonistBadge,
+  catABadge,
+  noOneToOneBadge,
+  tactBadge,
+} from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
@@ -65,6 +72,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('GET', '/appointment-series/10/details', getGroupAppointmentSeriesDetails)
     cy.stubEndpoint('GET', '/appointments/11/details', getGroupAppointmentDetails)
     cy.stubEndpoint('GET', '/users/jsmith', JSON.parse('{"name": "John Smith", "username": "jsmith"}'))
+    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlerts)
   })
 
   it('Should complete create group appointment journey', () => {
@@ -116,6 +124,16 @@ context('Create group appointment', () => {
     reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Jacobson, Lee')
     reviewPrisonersPage.continue()
+
+    const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+    reviewPrisonerAlertsPage.assertPrisonerInList('Lee Jacobson')
+    reviewPrisonerAlertsPage.assertBadges(arsonistBadge, catABadge, noOneToOneBadge, tactBadge)
+    reviewPrisonerAlertsPage.assertAlertDescriptions(
+      'Arsonist',
+      'No 1 to 1 with this prisoner',
+      'Terrorism Act or Related Offence',
+    )
+    reviewPrisonerAlertsPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)
     namePage.selectCategory('Chaplaincy')
