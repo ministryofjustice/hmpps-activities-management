@@ -7,6 +7,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
+{% from "partials/activities/suspension-badge.njk" import suspensionBadge %}
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Before you allocate" %}
 {% set pageId = 'before-you-allocate-page' %}
@@ -154,7 +155,8 @@
                     {% for prisonerAllocation in allocationSuitability.allocations %}
                         {% set currentAllocations = (currentAllocations.push([
                             {
-                                text: prisonerAllocation.allocation.activitySummary
+                                html: prisonerAllocation.allocation.activitySummary +
+                                suspensionBadge(prisonerAllocation.allocation.status, prisonerAllocation.allocation.plannedSuspension, now)
                             },
                             {
                                 text: prisonerAllocation.allocation.startDate | formatDate('d MMMM yyyy')

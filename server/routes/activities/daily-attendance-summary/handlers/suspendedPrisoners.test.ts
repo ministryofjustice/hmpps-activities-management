@@ -191,6 +191,7 @@ describe('Route Handlers - Suspended prisoners list', () => {
             cellLocation: 'MDI-1-001',
             prisonerName: 'Joe Bloggs',
             prisonerNumber: 'ABC123',
+            reason: 'Temporarily released or transferred',
             sessions: [
               {
                 sessionEndTime: '11:00',
@@ -248,6 +249,7 @@ describe('Route Handlers - Suspended prisoners list', () => {
             cellLocation: 'MDI-1-001',
             prisonerName: 'Joe Bloggs',
             prisonerNumber: 'ABC123',
+            reason: 'Suspended',
             sessions: [
               {
                 sessionEndTime: '11:00',
@@ -256,6 +258,56 @@ describe('Route Handlers - Suspended prisoners list', () => {
                 sessionSlot: 'AM',
                 sessionStartTime: '10:00',
                 sessionSummary: 'Maths Level 1',
+              },
+            ],
+            timeSlots: ['AM'],
+          },
+        ],
+      })
+    })
+
+    it('should filter the activities based on the reason', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      req = {
+        query: {
+          date: dateString,
+        },
+        session: {
+          attendanceSummaryJourney: { reasonFilter: 'AUTO_SUSPENDED' },
+        },
+      } as unknown as Request
+
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockAttendanceResponse)
+      when(activitiesService.getScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockActivitiesResponse)
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC123'], res.locals.user)
+        .mockResolvedValue(mockPrisonApiResponse)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/suspended-prisoners', {
+        activityDate: date,
+        uniqueCategories: ['Education', 'Prison Jobs'],
+        suspendedAttendancesByPrisoner: [
+          {
+            cellLocation: 'MDI-1-001',
+            prisonerName: 'Joe Bloggs',
+            prisonerNumber: 'ABC123',
+            reason: 'Temporarily released or transferred',
+            sessions: [
+              {
+                sessionEndTime: '14:00',
+                sessionId: 2,
+                sessionLocation: 'Classroom 2',
+                sessionSlot: 'AM',
+                sessionStartTime: '13:00',
+                sessionSummary: 'Woodworking',
               },
             ],
             timeSlots: ['AM'],

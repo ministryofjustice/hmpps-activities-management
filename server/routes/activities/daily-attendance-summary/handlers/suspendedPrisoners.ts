@@ -43,10 +43,13 @@ export default class SuspendedPrisonersRoutes {
     // Set the default filter values if they are not set
     req.session.attendanceSummaryJourney ??= {}
     req.session.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
+    req.session.attendanceSummaryJourney.reasonFilter ??= 'BOTH'
 
-    const { categoryFilters, searchTerm } = req.session.attendanceSummaryJourney
+    const { categoryFilters, reasonFilter, searchTerm } = req.session.attendanceSummaryJourney
 
-    const attendancesMatchingFilter = suspendedAttendances.filter(a => categoryFilters?.includes(a.categoryName))
+    const attendancesMatchingFilter = suspendedAttendances
+      .filter(a => categoryFilters?.includes(a.categoryName))
+      .filter(a => reasonFilter === a.attendanceReasonCode || reasonFilter === 'BOTH')
 
     const suspendedAttendancesByPrisoner = Object.values(_.groupBy(attendancesMatchingFilter, 'prisonerNumber'))
       .map(attendances => {
@@ -73,6 +76,9 @@ export default class SuspendedPrisonersRoutes {
             }),
             'sessionStartTime',
           ),
+          reason: attendances.find(a => a.attendanceReasonCode === AttendanceReason.AUTO_SUSPENDED)
+            ? 'Temporarily released or transferred'
+            : 'Suspended',
           timeSlots: attendances.map(a => a.timeSlot),
         }
       })

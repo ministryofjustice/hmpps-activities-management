@@ -6,7 +6,6 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { eventClashes, scheduledEventSort } from '../../../../utils/utils'
 import { ScheduledEvent } from '../../../../@types/activitiesAPI/types'
-import { PrisonerStatus } from '../../../../@types/prisonApiImportCustom'
 import { dateFromDateOption, formatIsoDate } from '../../../../utils/datePickerUtils'
 
 export default class LocationEventsRoutes {
@@ -39,13 +38,11 @@ export default class LocationEventsRoutes {
       return res.redirect(`locations?dateOption=${dateOption}${dateQuery}&timeSlot=${timeSlot}`)
     }
 
-    // Get only the prisoners resident at the prison that are not inactive out
-    const prisoners = (
-      await this.prisonService.searchInmatesByPrisonerNumbers(
-        [...new Set(internalLocationEvents.flatMap(l => l.events).map(e => e.prisonerNumber))],
-        user,
-      )
-    ).filter(p => p.prisonId === user.activeCaseLoadId && p.status !== PrisonerStatus.INACTIVE_OUT)
+    const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(
+      [...new Set(internalLocationEvents.flatMap(l => l.events).map(e => e.prisonerNumber))],
+      user,
+    )
+
     const otherEvents = await this.activitiesService.getScheduledEventsForPrisoners(
       richDate,
       prisoners.map(p => p.prisonerNumber),

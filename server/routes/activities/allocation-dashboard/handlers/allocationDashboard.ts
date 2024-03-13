@@ -215,6 +215,7 @@ export default class AllocationDashboardRoutes {
         startDate: parseDate(allocation.startDate),
         endDate: parseDate(allocation.endDate),
         status: allocation.status,
+        plannedSuspension: allocation.plannedSuspension,
         otherAllocations: otherAllocations?.map(a => ({
           activityId: a.activityId,
           scheduleName: a.scheduleDescription,

@@ -87,7 +87,23 @@ describe('Route Handlers - Exclusions - View allocations', () => {
         activities: [
           {
             activityName: 'Entry level Maths 1',
-            allocationId: 1,
+            allocation: {
+              exclusions: [
+                {
+                  daysOfWeek: ['MONDAY'],
+                  monday: true,
+                  timeSlot: 'AM',
+                  weekNumber: 1,
+                },
+              ],
+              id: 1,
+              prisonPayBand: {
+                id: 1,
+              },
+              prisonerNumber: 'ABC123å',
+              scheduleId: 1,
+              startDate: '2022-05-19',
+            },
             currentWeek: 1,
             scheduledSlots: {
               '1': [

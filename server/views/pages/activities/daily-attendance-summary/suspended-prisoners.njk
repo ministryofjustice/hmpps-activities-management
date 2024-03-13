@@ -4,6 +4,7 @@
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/searchInput.njk" import searchInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -27,7 +28,6 @@
         {{ govukCheckboxes({
             idPrefix: 'categoryFilters',
             name: 'categoryFilters',
-            classes: "govuk-radios--small",
             hint: {
                 text: "Select all that apply"
             },
@@ -39,9 +39,38 @@
             },
             items: categoryFilters
         }) }}
+
         <div class="govuk-!-margin-bottom-4">
             <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
         </div>
+
+        {{ govukRadios({
+            idPrefix: 'reasonFilter',
+            name: 'reasonFilter',
+            fieldset: {
+                legend: {
+                    text: 'Reason',
+                    classes: 'govuk-fieldset__legend--m'
+                }
+            },
+            items: [
+                {
+                    value: "SUSPENDED",
+                    text: "Suspended",
+                    checked: "SUSPENDED" == session.attendanceSummaryJourney.reasonFilter
+                },
+                {
+                    value: "AUTO_SUSPENDED",
+                    text: "Temporarily released or transferred",
+                    checked: "AUTO_SUSPENDED" == session.attendanceSummaryJourney.reasonFilter
+                },
+                {
+                    value: "BOTH",
+                    text: "Both",
+                    checked: "BOTH" == session.attendanceSummaryJourney.reasonFilter or not session.attendanceSummaryJourney.reasonFilter
+                }
+            ]
+        }) }}
 
         <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
             Apply filters
@@ -51,7 +80,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
-                    Suspended from activities
+                    Prisoners suspended or temporarily absent
                     <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
                 </h1>
 
@@ -181,6 +210,11 @@
                     attributes: { id: 'activities-' + loop.index },
                     html: sessions,
                     classes: 'govuk-table_cell'
+                },
+                {
+                    attributes: { id: 'activities-' + loop.index },
+                    text: suspendedPrisoner.reason,
+                    classes: 'govuk-table_cell'
                 }
             ]), suspendedPrisonersRows) %}
         {% endif %}
@@ -212,11 +246,15 @@
             {
                 html: "Activity",
                 classes: 'govuk-table__header'
+            },
+            {
+                html: "Reason",
+                classes: 'govuk-table__header'
             }
         ],
         rows: suspendedPrisonersRows if suspendedPrisonersRows | length > 0 else [[{
             text: "No suspended prisoners",
-            attributes: { "colspan": "3" },
+            attributes: { "colspan": "4" },
             classes: 'govuk-table_cell govuk-!-text-align-centre'
         }]]
     }) }}
