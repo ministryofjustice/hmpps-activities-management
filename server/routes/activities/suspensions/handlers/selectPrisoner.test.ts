@@ -11,7 +11,7 @@ jest.mock('../../../../services/prisonService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
-describe('Route Handlers - Exclusions - Select Prisoner', () => {
+describe('Route Handlers - Suspensions - Select Prisoner', () => {
   const handler = new SelectPrisonerRoutes(prisonService)
   let req: Request
   let res: Response
