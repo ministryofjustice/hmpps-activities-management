@@ -22,8 +22,9 @@
                 {{ govukPanel({
                     titleText: "Suspension started" if session.suspendJourney.allocations | length == 1 else "Suspensions started",
                     text: subText
+                    
                 }) }}
-                <p class='govuk-body'>They’ll be shown as ‘Suspended’ on unlock and movement lists, and when recording attendance.</p>
+                <p class='govuk-body'>They’ll be shown as ‘Prisoner suspended’ on unlock and movement lists, and when recording attendance.</p>
                 <p class='govuk-body'>If they were due to attend a session that has already started, attendance for that session will need to be recorded.</p>
 
                 {{ govukWarningText({
