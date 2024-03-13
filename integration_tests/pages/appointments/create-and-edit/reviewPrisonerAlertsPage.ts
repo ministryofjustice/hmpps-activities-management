@@ -4,6 +4,7 @@ export const catABadge = { clazz: 'cat-a-status--a', text: 'CAT A' }
 export const arsonistBadge = { clazz: 'alert-status--arsonist', text: 'Arsonist' }
 export const tactBadge = { clazz: 'alert-status--tact', text: 'TACT' }
 export const noOneToOneBadge = { clazz: 'alert-status--no-one-to-one', text: 'No one-to-one' }
+export const corruptorBadge = { clazz: 'alert-status--corruptor', text: 'Corruptor' }
 
 export default class ReviewPrisonerAlertsPage extends Page {
   constructor() {

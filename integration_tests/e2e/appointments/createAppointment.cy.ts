@@ -20,6 +20,7 @@ import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/review
 import ReviewPrisonerAlertsPage, {
   arsonistBadge,
   catABadge,
+  corruptorBadge,
   noOneToOneBadge,
   tactBadge,
 } from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
@@ -127,9 +128,10 @@ context('Create group appointment', () => {
 
     const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
     reviewPrisonerAlertsPage.assertPrisonerInList('Lee Jacobson')
-    reviewPrisonerAlertsPage.assertBadges(arsonistBadge, catABadge, noOneToOneBadge, tactBadge)
+    reviewPrisonerAlertsPage.assertBadges(arsonistBadge, catABadge, corruptorBadge, noOneToOneBadge, tactBadge)
     reviewPrisonerAlertsPage.assertAlertDescriptions(
       'Arsonist',
+      'Corruptor',
       'No 1 to 1 with this prisoner',
       'Terrorism Act or Related Offence',
     )

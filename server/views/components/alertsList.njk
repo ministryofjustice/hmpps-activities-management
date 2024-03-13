@@ -8,11 +8,17 @@
         {% if 'HA' in alertCodes %}
             <li class='alert-status alert-status--acct'>ACCT</li>
         {% endif %}
+        {% if 'HA1' in alertCodes %}
+            <li class='alert-status alert-status--acct-post-closure'>ACCT post closure</li>
+        {% endif %}
         {% if 'XA' in alertCodes %}
             <li class='alert-status alert-status--arsonist'>
                 <img src='/assets/images/arson_icon.png' alt='Arson'>
                 Arsonist
             </li>
+        {% endif %}
+        {% if 'LCE' in alertCodes %}
+            <li class='alert-status alert-status--care-experienced'>Care experienced</li>
         {% endif %}
         {% if params.category == 'A' or params.category == 'E' %}
             <li class='cat-a-status cat-a-status--{{ params.category | lower }}'>CAT A</li>
@@ -23,14 +29,41 @@
         {% if params.category == 'P' %}
             <li class='cat-a-status cat-a-status--{{ params.category | lower }}'>CAT A Provisional</li>
         {% endif %}
+            {% if 'XCA' in alertCodes %}
+            <li class='alert-status alert-status--chemical-attacker'>Chemical attacker</li>
+        {% endif %}
+        {% if 'XCI' in alertCodes %}
+            <li class='alert-status alert-status--concerted-indiscipline'>Concerted indiscipline</li>
+        {% endif %}
         {% if 'RCON' in alertCodes %}
             <li class='alert-status alert-status--conflict'>Conflict</li>
         {% endif %}
         {% if 'XCU' in alertCodes %}
             <li class='alert-status alert-status--controlled-unlock'>Controlled Unlock</li>
         {% endif %}
+        {% if 'XCO' in alertCodes %}
+            <li class='alert-status alert-status--corruptor'>
+                    <img src='/assets/images/CU_icon.png' alt='XCO'>
+                    Corruptor
+            </li>
+        {% endif %}
+        {% if 'CSIP' in alertCodes %}
+            <li class='alert-status alert-status--csip'>CSIP</li>
+        {% endif %}
         {% if 'XEL' in alertCodes %}
             <li class='alert-status alert-status--elist'>E-List</li>
+        {% endif %}
+        {% if 'XGANG' in alertCodes %}
+            <li class='alert-status alert-status--gang-member'>Gang member</li>
+        {% endif %}
+        {% if 'HID' in alertCodes %}
+            <li class='alert-status alert-status--medical'>Hidden disability</li>
+        {% endif %}
+        {% if 'XHT' in alertCodes %}
+            <li class='alert-status alert-status--hostage-taker'>Hostage taker</li>
+        {% endif %}
+        {% if 'VIP' in alertCodes %}
+            <li class='alert-status alert-status--isolated-prisoner'>Isolated</li>
         {% endif %}
         {% if 'RNO121' in alertCodes %}
             <li class='alert-status alert-status--no-one-to-one'>No one-to-one</li>
@@ -41,8 +74,32 @@
                 PEEP
             </li>
         {% endif %}
+        {% if 'UPIU' in alertCodes %}
+            <li class='alert-status alert-status--protective-isolation-unit'>Protective Isolation Unit</li>
+        {% endif %}
+        {% if 'RCDR' in alertCodes %}
+            <li class='alert-status alert-status--quarantined'>Quarantined</li>
+        {% endif %}
+        {% if 'XR' in alertCodes %}
+            <li class='alert-status alert-status--racist'>Racist</li>
+        {% endif %}
+        {% if 'URS' in alertCodes %}
+            <li class='alert-status alert-status--refusing-to-shield'>Refusing to shield</li>
+        {% endif %}
+        {% if 'URCU' in alertCodes %}
+            <li class='alert-status alert-status--reverse-cohorting-unit'>Reverse Cohorting Unit</li>
+        {% endif %}
         {% if 'XRF' in alertCodes %}
             <li class='alert-status alert-status--risk-females'>Risk to females</li>
+        {% endif %}
+        {% if 'RKS' in alertCodes %}
+            <li class='alert-status alert-status--risk-to-known-adults'>Risk to known adults</li>
+        {% endif %}
+        {% if 'RTP' in alertCodes or 'RLG' in alertCodes %}
+            <li class='alert-status alert-status--risk-lgbt'>Risk to LGBT</li>
+        {% endif %}
+        {% if 'USU' in alertCodes %}
+            <li class='alert-status alert-status--shielding-unit'>Shielding Unit</li>
         {% endif %}
         {% if 'XSA' in alertCodes or 'SA' in alertCodes %}
             <li class='alert-status alert-status--assault'>Staff assaulter</li>
@@ -50,69 +107,11 @@
         {% if 'XTACT' in alertCodes %}
             <li class='alert-status alert-status--tact'>TACT</li>
         {% endif %}
-
-        {% if 'HA1' in alertCodes %}
-            <li class='alert-status alert-status--acct-post-closure'>ACCT post closure</li>
-        {% endif %}
-        {% if 'XCO' in alertCodes %}
-            <li class='alert-status alert-status--corruptor'>
-                <img src='/assets/images/CU_icon.png' alt='XCO'>
-                Corruptor
-            </li>
-        {% endif %}
-        {% if 'XCA' in alertCodes %}
-            <li class='alert-status alert-status--chemical-attacker'>Chemical attacker</li>
-        {% endif %}
-        {% if 'XCI' in alertCodes %}
-            <li class='alert-status alert-status--concerted-indiscipline'>Concerted indiscipline</li>
-        {% endif %}
-        {% if 'XR' in alertCodes %}
-            <li class='alert-status alert-status--racist'>Racist</li>
-        {% endif %}
-        {% if 'RTP' in alertCodes or 'RLG' in alertCodes %}
-            <li class='alert-status alert-status--risk-lgbt'>Risk to LGBT</li>
-        {% endif %}
-        {% if 'XHT' in alertCodes %}
-            <li class='alert-status alert-status--hostage-taker'>Hostage taker</li>
-        {% endif %}
-        {% if 'XGANG' in alertCodes %}
-            <li class='alert-status alert-status--gang-member'>Gang member</li>
-        {% endif %}
-        {% if 'CSIP' in alertCodes %}
-            <li class='alert-status alert-status--csip'>CSIP</li>
-        {% endif %}
         {% if 'F1' in alertCodes %}
             <li class='alert-status alert-status--veteran'>Veteran</li>
         {% endif %}
-        {% if 'LCE' in alertCodes %}
-            <li class='alert-status alert-status--care-experienced'>Care experienced</li>
-        {% endif %}
-        {% if 'RCDR' in alertCodes %}
-            <li class='alert-status alert-status--quarantined'>Quarantined</li>
-        {% endif %}
-        {% if 'URCU' in alertCodes %}
-            <li class='alert-status alert-status--reverse-cohorting-unit'>Reverse Cohorting Unit</li>
-        {% endif %}
-        {% if 'UPIU' in alertCodes %}
-            <li class='alert-status alert-status--protective-isolation-unit'>Protective Isolation Unit</li>
-        {% endif %}
-        {% if 'USU' in alertCodes %}
-            <li class='alert-status alert-status--shielding-unit'>Shielding Unit</li>
-        {% endif %}
-        {% if 'URS' in alertCodes %}
-            <li class='alert-status alert-status--refusing-to-shield'>Refusing to shield</li>
-        {% endif %}
         {% if 'PVN' in alertCodes %}
             <li class='alert-status alert-status--multicase alert-status--visor'>ViSOR</li>
-        {% endif %}
-        {% if 'RKS' in alertCodes %}
-            <li class='alert-status alert-status--risk-to-known-adults'>Risk to known adults</li>
-        {% endif %}
-        {% if 'VIP' in alertCodes %}
-            <li class='alert-status alert-status--isolated-prisoner'>Isolated</li>
-        {% endif %}
-        {% if 'HID' in alertCodes %}
-            <li class='alert-status alert-status--medical'>Hidden disability</li>
         {% endif %}
     </ul>
 {% endmacro %}
