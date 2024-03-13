@@ -124,6 +124,14 @@
                     text: "Return to currently allocated",
                     href: "/activities/allocation-dashboard/" + allocation.activityId
                 }) }}
+
+                {% if suspensionsFeatureToggleEnabled %}
+                    {{ govukButton({
+                        text: "Suspend from this activity",
+                        href: "/activities/suspensions/suspend/" + allocation.prisonerNumber + "/suspend-from?allocationIds=" + allocation.id ,
+                        classes: "govuk-button--warning"
+                    }) }}
+                {% endif %}
             </div>
         </div>
     </div>

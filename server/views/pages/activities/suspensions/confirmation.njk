@@ -52,6 +52,9 @@
                 <h2 class="govuk-heading-m">What you can do next</h2>
                 <p class='govuk-body'>You can either:</p>
                 <ul class='govuk-list govuk-list--bullet'>
+                    {% if session.suspendJourney.allocations | length == 1 %}
+                        <li><a href="/activities/allocation-dashboard/{{ session.suspendJourney.allocations[0].activityId  }}" class='govuk-link govuk-link--no-visited-state'>view current allocations for {{ session.suspendJourney.allocations[0].activityName | safe }}</a></li>
+                    {% endif %}
                     <li><a href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>manage {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspensions</a></li>
                     <li><a href="/activities/suspensions/select-prisoner" class='govuk-link govuk-link--no-visited-state'>find another prisoner</a> to suspend them, or end a suspension</li>
                 </ul>

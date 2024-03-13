@@ -50,12 +50,14 @@ describe('initialiseSuspendJourney', () => {
           allocations: [
             {
               id: 1,
+              activityId: 10,
               activitySummary: 'Activity 1',
               startDate: '2024-03-02',
               endDate: '2024-06-02',
             },
             {
               id: 2,
+              activityId: 20,
               activitySummary: 'Activity 2',
               startDate: '2024-05-23',
               endDate: '2024-07-02',
@@ -111,10 +113,12 @@ describe('initialiseSuspendJourney', () => {
     expect(req.session.suspendJourney).toEqual({
       allocations: [
         {
+          activityId: 10,
           activityName: 'Activity 1',
           allocationId: 1,
         },
         {
+          activityId: 20,
           activityName: 'Activity 2',
           allocationId: 2,
         },

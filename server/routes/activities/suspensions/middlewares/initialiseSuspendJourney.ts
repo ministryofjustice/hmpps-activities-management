@@ -32,6 +32,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
     req.session.suspendJourney = {
       allocations: allocations.map(a => ({
         allocationId: a.id,
+        activityId: a.activityId,
         activityName: a.activitySummary,
       })),
       inmate: {

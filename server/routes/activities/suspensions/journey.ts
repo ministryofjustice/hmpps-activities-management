@@ -6,6 +6,7 @@ type Inmate = {
 export type SuspendJourney = {
   inmate: Inmate
   allocations: {
+    activityId: number
     allocationId: number
     activityName: string
   }[]
