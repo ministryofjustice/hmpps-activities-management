@@ -1,0 +1,65 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% set pageTitle = applicationName + " - Suspensions - Confirmation" %}
+{% set pageId = 'confirmation-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% if session.suspendJourney.suspendFrom == now | toDateString %}
+                {% set subText %}
+                    {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) is now suspended from
+                    {% if session.suspendJourney.allocations | length == 1 %}
+                        {{ session.suspendJourney.allocations[0].activityName | safe }}
+                    {% else %}
+                        {{ session.suspendJourney.allocations | length }} activities
+                    {% endif %}
+                {% endset %}
+
+                {{ govukPanel({
+                    titleText: "Suspension started" if session.suspendJourney.allocations | length == 1 else "Suspensions started",
+                    text: subText
+                    
+                }) }}
+                <p class='govuk-body'>They’ll be shown as ‘Prisoner suspended’ on unlock and movement lists, and when recording attendance.</p>
+                <p class='govuk-body'>If they were due to attend a session that has already started, attendance for that session will need to be recorded.</p>
+
+                {{ govukWarningText({
+                    text: "Unlock and movement lists for the rest of today may need to be printed again, to show this suspension.",
+                    iconFallbackText: "Warning"
+                }) }}
+            {% else %}
+                {% set subText %}
+                    {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) will be suspended from
+                    {% if session.suspendJourney.allocations | length == 1 %}
+                        {{ session.suspendJourney.allocations[0].activityName | safe }}
+                    {% else %}
+                        {{ session.suspendJourney.allocations | length }} activities
+                    {% endif %}
+                    from {{ session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}
+                {% endset %}
+
+                {{ govukPanel({
+                    titleText: "Suspension added" if session.suspendJourney.allocations | length == 1 else "Suspensions added",
+                    text: subText
+                }) }}
+                <p class='govuk-body'>From {{ session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}, they’ll be shown as ‘Suspended’ on unlock and movement lists, and when recording attendance.</p>
+            {% endif %}
+
+            <div class='govuk-!-margin-bottom-9'>
+                <h2 class="govuk-heading-m">What you can do next</h2>
+                <p class='govuk-body'>You can either:</p>
+                <ul class='govuk-list govuk-list--bullet'>
+                    {% if session.suspendJourney.allocations | length == 1 %}
+                        <li><a href="/activities/allocation-dashboard/{{ session.suspendJourney.allocations[0].activityId  }}" class='govuk-link govuk-link--no-visited-state'>view current allocations for {{ session.suspendJourney.allocations[0].activityName | safe }}</a></li>
+                    {% endif %}
+                    <li><a href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>manage {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspensions</a></li>
+                    <li><a href="/activities/suspensions/select-prisoner" class='govuk-link govuk-link--no-visited-state'>find another prisoner</a> to suspend them, or end a suspension</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

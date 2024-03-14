@@ -1,9 +1,7 @@
 // eslint-disable-next-line import/no-cycle
 import { components } from '.'
 
-export type InmateDetail = components['schemas']['InmateDetail']
 export type InmateBasicDetails = components['schemas']['InmateBasicDetails']
-export type PrisonApiUserDetail = components['schemas']['UserDetail']
 export type Location = components['schemas']['Location']
 export type PrisonerSchedule = components['schemas']['PrisonerSchedule']
 export type ScheduledAppointmentDto = components['schemas']['ScheduledAppointmentDto']

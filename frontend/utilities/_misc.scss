@@ -118,6 +118,25 @@ body {
   }
 }
 
+.govuk-summary-list--equal-widths {
+  > .govuk-summary-list__row {
+      > .govuk-summary-list__key {
+        width: revert;
+      }
+
+      > .govuk-summary-list__actions {
+        width: revert;
+      }
+  }
+}
+
+.govuk-summary-list--no-keys {
+  dt {
+    @extend .govuk-visually-hidden;
+    position: revert !important;
+  }
+}
+
 .govuk-summary-list__key--normal-key-weight {
   font-weight: normal;
 }

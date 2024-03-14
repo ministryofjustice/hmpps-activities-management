@@ -4,6 +4,7 @@ export enum MetricsEventType {
   CREATE_ACTIVITY_JOURNEY_COMPLETED = 'SAA-Create-Activity-Journey-Completed',
   CREATE_ALLOCATION_JOURNEY_STARTED = 'SAA-Create-Allocation-Journey-Started',
   CREATE_ALLOCATION_JOURNEY_COMPLETED = 'SAA-Create-Allocation-Journey-Completed',
+  SUSPEND_ALLOCATION_JOURNEY_COMPLETED = 'SAA-Suspend-Allocation-Journey-Completed',
   WAITLIST_APPLICATION_JOURNEY_STARTED = 'SAA-Waitlist-Application-Journey-Started',
   WAITLIST_APPLICATION_JOURNEY_COMPLETED = 'SAA-Waitlist-Application-Journey-Completed',
   CREATE_UNLOCK_LIST = 'SAA-Create-Unlock-List',

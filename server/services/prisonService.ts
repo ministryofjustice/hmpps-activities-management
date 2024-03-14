@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
-import { InmateDetail, ReferenceCode, AgencyPrisonerPayProfile, Alert } from '../@types/prisonApiImport/types'
+import { ReferenceCode, AgencyPrisonerPayProfile, Alert } from '../@types/prisonApiImport/types'
 import { PagePrisoner, Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../@types/express'
 
@@ -15,10 +15,6 @@ export default class PrisonService {
     private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
     private readonly incentivesApiClient: IncentivesApiClient,
   ) {}
-
-  async getInmate(nomisId: string, user: ServiceUser): Promise<InmateDetail> {
-    return this.prisonApiClient.getInmateDetail(nomisId, user)
-  }
 
   async getInmates(prisonCode: string, user: ServiceUser): Promise<PagePrisoner> {
     return this.prisonerSearchApiClient.getInmates(prisonCode, 0, 20, user)

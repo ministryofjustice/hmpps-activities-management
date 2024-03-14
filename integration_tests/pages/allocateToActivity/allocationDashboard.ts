@@ -35,7 +35,7 @@ export default class AllocationDashboard extends Page {
   }
 
   deallocateSelectedPrisoners = (): void => {
-    cy.get('#currently-allocated-tab').find('button').contains('Remove from activity').click()
+    cy.get('#currently-allocated-tab').find('button').contains('End allocation').click()
   }
 
   activeTimeSlots = () => cy.get('.govuk-table__cell > .govuk-tag').contains('Yes')

@@ -13,6 +13,7 @@ import { AppointmentSetJourney } from '../../routes/appointments/create-and-edit
 import { AttendanceSummaryJourney } from '../../routes/activities/daily-attendance-summary/journey'
 import { UnlockListJourney } from '../../routes/activities/unlock-list/journey'
 import { WaitListApplicationJourney } from '../../routes/activities/waitlist-application/journey'
+import { SuspendJourney } from '../../routes/activities/suspensions/journey'
 import { UserDetails } from '../manageUsersApiImport/types'
 
 export default {}
@@ -29,6 +30,7 @@ declare module 'express-session' {
     // as if there was only one journey per session e.g. req.session.appointmentJourney
     createJourney: CreateAnActivityJourney
     allocateJourney: AllocateToActivityJourney
+    suspendJourney: SuspendJourney
     appointmentJourney: AppointmentJourney
     appointmentSetJourney: AppointmentSetJourney
     editAppointmentJourney: EditAppointmentJourney

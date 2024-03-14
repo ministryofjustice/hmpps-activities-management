@@ -3,25 +3,18 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% set pageTitle = applicationName + " - Allocation - Deallocation Case Note" %}
-{% set pageId = 'deallocation-case-note-note-page' %}
+{% set pageTitle = applicationName + " - Suspensions - Case Note" %}
+{% set pageId = 'case-note-question-page' %}
 {% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <span class="govuk-caption-xl">Manage suspensions from activities</span>
+            <h1 class='govuk-heading-xl'>Do you want to add a case note about why {{ session.suspendJourney.inmate.prisonerName | safe }} is being suspended?</h1>
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
-                <h1 class='govuk-heading-xl'>Do you want to add a case note about why {{ session.allocateJourney.inmate.prisonerName }} is being removed?</h1>
-
-                <p class='govuk-hint'>
-                    This information can help others make decisions about allocating the prisoner to the same activity in the future.
-                </p>
-                <p class='govuk-hint'>
-                    It will also be available to other staff in the prison, like key workers and prison offender managers, on the case notes page.
-                </p>
 
                 {{ govukRadios({
                     classes: "govuk-radios--inline",
@@ -38,20 +31,20 @@
                         {
                             value: "yes",
                             text: "Yes",
-                            checked: true if session.allocateJourney.deallocationCaseNote else false
+                            checked: true if session.suspendJourney.caseNote else false
                         },
                         {
                             value: "no",
                             text: "No",
-                            checked: true if session.req.query.preserveHistory and not session.allocateJourney.deallocationCaseNote else false
+                            checked: true if session.req.query.preserveHistory and not session.suspendJourney.caseNote else false
                         }
                     ]
                 }) }}
 
-                <div class="govuk-button-group">
-                    {{ govukButton({ text: "Continue" }) }}
+                <div class='govuk-button-group'>
+                    {{ govukButton({ text: "Continue"}) }}
                     {% if not session.req.query.preserveHistory %}
-                        <a class="govuk-link" href="cancel">Cancel</a>
+                        <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>
                     {% endif %}
                 </div>
             </form>
