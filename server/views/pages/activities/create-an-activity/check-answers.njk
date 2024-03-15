@@ -98,7 +98,7 @@
                                 visuallyHiddenText: "Change record attendance option"
                             }] if not (session.createJourney.paid or (session.createJourney.attendanceRequired and session.createJourney.tierCode != 'FOUNDATION'))
                         }
-                    }
+                    } if nonAttendanceFeatureToggleEnabled
                 ]
             }) }}
 

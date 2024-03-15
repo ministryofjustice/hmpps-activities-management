@@ -4,6 +4,7 @@ import { IsIn } from 'class-validator'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import EventTier from '../../../../enum/eventTiers'
+import config from '../../../../config'
 
 enum RiskLevelOptions {
   HIGH = 'high',
@@ -40,7 +41,7 @@ export default class RiskLevelRoutes {
       return res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     }
 
-    if (req.session.createJourney.tierCode === EventTier.FOUNDATION) {
+    if (config.nonAttendanceFeatureToggleEnabled && req.session.createJourney.tierCode === EventTier.FOUNDATION) {
       return res.redirectOrReturn('attendance-required')
     }
     return res.redirectOrReturn('pay-option')

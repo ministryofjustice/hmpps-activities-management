@@ -9,6 +9,7 @@ import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import EventTier from '../../../../enum/eventTiers'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -40,6 +41,8 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       query: {},
       params: {},
     } as unknown as Request
+
+    config.nonAttendanceFeatureToggleEnabled = true
   })
 
   describe('GET', () => {
@@ -61,16 +64,31 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-option')
     })
 
-    it('should re-direct to attendance required option if tier is foundation', async () => {
+    it('should re-direct to attendance required option if tier is foundation if feature is enabled', async () => {
       req.body = {
         riskLevel: 'high',
       }
+
       req.session.createJourney.tierCode = EventTier.FOUNDATION
 
       await handler.POST(req, res)
 
       expect(req.session.createJourney.riskLevel).toEqual('high')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('attendance-required')
+    })
+
+    it('should save the selected risk level in session and redirect to pay option pay if feature is disabled', async () => {
+      req.body = {
+        riskLevel: 'high',
+      }
+
+      req.session.createJourney.tierCode = EventTier.FOUNDATION
+      config.nonAttendanceFeatureToggleEnabled = false
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.riskLevel).toEqual('high')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-option')
     })
 
     it('should save entered risk level in database', async () => {
