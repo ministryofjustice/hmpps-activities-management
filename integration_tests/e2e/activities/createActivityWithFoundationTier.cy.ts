@@ -43,7 +43,7 @@ context('Create activity', () => {
     cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
   })
 
-  it('should create a foundation tier  activity', () => {
+  const whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen = () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().should('contain.text', 'Activities, unlock and attendance')
     indexPage.activitiesCard().click()
@@ -71,15 +71,9 @@ context('Create activity', () => {
     const riskLevelPage = Page.verifyOnPage(RiskLevelPage)
     riskLevelPage.selectRiskLevel('Only people with a low workplace risk assessment are suitable')
     riskLevelPage.continue()
+  }
 
-    const attendanceRequiredPage = Page.verifyOnPage(AttendanceRequired)
-    attendanceRequiredPage.selectRecordAttendance('Yes')
-    attendanceRequiredPage.continue()
-
-    const payOptionPage = Page.verifyOnPage(PayOptionPage)
-    payOptionPage.selectPayOption('No')
-    payOptionPage.continue()
-
+  const whenWeProceedToTheCheckAnswersScreen = () => {
     const qualificationPage = Page.verifyOnPage(QualificationPage)
     qualificationPage.selectQualification('No')
     qualificationPage.continue()
@@ -122,9 +116,39 @@ context('Create activity', () => {
     const capacityPage = Page.verifyOnPage(CapacityPage)
     capacityPage.enterCapacity('6')
     capacityPage.continue()
+  }
+
+  it('should create a foundation tier activity when we record attendance', () => {
+    whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen()
+
+    const attendanceRequiredPage = Page.verifyOnPage(AttendanceRequired)
+    attendanceRequiredPage.selectRecordAttendance('Yes')
+    attendanceRequiredPage.continue()
+
+    const payOptionPage = Page.verifyOnPage(PayOptionPage)
+    payOptionPage.selectPayOption('No')
+    payOptionPage.continue()
+
+    whenWeProceedToTheCheckAnswersScreen()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertRecordAttendance('Yes')
+    checkAnswersPage.createActivity()
+
+    Page.verifyOnPage(ConfirmationPage)
+  })
+
+  it('should create a foundation tier activity when we do not record attendance', () => {
+    whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen()
+
+    const attendanceRequiredPage = Page.verifyOnPage(AttendanceRequired)
+    attendanceRequiredPage.selectRecordAttendance('No')
+    attendanceRequiredPage.continue()
+
+    whenWeProceedToTheCheckAnswersScreen()
+
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.assertRecordAttendance('No')
     checkAnswersPage.createActivity()
 
     Page.verifyOnPage(ConfirmationPage)
