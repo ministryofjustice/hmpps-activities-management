@@ -1,4 +1,5 @@
 import { RequestHandler, Router } from 'express'
+import createHttpError from 'http-errors'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
@@ -28,6 +29,7 @@ import TierRoutes, { TierForm } from './handlers/tier'
 import OrganiserRoutes, { OrganiserForm } from './handlers/organiser'
 import PayOption, { PayOptionForm } from './handlers/payOption'
 import AttendanceRequired, { AttendanceRequiredForm } from './handlers/attendanceRequired'
+import config from '../../../config'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -72,8 +74,6 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/organiser', organiserHandler.POST, OrganiserForm)
   get('/risk-level', riskLevelHandler.GET, true)
   post('/risk-level', riskLevelHandler.POST, RiskLevel)
-  get('/attendance-required', attendanceRequired.GET, true)
-  post('/attendance-required', attendanceRequired.POST, AttendanceRequiredForm)
   get('/pay-option', payOption.GET, true)
   post('/pay-option', payOption.POST, PayOptionForm)
   get('/pay-rate-type', payRateTypeHandler.GET, true)
@@ -111,6 +111,14 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/capacity', capacityHandler.POST, Capacity)
   get('/confirm-capacity', confirmCapacityRouteHandler.GET)
   post('/confirm-capacity', confirmCapacityRouteHandler.POST)
+
+  // Non-attendance routes are only accessible when feature toggle is provided
+  router.use((req, res, next) =>
+    !config.nonAttendanceFeatureToggleEnabled ? next(createHttpError.NotFound()) : next(),
+  )
+
+  get('/attendance-required', attendanceRequired.GET, true)
+  post('/attendance-required', attendanceRequired.POST, AttendanceRequiredForm)
 
   return router
 }
