@@ -73,6 +73,7 @@ describe('Route Handlers - Create an activity - Organiser', () => {
         activityId: 1,
         name: 'English 1',
         tierCode: EventTier.FOUNDATION,
+        attendanceRequired: true,
       }
       req.params = {
         mode: 'edit',
@@ -85,6 +86,7 @@ describe('Route Handlers - Create an activity - Organiser', () => {
         {
           organiserCode: Organiser.PRISONER,
           tierCode: EventTier.FOUNDATION,
+          attendanceRequired: true,
         },
         user,
       )

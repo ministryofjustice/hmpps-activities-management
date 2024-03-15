@@ -109,6 +109,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
         1,
         {
           tierCode: EventTier.TIER_1,
+          attendanceRequired: true,
         },
         user,
       )
@@ -118,6 +119,17 @@ describe('Route Handlers - Create an activity - Tier', () => {
         'Activity updated',
         "We've updated the tier for English 1",
       )
+    })
+
+    it('should set attendance required to true if tier is not foundation', async () => {
+      req.body = {
+        tier: EventTier.TIER_1,
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.attendanceRequired).toEqual(true)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('risk-level')
     })
   })
 

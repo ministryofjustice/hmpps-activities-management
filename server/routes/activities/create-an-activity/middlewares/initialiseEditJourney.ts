@@ -33,6 +33,7 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
       currentCapacity: schedule.capacity,
       capacity: schedule.capacity,
       allocations,
+      attendanceRequired: activity.attendanceRequired,
       paid: activity.paid,
       pay: activity.pay,
       educationLevels: activity.minimumEducationLevel,

@@ -3578,7 +3578,7 @@ export interface components {
        * @description The tier code for this activity, as defined by the Future Prison Regime team
        * @example TIER_1
        */
-      tierCode?: string
+      tierCode: string
       /**
        * @description The organiser code for the organiser of this activity
        * @example PRISON_STAFF

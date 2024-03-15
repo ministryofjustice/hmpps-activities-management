@@ -1,38 +1,38 @@
 import { addMonths } from 'date-fns'
-import IndexPage from '../pages/index'
-import Page from '../pages/page'
-import CategoryPage from '../pages/createActivity/category'
-import ActivityNamePage from '../pages/createActivity/name'
-import RiskLevelPage from '../pages/createActivity/riskLevel'
-import PayRateTypePage from '../pages/createActivity/payRateType'
-import PayPage from '../pages/createActivity/pay'
-import CheckPayPage from '../pages/createActivity/checkPay'
-import QualificationPage from '../pages/createActivity/qualification'
-import EducationLevelPage from '../pages/createActivity/educationLevel'
-import CheckEducationLevelsPage from '../pages/createActivity/checkEducationLevels'
-import getCategories from '../fixtures/activitiesApi/getCategories.json'
-import getActivities from '../fixtures/activitiesApi/getActivities.json'
-import moorlandPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
-import moorlandIncentiveLevels from '../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
-import educationLevels from '../fixtures/prisonApi/educationLevels.json'
-import studyAreas from '../fixtures/prisonApi/studyAreas.json'
-import CheckAnswersPage from '../pages/createActivity/checkAnswers'
-import ConfirmationPage from '../pages/createActivity/confirmation'
-import getEventLocations from '../fixtures/prisonApi/getEventLocations.json'
-import getPayProfile from '../fixtures/prisonApi/getPayProfile.json'
-import StartDatePage from '../pages/createSchedule/startDate'
-import EndDateOptionPage from '../pages/createSchedule/endDateOption'
-import EndDatePage from '../pages/createSchedule/endDate'
-import ScheduleFrequencyPage from '../pages/createSchedule/scheduleFrequency'
-import DaysAndTimesPage from '../pages/createSchedule/daysAndTimes'
-import BankHolidayPage from '../pages/createSchedule/bankHoliday'
-import LocationPage from '../pages/createSchedule/location'
-import CapacityPage from '../pages/createSchedule/capacity'
-import ManageActivitiesDashboardPage from '../pages/activities/manageActivitiesDashboard'
-import ActivitiesIndexPage from '../pages/activities'
-import ActivityTierPage from '../pages/createActivity/tier'
-import ActivityOrganiserPage from '../pages/createActivity/organiser'
-import PayOptionPage from '../pages/createActivity/pay-option'
+import IndexPage from '../../pages'
+import Page from '../../pages/page'
+import CategoryPage from '../../pages/createActivity/category'
+import ActivityNamePage from '../../pages/createActivity/name'
+import RiskLevelPage from '../../pages/createActivity/riskLevel'
+import PayRateTypePage from '../../pages/createActivity/payRateType'
+import PayPage from '../../pages/createActivity/pay'
+import CheckPayPage from '../../pages/createActivity/checkPay'
+import QualificationPage from '../../pages/createActivity/qualification'
+import EducationLevelPage from '../../pages/createActivity/educationLevel'
+import CheckEducationLevelsPage from '../../pages/createActivity/checkEducationLevels'
+import getCategories from '../../fixtures/activitiesApi/getCategories.json'
+import getActivities from '../../fixtures/activitiesApi/getActivities.json'
+import moorlandPayBands from '../../fixtures/activitiesApi/getMdiPrisonPayBands.json'
+import moorlandIncentiveLevels from '../../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
+import educationLevels from '../../fixtures/prisonApi/educationLevels.json'
+import studyAreas from '../../fixtures/prisonApi/studyAreas.json'
+import CheckAnswersPage from '../../pages/createActivity/checkAnswers'
+import ConfirmationPage from '../../pages/createActivity/confirmation'
+import getEventLocations from '../../fixtures/prisonApi/getEventLocations.json'
+import getPayProfile from '../../fixtures/prisonApi/getPayProfile.json'
+import StartDatePage from '../../pages/createSchedule/startDate'
+import EndDateOptionPage from '../../pages/createSchedule/endDateOption'
+import EndDatePage from '../../pages/createSchedule/endDate'
+import ScheduleFrequencyPage from '../../pages/createSchedule/scheduleFrequency'
+import DaysAndTimesPage from '../../pages/createSchedule/daysAndTimes'
+import BankHolidayPage from '../../pages/createSchedule/bankHoliday'
+import LocationPage from '../../pages/createSchedule/location'
+import CapacityPage from '../../pages/createSchedule/capacity'
+import ManageActivitiesDashboardPage from '../../pages/activities/manageActivitiesDashboard'
+import ActivitiesIndexPage from '../../pages/activities'
+import ActivityTierPage from '../../pages/createActivity/tier'
+import ActivityOrganiserPage from '../../pages/createActivity/organiser'
+import PayOptionPage from '../../pages/createActivity/pay-option'
 
 context('Create activity', () => {
   beforeEach(() => {
@@ -71,9 +71,9 @@ context('Create activity', () => {
     activityNamePage.enterName('5-a-side Football')
     activityNamePage.continue()
 
-    const activitTierPage = Page.verifyOnPage(ActivityTierPage)
-    activitTierPage.selectActivityTier('Tier 2')
-    activityNamePage.continue()
+    const activityTierPage = Page.verifyOnPage(ActivityTierPage)
+    activityTierPage.selectActivityTier('Tier 2')
+    activityTierPage.continue()
 
     const activitOrganiserPage = Page.verifyOnPage(ActivityOrganiserPage)
     activitOrganiserPage.selectOrganiser('Prison staff')

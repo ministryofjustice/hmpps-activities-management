@@ -89,8 +89,19 @@
                                     visuallyHiddenText: "change organiser"
                                 }
                             ]
-                        } if not activityEnded 
-                    } if organiser
+                        } if not activityEnded
+                    } if organiser,
+                    {
+                        key: { text: "Record attendance" },
+                        value: { text: "Yes" if activity.attendanceRequired else "No"},
+                        actions: {
+                            items: [{
+                                href: "/activities/edit/" + activity.id + "/attendance-required?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "Change record attendance option"
+                            }]
+                        } if not (activityEnded or schedule.activity.paid or (activity.attendanceRequired and activity.tier.code != 'FOUNDATION'))
+                    }
                 ]
             }) }}
 
