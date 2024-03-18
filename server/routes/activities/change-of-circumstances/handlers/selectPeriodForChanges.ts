@@ -3,8 +3,8 @@ import { Expose, Transform } from 'class-transformer'
 import { IsIn, ValidateIf } from 'class-validator'
 import { startOfToday, subDays } from 'date-fns'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
-import DateValidator from '../../../../validators/DateValidator'
 import IsValidDate from '../../../../validators/isValidDate'
+import Validator from '../../../../validators/validator'
 
 enum PresetDateOptions {
   TODAY = 'today',
@@ -20,7 +20,7 @@ export class TimePeriodForChanges {
   @Expose()
   @ValidateIf(o => o.datePresetOption === PresetDateOptions.OTHER)
   @Transform(({ value }) => parseDatePickerDate(value))
-  @DateValidator(date => date <= startOfToday(), { message: 'Enter a date on or before today' })
+  @Validator(date => date <= startOfToday(), { message: 'Enter a date on or before today' })
   @IsValidDate({ message: 'Enter a valid date' })
   date: Date
 }

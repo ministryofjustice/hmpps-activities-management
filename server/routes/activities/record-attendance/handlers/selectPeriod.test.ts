@@ -92,7 +92,9 @@ describe('Route Handlers - Select period', () => {
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
 
       expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
     })
@@ -104,7 +106,9 @@ describe('Route Handlers - Select period', () => {
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
 
       expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
     })

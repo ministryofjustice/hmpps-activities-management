@@ -100,7 +100,9 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       const body = { startDate }
 
       const requestObject = plainToInstance(StartDate, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
 
       expect(errors).toEqual([{ property: 'startDate', error: 'Enter a valid start date' }])
     })
@@ -111,7 +113,9 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       const body = { startDate }
 
       const requestObject = plainToInstance(StartDate, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
 
       expect(errors).toEqual([{ property: 'startDate', error: 'Enter a valid start date' }])
     })
