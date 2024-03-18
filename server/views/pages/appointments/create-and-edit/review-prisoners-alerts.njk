@@ -116,8 +116,7 @@
                                             <a href="{{ dpsUrl }}/prisoner/{{ prisoner.number }}"
                                                target="_blank"
                                                class="govuk-link govuk-link--no-visited-state">
-                                                {{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}
-                                                , {{ prisoner.number }}
+                                                {{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }}
                                             </a>
                                         </li>
                                     </ul>
