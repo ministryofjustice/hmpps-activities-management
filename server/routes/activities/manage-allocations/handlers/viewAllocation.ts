@@ -8,11 +8,15 @@ import activitySessionToDailyTimeSlots, {
   activitySlotsMinusExclusions,
 } from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
+import UserService from '../../../../services/userService'
+import CaseNotesService from '../../../../services/caseNotesService'
 
 export default class ViewAllocationRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
+    private readonly caseNotesService: CaseNotesService,
+    private readonly userService: UserService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -45,6 +49,16 @@ export default class ViewAllocationRoutes {
 
     const isStarted = new Date(allocation.startDate) <= new Date()
 
+    const userMap = await this.userService.getUserMap([allocation.plannedSuspension?.plannedBy], user)
+
+    const suspensionCaseNote = allocation.plannedSuspension?.caseNoteId
+      ? await this.caseNotesService.getCaseNote(
+          allocation.prisonerNumber,
+          allocation.plannedSuspension?.caseNoteId,
+          user,
+        )
+      : null
+
     res.render('pages/activities/manage-allocations/view-allocation', {
       allocation,
       prisonerName,
@@ -53,6 +67,8 @@ export default class ViewAllocationRoutes {
       isOnlyPay,
       dailySlots,
       currentWeek,
+      userMap,
+      suspensionCaseNote,
     })
   }
 }

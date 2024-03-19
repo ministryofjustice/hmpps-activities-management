@@ -8,15 +8,21 @@ import { Activity, Allocation } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import ViewAllocationRoutes from './viewAllocation'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
+import CaseNotesService from '../../../../services/caseNotesService'
+import UserService from '../../../../services/userService'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/caseNotesService')
+jest.mock('../../../../services/userService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const caseNotesService = new CaseNotesService(null) as jest.Mocked<CaseNotesService>
+const userService = new UserService(null, null, null) as jest.Mocked<UserService>
 
 describe('Route Handlers - Allocation dashboard', () => {
-  const handler = new ViewAllocationRoutes(activitiesService, prisonService)
+  const handler = new ViewAllocationRoutes(activitiesService, prisonService, caseNotesService, userService)
   let req: Request
   let res: Response
 

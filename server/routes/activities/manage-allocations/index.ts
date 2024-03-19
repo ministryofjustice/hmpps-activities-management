@@ -13,7 +13,12 @@ export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
-  const viewAllocationHandler = new ViewAllocationRoutes(services.activitiesService, services.prisonService)
+  const viewAllocationHandler = new ViewAllocationRoutes(
+    services.activitiesService,
+    services.prisonService,
+    services.caseNotesService,
+    services.userService,
+  )
 
   get('/', (req, res) => res.render('pages/activities/manage-allocations/home'))
   get('/view/:allocationId(\\d+)', viewAllocationHandler.GET)

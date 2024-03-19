@@ -15,10 +15,12 @@ import PrisonRegisterApiClient from './prisonRegisterApiClient'
 import ActivitiesApiClient from './activitiesApiClient'
 import IncentivesApiClient from './incentivesApiClient'
 import FrontendComponentApiClient from './frontendComponentApiClient'
+import CaseNotesApiClient from './caseNotesApiClient'
 
 export default function dataAccess() {
   return {
     manageUsersApiClient: new ManageUsersApiClient(),
+    caseNotesApiClient: new CaseNotesApiClient(),
     prisonApiClient: new PrisonApiClient(),
     prisonerSearchApiClient: new PrisonerSearchApiClient(),
     prisonRegisterApiClient: new PrisonRegisterApiClient(),
