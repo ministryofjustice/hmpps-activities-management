@@ -9,12 +9,12 @@ import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import { hasAnyAppointmentPropertyChanged } from '../../../../utils/editAppointmentUtils'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../validators/isValidDate'
-import DateValidator from '../../../../validators/DateValidator'
+import Validator from '../../../../validators/validator'
 
 export class DateAndTime {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
-  @DateValidator(date => date >= startOfToday(), { message: "Enter a date on or after today's date" })
+  @Validator(date => date >= startOfToday(), { message: "Enter a date on or after today's date" })
   @IsValidDate({ message: 'Enter a valid date for the appointment' })
   @IsNotEmpty({ message: 'Enter a date for the appointment' })
   startDate: Date

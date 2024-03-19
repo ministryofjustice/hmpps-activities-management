@@ -4,8 +4,8 @@ import { IsIn, IsNotEmpty, ValidateIf } from 'class-validator'
 import { addDays, startOfToday } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
-import DateValidator from '../../../../validators/DateValidator'
 import IsValidDate from '../../../../validators/isValidDate'
+import Validator from '../../../../validators/validator'
 
 enum PresetDateOptions {
   TODAY = 'today',
@@ -27,7 +27,7 @@ export class DateAndLocation {
   @Expose()
   @ValidateIf(o => o.datePresetOption === PresetDateOptions.OTHER)
   @Transform(({ value }) => parseDatePickerDate(value))
-  @DateValidator(thisDate => thisDate <= addDays(startOfToday(), 60), {
+  @Validator(thisDate => thisDate <= addDays(startOfToday(), 60), {
     message: 'Enter a date up to 60 days in the future',
   })
   @IsValidDate({ message: 'Enter a valid date' })

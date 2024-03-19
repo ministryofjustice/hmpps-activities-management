@@ -33,10 +33,7 @@ export default class NameRoutes {
     const duplicateCreateName = activityNames.find(activity => activity.name === req.session.createJourney.name)
 
     if (editJourney && duplicateEditName) {
-      return res.validationFailed(
-        'name',
-        `You need to enter a different name - there is already ${req.session.createJourney.name} for this prison`,
-      )
+      return res.validationFailed('name', 'Enter a different name. There is already an activity with this name')
     }
     if (editJourney) {
       const { activityId } = req.session.createJourney

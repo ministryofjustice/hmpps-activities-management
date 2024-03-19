@@ -95,7 +95,9 @@ describe('Route Handlers - Edit allocation - End date', () => {
       const body = { endDate }
 
       const requestObject = plainToInstance(EndDate, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
 
       expect(errors).toEqual([{ property: 'endDate', error: 'Enter a valid end date' }])
     })
@@ -106,7 +108,9 @@ describe('Route Handlers - Edit allocation - End date', () => {
       }
 
       const requestObject = plainToInstance(EndDate, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
 
       expect(errors).toEqual([{ property: 'endDate', error: 'Enter a valid end date' }])
     })

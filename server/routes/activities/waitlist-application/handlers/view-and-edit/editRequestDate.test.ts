@@ -81,7 +81,9 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
       const body = { requestDate }
 
       const requestObject = plainToInstance(EditRequestDate, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
 
       expect(errors).toEqual([{ property: 'requestDate', error: 'Enter a valid request date' }])
     })
@@ -92,7 +94,9 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
       const body = { requestDate }
 
       const requestObject = plainToInstance(EditRequestDate, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
 
       expect(errors).toEqual([{ property: 'requestDate', error: 'Enter a valid request date' }])
     })
