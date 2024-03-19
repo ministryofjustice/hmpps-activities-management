@@ -8,15 +8,23 @@ import { Activity, Allocation } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import ViewAllocationRoutes from './viewAllocation'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
+import CaseNotesService from '../../../../services/caseNotesService'
+import UserService from '../../../../services/userService'
+import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
+import { CaseNote } from '../../../../@types/caseNotesApi/types'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/caseNotesService')
+jest.mock('../../../../services/userService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const caseNotesService = new CaseNotesService(null) as jest.Mocked<CaseNotesService>
+const userService = new UserService(null, null, null) as jest.Mocked<UserService>
 
 describe('Route Handlers - Allocation dashboard', () => {
-  const handler = new ViewAllocationRoutes(activitiesService, prisonService)
+  const handler = new ViewAllocationRoutes(activitiesService, prisonService, caseNotesService, userService)
   let req: Request
   let res: Response
 
@@ -68,6 +76,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           startDate: '2022-05-19',
           prisonPayBand: { id: 1 },
           exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
+          plannedSuspension: { plannedBy: 'joebloggs', caseNoteId: 10001 },
         } as Allocation)
 
       when(prisonService.getInmateByPrisonerNumber)
@@ -99,6 +108,14 @@ describe('Route Handlers - Allocation dashboard', () => {
           id: 1,
           minimumEducationLevel: [],
         } as unknown as Activity)
+
+      when(userService.getUserMap)
+        .calledWith(atLeast(['joebloggs']))
+        .mockResolvedValue(new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>)
+
+      when(caseNotesService.getCaseNote)
+        .calledWith(atLeast('G4793VF', 10001))
+        .mockResolvedValue({ text: 'test case note' } as CaseNote)
     })
 
     it('should render the correct view', async () => {
@@ -112,6 +129,10 @@ describe('Route Handlers - Allocation dashboard', () => {
           startDate: '2022-05-19',
           prisonPayBand: { id: 1 },
           exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
+          plannedSuspension: {
+            plannedBy: 'joebloggs',
+            caseNoteId: 10001,
+          },
         },
         isOnlyPay: true,
         isStarted: true,
@@ -149,6 +170,10 @@ describe('Route Handlers - Allocation dashboard', () => {
               slots: ['am'],
             },
           ],
+        },
+        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]),
+        suspensionCaseNote: {
+          text: 'test case note',
         },
       })
     })

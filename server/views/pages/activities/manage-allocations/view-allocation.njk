@@ -5,7 +5,9 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "partials/activities/days-and-times.njk" import daysAndTimes %}
+{% from "partials/service-user-name.njk" import serviceUserName %}
 
 {% set pageTitle = applicationName + " - Update allocation - Check answers" %}
 {% set pageId = 'check-allocation-page' %}
@@ -27,6 +29,40 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            {% if allocation.plannedSuspension %}
+                <h2 class='govuk-heading-m'>Suspension added on {{ allocation.plannedSuspension.plannedAt | parseISODate | formatDate }}</h2>
+                <dl class="govuk-summary-list {{ 'govuk-!-margin-bottom-0' if suspensionCaseNote}}">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Suspension start date</dt>
+                        <dd class="govuk-summary-list__value">{{ allocation.plannedSuspension.plannedStartDate | formatDate }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Suspension end date</dt>
+                        <dd class="govuk-summary-list__value">{{ (allocation.plannedSuspension.plannedEndDate | formatDate) or "No end date" }}</dd>
+                        <dd class="govuk-summary-list__actions"><a href="#" class="govuk-link govuk-link--no-visited-state">End suspension</a></dd>
+                    </div>
+                    <div class="govuk-summary-list__row {{ 'govuk-summary-list__row--no-border' if suspensionCaseNote}}">
+                        <dt class="govuk-summary-list__key">Added by</dt>
+                        <dd class="govuk-summary-list__value">{{ serviceUserName(userMap.get(allocation.plannedSuspension.plannedBy)) }}</dd>
+                    </div>
+                </dl>
+
+                {% if suspensionCaseNote %}
+                    <dl class="govuk-summary-list govuk-summary-list--no-keys">
+                        <div class="govuk-summary-list__row">
+                            <dd class="govuk-summary-list__value">
+                                {{ govukDetails({
+                                    summaryText: "View case note",
+                                    classes: "govuk-!-margin-0",
+                                    text: suspensionCaseNote.text
+                                }) }}
+                            </dd>
+                        </div>
+                    </dl>
+                {% endif %}
+
+                <h2 class='govuk-heading-m'>Allocation details</h2>
+            {% endif %}
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
@@ -125,7 +161,7 @@
                     href: "/activities/allocation-dashboard/" + allocation.activityId
                 }) }}
 
-                {% if suspensionsFeatureToggleEnabled %}
+                {% if suspensionsFeatureToggleEnabled and not allocation.plannedSuspension %}
                     {{ govukButton({
                         text: "Suspend from this activity",
                         href: "/activities/suspensions/suspend/" + allocation.prisonerNumber + "/suspend-from?allocationIds=" + allocation.id ,
