@@ -127,7 +127,9 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
           },
         },
       })
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
 
       expect(errors).toEqual([{ property: 'endDate', error: 'Enter a valid end date' }])
     })

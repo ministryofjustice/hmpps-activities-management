@@ -10,16 +10,16 @@ import {
   parseDatePickerDate,
   parseIsoDate,
 } from '../../../../utils/datePickerUtils'
-import DateValidator from '../../../../validators/DateValidator'
 import { CreateAnActivityJourney } from '../journey'
 import IsValidDate from '../../../../validators/isValidDate'
+import Validator from '../../../../validators/validator'
 
 export class EndDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
   @ValidateIf((_, v) => v)
-  @DateValidator(thisDate => thisDate > startOfToday(), { message: 'Activity end date must be in the future' })
-  @DateValidator(
+  @Validator(thisDate => thisDate > startOfToday(), { message: 'Activity end date must be in the future' })
+  @Validator(
     (date, { createJourney }) => {
       const allocationDate = createJourney?.latestAllocationStartDate
       return allocationDate ? date >= parseIsoDate(allocationDate) : true
@@ -32,7 +32,7 @@ export class EndDate {
       },
     },
   )
-  @DateValidator((date, { createJourney }) => date >= parseIsoDate(createJourney.startDate), {
+  @Validator((date, { createJourney }) => date >= parseIsoDate(createJourney.startDate), {
     message: ({ object }) => {
       const { createJourney } = object as { createJourney: CreateAnActivityJourney }
       return `Enter a date on or after the activity’s scheduled start date, ${isoDateToDatePickerDate(

@@ -9,22 +9,22 @@ import {
   parseDatePickerDate,
   parseIsoDate,
 } from '../../../../utils/datePickerUtils'
-import DateValidator from '../../../../validators/DateValidator'
 import ActivitiesService from '../../../../services/activitiesService'
 import IsValidDate from '../../../../validators/isValidDate'
+import Validator from '../../../../validators/validator'
 
 export class StartDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
-  @DateValidator(date => date > startOfToday(), { message: 'Enter a date in the future' })
-  @DateValidator((date, { allocateJourney }) => date >= parseIsoDate(allocateJourney.activity.startDate), {
+  @Validator(date => date > startOfToday(), { message: 'Enter a date in the future' })
+  @Validator((date, { allocateJourney }) => date >= parseIsoDate(allocateJourney.activity.startDate), {
     message: (args: ValidationArguments) => {
       const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
       const activityStartDate = isoDateToDatePickerDate(allocateJourney.activity.startDate)
       return `Enter a date on or after the activity's start date, ${activityStartDate}`
     },
   })
-  @DateValidator(
+  @Validator(
     (date, { allocateJourney }) => {
       return !allocateJourney.activity.endDate || date <= parseIsoDate(allocateJourney.activity.endDate)
     },
@@ -36,16 +36,13 @@ export class StartDate {
       },
     },
   )
-  @DateValidator(
-    (date, { allocateJourney }) => !allocateJourney.endDate || date <= parseIsoDate(allocateJourney.endDate),
-    {
-      message: (args: ValidationArguments) => {
-        const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
-        const allocationEndDate = isoDateToDatePickerDate(allocateJourney.endDate)
-        return `Enter a date on or before the allocation end date, ${allocationEndDate}`
-      },
+  @Validator((date, { allocateJourney }) => !allocateJourney.endDate || date <= parseIsoDate(allocateJourney.endDate), {
+    message: (args: ValidationArguments) => {
+      const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
+      const allocationEndDate = isoDateToDatePickerDate(allocateJourney.endDate)
+      return `Enter a date on or before the allocation end date, ${allocationEndDate}`
     },
-  )
+  })
   @IsValidDate({ message: 'Enter a valid start date' })
   startDate: Date
 }

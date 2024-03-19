@@ -3,14 +3,14 @@ import { Expose, Transform } from 'class-transformer'
 import { parseISO, startOfDay } from 'date-fns'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { formatDatePickerDate, formatIsoDate, parseDatePickerDate } from '../../../../../utils/datePickerUtils'
-import DateValidator from '../../../../../validators/DateValidator'
 import { WaitListApplicationJourney } from '../../journey'
 import IsValidDate from '../../../../../validators/isValidDate'
+import Validator from '../../../../../validators/validator'
 
 export class EditRequestDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
-  @DateValidator(
+  @Validator(
     (date, { waitListApplicationJourney }) => date <= startOfDay(parseISO(waitListApplicationJourney.createdTime)),
     {
       message: ({ object }) => {
