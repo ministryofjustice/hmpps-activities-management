@@ -110,7 +110,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
   })
 
   describe('POST', () => {
-    it('should create the allocation and redirect to confirmation page', async () => {
+    it('should create the activity and redirect to confirmation page', async () => {
       const expectedActivity = {
         prisonCode: 'MDI',
         summary: 'Maths level 1',
@@ -143,7 +143,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
       expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
     })
 
-    it('should create the allocation when no education levels selected', async () => {
+    it('should create the activity when no education levels selected', async () => {
       const expectedActivity = {
         prisonCode: 'MDI',
         summary: 'Maths level 1',
@@ -167,6 +167,47 @@ describe('Route Handlers - Create an activity - Check answers', () => {
       }
 
       req.session.createJourney.educationLevels = undefined
+
+      when(activitiesService.createActivity)
+        .calledWith(atLeast(expectedActivity))
+        .mockResolvedValue(activity as unknown as Activity)
+
+      await handler.POST(req, res)
+
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.CREATE_ACTIVITY_JOURNEY_COMPLETED(res.locals.user).addJourneyCompletedMetrics(req),
+      )
+      expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
+    })
+
+    it('should create the activity record when tier is foundation and attendance required is true', async () => {
+      const expectedActivity = {
+        prisonCode: 'MDI',
+        summary: 'Maths level 1',
+        categoryId: 1,
+        tierCode: EventTier.FOUNDATION,
+        attendanceRequired: true,
+        riskLevel: 'High',
+        paid: true,
+        pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
+        description: 'Maths level 1',
+        startDate: '2023-01-17',
+        endDate: '2023-01-18',
+        locationId: 26149,
+        capacity: 12,
+        scheduleWeeks: 1,
+        slots: [
+          { weekNumber: 1, timeSlot: 'AM', tuesday: true },
+          { weekNumber: 1, timeSlot: 'PM', friday: true },
+          { weekNumber: 1, timeSlot: 'ED', friday: true },
+        ],
+      }
+
+      req.session.createJourney.organiserCode = undefined
+      req.session.createJourney.educationLevels = undefined
+      req.session.createJourney.tierCode = EventTier.FOUNDATION
+      req.session.createJourney.attendanceRequired = true
 
       when(activitiesService.createActivity)
         .calledWith(atLeast(expectedActivity))

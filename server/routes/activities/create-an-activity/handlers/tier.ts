@@ -23,6 +23,10 @@ export default class TierRoutes {
 
     req.session.createJourney.tierCode = tier
 
+    if (EventTier.FOUNDATION !== tier) {
+      req.session.createJourney.attendanceRequired = true
+    }
+
     if (EventTier.TIER_2 === tier) {
       return res.redirect(`organiser${preserveHistory ? '?preserveHistory=true' : ''}`)
     }
@@ -33,6 +37,7 @@ export default class TierRoutes {
       const { activityId } = req.session.createJourney
       const activity = {
         tierCode: req.session.createJourney.tierCode,
+        attendanceRequired: req.session.createJourney.attendanceRequired,
       } as ActivityUpdateRequest
 
       await this.activitiesService.updateActivity(activityId, activity, user)

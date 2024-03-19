@@ -101,6 +101,7 @@ describe('initialiseEditJourney', () => {
         rate: 150,
       },
     ],
+    attendanceRequired: false,
     minimumEducationLevel: [
       {
         id: 123456,
@@ -140,6 +141,7 @@ describe('initialiseEditJourney', () => {
       capacity: schedule.capacity,
       allocations: [allocation1, allocation2],
       pay: activity.pay,
+      attendanceRequired: activity.attendanceRequired,
       educationLevels: activity.minimumEducationLevel,
       location: {
         id: schedule.internalLocation.id,
@@ -152,7 +154,7 @@ describe('initialiseEditJourney', () => {
     expect(next).toBeCalledTimes(1)
   })
 
-  it('it should skip initalisation if session object already set', async () => {
+  it('it should skip initialisation if session object already set', async () => {
     req.session.createJourney = { activityId: 1 }
 
     await middleware(req, res, next)

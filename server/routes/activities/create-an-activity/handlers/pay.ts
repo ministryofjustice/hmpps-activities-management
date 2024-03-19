@@ -137,6 +137,8 @@ export default class PayRoutes {
       req.session.createJourney.flat.push(newRate)
     }
 
+    req.session.createJourney.attendanceRequired = true
+
     if (req.params.mode === 'edit') await this.updatePay(req, res)
     else res.redirect(`../check-pay${preserveHistory ? '?preserveHistory=true' : ''}`)
   }
@@ -176,6 +178,7 @@ export default class PayRoutes {
 
     const updatedActivity = {
       paid: true,
+      attendanceRequired: true,
       pay: updatedPayRates,
     } as ActivityUpdateRequest
     await this.activitiesService.updateActivity(activityId, updatedActivity, user)
