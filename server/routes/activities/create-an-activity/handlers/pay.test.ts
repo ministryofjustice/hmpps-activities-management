@@ -294,6 +294,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
       const updatedActivity = {
         paid: true,
+        attendanceRequired: true,
         pay: [
           { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 2, rate: 150 },
           { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', payBandId: 1, rate: 100 },

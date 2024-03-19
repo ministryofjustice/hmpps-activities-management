@@ -31,6 +31,7 @@ export type CreateAnActivityJourney = {
   riskLevel?: string
   minimumPayRate?: number
   maximumPayRate?: number
+  attendanceRequired?: boolean
   paid?: boolean
   pay?: ActivityPay[]
   flat?: ActivityPay[]

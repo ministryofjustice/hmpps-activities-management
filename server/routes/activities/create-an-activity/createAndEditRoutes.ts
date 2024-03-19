@@ -1,4 +1,5 @@
 import { RequestHandler, Router } from 'express'
+import createHttpError from 'http-errors'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
@@ -27,6 +28,8 @@ import CheckPayRoutes from './handlers/checkPay'
 import TierRoutes, { TierForm } from './handlers/tier'
 import OrganiserRoutes, { OrganiserForm } from './handlers/organiser'
 import PayOption, { PayOptionForm } from './handlers/payOption'
+import AttendanceRequired, { AttendanceRequiredForm } from './handlers/attendanceRequired'
+import config from '../../../config'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -40,6 +43,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const tierHandler = new TierRoutes(activitiesService)
   const organiserHandler = new OrganiserRoutes(activitiesService)
   const riskLevelHandler = new RiskLevelRoutes(activitiesService)
+  const attendanceRequired = new AttendanceRequired(activitiesService)
   const payOption = new PayOption(activitiesService, prisonService)
   const payRateTypeHandler = new PayRateTypeRoutes()
   const payHandler = new PayRoutes(prisonService, activitiesService)
@@ -107,6 +111,14 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/capacity', capacityHandler.POST, Capacity)
   get('/confirm-capacity', confirmCapacityRouteHandler.GET)
   post('/confirm-capacity', confirmCapacityRouteHandler.POST)
+
+  // Non-attendance routes are only accessible when feature toggle is provided
+  router.use((req, res, next) =>
+    !config.nonAttendanceFeatureToggleEnabled ? next(createHttpError.NotFound()) : next(),
+  )
+
+  get('/attendance-required', attendanceRequired.GET, true)
+  post('/attendance-required', attendanceRequired.POST, AttendanceRequiredForm)
 
   return router
 }
