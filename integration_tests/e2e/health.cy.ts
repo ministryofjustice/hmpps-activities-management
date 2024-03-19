@@ -2,8 +2,10 @@ context('Healthcheck', () => {
   context('All healthy', () => {
     beforeEach(() => {
       cy.task('reset')
-      cy.task('stubAuthPing')
-      cy.task('stubTokenVerificationPing')
+      cy.stubHealthPing('/auth/health/ping')
+      cy.stubHealthPing('/verification/health/ping')
+      cy.stubHealthPing('/health/ping')
+      cy.stubHealthPing('/health')
     })
 
     it('Health check page is visible', () => {
@@ -18,11 +20,21 @@ context('Healthcheck', () => {
   context('Some unhealthy', () => {
     it('Reports correctly when token verification down', () => {
       cy.task('reset')
-      cy.task('stubAuthPing')
-      cy.task('stubTokenVerificationPing', 500)
+      cy.stubHealthPing('/auth/health/ping')
+      cy.stubHealthPing('/verification/health/ping', 500)
+      cy.stubHealthPing('/health/ping')
+      cy.stubHealthPing('/health')
 
       cy.request({ url: '/health', method: 'GET', failOnStatusCode: false }).then(response => {
         expect(response.body.checks.hmppsAuth).to.equal('OK')
+        expect(response.body.checks.activitiesApi).to.equal('OK')
+        expect(response.body.checks.caseNotesApi).to.equal('OK')
+        expect(response.body.checks.prisonApi).to.equal('OK')
+        expect(response.body.checks.prisonerSearchApi).to.equal('OK')
+        expect(response.body.checks.incentivesApi).to.equal('OK')
+        expect(response.body.checks.frontendComponents).to.equal('OK')
+        expect(response.body.checks.prisonRegisterApi).to.equal('OK')
+        expect(response.body.checks.manageUsersApi).to.equal('OK')
         expect(response.body.checks.tokenVerification).to.contain({ status: 500, retries: 2 })
       })
     })

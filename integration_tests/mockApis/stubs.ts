@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import frontendComponentJson from '../fixtures/frontendComponents/frontendComponent.json'
 
-import { stubFor, getMatchingRequests } from './wiremock'
+import { stubFor, getMatchingRequests, stubHealthPing } from './wiremock'
 
 const createToken = () => {
   const payload = {
@@ -31,17 +31,6 @@ const favicon = () =>
     request: {
       method: 'GET',
       urlPattern: '/favicon.ico',
-    },
-    response: {
-      status: 200,
-    },
-  })
-
-const authPing = () =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern: '/auth/health/ping',
     },
     response: {
       status: 200,
@@ -156,19 +145,6 @@ const stubPrisonInformation = () =>
     },
   })
 
-const stubTokenVerificationPing = (status = 200) =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern: '/verification/health/ping',
-    },
-    response: {
-      status,
-      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      jsonBody: { status: 'UP' },
-    },
-  })
-
 const stubVerifyToken = (active = true) =>
   stubFor({
     request: {
@@ -210,8 +186,7 @@ const frontendComponents = () =>
 
 export default {
   getSignInUrl,
-  stubAuthPing: authPing,
-  stubTokenVerificationPing,
+  stubHealthPing,
   stubVerifyToken,
   stubSignIn: (name = 'john smith') =>
     Promise.all([
