@@ -16,5 +16,11 @@ declare namespace Cypress {
       responseFixture?: JSON,
       responseStatus?: number,
     ): Chainable<AUTWindow>
+
+    /**
+     * Custom command to stub an endpoint with wiremock.
+     * @example cy.stubHealthPing('/health/ping', 500)
+     */
+    stubHealthPing(urlPattern: string, responseStatus?: number): Chainable<AUTWindow>
   }
 }
