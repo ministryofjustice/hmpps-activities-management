@@ -7,7 +7,7 @@
   "scripts": {
     "prepare": "husky install",
     "compile-assets": "grunt",
-    "watch-node": "nodemon -r dotenv/config ./server.ts",
+    "watch-node": "nodemon --ignore '*.test.ts' -r dotenv/config ./server.ts",
     "watch-assets": "npm run build:dev && grunt watch",
     "build": "npm run compile-assets && tsc",
     "build:dev": "npx grunt clean-dev-build",

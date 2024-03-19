@@ -28,6 +28,7 @@ export default class OrganiserRoutes {
       const activity = {
         organiserCode: req.session.createJourney.organiserCode,
         tierCode: req.session.createJourney.tierCode,
+        attendanceRequired: req.session.createJourney.attendanceRequired,
       } as ActivityUpdateRequest
 
       await this.activitiesService.updateActivity(activityId, activity, user)

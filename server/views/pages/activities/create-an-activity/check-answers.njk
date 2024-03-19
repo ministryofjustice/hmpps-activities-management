@@ -18,6 +18,7 @@
 
             <h2 class="govuk-heading-m">Activity details</h2>
             {{ govukSummaryList({
+                attributes: { 'data-qa': 'activity-details' },
                 rows: [
                     {
                         key: {
@@ -86,7 +87,18 @@
                                 }
                             ]
                         }
-                    } if session.createJourney.organiserCode
+                    } if session.createJourney.organiserCode,
+                    {
+                        key: { text: "Record attendance" },
+                        value: { text: "Yes" if session.createJourney.attendanceRequired else "No"},
+                        actions: {
+                            items: [{
+                                href: "attendance-required?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "Change record attendance option"
+                            }] if not (session.createJourney.paid or (session.createJourney.attendanceRequired and session.createJourney.tierCode != 'FOUNDATION'))
+                        }
+                    } if nonAttendanceFeatureToggleEnabled
                 ]
             }) }}
 
