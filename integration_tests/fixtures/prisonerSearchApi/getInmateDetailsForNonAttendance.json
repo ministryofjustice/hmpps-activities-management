@@ -115,12 +115,6 @@
         "bodyPart": "Arm",
         "comment": "XFxqvLXgsZXFxqvLXgsZ"
       }
-    ],
-    "otherMarks": [
-      {
-        "bodyPart": "Head",
-        "comment": "FQBMLIAkRUWDFQBMLIAkRUW"
-      }
     ]
   },
   {
@@ -288,15 +282,6 @@
     "facialHair": "Clean Shaven",
     "shapeOfFace": "Oval",
     "build": "Medium",
-    "shoeSize": 9,
-    "otherMarks": [
-      {
-        "bodyPart": "Torso"
-      },
-      {
-        "bodyPart": "Torso",
-        "comment": "lgIVyMJzXpAflgIVyMJzXpAf"
-      }
-    ]
+    "shoeSize": 9
   }
 ]
