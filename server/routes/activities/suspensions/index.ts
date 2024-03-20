@@ -9,6 +9,7 @@ import config from '../../../config'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 import initialiseSuspendJourney from './middlewares/initialiseSuspendJourney'
 import suspendRoutes from './suspendRoutes'
+import ViewSuspensionsRoutes from './handlers/viewSuspensions'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -17,12 +18,18 @@ export default function Index(services: Services): Router {
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const viewAllocationsHandler = new ViewAllocationsRoutes(services.activitiesService, services.prisonService)
+  const viewSuspensionsHandler = new ViewSuspensionsRoutes(
+    services.activitiesService,
+    services.caseNotesService,
+    services.userService,
+  )
   const selectPrisonerRoutes = new SelectPrisonerRoutes(services.prisonService)
 
   // Suspension routes are only accessible when feature toggle is provided
   router.use((req, res, next) => (!config.suspensionsFeatureToggleEnabled ? next(createHttpError.NotFound()) : next()))
 
   get('/prisoner/:prisonerNumber', viewAllocationsHandler.GET)
+  get('/prisoner/:prisonerNumber/view-suspensions', viewSuspensionsHandler.GET)
   get('/select-prisoner', selectPrisonerRoutes.GET)
   post('/search-prisoner', selectPrisonerRoutes.SEARCH, PrisonerSearch)
   post('/select-prisoner', selectPrisonerRoutes.SELECT_PRISONER, SelectPrisoner)

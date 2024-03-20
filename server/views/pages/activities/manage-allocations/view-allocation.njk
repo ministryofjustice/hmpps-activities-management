@@ -16,7 +16,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">{{ allocation.activitySummary }}</span>
-            <span class="govuk-heading-xl">Change allocation details for {{ prisonerName }} ({{ allocation.prisonerNumber }})</span>
+            <h1 class="govuk-heading-xl">Change allocation details for {{ prisonerName }} ({{ allocation.prisonerNumber }})</h1>
         </div>
     </div>
 
@@ -39,7 +39,9 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Suspension end date</dt>
                         <dd class="govuk-summary-list__value">{{ (allocation.plannedSuspension.plannedEndDate | formatDate) or "No end date" }}</dd>
-                        <dd class="govuk-summary-list__actions"><a href="#" class="govuk-link govuk-link--no-visited-state">End suspension</a></dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="/activities/suspensions/unsuspend/{{ allocation.prisonerNumber }}/suspend-until?allocationIds={{ allocation.id }}" class="govuk-link govuk-link--no-visited-state">End suspension</a>
+                        </dd>
                     </div>
                     <div class="govuk-summary-list__row {{ 'govuk-summary-list__row--no-border' if suspensionCaseNote}}">
                         <dt class="govuk-summary-list__key">Added by</dt>

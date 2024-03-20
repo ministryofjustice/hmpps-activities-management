@@ -66,7 +66,7 @@ describe('Route Handlers - Suspensions - View allocations', () => {
               {
                 id: 1,
                 scheduleId: 1,
-                prisonerNumber: 'ABC123å',
+                prisonerNumber: 'ABC123',
                 startDate: '2022-05-19',
                 prisonPayBand: { id: 1 },
                 exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
@@ -86,11 +86,10 @@ describe('Route Handlers - Suspensions - View allocations', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/view-allocations', {
         activities: [
           {
-            activityName: 'Entry level Maths 1',
             allocation: {
               id: 1,
               scheduleId: 1,
-              prisonerNumber: 'ABC123å',
+              prisonerNumber: 'ABC123',
               startDate: '2022-05-19',
               prisonPayBand: { id: 1 },
               exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],

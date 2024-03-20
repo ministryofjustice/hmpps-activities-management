@@ -1,0 +1,82 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "partials/activities/days-and-times.njk" import daysAndTimes %}
+{% from "partials/service-user-name.njk" import serviceUserName %}
+
+{% set pageTitle = applicationName + " - Suspensions - View suspensions" %}
+{% set pageId = 'view-suspensions-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <span class="govuk-caption-xl">Manage suspensions from activities</span>
+            <h1 class="govuk-heading-xl">Suspension details</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% for group in groupedAllocations %}
+                {% set plannedAt = group[0].plannedSuspension.plannedAt %}
+                {% set activityNames = group | flatMap('activitySummary') %}
+                {% set startDate = group[0].plannedSuspension.plannedStartDate %}
+                {% set endDate = group[0].plannedSuspension.plannedEndDate %}
+                {% set addedBy = userMap.get(group[0].plannedSuspension.plannedBy) %}
+                {% set suspensionCaseNote = caseNotesMap.get(group[0].plannedSuspension.caseNoteId) %}
+
+                <h2 class='govuk-heading-m'>Suspension added on {{ plannedAt | parseISODate | formatDate("EEEE, d MMMM yyyy 'at' HH:mm") }}</h2>
+                <dl class="govuk-summary-list {{ 'govuk-!-margin-bottom-0' if suspensionCaseNote }}">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Activity</dt>
+                        <dd class="govuk-summary-list__value">
+                            <ul class='govuk-list'>
+                                {% for activity in activityNames | sort %}
+                                    <li>{{ activity }}</li>
+                                {% endfor %}
+                            </ul>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Suspension start date</dt>
+                        <dd class="govuk-summary-list__value">{{ startDate | formatDate }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Suspension end date</dt>
+                        <dd class="govuk-summary-list__value">{{ (endDate | formatDate) or "No end date" }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row {{ 'govuk-summary-list__row--no-border' if suspensionCaseNote }}">
+                        <dt class="govuk-summary-list__key">Added by</dt>
+                        <dd class="govuk-summary-list__value">{{ serviceUserName(addedBy) }}</dd>
+                    </div>
+                </dl>
+
+                {% if suspensionCaseNote %}
+                    <dl class="govuk-summary-list govuk-summary-list--no-keys">
+                        <div class="govuk-summary-list__row">
+                            <dd class="govuk-summary-list__value">
+                                {{ govukDetails({
+                                    summaryText: "View case note",
+                                    classes: "govuk-!-margin-0",
+                                    text: suspensionCaseNote.text
+                                }) }}
+                            </dd>
+                        </div>
+                    </dl>
+                {% endif %}
+            {% endfor %}
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "End all suspensions" if groupedAllocations | length > 1 else "End suspension",
+                    href: '../../unsuspend/' + session.req.params.prisonerNumber + '/suspend-until?allocationIds=' + groupedAllocations | flatten | flatMap('id')
+                }) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
