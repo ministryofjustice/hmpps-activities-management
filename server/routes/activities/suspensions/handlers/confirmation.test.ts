@@ -65,7 +65,6 @@ describe('Route Handlers - Suspensions - Confirmation', () => {
         ),
       )
       expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/confirmation')
-      expect(req.session.suspendJourney).toBeNull()
     })
 
     it('should record suspend journey complete in metrics', async () => {

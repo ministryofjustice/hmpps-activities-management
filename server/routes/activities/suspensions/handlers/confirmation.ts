@@ -13,7 +13,5 @@ export default class ConfirmationRoutes {
     this.metricsService.trackEvent(allocationEvent)
 
     res.render('pages/activities/suspensions/confirmation')
-
-    req.session.suspendJourney = null
   }
 }

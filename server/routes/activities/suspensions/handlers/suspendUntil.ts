@@ -14,7 +14,7 @@ enum PresetDateOptions {
   OTHER = 'other',
 }
 
-export class SuspendFrom {
+export class SuspendUntil {
   @Expose()
   @Validator(
     (datePresetOption, { suspendJourney }) =>
@@ -24,7 +24,7 @@ export class SuspendFrom {
     {
       message: args => {
         const { suspendJourney } = args.object as { suspendJourney: SuspendJourney }
-        return `Suspension must start on or before the allocation end date ${isoDateToDatePickerDate(suspendJourney.earliestAllocationEndDate)}`
+        return `Suspension must be ended on or before the allocation end date ${isoDateToDatePickerDate(suspendJourney.earliestAllocationEndDate)}`
       },
     },
   )
@@ -53,13 +53,13 @@ export class SuspendFrom {
   date: Date
 }
 
-export default class SuspendFromRoutes {
-  GET = async (req: Request, res: Response) => res.render('pages/activities/suspensions/suspend-from')
+export default class SuspendUntilRoutes {
+  GET = async (req: Request, res: Response) => res.render('pages/activities/suspensions/suspend-until')
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { datePresetOption, date } = req.body
-    req.session.suspendJourney.suspendFrom = toDateString(this.dateFromOptions(datePresetOption, date))
-    return res.redirectOrReturn('case-note-question')
+    req.session.suspendJourney.suspendUntil = toDateString(this.dateFromOptions(datePresetOption, date))
+    return res.redirect('check-answers')
   }
 
   private dateFromOptions = (dateOption: PresetDateOptions, date: Date) => {

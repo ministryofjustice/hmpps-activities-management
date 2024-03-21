@@ -71,7 +71,6 @@ describe('Route Handlers - Allocate - Confirmation', () => {
         prisonerNumber: 'ABC123',
         activityName: 'Maths',
       })
-      expect(req.session.allocateJourney).toBeNull()
     })
 
     it('should record create journey complete in metrics', async () => {

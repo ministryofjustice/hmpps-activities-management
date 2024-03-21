@@ -1,0 +1,71 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+
+{% set pageTitle = applicationName + " - Suspensions - Suspend until" %}
+{% set pageId = 'suspend-until-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">Manage suspensions from activities</span>
+            <h1 class='govuk-heading-xl'>
+                {% if session.suspendJourney.allocations | length == 1 %}
+                    When should {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspension from {{ session.suspendJourney.allocations[0].activityName | safe }} end?
+                {% else %}
+                    When should {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspension end?
+                {% endif %}
+            </h1>
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    name: "datePresetOption",
+                    errorMessage: validationErrors | findError('datePresetOption'),
+                    items: [
+                        {
+                            value: "immediately",
+                            text: "Immediately",
+                            hint: {
+                                text: "Unlock and movement lists for later today may need to be printed again."
+                            },
+                            checked: formResponses.datePresetOption == 'immediately' or session.suspendJourney.suspendUntil == now | toDateString
+                        },
+                        {
+                            value: "tomorrow",
+                            text: "From tomorrow",
+                            checked: formResponses.datePresetOption == 'tomorrow' or session.suspendJourney.suspendUntil == now | addDays(1) | toDateString
+                        },
+                        {
+                            value: "other",
+                            text: "On another date",
+                            checked: formResponses.datePresetOption == 'other' or session.suspendJourney.suspendUntil > now | addDays(1) | toDateString,
+                            conditional: {
+                                html: hmppsDatePicker({
+                                    id: 'date',
+                                    name: 'date',
+                                    hint: {
+                                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'
+                                    },
+                                    classes: 'hmpps-datepicker--fixed-width',
+                                    errorMessage: validationErrors | findError('date'),
+                                    value: formResponses.date or session.suspendJourney.suspendUntil | isoDateToDatePickerDate
+                                })
+                            }
+                        }
+                    ]
+                }) }}
+
+                <div class='govuk-button-group'>
+                    {{ govukButton({ text: "Continue"}) }}
+                    <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
