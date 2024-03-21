@@ -5,7 +5,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "./dist",
-    "sourceMap": false,
+    "sourceMap": true,
     "suppressImplicitAnyIndexErrors": true,
     "skipLibCheck": true,
     "noEmit": false,

@@ -26,7 +26,7 @@
                 <p class='govuk-body'>Select an activity to suspend {{ prisonerName }} from attending, or to end their suspension.</p>
 
                 {% set rows = [] %}
-                {% for activity in activities | sortBy('activityName') %}
+                {% for activity in activities | sortBy('allocation.activitySummary') %}
                     {% set slotsHtml %}
                         {% for week, slots in activity.scheduledSlots %}
                             {% if activity.scheduledSlots | length > 1 %}
@@ -44,7 +44,7 @@
                     {% set rows = (rows.push(
                         {
                             key: {
-                                html: '<div class="govuk-!-margin-bottom-3">' + activity.activityName + '</div>' +
+                                html: '<div class="govuk-!-margin-bottom-3">' + activity.allocation.activitySummary + '</div>' +
                                 suspensionBadge(activity.allocation.status, activity.allocation.plannedSuspension, now)
                             },
                             value: {
@@ -53,14 +53,14 @@
                             actions: {
                                 items: [
                                     {
-                                        href: '#',
+                                        href: session.req.params.prisonerNumber + '/view-suspensions?allocationId=' + activity.allocation.id,
                                         text: "View or end suspension",
-                                        visuallyHiddenText: "View or end suspension from " + activity.activityName
+                                        visuallyHiddenText: "View or end suspension from " + activity.allocation.activitySummary
                                     } if activity.allocation.plannedSuspension else
                                     {
                                         href: '../suspend/' + session.req.params.prisonerNumber + '/suspend-from?allocationIds=' + activity.allocation.id,
                                         text: "Suspend from activity",
-                                        visuallyHiddenText: "Suspend from " + activity.activityName
+                                        visuallyHiddenText: "Suspend from " + activity.allocation.activitySummary
                                     }
                                 ]
                             }
@@ -86,7 +86,7 @@
                     {% else %}
                         {{ govukButton({
                             text: "End all suspensions",
-                            href: '#',
+                            href: session.req.params.prisonerNumber + '/view-suspensions',
                             classes: "govuk-button--warning"
                         }) }}
                     {% endif %}

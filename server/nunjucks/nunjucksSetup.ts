@@ -3,7 +3,7 @@ import nunjucks, { Environment } from 'nunjucks'
 import express, { Router } from 'express'
 import path from 'path'
 import { addDays, addMonths, addWeeks, addYears, startOfDay, subDays, subMonths, subWeeks } from 'date-fns'
-import { flatMap, sortBy } from 'lodash'
+import { flatMap, sortBy, flatten } from 'lodash'
 import setUpDprNunjucksFilters from '@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/setUpNunjucksFilters'
 import {
   addDefaultSelectedValue,
@@ -165,6 +165,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('startOfDay', startOfDay)
   njkEnv.addFilter('filter', filterObjects)
   njkEnv.addFilter('flatMap', flatMap)
+  njkEnv.addFilter('flatten', flatten)
   njkEnv.addFilter('sortBy', sortBy)
   njkEnv.addFilter('excludeArray', excludeArrayObject)
 

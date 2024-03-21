@@ -36,7 +36,6 @@ export default class ViewAllocationsRoutes {
 
       return {
         allocation: a,
-        activityName: schedule.description,
         currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
         scheduledSlots: dailySlots,
       }
