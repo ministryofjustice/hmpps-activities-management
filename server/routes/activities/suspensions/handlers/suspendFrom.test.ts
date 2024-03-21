@@ -175,7 +175,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
       )
     })
 
-    it('other date must not be lower than between the start and end dates of the allocation', async () => {
+    it('other date must not be lower than the start and end date range of the allocation', async () => {
       const body = {
         datePresetOption: 'other',
         date: '04/05/2030',
@@ -200,7 +200,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
       )
     })
 
-    it('other date must not be higher than between the start and end dates of the allocation', async () => {
+    it('other date must not be higher than the start and end date range of the allocation', async () => {
       const body = {
         datePresetOption: 'other',
         date: '11/05/2030',
@@ -225,7 +225,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
       )
     })
 
-    it('other date must not be lower than between the start date of the allocation', async () => {
+    it('other date must not be lower than the start date of the allocation', async () => {
       const body = {
         datePresetOption: 'other',
         date: '04/05/2030',
