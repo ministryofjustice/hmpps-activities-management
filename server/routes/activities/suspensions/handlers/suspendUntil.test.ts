@@ -3,10 +3,10 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { addDays, format } from 'date-fns'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
-import SuspendFromRoutes, { SuspendFrom } from './suspendFrom'
+import SuspendUntilRoutes, { SuspendUntil } from './suspendUntil'
 
-describe('Route Handlers - Suspensions - Suspend From', () => {
-  const handler = new SuspendFromRoutes()
+describe('Route Handlers - Suspensions - Suspend Until', () => {
+  const handler = new SuspendUntilRoutes()
   let req: Request
   let res: Response
 
@@ -19,7 +19,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
         },
       },
       render: jest.fn(),
-      redirectOrReturn: jest.fn(),
+      redirect: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -36,7 +36,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
   describe('GET', () => {
     it('should render the correct view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/suspend-from')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/suspend-until')
     })
   })
 
@@ -48,7 +48,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.suspendJourney.suspendFrom).toEqual(format(new Date(), 'yyyy-MM-dd'))
+      expect(req.session.suspendJourney.suspendUntil).toEqual(format(new Date(), 'yyyy-MM-dd'))
     })
 
     it('should add tomorrows date to the session if TOMORROW is selected', async () => {
@@ -58,7 +58,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.suspendJourney.suspendFrom).toEqual(format(addDays(new Date(), 1), 'yyyy-MM-dd'))
+      expect(req.session.suspendJourney.suspendUntil).toEqual(format(addDays(new Date(), 1), 'yyyy-MM-dd'))
     })
 
     it('should add a different date to the session if OTHER is selected', async () => {
@@ -69,7 +69,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.suspendJourney.suspendFrom).toEqual(format(new Date('2026-04-20'), 'yyyy-MM-dd'))
+      expect(req.session.suspendJourney.suspendUntil).toEqual(format(new Date('2026-04-20'), 'yyyy-MM-dd'))
     })
 
     it('should redirect to the case note question page', async () => {
@@ -79,7 +79,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('case-note-question')
+      expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })
 
@@ -87,7 +87,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
     it('date preset option must be populated', async () => {
       const body = {}
 
-      const requestObject = plainToInstance(SuspendFrom, body)
+      const requestObject = plainToInstance(SuspendUntil, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(expect.arrayContaining([{ property: 'datePresetOption', error: 'Select a date' }]))
@@ -98,7 +98,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
         datePresetOption: 'unknown',
       }
 
-      const requestObject = plainToInstance(SuspendFrom, body)
+      const requestObject = plainToInstance(SuspendUntil, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(expect.arrayContaining([{ property: 'datePresetOption', error: 'Select a date' }]))
@@ -109,7 +109,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
         datePresetOption: 'tomorrow',
       }
 
-      const requestObject = plainToInstance(SuspendFrom, {
+      const requestObject = plainToInstance(SuspendUntil, {
         ...body,
         suspendJourney: { earliestAllocationEndDate: formatDate(new Date(), 'yyyy-MM-dd') },
       })
@@ -119,7 +119,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
         expect.arrayContaining([
           {
             property: 'datePresetOption',
-            error: `Suspension must start on or before the allocation end date ${formatDate(new Date(), 'dd/MM/yyyy')}`,
+            error: `Suspension must be ended on or before the allocation end date ${formatDate(new Date(), 'dd/MM/yyyy')}`,
           },
         ]),
       )
@@ -131,7 +131,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
         date: '04/13/2030',
       }
 
-      const requestObject = plainToInstance(SuspendFrom, {
+      const requestObject = plainToInstance(SuspendUntil, {
         ...body,
         suspendJourney: {
           earliestAllocationStartDate: formatDate(new Date('2030-05-05'), 'yyyy-MM-dd'),
@@ -156,7 +156,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
         date: '04/12/2023',
       }
 
-      const requestObject = plainToInstance(SuspendFrom, {
+      const requestObject = plainToInstance(SuspendUntil, {
         ...body,
         suspendJourney: {
           earliestAllocationStartDate: formatDate(new Date('2020-05-05'), 'yyyy-MM-dd'),
@@ -181,7 +181,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
         date: '04/05/2030',
       }
 
-      const requestObject = plainToInstance(SuspendFrom, {
+      const requestObject = plainToInstance(SuspendUntil, {
         ...body,
         suspendJourney: {
           earliestAllocationStartDate: formatDate(new Date('2030-05-05'), 'yyyy-MM-dd'),
@@ -200,13 +200,13 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
       )
     })
 
-    it('other date must not be higher than the start and end date range of the allocation', async () => {
+    it('other date must not be higher than the start and end date range of the allocation ', async () => {
       const body = {
         datePresetOption: 'other',
         date: '11/05/2030',
       }
 
-      const requestObject = plainToInstance(SuspendFrom, {
+      const requestObject = plainToInstance(SuspendUntil, {
         ...body,
         suspendJourney: {
           earliestAllocationStartDate: formatDate(new Date('2030-05-05'), 'yyyy-MM-dd'),
@@ -231,7 +231,7 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
         date: '04/05/2030',
       }
 
-      const requestObject = plainToInstance(SuspendFrom, {
+      const requestObject = plainToInstance(SuspendUntil, {
         ...body,
         suspendJourney: {
           earliestAllocationStartDate: formatDate(new Date('2030-05-05'), 'yyyy-MM-dd'),

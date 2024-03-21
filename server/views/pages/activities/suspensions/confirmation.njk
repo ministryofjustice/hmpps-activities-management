@@ -9,44 +9,83 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {% if session.suspendJourney.suspendFrom == now | toDateString %}
-                {% set subText %}
-                    {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) is now suspended from
-                    {% if session.suspendJourney.allocations | length == 1 %}
-                        {{ session.suspendJourney.allocations[0].activityName | safe }}
-                    {% else %}
-                        {{ session.suspendJourney.allocations | length }} activities
-                    {% endif %}
-                {% endset %}
+            {% if session.req.params.mode == 'suspend' %}
+                {% if session.suspendJourney.suspendFrom == now | toDateString %}
+                    {% set subText %}
+                        {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) is now suspended from
+                        {% if session.suspendJourney.allocations | length == 1 %}
+                            {{ session.suspendJourney.allocations[0].activityName | safe }}
+                        {% else %}
+                            {{ session.suspendJourney.allocations | length }} activities
+                        {% endif %}
+                    {% endset %}
 
-                {{ govukPanel({
-                    titleText: "Suspension started" if session.suspendJourney.allocations | length == 1 else "Suspensions started",
-                    text: subText
-                    
-                }) }}
-                <p class='govuk-body'>They’ll be shown as ‘Prisoner suspended’ on unlock and movement lists, and when recording attendance.</p>
-                <p class='govuk-body'>If they were due to attend a session that has already started, attendance for that session will need to be recorded.</p>
+                    {{ govukPanel({
+                        titleText: "Suspension started",
+                        text: subText
+                    }) }}
+                    <p class='govuk-body'>They’ll be shown as ‘Prisoner suspended’ on unlock and movement lists, and when recording attendance.</p>
+                    <p class='govuk-body'>If they were due to attend a session that has already started, attendance for that session will need to be recorded.</p>
 
-                {{ govukWarningText({
-                    text: "Unlock and movement lists for the rest of today may need to be printed again, to show this suspension.",
-                    iconFallbackText: "Warning"
-                }) }}
-            {% else %}
-                {% set subText %}
-                    {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) will be suspended from
-                    {% if session.suspendJourney.allocations | length == 1 %}
-                        {{ session.suspendJourney.allocations[0].activityName | safe }}
-                    {% else %}
-                        {{ session.suspendJourney.allocations | length }} activities
-                    {% endif %}
-                    from {{ session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}
-                {% endset %}
+                    {{ govukWarningText({
+                        text: "Unlock and movement lists for the rest of today may need to be printed again, to show this suspension.",
+                        iconFallbackText: "Warning"
+                    }) }}
+                {% else %}
+                    {% set subText %}
+                        {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) will be suspended from
+                        {% if session.suspendJourney.allocations | length == 1 %}
+                            {{ session.suspendJourney.allocations[0].activityName | safe }}
+                        {% else %}
+                            {{ session.suspendJourney.allocations | length }} activities
+                        {% endif %}
+                        from {{ session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}
+                    {% endset %}
 
-                {{ govukPanel({
-                    titleText: "Suspension added" if session.suspendJourney.allocations | length == 1 else "Suspensions added",
-                    text: subText
-                }) }}
-                <p class='govuk-body'>From {{ session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}, they’ll be shown as ‘Suspended’ on unlock and movement lists, and when recording attendance.</p>
+                    {{ govukPanel({
+                        titleText: "Suspension added",
+                        text: subText
+                    }) }}
+                    <p class='govuk-body'>From {{ session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}, they’ll be shown as ‘Suspended’ on unlock and movement lists, and when recording attendance.</p>
+                {% endif %}
+            {% endif %}
+
+            {% if session.req.params.mode == 'unsuspend' %}
+                {% if session.suspendJourney.suspendUntil == now | toDateString %}
+                    {% set subText %}
+                        {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) is now due to attend
+                        {% if session.suspendJourney.allocations | length == 1 %}
+                            {{ session.suspendJourney.allocations[0].activityName | safe }} again
+                        {% else %}
+                            their allocated activities again
+                        {% endif %}
+                    {% endset %}
+
+                    {{ govukPanel({
+                        titleText: "Suspension ended",
+                        text: subText
+                    }) }}
+
+                    {{ govukWarningText({
+                        text: "Unlock and movement lists for the rest of today may need to be printed again, to show that the prisoner is due to attend.",
+                        iconFallbackText: "Warning"
+                    }) }}
+                {% else %}
+                    {% set subText %}
+                        {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) is now due to attend
+                        {% if session.suspendJourney.allocations | length == 1 %}
+                            {{ session.suspendJourney.allocations[0].activityName | safe }} again
+                        {% else %}
+                            their allocated activities again
+                        {% endif %}
+                        from {{ session.suspendJourney.suspendUntil | formatDate('d MMMM yyyy') }}
+                    {% endset %}
+
+                    {{ govukPanel({
+                        titleText: "Suspension set to end",
+                        text: subText
+                    }) }}
+                {% endif %}
             {% endif %}
 
             <div class='govuk-!-margin-bottom-9'>

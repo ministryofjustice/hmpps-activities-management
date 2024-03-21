@@ -10,7 +10,11 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">Manage suspensions from activities</span>
-            <h1 class="govuk-heading-xl">Check and confirm suspension details</h1>
+            {% if session.req.params.mode == 'suspend' %}
+                <h1 class="govuk-heading-xl">Check and confirm suspension details</h1>
+            {% else %}
+                <h1 class="govuk-heading-xl">Check and confirm end of suspension details</h1>
+            {% endif %}
         </div>
     </div>
     <div class="govuk-grid-row">
@@ -37,7 +41,7 @@
                         value: { html: prisonerDetailsHtml }
                     },
                     {
-                        key: { text: "Suspended activity" },
+                        key: { text: "Activity" },
                         value: { text: activitiesText }
                     },
                     {
@@ -58,7 +62,26 @@
                                 }
                             ]
                         }
-                    },
+                    } if session.req.params.mode == 'suspend',
+                    {
+                        key: { text: "End of suspension" },
+                        value: {
+                            text: (
+                                ("Immediately" if session.suspendJourney.suspendUntil == now | toDateString) or
+                                ("From tomorrow: " + session.suspendJourney.suspendUntil | formatDate('d MMMM yyyy') if session.suspendJourney.suspendUntil == now | addDays(1) | toDateString) or
+                                (session.suspendJourney.suspendUntil | formatDate('d MMMM yyyy') if session.suspendJourney.suspendUntil > now | addDays(1) | toDateString)
+                            )
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "suspend-until?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change"
+                                }
+                            ]
+                        }
+                    } if session.req.params.mode == 'unsuspend',
                     {
                         key: {
                             text: "Do you want to add a case note?"
@@ -75,7 +98,7 @@
                                 }
                             ]
                         }
-                    },
+                    } if session.req.params.mode == 'suspend',
                     {
                         key: {
                             text: "Case note type"
@@ -93,7 +116,7 @@
                                 }
                             ]
                         }
-                    } if session.suspendJourney.caseNote,
+                    } if session.suspendJourney.caseNote and session.req.params.mode == 'suspend',
                     {
                         key: {
                             text: "Case note"
@@ -111,15 +134,15 @@
                                 }
                             ]
                         }
-                    } if session.suspendJourney.caseNote
+                    } if session.suspendJourney.caseNote and session.req.params.mode == 'suspend'
                 ]
             }) }}
 
-            <form method="POST" data-module="form-spinner" data-loading-text="Suspending prisoner">
+            <form method="POST" data-module="form-spinner" data-loading-text="Updating suspension">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
                     {{ govukButton({ 
-                        text: "Confirm and suspend",
+                        text: "Confirm and suspend" if session.req.params.mode == 'suspend' else "Confirm end of suspension",
                         preventDoubleClick: true
                     }) }}
                     <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>

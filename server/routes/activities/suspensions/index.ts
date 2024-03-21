@@ -9,6 +9,7 @@ import config from '../../../config'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 import initialiseSuspendJourney from './middlewares/initialiseSuspendJourney'
 import suspendRoutes from './suspendRoutes'
+import unsuspendRoutes from './unsuspendRoutes'
 import ViewSuspensionsRoutes from './handlers/viewSuspensions'
 
 export default function Index(services: Services): Router {
@@ -40,6 +41,12 @@ export default function Index(services: Services): Router {
     '/:mode(suspend)/:prisonerNumber/:journeyId',
     initialiseSuspendJourney(services.prisonService, services.activitiesService),
     suspendRoutes(services),
+  )
+
+  router.use(
+    '/:mode(unsuspend)/:prisonerNumber/:journeyId',
+    initialiseSuspendJourney(services.prisonService, services.activitiesService),
+    unsuspendRoutes(services),
   )
 
   return router

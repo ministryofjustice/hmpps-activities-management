@@ -22,7 +22,5 @@ export default class ConfirmationRoutes {
       prisonerNumber: inmate.prisonerNumber,
       activityName: activity.name,
     })
-
-    req.session.allocateJourney = null
   }
 }
