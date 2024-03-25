@@ -36,15 +36,12 @@ export class SuspendUntil {
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(
     (date, { suspendJourney }) =>
-      date >= parseIsoDate(suspendJourney.earliestAllocationStartDate) &&
-      (!suspendJourney.earliestAllocationEndDate || date <= parseIsoDate(suspendJourney.earliestAllocationEndDate)),
+      !suspendJourney.earliestAllocationEndDate || date <= parseIsoDate(suspendJourney.earliestAllocationEndDate),
     {
       message: args => {
         const { suspendJourney } = args.object as { suspendJourney: SuspendJourney }
-        const { earliestAllocationStartDate, earliestAllocationEndDate } = suspendJourney
-        return earliestAllocationEndDate
-          ? `Enter a date between the allocation start and end dates, ${isoDateToDatePickerDate(earliestAllocationStartDate)} to ${isoDateToDatePickerDate(earliestAllocationEndDate)}`
-          : `Enter a date after the allocation start date, ${isoDateToDatePickerDate(earliestAllocationStartDate)}`
+        const { earliestAllocationEndDate } = suspendJourney
+        return `Enter a date on or before the allocation end date, ${isoDateToDatePickerDate(earliestAllocationEndDate)}`
       },
     },
   )
