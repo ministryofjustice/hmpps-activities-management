@@ -134,7 +134,6 @@ describe('Route Handlers - Suspensions - Suspend Until', () => {
       const requestObject = plainToInstance(SuspendUntil, {
         ...body,
         suspendJourney: {
-          earliestAllocationStartDate: formatDate(new Date('2030-05-05'), 'yyyy-MM-dd'),
           earliestAllocationEndDate: formatDate(new Date('2030-05-10'), 'yyyy-MM-dd'),
         },
       })
@@ -159,7 +158,6 @@ describe('Route Handlers - Suspensions - Suspend Until', () => {
       const requestObject = plainToInstance(SuspendUntil, {
         ...body,
         suspendJourney: {
-          earliestAllocationStartDate: formatDate(new Date('2020-05-05'), 'yyyy-MM-dd'),
           earliestAllocationEndDate: formatDate(new Date('2030-05-10'), 'yyyy-MM-dd'),
         },
       })
@@ -175,32 +173,7 @@ describe('Route Handlers - Suspensions - Suspend Until', () => {
       )
     })
 
-    it('other date must not be lower than the start and end date range of the allocation', async () => {
-      const body = {
-        datePresetOption: 'other',
-        date: '04/05/2030',
-      }
-
-      const requestObject = plainToInstance(SuspendUntil, {
-        ...body,
-        suspendJourney: {
-          earliestAllocationStartDate: formatDate(new Date('2030-05-05'), 'yyyy-MM-dd'),
-          earliestAllocationEndDate: formatDate(new Date('2030-05-10'), 'yyyy-MM-dd'),
-        },
-      })
-      const errors = await validate(requestObject, {}).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual(
-        expect.arrayContaining([
-          {
-            property: 'date',
-            error: `Enter a date between the allocation start and end dates, 05/05/2030 to 10/05/2030`,
-          },
-        ]),
-      )
-    })
-
-    it('other date must not be higher than the start and end date range of the allocation ', async () => {
+    it('other date must not be higher than the end date of the allocation ', async () => {
       const body = {
         datePresetOption: 'other',
         date: '11/05/2030',
@@ -209,7 +182,6 @@ describe('Route Handlers - Suspensions - Suspend Until', () => {
       const requestObject = plainToInstance(SuspendUntil, {
         ...body,
         suspendJourney: {
-          earliestAllocationStartDate: formatDate(new Date('2030-05-05'), 'yyyy-MM-dd'),
           earliestAllocationEndDate: formatDate(new Date('2030-05-10'), 'yyyy-MM-dd'),
         },
       })
@@ -219,31 +191,7 @@ describe('Route Handlers - Suspensions - Suspend Until', () => {
         expect.arrayContaining([
           {
             property: 'date',
-            error: `Enter a date between the allocation start and end dates, 05/05/2030 to 10/05/2030`,
-          },
-        ]),
-      )
-    })
-
-    it('other date must not be lower than the start date of the allocation', async () => {
-      const body = {
-        datePresetOption: 'other',
-        date: '04/05/2030',
-      }
-
-      const requestObject = plainToInstance(SuspendUntil, {
-        ...body,
-        suspendJourney: {
-          earliestAllocationStartDate: formatDate(new Date('2030-05-05'), 'yyyy-MM-dd'),
-        },
-      })
-      const errors = await validate(requestObject, {}).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual(
-        expect.arrayContaining([
-          {
-            property: 'date',
-            error: `Enter a date after the allocation start date, 05/05/2030`,
+            error: `Enter a date on or before the allocation end date, 10/05/2030`,
           },
         ]),
       )

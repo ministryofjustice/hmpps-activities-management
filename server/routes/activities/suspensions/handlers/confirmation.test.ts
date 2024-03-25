@@ -25,7 +25,6 @@ describe('Route Handlers - Suspensions - Confirmation', () => {
       },
     ],
     earliestAllocationEndDate: '2024-06-02',
-    earliestAllocationStartDate: '2024-03-02',
     inmate: {
       prisonerName: 'John Smith',
       prisonerNumber: 'ABC123',

@@ -52,14 +52,12 @@ describe('initialiseSuspendJourney', () => {
               id: 1,
               activityId: 10,
               activitySummary: 'Activity 1',
-              startDate: '2024-03-02',
               endDate: '2024-06-02',
             },
             {
               id: 2,
               activityId: 20,
               activitySummary: 'Activity 2',
-              startDate: '2024-05-23',
               endDate: '2024-07-02',
             },
           ],
@@ -124,7 +122,6 @@ describe('initialiseSuspendJourney', () => {
         },
       ],
       earliestAllocationEndDate: '2024-06-02',
-      earliestAllocationStartDate: '2024-03-02',
       inmate: {
         prisonerName: 'John Smith',
         prisonerNumber: 'ABC123',

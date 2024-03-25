@@ -39,7 +39,6 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
         prisonerNumber,
       },
-      earliestAllocationStartDate: _.minBy(allocations, 'startDate').startDate,
       earliestAllocationEndDate: _.minBy(allocations, 'endDate')?.endDate,
     }
 

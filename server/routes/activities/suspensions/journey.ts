@@ -10,7 +10,6 @@ export type SuspendJourney = {
     allocationId: number
     activityName: string
   }[]
-  earliestAllocationStartDate: string
   earliestAllocationEndDate?: string
   suspendFrom?: string
   suspendUntil?: string
