@@ -142,23 +142,35 @@
                     ]
                 }) }}
 
+                {% set alertFilters = [] %}
+                {% for alert in alertOptions %}
+                    {% set alertFilters = (alertFilters.push({
+                        value: alert.key,
+                        text: alert.description,
+                        checked: alert.key in session.unlockListJourney.alertFilters
+                    }), alertFilters) %}
+                {% endfor %}
+
+                {% set alertFilters = alertFilters.concat({divider: 'or'}) %}
+
+                {% set alertFilters = alertFilters.concat({
+                        value: 'none',
+                        text: 'No alerts',
+                        behaviour: 'exclusive'
+                    })
+                %}
+
                 {{ govukCheckboxes({
-                    idPrefix: 'showAlerts',
-                    name: 'showAlerts',
+                    idPrefix: 'alertFilters',
+                    name: 'alertFilters',
                     classes: "govuk-checkboxes--small",
                     fieldset: {
                         legend: {
-                            text: 'Relevant alerts',
+                            text: 'Alerts',
                             classes: 'govuk-fieldset__legend--m'
                         }
                     },
-                    items:[
-                        {
-                            value: 'true',
-                            text: 'Include alerts',
-                            checked: true == session.unlockListJourney.showAlerts
-                        }
-                    ]
+                    items: alertFilters
                 }) }}
 
                 <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
@@ -226,7 +238,7 @@
                                     }
                                 ), row) %}
 
-                                {% if session.unlockListJourney.showAlerts %}
+                                {% if session.unlockListJourney.alertFilters %}
                                     {% set row = (row.push({
                                         html: alertsList({ alerts: item.alerts, category: item.category }),
                                         classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
@@ -261,7 +273,7 @@
                                 }
                             ] %}
 
-                            {% if session.unlockListJourney.showAlerts %}
+                            {% if session.unlockListJourney.alertFilters.length > 0 and 'none' not in session.unlockListJourney.alertFilters %}
                                 {% set headRows = (headRows.push(
                                     {
                                         text: "Relevant alerts",
@@ -274,12 +286,12 @@
                                 {
                                     html: "Event details",
                                     attributes: { "aria-sort": "none", colspan: 4 },
-                                    classes: 'govuk-table__header govuk-!-display-none-print ' + ('hmpps-width-40-percent' if session.unlockListJourney.showAlerts else 'hmpps-width-50-percent')
+                                    classes: 'govuk-table__header govuk-!-display-none-print ' + ('hmpps-width-40-percent' if session.unlockListJourney.alertFilters else 'hmpps-width-50-percent')
                                 },
                                 {
                                     html: "Event details",
                                     attributes: { "aria-sort": "none" },
-                                    classes: 'govuk-table__header print-only ' + ('hmpps-width-30-percent' if session.unlockListJourney.showAlerts else 'hmpps-width-40-percent')
+                                    classes: 'govuk-table__header print-only ' + ('hmpps-width-30-percent' if session.unlockListJourney.alertFilters else 'hmpps-width-40-percent')
                                 },
                                 {
                                     html: "<span><span class=\"text-underline\">R</span>efused</span>",
