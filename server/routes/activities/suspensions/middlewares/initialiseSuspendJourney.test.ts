@@ -53,12 +53,14 @@ describe('initialiseSuspendJourney', () => {
               activityId: 10,
               activitySummary: 'Activity 1',
               endDate: '2024-06-02',
+              status: 'SUSPENDED',
             },
             {
               id: 2,
               activityId: 20,
               activitySummary: 'Activity 2',
               endDate: '2024-07-02',
+              status: 'ACTIVE',
             },
           ],
         },
@@ -103,7 +105,7 @@ describe('initialiseSuspendJourney', () => {
   })
 
   it('should populate the session', async () => {
-    req.params = { prisonerNumber: 'ABC123' }
+    req.params = { prisonerNumber: 'ABC123', mode: 'unsuspend' }
     req.query.allocationIds = '1,2'
 
     await middleware(req, res, next)
@@ -115,6 +117,29 @@ describe('initialiseSuspendJourney', () => {
           activityName: 'Activity 1',
           allocationId: 1,
         },
+        {
+          activityId: 20,
+          activityName: 'Activity 2',
+          allocationId: 2,
+        },
+      ],
+      earliestAllocationEndDate: '2024-06-02',
+      inmate: {
+        prisonerName: 'John Smith',
+        prisonerNumber: 'ABC123',
+      },
+    })
+    expect(next).toHaveBeenCalled()
+  })
+
+  it('should populate the session and filter out already suspended allocations when in suspend mode', async () => {
+    req.params = { prisonerNumber: 'ABC123', mode: 'suspend' }
+    req.query.allocationIds = '1,2'
+
+    await middleware(req, res, next)
+
+    expect(req.session.suspendJourney).toEqual({
+      allocations: [
         {
           activityId: 20,
           activityName: 'Activity 2',

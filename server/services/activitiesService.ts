@@ -87,6 +87,22 @@ export default class ActivitiesService {
     return this.activitiesApiClient.patchAllocationUpdate(allocationId, updateBody, user)
   }
 
+  suspendAllocations(
+    prisonerNumber: string,
+    allocationIds: number[],
+    suspendFrom: string,
+    suspensionCaseNote: AddCaseNoteRequest,
+    user: ServiceUser,
+  ) {
+    const request = { prisonerNumber, allocationIds, suspendFrom, suspensionCaseNote }
+    return this.activitiesApiClient.suspendAllocations(request, user)
+  }
+
+  unsuspendAllocations(prisonerNumber: string, allocationIds: number[], suspendUntil: string, user: ServiceUser) {
+    const request = { prisonerNumber, allocationIds, suspendUntil }
+    return this.activitiesApiClient.unsuspendAllocations(request, user)
+  }
+
   allocateToSchedule(
     scheduleId: number,
     prisonerNumber: string,

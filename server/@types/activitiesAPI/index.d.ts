@@ -326,6 +326,28 @@ export interface paths {
      */
     post: operations['addToWaitingList']
   }
+  '/allocations/{prisonCode}/unsuspend': {
+    /**
+     * Suspend allocations
+     * @description Add a suspension end date to a list of allocations
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
+     */
+    post: operations['unsuspend']
+  }
+  '/allocations/{prisonCode}/suspend': {
+    /**
+     * Suspend allocations
+     * @description Add a suspension start date to a list of allocations, accompanied by an optional case note.
+     *
+     * Requires one of the following roles:
+     * * ACTIVITY_HUB
+     * * ACTIVITY_ADMIN
+     */
+    post: operations['suspend']
+  }
   '/activities': {
     /**
      * Create an activity
@@ -1597,18 +1619,18 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      paged?: boolean
-      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
+      paged?: boolean
+      unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -1617,15 +1639,15 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
       empty?: boolean
-      unsorted?: boolean
       sorted?: boolean
+      unsorted?: boolean
     }
     /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
     WaitingListApplication: {
@@ -1722,62 +1744,6 @@ export interface components {
        */
       updatedBy?: string
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
-    }
-    /** @description Describes an event to be published to the domain events SNS topic */
-    PublishEventUtilityModel: {
-      /**
-       * @description The outbound event to be published
-       * @enum {string}
-       */
-      outboundEvent:
-        | 'ACTIVITY_SCHEDULE_CREATED'
-        | 'ACTIVITY_SCHEDULE_UPDATED'
-        | 'ACTIVITY_SCHEDULED_INSTANCE_AMENDED'
-        | 'PRISONER_ALLOCATED'
-        | 'PRISONER_ALLOCATION_AMENDED'
-        | 'PRISONER_ATTENDANCE_CREATED'
-        | 'PRISONER_ATTENDANCE_AMENDED'
-        | 'PRISONER_ATTENDANCE_EXPIRED'
-        | 'APPOINTMENT_INSTANCE_CREATED'
-        | 'APPOINTMENT_INSTANCE_UPDATED'
-        | 'APPOINTMENT_INSTANCE_DELETED'
-        | 'APPOINTMENT_INSTANCE_CANCELLED'
-      /**
-       * @description A list of entity identifiers to be published with the event
-       * @example [
-       *   1,
-       *   2
-       * ]
-       */
-      identifiers: number[]
-    }
-    /** @description Describes an event to be published to the domain events SNS topic */
-    PublishEventUtilityModel: {
-      /**
-       * @description The outbound event to be published
-       * @enum {string}
-       */
-      outboundEvent:
-        | 'ACTIVITY_SCHEDULE_CREATED'
-        | 'ACTIVITY_SCHEDULE_UPDATED'
-        | 'ACTIVITY_SCHEDULED_INSTANCE_AMENDED'
-        | 'PRISONER_ALLOCATED'
-        | 'PRISONER_ALLOCATION_AMENDED'
-        | 'PRISONER_ATTENDANCE_CREATED'
-        | 'PRISONER_ATTENDANCE_AMENDED'
-        | 'PRISONER_ATTENDANCE_EXPIRED'
-        | 'APPOINTMENT_INSTANCE_CREATED'
-        | 'APPOINTMENT_INSTANCE_UPDATED'
-        | 'APPOINTMENT_INSTANCE_DELETED'
-        | 'APPOINTMENT_INSTANCE_CANCELLED'
-      /**
-       * @description A list of entity identifiers to be published with the event
-       * @example [
-       *   1,
-       *   2
-       * ]
-       */
-      identifiers: number[]
     }
     /** @description Describes an event to be published to the domain events SNS topic */
     PublishEventUtilityModel: {
@@ -3511,6 +3477,55 @@ export interface components {
        */
       status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
     }
+    /** @description The request with the suspension details */
+    UnsuspendPrisonerRequest: {
+      /**
+       * @description The prisoner number (NOMIS ID)
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      /**
+       * @description The allocation or allocations affected by the suspensions request. They must all be for the same prisoner
+       * @example [
+       *   1,
+       *   2,
+       *   3,
+       *   4
+       * ]
+       */
+      allocationIds: number[]
+      /**
+       * Format: date
+       * @description The date when the prisoner will be suspended till from the activity
+       * @example 2023-09-10
+       */
+      suspendUntil: string
+    }
+    /** @description The request with the suspension details */
+    SuspendPrisonerRequest: {
+      /**
+       * @description The prisoner number (NOMIS ID)
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      /**
+       * @description The allocation or allocations affected by the suspensions request. They must all be for the same prisoner
+       * @example [
+       *   1,
+       *   2,
+       *   3,
+       *   4
+       * ]
+       */
+      allocationIds: number[]
+      /**
+       * Format: date
+       * @description The date when the prisoner will be suspended from the activity
+       * @example 2023-09-10
+       */
+      suspendFrom: string
+      suspensionCaseNote?: components['schemas']['AddCaseNoteRequest']
+    }
     /** @description The create request with the new activity details */
     ActivityCreateRequest: {
       /**
@@ -3577,8 +3592,9 @@ export interface components {
       /**
        * @description The tier code for this activity, as defined by the Future Prison Regime team
        * @example TIER_1
+       * @enum {string}
        */
-      tierCode: string
+      tierCode: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
       /**
        * @description The organiser code for the organiser of this activity
        * @example PRISON_STAFF
@@ -4620,19 +4636,6 @@ export interface components {
       payBandId?: number
       /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
       exclusions?: components['schemas']['Slot'][]
-      /**
-       * Format: date
-       * @description The date when the prisoner will be suspended from the activity
-       * @example 2023-09-10
-       */
-      suspendFrom?: string
-      suspensionCaseNote?: components['schemas']['AddCaseNoteRequest']
-      /**
-       * Format: date
-       * @description The date when the prisoner will be suspended from the activity
-       * @example 2023-09-10
-       */
-      suspendUntil?: string
     }
     /** @description The update request with the new activity details */
     ActivityUpdateRequest: {
@@ -4644,8 +4647,9 @@ export interface components {
       /**
        * @description The tier code for this activity, as defined by the Future Prison Regime team
        * @example TIER_1
+       * @enum {string}
        */
-      tierCode?: string
+      tierCode?: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
       /**
        * @description The organiser code for this activity
        * @example PRISON_STAFF
@@ -5419,10 +5423,10 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -5431,9 +5435,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Describes one instance of an activity schedule */
@@ -6094,6 +6098,11 @@ export interface components {
        * @description The date and time the attendance was updated
        */
       recordedTime?: string
+      /**
+       * @description Is attendance required?
+       * @example true
+       */
+      attendanceRequired: boolean
     }
     /**
      * @description
@@ -8014,6 +8023,104 @@ export interface operations {
       }
       /** @description The activity schedule in the request for this ID was not found. */
       404: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Suspend allocations
+   * @description Add a suspension end date to a list of allocations
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
+   */
+  unsuspend: {
+    parameters: {
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        prisonCode: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UnsuspendPrisonerRequest']
+      }
+    }
+    responses: {
+      /** @description The suspensions were updated. */
+      202: {
+        content: {
+          'application/json': components['schemas']['Allocation']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Suspend allocations
+   * @description Add a suspension start date to a list of allocations, accompanied by an optional case note.
+   *
+   * Requires one of the following roles:
+   * * ACTIVITY_HUB
+   * * ACTIVITY_ADMIN
+   */
+  suspend: {
+    parameters: {
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        prisonCode: string
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SuspendPrisonerRequest']
+      }
+    }
+    responses: {
+      /** @description The suspensions were updated. */
+      202: {
+        content: {
+          'application/json': components['schemas']['Allocation']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }

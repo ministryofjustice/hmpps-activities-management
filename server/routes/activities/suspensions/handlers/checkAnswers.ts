@@ -10,27 +10,22 @@ export default class CheckAnswersRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { allocations, suspendFrom, suspendUntil, caseNote } = req.session.suspendJourney
     const { user } = res.locals
-    const { mode } = req.params
+    const { mode, prisonerNumber } = req.params
+
+    const allocationIds = allocations.map(a => a.allocationId)
 
     if (mode === 'suspend') {
-      await Promise.all(
-        allocations.map(a =>
-          this.activitiesService.updateAllocation(
-            a.allocationId,
-            {
-              suspendFrom,
-              suspensionCaseNote: caseNote as AddCaseNoteRequest,
-            },
-            user,
-          ),
-        ),
+      await this.activitiesService.suspendAllocations(
+        prisonerNumber,
+        allocationIds,
+        suspendFrom,
+        caseNote as AddCaseNoteRequest,
+        user,
       )
     }
 
     if (mode === 'unsuspend') {
-      await Promise.all(
-        allocations.map(a => this.activitiesService.updateAllocation(a.allocationId, { suspendUntil }, user)),
-      )
+      await this.activitiesService.unsuspendAllocations(prisonerNumber, allocationIds, suspendUntil, user)
     }
 
     return res.redirect('confirmation')
