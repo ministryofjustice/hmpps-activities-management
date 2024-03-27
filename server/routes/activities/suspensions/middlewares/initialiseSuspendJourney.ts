@@ -11,7 +11,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
     if (req.session.suspendJourney) return next()
 
     const allocationIds = (req.query.allocationIds as string)?.split(',')
-    const { prisonerNumber } = req.params
+    const { prisonerNumber, mode } = req.params
     const { user } = res.locals
 
     if (!allocationIds) return res.redirect('back')
@@ -30,11 +30,13 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
     const prisoner = await prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
 
     req.session.suspendJourney = {
-      allocations: allocations.map(a => ({
-        allocationId: a.id,
-        activityId: a.activityId,
-        activityName: a.activitySummary,
-      })),
+      allocations: allocations
+        .filter(a => mode === 'unsuspend' || a.status !== 'SUSPENDED')
+        .map(a => ({
+          allocationId: a.id,
+          activityId: a.activityId,
+          activityName: a.activitySummary,
+        })),
       inmate: {
         prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
         prisonerNumber,
