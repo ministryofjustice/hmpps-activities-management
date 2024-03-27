@@ -37,6 +37,7 @@ import {
   AppointmentUpdateRequest,
   Allocation,
   AppointmentAttendanceRequest,
+  AddCaseNoteRequest,
 } from '../@types/activitiesAPI/types'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import appointmentSeriesDetails from './fixtures/appointment_series_details_1.json'
@@ -100,6 +101,41 @@ describe('Activities Service', () => {
     it('should call activities API client to create an activity', async () => {
       await activitiesService.createActivity({ prisonCode: 'MDI' } as ActivityCreateRequest, user)
       expect(activitiesApiClient.postActivityCreation).toHaveBeenCalledWith({ prisonCode: 'MDI' }, user)
+    })
+  })
+
+  describe('suspendAllocations', () => {
+    it('should call activities API client to suspend an allocation', async () => {
+      await activitiesService.suspendAllocations(
+        'ABC123',
+        [1],
+        '2023-01-01',
+        { text: 'test case note', type: 'GEN' } as AddCaseNoteRequest,
+        user,
+      )
+      expect(activitiesApiClient.suspendAllocations).toHaveBeenCalledWith(
+        {
+          prisonerNumber: 'ABC123',
+          allocationIds: [1],
+          suspendFrom: '2023-01-01',
+          suspensionCaseNote: { text: 'test case note', type: 'GEN' },
+        },
+        user,
+      )
+    })
+  })
+
+  describe('unsuspendAllocations', () => {
+    it('should call activities API client to unsuspend an allocation', async () => {
+      await activitiesService.unsuspendAllocations('ABC123', [1], '2023-01-01', user)
+      expect(activitiesApiClient.unsuspendAllocations).toHaveBeenCalledWith(
+        {
+          prisonerNumber: 'ABC123',
+          allocationIds: [1],
+          suspendUntil: '2023-01-01',
+        },
+        user,
+      )
     })
   })
 

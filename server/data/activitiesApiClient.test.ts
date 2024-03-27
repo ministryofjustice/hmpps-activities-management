@@ -29,6 +29,8 @@ import {
   WaitingListApplicationUpdateRequest,
   AppointmentUpdateRequest,
   AppointmentAttendanceRequest,
+  SuspendPrisonerRequest,
+  UnsuspendPrisonerRequest,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -163,6 +165,48 @@ describe('activitiesApiClient', () => {
 
       await activitiesApiClient.postActivityCreation(
         { prisonCode: 'MDI', summary: 'Maths level 1' } as ActivityCreateRequest,
+        user,
+      )
+
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('suspendAllocations', () => {
+    it('should post data to api', async () => {
+      fakeActivitiesApi
+        .post('/allocations/MDI/suspend', {
+          prisonerNumber: 'ABC123',
+          allocationIds: [1],
+          suspendFrom: '2023-01-01',
+        })
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(202)
+
+      await activitiesApiClient.suspendAllocations(
+        { prisonerNumber: 'ABC123', allocationIds: [1], suspendFrom: '2023-01-01' } as SuspendPrisonerRequest,
+        user,
+      )
+
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('unsuspendAllocations', () => {
+    it('should post data to api', async () => {
+      fakeActivitiesApi
+        .post('/allocations/MDI/unsuspend', {
+          prisonerNumber: 'ABC123',
+          allocationIds: [1],
+          suspendUntil: '2023-01-01',
+        })
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(202)
+
+      await activitiesApiClient.unsuspendAllocations(
+        { prisonerNumber: 'ABC123', allocationIds: [1], suspendUntil: '2023-01-01' } as UnsuspendPrisonerRequest,
         user,
       )
 

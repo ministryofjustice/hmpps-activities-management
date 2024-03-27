@@ -57,6 +57,8 @@ import {
   WaitingListSearchParams,
   ScheduledAttendee,
   Slot,
+  SuspendPrisonerRequest,
+  UnsuspendPrisonerRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -156,6 +158,24 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: updateBody,
+    })
+  }
+
+  suspendAllocations(request: SuspendPrisonerRequest, user: ServiceUser) {
+    return this.post({
+      path: `/allocations/${user.activeCaseLoadId}/suspend`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: request,
+    })
+  }
+
+  unsuspendAllocations(request: UnsuspendPrisonerRequest, user: ServiceUser) {
+    return this.post({
+      path: `/allocations/${user.activeCaseLoadId}/unsuspend`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: request,
     })
   }
 

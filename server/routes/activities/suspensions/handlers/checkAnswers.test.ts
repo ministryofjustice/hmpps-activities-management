@@ -27,7 +27,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
 
     req = {
       body: {},
-      params: {},
+      params: { prisonerNumber: 'ABC123' },
       query: {},
       session: {
         suspendJourney: {
@@ -74,17 +74,19 @@ describe('Route Handlers - Suspensions - Check answers', () => {
 
       await handler.POST(req, res)
 
-      const expectedBody = {
-        suspendFrom: '2024-05-23',
-        suspensionCaseNote: {
-          type: 'GEN',
-          text: 'case note text',
-        },
+      const expectedCaseNote = {
+        type: 'GEN',
+        text: 'case note text',
       }
 
-      expect(activitiesService.updateAllocation).toHaveBeenCalledTimes(2)
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(1, expectedBody, user)
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(2, expectedBody, user)
+      expect(activitiesService.suspendAllocations).toHaveBeenCalled()
+      expect(activitiesService.suspendAllocations).toHaveBeenCalledWith(
+        'ABC123',
+        [1, 2],
+        '2024-05-23',
+        expectedCaseNote,
+        user,
+      )
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
 
@@ -93,11 +95,8 @@ describe('Route Handlers - Suspensions - Check answers', () => {
 
       await handler.POST(req, res)
 
-      const expectedBody = { suspendUntil: '2024-05-25' }
-
-      expect(activitiesService.updateAllocation).toHaveBeenCalledTimes(2)
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(1, expectedBody, user)
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(2, expectedBody, user)
+      expect(activitiesService.unsuspendAllocations).toHaveBeenCalled()
+      expect(activitiesService.unsuspendAllocations).toHaveBeenCalledWith('ABC123', [1, 2], '2024-05-25', user)
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
   })
