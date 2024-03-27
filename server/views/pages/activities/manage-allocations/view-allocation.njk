@@ -163,7 +163,7 @@
                     href: "/activities/allocation-dashboard/" + allocation.activityId
                 }) }}
 
-                {% if suspensionsFeatureToggleEnabled and not allocation.plannedSuspension %}
+                {% if not allocation.plannedSuspension %}
                     {{ govukButton({
                         text: "Suspend from this activity",
                         href: "/activities/suspensions/suspend/" + allocation.prisonerNumber + "/suspend-from?allocationIds=" + allocation.id ,

@@ -1,11 +1,9 @@
 import { RequestHandler, Router } from 'express'
-import createHttpError from 'http-errors'
 import { Services } from '../../../services'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import ViewAllocationsRoutes from './handlers/viewAllocations'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import SelectPrisonerRoutes, { PrisonerSearch, SelectPrisoner } from './handlers/selectPrisoner'
-import config from '../../../config'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 import initialiseSuspendJourney from './middlewares/initialiseSuspendJourney'
 import suspendRoutes from './suspendRoutes'
@@ -25,9 +23,6 @@ export default function Index(services: Services): Router {
     services.userService,
   )
   const selectPrisonerRoutes = new SelectPrisonerRoutes(services.prisonService)
-
-  // Suspension routes are only accessible when feature toggle is provided
-  router.use((req, res, next) => (!config.suspensionsFeatureToggleEnabled ? next(createHttpError.NotFound()) : next()))
 
   get('/prisoner/:prisonerNumber', viewAllocationsHandler.GET)
   get('/prisoner/:prisonerNumber/view-suspensions', viewSuspensionsHandler.GET)

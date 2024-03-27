@@ -59,17 +59,15 @@
             }) }}
         </div>
 
-        {% if suspensionsFeatureToggleEnabled %}
-            <div class="govuk-grid-column-one-third card-group__item">
-                {{ card({
-                    "href": "/activities/suspensions/select-prisoner",
-                    "clickable": "true",
-                    "heading": "Manage suspensions from activities",
-                    "description": "Suspend people from activities. End suspensions so people can attend again.",
-                    "data-qa": "suspensions"
-                }) }}
-            </div>
-        {% endif %}
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "href": "/activities/suspensions/select-prisoner",
+                "clickable": "true",
+                "heading": "Manage suspensions from activities",
+                "description": "Suspend people from activities. End suspensions so people can attend again.",
+                "data-qa": "suspensions"
+            }) }}
+        </div>
 
         <div class="govuk-grid-column-one-third card-group__item">
             {{ card({
