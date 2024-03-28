@@ -151,15 +151,6 @@
                     }), alertFilters) %}
                 {% endfor %}
 
-                {% set alertFilters = alertFilters.concat({divider: 'or'}) %}
-
-                {% set alertFilters = alertFilters.concat({
-                        value: 'none',
-                        text: 'No alerts',
-                        behaviour: 'exclusive'
-                    })
-                %}
-
                 {{ govukCheckboxes({
                     idPrefix: 'alertFilters',
                     name: 'alertFilters',
@@ -172,6 +163,10 @@
                     },
                     items: alertFilters
                 }) }}
+                <div class="govuk-!-margin-bottom-4">
+                    <a href="#" class="govuk-link govuk-link--no-visited-state"
+                       data-module="select-all-link" data-checkbox-name="alertFilters"></a>
+                </div>
 
                 <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
                     Apply filters
@@ -273,7 +268,7 @@
                                 }
                             ] %}
 
-                            {% if session.unlockListJourney.alertFilters.length > 0 and 'none' not in session.unlockListJourney.alertFilters %}
+                            {% if session.unlockListJourney.alertFilters.length > 0 %}
                                 {% set headRows = (headRows.push(
                                     {
                                         text: "Relevant alerts",

@@ -34,9 +34,7 @@ export default class ApplyFiltersRoutes {
       req.session.unlockListJourney.stayingOrLeavingFilter = stayingOrLeavingFilter
     }
 
-    if (alertFilters) {
-      req.session.unlockListJourney.alertFilters = alertFilters
-    }
+    req.session.unlockListJourney.alertFilters = alertFilters ?? []
 
     req.session.unlockListJourney.searchTerm = asString(searchTerm)
 
