@@ -4,6 +4,6 @@ export type UnlockListJourney = {
   subLocationFilters?: string[]
   activityFilter?: string
   stayingOrLeavingFilter?: string
-  showAlerts?: boolean
+  alertFilters?: string[]
   searchTerm?: string
 }

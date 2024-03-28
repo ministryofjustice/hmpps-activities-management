@@ -87,8 +87,11 @@ describe('Unlock list routes - planned events', () => {
         },
       ] as UnlockListItem[]
 
+      const alertFilterOptions = [{ key: 'ALERT_HA', description: 'ACCT', codes: ['HA'] }]
+
       when(activitiesService.getLocationGroups).mockResolvedValue(locationsAtPrison)
       when(unlockListService.getFilteredUnlockList).mockResolvedValue(unlockListItems)
+      when(unlockListService.getAllAlertFilterOptions).mockReturnValue(alertFilterOptions)
 
       await handler.GET(req, res)
 
@@ -99,6 +102,7 @@ describe('Unlock list routes - planned events', () => {
         ['A', 'B', 'C'],
         'With',
         'Both',
+        ['ALERT_HA'],
         '',
         res.locals.user,
       )
@@ -120,10 +124,13 @@ describe('Unlock list routes - planned events', () => {
           leavingWing: 2,
           stayingOnWing: 1,
         },
+        alertOptions: alertFilterOptions,
       })
     })
 
     it('should render the view from session filters', async () => {
+      const alertFilterOptions = [{ key: 'CAT_A', description: 'CAT A', codes: ['A', 'E'] }]
+
       req = {
         query: {
           date: '2022-01-01',
@@ -136,6 +143,7 @@ describe('Unlock list routes - planned events', () => {
             activityFilter: 'With',
             subLocationFilters: ['A'],
             searchTerm: 'search term',
+            alertFilters: ['CAT_A'],
           },
         },
       } as unknown as Request
@@ -153,6 +161,7 @@ describe('Unlock list routes - planned events', () => {
 
       when(activitiesService.getLocationGroups).mockResolvedValue(locationsAtPrison)
       when(unlockListService.getFilteredUnlockList).mockResolvedValue(unlockListItems)
+      when(unlockListService.getAllAlertFilterOptions).mockReturnValue(alertFilterOptions)
 
       await handler.GET(req, res)
 
@@ -163,6 +172,7 @@ describe('Unlock list routes - planned events', () => {
         ['A'],
         'With',
         'Leaving',
+        ['CAT_A'],
         'search term',
         res.locals.user,
       )
@@ -188,6 +198,7 @@ describe('Unlock list routes - planned events', () => {
           leavingWing: 2,
           stayingOnWing: 0,
         },
+        alertOptions: alertFilterOptions,
       })
     })
   })

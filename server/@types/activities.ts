@@ -40,6 +40,7 @@ export type UnlockListItem = {
   locationGroup?: string
   locationSubGroup: string
   cellLocation: string
+  category?: string
   alerts?: Alert[]
   events?: ScheduledEvent[]
   status: string

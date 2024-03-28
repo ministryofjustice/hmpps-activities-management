@@ -1,4 +1,5 @@
 import { when } from 'jest-when'
+import _ from 'lodash'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
@@ -34,7 +35,7 @@ const prisoners = {
       prisonId: 'MDI',
       prisonName: 'HMP Moorland',
       cellLocation: '1-1-001',
-      category: 'C',
+      category: 'A',
       legalStatus: 'SENTENCED',
     },
     {
@@ -48,7 +49,8 @@ const prisoners = {
       prisonId: 'MDI',
       prisonName: 'HMP Moorland',
       cellLocation: '1-2-002',
-      category: 'C',
+      category: 'E',
+      alerts: [{ alertCode: 'HA' }, { alertCode: 'PEEP' }],
       legalStatus: 'SENTENCED',
     },
     {
@@ -63,6 +65,7 @@ const prisoners = {
       prisonName: 'HMP Moorland',
       cellLocation: '1-2-003',
       category: 'C',
+      alerts: [{ alertCode: 'PEEP' }, { alertCode: 'XEL' }],
       legalStatus: 'SENTENCED',
     },
     {
@@ -76,7 +79,7 @@ const prisoners = {
       prisonId: 'MDI',
       prisonName: 'HMP Moorland',
       cellLocation: '1-1-004',
-      category: 'C',
+      category: 'P',
       legalStatus: 'SENTENCED',
     },
   ],
@@ -216,6 +219,7 @@ describe('Unlock list service', () => {
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
         'Both',
+        [],
         null,
         user,
       )
@@ -257,6 +261,7 @@ describe('Unlock list service', () => {
         ['C-Wing'],
         'Both',
         'Both',
+        [],
         null,
         user,
       )
@@ -287,6 +292,7 @@ describe('Unlock list service', () => {
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'With',
         'Both',
+        [],
         null,
         user,
       )
@@ -306,6 +312,7 @@ describe('Unlock list service', () => {
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
         'Both',
+        [],
         null,
         user,
       )
@@ -326,6 +333,7 @@ describe('Unlock list service', () => {
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
         'Leaving',
+        [],
         null,
         user,
       )
@@ -345,6 +353,7 @@ describe('Unlock list service', () => {
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
         'Staying',
+        [],
         null,
         user,
       )
@@ -364,6 +373,7 @@ describe('Unlock list service', () => {
         ['A-Wing'],
         'Both',
         'Leaving',
+        [],
         null,
         user,
       )
@@ -383,12 +393,106 @@ describe('Unlock list service', () => {
         [],
         'Both',
         'Both',
+        [],
         null,
         user,
       )
 
       expect(unlockListItems).toHaveLength(4)
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(1)
+    })
+
+    it('should only show categories matching the category filter', async () => {
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'am',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'With',
+        'Both',
+        ['CAT_A'],
+        null,
+        user,
+      )
+
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'])
+      expect(unlockListItems.map(i => i.category)).toEqual(['A', 'E', undefined, undefined])
+      expect(unlockListItems.map(i => i.alerts)).toEqual([undefined, [], [], undefined])
+    })
+
+    it('should only show alerts matching the alerts filter', async () => {
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'am',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'With',
+        'Both',
+        ['ALERT_PEEP', 'ALERT_HA'],
+        null,
+        user,
+      )
+
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'])
+      expect(unlockListItems.map(i => i.category)).toEqual([undefined, undefined, undefined, undefined])
+      const expectedAlertCodes = unlockListItems
+        .map(({ alerts }) => alerts)
+        .map(a => (!a ? undefined : _(a).map('alertCode').value()))
+      expect(expectedAlertCodes).toEqual([undefined, ['HA', 'PEEP'], ['PEEP'], undefined])
+    })
+
+    it('should only show alerts and categories matching the alerts filter', async () => {
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'am',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'With',
+        'Both',
+        ['ALERT_PEEP', 'ALERT_HA', 'CAT_A_PROVISIONAL'],
+        null,
+        user,
+      )
+
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'])
+      expect(unlockListItems.map(i => i.category)).toEqual([undefined, undefined, undefined, 'P'])
+      const actualAlertCodes = unlockListItems
+        .map(({ alerts }) => alerts)
+        .map(a => (!a ? undefined : _(a).map('alertCode').value()))
+      expect(actualAlertCodes).toEqual([undefined, ['HA', 'PEEP'], ['PEEP'], undefined])
+    })
+
+    it('should only for select location and with alerts and categories matching the alerts filter', async () => {
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'am',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'Both',
+        'Staying',
+        ['CAT_A', 'ALERT_XEL'],
+        null,
+        user,
+      )
+
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A2222AA', 'A3333AA'])
+      expect(unlockListItems.map(i => i.category)).toEqual(['E', undefined])
+      const actualAlertCodes = unlockListItems
+        .map(({ alerts }) => alerts)
+        .map(a => (!a ? undefined : _(a).map('alertCode').value()))
+      expect(actualAlertCodes).toEqual([[], ['XEL']])
     })
   })
 })

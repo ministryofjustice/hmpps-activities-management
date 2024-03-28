@@ -21,16 +21,19 @@ export default class PlannedEventsRoutes {
       .getLocationGroups(user)
       .then(locations => locations.find(loc => loc.key === locationKey))
 
+    const alertOptions = this.unlockListService.getAllAlertFilterOptions()
+
     // Set the default filter values if they are not set
     req.session.unlockListJourney.stayingOrLeavingFilter ??= 'Both'
     req.session.unlockListJourney.activityFilter ??= 'With'
     req.session.unlockListJourney.subLocationFilters ??= location.children.map(c => c.key)
-    req.session.unlockListJourney.showAlerts ??= true
+    req.session.unlockListJourney.alertFilters ??= alertOptions.map(a => a.key)
     req.session.unlockListJourney.searchTerm ??= ''
 
     const unlockDate = date ? toDate(asString(date)) : new Date()
 
-    const { subLocationFilters, activityFilter, stayingOrLeavingFilter, searchTerm } = req.session.unlockListJourney
+    const { subLocationFilters, activityFilter, stayingOrLeavingFilter, alertFilters, searchTerm } =
+      req.session.unlockListJourney
 
     const unlockListItems = await this.unlockListService.getFilteredUnlockList(
       unlockDate,
@@ -39,6 +42,7 @@ export default class PlannedEventsRoutes {
       subLocationFilters,
       activityFilter,
       stayingOrLeavingFilter,
+      alertFilters,
       searchTerm,
       user,
     )
@@ -59,6 +63,7 @@ export default class PlannedEventsRoutes {
       location,
       unlockListItems,
       movementCounts,
+      alertOptions,
     })
   }
 }

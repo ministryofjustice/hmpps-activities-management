@@ -20,7 +20,7 @@ describe('Route Handlers - applyFilters', () => {
           subLocationFilters: ['Original location'],
           activityFilter: 'Original activity filter',
           stayingOrLeavingFilter: 'Original staying or leaving filter',
-          showAlerts: false,
+          alertFilters: [],
           searchTerm: '',
         },
       },
@@ -33,7 +33,7 @@ describe('Route Handlers - applyFilters', () => {
         locationFilters: ['A'],
         activityFilter: 'With',
         stayingOrLeavingFilter: 'Staying',
-        showAlerts: 'true',
+        alertFilters: ['ALERT_PEEP'],
         searchTerm: 'search term',
       }
 
@@ -43,7 +43,7 @@ describe('Route Handlers - applyFilters', () => {
         subLocationFilters: ['A'],
         activityFilter: 'With',
         stayingOrLeavingFilter: 'Staying',
-        showAlerts: true,
+        alertFilters: ['ALERT_PEEP'],
         searchTerm: 'search term',
       })
     })
@@ -58,7 +58,7 @@ describe('Route Handlers - applyFilters', () => {
         subLocationFilters: [],
         activityFilter: 'Original activity filter',
         stayingOrLeavingFilter: 'Original staying or leaving filter',
-        showAlerts: false,
+        alertFilters: [],
         searchTerm: '',
       })
     })
@@ -71,7 +71,7 @@ describe('Route Handlers - applyFilters', () => {
         subLocationFilters: ['Original location'],
         activityFilter: 'Original activity filter',
         stayingOrLeavingFilter: 'Original staying or leaving filter',
-        showAlerts: false,
+        alertFilters: [],
         searchTerm: '',
       })
     })

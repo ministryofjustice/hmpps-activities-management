@@ -10,7 +10,22 @@ export default class UnlockListService {
     private readonly activitiesApiClient: ActivitiesApiClient,
   ) {}
 
-  private RELEVANT_ALERT_CODES = ['HA', 'PEEP', 'XEL', 'XCU']
+  private readonly ALERT_FILTERS = [
+    { key: 'ALERT_HA', description: 'ACCT', codes: ['HA'] },
+    { key: 'ALERT_XCU', description: 'Controlled Unlock', codes: ['XCU'] },
+    { key: 'ALERT_XEL', description: 'E-List', codes: ['XEL'] },
+    { key: 'ALERT_PEEP', description: 'PEEP', codes: ['PEEP'] },
+  ]
+
+  private readonly CATEGORY_FILTERS = [
+    { key: 'CAT_A', description: 'CAT A', codes: ['A', 'E'] },
+    { key: 'CAT_A_HIGHER', description: 'CAT A Higher', codes: ['H'] },
+    { key: 'CAT_A_PROVISIONAL', description: 'CAT A Provisional', codes: ['P'] },
+  ]
+
+  getAllAlertFilterOptions() {
+    return this.ALERT_FILTERS.concat(this.CATEGORY_FILTERS)
+  }
 
   async getFilteredUnlockList(
     date: Date,
@@ -19,6 +34,7 @@ export default class UnlockListService {
     subLocationFilters: string[],
     activityFilter: string,
     stayingOrLeavingFilter: string,
+    alertFilters: string[],
     searchTerm: string,
     user: ServiceUser,
   ): Promise<UnlockListItem[]> {
@@ -49,6 +65,14 @@ export default class UnlockListService {
       return []
     }
 
+    const selectedCategories = this.CATEGORY_FILTERS.filter(cat => alertFilters.includes(cat.key)).flatMap(
+      cat => cat.codes,
+    )
+
+    const selectedAlertCodes = this.ALERT_FILTERS.filter(alert => alertFilters.includes(alert.key)).flatMap(
+      alert => alert.codes,
+    )
+
     // Create unlock list items for each prisoner returned and populate their sub-location by cell-matching
     const prisoners = results?.content?.map(prisoner => {
       return {
@@ -56,9 +80,9 @@ export default class UnlockListService {
         bookingId: prisoner?.bookingId,
         prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
         cellLocation: prisoner?.cellLocation,
-        category: prisoner?.category,
+        category: selectedCategories.find(cat => cat === prisoner?.category),
         incentiveLevel: prisoner?.currentIncentive,
-        alerts: prisoner?.alerts?.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
+        alerts: prisoner?.alerts?.filter(a => selectedAlertCodes.includes(a.alertCode)),
         status: prisoner?.inOutStatus,
         prisonCode: prisoner?.prisonId,
         locationGroup: location,
