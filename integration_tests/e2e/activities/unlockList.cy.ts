@@ -1,3 +1,4 @@
+import { format, startOfToday } from 'date-fns'
 import IndexPage from '../../pages'
 import Page from '../../pages/page'
 import getLocationGroups from '../../fixtures/activitiesApi/getLocationGroups.json'
@@ -12,6 +13,7 @@ const catABadge = { clazz: 'cat-a-status--a', text: 'CAT A' }
 const peepBadge = { clazz: 'alert-status--disability', text: 'PEEP' }
 const controlledUnlockBadge = { clazz: 'alert-status--controlled-unlock', text: 'Controlled Unlock' }
 context('Create activity', () => {
+  const today = format(startOfToday(), 'yyyy-MM-dd')
   const locPrefixBlock1 = 'MDI-1-.+'
   const locPrefixBlock2AWing = 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-3-0(0[1-9]|1[0-2])'
   const locPrefixBlock2BWing = 'MDI-1-1-0(1[3-9]|2[0-6]),MDI-1-2-0(1[3-9]|2[0-6]),MDI-1-3-0(1[3-9]|2[0-6])'
@@ -50,7 +52,7 @@ context('Create activity', () => {
       '/prison/MDI/prisoners\\?page=0&size=1024&cellLocationPrefix=MDI-1-&sort=cellLocation',
       getPrisonPrisoners,
     )
-    cy.stubEndpoint('POST', '/scheduled-events/prison/MDI\\?date=2024-03-28&timeSlot=am', getScheduledEvents)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}&timeSlot=am`, getScheduledEvents)
   })
 
   it('should show correct alerts', () => {
