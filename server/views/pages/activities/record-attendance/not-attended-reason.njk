@@ -48,12 +48,7 @@
             value: formResponses.notAttendedData[index].moreDetail
         }) }}
     {% elseif reason.captureCaseNote %}
-        {{ govukWarningText({
-          text: (
-            prisoner.prisonerName | toTitleCase + (" won't be paid because this is" if isPayable else "'s attendance will be recorded as") + " an unacceptable absence."
-            ),
-            iconFallbackText: "Warning"
-        }) }}
+        {% set warningText = (prisoner.prisonerName | toTitleCase + (" won't be paid because this is" if isPayable else "'s attendance will be recorded as") + " an unacceptable absence.") %}
         {{ govukCharacterCount({
             label: {
                 text: "Add a case note"
@@ -63,8 +58,12 @@
             classes: "govuk-!-width-one-half",
             errorMessage: validationErrors | findError("notAttendedData-" + index + "-caseNote"),
             value: formResponses.notAttendedData[index].caseNote,
-            maxlength: 3800
+            maxlength: 3800,
+            hint: {
+                html: '<div class="govuk-warning-text govuk-!-margin-bottom-0"><span class="govuk-warning-text__icon" aria-hidden="true">!</span><strong class="govuk-warning-text__text"><span class="govuk-visually-hidden">Warning</span>' + warningText +'</strong></div>'      
+            }
         }) }}
+
        {{ govukRadios({
             classes: "govuk-radios--inline",
             hint: {
