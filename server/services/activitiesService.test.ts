@@ -173,6 +173,27 @@ describe('Activities Service', () => {
     })
   })
 
+  describe('getCancelledScheduledActivitiesAtPrison', () => {
+    it('should get the list of cancelled activities scheduled at a prison between a date range', async () => {
+      const expectedResult = [{ id: 1 }] as ScheduledActivity[]
+      const date = new Date()
+
+      when(activitiesApiClient.getScheduledActivitiesAtPrison).mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getCancelledScheduledActivitiesAtPrison(date, user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getScheduledActivitiesAtPrison).toHaveBeenCalledWith(
+        'MDI',
+        date,
+        date,
+        user,
+        undefined,
+        true,
+      )
+    })
+  })
+
   describe('getScheduledActivity', () => {
     it('should get the scheduled activitu by ID', async () => {
       const expectedResult = { id: 1 } as ScheduledActivity

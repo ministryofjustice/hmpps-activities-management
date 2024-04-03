@@ -14,6 +14,7 @@ type CancelledActivity = {
   category: string
   timeSlot: TimeSlot
   cancelledReason: string
+  activityId: number
 }
 
 export default class DailySummaryRoutes {
@@ -46,14 +47,15 @@ export default class DailySummaryRoutes {
     return res.render('pages/activities/daily-attendance-summary/daily-summary', {
       activityDate,
       uniqueCategories,
-      ...this.getCancelledActivitySummary(cancelledSessionsForFilters),
+      ...this.getCancelledActivitySummary(attendancesForFilters, cancelledSessionsForFilters),
       ...this.getDailyAttendanceSummary(attendancesForFilters),
       ...this.getSuspendedPrisonerCount(attendancesForFilters),
     })
   }
 
-  private getCancelledActivitySummary = (cancelledEvents: CancelledActivity[]) => {
+  private getCancelledActivitySummary = (allAttendances: AllAttendance[], cancelledEvents: CancelledActivity[]) => {
     const totalCancelledSessions = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalUnattendedCancelledSessions = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalStaffUnavailable = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalStaffTraining = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalActivityNotRequired = { DAY: 0, AM: 0, PM: 0, ED: 0 }
@@ -61,6 +63,16 @@ export default class DailySummaryRoutes {
     const totalOperationalIssue = { DAY: 0, AM: 0, PM: 0, ED: 0 }
 
     cancelledEvents.forEach(activity => {
+      const isUnattended = allAttendances.some(
+        a => a.activityId === activity.activityId && a.attendanceRequired === false,
+      )
+
+      if (isUnattended) {
+        totalUnattendedCancelledSessions.DAY += 1
+        totalUnattendedCancelledSessions[activity.timeSlot.toUpperCase()] += 1
+        return
+      }
+
       totalCancelledSessions.DAY += 1
       totalCancelledSessions[activity.timeSlot.toUpperCase()] += 1
       if (activity.cancelledReason === cancellationReasons.STAFF_UNAVAILABLE) {
@@ -88,6 +100,7 @@ export default class DailySummaryRoutes {
       totalActivityNotRequired,
       totalLocationUnavailable,
       totalOperationalIssue,
+      totalUnattendedCancelledSessions,
     }
   }
 
@@ -110,18 +123,31 @@ export default class DailySummaryRoutes {
     const totalRefused = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnpaidRest = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnpaidOther = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalUnattendedActivities = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalUnattendedAllocated = { DAY: 0, AM: 0, PM: 0, ED: 0 }
 
     _.uniqBy(attendances, 'scheduledInstanceId')
       .map(s => ({
         scheduledInstanceId: s.scheduledInstanceId,
         timeSlot: s.timeSlot,
+        attendanceRequired: s.attendanceRequired,
       }))
       .forEach(a => {
-        totalActivities.DAY += 1
-        totalActivities[a.timeSlot] += 1
+        if (a.attendanceRequired) {
+          totalActivities.DAY += 1
+          totalActivities[a.timeSlot] += 1
+        } else {
+          totalUnattendedActivities.DAY += 1
+          totalUnattendedActivities[a.timeSlot] += 1
+        }
       })
 
     attendances.forEach(attendance => {
+      if (!attendance.attendanceRequired) {
+        totalUnattendedAllocated.DAY += 1
+        totalUnattendedAllocated[attendance.timeSlot] += 1
+        return
+      }
       totalAllocated.DAY += 1
       totalAllocated[attendance.timeSlot] += 1
       if (attendance.status === AttendanceStatus.WAITING) {
@@ -209,6 +235,8 @@ export default class DailySummaryRoutes {
       totalRefused,
       totalUnpaidRest,
       totalUnpaidOther,
+      totalUnattendedActivities,
+      totalUnattendedAllocated,
     }
   }
 
@@ -234,16 +262,19 @@ export default class DailySummaryRoutes {
   }
 
   private getCancelledActivitiesAtPrison = (activityDate: Date, user: ServiceUser): Promise<CancelledActivity[]> => {
-    return this.activitiesService
-      .getScheduledActivitiesAtPrison(activityDate, user)
-      .then(scheduledActivities => scheduledActivities.filter(a => a.cancelled))
-      .then(cancelledActivities =>
-        cancelledActivities.map(a => ({
-          id: a.id,
-          category: a.activitySchedule.activity.category.name,
-          timeSlot: getTimeSlotFromTime(a.startTime),
-          cancelledReason: a.cancelledReason,
-        })),
-      )
+    const scheduledActivitiesPromise = this.activitiesService.getCancelledScheduledActivitiesAtPrison(
+      activityDate,
+      user,
+    )
+
+    return scheduledActivitiesPromise.then(cancelledActivities =>
+      cancelledActivities.map(a => ({
+        id: a.id,
+        category: a.activitySchedule.activity.category.name,
+        timeSlot: getTimeSlotFromTime(a.startTime),
+        cancelledReason: a.cancelledReason,
+        activityId: a.activitySchedule.activity.id,
+      })),
+    )
   }
 }

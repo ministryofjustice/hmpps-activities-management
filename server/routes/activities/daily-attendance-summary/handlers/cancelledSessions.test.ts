@@ -71,27 +71,6 @@ describe('Route Handlers - Cancelled Sessions List', () => {
           description: 'Houseblock 2',
           internalLocation: { description: 'Classroom 2' },
         },
-        cancelled: false,
-        allocated: 4,
-        comment: 'Stuff Training',
-        cancelledReason: 'Teacher unavailable',
-        attendances: [],
-      },
-      {
-        id: 3,
-        startTime: '13:00',
-        endTime: '14:00',
-        activitySchedule: {
-          activity: {
-            summary: 'Packing',
-            category: { code: 'SAA_INDUSTRIES' },
-            inCell: false,
-            offWing: false,
-            allocated: 4,
-          },
-          description: 'Houseblock 2',
-          internalLocation: { description: 'Classroom 2' },
-        },
         cancelled: true,
         comment: 'Stuff training',
         cancelledReason: 'Teacher unavailable',
@@ -119,7 +98,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
         },
       } as unknown as Request
 
-      when(activitiesService.getScheduledActivitiesAtPrison)
+      when(activitiesService.getCancelledScheduledActivitiesAtPrison)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockApiResponse)
 
@@ -140,7 +119,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
             comment: 'Stuff training',
           },
           {
-            id: 3,
+            id: 2,
             summary: 'Packing',
             inCell: false,
             offWing: false,
@@ -158,7 +137,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
       const dateString = '2022-12-08'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
 
-      when(activitiesService.getScheduledActivitiesAtPrison)
+      when(activitiesService.getCancelledScheduledActivitiesAtPrison)
         .calledWith(date, res.locals.user)
         .mockResolvedValue(mockApiResponse)
 
