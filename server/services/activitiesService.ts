@@ -71,6 +71,17 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getScheduledActivitiesAtPrison(user.activeCaseLoadId, date, date, user)
   }
 
+  getCancelledScheduledActivitiesAtPrison(date: Date, user: ServiceUser): Promise<ScheduledActivity[]> {
+    return this.activitiesApiClient.getScheduledActivitiesAtPrison(
+      user.activeCaseLoadId,
+      date,
+      date,
+      user,
+      undefined,
+      true,
+    )
+  }
+
   getScheduledActivity(id: number, user: ServiceUser): Promise<ScheduledActivity> {
     return this.activitiesApiClient.getScheduledActivity(id, user)
   }

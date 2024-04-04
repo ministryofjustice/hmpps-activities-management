@@ -118,7 +118,7 @@ describe('activitiesApiClient', () => {
       const response = { data: 'data' }
       fakeActivitiesApi
         .get('/prisons/MDI/scheduled-instances')
-        .query({ startDate: '2022-08-01', endDate: '2022-08-01', slot: 'am' })
+        .query({ startDate: '2022-08-01', endDate: '2022-08-01', slot: 'am', cancelled: true })
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
@@ -129,6 +129,7 @@ describe('activitiesApiClient', () => {
         parse('2022-08-01', 'yyyy-MM-dd', new Date()),
         user,
         TimeSlot.AM,
+        true,
       )
 
       expect(output).toEqual(response)
