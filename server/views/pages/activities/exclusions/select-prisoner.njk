@@ -44,9 +44,9 @@
                     }) }}
 
                     {% if prisoners | length > 0 %}
-                        <h2 class="govuk-heading-m" id="prisoner-results-text">
+                        <p class="govuk-heading-m" id="prisoner-results-text">
                             {{ ("There is 1 matching result" if prisoners.length == 1 else "Select the correct result from the list (maximum 50 results shown)") }}
-                        </h2>
+                        </p>
                     {% else %}
                         {{ govukWarningText({
                             text: "There are no matching search results.",
