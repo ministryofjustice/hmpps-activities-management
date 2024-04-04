@@ -21,7 +21,8 @@ export default class DailyAttendanceRoutes {
     }
     const activityDate = toDate(req.query.date as string)
     const attendances = await this.activitiesService.getAllAttendance(activityDate, user)
-    const attendancesForStatus = attendances.filter(a => {
+    const mandatoryAttendances = attendances.filter(a => a.attendanceRequired)
+    const attendancesForStatus = mandatoryAttendances.filter(a => {
       if (status === 'NotAttended') return a.status === AttendanceStatus.WAITING
       if (status === 'Attended')
         return a.status === AttendanceStatus.COMPLETED && a.attendanceReasonCode === AttendanceReason.ATTENDED
