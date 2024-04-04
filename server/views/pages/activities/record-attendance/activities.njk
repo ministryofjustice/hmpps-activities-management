@@ -169,9 +169,9 @@
                         "data-sort-value": activity.summary
                     },
                     html: '
-                            <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+                            <p class="govuk-heading-s govuk-!-margin-bottom-0">
                                 <a href="activities/' + activity.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (activity.summary | escape) + '<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
-                            </h2>
+                            </p>
                             <div>' + activityCancelledTag(activity.cancelled) + '</div>'
                 },
                 {
