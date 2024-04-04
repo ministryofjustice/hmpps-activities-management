@@ -15,11 +15,9 @@ export default class CancelledSessionsRoutes {
     }
     const activityDate = toDate(req.query.date as string)
 
-    const scheduledActivities = await this.activitiesService.getScheduledActivitiesAtPrison(activityDate, user)
+    const scheduledActivities = await this.activitiesService.getCancelledScheduledActivitiesAtPrison(activityDate, user)
 
-    const unfilteredCancelledSessions = scheduledActivities.filter(a => a.cancelled)
-
-    const cancelledSessions = unfilteredCancelledSessions
+    const cancelledSessions = scheduledActivities
       .map(session => ({
         id: session.id,
         summary: session.activitySchedule.activity.summary,

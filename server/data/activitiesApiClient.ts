@@ -109,6 +109,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     endDate: Date,
     user: ServiceUser,
     slot?: TimeSlot,
+    cancelled?: boolean,
   ): Promise<ScheduledActivity[]> {
     return this.get({
       path: `/prisons/${prisonCode}/scheduled-instances`,
@@ -116,6 +117,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
         startDate: toDateString(startDate),
         endDate: toDateString(endDate),
         slot,
+        cancelled,
       },
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),

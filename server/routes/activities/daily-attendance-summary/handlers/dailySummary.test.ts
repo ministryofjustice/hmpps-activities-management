@@ -37,9 +37,10 @@ describe('Route Handlers - Daily Attendance Summary', () => {
   })
 
   describe('GET', () => {
-    const mockApiResponse = [
+    const mockAllAttendanceApiResponse = [
       {
         attendanceId: 1,
+        scheduledInstanceId: 1,
         prisonCode: 'MDI',
         sessionDate: '2022-10-10',
         timeSlot: 'AM',
@@ -50,9 +51,11 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         activityId: 1,
         activitySummary: 'Maths Level 1',
         categoryName: 'Education',
+        attendanceRequired: true,
       },
       {
         attendanceId: 2,
+        scheduledInstanceId: 2,
         prisonCode: 'MDI',
         sessionDate: '2022-10-10',
         timeSlot: 'AM',
@@ -63,9 +66,11 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         activityId: 2,
         activitySummary: 'Woodworking',
         categoryName: 'Prison Jobs',
+        attendanceRequired: true,
       },
       {
         attendanceId: 3,
+        scheduledInstanceId: 2,
         prisonCode: 'MDI',
         sessionDate: '2022-10-10',
         timeSlot: 'AM',
@@ -76,9 +81,11 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         activityId: 2,
         activitySummary: 'Woodworking',
         categoryName: 'Prison Jobs',
+        attendanceRequired: true,
       },
       {
         attendanceId: 4,
+        scheduledInstanceId: 2,
         prisonCode: 'MDI',
         sessionDate: '2022-10-10',
         timeSlot: 'AM',
@@ -89,9 +96,11 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         activityId: 2,
         activitySummary: 'Woodworking',
         categoryName: 'Prison Jobs',
+        attendanceRequired: true,
       },
       {
         attendanceId: 5,
+        scheduledInstanceId: 2,
         prisonCode: 'MDI',
         sessionDate: '2022-10-10',
         timeSlot: 'AM',
@@ -102,56 +111,71 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         activityId: 2,
         activitySummary: 'Woodworking',
         categoryName: 'Prison Jobs',
+        attendanceRequired: true,
+      },
+      {
+        attendanceId: 6,
+        scheduledInstanceId: 3,
+        prisonCode: 'MDI',
+        sessionDate: '2022-10-10',
+        timeSlot: 'AM',
+        status: 'WAITING',
+        issuePayment: false,
+        prisonerNumber: 'ZXY432',
+        activityId: 3,
+        activitySummary: 'Gym',
+        categoryName: 'Exercise',
+        attendanceRequired: false,
+      },
+      {
+        attendanceId: 7,
+        scheduledInstanceId: 4,
+        prisonCode: 'MDI',
+        sessionDate: '2022-10-10',
+        timeSlot: 'PM',
+        status: 'WAITING',
+        issuePayment: false,
+        prisonerNumber: 'ZXY432',
+        activityId: 4,
+        activitySummary: 'Maths',
+        categoryName: 'Education',
+        attendanceRequired: false,
       },
     ] as AllAttendance[]
 
-    const mockActivities = [
+    const mockCancelledActivities = [
       {
         id: 1,
         startTime: '10:00',
         endTime: '11:00',
         activitySchedule: {
-          activity: { summary: 'Maths level 1', category: { name: 'Education' } },
-          description: 'Houseblock 1',
-          internalLocation: { description: 'Classroom' },
-        },
-        cancelled: false,
-        attendances: [
-          { status: 'WAITING' },
-          { status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
-          { status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
-        ],
-      },
-      {
-        id: 2,
-        startTime: '13:00',
-        endTime: '14:00',
-        activitySchedule: {
-          activity: { summary: 'English level 1', category: { name: 'Education' } },
-          description: 'Houseblock 2',
-          internalLocation: { description: 'Classroom 2' },
-        },
-        cancelled: false,
-        attendances: [
-          { status: 'WAITING' },
-          { status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
-          { status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
-        ],
-      },
-      {
-        id: 3,
-        startTime: '10:00',
-        endTime: '11:00',
-        activitySchedule: {
-          activity: { summary: 'Woodworking', category: { name: 'Prison Jobs' } },
+          activity: { id: 2, summary: 'Woodworking', category: { name: 'Prison Jobs' } },
           description: 'Houseblock 1',
           internalLocation: { description: 'Workshop' },
         },
         cancelled: true,
-        attendances: [
-          { status: 'COMPLETED', attendanceReason: { code: 'CANCELLED' } },
-          { status: 'COMPLETED', attendanceReason: { code: 'CANCELLED' } },
-        ],
+      },
+      {
+        id: 2,
+        startTime: '10:00',
+        endTime: '11:00',
+        activitySchedule: {
+          activity: { id: 3, summary: 'Gym', category: { name: 'Exercise' } },
+          description: 'Houseblock 1',
+          internalLocation: { description: 'Workshop' },
+        },
+        cancelled: true,
+      },
+      {
+        id: 3,
+        startTime: '13:00',
+        endTime: '14:00',
+        activitySchedule: {
+          activity: { id: 4, summary: 'Maths', category: { name: 'Education' } },
+          description: 'Houseblock 1',
+          internalLocation: { description: 'Workshop' },
+        },
+        cancelled: true,
       },
     ] as ScheduledActivity[]
 
@@ -170,17 +194,19 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         session: {},
       } as unknown as Request
 
-      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue(mockApiResponse)
-
-      when(activitiesService.getScheduledActivitiesAtPrison)
+      when(activitiesService.getAllAttendance)
         .calledWith(date, res.locals.user)
-        .mockResolvedValue(mockActivities)
+        .mockResolvedValue(mockAllAttendanceApiResponse)
+
+      when(activitiesService.getCancelledScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockCancelledActivities)
 
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/daily-summary', {
         activityDate: date,
-        uniqueCategories: ['Education', 'Prison Jobs'],
+        uniqueCategories: ['Education', 'Prison Jobs', 'Exercise'],
         totalAbsences: {
           AM: 2,
           DAY: 2,
@@ -188,8 +214,8 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalActivities: {
-          AM: 1,
-          DAY: 1,
+          AM: 2,
+          DAY: 2,
           ED: 0,
           PM: 0,
         },
@@ -331,6 +357,24 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           ED: 0,
           PM: 0,
         },
+        totalUnattendedActivities: {
+          AM: 1,
+          DAY: 2,
+          ED: 0,
+          PM: 1,
+        },
+        totalUnattendedAllocated: {
+          AM: 1,
+          DAY: 2,
+          ED: 0,
+          PM: 1,
+        },
+        totalUnattendedCancelledSessions: {
+          AM: 1,
+          DAY: 2,
+          ED: 0,
+          PM: 1,
+        },
       })
     })
 
@@ -338,9 +382,13 @@ describe('Route Handlers - Daily Attendance Summary', () => {
       const dateString = '2022-10-10'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
 
-      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue(mockApiResponse)
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockAllAttendanceApiResponse)
 
-      when(activitiesService.getScheduledActivitiesAtPrison).mockResolvedValue(mockActivities)
+      when(activitiesService.getCancelledScheduledActivitiesAtPrison)
+        .calledWith(date, res.locals.user)
+        .mockResolvedValue(mockCancelledActivities)
 
       req = {
         query: { date: dateString },
@@ -355,7 +403,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/daily-summary', {
         activityDate: date,
-        uniqueCategories: ['Education', 'Prison Jobs'],
+        uniqueCategories: ['Education', 'Prison Jobs', 'Exercise'],
         totalAbsences: {
           AM: 0,
           DAY: 0,
@@ -505,6 +553,24 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           DAY: 0,
           ED: 0,
           PM: 0,
+        },
+        totalUnattendedActivities: {
+          AM: 0,
+          DAY: 1,
+          ED: 0,
+          PM: 1,
+        },
+        totalUnattendedAllocated: {
+          AM: 0,
+          DAY: 1,
+          ED: 0,
+          PM: 1,
+        },
+        totalUnattendedCancelledSessions: {
+          AM: 0,
+          DAY: 1,
+          ED: 0,
+          PM: 1,
         },
       })
     })
