@@ -160,7 +160,7 @@
             <h2 class="govuk-heading-l">Absences</h2>
         </div>
         <div class="govuk-grid-column-full">
-            <h2 class="govuk-heading-m">{{ totalPaidAbsences[timeSlot] }} paid {{ "absence" if totalPaidAbsences[timeSlot] == 1 else "absences" }}</h2>
+            <h3 class="govuk-heading-m">{{ totalPaidAbsences[timeSlot] }} paid {{ "absence" if totalPaidAbsences[timeSlot] == 1 else "absences" }}</h3>
         </div>
 
         {{ stat({
@@ -200,7 +200,7 @@
         }) }}
 
         <div class="govuk-grid-column-full govuk-!-margin-top-3">
-            <h4 class="govuk-heading-m">{{ totalUnPaidAbsences[timeSlot] }} unpaid {{ "absence" if totalUnPaidAbsences[timeSlot] == 1 else "absences" }}</h4>
+            <h3 class="govuk-heading-m">{{ totalUnPaidAbsences[timeSlot] }} unpaid {{ "absence" if totalUnPaidAbsences[timeSlot] == 1 else "absences" }}</h3>
         </div>
 
         {{ stat({
@@ -238,7 +238,7 @@
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         <div class="govuk-grid-row govuk-!-margin-bottom-3">
             <div class="govuk-grid-column-full">
-                <h3 class="govuk-heading-l">Cancelled sessions</h3>
+                <h2 class="govuk-heading-l">Cancelled sessions</h2>
             </div>
             <div class="govuk-grid-column-full">
                 <h3 class="govuk-heading-m">
@@ -283,7 +283,7 @@
 
     <div class="govuk-grid-row govuk-!-margin-bottom-3">
         <div class="govuk-grid-column-full">
-            <h3 class="govuk-heading-l">Prisoners suspended or temporarily absent</h3>
+            <h2 class="govuk-heading-l">Prisoners suspended or temporarily absent</h2>
         </div>
 
         {{ stat({
@@ -303,7 +303,7 @@
 
         <div class="govuk-grid-row govuk-!-margin-bottom-3">
             <div class="govuk-grid-column-full">
-                <h3 class="govuk-heading-l">Activities where attendance is not required</h3>
+                <h2 class="govuk-heading-l">Activities where attendance is not required</h2>
             </div>
 
             <div class="govuk-grid-column-full">
