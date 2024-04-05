@@ -39,66 +39,74 @@ describe('Route Handlers - Daily Attendance List', () => {
   })
 
   describe('GET', () => {
-    const mockApiResponse = [
-      {
-        attendanceId: 1,
-        prisonCode: 'MDI',
-        sessionDate: '2022-10-10',
-        timeSlot: 'AM',
-        status: 'WAITING',
-        attendanceReasonCode: null,
-        issuePayment: null,
-        prisonerNumber: 'ABC123',
-        activityId: 1,
-        activitySummary: 'Maths Level 1',
-        categoryName: 'Education',
-      },
-      {
-        attendanceId: 2,
-        prisonCode: 'MDI',
-        sessionDate: '2022-10-10',
-        timeSlot: 'AM',
-        status: 'WAITING',
-        attendanceReasonCode: null,
-        issuePayment: null,
-        prisonerNumber: 'ABC321',
-        activityId: 2,
-        activitySummary: 'Woodworking',
-        categoryName: 'Prison Jobs',
-      },
-      {
-        attendanceId: 3,
-        prisonCode: 'MDI',
-        sessionDate: '2022-10-10',
-        timeSlot: 'AM',
-        status: 'COMPLETED',
-        attendanceReasonCode: 'ATTENDED',
-        issuePayment: true,
-        prisonerNumber: 'ZXY123',
-        activityId: 2,
-        activitySummary: 'Woodworking',
-        categoryName: 'Prison Jobs',
-      },
-    ] as AllAttendance[]
+    let mockApiResponse: AllAttendance[]
+    let mockPrisonApiResponse: Prisoner[]
 
-    const mockPrisonApiResponse = [
-      {
-        prisonerNumber: 'ABC123',
-        firstName: 'Joe',
-        lastName: 'Bloggs',
-        cellLocation: 'MDI-1-001',
-        alerts: [{ alertCode: 'HA' }, { alertCode: 'XCU' }],
-        category: 'A',
-      },
-      {
-        prisonerNumber: 'ABC321',
-        firstName: 'Alan',
-        lastName: 'Key',
-        cellLocation: 'MDI-1-002',
-        alerts: [],
-        category: 'A',
-      },
-    ] as Prisoner[]
+    beforeEach(() => {
+      mockApiResponse = [
+        {
+          attendanceId: 1,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'ABC123',
+          activityId: 1,
+          activitySummary: 'Maths Level 1',
+          categoryName: 'Education',
+          attendanceRequired: true,
+        },
+        {
+          attendanceId: 2,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'ABC321',
+          activityId: 2,
+          activitySummary: 'Woodworking',
+          categoryName: 'Prison Jobs',
+          attendanceRequired: true,
+        },
+        {
+          attendanceId: 3,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'COMPLETED',
+          attendanceReasonCode: 'ATTENDED',
+          issuePayment: true,
+          prisonerNumber: 'ZXY123',
+          activityId: 2,
+          activitySummary: 'Woodworking',
+          categoryName: 'Prison Jobs',
+          attendanceRequired: true,
+        },
+      ] as AllAttendance[]
+
+      mockPrisonApiResponse = [
+        {
+          prisonerNumber: 'ABC123',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
+          cellLocation: 'MDI-1-001',
+          alerts: [{ alertCode: 'HA' }, { alertCode: 'XCU' }],
+          category: 'A',
+        },
+        {
+          prisonerNumber: 'ABC321',
+          firstName: 'Alan',
+          lastName: 'Key',
+          cellLocation: 'MDI-1-002',
+          alerts: [],
+          category: 'A',
+        },
+      ] as Prisoner[]
+    })
 
     it('should redirect to the select period page if date is not provided', async () => {
       await handler.GET(req, res)
@@ -146,6 +154,7 @@ describe('Route Handlers - Daily Attendance List', () => {
               sessionDate: '2022-10-10',
               status: 'WAITING',
               timeSlot: 'AM',
+              attendanceRequired: true,
             },
           },
           {
@@ -164,6 +173,58 @@ describe('Route Handlers - Daily Attendance List', () => {
               sessionDate: '2022-10-10',
               status: 'WAITING',
               timeSlot: 'AM',
+              attendanceRequired: true,
+            },
+          },
+        ],
+      })
+    })
+
+    it('should not render where attendance is not required', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      req = {
+        query: {
+          date: dateString,
+          status: 'NotAttended',
+        },
+        session: {},
+      } as unknown as Request
+
+      mockApiResponse[1].attendanceRequired = false
+      mockPrisonApiResponse.pop()
+
+      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue(mockApiResponse)
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC123'], res.locals.user)
+        .mockResolvedValue(mockPrisonApiResponse)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
+        activityDate: date,
+        status: 'NotAttended',
+        uniqueCategories: ['Education'],
+        attendees: [
+          {
+            name: 'Joe Bloggs',
+            prisonerNumber: 'ABC123',
+            location: 'MDI-1-001',
+            attendance: {
+              activityId: 1,
+              activitySummary: 'Maths Level 1',
+              attendanceId: 1,
+              attendanceReasonCode: null,
+              categoryName: 'Education',
+              issuePayment: null,
+              prisonCode: 'MDI',
+              prisonerNumber: 'ABC123',
+              sessionDate: '2022-10-10',
+              status: 'WAITING',
+              timeSlot: 'AM',
+              attendanceRequired: true,
             },
           },
         ],
@@ -219,6 +280,7 @@ describe('Route Handlers - Daily Attendance List', () => {
               sessionDate: '2022-10-10',
               status: 'COMPLETED',
               timeSlot: 'AM',
+              attendanceRequired: true,
             },
           },
         ],
@@ -270,6 +332,7 @@ describe('Route Handlers - Daily Attendance List', () => {
               sessionDate: '2022-10-10',
               status: 'WAITING',
               timeSlot: 'AM',
+              attendanceRequired: true,
             },
           },
         ],
