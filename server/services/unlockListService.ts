@@ -13,7 +13,7 @@ export default class UnlockListService {
   private readonly ALERT_FILTERS = [
     { key: 'ALERT_HA', description: 'ACCT', codes: ['HA'] },
     { key: 'ALERT_XCU', description: 'Controlled unlock', codes: ['XCU'] },
-    { key: 'ALERT_XEL', description: 'Escape List', codes: ['XEL'] },
+    { key: 'ALERT_XEL', description: 'Escape list', codes: ['XEL'] },
     { key: 'ALERT_PEEP', description: 'PEEP', codes: ['PEEP'] },
   ]
 
