@@ -12,15 +12,15 @@ export default class UnlockListService {
 
   private readonly ALERT_FILTERS = [
     { key: 'ALERT_HA', description: 'ACCT', codes: ['HA'] },
-    { key: 'ALERT_XCU', description: 'Controlled Unlock', codes: ['XCU'] },
-    { key: 'ALERT_XEL', description: 'E-List', codes: ['XEL'] },
+    { key: 'ALERT_XCU', description: 'Controlled unlock', codes: ['XCU'] },
+    { key: 'ALERT_XEL', description: 'Escape list', codes: ['XEL'] },
     { key: 'ALERT_PEEP', description: 'PEEP', codes: ['PEEP'] },
   ]
 
   private readonly CATEGORY_FILTERS = [
-    { key: 'CAT_A', description: 'CAT A', codes: ['A', 'E'] },
-    { key: 'CAT_A_HIGHER', description: 'CAT A Higher', codes: ['H'] },
-    { key: 'CAT_A_PROVISIONAL', description: 'CAT A Provisional', codes: ['P'] },
+    { key: 'CAT_A', description: 'Category A', codes: ['A', 'E'] },
+    { key: 'CAT_A_HIGHER', description: 'Category A - high', codes: ['H'] },
+    { key: 'CAT_A_PROVISIONAL', description: 'Category A - provisional', codes: ['P'] },
   ]
 
   getAllAlertFilterOptions() {
