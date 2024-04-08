@@ -224,7 +224,7 @@
 {% macro renderOtherEvents(otherEvents) %}
     {% for event in otherEvents %}
         <div class="govuk-body govuk-!-margin-0">
-            {{ event.startTime }}{{ "to " + event.endTime if event.endTime }}:
+            {{ event.startTime }}{{ " to " + event.endTime if event.endTime }}:
             {% if event.eventType == 'ACTIVITY' and event.eventSource =='SAA' %}
                 <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list">{{ event.summary }}</a>
             {% elseif event.eventType == 'APPOINTMENT' and event.eventSource =='SAA' %}

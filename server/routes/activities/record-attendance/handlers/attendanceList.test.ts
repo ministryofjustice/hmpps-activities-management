@@ -94,6 +94,7 @@ describe('Route Handlers - Attendance List', () => {
     appointments: [event2],
     courtHearings: [event3],
     visits: [event4],
+    adjudications: [],
   } as PrisonerScheduledEvents
 
   const instance = {
@@ -316,6 +317,7 @@ describe('Route Handlers - Attendance List', () => {
           appointments: [],
           courtHearings: [],
           visits: [],
+          adjudications: [],
         } as PrisonerScheduledEvents)
 
       when(prisonService.searchInmatesByPrisonerNumbers)

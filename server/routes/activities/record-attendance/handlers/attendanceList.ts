@@ -133,6 +133,7 @@ export default class AttendanceListRoutes {
         ...response.appointments,
         ...response.courtHearings,
         ...response.visits,
+        ...response.adjudications,
       ])
       .then(events => events.filter(e => !e.cancelled))
       .then(events => events.filter(e => e.scheduledInstanceId !== +instanceId))
