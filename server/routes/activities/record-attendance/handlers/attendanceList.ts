@@ -55,6 +55,7 @@ export default class AttendanceListRoutes {
         ...otherEvents.appointments,
         ...otherEvents.courtHearings,
         ...otherEvents.visits,
+        ...otherEvents.adjudications,
       ]
 
       attendance = attendees.map(att => {
@@ -133,6 +134,7 @@ export default class AttendanceListRoutes {
         ...response.appointments,
         ...response.courtHearings,
         ...response.visits,
+        ...response.adjudications,
       ])
       .then(events => events.filter(e => !e.cancelled))
       .then(events => events.filter(e => e.scheduledInstanceId !== +instanceId))
