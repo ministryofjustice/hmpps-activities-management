@@ -233,7 +233,7 @@
                                     }
                                 ), row) %}
 
-                                {% if session.unlockListJourney.alertFilters %}
+                                {% if session.unlockListJourney.alertFilters.length > 0 %}
                                     {% set row = (row.push({
                                         html: alertsList({ alerts: item.alerts, category: item.category }),
                                         classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
