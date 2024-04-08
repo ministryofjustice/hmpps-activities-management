@@ -89,12 +89,22 @@ describe('Route Handlers - Attendance List', () => {
     prisonerNumber: 'ABC123',
   }
 
+  const adjudicationsEvent = {
+    eventId: 5,
+    eventType: 'ADJUDICATION_HEARING',
+    eventSource: 'NOMIS',
+    summary: 'Adujication Hearing',
+    startTime: '10:30',
+    endTime: '11:00',
+    prisonerNumber: 'ABC123',
+  }
+
   const scheduledEvents = {
     activities: [event1],
     appointments: [event2],
     courtHearings: [event3],
     visits: [event4],
-    adjudications: [],
+    adjudications: [adjudicationsEvent],
   } as PrisonerScheduledEvents
 
   const instance = {
@@ -170,7 +180,7 @@ describe('Route Handlers - Attendance List', () => {
           alerts: [{ alertCode: 'HA' }],
         },
         attendance: { prisonerNumber: 'ABC123', status: 'WAITING' },
-        otherEvents: [event4],
+        otherEvents: [event4, adjudicationsEvent],
       },
       {
         prisoner: prisoners[1],

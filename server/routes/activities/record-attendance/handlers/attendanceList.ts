@@ -55,6 +55,7 @@ export default class AttendanceListRoutes {
         ...otherEvents.appointments,
         ...otherEvents.courtHearings,
         ...otherEvents.visits,
+        ...otherEvents.adjudications,
       ]
 
       attendance = attendees.map(att => {
