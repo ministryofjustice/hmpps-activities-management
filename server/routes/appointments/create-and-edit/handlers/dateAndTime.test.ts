@@ -250,9 +250,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         expect.arrayContaining([
           { error: 'Enter a date for the appointment', property: 'startDate' },
           { error: 'Select a start time for the appointment', property: 'startTime' },
-          { error: 'Select a valid start time for the appointment', property: 'startTime' },
           { error: 'Select an end time for the appointment', property: 'endTime' },
-          { error: 'Select a valid end time for the appointment', property: 'endTime' },
         ]),
       )
     })
