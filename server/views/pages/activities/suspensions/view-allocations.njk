@@ -18,11 +18,15 @@
 
             {% if activities | length == 0 %}
                 {{ govukInsetText({
-                    text: prisonerName + " does not have any allocations."
+                    text: prisonerName + " is not allocated to any activities."
                 }) }}
             {% else %}
-
-                <p class='govuk-body'>{{ prisonerName }} is currently allocated to {{ activities | length }} activities.</p>
+                {% if activities | length == 1 %}
+                    <p class='govuk-body'>{{ prisonerName }} is currently allocated to one activity.</p>
+                {% else %}
+                    <p class='govuk-body'>{{ prisonerName }} is currently allocated to {{ activities | length }} activities.</p>
+                {% endif %}
+                
                 <p class='govuk-body'>Select an activity to suspend {{ prisonerName }} from attending, or to end their suspension.</p>
 
                 {% set rows = [] %}
