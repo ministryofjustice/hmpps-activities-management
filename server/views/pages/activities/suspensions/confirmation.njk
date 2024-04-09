@@ -24,7 +24,7 @@
                         titleText: "Suspension started",
                         text: subText
                     }) }}
-                    <p class='govuk-body'>They’ll be shown as ‘Prisoner suspended’ on unlock and movement lists, and when recording attendance.</p>
+                    <p class='govuk-body'>They will show as ‘Prisoner suspended’ on unlock and movement lists, and when recording attendance.</p>
                     <p class='govuk-body'>If they were due to attend a session that has already started, attendance for that session will need to be recorded.</p>
 
                     {{ govukWarningText({
@@ -46,7 +46,7 @@
                         titleText: "Suspension added",
                         text: subText
                     }) }}
-                    <p class='govuk-body'>From {{ session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}, they’ll be shown as ‘Suspended’ on unlock and movement lists, and when recording attendance.</p>
+                    <p class='govuk-body'>From {{ session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}, they will show as ‘Prisoner suspended’ on unlock and movement lists, and when recording attendance.</p>
                 {% endif %}
             {% endif %}
 
@@ -90,7 +90,7 @@
 
             <div class='govuk-!-margin-bottom-9'>
                 <h2 class="govuk-heading-m">What you can do next</h2>
-                <p class='govuk-body'>You can either:</p>
+                <p class='govuk-body'>You can:</p>
                 <ul class='govuk-list govuk-list--bullet'>
                     {% if session.suspendJourney.allocations | length == 1 %}
                         <li><a href="/activities/allocation-dashboard/{{ session.suspendJourney.allocations[0].activityId  }}" class='govuk-link govuk-link--no-visited-state'>view current allocations for {{ session.suspendJourney.allocations[0].activityName | safe }}</a></li>
