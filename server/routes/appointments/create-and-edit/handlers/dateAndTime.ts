@@ -3,7 +3,6 @@ import { Expose, Transform, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateNested } from 'class-validator'
 import { startOfToday } from 'date-fns'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
-import IsValidTime from '../../../../validators/isValidTime'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
 import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import { hasAnyAppointmentPropertyChanged } from '../../../../utils/editAppointmentUtils'
@@ -24,7 +23,6 @@ export class DateAndTime {
   @ValidateNested()
   @TimeAndDateIsAfterNow('startDate', { message: 'Select a start time that is in the future' })
   @IsNotEmpty({ message: 'Select a start time for the appointment' })
-  @IsValidTime({ message: 'Select a valid start time for the appointment' })
   startTime: SimpleTime
 
   @Expose()
@@ -32,7 +30,6 @@ export class DateAndTime {
   @ValidateNested()
   @TimeIsAfter('startTime', { message: 'Select an end time after the start time' })
   @IsNotEmpty({ message: 'Select an end time for the appointment' })
-  @IsValidTime({ message: 'Select a valid end time for the appointment' })
   endTime: SimpleTime
 }
 
