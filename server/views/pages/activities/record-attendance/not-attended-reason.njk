@@ -65,10 +65,13 @@
         }) }}
 
        {{ govukRadios({
-            classes: "govuk-radios--inline",
-            hint: {
-                text: "Should this be recorded as an incentive level warning?"
+            fieldset: {
+                legend: {
+                    text: "Should this be recorded as an incentive level warning?",
+                    classes: 'grey-text'
+                }
             },
+            classes: "govuk-radios--inline",
             idPrefix: "notAttendedData-" + index + "-incentiveLevelWarningIssued",
             name: "notAttendedData[" + index + "][incentiveLevelWarningIssued]",
             errorMessage: validationErrors | findError("notAttendedData-" + index + "-incentiveLevelWarningIssued"),
