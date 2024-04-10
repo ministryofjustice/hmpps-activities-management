@@ -2,14 +2,17 @@
 
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
 {% from "components/alertsList.njk" import alertsList %}
+{% from "components/alertFilters.njk" import alertFilters %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = (locations[0].description + " - movement list" if locations | length == 1 else "Movement lists for " + locations | length + " locations") + " - " + date | toDate | formatDate + " " + timeSlot | upper + " session" %}
 {% set pageId = 'movement-list-location-events-page' %}
-{% set jsBackLink = true %}
+{% set hardBackLinkText = 'Back' %}
+{% set hardBackLinkHref = "locations?dateOption=" + session.movementListJourney.dateOption + "&date=" + session.movementListJourney.date + "&timeSlot=" + session.movementListJourney.timeSlot %}
 
 {% macro showEvents(events, location) %}
     {% if events | length == 0 %}
@@ -66,49 +69,85 @@
 {% endmacro %}
 
 {% block content %}
-    {% if locations | length > 1 %}
-        <div class="moj-action-bar govuk-!-display-none-print">
-            {{ mojButtonMenu({
-                items: [{
-                    attributes: { id: 'print-movement-lists' },
-                    text: "Print these movement lists",
-                    classes: "govuk-button--blue js-print no-js-hidden",
-                    preventDoubleClick: true
-                }]
-            }) }}
-        </div>
-    {% endif %}
 
-    {% for location in locations %}
-        {% set locationIndex = loop.index %}
-        {% set prisonerEventsTableRows = [] %}
-        {% for prisonerEvents in location.prisonerEvents %}
-            {% set prisonerEventsTableRows = (prisonerEventsTableRows.push([
-                {
-                    html: '<span class="print-checkbox"></span>',
-                    classes: 'print-only'
-                }, {
-                    html: showProfileLink({
-                        name: prisonerEvents.firstName + " " + prisonerEvents.lastName,
-                        prisonerNumber: prisonerEvents.prisonerNumber,
-                        inCaseLoad: prisonerEvents.prisonId == user.activeCaseLoadId
-                    }),
-                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-name-and-number', "data-sort-value": (prisonerEvents.firstName + " " + prisonerEvents.lastName) | toTitleCase | prisonerName(false) }
-                }, {
-                    text: statusBasedCellLocation(prisonerEvents.cellLocation, prisonerEvents.status, prisonerEvents.prisonId == user.activeCaseLoadId),
-                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-cell-location' }
-                }, {
-                    html: alertsList({ alerts: prisonerEvents.alerts, category: prisonerEvents.category }),
-                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-alerts' }
-                }, {
-                    html: showEvents(prisonerEvents.events, location),
-                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-events' }
-                }, {
-                    html: showEvents(prisonerEvents.clashingEvents, location),
-                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-clashing-events' }
-                }
-            ]), prisonerEventsTableRows) %}
-        {% endfor %}
+    {% set filterOptionsHtml %}
+
+        {{ alertFilters(alertOptions, session.movementListJourney.alertFilters) }}
+
+        <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
+            Apply filters
+        </button>
+    {% endset %}
+
+    <div class="moj-filter-layout" data-module="activities-list-filter">
+        <form id="filter-form" method="POST" action="update-filters" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <div class="moj-filter-layout__filter govuk-!-display-none-print">
+                {{ mojFilter({
+                    heading: {
+                        text: 'Filters'
+                    },
+                    optionsHtml: filterOptionsHtml
+                }) }}
+            </div>
+            <div class="moj-filter-layout__content">
+                {% if locations | length > 1 %}
+                    <div class="moj-action-bar govuk-!-display-none-print">
+                        <div class="moj-action-bar__filter"></div>
+                        {{ mojButtonMenu({
+                            items: [{
+                                attributes: { id: 'print-movement-lists' },
+                                text: "Print these movement lists",
+                                classes: "govuk-button--blue js-print no-js-hidden",
+                                preventDoubleClick: true
+                            }]
+                        }) }}
+                    </div>
+                {% endif %}
+
+                {% for location in locations %}
+                    {% set locationIndex = loop.index %}
+                    {% set prisonerEventsTableRows = [] %}
+                    {% for prisonerEvents in location.prisonerEvents %}
+                        {% set row = [] %}
+                        {% set row = row.concat(
+                            {
+                                html: '<span class="print-checkbox"></span>',
+                                classes: 'print-only'
+                            }, {
+                                html: showProfileLink({
+                                    name: prisonerEvents.firstName + " " + prisonerEvents.lastName,
+                                    prisonerNumber: prisonerEvents.prisonerNumber,
+                                    inCaseLoad: prisonerEvents.prisonId == user.activeCaseLoadId
+                                }),
+                                attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-name-and-number', "data-sort-value": (prisonerEvents.firstName + " " + prisonerEvents.lastName) | toTitleCase | prisonerName(false) }
+                            }, {
+                                text: statusBasedCellLocation(prisonerEvents.cellLocation, prisonerEvents.status, prisonerEvents.prisonId == user.activeCaseLoadId),
+                                attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-cell-location' }
+                            }
+                        ) %}
+
+                        {% if session.movementListJourney.alertFilters|length %}
+                            {% set row = row.concat(
+                                {
+                                    html: alertsList({ alerts: prisonerEvents.alerts, category: prisonerEvents.category }),
+                                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-alerts' }
+                                }
+                            ) %}
+                        {% endif %}
+
+                        {% set row = row.concat(
+                            {
+                                html: showEvents(prisonerEvents.events, location),
+                                attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-events' }
+                            }, {
+                                html: showEvents(prisonerEvents.clashingEvents, location),
+                                attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-clashing-events' }
+                            }
+                        ) %}
+
+                        {% set prisonerEventsTableRows = (prisonerEventsTableRows.push(row), prisonerEventsTableRows) %}
+                    {% endfor %}
 
         <div class="movement-list{{ " print-page-break" if not loop.first }}">
             <div class="govuk-grid-row movement-list__location">
@@ -119,50 +158,68 @@
                 </div>
             </div>
 
-            <div class="govuk-grid-row movement-list__location-events">
-                <div class="govuk-grid-column-full">
-                    <h2 class="govuk-heading-m">{{ "1 person allocated" if location.prisonerEvents | length == 1 else location.prisonerEvents | length + " people allocated" }}</h2>
+                        <div class="govuk-grid-row movement-list__location-events">
+                            <div class="govuk-grid-column-full">
+                                <h2 class="govuk-heading-m">{{ "1 person allocated" if location.prisonerEvents | length == 1 else location.prisonerEvents | length + " people allocated" }}</h2>
 
-                    {% if locations | length == 1 %}
-                        <div class="moj-action-bar govuk-!-display-none-print">
-                            {{ mojButtonMenu({
-                                items: [{
-                                    attributes: { id: 'print-movement-list' },
-                                    text: "Print this movement list",
-                                    classes: "govuk-button--blue js-print no-js-hidden",
-                                    preventDoubleClick: true
-                                }]
-                            }) }}
+                                {% if locations | length == 1 %}
+                                    <div class="moj-action-bar govuk-!-display-none-print">
+                                    <div class="moj-action-bar__filter"></div>
+                                        {{ mojButtonMenu({
+                                            items: [{
+                                                attributes: { id: 'print-movement-list' },
+                                                text: "Print this movement list",
+                                                classes: "govuk-button--blue js-print no-js-hidden",
+                                                preventDoubleClick: true
+                                            }]
+                                        }) }}
+                                    </div>
+                                {% endif %}
+
+                                {% set headRows = [
+                                    {
+                                        classes: "print-only"
+                                    }, {
+                                        text: "Name",
+                                        attributes: { "aria-sort": "none" }
+                                    }, {
+                                        text: "Cell location",
+                                        attributes: { "aria-sort": "ascending" }
+                                    }
+                                ] %}
+
+                                {% if session.movementListJourney.alertFilters|length %}
+                                    {% set headRows = headRows.concat(
+                                        {
+                                            text: "Relevant alerts",
+                                            classes: 'govuk-table__header'
+                                        }
+                                    ) %}
+                                {% endif %}
+
+                                {% set headRows = headRows.concat(
+                                    {
+                                        text: "Activity",
+                                        attributes: { "aria-sort": "none" }
+                                    }, {
+                                        text: "Clashing events",
+                                        attributes: { "aria-sort": "none" }
+                                    }
+                                ) %}
+
+                                {{ govukTable({
+                                    attributes: {
+                                        'data-module': 'moj-sortable-table',
+                                        'data-qa': 'location-' + locationIndex + '-prisoner-events'
+                                    },
+                                    head: headRows,
+                                    rows: prisonerEventsTableRows
+                                }) }}
+                            </div>
                         </div>
-                    {% endif %}
-
-                    {{ govukTable({
-                        attributes: {
-                            'data-module': 'moj-sortable-table',
-                            'data-qa': 'location-' + locationIndex + '-prisoner-events'
-                        },
-                        head: [
-                            {
-                                classes: "print-only"
-                            }, {
-                                text: "Name",
-                                attributes: { "aria-sort": "none" }
-                            }, {
-                                text: "Cell location",
-                                attributes: { "aria-sort": "ascending" }
-                            }, {
-                                text: "Relevant alerts"
-                            }, {
-                                text: "Activity",
-                                attributes: { "aria-sort": "none" }
-                            }, {
-                                text: "Clashing events",
-                                attributes: { "aria-sort": "none" }
-                            }],
-                        rows: prisonerEventsTableRows
-                    }) }}
-                </div>
+                    </div>
+                {% endfor %}
             </div>
-        </div>
-    {% endfor %}
+        </form>
+    </div>
 {% endblock %}

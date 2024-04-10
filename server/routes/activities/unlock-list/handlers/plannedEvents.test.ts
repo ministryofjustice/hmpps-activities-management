@@ -7,17 +7,20 @@ import UnlockListService from '../../../../services/unlockListService'
 import { LocationGroup } from '../../../../@types/activitiesAPI/types'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
+import AlertsFilterService from '../../../../services/alertsFilterService'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/unlockListService')
+jest.mock('../../../../services/alertsFilterService')
 jest.mock('../../../../services/metricsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-const unlockListService = new UnlockListService(null, null) as jest.Mocked<UnlockListService>
+const unlockListService = new UnlockListService(null, null, null) as jest.Mocked<UnlockListService>
+const alertsFilterService = new AlertsFilterService() as jest.Mocked<AlertsFilterService>
 const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Unlock list routes - planned events', () => {
-  const handler = new PlannedEventRoutes(activitiesService, unlockListService, metricsService)
+  const handler = new PlannedEventRoutes(activitiesService, unlockListService, metricsService, alertsFilterService)
 
   const locationsAtPrison = [
     {
@@ -91,7 +94,7 @@ describe('Unlock list routes - planned events', () => {
 
       when(activitiesService.getLocationGroups).mockResolvedValue(locationsAtPrison)
       when(unlockListService.getFilteredUnlockList).mockResolvedValue(unlockListItems)
-      when(unlockListService.getAllAlertFilterOptions).mockReturnValue(alertFilterOptions)
+      when(alertsFilterService.getAllAlertFilterOptions).mockReturnValue(alertFilterOptions)
 
       await handler.GET(req, res)
 
@@ -161,7 +164,7 @@ describe('Unlock list routes - planned events', () => {
 
       when(activitiesService.getLocationGroups).mockResolvedValue(locationsAtPrison)
       when(unlockListService.getFilteredUnlockList).mockResolvedValue(unlockListItems)
-      when(unlockListService.getAllAlertFilterOptions).mockReturnValue(alertFilterOptions)
+      when(alertsFilterService.getAllAlertFilterOptions).mockReturnValue(alertFilterOptions)
 
       await handler.GET(req, res)
 

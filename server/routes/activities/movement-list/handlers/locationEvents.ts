@@ -7,14 +7,14 @@ import PrisonService from '../../../../services/prisonService'
 import { eventClashes, scheduledEventSort } from '../../../../utils/utils'
 import { ScheduledEvent } from '../../../../@types/activitiesAPI/types'
 import { dateFromDateOption, formatIsoDate } from '../../../../utils/datePickerUtils'
+import AlertsFilterService from '../../../../services/alertsFilterService'
 
 export default class LocationEventsRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
+    private readonly alertsFilterService: AlertsFilterService,
   ) {}
-
-  private RELEVANT_ALERT_CODES = ['HA', 'PEEP', 'XEL', 'XCU']
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
@@ -57,6 +57,12 @@ export default class LocationEventsRoutes {
       ...otherEvents.courtHearings,
       ...otherEvents.externalTransfers,
     ] as ScheduledEvent[]
+
+    const alertOptions = this.alertsFilterService.getAllAlertFilterOptions()
+
+    req.session.movementListJourney.alertFilters ??= alertOptions.map(a => a.key)
+
+    const { alertFilters } = req.session.movementListJourney
 
     const locations = internalLocationEvents.map(
       l =>
@@ -103,7 +109,8 @@ export default class LocationEventsRoutes {
 
               return {
                 ...p,
-                alerts: p.alerts?.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
+                alerts: this.alertsFilterService.getFilteredAlerts(alertFilters, p?.alerts),
+                category: this.alertsFilterService.getFilteredCategory(alertFilters, p?.category),
                 events,
                 clashingEvents,
               } as MovementListPrisonerEvents
@@ -117,6 +124,7 @@ export default class LocationEventsRoutes {
       date: formatIsoDate(richDate),
       timeSlot,
       locations,
+      alertOptions,
     })
   }
 }
