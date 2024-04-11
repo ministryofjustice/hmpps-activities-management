@@ -79,7 +79,7 @@
         </button>
     {% endset %}
 
-    <div class="moj-filter-layout" data-module="activities-list-filter">
+    <div class="moj-filter-layout govuk-!-margin-0 unlock-list" data-module="activities-list-filter">
         <form id="filter-form" method="POST" action="update-filters" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
             <div class="moj-filter-layout__filter govuk-!-display-none-print">
@@ -149,14 +149,14 @@
                         {% set prisonerEventsTableRows = (prisonerEventsTableRows.push(row), prisonerEventsTableRows) %}
                     {% endfor %}
 
-        <div class="movement-list{{ " print-page-break" if not loop.first }}">
-            <div class="govuk-grid-row movement-list__location">
-                <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-l govuk-!-margin-0">{{ location.description }} - movement list</h1>
-                    <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot | upper }} session</span>
-                    <span class="govuk-caption-l" data-qa="date-caption">{{ date | toDate | formatDate }}</span>
-                </div>
-            </div>
+                    <div class="movement-list{{ " print-page-break" if not loop.first }}">
+                        <div class="govuk-grid-row movement-list__location">
+                            <div class="govuk-grid-column-two-thirds">
+                                <h1 class="govuk-heading-l govuk-!-margin-0">{{ location.description }} - movement list</h1>
+                                <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot | upper }} session</span>
+                                <span class="govuk-caption-l" data-qa="date-caption">{{ date | toDate | formatDate }}</span>
+                            </div>
+                        </div>
 
                         <div class="govuk-grid-row movement-list__location-events">
                             <div class="govuk-grid-column-full">
@@ -191,8 +191,7 @@
                                 {% if session.movementListJourney.alertFilters|length %}
                                     {% set headRows = headRows.concat(
                                         {
-                                            text: "Relevant alerts",
-                                            classes: 'govuk-table__header'
+                                            text: "Relevant alerts"
                                         }
                                     ) %}
                                 {% endif %}
