@@ -23,6 +23,29 @@
     }
   },
   {
+    "scheduledInstanceId": 94,
+    "activityId": 1,
+    "activityScheduleId": 2,
+    "summary": "Football",
+    "categoryId": 2,
+    "sessionDate": "2023-03-30",
+    "startTime": "09:00",
+    "endTime": "09:00",
+    "inCell": false,
+    "onWing": false,
+    "offWing": false,
+    "internalLocation": 98877667,
+    "cancelled": false,
+    "attendanceSummary": {
+      "allocations": 5,
+      "attendees": 0,
+      "notRecorded": 0,
+      "attended": 0,
+      "absences": 0,
+      "paid": false
+    }
+  },
+  {
     "scheduledInstanceId": 11,
     "activityId": 2,
     "activityScheduleId": 3,

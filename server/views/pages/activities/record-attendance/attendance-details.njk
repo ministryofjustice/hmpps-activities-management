@@ -33,7 +33,7 @@
                 text: "Change",
                 visuallyHiddenText: "Change attendance option"
             }]
-        } if attendance.editable and attendance.status !== 'WAITING'
+        } if instance.activitySchedule.activity.attendanceRequired and attendance.editable and attendance.status !== 'WAITING'
      }
 ), summaryListRows) %}
 

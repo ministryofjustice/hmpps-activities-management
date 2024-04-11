@@ -8,16 +8,16 @@ import CancelSessionReason from '../pages/recordAttendance/cancelSessionReason'
 import CancelSessionConfirm from '../pages/recordAttendance/cancelSessionConfirm'
 import UncancelSessionConfirm from '../pages/recordAttendance/uncancelSessionConfirm'
 import getAttendanceSummary from '../fixtures/activitiesApi/getAttendanceSummary.json'
-import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance93.json'
-import getAttendeesForScheduledInstance from '../fixtures/activitiesApi/getAttendeesScheduledInstance93.json'
-import getCancelledScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance-cancelled.json'
+import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance94.json'
+import getAttendeesForScheduledInstance from '../fixtures/activitiesApi/getAttendeesScheduledInstance94.json'
+import getCancelledScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance-cancelled94.json'
 import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getInmateDetails from '../fixtures/prisonerSearchApi/getInmateDetailsForAttendance.json'
 import getCategories from '../fixtures/activitiesApi/getCategories.json'
 import AttendanceDashboardPage from '../pages/recordAttendance/attendanceDashboard'
 import ActivitiesIndexPage from '../pages/activities'
 
-context('Record attendance', () => {
+context('Attendance not required', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
 
   beforeEach(() => {
@@ -33,17 +33,17 @@ context('Record attendance', () => {
       `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`,
       getAttendanceSummary,
     )
-    cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstance)
-    cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendeesForScheduledInstance)
+    cy.stubEndpoint('GET', '/scheduled-instances/94', getScheduledInstance)
+    cy.stubEndpoint('GET', '/scheduled-instances/94/scheduled-attendees', getAttendeesForScheduledInstance)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('PUT', '/attendances')
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
-    cy.stubEndpoint('PUT', '/scheduled-instances/93/cancel')
-    cy.stubEndpoint('PUT', '/scheduled-instances/93/uncancel')
+    cy.stubEndpoint('PUT', '/scheduled-instances/94/cancel')
+    cy.stubEndpoint('PUT', '/scheduled-instances/94/uncancel')
   })
 
-  it('should click through record attendance journey', () => {
+  it('should not display attendance journey options and information', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().should('contain.text', 'Activities, unlock and attendance')
     indexPage.activitiesCard().click()
@@ -62,20 +62,17 @@ context('Record attendance', () => {
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
     activitiesPage.activityRows().should('have.length', 5)
-    activitiesPage.selectActivityWithName('English level 1')
+    activitiesPage.selectActivityWithName('Football')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Attended')
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Pay')
-    attendanceListPage.selectPrisoner('Aborah, Cudmastarie')
-    attendanceListPage.selectPrisoner('Arianniver, Eeteljan')
-    attendanceListPage.markAsAttended()
-    Page.verifyOnPage(AttendanceListPage)
+    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Not required')
+    attendanceListPage.checkAttendanceStatus('Aborah, Cudmastarie', 'Not required')
 
     attendanceListPage.cancelSessionButton().click()
-    cy.stubEndpoint('GET', '/scheduled-instances/93', getCancelledScheduledInstance)
+    cy.stubEndpoint('GET', '/scheduled-instances/94', getCancelledScheduledInstance)
 
     const cancelSessionReasonPage = Page.verifyOnPage(CancelSessionReason)
+    cancelSessionReasonPage.caption()
     cancelSessionReasonPage.selectReason('Location unavailable')
     cancelSessionReasonPage.moreDetailsInput().type('Location in use')
     cancelSessionReasonPage.continue()
@@ -85,10 +82,8 @@ context('Record attendance', () => {
     cancelSessionConfirmPage.confirm()
 
     Page.verifyOnPage(AttendanceListPage)
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Cancelled')
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Pay')
-    attendanceListPage.checkAttendanceStatus('Aisho, Egurztof', 'Cancelled')
-    attendanceListPage.checkAttendanceStatus('Aisho, Egurztof', 'Pay')
+    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Not required')
+    attendanceListPage.checkAttendanceStatus('Aisho, Egurztof', 'Not required')
     attendanceListPage.assertNotificationContents(
       'Session cancelled',
       'This activity session has been cancelled for the following reason:',
@@ -96,7 +91,7 @@ context('Record attendance', () => {
 
     attendanceListPage.getLinkByText('Uncancel this session').click()
 
-    cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstance)
+    cy.stubEndpoint('GET', '/scheduled-instances/94', getScheduledInstance)
 
     const uncancelSessionConfirmPage = Page.verifyOnPage(UncancelSessionConfirm)
     uncancelSessionConfirmPage.selectReason('Yes')

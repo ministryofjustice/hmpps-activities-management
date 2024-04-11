@@ -52,7 +52,7 @@ context('Record non attendance', () => {
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.activityRows().should('have.length', 4)
+    activitiesPage.activityRows().should('have.length', 5)
     activitiesPage.selectActivityWithName('English level 1')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
