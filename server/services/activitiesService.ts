@@ -47,9 +47,13 @@ import {
   AddCaseNoteRequest,
 } from '../@types/activitiesAPI/types'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
+// import PrisonApiClient from '../data/prisonApiClient'
 
 export default class ActivitiesService {
-  constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
+  constructor(
+    private readonly activitiesApiClient: ActivitiesApiClient /* ,
+              private readonly prisonApiClient: PrisonApiClient */,
+  ) {}
 
   async getActivity(activityId: number, user: ServiceUser): Promise<Activity> {
     return this.activitiesApiClient.getActivity(activityId, user)
@@ -136,43 +140,6 @@ export default class ActivitiesService {
 
   getPayBandsForPrison(user: ServiceUser): Promise<PrisonPayBand[]> {
     return this.activitiesApiClient.getPayBandsForPrison(user.activeCaseLoadId, user)
-  }
-
-  getScheduledEvents(
-    prisonerNumber: string,
-    startDate: Date,
-    endDate: Date,
-    user: ServiceUser,
-  ): Promise<ScheduledEvent[]> {
-    return this.activitiesApiClient
-      .getScheduledEvents(
-        user.activeCaseLoadId,
-        prisonerNumber,
-        format(startDate, 'yyyy-MM-dd'),
-        format(endDate, 'yyyy-MM-dd'),
-        user,
-      )
-      .then(res => [
-        ...res.activities,
-        ...res.courtHearings,
-        ...res.appointments,
-        ...res.visits,
-        ...res.externalTransfers,
-        ...res.adjudications,
-      ])
-  }
-
-  getScheduledEventsForPrisoners(
-    date: Date,
-    prisonerNumbers: string[],
-    user: ServiceUser,
-  ): Promise<PrisonerScheduledEvents> {
-    return this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
-      user.activeCaseLoadId,
-      format(date, 'yyyy-MM-dd'),
-      prisonerNumbers,
-      user,
-    )
   }
 
   async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
@@ -380,6 +347,11 @@ export default class ActivitiesService {
     )
   }
 
+  /*
+    break these three calls into a new service, scheduled event service
+  */
+
+  //  this calls scheduled events controller
   async getInternalLocationEvents(
     prisonCode: string,
     date: Date,
@@ -387,6 +359,7 @@ export default class ActivitiesService {
     user: ServiceUser,
     timeSlot?: string,
   ) {
+    // merge in other events
     return this.activitiesApiClient.getInternalLocationEvents(
       prisonCode,
       format(date, 'yyyy-MM-dd'),
@@ -395,6 +368,58 @@ export default class ActivitiesService {
       timeSlot,
     )
   }
+
+  //  this calls scheduled events controller
+  getScheduledEvents(
+    prisonerNumber: string,
+    startDate: Date,
+    endDate: Date,
+    user: ServiceUser,
+  ): Promise<ScheduledEvent[]> {
+    // merge in other events
+    return this.activitiesApiClient
+      .getScheduledEvents(
+        user.activeCaseLoadId,
+        prisonerNumber,
+        format(startDate, 'yyyy-MM-dd'),
+        format(endDate, 'yyyy-MM-dd'),
+        user,
+      )
+      .then(res => [
+        ...res.activities,
+        ...res.courtHearings,
+        ...res.appointments,
+        ...res.visits,
+        ...res.externalTransfers,
+        ...res.adjudications,
+      ])
+  }
+
+  //  this calls scheduled events controller
+  getScheduledEventsForPrisoners(
+    date: Date,
+    prisonerNumbers: string[],
+    user: ServiceUser,
+  ): Promise<PrisonerScheduledEvents> {
+    // merge in other events
+    return this.activitiesApiClient.getScheduledEventsByPrisonerNumbers(
+      user.activeCaseLoadId,
+      format(date, 'yyyy-MM-dd'),
+      prisonerNumbers,
+      user,
+    )
+  }
+
+  // these are the other events to get, transform to ScheduledEvent, then merge into responses.
+  /* getOtherScheduledEvents(): {
+    return Promise.all(
+      transfers
+      visits
+      /court hearings
+      adjudications
+    ).map(transformTo ==> ScheduledEvent)
+  }
+  */
 
   async getAppointmentAttendanceSummaries(prisonCode: string, date: Date, user: ServiceUser) {
     return this.activitiesApiClient.getAppointmentAttendanceSummaries(prisonCode, format(date, 'yyyy-MM-dd'), user)

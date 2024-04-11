@@ -38,4 +38,86 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
       authToken: user.token,
     })
   }
+
+  // court hearings
+  /*
+    suspend fun getScheduledCourtHearingsAsync(
+    bookingId: Long,
+    dateRange: LocalDateRange,
+  ): CourtHearings? {
+    if (dateRange.isEmpty()) return null
+    return prisonApiWebClient.get()
+      .uri { uriBuilder: UriBuilder ->
+        uriBuilder
+          .path("/api/bookings/{bookingId}/court-hearings")
+          .queryParam("fromDate", dateRange.start)
+          .queryParam("toDate", dateRange.endInclusive)
+          .build(bookingId)
+      }
+      .retrieve()
+      .awaitBody()
+    }
+  */
+  // visits
+  /*
+   suspend fun getScheduledVisitsAsync(
+    bookingId: Long,
+    dateRange: LocalDateRange,
+  ): List<PrisonApiScheduledEvent> =
+    prisonApiWebClient.get()
+      .uri { uriBuilder: UriBuilder ->
+        uriBuilder
+          .path("/api/bookings/{bookingId}/visits")
+          .queryParam("fromDate", dateRange.start)
+          .queryParam("toDate", dateRange.endInclusive)
+          .build(bookingId)
+      }
+      .retrieve()
+      .awaitBody()
+  */
+  // transfers - not other logic around this...mainly to avoid calling
+  /*
+   suspend fun getExternalTransfersOnDateAsync(
+    agencyId: String,
+    prisonerNumbers: Set<String>,
+    date: LocalDate,
+  ): List<PrisonerSchedule> {
+    if (prisonerNumbers.isEmpty()) return emptyList()
+    return prisonApiWebClient.post()
+      .uri { uriBuilder: UriBuilder ->
+        uriBuilder
+          .path("/api/schedules/{agencyId}/externalTransfers")
+          .queryParam("date", date)
+          .build(agencyId)
+      }
+      .bodyValue(prisonerNumbers)
+      .retrieve()
+      .awaitBody()
+  }
+  */
+  // adjudication hearings
+  /*
+   suspend fun getOffenderAdjudications(
+    agencyId: String,
+    dateRange: LocalDateRange,
+    prisonerNumbers: Set<String>,
+    timeSlot: TimeSlot? = null,
+  ): List<OffenderAdjudicationHearing> {
+    if (prisonerNumbers.isEmpty()) return emptyList()
+    return prisonApiWebClient.post()
+      .uri { uriBuilder: UriBuilder ->
+        uriBuilder
+          .path("/api/offenders/adjudication-hearings")
+          .queryParam("agencyId", agencyId)
+          .queryParam("fromDate", dateRange.start)
+          .queryParam("toDate", dateRange.endInclusive)
+          .maybeQueryParam("timeSlot", timeSlot)
+          .build()
+      }
+      .bodyValue(prisonerNumbers)
+      .retrieve()
+      .awaitBody()
+  }
+
+  */
 }
