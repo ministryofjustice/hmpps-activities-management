@@ -281,10 +281,11 @@
 {% macro renderViewLink(attendance) %}
     {% if attendance.status === 'COMPLETED' or attendance.attendanceHistory|length %}
         <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">
-            {% if attendance.editable === false or instance.activitySchedule.activity.attendanceRequired === false %}
-                View
-            {% elif attendance.editable %}
+            {% if attendance.editable and instance.activitySchedule.activity.attendanceRequired %}
                 View or Edit
-            {% endif %}</a>
+            {% else %}
+                View
+            {% endif %}
+        </a>
     {% endif %}
 {% endmacro %}
