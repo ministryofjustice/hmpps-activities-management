@@ -1,0 +1,112 @@
+[
+  {
+    "prisonerNumber": "A7789DY",
+    "bookingId": "1201110",
+    "bookNumber": "38526A",
+    "firstName": "BOOKING",
+    "lastName": "ANDY",
+    "dateOfBirth": "1999-07-19",
+    "gender": "Male",
+    "youthOffender": false,
+    "status": "ACTIVE IN",
+    "lastMovementTypeCode": "CRT",
+    "lastMovementReasonCode": "CRT",
+    "inOutStatus": "IN",
+    "prisonId": "MDI",
+    "prisonName": "Moorland (HMP & YOI)",
+    "cellLocation": "3-3-017",
+    "aliases": [],
+    "alerts": [
+      {
+        "alertType": "XCU",
+        "alertCode": "XCU",
+        "active": true,
+        "expired": false
+      }
+    ],
+    "category": "A",
+    "legalStatus": "SENTENCED",
+    "imprisonmentStatus": "ADIMP_ORA20",
+    "imprisonmentStatusDescription": "ORA 2020 Standard Determinate Sentence",
+    "recall": false,
+    "indeterminateSentence": false,
+    "receptionDate": "2021-01-15",
+    "locationDescription": "Moorland (HMP & YOI)",
+    "restrictedPatient": false,
+    "currentIncentive": {
+      "level": {
+        "code": "STD",
+        "description": "Standard"
+      },
+      "dateTime": "2022-10-27T14:22:23",
+      "nextReviewDate": "2023-10-27"
+    }
+  },
+  {
+    "prisonerNumber": "G4572UO",
+    "pncNumber": "06/842979X",
+    "pncNumberCanonicalShort": "06/842979X",
+    "pncNumberCanonicalLong": "2006/842979X",
+    "croNumber": "472465/06M",
+    "bookingId": "1116666",
+    "bookNumber": "W35506",
+    "firstName": "EGURZTOF",
+    "lastName": "AISHO",
+    "dateOfBirth": "1976-01-27",
+    "gender": "Male",
+    "ethnicity": "White: Any other background",
+    "youthOffender": false,
+    "maritalStatus": "Single-not married/in civil partnership",
+    "religion": "Roman Catholic",
+    "nationality": "Polish",
+    "status": "ACTIVE IN",
+    "lastMovementTypeCode": "ADM",
+    "lastMovementReasonCode": "INT",
+    "inOutStatus": "IN",
+    "prisonId": "MDI",
+    "prisonName": "Moorland (HMP & YOI)",
+    "cellLocation": "2-3-009",
+    "aliases": [],
+    "alerts": [
+      {
+        "alertType": "XCU",
+        "alertCode": "XCU",
+        "active": true,
+        "expired": false
+      },
+      {
+        "alertType": "PEEP",
+        "alertCode": "PEEP",
+        "active": true,
+        "expired": false
+      }
+    ],
+    "csra": "Standard",
+    "category": "U",
+    "legalStatus": "REMAND",
+    "imprisonmentStatus": "TRL",
+    "imprisonmentStatusDescription": "Committed to Crown Court for Trial",
+    "recall": false,
+    "indeterminateSentence": false,
+    "receptionDate": "2016-07-19",
+    "locationDescription": "Moorland (HMP & YOI)",
+    "restrictedPatient": false,
+    "currentIncentive": {
+      "level": {
+        "code": "BAS",
+        "description": "Basic"
+      },
+      "dateTime": "2022-12-16T11:44:53",
+      "nextReviewDate": "2022-12-23"
+    },
+    "heightCentimetres": 176,
+    "weightKilograms": 76,
+    "hairColour": "Blonde",
+    "rightEyeColour": "Brown",
+    "leftEyeColour": "Brown",
+    "facialHair": "Clean Shaven",
+    "shapeOfFace": "Oval",
+    "build": "Thin",
+    "shoeSize": 9
+  }
+]

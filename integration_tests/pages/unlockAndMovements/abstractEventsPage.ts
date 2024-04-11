@@ -1,8 +1,11 @@
 import Page from '../page'
 
-export default class PlannedEventsPage extends Page {
-  constructor() {
-    super('planned-events-page')
+export const CAT_A_BADGE = { clazz: 'cat-a-status--a', text: 'CAT A' }
+export const PEEP_BADGE = { clazz: 'alert-status--disability', text: 'PEEP' }
+export const CONTROLLED_UNLOCK_BADGE = { clazz: 'alert-status--controlled-unlock', text: 'Controlled Unlock' }
+export default abstract class AbstractEventsPage extends Page {
+  protected constructor(pageId: string) {
+    super(pageId)
   }
 
   assertBadges(row, ...expectedBadges) {
