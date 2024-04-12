@@ -30,7 +30,7 @@ describe('Views - Allocation dashboard', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect(
-      $('#incentiveLevelFilter > option')
+      $('#candidates-filter > .govuk-form-group > #incentiveLevelFilter > option')
         .map((i, e) => $(e).text())
         .get(),
     ).toEqual([

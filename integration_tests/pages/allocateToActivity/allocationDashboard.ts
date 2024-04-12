@@ -26,7 +26,7 @@ export default class AllocationDashboard extends Page {
       })
 
   selectCandidateWithName = (name: string): void => {
-    this.getInputByLabel(name).click()
+    this.getInputByLabel(name).click({ force: true })
     cy.get('#candidates-tab').find('button').contains('Allocate').click()
   }
 
@@ -40,7 +40,8 @@ export default class AllocationDashboard extends Page {
 
   activeTimeSlots = () => cy.get('.govuk-table__cell > .govuk-tag').contains('Yes')
 
-  selectRiskLevelOption = (option: string) => cy.get('#riskLevelFilter').select(option)
+  selectRiskLevelOption = (option: string) =>
+    cy.get('#candidates-filter > .govuk-form-group > #riskLevelFilter').select(option)
 
   applyFilters = () => cy.get('#apply-filters').click()
 }
