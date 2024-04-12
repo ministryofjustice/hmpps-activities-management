@@ -73,8 +73,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-m">{{ attendance | length }} {{ "person" if attendance | length == 1 else "people" }} allocated</h2>
-            {% if instance.activitySchedule.activity.attendanceRequired === false %} 
-            {% else %}
+            {% if instance.activitySchedule.activity.attendanceRequired %} 
                 <ul class="govuk-list">
                     <li>
                         <span>Attended:</span>
