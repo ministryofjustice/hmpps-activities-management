@@ -1,0 +1,37 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>ministryofjustice/hmpps-renovate-config:node"],
+  "reviewers": ["timoj58", "natclamp-moj", "Kristian-Gregory", "davidthomas22", "dafhoustonmoj", "munslowl"],
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "rangeStrategy": "bump"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non major NPM dependencies",
+      "groupSlug": "all-npm-minor-patch",
+      "stabilityDays": 3
+    },
+    {
+      "matchPackageNames": ["typescript", "govuk-frontend"],
+      "rangeStrategy": "bump",
+      "stabilityDays": 0
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["@types/node"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "matchDatasources": ["docker-compose"],
+      "matchPackageNames": ["bitnami/redis"],
+      "allowedVersions": "5.0"
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "stabilityDays": 0
+  }
+}
