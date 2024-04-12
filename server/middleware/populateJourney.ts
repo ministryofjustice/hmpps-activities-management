@@ -11,6 +11,7 @@ const journeys = [
   'editAppointmentJourney',
   'journeyMetrics',
   'unlockListJourney',
+  'movementListJourney',
   'waitListApplicationJourney',
 ]
 const MAX_CONCURRENT_JOURNEYS = 100

@@ -10,15 +10,18 @@ import { InternalLocationEvents, PrisonerScheduledEvents, ScheduledEvent } from 
 import { EventType, MovementListLocation } from '../../../../@types/activities'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { PrisonerStatus } from '../../../../@types/prisonApiImportCustom'
+import AlertsFilterService from '../../../../services/alertsFilterService'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
+jest.mock('../../../../services/alertsFilterService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const alertsFilterService = new AlertsFilterService() as jest.Mocked<AlertsFilterService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Movement list routes - location events', () => {
-  const handler = new LocationEventsRoutes(activitiesService, prisonService)
+  const handler = new LocationEventsRoutes(activitiesService, prisonService, alertsFilterService)
   let req: Request
   let res: Response
 
@@ -44,8 +47,15 @@ describe('Movement list routes - location events', () => {
         alertType: 'H',
         alertCode: 'HA',
       },
+      {
+        alertType: 'PEEP',
+        alertCode: 'PEEP',
+      },
     ],
   } as Prisoner
+
+  const alertFilterOptions = [{ key: 'ALERT_HA', description: 'ACCT', codes: ['HA'] }]
+  const alertFilters = ['ALERT_HA', 'CAT_A_PROVISIONAL']
 
   beforeEach(() => {
     res = {
@@ -58,11 +68,25 @@ describe('Movement list routes - location events', () => {
       redirect: jest.fn(),
     } as unknown as Response
 
-    req = {} as unknown as Request
+    req = {
+      session: {
+        movementListJourney: {
+          alertFilters,
+        },
+      },
+    } as unknown as Request
 
     when(prisonService.searchInmatesByPrisonerNumbers)
       .calledWith([prisoner.prisonerNumber], res.locals.user)
       .mockResolvedValue([prisoner])
+
+    when(alertsFilterService.getAllAlertFilterOptions).mockReturnValue(alertFilterOptions)
+
+    when(alertsFilterService.getFilteredAlerts)
+      .calledWith(alertFilters, prisoner.alerts)
+      .mockReturnValue(prisoner.alerts)
+
+    when(alertsFilterService.getFilteredCategory).calledWith(alertFilters, prisoner.category).mockReturnValue('P')
   })
 
   afterEach(() => {
@@ -196,6 +220,7 @@ describe('Movement list routes - location events', () => {
             ],
           },
         ] as MovementListLocation[],
+        alertOptions: alertFilterOptions,
       })
     })
 
@@ -355,6 +380,7 @@ describe('Movement list routes - location events', () => {
             ],
           },
         ] as MovementListLocation[],
+        alertOptions: alertFilterOptions,
       })
     })
 
@@ -466,7 +492,133 @@ describe('Movement list routes - location events', () => {
             ],
           },
         ] as MovementListLocation[],
+        alertOptions: alertFilterOptions,
       })
+    })
+
+    it('renders the expected view with one prisoner whose alerts are filtered', async () => {
+      const dateOption = DateOption.TODAY
+      const dateQueryParam = format(new Date(), 'yyyy-MM-dd')
+      const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
+      const timeSlot = TimeSlot.AM
+      req.query = {
+        locationIds: `${internalLocation.id}`,
+        dateOption,
+        timeSlot,
+      }
+
+      const internalLocationEvents = [
+        {
+          ...internalLocation,
+          events: [
+            {
+              prisonerNumber: 'A1234BC',
+            },
+          ],
+        },
+      ] as InternalLocationEvents[]
+      when(activitiesService.getInternalLocationEvents)
+        .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+        .mockResolvedValue(internalLocationEvents)
+
+      when(activitiesService.getScheduledEventsForPrisoners)
+        .calledWith(date, [prisoner.prisonerNumber], res.locals.user)
+        .mockResolvedValue({
+          activities: [],
+          appointments: [],
+          visits: [],
+          adjudications: [],
+          courtHearings: [],
+          externalTransfers: [],
+        })
+
+      const filteredAlerts = prisoner.alerts.filter(a => a.alertCode === 'HA')
+      when(alertsFilterService.getFilteredAlerts)
+        .calledWith(alertFilters, prisoner.alerts)
+        .mockReturnValue(filteredAlerts)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
+        dateOption,
+        date: dateQueryParam,
+        timeSlot,
+        locations: [
+          {
+            ...internalLocationEvents[0],
+            prisonerEvents: [
+              {
+                ...prisoner,
+                alerts: filteredAlerts,
+                events: internalLocationEvents[0].events,
+                clashingEvents: [],
+              },
+            ],
+          },
+        ] as MovementListLocation[],
+        alertOptions: alertFilterOptions,
+      })
+    })
+  })
+
+  it('renders the expected view with one prisoner whose alerts are filtered', async () => {
+    const dateOption = DateOption.TODAY
+    const dateQueryParam = format(new Date(), 'yyyy-MM-dd')
+    const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
+    const timeSlot = TimeSlot.AM
+    req.query = {
+      locationIds: `${internalLocation.id}`,
+      dateOption,
+      timeSlot,
+    }
+
+    const internalLocationEvents = [
+      {
+        ...internalLocation,
+        events: [
+          {
+            prisonerNumber: 'A1234BC',
+          },
+        ],
+      },
+    ] as InternalLocationEvents[]
+    when(activitiesService.getInternalLocationEvents)
+      .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+      .mockResolvedValue(internalLocationEvents)
+
+    when(activitiesService.getScheduledEventsForPrisoners)
+      .calledWith(date, [prisoner.prisonerNumber], res.locals.user)
+      .mockResolvedValue({
+        activities: [],
+        appointments: [],
+        visits: [],
+        adjudications: [],
+        courtHearings: [],
+        externalTransfers: [],
+      })
+
+    when(alertsFilterService.getFilteredCategory).calledWith(alertFilters, prisoner.category).mockReturnValue(undefined)
+
+    await handler.GET(req, res)
+
+    expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
+      dateOption,
+      date: dateQueryParam,
+      timeSlot,
+      locations: [
+        {
+          ...internalLocationEvents[0],
+          prisonerEvents: [
+            {
+              ...prisoner,
+              category: undefined,
+              events: internalLocationEvents[0].events,
+              clashingEvents: [],
+            },
+          ],
+        },
+      ] as MovementListLocation[],
+      alertOptions: alertFilterOptions,
     })
   })
 
@@ -576,6 +728,7 @@ describe('Movement list routes - location events', () => {
           ],
         },
       ] as MovementListLocation[],
+      alertOptions: alertFilterOptions,
     })
   })
 
@@ -739,6 +892,7 @@ describe('Movement list routes - location events', () => {
           ],
         },
       ] as MovementListLocation[],
+      alertOptions: alertFilterOptions,
     })
   })
 })

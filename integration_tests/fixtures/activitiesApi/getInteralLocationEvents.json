@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "prisonCode": "MDI",
+    "code": "WORK_IND-WS1-WS1",
+    "description": "Workshop 1"
+  },
+  {
+    "id": 2,
+    "prisonCode": "MDI",
+    "code": "WORK_IND-WS2-WS2",
+    "description": "Workshop 2"
+  }
+]

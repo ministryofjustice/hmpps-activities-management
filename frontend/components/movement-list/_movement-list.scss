@@ -18,6 +18,10 @@
   }
 }
 
+.moj-filter-layout__content {
+  overflow-x: hidden;
+}
+
 @include govuk-media-query($media-type: print) {
   .movement-list {
     .govuk-heading-l {

@@ -4,15 +4,18 @@ import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
 import UnlockListService from './unlockListService'
-import { PagePrisoner } from '../@types/prisonerOffenderSearchImport/types'
+import { PagePrisoner, PrisonerAlert } from '../@types/prisonerOffenderSearchImport/types'
 import { PrisonerScheduledEvents } from '../@types/activitiesAPI/types'
 import atLeast from '../../jest.setup'
+import AlertsFilterService from './alertsFilterService'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
+jest.mock('../services/alertsFilterService')
 
 const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
 const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
+const alertsFilterService = new AlertsFilterService() as jest.Mocked<AlertsFilterService>
 
 const user = { activeCaseLoadId: 'MDI' } as ServiceUser
 
@@ -182,7 +185,7 @@ const scheduledEvents = {
   ],
 } as PrisonerScheduledEvents
 
-const unlockListService = new UnlockListService(prisonerSearchApiClient, activitiesApiClient)
+const unlockListService = new UnlockListService(prisonerSearchApiClient, activitiesApiClient, alertsFilterService)
 
 describe('Unlock list service', () => {
   beforeEach(() => {
@@ -402,9 +405,15 @@ describe('Unlock list service', () => {
       expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(1)
     })
 
-    it('should only show categories matching the category filter', async () => {
+    it('should filter category', async () => {
       when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
       when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
+      when(alertsFilterService.getFilteredCategory)
+        .calledWith(atLeast(['CAT_A'], 'A'))
+        .mockReturnValueOnce('A')
+      when(alertsFilterService.getFilteredCategory)
+        .calledWith(atLeast(['CAT_A'], 'E'))
+        .mockReturnValueOnce('E')
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
@@ -420,12 +429,22 @@ describe('Unlock list service', () => {
 
       expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'])
       expect(unlockListItems.map(i => i.category)).toEqual(['A', 'E', undefined, undefined])
-      expect(unlockListItems.map(i => i.alerts)).toEqual([undefined, [], [], undefined])
+      expect(unlockListItems.map(i => i.alerts)).toEqual([undefined, undefined, undefined, undefined])
     })
 
-    it('should only show alerts matching the alerts filter', async () => {
+    it('should filter alerts', async () => {
+      const alertFilters = ['ALERT_PEEP', 'ALERT_HA']
+      const mockFilteredAlerts1 = [{ alertCode: 'HA' }, { alertCode: 'PEEP' }] as PrisonerAlert[]
+      const mockFilteredAlerts2 = [{ alertCode: 'PEEP' }] as PrisonerAlert[]
+
       when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
       when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
+      when(alertsFilterService.getFilteredAlerts)
+        .calledWith(atLeast(alertFilters, [{ alertCode: 'HA' }, { alertCode: 'PEEP' }]))
+        .mockReturnValueOnce(mockFilteredAlerts1)
+      when(alertsFilterService.getFilteredAlerts)
+        .calledWith(atLeast(alertFilters, [{ alertCode: 'PEEP' }, { alertCode: 'XEL' }]))
+        .mockReturnValueOnce(mockFilteredAlerts2)
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
@@ -434,7 +453,7 @@ describe('Unlock list service', () => {
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'With',
         'Both',
-        ['ALERT_PEEP', 'ALERT_HA'],
+        alertFilters,
         null,
         user,
       )
@@ -445,54 +464,6 @@ describe('Unlock list service', () => {
         .map(({ alerts }) => alerts)
         .map(a => (!a ? undefined : _(a).map('alertCode').value()))
       expect(expectedAlertCodes).toEqual([undefined, ['HA', 'PEEP'], ['PEEP'], undefined])
-    })
-
-    it('should only show alerts and categories matching the alerts filter', async () => {
-      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
-      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
-
-      const unlockListItems = await unlockListService.getFilteredUnlockList(
-        new Date('2022-01-01'),
-        'am',
-        'HB1',
-        ['A-Wing', 'B-Wing', 'C-Wing'],
-        'With',
-        'Both',
-        ['ALERT_PEEP', 'ALERT_HA', 'CAT_A_PROVISIONAL'],
-        null,
-        user,
-      )
-
-      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'])
-      expect(unlockListItems.map(i => i.category)).toEqual([undefined, undefined, undefined, 'P'])
-      const actualAlertCodes = unlockListItems
-        .map(({ alerts }) => alerts)
-        .map(a => (!a ? undefined : _(a).map('alertCode').value()))
-      expect(actualAlertCodes).toEqual([undefined, ['HA', 'PEEP'], ['PEEP'], undefined])
-    })
-
-    it('should only for select location and with alerts and categories matching the alerts filter', async () => {
-      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
-      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
-
-      const unlockListItems = await unlockListService.getFilteredUnlockList(
-        new Date('2022-01-01'),
-        'am',
-        'HB1',
-        ['A-Wing', 'B-Wing', 'C-Wing'],
-        'Both',
-        'Staying',
-        ['CAT_A', 'ALERT_XEL'],
-        null,
-        user,
-      )
-
-      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A2222AA', 'A3333AA'])
-      expect(unlockListItems.map(i => i.category)).toEqual(['E', undefined])
-      const actualAlertCodes = unlockListItems
-        .map(({ alerts }) => alerts)
-        .map(a => (!a ? undefined : _(a).map('alertCode').value()))
-      expect(actualAlertCodes).toEqual([[], ['XEL']])
     })
   })
 })
