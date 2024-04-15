@@ -10,7 +10,7 @@ function ListFilter(container) {
       container: $('.moj-action-bar__filter'),
       showText: 'Show filter',
       hideText: 'Hide filter',
-      classes: 'govuk-button--secondary',
+      classes: 'govuk-button--blue',
     },
     closeButton: {
       container: $('.moj-filter__header-action'),
