@@ -1,0 +1,16 @@
+[
+  {
+    "scheduledInstanceId": 94,
+    "allocationId": 1,
+    "prisonerNumber": "G4479GQ",
+    "bookingId": 100001,
+    "suspended": false
+  },
+  {
+    "scheduledInstanceId": 94,
+    "allocationId": 2,
+    "prisonerNumber": "G6749VJ",
+    "bookingId": 200002,
+    "suspended": false
+  }
+]

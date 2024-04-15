@@ -73,32 +73,34 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-m">{{ attendance | length }} {{ "person" if attendance | length == 1 else "people" }} allocated</h2>
-            <ul class="govuk-list">
-                <li>
-                    <span>Attended:</span>
-                    {% if attendanceSummary.attendanceCount == 0 %}
-                        -
-                    {% else %}
-                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span>({{ attendanceSummary.attendedPercentage }}%)
-                    {% endif %}
-                </li>
-                <li>
-                    <span>Absent:</span>
-                    {% if attendanceSummary.attendanceCount == 0 %}
-                        -
-                    {% else %}
-                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
-                    {% endif %}
-                </li>
-                <li>
-                    <span>Not recorded:</span>
-                    {% if attendanceSummary.attendanceCount == 0 %}
-                        -
-                    {% else %}
-                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
-                    {% endif %}
-                </li>
-            </ul>
+            {% if instance.activitySchedule.activity.attendanceRequired %} 
+                <ul class="govuk-list">
+                    <li>
+                        <span>Attended:</span>
+                        {% if attendanceSummary.attendanceCount == 0 %}
+                            -
+                        {% else %}
+                            <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
+                        {% endif %}
+                    </li>
+                    <li>
+                        <span>Absent:</span>
+                        {% if attendanceSummary.attendanceCount == 0 %}
+                            -
+                        {% else %}
+                            <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
+                        {% endif %}
+                    </li>
+                    <li>
+                        <span>Not recorded:</span>
+                        {% if attendanceSummary.attendanceCount == 0 %}
+                            -
+                        {% else %}
+                            <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
+                        {% endif %}
+                    </li>
+                </ul>     
+            {% endif %}    
 
             {% if instance.date | toDate > now and not instance.cancelled %}
                 {{ govukInsetText({
@@ -123,8 +125,7 @@
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.prisoner | firstNameLastName | toTitleCase | prisonerName,
             value: attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
-            selectable: attendee.attendance.status === "WAITING" and attendee.attendance.editable,
-
+            selectable: attendee.attendance.status === "WAITING" and attendee.attendance.editable and instance.activitySchedule.activity.attendanceRequired === true,
             items: [
                 {
                     html: '<span class="print-checkbox govuk-!-margin-left-3"></span>',
@@ -161,7 +162,7 @@
                     }
                 },
                 {
-                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code) + ' ' + renderPayStatus(attendee.attendance, isPayable),
+                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' + renderPayStatus(attendee.attendance, isPayable),
                     classes: 'govuk-!-display-none-print',
                     attributes: {
                         "data-qa": "attendance"
@@ -278,6 +279,12 @@
 
 {% macro renderViewLink(attendance) %}
     {% if attendance.status === 'COMPLETED' or attendance.attendanceHistory|length %}
-        <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">{{ "View or edit" if attendance.editable else "View" }}</a>
+        <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">
+            {% if attendance.editable and instance.activitySchedule.activity.attendanceRequired %}
+                View or Edit
+            {% else %}
+                View
+            {% endif %}
+        </a>
     {% endif %}
 {% endmacro %}

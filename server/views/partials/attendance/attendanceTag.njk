@@ -43,10 +43,11 @@
   }
 } %}
 
-
-{% macro attendanceTag(status, code) %}
+{% macro attendanceTag(status, code, attendanceRequired) %}
     {% if status %}
-      {% if status === 'COMPLETED' %}
+      {% if attendanceRequired === false %}
+        Not required
+      {% elif status === 'COMPLETED' %}
           {{ govukTag(attendanceTags[code]) }}
       {% else %}
         Not recorded {{ "yet" if attendance.editable }}
