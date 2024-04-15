@@ -31,7 +31,7 @@ export default class AllocationDashboard extends Page {
   }
 
   selectAllocatedPrisonerByName = (name: string): void => {
-    this.getInputByLabel(name).click()
+    this.getInputByLabel(name).click({ force: true })
   }
 
   deallocateSelectedPrisoners = (): void => {
