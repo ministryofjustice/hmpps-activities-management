@@ -6,4 +6,6 @@ export default class UnlockAndMovementIndexPage extends Page {
   }
 
   createUnlockListsCard = (): Cypress.Chainable => cy.get('[data-qa=create-unlock-lists]')
+
+  createMovementListsCard = (): Cypress.Chainable => cy.get('[data-qa=create-movement-lists]')
 }

@@ -16,6 +16,10 @@ export default class LocationsRoutes {
       return res.redirect('choose-details')
     }
 
+    req.session.movementListJourney.dateOption = dateOption as string
+    req.session.movementListJourney.date = formatIsoDate(richDate)
+    req.session.movementListJourney.timeSlot = timeSlot as string
+
     const locations = await this.activitiesService.getInternalLocationEventsSummaries(
       user.activeCaseLoadId,
       richDate,
@@ -25,7 +29,7 @@ export default class LocationsRoutes {
 
     return res.render('pages/activities/movement-list/locations', {
       dateOption,
-      date: formatIsoDate(richDate),
+      date: req.session.movementListJourney.date,
       timeSlot,
       locations,
     })

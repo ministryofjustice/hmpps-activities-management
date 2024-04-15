@@ -26,7 +26,9 @@ describe('Movement list routes - choose details', () => {
       redirect: jest.fn(),
     } as unknown as Response
 
-    req = {} as unknown as Request
+    req = {
+      session: {},
+    } as unknown as Request
   })
 
   afterEach(() => {

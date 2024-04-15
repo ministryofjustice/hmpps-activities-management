@@ -1,11 +1,6 @@
-import { Attendance, InternalLocation, ScheduledEvent } from './activitiesAPI/types'
+import { ScheduledEvent } from './activitiesAPI/types'
 import { Alert } from './prisonApiImport/types'
-import { PrisonerAlert as PrisonerSearchAlert } from './prisonerOffenderSearchImport/types'
-
-export type PrisonerAlert = {
-  alertType: string
-  alertCode: string
-}
+import { PrisonerAlert } from './prisonerOffenderSearchImport/types'
 
 export type Prisoner = {
   prisonerNumber?: string
@@ -15,21 +10,6 @@ export type Prisoner = {
   cellLocation?: string
   alerts?: PrisonerAlert[]
   category?: string
-}
-
-export type ActivityScheduleAllocation = {
-  activityScheduleId: number
-  description: string
-  internalLocation?: InternalLocation
-  prisoner: Prisoner
-  attendance?: Attendance
-}
-
-export type AllocationsSummary = {
-  capacity?: number
-  allocated?: number
-  percentageAllocated: number
-  vacancies: number
 }
 
 export type UnlockListItem = {
@@ -61,7 +41,7 @@ export type MovementListPrisonerEvents = {
   cellLocation: string
   category: string
   status: string
-  alerts?: PrisonerSearchAlert[]
+  alerts?: PrisonerAlert[]
   events?: ScheduledEvent[]
   clashingEvents?: ScheduledEvent[]
 }

@@ -4,12 +4,14 @@ import UnlockListService from '../../../../services/unlockListService'
 import { asString, toDate } from '../../../../utils/utils'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
+import AlertsFilterService from '../../../../services/alertsFilterService'
 
 export default class PlannedEventsRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly unlockListService: UnlockListService,
     private readonly metricsService: MetricsService,
+    private readonly alertsFilterService: AlertsFilterService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -21,7 +23,7 @@ export default class PlannedEventsRoutes {
       .getLocationGroups(user)
       .then(locations => locations.find(loc => loc.key === locationKey))
 
-    const alertOptions = this.unlockListService.getAllAlertFilterOptions()
+    const alertOptions = this.alertsFilterService.getAllAlertFilterOptions()
 
     // Set the default filter values if they are not set
     req.session.unlockListJourney.stayingOrLeavingFilter ??= 'Both'

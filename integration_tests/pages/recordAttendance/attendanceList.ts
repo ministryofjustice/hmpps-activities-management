@@ -6,7 +6,13 @@ export default class AttendanceListPage extends Page {
   }
 
   selectPrisoner = name =>
-    cy.get('#attendanceList').find('td:nth-child(3)').contains(name).parents('tr').find('td:nth-child(1) input').click()
+    cy
+      .get('#attendanceList')
+      .find('td:nth-child(3)')
+      .contains(name)
+      .parents('tr')
+      .find('td:nth-child(1) input')
+      .click({ force: true })
 
   checkAttendanceStatus = (name, status) =>
     cy

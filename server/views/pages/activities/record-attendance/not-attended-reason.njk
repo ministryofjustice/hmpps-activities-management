@@ -67,7 +67,7 @@
        {{ govukRadios({
             fieldset: {
                 legend: {
-                    text: "Should this be recorded as an incentive level warning?",
+                    html: "Should this be recorded as an incentive level warning?",
                     classes: 'grey-text'
                 }
             },
@@ -155,6 +155,19 @@
     {% endif %}
 {% endmacro %}
 
+{% macro getSpanContent(reason) %}
+{# We need a span so that VoiceOver can make users aware that there's some conditionally revealed content. The extra fullstop is to make sure Voiceover reads the content as two sentences, but we don't want to show it visually #}
+{% if reason.code === 'SICK' %}
+    <span class="govuk-visually-hidden">. If sick, select if they should be paid</span>
+{% elif reason.code === 'REFUSED' %}
+    <span class="govuk-visually-hidden">. If refused, add a case note</span>
+{% elif reason.code === 'REST' %}
+    <span class="govuk-visually-hidden">. If resting, select if they should be paid</span>
+{% elif reason.captureOtherText %}
+    <span class="govuk-visually-hidden">. If the absence reason is not listed, add a reason</span>
+{% endif %}
+{% endmacro %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
@@ -182,10 +195,11 @@
                      {% for notAttendedReason in notAttendedReasons %}
                         {% if (notAttendedReason.code != "CLASH") or (prisoner.otherEvents|length and not hasActivityClash) %}
                             {% set conditionalOptionsHtml = nestedReasonData(prisonerIndex, notAttendedReason, prisoner, validationErrors, formResponses) | trim %}
+                            {% set conditionalRevealExplanationText = getSpanContent(notAttendedReason) %}
                             {% set notAttendedReasonOptions = (notAttendedReasonOptions.push(
                                  {
                                     value: notAttendedReason.code,
-                                    text: notAttendedReason.description,
+                                    html: '<p class="govuk-body">' + notAttendedReason.description + conditionalRevealExplanationText + '</p>',
                                     conditional: {
                                         html: conditionalOptionsHtml if conditionalOptionsHtml | length
                                     },

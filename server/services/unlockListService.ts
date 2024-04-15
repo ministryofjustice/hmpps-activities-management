@@ -3,29 +3,14 @@ import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
 import { scheduledEventSort, toDateString } from '../utils/utils'
+import AlertsFilterService from './alertsFilterService'
 
 export default class UnlockListService {
   constructor(
     private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
     private readonly activitiesApiClient: ActivitiesApiClient,
+    private readonly alertsFilterService: AlertsFilterService,
   ) {}
-
-  private readonly ALERT_FILTERS = [
-    { key: 'ALERT_HA', description: 'ACCT', codes: ['HA'] },
-    { key: 'ALERT_XCU', description: 'Controlled unlock', codes: ['XCU'] },
-    { key: 'ALERT_XEL', description: 'Escape list', codes: ['XEL'] },
-    { key: 'ALERT_PEEP', description: 'PEEP', codes: ['PEEP'] },
-  ]
-
-  private readonly CATEGORY_FILTERS = [
-    { key: 'CAT_A', description: 'Category A', codes: ['A', 'E'] },
-    { key: 'CAT_A_HIGHER', description: 'Category A - high', codes: ['H'] },
-    { key: 'CAT_A_PROVISIONAL', description: 'Category A - provisional', codes: ['P'] },
-  ]
-
-  getAllAlertFilterOptions() {
-    return this.ALERT_FILTERS.concat(this.CATEGORY_FILTERS)
-  }
 
   async getFilteredUnlockList(
     date: Date,
@@ -65,14 +50,6 @@ export default class UnlockListService {
       return []
     }
 
-    const selectedCategories = this.CATEGORY_FILTERS.filter(cat => alertFilters.includes(cat.key)).flatMap(
-      cat => cat.codes,
-    )
-
-    const selectedAlertCodes = this.ALERT_FILTERS.filter(alert => alertFilters.includes(alert.key)).flatMap(
-      alert => alert.codes,
-    )
-
     // Create unlock list items for each prisoner returned and populate their sub-location by cell-matching
     const prisoners = results?.content?.map(prisoner => {
       return {
@@ -80,9 +57,9 @@ export default class UnlockListService {
         bookingId: prisoner?.bookingId,
         prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
         cellLocation: prisoner?.cellLocation,
-        category: selectedCategories.find(cat => cat === prisoner?.category),
+        category: this.alertsFilterService.getFilteredCategory(alertFilters, prisoner?.category),
         incentiveLevel: prisoner?.currentIncentive,
-        alerts: prisoner?.alerts?.filter(a => selectedAlertCodes.includes(a.alertCode)),
+        alerts: this.alertsFilterService.getFilteredAlerts(alertFilters, prisoner?.alerts),
         status: prisoner?.inOutStatus,
         prisonCode: prisoner?.prisonId,
         locationGroup: location,

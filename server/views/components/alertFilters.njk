@@ -1,0 +1,31 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+{% macro alertFilters(allAlerts, selectedAlerts) %}
+
+    {% set alertFilters = [] %}
+    {% for alert in allAlerts %}
+        {% set alertFilters = (alertFilters.push({
+                value: alert.key,
+                text: alert.description,
+                checked: alert.key in selectedAlerts
+        }), alertFilters) %}
+    {% endfor %}
+
+    {{ govukCheckboxes({
+        idPrefix: 'alertFilters',
+        name: 'alertFilters',
+        classes: "govuk-checkboxes--small",
+        fieldset: {
+                legend: {
+                        text: 'Alerts',
+                        classes: 'govuk-fieldset__legend--m'
+                }
+        },
+        items: alertFilters
+    }) }}
+
+    <div class="govuk-!-margin-bottom-4">
+        <a href="#" class="govuk-link govuk-link--no-visited-state"
+           data-module="select-all-link" data-checkbox-name="alertFilters"></a>
+    </div>
+{% endmacro %}

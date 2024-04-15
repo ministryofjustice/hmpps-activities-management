@@ -15,6 +15,7 @@ import { UnlockListJourney } from '../../routes/activities/unlock-list/journey'
 import { WaitListApplicationJourney } from '../../routes/activities/waitlist-application/journey'
 import { SuspendJourney } from '../../routes/activities/suspensions/journey'
 import { UserDetails } from '../manageUsersApiImport/types'
+import { MovementListJourney } from '../../routes/activities/movement-list/journey'
 
 export default {}
 
@@ -37,6 +38,7 @@ declare module 'express-session' {
     calendarSpikeJourney: CalendarSpikeJourney
     attendanceSummaryJourney: AttendanceSummaryJourney
     unlockListJourney: UnlockListJourney
+    movementListJourney: MovementListJourney
     waitListApplicationJourney: WaitListApplicationJourney
     notAttendedJourney: NotAttendedJourney
     recordAttendanceRequests: RecordAttendanceRequests

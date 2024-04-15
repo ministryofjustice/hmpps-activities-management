@@ -4,14 +4,12 @@ import Page from '../../pages/page'
 import getLocationGroups from '../../fixtures/activitiesApi/getLocationGroups.json'
 import ActivitiesIndexPage from '../../pages/activities'
 import UnlockAndMovementIndexPage from '../../pages/unlockAndMovements/unlockAndMovementDashboard'
-import ChooseDateAndLocationPage from '../../pages/unlockAndMovements/chooseDateAndLocation'
+import ChooseDateAndLocationPage from '../../pages/unlockAndMovements/unlock/chooseDateAndLocation'
 import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ-A8644DY.json'
 import getScheduledEvents from '../../fixtures/activitiesApi/getScheduleEvents-MDI-A1350DZ-A8644DY.json'
-import PlannedEventsPage from '../../pages/unlockAndMovements/plannedEventsPage'
+import PlannedEventsPage from '../../pages/unlockAndMovements/unlock/plannedEventsPage'
+import { CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE } from '../../pages/unlockAndMovements/abstractEventsPage'
 
-const catABadge = { clazz: 'cat-a-status--a', text: 'CAT A' }
-const peepBadge = { clazz: 'alert-status--disability', text: 'PEEP' }
-const controlledUnlockBadge = { clazz: 'alert-status--controlled-unlock', text: 'Controlled Unlock' }
 context('Create activity', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
   const locPrefixBlock1 = 'MDI-1-.+'
@@ -75,8 +73,8 @@ context('Create activity', () => {
     chooseDateAndLocationPage.continue()
 
     const plannedEventsPage = Page.verifyOnPage(PlannedEventsPage)
-    plannedEventsPage.assertBadges(0, controlledUnlockBadge, peepBadge)
-    plannedEventsPage.assertBadges(1, catABadge, controlledUnlockBadge)
+    plannedEventsPage.assertBadges(0, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE)
+    plannedEventsPage.assertBadges(1, CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE)
 
     plannedEventsPage.getButton('Show filter').click()
     plannedEventsPage.acctAlertCheckbox().should('be.checked')
@@ -90,8 +88,8 @@ context('Create activity', () => {
     plannedEventsPage.controlledUnlockAlertCheckbox().uncheck()
     plannedEventsPage.getButton('Apply filters').eq(0).click()
 
-    plannedEventsPage.assertBadges(0, peepBadge)
-    plannedEventsPage.assertBadges(1, catABadge)
+    plannedEventsPage.assertBadges(0, PEEP_BADGE)
+    plannedEventsPage.assertBadges(1, CAT_A_BADGE)
 
     plannedEventsPage.getButton('Show filter').click()
     plannedEventsPage.acctAlertCheckbox().should('be.checked')
@@ -104,8 +102,8 @@ context('Create activity', () => {
 
     plannedEventsPage.selectAllAlerts().click()
     plannedEventsPage.getButton('Apply filters').eq(0).click()
-    plannedEventsPage.assertBadges(0, controlledUnlockBadge, peepBadge)
-    plannedEventsPage.assertBadges(1, catABadge, controlledUnlockBadge)
+    plannedEventsPage.assertBadges(0, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE)
+    plannedEventsPage.assertBadges(1, CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE)
 
     plannedEventsPage.getButton('Show filter').click()
     plannedEventsPage.selectAllAlerts().click()
