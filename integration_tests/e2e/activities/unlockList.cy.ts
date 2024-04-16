@@ -76,7 +76,7 @@ context('Create activity', () => {
     plannedEventsPage.assertBadges(0, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE)
     plannedEventsPage.assertBadges(1, CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE)
 
-    plannedEventsPage.getButton('Show filter').click()
+    plannedEventsPage.getButton('Hide filter').should('be.visible')
     plannedEventsPage.acctAlertCheckbox().should('be.checked')
     plannedEventsPage.controlledUnlockAlertCheckbox().should('be.checked')
     plannedEventsPage.eListAlertCheckbox().should('be.checked')
@@ -91,7 +91,7 @@ context('Create activity', () => {
     plannedEventsPage.assertBadges(0, PEEP_BADGE)
     plannedEventsPage.assertBadges(1, CAT_A_BADGE)
 
-    plannedEventsPage.getButton('Show filter').click()
+    plannedEventsPage.getButton('Hide filter').should('be.visible')
     plannedEventsPage.acctAlertCheckbox().should('be.checked')
     plannedEventsPage.controlledUnlockAlertCheckbox().should('not.be.checked')
     plannedEventsPage.eListAlertCheckbox().should('be.checked')
@@ -105,7 +105,7 @@ context('Create activity', () => {
     plannedEventsPage.assertBadges(0, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE)
     plannedEventsPage.assertBadges(1, CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE)
 
-    plannedEventsPage.getButton('Show filter').click()
+    plannedEventsPage.getButton('Hide filter').should('be.visible')
     plannedEventsPage.selectAllAlerts().click()
     plannedEventsPage.acctAlertCheckbox().should('not.be.checked')
     plannedEventsPage.controlledUnlockAlertCheckbox().should('not.be.checked')
