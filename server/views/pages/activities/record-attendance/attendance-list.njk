@@ -130,6 +130,10 @@
                 {
                     html: '<span class="print-checkbox govuk-!-margin-left-3"></span>',
                     classes: 'govuk-table_cell print-only'
+                } if instance.activitySchedule.activity.attendanceRequired else 
+                {
+                    html: '<span class="govuk-!-margin-left-0"></span>',
+                    classes: 'govuk-table_cell print-only'
                 },
                 {
                     html: showProfileLink({
