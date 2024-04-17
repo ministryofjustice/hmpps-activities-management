@@ -6,7 +6,7 @@
 
     position: sticky;
     z-index: 999;
-    top: -1px;
+    top: 0px;
   }
 
   .govuk-table__header {
@@ -100,5 +100,13 @@
 
   .govuk-width-container {
     justify-content: space-between;
+  }
+}
+
+// This is required to override a style added by govuk-frontend 
+// which sets the S-P-T to 0 when sticky is used
+@supports (position: sticky) {
+  .govuk-template {
+      scroll-padding-top: 80px !important;
   }
 }
