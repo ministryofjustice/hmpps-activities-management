@@ -128,6 +128,10 @@ export function registerNunjucks(app?: express.Express): Environment {
     const name = prisonerName(str, bold)
     return name ? njkEnv.getFilter('safe')(name) : null
   })
+  njkEnv.addFilter('prisonerNameForSorting', str => {
+    const name = njkEnv.getFilter('prisonerName')(str, false)
+    return name.val || null
+  })
   njkEnv.addFilter('setSelected', setSelected)
   njkEnv.addFilter('addDefaultSelectedValue', addDefaultSelectedValue)
   njkEnv.addFilter('toTimeItems', toTimeItems)
