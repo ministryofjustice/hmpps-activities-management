@@ -15,8 +15,15 @@ export default function setUpStaticResources(): Router {
 
   router.use('/assets', express.static(path.join(process.cwd(), '/assets'), cacheControl))
 
-  // TODO: Peer dependency of moj-frontend & dpr-frontend, consider helping to remove this from there and therefore as a dependency of this project
+  // TODO: Peer dependency of moj-frontend, consider helping to remove this from there and therefore as a dependency of this project
   router.use('/assets', express.static(path.join(process.cwd(), '/node_modules/jquery/dist'), cacheControl))
+
+  router.use(
+    '/assets/dpr',
+    express.static(
+      path.join(process.cwd(), '/node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/assets'),
+    ),
+  )
 
   // Don't cache dynamic resources
   router.use(noCache())
