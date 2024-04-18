@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { defineConfig } from 'cypress'
 import { resetStubs } from './integration_tests/mockApis/wiremock'
 import stubs from './integration_tests/mockApis/stubs'
@@ -18,6 +19,16 @@ export default defineConfig({
       on('task', {
         reset: resetStubs,
         ...stubs,
+        log(message) {
+          console.log(message)
+
+          return null
+        },
+        table(message) {
+          console.table(message)
+
+          return null
+        },
       })
     },
     baseUrl: 'http://localhost:3007',
