@@ -150,7 +150,7 @@
 {% endblock %}
 
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate, user) %}
-    {% set tab = 'day-tab' if timeSlot === 'DAY' %}
+    {% set tab = 'day-tab' if timeSlot == 'DAY' %}
     {% set attendanceRows = [] %}
     {% for attendee in attendees %}
         {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
@@ -227,7 +227,7 @@
                 attributes: { "aria-sort": "none" }
             },
             {
-                text: "Activity" if tab === 'day-tab' and (status == "NotAttended" or status == "Attended") else "Session",
+                text: "Activity" if tab == 'day-tab' and (status == "NotAttended" or status == "Attended") else "Session",
                 attributes: { "aria-sort": "ascending" }
             },
             {
