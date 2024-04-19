@@ -120,7 +120,7 @@
                                     prisonerNumber: prisonerEvents.prisonerNumber,
                                     inCaseLoad: prisonerEvents.prisonId == user.activeCaseLoadId
                                 }),
-                                attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-name-and-number', "data-sort-value": (prisonerEvents.firstName + " " + prisonerEvents.lastName) | toTitleCase | prisonerName(false) }
+                                attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-name-and-number', "data-sort-value": (prisonerEvents.firstName + " " + prisonerEvents.lastName) | toTitleCase | prisonerNameForSorting }
                             }, {
                                 text: statusBasedCellLocation(prisonerEvents.cellLocation, prisonerEvents.status, prisonerEvents.prisonId == user.activeCaseLoadId),
                                 attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-cell-location' }
