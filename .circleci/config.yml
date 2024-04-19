@@ -38,6 +38,9 @@ jobs:
             - node_modules
             - ~/.cache
       - run:
+          name: List resolved dependency tree
+          command: npm ls --all
+      - run:
           command: |
             npm run build
             DATE=$(date '+%Y-%m-%d')
