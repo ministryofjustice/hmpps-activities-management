@@ -154,7 +154,7 @@
         {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
             {% set attendanceRows = (attendanceRows.push([
                 {
-                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name | prisonerName(false) },
+                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name | prisonerNameForSorting },
                     html: showProfileLink({
                         name: attendee.name,
                         prisonerNumber: attendee.prisonerNumber,

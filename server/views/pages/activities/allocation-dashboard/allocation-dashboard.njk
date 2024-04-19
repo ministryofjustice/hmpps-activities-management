@@ -211,7 +211,7 @@
                         inCaseLoad: row.prisonerPrisonCode == user.activeCaseLoadId
                     }),
                     attributes: {
-                        "data-sort-value": row.name | prisonerName(false)
+                        "data-sort-value": row.name | prisonerNameForSorting
                     }
                 },
                 {
@@ -450,7 +450,7 @@
                         inCaseLoad: row.prisonerPrisonCode == user.activeCaseLoadId
                     }),
                     attributes: {
-                        "data-sort-value": row.name | prisonerName(false)
+                        "data-sort-value": row.name | prisonerNameForSorting
                     }
                 },
                 {
@@ -680,7 +680,7 @@
                         cellLocation: row.cellLocation
                     }),
                     attributes: {
-                        "data-sort-value": row.name | prisonerName(false)
+                        "data-sort-value": row.name | prisonerNameForSorting
                     }
                 },
                 {
