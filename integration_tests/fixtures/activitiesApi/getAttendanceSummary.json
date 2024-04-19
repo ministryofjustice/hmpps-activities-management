@@ -11,6 +11,7 @@
     "inCell": false,
     "onWing": false,
     "offWing": false,
+    "attendanceRequired": true,
     "internalLocation": 98877667,
     "cancelled": false,
     "attendanceSummary": {
@@ -34,6 +35,7 @@
     "inCell": false,
     "onWing": false,
     "offWing": false,
+    "attendanceRequired": false,
     "internalLocation": 98877667,
     "cancelled": false,
     "attendanceSummary": {
@@ -57,6 +59,7 @@
     "inCell": false,
     "onWing": false,
     "offWing": false,
+    "attendanceRequired": true,
     "internalLocation": 98877667,
     "cancelled": false,
     "attendanceSummary": {
@@ -80,6 +83,7 @@
     "inCell": false,
     "onWing": false,
     "offWing": false,
+    "attendanceRequired": true,
     "internalLocation": 98877667,
     "cancelled": false,
     "attendanceSummary": {
@@ -103,6 +107,7 @@
     "inCell": false,
     "onWing": false,
     "offWing": false,
+    "attendanceRequired": false,
     "internalLocation": 98877667,
     "cancelled": false,
     "attendanceSummary": {

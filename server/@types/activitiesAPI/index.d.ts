@@ -5714,6 +5714,11 @@ export interface components {
        */
       cancelled: boolean
       attendanceSummary: components['schemas']['AttendanceSummaryDetails']
+      /**
+       * @description Flag to indicate if attendance is required
+       * @example false
+       */
+      attendanceRequired: boolean
     }
     /** @description Describes the rollout plan of a prison which may or may not be rolled out */
     RolloutPrisonPlan: {
