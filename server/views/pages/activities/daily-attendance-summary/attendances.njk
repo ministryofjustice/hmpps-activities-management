@@ -14,6 +14,7 @@
 {% set pageTitle = applicationName + " - Daily attendance list" %}
 {% set pageId = 'daily-attendance-detail-page' %}
 {% set jsBackLink = true %}
+{% set tab = '' %}
 
 {% block content %}
     {% set filterOptionsHtml %}
@@ -149,6 +150,7 @@
 {% endblock %}
 
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate, user) %}
+    {% set tab = 'day-tab' if timeSlot == 'DAY' %}
     {% set attendanceRows = [] %}
     {% for attendee in attendees %}
         {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
@@ -173,6 +175,11 @@
                     html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>',
                     classes: 'govuk-table__cell'
                 },
+                {
+                    attributes: { id: 'session-' + loop.index, "data-sort-value": attendee.attendance.timeSlot },
+                    text: attendee.attendance.timeSlot,
+                    classes: 'govuk-table__cell'
+                } if (status == "NotAttended" or status == "Attended") and tab == "day-tab",
                 {
                     attributes: { id: 'recorded-time-' + loop.index, "data-sort-value": attendee.location },
                     text: attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('HH:mm:ss') + ' on ' + attendee.attendance.recordedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMM yyyy'),
@@ -220,9 +227,13 @@
                 attributes: { "aria-sort": "none" }
             },
             {
-                html: "Session",
+                text: "Activity" if tab == 'day-tab' and (status == "NotAttended" or status == "Attended") else "Session",
                 attributes: { "aria-sort": "ascending" }
             },
+            {
+                text: "Session",
+                attributes: { "aria-sort": "none" }
+            }  if (status == "NotAttended" or status == "Attended") and tab == 'day-tab',
             {
                 html: "Time recorded",
                 attributes: { "aria-sort": "none" }
