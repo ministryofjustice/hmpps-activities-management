@@ -78,7 +78,7 @@
     "@hmcts/uk-bank-holidays": "^1.0.2",
     "@microsoft/applicationinsights-web": "^3.1.2",
     "@ministryofjustice/frontend": "^2.1.2",
-    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^3.7.5",
+    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "3.7.4",
     "@types/express-serve-static-core": "^4.19.0",
     "@types/lodash": "^4.17.0",
     "accessible-autocomplete": "^2.0.4",
