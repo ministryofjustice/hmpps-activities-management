@@ -21,8 +21,7 @@
       "attended": 1,
       "absences": 0,
       "paid": 1
-    },
-    "attendanceRequired": true
+    }
   },
   {
     "scheduledInstanceId": 189,
@@ -50,8 +49,7 @@
       "attended": 1,
       "absences": 0,
       "paid": 1
-    },
-    "attendanceRequired": true
+    }
   },
   {
     "scheduledInstanceId": 236,
@@ -75,7 +73,6 @@
       "attended": 1,
       "absences": 2,
       "paid": 1
-    },
-    "attendanceRequired": true
+    }
   }
 ]
