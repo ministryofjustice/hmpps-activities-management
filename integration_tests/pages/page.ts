@@ -1,5 +1,6 @@
 import path from 'path'
 import { format, getDate, getMonth, getYear, parse } from 'date-fns'
+import * as axe from 'axe-core'
 import DatePicker from '../components/datePicker'
 import SummaryList from '../components/summaryList'
 import { formatDatePickerDate } from '../../server/utils/datePickerUtils'
@@ -26,7 +27,7 @@ export default abstract class Page {
           { id: 'color-contrast', enabled: false },
         ],
       })
-      cy.checkA11y()
+      cy.checkA11y(null, null, this.terminalLog)
     }
   }
 
@@ -107,13 +108,13 @@ export default abstract class Page {
     this.datePickerDialog().should('not.be.visible')
     cy.get('.hmpps-datepicker-button').click()
     this.datePickerDialog().should('be.visible')
-    cy.checkA11y()
+    cy.checkA11y(null, null, this.terminalLog)
   }
 
   closeDatePicker = () => {
     this.datePickerDialog().find(`button:contains('Cancel')`).click()
     this.datePickerDialog().should('not.be.visible')
-    cy.checkA11y()
+    cy.checkA11y(null, null, this.terminalLog)
   }
 
   selectDatePickerDate = (date: Date) => {
@@ -138,7 +139,7 @@ export default abstract class Page {
       }
     })
 
-    cy.checkA11y()
+    cy.checkA11y(null, null, this.terminalLog)
 
     // Select day
     cy.get('.hmpps-datepicker__dialog__table')
@@ -162,5 +163,33 @@ export default abstract class Page {
       .contains(new RegExp(`^${getDate(date).toString()}$`))
       .should('have.class', 'hmpps-datepicker-selected')
     this.closeDatePicker()
+  }
+
+  terminalLog(violations: axe.Result[]) {
+    const violationData = violations.map(({ id, impact, help, helpUrl, nodes }) => ({
+      id,
+      impact,
+      help,
+      helpUrl,
+      nodes: nodes.length,
+    }))
+
+    if (violationData.length > 0) {
+      cy.task('log', 'Violation summary')
+      cy.task('table', violationData)
+
+      cy.task('log', 'Violation detail')
+      cy.task('log', '----------------')
+
+      violations.forEach(v => {
+        v.nodes.forEach(node => {
+          cy.task('log', node.failureSummary)
+          cy.task('log', `Impact: ${node.impact}`)
+          cy.task('log', `Target: ${node.target}`)
+          cy.task('log', `HTML: ${node.html}`)
+          cy.task('log', '----------------')
+        })
+      })
+    }
   }
 }
