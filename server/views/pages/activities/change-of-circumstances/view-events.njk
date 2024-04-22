@@ -109,7 +109,12 @@
         ({ text: "Alert updated", classes: "govuk-tag--red" } if 'alerts-updated' in event.eventType) or
         ({ text: "Non-association", classes: "govuk-tag--orange" } if 'non-association' in event.eventType) or
         ({ text: "IEP status", classes: "govuk-tag--green" } if 'iep-review' in event.eventType) or
-        ({ text: "Release", classes: "govuk-tag--green" } if 'activities-changed' in event.eventType or 'appointments-changed' in event.eventType or 'prisoner.released' in event.eventType) or
+        ({ text: "Activities suspended", classes: "govuk-tag--green" } if ('activities-changed' in event.eventType and event.eventDescription === 'ACTIVITY_SUSPENDED')) or
+        ({ text: "Activities ended", classes: "govuk-tag--green" } if ('activities-changed' in event.eventType and event.eventDescription === 'ACTIVITY_ENDED')) or
+        ({ text: "Temporary release", classes: "govuk-tag--green" } if ('prisoner.released' in event.eventType and event.eventDescription === 'TEMPORARY_RELEASE')) or
+        ({ text: "Permanent release", classes: "govuk-tag--green" } if ('prisoner.released' in event.eventType and event.eventDescription === 'PERMANENT_RELEASE')) or
+        ({ text: "Release", classes: "govuk-tag--green" } if 'prisoner.released' in event.eventType) or
+        ({ text: "Appointments cancelled", classes: "govuk-tag--green" } if 'appointments-changed' in event.eventType) or
         ({ text: "Cell-move", classes: "govuk-tag--blue" } if 'cell.move' in event.eventType) or
         { text: "Unknown-event", classes: "govuk-tag--yellow"} %}
 

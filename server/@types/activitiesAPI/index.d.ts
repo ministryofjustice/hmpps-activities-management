@@ -84,6 +84,7 @@ export interface paths {
      * Requires one of the following roles:
      * * PRISON
      * * ACTIVITY_ADMIN
+     * * ACTIVITIES_MANAGEMENT__RO
      */
     post: operations['searchWaitingLists']
   }
@@ -169,6 +170,7 @@ export interface paths {
      * Requires one of the following roles:
      * * PRISON
      * * ACTIVITY_ADMIN
+     * * ACTIVITIES_MANAGEMENT__RO
      */
     post: operations['prisonerAllocations']
   }
@@ -455,9 +457,10 @@ export interface paths {
   '/subject-access-request': {
     /**
      * Provides content for a prisoner to satisfy the needs of a subject access request on their behalf
-     * @description
+     * @description Requires role SAR_DATA_ACCESS or additional role as specified by hmpps.sar.additionalAccessRole configuration.
      *
      * Requires one of the following roles:
+     * * SAR_DATA_ACCESS
      * * SAR_DATA_ACCESS
      */
     get: operations['getSarContentByReference']
@@ -635,6 +638,7 @@ export interface paths {
      * Requires one of the following roles:
      * * PRISON
      * * ACTIVITY_ADMIN
+     * * ACTIVITIES_MANAGEMENT__RO
      */
     get: operations['getActivities']
   }
@@ -928,6 +932,7 @@ export interface paths {
      * Requires one of the following roles:
      * * PRISON
      * * ACTIVITY_ADMIN
+     * * ACTIVITIES_MANAGEMENT__RO
      */
     get: operations['getActivityKeyIds']
   }
@@ -1618,7 +1623,7 @@ export interface components {
     PageableObject: {
       /** Format: int64 */
       offset?: number
-      sort?: components['schemas']['SortObject']
+      sort?: components['schemas']['SortObject'][]
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
@@ -1638,16 +1643,18 @@ export interface components {
       content?: components['schemas']['WaitingListApplication'][]
       /** Format: int32 */
       number?: number
-      sort?: components['schemas']['SortObject']
+      sort?: components['schemas']['SortObject'][]
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
-      empty?: boolean
-      sorted?: boolean
-      unsorted?: boolean
+      direction?: string
+      nullHandling?: string
+      ascending?: boolean
+      property?: string
+      ignoreCase?: boolean
     }
     /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
     WaitingListApplication: {
@@ -4731,7 +4738,7 @@ export interface components {
        * @default false
        * @example true
        */
-      removeEndDate: boolean
+      removeEndDate?: boolean
       /**
        * @description Flag to indicate if the activity is a paid activity or not. If true then pay rates are required, if false then no pay rates should be provided. Cannot be updated if already allocated.
        * @example true
@@ -4870,208 +4877,9 @@ export interface components {
        */
       issuePayment?: boolean
     }
-    /** @description All of the allocations for the prisoner for the period */
-    SarAllocation: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this allocation
-       * @example 123456
-       */
-      allocationId: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * @description The status of the allocation
-       * @example ACTIVE
-       */
-      prisonerStatus: string
-      /**
-       * Format: date
-       * @description The start date of the allocation
-       * @example 2022-01-01
-       */
-      startDate: string
-      /**
-       * Format: date
-       * @description The end date of the allocation, can be null
-       * @example 2024-01-01
-       */
-      endDate?: string
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity
-       * @example 123456
-       */
-      activityId: number
-      /**
-       * @description A brief summary description of this activity
-       * @example Maths level 1
-       */
-      activitySummary: string
-      /**
-       * @description The pay band for the allocation, can be null e.g. unpaid activity
-       * @example Pay band 1 (lowest)
-       */
-      payBand?: string
-      /**
-       * Format: date
-       * @description The date the allocation entry was created
-       * @example 2022-01-01
-       */
-      createdDate: string
-    }
-    /** @description All of the appointments for the prisoner for the period */
-    SarAppointment: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this appointment
-       * @example 123456
-       */
-      appointmentId: number
-      /**
-       * @description The prison code where this appointment takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * @description The category code of the appointment
-       * @example CHAP
-       */
-      categoryCode: string
-      /**
-       * Format: date
-       * @description The start date of the appointment
-       * @example 2022-01-01
-       */
-      startDate: string
-      /**
-       * Format: partial-time
-       * @description The start time of the appointment
-       * @example 12:30
-       */
-      startTime: string
-      /**
-       * Format: partial-time
-       * @description The end time of the appointment, can be null
-       * @example 10:15
-       */
-      endTime?: string
-      /**
-       * @description Any extra information about the appointment, can be null
-       * @example Discuss God
-       */
-      extraInformation?: string
-      /**
-       * @description The attendance of the appointment
-       * @example Yes
-       * @enum {string}
-       */
-      attended: 'Yes' | 'No' | 'Unmarked'
-      /**
-       * Format: date
-       * @description The date the appointment entry was created
-       * @example 2022-01-01
-       */
-      createdDate: string
-    }
-    /** @description All of the attendances for the prisoner for the period */
-    SarAttendanceSummary: {
-      /**
-       * @description The summary reason for a recorded prisoner attendance
-       * @example ATTENDED
-       */
-      attendanceReasonCode: string
-      /**
-       * Format: int32
-       * @description A count of attendance for a given reason
-       * @example 3
-       */
-      count: number
-    }
-    /** @description Waiting list applications for a prisoner */
-    SarWaitingList: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this waiting list entry
-       * @example 123456
-       */
-      waitingListId: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * @description A brief summary description of this activity
-       * @example Maths level 1
-       */
-      activitySummary: string
-      /**
-       * Format: date
-       * @description The date the application was added to the waiting list entry
-       * @example 2022-01-01
-       */
-      applicationDate: string
-      /**
-       * @description The identity of the requester of the activity
-       * @example Prison staff
-       */
-      originator: string
-      /**
-       * @description The status of the waiting list entry
-       * @example ACTIVE
-       */
-      status: string
-      /**
-       * Format: date
-       * @description The date the waiting list entry was last updated, can be null
-       * @example 2022-01-01
-       */
-      statusDate?: string
-      /**
-       * @description The comments associated with this waiting list entry, can be null
-       * @example OK to proceed
-       */
-      comments?: string
-      /**
-       * Format: date
-       * @description The date the waiting list entry was created
-       * @example 2022-01-01
-       */
-      createdDate: string
-    }
-    SubjectAccessRequestContent: {
-      content: components['schemas']['SubjectAccessRequestData']
-    }
-    SubjectAccessRequestData: {
-      /**
-       * @description The prisoner number (Nomis ID)
-       * @example A1234AA
-       */
-      prisonerNumber: string
-      /**
-       * Format: date
-       * @description The from date for the request
-       * @example 2022-01-01
-       */
-      fromDate: string
-      /**
-       * Format: date
-       * @description The to date for the request
-       * @example 2024-01-01
-       */
-      toDate: string
-      /** @description All of the allocations for the prisoner for the period */
-      allocations: components['schemas']['SarAllocation'][]
-      /** @description All of the attendances for the prisoner for the period */
-      attendanceSummary: components['schemas']['SarAttendanceSummary'][]
-      /** @description Waiting list applications for a prisoner */
-      waitingListApplications: components['schemas']['SarWaitingList'][]
-      /** @description All of the appointments for the prisoner for the period */
-      appointments: components['schemas']['SarAppointment'][]
+    HmppsSubjectAccessRequestContent: {
+      /** @description The content of the subject access request response */
+      content: Record<string, never>
     }
     /** @description Describes a pay rate applied to an activity */
     ActivityPayLite: {
@@ -5434,7 +5242,7 @@ export interface components {
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
-      sort?: components['schemas']['SortObject']
+      sort?: components['schemas']['SortObject'][]
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
@@ -6008,6 +5816,17 @@ export interface components {
        * @example U4588F
        */
       acknowledgedBy?: string
+      /**
+       * @description A simple description of the event acton
+       * @example ACTIVITY_SUSPENDED
+       * @enum {string}
+       */
+      eventDescription?:
+        | 'ACTIVITY_SUSPENDED'
+        | 'ACTIVITY_ENDED'
+        | 'RELEASED'
+        | 'PERMANENT_RELEASE'
+        | 'TEMPORARY_RELEASE'
     }
     /** @description The result of an event review search */
     EventReviewSearchResults: {
@@ -7108,6 +6927,7 @@ export interface operations {
    * Requires one of the following roles:
    * * PRISON
    * * ACTIVITY_ADMIN
+   * * ACTIVITIES_MANAGEMENT__RO
    */
   searchWaitingLists: {
     parameters: {
@@ -7484,6 +7304,7 @@ export interface operations {
    * Requires one of the following roles:
    * * PRISON
    * * ACTIVITY_ADMIN
+   * * ACTIVITIES_MANAGEMENT__RO
    */
   prisonerAllocations: {
     parameters: {
@@ -8609,9 +8430,10 @@ export interface operations {
   }
   /**
    * Provides content for a prisoner to satisfy the needs of a subject access request on their behalf
-   * @description
+   * @description Requires role SAR_DATA_ACCESS or additional role as specified by hmpps.sar.additionalAccessRole configuration.
    *
    * Requires one of the following roles:
+   * * SAR_DATA_ACCESS
    * * SAR_DATA_ACCESS
    */
   getSarContentByReference: {
@@ -8631,7 +8453,7 @@ export interface operations {
       /** @description Request successfully processed - content found */
       200: {
         content: {
-          'application/json': components['schemas']['SubjectAccessRequestContent']
+          'application/json': components['schemas']['HmppsSubjectAccessRequestContent']
         }
       }
       /** @description Request successfully processed - no content found */
@@ -8643,7 +8465,7 @@ export interface operations {
       /** @description Subject Identifier is not recognised by this service */
       209: {
         content: {
-          'application/json': components['schemas']['ErrorResponse']
+          'application/json': Record<string, never>
         }
       }
       /** @description The client does not have authorisation to make this request */
@@ -9141,6 +8963,8 @@ export interface operations {
         endDate: string
         /** @description The time slot (optional). If supplied, one of AM, PM or ED. */
         slot?: 'AM' | 'PM' | 'ED'
+        /** @description Return cancelled scheduled instances? */
+        cancelled?: boolean
       }
       path: {
         /** @description The 3-character prison code. */
@@ -9336,6 +9160,7 @@ export interface operations {
    * Requires one of the following roles:
    * * PRISON
    * * ACTIVITY_ADMIN
+   * * ACTIVITIES_MANAGEMENT__RO
    */
   getActivities: {
     parameters: {
@@ -10355,6 +10180,7 @@ export interface operations {
    * Requires one of the following roles:
    * * PRISON
    * * ACTIVITY_ADMIN
+   * * ACTIVITIES_MANAGEMENT__RO
    */
   getActivityKeyIds: {
     parameters: {
