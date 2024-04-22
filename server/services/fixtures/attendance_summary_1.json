@@ -11,6 +11,7 @@
     "inCell": true,
     "onWing": false,
     "offWing": false,
+    "attendanceRequired": true,
     "internalLocation": null,
     "cancelled": false,
     "attendanceSummary": {
@@ -34,6 +35,7 @@
     "inCell": false,
     "onWing": false,
     "offWing": false,
+    "attendanceRequired": false,
     "internalLocation": {
       "id": 100,
       "code": "MDI-WORK-1",
@@ -61,6 +63,7 @@
     "inCell": false,
     "onWing": true,
     "offWing": false,
+    "attendanceRequired": true,
     "internalLocation": null,
     "cancelled": false,
     "attendanceSummary": {
