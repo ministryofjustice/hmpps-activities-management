@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "code": "EDU_LEVEL",
+    "name": "English Level 1",
+    "description": "English Level 1"
+  },
+  {
+    "id": 2,
+    "code": "EDU_LEVEL",
+    "name": "English Level 2",
+    "description": "English Level 2"
+  },
+  {
+    "id": 3,
+    "code": "GYM_SPORTS_FITNESS",
+    "name": "Football",
+    "description": "Football"
+  },
+  {
+    "id": 4,
+    "code": "EDU_LEVEL",
+    "name": "Maths Level 1",
+    "description": "Maths Level 1"
+  }
+]

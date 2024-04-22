@@ -202,7 +202,7 @@
                         "data-sort-value": activity.attendanceSummary.attended or 0
                     },
                     classes: 'govuk-table__cell--numeric',
-                    text: attendanceStat(activity.attendanceSummary.attended)
+                    text: attendanceStat(activity.attendanceSummary.attended, activity.attendanceRequired)
                 },
                 {
                     attributes: {
@@ -210,7 +210,7 @@
                         "data-sort-value": activity.attendanceSummary.notRecorded or 0
                     },
                     classes: 'govuk-table__cell--numeric',
-                    text: attendanceStat(activity.attendanceSummary.notRecorded)
+                    text: attendanceStat(activity.attendanceSummary.notRecorded, activity.attendanceRequired)
                 },
                 {
                     attributes: {
@@ -218,14 +218,15 @@
                         "data-sort-value": activity.attendanceSummary.absences or 0
                     },
                     classes: 'govuk-table__cell--numeric',
-                    text: attendanceStat(activity.attendanceSummary.absences)
+                    text: attendanceStat(activity.attendanceSummary.absences, activity.attendanceRequired)
                 }
             ]), rows) %}
         {% endfor %}
 
         {{ govukTable({
             attributes: {
-                'data-module': 'moj-sortable-table'
+                'data-module': 'moj-sortable-table',
+                'data-qa': 'table-session-' + session
             },
             caption: caption + " (" + rows.length + ")",
             head: [
@@ -292,6 +293,6 @@
     {% endif %}
 {% endmacro %}
 
-{% macro attendanceStat(stat) %}
-    {{ stat if stat !== null else '-' }}
+{% macro attendanceStat(stat, attendanceRequired=true) %}
+    {{ stat if stat !== null and attendanceRequired === true else '-' }}
 {% endmacro %}
