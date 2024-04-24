@@ -11,6 +11,7 @@ export default class AlertsFilterService {
     { key: 'ALERT_XCU', description: 'Controlled unlock', codes: ['XCU'] },
     { key: 'ALERT_XEL', description: 'Escape list', codes: ['XEL'] },
     { key: 'ALERT_PEEP', description: 'PEEP', codes: ['PEEP'] },
+    { key: 'ALERT_TACT', description: 'TACT', codes: ['XTACT'] },
   ]
 
   private readonly CATEGORY_FILTERS: AlertFilterOption[] = [
