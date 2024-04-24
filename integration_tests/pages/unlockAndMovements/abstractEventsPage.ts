@@ -28,6 +28,8 @@ export default abstract class AbstractEventsPage extends Page {
 
   peepAlertCheckbox = () => this.alertCheckBox('ALERT_PEEP')
 
+  tactAlertCheckbox = () => this.alertCheckBox('ALERT_TACT')
+
   catAAlertCheckbox = () => this.alertCheckBox('CAT_A')
 
   catAHigherAlertCheckbox = () => this.alertCheckBox('CAT_A_HIGHER')
