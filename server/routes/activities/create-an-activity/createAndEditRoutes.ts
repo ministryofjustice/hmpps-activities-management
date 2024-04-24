@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import createHttpError from 'http-errors'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
@@ -29,7 +28,6 @@ import TierRoutes, { TierForm } from './handlers/tier'
 import OrganiserRoutes, { OrganiserForm } from './handlers/organiser'
 import PayOption, { PayOptionForm } from './handlers/payOption'
 import AttendanceRequired, { AttendanceRequiredForm } from './handlers/attendanceRequired'
-import config from '../../../config'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -111,12 +109,6 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/capacity', capacityHandler.POST, Capacity)
   get('/confirm-capacity', confirmCapacityRouteHandler.GET)
   post('/confirm-capacity', confirmCapacityRouteHandler.POST)
-
-  // Non-attendance routes are only accessible when feature toggle is provided
-  router.use((req, res, next) =>
-    !config.nonAttendanceFeatureToggleEnabled ? next(createHttpError.NotFound()) : next(),
-  )
-
   get('/attendance-required', attendanceRequired.GET, true)
   post('/attendance-required', attendanceRequired.POST, AttendanceRequiredForm)
 
