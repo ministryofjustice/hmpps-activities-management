@@ -4,20 +4,25 @@ import { validate } from 'class-validator'
 import { addDays } from 'date-fns'
 import { NextFunction } from 'express-serve-static-core'
 import createHttpError from 'http-errors'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
 import DaysAndTimesRoutes, { DaysAndTimes } from './daysAndTimes'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
+import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../utils/helpers/activityScheduleValidator')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const findActivitySlotErrorsMock = validateSlotChanges as jest.MockedFunction<typeof validateSlotChanges>
 
 describe('Route Handlers - Create an activity schedule - Days and times', () => {
   const handler = new DaysAndTimesRoutes(activitiesService)
   let req: Request
   let res: Response
   let next: NextFunction
+  const startDate = addDays(new Date(), 1)
+  const endDate = addDays(new Date(), 8)
 
   beforeEach(() => {
     res = {
@@ -31,12 +36,15 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirectOrReturnWithSuccess: jest.fn(),
+      addValidationError: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
       session: {
         createJourney: {
-          startDate: formatIsoDate(addDays(new Date(), 1)),
+          startDate: formatIsoDate(startDate),
+          endDate: formatIsoDate(endDate),
         },
       },
       body: {},
@@ -45,6 +53,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
     } as unknown as Request
 
     next = jest.fn()
+
+    findActivitySlotErrorsMock.mockReturnValue([])
   })
 
   describe('GET', () => {
@@ -315,6 +325,33 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'timeSlotsTuesday', error: 'Select at least one time slot for Tuesday' }])
+    })
+  })
+
+  describe('slots validation', () => {
+    it('validation fails if any slots are outside date range', async () => {
+      req.session.createJourney.scheduleWeeks = 1
+      req.params = {
+        weekNumber: '1',
+      }
+      req.body = {
+        days: ['tuesday', 'friday'],
+        timeSlotsTuesday: ['AM'],
+        timeSlotsFriday: ['PM', 'ED'],
+      }
+
+      findActivitySlotErrorsMock.mockReturnValue([{ weekNumber: 1, day: 'Monday' }])
+
+      await handler.POST(req, res, next)
+
+      const startDateStr = formatDate(startDate)
+      const endDateStr = formatDate(endDate)
+      expect(res.addValidationError).toBeCalledTimes(1)
+      expect(res.addValidationError).toHaveBeenCalledWith(
+        'timeSlotsMonday',
+        `You cannot select Monday. This is because the activity starts on ${startDateStr} and ends on ${endDateStr}`,
+      )
+      expect(res.validationFailed).toBeCalledTimes(1)
     })
   })
 })
