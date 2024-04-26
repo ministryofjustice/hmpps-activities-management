@@ -47,10 +47,15 @@
     window.applicationInsightsRoleName = '{{ applicationInsightsRoleName }}'
     window.authenticatedUser = '{{ user.username }}'
   </script>
-  {# Jquery is required by dpr-frontend #}
-  <script src="/assets/jquery.js"></script>
   <script type="module" src="/assets/javascript/activities.min.js"></script>
   {% for js in feComponents.jsIncludes %}
     <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
   {% endfor %}
+  {# Expose the DPR assets #}
+  <script type="module" src="/assets/dpr/js/all.mjs"></script>
+  <script type="module">
+    import initAll from "/assets/dpr/js/all.mjs";
+
+    initAll();
+  </script>
 {% endblock %}
