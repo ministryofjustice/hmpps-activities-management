@@ -1,0 +1,9 @@
+{% macro appointmentConfirmationTitle(appointmentSet, appointmentJourney) -%}
+  {% if appointmentJourney.retrospective == YesNo.YES %}
+    Appointment created
+  {% elseif appointmentSet %}
+    Set of back-to-backs scheduled
+  {% else %}
+    Appointment scheduled
+  {% endif %}
+{%- endmacro %}
