@@ -298,29 +298,27 @@
         }) }}
     </div>
 
-    {%  if nonAttendanceFeatureToggleEnabled %}
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-        <div class="govuk-grid-row govuk-!-margin-bottom-3">
-            <div class="govuk-grid-column-full">
-                <h2 class="govuk-heading-l">Activities where attendance is not required</h2>
+    <div class="govuk-grid-row govuk-!-margin-bottom-3">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-l">Activities where attendance is not required</h2>
+        </div>
+
+        <div class="govuk-grid-column-full">
+            <div class="govuk-body-l">
+                {{ totalUnattendedAllocated[timeSlot] }} total allocation{% if totalUnattendedAllocated[timeSlot] != 1 %}s{% endif %} for {{ totalUnattendedActivities[timeSlot] }} session{% if totalUnattendedActivities[timeSlot] != 1 %}s{% endif %}
             </div>
+        </div>
 
+        {% if totalUnattendedCancelledSessions[timeSlot] > 0 %}
             <div class="govuk-grid-column-full">
                 <div class="govuk-body-l">
-                    {{ totalUnattendedAllocated[timeSlot] }} total allocation{% if totalUnattendedAllocated[timeSlot] != 1 %}s{% endif %} for {{ totalUnattendedActivities[timeSlot] }} session{% if totalUnattendedActivities[timeSlot] != 1 %}s{% endif %}
+                    {{ totalUnattendedCancelledSessions[timeSlot] }} cancelled session{% if totalUnattendedCancelledSessions[timeSlot] != 1 %}s{% endif %}
                 </div>
             </div>
-
-            {% if totalUnattendedCancelledSessions[timeSlot] > 0 %}
-                <div class="govuk-grid-column-full">
-                    <div class="govuk-body-l">
-                        {{ totalUnattendedCancelledSessions[timeSlot] }} cancelled session{% if totalUnattendedCancelledSessions[timeSlot] != 1 %}s{% endif %}
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
 {% endmacro %}
 
 {% macro stat(params) %}
