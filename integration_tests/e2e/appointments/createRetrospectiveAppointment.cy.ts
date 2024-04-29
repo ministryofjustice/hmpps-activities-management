@@ -177,6 +177,7 @@ context('Create a retrospective appointment', () => {
     )}.`
     confirmationPage.assertMessageEquals(successMessage)
     confirmationPage.assertCreateAnotherLinkExists()
+    confirmationPage.assertRecordAttendanceLinkExists()
     confirmationPage.assertViewAppointmentLinkDoesNotExist()
   })
 })

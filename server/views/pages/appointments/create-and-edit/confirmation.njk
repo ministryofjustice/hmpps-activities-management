@@ -56,6 +56,11 @@
                     <a href="/appointments/{{ appointment.id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View, print movement slips and manage this appointment</a>
                 </p>
             {% endif %}
+            {% if session.appointmentJourney.retrospective == YesNo.YES %}
+            <p class="govuk-body">
+                <a href="/appointments/{{ appointment.id }}/attendance" class="govuk-link govuk-link--no-visited-state" data-qa="record-attendance-link">Record appointment attendance</a>
+            </p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
