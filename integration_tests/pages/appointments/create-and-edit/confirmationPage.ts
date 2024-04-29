@@ -13,4 +13,6 @@ export default class ConfirmationPage extends Page {
 
   assertViewAppointmentLinkExists = () =>
     this.viewAppointmentLink().contains('View, print movement slips and manage this appointment')
+
+  assertViewAppointmentLinkDoesNotExist = () => this.viewAppointmentLink().should('not.exist')
 }

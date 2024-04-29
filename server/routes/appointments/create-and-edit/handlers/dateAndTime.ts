@@ -1,19 +1,23 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateNested } from 'class-validator'
-import { startOfToday } from 'date-fns'
+import { startOfToday, subDays } from 'date-fns'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
-import TimeAndDateIsAfterNow from '../../../../validators/timeAndDateIsAfterNow'
 import { hasAnyAppointmentPropertyChanged } from '../../../../utils/editAppointmentUtils'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
+import { formatDate } from '../../../../utils/utils'
+import { YesNo } from '../../../../@types/activities'
 
+const MAX_RETROSPECTIVE_DAYS = 6
 export class DateAndTime {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
-  @Validator(date => date >= startOfToday(), { message: "Enter a date on or after today's date" })
+  @Validator(date => date > subDays(startOfToday(), MAX_RETROSPECTIVE_DAYS), {
+    message: `Enter a date that's after ${maximumRetrospectiveDate(new Date(), MAX_RETROSPECTIVE_DAYS)}`,
+  })
   @IsValidDate({ message: 'Enter a valid date for the appointment' })
   @IsNotEmpty({ message: 'Enter a date for the appointment' })
   startDate: Date
@@ -21,7 +25,6 @@ export class DateAndTime {
   @Expose()
   @Type(() => SimpleTime)
   @ValidateNested()
-  @TimeAndDateIsAfterNow('startDate', { message: 'Select a start time that is in the future' })
   @IsNotEmpty({ message: 'Select a start time for the appointment' })
   startTime: SimpleTime
 
@@ -45,7 +48,14 @@ export default class DateAndTimeRoutes {
 
     this.setTimeAndDate(req, 'appointmentJourney')
 
-    res.redirectOrReturn(`repeat`)
+    if (retrospectiveAppointment(req.session.appointmentJourney.startTime)) {
+      req.session.appointmentJourney.retrospective = YesNo.YES
+      req.session.appointmentJourney.repeat = YesNo.NO
+      res.redirectOrReturn(`check-answers`)
+    } else {
+      req.session.appointmentJourney.retrospective = YesNo.NO
+      res.redirectOrReturn(`repeat`)
+    }
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
@@ -81,4 +91,17 @@ export default class DateAndTimeRoutes {
       date: endTime.toDate(startDate),
     }
   }
+}
+
+export function maximumRetrospectiveDate(fromDate: Date, daysAgo: number): string {
+  const date = subDays(fromDate, daysAgo)
+  return formatDate(date, 'd MMMM yyyy')
+}
+
+export function retrospectiveAppointment(startTime: { hour: number; minute: number; date: Date }) {
+  const appointmentStart = new Date(startTime.date)
+  appointmentStart.setHours(startTime.hour)
+  appointmentStart.setMinutes(startTime.minute)
+
+  return appointmentStart < new Date()
 }

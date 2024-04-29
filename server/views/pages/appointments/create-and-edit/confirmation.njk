@@ -3,23 +3,27 @@
 {% from "govuk/components/panel/macro.njk" import govukPanel %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+{% from "pages/appointments/partials/appointment-confirmation-title.njk" import appointmentConfirmationTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Set scheduled" if session.appointmentJourney.type == AppointmentType.SET else "Appointment scheduled", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Set scheduled" if session.appointmentJourney.type == AppointmentType.SET else "Appointment scheduled", session.appointmentJourney, session.appointmentJourney.retrospective == YesNo.YES) %}
+
 {% set pageId = 'appointment-scheduled-confirmation-page' %}
+
+{% set titleText = appointmentConfirmationTitle(appointmentSet, session.appointmentJourney) %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ govukPanel({
-                titleText: "Set of back-to-backs scheduled" if appointmentSet else "Appointment scheduled"
-            }) }}
+               {{ govukPanel({
+                    titleText: titleText
+                }) }}
             <p class="govuk-body" data-qa="message">
                 {% if appointment.appointmentType == AppointmentType.GROUP %}
-                    You have successfully scheduled an appointment for {{ appointment.attendees | length }} {{ "person" if appointment.attendees.length == 1 else "people" }}
+                    You have successfully {{"created" if session.appointmentJourney.retrospective == YesNo.YES else "scheduled" }} an appointment for {{ appointment.attendees | length }} {{ "person" if appointment.attendees.length == 1 else "people" }}
                 {% endif %}
 
                 {% if appointmentSet %}
-                    You have successfully scheduled {{ "an appointment for 1 person on" if appointmentSet.appointments | length == 1 else "appointments for " + appointmentSet.appointments | length + " people starting on" }} {{ (appointment.startDate or appointmentSet.startDate) | toDate | formatDate }}
+                    You have successfully {{"created" if session.appointmentJourney.retrospective == YesNo.YES else "scheduled" }} {{ "an appointment for 1 person on" if appointmentSet.appointments | length == 1 else "appointments for " + appointmentSet.appointments | length + " people starting on" }} {{ (appointment.startDate or appointmentSet.startDate) | toDate | formatDate }}
                 {% elseif not appointment.appointmentSeries.schedule %}
                     on {{ (appointment.startDate or appointmentSet.startDate) | toDate | formatDate }}.
                 {% else %}
@@ -47,7 +51,7 @@
                 <p class="govuk-body">
                     <a href="/appointments/set/{{ appointmentSet.id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View, print movement slips and manage this set of appointments</a>
                 </p>
-            {% else %}
+            {% elseif session.appointmentJourney.retrospective != YesNo.YES %}
                 <p class="govuk-body">
                     <a href="/appointments/{{ appointment.id }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-appointment-link">View, print movement slips and manage this appointment</a>
                 </p>

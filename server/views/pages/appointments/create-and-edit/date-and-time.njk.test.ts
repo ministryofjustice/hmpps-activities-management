@@ -65,7 +65,7 @@ describe('Views - Appointments Management - Date and Time', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text().trim()).toEqual('When is the appointment?')
+    expect($('h1').text().trim()).toEqual('Enter the date and time of the appointment')
   })
 
   it('edit content', () => {

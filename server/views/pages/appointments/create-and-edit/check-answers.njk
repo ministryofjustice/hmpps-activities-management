@@ -171,7 +171,7 @@
                     classes: "govuk-link--no-visited-state",
                     attributes: { 'data-qa': 'change-repeat' }
                 }
-            ]
+            ] if session.appointmentJourney.retrospective == YesNo.NO
         }
     } if session.appointmentJourney.repeat
 ), schedulingInformationRows) %}
@@ -239,7 +239,7 @@
                         classes: "govuk-link--no-visited-state",
                         attributes: { 'data-qa': 'change-extra-information' }
                     }
-                ]
+                ] if session.appointmentJourney.retrospective == YesNo.NO
             }
         }
     ), extraInfoRows) %}
