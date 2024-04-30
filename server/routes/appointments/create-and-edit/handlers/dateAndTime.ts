@@ -42,13 +42,14 @@ export default class DateAndTimeRoutes {
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
-    if (req.query.preserveHistory) {
+    this.setTimeAndDate(req, 'appointmentJourney')
+    const retrospective = retrospectiveAppointment(req.session.appointmentJourney.startTime)
+
+    if (req.query.preserveHistory && !retrospective) {
       req.session.returnTo = 'schedule?preserveHistory=true'
     }
 
-    this.setTimeAndDate(req, 'appointmentJourney')
-
-    if (retrospectiveAppointment(req.session.appointmentJourney.startTime)) {
+    if (retrospective) {
       req.session.appointmentJourney.retrospective = YesNo.YES
       req.session.appointmentJourney.repeat = YesNo.NO
       res.redirectOrReturn(`check-answers`)
