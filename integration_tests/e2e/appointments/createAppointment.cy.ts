@@ -94,7 +94,7 @@ context('Create group appointment', () => {
       .should('contain.text', 'Set up a one-off or repeating appointment for one or more people.')
     appointmentsManagementPage.createGroupAppointmentCard().click()
 
-    let howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
+    const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
     howToAddPrisonersPage.selectHowToAdd('Add a group of people using a CSV file')
     howToAddPrisonersPage.continue()
 
@@ -109,11 +109,6 @@ context('Create group appointment', () => {
     reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
     reviewPrisonersPage.assertPrisonerInList('Winchurch, David')
     reviewPrisonersPage.addAnotherPrisoner()
-    reviewPrisonersPage.continue()
-
-    howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Search for them one by one')
-    howToAddPrisonersPage.continue()
 
     let selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('lee')
