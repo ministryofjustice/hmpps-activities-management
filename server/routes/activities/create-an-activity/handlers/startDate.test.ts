@@ -214,7 +214,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       expect(errors).toEqual([
         {
           property: 'startDate',
-          error: `Enter a date before ${formatDate(nearestInvalidDate)}, so the days this activity runs are all before it’s scheduled to end.`,
+          error: `Enter a date before ${formatDate(nearestInvalidDate)}, so the days this activity runs are all before it’s scheduled to end`,
         },
       ])
     })
