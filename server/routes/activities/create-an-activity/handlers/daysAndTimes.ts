@@ -3,11 +3,13 @@ import { Expose } from 'class-transformer'
 import { IsNotEmpty, ValidateIf } from 'class-validator'
 import createHttpError from 'http-errors'
 import { NextFunction } from 'express-serve-static-core'
-import { convertToArray, mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
+import { convertToArray, formatDate, mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
+import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
+import { CreateAnActivityJourney } from '../journey'
 
 export class DaysAndTimes {
   @Expose()
@@ -48,6 +50,8 @@ export class DaysAndTimes {
   @IsNotEmpty({ message: 'Select at least one time slot for Sunday' })
   timeSlotsSunday: string[]
 }
+
+const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 export default class DaysAndTimesRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -96,7 +100,6 @@ export default class DaysAndTimesRoutes {
         return []
       }
 
-      const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
       daysOfWeek.forEach(day => {
         if (weeklySlots.days.find(selectedDay => selectedDay === day.toLowerCase())) {
           weeklySlots[`timeSlots${day}`] = sanitizeTimeSlots(req.body[`timeSlots${day}`])
@@ -104,6 +107,10 @@ export default class DaysAndTimesRoutes {
           weeklySlots[`timeSlots${day}`] = []
         }
       })
+    }
+
+    if (this.findSlotErrors(req.session.createJourney, weekNumberInt, res)) {
+      return res.validationFailed()
     }
 
     if (scheduleWeeks === weekNumberInt) {
@@ -114,7 +121,7 @@ export default class DaysAndTimesRoutes {
       return res.redirect('../check-answers')
     }
     if (preserveHistory && !fromScheduleFrequency) {
-      // If this is a week-specfic slot edit (not from schedule frequency page)
+      // If this is a week-specific slot edit (not from schedule frequency page)
       if (req.params.mode === 'edit') return this.editSlots(req, res)
       return res.redirect('../check-answers')
     }
@@ -158,6 +165,29 @@ export default class DaysAndTimesRoutes {
     if (!+weekNumber || !scheduleWeeks) return false
     if (weekNumberInt !== +weekNumber) return false
     if (weekNumberInt <= 0 || weekNumberInt > scheduleWeeks) return false
+    return true
+  }
+
+  private findSlotErrors(journey: CreateAnActivityJourney, weekNumber: number, res: Response): boolean {
+    const errors = validateSlotChanges(journey, weekNumber)
+
+    if (errors.length === 0) {
+      return false
+    }
+
+    const activityStartDate = formatDate(journey.startDate)
+    const activityEndDate = formatDate(journey.endDate)
+
+    errors.forEach(error => {
+      let message
+      if (journey.scheduleWeeks === 1) {
+        message = `You cannot select ${error.day}. This is because the activity starts on ${activityStartDate} and ends on ${activityEndDate}`
+      } else {
+        message = `You cannot select ${error.day}. As this activity starts on ${activityStartDate} and ends on ${activityEndDate}, there cannot be a ${error.day} session in week ${weekNumber}`
+      }
+      res.addValidationError(`timeSlots${error.day}`, message)
+    })
+
     return true
   }
 }

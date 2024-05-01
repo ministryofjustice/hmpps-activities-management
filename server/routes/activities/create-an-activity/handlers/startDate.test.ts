@@ -1,19 +1,23 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 import { when } from 'jest-when'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
 import StartDateRoutes, { StartDate } from './startDate'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
+import { isStartDateValid, getNearestInvalidStartDate } from '../../../../utils/helpers/activityScheduleValidator'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../utils/helpers/activityScheduleValidator')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const isStartDateValidMock = isStartDateValid as jest.MockedFunction<typeof isStartDateValid>
+const nearestInvalidStartDateMock = getNearestInvalidStartDate as jest.MockedFunction<typeof getNearestInvalidStartDate>
 
 describe('Route Handlers - Create an activity schedule - Start date', () => {
   const handler = new StartDateRoutes(activitiesService)
@@ -30,6 +34,8 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirectWithSuccess: jest.fn(),
+      addValidationError: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -38,6 +44,8 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
         createJourney: {},
       },
     } as unknown as Request
+
+    isStartDateValidMock.mockReturnValue(true)
   })
 
   describe('GET', () => {
@@ -186,6 +194,27 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
           error: `Enter a date on or before the first allocation start date, ${formatDatePickerDate(
             allocationStartDate,
           )}`,
+        },
+      ])
+    })
+
+    it('validation fails if start date makes date range invalid', async () => {
+      const startDate = addDays(new Date(), 2)
+      const nearestInvalidDate = subDays(startDate, 1)
+
+      const body = { startDate: formatDatePickerDate(startDate) }
+
+      const requestObject = plainToInstance(StartDate, body)
+
+      isStartDateValidMock.mockReturnValue(false)
+      nearestInvalidStartDateMock.mockReturnValue(nearestInvalidDate)
+
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([
+        {
+          property: 'startDate',
+          error: `Enter a date before ${formatDate(nearestInvalidDate)}, so the days this activity runs are all before it’s scheduled to end`,
         },
       ])
     })

@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
-import { addDays, startOfToday } from 'date-fns'
+import { addDays, addWeeks, startOfToday } from 'date-fns'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
 import EndDateRoutes, { EndDate } from './endDate'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -10,10 +10,14 @@ import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
+import { getNearestInvalidEndDate, isEndDateValid } from '../../../../utils/helpers/activityScheduleValidator'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../utils/helpers/activityScheduleValidator')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const isEndDateValidMock = isEndDateValid as jest.MockedFunction<typeof isEndDateValid>
+const nearestInvalidEndDateMock = getNearestInvalidEndDate as jest.MockedFunction<typeof getNearestInvalidEndDate>
 
 describe('Route Handlers - Create an activity schedule - End date', () => {
   const handler = new EndDateRoutes(activitiesService)
@@ -30,6 +34,8 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirectWithSuccess: jest.fn(),
+      addValidationError: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -41,6 +47,8 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         },
       },
     } as unknown as Request
+
+    isEndDateValidMock.mockReturnValue(true)
   })
 
   describe('GET', () => {
@@ -71,8 +79,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         .calledWith(atLeast(updatedActivity))
         .mockResolvedValueOnce(activity as unknown as Activity)
 
-      const today = new Date()
-      const endDate = today
+      const endDate = new Date()
 
       req.session.createJourney = {
         activityId: 1,
@@ -237,6 +244,33 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
+    })
+
+    it('validation fails if end date makes date range invalid', async () => {
+      const endDate = addWeeks(new Date(), 1)
+      const nearestInvalidDate = addDays(endDate, 1)
+
+      const body = { endDate: formatDatePickerDate(endDate) }
+
+      const requestObject = plainToInstance(EndDate, {
+        ...body,
+        createJourney: {
+          startDate: formatDate(addDays(new Date(), 1), 'yyyy-MM-dd'),
+          endDate: formatDatePickerDate(endDate),
+        },
+      })
+
+      isEndDateValidMock.mockReturnValue(false)
+      nearestInvalidEndDateMock.mockReturnValue(nearestInvalidDate)
+
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([
+        {
+          property: 'endDate',
+          error: `Enter a date after ${formatDate(nearestInvalidDate)}, so the days this activity runs are all before it’s scheduled to end`,
+        },
+      ])
     })
   })
 })
