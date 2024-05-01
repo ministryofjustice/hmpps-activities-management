@@ -118,7 +118,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
   it('should populate return to with schedule', async () => {
     req.query = { preserveHistory: 'true' }
     req.body = {
-      startDate: formatDatePickerDate(tomorrow),
+      startDate: formatIsoDate(tomorrow),
       startTime: plainToInstance(SimpleTime, {
         hour: 11,
         minute: 30,
