@@ -111,10 +111,20 @@
             {% if session.appointmentJourney.type != AppointmentType.SET %}
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Add another person",
+                        text: "Add another person individually",
+                        id: "add-prisoner-individual",
                         classes: "govuk-button--secondary",
-                        href: "how-to-add-prisoners" + ('?preserveHistory=true' if preserveHistory else ''),
+                        href: "select-prisoner" + ('?preserveHistory=true' if preserveHistory else ''),
                         attributes: { 'data-qa': 'add-prisoner-secondary' }
+                    }) }}
+                </div>
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Add people using a CSV file",
+                        id: "add-prisoners-csv",
+                        classes: "govuk-button--secondary",
+                        href: "upload-prisoner-list" + ('?preserveHistory=true' if preserveHistory else ''),
+                        attributes: { 'data-qa': 'add-prisoner-multiple' }
                     }) }}
                 </div>
             {% endif %}
@@ -123,7 +133,8 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Continue"
+                        text: "Continue",
+                        id: "continue-button"
                     }) }}
                 </div>
             </form>
