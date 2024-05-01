@@ -46,7 +46,7 @@ export class EndDate {
     message: ({ object }) => {
       const { createJourney } = object as { createJourney: CreateAnActivityJourney }
       const nearestDate = getNearestInvalidEndDate(createJourney)
-      return `Enter a date after ${formatDate(nearestDate)}, so the days this activity runs are all before it’s scheduled to end.`
+      return `Enter a date after ${formatDate(nearestDate)}, so the days this activity runs are all before it’s scheduled to end`
     },
   })
   @IsValidDate({ message: 'Enter a valid end date' })
