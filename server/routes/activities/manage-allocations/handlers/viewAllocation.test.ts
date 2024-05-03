@@ -77,6 +77,8 @@ describe('Route Handlers - Allocation dashboard', () => {
           prisonPayBand: { id: 1 },
           exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
           plannedSuspension: { plannedBy: 'joebloggs', caseNoteId: 10001 },
+          allocatedBy: 'GEOFFT',
+          allocatedTime: '2024-05-03T13:22:00',
         } as Allocation)
 
       when(prisonService.getInmateByPrisonerNumber)
@@ -110,8 +112,13 @@ describe('Route Handlers - Allocation dashboard', () => {
         } as unknown as Activity)
 
       when(userService.getUserMap)
-        .calledWith(atLeast(['joebloggs']))
-        .mockResolvedValue(new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>)
+        .calledWith(atLeast(['joebloggs', 'GEOFFT']))
+        .mockResolvedValue(
+          new Map([
+            ['joebloggs', { name: 'Joe Bloggs' }],
+            ['GEOFFT', { name: 'Geoff Toms' }],
+          ]) as Map<string, UserDetails>,
+        )
 
       when(caseNotesService.getCaseNote)
         .calledWith(atLeast('G4793VF', 10001))
@@ -133,6 +140,8 @@ describe('Route Handlers - Allocation dashboard', () => {
             plannedBy: 'joebloggs',
             caseNoteId: 10001,
           },
+          allocatedBy: 'GEOFFT',
+          allocatedTime: '2024-05-03T13:22:00',
         },
         isOnlyPay: true,
         isStarted: true,
@@ -171,7 +180,10 @@ describe('Route Handlers - Allocation dashboard', () => {
             },
           ],
         },
-        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]),
+        userMap: new Map([
+          ['joebloggs', { name: 'Joe Bloggs' }],
+          ['GEOFFT', { name: 'Geoff Toms' }],
+        ]),
         suspensionCaseNote: {
           text: 'test case note',
         },

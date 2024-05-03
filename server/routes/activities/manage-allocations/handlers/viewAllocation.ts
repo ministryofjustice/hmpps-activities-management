@@ -49,7 +49,10 @@ export default class ViewAllocationRoutes {
 
     const isStarted = new Date(allocation.startDate) <= new Date()
 
-    const userMap = await this.userService.getUserMap([allocation.plannedSuspension?.plannedBy], user)
+    const userMap = await this.userService.getUserMap(
+      [allocation.plannedSuspension?.plannedBy, allocation.allocatedBy],
+      user,
+    )
 
     const suspensionCaseNote = allocation.plannedSuspension?.caseNoteId
       ? await this.caseNotesService.getCaseNote(
