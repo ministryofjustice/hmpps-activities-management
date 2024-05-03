@@ -156,6 +156,14 @@
                         </a>
                     </dd>
                 </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Allocated by
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ serviceUserName(userMap.get(allocation.allocatedBy)) }} on {{ allocation.allocatedTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate('d MMMM yyyy hh:mm a', false) }}
+                    </dd>
+                </div>
             </dl>
             <div class="govuk-button-group">
                 {{ govukButton({
