@@ -10,6 +10,7 @@ import activitySessionToDailyTimeSlots, {
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import UserService from '../../../../services/userService'
 import CaseNotesService from '../../../../services/caseNotesService'
+import logger from '../../../../../logger'
 
 export default class ViewAllocationRoutes {
   constructor(
@@ -49,10 +50,14 @@ export default class ViewAllocationRoutes {
 
     const isStarted = new Date(allocation.startDate) <= new Date()
 
-    const userMap = await this.userService.getUserMap(
-      [allocation.plannedSuspension?.plannedBy, allocation.allocatedBy],
-      user,
-    )
+    const userMap = await this.userService.getUserMap([allocation.plannedSuspension?.plannedBy], user)
+
+    try {
+      const allocatedByUser = await this.userService.getUserMap([allocation.allocatedBy], user)
+      allocatedByUser.forEach((value, key) => userMap.set(key, value))
+    } catch (e) {
+      logger.info(`Handled allocatedBy user ${allocation.allocatedBy} not found.`)
+    }
 
     const suspensionCaseNote = allocation.plannedSuspension?.caseNoteId
       ? await this.caseNotesService.getCaseNote(
