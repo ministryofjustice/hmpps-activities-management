@@ -18,4 +18,12 @@ export default class AppointmentDetailsRoutes {
       userMap,
     })
   }
+
+  COPY = async (req: Request, res: Response): Promise<void> => {
+    const { appointment } = req
+
+    res.render('pages/appointments/appointment/copy', {
+      appointment,
+    })
+  }
 }

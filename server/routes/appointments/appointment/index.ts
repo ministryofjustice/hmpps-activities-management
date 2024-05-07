@@ -1,4 +1,5 @@
 import { RequestHandler, Router } from 'express'
+import createHttpError from 'http-errors'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import AppointmentDetailsRoutes from './handlers/appointmentDetails'
 import AppointmentMovementSlipRoutes from './handlers/appointmentMovementSlip'
@@ -6,6 +7,7 @@ import AppointmentAttendanceRoutes, { AppointmentAttendance } from './handlers/a
 import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
 import { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
+import config from '../../../config'
 
 export default function Index({ activitiesService, userService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -24,6 +26,12 @@ export default function Index({ activitiesService, userService, metricsService }
   get('/attendance', appointmentAttendanceRoutes.GET)
   post('/attend', appointmentAttendanceRoutes.ATTEND, AppointmentAttendance)
   post('/non-attend', appointmentAttendanceRoutes.NON_ATTEND, AppointmentAttendance)
+
+  router.use((req, res, next) =>
+    !config.copyAppointmentFeatureToggleEnabled ? next(createHttpError.NotFound()) : next(),
+  )
+
+  get('/copy', appointmentDetailsRoutes.COPY)
 
   return router
 }
