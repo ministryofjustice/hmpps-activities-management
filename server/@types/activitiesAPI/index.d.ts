@@ -1632,10 +1632,10 @@ export interface components {
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -1644,9 +1644,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject'][]
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
@@ -4126,6 +4126,11 @@ export interface components {
        */
       id: number
       /**
+       * @description Activity schedule timeslot
+       * @enum {string}
+       */
+      timeSlot: 'AM' | 'PM' | 'ED'
+      /**
        * Format: int32
        * @description The week of the schedule this slot relates to
        * @example 1
@@ -5231,10 +5236,10 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -5243,9 +5248,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject'][]
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Describes one instance of an activity schedule */

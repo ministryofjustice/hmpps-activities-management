@@ -3,7 +3,7 @@ import { when } from 'jest-when'
 import initialiseEditJourney from './initialiseEditJourney'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
-import { Activity } from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivitySchedule, ActivityScheduleSlot, Allocation } from '../../../../@types/activitiesAPI/types'
 import atLeast from '../../../../../jest.setup'
 import { mapActivityModelSlotsToJourney } from '../../../../utils/utils'
 
@@ -38,32 +38,33 @@ describe('initialiseEditJourney', () => {
   const allocation1 = {
     id: 1,
     startDate: '2022-02-01',
-  }
+  } as Allocation
 
   const allocation2 = {
     id: 2,
     startDate: '2022-02-02',
+  } as Allocation
+
+  const slot: ActivityScheduleSlot = {
+    id: 1,
+    timeSlot: 'AM',
+    weekNumber: 1,
+    startTime: '9:00',
+    endTime: '11:30',
+    daysOfWeek: ['Mon', 'Tue'],
+    mondayFlag: true,
+    tuesdayFlag: true,
+    wednesdayFlag: false,
+    thursdayFlag: false,
+    fridayFlag: false,
+    saturdayFlag: false,
+    sundayFlag: false,
   }
 
-  const schedule = {
+  const schedule: ActivitySchedule = {
     id: 1,
     scheduleWeeks: 1,
-    slots: [
-      {
-        id: 1,
-        weekNumber: 1,
-        startTime: '9:00',
-        endTime: '11:30',
-        daysOfWeek: ['Mon', 'Tue'],
-        mondayFlag: true,
-        tuesdayFlag: true,
-        wednesdayFlag: false,
-        thursdayFlag: false,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-      },
-    ],
+    slots: [slot],
     runsOnBankHoliday: false,
     capacity: 10,
     internalLocation: {
@@ -72,7 +73,7 @@ describe('initialiseEditJourney', () => {
       description: 'A-Wing',
     },
     allocations: [allocation1, allocation2],
-  }
+  } as ActivitySchedule
 
   const activity = {
     id: 1,
