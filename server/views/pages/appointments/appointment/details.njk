@@ -96,21 +96,37 @@
                 }) }}
             {% endif %}
 
+            {% set items = [] %}
+            {% if copyAppointmentFeatureToggleEnabled %}
+                {% set items = items.concat(
+                    {
+                    href: appointmentLink + "/copy",
+                    text: "Copy appointment",
+                    classes: "govuk-link--no-visited-state",
+                    attributes: { 'data-qa': 'copy-appointment' }
+                    }
+                 ) %}
+            {% endif %}
+
+            {% if editable %}
+                {% set items = items.concat(
+                    {
+                        href: appointmentLink + "/edit/start/cancel",
+                        text: "Cancel appointment",
+                        classes: "govuk-link--no-visited-state",
+                        attributes: { 'data-qa': 'cancel-appointment' }
+                    }
+                ) %}
+            {% endif %}
+
             {{ govukSummaryList({
                 card: {
                     title: {
                         text: "Appointment details"
                     },
                     actions: {
-                        items: [
-                            {
-                                href: appointmentLink + "/edit/start/cancel",
-                                text: "Cancel appointment",
-                                classes: "govuk-link--no-visited-state",
-                                attributes: { 'data-qa': 'cancel-appointment' }
-                            }
-                        ]
-                    } if editable
+                        items: items
+                    }
                 },
                 rows: [
                     {

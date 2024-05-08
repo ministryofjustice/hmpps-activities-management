@@ -18,6 +18,7 @@ describe('Route Handlers - Appointment Details', () => {
 
   let req: Request
   let res: Response
+  let appointment: AppointmentDetails
 
   beforeEach(() => {
     res = {
@@ -29,6 +30,19 @@ describe('Route Handlers - Appointment Details', () => {
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
+
+    appointment = {
+      id: 10,
+      appointmentSeries: {
+        id: 9,
+      },
+      startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
+      startTime: '23:59',
+      createdBy: 'joebloggs',
+      updatedBy: 'joebloggs',
+      cancelledBy: 'joebloggs',
+    } as AppointmentDetails
+
     when(userService.getUserMap)
       .calledWith(atLeast(['joebloggs', 'joebloggs', 'joebloggs']))
       .mockResolvedValue(new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>)
@@ -40,18 +54,6 @@ describe('Route Handlers - Appointment Details', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      const appointment = {
-        id: 10,
-        appointmentSeries: {
-          id: 9,
-        },
-        startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
-        startTime: '23:59',
-        createdBy: 'joebloggs',
-        updatedBy: 'joebloggs',
-        cancelledBy: 'joebloggs',
-      } as AppointmentDetails
-
       req = {
         params: {
           id: '10',
@@ -64,6 +66,23 @@ describe('Route Handlers - Appointment Details', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
         appointment,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+      })
+    })
+  })
+
+  describe('COPY', () => {
+    it('should render the expected view', async () => {
+      req = {
+        params: {
+          id: '10',
+        },
+        appointment,
+      } as unknown as Request
+
+      await handler.COPY(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/copy', {
+        appointment,
       })
     })
   })

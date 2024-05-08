@@ -1,0 +1,43 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Copying an appointment" %}
+{% set pageId = 'copy-appointment-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+                <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
+
+                <h1 class="govuk-heading-l">Copying an appointment</h1>
+
+                <p class="govuk-body" data-qa="first-paragraph">
+                    This will create a new appointment, using the details of {{ appointment.appointmentName }} from <strong>{{ appointment.startDate | toDate | formatDate }}</strong>.
+                    It will have the same:
+                </p>
+
+                <ul>
+                    <li class='govuk-list govuk-list--bullet'>name</li>
+                    <li class='govuk-list govuk-list--bullet'>attendees</li>
+                    <li class='govuk-list govuk-list--bullet'>tier and host</li>
+                    <li class='govuk-list govuk-list--bullet'>location</li>
+                    <li class='govuk-list govuk-list--bullet'>start and end times</li>
+                    <li class='govuk-list govuk-list--bullet'>extra information</li>
+                </ul>
+
+                <div class='govuk-button-group'>
+                    {{ govukButton({ text: "Continue"}) }}
+                    {% if not session.req.query.preserveHistory %}
+                        <a class="govuk-link govuk-link--no-visited-state" href="/appointments/{{ appointment.id }}">Cancel and return to appointment</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
