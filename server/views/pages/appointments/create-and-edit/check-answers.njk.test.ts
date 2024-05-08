@@ -141,6 +141,26 @@ describe('Views - Create Appointment - Check Answers', () => {
     expect(getNumberOfAppointmentsValueElement().text().trim()).toEqual('6')
   })
 
+  it('should display repeats and extra information change links for an appointment in the future', () => {
+    viewContext.session.appointmentJourney.retrospective = YesNo.NO
+    viewContext.session.appointmentJourney.repeat = YesNo.NO
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=change-repeat]').attr('href')).toEqual('repeat?preserveHistory=true')
+    expect($('[data-qa=change-extra-information]').attr('href')).toEqual('extra-information?preserveHistory=true')
+  })
+
+  it('should not display repeats and extra information change links for a retrospective appointment', () => {
+    viewContext.session.appointmentJourney.retrospective = YesNo.YES
+    viewContext.session.appointmentJourney.repeat = YesNo.NO
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=change-repeat]').attr('href')).toBeUndefined()
+    expect($('[data-qa=change-extra-information]').attr('href')).toBeUndefined()
+  })
+
   describe('Group Appointment', () => {
     beforeEach(() => {
       viewContext.session.appointmentJourney.type = AppointmentType.GROUP

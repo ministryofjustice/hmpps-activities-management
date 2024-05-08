@@ -1,14 +1,15 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays, addHours, getHours, getMinutes, subDays, subMinutes } from 'date-fns'
-import DateAndTimeRoutes, { DateAndTime } from './dateAndTime'
-import SimpleTime, { simpleTimeFromDate } from '../../../../commonValidationTypes/simpleTime'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { addDays, addHours, subDays, subHours } from 'date-fns'
+import DateAndTimeRoutes, { DateAndTime, retrospectiveAppointment, maximumRetrospectiveDate } from './dateAndTime'
+import SimpleTime from '../../../../commonValidationTypes/simpleTime'
+import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
 import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { ServiceUser } from '../../../../@types/express'
 import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
+import { YesNo } from '../../../../@types/activities'
 
 jest.mock('../../../../services/editAppointmentService')
 
@@ -78,13 +79,15 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         minute: 0,
         date: req.body.endTime.toDate(tomorrow),
       })
+      expect(req.session.appointmentJourney.retrospective).toBe(YesNo.NO)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('repeat')
     })
 
-    it('should populate return to with schedule', async () => {
-      req.query = { preserveHistory: 'true' }
+    it('should populate return to with check-answers for a retrospective appointment 5 days in the past', async () => {
+      const fiveDaysAgo = subDays(new Date(), 5)
+
       req.body = {
-        startDate: formatDatePickerDate(tomorrow),
+        startDate: fiveDaysAgo,
         startTime: plainToInstance(SimpleTime, {
           hour: 11,
           minute: 30,
@@ -95,8 +98,38 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         }),
       }
       await handler.CREATE(req, res)
-      expect(req.session.returnTo).toEqual('schedule?preserveHistory=true')
+      expect(req.session.appointmentJourney.startDate).toEqual(formatIsoDate(fiveDaysAgo))
+      expect(req.session.appointmentJourney.startTime).toEqual({
+        hour: 11,
+        minute: 30,
+        date: req.body.startTime.toDate(fiveDaysAgo),
+      })
+      expect(req.session.appointmentJourney.endTime).toEqual({
+        hour: 13,
+        minute: 0,
+        date: req.body.endTime.toDate(fiveDaysAgo),
+      })
+      expect(req.session.appointmentJourney.retrospective).toBe(YesNo.YES)
+      expect(req.session.appointmentJourney.repeat).toEqual(YesNo.NO)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })
+  })
+
+  it('should populate return to with schedule', async () => {
+    req.query = { preserveHistory: 'true' }
+    req.body = {
+      startDate: formatIsoDate(tomorrow),
+      startTime: plainToInstance(SimpleTime, {
+        hour: 11,
+        minute: 30,
+      }),
+      endTime: plainToInstance(SimpleTime, {
+        hour: 13,
+        minute: 0,
+      }),
+    }
+    await handler.CREATE(req, res)
+    expect(req.session.returnTo).toEqual('schedule?preserveHistory=true')
   })
 
   describe('EDIT', () => {
@@ -130,6 +163,16 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
           minute: 0,
         }),
       } as unknown as AppointmentJourney
+    })
+
+    it('should update the appointment date and redirect to schedule when the start date is 5 days ago', async () => {
+      const fiveDaysAgo = subDays(new Date(), 5)
+      req.body.startDate = fiveDaysAgo
+
+      await handler.EDIT(req, res)
+
+      expect(req.session.editAppointmentJourney.startDate).toEqual(formatIsoDate(fiveDaysAgo))
+      expect(res.redirect).toHaveBeenCalledWith('schedule')
     })
 
     it('should update the appointment date and redirect to schedule', async () => {
@@ -255,17 +298,18 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       )
     })
 
-    it('validation fails when start date is in the past', async () => {
-      const yesterday = subDays(new Date(), 1)
+    it('validation fails when start date is more than 5 days in the past', async () => {
+      const sixDaysAgo = subDays(new Date(), 6)
+      const sixDaysAgoFormatted = formatDate(sixDaysAgo, 'd MMMM yyyy')
       const body = {
-        startDate: formatDatePickerDate(yesterday),
+        startDate: formatDatePickerDate(sixDaysAgo),
         startTime: plainToInstance(SimpleTime, {
           hour: 11,
           minute: 30,
         }),
         endTime: plainToInstance(SimpleTime, {
-          hour: 13,
-          minute: 0,
+          hour: 11,
+          minute: 45,
         }),
       }
 
@@ -273,32 +317,9 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
-        expect.arrayContaining([{ error: "Enter a date on or after today's date", property: 'startDate' }]),
+        expect.arrayContaining([{ error: `Enter a date that's after ${sixDaysAgoFormatted}`, property: 'startDate' }]),
       )
     })
-  })
-
-  it('validation fails when start time is in the past', async () => {
-    // Test will fail if run at midnight
-    const now = new Date()
-    if (getHours(now) === 0 && getMinutes(now) === 0) {
-      return
-    }
-
-    const todayOneMinuteInThePast = subMinutes(now, 1)
-    const body = {
-      startDate: formatDatePickerDate(todayOneMinuteInThePast),
-      startTime: simpleTimeFromDate(todayOneMinuteInThePast),
-      endTime: simpleTimeFromDate(addHours(todayOneMinuteInThePast, 1)),
-    }
-
-    const requestObject = plainToInstance(DateAndTime, body)
-
-    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-    expect(errors).toEqual(
-      expect.arrayContaining([{ error: 'Select a start time that is in the future', property: 'startTime' }]),
-    )
   })
 
   it('validation fails when end time is not after the start time', async () => {
@@ -320,5 +341,38 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     expect(errors).toEqual(
       expect.arrayContaining([{ error: 'Select an end time after the start time', property: 'endTime' }]),
     )
+  })
+})
+
+describe('Retrospective - Appointment Journey - Date and Time', () => {
+  it('should return correct earliest date', async () => {
+    const aDate = new Date('December 17, 2023 03:24:00')
+    const formattedDate = maximumRetrospectiveDate(aDate, 5)
+
+    expect(formattedDate).toEqual('12 December 2023')
+  })
+
+  it('should return true for an appointment in the past', async () => {
+    const pastTime = subHours(new Date(), 1)
+    const startTime = {
+      hour: pastTime.getHours(),
+      minute: pastTime.getMinutes(),
+      date: pastTime,
+    }
+
+    const isRetrospective = retrospectiveAppointment(startTime)
+    expect(isRetrospective).toBe(true)
+  })
+
+  it('should return false for an appointment in the future', async () => {
+    const futureTime = addHours(new Date(), 1)
+    const startTime = {
+      hour: futureTime.getHours(),
+      minute: futureTime.getMinutes(),
+      date: futureTime,
+    }
+
+    const isRetrospective = retrospectiveAppointment(startTime)
+    expect(isRetrospective).toBe(false)
   })
 })

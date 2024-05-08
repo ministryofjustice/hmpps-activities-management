@@ -13,6 +13,8 @@ import {
 import { CreateAnActivityJourney } from '../journey'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
+import { getNearestInvalidEndDate, isEndDateValid } from '../../../../utils/helpers/activityScheduleValidator'
+import { formatDate } from '../../../../utils/utils'
 
 export class EndDate {
   @Expose()
@@ -40,6 +42,13 @@ export class EndDate {
       )}`
     },
   })
+  @Validator((date, { createJourney }) => isEndDateValid(createJourney, date), {
+    message: ({ object }) => {
+      const { createJourney } = object as { createJourney: CreateAnActivityJourney }
+      const nearestDate = getNearestInvalidEndDate(createJourney)
+      return `Enter a date after ${formatDate(nearestDate)}, so the days this activity runs are all before it’s scheduled to end`
+    },
+  })
   @IsValidDate({ message: 'Enter a valid end date' })
   endDate: Date
 }
@@ -51,7 +60,9 @@ export default class EndDateRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const updatedEndDate = req.body.endDate
+
     req.session.createJourney.endDate = updatedEndDate ? formatIsoDate(updatedEndDate) : null
+
     if (req.params.mode === 'edit') {
       const { user } = res.locals
       const { activityId, name, endDate } = req.session.createJourney
@@ -59,7 +70,9 @@ export default class EndDateRoutes {
       await this.activitiesService.updateActivity(activityId, activity, user)
 
       const successMessage = `You've updated the end date for ${name}`
-      res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
-    } else res.redirectOrReturn('schedule-frequency')
+      return res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
+    }
+
+    return res.redirectOrReturn('schedule-frequency')
   }
 }

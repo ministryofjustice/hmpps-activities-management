@@ -147,10 +147,6 @@ context('Create group appointment - check answers change links', () => {
     reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
     reviewPrisonersPage.addAnotherPrisoner()
 
-    Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Search for them one by one')
-    howToAddPrisonersPage.continue()
-
     Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A1350DZ')
     selectPrisonerPage.searchButton().click()

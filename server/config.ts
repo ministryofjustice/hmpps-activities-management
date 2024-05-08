@@ -173,6 +173,7 @@ export default {
     },
   ] as RouteAuth[],
   spikesFeatureToggleEnabled: Boolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', false)),
+  copyAppointmentFeatureToggleEnabled: Boolean(get('COPY_APPOINTMENT_FEATURE_TOGGLE_ENABLED', false)),
   frontendComponentsApiToggleEnabled: Boolean(
     get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', true, requiredInProduction),
   ),

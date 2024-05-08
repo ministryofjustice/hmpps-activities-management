@@ -67,18 +67,6 @@ describe('Route Handlers - Allocation dashboard', () => {
         },
       } as Prisoner
 
-      when(activitiesService.getAllocation)
-        .calledWith(1, res.locals.user)
-        .mockResolvedValue({
-          id: 1,
-          activityId: 1,
-          prisonerNumber: 'G4793VF',
-          startDate: '2022-05-19',
-          prisonPayBand: { id: 1 },
-          exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
-          plannedSuspension: { plannedBy: 'joebloggs', caseNoteId: 10001 },
-        } as Allocation)
-
       when(prisonService.getInmateByPrisonerNumber)
         .calledWith('G4793VF', res.locals.user)
         .mockResolvedValue(prisonerInfo)
@@ -109,16 +97,38 @@ describe('Route Handlers - Allocation dashboard', () => {
           minimumEducationLevel: [],
         } as unknown as Activity)
 
-      when(userService.getUserMap)
-        .calledWith(atLeast(['joebloggs']))
-        .mockResolvedValue(new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>)
-
       when(caseNotesService.getCaseNote)
         .calledWith(atLeast('G4793VF', 10001))
         .mockResolvedValue({ text: 'test case note' } as CaseNote)
     })
 
-    it('should render the correct view', async () => {
+    it('should render the correct view when allocated by user not found', async () => {
+      when(userService.getUserMap)
+        .calledWith(atLeast(['joebloggs']))
+        .mockResolvedValue(
+          new Map([['joebloggs', { username: 'joebloggs', name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        )
+
+      when(userService.getUserMap)
+        .calledWith(atLeast(['MIGRATION']))
+        .mockImplementation(() => {
+          throw new Error('Account for username MIGRATION not found')
+        })
+
+      when(activitiesService.getAllocation)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue({
+          id: 1,
+          activityId: 1,
+          prisonerNumber: 'G4793VF',
+          startDate: '2022-05-19',
+          prisonPayBand: { id: 1 },
+          exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
+          plannedSuspension: { plannedBy: 'joebloggs', caseNoteId: 10001 },
+          allocatedBy: 'MIGRATION',
+          allocatedTime: '2024-05-03T13:22:00',
+        } as Allocation)
+
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/view-allocation', {
@@ -133,6 +143,8 @@ describe('Route Handlers - Allocation dashboard', () => {
             plannedBy: 'joebloggs',
             caseNoteId: 10001,
           },
+          allocatedBy: 'MIGRATION',
+          allocatedTime: '2024-05-03T13:22:00',
         },
         isOnlyPay: true,
         isStarted: true,
@@ -171,7 +183,98 @@ describe('Route Handlers - Allocation dashboard', () => {
             },
           ],
         },
-        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]),
+        userMap: new Map([['joebloggs', { username: 'joebloggs', name: 'Joe Bloggs' }]]),
+        suspensionCaseNote: {
+          text: 'test case note',
+        },
+      })
+    })
+
+    it('should render the correct view', async () => {
+      when(userService.getUserMap)
+        .calledWith(atLeast(['joebloggs']))
+        .mockResolvedValue(
+          new Map([['joebloggs', { username: 'joebloggs', name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        )
+
+      when(userService.getUserMap)
+        .calledWith(atLeast(['GEOFFT']))
+        .mockResolvedValue(
+          new Map([['GEOFFT', { username: 'GEOFFT', name: 'Geoff Toms' }]]) as Map<string, UserDetails>,
+        )
+
+      when(activitiesService.getAllocation)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue({
+          id: 1,
+          activityId: 1,
+          prisonerNumber: 'G4793VF',
+          startDate: '2022-05-19',
+          prisonPayBand: { id: 1 },
+          exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
+          plannedSuspension: { plannedBy: 'joebloggs', caseNoteId: 10001 },
+          allocatedBy: 'GEOFFT',
+          allocatedTime: '2024-05-03T13:22:00',
+        } as Allocation)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/view-allocation', {
+        allocation: {
+          id: 1,
+          activityId: 1,
+          prisonerNumber: 'G4793VF',
+          startDate: '2022-05-19',
+          prisonPayBand: { id: 1 },
+          exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
+          plannedSuspension: {
+            plannedBy: 'joebloggs',
+            caseNoteId: 10001,
+          },
+          allocatedBy: 'GEOFFT',
+          allocatedTime: '2024-05-03T13:22:00',
+        },
+        isOnlyPay: true,
+        isStarted: true,
+        pay: { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+        prisonerName: 'John Smith',
+        currentWeek: 1,
+        dailySlots: {
+          '1': [
+            {
+              day: 'Monday',
+              slots: [],
+            },
+            {
+              day: 'Tuesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Wednesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Thursday',
+              slots: ['am'],
+            },
+            {
+              day: 'Friday',
+              slots: ['am'],
+            },
+            {
+              day: 'Saturday',
+              slots: ['am'],
+            },
+            {
+              day: 'Sunday',
+              slots: ['am'],
+            },
+          ],
+        },
+        userMap: new Map([
+          ['joebloggs', { username: 'joebloggs', name: 'Joe Bloggs' }],
+          ['GEOFFT', { username: 'GEOFFT', name: 'Geoff Toms' }],
+        ]),
         suspensionCaseNote: {
           text: 'test case note',
         },

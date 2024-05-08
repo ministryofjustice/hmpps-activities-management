@@ -1,4 +1,4 @@
-import { addDays } from 'date-fns'
+import { subDays } from 'date-fns'
 import Page from '../../pages/page'
 import IndexPage from '../../pages'
 import AppointmentsManagementPage from '../../pages/appointments/appointmentsManagementPage'
@@ -25,24 +25,20 @@ import ReviewPrisonerAlertsPage, {
   tactBadge,
 } from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
-import RepeatPage from '../../pages/appointments/create-and-edit/repeatPage'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
 import ConfirmationPage from '../../pages/appointments/create-and-edit/confirmationPage'
 import { formatDate } from '../../../server/utils/utils'
 import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/uploadPrisonerListPage'
-import AppointmentDetailsPage from '../../pages/appointments/appointment/appointmentDetailsPage'
-import ExtraInformationPage from '../../pages/appointments/create-and-edit/extraInformationPage'
-import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 
-context('Create group appointment', () => {
-  const tomorrow = addDays(new Date(), 1)
-  const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
-  // To pass validation we must ensure the appointment details start date is set to tomorrow
-  getGroupAppointmentSeriesDetails.startDate = tomorrowFormatted
+context('Create a retrospective appointment', () => {
+  const fiveDaysAgo = subDays(new Date(), 5)
+  const fiveDaysAgoFormatted = formatDate(fiveDaysAgo, 'yyyy-MM-dd')
+  // To pass validation we must ensure the retrospective appointment details less than 6 days ago
+  getGroupAppointmentSeriesDetails.startDate = fiveDaysAgoFormatted
   getGroupAppointmentSeriesDetails.appointments[0].startDate = getGroupAppointmentSeriesDetails.startDate
-  getGroupAppointmentDetails.startDate = tomorrowFormatted
+  getGroupAppointmentDetails.startDate = fiveDaysAgoFormatted
   getScheduledEvents.activities
     .filter(e => e.prisonerNumber === 'A7789DY')
     .forEach(e => {
@@ -68,7 +64,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getPrisonPrisonersA8644DYA1351DZ)
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${fiveDaysAgoFormatted}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
     cy.stubEndpoint('GET', '/appointment-series/10/details', getGroupAppointmentSeriesDetails)
     cy.stubEndpoint('GET', '/appointments/11/details', getGroupAppointmentDetails)
@@ -76,7 +72,7 @@ context('Create group appointment', () => {
     cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlerts)
   })
 
-  it('Should complete create group appointment journey', () => {
+  it('Should complete create group appointment journey for a retrospective appointment', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().should('contain.text', 'Appointments scheduling and attendance')
     indexPage
@@ -150,20 +146,10 @@ context('Create group appointment', () => {
     locationPage.continue()
 
     const dateAndTimePage = Page.verifyOnPage(DateAndTimePage)
-    dateAndTimePage.selectStartDate(tomorrow)
+    dateAndTimePage.selectStartDate(fiveDaysAgo)
     dateAndTimePage.selectStartTime(14, 0)
     dateAndTimePage.selectEndTime(15, 30)
     dateAndTimePage.continue()
-
-    const repeatPage = Page.verifyOnPage(RepeatPage)
-    repeatPage.selectRepeat('No')
-    repeatPage.continue()
-
-    const schedulePage = Page.verifyOnPage(SchedulePage)
-    schedulePage.continue()
-
-    const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
-    extraInformationPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.assertPrisonerInList('Winchurch, David', 'A1350DZ')
@@ -173,34 +159,20 @@ context('Create group appointment', () => {
     checkAnswersPage.assertTier('Tier 2')
     checkAnswersPage.assertHost('Prison staff')
     checkAnswersPage.assertLocation('Chapel')
-    checkAnswersPage.assertStartDate(tomorrow)
+    checkAnswersPage.assertStartDate(fiveDaysAgo)
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
     checkAnswersPage.assertRepeat('No')
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
-    const successMessage = `You have successfully scheduled an appointment for 3 people on ${formatDate(
-      tomorrow,
+    const successMessage = `You have successfully created an appointment for 3 people on ${formatDate(
+      fiveDaysAgo,
       'EEEE, d MMMM yyyy',
     )}.`
     confirmationPage.assertMessageEquals(successMessage)
     confirmationPage.assertCreateAnotherLinkExists()
-    confirmationPage.assertViewAppointmentLinkExists()
-
-    confirmationPage.viewAppointmentLink().click()
-
-    const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
-    appointmentDetailsPage.assertNoAppointmentSeriesDetails()
-    appointmentDetailsPage.assertName('Chaplaincy')
-    appointmentDetailsPage.assertLocation('Chapel')
-    appointmentDetailsPage.assertStartDate(tomorrow)
-    appointmentDetailsPage.assertStartTime(14, 0)
-    appointmentDetailsPage.assertEndTime(15, 30)
-    appointmentDetailsPage.assertPrisonerSummary('Gregs, Stephen', 'A8644DY', '1-3')
-    appointmentDetailsPage.assertPrisonerSummary('Winchurch, David', 'A1350DZ', '2-2-024')
-    appointmentDetailsPage.assertPrisonerSummary('Jacobson, Lee', 'A1351DZ', '1')
-
-    appointmentDetailsPage.assertCreatedBy('J. Smith')
+    confirmationPage.assertRecordAttendanceLinkExists()
+    confirmationPage.assertViewAppointmentLinkDoesNotExist()
   })
 })
