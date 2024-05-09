@@ -13,7 +13,7 @@ import {
 } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 import { AppointmentFrequency } from '../../../../@types/appointments'
-import { AppointmentType } from '../appointmentJourney'
+import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { AppointmentSetJourney } from '../appointmentSetJourney'
 import { organiserDescriptions } from '../../../../enum/eventOrganisers'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
@@ -43,6 +43,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
       session: {
         appointmentJourney: {
           type: AppointmentType.GROUP,
+          mode: AppointmentJourneyMode.CREATE,
           prisoners: [
             {
               number: 'A1234BC',
@@ -84,12 +85,28 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
   })
 
   describe('GET', () => {
-    it('should render the check answers page with data from session', async () => {
+    it('should render the check answers page with data from session when mode is CREATE', async () => {
       await handler.GET(req, res)
+
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/check-answers', {
         tier: eventTierDescriptions.TIER_2,
         organiser: organiserDescriptions.PRISON_STAFF,
       })
+
+      expect(req.session.appointmentJourney.mode).toEqual(AppointmentJourneyMode.CREATE)
+    })
+
+    it('should render the check answers page with data from session when mode is COPY', async () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.COPY
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/check-answers', {
+        tier: eventTierDescriptions.TIER_2,
+        organiser: organiserDescriptions.PRISON_STAFF,
+      })
+
+      expect(req.session.appointmentJourney.mode).toEqual(AppointmentJourneyMode.CREATE)
     })
   })
 

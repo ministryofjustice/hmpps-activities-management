@@ -71,6 +71,9 @@ export default class ReviewPrisonerRoutes {
       if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
         return '../../schedule'
       }
+      if (req.session.appointmentJourney.mode === AppointmentJourneyMode.COPY) {
+        return 'date-and-time'
+      }
       return 'name'
     }
     return 'review-prisoners-alerts'

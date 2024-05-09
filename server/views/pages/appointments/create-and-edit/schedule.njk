@@ -169,7 +169,7 @@
                                         classes: "govuk-link--no-visited-state",
                                         attributes: { 'data-qa': 'change-time' }
                                     }
-                                ]
+                                ] if session.appointmentJourney.mode != AppointmentJourneyMode.COPY
                             } if isDateTimeEditable
                         } if showTime
                     ), appointmentSummary) %}

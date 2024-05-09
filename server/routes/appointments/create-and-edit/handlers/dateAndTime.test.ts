@@ -53,6 +53,10 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
   })
 
   describe('CREATE', () => {
+    beforeEach(() => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    })
+
     it('should save start date, start time and end time in session and redirect to repeat page', async () => {
       req.body = {
         startDate: tomorrow,
@@ -130,6 +134,41 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     }
     await handler.CREATE(req, res)
     expect(req.session.returnTo).toEqual('schedule?preserveHistory=true')
+  })
+
+  describe('COPY', () => {
+    it('should populate return to with check-answers when copying and appointment', async () => {
+      req.body = {
+        startDate: tomorrow,
+      }
+      req.session.appointmentJourney = {
+        type: AppointmentType.INDIVIDUAL,
+        mode: AppointmentJourneyMode.COPY,
+        startTime: {
+          hour: 10,
+          minute: 5,
+          date: undefined,
+        },
+        endTime: {
+          hour: 11,
+          minute: 24,
+          date: undefined,
+        },
+      }
+      await handler.CREATE(req, res)
+      expect(req.session.appointmentJourney.startDate).toEqual(formatIsoDate(tomorrow))
+      expect(req.session.appointmentJourney.startTime).toEqual({
+        hour: 10,
+        minute: 5,
+        date: plainToInstance(SimpleTime, { hour: 10, minute: 5 }).toDate(tomorrow),
+      })
+      expect(req.session.appointmentJourney.endTime).toEqual({
+        hour: 11,
+        minute: 24,
+        date: plainToInstance(SimpleTime, { hour: 11, minute: 24 }).toDate(tomorrow),
+      })
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule')
+    })
   })
 
   describe('EDIT', () => {
@@ -283,64 +322,121 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
   })
 
   describe('Validation', () => {
-    it('validation fails when no date or times are specified', async () => {
-      const body = {}
+    describe('CREATE / EDIT', () => {
+      it.each([{ mode: AppointmentJourneyMode.CREATE }, { mode: AppointmentJourneyMode.EDIT }])(
+        'validation fails when no date or times are specified and mode is $mode',
+        async ({ mode }) => {
+          const body = {
+            appointmentJourney: {
+              mode,
+            },
+          }
 
-      const requestObject = plainToInstance(DateAndTime, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+          const requestObject = plainToInstance(DateAndTime, body)
+          const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(
-        expect.arrayContaining([
-          { error: 'Enter a date for the appointment', property: 'startDate' },
-          { error: 'Select a start time for the appointment', property: 'startTime' },
-          { error: 'Select an end time for the appointment', property: 'endTime' },
-        ]),
+          expect(errors).toEqual(
+            expect.arrayContaining([
+              { error: 'Enter a date for the appointment', property: 'startDate' },
+              { error: 'Select a start time for the appointment', property: 'startTime' },
+              { error: 'Select an end time for the appointment', property: 'endTime' },
+            ]),
+          )
+        },
+      )
+
+      it.each([{ mode: AppointmentJourneyMode.CREATE }, { mode: AppointmentJourneyMode.EDIT }])(
+        'validation fails when start date is more than 5 days in the past and mode is $mode',
+        async ({ mode }) => {
+          const sixDaysAgo = subDays(new Date(), 6)
+          const sixDaysAgoFormatted = formatDate(sixDaysAgo, 'd MMMM yyyy')
+          const body = {
+            appointmentJourney: {
+              mode,
+            },
+            startDate: formatDatePickerDate(sixDaysAgo),
+            startTime: plainToInstance(SimpleTime, {
+              hour: 11,
+              minute: 30,
+            }),
+            endTime: plainToInstance(SimpleTime, {
+              hour: 11,
+              minute: 45,
+            }),
+          }
+
+          const requestObject = plainToInstance(DateAndTime, body)
+          const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+          expect(errors).toEqual(
+            expect.arrayContaining([
+              {
+                error: `Enter a date that's after ${sixDaysAgoFormatted}`,
+                property: 'startDate',
+              },
+            ]),
+          )
+        },
+      )
+
+      it.each([{ mode: AppointmentJourneyMode.CREATE }, { mode: AppointmentJourneyMode.EDIT }])(
+        'validation fails when end time is not after the start time and mode is $mode',
+        async ({ mode }) => {
+          const body = {
+            appointmentJourney: {
+              mode,
+            },
+            startDate: formatDatePickerDate(tomorrow),
+            startTime: plainToInstance(SimpleTime, {
+              hour: 11,
+              minute: 30,
+            }),
+            endTime: plainToInstance(SimpleTime, {
+              hour: 11,
+              minute: 30,
+            }),
+          }
+
+          const requestObject = plainToInstance(DateAndTime, body)
+          const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+          expect(errors).toEqual(
+            expect.arrayContaining([{ error: 'Select an end time after the start time', property: 'endTime' }]),
+          )
+        },
       )
     })
 
-    it('validation fails when start date is more than 5 days in the past', async () => {
-      const sixDaysAgo = subDays(new Date(), 6)
-      const sixDaysAgoFormatted = formatDate(sixDaysAgo, 'd MMMM yyyy')
-      const body = {
-        startDate: formatDatePickerDate(sixDaysAgo),
-        startTime: plainToInstance(SimpleTime, {
-          hour: 11,
-          minute: 30,
-        }),
-        endTime: plainToInstance(SimpleTime, {
-          hour: 11,
-          minute: 45,
-        }),
-      }
+    describe('COPY', () => {
+      it('validation fails when no date is specified', async () => {
+        const body = {
+          appointmentJourney: {
+            mode: AppointmentJourneyMode.COPY,
+          },
+        }
 
-      const requestObject = plainToInstance(DateAndTime, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+        const requestObject = plainToInstance(DateAndTime, body)
+        const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(
-        expect.arrayContaining([{ error: `Enter a date that's after ${sixDaysAgoFormatted}`, property: 'startDate' }]),
-      )
+        expect(errors).toEqual(
+          expect.arrayContaining([{ error: 'Enter a date for the appointment', property: 'startDate' }]),
+        )
+      })
+
+      it('validation succeeds without times', async () => {
+        const body = {
+          appointmentJourney: {
+            mode: AppointmentJourneyMode.COPY,
+          },
+          startDate: formatDatePickerDate(tomorrow),
+        }
+
+        const requestObject = plainToInstance(DateAndTime, body)
+        const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+        expect(errors).toHaveLength(0)
+      })
     })
-  })
-
-  it('validation fails when end time is not after the start time', async () => {
-    const body = {
-      startDate: formatDatePickerDate(tomorrow),
-      startTime: plainToInstance(SimpleTime, {
-        hour: 11,
-        minute: 30,
-      }),
-      endTime: plainToInstance(SimpleTime, {
-        hour: 11,
-        minute: 30,
-      }),
-    }
-
-    const requestObject = plainToInstance(DateAndTime, body)
-    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-    expect(errors).toEqual(
-      expect.arrayContaining([{ error: 'Select an end time after the start time', property: 'endTime' }]),
-    )
   })
 })
 

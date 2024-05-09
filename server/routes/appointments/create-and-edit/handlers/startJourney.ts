@@ -48,6 +48,16 @@ export default class StartJourneyRoutes {
     res.redirect('upload-appointment-set')
   }
 
+  COPY = async (req: Request, res: Response): Promise<void> => {
+    this.populateAppointmentJourney(req, AppointmentJourneyMode.COPY)
+
+    // TODO
+    // initJourneyMetrics(req, 'startLink')
+    // this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED(req, res.locals.user))
+
+    res.redirect('../review-prisoners')
+  }
+
   PRISONER = async (req: Request, res: Response): Promise<void> => {
     const { prisonNumber } = req.params
     const { user } = res.locals
@@ -134,14 +144,14 @@ export default class StartJourneyRoutes {
     return res.redirect('../cancel/reason')
   }
 
-  private populateEditSession(req: Request, property?: string) {
-    const { appointmentSeries, appointment } = req
+  private populateAppointmentJourney(req: Request, journeyType: AppointmentJourneyMode) {
+    const { appointment } = req
 
     const startTime = parseDate(`${appointment.startDate}T${appointment.startTime}`, "yyyy-MM-dd'T'HH:mm")
     const endTime = parseDate(`${appointment.startDate}T${appointment.endTime}`, "yyyy-MM-dd'T'HH:mm")
 
     req.session.appointmentJourney = {
-      mode: AppointmentJourneyMode.EDIT,
+      mode: journeyType,
       type: AppointmentType[appointment.appointmentType],
       appointmentName: appointment.appointmentName,
       prisoners: appointment.attendees.map(attendee => ({
@@ -180,6 +190,14 @@ export default class StartJourneyRoutes {
       }
     }
 
+    initJourneyMetrics(req)
+  }
+
+  private populateEditSession(req: Request, property?: string) {
+    this.populateAppointmentJourney(req, AppointmentJourneyMode.EDIT)
+
+    const { appointmentSeries, appointment } = req
+
     req.session.editAppointmentJourney = {
       numberOfAppointments: appointment.appointmentSeries?.schedule?.numberOfAppointments ?? 1,
       appointments: appointmentSeries?.appointments.map(a => ({
@@ -196,7 +214,5 @@ export default class StartJourneyRoutes {
       appointmentSet: appointment.appointmentSet,
       property,
     }
-
-    initJourneyMetrics(req)
   }
 }

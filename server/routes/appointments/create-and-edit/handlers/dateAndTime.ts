@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import { Expose, Transform, Type } from 'class-transformer'
-import { IsNotEmpty, ValidateNested } from 'class-validator'
+import { Expose, plainToInstance, Transform, Type } from 'class-transformer'
+import { IsNotEmpty, ValidateIf, ValidateNested } from 'class-validator'
 import { startOfToday, subDays } from 'date-fns'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import TimeIsAfter from '../../../../validators/timeIsAfter'
@@ -10,6 +10,7 @@ import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
 import { formatDate } from '../../../../utils/utils'
 import { YesNo } from '../../../../@types/activities'
+import { AppointmentJourneyMode } from '../appointmentJourney'
 
 const MAX_RETROSPECTIVE_DAYS = 6
 export class DateAndTime {
@@ -24,12 +25,14 @@ export class DateAndTime {
 
   @Expose()
   @Type(() => SimpleTime)
+  @ValidateIf(o => o.appointmentJourney.mode !== AppointmentJourneyMode.COPY)
   @ValidateNested()
   @IsNotEmpty({ message: 'Select a start time for the appointment' })
   startTime: SimpleTime
 
   @Expose()
   @Type(() => SimpleTime)
+  @ValidateIf(o => o.appointmentJourney.mode !== AppointmentJourneyMode.COPY)
   @ValidateNested()
   @TimeIsAfter('startTime', { message: 'Select an end time after the start time' })
   @IsNotEmpty({ message: 'Select an end time for the appointment' })
@@ -42,21 +45,27 @@ export default class DateAndTimeRoutes {
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentJourney } = req.session
     this.setTimeAndDate(req, 'appointmentJourney')
-    const retrospective = retrospectiveAppointment(req.session.appointmentJourney.startTime)
+    const retrospective = retrospectiveAppointment(appointmentJourney.startTime)
 
     if (req.query.preserveHistory && !retrospective) {
       req.session.returnTo = 'schedule?preserveHistory=true'
     }
 
     if (retrospective) {
-      req.session.appointmentJourney.retrospective = YesNo.YES
-      req.session.appointmentJourney.repeat = YesNo.NO
-      res.redirectOrReturn(`check-answers`)
-    } else {
-      req.session.appointmentJourney.retrospective = YesNo.NO
-      res.redirectOrReturn(`repeat`)
+      appointmentJourney.retrospective = YesNo.YES
+      appointmentJourney.repeat = YesNo.NO
+      return res.redirectOrReturn('check-answers')
     }
+
+    appointmentJourney.retrospective = YesNo.NO
+
+    if (appointmentJourney.mode === AppointmentJourneyMode.COPY) {
+      return res.redirectOrReturn('schedule')
+    }
+
+    return res.redirectOrReturn('repeat')
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
@@ -80,17 +89,20 @@ export default class DateAndTimeRoutes {
 
     appointmentJourney.startDate = formatIsoDate(startDate)
 
-    appointmentJourney.startTime = {
-      hour: startTime.hour,
-      minute: startTime.minute,
-      date: startTime.toDate(startDate),
+    if (appointmentJourney.mode !== AppointmentJourneyMode.COPY) {
+      appointmentJourney.startTime = {
+        hour: startTime.hour,
+        minute: startTime.minute,
+      }
+
+      appointmentJourney.endTime = {
+        hour: endTime.hour,
+        minute: endTime.minute,
+      }
     }
 
-    appointmentJourney.endTime = {
-      hour: endTime.hour,
-      minute: endTime.minute,
-      date: endTime.toDate(startDate),
-    }
+    appointmentJourney.startTime.date = plainToInstance(SimpleTime, appointmentJourney.startTime).toDate(startDate)
+    appointmentJourney.endTime.date = plainToInstance(SimpleTime, appointmentJourney.endTime).toDate(startDate)
   }
 }
 

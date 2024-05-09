@@ -75,12 +75,23 @@ export default class ScheduleRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const nextRoute =
-      req.session.appointmentJourney.type === AppointmentType.SET
-        ? 'appointment-set-extra-information'
-        : 'extra-information'
+    const nextRoute = this.determineNextRoute(req)
+
     if (req.session.appointmentJourney.createJourneyComplete) return res.redirectOrReturn(nextRoute)
+
     return res.redirect(nextRoute)
+  }
+
+  private determineNextRoute(req: Request): string {
+    const { mode, type } = req.session.appointmentJourney
+
+    if (mode === AppointmentJourneyMode.COPY) {
+      return 'check-answers'
+    }
+    if (type === AppointmentType.SET) {
+      return 'appointment-set-extra-information'
+    }
+    return 'extra-information'
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {

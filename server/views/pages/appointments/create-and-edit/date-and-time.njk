@@ -10,6 +10,9 @@
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
     {% set pageTitle = appointmentJourneyTitle("change date and time", session.appointmentJourney) %}
     {% set pageHeading = "Enter the new date and time" %}
+{% elif session.appointmentJourney.mode == AppointmentJourneyMode.COPY %}
+    {% set pageTitle = appointmentJourneyTitle("change date", session.appointmentJourney) %}
+    {% set pageHeading = "Enter date of the appointment" %}
 {% else %}
     {% set pageTitle = appointmentJourneyTitle("Date and time of appointment", session.appointmentJourney) %}
     {% set pageHeading = "Enter the date and time of the appointment" %}
@@ -33,34 +36,36 @@
                         classes: "govuk-label--m"
                     },
                     hint: {
-                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
+                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select. ' + session.appointmentJourney.mode
                     },
                     errorMessage: validationErrors | findError('startDate'),
                     classes: 'hmpps-datepicker--fixed-width',
                     value: formResponses.startDate or ((session.editAppointmentJourney.startDate or session.appointmentJourney.startDate) | isoDateToDatePickerDate)
                 }) }}
-                {{ timePicker({
-                    id: 'startTime',
-                    name: 'startTime',
-                    label: {
-                        text: 'Start time',
-                        classes: "govuk-fieldset__legend--m"
-                    },
-                    renderedErrorMessage: validationErrors | findError('startTime'),
-                    validationErrors: validationErrors,
-                    formResponses: formResponses.startTime or session.editAppointmentJourney.startTime or session.appointmentJourney.startTime
-                }) }}
-                {{ timePicker({
-                    id: 'endTime',
-                    name: 'endTime',
-                    label: {
-                        text: 'End time',
-                        classes: "govuk-fieldset__legend--m"
-                    },
-                    renderedErrorMessage: validationErrors | findError('endTime'),
-                    validationErrors: validationErrors,
-                    formResponses: formResponses.endTime or session.editAppointmentJourney.endTime or session.appointmentJourney.endTime
-                }) }}
+                {% if session.appointmentJourney.mode != AppointmentJourneyMode.COPY %}
+                    {{ timePicker({
+                        id: 'startTime',
+                        name: 'startTime',
+                        label: {
+                            text: 'Start time',
+                            classes: "govuk-fieldset__legend--m"
+                        },
+                        renderedErrorMessage: validationErrors | findError('startTime'),
+                        validationErrors: validationErrors,
+                        formResponses: formResponses.startTime or session.editAppointmentJourney.startTime or session.appointmentJourney.startTime
+                    }) }}
+                    {{ timePicker({
+                        id: 'endTime',
+                        name: 'endTime',
+                        label: {
+                            text: 'End time',
+                            classes: "govuk-fieldset__legend--m"
+                        },
+                        renderedErrorMessage: validationErrors | findError('endTime'),
+                        validationErrors: validationErrors,
+                        formResponses: formResponses.endTime or session.editAppointmentJourney.endTime or session.appointmentJourney.endTime
+                    }) }}
+                {%  endif %}
                 {{ govukButton({
                     text: "Continue"
                 }) }}
