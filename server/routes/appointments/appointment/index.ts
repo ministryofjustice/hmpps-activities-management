@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import createHttpError from 'http-errors'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import AppointmentDetailsRoutes from './handlers/appointmentDetails'
 import AppointmentMovementSlipRoutes from './handlers/appointmentMovementSlip'
@@ -27,11 +26,9 @@ export default function Index({ activitiesService, userService, metricsService }
   post('/attend', appointmentAttendanceRoutes.ATTEND, AppointmentAttendance)
   post('/non-attend', appointmentAttendanceRoutes.NON_ATTEND, AppointmentAttendance)
 
-  router.use((req, res, next) =>
-    !config.copyAppointmentFeatureToggleEnabled ? next(createHttpError.NotFound()) : next(),
-  )
-
-  get('/copy', appointmentDetailsRoutes.COPY)
+  if (config.copyAppointmentFeatureToggleEnabled) {
+    get('/copy', appointmentDetailsRoutes.COPY)
+  }
 
   return router
 }
