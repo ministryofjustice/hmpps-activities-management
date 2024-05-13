@@ -167,6 +167,31 @@ describe('Route Handlers - Create Appointment - Start', () => {
     })
   })
 
+  describe('COPY', () => {
+    it('should set mode and redirect', async () => {
+      req.appointment = appointment
+
+      await handler.COPY(req, res)
+
+      expect(req.session.appointmentJourney).toEqual(expectedJourney(AppointmentJourneyMode.COPY))
+      expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toBeUndefined()
+
+      // TODO
+      // expect(metricsService.trackEvent).toBeCalledWith(
+      //   new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+      //     .addProperty('journeyId', journeyId)
+      //     .addProperty('appointmentId', appointment.id)
+      //     .addProperty('property', 'location')
+      //     .addProperty('isApplyToQuestionRequired', 'true'),
+      // )
+
+      expect(res.redirect).toHaveBeenCalledWith('../review-prisoners')
+    })
+  })
+
   describe('PRISONER', () => {
     beforeEach(() => {
       req.params.prisonNumber = 'A1234BC'
@@ -239,6 +264,55 @@ describe('Route Handlers - Create Appointment - Start', () => {
     })
   })
 
+  const expectedJourney = (mode: AppointmentJourneyMode) => {
+    return {
+      mode,
+      type: AppointmentType.GROUP,
+      appointmentName: 'Appointment name (Chaplaincy)',
+      prisoners: [
+        {
+          number: 'A1234BC',
+          name: 'TEST01 PRISONER01',
+          cellLocation: '1-1-1',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
+        },
+        {
+          number: 'B2345CD',
+          name: 'TEST02 PRISONER02',
+          cellLocation: '2-2-2',
+          status: 'ACTIVE IN',
+          prisonCode: 'MDI',
+        },
+      ],
+      category: {
+        code: 'CHAP',
+        description: 'Chaplaincy',
+      },
+      tierCode: EventTier.TIER_2,
+      organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
+      location: {
+        id: 26152,
+        prisonCode: 'CHAP',
+        description: 'Chapel',
+      },
+      startDate: '2023-04-13',
+      startTime: {
+        date: new Date('2023-04-13 09:00:00'),
+        hour: 9,
+        minute: 0,
+      },
+      endTime: {
+        date: new Date('2023-04-13 10:00:00'),
+        hour: 10,
+        minute: 0,
+      },
+      repeat: YesNo.YES,
+      numberOfAppointments: 3,
+      frequency: 'WEEKLY',
+    } as AppointmentJourney
+  }
+
   describe('EDIT', () => {
     beforeEach(() => {
       req = {
@@ -283,52 +357,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         property: 'location',
       }
 
-      const appointmentJourneySession = {
-        mode: AppointmentJourneyMode.EDIT,
-        type: AppointmentType.GROUP,
-        appointmentName: 'Appointment name (Chaplaincy)',
-        prisoners: [
-          {
-            number: 'A1234BC',
-            name: 'TEST01 PRISONER01',
-            cellLocation: '1-1-1',
-            status: 'ACTIVE IN',
-            prisonCode: 'MDI',
-          },
-          {
-            number: 'B2345CD',
-            name: 'TEST02 PRISONER02',
-            cellLocation: '2-2-2',
-            status: 'ACTIVE IN',
-            prisonCode: 'MDI',
-          },
-        ],
-        category: {
-          code: 'CHAP',
-          description: 'Chaplaincy',
-        },
-        tierCode: EventTier.TIER_2,
-        organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
-        location: {
-          id: 26152,
-          prisonCode: 'CHAP',
-          description: 'Chapel',
-        },
-        startDate: '2023-04-13',
-        startTime: {
-          date: new Date('2023-04-13 09:00:00'),
-          hour: 9,
-          minute: 0,
-        },
-        endTime: {
-          date: new Date('2023-04-13 10:00:00'),
-          hour: 10,
-          minute: 0,
-        },
-        repeat: YesNo.YES,
-        numberOfAppointments: 3,
-        frequency: 'WEEKLY',
-      } as AppointmentJourney
+      const appointmentJourneySession = expectedJourney(AppointmentJourneyMode.EDIT)
 
       const editAppointmentJourneySession = {
         numberOfAppointments: 3,

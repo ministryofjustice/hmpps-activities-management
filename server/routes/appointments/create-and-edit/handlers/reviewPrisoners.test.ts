@@ -200,22 +200,38 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       }
     })
 
-    it('should redirect or return to review alerts page if there are any alerts', async () => {
-      when(prisonerAlertsService.getAlertDetails)
-        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
-        .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 1 } as PrisonerAlertResults))
+    it.each([{ mode: AppointmentJourneyMode.CREATE }, { mode: AppointmentJourneyMode.EDIT }])(
+      'should redirect or return to review alerts page if there are any alerts when mode is $mode',
+      async ({ mode }) => {
+        req.session.appointmentJourney.mode = mode
 
-      await handler.POST(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('review-prisoners-alerts')
-    })
+        when(prisonerAlertsService.getAlertDetails)
+          .calledWith(req.session.appointmentJourney.prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
+          .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 1 } as PrisonerAlertResults))
 
-    it('should redirect or return to review alerts page there are no alerts', async () => {
+        await handler.POST(req, res)
+        expect(res.redirectOrReturn).toBeCalledWith('review-prisoners-alerts')
+      },
+    )
+
+    it('should redirect or return to review alerts page there are no alerts when mode is CREATE', async () => {
       when(prisonerAlertsService.getAlertDetails)
         .calledWith(req.session.appointmentJourney.prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
 
       await handler.POST(req, res)
       expect(res.redirectOrReturn).toBeCalledWith('name')
+    })
+
+    it('should redirect or return to name page when there are no alerts when mode is COPY', async () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.COPY
+
+      when(prisonerAlertsService.getAlertDetails)
+        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
+        .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
+
+      await handler.POST(req, res)
+      expect(res.redirectOrReturn).toBeCalledWith('date-and-time')
     })
 
     it('should populate return to with schedule', async () => {

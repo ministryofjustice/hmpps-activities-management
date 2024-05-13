@@ -124,12 +124,22 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
   })
 
   describe('POST', () => {
-    it('should redirect or return to name page', async () => {
+    it('should redirect or return to name page during create', async () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
       req.body = {
         howToAdd: 'SEARCH',
       }
       await handler.POST(req, res)
       expect(res.redirectOrReturn).toBeCalledWith('name')
+    })
+
+    it('should redirect or return to name page during copy', async () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.COPY
+      req.body = {
+        howToAdd: 'SEARCH',
+      }
+      await handler.POST(req, res)
+      expect(res.redirectOrReturn).toBeCalledWith('date-and-time')
     })
 
     it('should populate return to with schedule', async () => {

@@ -46,7 +46,11 @@ export default class ReviewPrisonersAlertsRoutes {
       req.session.returnTo = 'schedule?preserveHistory=true'
     }
 
-    res.redirectOrReturn('name')
+    if (req.session.appointmentJourney.mode === AppointmentJourneyMode.COPY) {
+      return res.redirectOrReturn('date-and-time')
+    }
+
+    return res.redirectOrReturn('name')
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {

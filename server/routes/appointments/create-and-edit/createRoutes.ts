@@ -1,4 +1,5 @@
 import { RequestHandler, Router } from 'express'
+import createHttpError from 'http-errors'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import emptyAppointmentJourneyHandler from '../../../middleware/emptyAppointmentJourneyHandler'
 import validationMiddleware from '../../../middleware/validationMiddleware'
@@ -33,6 +34,8 @@ import TierRoutes, { TierForm } from './handlers/tier'
 import HostRoutes, { HostForm } from './handlers/host'
 import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
 import PrisonerAlertsService from '../../../services/prisonerAlertsService'
+import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
+import config from '../../../config'
 
 export default function Create({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -140,6 +143,17 @@ export default function Create({ prisonService, activitiesService, metricsServic
     fetchAppointmentSet(activitiesService),
     emptyAppointmentJourneyHandler(true),
     asyncMiddleware(confirmationRoutes.GET_SET),
+  )
+
+  router.use((req, res, next) =>
+    !config.copyAppointmentFeatureToggleEnabled ? next(createHttpError.NotFound()) : next(),
+  )
+
+  router.get(
+    '/start-copy/:appointmentId',
+    fetchAppointment(activitiesService),
+    fetchAppointmentSeries(activitiesService),
+    startJourneyRoutes.COPY,
   )
 
   return router

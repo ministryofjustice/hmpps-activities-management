@@ -352,6 +352,12 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         await handler.POST(req, res)
         expect(res[redirectMethod]).toHaveBeenCalledWith('appointment-set-extra-information')
       })
+
+      it('should redirect to check answers page for mode = COPY', async () => {
+        req.session.appointmentJourney.mode = AppointmentJourneyMode.COPY
+        await handler.POST(req, res)
+        expect(res[redirectMethod]).toHaveBeenCalledWith('check-answers')
+      })
     })
   })
 

@@ -13,6 +13,7 @@ export enum AppointmentType {
 export enum AppointmentJourneyMode {
   CREATE = 'CREATE',
   EDIT = 'EDIT',
+  COPY = 'COPY',
 }
 
 export type AppointmentJourney = {

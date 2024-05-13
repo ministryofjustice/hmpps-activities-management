@@ -10,7 +10,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <form method="POST">
+            <form method="POST" action="/appointments/create/start-copy/{{ appointment.id }}">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
                 <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>

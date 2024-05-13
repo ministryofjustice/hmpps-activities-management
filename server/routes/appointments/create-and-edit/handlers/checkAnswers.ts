@@ -4,7 +4,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import { AppointmentSeriesCreateRequest, AppointmentSetCreateRequest } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
-import { AppointmentType } from '../appointmentJourney'
+import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
 import { organiserDescriptions } from '../../../../enum/eventOrganisers'
 
@@ -14,7 +14,11 @@ export default class CheckAnswersRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentJourney } = req.session
 
-    req.session.appointmentJourney.createJourneyComplete = true
+    appointmentJourney.createJourneyComplete = true
+
+    if (appointmentJourney.mode === AppointmentJourneyMode.COPY) {
+      appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    }
 
     res.render('pages/appointments/create-and-edit/check-answers', {
       tier: eventTierDescriptions[appointmentJourney.tierCode],

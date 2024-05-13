@@ -97,7 +97,7 @@
             {% endif %}
 
             {% set items = [] %}
-            {% if copyAppointmentFeatureToggleEnabled %}
+            {% if copyAppointmentFeatureToggleEnabled and not appointment.appointmentSet %}
                 {% set items = items.concat(
                     {
                     href: appointmentLink + "/copy",
