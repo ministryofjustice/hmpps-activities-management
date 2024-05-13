@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import createHttpError from 'http-errors'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import emptyAppointmentJourneyHandler from '../../../middleware/emptyAppointmentJourneyHandler'
 import validationMiddleware from '../../../middleware/validationMiddleware'
@@ -32,6 +31,7 @@ import fetchAppointmentSet from '../../../middleware/appointments/fetchAppointme
 import ScheduleRoutes from './handlers/schedule'
 import TierRoutes, { TierForm } from './handlers/tier'
 import HostRoutes, { HostForm } from './handlers/host'
+import CopySeries, { HowToCopySeriesForm } from './handlers/copySeries'
 import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
 import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
@@ -69,6 +69,7 @@ export default function Create({ prisonService, activitiesService, metricsServic
   const appointmentSetTimesRoutes = new AppointmentSetTimesRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
   const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
+  const copySeriesRoutes = new CopySeries()
 
   get('/start-group', startJourneyRoutes.GROUP)
   get('/start-set', startJourneyRoutes.SET)
@@ -145,16 +146,17 @@ export default function Create({ prisonService, activitiesService, metricsServic
     asyncMiddleware(confirmationRoutes.GET_SET),
   )
 
-  router.use((req, res, next) =>
-    !config.copyAppointmentFeatureToggleEnabled ? next(createHttpError.NotFound()) : next(),
-  )
+  if (config.copyAppointmentFeatureToggleEnabled) {
+    router.get(
+      '/start-copy/:appointmentId',
+      fetchAppointment(activitiesService),
+      fetchAppointmentSeries(activitiesService),
+      startJourneyRoutes.COPY,
+    )
 
-  router.get(
-    '/start-copy/:appointmentId',
-    fetchAppointment(activitiesService),
-    fetchAppointmentSeries(activitiesService),
-    startJourneyRoutes.COPY,
-  )
+    get('/copy-series', copySeriesRoutes.GET, true)
+    post('/copy-series', copySeriesRoutes.POST, HowToCopySeriesForm)
+  }
 
   return router
 }

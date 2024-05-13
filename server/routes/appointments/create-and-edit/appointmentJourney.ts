@@ -51,4 +51,5 @@ export type AppointmentJourney = {
   extraInformation?: string
   fromPrisonNumberProfile?: string
   retrospective?: YesNo
+  originalAppointmentId?: number
 }

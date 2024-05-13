@@ -1,0 +1,54 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+
+{% set pageTitle = appointmentJourneyTitle("copy appointment series", session.appointmentJourney) %}
+{% set pageHeading = "Copying an appointment that's part of a series" %}
+
+{% set pageId = 'appointments-copy-series-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
+            <h1 class="govuk-heading-l">Copying an appointment that's part of a series</h1>
+            <p class="govuk-body-l">{{ appointmentJourney.appointmentName }} is part of a series of {{ appointmentJourney.numberOfAppointments }} appointments.</p>
+
+            <form method="POST" action="copy-series">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    name: "howToCopy",
+                    fieldset: {
+                        legend: {
+                            text: "Select what you want to create by copying this appointment",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('howToAdd'),
+                    items: [
+                        {
+                            value: HowToCopySeriesOptions.ONE_OFF,
+                            text: "A one-off appointment",
+                            checked: formResponses.howToCopy == HowToCopySeriesOptions.ONE_OFF
+                        },
+                        {
+                            value: HowToCopySeriesOptions.SERIES,
+                            text: "A series of repeating appointments",
+                            checked: formResponses.howToCopy == HowToCopySeriesOptions.SERIES
+                        }
+                    ]
+                }) }}
+
+                <div class='govuk-button-group'>
+                    {{ govukButton({ text: "Continue"}) }}
+                    <a class="govuk-link govuk-link--no-visited-state" href="/appointments/{{ appointmentJourney.originalAppointmentId }}">Cancel and return to appointment</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

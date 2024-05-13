@@ -62,6 +62,9 @@ export default class DateAndTimeRoutes {
     appointmentJourney.retrospective = YesNo.NO
 
     if (appointmentJourney.mode === AppointmentJourneyMode.COPY) {
+      if (appointmentJourney.repeat === YesNo.YES) {
+        return res.redirectOrReturn('copy-series')
+      }
       return res.redirectOrReturn('schedule')
     }
 

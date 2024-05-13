@@ -14,6 +14,7 @@ import { YesNo } from '../../../../@types/activities'
 jest.mock('../../../../services/editAppointmentService')
 
 const tomorrow = addDays(new Date(), 1)
+const fiveDaysAgo = subDays(new Date(), 5)
 const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
 
 describe('Route Handlers - Appointment Journey - Date and Time', () => {
@@ -88,8 +89,6 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     })
 
     it('should populate return to with check-answers for a retrospective appointment 5 days in the past', async () => {
-      const fiveDaysAgo = subDays(new Date(), 5)
-
       req.body = {
         startDate: fiveDaysAgo,
         startTime: plainToInstance(SimpleTime, {
@@ -137,7 +136,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
   })
 
   describe('COPY', () => {
-    it('should populate return to with check-answers when copying and appointment', async () => {
+    beforeEach(() => {
       req.body = {
         startDate: tomorrow,
       }
@@ -155,7 +154,11 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
           date: undefined,
         },
       }
+    })
+
+    it('should populate return to with schedule when copying a single appointment', async () => {
       await handler.CREATE(req, res)
+
       expect(req.session.appointmentJourney.startDate).toEqual(formatIsoDate(tomorrow))
       expect(req.session.appointmentJourney.startTime).toEqual({
         hour: 10,
@@ -168,6 +171,45 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         date: plainToInstance(SimpleTime, { hour: 11, minute: 24 }).toDate(tomorrow),
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule')
+    })
+
+    it('should populate return to with copy-series when copying a future series', async () => {
+      req.session.appointmentJourney.repeat = YesNo.YES
+
+      await handler.CREATE(req, res)
+
+      expect(req.session.appointmentJourney.startDate).toEqual(formatIsoDate(tomorrow))
+      expect(req.session.appointmentJourney.startTime).toEqual({
+        hour: 10,
+        minute: 5,
+        date: plainToInstance(SimpleTime, { hour: 10, minute: 5 }).toDate(tomorrow),
+      })
+      expect(req.session.appointmentJourney.endTime).toEqual({
+        hour: 11,
+        minute: 24,
+        date: plainToInstance(SimpleTime, { hour: 11, minute: 24 }).toDate(tomorrow),
+      })
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('copy-series')
+    })
+
+    it('should populate return to with check-answers when copying a retrospective series', async () => {
+      req.session.appointmentJourney.repeat = YesNo.YES
+      req.body.startDate = fiveDaysAgo
+
+      await handler.CREATE(req, res)
+
+      expect(req.session.appointmentJourney.startDate).toEqual(formatIsoDate(fiveDaysAgo))
+      expect(req.session.appointmentJourney.startTime).toEqual({
+        hour: 10,
+        minute: 5,
+        date: plainToInstance(SimpleTime, { hour: 10, minute: 5 }).toDate(fiveDaysAgo),
+      })
+      expect(req.session.appointmentJourney.endTime).toEqual({
+        hour: 11,
+        minute: 24,
+        date: plainToInstance(SimpleTime, { hour: 11, minute: 24 }).toDate(fiveDaysAgo),
+      })
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })
   })
 
@@ -205,7 +247,6 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     })
 
     it('should update the appointment date and redirect to schedule when the start date is 5 days ago', async () => {
-      const fiveDaysAgo = subDays(new Date(), 5)
       req.body.startDate = fiveDaysAgo
 
       await handler.EDIT(req, res)
