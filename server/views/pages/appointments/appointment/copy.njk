@@ -31,11 +31,9 @@
                     <li class='govuk-list govuk-list--bullet'>extra information</li>
                 </ul>
 
-                <div class='govuk-button-group'>
+                <div class='govuk-button-group appointment-copy'>
                     {{ govukButton({ text: "Continue"}) }}
-                    {% if not session.req.query.preserveHistory %}
-                        <a class="govuk-link govuk-link--no-visited-state" href="/appointments/{{ appointment.id }}">Cancel and return to appointment</a>
-                    {% endif %}
+                    <a class="govuk-link govuk-link--no-visited-state" href="/appointments/{{ appointment.id }}">Cancel and return to appointment</a>
                 </div>
             </form>
         </div>

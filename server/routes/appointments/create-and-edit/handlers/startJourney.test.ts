@@ -168,12 +168,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
   })
 
   describe('COPY', () => {
-    it('should set mode and redirect', async () => {
+    it('should set mode, original appointment id and redirect', async () => {
       req.appointment = appointment
 
       await handler.COPY(req, res)
 
-      expect(req.session.appointmentJourney).toEqual(expectedJourney(AppointmentJourneyMode.COPY))
+      expect(req.session.appointmentJourney).toEqual(expectedJourney(AppointmentJourneyMode.COPY, appointment.id))
       expect(req.session.appointmentSetJourney).toBeUndefined()
 
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
@@ -264,8 +264,9 @@ describe('Route Handlers - Create Appointment - Start', () => {
     })
   })
 
-  const expectedJourney = (mode: AppointmentJourneyMode) => {
+  const expectedJourney = (mode: AppointmentJourneyMode, originalAppointmentId?: number) => {
     return {
+      originalAppointmentId,
       mode,
       type: AppointmentType.GROUP,
       appointmentName: 'Appointment name (Chaplaincy)',

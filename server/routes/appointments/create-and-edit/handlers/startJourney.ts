@@ -51,6 +51,8 @@ export default class StartJourneyRoutes {
   COPY = async (req: Request, res: Response): Promise<void> => {
     this.populateAppointmentJourney(req, AppointmentJourneyMode.COPY)
 
+    req.session.appointmentJourney.originalAppointmentId = req.appointment.id
+
     // TODO
     // initJourneyMetrics(req, 'startLink')
     // this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED(req, res.locals.user))
