@@ -181,7 +181,7 @@
     "prettier": "^3.2.5",
     "prettier-plugin-jinja-template": "^1.4.0",
     "rollup": "^4.17.2",
-    "sass": "^1.77.0",
+    "sass": "^1.77.1",
     "supertest": "^7.0.0",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
