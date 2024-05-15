@@ -14,7 +14,6 @@ describe('Route Handlers - Duplicate Appointment - Copy Appointment Series', () 
     res = {
       render: jest.fn(),
       redirect: jest.fn(),
-      redirectOrReturn: jest.fn(),
     } as unknown as Response
 
     req = {

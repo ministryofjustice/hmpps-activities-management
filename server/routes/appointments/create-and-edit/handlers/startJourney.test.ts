@@ -228,7 +228,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(res.redirect).toHaveBeenCalledWith('../review-prisoners')
     })
 
-    it('should render how to add prisoners page if no attendees remain', async () => {
+    it('should render no attendees view if no attendees remain', async () => {
       req.appointment = appointment
 
       when(appointeeAttendeeService.findUnavailableAttendees)
@@ -253,7 +253,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       //     .addProperty('isApplyToQuestionRequired', 'true'),
       // )
 
-      expect(res.redirect).toHaveBeenCalledWith('../how-to-add-prisoners')
+      expect(res.redirect).toHaveBeenCalledWith('../no-attendees')
     })
   })
 
