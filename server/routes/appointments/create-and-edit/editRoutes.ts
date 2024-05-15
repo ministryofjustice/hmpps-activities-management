@@ -24,6 +24,7 @@ import TierRoutes, { TierForm } from './handlers/tier'
 import HostRoutes, { HostForm } from './handlers/host'
 import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
 import PrisonerAlertsService from '../../../services/prisonerAlertsService'
+import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
 
 export default function Edit({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -34,7 +35,8 @@ export default function Edit({ prisonService, activitiesService, metricsService 
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
-  const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService)
+  const appointeeAttendeeService = new AppointeeAttendeeService(prisonService)
+  const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService, appointeeAttendeeService)
   const prisonerAlertsService = new PrisonerAlertsService(prisonService)
   const tierRoutes = new TierRoutes(editAppointmentService)
   const hostRoutes = new HostRoutes(editAppointmentService)

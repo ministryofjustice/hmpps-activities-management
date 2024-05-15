@@ -32,10 +32,12 @@ import ScheduleRoutes from './handlers/schedule'
 import TierRoutes, { TierForm } from './handlers/tier'
 import HostRoutes, { HostForm } from './handlers/host'
 import CopySeries, { HowToCopySeriesForm } from './handlers/copySeries'
+import NoAttendees from './handlers/noAttendees'
 import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
 import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
 import config from '../../../config'
+import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
 
 export default function Create({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -47,7 +49,8 @@ export default function Create({ prisonService, activitiesService, metricsServic
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const prisonerAlertsService = new PrisonerAlertsService(prisonService)
-  const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService)
+  const appointeeAttendeeService = new AppointeeAttendeeService(prisonService)
+  const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService, appointeeAttendeeService)
   const selectPrisonerRoutes = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const nameRoutes = new NameRoutes(activitiesService)
@@ -70,6 +73,7 @@ export default function Create({ prisonService, activitiesService, metricsServic
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
   const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
   const copySeriesRoutes = new CopySeries()
+  const noAttendeesRoutes = new NoAttendees()
 
   get('/start-group', startJourneyRoutes.GROUP)
   get('/start-set', startJourneyRoutes.SET)
@@ -156,6 +160,8 @@ export default function Create({ prisonService, activitiesService, metricsServic
 
     get('/copy-series', copySeriesRoutes.GET, true)
     post('/copy-series', copySeriesRoutes.POST, HowToCopySeriesForm)
+    get('/no-attendees', noAttendeesRoutes.GET, true)
+    post('/no-attendees', noAttendeesRoutes.POST)
   }
 
   return router

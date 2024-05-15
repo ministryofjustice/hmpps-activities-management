@@ -2,7 +2,6 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
 {% set pageTitle = appointmentJourneyTitle("copy appointment series", session.appointmentJourney) %}
@@ -15,7 +14,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
-            <h1 class="govuk-heading-l">Copying an appointment that's part of a series</h1>
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
             <p class="govuk-body-l">{{ appointmentJourney.appointmentName }} is part of a series of {{ appointmentJourney.numberOfAppointments }} appointments.</p>
 
             <form method="POST" action="copy-series">

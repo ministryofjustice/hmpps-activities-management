@@ -1,0 +1,30 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
+
+{% set pageTitle = appointmentJourneyTitle("no attendess", session.appointmentJourney) %}
+{% set pageHeading = "There are no attendees for this appointment" %}
+
+{% set pageId = 'appointments-no-attendees-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l" data-qa="caption">Schedule an Appointment</span>
+            <h1 class="govuk-heading-l">{{  pageHeading }}</h1>
+            <p>Attendees from {{ appointmentJourney.appointmentName }} on {{ appointmentJourney.startDate | toDate | formatDate }} have left {{ user.activeCaseLoadDescription }}.</p>
+            <p>If you want to continue copying the appointment, you must add someone.</p>
+
+            <form method="POST" action="no-attendees">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <div class='govuk-button-group appointment-copy'>
+                    {{ govukButton({ text: "Add someone to the list"}) }}
+                    <a class="govuk-link govuk-link--no-visited-state" href="/appointments/{{ appointmentJourney.originalAppointmentId }}">Cancel and return to appointment</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

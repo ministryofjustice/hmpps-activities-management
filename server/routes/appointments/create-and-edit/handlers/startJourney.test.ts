@@ -9,19 +9,23 @@ import { YesNo } from '../../../../@types/activities'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import MetricsService from '../../../../services/metricsService'
+import AppointeeAttendeeService from '../../../../services/appointeeAttendeeService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import { MetricsEventType } from '../../../../@types/metricsEvents'
 import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
 import EventOrganiser, { organiserDescriptions } from '../../../../enum/eventOrganisers'
+import atLeast from '../../../../../jest.setup'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/metricsService')
+jest.mock('../../../../services/appointeeAttendeeService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
+const appointeeAttendeeService = new AppointeeAttendeeService(null) as jest.Mocked<AppointeeAttendeeService>
 
 describe('Route Handlers - Create Appointment - Start', () => {
-  const handler = new StartJourneyRoutes(prisonService, metricsService)
+  const handler = new StartJourneyRoutes(prisonService, metricsService, appointeeAttendeeService)
   let req: Request
   let res: Response
   const journeyId = uuidv4()
@@ -40,6 +44,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       },
     ],
   } as unknown as AppointmentSeriesDetails
+
   const appointment = {
     id: 12,
     appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
@@ -171,6 +176,10 @@ describe('Route Handlers - Create Appointment - Start', () => {
     it('should set mode, original appointment id and redirect', async () => {
       req.appointment = appointment
 
+      when(appointeeAttendeeService.findUnavailableAttendees)
+        .calledWith(atLeast(['A1234BC', 'B2345CD'], res.locals.user))
+        .mockResolvedValueOnce([])
+
       await handler.COPY(req, res)
 
       expect(req.session.appointmentJourney).toEqual(expectedJourney(AppointmentJourneyMode.COPY, appointment.id))
@@ -189,6 +198,62 @@ describe('Route Handlers - Create Appointment - Start', () => {
       // )
 
       expect(res.redirect).toHaveBeenCalledWith('../review-prisoners')
+    })
+
+    it('should remove any prisoners who are unavailable', async () => {
+      req.appointment = appointment
+
+      when(appointeeAttendeeService.findUnavailableAttendees)
+        .calledWith(atLeast(['A1234BC', 'B2345CD'], res.locals.user))
+        .mockResolvedValueOnce(['A1234BC'])
+
+      await handler.COPY(req, res)
+
+      expect(req.session.appointmentJourney.prisoners.map(p => p.number)).toEqual(['B2345CD'])
+
+      expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toBeUndefined()
+
+      // TODO
+      // expect(metricsService.trackEvent).toBeCalledWith(
+      //   new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+      //     .addProperty('journeyId', journeyId)
+      //     .addProperty('appointmentId', appointment.id)
+      //     .addProperty('property', 'location')
+      //     .addProperty('isApplyToQuestionRequired', 'true'),
+      // )
+
+      expect(res.redirect).toHaveBeenCalledWith('../review-prisoners')
+    })
+
+    it('should render no attendees view if no attendees remain', async () => {
+      req.appointment = appointment
+
+      when(appointeeAttendeeService.findUnavailableAttendees)
+        .calledWith(atLeast(['A1234BC', 'B2345CD'], res.locals.user))
+        .mockResolvedValueOnce(['A1234BC', 'B2345CD'])
+
+      await handler.COPY(req, res)
+
+      expect(req.session.appointmentJourney.prisoners).toHaveLength(0)
+
+      expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toBeUndefined()
+
+      // TODO
+      // expect(metricsService.trackEvent).toBeCalledWith(
+      //   new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+      //     .addProperty('journeyId', journeyId)
+      //     .addProperty('appointmentId', appointment.id)
+      //     .addProperty('property', 'location')
+      //     .addProperty('isApplyToQuestionRequired', 'true'),
+      // )
+
+      expect(res.redirect).toHaveBeenCalledWith('../no-attendees')
     })
   })
 
