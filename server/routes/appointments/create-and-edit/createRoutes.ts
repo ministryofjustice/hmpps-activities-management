@@ -36,6 +36,7 @@ import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
 import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
 import config from '../../../config'
+import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
 
 export default function Create({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -47,7 +48,8 @@ export default function Create({ prisonService, activitiesService, metricsServic
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const prisonerAlertsService = new PrisonerAlertsService(prisonService)
-  const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService)
+  const appointeeAttendeeService = new AppointeeAttendeeService(prisonService)
+  const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService, appointeeAttendeeService)
   const selectPrisonerRoutes = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const nameRoutes = new NameRoutes(activitiesService)

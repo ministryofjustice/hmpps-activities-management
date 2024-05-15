@@ -11,11 +11,13 @@ import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import EventOrganiser from '../../../../enum/eventOrganisers'
 import EventTier from '../../../../enum/eventTiers'
+import AppointeeAttendeeService from '../../../../services/appointeeAttendeeService'
 
 export default class StartJourneyRoutes {
   constructor(
     private readonly prisonService: PrisonService,
     private readonly metricsService: MetricsService,
+    private readonly appointeeAttendeeService: AppointeeAttendeeService,
   ) {}
 
   GROUP = async (req: Request, res: Response): Promise<void> => {
@@ -49,15 +51,31 @@ export default class StartJourneyRoutes {
   }
 
   COPY = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
+
     this.populateAppointmentJourney(req, AppointmentJourneyMode.COPY)
 
-    req.session.appointmentJourney.originalAppointmentId = req.appointment.id
+    const { appointmentJourney } = req.session
+
+    appointmentJourney.originalAppointmentId = req.appointment.id
+
+    const prisonerNumbers = appointmentJourney.prisoners.map(p => p.number)
+
+    const unavailableAttendees = await this.appointeeAttendeeService.findUnavailableAttendees(prisonerNumbers, user)
+
+    appointmentJourney.prisoners = appointmentJourney.prisoners.filter(
+      prisoner => !unavailableAttendees.includes(prisoner.number),
+    )
 
     // TODO
     // initJourneyMetrics(req, 'startLink')
     // this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED(req, res.locals.user))
 
-    res.redirect('../review-prisoners')
+    if (appointmentJourney.prisoners.length === 0) {
+      return res.redirect('../how-to-add-prisoners')
+    }
+
+    return res.redirect('../review-prisoners')
   }
 
   PRISONER = async (req: Request, res: Response): Promise<void> => {
