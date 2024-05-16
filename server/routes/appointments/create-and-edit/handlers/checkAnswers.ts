@@ -60,6 +60,7 @@ export default class CheckAnswersRoutes {
       startTime: plainToInstance(SimpleTime, appointmentJourney.startTime).toIsoString(),
       endTime: plainToInstance(SimpleTime, appointmentJourney.endTime).toIsoString(),
       extraInformation: appointmentJourney.extraInformation,
+      originalAppointmentId: appointmentJourney.originalAppointmentId,
     } as AppointmentSeriesCreateRequest
 
     if (appointmentJourney.repeat === YesNo.YES) {
