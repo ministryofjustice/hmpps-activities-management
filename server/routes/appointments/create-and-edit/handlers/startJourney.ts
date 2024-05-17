@@ -67,9 +67,8 @@ export default class StartJourneyRoutes {
       prisoner => !unavailableAttendees.includes(prisoner.number),
     )
 
-    // TODO
-    // initJourneyMetrics(req, 'startLink')
-    // this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED(req, res.locals.user))
+    initJourneyMetrics(req)
+    this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_STARTED(req, res.locals.user))
 
     if (appointmentJourney.prisoners.length === 0) {
       return res.redirect('../no-attendees')

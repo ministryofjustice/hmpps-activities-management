@@ -188,14 +188,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
       expect(req.session.journeyMetrics.source).toBeUndefined()
 
-      // TODO
-      // expect(metricsService.trackEvent).toBeCalledWith(
-      //   new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
-      //     .addProperty('journeyId', journeyId)
-      //     .addProperty('appointmentId', appointment.id)
-      //     .addProperty('property', 'location')
-      //     .addProperty('isApplyToQuestionRequired', 'true'),
-      // )
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user).addProperty(
+          'journeyId',
+          journeyId,
+        ),
+      )
 
       expect(res.redirect).toHaveBeenCalledWith('../review-prisoners')
     })
@@ -216,14 +214,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
       expect(req.session.journeyMetrics.source).toBeUndefined()
 
-      // TODO
-      // expect(metricsService.trackEvent).toBeCalledWith(
-      //   new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
-      //     .addProperty('journeyId', journeyId)
-      //     .addProperty('appointmentId', appointment.id)
-      //     .addProperty('property', 'location')
-      //     .addProperty('isApplyToQuestionRequired', 'true'),
-      // )
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user).addProperty(
+          'journeyId',
+          journeyId,
+        ),
+      )
 
       expect(res.redirect).toHaveBeenCalledWith('../review-prisoners')
     })
@@ -244,14 +240,12 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
       expect(req.session.journeyMetrics.source).toBeUndefined()
 
-      // TODO
-      // expect(metricsService.trackEvent).toBeCalledWith(
-      //   new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
-      //     .addProperty('journeyId', journeyId)
-      //     .addProperty('appointmentId', appointment.id)
-      //     .addProperty('property', 'location')
-      //     .addProperty('isApplyToQuestionRequired', 'true'),
-      // )
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user).addProperty(
+          'journeyId',
+          journeyId,
+        ),
+      )
 
       expect(res.redirect).toHaveBeenCalledWith('../no-attendees')
     })
