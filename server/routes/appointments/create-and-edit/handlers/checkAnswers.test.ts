@@ -171,6 +171,21 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
       expect(res.redirect).toHaveBeenCalledWith('confirmation/16')
     })
 
+    it('should create the appointment series and redirect to confirmation page when duplicated from an original appointment', async () => {
+      req.session.appointmentJourney.originalAppointmentId = 789
+
+      expectedRequest.originalAppointmentId = 789
+
+      when(activitiesService.createAppointmentSeries)
+        .calledWith(atLeast(expectedRequest))
+        .mockResolvedValueOnce(expectedResponse)
+
+      await handler.POST(req, res)
+
+      expect(activitiesService.createAppointmentSeries).toHaveBeenCalledWith(expectedRequest, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('confirmation/16')
+    })
+
     it('should create the repeat appointment and redirect to confirmation page', async () => {
       req.session.appointmentJourney.repeat = YesNo.YES
       req.session.appointmentJourney.frequency = AppointmentFrequency.WEEKLY

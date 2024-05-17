@@ -3447,6 +3447,11 @@ export interface components {
        * @example This appointment will help adjusting to life outside of prison
        */
       extraInformation?: string
+      /**
+       * @description The id of the original appointment that the new appointment was copied from
+       * @example 789
+       */
+      originalAppointmentId?: number
     }
     /** @description The request with the prisoner waiting list details */
     WaitingListApplicationRequest: {
