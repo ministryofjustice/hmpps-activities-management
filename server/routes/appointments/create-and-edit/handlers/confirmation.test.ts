@@ -83,7 +83,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
   })
 
   describe('GET', () => {
-    it('should render the confirmation page with appointment details', async () => {
+    it('should render the confirmation page with appointment details when creating a new appointment', async () => {
       await handler.GET(req, res)
 
       expect(metricsService.trackEvent).toBeCalledWith(
@@ -91,6 +91,24 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
           .addProperty('journeyId', journeyId)
           .addProperty('journeySource', 'startLink')
           .addProperty('appointmentSeriesId', 2)
+          .addMeasurement('journeyTimeSec', 60),
+      )
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {
+        appointment: req.appointment,
+      })
+    })
+
+    it('should render the confirmation page with appointment details when duplicating an appointment', async () => {
+      req.session.appointmentJourney.originalAppointmentId = 789
+
+      await handler.GET(req, res)
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('journeySource', 'startLink')
+          .addProperty('appointmentSeriesId', 2)
+          .addProperty('originalId', 789)
           .addMeasurement('journeyTimeSec', 60),
       )
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirmation', {

@@ -8,7 +8,14 @@ export default class ConfirmationRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointment } = req
 
-    this.metricsService.trackEvent(MetricsEvent.CREATE_APPOINTMENT_JOURNEY_COMPLETED(appointment, req, res.locals.user))
+    this.metricsService.trackEvent(
+      MetricsEvent.CREATE_APPOINTMENT_JOURNEY_COMPLETED(
+        appointment,
+        req,
+        res.locals.user,
+        req.session.appointmentJourney,
+      ),
+    )
 
     res.render('pages/appointments/create-and-edit/confirmation', { appointment })
 

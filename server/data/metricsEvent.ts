@@ -3,7 +3,7 @@ import { AppointmentDetails, AppointmentSetDetails } from '../@types/activitiesA
 import { ServiceUser } from '../@types/express'
 import { AllocateToActivityJourney } from '../routes/activities/manage-allocations/journey'
 import { WaitListApplicationJourney } from '../routes/activities/waitlist-application/journey'
-import { AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { AppointmentJourney, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { isApplyToQuestionRequired } from '../utils/editAppointmentUtils'
 import { AppointmentApplyTo, AppointmentCancellationReason } from '../@types/appointments'
 import { MetricsEventType } from '../@types/metricsEvents'
@@ -127,10 +127,16 @@ export default class MetricsEvent {
     return new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, user).addJourneyStartedMetrics(req)
   }
 
-  static CREATE_APPOINTMENT_JOURNEY_COMPLETED(appointment: AppointmentDetails, req: Request, user: ServiceUser) {
+  static CREATE_APPOINTMENT_JOURNEY_COMPLETED(
+    appointment: AppointmentDetails,
+    req: Request,
+    user: ServiceUser,
+    appointmentJourney: AppointmentJourney,
+  ) {
     return new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, user)
       .addJourneyCompletedMetrics(req)
       .addProperty('appointmentSeriesId', appointment.appointmentSeries.id)
+      .addProperty('originalId', appointmentJourney.originalAppointmentId)
   }
 
   static CREATE_APPOINTMENT_SET_JOURNEY_STARTED(req: Request, user: ServiceUser) {
