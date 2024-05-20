@@ -2035,6 +2035,23 @@ export interface components {
        * @description The event priority - configurable by prison, or via defaults.
        */
       priority: number
+      /**
+       * Format: date
+       * @description The start date of the first appointment cancelled in the series
+       */
+      appointmentSeriesCancellationStartDate?: string
+      /**
+       * Format: partial-time
+       * @description The start time of the first appointment cancelled in the series
+       * @example 10:30
+       */
+      appointmentSeriesCancellationStartTime?: string
+      /**
+       * @description The appointment series frequency
+       * @example DAILY
+       * @enum {string}
+       */
+      appointmentSeriesFrequency?: 'WEEKDAY' | 'DAILY' | 'WEEKLY' | 'FORTNIGHTLY' | 'MONTHLY'
     }
     /**
      * @description
@@ -3448,7 +3465,10 @@ export interface components {
        */
       extraInformation?: string
       /**
-       * @description The id of the original appointment that the new appointment was copied from
+       * Format: int64
+       * @description
+       *     The id of the original appointment that the new appointment was copied from
+       *
        * @example 789
        */
       originalAppointmentId?: number
@@ -5658,6 +5678,12 @@ export interface components {
        * @example 20:00
        */
       edFinish: string
+      /**
+       * Format: int32
+       * @description The maximum number of days to expiry
+       * @example 21
+       */
+      maxDaysToExpiry: number
     }
     Location: {
       /**

@@ -1,9 +1,46 @@
+import { subDays, subMonths, subWeeks } from 'date-fns'
 import { SubLocationCellPattern, UnlockListItem } from '../@types/activities'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
-import { scheduledEventSort, toDateString } from '../utils/utils'
+import { scheduledEventSort, toDate, toDateString } from '../utils/utils'
 import AlertsFilterService from './alertsFilterService'
+import { ScheduledEvent } from '../@types/activitiesAPI/types'
+import { AppointmentFrequency } from '../@types/appointments'
+
+export function applyCancellationDispalyRule(app: ScheduledEvent): boolean {
+  let showAppointment = true
+  const beginingOfToday = new Date().setHours(0, 0, 0, 0)
+  if (app.cancelled) {
+    if (
+      app.appointmentSeriesFrequency === AppointmentFrequency.DAILY &&
+      toDate(app.appointmentSeriesCancellationStartDate) < subDays(beginingOfToday, 2)
+    ) {
+      showAppointment = false
+    } else if (
+      app.appointmentSeriesFrequency === AppointmentFrequency.WEEKDAY &&
+      toDate(app.appointmentSeriesCancellationStartDate) < subDays(beginingOfToday, 4)
+    ) {
+      showAppointment = false
+    } else if (
+      app.appointmentSeriesFrequency === AppointmentFrequency.WEEKLY &&
+      toDate(app.appointmentSeriesCancellationStartDate) < subWeeks(beginingOfToday, 2)
+    ) {
+      showAppointment = false
+    } else if (
+      app.appointmentSeriesFrequency === AppointmentFrequency.FORTNIGHTLY &&
+      toDate(app.appointmentSeriesCancellationStartDate) < subWeeks(beginingOfToday, 4)
+    ) {
+      showAppointment = false
+    } else if (
+      app.appointmentSeriesFrequency === AppointmentFrequency.MONTHLY &&
+      toDate(app.appointmentSeriesCancellationStartDate) < subMonths(beginingOfToday, 2)
+    ) {
+      showAppointment = false
+    }
+  }
+  return showAppointment
+}
 
 export default class UnlockListService {
   constructor(
@@ -81,7 +118,9 @@ export default class UnlockListService {
 
     // Match the prisoners with their events by prisonerNumber
     const unlockListItems = filteredPrisoners.map(prisoner => {
-      const appointments = scheduledEvents?.appointments.filter(app => app.prisonerNumber === prisoner.prisonerNumber)
+      const appointments = scheduledEvents?.appointments
+        .filter(app => app.prisonerNumber === prisoner.prisonerNumber)
+        .filter(app => applyCancellationDispalyRule(app))
       const courtHearings = scheduledEvents?.courtHearings.filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
       const visits = scheduledEvents?.visits.filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
       const adjudications = scheduledEvents?.adjudications.filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
