@@ -15,7 +15,7 @@ generic-service:
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-preprod.prison.service.justice.gov.uk"
     ACTIVITIES_API_URL: "https://activities-api-preprod.prison.service.justice.gov.uk"
     CASE_NOTES_API_URL: "https://preprod.offender-case-notes.service.justice.gov.uk"
-    PRISON_API_URL: "https://api-preprod.prison.service.justice.gov.uk"
+    PRISON_API_URL: "https://prison-api-preprod.prison.service.justice.gov.uk"
     PRISONER_SEARCH_API_URL: "https://prisoner-search-preprod.prison.service.justice.gov.uk"
     INCENTIVES_API_URL: "https://incentives-api-preprod.hmpps.service.justice.gov.uk"
     FRONTEND_COMPONENT_API_URL: "https://frontend-components-preprod.hmpps.service.justice.gov.uk"
