@@ -6316,6 +6316,13 @@ export interface components {
        * @example A-1-002
        */
       cellLocation: string
+      /**
+       * @description
+       *     The prisoner's category.
+       *
+       * @example P
+       */
+      category: string
     }
     /**
      * @description
