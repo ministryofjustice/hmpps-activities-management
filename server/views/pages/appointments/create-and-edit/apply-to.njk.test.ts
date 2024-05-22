@@ -172,6 +172,7 @@ describe('Views - Appointments Management - Apply to', () => {
       prisonCode: 'TPR',
       cellLocation: '1-1-1',
       status: 'ACTIVE IN',
+      category: null,
     }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))

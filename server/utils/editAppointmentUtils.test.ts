@@ -512,6 +512,7 @@ describe('Edit Appointment Utils', () => {
         prisonCode: 'MDI',
         cellLocation: '1-1-1',
         status: 'ACTIVE IN',
+        category: 'H',
       }
 
       expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
@@ -783,6 +784,7 @@ describe('Edit Appointment Utils', () => {
         cellLocation: '1-1-1',
         status: 'ACTIVE IN',
         prisonCode: 'MDI',
+        category: 'H',
       }
 
       const options = getAppointmentApplyToOptions(req)
