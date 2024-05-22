@@ -182,6 +182,7 @@ export default class StartJourneyRoutes {
         prisonCode: attendee.prisoner.prisonCode,
         status: attendee.prisoner.status,
         cellLocation: attendee.prisoner.cellLocation,
+        category: attendee.prisoner.category,
       })),
       category: appointment.category,
       tierCode: EventTier[appointment.tier?.code] ?? null,
