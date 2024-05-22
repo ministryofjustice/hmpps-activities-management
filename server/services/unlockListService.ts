@@ -8,7 +8,7 @@ import AlertsFilterService from './alertsFilterService'
 import { ScheduledEvent } from '../@types/activitiesAPI/types'
 import { AppointmentFrequency } from '../@types/appointments'
 
-export function applyCancellationDispalyRule(app: ScheduledEvent): boolean {
+export function applyCancellationDisplayRule(app: ScheduledEvent): boolean {
   let showAppointment = true
   const beginingOfToday = new Date().setHours(0, 0, 0, 0)
   if (app.cancelled) {
@@ -120,7 +120,7 @@ export default class UnlockListService {
     const unlockListItems = filteredPrisoners.map(prisoner => {
       const appointments = scheduledEvents?.appointments
         .filter(app => app.prisonerNumber === prisoner.prisonerNumber)
-        .filter(app => applyCancellationDispalyRule(app))
+        .filter(app => applyCancellationDisplayRule(app))
       const courtHearings = scheduledEvents?.courtHearings.filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
       const visits = scheduledEvents?.visits.filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
       const adjudications = scheduledEvents?.adjudications.filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)

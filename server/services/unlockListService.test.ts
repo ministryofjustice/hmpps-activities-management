@@ -4,7 +4,7 @@ import { subDays, subMonths, subWeeks } from 'date-fns'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
-import UnlockListService, { applyCancellationDispalyRule } from './unlockListService'
+import UnlockListService, { applyCancellationDisplayRule } from './unlockListService'
 import { PagePrisoner, PrisonerAlert } from '../@types/prisonerOffenderSearchImport/types'
 import { PrisonerScheduledEvents, ScheduledEvent } from '../@types/activitiesAPI/types'
 import atLeast from '../../jest.setup'
@@ -560,7 +560,7 @@ describe('Unlock list service', () => {
         appointmentSeriesFrequency: AppointmentFrequency.DAILY,
         appointmentSeriesCancellationStartDate: toDateString(threeDaysAgo),
       }
-      const showAppointment = applyCancellationDispalyRule(appointment)
+      const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(false)
     })
 
@@ -579,7 +579,7 @@ describe('Unlock list service', () => {
         appointmentSeriesFrequency: AppointmentFrequency.DAILY,
         appointmentSeriesCancellationStartDate: toDateString(twoDaysAgo),
       }
-      const showAppointment = applyCancellationDispalyRule(appointment)
+      const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(true)
     })
 
@@ -598,7 +598,7 @@ describe('Unlock list service', () => {
         appointmentSeriesFrequency: AppointmentFrequency.WEEKDAY,
         appointmentSeriesCancellationStartDate: toDateString(fiveDaysAgo),
       }
-      const showAppointment = applyCancellationDispalyRule(appointment)
+      const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(false)
     })
 
@@ -617,7 +617,7 @@ describe('Unlock list service', () => {
         appointmentSeriesFrequency: AppointmentFrequency.WEEKDAY,
         appointmentSeriesCancellationStartDate: toDateString(fourDaysAgo),
       }
-      const showAppointment = applyCancellationDispalyRule(appointment)
+      const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(true)
     })
 
@@ -636,7 +636,7 @@ describe('Unlock list service', () => {
         appointmentSeriesFrequency: AppointmentFrequency.WEEKLY,
         appointmentSeriesCancellationStartDate: toDateString(fifteenDaysAgo),
       }
-      const showAppointment = applyCancellationDispalyRule(appointment)
+      const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(false)
     })
 
@@ -655,7 +655,7 @@ describe('Unlock list service', () => {
         appointmentSeriesFrequency: AppointmentFrequency.WEEKLY,
         appointmentSeriesCancellationStartDate: toDateString(twoWeeksAgo),
       }
-      const showAppointment = applyCancellationDispalyRule(appointment)
+      const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(true)
     })
 
@@ -674,7 +674,7 @@ describe('Unlock list service', () => {
         appointmentSeriesFrequency: AppointmentFrequency.FORTNIGHTLY,
         appointmentSeriesCancellationStartDate: toDateString(twentyNineDaysAgo),
       }
-      const showAppointment = applyCancellationDispalyRule(appointment)
+      const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(false)
     })
 
@@ -693,7 +693,7 @@ describe('Unlock list service', () => {
         appointmentSeriesFrequency: AppointmentFrequency.FORTNIGHTLY,
         appointmentSeriesCancellationStartDate: toDateString(fourWeeksAgo),
       }
-      const showAppointment = applyCancellationDispalyRule(appointment)
+      const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(true)
     })
 
@@ -712,7 +712,7 @@ describe('Unlock list service', () => {
         appointmentSeriesFrequency: AppointmentFrequency.MONTHLY,
         appointmentSeriesCancellationStartDate: toDateString(overTwoMonthsAgo),
       }
-      const showAppointment = applyCancellationDispalyRule(appointment)
+      const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(false)
     })
 
@@ -731,7 +731,7 @@ describe('Unlock list service', () => {
         appointmentSeriesFrequency: AppointmentFrequency.MONTHLY,
         appointmentSeriesCancellationStartDate: toDateString(twoMonthsAgo),
       }
-      const showAppointment = applyCancellationDispalyRule(appointment)
+      const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(true)
     })
   })
