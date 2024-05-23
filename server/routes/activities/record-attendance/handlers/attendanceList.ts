@@ -8,7 +8,9 @@ import { Attendance, ScheduledEvent } from '../../../../@types/activitiesAPI/typ
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
-import { Prisoner } from '../../../../@types/activities'
+import { EventType, Prisoner } from '../../../../@types/activities'
+
+import applyCancellationDisplayRule from '../../../../utils/applyCancellationDisplayRule'
 
 export class AttendanceList {
   @Expose()
@@ -63,6 +65,7 @@ export default class AttendanceListRoutes {
           .filter(e => e.prisonerNumber === att.prisonerNumber)
           .filter(e => e.scheduledInstanceId !== instanceId)
           .filter(e => eventClashes(e, instance))
+          .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e))
 
         const attendee = {
           ...att,

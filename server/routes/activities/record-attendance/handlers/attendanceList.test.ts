@@ -1,12 +1,18 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import { format, startOfYesterday } from 'date-fns'
+import { format, startOfYesterday, subDays } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
-import { PrisonerScheduledEvents, ScheduledActivity, ScheduledAttendee } from '../../../../@types/activitiesAPI/types'
+import {
+  PrisonerScheduledEvents,
+  ScheduledActivity,
+  ScheduledAttendee,
+  ScheduledEvent,
+} from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import AttendanceListRoutes, { ScheduledInstanceAttendance } from './attendanceList'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { getAttendanceSummary } from '../../../../utils/utils'
+import { getAttendanceSummary, toDateString } from '../../../../utils/utils'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -89,6 +95,52 @@ describe('Route Handlers - Attendance List', () => {
     prisonerNumber: 'ABC123',
   }
 
+  const twoDaysAgo = subDays(new Date(), 2)
+  const displayableCancelledAppointment: ScheduledEvent = {
+    autoSuspended: false,
+    cancelled: true,
+    inCell: false,
+    offWing: false,
+    onWing: false,
+    outsidePrison: false,
+    priority: 0,
+    suspended: false,
+    appointmentSeriesId: 3,
+    appointmentId: 3,
+    appointmentAttendeeId: 2,
+    eventType: 'APPOINTMENT',
+    eventSource: 'SAA',
+    summary: 'Appointment with the guv',
+    startTime: '10:30',
+    endTime: '11:00',
+    prisonerNumber: 'ABC123',
+    appointmentSeriesCancellationStartDate: toDateString(twoDaysAgo),
+    appointmentSeriesFrequency: AppointmentFrequency.DAILY,
+  }
+
+  const threeDaysAgo = subDays(new Date(), 3)
+  const expiredCancelledAppointment: ScheduledEvent = {
+    autoSuspended: false,
+    cancelled: true,
+    inCell: false,
+    offWing: false,
+    onWing: false,
+    outsidePrison: false,
+    priority: 0,
+    suspended: false,
+    appointmentSeriesId: 3,
+    appointmentId: 3,
+    appointmentAttendeeId: 2,
+    eventType: 'APPOINTMENT',
+    eventSource: 'SAA',
+    summary: 'Appointment with the guv',
+    startTime: '10:30',
+    endTime: '11:00',
+    prisonerNumber: 'ABC123',
+    appointmentSeriesCancellationStartDate: toDateString(threeDaysAgo),
+    appointmentSeriesFrequency: AppointmentFrequency.DAILY,
+  }
+
   const adjudicationsEvent = {
     eventId: 5,
     eventType: 'ADJUDICATION_HEARING',
@@ -101,7 +153,7 @@ describe('Route Handlers - Attendance List', () => {
 
   const scheduledEvents = {
     activities: [event1],
-    appointments: [event2],
+    appointments: [event2, expiredCancelledAppointment, displayableCancelledAppointment],
     courtHearings: [event3],
     visits: [event4],
     adjudications: [adjudicationsEvent],
@@ -180,7 +232,7 @@ describe('Route Handlers - Attendance List', () => {
           alerts: [{ alertCode: 'HA' }],
         },
         attendance: { prisonerNumber: 'ABC123', status: 'WAITING' },
-        otherEvents: [event4, adjudicationsEvent],
+        otherEvents: [displayableCancelledAppointment, event4, adjudicationsEvent],
       },
       {
         prisoner: prisoners[1],
