@@ -8,6 +8,16 @@
     "code": "CHAP",
     "description": "Chaplaincy"
   },
+  "tier": {
+    "id": 2,
+    "code": "TIER_2",
+    "description": "Tier 2"
+  },
+  "organiser": {
+    "id": 1,
+    "code": "PRISON_STAFF",
+    "description": "Prison staff"
+  },
   "prisonCode": "MDI",
   "appointmentName": "Chaplain Meeting (Chaplaincy)",
   "internalLocation": {
@@ -37,7 +47,8 @@
         "firstName": "STEPHEN",
         "lastName": "GREGS",
         "prisonCode": "MDI",
-        "cellLocation": "1-3"
+        "cellLocation": "1-3",
+        "category": "C"
       }
     },
     {
@@ -59,7 +70,8 @@
         "firstName": "LEE",
         "lastName": "JACOBSON",
         "prisonCode": "MDI",
-        "cellLocation": "1"
+        "cellLocation": "1",
+        "category": "A"
       }
     }
   ]

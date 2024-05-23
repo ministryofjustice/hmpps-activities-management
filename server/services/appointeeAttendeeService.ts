@@ -19,8 +19,14 @@ export default class AppointeeAttendeeService {
     const notInExpectedPrison = (prisoner: Prisoner) =>
       prisoner.inOutStatus === 'OUT' && prisoner.prisonId !== user.activeCaseLoadId
 
-    return prisoners
+    const unRecognisedPrisonerNumbers = attendeePrisonerNumbers.filter(
+      attendeePrisonerNumber => !prisoners.some(prisoner => prisoner.prisonerNumber === attendeePrisonerNumber),
+    )
+
+    const unavailablePrisoners = prisoners
       .filter(prisoner => isPermanentlyReleased(prisoner) || notInExpectedPrison(prisoner))
       .map(prisoner => prisoner.prisonerNumber)
+
+    return [...unRecognisedPrisonerNumbers, ...unavailablePrisoners]
   }
 }

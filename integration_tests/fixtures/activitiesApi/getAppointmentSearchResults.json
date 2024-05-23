@@ -1,7 +1,7 @@
 [
   {
     "appointmentSeriesId": 1,
-    "appointmentId": 1,
+    "appointmentId": 11,
     "appointmentType": "INDIVIDUAL",
     "attendees": [
       {
@@ -20,12 +20,13 @@
     "startTime": "09:30",
     "endTime": "11:00",
     "isRepeat": false,
+    "isExpired": true,
     "sequenceNumber": 1,
     "maxSequenceNumber": 1
   },
   {
     "appointmentSeriesId": 1,
-    "appointmentId": 2,
+    "appointmentId": 12,
     "appointmentType": "INDIVIDUAL",
     "attendees": [
       {
@@ -42,6 +43,7 @@
     "startTime": "09:30",
     "endTime": "11:00",
     "isRepeat": false,
+    "isExpired": true,
     "sequenceNumber": 1,
     "maxSequenceNumber": 1
   }

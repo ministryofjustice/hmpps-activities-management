@@ -64,7 +64,7 @@ context('Create group appointment - back links', () => {
     cy.visit('/appointments/create/start-group')
 
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Search for them one by one')
+    howToAddPrisonersPage.selectOneByOne()
     howToAddPrisonersPage.continue()
 
     const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
