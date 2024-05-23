@@ -18,3 +18,7 @@ Cypress.Commands.add(
 Cypress.Commands.add('stubHealthPing', (urlPattern: string, responseStatus = 200) =>
   stubHealthPing(urlPattern, responseStatus),
 )
+
+Cypress.Commands.add('cardIsDisplayed', (selector: string, heading: string, description: string) => {
+  cy.get(selector).should('contain.text', heading).should('contain.text', description)
+})

@@ -59,30 +59,18 @@ context('Create group appointment', () => {
 
   it('Should create an in cell appointment journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.appointmentsManagementCard().should('contain.text', 'Appointments scheduling and attendance')
-    indexPage
-      .appointmentsManagementCard()
-      .should(
-        'contain.text',
-        'Create, manage and edit appointments. Print movement slips. Record appointment attendance.',
-      )
     indexPage.appointmentsManagementCard().click()
 
     const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
-    appointmentsManagementPage.createGroupAppointmentCard().should('contain.text', 'Schedule an appointment')
-    appointmentsManagementPage
-      .createGroupAppointmentCard()
-      .should('contain.text', 'Set up a one-off or repeating appointment for one or more people.')
     appointmentsManagementPage.createGroupAppointmentCard().click()
 
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectHowToAdd('Search for them one by one')
+    howToAddPrisonersPage.selectOneByOne()
     howToAddPrisonersPage.continue()
 
     const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A8644DY')
     selectPrisonerPage.searchButton().click()
-
     selectPrisonerPage.continueButton().click()
 
     const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
