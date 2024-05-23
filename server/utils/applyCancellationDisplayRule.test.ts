@@ -195,5 +195,23 @@ describe('Unlock list service', () => {
       const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(true)
     })
+
+    it('should show when not part of an appointment series', async () => {
+      const appointment: ScheduledEvent = {
+        autoSuspended: false,
+        cancelled: true,
+        inCell: false,
+        offWing: false,
+        onWing: false,
+        outsidePrison: false,
+        priority: 0,
+        startTime: '',
+        suspended: false,
+        appointmentSeriesFrequency: AppointmentFrequency.DAILY,
+        appointmentSeriesCancellationStartDate: null,
+      }
+      const showAppointment = applyCancellationDisplayRule(appointment)
+      expect(showAppointment).toEqual(true)
+    })
   })
 })
