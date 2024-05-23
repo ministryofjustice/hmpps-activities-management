@@ -1,12 +1,12 @@
-import { subDays, subMonths, subWeeks } from 'date-fns'
+import { startOfToday, subDays, subMonths, subWeeks } from 'date-fns'
 import { ScheduledEvent } from '../@types/activitiesAPI/types'
 import { AppointmentFrequency } from '../@types/appointments'
 import { toDate } from './utils'
 
 export default function applyCancellationDisplayRule(app: ScheduledEvent): boolean {
   let showAppointment = true
-  const beginningOfToday = new Date().setHours(0, 0, 0, 0)
-  if (app.cancelled) {
+  const beginningOfToday = startOfToday()
+  if (app.cancelled && app.appointmentSeriesCancellationStartDate && app.appointmentSeriesFrequency) {
     if (
       app.appointmentSeriesFrequency === AppointmentFrequency.DAILY &&
       toDate(app.appointmentSeriesCancellationStartDate) < subDays(beginningOfToday, 2)
