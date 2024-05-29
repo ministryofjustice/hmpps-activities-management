@@ -698,4 +698,51 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(res.redirect).toHaveBeenCalledWith('../cancel/reason')
     })
   })
+
+  describe('UNCANCEL', () => {
+    beforeEach(() => {
+      req = {
+        session: {},
+        params: { journeyId },
+        appointmentSeries,
+        appointment,
+      } as unknown as Request
+    })
+
+    it('should populate the session and redirect to confirm screen', async () => {
+      const editAppointmentJourneySession = {
+        numberOfAppointments: 3,
+        appointments: [
+          {
+            sequenceNumber: 2,
+            startDate: '2023-04-20',
+          },
+          {
+            sequenceNumber: 3,
+            startDate: '2023-04-27',
+          },
+        ],
+        sequenceNumber: 2,
+        appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
+      } as EditAppointmentJourney
+
+      await handler.UNCANCEL(req, res)
+
+      expect(req.session.appointmentJourney).not.toBeUndefined()
+      expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
+      expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toBeUndefined()
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.UNCANCEL_APPOINTMENT_JOURNEY_STARTED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentId', appointment.id)
+          .addProperty('isApplyToQuestionRequired', 'true'),
+      )
+
+      expect(res.redirect).toHaveBeenCalledWith('../uncancel/confirm')
+    })
+  })
 })

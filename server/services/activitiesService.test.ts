@@ -38,6 +38,7 @@ import {
   Allocation,
   AppointmentAttendanceRequest,
   AddCaseNoteRequest,
+  AppointmentCancelRequest,
 } from '../@types/activitiesAPI/types'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import appointmentSeriesDetails from './fixtures/appointment_series_details_1.json'
@@ -450,6 +451,32 @@ describe('Activities Service', () => {
       await activitiesService.editAppointment(1, apiRequest, user)
 
       expect(activitiesApiClient.patchUpdateAppointment).toHaveBeenCalledWith(1, apiRequest, user)
+    })
+  })
+
+  describe('cancelAppointment', () => {
+    it('should cancel an appointment', async () => {
+      const apiRequest: AppointmentCancelRequest = {
+        applyTo: 'ALL_FUTURE_APPOINTMENTS',
+        cancellationReasonId: 1,
+      }
+
+      await activitiesService.cancelAppointment(1, apiRequest, user)
+
+      expect(activitiesApiClient.cancelAppointments).toHaveBeenCalledWith(1, apiRequest, user)
+    })
+  })
+
+  describe('uncancelAppointment', () => {
+    it('should uncancel an appointment', async () => {
+      const apiRequest: AppointmentCancelRequest = {
+        applyTo: 'ALL_FUTURE_APPOINTMENTS',
+        cancellationReasonId: 1,
+      }
+
+      await activitiesService.uncancelAppointment(1, apiRequest, user)
+
+      expect(activitiesApiClient.uncancelAppointments).toHaveBeenCalledWith(1, apiRequest, user)
     })
   })
 

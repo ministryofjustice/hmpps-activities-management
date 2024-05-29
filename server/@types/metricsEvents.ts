@@ -16,6 +16,8 @@ export enum MetricsEventType {
   EDIT_APPOINTMENT_JOURNEY_COMPLETED = 'SAA-Edit-Appointment-Journey-Completed',
   CANCEL_APPOINTMENT_JOURNEY_STARTED = 'SAA-Cancel-Appointment-Journey-Started',
   CANCEL_APPOINTMENT_JOURNEY_COMPLETED = 'SAA-Cancel-Appointment-Journey-Completed',
+  UNCANCEL_APPOINTMENT_JOURNEY_STARTED = 'SAA-Uncancel-Appointment-Journey-Started',
+  UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED = 'SAA-Uncancel-Appointment-Journey-Completed',
   APPOINTMENT_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Movement-Slips-Printed',
   APPOINTMENT_SET_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Set-Movement-Slips-Printed',
   APPOINTMENT_CHANGE_FROM_SCHEDULE = 'SAA-Appointment-Change-From-Schedule',

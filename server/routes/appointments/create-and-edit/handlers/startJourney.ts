@@ -163,6 +163,16 @@ export default class StartJourneyRoutes {
     return res.redirect('../cancel/reason')
   }
 
+  UNCANCEL = async (req: Request, res: Response): Promise<void> => {
+    const { appointment } = req
+
+    this.populateEditSession(req)
+
+    this.metricsService.trackEvent(MetricsEvent.UNCANCEL_APPOINTMENT_JOURNEY_STARTED(appointment, req, res.locals.user))
+
+    return res.redirect('../uncancel/confirm')
+  }
+
   private populateAppointmentJourney(req: Request, journeyType: AppointmentJourneyMode) {
     const { appointment } = req
 

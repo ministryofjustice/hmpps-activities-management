@@ -4,7 +4,11 @@ import ActivitiesService from './activitiesService'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
-import { AppointmentCancelRequest, AppointmentUpdateRequest } from '../@types/activitiesAPI/types'
+import {
+  AppointmentCancelRequest,
+  AppointmentUncancelRequest,
+  AppointmentUpdateRequest,
+} from '../@types/activitiesAPI/types'
 import SimpleTime from '../commonValidationTypes/simpleTime'
 import { YesNo } from '../@types/activities'
 import {
@@ -76,6 +80,20 @@ export default class EditAppointmentService {
         MetricsEvent.CANCEL_APPOINTMENT_JOURNEY_COMPLETED(+appointmentId, applyTo, req, res.locals.user),
       )
 
+      this.clearSession(req)
+
+      return res.redirect(`/appointments/${appointmentId}`)
+    }
+
+    if (editAppointmentJourney.uncancel) {
+      const uncancelRequest: AppointmentUncancelRequest = {
+        applyTo,
+      }
+      await this.activitiesService.uncancelAppointment(+appointmentId, uncancelRequest, user)
+
+      this.metricsService.trackEvent(
+        MetricsEvent.UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED(+appointmentId, applyTo, req, res.locals.user),
+      )
       this.clearSession(req)
 
       return res.redirect(`/appointments/${appointmentId}`)

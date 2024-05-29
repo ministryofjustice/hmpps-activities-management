@@ -25,6 +25,10 @@ export const getAppointmentEditMessage = (
     return 'delete'
   }
 
+  if (editAppointmentJourney.uncancel) {
+    return 'uncancel'
+  }
+
   const updateProperties = []
   if (hasAppointmentTierChanged(appointmentJourney, editAppointmentJourney)) {
     updateProperties.push('tier')
@@ -84,6 +88,10 @@ export const getConfirmAppointmentEditCta = (
     return 'Delete appointment'
   }
 
+  if (editAppointmentJourney.uncancel) {
+    return 'Confirm'
+  }
+
   const updateProperties = []
   if (hasAppointmentTierChanged(appointmentJourney, editAppointmentJourney)) {
     updateProperties.push('tier')
@@ -140,6 +148,10 @@ export const getAppointmentEditApplyToCta = (
   }
 
   if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+    return 'Confirm'
+  }
+
+  if (editAppointmentJourney.uncancel) {
     return 'Confirm'
   }
 

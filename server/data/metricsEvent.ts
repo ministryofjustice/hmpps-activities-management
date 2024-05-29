@@ -210,6 +210,34 @@ export default class MetricsEvent {
       })
   }
 
+  static UNCANCEL_APPOINTMENT_JOURNEY_STARTED(appointment: AppointmentDetails, req: Request, user: ServiceUser) {
+    return new MetricsEvent(MetricsEventType.UNCANCEL_APPOINTMENT_JOURNEY_STARTED, user)
+      .addJourneyStartedMetrics(req)
+      .addProperties({
+        appointmentId: appointment.id,
+        isApplyToQuestionRequired: isApplyToQuestionRequired(req.session.editAppointmentJourney).toString(),
+      })
+  }
+
+  static UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED(
+    appointmentId: number,
+    applyTo: AppointmentApplyTo,
+    req: Request,
+    user: ServiceUser,
+  ) {
+    return new MetricsEvent(MetricsEventType.UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED, user)
+      .addProperty('journeyId', req.params.journeyId)
+      .addJourneyCompletedMetrics(req)
+      .addProperties({
+        appointmentId,
+        isDelete: (
+          req.session.editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR
+        ).toString(),
+        isApplyToQuestionRequired: isApplyToQuestionRequired(req.session.editAppointmentJourney).toString(),
+        applyTo,
+      })
+  }
+
   static APPOINTMENT_MOVEMENT_SLIP_PRINTED(appointment: AppointmentDetails, user: ServiceUser) {
     return new MetricsEvent(MetricsEventType.APPOINTMENT_MOVEMENT_SLIP_PRINTED, user)
       .addProperty('appointmentId', appointment.id)

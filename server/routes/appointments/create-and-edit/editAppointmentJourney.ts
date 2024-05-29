@@ -36,4 +36,5 @@ export type EditAppointmentJourney = {
   addPrisoners?: AppointmentPrisonerDetails[]
   removePrisoner?: PrisonerSummary
   cancellationReason?: AppointmentCancellationReason
+  uncancel?: boolean
 }

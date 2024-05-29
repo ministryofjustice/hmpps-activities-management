@@ -42,6 +42,7 @@ export type AppointmentSetCreateRequest = components['schemas']['AppointmentSetC
 export type AppointmentSetAppointment = components['schemas']['AppointmentSetAppointment']
 export type AppointmentUpdateRequest = components['schemas']['AppointmentUpdateRequest']
 export type AppointmentCancelRequest = components['schemas']['AppointmentCancelRequest']
+export type AppointmentUncancelRequest = components['schemas']['AppointmentUncancelRequest']
 export type AppointmentSearchRequest = components['schemas']['AppointmentSearchRequest']
 export type AppointmentSearchResult = components['schemas']['AppointmentSearchResult']
 export type AppointmentAttendanceSummary = components['schemas']['AppointmentAttendanceSummary']

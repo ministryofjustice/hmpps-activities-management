@@ -17,6 +17,7 @@ import {
   AppointmentUpdateRequest,
   AppointmentSeriesSummary,
   AppointmentSetSummary,
+  AppointmentUncancelRequest,
 } from '../@types/activitiesAPI/types'
 import { YesNo } from '../@types/activities'
 import config from '../config'
@@ -218,6 +219,34 @@ describe('Edit Appointment Service', () => {
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
         expect(metricsService.trackEvent).toBeCalledWith(
           new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('isDelete', 'false')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
+        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
+      })
+
+      it('FIXME when un-cancelling', async () => {
+        req.session.editAppointmentJourney.uncancel = true
+
+        await service.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
+
+        expect(activitiesService.uncancelAppointment).toHaveBeenCalledWith(
+          2,
+          {
+            applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
+          } as AppointmentUncancelRequest,
+          res.locals.user,
+        )
+        expect(activitiesService.editAppointment).not.toHaveBeenCalled()
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
             .addProperty('isDelete', 'false')
@@ -749,6 +778,34 @@ describe('Edit Appointment Service', () => {
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
+      it('FIXME when un-cancelling', async () => {
+        req.session.editAppointmentJourney.uncancel = true
+
+        await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
+
+        expect(activitiesService.uncancelAppointment).toHaveBeenCalledWith(
+          2,
+          {
+            applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+          } as AppointmentUncancelRequest,
+          res.locals.user,
+        )
+        expect(activitiesService.editAppointment).not.toHaveBeenCalled()
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('isDelete', 'false')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
+        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
+      })
+
       it('when deleting', async () => {
         req.session.editAppointmentJourney.appointmentSeries = {
           id: 1,
@@ -855,6 +912,34 @@ describe('Edit Appointment Service', () => {
 
         expect(metricsService.trackEvent).toBeCalledWith(
           new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+            .addProperty('journeyId', journeyId)
+            .addProperty('appointmentId', appointmentId)
+            .addProperty('isDelete', 'false')
+            .addProperty('isApplyToQuestionRequired', 'true')
+            .addProperty('applyTo', AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+            .addMeasurement('journeyTimeSec', 60),
+        )
+        expect(req.session.appointmentJourney).toBeNull()
+        expect(req.session.editAppointmentJourney).toBeNull()
+        expect(req.session.journeyMetrics).toBeNull()
+        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
+      })
+
+      it('FIXME when un-cancelling', async () => {
+        req.session.editAppointmentJourney.uncancel = true
+
+        await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
+
+        expect(activitiesService.uncancelAppointment).toHaveBeenCalledWith(
+          2,
+          {
+            applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
+          } as AppointmentUncancelRequest,
+          res.locals.user,
+        )
+        expect(activitiesService.editAppointment).not.toHaveBeenCalled()
+        expect(metricsService.trackEvent).toBeCalledWith(
+          new MetricsEvent(MetricsEventType.UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
             .addProperty('isDelete', 'false')
