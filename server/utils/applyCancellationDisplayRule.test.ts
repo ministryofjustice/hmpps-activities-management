@@ -6,8 +6,9 @@ import applyCancellationDisplayRule from './applyCancellationDisplayRule'
 
 describe('Unlock list service', () => {
   describe('cancelled appointment unlock list filters', () => {
-    it('should not show daily appointment more than 2 days ago', async () => {
-      const threeDaysAgo = subDays(new Date(), 3)
+    it('should not show daily appointment more than 2 days before the appointment date', async () => {
+      const appointmentDate = subDays(new Date(), 2)
+      const threeDaysBefore = subDays(new Date(), 5)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,
@@ -18,15 +19,17 @@ describe('Unlock list service', () => {
         priority: 0,
         startTime: '',
         suspended: false,
+        date: toDateString(appointmentDate),
         appointmentSeriesFrequency: AppointmentFrequency.DAILY,
-        appointmentSeriesCancellationStartDate: toDateString(threeDaysAgo),
+        appointmentSeriesCancellationStartDate: toDateString(threeDaysBefore),
       }
       const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(false)
     })
 
-    it('should show daily appointment that is 2 days old', async () => {
-      const twoDaysAgo = subDays(new Date(), 2)
+    it('should show daily appointment that is 2 days before the appointment date', async () => {
+      const appointmentDate = subDays(new Date(), 2)
+      const twoDaysBefore = subDays(new Date(), 4)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,
@@ -37,15 +40,17 @@ describe('Unlock list service', () => {
         priority: 0,
         startTime: '',
         suspended: false,
+        date: toDateString(appointmentDate),
         appointmentSeriesFrequency: AppointmentFrequency.DAILY,
-        appointmentSeriesCancellationStartDate: toDateString(twoDaysAgo),
+        appointmentSeriesCancellationStartDate: toDateString(twoDaysBefore),
       }
       const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(true)
     })
 
-    it('should not show weekday appointment more than 4 days ago', async () => {
-      const fiveDaysAgo = subDays(new Date(), 5)
+    it('should not show weekday appointment more than 4 days before the appointment date', async () => {
+      const appointmentDate = subDays(new Date(), 2)
+      const fiveDaysAgo = subDays(new Date(), 7)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,
@@ -56,6 +61,7 @@ describe('Unlock list service', () => {
         priority: 0,
         startTime: '',
         suspended: false,
+        date: toDateString(appointmentDate),
         appointmentSeriesFrequency: AppointmentFrequency.WEEKDAY,
         appointmentSeriesCancellationStartDate: toDateString(fiveDaysAgo),
       }
@@ -63,8 +69,9 @@ describe('Unlock list service', () => {
       expect(showAppointment).toEqual(false)
     })
 
-    it('should show weekday appointment that is 4 days old', async () => {
-      const fourDaysAgo = subDays(new Date(), 4)
+    it('should show weekday appointment that is 4 days before the appointment date', async () => {
+      const appointmentDate = subDays(new Date(), 2)
+      const fourDaysBefore = subDays(new Date(), 6)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,
@@ -75,15 +82,17 @@ describe('Unlock list service', () => {
         priority: 0,
         startTime: '',
         suspended: false,
+        date: toDateString(appointmentDate),
         appointmentSeriesFrequency: AppointmentFrequency.WEEKDAY,
-        appointmentSeriesCancellationStartDate: toDateString(fourDaysAgo),
+        appointmentSeriesCancellationStartDate: toDateString(fourDaysBefore),
       }
       const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(true)
     })
 
-    it('should not show weekly appointment more than 2 weeks ago', async () => {
-      const fifteenDaysAgo = subDays(new Date(), 15)
+    it('should not show weekly appointment more than 2 weeks before the appointment date', async () => {
+      const appointmentDate = subDays(new Date(), 2)
+      const fifteenDaysBefore = subDays(new Date(), 17)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,
@@ -94,15 +103,17 @@ describe('Unlock list service', () => {
         priority: 0,
         startTime: '',
         suspended: false,
+        date: toDateString(appointmentDate),
         appointmentSeriesFrequency: AppointmentFrequency.WEEKLY,
-        appointmentSeriesCancellationStartDate: toDateString(fifteenDaysAgo),
+        appointmentSeriesCancellationStartDate: toDateString(fifteenDaysBefore),
       }
       const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(false)
     })
 
-    it('should show weekly appointment that is 2 weeks old', async () => {
-      const twoWeeksAgo = subWeeks(new Date(), 2)
+    it('should show weekly appointment that is 2 weeks before the appointment date', async () => {
+      const appointmentDate = subDays(new Date(), 2)
+      const twoWeeksBefore = subDays(subWeeks(new Date(), 2), 2)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,
@@ -113,15 +124,17 @@ describe('Unlock list service', () => {
         priority: 0,
         startTime: '',
         suspended: false,
+        date: toDateString(appointmentDate),
         appointmentSeriesFrequency: AppointmentFrequency.WEEKLY,
-        appointmentSeriesCancellationStartDate: toDateString(twoWeeksAgo),
+        appointmentSeriesCancellationStartDate: toDateString(twoWeeksBefore),
       }
       const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(true)
     })
 
-    it('should not show fortnightly appointment more than 4 weeks ago', async () => {
-      const twentyNineDaysAgo = subDays(new Date(), 29)
+    it('should not show fortnightly appointment more than 4 weeks before the appointment date', async () => {
+      const appointmentDate = subDays(new Date(), 2)
+      const twentyNineDaysBefore = subDays(new Date(), 31)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,
@@ -132,15 +145,17 @@ describe('Unlock list service', () => {
         priority: 0,
         startTime: '',
         suspended: false,
+        date: toDateString(appointmentDate),
         appointmentSeriesFrequency: AppointmentFrequency.FORTNIGHTLY,
-        appointmentSeriesCancellationStartDate: toDateString(twentyNineDaysAgo),
+        appointmentSeriesCancellationStartDate: toDateString(twentyNineDaysBefore),
       }
       const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(false)
     })
 
-    it('should show fortnightly appointment that is 4 weeks old', async () => {
-      const fourWeeksAgo = subWeeks(new Date(), 4)
+    it('should show fortnightly appointment that is 4 weeks before the appointment date', async () => {
+      const appointmentDate = subDays(new Date(), 2)
+      const fourWeeksBefore = subDays(subWeeks(new Date(), 4), 2)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,
@@ -151,15 +166,17 @@ describe('Unlock list service', () => {
         priority: 0,
         startTime: '',
         suspended: false,
+        date: toDateString(appointmentDate),
         appointmentSeriesFrequency: AppointmentFrequency.FORTNIGHTLY,
-        appointmentSeriesCancellationStartDate: toDateString(fourWeeksAgo),
+        appointmentSeriesCancellationStartDate: toDateString(fourWeeksBefore),
       }
       const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(true)
     })
 
-    it('should not show monthly appointment more than 2 months ago', async () => {
-      const overTwoMonthsAgo = subDays(subMonths(new Date(), 2), 1)
+    it('should not show monthly appointment more than 2 months before the appointment date', async () => {
+      const appointmentDate = subDays(new Date(), 2)
+      const overTwoMonthsBefore = subDays(subMonths(new Date(), 2), 3)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,
@@ -170,15 +187,17 @@ describe('Unlock list service', () => {
         priority: 0,
         startTime: '',
         suspended: false,
+        date: toDateString(appointmentDate),
         appointmentSeriesFrequency: AppointmentFrequency.MONTHLY,
-        appointmentSeriesCancellationStartDate: toDateString(overTwoMonthsAgo),
+        appointmentSeriesCancellationStartDate: toDateString(overTwoMonthsBefore),
       }
       const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(false)
     })
 
-    it('should show monthly appointment that is 2 months old', async () => {
-      const twoMonthsAgo = subMonths(new Date(), 2)
+    it('should show monthly appointment that is 2 months before the appointment date', async () => {
+      const appointmentDate = subDays(new Date(), 2)
+      const twoMonthsBefore = subDays(subMonths(new Date(), 2), 2)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,
@@ -189,14 +208,16 @@ describe('Unlock list service', () => {
         priority: 0,
         startTime: '',
         suspended: false,
+        date: toDateString(appointmentDate),
         appointmentSeriesFrequency: AppointmentFrequency.MONTHLY,
-        appointmentSeriesCancellationStartDate: toDateString(twoMonthsAgo),
+        appointmentSeriesCancellationStartDate: toDateString(twoMonthsBefore),
       }
       const showAppointment = applyCancellationDisplayRule(appointment)
       expect(showAppointment).toEqual(true)
     })
 
     it('should show when not part of an appointment series', async () => {
+      const appointmentDate = subDays(new Date(), 2)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,
@@ -207,6 +228,7 @@ describe('Unlock list service', () => {
         priority: 0,
         startTime: '',
         suspended: false,
+        date: toDateString(appointmentDate),
         appointmentSeriesFrequency: AppointmentFrequency.DAILY,
         appointmentSeriesCancellationStartDate: null,
       }
@@ -224,6 +246,7 @@ describe('Unlock list service', () => {
         priority: 0,
         startTime: '',
         suspended: false,
+        date: toDateString(appointmentDate),
         appointmentSeriesFrequency: null,
         appointmentSeriesCancellationStartDate: toDateString(twoDaysAgo),
       }
