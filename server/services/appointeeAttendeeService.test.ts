@@ -55,6 +55,19 @@ describe('Appointee Attendee Service', () => {
     prisoners = [prisonerA, prisonerB]
   })
 
+  it('Prisoner was not returned by search api', async () => {
+    prisonerB.inOutStatus = 'OUT'
+    prisonerB.prisonId = 'RSI'
+
+    when(prisonService.searchInmatesByPrisonerNumbers)
+      .calledWith(atLeast(['AAAAAAA', 'BBBBBBB'], user))
+      .mockResolvedValueOnce([prisonerB])
+
+    const unavailableAttendees = await appointeeAttendeeService.findUnavailableAttendees(['AAAAAAA', 'BBBBBBB'], user)
+
+    expect(unavailableAttendees).toEqual(['AAAAAAA', 'BBBBBBB'])
+  })
+
   describe('Status is INACTIVE OUT', () => {
     const nonReleaseMovementCodes = ['ADM', 'CRT', null, undefined]
 

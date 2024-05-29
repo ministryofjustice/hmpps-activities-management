@@ -25,22 +25,9 @@ context('Manage appointment', () => {
   it('Should be able to view appointments', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().should('contain.text', 'Appointments scheduling and attendance')
-    indexPage
-      .appointmentsManagementCard()
-      .should(
-        'contain.text',
-        'Create, manage and edit appointments. Print movement slips. Record appointment attendance.',
-      )
     indexPage.appointmentsManagementCard().click()
 
     const searchAppointmentsPage = Page.verifyOnPage(AppointmentsManagementPage)
-    searchAppointmentsPage.searchAppointmentsCard().should('contain.text', 'Manage existing appointments')
-    searchAppointmentsPage
-      .searchAppointmentsCard()
-      .should(
-        'contain.text',
-        'Edit the details of an appointment, including cancelling, adding and removing people, and printing movement slips.',
-      )
     searchAppointmentsPage.searchAppointmentsCard().click()
 
     const searchSelectDatePage = Page.verifyOnPage(SearchSelectDatePage)

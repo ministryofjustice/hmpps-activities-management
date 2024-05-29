@@ -8,6 +8,9 @@ export default class AppointmentDetailsPage extends Page {
 
   printMovementSlipLink = () => cy.get('[data-qa=print-movement-slips]')
 
+  assertSeriesDetail = (header: string, value: string) =>
+    this.assertSummaryListValue('appointment-series-details', header, value)
+
   assertAppointmentDetail = (header: string, value: string) =>
     this.assertSummaryListValue('appointment-details', header, value)
 
@@ -55,4 +58,10 @@ export default class AppointmentDetailsPage extends Page {
       .find(`.govuk-summary-list__key:contains(${property})`)
       .parent()
       .find(`.govuk-summary-list__actions a:contains(Change)`)
+
+  copyAppointmentLink = (): Cypress.Chainable => cy.get('[data-qa=copy-appointment]')
+
+  assertSeriesFrequency = (frequency: string) => this.assertSeriesDetail('Frequency', frequency)
+
+  assertSeriesSequence = (sequence: string) => this.assertSeriesDetail('Appointment', sequence)
 }

@@ -22,5 +22,11 @@ declare namespace Cypress {
      * @example cy.stubHealthPing('/health/ping', 500)
      */
     stubHealthPing(urlPattern: string, responseStatus?: number): Chainable<AUTWindow>
+
+    /**
+     * Custom command to check card is displayed.
+     * @example cy.cardIsDisplayed('[data-qa=the-card]', 'Card heading', 'Card description')
+     */
+    cardIsDisplayed(selector: string, heading: string, description: string)
   }
 }

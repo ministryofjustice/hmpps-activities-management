@@ -6,7 +6,6 @@ import createHttpError from 'http-errors'
 import nunjucksSetup from './nunjucks/nunjucksSetup'
 import errorHandler from './errorHandler'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
-import { metricsMiddleware } from './monitoring/metricsApp'
 
 import setUpAuthentication from './middleware/setUpAuthentication'
 import setUpCsrf from './middleware/setUpCsrf'
@@ -35,7 +34,6 @@ export default function createApp(services: Services, dataAccess: DataAccess): e
   app.set('trust proxy', true)
   app.set('port', process.env.PORT || 3000)
 
-  app.use(metricsMiddleware)
   app.use(setUpHealthChecks(services))
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
