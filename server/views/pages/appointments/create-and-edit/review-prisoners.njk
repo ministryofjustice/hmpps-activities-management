@@ -132,10 +132,10 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
-                    {{ govukButton({
-                        text: "Continue",
-                        id: "continue-button"
-                    }) }}
+                    {{ govukButton({ text: "Continue", id: "continue-button"}) }}
+                    {% if originalAppointmentId %}
+                        <a class="govuk-link govuk-link--no-visited-state" href="/appointments/{{ originalAppointmentId }}">Cancel and return to appointment</a>
+                    {% endif %}
                 </div>
             </form>
             {% endif %}

@@ -9,4 +9,6 @@ export default class ReviewPrisonersPage extends Page {
 
   assertPrisonerInList = (name: string) =>
     cy.get('[data-qa="prisoners-list-table"]').find('tr td:nth-child(1)').contains(name)
+
+  cancelLink = (): Cypress.Chainable => cy.get('a').contains('Cancel and return to appointment')
 }
