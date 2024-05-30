@@ -50,28 +50,40 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
   })
 
   describe('GET', () => {
-    it('should render the review prisoners view with back to how to add prisoners', async () => {
-      const prisoners = [
-        {
-          number: 'A1234BC',
-          name: '',
-          cellLocation: '',
-          status: '',
-          prisonCode: '',
-        },
-        {
-          number: 'B2345CD',
-          name: '',
-          cellLocation: '',
-          status: '',
-          prisonCode: '',
-        },
-      ]
+    const prisoners = [
+      {
+        number: 'A1234BC',
+        name: '',
+        cellLocation: '',
+        status: '',
+        prisonCode: '',
+      },
+      {
+        number: 'B2345CD',
+        name: '',
+        cellLocation: '',
+        status: '',
+        prisonCode: '',
+      },
+    ]
+
+    it('should render the review prisoners view with back to how to add prisoners during CREATE', async () => {
       req.session.appointmentJourney.prisoners = prisoners
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         backLinkHref: 'how-to-add-prisoners',
         prisoners,
+      })
+    })
+
+    it('should render the review prisoners view with back to how to add prisoners during COPY', async () => {
+      req.session.appointmentJourney.prisoners = prisoners
+      req.session.appointmentJourney.originalAppointmentId = 1234
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
+        backLinkHref: 'how-to-add-prisoners',
+        prisoners,
+        originalAppointmentId: 1234,
       })
     })
 
@@ -133,22 +145,6 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         appointmentId,
       }
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-      const prisoners = [
-        {
-          number: 'A1234BC',
-          name: '',
-          cellLocation: '',
-          status: '',
-          prisonCode: '',
-        },
-        {
-          number: 'B2345CD',
-          name: '',
-          cellLocation: '',
-          status: '',
-          prisonCode: '',
-        },
-      ]
       req.session.editAppointmentJourney.addPrisoners = prisoners
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
@@ -167,22 +163,6 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     it('should render the review prisoners view with preserve history', async () => {
       req.query = { preserveHistory: 'true' }
-      const prisoners = [
-        {
-          number: 'A1234BC',
-          name: '',
-          cellLocation: '',
-          status: '',
-          prisonCode: '',
-        },
-        {
-          number: 'B2345CD',
-          name: '',
-          cellLocation: '',
-          status: '',
-          prisonCode: '',
-        },
-      ]
       req.session.appointmentJourney.prisoners = prisoners
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
