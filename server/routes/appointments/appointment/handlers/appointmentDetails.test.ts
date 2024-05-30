@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import { addDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 import { when } from 'jest-when'
-import AppointmentDetailsRoutes from './appointmentDetails'
+import AppointmentDetailsRoutes, { isAppointmentUncancellable } from './appointmentDetails'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
-import { formatDate } from '../../../../utils/utils'
+import { formatDate, toDateString } from '../../../../utils/utils'
 import UserService from '../../../../services/userService'
 import atLeast from '../../../../../jest.setup'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
@@ -83,6 +83,66 @@ describe('Route Handlers - Appointment Details', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/copy', {
         appointment,
+      })
+    })
+  })
+
+  describe('uncancellable appointments', () => {
+    it('appointment cancelled 5 days ago can be uncancelled', async () => {
+      appointment.isCancelled = true
+      appointment.startDate = toDateString(subDays(new Date(), 5))
+
+      const canCancel: boolean = isAppointmentUncancellable(appointment)
+
+      expect(canCancel).toEqual(true)
+    })
+
+    it('appointment cancelled 6 days ago can be cannot be uncancelled', async () => {
+      appointment.isCancelled = true
+      appointment.startDate = toDateString(subDays(new Date(), 6))
+
+      const canCancel: boolean = isAppointmentUncancellable(appointment)
+
+      expect(canCancel).toEqual(false)
+    })
+
+    it('should render the expected view for an appointment cancelled 5 days ago can be uncancelled', async () => {
+      req = {
+        params: {
+          id: '10',
+        },
+        appointment,
+      } as unknown as Request
+
+      appointment.isCancelled = true
+      appointment.startDate = toDateString(subDays(new Date(), 5))
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
+        appointment,
+        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        appointmentUncancellable: true,
+      })
+    })
+
+    it('should render the expected view for an appointment cancelled 6 days ago can be cannot be uncancelled', async () => {
+      req = {
+        params: {
+          id: '10',
+        },
+        appointment,
+      } as unknown as Request
+
+      appointment.isCancelled = true
+      appointment.startDate = toDateString(subDays(new Date(), 6))
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
+        appointment,
+        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        appointmentUncancellable: false,
       })
     })
   })

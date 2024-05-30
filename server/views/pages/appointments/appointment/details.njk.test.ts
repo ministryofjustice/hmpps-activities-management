@@ -140,4 +140,6 @@ describe('Views - Appointments Management - Appointment Details', () => {
 
     expect($('[data-qa=prisoner-list-title]').text().trim()).toContain('2 attendees')
   })
+
+  // FIXME uncancel test
 })

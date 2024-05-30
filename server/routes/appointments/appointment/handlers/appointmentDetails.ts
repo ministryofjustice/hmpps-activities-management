@@ -2,6 +2,11 @@ import { Request, Response } from 'express'
 import { startOfToday, subDays } from 'date-fns'
 import UserService from '../../../../services/userService'
 import { parseDate } from '../../../../utils/utils'
+import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
+
+export function isAppointmentUncancellable(appointment: AppointmentDetails): boolean {
+  return appointment.isCancelled && parseDate(appointment.startDate) > subDays(startOfToday(), 6)
+}
 
 export default class AppointmentDetailsRoutes {
   constructor(private readonly userService: UserService) {}
@@ -15,13 +20,10 @@ export default class AppointmentDetailsRoutes {
       user,
     )
 
-    const appointmentUncancellable =
-      appointment.isCancelled && parseDate(appointment.startDate) > subDays(startOfToday(), 6)
-
     res.render('pages/appointments/appointment/details', {
       appointment,
       userMap,
-      appointmentUncancellable,
+      appointmentUncancellable: isAppointmentUncancellable(appointment),
     })
   }
 
