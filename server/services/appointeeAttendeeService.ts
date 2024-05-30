@@ -16,8 +16,7 @@ export default class AppointeeAttendeeService {
       prisoner.confirmedReleaseDate <= now &&
       prisoner.lastMovementTypeCode === 'REL'
 
-    const notInExpectedPrison = (prisoner: Prisoner) =>
-      prisoner.inOutStatus === 'OUT' || prisoner.prisonId !== user.activeCaseLoadId
+    const notInExpectedPrison = (prisoner: Prisoner) => prisoner.prisonId !== user.activeCaseLoadId
 
     const unRecognisedPrisonerNumbers = attendeePrisonerNumbers.filter(
       attendeePrisonerNumber => !prisoners.some(prisoner => prisoner.prisonerNumber === attendeePrisonerNumber),

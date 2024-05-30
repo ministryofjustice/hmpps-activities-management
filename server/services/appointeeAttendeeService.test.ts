@@ -174,7 +174,9 @@ describe('Appointee Attendee Service', () => {
     })
 
     describe('Not in expected prison', () => {
-      it('Should not return attendee where active case load id is MDI, prison id MDI and in/out status is IN', async () => {
+      const wrongPrisonCodes = ['RSI', null, undefined]
+
+      it('Should not return attendee where active case load id is MDI and prison id MDI', async () => {
         prisonerA.inOutStatus = 'IN'
         prisonerA.prisonId = 'MDI'
 
@@ -190,19 +192,10 @@ describe('Appointee Attendee Service', () => {
         expect(unavailableAttendees).toHaveLength(0)
       })
 
-      it.each([
-        { inOutStatus: 'OUT', prisonId: 'MDI' },
-        { inOutStatus: 'OUT', prisonId: 'RSI' },
-        { inOutStatus: 'OUT', prisonId: 'null' },
-        { inOutStatus: 'OUT', prisonId: 'undefined' },
-        { inOutStatus: 'IN', prisonId: 'RSI' },
-        { inOutStatus: 'IN', prisonId: 'null' },
-        { inOutStatus: 'IN', prisonId: 'undefined' },
-      ] as Pick<Prisoner, 'inOutStatus' | 'prisonId'>[])(
-        'Should return unavailable attendee where active case load id is MDI, prison id is $prisonId and in/out status is $inOutStatus',
-        async ({ inOutStatus, prisonId }) => {
-          prisonerA.inOutStatus = inOutStatus
-          prisonerA.prisonId = prisonId
+      it.each(wrongPrisonCodes)(
+        'Should return attendee active case load id is MDI but prison id is %s',
+        async wrongPrisonCode => {
+          prisonerA.prisonId = wrongPrisonCode
 
           when(prisonService.searchInmatesByPrisonerNumbers)
             .calledWith(atLeast(['AAAAAAA', 'BBBBBBB'], user))
