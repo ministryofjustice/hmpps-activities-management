@@ -11,7 +11,7 @@ export default class UncancelRoutes {
     const { appointmentId } = req.params
 
     req.session.editAppointmentJourney.uncancel = true
-    // FIXME: should editMessage this be set here
+
     res.render('pages/appointments/create-and-edit/confirm-edit', {
       appointmentId,
       startDate: parseIsoDate(req.session.appointmentJourney.startDate),
@@ -19,12 +19,10 @@ export default class UncancelRoutes {
     })
   }
 
-  // FIXME
-  // eslint-disable-next-line consistent-return
   POST = async (req: Request, res: Response): Promise<void> => {
     if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
       return res.redirect('apply-to')
     }
-    await this.editAppointmentService.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
+    return this.editAppointmentService.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
   }
 }

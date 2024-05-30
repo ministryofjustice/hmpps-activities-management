@@ -20,9 +20,14 @@ const getAppointmentDetailsValueElement = (heading: string) =>
 describe('Views - Appointments Management - Appointment Details', () => {
   let compiledTemplate: Template
   const tomorrow = addDays(new Date(), 1)
-  let viewContext: { appointment: AppointmentDetails; userMap: Map<string, UserDetails> } = {
+  let viewContext: {
+    appointment: AppointmentDetails
+    userMap: Map<string, UserDetails>
+    appointmentUncancellable: boolean
+  } = {
     appointment: {} as AppointmentDetails,
     userMap: {} as Map<string, UserDetails>,
+    appointmentUncancellable: false,
   }
 
   const njkEnv = registerNunjucks()
@@ -52,6 +57,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
         createdTime: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentDetails,
       userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as unknown as Map<string, UserDetails>,
+      appointmentUncancellable: false,
     }
   })
 
@@ -134,6 +140,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
         createdTime: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentDetails,
       userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as unknown as Map<string, UserDetails>,
+      appointmentUncancellable: false,
     }
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -141,5 +148,17 @@ describe('Views - Appointments Management - Appointment Details', () => {
     expect($('[data-qa=prisoner-list-title]').text().trim()).toContain('2 attendees')
   })
 
-  // FIXME uncancel test
+  it('should display uncancel link when the appoinment is cancelled', () => {
+    viewContext.appointmentUncancellable = true
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=uncancel-appointment]').text().trim()).toContain('Uncancel appointment')
+  })
+
+  it('should not display uncancel link when the appoinment is cancelled', () => {
+    viewContext.appointmentUncancellable = false
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=uncancel-appointment]').text().trim()).not.toContain('Uncancel appointment')
+  })
 })

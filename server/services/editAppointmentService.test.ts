@@ -232,7 +232,7 @@ describe('Edit Appointment Service', () => {
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
-      it('FIXME when un-cancelling', async () => {
+      it('when un-cancelling an appointment', async () => {
         req.session.editAppointmentJourney.uncancel = true
 
         await service.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
@@ -778,7 +778,7 @@ describe('Edit Appointment Service', () => {
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
-      it('FIXME when un-cancelling', async () => {
+      it('when un-cancelling', async () => {
         req.session.editAppointmentJourney.uncancel = true
 
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
@@ -925,7 +925,7 @@ describe('Edit Appointment Service', () => {
         expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
       })
 
-      it('FIXME when un-cancelling', async () => {
+      it('when un-cancelling', async () => {
         req.session.editAppointmentJourney.uncancel = true
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
