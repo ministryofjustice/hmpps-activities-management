@@ -173,14 +173,13 @@ describe('Appointee Attendee Service', () => {
       })
     })
 
-    describe('In/out status is OUT', () => {
+    describe('Not in expected prison', () => {
       const wrongPrisonCodes = ['RSI', null, undefined]
 
-      beforeEach(() => {
-        prisonerA.inOutStatus = 'OUT'
-      })
-
       it('Should not return attendee where active case load id is MDI and prison id MDI', async () => {
+        prisonerA.inOutStatus = 'IN'
+        prisonerA.prisonId = 'MDI'
+
         when(prisonService.searchInmatesByPrisonerNumbers)
           .calledWith(atLeast(['AAAAAAA', 'BBBBBBB'], user))
           .mockResolvedValueOnce(prisoners)
