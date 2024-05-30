@@ -90,6 +90,13 @@ context('Duplicate appointment', () => {
       copySummaryPage.continue()
 
       const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+      // cancel and return to original appointment
+      reviewPrisonersPage.cancelLink().click()
+
+      originalAppointmentDetailsPage.copyAppointmentLink().click()
+
+      copySummaryPage.continue()
+
       reviewPrisonersPage.continue()
 
       verifyAlerts()

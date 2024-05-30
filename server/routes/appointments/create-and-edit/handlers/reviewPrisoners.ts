@@ -36,6 +36,7 @@ export default class ReviewPrisonerRoutes {
       backLinkHref,
       preserveHistory,
       prisoners,
+      originalAppointmentId: appointmentJourney.originalAppointmentId,
     })
   }
 

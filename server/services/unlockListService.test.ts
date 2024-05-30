@@ -490,7 +490,7 @@ describe('Unlock list service', () => {
             suspended: false,
             date: toDateString(subDays(new Date(), 2)),
             appointmentSeriesFrequency: AppointmentFrequency.WEEKDAY,
-            appointmentSeriesCancellationStartDate: toDateString(subDays(new Date(), 7)),
+            appointmentSeriesCancellationStartDate: toDateString(subDays(new Date(), 6)),
           },
           {
             appointmentId: 3456,
@@ -507,7 +507,7 @@ describe('Unlock list service', () => {
             suspended: false,
             date: toDateString(subDays(new Date(), 2)),
             appointmentSeriesFrequency: AppointmentFrequency.WEEKDAY,
-            appointmentSeriesCancellationStartDate: toDateString(subDays(new Date(), 6)),
+            appointmentSeriesCancellationStartDate: toDateString(subDays(new Date(), 5)),
           },
         ],
         visits: [],

@@ -9,27 +9,27 @@ export default function applyCancellationDisplayRule(app: ScheduledEvent): boole
   if (app.cancelled && app.appointmentSeriesCancellationStartDate && app.appointmentSeriesFrequency) {
     if (
       app.appointmentSeriesFrequency === AppointmentFrequency.DAILY &&
-      toDate(app.appointmentSeriesCancellationStartDate) < subDays(appointmentDate, 2)
+      toDate(app.appointmentSeriesCancellationStartDate) < subDays(appointmentDate, 1)
     ) {
       showAppointment = false
     } else if (
       app.appointmentSeriesFrequency === AppointmentFrequency.WEEKDAY &&
-      toDate(app.appointmentSeriesCancellationStartDate) < subDays(appointmentDate, 4)
+      toDate(app.appointmentSeriesCancellationStartDate) < subDays(appointmentDate, 3)
     ) {
       showAppointment = false
     } else if (
       app.appointmentSeriesFrequency === AppointmentFrequency.WEEKLY &&
-      toDate(app.appointmentSeriesCancellationStartDate) < subWeeks(appointmentDate, 2)
+      toDate(app.appointmentSeriesCancellationStartDate) < subWeeks(appointmentDate, 1)
     ) {
       showAppointment = false
     } else if (
       app.appointmentSeriesFrequency === AppointmentFrequency.FORTNIGHTLY &&
-      toDate(app.appointmentSeriesCancellationStartDate) < subWeeks(appointmentDate, 4)
+      toDate(app.appointmentSeriesCancellationStartDate) < subWeeks(appointmentDate, 2)
     ) {
       showAppointment = false
     } else if (
       app.appointmentSeriesFrequency === AppointmentFrequency.MONTHLY &&
-      toDate(app.appointmentSeriesCancellationStartDate) < subMonths(appointmentDate, 2)
+      toDate(app.appointmentSeriesCancellationStartDate) < subMonths(appointmentDate, 1)
     ) {
       showAppointment = false
     }
