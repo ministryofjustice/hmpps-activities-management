@@ -114,12 +114,12 @@ describe('Route Handlers - Attendance List', () => {
     endTime: '11:00',
     prisonerNumber: 'ABC123',
     date: toDateString(subDays(new Date(), 2)),
-    appointmentSeriesCancellationStartDate: toDateString(subDays(new Date(), 4)),
+    appointmentSeriesCancellationStartDate: toDateString(subDays(new Date(), 3)),
     appointmentSeriesFrequency: AppointmentFrequency.DAILY,
   }
 
   const appointmentDate = subDays(new Date(), 2)
-  const threeDaysBefore = subDays(appointmentDate, 3)
+  const twoDaysBefore = subDays(appointmentDate, 2)
 
   const expiredCancelledAppointment: ScheduledEvent = {
     autoSuspended: false,
@@ -140,7 +140,7 @@ describe('Route Handlers - Attendance List', () => {
     endTime: '11:00',
     prisonerNumber: 'ABC123',
     date: toDateString(appointmentDate),
-    appointmentSeriesCancellationStartDate: toDateString(threeDaysBefore),
+    appointmentSeriesCancellationStartDate: toDateString(twoDaysBefore),
     appointmentSeriesFrequency: AppointmentFrequency.DAILY,
   }
 
