@@ -121,7 +121,7 @@
   },
   "devDependencies": {
     "@jest-mock/express": "^2.0.2",
-    "@rollup/plugin-commonjs": "^25.0.8",
+    "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/bunyan": "^1.8.11",
     "@types/bunyan-format": "^0.2.9",
