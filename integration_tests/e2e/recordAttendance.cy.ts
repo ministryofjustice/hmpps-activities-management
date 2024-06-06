@@ -91,7 +91,8 @@ context('Record attendance', () => {
     attendanceListPage.checkAttendanceStatus('Aisho, Egurztof', 'Pay')
     attendanceListPage.assertNotificationContents(
       'Session cancelled',
-      'This activity session has been cancelled by J. Smith on Thursday, 2 February 2023 for the following reason:',
+      'This activity session has been cancelled by USER1 - J. Smith on Thursday, 2 February 2023 for the following reason:',
+      'Location unavailable - this is a comment',
     )
 
     attendanceListPage.getLinkByText('Uncancel this session').click()

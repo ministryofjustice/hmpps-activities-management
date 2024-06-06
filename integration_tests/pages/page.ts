@@ -83,11 +83,15 @@ export default abstract class Page {
 
   protected getSummaryListById = (id: string) => new SummaryList(id)
 
-  assertNotificationContents = (titleText, notificationText = null) => {
+  assertNotificationContents = (titleText, notificationText = null, comment = null) => {
     cy.get('.govuk-notification-banner .govuk-notification-banner__heading').contains(titleText)
 
     if (notificationText) {
       cy.get('.govuk-notification-banner .govuk-notification-banner__content').contains(notificationText)
+    }
+
+    if (comment) {
+      cy.get('.govuk-notification-banner .govuk-notification-banner__content').contains(comment)
     }
   }
 
