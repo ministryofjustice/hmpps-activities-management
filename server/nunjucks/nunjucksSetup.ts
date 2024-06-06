@@ -2,7 +2,7 @@
 import nunjucks, { Environment } from 'nunjucks'
 import express, { Router } from 'express'
 import path from 'path'
-import { addDays, addMonths, addWeeks, addYears, startOfDay, subDays, subMonths, subWeeks } from 'date-fns'
+import { addDays, addMonths, addWeeks, addYears, startOfDay, subDays, subMonths, subWeeks, getUnixTime } from 'date-fns'
 import { flatMap, sortBy, flatten } from 'lodash'
 import setUpDprNunjucksFilters from '@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/setUpNunjucksFilters'
 import {
@@ -145,6 +145,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('subMonths', subMonths)
   njkEnv.addFilter('addMonths', addMonths)
   njkEnv.addFilter('subWeeks', subWeeks)
+  njkEnv.addFilter('getUnixTime', getUnixTime)
   njkEnv.addFilter('addWeeks', addWeeks)
   njkEnv.addFilter('isClashing', isClashing)
   njkEnv.addFilter('existsInStringArray', existsInStringArray)
