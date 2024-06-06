@@ -220,7 +220,7 @@
                 {
                     html: allocatedDatesHtml,
                     attributes: {
-                        "data-sort-value": row.startDate | formatDate('yyyy-MM-dd')
+                        "data-sort-value": row.startDate | getUnixTime 
                     }
                 },
                 {
@@ -229,7 +229,7 @@
                 {
                     html: earliestReleaseDate(row.earliestReleaseDate),
                     attributes: {
-                        "data-sort-value": row.earliestReleaseDate.releaseDate | formatDate('yyyy-MM-dd')
+                        "data-sort-value": row.earliestReleaseDate.releaseDate | getUnixTime 
                     }
                 }
             ]
@@ -456,11 +456,14 @@
                 {
                     html: splitLine(row.requestDate, row.requestedBy),
                     attributes: {
-                        "data-sort-value": row.requestDate | formatDate('yyyy-MM-dd')
+                        "data-sort-value": row.requestDate | getUnixTime 
                     }
                 },
                 {
-                    html: earliestReleaseDate(row.earliestReleaseDate)
+                    html: earliestReleaseDate(row.earliestReleaseDate),
+                    attributes: {
+                        "data-sort-value": row.earliestReleaseDate.releaseDate | getUnixTime 
+                    }
                 },
                 {
                     html: currentAllocationsHtml
