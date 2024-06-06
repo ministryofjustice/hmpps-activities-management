@@ -24,7 +24,7 @@
             {% if instance.cancelled %}
                 {% set cancelledSessionHeadingHtml %}
                     <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
-                    <p class="govuk-body">This activity session has been cancelled {{ serviceUserName(userMap.get(instance.cancelledBy)) }} on {{ instance.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }} for the following reason:</p>
+                    <p class="govuk-body">This activity session has been cancelled by {{ serviceUserName(userMap.get(instance.cancelledBy)) }} on {{ instance.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }} for the following reason:</p>
                     <ul class="govuk-list govuk-list--bullet"><li>{{ instance.cancelledReason }}</li></ul>
                 {% endset %}
                 {{ govukNotificationBanner({
