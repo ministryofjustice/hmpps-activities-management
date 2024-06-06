@@ -86,7 +86,7 @@ context('Attendance not required', () => {
     attendanceListPage.checkAttendanceStatus('Aisho, Egurztof', 'Not required')
     attendanceListPage.assertNotificationContents(
       'Session cancelled',
-      'This activity session has been cancelled J. Smith on Thursday, 2 February 2023 for the following reason:',
+      'This activity session has been cancelled by J. Smith on Thursday, 2 February 2023 for the following reason:',
     )
 
     attendanceListPage.getLinkByText('Uncancel this session').click()
