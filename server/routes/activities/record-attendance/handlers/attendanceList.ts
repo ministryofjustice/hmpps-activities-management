@@ -11,6 +11,7 @@ import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { EventType, Prisoner } from '../../../../@types/activities'
 
 import applyCancellationDisplayRule from '../../../../utils/applyCancellationDisplayRule'
+import UserService from '../../../../services/userService'
 
 export class AttendanceList {
   @Expose()
@@ -29,6 +30,7 @@ export default class AttendanceListRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
+    private readonly userService: UserService,
   ) {}
 
   private RELEVANT_ALERT_CODES = ['HA', 'XA', 'RCON', 'XEL', 'RNO121', 'PEEP', 'XRF', 'XSA', 'XTACT']
@@ -80,11 +82,14 @@ export default class AttendanceListRoutes {
       })
     }
 
+    const userMap = await this.userService.getUserMap([instance.cancelledBy], user)
+
     res.render('pages/activities/record-attendance/attendance-list', {
       instance,
       isPayable: instance.activitySchedule.activity.paid,
       attendance,
       attendanceSummary: getAttendanceSummary(instance.attendances),
+      userMap,
     })
   }
 
