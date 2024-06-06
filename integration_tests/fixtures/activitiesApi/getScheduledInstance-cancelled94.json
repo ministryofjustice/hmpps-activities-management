@@ -4,7 +4,7 @@
   "startTime": "13:45",
   "endTime": "16:45",
   "cancelled": true,
-  "cancelledTime": "2023-02-02",
+  "cancelledTime": "2023-02-02T10:15:23",
   "cancelledBy": "USER1",
   "cancelledReason": "Location unavailable",
   "attendances": [
