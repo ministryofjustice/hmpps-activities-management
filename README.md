@@ -121,3 +121,15 @@ up its environment to reference the DEV APIs, local activities API and local con
 ## Ensuring slack notifications are raised correctly
 
 To ensure notifications are routed to the correct slack channels, update the `alerts-slack-channel` and `releases-slack-channel` parameters in `.circle/config.yml` to an appropriate channel.
+
+## Digital Prison Reporting (DPR)
+
+DPR integration has been started and first report is available [here](https://activities-dev.prison.service.justice.gov.uk/dpr-reporting/waitlist-agg).
+
+Not easy to test locally as endpoints are not available.
+
+Docs are [here](https://ministryofjustice.github.io/hmpps-digital-prison-reporting-frontend/components/list-report/)
+
+
+
+
