@@ -8,6 +8,7 @@ import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
+import config from '../../../../config'
 
 const view = fs.readFileSync('server/views/pages/appointments/appointment/details.njk')
 
@@ -62,6 +63,8 @@ describe('Views - Appointments Management - Appointment Details', () => {
       >,
       cancellable: false,
     }
+
+    config.uncancelAppointmentFeatureToggleEnabled = true
   })
 
   it('should display name in heading', () => {
