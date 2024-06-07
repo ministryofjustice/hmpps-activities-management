@@ -965,7 +965,7 @@ describe('Edit Appointment Service', () => {
           `/appointments/${appointmentId}`,
           "You've uncancelled appointments 1 to 4 in the series",
         )
-      }) // FIXME check these messages are correct. 1 to 4
+      })
 
       it('when deleting', async () => {
         req.session.editAppointmentJourney.appointmentSeries = {
