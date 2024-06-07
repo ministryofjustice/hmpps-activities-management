@@ -118,7 +118,7 @@
                     }
                 ) %}
             {% endif %}
-            {% if uncancelAppointmentFeatureToggleEnabled and appointmentUncancellable %}
+            {% if uncancelAppointmentFeatureToggleEnabled and cancellable and not appointment.appointmentSet %}
                 {% set items = items.concat(
                     {
                         href: appointmentLink + "/edit/start/uncancel",

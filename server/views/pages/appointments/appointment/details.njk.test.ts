@@ -23,11 +23,11 @@ describe('Views - Appointments Management - Appointment Details', () => {
   let viewContext: {
     appointment: AppointmentDetails
     userMap: Map<string, UserDetails>
-    appointmentUncancellable: boolean
+    cancellable: boolean
   } = {
     appointment: {} as AppointmentDetails,
     userMap: {} as Map<string, UserDetails>,
-    appointmentUncancellable: false,
+    cancellable: false,
   }
 
   const njkEnv = registerNunjucks()
@@ -57,7 +57,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
         createdTime: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentDetails,
       userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as unknown as Map<string, UserDetails>,
-      appointmentUncancellable: false,
+      cancellable: false,
     }
   })
 
@@ -140,7 +140,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
         createdTime: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentDetails,
       userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as unknown as Map<string, UserDetails>,
-      appointmentUncancellable: false,
+      cancellable: false,
     }
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -149,14 +149,26 @@ describe('Views - Appointments Management - Appointment Details', () => {
   })
 
   it('should display uncancel link when the appoinment is cancelled', () => {
-    viewContext.appointmentUncancellable = true
+    viewContext.cancellable = true
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=uncancel-appointment]').text().trim()).toContain('Uncancel appointment')
   })
 
   it('should not display uncancel link when the appoinment is cancelled', () => {
-    viewContext.appointmentUncancellable = false
+    viewContext.cancellable = false
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=uncancel-appointment]').text().trim()).not.toContain('Uncancel appointment')
+  })
+
+  it('should not display uncancel link when the appoinment is part of an appointment set', () => {
+    viewContext.cancellable = true
+    viewContext.appointment.appointmentSet = {
+      id: 2,
+      appointmentCount: 2,
+      scheduledAppointmentCount: 1,
+    }
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=uncancel-appointment]').text().trim()).not.toContain('Uncancel appointment')

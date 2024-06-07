@@ -149,6 +149,7 @@ describe('Edit Appointment Service', () => {
         {
           sequenceNumber: 1,
           startDate: formatDate(weekTomorrow, 'yyyy-MM-dd'),
+          cancelled: false,
         },
       ]
       req.session.editAppointmentJourney.property = 'location'
@@ -257,7 +258,10 @@ describe('Edit Appointment Service', () => {
         expect(req.session.appointmentJourney).toBeNull()
         expect(req.session.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
-        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
+        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+          `/appointments/${appointmentId}`,
+          "You've uncancelled this appointment",
+        )
       })
 
       it('when deleting', async () => {
@@ -299,6 +303,7 @@ describe('Edit Appointment Service', () => {
           {
             sequenceNumber: 1,
             startDate: formatDate(weekTomorrow, 'yyyy-MM-dd'),
+            cancelled: false,
           },
         ]
         req.session.editAppointmentJourney.appointmentSet = {
@@ -803,7 +808,10 @@ describe('Edit Appointment Service', () => {
         expect(req.session.appointmentJourney).toBeNull()
         expect(req.session.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
-        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
+        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+          `/appointments/${appointmentId}`,
+          "You've uncancelled appointments 2 to 4 in the series",
+        )
       })
 
       it('when deleting', async () => {
@@ -863,14 +871,17 @@ describe('Edit Appointment Service', () => {
           {
             sequenceNumber: 1,
             startDate: '2023-01-01',
+            cancelled: false,
           },
           {
             sequenceNumber: 2,
             startDate: '2023-01-02',
+            cancelled: false,
           },
           {
             sequenceNumber: 3,
             startDate: '2023-01-03',
+            cancelled: false,
           },
         ]
         req.session.editAppointmentJourney.location = {
@@ -950,8 +961,11 @@ describe('Edit Appointment Service', () => {
         expect(req.session.appointmentJourney).toBeNull()
         expect(req.session.editAppointmentJourney).toBeNull()
         expect(req.session.journeyMetrics).toBeNull()
-        expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
-      })
+        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+          `/appointments/${appointmentId}`,
+          "You've uncancelled appointments 1 to 4 in the series",
+        )
+      }) // FIXME check these messages are correct. 1 to 4
 
       it('when deleting', async () => {
         req.session.editAppointmentJourney.appointmentSeries = {
@@ -1010,10 +1024,12 @@ describe('Edit Appointment Service', () => {
           {
             sequenceNumber: 3,
             startDate: '2023-01-01',
+            cancelled: false,
           },
           {
             sequenceNumber: 4,
             startDate: '2023-01-02',
+            cancelled: false,
           },
         ]
         req.session.editAppointmentJourney.sequenceNumber = 3
@@ -1049,14 +1065,17 @@ describe('Edit Appointment Service', () => {
           {
             sequenceNumber: 1,
             startDate: '2023-01-01',
+            cancelled: false,
           },
           {
             sequenceNumber: 2,
             startDate: '2023-01-02',
+            cancelled: false,
           },
           {
             sequenceNumber: 3,
             startDate: '2023-01-03',
+            cancelled: false,
           },
         ]
         req.session.editAppointmentJourney.location = {
@@ -1135,6 +1154,7 @@ describe('Edit Appointment Service', () => {
           .map((_, i) => ({
             sequenceNumber: i + 1,
             startDate: formatDate(addDays(weekTomorrow, i), 'yyyy-MM-dd'),
+            cancelled: false,
           }))
         req.session.editAppointmentJourney.property = 'add-prisoners'
 

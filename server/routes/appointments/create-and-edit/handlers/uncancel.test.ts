@@ -65,6 +65,7 @@ describe('Route Handlers - Uncancel an Appointment', () => {
             {
               sequenceNumber: 1,
               startDate: '2024-05-29',
+              cancelled: true,
             },
           ],
           sequenceNumber: 1,
@@ -100,7 +101,6 @@ describe('Route Handlers - Uncancel an Appointment', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/confirm-edit', {
         appointmentId,
         startDate: parseIsoDate(req.session.appointmentJourney.startDate),
-        editMessage: 'uncancel',
       })
     })
   })
@@ -157,22 +157,27 @@ describe('Route Handlers - Uncancel an Appointment', () => {
               {
                 sequenceNumber: 1,
                 startDate: '2024-05-29',
+                cancelled: true,
               },
               {
                 sequenceNumber: 2,
                 startDate: '2024-05-30',
+                cancelled: true,
               },
               {
                 sequenceNumber: 3,
                 startDate: '2024-05-31',
+                cancelled: true,
               },
               {
                 sequenceNumber: 4,
                 startDate: '2024-06-03',
+                cancelled: true,
               },
               {
                 sequenceNumber: 5,
                 startDate: '2024-06-04',
+                cancelled: true,
               },
             ],
             sequenceNumber: 1,
@@ -197,6 +202,202 @@ describe('Route Handlers - Uncancel an Appointment', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toBeCalledWith('apply-to')
+    })
+
+    it('should redirect to appointment screen when part of an appointment series and last appointment is being uncancelled', async () => {
+      req = {
+        session: {
+          appointmentJourney: {
+            mode: 'EDIT',
+            type: 'GROUP',
+            appointmentName: 'Activities',
+            prisoners: [
+              {
+                number: 'G7274UH',
+                name: 'EFLIAICO GABRIJAH',
+                prisonCode: 'RSI',
+                status: 'ACTIVE IN',
+                cellLocation: 'R-2-037',
+                category: 'C',
+              },
+            ],
+            category: {
+              code: 'ACTI',
+              description: 'Activities',
+            },
+            tierCode: 'FOUNDATION',
+            organiserCode: null,
+            location: {
+              id: 67128,
+              prisonCode: 'RSI',
+              description: 'A Wing',
+            },
+            inCell: false,
+            startDate: '2024-06-04',
+            startTime: {
+              date: '2024-06-04T08:00:00.000Z',
+              hour: 9,
+              minute: 0,
+            },
+            endTime: {
+              date: '2024-06-04T08:20:00.000Z',
+              hour: 9,
+              minute: 20,
+            },
+            repeat: 'YES',
+            frequency: 'WEEKDAY',
+            numberOfAppointments: 5,
+            extraInformation: null,
+          },
+          editAppointmentJourney: {
+            numberOfAppointments: 5,
+            appointments: [
+              {
+                sequenceNumber: 1,
+                startDate: '2024-05-29',
+                cancelled: true,
+              },
+              {
+                sequenceNumber: 2,
+                startDate: '2024-05-30',
+                cancelled: true,
+              },
+              {
+                sequenceNumber: 3,
+                startDate: '2024-05-31',
+                cancelled: true,
+              },
+              {
+                sequenceNumber: 4,
+                startDate: '2024-06-03',
+                cancelled: true,
+              },
+              {
+                sequenceNumber: 5,
+                startDate: '2024-06-04',
+                cancelled: true,
+              },
+            ],
+            sequenceNumber: 1,
+            appointmentSeries: {
+              id: 21,
+              schedule: {
+                frequency: 'WEEKDAY',
+                numberOfAppointments: 5,
+              },
+              appointmentCount: 5,
+              scheduledAppointmentCount: 5,
+            },
+            appointmentSet: null,
+            uncancel: true,
+          } as EditAppointmentJourney,
+        },
+        params: {
+          appointmentId: 5,
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(editAppointmentService.edit).toHaveBeenCalledWith(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
+    })
+
+    it('should redirect to appointment screen when part of an appointment series and future appointments are not cancelled', async () => {
+      req = {
+        session: {
+          appointmentJourney: {
+            mode: 'EDIT',
+            type: 'GROUP',
+            appointmentName: 'Activities',
+            prisoners: [
+              {
+                number: 'G7274UH',
+                name: 'EFLIAICO GABRIJAH',
+                prisonCode: 'RSI',
+                status: 'ACTIVE IN',
+                cellLocation: 'R-2-037',
+                category: 'C',
+              },
+            ],
+            category: {
+              code: 'ACTI',
+              description: 'Activities',
+            },
+            tierCode: 'FOUNDATION',
+            organiserCode: null,
+            location: {
+              id: 67128,
+              prisonCode: 'RSI',
+              description: 'A Wing',
+            },
+            inCell: false,
+            startDate: '2024-05-29',
+            startTime: {
+              date: '2024-05-29T08:00:00.000Z',
+              hour: 9,
+              minute: 0,
+            },
+            endTime: {
+              date: '2024-05-29T08:20:00.000Z',
+              hour: 9,
+              minute: 20,
+            },
+            repeat: 'YES',
+            frequency: 'WEEKDAY',
+            numberOfAppointments: 5,
+            extraInformation: null,
+          },
+          editAppointmentJourney: {
+            numberOfAppointments: 5,
+            appointments: [
+              {
+                sequenceNumber: 1,
+                startDate: '2024-05-29',
+                cancelled: true,
+              },
+              {
+                sequenceNumber: 2,
+                startDate: '2024-05-30',
+                cancelled: true,
+              },
+              {
+                sequenceNumber: 3,
+                startDate: '2024-05-31',
+                cancelled: false,
+              },
+              {
+                sequenceNumber: 4,
+                startDate: '2024-06-03',
+                cancelled: true,
+              },
+              {
+                sequenceNumber: 5,
+                startDate: '2024-06-04',
+                cancelled: true,
+              },
+            ],
+            sequenceNumber: 1,
+            appointmentSeries: {
+              id: 21,
+              schedule: {
+                frequency: 'WEEKDAY',
+                numberOfAppointments: 5,
+              },
+              appointmentCount: 5,
+              scheduledAppointmentCount: 5,
+            },
+            appointmentSet: null,
+            uncancel: true,
+          } as EditAppointmentJourney,
+        },
+        params: {
+          appointmentId,
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(editAppointmentService.edit).toHaveBeenCalledWith(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
     })
 
     it('should redirect to appointment screen when a single appointment', async () => {

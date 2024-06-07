@@ -9,6 +9,7 @@ export type EditAppointmentJourney = {
   appointments: {
     sequenceNumber: number
     startDate: string
+    cancelled: boolean
   }[]
   sequenceNumber: number
   appointmentSeries?: AppointmentSeriesSummary

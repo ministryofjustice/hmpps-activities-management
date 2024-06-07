@@ -233,10 +233,12 @@ export default class StartJourneyRoutes {
       appointments: appointmentSeries?.appointments.map(a => ({
         sequenceNumber: a.sequenceNumber,
         startDate: a.startDate,
+        cancelled: a.isCancelled,
       })) ?? [
         {
           sequenceNumber: appointment.sequenceNumber,
           startDate: appointment.startDate,
+          cancelled: appointment.isCancelled,
         },
       ],
       sequenceNumber: appointment.sequenceNumber,

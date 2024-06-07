@@ -79,6 +79,7 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
         {
           sequenceNumber: 2,
           startDate: '2023-01-02',
+          cancelled: false,
         },
       ]
       req.body = {

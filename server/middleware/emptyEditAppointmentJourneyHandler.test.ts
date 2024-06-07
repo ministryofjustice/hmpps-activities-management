@@ -38,6 +38,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
           {
             sequenceNumber: 1,
             startDate: '2023-01-01',
+            cancelled: false,
           },
         ],
         sequenceNumber: 1,
@@ -71,6 +72,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
           {
             sequenceNumber: 1,
             startDate: '2023-01-01',
+            cancelled: false,
           },
         ],
         sequenceNumber: 1,

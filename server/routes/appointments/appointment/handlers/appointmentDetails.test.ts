@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { addDays, subDays } from 'date-fns'
 import { when } from 'jest-when'
-import AppointmentDetailsRoutes, { isAppointmentUncancellable } from './appointmentDetails'
+import AppointmentDetailsRoutes from './appointmentDetails'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate, toDateString } from '../../../../utils/utils'
 import UserService from '../../../../services/userService'
@@ -88,24 +88,6 @@ describe('Route Handlers - Appointment Details', () => {
   })
 
   describe('uncancellable appointments', () => {
-    it('appointment cancelled 5 days ago can be uncancelled', async () => {
-      appointment.isCancelled = true
-      appointment.startDate = toDateString(subDays(new Date(), 5))
-
-      const canCancel: boolean = isAppointmentUncancellable(appointment)
-
-      expect(canCancel).toEqual(true)
-    })
-
-    it('appointment cancelled 6 days ago can be cannot be uncancelled', async () => {
-      appointment.isCancelled = true
-      appointment.startDate = toDateString(subDays(new Date(), 6))
-
-      const canCancel: boolean = isAppointmentUncancellable(appointment)
-
-      expect(canCancel).toEqual(false)
-    })
-
     it('should render the expected view for an appointment cancelled 5 days ago can be uncancelled', async () => {
       req = {
         params: {
@@ -122,7 +104,7 @@ describe('Route Handlers - Appointment Details', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
         appointment,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
-        appointmentUncancellable: true,
+        cancellable: true,
       })
     })
 
@@ -142,7 +124,7 @@ describe('Route Handlers - Appointment Details', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
         appointment,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
-        appointmentUncancellable: false,
+        cancellable: false,
       })
     })
   })

@@ -1,6 +1,6 @@
 import { Request } from 'express'
-import { addDays } from 'date-fns'
-import { formatDate, parseDate } from './utils'
+import { addDays, subDays } from 'date-fns'
+import { formatDate, parseDate, toDateString } from './utils'
 import {
   AppointmentJourney,
   AppointmentJourneyMode,
@@ -21,10 +21,12 @@ import {
   getConfirmAppointmentEditCta,
   getAppointmentEditApplyToCta,
   hasAppointmentLocationChanged,
+  isUncancellable,
 } from './editAppointmentUtils'
 import { formatIsoDate } from './datePickerUtils'
 import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
+import { AppointmentDetails } from '../@types/activitiesAPI/types'
 
 describe('Edit Appointment Utils', () => {
   const weekTomorrow = addDays(new Date(), 8)
@@ -103,6 +105,7 @@ describe('Edit Appointment Utils', () => {
         {
           sequenceNumber: 1,
           startDate: '2023-01-01',
+          cancelled: false,
         },
       ]
       req.session.editAppointmentJourney.sequenceNumber = 1
@@ -123,6 +126,7 @@ describe('Edit Appointment Utils', () => {
         {
           sequenceNumber: 4,
           startDate: '2023-01-01',
+          cancelled: false,
         },
       ]
       req.session.editAppointmentJourney.sequenceNumber = 4
@@ -142,10 +146,12 @@ describe('Edit Appointment Utils', () => {
         {
           sequenceNumber: 3,
           startDate: '2023-01-01',
+          cancelled: false,
         },
         {
           sequenceNumber: 4,
           startDate: '2023-01-02',
+          cancelled: false,
         },
       ]
       req.session.editAppointmentJourney.sequenceNumber = 3
@@ -533,6 +539,7 @@ describe('Edit Appointment Utils', () => {
         {
           sequenceNumber: 1,
           startDate: '2023-01-01',
+          cancelled: false,
         },
       ]
       req.session.editAppointmentJourney.sequenceNumber = 1
@@ -550,6 +557,7 @@ describe('Edit Appointment Utils', () => {
         {
           sequenceNumber: 4,
           startDate: '2023-01-01',
+          cancelled: false,
         },
       ]
       req.session.editAppointmentJourney.sequenceNumber = 4
@@ -584,10 +592,12 @@ describe('Edit Appointment Utils', () => {
         {
           sequenceNumber: 3,
           startDate: '2023-01-03',
+          cancelled: false,
         },
         {
           sequenceNumber: 4,
           startDate: '2023-01-04',
+          cancelled: false,
         },
       ]
       req.session.editAppointmentJourney.sequenceNumber = 3
@@ -611,14 +621,17 @@ describe('Edit Appointment Utils', () => {
         {
           sequenceNumber: 1,
           startDate: '2023-01-01',
+          cancelled: false,
         },
         {
           sequenceNumber: 3,
           startDate: '2023-01-03',
+          cancelled: false,
         },
         {
           sequenceNumber: 4,
           startDate: '2023-01-04',
+          cancelled: false,
         },
       ]
       req.session.editAppointmentJourney.sequenceNumber = 1
@@ -820,5 +833,35 @@ describe('Edit Appointment Utils', () => {
         expect(getRepeatFrequencyText(req.session.appointmentJourney)).toEqual(expectedText)
       },
     )
+  })
+
+  describe('uncancellable appointments', () => {
+    const appointment = {
+      id: 10,
+      appointmentSeries: {
+        id: 9,
+      },
+      startTime: '23:59',
+      createdBy: 'joebloggs',
+      updatedBy: 'joebloggs',
+      cancelledBy: 'joebloggs',
+      isCancelled: true,
+    } as AppointmentDetails
+
+    it('appointment cancelled 5 days ago can be uncancelled', async () => {
+      appointment.startDate = toDateString(subDays(new Date(), 5))
+
+      const canCancel: boolean = isUncancellable(appointment)
+
+      expect(canCancel).toEqual(true)
+    })
+
+    it('appointment cancelled 6 days ago can be cannot be uncancelled', async () => {
+      appointment.startDate = toDateString(subDays(new Date(), 6))
+
+      const canCancel: boolean = isUncancellable(appointment)
+
+      expect(canCancel).toEqual(false)
+    })
   })
 })

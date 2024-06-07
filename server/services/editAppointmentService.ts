@@ -66,6 +66,11 @@ export default class EditAppointmentService {
     const { appointmentJourney, editAppointmentJourney } = req.session
     const { appointmentId } = req.params
 
+    const successHeading = `You've ${this.getEditedMessage(
+      appointmentJourney,
+      editAppointmentJourney,
+    )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo)}`
+
     if (editAppointmentJourney.cancellationReason) {
       const { cancellationReason } = editAppointmentJourney
 
@@ -95,8 +100,7 @@ export default class EditAppointmentService {
         MetricsEvent.UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED(+appointmentId, applyTo, req, res.locals.user),
       )
       this.clearSession(req)
-
-      return res.redirect(`/appointments/${appointmentId}`)
+      return res.redirectWithSuccess(`/appointments/${appointmentId}`, successHeading)
     }
 
     const request = { applyTo } as AppointmentUpdateRequest
@@ -158,13 +162,7 @@ export default class EditAppointmentService {
       MetricsEvent.EDIT_APPOINTMENT_JOURNEY_COMPLETED(+appointmentId, true, applyTo, req, res.locals.user),
     )
 
-    const successHeading = `You've ${this.getEditedMessage(
-      appointmentJourney,
-      editAppointmentJourney,
-    )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo)}`
-
     this.clearSession(req)
-
     return res.redirectWithSuccess(`/appointments/${appointmentId}`, successHeading)
   }
 
