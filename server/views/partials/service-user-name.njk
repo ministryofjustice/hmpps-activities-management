@@ -4,6 +4,6 @@
   {% elseif user.name === ServiceAsUsername %}
     {{ user.name }}
   {% else %}
-    {{ user.name | toTitleCase | initialiseName or "Unknown user" }}
+    {{ user.username + " - " + (user.name | toTitleCase | initialiseName or "Unknown user") }}
   {% endif %}
 {% endmacro %}

@@ -6,7 +6,6 @@ import AppointmentAttendanceRoutes, { AppointmentAttendance } from './handlers/a
 import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
 import { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
-import config from '../../../config'
 
 export default function Index({ activitiesService, userService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -26,9 +25,7 @@ export default function Index({ activitiesService, userService, metricsService }
   post('/attend', appointmentAttendanceRoutes.ATTEND, AppointmentAttendance)
   post('/non-attend', appointmentAttendanceRoutes.NON_ATTEND, AppointmentAttendance)
 
-  if (config.copyAppointmentFeatureToggleEnabled) {
-    get('/copy', appointmentDetailsRoutes.COPY)
-  }
+  get('/copy', appointmentDetailsRoutes.COPY)
 
   return router
 }

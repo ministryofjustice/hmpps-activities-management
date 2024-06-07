@@ -6,6 +6,7 @@ import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import attendanceListCancelledContext from '../../../fixtures/pages/record-attendance/attendance-list-cancelled.json'
 import attendanceListContext from '../../../fixtures/pages/record-attendance/attendance-list.json'
 import attendanceListNotEditableContext from '../../../fixtures/pages/record-attendance/attendance-list-not-editable.json'
+import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 
 const snippet = fs.readFileSync('server/views/pages/activities/record-attendance/attendance-list.njk')
 
@@ -38,7 +39,12 @@ describe('Views - Attendance list', () => {
   })
 
   it('should not be able to mark attendance of cancelled session', () => {
-    const $ = cheerio.load(compiledTemplate.render(attendanceListCancelledContext))
+    const $ = cheerio.load(
+      compiledTemplate.render({
+        instance: attendanceListCancelledContext.instance,
+        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as unknown as Map<string, UserDetails>,
+      }),
+    )
     expect($('input[name="selectedAttendances"]')).toHaveLength(0)
   })
 

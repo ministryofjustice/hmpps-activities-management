@@ -13,15 +13,20 @@ import AttendanceListRoutes, { ScheduledInstanceAttendance } from './attendanceL
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { getAttendanceSummary, toDateString } from '../../../../utils/utils'
 import { AppointmentFrequency } from '../../../../@types/appointments'
+import UserService from '../../../../services/userService'
+import atLeast from '../../../../../jest.setup'
+import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
+jest.mock('../../../../services/userService')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
+const userService = new UserService(null, null, null)
 
 describe('Route Handlers - Attendance List', () => {
-  const handler = new AttendanceListRoutes(activitiesService, prisonService)
+  const handler = new AttendanceListRoutes(activitiesService, prisonService, userService)
 
   let req: Request
   let res: Response
@@ -205,6 +210,9 @@ describe('Route Handlers - Attendance List', () => {
     } as unknown as Request
 
     when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(instance)
+    when(userService.getUserMap)
+      .calledWith(atLeast([null]))
+      .mockResolvedValue(new Map([]) as Map<string, UserDetails>)
 
     when(activitiesService.getAttendees)
       .calledWith(1, res.locals.user)

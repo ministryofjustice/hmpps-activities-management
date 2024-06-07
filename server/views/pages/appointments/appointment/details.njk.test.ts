@@ -56,7 +56,10 @@ describe('Views - Appointments Management - Appointment Details', () => {
         isExpired: false,
         createdTime: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentDetails,
-      userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as unknown as Map<string, UserDetails>,
+      userMap: new Map([['joebloggs', { name: 'Joe Bloggs', username: 'USER1' }]]) as unknown as Map<
+        string,
+        UserDetails
+      >,
       cancellable: false,
     }
   })
@@ -88,7 +91,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
     $ = cheerio.load(compiledTemplate.render(viewContext))
     expect(
       $('[data-qa=appointment-history] .govuk-summary-list__key:contains("Last edited by")').next().text().trim(),
-    ).toBe('J. Bloggs')
+    ).toBe('USER1 - J. Bloggs')
   })
 
   it('should display location as in cell', () => {

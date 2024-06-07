@@ -12,10 +12,15 @@
 {% from "partials/attendance/otherEvent.njk" import otherEvent %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/service-user-name.njk" import serviceUserName %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
 {% set jsBackLink = true %}
+{% set cancelledComment = '' %}
+{% if instance.comment !== undefined and instance.comment !== null %}
+ {% set cancelledComment = " - "+instance.comment %}
+{% endif %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -23,8 +28,8 @@
             {% if instance.cancelled %}
                 {% set cancelledSessionHeadingHtml %}
                     <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
-                    <p class="govuk-body">This activity session has been cancelled for the following reason:</p>
-                    <ul class="govuk-list govuk-list--bullet"><li>{{ instance.cancelledReason }}</li></ul>
+                    <p class="govuk-body">This activity session has been cancelled by {{ serviceUserName(userMap.get(instance.cancelledBy)) }} on {{ instance.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }} for the following reason:</p>
+                    <ul class="govuk-list govuk-list--bullet"><li>{{ instance.cancelledReason }} {{ cancelledComment }}</li></ul>
                 {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',

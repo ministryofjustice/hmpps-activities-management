@@ -36,7 +36,6 @@ import NoAttendees from './handlers/noAttendees'
 import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
 import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
-import config from '../../../config'
 import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
 
 export default function Create({ prisonService, activitiesService, metricsService }: Services): Router {
@@ -150,19 +149,17 @@ export default function Create({ prisonService, activitiesService, metricsServic
     asyncMiddleware(confirmationRoutes.GET_SET),
   )
 
-  if (config.copyAppointmentFeatureToggleEnabled) {
-    router.get(
-      '/start-copy/:appointmentId',
-      fetchAppointment(activitiesService),
-      fetchAppointmentSeries(activitiesService),
-      startJourneyRoutes.COPY,
-    )
+  router.get(
+    '/start-copy/:appointmentId',
+    fetchAppointment(activitiesService),
+    fetchAppointmentSeries(activitiesService),
+    startJourneyRoutes.COPY,
+  )
 
-    get('/copy-series', copySeriesRoutes.GET, true)
-    post('/copy-series', copySeriesRoutes.POST, HowToCopySeriesForm)
-    get('/no-attendees', noAttendeesRoutes.GET, true)
-    post('/no-attendees', noAttendeesRoutes.POST)
-  }
+  get('/copy-series', copySeriesRoutes.GET, true)
+  post('/copy-series', copySeriesRoutes.POST, HowToCopySeriesForm)
+  get('/no-attendees', noAttendeesRoutes.GET, true)
+  post('/no-attendees', noAttendeesRoutes.POST)
 
   return router
 }

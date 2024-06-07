@@ -4,7 +4,8 @@
   "startTime": "14:00",
   "endTime": "15:00",
   "cancelled": true,
-  "cancelledTime": "2023-02-02",
+  "cancelledTime": "2023-02-02T10:15:23",
+  "comment": "this is a comment",
   "cancelledBy": "USER1",
   "cancelledReason": "Location unavailable",
   "attendances": [

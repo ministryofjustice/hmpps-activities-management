@@ -175,8 +175,29 @@ describe('Unlock list service', () => {
     })
 
     it('should not show monthly appointment more than 1 month before the appointment date', async () => {
-      const appointmentDate = subDays(new Date(), 2)
-      const overOneMonthBefore = subDays(subMonths(new Date(), 1), 3)
+      const appointmentDate = new Date(2023, 7, 31)
+      const overOneMonthBefore = subDays(subMonths(appointmentDate, 1), 1)
+      const appointment: ScheduledEvent = {
+        autoSuspended: false,
+        cancelled: true,
+        inCell: false,
+        offWing: false,
+        onWing: false,
+        outsidePrison: false,
+        priority: 0,
+        startTime: '',
+        suspended: false,
+        date: toDateString(appointmentDate),
+        appointmentSeriesFrequency: AppointmentFrequency.MONTHLY,
+        appointmentSeriesCancellationStartDate: toDateString(overOneMonthBefore),
+      }
+      const showAppointment = applyCancellationDisplayRule(appointment)
+      expect(showAppointment).toEqual(false)
+    })
+
+    it('should not show monthly appointment more than 1 month before the appointment date with different month ends', async () => {
+      const appointmentDate = new Date(2024, 2, 31)
+      const overOneMonthBefore = subDays(subMonths(appointmentDate, 1), 1)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,
@@ -196,8 +217,29 @@ describe('Unlock list service', () => {
     })
 
     it('should show monthly appointment that is 1 month before the appointment date', async () => {
-      const appointmentDate = subDays(new Date(), 2)
-      const oneMonthBefore = subDays(subMonths(new Date(), 1), 2)
+      const appointmentDate = new Date(2023, 7, 31)
+      const oneMonthBefore = subMonths(appointmentDate, 1)
+      const appointment: ScheduledEvent = {
+        autoSuspended: false,
+        cancelled: true,
+        inCell: false,
+        offWing: false,
+        onWing: false,
+        outsidePrison: false,
+        priority: 0,
+        startTime: '',
+        suspended: false,
+        date: toDateString(appointmentDate),
+        appointmentSeriesFrequency: AppointmentFrequency.MONTHLY,
+        appointmentSeriesCancellationStartDate: toDateString(oneMonthBefore),
+      }
+      const showAppointment = applyCancellationDisplayRule(appointment)
+      expect(showAppointment).toEqual(true)
+    })
+
+    it('should show monthly appointment that is 1 month before the appointment date with different month ends', async () => {
+      const appointmentDate = new Date(2024, 2, 31)
+      const oneMonthBefore = subMonths(appointmentDate, 1)
       const appointment: ScheduledEvent = {
         autoSuspended: false,
         cancelled: true,

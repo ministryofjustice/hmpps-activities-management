@@ -25,7 +25,7 @@ export default function Index({ activitiesService, prisonService, userService }:
   const homeHandler = new HomeRoutes()
   const selectPeriodHandler = new SelectPeriodRoutes()
   const activitiesHandler = new ActivitiesRoutes(activitiesService)
-  const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService)
+  const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService, userService)
   const notAttendedReasonHandler = new NotAttendedReasonRoutes(activitiesService)
   const cancelSessionReasonRoutes = new CancelSessionReasonRoutes(activitiesService)
   const cancelSessionConfirmationRoutes = new CancelSessionConfirmationRoutes(activitiesService)
