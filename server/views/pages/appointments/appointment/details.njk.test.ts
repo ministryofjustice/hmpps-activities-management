@@ -63,8 +63,6 @@ describe('Views - Appointments Management - Appointment Details', () => {
       >,
       cancellable: false,
     }
-
-    config.uncancelAppointmentFeatureToggleEnabled = true
   })
 
   it('should display name in heading', () => {
@@ -155,6 +153,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
   })
 
   it('should display uncancel link when the appoinment is cancelled', () => {
+    config.uncancelAppointmentFeatureToggleEnabled = true
     viewContext.cancellable = true
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -162,6 +161,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
   })
 
   it('should not display uncancel link when the appoinment is cancelled', () => {
+    config.uncancelAppointmentFeatureToggleEnabled = true
     viewContext.cancellable = false
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -169,6 +169,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
   })
 
   it('should not display uncancel link when the appoinment is part of an appointment set', () => {
+    config.uncancelAppointmentFeatureToggleEnabled = true
     viewContext.cancellable = true
     viewContext.appointment.appointmentSet = {
       id: 2,
