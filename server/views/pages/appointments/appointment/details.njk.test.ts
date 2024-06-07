@@ -152,7 +152,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
     expect($('[data-qa=prisoner-list-title]').text().trim()).toContain('2 attendees')
   })
 
-  it('should display uncancel link when the appoinment is cancelled', () => {
+  it('should display uncancel link when the appointment is cancelled', () => {
     config.uncancelAppointmentFeatureToggleEnabled = true
     viewContext.cancellable = true
     $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -160,7 +160,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
     expect($('[data-qa=uncancel-appointment]').text().trim()).toContain('Uncancel appointment')
   })
 
-  it('should not display uncancel link when the appoinment is cancelled', () => {
+  it('should not display uncancel link when the appointment is cancelled', () => {
     config.uncancelAppointmentFeatureToggleEnabled = true
     viewContext.cancellable = false
     $ = cheerio.load(compiledTemplate.render(viewContext))
