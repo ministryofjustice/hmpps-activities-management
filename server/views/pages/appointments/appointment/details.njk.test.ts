@@ -31,6 +31,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
     cancellable: false,
   }
 
+  config.uncancelAppointmentFeatureToggleEnabled = true
   const njkEnv = registerNunjucks()
 
   beforeEach(() => {
@@ -153,7 +154,6 @@ describe('Views - Appointments Management - Appointment Details', () => {
   })
 
   it('should display uncancel link when the appointment is cancelled', () => {
-    config.uncancelAppointmentFeatureToggleEnabled = true
     viewContext.cancellable = true
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -161,15 +161,13 @@ describe('Views - Appointments Management - Appointment Details', () => {
   })
 
   it('should not display uncancel link when the appointment is cancelled', () => {
-    config.uncancelAppointmentFeatureToggleEnabled = true
     viewContext.cancellable = false
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=uncancel-appointment]').text().trim()).not.toContain('Uncancel appointment')
   })
 
-  it('should not display uncancel link when the appoinment is part of an appointment set', () => {
-    config.uncancelAppointmentFeatureToggleEnabled = true
+  it('should not display uncancel link when the appointment is part of an appointment set', () => {
     viewContext.cancellable = true
     viewContext.appointment.appointmentSet = {
       id: 2,
