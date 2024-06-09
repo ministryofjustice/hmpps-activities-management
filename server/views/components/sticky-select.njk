@@ -44,9 +44,8 @@
         {% else %}
             {% set r = [{ html: '', classes: 'govuk-!-display-none-print' }] %}
         {% endif %}
-        {% for item in row.items %}
-            {% set r = (r.push(item), r) %}
-        {% endfor %}
+
+        {% set r = concatArrays(r, row.items) %}
 
         {% set rows = (rows.push(r), rows) %}
     {% else %}
