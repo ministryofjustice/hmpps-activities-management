@@ -4,7 +4,11 @@ import ActivitiesService from './activitiesService'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
-import { AppointmentCancelRequest, AppointmentUpdateRequest } from '../@types/activitiesAPI/types'
+import {
+  AppointmentCancelRequest,
+  AppointmentUncancelRequest,
+  AppointmentUpdateRequest,
+} from '../@types/activitiesAPI/types'
 import SimpleTime from '../commonValidationTypes/simpleTime'
 import { YesNo } from '../@types/activities'
 import {
@@ -62,6 +66,11 @@ export default class EditAppointmentService {
     const { appointmentJourney, editAppointmentJourney } = req.session
     const { appointmentId } = req.params
 
+    const successHeading = `You've ${this.getEditedMessage(
+      appointmentJourney,
+      editAppointmentJourney,
+    )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo)}`
+
     if (editAppointmentJourney.cancellationReason) {
       const { cancellationReason } = editAppointmentJourney
 
@@ -79,6 +88,19 @@ export default class EditAppointmentService {
       this.clearSession(req)
 
       return res.redirect(`/appointments/${appointmentId}`)
+    }
+
+    if (editAppointmentJourney.uncancel) {
+      const uncancelRequest: AppointmentUncancelRequest = {
+        applyTo,
+      }
+      await this.activitiesService.uncancelAppointment(+appointmentId, uncancelRequest, user)
+
+      this.metricsService.trackEvent(
+        MetricsEvent.UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED(+appointmentId, applyTo, req, res.locals.user),
+      )
+      this.clearSession(req)
+      return res.redirectWithSuccess(`/appointments/${appointmentId}`, successHeading)
     }
 
     const request = { applyTo } as AppointmentUpdateRequest
@@ -140,13 +162,7 @@ export default class EditAppointmentService {
       MetricsEvent.EDIT_APPOINTMENT_JOURNEY_COMPLETED(+appointmentId, true, applyTo, req, res.locals.user),
     )
 
-    const successHeading = `You've ${this.getEditedMessage(
-      appointmentJourney,
-      editAppointmentJourney,
-    )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo)}`
-
     this.clearSession(req)
-
     return res.redirectWithSuccess(`/appointments/${appointmentId}`, successHeading)
   }
 

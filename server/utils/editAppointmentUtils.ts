@@ -1,14 +1,16 @@
 import { Request } from 'express'
+import { startOfToday, subDays } from 'date-fns'
 import {
   AppointmentApplyTo,
   AppointmentApplyToOption,
   AppointmentCancellationReason,
   AppointmentFrequency,
 } from '../@types/appointments'
-import { convertToTitleCase, formatDate, fullName } from './utils'
+import { convertToTitleCase, formatDate, fullName, parseDate } from './utils'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { parseIsoDate } from './datePickerUtils'
+import { AppointmentDetails } from '../@types/activitiesAPI/types'
 
 export const isApplyToQuestionRequired = (editAppointmentJourney: EditAppointmentJourney) =>
   editAppointmentJourney.appointments?.length > 1
@@ -23,6 +25,10 @@ export const getAppointmentEditMessage = (
 
   if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
     return 'delete'
+  }
+
+  if (editAppointmentJourney.uncancel) {
+    return 'uncancel'
   }
 
   const updateProperties = []
@@ -84,6 +90,10 @@ export const getConfirmAppointmentEditCta = (
     return 'Delete appointment'
   }
 
+  if (editAppointmentJourney.uncancel) {
+    return 'Confirm'
+  }
+
   const updateProperties = []
   if (hasAppointmentTierChanged(appointmentJourney, editAppointmentJourney)) {
     updateProperties.push('tier')
@@ -140,6 +150,10 @@ export const getAppointmentEditApplyToCta = (
   }
 
   if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+    return 'Confirm'
+  }
+
+  if (editAppointmentJourney.uncancel) {
     return 'Confirm'
   }
 
@@ -413,3 +427,7 @@ export const hasAppointmentCommentChanged = (
 
 export const hasAppointmentAttendeesChanged = (editAppointmentJourney: EditAppointmentJourney) =>
   editAppointmentJourney.addPrisoners || editAppointmentJourney.removePrisoner
+
+export function isUncancellable(appointment: AppointmentDetails): boolean {
+  return appointment.isCancelled && parseDate(appointment.startDate) > subDays(startOfToday(), 6)
+}

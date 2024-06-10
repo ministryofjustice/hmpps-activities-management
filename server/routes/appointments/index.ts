@@ -49,6 +49,7 @@ export default function routes(services: Services): Router {
   // then redirects to that new url
   const editAppointmentBaseUrl = '/:appointmentId(\\d+)/edit'
   router.get(`${editAppointmentBaseUrl}/start/cancel`, appointmentsStartNewJourney('/edit/'))
+  router.get(`${editAppointmentBaseUrl}/start/uncancel`, appointmentsStartNewJourney('/edit/'))
   router.get(`${editAppointmentBaseUrl}/start/:property`, appointmentsStartNewJourney('/edit/'))
   router.get(`${editAppointmentBaseUrl}/start/:prisonNumber/remove`, appointmentsStartNewJourney('/edit/'))
   router.get(`${editAppointmentBaseUrl}/start/prisoners/add`, appointmentsStartNewJourney('/edit/'))

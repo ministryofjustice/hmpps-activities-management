@@ -25,6 +25,8 @@ import HostRoutes, { HostForm } from './handlers/host'
 import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
 import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
+import UncancelRoutes from './handlers/uncancel'
+import config from '../../../config'
 
 export default function Edit({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -62,6 +64,21 @@ export default function Edit({ prisonService, activitiesService, metricsService 
   post('/cancel/confirm', confirmEditRoutes.POST, ConfirmEdit)
   get('/cancel/apply-to', applyToRoutes.GET, true)
   post('/cancel/apply-to', applyToRoutes.POST, ApplyTo)
+
+  // Uncancel routes
+  if (config.uncancelAppointmentFeatureToggleEnabled) {
+    const uncancelRoutes = new UncancelRoutes(editAppointmentService)
+    router.get(
+      '/start/uncancel',
+      fetchAppointment(activitiesService),
+      fetchAppointmentSeries(activitiesService),
+      startJourneyRoutes.UNCANCEL,
+    )
+    get('/uncancel/confirm', uncancelRoutes.GET, true)
+    post('/uncancel/confirm', uncancelRoutes.POST, ConfirmEdit)
+    get('/uncancel/apply-to', applyToRoutes.GET, true)
+    post('/uncancel/apply-to', applyToRoutes.POST, ApplyTo)
+  }
 
   // Edit property routes
   router.get(

@@ -48,6 +48,19 @@ export interface paths {
      */
     put: operations['markAttendances']
   }
+  '/appointments/{appointmentId}/uncancel': {
+    /**
+     * Uncancel an appointment or series of appointments
+     * @description
+     *     Uncancel an appointment or series of appointments based on the applyTo property.
+     *
+     *
+     * Requires one of the following roles:
+     * * PRISON
+     * * ACTIVITY_ADMIN
+     */
+    put: operations['uncancelAppointment']
+  }
   '/appointments/{appointmentId}/cancel': {
     /**
      * Cancel an appointment or series of appointments
@@ -1098,21 +1111,12 @@ export interface components {
        */
       otherAbsenceReason?: string
     }
-    /** @description The cancel request with the cancellation details and how to apply the cancellation */
-    AppointmentCancelRequest: {
-      /**
-       * Format: int64
-       * @description
-       *     Specifies the id of the reason for the cancellation. The cancellation reason, identified by this id, will determine
-       *     whether the cancellation is also treated as a soft delete
-       *
-       * @example 1234
-       */
-      cancellationReasonId: number
+    /** @description The uncancel request with the uncancellation details and how to apply the uncancellation */
+    AppointmentUncancelRequest: {
       /**
        * @description
-       *     Specifies which appointment or appointments this cancellation should apply to.
-       *     Defaults to THIS_APPOINTMENT meaning the cancellation will be applied to the appointment specified by the
+       *     Specifies which appointment or appointments this un-cancellation should apply to.
+       *     Defaults to THIS_APPOINTMENT meaning the un-cancellation will be applied to the appointment specified by the
        *     supplied id only.
        *
        * @example THIS_APPOINTMENT
@@ -1548,6 +1552,28 @@ export interface components {
        */
       description: string
     }
+    /** @description The cancel request with the cancellation details and how to apply the cancellation */
+    AppointmentCancelRequest: {
+      /**
+       * Format: int64
+       * @description
+       *     Specifies the id of the reason for the cancellation. The cancellation reason, identified by this id, will determine
+       *     whether the cancellation is also treated as a soft delete
+       *
+       * @example 1234
+       */
+      cancellationReasonId: number
+      /**
+       * @description
+       *     Specifies which appointment or appointments this cancellation should apply to.
+       *     Defaults to THIS_APPOINTMENT meaning the cancellation will be applied to the appointment specified by the
+       *     supplied id only.
+       *
+       * @example THIS_APPOINTMENT
+       * @enum {string}
+       */
+      applyTo: 'THIS_APPOINTMENT' | 'THIS_AND_ALL_FUTURE_APPOINTMENTS' | 'ALL_FUTURE_APPOINTMENTS'
+    }
     /** @description The lists of prison numbers to mark as attended and non-attended */
     AppointmentAttendanceRequest: {
       /**
@@ -1624,12 +1650,12 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject'][]
+      paged?: boolean
+      unpaged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
-      paged?: boolean
-      unpaged?: boolean
     }
     PagedWaitingListApplication: {
       /** Format: int32 */
@@ -6348,7 +6374,7 @@ export interface components {
        *
        * @example P
        */
-      category: string
+      category?: string
     }
     /**
      * @description
@@ -6853,6 +6879,57 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  /**
+   * Uncancel an appointment or series of appointments
+   * @description
+   *     Uncancel an appointment or series of appointments based on the applyTo property.
+   *
+   *
+   * Requires one of the following roles:
+   * * PRISON
+   * * ACTIVITY_ADMIN
+   */
+  uncancelAppointment: {
+    parameters: {
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        appointmentId: number
+      }
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AppointmentUncancelRequest']
+      }
+    }
+    responses: {
+      /** @description The appointment or series of appointments was uncancelled. */
+      202: {
+        content: {
+          'application/json': components['schemas']['AppointmentSeries']
+        }
+      }
+      /** @description Bad request */
+      400: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The appointment for this id was not found. */
+      404: {
         content: {
           'application/json': components['schemas']['ErrorResponse']
         }

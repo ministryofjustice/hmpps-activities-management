@@ -59,6 +59,7 @@ import {
   Slot,
   SuspendPrisonerRequest,
   UnsuspendPrisonerRequest,
+  AppointmentUncancelRequest,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -488,6 +489,19 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async cancelAppointments(appointmentId: number, request: AppointmentCancelRequest, user: ServiceUser): Promise<void> {
     return this.put({
       path: `/appointments/${appointmentId}/cancel`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: request,
+    })
+  }
+
+  async uncancelAppointments(
+    appointmentId: number,
+    request: AppointmentUncancelRequest,
+    user: ServiceUser,
+  ): Promise<void> {
+    return this.put({
+      path: `/appointments/${appointmentId}/uncancel`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: request,

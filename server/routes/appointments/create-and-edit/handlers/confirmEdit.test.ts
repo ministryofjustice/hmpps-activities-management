@@ -36,18 +36,22 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
             {
               sequenceNumber: 1,
               startDate: format(weekTomorrow, 'yyyy-MM-dd'),
+              cancelled: false,
             },
             {
               sequenceNumber: 2,
               startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
+              cancelled: false,
             },
             {
               sequenceNumber: 3,
               startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
+              cancelled: false,
             },
             {
               sequenceNumber: 4,
               startDate: format(addDays(weekTomorrow, 3), 'yyyy-MM-dd'),
+              cancelled: false,
             },
           ],
           sequenceNumber: 2,

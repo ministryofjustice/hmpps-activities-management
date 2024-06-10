@@ -45,6 +45,7 @@ import {
   WaitingListSearchParams,
   Slot,
   AddCaseNoteRequest,
+  AppointmentUncancelRequest,
 } from '../@types/activitiesAPI/types'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
 
@@ -306,6 +307,10 @@ export default class ActivitiesService {
 
   async cancelAppointment(appointmentId: number, request: AppointmentCancelRequest, user: ServiceUser) {
     return this.activitiesApiClient.cancelAppointments(appointmentId, request, user)
+  }
+
+  async uncancelAppointment(appointmentId: number, request: AppointmentUncancelRequest, user: ServiceUser) {
+    return this.activitiesApiClient.uncancelAppointments(appointmentId, request, user)
   }
 
   async createAppointmentSet(request: AppointmentSetCreateRequest, user: ServiceUser): Promise<AppointmentSet> {

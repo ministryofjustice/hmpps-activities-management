@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import UserService from '../../../../services/userService'
+import { isUncancellable } from '../../../../utils/editAppointmentUtils'
 
 export default class AppointmentDetailsRoutes {
   constructor(private readonly userService: UserService) {}
@@ -16,6 +17,7 @@ export default class AppointmentDetailsRoutes {
     res.render('pages/appointments/appointment/details', {
       appointment,
       userMap,
+      uncancellable: isUncancellable(appointment),
     })
   }
 

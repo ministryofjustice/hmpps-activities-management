@@ -118,7 +118,16 @@
                     }
                 ) %}
             {% endif %}
-
+            {% if uncancelAppointmentFeatureToggleEnabled and uncancellable and not appointment.appointmentSet %}
+                {% set items = items.concat(
+                    {
+                        href: appointmentLink + "/edit/start/uncancel",
+                        text: "Uncancel appointment",
+                        classes: "govuk-link--no-visited-state",
+                        attributes: { 'data-qa': 'uncancel-appointment' }
+                    }
+                ) %}
+            {% endif %}
             {{ govukSummaryList({
                 card: {
                     title: {
