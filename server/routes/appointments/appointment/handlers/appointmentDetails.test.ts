@@ -104,7 +104,7 @@ describe('Route Handlers - Appointment Details', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
         appointment,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
-        cancellable: true,
+        uncancellable: true,
       })
     })
 
@@ -124,7 +124,7 @@ describe('Route Handlers - Appointment Details', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
         appointment,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
-        cancellable: false,
+        uncancellable: false,
       })
     })
   })

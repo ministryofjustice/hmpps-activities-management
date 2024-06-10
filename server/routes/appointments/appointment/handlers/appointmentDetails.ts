@@ -17,7 +17,7 @@ export default class AppointmentDetailsRoutes {
     res.render('pages/appointments/appointment/details', {
       appointment,
       userMap,
-      cancellable: isUncancellable(appointment),
+      uncancellable: isUncancellable(appointment),
     })
   }
 

@@ -24,11 +24,11 @@ describe('Views - Appointments Management - Appointment Details', () => {
   let viewContext: {
     appointment: AppointmentDetails
     userMap: Map<string, UserDetails>
-    cancellable: boolean
+    uncancellable: boolean
   } = {
     appointment: {} as AppointmentDetails,
     userMap: {} as Map<string, UserDetails>,
-    cancellable: false,
+    uncancellable: false,
   }
 
   config.uncancelAppointmentFeatureToggleEnabled = true
@@ -62,7 +62,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
         string,
         UserDetails
       >,
-      cancellable: false,
+      uncancellable: false,
     }
   })
 
@@ -145,7 +145,7 @@ describe('Views - Appointments Management - Appointment Details', () => {
         createdTime: formatDate(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
       } as AppointmentDetails,
       userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as unknown as Map<string, UserDetails>,
-      cancellable: false,
+      uncancellable: false,
     }
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -154,21 +154,21 @@ describe('Views - Appointments Management - Appointment Details', () => {
   })
 
   it('should display uncancel link when the appointment is cancelled', () => {
-    viewContext.cancellable = true
+    viewContext.uncancellable = true
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=uncancel-appointment]').text().trim()).toContain('Uncancel appointment')
   })
 
   it('should not display uncancel link when the appointment is cancelled', () => {
-    viewContext.cancellable = false
+    viewContext.uncancellable = false
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=uncancel-appointment]').text().trim()).not.toContain('Uncancel appointment')
   })
 
   it('should not display uncancel link when the appointment is part of an appointment set', () => {
-    viewContext.cancellable = true
+    viewContext.uncancellable = true
     viewContext.appointment.appointmentSet = {
       id: 2,
       appointmentCount: 2,
