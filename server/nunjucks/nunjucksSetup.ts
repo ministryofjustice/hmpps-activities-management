@@ -34,6 +34,7 @@ import {
   removeUndefined,
   filterObjects,
   excludeArrayObject,
+  concatArrays,
 } from '../utils/utils'
 import config from '../config'
 import applicationVersion from '../applicationVersion'
@@ -194,6 +195,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('getAppointmentEditMessage', getAppointmentEditMessage)
   njkEnv.addGlobal('getConfirmAppointmentEditCta', getConfirmAppointmentEditCta)
   njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)
+  njkEnv.addGlobal('concatArrays', concatArrays)
   njkEnv.addGlobal('dpsUrl', config.dpsUrl)
   njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)

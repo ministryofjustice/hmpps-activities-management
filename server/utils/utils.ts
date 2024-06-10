@@ -262,6 +262,10 @@ export const buildErrorSummaryList = (array: FieldValidationError[]) => {
   }))
 }
 
+export const concatArrays = (a: unknown[], b: unknown[]) => {
+  return [...a, ...b]
+}
+
 export const formatDate = (date: unknown, fmt = 'EEEE, d MMMM yyyy', inContextName = false) => {
   if (!date) return null
 
