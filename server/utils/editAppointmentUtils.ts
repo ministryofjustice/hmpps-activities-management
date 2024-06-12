@@ -439,5 +439,4 @@ export function isUncancellable(appointment: AppointmentDetails): boolean {
 
 const isUncancelAndAllFutureNotCancelled = (editAppointmentJourney: EditAppointmentJourney) =>
   editAppointmentJourney.uncancel &&
-  editAppointmentJourney.appointments.filter(i => toDate(i.startDate) >= startOfToday() && i.cancelled === false)
-    .length > 0
+  editAppointmentJourney.appointments.some(i => toDate(i.startDate) >= startOfToday() && i.cancelled === false)
