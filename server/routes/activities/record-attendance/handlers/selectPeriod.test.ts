@@ -5,6 +5,7 @@ import { validate } from 'class-validator'
 import SelectPeriodRoutes, { TimePeriod } from './selectPeriod'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { formatDatePickerDate } from '../../../../utils/datePickerUtils'
+import config from '../../../../config'
 
 describe('Route Handlers - Select period', () => {
   const handler = new SelectPeriodRoutes()
@@ -80,6 +81,8 @@ describe('Route Handlers - Select period', () => {
 
   describe('type validation', () => {
     it('validation fails if values are not entered', async () => {
+      config.recordAttendanceSelectSlotFirst = true
+
       const body = {}
 
       const requestObject = plainToInstance(TimePeriod, body)
