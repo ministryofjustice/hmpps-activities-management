@@ -32,7 +32,7 @@
                         {% set comma = joiner(', ') %}
                         {%- for session in selectedSessions -%}
                             {{  ' - ' if loop.first and session }}
-                            {{ ' and ' if loop.last and not loop.first else comma() }}{{ session | upper }}
+                            {{- ' and ' if loop.last and not loop.first else comma() }}{{ session | upper }}
                         {%- endfor -%}
                     {% endif %}
                 </span>
