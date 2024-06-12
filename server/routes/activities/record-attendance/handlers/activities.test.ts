@@ -94,6 +94,7 @@ describe('Route Handlers - Activities', () => {
           ],
         },
         activityDate: date,
+        selectedSessions: ['pm', 'ed'],
       })
     })
 
@@ -141,6 +142,7 @@ describe('Route Handlers - Activities', () => {
           ],
         },
         activityDate: date,
+        selectedSessions: null,
       })
     })
 
@@ -173,6 +175,7 @@ describe('Route Handlers - Activities', () => {
           ],
         },
         activityDate: date,
+        selectedSessions: ['am'],
       })
     })
 
@@ -205,6 +208,7 @@ describe('Route Handlers - Activities', () => {
           ],
         },
         activityDate: date,
+        selectedSessions: null,
       })
     })
 
@@ -240,6 +244,7 @@ describe('Route Handlers - Activities', () => {
           ],
         },
         activityDate: date,
+        selectedSessions: null,
       })
     })
   })

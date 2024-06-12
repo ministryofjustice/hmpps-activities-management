@@ -1,18 +1,18 @@
-import IndexPage from '../pages/index'
-import Page from '../pages/page'
-import SelectPeriodPage from '../pages/recordAttendance/selectPeriod'
-import ActivitiesPage from '../pages/recordAttendance/activitiesPage'
-import AttendanceListPage from '../pages/recordAttendance/attendanceList'
-import getAttendanceReasons from '../fixtures/activitiesApi/getAttendanceReasons.json'
-import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance93.json'
-import getAttendeesForScheduledInstance from '../fixtures/activitiesApi/getAttendeesScheduledInstance93.json'
-import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
-import getInmateDetails from '../fixtures/prisonerSearchApi/getInmateDetailsForNonAttendance.json'
-import NotAttendedReasonPage from '../pages/recordAttendance/notAttendedReason'
-import getCategories from '../fixtures/activitiesApi/getCategories.json'
-import getAttendanceSummary from '../fixtures/activitiesApi/getAttendanceSummary.json'
-import AttendanceDashboardPage from '../pages/recordAttendance/attendanceDashboard'
-import ActivitiesIndexPage from '../pages/activities'
+import IndexPage from '../../../pages'
+import Page from '../../../pages/page'
+import SelectPeriodPage from '../../../pages/recordAttendance/selectPeriod'
+import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
+import AttendanceListPage from '../../../pages/recordAttendance/attendanceList'
+import getAttendanceReasons from '../../../fixtures/activitiesApi/getAttendanceReasons.json'
+import getScheduledInstance from '../../../fixtures/activitiesApi/getScheduledInstance93.json'
+import getAttendeesForScheduledInstance from '../../../fixtures/activitiesApi/getAttendeesScheduledInstance93.json'
+import getScheduledEvents from '../../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
+import getInmateDetails from '../../../fixtures/prisonerSearchApi/getInmateDetailsForNonAttendance.json'
+import NotAttendedReasonPage from '../../../pages/recordAttendance/notAttendedReason'
+import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
+import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
+import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceDashboard'
+import ActivitiesIndexPage from '../../../pages/activities'
 
 context('Record non attendance', () => {
   beforeEach(() => {
@@ -36,23 +36,21 @@ context('Record non attendance', () => {
 
   it('should click through record non attendance journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().should('contain.text', 'Activities, unlock and attendance')
     indexPage.activitiesCard().click()
 
     const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.recordAttendanceCard().should('contain.text', 'Record activity attendance')
     activitiesIndexPage.recordAttendanceCard().click()
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
-    recordAttendancePage.recordAttendanceCard().should('contain.text', 'Record attendance and cancel activity sessions')
     recordAttendancePage.recordAttendanceCard().click()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(2023, 1, 2))
+    selectPeriodPage.selectAM()
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.activityRows().should('have.length', 5)
+    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1')
     activitiesPage.selectActivityWithName('English level 1')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)

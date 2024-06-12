@@ -5,6 +5,7 @@ import { validate } from 'class-validator'
 import SelectPeriodRoutes, { TimePeriod } from './selectPeriod'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { formatDatePickerDate } from '../../../../utils/datePickerUtils'
+import config from '../../../../config'
 
 describe('Route Handlers - Select period', () => {
   const handler = new SelectPeriodRoutes()
@@ -34,26 +35,40 @@ describe('Route Handlers - Select period', () => {
     it("redirect with the expected query params for when today's date is selected", async () => {
       req.body = {
         datePresetOption: 'today',
+        sessions: ['am', 'ed'],
       }
 
       const todaysDate = format(new Date(), 'yyyy-MM-dd')
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`activities?date=${todaysDate}`)
+      expect(res.redirect).toHaveBeenCalledWith(`activities?date=${todaysDate}&sessionFilters=am,ed`)
     })
 
     it("redirect with the expected query params for when yesterday's date is selected", async () => {
       req.body = {
         datePresetOption: 'yesterday',
+        sessions: ['am', 'ed'],
       }
 
       const yesterdaysDate = format(subDays(new Date(), 1), 'yyyy-MM-dd')
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`activities?date=${yesterdaysDate}`)
+      expect(res.redirect).toHaveBeenCalledWith(`activities?date=${yesterdaysDate}&sessionFilters=am,ed`)
     })
 
     it('redirect with the expected query params for when a custom date is selected', async () => {
+      req.body = {
+        datePresetOption: 'other',
+        date: new Date('2022/12/01'),
+        sessions: ['am', 'ed'],
+      }
+
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith(`activities?date=2022-12-01&sessionFilters=am,ed`)
+    })
+
+    // TODO: Remove this when removing toggle
+    it('redirect with the expected query params for when no sessions are selected', async () => {
       req.body = {
         datePresetOption: 'other',
         date: new Date('2022/12/01'),
@@ -66,29 +81,36 @@ describe('Route Handlers - Select period', () => {
 
   describe('type validation', () => {
     it('validation fails if values are not entered', async () => {
+      config.recordAttendanceSelectSlotFirst = true
+
       const body = {}
 
       const requestObject = plainToInstance(TimePeriod, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select an activity or appointment date' }])
+      expect(errors).toEqual([
+        { property: 'datePresetOption', error: 'Select a date' },
+        { property: 'sessions', error: 'Select a time period' },
+      ])
     })
 
-    it('validation fails if invalid values are entered', async () => {
+    it('validation fails if invalid preset option is entered', async () => {
       const body = {
         datePresetOption: 'invalid',
+        sessions: ['am', 'ed'],
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select an activity or appointment date' }])
+      expect(errors).toEqual([{ property: 'datePresetOption', error: 'Select a date' }])
     })
 
     it('validation fails if preset option is other and a date is not provided', async () => {
       const body = {
         datePresetOption: 'other',
         date: {},
+        sessions: ['am', 'ed'],
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
@@ -103,6 +125,7 @@ describe('Route Handlers - Select period', () => {
       const body = {
         datePresetOption: 'other',
         date: '2022/2/31',
+        sessions: ['am', 'ed'],
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
@@ -117,6 +140,7 @@ describe('Route Handlers - Select period', () => {
       const body = {
         datePresetOption: 'other',
         date: formatDatePickerDate(addDays(new Date(), 61)),
+        sessions: ['am', 'ed'],
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
@@ -129,6 +153,7 @@ describe('Route Handlers - Select period', () => {
       const body = {
         datePresetOption: 'other',
         date: '27/2/2022',
+        sessions: ['am', 'ed'],
       }
 
       const requestObject = plainToInstance(TimePeriod, body)

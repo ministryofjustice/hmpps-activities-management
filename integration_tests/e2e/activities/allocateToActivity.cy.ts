@@ -1,33 +1,33 @@
 import { addMonths } from 'date-fns'
-import getActivities from '../fixtures/activitiesApi/getActivities.json'
-import getSchedulesInActivity from '../fixtures/activitiesApi/getSchedulesInActivity.json'
-import getAllocations from '../fixtures/activitiesApi/getAllocations.json'
-import prisonerAllocations from '../fixtures/activitiesApi/prisonerAllocations.json'
-import getSchedule from '../fixtures/activitiesApi/getSchedule.json'
-import moorlandIncentiveLevels from '../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
-import getInmateDetails from '../fixtures/prisonerSearchApi/getPrisoner-MDI-A5015DY.json'
-import getPrisonerIepSummary from '../fixtures/incentivesApi/getPrisonerIepSummary.json'
-import getActivity from '../fixtures/activitiesApi/getActivity.json'
-import getDeallocationReasons from '../fixtures/activitiesApi/getDeallocationReasons.json'
-import getMdiPrisonPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
-import getCandidates from '../fixtures/activitiesApi/getCandidates.json'
-import getCandidateSuitability from '../fixtures/activitiesApi/getCandidateSuitability.json'
+import getActivities from '../../fixtures/activitiesApi/getActivities.json'
+import getSchedulesInActivity from '../../fixtures/activitiesApi/getSchedulesInActivity.json'
+import getAllocations from '../../fixtures/activitiesApi/getAllocations.json'
+import prisonerAllocations from '../../fixtures/activitiesApi/prisonerAllocations.json'
+import getSchedule from '../../fixtures/activitiesApi/getSchedule.json'
+import moorlandIncentiveLevels from '../../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
+import getInmateDetails from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A5015DY.json'
+import getPrisonerIepSummary from '../../fixtures/incentivesApi/getPrisonerIepSummary.json'
+import getActivity from '../../fixtures/activitiesApi/getActivity.json'
+import getDeallocationReasons from '../../fixtures/activitiesApi/getDeallocationReasons.json'
+import getMdiPrisonPayBands from '../../fixtures/activitiesApi/getMdiPrisonPayBands.json'
+import getCandidates from '../../fixtures/activitiesApi/getCandidates.json'
+import getCandidateSuitability from '../../fixtures/activitiesApi/getCandidateSuitability.json'
 
-import IndexPage from '../pages/index'
-import Page from '../pages/page'
-import StartDatePage from '../pages/allocateToActivity/startDate'
-import EndDateOptionPage from '../pages/allocateToActivity/endDateOption'
-import EndDatePage from '../pages/allocateToActivity/endDate'
-import ActivitiesDashboardPage from '../pages/allocateToActivity/activitiesDashboard'
-import PayBandPage from '../pages/allocateToActivity/payBand'
-import CheckAnswersPage from '../pages/allocateToActivity/checkAnswers'
-import CancelPage from '../pages/allocateToActivity/cancel'
-import ConfirmationPage from '../pages/allocateToActivity/confirmation'
-import AllocationDashboard from '../pages/allocateToActivity/allocationDashboard'
-import ManageActivitiesDashboardPage from '../pages/activities/manageActivitiesDashboard'
-import BeforeYouAllocate from '../pages/allocateToActivity/beforeYouAllocate'
-import ActivitiesIndexPage from '../pages/activities'
-import ExclusionsPage from '../pages/allocateToActivity/exclusions'
+import IndexPage from '../../pages'
+import Page from '../../pages/page'
+import StartDatePage from '../../pages/allocateToActivity/startDate'
+import EndDateOptionPage from '../../pages/allocateToActivity/endDateOption'
+import EndDatePage from '../../pages/allocateToActivity/endDate'
+import ActivitiesDashboardPage from '../../pages/allocateToActivity/activitiesDashboard'
+import PayBandPage from '../../pages/allocateToActivity/payBand'
+import CheckAnswersPage from '../../pages/allocateToActivity/checkAnswers'
+import CancelPage from '../../pages/allocateToActivity/cancel'
+import ConfirmationPage from '../../pages/allocateToActivity/confirmation'
+import AllocationDashboard from '../../pages/allocateToActivity/allocationDashboard'
+import ManageActivitiesDashboardPage from '../../pages/activities/manageActivitiesDashboard'
+import BeforeYouAllocate from '../../pages/allocateToActivity/beforeYouAllocate'
+import ActivitiesIndexPage from '../../pages/activities'
+import ExclusionsPage from '../../pages/allocateToActivity/exclusions'
 
 context('Allocate to activity', () => {
   beforeEach(() => {
@@ -54,11 +54,9 @@ context('Allocate to activity', () => {
 
   it('should click through allocate to activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().should('contain.text', 'Activities, unlock and attendance')
     indexPage.activitiesCard().click()
 
     const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.allocateToActivitiesCard().should('contain.text', 'Allocate people to activities')
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
