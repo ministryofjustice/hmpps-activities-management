@@ -38,10 +38,10 @@ export default class UncancelRoutes {
     editAppointmentJourney: EditAppointmentJourney,
   ) => {
     const startDate = toDate(appointmentJourney.startDate)
-    const anyAfter = editAppointmentJourney.appointments.filter(i => toDate(i.startDate) > startDate).length
-    const anyAfterScheduled = editAppointmentJourney.appointments.filter(
+    const anyAfter = editAppointmentJourney.appointments.some(i => toDate(i.startDate) > startDate)
+    const anyAfterScheduled = editAppointmentJourney.appointments.some(
       i => toDate(i.startDate) > startDate && i.cancelled === false,
-    ).length
-    return anyAfter > 0 && anyAfterScheduled === 0
+    )
+    return anyAfter && !anyAfterScheduled
   }
 }

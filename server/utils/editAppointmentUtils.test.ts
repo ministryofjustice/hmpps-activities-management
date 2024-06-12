@@ -726,6 +726,107 @@ describe('Edit Appointment Utils', () => {
       )
     })
 
+    it('uncancel appointment where all future appointments are cancelled', () => {
+      req.session.appointmentJourney.startDate = toDateString(addDays(Date(), 2))
+      req.session.editAppointmentJourney = {
+        numberOfAppointments: 3,
+        appointments: [
+          {
+            sequenceNumber: 1,
+            startDate: toDateString(addDays(Date(), 1)),
+            cancelled: true,
+          },
+          {
+            sequenceNumber: 2,
+            startDate: toDateString(addDays(Date(), 2)),
+            cancelled: true,
+          },
+          {
+            sequenceNumber: 3,
+            startDate: toDateString(addDays(Date(), 3)),
+            cancelled: true,
+          },
+        ],
+        sequenceNumber: 2,
+        appointmentSeries: {
+          id: 25,
+          schedule: {
+            frequency: 'DAILY',
+            numberOfAppointments: 3,
+          },
+          appointmentCount: 3,
+          scheduledAppointmentCount: 3,
+        },
+        appointmentSet: null,
+        uncancel: true,
+      }
+
+      const options = getAppointmentApplyToOptions(req)
+
+      const firstFrom = formatDate(addDays(Date(), 1), 'd MMMM yyyy')
+      const secondFrom = formatDate(addDays(Date(), 2), 'd MMMM yyyy')
+      const lastDateTo = formatDate(addDays(Date(), 3), 'd MMMM yyyy')
+
+      expect(options[0].description).toEqual(
+        `Just this one - ${formatDate(addDays(Date(), 2), 'EEEE, d MMMM yyyy')} (2 of 3)`,
+      )
+      expect(options[1].additionalDescription).toEqual(
+        `You're uncancelling the following 2 appointments:<br>${secondFrom} (2 of 3) to ${lastDateTo} (3 of 3)`,
+      )
+      expect(options[2].additionalDescription).toEqual(
+        `You're uncancelling the following 3 appointments:<br>${firstFrom} (1 of 3) to ${lastDateTo} (3 of 3)`,
+      )
+    })
+
+    it('uncancel appointment where all future appointments are not cancelled', () => {
+      req.session.appointmentJourney.startDate = toDateString(addDays(Date(), 2))
+      req.session.editAppointmentJourney = {
+        numberOfAppointments: 3,
+        appointments: [
+          {
+            sequenceNumber: 1,
+            startDate: toDateString(addDays(Date(), 1)),
+            cancelled: false,
+          },
+          {
+            sequenceNumber: 2,
+            startDate: toDateString(addDays(Date(), 2)),
+            cancelled: true,
+          },
+          {
+            sequenceNumber: 3,
+            startDate: toDateString(addDays(Date(), 3)),
+            cancelled: true,
+          },
+        ],
+        sequenceNumber: 2,
+        appointmentSeries: {
+          id: 25,
+          schedule: {
+            frequency: 'DAILY',
+            numberOfAppointments: 3,
+          },
+          appointmentCount: 3,
+          scheduledAppointmentCount: 3,
+        },
+        appointmentSet: null,
+        uncancel: true,
+      }
+
+      const options = getAppointmentApplyToOptions(req)
+
+      const secondFrom = formatDate(addDays(Date(), 2), 'd MMMM yyyy')
+      const lastDateTo = formatDate(addDays(Date(), 3), 'd MMMM yyyy')
+
+      expect(options.length).toEqual(2)
+      expect(options[0].description).toEqual(
+        `Just this one - ${formatDate(addDays(Date(), 2), 'EEEE, d MMMM yyyy')} (2 of 3)`,
+      )
+      expect(options[1].additionalDescription).toEqual(
+        `You're uncancelling the following 2 appointments:<br>${secondFrom} (2 of 3) to ${lastDateTo} (3 of 3)`,
+      )
+    })
+
     it('delete appointment', () => {
       req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 

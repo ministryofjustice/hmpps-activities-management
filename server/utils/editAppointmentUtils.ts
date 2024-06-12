@@ -6,7 +6,7 @@ import {
   AppointmentCancellationReason,
   AppointmentFrequency,
 } from '../@types/appointments'
-import { convertToTitleCase, formatDate, fullName, parseDate } from './utils'
+import { convertToTitleCase, formatDate, fullName, parseDate, toDate } from './utils'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { parseIsoDate } from './datePickerUtils'
@@ -241,7 +241,8 @@ export const getAppointmentApplyToOptions = (req: Request) => {
 
     if (
       !isFirstRemainingAppointment(editAppointmentJourney) &&
-      !hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)
+      !hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney) &&
+      !isUncancelAndAllFutureNotCancelled(editAppointmentJourney)
     ) {
       const applyToCount = applyToAppointmentCount(AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS, editAppointmentJourney)
       applyToOptions.push({
@@ -307,6 +308,10 @@ export const getRepeatFrequencyText = (appointmentJourney: AppointmentJourney) =
 const getEditHintAction = (appointmentJourney: AppointmentJourney, editAppointmentJourney: EditAppointmentJourney) => {
   if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
     return 'cancelling'
+  }
+
+  if (editAppointmentJourney.uncancel === true) {
+    return 'uncancelling'
   }
 
   if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
@@ -431,3 +436,7 @@ export const hasAppointmentAttendeesChanged = (editAppointmentJourney: EditAppoi
 export function isUncancellable(appointment: AppointmentDetails): boolean {
   return appointment.isCancelled && parseDate(appointment.startDate) > subDays(startOfToday(), 6)
 }
+
+const isUncancelAndAllFutureNotCancelled = (editAppointmentJourney: EditAppointmentJourney) =>
+  editAppointmentJourney.uncancel &&
+  editAppointmentJourney.appointments.some(i => toDate(i.startDate) >= startOfToday() && i.cancelled === false)
