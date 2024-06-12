@@ -20,4 +20,13 @@ export default class ActivitiesPage extends Page {
         const activityUrl = e.prop('href')
         cy.visit(activityUrl)
       })
+
+  containsActivities = (...activities: string[]) => {
+    this.activityRows()
+      .find('a')
+      .should('have.length', activities.length)
+      .each((item, index) => {
+        cy.wrap(item).should('contain', activities[index])
+      })
+  }
 }

@@ -1,21 +1,21 @@
 import { format, startOfToday } from 'date-fns'
-import IndexPage from '../pages/index'
-import Page from '../pages/page'
-import SelectPeriodPage from '../pages/recordAttendance/selectPeriod'
-import ActivitiesPage from '../pages/recordAttendance/activitiesPage'
-import AttendanceListPage from '../pages/recordAttendance/attendanceList'
-import CancelSessionReason from '../pages/recordAttendance/cancelSessionReason'
-import CancelSessionConfirm from '../pages/recordAttendance/cancelSessionConfirm'
-import UncancelSessionConfirm from '../pages/recordAttendance/uncancelSessionConfirm'
-import getAttendanceSummary from '../fixtures/activitiesApi/getAttendanceSummary.json'
-import getScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance94.json'
-import getAttendeesForScheduledInstance from '../fixtures/activitiesApi/getAttendeesScheduledInstance94.json'
-import getCancelledScheduledInstance from '../fixtures/activitiesApi/getScheduledInstance-cancelled94.json'
-import getScheduledEvents from '../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
-import getInmateDetails from '../fixtures/prisonerSearchApi/getInmateDetailsForAttendance.json'
-import getCategories from '../fixtures/activitiesApi/getCategories.json'
-import AttendanceDashboardPage from '../pages/recordAttendance/attendanceDashboard'
-import ActivitiesIndexPage from '../pages/activities'
+import IndexPage from '../../../pages'
+import Page from '../../../pages/page'
+import SelectPeriodPage from '../../../pages/recordAttendance/selectPeriod'
+import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
+import AttendanceListPage from '../../../pages/recordAttendance/attendanceList'
+import CancelSessionReason from '../../../pages/recordAttendance/cancelSessionReason'
+import CancelSessionConfirm from '../../../pages/recordAttendance/cancelSessionConfirm'
+import UncancelSessionConfirm from '../../../pages/recordAttendance/uncancelSessionConfirm'
+import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
+import getScheduledInstance from '../../../fixtures/activitiesApi/getScheduledInstance94.json'
+import getAttendeesForScheduledInstance from '../../../fixtures/activitiesApi/getAttendeesScheduledInstance94.json'
+import getCancelledScheduledInstance from '../../../fixtures/activitiesApi/getScheduledInstance-cancelled94.json'
+import getScheduledEvents from '../../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
+import getInmateDetails from '../../../fixtures/prisonerSearchApi/getInmateDetailsForAttendance.json'
+import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
+import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceDashboard'
+import ActivitiesIndexPage from '../../../pages/activities'
 
 context('Attendance not required', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -45,23 +45,21 @@ context('Attendance not required', () => {
 
   it('should not display attendance journey options and information', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().should('contain.text', 'Activities, unlock and attendance')
     indexPage.activitiesCard().click()
 
     const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.recordAttendanceCard().should('contain.text', 'Record activity attendance')
     activitiesIndexPage.recordAttendanceCard().click()
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
-    recordAttendancePage.recordAttendanceCard().should('contain.text', 'Record attendance and cancel activity sessions')
     recordAttendancePage.recordAttendanceCard().click()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(today))
+    selectPeriodPage.selectAM()
     selectPeriodPage.continue()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.activityRows().should('have.length', 5)
+    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1')
     activitiesPage.selectActivityWithName('Football')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)

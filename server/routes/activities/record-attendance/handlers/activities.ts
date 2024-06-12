@@ -47,6 +47,7 @@ export default class ActivitiesRoutes {
       activitiesBySession,
       activityDate,
       filterItems: filterItems(categories, filterValues),
+      selectedSessions: filterValues.sessionFilters,
     })
   }
 

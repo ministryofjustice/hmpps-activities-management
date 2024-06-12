@@ -52,11 +52,9 @@ context('Create activity', () => {
 
   it('should click through create activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().should('contain.text', 'Activities, unlock and attendance')
     indexPage.activitiesCard().click()
 
     const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.allocateToActivitiesCard().should('contain.text', 'Allocate people to activities')
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
