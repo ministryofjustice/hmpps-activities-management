@@ -40,7 +40,7 @@
                     {% if not recordAttendanceSelectSlotFirst and now | toDateString != activityDate | toDateString %}
                         <li><a href="?date={{ now | toDateString }}{{ filterParams }}" class="govuk-link govuk-!-font-size-19">View the schedule for today</a></li>
                     {% endif %}
-                    <li><a href="select-period" class="govuk-link govuk-!-font-size-19">View the schedule for a different day</a></li>
+                    <li><a href="select-period" class="govuk-link govuk-!-font-size-19">View a different day or time period</a></li>
                     <li><a href="/activities/attendance-summary/summary?date={{ activityDate | toDateString }}{{ filterParams }}" class="govuk-link govuk-!-font-size-19">Go to daily attendance summary</a></li>
                 </ul>
 
