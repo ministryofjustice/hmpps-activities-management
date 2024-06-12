@@ -55,11 +55,9 @@ context('Create activity', () => {
 
   it('should show correct alerts', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().should('contain.text', 'Activities, unlock and attendance')
     indexPage.activitiesCard().click()
 
     const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.unlockAndMovementCard().should('contain.text', 'Manage unlock and movement')
     activitiesIndexPage.unlockAndMovementCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)

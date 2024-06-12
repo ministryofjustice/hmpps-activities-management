@@ -22,6 +22,7 @@ generic-service:
     PRISON_REGISTER_API_URL: "https://prison-register-dev.hmpps.service.justice.gov.uk"
     MANAGE_USERS_API_URL: "https://manage-users-api-dev.hmpps.service.justice.gov.uk"
     UNCANCEL_APPOINTMENT_FEATURE_TOGGLE_ENABLED: "true"
+    RECORD_ATTENDANCE_SELECT_SLOT_FIRST: "true"
 
   allowlist: null
 

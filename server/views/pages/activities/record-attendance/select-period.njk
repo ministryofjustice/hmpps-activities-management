@@ -1,5 +1,6 @@
 {% extends "layout.njk" %}
 
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
@@ -12,15 +13,18 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
+
+            <h1 class="govuk-heading-l">Choose details to record attendance</h1>
+
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
                     name: "datePresetOption",
                     fieldset: {
                         legend: {
-                            text: "What date do you want to record attendance for?",
+                            text: "Attendance date",
                             isPageHeading: true,
-                            classes: "govuk-fieldset__legend--xl"
+                            classes: "govuk-fieldset__legend--m"
                         }
                     },
                     errorMessage: validationErrors | findError('datePresetOption'),
@@ -58,6 +62,34 @@
                         }
                     ]
                 }) }}
+
+                {{ govukCheckboxes({
+                    name: "sessions",
+                    fieldset: {
+                        legend: {
+                            text: "Time period",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('sessions'),
+                    items: [
+                        {
+                            value: TimeSlot.AM,
+                            text: "AM (morning)",
+                            checked: sessions and TimeSlot.AM in (sessions)
+                        },
+                        {
+                            value: TimeSlot.PM,
+                            text: "PM (afternoon)",
+                            checked: sessions and TimeSlot.PM in (sessions)
+                        },
+                        {
+                            value: TimeSlot.ED,
+                            text: "ED (evening)",
+                            checked: sessions and TimeSlot.ED in (sessions)
+                        }
+                    ]
+                }) if recordAttendanceSelectSlotFirst }}
 
                 {{ govukButton({
                     text: "Continue"

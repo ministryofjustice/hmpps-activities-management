@@ -26,9 +26,18 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Find an activity to record or edit attendance</h1>
-                <span class="govuk-caption-m govuk-!-margin-bottom-4">{{ activityDate | formatDate }}</span>
+                <span class="govuk-caption-m govuk-!-margin-bottom-4">
+                    {{ activityDate | formatDate }}
+                    {%  if recordAttendanceSelectSlotFirst %}
+                        {% set comma = joiner(', ') %}
+                        {%- for session in selectedSessions -%}
+                            {{  ' - ' if loop.first and session }}
+                            {{ ' and ' if loop.last and not loop.first else comma() }}{{ session | upper }}
+                        {%- endfor -%}
+                    {% endif %}
+                </span>
                 <ul class="govuk-list govuk-!-margin-bottom-4">
-                    {% if now | toDateString != activityDate | toDateString %}
+                    {% if not recordAttendanceSelectSlotFirst and now | toDateString != activityDate | toDateString %}
                         <li><a href="?date={{ now | toDateString }}{{ filterParams }}" class="govuk-link govuk-!-font-size-19">View the schedule for today</a></li>
                     {% endif %}
                     <li><a href="select-period" class="govuk-link govuk-!-font-size-19">View the schedule for a different day</a></li>

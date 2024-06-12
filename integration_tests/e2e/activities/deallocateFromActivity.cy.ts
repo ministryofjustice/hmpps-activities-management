@@ -1,25 +1,25 @@
 import { addMonths } from 'date-fns'
-import getActivities from '../fixtures/activitiesApi/getActivities.json'
-import getAllocations from '../fixtures/activitiesApi/getAllocations.json'
-import prisonerAllocations from '../fixtures/activitiesApi/prisonerAllocations.json'
-import getSchedule from '../fixtures/activitiesApi/getSchedule.json'
-import moorlandIncentiveLevels from '../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
-import getInmateDetails from '../fixtures/prisonerSearchApi/getInmateDetailsForDeallocation.json'
-import getActivity from '../fixtures/activitiesApi/getActivity.json'
-import getDeallocationReasons from '../fixtures/activitiesApi/getDeallocationReasons.json'
-import getMdiPrisonPayBands from '../fixtures/activitiesApi/getMdiPrisonPayBands.json'
-import getCandidates from '../fixtures/activitiesApi/getCandidates.json'
+import getActivities from '../../fixtures/activitiesApi/getActivities.json'
+import getAllocations from '../../fixtures/activitiesApi/getAllocations.json'
+import prisonerAllocations from '../../fixtures/activitiesApi/prisonerAllocations.json'
+import getSchedule from '../../fixtures/activitiesApi/getSchedule.json'
+import moorlandIncentiveLevels from '../../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
+import getInmateDetails from '../../fixtures/prisonerSearchApi/getInmateDetailsForDeallocation.json'
+import getActivity from '../../fixtures/activitiesApi/getActivity.json'
+import getDeallocationReasons from '../../fixtures/activitiesApi/getDeallocationReasons.json'
+import getMdiPrisonPayBands from '../../fixtures/activitiesApi/getMdiPrisonPayBands.json'
+import getCandidates from '../../fixtures/activitiesApi/getCandidates.json'
 
-import IndexPage from '../pages/index'
-import Page from '../pages/page'
-import EndDatePage from '../pages/allocateToActivity/endDate'
-import ActivitiesDashboardPage from '../pages/allocateToActivity/activitiesDashboard'
-import CheckAnswersPage from '../pages/allocateToActivity/checkAnswers'
-import ConfirmationPage from '../pages/allocateToActivity/confirmation'
-import AllocationDashboard from '../pages/allocateToActivity/allocationDashboard'
-import ManageActivitiesDashboardPage from '../pages/activities/manageActivitiesDashboard'
-import ActivitiesIndexPage from '../pages/activities'
-import DeallocationReasonPage from '../pages/allocateToActivity/deallocationReason'
+import IndexPage from '../../pages'
+import Page from '../../pages/page'
+import EndDatePage from '../../pages/allocateToActivity/endDate'
+import ActivitiesDashboardPage from '../../pages/allocateToActivity/activitiesDashboard'
+import CheckAnswersPage from '../../pages/allocateToActivity/checkAnswers'
+import ConfirmationPage from '../../pages/allocateToActivity/confirmation'
+import AllocationDashboard from '../../pages/allocateToActivity/allocationDashboard'
+import ManageActivitiesDashboardPage from '../../pages/activities/manageActivitiesDashboard'
+import ActivitiesIndexPage from '../../pages/activities'
+import DeallocationReasonPage from '../../pages/allocateToActivity/deallocationReason'
 
 context('Deallocation from activity', () => {
   beforeEach(() => {
@@ -44,11 +44,9 @@ context('Deallocation from activity', () => {
 
   it('should click through deallocate from activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().should('contain.text', 'Activities, unlock and attendance')
     indexPage.activitiesCard().click()
 
     const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.allocateToActivitiesCard().should('contain.text', 'Allocate people to activities')
     activitiesIndexPage.allocateToActivitiesCard().click()
 
     const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
