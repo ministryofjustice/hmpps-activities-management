@@ -64,7 +64,11 @@
                     {% if location.children | length %}
                         {% set locationFilters = [] %}
                         {% for subLocation in location.children %}
-                            {% set locationFilters = (locationFilters.push({value: subLocation.key, text: subLocation.name, checked: subLocation.key in session.unlockListJourney.subLocationFilters}), locationFilters) %}
+                            {% set locationFilters = (locationFilters.push({
+                                value: subLocation.key, 
+                                text: subLocation.name, 
+                                checked: subLocation.key in session.unlockListJourney.subLocationFilters
+                                }), locationFilters) %}
                         {% endfor %}
 
                         {{ govukCheckboxes({
