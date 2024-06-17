@@ -5,5 +5,5 @@ export default class PayRateTypePage extends Page {
     super('create-activity-pay-rate-type-page')
   }
 
-  payRateType = (text: string) => this.getInputByLabel(text).click()
+  incentiveLevel = (text: string) => this.getInputByLabel(text).click()
 }
