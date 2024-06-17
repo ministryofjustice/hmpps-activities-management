@@ -18,8 +18,22 @@
   }
 }
 
+.moj-filter-layout {
+  display: flex;
+}
+
+.moj-filter-layout__filter {
+  display: contents;
+}
+
 .moj-filter-layout__content {
-  overflow-x: hidden;
+  overflow-x: visible;
+  overflow: visible;
+}
+
+.moj-filter {
+  min-width: 340px;
+  margin-right: 40px;
 }
 
 @include govuk-media-query($media-type: print) {

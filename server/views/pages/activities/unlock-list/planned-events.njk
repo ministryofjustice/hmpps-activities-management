@@ -17,59 +17,61 @@
 {% set hardBackLinkHref = "select-date-and-location" %}
 
 {% block content %}
-   <div class="govuk-table govuk-!-margin-0 unlock-list">
+    <div class="govuk-table govuk-!-margin-0 unlock-list">
         <div class="govuk-table__head">
             <div class="govuk-table__row">
                 <div>
-                <div class="govuk-grid-row govuk-!-margin-bottom-1">
-                    <div class="govuk-grid-column-two-thirds govuk-!-print-grid-column-one-half govuk-!-margin-bottom-1">
-                        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ location.name }} - Unlock list</h1>
-                        <div class="govuk-caption-l govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ timeSlot | upper }} session</div>
-                        <div class="govuk-caption-l">{{ date | formatDate }}</div>
-                        <div class="govuk-!-margin-top-2">
-                            <div class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
-                                {{ unlockListItems.length }} people to unlock
+                    <div class="govuk-grid-row govuk-!-margin-bottom-1">
+                        <div class="govuk-grid-column-two-thirds govuk-!-print-grid-column-one-half govuk-!-margin-bottom-1">
+                            <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ location.name }} - Unlock list</h1>
+                            <div class="govuk-caption-l govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ timeSlot | upper }} session</div>
+                            <div class="govuk-caption-l">{{ date | formatDate }}</div>
+                            <div class="govuk-!-margin-top-2">
+                                <div class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
+                                    {{ unlockListItems.length }} people to unlock
                             </div>
-                            <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.leavingWing }}
+                                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.leavingWing }}
                                 leaving wing
                             </div>
-                            <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.stayingOnWing }}
+                                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.stayingOnWing }}
                                 staying on wing
                             </div>
-                        </div>
-                        <div class="search-input search-input--inline-search govuk-!-margin-top-6 govuk-!-display-none-print">
-                            <div class="search-input__form-inputs">
-                                <div class="govuk-form-group">
-                                    <label class="govuk-label govuk-label--s" for="searchTerm">Search by prisoner name, prison number, or by event name</label>
-                                    <input class="govuk-input" id="searchTerm" name="searchTerm" type="search" form="filter-form" value="{{ session.unlockListJourney.searchTerm }}">
+                            </div>
+                            <div class="search-input search-input--inline-search govuk-!-margin-top-6 govuk-!-display-none-print">
+                                <div class="search-input__form-inputs">
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label govuk-label--s" for="searchTerm">Search by prisoner name, prison number, or by event name</label>
+                                        <input class="govuk-input" id="searchTerm" name="searchTerm" type="search" form="filter-form" value="{{ session.unlockListJourney.searchTerm }}">
+                                    </div>
+                                    <button type="submit" class="govuk-button" data-module="govuk-button" form="filter-form">Search</button>
                                 </div>
-                                <button type="submit" class="govuk-button" data-module="govuk-button" form="filter-form">Search</button>
+                            </div>
+                        </div>
+                        <div class="govuk-grid-column-one-third govuk-!-print-grid-column-one-half">
+                            <div class="print-only">
+                                <div class="printable-textarea">Notes</div>
                             </div>
                         </div>
                     </div>
-                    <div class="govuk-grid-column-one-third govuk-!-print-grid-column-one-half">
-                        <div class="print-only">
-                            <div class="printable-textarea">Notes</div>
-                        </div>
-                    </div>
+                    <hr class="govuk-section-break govuk-section-break--visible print-only"/>
                 </div>
-                <hr class="govuk-section-break govuk-section-break--visible print-only" />
-            </div>
             </div>
         </div>
-        <div class="govuk-table__body"><div class="govuk-table__row"><div>
-            {% set filterOptionsHtml %}
-                {% if location.children | length %}
-                    {% set locationFilters = [] %}
-                    {% for subLocation in location.children %}
-                        {% set locationFilters = (locationFilters.push({
-                            value: subLocation.key,
-                            text: subLocation.name,
-                            checked: subLocation.key in session.unlockListJourney.subLocationFilters
-                        }), locationFilters) %}
-                    {% endfor %}
+        <div class="govuk-table__body">
+            <div class="govuk-table__row">
+                <div>
+                    {% set filterOptionsHtml %}
+                    {% if location.children | length %}
+                        {% set locationFilters = [] %}
+                        {% for subLocation in location.children %}
+                            {% set locationFilters = (locationFilters.push({
+                                value: subLocation.key, 
+                                text: subLocation.name, 
+                                checked: subLocation.key in session.unlockListJourney.subLocationFilters
+                                }), locationFilters) %}
+                        {% endfor %}
 
-                    {{ govukCheckboxes({
+                        {{ govukCheckboxes({
                         idPrefix: 'locationFilters',
                         name: 'locationFilters',
                         classes: "govuk-checkboxes--small",
@@ -81,13 +83,13 @@
                         },
                         items: locationFilters
                     }) }}
-                    <div class="govuk-!-margin-bottom-4">
-                        <a href="#" class="govuk-link govuk-link--no-visited-state"
+                        <div class="govuk-!-margin-bottom-4">
+                            <a href="#" class="govuk-link govuk-link--no-visited-state"
                         data-module="select-all-link" data-checkbox-name="locationFilters"></a>
-                    </div>
-                {% endif %}
+                        </div>
+                    {% endif %}
 
-                {{ govukRadios({
+                    {{ govukRadios({
                     idPrefix: 'activityFilter',
                     name: 'activityFilter',
                     classes: "govuk-radios--small",
@@ -116,7 +118,7 @@
                     ]
                 }) }}
 
-                {{ govukRadios({
+                    {{ govukRadios({
                     idPrefix: 'stayingOrLeavingFilter',
                     name: 'stayingOrLeavingFilter',
                     classes: "govuk-radios--small",
@@ -145,28 +147,30 @@
                     ]
                 }) }}
 
-                {{ alertFilters(alertOptions, session.unlockListJourney.alertFilters) }}
+                    {{ alertFilters(alertOptions, session.unlockListJourney.alertFilters) }}
 
-                <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
+                    <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
                     Apply filters
                 </button>
-            {% endset %}
+                    {% endset %}
 
-            <div class="moj-filter-layout" data-module="activities-list-filter" data-filter-start-shown="true">
-                <form id="filter-form" method="POST" action="update-filters" novalidate>
-                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                    <div class="moj-filter-layout__filter govuk-!-display-none-print">
-                        {{ mojFilter({
+                    <div class="moj-filter-layout" data-module="activities-list-filter" data-filter-start-shown="true">
+
+                        <div class="moj-filter-layout__filter govuk-!-display-none-print">
+                            <form id="filter-form" method="POST" action="update-filters" novalidate>
+                                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                                {{ mojFilter({
                             heading: {
                                 text: 'Filters'
                             },
                             optionsHtml: filterOptionsHtml
                         }) }}
-                    </div>
-                    <div class="moj-filter-layout__content">
-                        <div class="moj-action-bar govuk-!-display-none-print">
-                            <div class="moj-action-bar__filter"></div>
-                            {{ mojButtonMenu({
+                            </form>
+                        </div>
+                        <div class="moj-filter-layout__content">
+                            <div class="moj-action-bar govuk-!-display-none-print">
+                                <div class="moj-action-bar__filter"></div>
+                                {{ mojButtonMenu({
                                 items: [{
                                     attributes: { 
                                         id: 'print-unlock',
@@ -187,13 +191,13 @@
                                     preventDoubleClick: true
                                 }]
                             }) }}
-                        </div>
+                            </div>
 
-                        {% if unlockListItems | length > 0 %}
-                            {% set rows = [] %}
-                            {% for item in unlockListItems %}
-                                {% set row = [] %}
-                                {% set row = (row.push(
+                            {% if unlockListItems | length > 0 %}
+                                {% set rows = [] %}
+                                {% for item in unlockListItems %}
+                                    {% set row = [] %}
+                                    {% set row = (row.push(
                                     {
                                         attributes: { 
                                             id: 'activity-' + loop.index, 
@@ -212,14 +216,14 @@
                                     }
                                 ), row) %}
 
-                                {% if session.unlockListJourney.alertFilters.length > 0 %}
-                                    {% set row = (row.push({
+                                    {% if session.unlockListJourney.alertFilters.length > 0 %}
+                                        {% set row = (row.push({
                                         html: alertsList({ alerts: item.alerts, category: item.category }),
                                         classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
                                     }), row) %}
-                                {% endif %}
+                                    {% endif %}
 
-                                {% set row = (row.push(
+                                    {% set row = (row.push(
                                     {
                                         attributes: { 
                                             id: 'activity-' + loop.index,
@@ -231,10 +235,10 @@
                                     }
                                 ), row) %}
 
-                                {% set rows = (rows.push(row), rows) %}
-                            {% endfor %}
+                                    {% set rows = (rows.push(row), rows) %}
+                                {% endfor %}
 
-                            {% set headRows = [
+                                {% set headRows = [
                                 {
                                     text: "Name",
                                     attributes: { "aria-sort": "none" },
@@ -247,16 +251,16 @@
                                 }
                             ] %}
 
-                            {% if session.unlockListJourney.alertFilters.length > 0 %}
-                                {% set headRows = (headRows.push(
+                                {% if session.unlockListJourney.alertFilters.length > 0 %}
+                                    {% set headRows = (headRows.push(
                                     {
                                         text: "Relevant alerts",
                                         classes: 'govuk-table__header'
                                     }
                                 ), headRows) %}
-                            {% endif %}
+                                {% endif %}
 
-                            {% set headRows = (headRows.push(
+                                {% set headRows = (headRows.push(
                                 {
                                     html: "Event details",
                                     attributes: { "aria-sort": "none", colspan: 4 },
@@ -281,37 +285,38 @@
                                 }
                             ), headRows) %}
 
-                            {{ govukTable({
+                                {{ govukTable({
                                 attributes: {
                                     id: 'unlock-list-table',
                                     'data-module': 'moj-sortable-table'
                                 },
                                 caption: "Prisoners",
-                                classes: "fixed-layout-table alternating-row-shading",
+                                classes: "fixed-layout-table alternating-row-shading sticky-header",
                                 captionClasses: "govuk-visually-hidden",
                                 head: headRows,
                                 rows: rows
                             }) }}
-                        {% elseif session.unlockListJourney.searchTerm %}
-                            {{ govukWarningText({
+                            {% elseif session.unlockListJourney.searchTerm %}
+                                {{ govukWarningText({
                                 text: "There are no matching search results.",
                                 iconFallbackText: "Warning",
                                 classes: "govuk-!-margin-top-4"
                             }) }}
-                            <p class="govuk-body">You can:</p>
-                            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
-                                <li>try a different search</li>
-                                <li>check the filters, to make sure the person or event is included</li>
-                            </ul>
-                        {% endif %}
+                                <p class="govuk-body">You can:</p>
+                                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+                                    <li>try a different search</li>
+                                    <li>check the filters, to make sure the person or event is included</li>
+                                </ul>
+                            {% endif %}
+                        </div>
                     </div>
-                </form>
-            </div>
-        </div></div></div>
-        <div class="print-only">
-                <div class="govuk-!-padding-top-1 govuk-body-s">
-                    Printed at {{ now | formatDate('h:mmaaa \'on\' EEEE, d MMMM yyyy') }}
                 </div>
+            </div>
+        </div>
+        <div class="print-only">
+            <div class="govuk-!-padding-top-1 govuk-body-s">
+                    Printed at {{ now | formatDate('h:mmaaa \'on\' EEEE, d MMMM yyyy') }}
+            </div>
         </div>
     </div>
 {% endblock %}

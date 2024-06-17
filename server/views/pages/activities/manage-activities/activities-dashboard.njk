@@ -20,25 +20,27 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <div class="moj-filter-layout" data-module="activities-list-filter">
-                <form method='GET'>
-                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                    <div class="moj-filter-layout__filter govuk-!-display-none-print">
+
+                <div class="moj-filter-layout__filter govuk-!-display-none-print">
+                    <form method='GET'>
+                        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                         {{ mojFilter({
                             heading: {
                                 text: 'Filters'
                             },
                             optionsHtml: activitiesFilters(filters)
                         }) }}
+                    </form>
+                </div>
+                <hr class="print-only"/>
+                <div class="moj-filter-layout__content">
+                    <div class="moj-action-bar govuk-!-display-none-print">
+                        <div class="moj-action-bar__filter"></div>
                     </div>
-                    <hr class="print-only" />
-                    <div class="moj-filter-layout__content">
-                        <div class="moj-action-bar govuk-!-display-none-print">
-                            <div class="moj-action-bar__filter"></div>
-                        </div>
 
-                        {% set rows = [] %}
-                        {% for activity in activities %}
-                            {% set rows = (rows.push([
+                    {% set rows = [] %}
+                    {% for activity in activities %}
+                        {% set rows = (rows.push([
                                 {
                                     attributes: {
                                         id: 'activity-' + loop.index,
@@ -72,14 +74,15 @@
                                     text: renderActivityState(activity.activityState)
                                 }
                             ]), rows) %}
-                        {% endfor %}
+                    {% endfor %}
 
-                        {{ govukTable({
+                    {{ govukTable({
                             attributes: {
                                 'data-module': 'moj-sortable-table'
                             },
                             caption: "Activities",
                             captionClasses: "govuk-visually-hidden",
+                            classes: 'sticky-header',
                             head: [
                                 {
                                     text: "Activity name",
@@ -108,8 +111,7 @@
                             ],
                             rows: rows
                         }) }}
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -137,13 +139,11 @@
             value: "live",
             text: "Live",
             checked: filters.stateFilter == "live"
-        },
-        {
+        }, {
             value: "archived",
             text: "Archived",
             checked: filters.stateFilter == "archived"
-        },
-        {
+        }, {
             value: "all",
             text: "Both (live or archived)",
             checked: filters.stateFilter == "all"
