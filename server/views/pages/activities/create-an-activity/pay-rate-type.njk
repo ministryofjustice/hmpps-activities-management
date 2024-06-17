@@ -14,30 +14,49 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ activityJourneyCaption(session.createJourney) }}
-                {{ govukRadios({
-                    name: "payRateTypeOption",
-                    fieldset: {
-                        legend: {
-                            text: "What type of rate do you want to create?",
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
-                    items: [
+                {% if session.req.params.mode == 'edit' and hasAllocations %}
+                    <input type='hidden' name='incentiveLevel' value='{{ iep }}' >
+                {% else %}
+                    {% set incentiveLevelOptions = [] %}
+                    {% for incentiveLevel in incentiveLevels %}
+                        {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                            {
+                                value: incentiveLevel.levelName,
+                                text: incentiveLevel.levelName,
+                                checked: incentiveLevel.levelName == formResponses.incentiveLevel or (incentiveLevel.levelName == iep and not formResponses)
+                            }
+                        ), incentiveLevelOptions)
+                        %}
+                    {% endfor %}
+                    {% set incentiveLevelOptions = (incentiveLevelOptions.push(
                         {
-                            value: "single",
-                            text: "A single pay rate for one incentive level",
-                            checked: session.createJourney.payRateTypeOption == "single"
+                            divider: "or"
+                        }), incentiveLevelOptions)
+                    %}
+                    {%
+                        set incentiveLevelOptions = (incentiveLevelOptions.push(
+                        {
+                            value: "FLAT_RATE",
+                            text: "A flat rate that applies to all incentive levels"
+                        }), incentiveLevelOptions)
+                    %}
+                    {{ govukRadios({
+                        name: "incentiveLevel",
+                        id: "incentiveLevel",
+                        fieldset: {
+                            legend: {
+                                text: "Choose what kind of pay rate you want to set up for the activity",
+                                isPageHeading: true,
+                                classes: "govuk-fieldset__legend--l"
+                            }
                         },
-                        {
-                            value: "flat",
-                            text: "A flat rate that applies to all incentive levels",
-                            checked: session.createJourney.payRateTypeOption == "flat"
-                        }
-                    ],
-                    errorMessage: validationErrors | findError('payRateTypeOption')
-                }) }}
-
+                        hint: {
+                            text: 'Only prisoners with the specified incentive level can be allocated to this pay rate.'
+                        },
+                        items: incentiveLevelOptions,
+                        errorMessage: validationErrors | findError('incentiveLevel')
+                    }) }}
+                {% endif %}
                 {{ govukButton({
                     text: "Continue"
                 }) }}
