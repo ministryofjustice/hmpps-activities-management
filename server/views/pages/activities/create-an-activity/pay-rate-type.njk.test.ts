@@ -46,45 +46,6 @@ describe('Views - Activity create - pay rate type', () => {
       visitOrders: 2,
       privilegedVisitOrders: 2,
     },
-    {
-      levelCode: 'EN2',
-      levelName: 'Enhanced 2',
-      prisonId: 'RSI',
-      active: true,
-      defaultOnAdmission: false,
-      remandTransferLimitInPence: 6700,
-      remandSpendLimitInPence: 66000,
-      convictedTransferLimitInPence: 3300,
-      convictedSpendLimitInPence: 33000,
-      visitOrders: 2,
-      privilegedVisitOrders: 1,
-    },
-    {
-      levelCode: 'BAN',
-      levelName: 'Gold',
-      prisonId: 'RSI',
-      active: true,
-      defaultOnAdmission: false,
-      remandTransferLimitInPence: 6700,
-      remandSpendLimitInPence: 66000,
-      convictedTransferLimitInPence: 3300,
-      convictedSpendLimitInPence: 33000,
-      visitOrders: 2,
-      privilegedVisitOrders: 1,
-    },
-    {
-      levelCode: 'MW1',
-      levelName: 'New Mike Level',
-      prisonId: 'RSI',
-      active: true,
-      defaultOnAdmission: false,
-      remandTransferLimitInPence: 670000,
-      remandSpendLimitInPence: 66000,
-      convictedTransferLimitInPence: 3300,
-      convictedSpendLimitInPence: 33000,
-      visitOrders: 2,
-      privilegedVisitOrders: 1,
-    },
   ]
 
   let compiledTemplate: Template
@@ -118,6 +79,11 @@ describe('Views - Activity create - pay rate type', () => {
   it('Views - Create Activity - pay rate type', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('input[name="incentiveLevel"][type="radio"]').length).toBe(7)
+    expect($('input[name="incentiveLevel"][type="radio"]').length).toBe(4)
+    expect(
+      $("[name='incentiveLevel']")
+        .map((i, e) => $(e).val())
+        .get(),
+    ).toEqual(['Basic', 'Standard', 'Enhanced', 'FLAT_RATE'])
   })
 })
