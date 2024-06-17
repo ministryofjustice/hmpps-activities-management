@@ -18,16 +18,16 @@
 
 {% block content %}
     {% set filterOptionsHtml %}
-        {% set categoryFilters = [] %}
-        {% for category in uniqueCategories %}
-            {% set categoryFilters = (categoryFilters.push({
-                value: category,
-                text: category,
-                checked: category in session.attendanceSummaryJourney.categoryFilters
-            }), categoryFilters) %}
-        {% endfor %}
+    {% set categoryFilters = [] %}
+    {% for category in uniqueCategories %}
+        {% set categoryFilters = (categoryFilters.push({
+            value: category, 
+            text: category, 
+            checked: category in session.attendanceSummaryJourney.categoryFilters
+        }), categoryFilters) %}
+    {% endfor %}
 
-        {{ govukCheckboxes({
+    {{ govukCheckboxes({
             idPrefix: 'categoryFilters',
             name: 'categoryFilters',
             classes: "govuk-radios--small",
@@ -42,26 +42,25 @@
             },
             items: categoryFilters
         }) }}
-        <div class="govuk-!-margin-bottom-4">
-            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
-        </div>
+    <div class="govuk-!-margin-bottom-4">
+        <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
+    </div>
 
-        <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
+    <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
             Apply filters
         </button>
     {% endset %}
-    <div class="moj-filter-layout" data-module="activities-list-filter">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">{{
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">{{
                     ("All not attended yet" if status == 'NotAttended') +
                     ("All absences" if status == 'Absences') +
                     ("All attended" if status == 'Attended')
                 }}
                 <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
-                </h1>
-
-                {{ searchInput({
+            </h1>
+            {{ searchInput({
                     classes: "search-input--inline-search",
                     input: {
                         id: 'searchTerm',
@@ -83,35 +82,39 @@
                         }
                     }
                 }) }}
-            </div>
-            <div class="govuk-grid-column-one-third govuk-!-text-align-right">
-                <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
-                {{ govukButton({
+        </div>
+        <div class="govuk-grid-column-one-third govuk-!-text-align-right">
+            <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
+            {{ govukButton({
                     text: "Refresh",
                     classes: "govuk-button--blue",
                     attributes: {
                         form: 'filter-form'
                     }
                 }) }}
-            </div>
         </div>
+    </div>
 
-        <form id="filter-form" method="POST" action="update-filters" novalidate>
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-            <div class="moj-filter-layout__filter">
-                {{ mojFilter({
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="moj-filter-layout" data-module="activities-list-filter">
+                <div class="moj-filter-layout__filter">
+                    <form id="filter-form" method="POST" action="update-filters" novalidate>
+                        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                        {{ mojFilter({
                     heading: {
                         text: 'Filter'
                     },
                     optionsHtml: filterOptionsHtml
                 }) }}
-            </div>
-
-            <div class="moj-filter-layout__content">
-                <div class="moj-action-bar">
-                    <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
+                    </form>
                 </div>
-                {{ govukTabs({
+
+                <div class="moj-filter-layout__content">
+                    <div class="moj-action-bar">
+                        <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
+                    </div>
+                    {{ govukTabs({
                     classes: "govuk-tabs--borderless",
                     items: [
                         {
@@ -144,17 +147,18 @@
                         }
                     ]
                 }) }}
+                </div>
             </div>
-        </form>
-    </div>
-{% endblock %}
+        </div>
+        </div>
+    {% endblock %}
 
-{% macro summaryHtml(timeSlot, timeSlotDescription, activityDate, user) %}
-    {% set tab = 'day-tab' if timeSlot == 'DAY' %}
-    {% set attendanceRows = [] %}
-    {% for attendee in attendees %}
-        {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
-            {% set attendanceRows = (attendanceRows.push([
+    {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate, user) %}
+        {% set tab = 'day-tab' if timeSlot == 'DAY' %}
+        {% set attendanceRows = [] %}
+        {% for attendee in attendees %}
+            {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
+                {% set attendanceRows = (attendanceRows.push([
                 {
                     attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name | prisonerNameForSorting },
                     html: showProfileLink({
@@ -195,27 +199,28 @@
                     html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-details/' + attendee.attendance.attendanceId + '" class="govuk-link govuk-link--no-visited-state">' + 'View or edit</a>'
                 } if status != "NotAttended"
             ] | removeUndefined), attendanceRows) %}
-        {% endif %}
-    {% endfor %}
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters">
-            {% if status == 'Attended' %}
-                <h2 class="govuk-heading-m">{{ attendanceRows | length }} attended</h2>
-            {% elseif status == 'NotAttended' %}
-                <h2 class="govuk-heading-m">{{ attendanceRows | length }} not attended yet</h2>
-            {% elseif status == 'Absences' %}
-                <h2 class="govuk-heading-m">{{ attendanceRows | length }} absence{% if attendanceRows | length != 1 %}s{% endif %}</h2>
             {% endif %}
-        </div>
-    </div>
+        {% endfor %}
 
-    {{ govukTable({
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-three-quarters">
+                {% if status == 'Attended' %}
+                    <h2 class="govuk-heading-m">{{ attendanceRows | length }} attended</h2>
+                {% elseif status == 'NotAttended' %}
+                    <h2 class="govuk-heading-m">{{ attendanceRows | length }} not attended yet</h2>
+                {% elseif status == 'Absences' %}
+                    <h2 class="govuk-heading-m">{{ attendanceRows | length }} absence{% if attendanceRows | length != 1 %}s{% endif %}
+                    </h2>
+                {% endif %}
+            </div>
+        </div>
+
+        {{ govukTable({
         attributes: {
             'data-module': 'moj-sortable-table',
             id: 'attendee-list-table'
         },
-        classes: "alternating-row-shading fixed-layout-table",
+        classes: "alternating-row-shading fixed-layout-table sticky-header",
         captionClasses: "govuk-visually-hidden",
         head: [
             {
@@ -248,18 +253,19 @@
         ] | removeUndefined,
         rows: attendanceRows
     }) }}
-{% endmacro %}
+    {% endmacro %}
 
-{% macro renderPayStatus(attendance) %}
-    {% if attendance.issuePayment %}
-        {{ govukTag({
+    {% macro renderPayStatus(attendance) %}
+        {% if attendance.issuePayment %}
+            {{ govukTag({
             text: "Pay",
             classes: "govuk-tag--green"
         }) }}
-    {% elseif attendance.status !=  'WAITING' %}
-        {{ govukTag({
+        {% elseif attendance.status !=  'WAITING' %}
+            {{ govukTag({
             text: "No pay",
             classes: "govuk-tag--red"
         }) }}
-    {% endif %}
-{% endmacro %}
+        {% endif %}
+    {% endmacro %}
+    
