@@ -203,6 +203,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('uncancelAppointmentFeatureToggleEnabled', config.uncancelAppointmentFeatureToggleEnabled)
   njkEnv.addGlobal('recordAttendanceSelectSlotFirst', config.recordAttendanceSelectSlotFirst)
+  njkEnv.addGlobal('appointmentsAttendanceSummaryFlag', config.appointmentsAttendanceSummaryFlag)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

@@ -7,6 +7,7 @@ import appointmentSetDetailsRoutes from './appointment-set'
 import appointmentDetailsRoutes from './appointment'
 import appointmentSearchRoutes from './search'
 import appointmentAttendanceRoutes from './attendance'
+import appointmentAttendanceSummaryStatistics from './attendance-summary-stats'
 import { Services } from '../../services'
 import rolloutMiddleware from '../../middleware/rolloutMiddleware'
 import ServiceName from '../../enum/serviceName'
@@ -30,6 +31,9 @@ export default function routes(services: Services): Router {
   router.use('/series/:appointmentSeriesId(\\d+)', appointmentSeriesDetailsRoutes(services))
   router.use('/set/:appointmentSetId(\\d+)', appointmentSetDetailsRoutes(services))
   router.use('/:appointmentId(\\d+)', appointmentDetailsRoutes(services))
+
+  // Appointments attendance summary statistics routes
+  router.use('/attendance-summary', appointmentAttendanceSummaryStatistics())
 
   // Create appointment journey routes. These are the starting points for the three appointment type creation journeys.
   // They use the startNewJourney middleware which adds a unique journeyId into the url after the /create/ path segment
