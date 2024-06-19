@@ -141,6 +141,10 @@ export default {
       },
       agent: new AgentConfig(Number(get('CASE_NOTES_API_TIMEOUT_RESPONSE', 30000))),
     },
+    reporting: {
+      url: get('REPORTING_API_URL', 'http://localhost:3010', requiredInProduction),
+      timeout: Number(get('REPORTING_API_TIMEOUT_RESPONSE', 10000)),
+    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
@@ -173,7 +177,6 @@ export default {
     },
   ] as RouteAuth[],
   spikesFeatureToggleEnabled: Boolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', false)),
-  uncancelAppointmentFeatureToggleEnabled: Boolean(get('UNCANCEL_APPOINTMENT_FEATURE_TOGGLE_ENABLED', false)),
   appointmentsAttendanceSummaryFlag: Boolean(get('APPOINTMENTS_ATTENDANCE_SUMMARY_FLAG', false)),
   recordAttendanceSelectSlotFirst: Boolean(get('RECORD_ATTENDANCE_SELECT_SLOT_FIRST', false)),
   frontendComponentsApiToggleEnabled: Boolean(
