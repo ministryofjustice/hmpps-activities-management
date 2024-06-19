@@ -45,13 +45,13 @@
                         id: "incentiveLevel",
                         fieldset: {
                             legend: {
-                                text: "Choose what kind of pay rate you want to set up for the activity",
+                                text: "Choose what kind of pay rate you want to set up for this activity",
                                 isPageHeading: true,
                                 classes: "govuk-fieldset__legend--l"
                             }
                         },
                         hint: {
-                            text: 'Only prisoners with the specified incentive level can be allocated to this pay rate.'
+                            text: 'If there’s no pay rate for a certain incentive level, no one on that incentive level can be allocated.'
                         },
                         items: incentiveLevelOptions,
                         errorMessage: validationErrors | findError('incentiveLevel')
