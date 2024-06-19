@@ -21,7 +21,11 @@
             {% if editMode %}
                 <h1 class="govuk-heading-l">Change {{ iep }} incentive level: {{ band.alias }}</h1>
             {% else %}
-                <h1 class="govuk-heading-l">Enter pay for {{ session.createJourney.name }}</h1>
+                {% if payRateType === "single" %}
+                    <h1 class="govuk-heading-l">Enter pay amount and pay band name for the {{ session.createJourney.incentiveLevel }} incentive level pay rate</h1>
+                {% else %}
+                    <h1 class="govuk-heading-l">Enter pay amount and pay band name for the flat-rate incentive level pay rate</h1>
+                {% endif %}
             {% endif %}
 
             <form method="POST">
@@ -31,11 +35,7 @@
                     {{ govukInsetText({
                         text: 'Any changes you make to this pay rate will take effect from tomorrow.'
                     }) }}
-                {% else %}
-                    <p class="govuk-body">Add all the pay rates available for this activity.</p>
-                    <p class="govuk-body">You can add up to {{ payBands | length }} rates for each incentive level. Each time you add one you'll have the option to add another.</p>
-                    <p class="govuk-body">When you come to allocate someone to this activity, all the rates that can be paid will be displayed.</p>
-                {% endif %}
+                 {% endif %}
 
                 {{ govukInput({
                     id: "rate",
@@ -85,9 +85,9 @@
                 {{ govukDetails({
                     summaryText: "What is a pay band?",
                     html: '
-                            <p>A \'pay band\' is a label to help you easily tell the difference between the pay rates that someone can be paid for
-                            for this activity.</p>
-                            <p>Depending on which prison you work in, pay bands may be numbered, or named, for example \'Skilled\' or \'General\'</p>
+                            <p>\'Pay band\' is a label to help you easily tell the difference between the pay rates that someone can be paid for
+                            this activity.</p>
+                            <p>For example you might have a pay band called \'unskilled\' and another called \'skilled\'.</p>
                           '
                 }) }}
 
@@ -95,6 +95,8 @@
                 {% if payRateType === "single" %}
                     {% if session.req.params.mode == 'edit' and hasAllocations %}
                         <input type='hidden' name='incentiveLevel' value='{{ iep }}' >
+                    {% elseif session.req.params.mode == 'create' and session.createJourney.incentiveLevel !== null %}
+                        <input type='hidden' name='incentiveLevel' value='{{ session.createJourney.incentiveLevel }}' >
                     {% else %}
                         {% set incentiveLevelOptions = [] %}
                         {% for incentiveLevel in incentiveLevels %}
@@ -124,7 +126,7 @@
                 {% endif %}
 
                 {{ govukButton({
-                    text: "Review and add more rates"
+                    text: "Save and continue"
                 }) }}
             </form>
         </div>

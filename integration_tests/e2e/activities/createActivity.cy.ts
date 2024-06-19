@@ -86,13 +86,12 @@ context('Create activity', () => {
     payOptionPage.continue()
 
     const payRateTypePage = Page.verifyOnPage(PayRateTypePage)
-    payRateTypePage.payRateType('A single pay rate for one incentive level')
+    payRateTypePage.incentiveLevel('Standard')
     payRateTypePage.continue()
 
     const payPage = Page.verifyOnPage(PayPage)
     payPage.enterPayAmount('1.00')
     payPage.selectPayBand('Low')
-    payPage.incentiveLevel('Basic')
     payPage.reviewAndAddMoreRates()
 
     const checkPayPage = Page.verifyOnPage(CheckPayPage)
@@ -100,18 +99,17 @@ context('Create activity', () => {
     checkPayPage.addAnother()
 
     const payRateTypePage2 = Page.verifyOnPage(PayRateTypePage)
-    payRateTypePage2.payRateType('A single pay rate for one incentive level')
+    payRateTypePage2.incentiveLevel('Enhanced')
     payRateTypePage2.continue()
 
     const payPage2 = Page.verifyOnPage(PayPage)
     payPage2.enterPayAmount('1.50')
     payPage2.selectPayBand('Medium')
-    payPage2.incentiveLevel('Basic')
     payPage2.reviewAndAddMoreRates()
 
     const checkPayPage2 = Page.verifyOnPage(CheckPayPage)
     checkPayPage2.payRows().should('have.length', 2)
-    checkPayPage2.confirmPayRates()
+    checkPayPage2.continuePayRates()
 
     const qualificationPage = Page.verifyOnPage(QualificationPage)
     qualificationPage.selectQualification('Yes')

@@ -1,11 +1,18 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import PayRateTypeRoutes, { PayRateType } from './payRateType'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import PrisonService from '../../../../services/prisonService'
+import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
+import atLeast from '../../../../../jest.setup'
 
+jest.mock('../../../../services/prisonService')
+
+const prisonService = new PrisonService(null, null, null)
 describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
-  const handler = new PayRateTypeRoutes()
+  const handler = new PayRateTypeRoutes(prisonService)
   let req: Request
   let res: Response
 
@@ -14,6 +21,7 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
       locals: {
         user: {
           username: 'joebloggs',
+          activeCaseLoadId: 'MDI',
         },
       },
       render: jest.fn(),
@@ -28,17 +36,27 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
     } as unknown as Request
   })
 
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
+
   describe('GET', () => {
     it('should render the expected view', async () => {
+      when(prisonService.getIncentiveLevels)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValue([{ levelName: 'Standard' }] as IncentiveLevel[])
+
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/pay-rate-type')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/pay-rate-type', {
+        incentiveLevels: [{ levelName: 'Standard' }],
+      })
     })
   })
 
   describe('POST', () => {
     it('should save selected option in session and redirect to pay page', async () => {
       req.body = {
-        payRateTypeOption: 'single',
+        incentiveLevel: 'Basic',
       }
 
       await handler.POST(req, res)
@@ -46,9 +64,29 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
       expect(res.redirect).toHaveBeenCalledWith('pay/single')
     })
 
+    it('should redirect with a pay rate of single where there is an incentive level present', async () => {
+      req.body = {
+        incentiveLevel: 'Basic',
+      }
+
+      await handler.POST(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('pay/single')
+    })
+
+    it('should redirect with a pay rate of flat where there is a no incentive level present', async () => {
+      req.body = {
+        incentiveLevel: 'FLAT_RATE',
+      }
+
+      await handler.POST(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('pay/flat')
+    })
+
     it('should redirect with preserveHistory flag', async () => {
       req.body = {
-        payRateTypeOption: 'single',
+        incentiveLevel: 'Basic',
       }
       req.query = {
         preserveHistory: 'true',
@@ -63,7 +101,7 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
   describe('type validation', () => {
     it('validation fails if a value is not entered', async () => {
       const body = {
-        payRateTypeOption: '',
+        incentiveLevel: '',
       }
 
       const requestObject = plainToInstance(PayRateType, body)
@@ -71,7 +109,7 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
 
       expect(errors).toEqual([
         {
-          property: 'payRateTypeOption',
+          property: 'incentiveLevel',
           error:
             'Select if you want to create a pay rate for a single incentive level or a flat rate for all incentive levels',
         },

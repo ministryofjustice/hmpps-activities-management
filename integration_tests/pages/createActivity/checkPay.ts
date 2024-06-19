@@ -10,7 +10,7 @@ export default class CheckPayPage extends Page {
       return Cypress.$.makeArray($el)
     })
 
-  confirmPayRates = () => cy.get('button').contains('Confirm').click()
+  continuePayRates = () => cy.get('button').contains('Continue').click()
 
-  addAnother = () => cy.get('a').contains('Add another pay rate').click()
+  addAnother = () => cy.get('a').contains('Add a pay rate').click()
 }

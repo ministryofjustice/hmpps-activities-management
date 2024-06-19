@@ -1,6 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
@@ -91,22 +92,27 @@
             }) if rows | length }}
 
             {% if flatPay | length == 0 and incentiveLevelPays | length == 0 %}
-                <p class="govuk-body">No pay rates have been set for this activity.</p>
-                <p class="govuk-body">You must set at least one pay rate or <a href="pay-option{{ "?" + preserveHistoryText if preserveHistoryText }}" class="govuk-link">change the activity to unpaid</a>.</p>
+                <p class="govuk-body">No pay rates have been set for this activity. You must set at least one pay rate.</p>
             {% endif %}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukInsetText({
+                    text: 'You can create up to 10 rates for each incentive level.'
+                }) }}
+
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Confirm",
-                        preventDoubleClick: true
-                    }) if flatPay | length > 0 or incentiveLevelPays | length > 0 }}
-                    {{ govukButton({
-                        text: "Add another pay rate",
+                        text: "Add a pay rate",
                         href: 'pay-rate-type' + (("?" + preserveHistoryText) if preserveHistoryText),
                         classes: "govuk-button--secondary"
                     }) }}
+                </div>
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue",
+                        preventDoubleClick: true
+                    }) if flatPay | length > 0 or incentiveLevelPays | length > 0 }}
                 </div>
             </form>
         </div>
