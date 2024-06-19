@@ -8,6 +8,7 @@ import successMessageMiddleware from '../middleware/successMessageMiddleware'
 import timeNowMiddleware from '../middleware/timeNowMiddleware'
 import routeAuthMiddleware from '../middleware/routeAuthMiddleware'
 import appointmentRoutes from './appointments'
+import reportingRoutes from './reporting'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -21,6 +22,7 @@ export default function routes(services: Services): Router {
   router.use('/', homeRoutes())
   router.use('/activities', activityRoutes(services))
   router.use('/appointments', appointmentRoutes(services))
+  router.use('/dpr-reporting', reportingRoutes())
   // Add more beta build routes here
 
   // Spikes under here spikes
