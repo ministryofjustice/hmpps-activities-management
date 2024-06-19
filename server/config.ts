@@ -141,6 +141,10 @@ export default {
       },
       agent: new AgentConfig(Number(get('CASE_NOTES_API_TIMEOUT_RESPONSE', 30000))),
     },
+    reporting: {
+      url: get('REPORTING_API_URL', 'http://localhost:3010', requiredInProduction),
+      timeout: Number(get('REPORTING_API_TIMEOUT_RESPONSE', 10000)),
+    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
