@@ -11,5 +11,5 @@ export default class PayPage extends Page {
 
   incentiveLevel = (text: string) => this.getInputByLabel(text).click()
 
-  reviewAndAddMoreRates = () => cy.get('button').contains('Review and add more rates').click()
+  reviewAndAddMoreRates = () => cy.get('button').contains('Save and continue').click()
 }
