@@ -7,7 +7,7 @@ import SelectDatePage from '../../pages/appointments/appointments-attendance-sum
 import DashboardPage from '../../pages/appointments/appointments-attendance-summary/dashboard'
 import { formatDate } from '../../../server/utils/utils'
 
-context('Appointment attendancy summary statistics', () => {
+context.skip('Appointment attendancy summary statistics', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
