@@ -44,15 +44,16 @@
     {% endset %}
 
     <div class="moj-filter-layout" data-module="activities-list-filter">
+            <div class="moj-filter-layout__filter">
         <form id="filter-form" method="POST" action="update-filters" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-            <div class="moj-filter-layout__filter">
                 {{ mojFilter({
                     heading: {
                         text: 'Filter'
                     },
                     optionsHtml: filterOptionsHtml
                 }) }}
+                        </form>
             </div>
             <div class="moj-filter-layout__content">
                 <div class="moj-action-bar">
@@ -92,7 +93,7 @@
                     ]
                 }) }}
             </div>
-        </form>
+
     </div>
 {% endblock %}
 
