@@ -4,6 +4,7 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "../../../components/stat.njk" import stat %}
 
 {% set pageTitle = applicationName + " - Daily attendance summary" %}
 {% set pageId = 'daily-attendance-summary-page' %}
@@ -11,16 +12,12 @@
 
 {% block content %}
     {% set filterOptionsHtml %}
-        {% set categoryFilters = [] %}
-        {% for category in uniqueCategories %}
-            {% set categoryFilters = (categoryFilters.push({
-                value: category,
-                text: category,
-                checked: category in session.attendanceSummaryJourney.categoryFilters
-            }), categoryFilters) %}
-        {% endfor %}
+    {% set categoryFilters = [] %}
+    {% for category in uniqueCategories %}
+        {% set categoryFilters = (categoryFilters.push({value: category, text: category, checked: category in session.attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
+    {% endfor %}
 
-        {{ govukCheckboxes({
+    {{ govukCheckboxes({
             idPrefix: 'categoryFilters',
             name: 'categoryFilters',
             classes: "govuk-radios--small",
@@ -35,31 +32,33 @@
             },
             items: categoryFilters
         }) }}
-        <div class="govuk-!-margin-bottom-4">
-            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
-        </div>
-        <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
+    <div class="govuk-!-margin-bottom-4">
+        <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
+    </div>
+    <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
             Apply filters
         </button>
     {% endset %}
 
-    <div class="moj-filter-layout" data-module="activities-list-filter">
-            <div class="moj-filter-layout__filter">
-        <form id="filter-form" method="POST" action="update-filters" novalidate>
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                {{ mojFilter({
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
+                <div class="moj-filter-layout__filter moj-filter-layout__flex">
+                    <form id="filter-form" method="POST" action="update-filters" novalidate>
+                        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                        {{ mojFilter({
                     heading: {
                         text: 'Filter'
                     },
                     optionsHtml: filterOptionsHtml
                 }) }}
-                        </form>
-            </div>
-            <div class="moj-filter-layout__content">
-                <div class="moj-action-bar">
-                    <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
+                    </form>
                 </div>
-                {{ govukTabs({
+                <div class="moj-filter-layout__content">
+                    <div class="moj-action-bar">
+                        <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
+                    </div>
+                    {{ govukTabs({
                     classes: "govuk-tabs--borderless",
                     items: [
                         {
@@ -92,8 +91,10 @@
                         }
                     ]
                 }) }}
-            </div>
+                </div>
 
+            </div>
+        </div>
     </div>
 {% endblock %}
 
@@ -116,7 +117,8 @@
         <div class="govuk-grid-column-full">
             <div class="govuk-body-l">
                 {{ totalAllocated[timeSlot] }} total allocation{% if totalAllocated[timeSlot] != 1 %}s{% endif %} for
-                <a href="/activities/attendance/activities?date={{ activityDate | formatDate('yyyy-MM-dd') }}&preserveHistory=true" class="govuk-link govuk-link--no-visited-state" data-qa="sessions-link" target='_blank'>{{ totalActivities[timeSlot] }} session{% if totalActivities[timeSlot] != 1 %}s{% endif %}</a>
+                <a href="/activities/attendance/activities?date={{ activityDate | formatDate('yyyy-MM-dd') }}&preserveHistory=true" class="govuk-link govuk-link--no-visited-state" data-qa="sessions-link" target='_blank'>{{ totalActivities[timeSlot] }} session{% if totalActivities[timeSlot] != 1 %}s{% endif %}
+                </a>
             </div>
         </div>
 
@@ -244,7 +246,9 @@
             <div class="govuk-grid-column-full">
                 <h3 class="govuk-heading-m">
                     {{ totalCancelledSessions[timeSlot] }} cancelled sessions
-                    <span><a href="cancelled-sessions?date={{ activityDate | formatDate('yyyy-MM-dd') }}" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">(View cancelled sessions)</a></span>
+                    <span>
+                        <a href="cancelled-sessions?date={{ activityDate | formatDate('yyyy-MM-dd') }}" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">(View cancelled sessions)</a>
+                    </span>
                 </h3>
             </div>
 
@@ -320,25 +324,4 @@
             </div>
         {% endif %}
     </div>
-{% endmacro %}
-
-{% macro stat(params) %}
-    {% if params.number > 0 or params.forceDisplay %}
-        <div class="govuk-grid-column-one-quarter govuk-!-margin-bottom-3">
-            <div class="govuk-hint govuk-!-margin-bottom-0">{{ params.heading }}</div>
-            <span class="govuk-heading-xl govuk-!-margin-0 govuk-!-padding-0 ">
-                <span>{{ params.number }}</span>
-                {% if params.visuallyHiddenText %}<span class="govuk-visually-hidden">{{ params.visuallyHiddenText }}</span>{% endif %}
-                {% if params.percentage %}<span class="govuk-tag govuk-tag--grey govuk-!-display-inline-block">{{ params.percentage }}%</span>{% endif %}
-            </span>
-
-            {% if params.link %}
-                <p class="govuk-!-margin-bottom-0">
-                    <a href="{{ params.link.href }}" class="govuk-!-font-weight-bold govuk-link govuk-link--no-visited-state">
-                        {{ params.link.text }}
-                    </a>
-                </p>
-            {% endif %}
-        </div>
-    {% endif %}
 {% endmacro %}

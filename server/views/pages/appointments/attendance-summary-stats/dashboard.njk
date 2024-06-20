@@ -2,7 +2,9 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from "components/stat.njk" import stat %}
 
 {% set pageTitle = "Appointments attendance summary" %}
 {% set pageId = 'appointment-attendance-summary-stats-dashboard' %}
@@ -22,5 +24,65 @@
           classes: "govuk-button--blue"
       }) }}
     </div>
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-body-l">{{ totalAttendees or 0 }} attendees for 
+          <a href="/appointments/attendance/summaries?dateOption=other&date={{ date | formatDate('yyyy-MM-dd') }}">{{ totalAppointments or 0 }} appointments.</a>
+      </h2>
+    </div>
   </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <div class="moj-filter-layout" data-module="activities-list-filter">
+        <div class="moj-filter-layout__filter">
+          <form id="filter-form" method="POST" action="update-filters" novalidate>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+            {{ mojFilter({
+            heading: {
+                text: 'Filter'
+            },
+            optionsHtml: filterOptionsHtml
+        }) }}
+          </form>
+        </div>
+        <div class="moj-filter-layout__content">
+          <div class="moj-action-bar">
+            <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
+          </div>
+            {{ stat({
+          heading: "Attended",
+          number: 100,
+          visuallyHiddenText: "prisoners, which is",
+          percentage: 100,
+          link: {
+            href: '#',
+            text: 'All attended'
+          }
+        }) }}
+            {{ stat({
+          heading: "Not attended",
+          number: 20,
+          visuallyHiddenText: "prisoners, which is",
+          percentage: 20,
+          link: {
+            href: '#',
+            text: 'All not attended'
+          }
+        }) }}
+                    {{ stat({
+          heading: "Not recorded yet",
+          number: 1,
+          visuallyHiddenText: "prisoners, which is",
+          percentage: 1,
+          link: {
+            href: '#',
+            text: 'All not recorded yet'
+          }
+        }) }}
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
