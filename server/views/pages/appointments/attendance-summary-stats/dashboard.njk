@@ -1,0 +1,26 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+
+{% set pageTitle = "Appointments attendance summary" %}
+{% set pageId = 'appointment-attendance-summary-stats-dashboard' %}
+{% set hardBackLinkText = "Back to choose a date" %}
+{% set hardBackLinkHref = "/appointments/attendance-summary/select-date" %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <span class="govuk-caption-l">{{ date | formatDate }}</span>
+      <h1 class="govuk-heading-xl">Appointments attendance summary</h1>
+    </div>
+    <div class="govuk-grid-column-one-quarter govuk-!-padding-right-0 govuk-!-text-align-right">
+      <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
+      {{ govukButton({
+          text: "Refresh",
+          classes: "govuk-button--blue"
+      }) }}
+    </div>
+  </div>
+{% endblock %}

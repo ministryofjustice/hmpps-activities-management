@@ -54,6 +54,18 @@
                         "data-qa": "record-appointment-attendance-card"
                     }) }}
                 </div>
+                {% if appointmentsAttendanceSummaryFlag %}
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "id": "viewAppointmentsAttendanceSummary",
+                        "href": "/appointments/attendance-summary/select-date",
+                        "clickable": "true",
+                        "heading": "View appointments attendance summary",
+                        "description": "See attendance figures, including details of who did not attend, where attendance has not been recorded yet, tiers, and cancellations.",
+                        "data-qa": "view-appointments-attendance-summary-card"
+                    }) }}
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

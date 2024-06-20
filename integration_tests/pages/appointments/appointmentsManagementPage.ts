@@ -18,4 +18,11 @@ export default class AppointmentsManagementPage extends Page {
       'Manage existing appointments',
       'Edit the details of an appointment, including cancelling, adding and removing people, and printing movement slips.',
     )
+
+  viewAppointmentsAttendanceSummaryCard = (): Cypress.Chainable =>
+    cy.cardIsDisplayed(
+      '[data-qa=view-appointments-attendance-summary-card]',
+      'View appointments attendance summary',
+      'See attendance figures, including details of who did not attend, where attendance has not been recorded yet, tiers, and cancellations.',
+    )
 }
