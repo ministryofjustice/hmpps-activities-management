@@ -1,4 +1,5 @@
 import { when } from 'jest-when'
+import createHttpError from 'http-errors'
 import UserService from './userService'
 import ManageUsersApiClient from '../data/manageUsersApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
@@ -146,6 +147,36 @@ describe('User service', () => {
       )
 
       expect(manageUsersApiClient.getUserByUsername).not.toHaveBeenCalled()
+    })
+
+    it('Returns External user as a User object if the user name is not found', async () => {
+      const usernames = ['hmpps-book-a-video-link-client']
+
+      when(manageUsersApiClient.getUserByUsername)
+        .calledWith(atLeast('hmpps-book-a-video-link-client'))
+        .mockRejectedValue(createHttpError.NotFound())
+
+      const result = await userService.getUserMap(usernames, user as ServiceUser)
+
+      expect(result).toEqual(
+        new Map([
+          ['hmpps-book-a-video-link-client', { name: 'External user', username: 'hmpps-book-a-video-link-client' }],
+        ]),
+      )
+
+      expect(manageUsersApiClient.getUserByUsername).toHaveBeenCalledWith('hmpps-book-a-video-link-client', {
+        authSource: 'nomis',
+      })
+    })
+
+    it('Propagates non 404 error from Manage Users API client', async () => {
+      const usernames = ['jbloggs']
+
+      when(manageUsersApiClient.getUserByUsername)
+        .calledWith(atLeast('jbloggs'))
+        .mockRejectedValue(createHttpError.InternalServerError())
+
+      await expect(userService.getUserMap(usernames, user as ServiceUser)).rejects.toThrow()
     })
   })
 })
