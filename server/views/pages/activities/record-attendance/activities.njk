@@ -7,7 +7,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
-
+{% from "partials/attendance/activitiesTable.njk" import activitiesTable %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'activities-page' %}
@@ -128,9 +128,13 @@
                     <div class="moj-action-bar__filter"></div>
                 </div>
 
-                {{ scheduledActivitiesTable('Morning sessions', activitiesBySession, 'am') }}
-                {{ scheduledActivitiesTable('Afternoon sessions', activitiesBySession, 'pm') }}
-                {{ scheduledActivitiesTable('Evening sessions', activitiesBySession, 'ed') }}
+                {% if recordAttendanceSelectSlotFirst %}
+                    {{ activitiesTable(activityRows, activityDate, filterParams, now) }}
+                {% else %} {# TODO: SAA-1796 Remove #}
+                    {{ scheduledActivitiesTable('Morning sessions', activitiesBySession, 'am') }}
+                    {{ scheduledActivitiesTable('Afternoon sessions', activitiesBySession, 'pm') }}
+                    {{ scheduledActivitiesTable('Evening sessions', activitiesBySession, 'ed') }}
+                {% endif %}
 
                 {% if activitiesBySession['am'].length == 0 and activitiesBySession['pm'].length == 0 and activitiesBySession['ed'].length == 0 %}
                     {{ govukWarningText({
@@ -138,6 +142,9 @@
                         iconFallbackText: "Warning"
                     }) }}
                 {% endif %}
+
+                {% if not recordAttendanceSelectSlotFirst %}
+                {# TODO: SAA-1796 Remove #}
 
                 <nav class="govuk-pagination govuk-pagination--block" role="navigation" aria-label="results">
                     <div class="govuk-pagination__prev">
@@ -159,6 +166,8 @@
                                 <span class="govuk-pagination__link-label">{{ activityDate | addDays(1) | formatDate }}</span>
                             </a>
                         </div>
+                    {% endif %}
+
                     {% endif %}
                 </nav>
             </div>
@@ -298,7 +307,7 @@
     {% if cancelled %}
         {{ govukTag({
             text: "Cancelled",
-            classes: "govuk-tag--red"
+            classes: "govuk-tag--red govuk-!-margin-top-1"
         }) }}
     {% endif %}
 {% endmacro %}

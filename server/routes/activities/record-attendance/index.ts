@@ -14,6 +14,7 @@ import EditAttendanceRoutes, { EditAttendance } from './handlers/editAttendance'
 import RemovePayRoutes, { RemovePay } from './handlers/removePay'
 import HomeRoutes from './handlers/home'
 import ResetAttendanceRoutes, { ResetAttendance } from './handlers/resetAttendance'
+import config from '../../../config'
 
 export default function Index({ activitiesService, prisonService, userService }: Services): Router {
   const router = Router()
@@ -41,9 +42,22 @@ export default function Index({ activitiesService, prisonService, userService }:
   get('/activities', activitiesHandler.GET)
   post('/activities', activitiesHandler.POST)
   get('/activities/:id/attendance-list', attendanceListHandler.GET)
+  if (config.recordAttendanceSelectSlotFirst) {
+    get('/activities/attendance-list', attendanceListHandler.GET_ATTENDANCES)
+    post('/activities/attendance-list', activitiesHandler.POST_ATTENDANCES)
+    post('/activities/attended', attendanceListHandler.ATTENDED_MULTIPLE, AttendanceList)
+    post('/activities/not-attended', attendanceListHandler.NOT_ATTENDED_MULTIPLE, AttendanceList)
+    get('/activities/not-attended-reason', notAttendedReasonHandler.GET_MULTIPLE)
+    post('/activities/not-attended-reason', notAttendedReasonHandler.POST_MULTIPLE, NotAttendedForm)
+  }
+
+  // TODO: SAA-1796 Remove these three
   post('/activities/:id/attended', attendanceListHandler.ATTENDED, AttendanceList)
-  post('/activities/:id/not-attended', attendanceListHandler.NOT_ATTENDED, AttendanceList)
   get('/activities/:id/not-attended-reason', notAttendedReasonHandler.GET)
+
+  // TODO: SAA-1796 Change handler to attendanceListHandler.NOT_ATTENDED_MULTIPLE
+  post('/activities/:id/not-attended', attendanceListHandler.NOT_ATTENDED, AttendanceList)
+
   post('/activities/:id/not-attended-reason', notAttendedReasonHandler.POST, NotAttendedForm)
   get('/activities/:id/cancel', cancelSessionReasonRoutes.GET)
   post('/activities/:id/cancel', cancelSessionReasonRoutes.POST, CancelReasonForm)

@@ -6,6 +6,7 @@ import PrisonService from '../../../../services/prisonService'
 import { YesNo } from '../../../../@types/activities'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { convertToTitleCase } from '../../../../utils/utils'
+import { AttendActivityMode } from '../recordAttendanceRequests'
 
 export class ResetAttendance {
   @Expose()
@@ -35,6 +36,11 @@ export default class ResetAttendanceRoutes {
     const { attendanceId } = req.params
     const { confirm } = req.body
 
+    const returnUrl =
+      req.session.recordAttendanceRequests.mode === AttendActivityMode.MULTIPLE
+        ? '/activities/attendance/activities/attendance-list'
+        : `/activities/attendance/activities/${id}/attendance-list`
+
     if (confirm === YesNo.YES) {
       const attendances = [
         {
@@ -49,14 +55,11 @@ export default class ResetAttendanceRoutes {
       const attendee = await this.prisonService.getInmateByPrisonerNumber(attendance.prisonerNumber, user)
       const attendeeName = convertToTitleCase(`${attendee.firstName} ${attendee.lastName}`)
 
+      // TODO: SAA-1737 Add activity name?
       const successMessage = `Attendance for ${attendeeName} has been reset`
-      return res.redirectWithSuccess(
-        `/activities/attendance/activities/${id}/attendance-list`,
-        'Attendance reset',
-        successMessage,
-      )
+      return res.redirectWithSuccess(returnUrl, 'Attendance reset', successMessage)
     }
 
-    return res.redirect(`/activities/attendance/activities/${id}/attendance-list`)
+    return res.redirect(returnUrl)
   }
 }

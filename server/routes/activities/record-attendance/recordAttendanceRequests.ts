@@ -3,6 +3,13 @@ export type SessionCancellationRequest = {
   comment?: string
 }
 
+export enum AttendActivityMode {
+  MULTIPLE = 'MULTIPLE',
+  SINGLE = 'SINGLE',
+}
+
 export type RecordAttendanceRequests = {
-  sessionCancellation: SessionCancellationRequest
+  sessionCancellation?: SessionCancellationRequest
+  mode?: AttendActivityMode
+  selectedInstanceIds?: string[]
 }

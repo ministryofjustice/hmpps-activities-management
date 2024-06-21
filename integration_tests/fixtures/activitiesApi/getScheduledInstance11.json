@@ -1,0 +1,116 @@
+{
+  "id": 11,
+  "date": "2023-02-02",
+  "startTime": "14:00",
+  "endTime": "15:00",
+  "cancelled": false,
+  "cancelledTime": null,
+  "cancelledBy": null,
+  "attendances": [
+    {
+      "id": 4,
+      "prisonerNumber": "A7789DY",
+      "attendanceReason": {
+        "code": "ATTENDED",
+        "description": "Attended"
+      },
+      "comment": null,
+      "posted": false,
+      "recordedTime": null,
+      "recordedBy": null,
+      "status": "COMPLETED",
+      "payAmount": null,
+      "bonusAmount": null,
+      "pieces": null,
+      "issuePayment": false,
+      "editable": true
+    },
+    {
+      "id": 3,
+      "prisonerNumber": "G4572UO",
+      "attendanceReason": {
+        "code": "ATTENDED",
+        "description": "Attended"
+      },
+      "comment": null,
+      "posted": false,
+      "recordedTime": null,
+      "recordedBy": null,
+      "status": "COMPLETED",
+      "payAmount": null,
+      "bonusAmount": null,
+      "pieces": null,
+      "issuePayment": false,
+      "editable": true
+    },
+    {
+      "id": 2,
+      "prisonerNumber": "G5897GP",
+      "attendanceReason": null,
+      "comment": null,
+      "posted": false,
+      "recordedTime": null,
+      "recordedBy": null,
+      "status": "WAITING",
+      "payAmount": null,
+      "bonusAmount": null,
+      "pieces": null,
+      "issuePayment": false,
+      "editable": true
+    },
+    {
+      "id": 5,
+      "prisonerNumber": "G7218GI",
+      "attendanceReason": null,
+      "comment": null,
+      "posted": false,
+      "recordedTime": null,
+      "recordedBy": null,
+      "status": "WAITING",
+      "payAmount": null,
+      "bonusAmount": null,
+      "pieces": null,
+      "issuePayment": false,
+      "editable": true
+    }
+  ],
+  "activitySchedule": {
+    "id": 8,
+    "description": "English Level 2",
+    "internalLocation": {
+      "id": 2,
+      "code": "EDU-ROOM-3",
+      "description": "Education - R3"
+    },
+    "capacity": 10,
+    "activity": {
+      "id": 2,
+      "prisonCode": "MDI",
+      "attendanceRequired": true,
+      "inCell": false,
+      "pieceWork": false,
+      "outsideWork": false,
+      "payPerSession": "H",
+      "summary": "English level 2",
+      "description": "A intermediate english course suitable for introduction to the subject",
+      "category": {
+        "id": 1,
+        "code": "EDUCATION",
+        "name": "Education",
+        "description": "Such as classes in English, maths, construction and computer skills"
+      },
+      "riskLevel": null,
+      "paid": true
+    },
+    "slots": [
+      {
+        "id": 8,
+        "startTime": "14:00",
+        "endTime": "15:00",
+        "daysOfWeek": ["Thu"]
+      }
+    ],
+    "startDate": "2022-10-10",
+    "endDate": null
+  }
+}

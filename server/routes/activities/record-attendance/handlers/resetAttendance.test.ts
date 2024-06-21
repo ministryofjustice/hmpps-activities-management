@@ -10,6 +10,7 @@ import ResetAttendanceRoutes, { ResetAttendance } from './resetAttendance'
 import { YesNo } from '../../../../@types/activities'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { AttendActivityMode } from '../recordAttendanceRequests'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -87,38 +88,63 @@ describe('Route Handlers - Reset Attendance', () => {
       when(activitiesService.updateAttendances).mockResolvedValue()
     })
 
-    it('should reset attendance and display success message when reset has been confirmed', async () => {
-      when(activitiesService.getAttendanceDetails).mockResolvedValue(attendance)
-      when(prisonService.getInmateByPrisonerNumber).calledWith('ABC321', res.locals.user).mockResolvedValue(prisoner)
+    describe('Journey is from updating a single activity instance', () => {
+      beforeEach(() => {
+        req.session.recordAttendanceRequests = {
+          mode: AttendActivityMode.SINGLE,
+        }
+      })
 
-      req.body.confirm = YesNo.YES
+      it.each([
+        [AttendActivityMode.SINGLE, '1/attendance-list'],
+        [AttendActivityMode.MULTIPLE, 'attendance-list'],
+      ])(
+        'should reset attendance and display success message when reset has been confirmed and mode = %s',
+        async (mode: AttendActivityMode, url: string) => {
+          req.session.recordAttendanceRequests = { mode }
 
-      await handler.POST(req, res)
+          when(activitiesService.getAttendanceDetails).mockResolvedValue(attendance)
+          when(prisonService.getInmateByPrisonerNumber)
+            .calledWith('ABC321', res.locals.user)
+            .mockResolvedValue(prisoner)
 
-      expect(activitiesService.updateAttendances).toHaveBeenCalledWith(
-        [
-          {
-            id: 1,
-            prisonCode: res.locals.user.activeCaseLoadId,
-            status: AttendanceStatus.WAITING,
-          },
-        ],
-        res.locals.user,
+          req.body.confirm = YesNo.YES
+
+          await handler.POST(req, res)
+
+          expect(activitiesService.updateAttendances).toHaveBeenCalledWith(
+            [
+              {
+                id: 1,
+                prisonCode: res.locals.user.activeCaseLoadId,
+                status: AttendanceStatus.WAITING,
+              },
+            ],
+            res.locals.user,
+          )
+          expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+            `/activities/attendance/activities/${url}`,
+            'Attendance reset',
+            `Attendance for ${prisoner.firstName} ${prisoner.lastName} has been reset`,
+          )
+        },
       )
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/activities/attendance/activities/1/attendance-list',
-        'Attendance reset',
-        `Attendance for ${prisoner.firstName} ${prisoner.lastName} has been reset`,
+
+      it.each([
+        [AttendActivityMode.SINGLE, '1/attendance-list'],
+        [AttendActivityMode.MULTIPLE, 'attendance-list'],
+      ])(
+        'should return back to attendance list page and not reset attendance if not confirmed and mode = %s',
+        async (mode: AttendActivityMode, url: string) => {
+          req.body.confirm = YesNo.NO
+          req.session.recordAttendanceRequests = { mode }
+
+          await handler.POST(req, res)
+
+          expect(activitiesService.updateAttendances).toBeCalledTimes(0)
+          expect(res.redirect).toHaveBeenCalledWith(`/activities/attendance/activities/${url}`)
+        },
       )
-    })
-
-    it('should return back to attendance list page and not reset attendance if not confirmed', async () => {
-      req.body.confirm = YesNo.NO
-
-      await handler.POST(req, res)
-
-      expect(activitiesService.updateAttendances).toBeCalledTimes(0)
-      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/1/attendance-list')
     })
   })
 
