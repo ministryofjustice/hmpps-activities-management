@@ -16,16 +16,12 @@
 
 {% block content %}
     {% set filterOptionsHtml %}
-        {% set categoryFilters = [] %}
-        {% for category in uniqueCategories %}
-            {% set categoryFilters = (categoryFilters.push({
-                value: category,
-                text: category,
-                checked: category in session.attendanceSummaryJourney.categoryFilters
-            }), categoryFilters) %}
-        {% endfor %}
+    {% set categoryFilters = [] %}
+    {% for category in uniqueCategories %}
+        {% set categoryFilters = (categoryFilters.push({value: category, text: category, checked: category in session.attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
+    {% endfor %}
 
-        {{ govukCheckboxes({
+    {{ govukCheckboxes({
             idPrefix: 'categoryFilters',
             name: 'categoryFilters',
             hint: {
@@ -40,11 +36,11 @@
             items: categoryFilters
         }) }}
 
-        <div class="govuk-!-margin-bottom-4">
-            <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
-        </div>
+    <div class="govuk-!-margin-bottom-4">
+        <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
+    </div>
 
-        {{ govukRadios({
+    {{ govukRadios({
             idPrefix: 'reasonFilter',
             name: 'reasonFilter',
             fieldset: {
@@ -72,19 +68,19 @@
             ]
         }) }}
 
-        <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
+    <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
             Apply filters
         </button>
     {% endset %}
-    <div class="moj-filter-layout" data-module="activities-list-filter">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
                     Prisoners suspended or temporarily absent
                     <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
-                </h1>
+            </h1>
 
-                {{ searchInput({
+            {{ searchInput({
                     classes: "search-input--inline-search",
                     input: {
                         id: 'searchTerm',
@@ -106,35 +102,37 @@
                         }
                     }
                 }) }}
-            </div>
-            <div class="govuk-grid-column-one-third govuk-!-text-align-right">
-                <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
-                {{ govukButton({
+        </div>
+        <div class="govuk-grid-column-one-third govuk-!-text-align-right">
+            <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
+            {{ govukButton({
                     text: "Refresh",
                     classes: "govuk-button--blue",
                     attributes: {
                         form: 'filter-form'
                     }
                 }) }}
-            </div>
         </div>
+    </div>
 
-        <form id="filter-form" method="POST" action="update-filters" novalidate>
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-            <div class="moj-filter-layout__filter">
+    <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
+        <div class="moj-filter-layout__filter moj-filter-layout__flex">
+            <form id="filter-form" method="POST" action="update-filters" novalidate>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 {{ mojFilter({
                     heading: {
                         text: 'Filter'
                     },
                     optionsHtml: filterOptionsHtml
                 }) }}
-            </div>
+            </form>
+        </div>
 
-            <div class="moj-filter-layout__content">
-                <div class="moj-action-bar">
-                    <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
-                </div>
-                {{ govukTabs({
+        <div class="moj-filter-layout__content">
+            <div class="moj-action-bar">
+                <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
+            </div>
+            {{ govukTabs({
                     classes: "govuk-tabs--borderless",
                     items: [
                         {
@@ -167,8 +165,7 @@
                         }
                     ]
                 }) }}
-            </div>
-        </form>
+        </div>
     </div>
 {% endblock %}
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
@@ -176,19 +173,21 @@
     {% for suspendedPrisoner in suspendedAttendancesByPrisoner %}
         {% if timeSlot === 'DAY' or timeSlot in suspendedPrisoner.timeSlots %}
             {% set sessions %}
-                {% for session in (suspendedPrisoner.sessions if timeSlot === 'DAY' else suspendedPrisoner.sessions | filter('sessionSlot', timeSlot)) %}
-                    <div class="govuk-body-s govuk-!-margin-0">
-                        <div class="govuk-!-margin-right-2">
-                            <div class="govuk-!-font-weight-bold">
-                                <a href="/activities/attendance/activities/{{ session.sessionId }}/attendance-list"
+            {% for session in (suspendedPrisoner.sessions if timeSlot === 'DAY' else 
+                suspendedPrisoner.sessions | filter('sessionSlot', timeSlot)
+            ) %}
+                <div class="govuk-body-s govuk-!-margin-0">
+                    <div class="govuk-!-margin-right-2">
+                        <div class="govuk-!-font-weight-bold">
+                            <a href="/activities/attendance/activities/{{ session.sessionId }}/attendance-list"
                                    class="govuk-link govuk-link--no-visited-state" target='_blank'>{{ session.sessionSummary }}</a>
-                            </div>
-                            <div>{{ session.sessionStartTime }} - {{ session.sessionEndTime }}</div>
-                            <div>{{ session.sessionLocation }}</div>
                         </div>
+                        <div>{{ session.sessionStartTime }} - {{ session.sessionEndTime }}</div>
+                        <div>{{ session.sessionLocation }}</div>
                     </div>
-                    {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
-                {% endfor %}
+                </div>
+                {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
+            {% endfor %}
             {% endset %}
             {% set suspendedPrisonersRows = (suspendedPrisonersRows.push([
                 {

@@ -97,8 +97,8 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <div class="moj-filter-layout" data-module="activities-list-filter">
-                <div class="moj-filter-layout__filter">
+            <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
+                <div class="moj-filter-layout__filter moj-filter-layout__flex">
                     <form id="filter-form" method="POST" action="update-filters" novalidate>
                         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                         {{ mojFilter({
