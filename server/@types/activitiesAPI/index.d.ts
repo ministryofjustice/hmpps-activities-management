@@ -5996,6 +5996,7 @@ export interface components {
      *   records. Supports management level views of appointment attendance and statistics.
      */
     AppointmentAttendanceSummary: {
+      eventTierType: import('/Users/natalie.clamp/dev/hmpps-activities-management/server/enum/eventTiers').default
       /**
        * Format: int64
        * @description The internally generated identifier for this appointment

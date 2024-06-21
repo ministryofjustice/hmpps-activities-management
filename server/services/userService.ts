@@ -45,7 +45,10 @@ export default class UserService {
           if (u === SERVICE_AS_USERNAME) {
             return { username: SERVICE_AS_USERNAME, name: SERVICE_AS_USERNAME } as UserDetails
           }
-          return this.manageUsersApiClient.getUserByUsername(u, user)
+          return this.manageUsersApiClient.getUserByUsername(u, user).catch(e => {
+            if (e.status === 404) return { username: u, name: 'External user' } as UserDetails
+            throw e
+          })
         }),
     )
     return new Map(users.map(u => [u.username, u]))

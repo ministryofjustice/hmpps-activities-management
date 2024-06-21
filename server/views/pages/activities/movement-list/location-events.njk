@@ -79,8 +79,8 @@
         </button>
     {% endset %}
 
-    <div class="moj-filter-layout govuk-!-margin-0 unlock-list" data-module="activities-list-filter">
-            <div class="moj-filter-layout__filter govuk-!-display-none-print">
+    <div class="moj-filter-layout moj-filter-layout__flex govuk-!-margin-0 unlock-list" data-module="activities-list-filter">
+            <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
         <form id="filter-form" method="POST" action="update-filters" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ mojFilter({

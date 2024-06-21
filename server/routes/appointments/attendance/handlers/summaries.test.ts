@@ -84,6 +84,9 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           attendedPercentage: 0,
           notAttendedPercentage: 0,
           notRecordedPercentage: 0,
+          foundationCount: 0,
+          tier1Count: 0,
+          tier2Count: 0,
         },
         prisonersDetails,
       })
@@ -138,6 +141,9 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           attendedPercentage: 50,
           notAttendedPercentage: 30,
           notRecordedPercentage: 20,
+          foundationCount: 3,
+          tier1Count: 3,
+          tier2Count: 3,
         },
         prisonersDetails,
       })
@@ -209,6 +215,9 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           attendedPercentage: 43,
           notAttendedPercentage: 29,
           notRecordedPercentage: 29,
+          foundationCount: 2,
+          tier1Count: 2,
+          tier2Count: 2,
         },
         prisonersDetails,
       })
@@ -307,6 +316,9 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           notAttendedPercentage: 25,
           notRecorded: 1,
           notRecordedPercentage: 25,
+          foundationCount: 2,
+          tier1Count: 2,
+          tier2Count: 2,
         },
         prisonersDetails: expectedPrisonersDetails,
       })
