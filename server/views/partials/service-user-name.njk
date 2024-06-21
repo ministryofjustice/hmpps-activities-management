@@ -3,6 +3,8 @@
     DPS user
   {% elseif user.name === ServiceAsUsername %}
     {{ user.name }}
+  {% elseif user.name === "External user" %}
+    {{ user.name }}
   {% else %}
     {{ user.username + " - " + (user.name | toTitleCase | initialiseName or "Unknown user") }}
   {% endif %}

@@ -52,7 +52,7 @@
     {% set resultsTableRows = (resultsTableRows.push([
         {
             text: result.startTime + (" to " + result.endTime if result.endTime),
-            attributes: { 'data-qa': 'result-time-' + index }
+            attributes: { 'data-qa': 'result-time-' + index, 'data-sort-value': result.startTime | parseDate('HH:mm') | formatDate("HHmm") }
         }, {
             text: result.appointmentName,
             attributes: { 'data-qa': 'result-appointment-name-' + index }
