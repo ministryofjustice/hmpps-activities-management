@@ -33,7 +33,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <div class="moj-filter-layout" data-module="activities-list-filter">
-        <div class="moj-filter-layout__filter">
+        <div class="moj-filter-layout__filter moj-filter-layout__filter--small">
           <form id="filter-form" method="POST" action="update-filters" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
             {{ mojFilter({
@@ -48,37 +48,93 @@
           <div class="moj-action-bar">
             <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
           </div>
-            {{ stat({
+          {{ stat({
           heading: "Attended",
-          number: 100,
+          number: 70,
           visuallyHiddenText: "prisoners, which is",
-          percentage: 100,
+          percentage: 70,
+          width: 'stat--small',
           link: {
             href: '#',
             text: 'All attended'
           }
         }) }}
-            {{ stat({
+          {{ stat({
           heading: "Not attended",
           number: 20,
           visuallyHiddenText: "prisoners, which is",
           percentage: 20,
+          width: 'stat--small',
           link: {
             href: '#',
             text: 'All not attended'
           }
         }) }}
-                    {{ stat({
+          {{ stat({
           heading: "Not recorded yet",
-          number: 1,
+          number: 10,
           visuallyHiddenText: "prisoners, which is",
-          percentage: 1,
+          percentage: 10,
+          width: 'stat--small',
           link: {
             href: '#',
             text: 'All not recorded yet'
           }
         }) }}
 
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+        <h3 class="govuk-body-l">Attendance by tier</h3>
+        <p class="govuk-body-l">Attendances recorded at appointments in eachtier.</p>
+
+        {{ stat({
+          heading: "Tier 1",
+          number: 50,
+          visuallyHiddenText: "prisoners, which is",
+          percentage: 50,
+          width: 'stat--small',
+          link: {
+            href: '#',
+            text: 'All tier 1'
+          }
+        }) }}
+          {{ stat({
+          heading: "Tier 2",
+          number: 30,
+          visuallyHiddenText: "prisoners, which is",
+          percentage: 30,
+          width: 'stat--small',
+          link: {
+            href: '#',
+            text: 'All tier 2'
+          }
+        }) }}
+          {{ stat({
+          heading: "Routine (also called 'foundational')",
+          number: 20,
+          visuallyHiddenText: "prisoners, which is",
+          percentage: 20,
+          width: 'stat--small',
+          link: {
+            href: '#',
+            text: 'All routine'
+          }
+        }) }}
+
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+        <h3 class="govuk-body-l">Cancelled appointments</h3>
+
+          {{ stat({
+          heading: "Cancelled appointments",
+          number: 12,
+          visuallyHiddenText: "prisoners, which is",
+          width: 'stat--small',
+          link: {
+            href: '#',
+            text: 'All cancelled'
+          }
+        }) }}
 
         </div>
       </div>
