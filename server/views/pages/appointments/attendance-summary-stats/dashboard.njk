@@ -3,13 +3,65 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "components/stat.njk" import stat %}
 
 {% set pageTitle = "Appointments attendance summary" %}
 {% set pageId = 'appointment-attendance-summary-stats-dashboard' %}
 {% set hardBackLinkText = "Back to choose a date" %}
 {% set hardBackLinkHref = "/appointments/attendance-summary/select-date" %}
+
+{% set otherDateHintHtml %}
+  <div>For example {{ exampleDatePickerDate() }}</div>
+{% endset %}
+
+{% set appointmentNameOptions = [{ value: "", text: "" }] %}
+{% for category in categories %}
+    {% set appointmentNameOptions = (appointmentNameOptions.push({
+        text: category.description,
+        value: category.code
+    }), appointmentNameOptions) %}
+
+{% endfor %}
+
+{% set filterOptionsHtml %}
+    {{
+      hmppsDatePicker({
+        id: 'date',
+        name: 'date',
+        classes: 'hmpps-datepicker--fixed-width',
+        label: {
+            text: 'Date',
+            classes: 'govuk-!-font-weight-bold'
+        },
+        hint: { html: otherDateHintHtml },
+        errorMessage: validationErrors | findError('date'),
+        value: date | isoDateToDatePickerDate
+      })
+    }}
+    {{ govukSelect({
+      id: "appointmentName",
+      name: "appointmentName",
+      label: {
+          text: "Appointment name",
+          classes: "govuk-label--s"
+      },
+      errorMessage: validationErrors | findError('appointmentName'),
+      items: appointmentNameOptions,
+      value: appointmentName
+    }) }}
+    {{ govukInput({
+      label: {
+        text: "Appointment custom name",
+        classes: "govuk-label--s"
+      },
+      id: "customAppointmentName",
+      name: "customAppointmentName"
+    }) }}
+
+{% endset %}
 
 {% block content %}
   <div class="govuk-grid-row">
@@ -32,7 +84,7 @@
   </div>
   <div class="moj-filter-layout" data-module="activities-list-filter">
     <div class="moj-filter-layout__filter moj-filter-layout__filter--small">
-      <form id="filter-form" method="POST" action="update-filters" novalidate>
+      <form id="filter-form" method="POST" novalidate>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
         {{ mojFilter({
             heading: {
@@ -55,6 +107,7 @@
           visuallyHiddenText: "prisoners, which is",
           percentage: attendanceSummary.attendedPercentage,
           width: 'stat--small',
+          forceDisplay: true,
           link: {
             href: '#',
             text: 'All attended'
@@ -66,6 +119,7 @@
           visuallyHiddenText: "prisoners, which is",
           percentage: attendanceSummary.notAttendedPercentage,
           width: 'stat--small',
+          forceDisplay: true,
           link: {
             href: '#',
             text: 'All not attended'
@@ -77,6 +131,7 @@
           visuallyHiddenText: "prisoners, which is",
           percentage: attendanceSummary.notRecordedPercentage,
           width: 'stat--small',
+          forceDisplay: true,
           link: {
             href: '#',
             text: 'All not recorded yet'
@@ -96,6 +151,7 @@
           visuallyHiddenText: "prisoners, which is",
           percentage: 1,
           width: 'stat--small',
+          forceDisplay: true,
           link: {
             href: '#',
             text: 'All tier 1'
@@ -107,6 +163,7 @@
           visuallyHiddenText: "prisoners, which is",
           percentage: 1,
           width: 'stat--small',
+          forceDisplay: true,
           link: {
             href: '#',
             text: 'All tier 2'
@@ -118,6 +175,7 @@
           visuallyHiddenText: "prisoners, which is",
           percentage: 1,
           width: 'stat--med',
+          forceDisplay: true,
           link: {
             href: '#',
             text: 'All routine'
@@ -134,6 +192,7 @@
           number: cancelledCount,
           visuallyHiddenText: "prisoners, which is",
           width: 'stat--med',
+          forceDisplay: true,
           link: {
             href: '#',
             text: 'All cancelled'
@@ -145,3 +204,7 @@
     </div>
 
     {% endblock %}
+
+{% block meta %}
+    <meta name="autocompleteElements" content="appointmentName"/>
+{% endblock %}

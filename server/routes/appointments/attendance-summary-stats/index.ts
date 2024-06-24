@@ -18,6 +18,7 @@ export default function Index({ activitiesService }: Services): Router {
   get('/select-date', selectDateRoutes.GET)
   post('/select-date', selectDateRoutes.POST, SelectDate)
   get('/dashboard', dashboardRoutes.GET)
+  post('/dashboard', dashboardRoutes.POST)
 
   return router
 }

@@ -30,9 +30,9 @@ const getAttendanceSummary = (summaries: AppointmentAttendanceSummary[]) => {
 }
 
 const getEventTierCounts = (summaries: AppointmentAttendanceSummary[]) => {
-  const tier1 = summaries.map(s => s.eventTierType === EventTier.TIER_1)
-  const tier2 = summaries.map(s => s.eventTierType === EventTier.TIER_2)
-  const foundation = summaries.map(s => s.eventTierType === EventTier.FOUNDATION)
+  const tier1 = summaries.filter(s => s.eventTierType === EventTier.TIER_1)
+  const tier2 = summaries.filter(s => s.eventTierType === EventTier.TIER_2)
+  const foundation = summaries.filter(s => s.eventTierType === EventTier.FOUNDATION)
   return {
     tier1Count: tier1.length,
     tier2Count: tier2.length,
