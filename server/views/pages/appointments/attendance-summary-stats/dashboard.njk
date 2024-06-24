@@ -58,9 +58,12 @@
         classes: "govuk-label--s"
       },
       id: "customAppointmentName",
-      name: "customAppointmentName"
+      name: "customAppointmentName",
+      value: customAppointmentName
     }) }}
-
+    <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button" type="submit">
+      Apply filters
+    </button>
 {% endset %}
 
 {% block content %}
@@ -78,7 +81,7 @@
     </div>
     <div class="govuk-grid-column-full">
       <h2 class="govuk-body-l">{{ attendanceSummary.attendeeCount }} attendees for 
-          <a href="/appointments/attendance/summaries?dateOption=other&date={{ date | formatDate('yyyy-MM-dd') }}">{{ summariesNotCancelled | length }} appointment{{ "s" if summariesNotCancelled | length != 1 }}</a>
+          <a href="/appointments/attendance/summaries?date={{ date | formatDate('yyyy-MM-dd') }}&appointmentName={{appointmentName}}&customAppointmentName={{customAppointmentName}}">{{ summariesNotCancelled | length }} appointment{{ "s" if summariesNotCancelled | length != 1 }}</a>
       </h2>
     </div>
   </div>
@@ -94,7 +97,7 @@
         }) }}
       </form>
     </div>
-    <div class="moj-filter-layout__content">
+    <div class="moj-filter-layout__content moj-filter-layout__content--stats">
         <div class="moj-action-bar">
           <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
         </div>
