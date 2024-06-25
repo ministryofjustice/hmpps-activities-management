@@ -2830,10 +2830,10 @@ export interface components {
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -6456,10 +6456,10 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -7168,6 +7168,23 @@ export interface components {
        * @example true
        */
       attendanceRequired: boolean
+    }
+    /** @description attendee and appointment details for a given status, ie not records */
+    AppointmentAttendeeByStatus: {
+      prisonerNumber: string
+      /** Format: int64 */
+      bookingId: number
+      /** Format: int64 */
+      appointmentId: number
+      /** Format: int64 */
+      appointmentAttendeeId: number
+      appointmentName: string
+      /** Format: date */
+      startDate: string
+      /** Format: partial-time */
+      startTime: string
+      /** Format: partial-time */
+      endTime: string
     }
     /** @description
      *       Contains the summary information of a limited set the appointment properties along with counts of appointment attendance
@@ -11434,7 +11451,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['AppointmentAttendanceSummary']
+          'application/json': components['schemas']['AppointmentAttendeeByStatus']
         }
       }
       /** @description Invalid request */
