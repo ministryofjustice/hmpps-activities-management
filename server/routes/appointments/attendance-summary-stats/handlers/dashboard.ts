@@ -13,14 +13,18 @@ export default class DashboardRoutes {
     if (!isValidIsoDate(date as string)) {
       return res.redirect(`?date=${formatIsoDate(new Date())}`)
     }
-    const categories = await this.activitiesService.getAppointmentCategories(user)
-    const summaries = await this.activitiesService.getAppointmentAttendanceSummaries(
-      user.activeCaseLoadId,
-      new Date(date as string),
-      user,
-      appointmentName as string,
-      customAppointmentName as string,
-    )
+
+    const [categories, summaries] = await Promise.all([
+      this.activitiesService.getAppointmentCategories(user),
+      this.activitiesService.getAppointmentAttendanceSummaries(
+        user.activeCaseLoadId,
+        new Date(date as string),
+        user,
+        appointmentName as string,
+        customAppointmentName as string,
+      ),
+    ])
+
     const summariesNotCancelled = summaries.filter(s => !s.isCancelled)
     const attendanceSummary = getAttendanceSummary(summariesNotCancelled)
 
@@ -29,7 +33,7 @@ export default class DashboardRoutes {
       categories,
       summariesNotCancelled,
       attendanceSummary,
-      cancelledCount: summaries.filter(s => s.isCancelled).length,
+      cancelledCount: summaries.length - summariesNotCancelled.length,
       appointmentName: appointmentName ?? '',
       customAppointmentName: customAppointmentName ?? '',
     })
