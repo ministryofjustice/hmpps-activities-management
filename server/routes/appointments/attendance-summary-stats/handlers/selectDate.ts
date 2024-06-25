@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsIn, ValidateIf } from 'class-validator'
 import DateOption from '../../../../enum/dateOption'
-import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import { dateFromDateOption, formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../validators/isValidDate'
 
 export class SelectDate {
@@ -25,8 +25,10 @@ export default class SelectDateRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { dateOption, date }: SelectDate = req.body
 
-    const dateQuery = dateOption === DateOption.OTHER ? `&date=${formatIsoDate(date)}` : ''
+    const dateOptionDate = dateFromDateOption(dateOption as DateOption)
+    const dateQuery =
+      dateOption === DateOption.OTHER ? `date=${formatIsoDate(date)}` : `date=${formatIsoDate(dateOptionDate)}`
 
-    return res.redirect(`dashboard?dateOption=${dateOption}${dateQuery}`)
+    return res.redirect(`dashboard?${dateQuery}`)
   }
 }

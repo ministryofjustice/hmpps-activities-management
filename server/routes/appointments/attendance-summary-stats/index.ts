@@ -3,8 +3,9 @@ import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import SelectDateRoutes, { SelectDate } from './handlers/selectDate'
 import DashboardRoutes from './handlers/dashboard'
+import { Services } from '../../../services'
 
-export default function Index(): Router {
+export default function Index({ activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -12,11 +13,12 @@ export default function Index(): Router {
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const selectDateRoutes = new SelectDateRoutes()
-  const dashboardRoutes = new DashboardRoutes()
+  const dashboardRoutes = new DashboardRoutes(activitiesService)
 
   get('/select-date', selectDateRoutes.GET)
   post('/select-date', selectDateRoutes.POST, SelectDate)
   get('/dashboard', dashboardRoutes.GET)
+  post('/dashboard', dashboardRoutes.POST)
 
   return router
 }

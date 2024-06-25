@@ -847,6 +847,8 @@ describe('Activities Service', () => {
         prisonCode,
         formatIsoDate(date),
         user,
+        null,
+        null,
       )
     })
   })

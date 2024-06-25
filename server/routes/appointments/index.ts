@@ -33,7 +33,7 @@ export default function routes(services: Services): Router {
   router.use('/:appointmentId(\\d+)', appointmentDetailsRoutes(services))
 
   // Appointments attendance summary statistics routes
-  router.use('/attendance-summary', appointmentAttendanceSummaryStatistics())
+  router.use('/attendance-summary', appointmentAttendanceSummaryStatistics(services))
 
   // Create appointment journey routes. These are the starting points for the three appointment type creation journeys.
   // They use the startNewJourney middleware which adds a unique journeyId into the url after the /create/ path segment
