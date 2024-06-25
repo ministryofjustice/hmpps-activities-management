@@ -1,6 +1,6 @@
 {% macro stat(params) %}
     {% if params.number > 0 or params.forceDisplay %}
-        <div class="{% if params.width %} {{ params.width }} {% else %} govuk-grid-column-one-quarter {% endif %} govuk-!-margin-bottom-3">
+        <div class="{% if params.width %} {{ params.width }} {% else %} govuk-grid-column-one-quarter {% endif %} govuk-!-margin-bottom-3" {% if params.dataQa %} data-qa="{{ params.dataQa }}" {% endif %}>
             <div class="govuk-hint govuk-!-margin-bottom-0">{{ params.heading }}</div>
             <span class="govuk-heading-xl govuk-!-margin-0 govuk-!-padding-0 ">
                 <span>{{ params.number }}</span>

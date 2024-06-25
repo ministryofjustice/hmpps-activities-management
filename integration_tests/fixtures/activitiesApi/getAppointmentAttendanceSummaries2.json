@@ -1,0 +1,281 @@
+[
+  {
+    "id": 34235,
+    "prisonCode": "MDI",
+    "appointmentName": "Dave's Worshipping (Chaplaincy)",
+    "internalLocation": { "id": 65999, "prisonCode": "MDI", "description": "Multi Faith" },
+    "startDate": "2024-06-24",
+    "startTime": "11:00",
+    "endTime": "13:30",
+    "isCancelled": false,
+    "attendeeCount": 6,
+    "attendedCount": 0,
+    "nonAttendedCount": 0,
+    "notRecordedCount": 6,
+    "attendees": [
+      {
+        "appointmentAttendeeId": 223716,
+        "prisonerNumber": "G8438VW",
+        "bookingId": 1131145
+      },
+      {
+        "appointmentAttendeeId": 223717,
+        "prisonerNumber": "G5852GQ",
+        "bookingId": 550291
+      },
+      {
+        "appointmentAttendeeId": 223718,
+        "prisonerNumber": "G0256VF",
+        "bookingId": 1099208
+      },
+      {
+        "appointmentAttendeeId": 223719,
+        "prisonerNumber": "G8657VC",
+        "bookingId": 1068568
+      },
+      {
+        "appointmentAttendeeId": 223720,
+        "prisonerNumber": "G0234GE",
+        "bookingId": 95379
+      },
+      {
+        "appointmentAttendeeId": 223721,
+        "prisonerNumber": "G4085VK",
+        "bookingId": 1088365
+      }
+    ],
+    "eventTierType": "TIER_2"
+  },
+  {
+    "id": 33645,
+    "prisonCode": "MDI",
+    "appointmentName": "Candle Lighting (Chaplaincy)",
+    "internalLocation": { "id": 66000, "prisonCode": "MDI", "description": "Chapel" },
+    "startDate": "2024-06-24",
+    "startTime": "10:00",
+    "endTime": "11:00",
+    "isCancelled": false,
+    "attendeeCount": 2,
+    "attendedCount": 0,
+    "nonAttendedCount": 0,
+    "notRecordedCount": 2,
+    "attendees": [
+      {
+        "appointmentAttendeeId": 220736,
+        "prisonerNumber": "G0234GE",
+        "bookingId": 95379
+      },
+      {
+        "appointmentAttendeeId": 220737,
+        "prisonerNumber": "G4085VK",
+        "bookingId": 1088365
+      }
+    ],
+    "eventTierType": "TIER_2"
+  },
+  {
+    "id": 33791,
+    "prisonCode": "MDI",
+    "appointmentName": "Candle Burning (Chaplaincy)",
+    "internalLocation": { "id": 65999, "prisonCode": "MDI", "description": "Multi Faith" },
+    "startDate": "2024-06-24",
+    "startTime": "14:00",
+    "endTime": "14:30",
+    "isCancelled": false,
+    "attendeeCount": 6,
+    "attendedCount": 0,
+    "nonAttendedCount": 0,
+    "notRecordedCount": 6,
+    "attendees": [
+      {
+        "appointmentAttendeeId": 221605,
+        "prisonerNumber": "G8438VW",
+        "bookingId": 1131145
+      },
+      {
+        "appointmentAttendeeId": 221607,
+        "prisonerNumber": "G5852GQ",
+        "bookingId": 550291
+      },
+      {
+        "appointmentAttendeeId": 221608,
+        "prisonerNumber": "G0256VF",
+        "bookingId": 1099208
+      },
+      {
+        "appointmentAttendeeId": 221609,
+        "prisonerNumber": "G0234GE",
+        "bookingId": 95379
+      },
+      {
+        "appointmentAttendeeId": 221610,
+        "prisonerNumber": "G8657VC",
+        "bookingId": 1068568
+      },
+      {
+        "appointmentAttendeeId": 221611,
+        "prisonerNumber": "G0529UD",
+        "bookingId": 1152397
+      }
+    ],
+    "eventTierType": "FOUNDATION"
+  },
+  {
+    "id": 33719,
+    "prisonCode": "MDI",
+    "appointmentName": "Chaplaincy",
+    "internalLocation": { "id": 65999, "prisonCode": "MDI", "description": "Multi Faith" },
+    "startDate": "2024-06-24",
+    "startTime": "10:00",
+    "endTime": "10:30",
+    "isCancelled": false,
+    "attendeeCount": 5,
+    "attendedCount": 0,
+    "nonAttendedCount": 0,
+    "notRecordedCount": 5,
+    "attendees": [
+      {
+        "appointmentAttendeeId": 221178,
+        "prisonerNumber": "G8438VW",
+        "bookingId": 1131145
+      },
+      {
+        "appointmentAttendeeId": 221179,
+        "prisonerNumber": "G5852GQ",
+        "bookingId": 550291
+      },
+      {
+        "appointmentAttendeeId": 221181,
+        "prisonerNumber": "G0256VF",
+        "bookingId": 1099208
+      },
+      {
+        "appointmentAttendeeId": 221182,
+        "prisonerNumber": "G8657VC",
+        "bookingId": 1068568
+      },
+      {
+        "appointmentAttendeeId": 221183,
+        "prisonerNumber": "G0234GE",
+        "bookingId": 95379
+      }
+    ],
+    "eventTierType": "TIER_2"
+  },
+  {
+    "id": 33578,
+    "prisonCode": "MDI",
+    "appointmentName": "Dave's Slapping Session (Counselling Session)",
+    "internalLocation": null,
+    "startDate": "2024-06-24",
+    "startTime": "10:00",
+    "endTime": "11:00",
+    "isCancelled": false,
+    "attendeeCount": 2,
+    "attendedCount": 0,
+    "nonAttendedCount": 0,
+    "notRecordedCount": 2,
+    "attendees": [
+      {
+        "appointmentAttendeeId": 220563,
+        "prisonerNumber": "G0256VF",
+        "bookingId": 1099208
+      },
+      {
+        "appointmentAttendeeId": 220663,
+        "prisonerNumber": "G3042UD",
+        "bookingId": 1149218
+      }
+    ],
+    "eventTierType": "TIER_1"
+  },
+  {
+    "id": 33909,
+    "prisonCode": "MDI",
+    "appointmentName": "Candle Burning (Chaplaincy)",
+    "internalLocation": { "id": 65999, "prisonCode": "MDI", "description": "Multi Faith" },
+    "startDate": "2024-06-24",
+    "startTime": "10:00",
+    "endTime": "10:30",
+    "isCancelled": false,
+    "attendeeCount": 6,
+    "attendedCount": 0,
+    "nonAttendedCount": 0,
+    "notRecordedCount": 6,
+    "attendees": [
+      {
+        "appointmentAttendeeId": 222425,
+        "prisonerNumber": "G8438VW",
+        "bookingId": 1131145
+      },
+      {
+        "appointmentAttendeeId": 222427,
+        "prisonerNumber": "G5852GQ",
+        "bookingId": 550291
+      },
+      {
+        "appointmentAttendeeId": 222428,
+        "prisonerNumber": "G0256VF",
+        "bookingId": 1099208
+      },
+      {
+        "appointmentAttendeeId": 222429,
+        "prisonerNumber": "G5857UE",
+        "bookingId": 954303
+      },
+      {
+        "appointmentAttendeeId": 222430,
+        "prisonerNumber": "G0234GE",
+        "bookingId": 95379
+      },
+      {
+        "appointmentAttendeeId": 222431,
+        "prisonerNumber": "G8657VC",
+        "bookingId": 1068568
+      }
+    ],
+    "eventTierType": "TIER_1"
+  },
+  {
+    "id": 32641,
+    "prisonCode": "MDI",
+    "appointmentName": "Monday Worship (Chaplaincy)",
+    "internalLocation": { "id": 66000, "prisonCode": "MDI", "description": "Chapel" },
+    "startDate": "2024-06-24",
+    "startTime": "10:30",
+    "endTime": "11:00",
+    "isCancelled": true,
+    "attendeeCount": 5,
+    "attendedCount": 0,
+    "nonAttendedCount": 0,
+    "notRecordedCount": 5,
+    "attendees": [
+      {
+        "appointmentAttendeeId": 218971,
+        "prisonerNumber": "G0256VF",
+        "bookingId": 1099208
+      },
+      {
+        "appointmentAttendeeId": 218972,
+        "prisonerNumber": "G8657VC",
+        "bookingId": 1068568
+      },
+      {
+        "appointmentAttendeeId": 218973,
+        "prisonerNumber": "G5852GQ",
+        "bookingId": 550291
+      },
+      {
+        "appointmentAttendeeId": 218974,
+        "prisonerNumber": "G0234GE",
+        "bookingId": 95379
+      },
+      {
+        "appointmentAttendeeId": 218975,
+        "prisonerNumber": "G8438VW",
+        "bookingId": 1131145
+      }
+    ],
+    "eventTierType": "TIER_2"
+  }
+]

@@ -80,7 +80,7 @@
       }) }}
     </div>
     <div class="govuk-grid-column-full">
-      <h2 class="govuk-body-l">{{ attendanceSummary.attendeeCount }} attendees for 
+      <h2 class="govuk-body-l" data-qa="appointmentsNotCancelledTotal">{{ attendanceSummary.attendeeCount }} attendees for 
           <a href="/appointments/attendance/summaries?date={{ date | formatDate('yyyy-MM-dd') }}&appointmentName={{appointmentName}}&customAppointmentName={{customAppointmentName}}">{{ summariesNotCancelled | length }} appointment{{ "s" if summariesNotCancelled | length != 1 }}</a>
       </h2>
     </div>
@@ -102,7 +102,7 @@
           <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
         </div>
 
-      <div class="">
+      <div>
         <div class="govuk-grid-row govuk-!-margin-left-1">
         {{ stat({
           heading: "Attended",
@@ -111,6 +111,7 @@
           percentage: attendanceSummary.attendedPercentage,
           width: 'stat--small',
           forceDisplay: true,
+          dataQa: 'attended',
           link: {
             href: '#',
             text: 'All attended'
@@ -123,6 +124,7 @@
           percentage: attendanceSummary.notAttendedPercentage,
           width: 'stat--small',
           forceDisplay: true,
+          dataQa: 'notAttended',
           link: {
             href: '#',
             text: 'All not attended'
@@ -134,6 +136,7 @@
           visuallyHiddenText: "prisoners, which is",
           percentage: attendanceSummary.notRecordedPercentage,
           width: 'stat--small',
+          dataQa: 'notRecorded',
           forceDisplay: true,
           link: {
             href: '#',
@@ -154,6 +157,7 @@
           visuallyHiddenText: "prisoners, which is",
           percentage: 1,
           width: 'stat--small',
+          dataQa: 'tier1',
           forceDisplay: true,
           link: {
             href: '#',
@@ -167,6 +171,7 @@
           percentage: 1,
           width: 'stat--small',
           forceDisplay: true,
+          dataQa: 'tier2',
           link: {
             href: '#',
             text: 'All tier 2'
@@ -179,6 +184,7 @@
           percentage: 1,
           width: 'stat--med',
           forceDisplay: true,
+          dataQa: 'foundational',
           link: {
             href: '#',
             text: 'All routine'
@@ -196,6 +202,7 @@
           visuallyHiddenText: "prisoners, which is",
           width: 'stat--med',
           forceDisplay: true,
+          dataQa: 'cancelled',
           link: {
             href: '#',
             text: 'All cancelled'

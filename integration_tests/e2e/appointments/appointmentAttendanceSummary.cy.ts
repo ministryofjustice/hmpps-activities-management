@@ -6,12 +6,40 @@ import AppointmentsManagementPage from '../../pages/appointments/appointmentsMan
 import SelectDatePage from '../../pages/appointments/appointments-attendance-summary/selectDate'
 import DashboardPage from '../../pages/appointments/appointments-attendance-summary/dashboard'
 import { formatDate } from '../../../server/utils/utils'
+import getCategories from '../../fixtures/activitiesApi/getAppointmentCategories.json'
+import getAppointmentAttendanceSummaries1 from '../../fixtures/activitiesApi/getAppointmentAttendanceSummaries1.json'
+import getAppointmentAttendanceSummaries2 from '../../fixtures/activitiesApi/getAppointmentAttendanceSummaries2.json'
 
 context.skip('Appointment attendancy summary statistics', () => {
+  const now = new Date()
+  const todayFormatted = formatDate(now, 'yyyy-MM-dd')
+  const yesterday = subDays(new Date(), 1)
+  const yesterdayFormatted = formatDate(yesterday, 'yyyy-MM-dd')
+  const yesterdayFormattedLong = formatDate(yesterday)
+  const tomorrow = addDays(new Date(), 1)
+  const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
+  const tomorrowFormattedLong = formatDate(tomorrow)
+
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.signIn()
+    cy.stubEndpoint('GET', '/appointment-categories', getCategories)
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/attendance-summaries\\?date=${todayFormatted}`,
+      getAppointmentAttendanceSummaries1,
+    )
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/attendance-summaries\\?date=${yesterdayFormatted}`,
+      getAppointmentAttendanceSummaries2,
+    )
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/attendance-summaries\\?date=${tomorrowFormatted}`,
+      getAppointmentAttendanceSummaries1,
+    )
   })
 
   it('should follow validation rules', () => {
@@ -43,9 +71,16 @@ context.skip('Appointment attendancy summary statistics', () => {
     cy.location().should(loc => {
       expect(loc.pathname).to.eq('/appointments/attendance-summary/dashboard')
     })
-    const now = new Date()
-    const today = formatDate(now)
-    dashboardPage.dateCaption().contains(today)
+    dashboardPage.dateCaption().contains(formatDate(now))
+    dashboardPage.appointmentsNotCancelledTotal().contains('38 attendees for 8 appointments')
+
+    dashboardPage.attendedStat().contains('17')
+    dashboardPage.notAttendedStat().contains('9')
+    dashboardPage.notRecordedStat().contains('12')
+    dashboardPage.tier1Stat().contains('2')
+    dashboardPage.tier2Stat().contains('4')
+    dashboardPage.foundationalStat().contains('2')
+    dashboardPage.cancelledStat().contains('0')
   })
   it('should render the select date page - yesterday', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -62,9 +97,15 @@ context.skip('Appointment attendancy summary statistics', () => {
     cy.location().should(loc => {
       expect(loc.pathname).to.eq('/appointments/attendance-summary/dashboard')
     })
-    const yesterday = subDays(new Date(), 1)
-    const yesterdayFormatted = formatDate(yesterday)
-    dashboardPage.dateCaption().contains(yesterdayFormatted)
+    dashboardPage.dateCaption().contains(yesterdayFormattedLong)
+    dashboardPage.appointmentsNotCancelledTotal().contains('27 attendees for 6 appointments')
+    dashboardPage.attendedStat().contains('0')
+    dashboardPage.notAttendedStat().contains('0')
+    dashboardPage.notRecordedStat().contains('27')
+    dashboardPage.tier1Stat().contains('2')
+    dashboardPage.tier2Stat().contains('3')
+    dashboardPage.foundationalStat().contains('1')
+    dashboardPage.cancelledStat().contains('1')
   })
   it('should render the select date page - chosen date', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -73,7 +114,6 @@ context.skip('Appointment attendancy summary statistics', () => {
     const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
     appointmentsManagementPage.viewAppointmentsAttendanceSummaryCard().click()
 
-    const tomorrow = addDays(new Date(), 1)
     const selectDatePage = Page.verifyOnPage(SelectDatePage)
     selectDatePage.dateChoice().find('input[value="other"]').check()
     selectDatePage.selectDatePickerDate(tomorrow)
@@ -84,7 +124,6 @@ context.skip('Appointment attendancy summary statistics', () => {
       expect(loc.pathname).to.eq('/appointments/attendance-summary/dashboard')
     })
 
-    const tomorrowFormatted = formatDate(tomorrow)
-    dashboardPage.dateCaption().contains(tomorrowFormatted)
+    dashboardPage.dateCaption().contains(tomorrowFormattedLong)
   })
 })
