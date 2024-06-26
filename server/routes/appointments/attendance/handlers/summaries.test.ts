@@ -87,6 +87,9 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           foundationCount: 0,
           tier1Count: 0,
           tier2Count: 0,
+          foundationalPercentage: 0,
+          tier1Percentage: 0,
+          tier2Percentage: 0,
         },
         prisonersDetails,
       })
@@ -106,6 +109,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           nonAttendedCount: 0,
           notRecordedCount: 1,
           attendees: [],
+          eventTierType: 'TIER_1',
         },
         {
           attendeeCount: 3,
@@ -113,6 +117,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           nonAttendedCount: 1,
           notRecordedCount: 0,
           attendees: [],
+          eventTierType: 'TIER_1',
         },
         {
           attendeeCount: 6,
@@ -120,6 +125,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           nonAttendedCount: 2,
           notRecordedCount: 1,
           attendees: [],
+          eventTierType: 'TIER_2',
         },
       ] as AppointmentAttendanceSummary[]
 
@@ -142,8 +148,11 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           notAttendedPercentage: 30,
           notRecordedPercentage: 20,
           foundationCount: 0,
-          tier1Count: 0,
-          tier2Count: 0,
+          tier1Count: 2,
+          tier2Count: 3,
+          foundationalPercentage: 0,
+          tier1Percentage: 50,
+          tier2Percentage: 50,
         },
         prisonersDetails,
       })
@@ -164,6 +173,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           nonAttendedCount: 0,
           notRecordedCount: 1,
           attendees: [],
+          eventTierType: 'FOUNDATION',
         },
         {
           isCancelled: true,
@@ -172,6 +182,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           nonAttendedCount: 1,
           notRecordedCount: 0,
           attendees: [],
+          eventTierType: 'FOUNDATION',
         },
         {
           attendeeCount: 6,
@@ -179,6 +190,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           nonAttendedCount: 2,
           notRecordedCount: 1,
           attendees: [],
+          eventTierType: 'TIER_2',
         },
       ] as AppointmentAttendanceSummary[]
 
@@ -198,6 +210,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
             nonAttendedCount: 0,
             notRecordedCount: 1,
             attendees: [],
+            eventTierType: 'FOUNDATION',
           },
           {
             attendeeCount: 6,
@@ -205,6 +218,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
             nonAttendedCount: 2,
             notRecordedCount: 1,
             attendees: [],
+            eventTierType: 'TIER_2',
           },
         ] as AppointmentAttendanceSummary[],
         attendanceSummary: {
@@ -217,7 +231,10 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           notRecordedPercentage: 29,
           foundationCount: 0,
           tier1Count: 0,
-          tier2Count: 0,
+          tier2Count: 3,
+          foundationalPercentage: 0,
+          tier1Percentage: 0,
+          tier2Percentage: 50,
         },
         prisonersDetails,
       })
@@ -319,6 +336,9 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           foundationCount: 0,
           tier1Count: 0,
           tier2Count: 0,
+          foundationalPercentage: 0,
+          tier1Percentage: 0,
+          tier2Percentage: 0,
         },
         prisonersDetails: expectedPrisonersDetails,
       })
