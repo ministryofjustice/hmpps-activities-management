@@ -2,11 +2,20 @@ import { Request, Response } from 'express'
 import { datePickerDateToIsoDate, formatIsoDate, isValidIsoDate } from '../../../../utils/datePickerUtils'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AttendanceStatus } from '../../../../@types/appointments'
-import { getAttendanceDataSubTitle, getAttendanceDataTitle, getAttendeeCount } from '../../utils/attendanceUtils'
+import {
+  enhanceAppointment,
+  getAttendanceDataSubTitle,
+  getAttendanceDataTitle,
+  getSpecificAppointmentCount,
+} from '../../utils/attendanceUtils'
 import EventTier from '../../../../enum/eventTiers'
+import PrisonService from '../../../../services/prisonService'
 
 export default class AttendanceDataRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
@@ -36,13 +45,20 @@ export default class AttendanceDataRoutes {
         EventTier[eventTier as string]
       ),
     ])
-    // console.log(appointments)
-    // const attendeeCount = getAttendeeCount(appointments)
+
+    const prisonerNumbers = Array.from(new Set(appointments.map(prisoner => prisoner.prisonerNumber)))
+    const prisonerDetails = new Map(
+      (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)).map(prisonerDetail => [
+        prisonerDetail.prisonerNumber,
+        prisonerDetail,
+      ])
+    )
+
+    const enhancedAppointments = appointments.map(appointment =>
+      enhanceAppointment(appointment, prisonerDetails.get(appointment.prisonerNumber))
+    )
 
     const summariesNotCancelled = summaries.filter(s => !s.isCancelled)
-
-    const attendanceCount = 10
-    const appointmentCount = 2
 
     return res.render('pages/appointments/attendance-summary-stats/attendanceData', {
       date,
@@ -51,12 +67,13 @@ export default class AttendanceDataRoutes {
       appointmentName: appointmentName ?? '',
       customAppointmentName: customAppointmentName ?? '',
       attendanceState,
+      appointments: enhancedAppointments,
       title: getAttendanceDataTitle(AttendanceStatus[attendanceState as string], EventTier[eventTier as string]),
       subTitle: getAttendanceDataSubTitle(
         AttendanceStatus[attendanceState as string],
         EventTier[eventTier as string],
-        attendanceCount,
-        appointmentCount
+        appointments.length,
+        getSpecificAppointmentCount(appointments)
       ),
     })
   }
@@ -65,7 +82,7 @@ export default class AttendanceDataRoutes {
     const { date, appointmentName, customAppointmentName, attendanceState, eventTier } = req.body
 
     return res.redirect(
-      `?date=${datePickerDateToIsoDate(date)}&appointmentName=${appointmentName ?? ''}&customAppointmentName=${customAppointmentName ?? ''}&attendanceState=${attendanceState ?? ''}&eventTier=${eventTier}`,
+      `?date=${datePickerDateToIsoDate(date)}&appointmentName=${appointmentName ?? ''}&customAppointmentName=${customAppointmentName ?? ''}&attendanceState=${attendanceState ?? ''}&eventTier=${eventTier}`
     )
   }
 }

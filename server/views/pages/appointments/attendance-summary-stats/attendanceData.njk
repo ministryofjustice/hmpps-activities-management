@@ -6,12 +6,23 @@
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
-{% from "components/stat.njk" import stat %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 
 {% set pageTitle = "Appointments attendance data - " + date | formatDate %}
 {% set pageId = 'appointments-attendance-data' %}
 {% set hardBackLinkText = "Back" %}
 {% set hardBackLinkHref = "/appointments/attendance-summary/dashboard" %}
+
+
+{% set rows = [] %}
+{% for appointment in appointments %}
+    {% set rows = (rows.push([
+        { html: appointment.name | prisonerName +'<br>' + appointment.prisonerNumber },
+        { text: appointment.cellLocation or '-' },
+        { html: "<a href="+appointment.appointmentHref+">"+appointment.appointmentName+'</a>' or '-' },
+        { html: appointment.time + '<br>' + appointment.date }
+    ]), rows) %}
+{% endfor %}
 
 {% set otherDateHintHtml %}
   <div>For example {{ exampleDatePickerDate() }}</div>
@@ -83,8 +94,8 @@
       }) }}
     </div>
   </div>
-  <div class="moj-filter-layout" data-module="activities-list-filter">
-    <div class="moj-filter-layout__filter moj-filter-layout__filter--small">
+  <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
+    <div class="moj-filter-layout__filter moj-filter-layout__flex moj-filter-layout__filter--small">
       <form id="filter-form" method="POST" novalidate>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
         <input type="hidden" name="attendanceState" value="{{ attendanceState }}"/>
@@ -103,6 +114,29 @@
         </div>
         <div>
             <h2 class="govuk-heading-l">{{ subTitle }}</h2>
+              {{ govukTable({
+                attributes: {
+                    'data-module': 'moj-sortable-table',
+                    'data-qa': 'appointment-attendance-data'
+                },
+                head: [
+                    {
+                        text: "Attendee",
+                        attributes: { "aria-sort": "none" }
+                    }, {
+                        text: "Cell location",
+                        attributes: { "aria-sort": "none" }
+                    }, {
+                        text: "Appointment",
+                        attributes: { "aria-sort": "none" }
+                    }, {
+                        text: "Time and date",
+                        attributes: { "aria-sort": "none" }
+                    }],
+                rows: rows,
+                classes: 'sticky-header'
+            }) }}
+
         </div>
     </div>
     {% endblock %}

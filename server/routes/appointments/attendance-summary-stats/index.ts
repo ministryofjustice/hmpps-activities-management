@@ -6,7 +6,7 @@ import DashboardRoutes from './handlers/dashboard'
 import AttendanceDataRoutes from './handlers/attendanceData'
 import { Services } from '../../../services'
 
-export default function Index({ activitiesService }: Services): Router {
+export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -15,7 +15,7 @@ export default function Index({ activitiesService }: Services): Router {
 
   const selectDateRoutes = new SelectDateRoutes()
   const dashboardRoutes = new DashboardRoutes(activitiesService)
-  const attendanceDataRoutes = new AttendanceDataRoutes(activitiesService)
+  const attendanceDataRoutes = new AttendanceDataRoutes(activitiesService, prisonService)
 
   get('/select-date', selectDateRoutes.GET)
   post('/select-date', selectDateRoutes.POST, SelectDate)

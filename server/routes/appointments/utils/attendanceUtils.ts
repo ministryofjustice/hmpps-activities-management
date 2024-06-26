@@ -1,3 +1,4 @@
+import { Prisoner } from '../../../@types/activities'
 import { AppointmentAttendanceSummary, AppointmentAttendeeByStatus } from '../../../@types/activitiesAPI/types'
 import { AttendanceStatus } from '../../../@types/appointments'
 import EventTier from '../../../enum/eventTiers'
@@ -17,13 +18,13 @@ export const getAttendanceSummary = (summaries: AppointmentAttendanceSummary[]) 
 
   if (attendanceSummary.attendeeCount > 0) {
     attendanceSummary.attendedPercentage = Math.round(
-      (attendanceSummary.attended / attendanceSummary.attendeeCount) * 100,
+      (attendanceSummary.attended / attendanceSummary.attendeeCount) * 100
     )
     attendanceSummary.notAttendedPercentage = Math.round(
-      (attendanceSummary.notAttended / attendanceSummary.attendeeCount) * 100,
+      (attendanceSummary.notAttended / attendanceSummary.attendeeCount) * 100
     )
     attendanceSummary.notRecordedPercentage = Math.round(
-      (attendanceSummary.notRecorded / attendanceSummary.attendeeCount) * 100,
+      (attendanceSummary.notRecorded / attendanceSummary.attendeeCount) * 100
     )
   }
 
@@ -79,7 +80,7 @@ export const getAttendanceDataSubTitle = (
   page: AttendanceStatus,
   eventTier: EventTier,
   attendanceCount: number,
-  appointmentCount: number,
+  appointmentCount: number
 ) => {
   switch (page) {
     case AttendanceStatus.ATTENDED:
@@ -101,8 +102,17 @@ export const getAttendanceDataSubTitle = (
   }
 }
 
-export const getAttendeeCount = (appointments: AppointmentAttendeeByStatus[]) => {
-  const uniqueAppointmentIds = new Set(appointments.map(appointment => appointment.appointmentId))
-  // console.log(uniqueAppointmentIds)
-  return uniqueAppointmentIds
+export const getSpecificAppointmentCount = (appointments: AppointmentAttendeeByStatus[]) => {
+  return Array.from(new Set(appointments.map(appointment => appointment.appointmentId))).length
+}
+
+export const enhanceAppointment = (appointment: AppointmentAttendeeByStatus, prisoner: Prisoner) => {
+  return {
+    ...appointment,
+    cellLocation: prisoner.cellLocation,
+    appointmentHref: '', // TODO
+    time: `${appointment.startTime} to ${appointment.endTime}`,
+    date: appointment.startDate,
+    name: `${prisoner.firstName} ${prisoner.lastName}`,
+  }
 }
