@@ -1615,6 +1615,30 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/attendances/{prisonCode}/suspended': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * gets a list of suspended prisoner attendance activities for a given date
+     * @description
+     *
+     *     Requires one of the following roles:
+     *     * PRISON
+     *     * ACTIVITY_ADMIN
+     */
+    get: operations['getAttendanceForSuspendedPrisoners']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/attendances/{attendanceId}': {
     parameters: {
       query?: never
@@ -7169,6 +7193,49 @@ export interface components {
        */
       attendanceRequired: boolean
     }
+    /** @description suspended prisoner activity attendance */
+    SuspendedPrisonerActivityAttendance: {
+      /**
+       * Format: partial-time
+       * @description the activity start time
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description the activity end time
+       */
+      endTime: string
+      /** @description internal location description */
+      internalLocation?: string
+      /**
+       * @description Flag to indicate if the location of the activity is in cell
+       * @example false
+       */
+      inCell: boolean
+      /**
+       * @description Flag to indicate if the location of the activity is on wing
+       * @example false
+       */
+      onWing: boolean
+      /**
+       * @description Flag to indicate if the location of the activity is off wing and not in a listed location
+       * @example false
+       */
+      offWing: boolean
+      /** @description time slot */
+      timeSlot: string
+      /** @description category name */
+      categoryName: string
+      /** @description attendance reason code */
+      attendanceReasonCode: string
+    }
+    /** @description suspended prisoner activity attendance */
+    SuspendedPrisonerAttendance: {
+      /** @description prisoner number */
+      prisonerNumber: string
+      /** @description attendance */
+      attendance: components['schemas']['SuspendedPrisonerActivityAttendance'][]
+    }
     /** @description attendee and appointment details for a given status, ie not records */
     AppointmentAttendeeByStatus: {
       prisonerNumber: string
@@ -11311,6 +11378,50 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['AllAttendance'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getAttendanceForSuspendedPrisoners: {
+    parameters: {
+      query: {
+        /** @description date of query (required). Format YYYY-MM-DD. */
+        date: string
+      }
+      header?: never
+      path: {
+        /** @description The 3-character prison code. */
+        prisonCode: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful call */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SuspendedPrisonerAttendance'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */
