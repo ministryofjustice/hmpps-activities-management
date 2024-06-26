@@ -12,12 +12,16 @@
     "onWing": false,
     "offWing": false,
     "attendanceRequired": true,
-    "internalLocation": 98877667,
+    "internalLocation": {
+      "id": 999555,
+      "code": "ED2",
+      "description": "EDUCATION 2"
+    },
     "cancelled": false,
     "attendanceSummary": {
       "allocations": 5,
-      "attendees": 5,
-      "notRecorded": 2,
+      "attendees": 4,
+      "notRecorded": 1,
       "attended": 2,
       "absences": 1,
       "paid": 2
@@ -34,16 +38,16 @@
     "endTime": "09:00",
     "inCell": false,
     "onWing": false,
-    "offWing": false,
+    "offWing": true,
     "attendanceRequired": false,
-    "internalLocation": 98877667,
+    "internalLocation": null,
     "cancelled": false,
     "attendanceSummary": {
-      "allocations": 5,
-      "attendees": 0,
-      "notRecorded": 0,
-      "attended": 0,
-      "absences": 0,
+      "allocations": 20,
+      "attendees": 16,
+      "notRecorded": 3,
+      "attended": 10,
+      "absences": 3,
       "paid": false
     }
   },
@@ -60,13 +64,17 @@
     "onWing": false,
     "offWing": false,
     "attendanceRequired": true,
-    "internalLocation": 98877667,
+    "internalLocation": {
+      "id": 777888,
+      "code": "ED1",
+      "description": "EDUCATION 1"
+    },
     "cancelled": false,
     "attendanceSummary": {
-      "allocations": 5,
-      "attendees": 5,
+      "allocations": 10,
+      "attendees": 7,
       "notRecorded": 2,
-      "attended": 2,
+      "attended": 5,
       "absences": 1,
       "paid": 2
     }
@@ -84,14 +92,18 @@
     "onWing": false,
     "offWing": false,
     "attendanceRequired": true,
-    "internalLocation": 98877667,
+    "internalLocation": {
+      "id": 444555,
+      "code": "BWING",
+      "description": "B WING"
+    },
     "cancelled": false,
     "attendanceSummary": {
-      "allocations": 5,
-      "attendees": 5,
+      "allocations": 18,
+      "attendees": 16,
       "notRecorded": 2,
-      "attended": 2,
-      "absences": 1,
+      "attended": 14,
+      "absences": 0,
       "paid": 2
     }
   },
@@ -108,13 +120,17 @@
     "onWing": false,
     "offWing": false,
     "attendanceRequired": false,
-    "internalLocation": 98877667,
+    "internalLocation": {
+      "id": 12345,
+      "code": "GYM",
+      "description": "GYM"
+    },
     "cancelled": false,
     "attendanceSummary": {
-      "allocations": 5,
-      "attendees": 5,
-      "notRecorded": 2,
-      "attended": 2,
+      "allocations": 16,
+      "attendees": 8,
+      "notRecorded": 4,
+      "attended": 3,
       "absences": 1,
       "paid": 2
     }
