@@ -5,6 +5,7 @@ import ActivitiesRoutes from './activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import attendanceSummaryResponse from '../../../../services/fixtures/attendance_summary_1.json'
+import { AttendActivityMode } from '../recordAttendanceRequests'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -95,6 +96,73 @@ describe('Route Handlers - Activities', () => {
         },
         activityDate: date,
         selectedSessions: ['pm', 'ed'],
+        activityRows: [
+          {
+            ...attendanceSummaryResponse[0],
+            session: 'pm',
+            sessionOrderIndex: 1,
+          },
+          {
+            ...attendanceSummaryResponse[2],
+            session: 'pm',
+            sessionOrderIndex: 1,
+          },
+        ],
+      })
+    })
+
+    it('should render with the expected view when multiple sessions are returned', async () => {
+      req = {
+        query: {
+          date: dateString,
+          sessionFilters: 'am,pm',
+          categoryFilters: 'SAA_EDUCATION,SAA_INDUSTRIES',
+          locationFilters: 'IN_CELL,OUT_OF_CELL',
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
+        activitiesBySession: {
+          am: [attendanceSummaryResponse[1]],
+          pm: [attendanceSummaryResponse[0], attendanceSummaryResponse[2]],
+          ed: [],
+        },
+        filterItems: {
+          categoryFilters: [
+            { value: 'SAA_EDUCATION', text: 'Education', checked: true },
+            { value: 'SAA_INDUSTRIES', text: 'Packing', checked: true },
+          ],
+          sessionFilters: [
+            { value: 'am', text: 'Morning (AM)', checked: true },
+            { value: 'pm', text: 'Afternoon (PM)', checked: true },
+            { value: 'ed', text: 'Evening (ED)', checked: false },
+          ],
+          locationFilters: [
+            { value: 'IN_CELL', text: 'In cell', checked: true },
+            { value: 'OUT_OF_CELL', text: 'Out of cell', checked: true },
+          ],
+        },
+        activityDate: date,
+        selectedSessions: ['am', 'pm'],
+        activityRows: [
+          {
+            ...attendanceSummaryResponse[1],
+            session: 'am',
+            sessionOrderIndex: 0,
+          },
+          {
+            ...attendanceSummaryResponse[0],
+            session: 'pm',
+            sessionOrderIndex: 1,
+          },
+          {
+            ...attendanceSummaryResponse[2],
+            session: 'pm',
+            sessionOrderIndex: 1,
+          },
+        ],
       })
     })
 
@@ -143,6 +211,13 @@ describe('Route Handlers - Activities', () => {
         },
         activityDate: date,
         selectedSessions: null,
+        activityRows: [
+          {
+            ...attendanceSummaryResponse[2],
+            session: 'pm',
+            sessionOrderIndex: 1,
+          },
+        ],
       })
     })
 
@@ -176,6 +251,13 @@ describe('Route Handlers - Activities', () => {
         },
         activityDate: date,
         selectedSessions: ['am'],
+        activityRows: [
+          {
+            ...attendanceSummaryResponse[1],
+            session: 'am',
+            sessionOrderIndex: 0,
+          },
+        ],
       })
     })
 
@@ -209,6 +291,18 @@ describe('Route Handlers - Activities', () => {
         },
         activityDate: date,
         selectedSessions: null,
+        activityRows: [
+          {
+            ...attendanceSummaryResponse[0],
+            session: 'pm',
+            sessionOrderIndex: 1,
+          },
+          {
+            ...attendanceSummaryResponse[2],
+            session: 'pm',
+            sessionOrderIndex: 1,
+          },
+        ],
       })
     })
 
@@ -245,7 +339,34 @@ describe('Route Handlers - Activities', () => {
         },
         activityDate: date,
         selectedSessions: null,
+        activityRows: [
+          {
+            ...attendanceSummaryResponse[0],
+            session: 'pm',
+            sessionOrderIndex: 1,
+          },
+        ],
       })
+    })
+  })
+
+  describe('POST_ATTENDANCES', () => {
+    it('should save the selected instance ids and redirect', async () => {
+      req = {
+        body: {
+          selectedInstanceIds: [345, 567],
+        },
+        session: {},
+      } as unknown as Request
+
+      await handler.POST_ATTENDANCES(req, res)
+
+      expect(req.session.recordAttendanceRequests).toEqual({
+        mode: AttendActivityMode.MULTIPLE,
+        selectedInstanceIds: [345, 567],
+      })
+
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/attendance-list')
     })
   })
 })

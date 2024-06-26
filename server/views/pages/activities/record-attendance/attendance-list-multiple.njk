@@ -1,0 +1,234 @@
+{% extends "layout.njk" %}
+
+{% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
+{% from "components/sticky-select.njk" import stickySelect %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "partials/attendance/otherEvent.njk" import otherEvent %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "components/searchBar.njk" import searchBar %}
+
+{% set pageTitle = "Record attendance at " + numActivities + (" activity" if numActivities == 1 else " activities")  %}
+{% set pageId = 'attendance-list-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
+                {{  pageTitle }}
+                <span class="govuk-caption-l">
+                    {% set comma = joiner(', ') %}
+                    {%- for session in selectedSessions -%}
+                        {{- ' and ' if loop.last and not loop.first else comma() }}
+                        {{ session | upper }}
+                    {%- endfor -%}
+                    {{- ' session' if selectedSessions | length == 1 else ' sessions' }}
+                </span>
+
+                <span class="govuk-caption-l">{{ selectedDate | toDate | formatDate }}</span>
+
+                <h2 class="govuk-heading-m">{{ attendanceRows | length }} allocations</h2>
+            </h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-4">
+        <div class="govuk-grid-column-two-thirds">
+            <ul class="govuk-list">
+                <li>
+                    <span>Attended:</span>
+                    {% if attendanceSummary.attendanceCount == 0 %}
+                        -
+                    {% else %}
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
+                    {% endif %}
+                </li>
+                <li>
+                    <span>Absent:</span>
+                    {% if attendanceSummary.attendanceCount == 0 %}
+                        -
+                    {% else %}
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
+                    {% endif %}
+                </li>
+                <li>
+                    <span>Not recorded:</span>
+                    {% if attendanceSummary.attendanceCount == 0 %}
+                        -
+                    {% else %}
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-4">
+        <div class="govuk-grid-column-two-thirds">
+            <form method='GET'>
+                {{ searchBar({
+                    inputParams: {
+                        id: 'searchTerm',
+                        name: 'searchTerm',
+                        label: {
+                            text: 'Search by prisoner name or prison number',
+                            classes: 'govuk-label--s'
+                        },
+                        type: 'search',
+                        value: session.req.query.searchTerm
+                    },
+                    buttonParams: {
+                        text: 'Search'
+                    }
+                }) }}
+            </form>
+        </div>
+    </div>
+
+    {% set rows = [] %}
+    {% for attendee in attendanceRows | sort(false, false, 'location') %}
+        {% set rows = (rows.push({
+            visuallyHiddenText: 'Select ' + attendee.prisoner | firstNameLastName | toTitleCase | prisonerName,
+            value: attendee.instance.id + '-' + attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
+            selectable: attendee.attendance.status === "WAITING" and attendee.attendance.editable and attendee.instance.activitySchedule.activity.attendanceRequired,
+            items: [
+                {
+                    html: showProfileLink({
+                        name: attendee.prisoner | firstNameLastName,
+                        prisonerNumber: attendee.prisoner.prisonerNumber,
+                        inCaseLoad: attendee.prisoner.prisonId == user.activeCaseLoadId
+                    }),
+                    attributes: {
+                        "data-qa": "prisoner-details",
+                        "data-sort-value": attendee.prisoner | firstNameLastName | prisonerNameForSorting
+                    }
+                },
+                {
+                    text: statusBasedCellLocation(attendee.prisoner.cellLocation, attendee.prisoner.status, attendee.prisoner.prisonId == user.activeCaseLoadId),
+                    attributes: {
+                        "data-qa": "location"
+                    }
+                },
+                {
+                    html: attendee.instance.activitySchedule.activity.summary,
+                    attributes: {
+                        "data-qa": "activity"
+                    }
+                },
+                {
+                    html: attendee.session | upper,
+                    attributes: {
+                        "data-qa": "session"
+                    }
+                },                {
+                    html: renderOtherEvents(attendee.otherEvents),
+                    attributes: {
+                        "data-qa": "other-events"
+                    }
+                },
+                {
+                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' + renderPayStatus(attendee),
+                    attributes: {
+                        "data-qa": "attendance"
+                    }
+                },
+                {
+                    html: renderViewLink(attendee)
+                }
+            ]
+        }), rows) %}
+    {% endfor %}
+
+    <form method='POST'>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        {{ stickySelect({
+            type: 'check',
+            id: "attendanceList",
+            caption: "Attendance list",
+            captionClasses: "govuk-visually-hidden",
+            classes: 'sticky-header',
+            name: 'selectedAttendances',
+            head: [
+                {
+                    text: "Name",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "Cell location",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "Activity",
+                    attributes: { "aria-sort": "ascending" },
+                    classes: 'hmpps-max-width-240'
+                },
+                {
+                    text: "Session",
+                    attributes: { "aria-sort": "ascending" }
+                },
+                {
+                    text: "Clashing events"
+                },
+                {
+                    text: "Attendance and pay",
+                    colspan: 2,
+                    attributes: { "aria-sort": "none" }
+                }
+            ],
+            rows: rows,
+            actions: [
+                {
+                    text: 'Mark as attended',
+                    formAction: 'attended'
+                },
+                {
+                    text: 'Mark as not attended',
+                    formAction: 'not-attended'
+                }
+            ],
+            itemsDescription: 'allocation',
+            itemsDescriptionPlural: 'allocations'
+        }) }}
+    </form>
+{% endblock %}
+
+{% macro renderOtherEvents(otherEvents) %}
+    {% for event in otherEvents %}
+        {{ otherEvent(event) }}
+        {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro renderPayStatus(attendee) %}
+    {% if attendee.attendance and attendee.attendance.status != 'WAITING' %}
+        {% if attendee.attendance.issuePayment %}
+            {{ govukTag({
+                text: "Pay",
+                classes: "govuk-tag--green"
+            }) }}
+        {% elseif attendee.instance.activitySchedule.activity.paid %}
+            {{ govukTag({
+                text: "No pay",
+                classes: "govuk-tag--red"
+            }) }}
+        {% else %}
+            {{ govukTag({
+                text: "Unpaid",
+                classes: "govuk-tag--green"
+            }) }}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro renderViewLink(attendee) %}
+    {% if attendee.attendance.status === 'COMPLETED' or attendee.attendance.attendanceHistory|length %}
+        <a href="/activities/attendance/activities/{{ attendee.instance.id }}/attendance-details/{{ attendee.attendance.id }}" class="govuk-link govuk-link--no-visited-state">
+            {% if attendee.attendance.editable and attendee.isAttendanceRequired %}
+                View or Edit
+            {% else %}
+                View
+            {% endif %}
+        </a>
+    {% endif %}
+{% endmacro %}

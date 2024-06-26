@@ -1,0 +1,153 @@
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "components/sticky-select.njk" import stickySelect %}
+
+{% macro activitiesTable(activities, activityDate, filterParams, now) %}
+    {% if activities.length %}
+
+        {% set rows = [] %}
+
+        {% for activity in activities %}
+            {% set activityLocation = ("In cell" if activity.inCell) or ("On wing" if activity.onWing) or ("Off wing" if activity.offWing) or activity.internalLocation.description | capitalize %}
+            {% set rows = (rows.push({
+                visuallyHiddenText: 'Select ' + activity.summary + ' ' + (activity.session | upper),
+                value: activity.scheduledInstanceId,
+                selectable: not activity.cancelled and activity.attendanceRequired and activity.attendanceSummary.allocations > 0 and not ((activity.sessionDate | toDateString) > (now | toDateString)),
+                items: [
+                    {
+                        attributes: {
+                            id: 'activity-' + loop.index,
+                            "data-sort-value": activity.summary
+                        },
+                        classes: 'attendance-activities',
+                        html: '
+                            <p class="govuk-heading-s govuk-!-margin-bottom-0">
+                                <a href="activities/' + activity.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (activity.summary | escape) + '<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
+                            </p>
+                            <div>' + activityCancelledTag(activity.cancelled) + '</div>'
+                    },
+                    {
+                        attributes: {
+                            id: 'location-' + loop.index,
+                            "data-sort-value": activityLocation
+                        },
+                        text: activityLocation
+                    },
+                    {
+                        attributes: {
+                            id: 'session-' + loop.index,
+                            "data-sort-value": activity.sessionOrderIndex
+                        },
+                        text: activity.session | upper
+                    },
+                    {
+                        attributes: {
+                            id: 'scheduled-' + loop.index,
+                            "data-sort-value": activity.attendanceSummary.allocations
+                        },
+                        classes: 'govuk-table__cell--numeric',
+                        text: activity.attendanceSummary.allocations
+                    },
+                    {
+                        attributes: {
+                            id: 'attended-' + loop.index,
+                            "data-sort-value": activity.attendanceSummary.attended or 0
+                        },
+                        classes: 'govuk-table__cell--numeric',
+                        text: attendanceStat(activity.attendanceSummary.attended, activity.attendanceRequired)
+                    },
+                    {
+                        attributes: {
+                            id: 'notRecorded-' + loop.index,
+                            "data-sort-value": activity.attendanceSummary.notRecorded or 0
+                        },
+                        classes: 'govuk-table__cell--numeric',
+                        text: attendanceStat(activity.attendanceSummary.notRecorded, activity.attendanceRequired)
+                    },
+                    {
+                        attributes: {
+                            id: 'notAttended-' + loop.index,
+                            "data-sort-value": activity.attendanceSummary.absences or 0
+                        },
+                        classes: 'govuk-table__cell--numeric',
+                        text: attendanceStat(activity.attendanceSummary.absences, activity.attendanceRequired)
+                    }
+                ]
+            }), rows) %}
+        {% endfor %}
+
+        {{ stickySelect({
+            idPrefix: 'activities',
+            type: 'check',
+            caption: "(" + activities.length + ") sessions",
+            captionClasses: "govuk-visually-hidden",
+            name: 'selectedInstanceIds',
+            fixed: true,
+            head: [
+                {
+                    text: "Activity",
+                    attributes: { "aria-sort": "ascending" }
+                },
+                {
+                    text: "Location",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "Session",
+                    attributes: { "aria-sort": "ascending" }
+                },
+                {
+                    text: "Allocated",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "Attended",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "Not recorded",
+                    attributes: { "aria-sort": "none" }
+                },
+                {
+                    text: "All absences",
+                    attributes: { "aria-sort": "none" }
+                }
+            ],
+            rows: rows,
+            actions: [
+                {
+                    text: 'Record or edit attendance',
+                    formAction: '/activities/attendance/activities/attendance-list'
+                }
+            ],
+            itemsDescription: 'activity',
+            itemsDescriptionPlural: 'activities',
+            pagination: {
+                previous: {
+                    title: 'Previous day',
+                    label: activityDate | addDays(-1) | formatDate,
+                    href: 'activities?date=' + activityDate | addDays(-1) | formatDate('yyyy-MM-dd') + filterParams
+                },
+                next: {
+                    title: 'Next day',
+                    label: activityDate | addDays(1) | formatDate,
+                    href: 'activities?date=' + activityDate | addDays(1) | formatDate('yyyy-MM-dd') + filterParams
+                }
+            }
+        }) }}
+
+    {% endif %}
+
+{% endmacro %}
+
+{% macro activityCancelledTag(cancelled) %}
+    {% if cancelled %}
+        {{ govukTag({
+            text: "Cancelled",
+            classes: "govuk-tag--red govuk-!-margin-top-1"
+        }) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro attendanceStat(stat, attendanceRequired=true) %}
+    {{ stat if stat !== null and attendanceRequired === true else '-' }}
+{% endmacro %}

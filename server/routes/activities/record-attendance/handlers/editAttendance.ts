@@ -7,6 +7,7 @@ import { eventClashes, toDate } from '../../../../utils/utils'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { Attendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
+import { AttendActivityMode } from '../recordAttendanceRequests'
 
 enum EditAttendanceOptions {
   YES = 'yes',
@@ -60,7 +61,13 @@ export default class EditAttendanceRoutes {
         },
       ]
       await this.activitiesService.updateAttendances(attendances, user)
-      return res.redirect(`/activities/attendance/activities/${id}/attendance-list`)
+
+      const returnUrl =
+        req.session.recordAttendanceRequests.mode === AttendActivityMode.MULTIPLE
+          ? '/activities/attendance/activities/attendance-list'
+          : `/activities/attendance/activities/${id}/attendance-list`
+
+      return res.redirect(returnUrl)
     }
 
     if (req.body.attendanceOption === EditAttendanceOptions.NO) {
