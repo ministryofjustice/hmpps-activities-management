@@ -22,16 +22,18 @@ export default class SuspendedPrisonersRoutes {
 
     const activityDate = toDate(req.query.date as string)
 
-    const scheduledActivities = await this.activitiesService.getScheduledActivitiesAtPrison(activityDate, user)
-    const suspendedAttendances = await this.activitiesService
-      .getAllAttendance(activityDate, user)
-      .then(r =>
-        r.filter(
-          a =>
-            a.attendanceReasonCode === AttendanceReason.SUSPENDED ||
-            a.attendanceReasonCode === AttendanceReason.AUTO_SUSPENDED,
+    const [scheduledActivities, suspendedAttendances] = await Promise.all([
+      this.activitiesService.getScheduledActivitiesAtPrison(activityDate, user),
+      this.activitiesService
+        .getAllAttendance(activityDate, user)
+        .then(r =>
+          r.filter(
+            a =>
+              a.attendanceReasonCode === AttendanceReason.SUSPENDED ||
+              a.attendanceReasonCode === AttendanceReason.AUTO_SUSPENDED,
+          ),
         ),
-      )
+    ])
 
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(
       _.uniq(suspendedAttendances.map(a => a.prisonerNumber)),
