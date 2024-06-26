@@ -22,3 +22,11 @@ export enum AppointmentCancellationReason {
   CREATED_IN_ERROR = '1',
   CANCELLED = '2',
 }
+
+export enum AttendanceStatus {
+  ATTENDED = 'ATTENDED',
+  NOT_ATTENDED = 'NOT_ATTENDED',
+  NOT_RECORDED = 'NOT_RECORDED',
+  EVENT_TIER = 'EVENT_TIER',
+  CANCELLED = 'CANCELLED',
+}

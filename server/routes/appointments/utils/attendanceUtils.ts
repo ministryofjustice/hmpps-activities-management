@@ -1,7 +1,8 @@
-import { AppointmentAttendanceSummary } from '../../../@types/activitiesAPI/types'
+import { AppointmentAttendanceSummary, AppointmentAttendeeByStatus } from '../../../@types/activitiesAPI/types'
+import { AttendanceStatus } from '../../../@types/appointments'
 import EventTier from '../../../enum/eventTiers'
 
-const getAttendanceSummary = (summaries: AppointmentAttendanceSummary[]) => {
+export const getAttendanceSummary = (summaries: AppointmentAttendanceSummary[]) => {
   const tierCounts = getEventTierCounts(summaries)
   const attendanceSummary = {
     attendeeCount: summaries.map(s => s.attendeeCount).reduce((sum, count) => sum + count, 0),
@@ -55,4 +56,53 @@ const getEventTierCounts = (summaries: AppointmentAttendanceSummary[]) => {
   }
 }
 
-export default getAttendanceSummary
+export const getAttendanceDataTitle = (page: AttendanceStatus, eventTier: EventTier) => {
+  switch (page) {
+    case AttendanceStatus.ATTENDED:
+      return 'All attended'
+    case AttendanceStatus.NOT_ATTENDED:
+      return 'All not attended'
+    case AttendanceStatus.NOT_RECORDED:
+      return 'All not recorded yet'
+    case AttendanceStatus.CANCELLED:
+      return 'All cancelled appointments'
+    case AttendanceStatus.EVENT_TIER:
+      if (eventTier === EventTier.TIER_1) return 'Tier 1 appointments'
+      if (eventTier === EventTier.TIER_2) return 'Tier 2 appointments'
+      return 'Routine (also called ’foundational’) appointments'
+    default:
+      return 'Appointment attendance'
+  }
+}
+
+export const getAttendanceDataSubTitle = (
+  page: AttendanceStatus,
+  eventTier: EventTier,
+  attendanceCount: number,
+  appointmentCount: number,
+) => {
+  switch (page) {
+    case AttendanceStatus.ATTENDED:
+      return `${attendanceCount} attended`
+    case AttendanceStatus.NOT_ATTENDED:
+      return `${attendanceCount} not attended`
+    case AttendanceStatus.NOT_RECORDED:
+      return `${attendanceCount} not recorded yet`
+    case AttendanceStatus.CANCELLED:
+      return `${attendanceCount} cancelled appointments`
+    case AttendanceStatus.EVENT_TIER:
+      if (eventTier === EventTier.TIER_1)
+        return `${attendanceCount} attendances recorded at ${appointmentCount} Tier 1 appointments`
+      if (eventTier === EventTier.TIER_2)
+        return `${attendanceCount} attendances recorded at ${appointmentCount} Tier 2 appointments`
+      return `${attendanceCount} attendances recorded at ${appointmentCount} routine appointments`
+    default:
+      return `${appointmentCount} appointments`
+  }
+}
+
+export const getAttendeeCount = (appointments: AppointmentAttendeeByStatus[]) => {
+  const uniqueAppointmentIds = new Set(appointments.map(appointment => appointment.appointmentId))
+  // console.log(uniqueAppointmentIds)
+  return uniqueAppointmentIds
+}

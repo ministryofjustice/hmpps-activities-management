@@ -47,7 +47,12 @@ import {
 import { Services } from '../services'
 import { EventSource, EventType, YesNo } from '../@types/activities'
 import { AppointmentType, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
-import { AppointmentCancellationReason, AppointmentFrequency, AppointmentApplyTo } from '../@types/appointments'
+import {
+  AppointmentCancellationReason,
+  AppointmentFrequency,
+  AppointmentApplyTo,
+  AttendanceStatus,
+} from '../@types/appointments'
 import TimeSlot from '../enum/timeSlot'
 import {
   getAppointmentEditApplyToCta,
@@ -60,6 +65,7 @@ import { PrisonerStatus } from '../@types/prisonApiImportCustom'
 import { isoDateToDatePickerDate, parseIsoDate } from '../utils/datePickerUtils'
 import WaitlistRequester from '../enum/waitlistRequester'
 import { SERVICE_AS_USERNAME } from '../services/userService'
+import EventTier from '../enum/eventTiers'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -192,6 +198,8 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('AppointmentJourneyMode', AppointmentJourneyMode)
   njkEnv.addGlobal('AppointmentApplyTo', AppointmentApplyTo)
   njkEnv.addGlobal('AppointmentCancellationReason', AppointmentCancellationReason)
+  njkEnv.addGlobal('AttendanceStatus', AttendanceStatus)
+  njkEnv.addGlobal('EventTier', EventTier)
   njkEnv.addGlobal('getAppointmentEditMessage', getAppointmentEditMessage)
   njkEnv.addGlobal('getConfirmAppointmentEditCta', getConfirmAppointmentEditCta)
   njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)
