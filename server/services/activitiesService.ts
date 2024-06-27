@@ -47,9 +47,13 @@ import {
   AddCaseNoteRequest,
   AppointmentUncancelRequest,
   SuspendedPrisonerAttendance,
+  AppointmentAttendeeByStatus,
 } from '../@types/activitiesAPI/types'
-import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
+import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
+import { AttendanceStatus } from '../@types/appointments'
+import EventTier from '../enum/eventTiers'
+import EventOrganiser from '../enum/eventOrganisers'
 
 export default class ActivitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
@@ -459,5 +463,29 @@ export default class ActivitiesService {
   async activeRolledPrisons(): Promise<string[]> {
     const r = await this.getRolledOutPrisons()
     return r.filter(item => item.activitiesRolledOut || item.appointmentsRolledOut).map(item => item.prisonCode)
+  }
+
+  async getAppointmentsByStatusAndDate(
+    prisonCode: string,
+    status: AttendanceStatus,
+    date: string,
+    user: ServiceUser,
+    categoryCode?: string,
+    customName?: string,
+    prisonerNumber?: string,
+    eventTier?: EventTier,
+    organiserCode?: EventOrganiser,
+  ): Promise<AppointmentAttendeeByStatus[]> {
+    return this.activitiesApiClient.AppointmentAttendeeByStatus(
+      prisonCode,
+      status,
+      date,
+      user,
+      categoryCode ?? null,
+      customName ?? null,
+      prisonerNumber ?? null,
+      eventTier ?? null,
+      organiserCode ?? null,
+    )
   }
 }
