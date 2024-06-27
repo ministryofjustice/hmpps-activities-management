@@ -46,6 +46,7 @@ import {
   Slot,
   AddCaseNoteRequest,
   AppointmentUncancelRequest,
+  SuspendedPrisonerAttendance,
 } from '../@types/activitiesAPI/types'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
 
@@ -80,6 +81,18 @@ export default class ActivitiesService {
       user,
       undefined,
       true,
+    )
+  }
+
+  getSuspendedPrisonersActivityAttendance(
+    date: Date,
+    user: ServiceUser,
+    reason?: String,
+    categories?: String[]): Promise<SuspendedPrisonerAttendance[]> {
+    return this.activitiesApiClient.getSuspendedPrisonersActivityAttendance(
+      user.activeCaseLoadId,
+      date,
+      user,
     )
   }
 

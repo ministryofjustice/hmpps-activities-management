@@ -60,6 +60,7 @@ import {
   SuspendPrisonerRequest,
   UnsuspendPrisonerRequest,
   AppointmentUncancelRequest,
+  SuspendedPrisonerAttendance,
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
@@ -124,6 +125,25 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
+
+  getSuspendedPrisonersActivityAttendance(
+    prisonCode: string,
+    date: Date,
+    user: ServiceUser,
+    reason?: String,
+    categories?: String[]): Promise<SuspendedPrisonerAttendance[]> {
+    return this.get({
+      path: `/attendances/${prisonCode}/suspended`,
+      query: {
+        date: toDateString(date),
+        reason,
+        categories,
+      },
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
 
   getScheduledActivity(id: number, user: ServiceUser): Promise<ScheduledActivity> {
     return this.get({
