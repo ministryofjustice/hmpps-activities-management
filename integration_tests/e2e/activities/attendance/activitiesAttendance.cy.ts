@@ -7,7 +7,7 @@ import ActivitiesIndexPage from '../../../pages/activities'
 import SelectPeriodPage from '../../../pages/activities/attendanceSummary/selectPeriod'
 import DailySummaryPage from '../../../pages/activities/attendanceSummary/dailySummary'
 import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceDashboard'
-import ActivitiesPage from '../../../pages/activities/attendanceSummary/activities'
+import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
 
 context('Daily Attendance', () => {
@@ -49,8 +49,19 @@ context('Daily Attendance', () => {
     dailySummaryPage.selectSessionsLink()
 
     const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.assertRow('am', 'English level 1', '5', '2', '2', '1')
-    // Non-attended should have hyphens for Attended, Not recorded and All absences
-    activitiesPage.assertRow('am', 'Football', '5', '-', '-', '-')
+    activitiesPage.assertRow(1, true, 'English level 1', 'Education 2', 'AM', '5', '2', '1', '1')
+    activitiesPage.assertRow(2, true, 'English level 2', 'Education 1', 'AM', '10', '5', '2', '1')
+    activitiesPage.assertRow(3, false, 'Football', 'Off wing', 'AM', '20', '-', '-', '-')
+    activitiesPage.assertRow(4, false, 'Gym', 'Gym', 'PM', '16', '-', '-', '-')
+    activitiesPage.assertRow(5, true, 'Maths level 1', 'B wing', 'AM', '18', '4', '2', '0')
+
+    activitiesPage.getButton('Show filter').click()
+    activitiesPage.sessionPMCheckbox().click()
+    activitiesPage.getButton('Apply filters').eq(0).click()
+
+    activitiesPage.assertRow(1, true, 'English level 1', 'Education 2', 'AM', '5', '2', '1', '1')
+    activitiesPage.assertRow(2, true, 'English level 2', 'Education 1', 'AM', '10', '5', '2', '1')
+    activitiesPage.assertRow(3, false, 'Football', 'Off wing', 'AM', '20', '-', '-', '-')
+    activitiesPage.assertRow(4, true, 'Maths level 1', 'B wing', 'AM', '18', '4', '2', '0')
   })
 })

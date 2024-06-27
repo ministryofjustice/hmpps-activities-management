@@ -9,6 +9,7 @@ import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import EditAttendanceRoutes, { EditAttendance } from './editAttendance'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { AttendActivityMode } from '../recordAttendanceRequests'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -117,13 +118,33 @@ describe('Route Handlers - Edit Attendance', () => {
   })
 
   describe('POST', () => {
+    beforeEach(() => {
+      req.session.recordAttendanceRequests = {
+        mode: AttendActivityMode.SINGLE,
+      }
+    })
+
     it('redirect as expected when the yes attendance option is selected', async () => {
       req.body = {
         attendanceOption: 'yes',
       }
 
       await handler.POST(req, res)
+
       expect(res.redirect).toHaveBeenCalledWith(`/activities/attendance/activities/1/attendance-list`)
+    })
+
+    it('redirect as expected when mode is MULTIPLE', async () => {
+      req.body = {
+        attendanceOption: 'yes',
+      }
+      req.session.recordAttendanceRequests = {
+        mode: AttendActivityMode.MULTIPLE,
+      }
+
+      await handler.POST(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/attendance/activities/attendance-list`)
     })
 
     it('redirect as expected when the no attendance option is selected', async () => {

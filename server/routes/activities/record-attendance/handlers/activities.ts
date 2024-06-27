@@ -4,6 +4,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { asString, convertToArray, formatDate, getTimeSlotFromTime, toDate } from '../../../../utils/utils'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
+import { AttendActivityMode } from '../recordAttendanceRequests'
 
 export default class ActivitiesRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -37,6 +38,21 @@ export default class ActivitiesRoutes {
       .filter(a => selectedCategoryIds?.includes(a.categoryId) ?? true)
       .filter(a => filterValues.locationFilters?.includes(a.inCell ? 'IN_CELL' : 'OUT_OF_CELL') ?? true)
 
+    const activityRows = filteredActivities
+      .map(a => {
+        const session = getTimeSlotFromTime(a.startTime)
+        return {
+          ...a,
+          session,
+          sessionOrderIndex: Object.values(TimeSlot).indexOf(session),
+        }
+      })
+      .filter(a => !filterValues.sessionFilters || filterValues.sessionFilters.includes(a.session))
+      .sort((a, b) => {
+        return a.sessionOrderIndex - b.sessionOrderIndex
+      })
+
+    // TODO: SAA-1796 Will no longer need to split by session so remove
     const activitiesBySession = {
       am: filteredActivities.filter(a => getTimeSlotFromTime(a.startTime) === TimeSlot.AM),
       pm: filteredActivities.filter(a => getTimeSlotFromTime(a.startTime) === TimeSlot.PM),
@@ -48,6 +64,7 @@ export default class ActivitiesRoutes {
       activityDate,
       filterItems: filterItems(categories, filterValues),
       selectedSessions: filterValues.sessionFilters,
+      activityRows,
     })
   }
 
@@ -65,6 +82,15 @@ export default class ActivitiesRoutes {
       `&categoryFilters=${categoryFiltersString}` +
       `&locationFilters=${locationFiltersString}`
     res.redirect(redirectUrl)
+  }
+
+  POST_ATTENDANCES = async (req: Request, res: Response): Promise<void> => {
+    const { selectedInstanceIds } = req.body
+    req.session.recordAttendanceRequests = {
+      mode: AttendActivityMode.MULTIPLE,
+      selectedInstanceIds: selectedInstanceIds ? convertToArray(req.body.selectedInstanceIds) : [],
+    }
+    res.redirect('/activities/attendance/activities/attendance-list')
   }
 }
 

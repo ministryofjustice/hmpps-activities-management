@@ -67,7 +67,7 @@ context('Record attendance', () => {
     selectPeriodPage.selectPM()
     selectPeriodPage.continue()
 
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1', 'Gym')
+    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Gym', 'Maths level 1')
     activitiesPage.selectActivityWithName('English level 1')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)

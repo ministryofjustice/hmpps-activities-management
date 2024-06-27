@@ -129,7 +129,7 @@
     {% for attendee in attendance | sort(false, false, 'location') %}
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.prisoner | firstNameLastName | toTitleCase | prisonerName,
-            value: attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
+            value: instance.id + '-' + attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
             selectable: attendee.attendance.status === "WAITING" and attendee.attendance.editable and instance.activitySchedule.activity.attendanceRequired === true,
             items: [
                 {

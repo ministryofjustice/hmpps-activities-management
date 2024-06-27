@@ -4,11 +4,13 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import NotAttendedReasonRoutes, { NotAttendedForm } from './notAttendedReason'
-import { AttendanceReason, AttendanceUpdateRequest, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
+import { AttendanceReason, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import { YesNo } from '../../../../@types/activities'
 import AttendanceReasons from '../../../../enum/attendanceReason'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
+import config from '../../../../config'
+import { AttendActivityMode } from '../recordAttendanceRequests'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -21,6 +23,8 @@ describe('Route Handlers - Non Attendance', () => {
   let res: Response
 
   beforeEach(() => {
+    config.recordAttendanceSelectSlotFirst = true
+
     res = {
       locals: {
         user: {
@@ -33,7 +37,6 @@ describe('Route Handlers - Non Attendance', () => {
     } as unknown as Response
 
     req = {
-      params: { id: 1 },
       session: {
         notAttendedJourney: {
           activityInstance: {
@@ -41,12 +44,17 @@ describe('Route Handlers - Non Attendance', () => {
             startTime: '09:00',
             activitySchedule: { activity: { summary: 'Test activity' }, internalLocation: { description: 'Room 1' } },
           },
-          selectedPrisoners: [{ attendanceId: 1, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' }],
+          selectedPrisoners: [
+            { instanceId: 1, attendanceId: 1, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' },
+            { instanceId: 2, attendanceId: 2, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' },
+            { instanceId: 2, attendanceId: 3, prisonerNumber: 'XYZ123', prisonerName: 'MARY SMITH' },
+          ],
         },
       },
       body: plainToInstance(NotAttendedForm, {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'JOE BLOGGS',
             notAttendedReason: AttendanceReasons.SICK,
@@ -55,6 +63,28 @@ describe('Route Handlers - Non Attendance', () => {
             otherAbsenceReason: '',
             sickPay: YesNo.YES,
             isPayable: true,
+          },
+          {
+            instanceId: 2,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'JOE BLOGGS',
+            notAttendedReason: AttendanceReasons.OTHER,
+            moreDetail: '',
+            caseNote: '',
+            otherAbsenceReason: 'Refusal',
+            sickPay: YesNo.YES,
+            isPayable: false,
+          },
+          {
+            instanceId: 2,
+            prisonerNumber: 'XYZ123',
+            prisonerName: 'MARY SMITH',
+            notAttendedReason: AttendanceReasons.REFUSED,
+            moreDetail: '',
+            caseNote: 'Blah Blah',
+            otherAbsenceReason: '',
+            sickPay: YesNo.YES,
+            isPayable: false,
           },
         ],
       }),
@@ -65,17 +95,34 @@ describe('Route Handlers - Non Attendance', () => {
     jest.resetAllMocks()
   })
 
-  describe('GET', () => {
+  describe('GET_MULTIPLE', () => {
     it('should render with the expected view', async () => {
       when(activitiesService.getScheduledActivity)
         .calledWith(1, res.locals.user)
         .mockResolvedValue({
           id: 1,
+          startTime: '09:00',
           activitySchedule: {
             id: 2,
             activity: {
               id: 2,
+              summary: 'Maths 1',
               paid: true,
+            },
+          },
+        } as ScheduledActivity)
+
+      when(activitiesService.getScheduledActivity)
+        .calledWith(2, res.locals.user)
+        .mockResolvedValue({
+          id: 2,
+          startTime: '09:00',
+          activitySchedule: {
+            id: 3,
+            activity: {
+              id: 4,
+              summary: 'English 1',
+              paid: false,
             },
           },
         } as ScheduledActivity)
@@ -111,9 +158,9 @@ describe('Route Handlers - Non Attendance', () => {
           },
         ] as AttendanceReason[])
 
-      await handler.GET(req, res)
+      await handler.GET_MULTIPLE(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/not-attended-reason', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/not-attended-reason-multiple', {
         notAttendedReasons: [
           {
             id: 1,
@@ -129,77 +176,125 @@ describe('Route Handlers - Non Attendance', () => {
             displayInAbsence: true,
           },
         ],
-        selectedPrisoners: [{ attendanceId: 1, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' }],
-        isPayable: true,
+        rows: [
+          {
+            instanceId: 1,
+            attendanceId: 1,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'JOE BLOGGS',
+            session: 'am',
+            activityName: 'Maths 1',
+            isPayable: true,
+          },
+          {
+            instanceId: 2,
+            attendanceId: 2,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'JOE BLOGGS',
+            session: 'am',
+            activityName: 'English 1',
+            isPayable: false,
+          },
+          {
+            instanceId: 2,
+            attendanceId: 3,
+            prisonerNumber: 'XYZ123',
+            prisonerName: 'MARY SMITH',
+            session: 'am',
+            activityName: 'English 1',
+            isPayable: false,
+          },
+        ],
       })
     })
   })
 
-  describe('POST', () => {
-    const expectedAttendance = {
-      id: 1,
-      prisonCode: 'MDI',
-      status: AttendanceStatus.COMPLETED,
-      attendanceReason: AttendanceReasons.SICK,
-      incentiveLevelWarningIssued: false,
-      issuePayment: true,
-      comment: '',
-      caseNote: null,
-      otherAbsenceReason: null,
-    } as AttendanceUpdateRequest
+  describe('POST_MULTIPLE', () => {
+    it.each([
+      [AttendActivityMode.SINGLE, '/1/attendance-list'],
+      [AttendActivityMode.MULTIPLE, '/attendance-list'],
+    ])(
+      'non attendance should be redirected to the non attendance page and mode is %s',
+      async (mode: AttendActivityMode, url: string) => {
+        req.session.recordAttendanceRequests = { mode }
 
-    it('non attendance should be redirected to the non attendance page', async () => {
-      when(activitiesService.getScheduledActivity)
-        .calledWith(1, res.locals.user)
-        .mockResolvedValue({
-          id: 1,
-          activitySchedule: {
-            id: 2,
-            activity: {
+        when(activitiesService.getScheduledActivity)
+          .calledWith(1, res.locals.user)
+          .mockResolvedValue({
+            id: 1,
+            startTime: '09:00',
+            activitySchedule: {
               id: 2,
-              paid: true,
+              activity: {
+                id: 2,
+                summary: 'Maths 1',
+                paid: true,
+              },
             },
-          },
-        } as ScheduledActivity)
+          } as ScheduledActivity)
 
-      await handler.POST(req, res)
-
-      expect(activitiesService.updateAttendances).toHaveBeenCalledWith([expectedAttendance], res.locals.user)
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        'attendance-list',
-        'Attendance recorded',
-        "You've saved attendance details for Joe Bloggs",
-      )
-    })
-
-    it('should not issue payment if activity is unpaid', async () => {
-      when(activitiesService.getScheduledActivity)
-        .calledWith(1, res.locals.user)
-        .mockResolvedValue({
-          id: 1,
-          activitySchedule: {
+        when(activitiesService.getScheduledActivity)
+          .calledWith(2, res.locals.user)
+          .mockResolvedValue({
             id: 2,
-            activity: {
-              id: 2,
-              paid: false,
+            startTime: '09:00',
+            activitySchedule: {
+              id: 3,
+              activity: {
+                id: 4,
+                summary: 'English 1',
+                paid: false,
+              },
             },
-          },
-        } as ScheduledActivity)
+          } as ScheduledActivity)
 
-      await handler.POST(req, res)
+        await handler.POST_MULTIPLE(req, res)
 
-      const unpaidAttendance = {
-        ...expectedAttendance,
-        issuePayment: false,
-      }
-
-      expect(activitiesService.updateAttendances).toHaveBeenCalledWith([unpaidAttendance], res.locals.user)
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        'attendance-list',
-        'Attendance recorded',
-        "You've saved attendance details for Joe Bloggs",
-      )
-    })
+        expect(activitiesService.updateAttendances).toHaveBeenCalledWith(
+          [
+            {
+              id: 1,
+              prisonCode: 'MDI',
+              status: AttendanceStatus.COMPLETED,
+              attendanceReason: AttendanceReasons.SICK,
+              incentiveLevelWarningIssued: false,
+              issuePayment: true,
+              comment: '',
+              caseNote: null,
+              otherAbsenceReason: null,
+            },
+            {
+              id: 2,
+              prisonCode: 'MDI',
+              status: AttendanceStatus.COMPLETED,
+              attendanceReason: AttendanceReasons.OTHER,
+              incentiveLevelWarningIssued: false,
+              issuePayment: false,
+              comment: null,
+              caseNote: null,
+              otherAbsenceReason: 'Refusal',
+            },
+            {
+              id: 3,
+              prisonCode: 'MDI',
+              status: AttendanceStatus.COMPLETED,
+              attendanceReason: AttendanceReasons.REFUSED,
+              incentiveLevelWarningIssued: false,
+              issuePayment: false,
+              comment: null,
+              caseNote: 'Blah Blah',
+              otherAbsenceReason: null,
+            },
+          ],
+          res.locals.user,
+        )
+        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+          `/activities/attendance/activities${url}`,
+          'Attendance recorded',
+          "You've saved attendance details for 3 people",
+        )
+      },
+    )
   })
 
   describe('Validation', () => {
@@ -207,6 +302,7 @@ describe('Route Handlers - Non Attendance', () => {
       const requestData = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -214,6 +310,7 @@ describe('Route Handlers - Non Attendance', () => {
             sickPay: YesNo.YES,
           },
           {
+            instanceId: 2,
             prisonerNumber: 'ABC234',
             prisonerName: 'John Smith',
             isPayable: true,
@@ -228,10 +325,35 @@ describe('Route Handlers - Non Attendance', () => {
       expect(errors.length).toEqual(0)
     })
 
-    it('should fail validation if no attendence reason provided', async () => {
+    it('should fail validation if no instance id provided', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            prisonerNumber: 'ABC234',
+            prisonerName: 'John Smith',
+            isPayable: true,
+            notAttendedReason: AttendanceReasons.SICK,
+            sickPay: YesNo.NO,
+          },
+        ],
+      }
+
+      const requestObject = plainToInstance(NotAttendedForm, badRequest)
+      const errors = await validate(requestObject).then(errs =>
+        errs[0]?.children[0]?.children.flatMap(associateErrorsWithProperty),
+      )
+      expect(errors.length).toEqual(1)
+      expect(errors[0]).toEqual({
+        property: 'instanceId',
+        error: 'instanceId must be a positive number',
+      })
+    })
+
+    it('should fail validation if no attendance reason provided', async () => {
+      const badRequest = {
+        notAttendedData: [
+          {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
           },
@@ -253,6 +375,7 @@ describe('Route Handlers - Non Attendance', () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             notAttendedReason: 'INVALID',
@@ -271,10 +394,11 @@ describe('Route Handlers - Non Attendance', () => {
       })
     })
 
-    it('should fail validation if attendence reason is "SICK" and pay not selected', async () => {
+    it('should fail validation if attendance reason is "SICK" and pay not selected', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -294,10 +418,11 @@ describe('Route Handlers - Non Attendance', () => {
       })
     })
 
-    it('should fail validation if attendence reason is "REST" and pay not selected', async () => {
+    it('should fail validation if attendance reason is "REST" and pay not selected', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -317,10 +442,11 @@ describe('Route Handlers - Non Attendance', () => {
       })
     })
 
-    it('should fail validation if attendence reason is "OTHER" and pay not selected', async () => {
+    it('should fail validation if attendance reason is "OTHER" and pay not selected', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -341,10 +467,11 @@ describe('Route Handlers - Non Attendance', () => {
       })
     })
 
-    it('should pass validation and not require pay selection if attendence reason is "SICK" and activity is unpaid', async () => {
+    it('should pass validation and not require pay selection if attendance reason is "SICK" and activity is unpaid', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'false',
@@ -358,10 +485,11 @@ describe('Route Handlers - Non Attendance', () => {
       expect(errors.length).toEqual(0)
     })
 
-    it('should pass validation and not require pay selection if attendence reason is "REST" and activity is unpaid', async () => {
+    it('should pass validation and not require pay selection if attendance reason is "REST" and activity is unpaid', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'false',
@@ -375,10 +503,11 @@ describe('Route Handlers - Non Attendance', () => {
       expect(errors.length).toEqual(0)
     })
 
-    it('should pass validation and not require pay selection if attendence reason is "OTHER" and activity is unpaid', async () => {
+    it('should pass validation and not require pay selection if attendance reason is "OTHER" and activity is unpaid', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'false',
@@ -392,10 +521,11 @@ describe('Route Handlers - Non Attendance', () => {
       expect(errors.length).toEqual(0)
     })
 
-    it('should fail validation if attendence reason is "OTHER" and other absence reason not entered', async () => {
+    it('should fail validation if attendance reason is "OTHER" and other absence reason not entered', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -417,10 +547,11 @@ describe('Route Handlers - Non Attendance', () => {
       })
     })
 
-    it('should fail validation if attendence reason is "OTHER" and other absence reason exceeds 100 characters', async () => {
+    it('should fail validation if attendance reason is "OTHER" and other absence reason exceeds 100 characters', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -442,10 +573,11 @@ describe('Route Handlers - Non Attendance', () => {
       })
     })
 
-    it('should fail validation if attendence reason is "SICK" and more details exceed 100 characters', async () => {
+    it('should fail validation if attendance reason is "SICK" and more details exceed 100 characters', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -467,10 +599,11 @@ describe('Route Handlers - Non Attendance', () => {
       })
     })
 
-    it('should fail validation if attendence reason is "REFUSED" and case note not entered', async () => {
+    it('should fail validation if attendance reason is "REFUSED" and case note not entered', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -492,10 +625,11 @@ describe('Route Handlers - Non Attendance', () => {
       })
     })
 
-    it('should fail validation if attendence reason is "REFUSED" and case note exceeds 4000 characters', async () => {
+    it('should fail validation if attendance reason is "REFUSED" and case note exceeds 4000 characters', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -517,10 +651,11 @@ describe('Route Handlers - Non Attendance', () => {
       })
     })
 
-    it('should fail validation if attendence reason is "REFUSED" and incentive level warning not selected', async () => {
+    it('should fail validation if attendance reason is "REFUSED" and incentive level warning not selected', async () => {
       const badRequest = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -545,6 +680,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -562,6 +698,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -580,6 +717,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -598,6 +736,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -616,6 +755,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -633,6 +773,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -650,6 +791,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -667,6 +809,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',
@@ -684,6 +827,7 @@ describe('Route Handlers - Non Attendance', () => {
       const request = {
         notAttendedData: [
           {
+            instanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
             isPayable: 'true',

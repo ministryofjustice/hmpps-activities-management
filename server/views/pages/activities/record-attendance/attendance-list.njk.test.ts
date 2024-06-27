@@ -8,7 +8,7 @@ import attendanceListContext from '../../../fixtures/pages/record-attendance/att
 import attendanceListNotEditableContext from '../../../fixtures/pages/record-attendance/attendance-list-not-editable.json'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 
-const snippet = fs.readFileSync('server/views/pages/activities/record-attendance/attendance-list.njk')
+const snippet = fs.readFileSync('server/views/pages/activities/record-attendance/attendance-list-single.njk')
 
 const today = format(startOfToday(), 'yyyy-MM-dd')
 
