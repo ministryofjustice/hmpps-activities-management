@@ -130,8 +130,9 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     prisonCode: string,
     date: Date,
     user: ServiceUser,
-    reason?: String,
-    categories?: String[]): Promise<SuspendedPrisonerAttendance[]> {
+    reason?: string,
+    categories?: string[],
+  ): Promise<SuspendedPrisonerAttendance[]> {
     return this.get({
       path: `/attendances/${prisonCode}/suspended`,
       query: {
@@ -143,7 +144,6 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
-
 
   getScheduledActivity(id: number, user: ServiceUser): Promise<ScheduledActivity> {
     return this.get({
