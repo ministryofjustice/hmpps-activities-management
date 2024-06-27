@@ -16,10 +16,12 @@ export default class SuspendedPrisonersRoutes {
     const { user } = res.locals
     const { date } = req.query
 
+    const categories = await this.activitiesService.getActivityCategories(user)
+
     // Set the default filter values if they are not set
     req.session.attendanceSummaryJourney ??= {}
-    req.session.attendanceSummaryJourney.categoryFilters ??= null
-    req.session.attendanceSummaryJourney.reasonFilter ??= null
+    req.session.attendanceSummaryJourney.categoryFilters ??= []
+    req.session.attendanceSummaryJourney.reasonFilter ??= 'BOTH'
 
     const { categoryFilters, reasonFilter, searchTerm } = req.session.attendanceSummaryJourney
 
@@ -29,13 +31,17 @@ export default class SuspendedPrisonersRoutes {
 
     const activityDate = toDate(req.query.date as string)
 
-    const [suspendedPrisonerAttendance, categories] = await Promise.all([
-      this.activitiesService.getSuspendedPrisonersActivityAttendance(activityDate, user, reasonFilter, categoryFilters),
-      this.activitiesService.getActivityCategories(user),
-    ])
+    let reason = null
+    const categoryCodes = categoryFilters.map(cf => categories.find(c => c.name === cf).code)
+    if (reasonFilter !== 'BOTH') reason = reasonFilter
+    const suspendedPrisonerAttendance = await this.activitiesService.getSuspendedPrisonersActivityAttendance(
+      activityDate,
+      user,
+      reason,
+      categoryCodes,
+    )
 
-    req.session.attendanceSummaryJourney.categoryFilters = categories.map(c => c.code)
-    req.session.attendanceSummaryJourney.reasonFilter ??= 'BOTH'
+    req.session.attendanceSummaryJourney.categoryFilters = categories.map(c => c.name)
 
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(
       _.uniq(suspendedPrisonerAttendance.map(a => a.prisonerNumber)),
