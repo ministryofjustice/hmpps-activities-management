@@ -131,15 +131,15 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     prisonCode: string,
     date: Date,
     user: ServiceUser,
-    reason?: string,
     categories?: ActivityCategoryEnum[],
+    reason?: string,
   ): Promise<SuspendedPrisonerAttendance[]> {
     return this.get({
       path: `/attendances/${prisonCode}/suspended`,
       query: {
         date: toDateString(date),
-        reason,
-        categories,
+        ...(reason && { reason }),
+        ...(categories && { categories: categories.toString() }),
       },
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),

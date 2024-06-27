@@ -21,7 +21,7 @@ export default class SuspendedPrisonersRoutes {
 
     // Set the default filter values if they are not set
     req.session.attendanceSummaryJourney ??= {}
-    req.session.attendanceSummaryJourney.categoryFilters ??= []
+    req.session.attendanceSummaryJourney.categoryFilters ??= null
     req.session.attendanceSummaryJourney.reasonFilter ??= 'BOTH'
 
     const { categoryFilters, reasonFilter, searchTerm } = req.session.attendanceSummaryJourney
@@ -33,13 +33,12 @@ export default class SuspendedPrisonersRoutes {
     const activityDate = toDate(req.query.date as string)
 
     let reason = null
-    const categoryCodes = categoryFilters.map(cf => ActivityCategoryEnum[categories.find(c => c.name === cf).code])
     if (reasonFilter !== 'BOTH') reason = reasonFilter
     const suspendedPrisonerAttendance = await this.activitiesService.getSuspendedPrisonersActivityAttendance(
       activityDate,
       user,
+      categoryFilters && categoryFilters.map(cf => ActivityCategoryEnum[categories.find(c => c.name === cf).code]),
       reason,
-      categoryCodes,
     )
 
     req.session.attendanceSummaryJourney.categoryFilters = categories.map(c => c.name)

@@ -88,15 +88,15 @@ export default class ActivitiesService {
   getSuspendedPrisonersActivityAttendance(
     date: Date,
     user: ServiceUser,
-    reason?: string,
     categories?: ActivityCategoryEnum[],
+    reason?: string,
   ): Promise<SuspendedPrisonerAttendance[]> {
     return this.activitiesApiClient.getSuspendedPrisonersActivityAttendance(
       user.activeCaseLoadId,
       date,
       user,
-      reason,
       categories,
+      reason,
     )
   }
 
