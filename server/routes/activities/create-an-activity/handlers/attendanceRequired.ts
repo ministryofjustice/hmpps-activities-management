@@ -7,7 +7,7 @@ import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
 export class AttendanceRequiredForm {
   @Expose()
-  @IsEnum(YesNo, { message: 'Select whether attendance should be recorded' })
+  @IsEnum(YesNo, { message: 'Select yes if attendance should be recorded' })
   attendanceRequired: YesNo
 }
 

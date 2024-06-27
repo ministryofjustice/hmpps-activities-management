@@ -9,7 +9,9 @@ enum QualificationOption {
 
 export class Qualification {
   @Expose()
-  @IsIn(Object.values(QualificationOption), { message: 'Select which education levels or qualifications are required' })
+  @IsIn(Object.values(QualificationOption), {
+    message: 'Select yes if education levels or qualifications are required',
+  })
   qualificationOption: QualificationOption
 }
 

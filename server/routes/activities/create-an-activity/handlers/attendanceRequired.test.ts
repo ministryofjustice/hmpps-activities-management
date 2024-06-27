@@ -139,9 +139,7 @@ describe('Route Handlers - Create an activity schedule - Attendance Required opt
       const requestObject = plainToInstance(AttendanceRequiredForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([
-        { property: 'attendanceRequired', error: 'Select whether attendance should be recorded' },
-      ])
+      expect(errors).toEqual([{ property: 'attendanceRequired', error: 'Select yes if attendance should be recorded' }])
     })
   })
 })
