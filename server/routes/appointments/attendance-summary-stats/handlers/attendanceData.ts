@@ -6,7 +6,7 @@ import {
   enhanceAppointment,
   getAttendanceDataSubTitle,
   getAttendanceDataTitle,
-  getSpecificAppointmentCount
+  getSpecificAppointmentCount,
 } from '../../utils/attendanceUtils'
 import EventTier from '../../../../enum/eventTiers'
 import PrisonService from '../../../../services/prisonService'
@@ -15,13 +15,13 @@ import EventOrganiser from '../../../../enum/eventOrganisers'
 export default class AttendanceDataRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
-    private readonly prisonService: PrisonService
+    private readonly prisonService: PrisonService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { date, appointmentName, customAppointmentName, attendanceState, eventTier, prisonerNumber, organiserCode } =
-      req.query
+    const { date, appointmentName, customAppointmentName, attendanceState, eventTier, organiserCode } = req.query
+    const searchTerm = JSON.stringify(req.query.searchTerm)?.replace(/"/g, '')
 
     if (!isValidIsoDate(date as string)) {
       return res.redirect(`?date=${formatIsoDate(new Date())}`)
@@ -34,7 +34,7 @@ export default class AttendanceDataRoutes {
         new Date(date as string),
         user,
         appointmentName as string,
-        customAppointmentName as string
+        customAppointmentName as string,
       ),
       this.activitiesService.getAppointmentsByStatusAndDate(
         user.activeCaseLoadId,
@@ -43,22 +43,22 @@ export default class AttendanceDataRoutes {
         user,
         appointmentName as string,
         customAppointmentName as string,
-        prisonerNumber as string,
+        searchTerm,
         EventTier[eventTier as string],
-        EventOrganiser[organiserCode as string]
-      )
+        EventOrganiser[organiserCode as string],
+      ),
     ])
 
     const prisonerNumbers = Array.from(new Set(appointments.map(prisoner => prisoner.prisonerNumber)))
     const prisonerDetails = new Map(
       (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)).map(prisonerDetail => [
         prisonerDetail.prisonerNumber,
-        prisonerDetail
-      ])
+        prisonerDetail,
+      ]),
     )
 
     const enhancedAppointments = appointments.map(appointment =>
-      enhanceAppointment(appointment, prisonerDetails.get(appointment.prisonerNumber))
+      enhanceAppointment(appointment, prisonerDetails.get(appointment.prisonerNumber)),
     )
 
     return res.render('pages/appointments/attendance-summary-stats/attendanceData', {
@@ -74,20 +74,22 @@ export default class AttendanceDataRoutes {
         AttendanceStatus[attendanceState as string],
         EventTier[eventTier as string],
         appointments.length,
-        getSpecificAppointmentCount(appointments)
+        getSpecificAppointmentCount(appointments),
       ),
       showHostsFilter:
         AttendanceStatus[attendanceState as string] === AttendanceStatus.EVENT_TIER &&
         EventTier[eventTier as string] === EventTier.TIER_2,
-      eventTier,
-      organiserCode
+      eventTier: eventTier ?? '',
+      organiserCode: organiserCode ?? '',
+      searchTerm: searchTerm ?? '',
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { date, appointmentName, customAppointmentName, attendanceState, eventTier, organiserCode, searchTerm } = req.body
+    const { date, appointmentName, customAppointmentName, attendanceState, eventTier, organiserCode, searchTerm } =
+      req.body
     return res.redirect(
-      `?date=${datePickerDateToIsoDate(date)}&appointmentName=${appointmentName ?? ''}&customAppointmentName=${customAppointmentName ?? ''}&attendanceState=${attendanceState ?? ''}&eventTier=${eventTier ?? ''}&organiserCode=${organiserCode ?? ''}&searchTerm=${searchTerm ?? ''}`
+      `?date=${datePickerDateToIsoDate(date)}&appointmentName=${appointmentName ?? ''}&customAppointmentName=${customAppointmentName ?? ''}&attendanceState=${attendanceState ?? ''}&eventTier=${eventTier ?? ''}&organiserCode=${organiserCode ?? ''}&searchTerm=${searchTerm ?? ''}`,
     )
   }
 }

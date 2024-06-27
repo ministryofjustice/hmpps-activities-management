@@ -145,13 +145,13 @@
       }) }}
     </div>
   </div>
-       {# <form id="filter-form" method="POST" novalidate>
+       <form id="filter-form" method="POST" novalidate>
           <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
           <input type="hidden" name="attendanceState" value="{{ attendanceState }}"/>
-          <input type="hidden" name="eventTier" value="{{ eventTier }}"/> #}
+          <input type="hidden" name="eventTier" value="{{ eventTier }}"/>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
-          <label class="govuk-label" for="search-input">Search by name or prison number</label>
+          <label class="govuk-label" for="search-input">Search by prison number</label>
           {{ searchBar({
               inputParams: {
                   id: 'search-input',
@@ -166,17 +166,12 @@
   </div>
   <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
     <div class="moj-filter-layout__filter moj-filter-layout__flex moj-filter-layout__filter--small">
-      <form id="filter-form" method="POST" novalidate>
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-        <input type="hidden" name="attendanceState" value="{{ attendanceState }}"/>
-        <input type="hidden" name="eventTier" value="{{ eventTier }}"/>
         {{ mojFilter({
             heading: {
                 text: 'Filter'
             },
             optionsHtml: filterOptionsHtml
         }) }}
-      </form>
     </div>
     <div class="moj-filter-layout__content moj-filter-layout__content--grow">
       <div class="moj-action-bar">
@@ -212,7 +207,7 @@
         {% endif %}
       </div>
     </div>
-    {# </form> #}
+    </form>
   {% endblock %}
 
   {% block meta %}
