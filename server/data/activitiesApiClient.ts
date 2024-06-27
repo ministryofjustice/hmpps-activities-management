@@ -64,6 +64,7 @@ import {
 } from '../@types/activitiesAPI/types'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
+import { ActivityCategoryEnum } from './activityCategoryEnum'
 
 const CASELOAD_HEADER = (caseloadId: string) => ({ 'Caseload-Id': caseloadId })
 
@@ -131,7 +132,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     date: Date,
     user: ServiceUser,
     reason?: string,
-    categories?: string[],
+    categories?: ActivityCategoryEnum[],
   ): Promise<SuspendedPrisonerAttendance[]> {
     return this.get({
       path: `/attendances/${prisonCode}/suspended`,

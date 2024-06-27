@@ -49,6 +49,7 @@ import {
   SuspendedPrisonerAttendance,
 } from '../@types/activitiesAPI/types'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
+import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 
 export default class ActivitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
@@ -88,7 +89,7 @@ export default class ActivitiesService {
     date: Date,
     user: ServiceUser,
     reason?: string,
-    categories?: string[],
+    categories?: ActivityCategoryEnum[],
   ): Promise<SuspendedPrisonerAttendance[]> {
     return this.activitiesApiClient.getSuspendedPrisonersActivityAttendance(
       user.activeCaseLoadId,

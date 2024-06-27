@@ -5,6 +5,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import PrisonService from '../../../../services/prisonService'
 import { getActivityLocationDescription } from '../../../../utils/activityLocationDescription'
+import { ActivityCategoryEnum } from '../../../../data/activityCategoryEnum'
 
 export default class SuspendedPrisonersRoutes {
   constructor(
@@ -32,7 +33,7 @@ export default class SuspendedPrisonersRoutes {
     const activityDate = toDate(req.query.date as string)
 
     let reason = null
-    const categoryCodes = categoryFilters.map(cf => categories.find(c => c.name === cf).code)
+    const categoryCodes = categoryFilters.map(cf => ActivityCategoryEnum[categories.find(c => c.name === cf).code])
     if (reasonFilter !== 'BOTH') reason = reasonFilter
     const suspendedPrisonerAttendance = await this.activitiesService.getSuspendedPrisonersActivityAttendance(
       activityDate,
