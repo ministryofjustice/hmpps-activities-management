@@ -34,7 +34,7 @@ export default class SuspendedPrisonersRoutes {
       this.activitiesService.getActivityCategories(user),
     ])
 
-    req.session.attendanceSummaryJourney.categoryFilters = categories.map(c => c.name)
+    req.session.attendanceSummaryJourney.categoryFilters = categories.map(c => c.code)
     req.session.attendanceSummaryJourney.reasonFilter ??= 'BOTH'
 
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(
