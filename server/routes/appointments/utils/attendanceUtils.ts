@@ -2,6 +2,7 @@ import { Prisoner } from '../../../@types/activities'
 import { AppointmentAttendanceSummary, AppointmentAttendeeByStatus } from '../../../@types/activitiesAPI/types'
 import { AttendanceStatus } from '../../../@types/appointments'
 import EventTier from '../../../enum/eventTiers'
+import { formatDate, simplifyTime } from '../../../utils/utils'
 
 export const getAttendanceSummary = (summaries: AppointmentAttendanceSummary[]) => {
   const tierCounts = getEventTierCounts(summaries)
@@ -18,13 +19,13 @@ export const getAttendanceSummary = (summaries: AppointmentAttendanceSummary[]) 
 
   if (attendanceSummary.attendeeCount > 0) {
     attendanceSummary.attendedPercentage = Math.round(
-      (attendanceSummary.attended / attendanceSummary.attendeeCount) * 100
+      (attendanceSummary.attended / attendanceSummary.attendeeCount) * 100,
     )
     attendanceSummary.notAttendedPercentage = Math.round(
-      (attendanceSummary.notAttended / attendanceSummary.attendeeCount) * 100
+      (attendanceSummary.notAttended / attendanceSummary.attendeeCount) * 100,
     )
     attendanceSummary.notRecordedPercentage = Math.round(
-      (attendanceSummary.notRecorded / attendanceSummary.attendeeCount) * 100
+      (attendanceSummary.notRecorded / attendanceSummary.attendeeCount) * 100,
     )
   }
 
@@ -80,7 +81,7 @@ export const getAttendanceDataSubTitle = (
   page: AttendanceStatus,
   eventTier: EventTier,
   attendanceCount: number,
-  appointmentCount: number
+  appointmentCount: number,
 ) => {
   switch (page) {
     case AttendanceStatus.ATTENDED:
@@ -109,10 +110,12 @@ export const getSpecificAppointmentCount = (appointments: AppointmentAttendeeByS
 export const enhanceAppointment = (appointment: AppointmentAttendeeByStatus, prisoner: Prisoner) => {
   return {
     ...appointment,
-    cellLocation: prisoner.cellLocation,
-    appointmentHref: '', // TODO
-    time: `${appointment.startTime} to ${appointment.endTime}`,
-    date: appointment.startDate,
-    name: `${prisoner.firstName} ${prisoner.lastName}`,
+    appointmentHref: `/appointments/${appointment.appointmentId}/attendance`,
+    time: appointment.endTime
+      ? `${simplifyTime(appointment.startTime)} to ${simplifyTime(appointment.endTime)}`
+      : simplifyTime(appointment.startTime),
+    date: formatDate(appointment.startDate, 'd MMMM yyyy'),
+    ...prisoner,
+    timeDateSortingValue: new Date(`${appointment.startDate}T${appointment.startTime}`),
   }
 }

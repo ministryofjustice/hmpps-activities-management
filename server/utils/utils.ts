@@ -127,6 +127,11 @@ export const getTimeSlotFromTime = (time: string): TimeSlot => {
   return TimeSlot.ED
 }
 
+export const simplifyTime = (time: string): string => {
+  const splitTime = time.split(':')
+  return `${splitTime[0]}:${splitTime[1]}`
+}
+
 export const startsWithAny = (string: string, list: string[]): boolean => {
   return list.find(s => string.startsWith(s)) !== undefined
 }

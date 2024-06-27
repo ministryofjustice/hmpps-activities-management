@@ -66,6 +66,7 @@ import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
 import { AttendanceStatus } from '../@types/appointments'
 import EventTier from '../enum/eventTiers'
+import EventOrganiser from '../enum/eventOrganisers'
 
 const CASELOAD_HEADER = (caseloadId: string) => ({ 'Caseload-Id': caseloadId })
 
@@ -713,6 +714,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     customName: string,
     prisonerNumber: string,
     eventTier: EventTier,
+    organiserCode: EventOrganiser,
   ): Promise<AppointmentAttendeeByStatus[]> {
     const query = {
       date,
@@ -720,6 +722,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       ...(customName && { customName }),
       ...(prisonerNumber && { prisonerNumber }),
       ...(eventTier && { eventTier }),
+      ...(organiserCode && { organiserCode }),
     }
     return this.get({
       path: `/appointments/${prisonCode}/${status}/attendance`,

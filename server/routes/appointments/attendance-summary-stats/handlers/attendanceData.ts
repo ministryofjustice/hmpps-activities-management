@@ -6,10 +6,11 @@ import {
   enhanceAppointment,
   getAttendanceDataSubTitle,
   getAttendanceDataTitle,
-  getSpecificAppointmentCount,
+  getSpecificAppointmentCount
 } from '../../utils/attendanceUtils'
 import EventTier from '../../../../enum/eventTiers'
 import PrisonService from '../../../../services/prisonService'
+import EventOrganiser from '../../../../enum/eventOrganisers'
 
 export default class AttendanceDataRoutes {
   constructor(
@@ -19,7 +20,8 @@ export default class AttendanceDataRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { date, appointmentName, customAppointmentName, attendanceState, eventTier, prisonerNumber } = req.query
+    const { date, appointmentName, customAppointmentName, attendanceState, eventTier, prisonerNumber, organiserCode } =
+      req.query
 
     if (!isValidIsoDate(date as string)) {
       return res.redirect(`?date=${formatIsoDate(new Date())}`)
@@ -42,15 +44,16 @@ export default class AttendanceDataRoutes {
         appointmentName as string,
         customAppointmentName as string,
         prisonerNumber as string,
-        EventTier[eventTier as string]
-      ),
+        EventTier[eventTier as string],
+        EventOrganiser[organiserCode as string]
+      )
     ])
 
     const prisonerNumbers = Array.from(new Set(appointments.map(prisoner => prisoner.prisonerNumber)))
     const prisonerDetails = new Map(
       (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)).map(prisonerDetail => [
         prisonerDetail.prisonerNumber,
-        prisonerDetail,
+        prisonerDetail
       ])
     )
 
@@ -58,12 +61,10 @@ export default class AttendanceDataRoutes {
       enhanceAppointment(appointment, prisonerDetails.get(appointment.prisonerNumber))
     )
 
-    const summariesNotCancelled = summaries.filter(s => !s.isCancelled)
-
     return res.render('pages/appointments/attendance-summary-stats/attendanceData', {
       date,
       categories,
-      summariesNotCancelled,
+      summariesNotCancelled: summaries.filter(s => !s.isCancelled),
       appointmentName: appointmentName ?? '',
       customAppointmentName: customAppointmentName ?? '',
       attendanceState,
@@ -75,14 +76,18 @@ export default class AttendanceDataRoutes {
         appointments.length,
         getSpecificAppointmentCount(appointments)
       ),
+      showHostsFilter:
+        AttendanceStatus[attendanceState as string] === AttendanceStatus.EVENT_TIER &&
+        EventTier[eventTier as string] === EventTier.TIER_2,
+      eventTier,
+      organiserCode
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { date, appointmentName, customAppointmentName, attendanceState, eventTier } = req.body
-
+    const { date, appointmentName, customAppointmentName, attendanceState, eventTier, organiserCode, searchTerm } = req.body
     return res.redirect(
-      `?date=${datePickerDateToIsoDate(date)}&appointmentName=${appointmentName ?? ''}&customAppointmentName=${customAppointmentName ?? ''}&attendanceState=${attendanceState ?? ''}&eventTier=${eventTier}`
+      `?date=${datePickerDateToIsoDate(date)}&appointmentName=${appointmentName ?? ''}&customAppointmentName=${customAppointmentName ?? ''}&attendanceState=${attendanceState ?? ''}&eventTier=${eventTier ?? ''}&organiserCode=${organiserCode ?? ''}&searchTerm=${searchTerm ?? ''}`
     )
   }
 }

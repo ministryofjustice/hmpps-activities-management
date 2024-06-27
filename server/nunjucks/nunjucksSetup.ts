@@ -66,6 +66,7 @@ import { isoDateToDatePickerDate, parseIsoDate } from '../utils/datePickerUtils'
 import WaitlistRequester from '../enum/waitlistRequester'
 import { SERVICE_AS_USERNAME } from '../services/userService'
 import EventTier from '../enum/eventTiers'
+import EventOrganiser from '../enum/eventOrganisers'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -200,6 +201,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('AppointmentCancellationReason', AppointmentCancellationReason)
   njkEnv.addGlobal('AttendanceStatus', AttendanceStatus)
   njkEnv.addGlobal('EventTier', EventTier)
+  njkEnv.addGlobal('EventOrganiser', EventOrganiser)
   njkEnv.addGlobal('getAppointmentEditMessage', getAppointmentEditMessage)
   njkEnv.addGlobal('getConfirmAppointmentEditCta', getConfirmAppointmentEditCta)
   njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)

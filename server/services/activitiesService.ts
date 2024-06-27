@@ -51,6 +51,7 @@ import {
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
 import { AttendanceStatus } from '../@types/appointments'
 import EventTier from '../enum/eventTiers'
+import EventOrganiser from '../enum/eventOrganisers'
 
 export default class ActivitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
@@ -456,6 +457,7 @@ export default class ActivitiesService {
     customName?: string,
     prisonerNumber?: string,
     eventTier?: EventTier,
+    organiserCode?: EventOrganiser,
   ): Promise<AppointmentAttendeeByStatus[]> {
     return this.activitiesApiClient.AppointmentAttendeeByStatus(
       prisonCode,
@@ -466,6 +468,7 @@ export default class ActivitiesService {
       customName ?? null,
       prisonerNumber ?? null,
       eventTier ?? null,
+      organiserCode ?? null,
     )
   }
 }
