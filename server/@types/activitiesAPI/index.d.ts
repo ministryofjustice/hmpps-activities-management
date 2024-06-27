@@ -7228,6 +7228,17 @@ export interface components {
       categoryName: string
       /** @description attendance reason code */
       attendanceReasonCode: string
+      /**
+       * Format: int64
+       * @description The id of the particular session instance for this attendance record
+       * @example 1
+       */
+      scheduledInstanceId: number
+      /**
+       * @description The title of the activity for this attendance record
+       * @example Math Level 1
+       */
+      activitySummary: string
     }
     /** @description suspended prisoner activity attendance */
     SuspendedPrisonerAttendance: {
@@ -11405,6 +11416,17 @@ export interface operations {
       query: {
         /** @description date of query (required). Format YYYY-MM-DD. */
         date: string
+        reason?: string
+        categories?: (
+          | 'SAA_EDUCATION'
+          | 'SAA_INDUSTRIES'
+          | 'SAA_PRISON_JOBS'
+          | 'SAA_GYM_SPORTS_FITNESS'
+          | 'SAA_INDUCTION'
+          | 'SAA_INTERVENTIONS'
+          | 'SAA_FAITH_SPIRITUALITY'
+          | 'SAA_NOT_IN_WORKSAA_OTHER'
+        )[]
       }
       header?: never
       path: {
@@ -11542,6 +11564,7 @@ export interface operations {
         customName?: string
         prisonerNumber?: string
         eventTier?: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
+        organiserCode?: string
       }
       header?: {
         'Caseload-Id'?: string
