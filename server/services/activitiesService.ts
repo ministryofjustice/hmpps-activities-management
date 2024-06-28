@@ -46,8 +46,10 @@ import {
   Slot,
   AddCaseNoteRequest,
   AppointmentUncancelRequest,
+  SuspendedPrisonerAttendance,
   AppointmentAttendeeByStatus,
 } from '../@types/activitiesAPI/types'
+import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
 import { AttendanceStatus } from '../@types/appointments'
 import EventTier from '../enum/eventTiers'
@@ -84,6 +86,21 @@ export default class ActivitiesService {
       user,
       undefined,
       true,
+    )
+  }
+
+  getSuspendedPrisonersActivityAttendance(
+    date: Date,
+    user: ServiceUser,
+    categories?: ActivityCategoryEnum[],
+    reason?: string,
+  ): Promise<SuspendedPrisonerAttendance[]> {
+    return this.activitiesApiClient.getSuspendedPrisonersActivityAttendance(
+      user.activeCaseLoadId,
+      date,
+      user,
+      categories,
+      reason,
     )
   }
 
