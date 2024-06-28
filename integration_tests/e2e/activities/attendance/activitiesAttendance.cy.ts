@@ -9,6 +9,7 @@ import DailySummaryPage from '../../../pages/activities/attendanceSummary/dailyS
 import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceDashboard'
 import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
+import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
 
 context('Daily Attendance', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -29,6 +30,7 @@ context('Daily Attendance', () => {
       `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`,
       getAttendanceSummary,
     )
+    cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
   })
 
   it('should click through create activity journey', () => {
@@ -55,7 +57,6 @@ context('Daily Attendance', () => {
     activitiesPage.assertRow(4, false, 'Gym', 'Gym', 'PM', '16', '-', '-', '-')
     activitiesPage.assertRow(5, true, 'Maths level 1', 'B wing', 'AM', '18', '4', '2', '0')
 
-    activitiesPage.getButton('Show filter').click()
     activitiesPage.sessionPMCheckbox().click()
     activitiesPage.getButton('Apply filters').eq(0).click()
 
