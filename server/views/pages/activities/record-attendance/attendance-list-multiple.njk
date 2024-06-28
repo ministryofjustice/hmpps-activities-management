@@ -8,7 +8,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "components/searchBar.njk" import searchBar %}
 
-{% set pageTitle = "Record attendance at " + numActivities + (" activity" if numActivities == 1 else " activities")  %}
+{% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
 {% set jsBackLink = true %}
 
@@ -16,7 +16,11 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
-                {{  pageTitle }}
+                {% if numActivities == 1 %}
+                    {{ attendanceRows[0].instance.activitySchedule.activity.summary }} - record attendance
+                {% else %}
+                    Record attendance at  {{  numActivities }} activities
+                {% endif %}
                 <span class="govuk-caption-l">
                     {% set comma = joiner(', ') %}
                     {%- for session in selectedSessions -%}
