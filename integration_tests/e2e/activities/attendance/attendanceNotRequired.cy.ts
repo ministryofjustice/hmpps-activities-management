@@ -16,6 +16,7 @@ import getInmateDetails from '../../../fixtures/prisonerSearchApi/getInmateDetai
 import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
 import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceDashboard'
 import ActivitiesIndexPage from '../../../pages/activities'
+import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
 
 context('Attendance not required', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -41,6 +42,7 @@ context('Attendance not required', () => {
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
     cy.stubEndpoint('PUT', '/scheduled-instances/94/cancel')
     cy.stubEndpoint('PUT', '/scheduled-instances/94/uncancel')
+    cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
   })
 
   it('should not display attendance journey options and information', () => {
