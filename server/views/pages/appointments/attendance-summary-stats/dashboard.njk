@@ -117,7 +117,8 @@
           dataQa: 'attended',
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.ATTENDED ,
-            text: 'All attended'
+            text: 'All attended',
+            dataQa: 'attended-link'
           }
         }) }}
         {{ stat({
@@ -130,7 +131,8 @@
           dataQa: 'notAttended',
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.NOT_ATTENDED ,
-            text: 'All not attended'
+            text: 'All not attended',
+            dataQa: 'notAttended-link'
           }
         }) }}
         {{ stat({
@@ -143,7 +145,8 @@
           forceDisplay: true,
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.NOT_RECORDED ,
-            text: 'All not recorded yet'
+            text: 'All not recorded yet',
+            dataQa: 'notRecorded-link'
           }
         }) }}
         </div>
@@ -164,7 +167,8 @@
           forceDisplay: true,
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.EVENT_TIER + "&eventTier=" + EventTier.TIER_1,
-            text: 'All tier 1'
+            text: 'All tier 1',
+            dataQa: 'tier1-link'
           }
         }) }}
         {{ stat({
@@ -177,7 +181,8 @@
           dataQa: 'tier2',
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.EVENT_TIER + "&eventTier=" + EventTier.TIER_2,
-            text: 'All tier 2'
+            text: 'All tier 2',
+            dataQa: 'tier2-link'
           }
         }) }}
         {{ stat({
@@ -187,10 +192,11 @@
           percentage: attendanceSummary.foundationalPercentage,
           width: 'stat--med',
           forceDisplay: true,
-          dataQa: 'foundational',
+          dataQa: 'routine',
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.EVENT_TIER + "&eventTier=" + EventTier.FOUNDATION,
-            text: 'All routine'
+            text: 'All routine',
+            dataQa: 'routine-link'
           }
         }) }}
         </div>
@@ -208,7 +214,8 @@
           dataQa: 'cancelled',
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.CANCELLED,
-            text: 'All cancelled'
+            text: 'All cancelled',
+            dataQa: 'cancelled-link'
           }
         }) }}
         </div>

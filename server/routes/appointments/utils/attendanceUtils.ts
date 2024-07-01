@@ -32,7 +32,7 @@ export const getAttendanceSummary = (summaries: AppointmentAttendanceSummary[]) 
   return attendanceSummary
 }
 
-const getEventTierCounts = (summaries: AppointmentAttendanceSummary[]) => {
+export const getEventTierCounts = (summaries: AppointmentAttendanceSummary[]) => {
   const tier1 = summaries.filter(s => s.eventTierType === EventTier.TIER_1)
   const tier2 = summaries.filter(s => s.eventTierType === EventTier.TIER_2)
   const foundation = summaries.filter(s => s.eventTierType === EventTier.FOUNDATION)
