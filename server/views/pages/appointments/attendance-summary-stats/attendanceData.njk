@@ -14,7 +14,7 @@
 {% set pageTitle = "Appointments attendance data - " + date | formatDate %}
 {% set pageId = 'appointments-attendance-data' %}
 {% set hardBackLinkText = "Back" %}
-{% set hardBackLinkHref = "/appointments/attendance-summary/dashboard" %}
+{% set hardBackLinkHref = "/appointments/attendance-summary/dashboard?date="+date %}
 
 {% set rows = [] %}
 {% for appointment in appointments %}
