@@ -1,4 +1,5 @@
 import { addDays, subDays } from 'date-fns'
+import EventTier from '../../../server/enum/eventTiers'
 
 import Page from '../../pages/page'
 import IndexPage from '../../pages'
@@ -14,7 +15,7 @@ import getAttendanceByStatus from '../../fixtures/activitiesApi/getAttendanceByS
 import getInmateDetails from '../../fixtures/prisonerSearchApi/getInmateDetailsForAttendance.json'
 import { AttendanceStatus } from '../../../server/@types/appointments'
 
-context.skip('Appointment attendancy summary statistics', () => {
+context('Appointment attendancy summary statistics', () => {
   const now = new Date()
   const todayFormatted = formatDate(now, 'yyyy-MM-dd')
   const yesterday = subDays(new Date(), 1)
@@ -48,6 +49,31 @@ context.skip('Appointment attendancy summary statistics', () => {
       'GET',
       `/appointments/MDI/${AttendanceStatus.ATTENDED}/attendance\\?date=${tomorrowFormatted}`,
       getAttendanceByStatus,
+    )
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/${AttendanceStatus.NOT_ATTENDED}/attendance\\?date=${tomorrowFormatted}`,
+      getAttendanceByStatus.slice(0, 9),
+    )
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/${AttendanceStatus.NOT_ATTENDED}/attendance\\?date=${tomorrowFormatted}&prisonerNumber=G5897GP`,
+      getAttendanceByStatus.slice(0, 7),
+    )
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/${AttendanceStatus.NOT_RECORDED}/attendance\\?date=${tomorrowFormatted}`,
+      getAttendanceByStatus.slice(0, 12),
+    )
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/${AttendanceStatus.EVENT_TIER}/attendance\\?date=${tomorrowFormatted}&eventTier=${EventTier.TIER_1}`,
+      getAttendanceByStatus.slice(0, 3),
+    )
+    cy.stubEndpoint(
+      'GET',
+      `/appointments/MDI/${AttendanceStatus.NOT_RECORDED}/attendance\\?date=${tomorrowFormatted}&customName=candle`,
+      getAttendanceByStatus.slice(0, 12),
     )
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
   })
@@ -87,9 +113,9 @@ context.skip('Appointment attendancy summary statistics', () => {
     dashboardPage.attendedStat().contains('17')
     dashboardPage.notAttendedStat().contains('9')
     dashboardPage.notRecordedStat().contains('12')
-    dashboardPage.tier1Stat().contains('2')
-    dashboardPage.tier2Stat().contains('4')
-    dashboardPage.routineStat().contains('2')
+    dashboardPage.tier1Stat().contains('3')
+    dashboardPage.tier2Stat().contains('8')
+    dashboardPage.routineStat().contains('6')
     dashboardPage.cancelledStat().contains('0')
   })
   it('should render the select date page - yesterday', () => {
@@ -112,9 +138,9 @@ context.skip('Appointment attendancy summary statistics', () => {
     dashboardPage.attendedStat().contains('0')
     dashboardPage.notAttendedStat().contains('0')
     dashboardPage.notRecordedStat().contains('27')
-    dashboardPage.tier1Stat().contains('2')
-    dashboardPage.tier2Stat().contains('3')
-    dashboardPage.routineStat().contains('1')
+    dashboardPage.tier1Stat().contains('0')
+    dashboardPage.tier2Stat().contains('0')
+    dashboardPage.routineStat().contains('0')
     dashboardPage.cancelledStat().contains('1')
   })
   it('should render the select date page - chosen date', () => {
@@ -178,5 +204,101 @@ context.skip('Appointment attendancy summary statistics', () => {
       })
     allAttendedPage.appointmentName(32642).first().click()
     cy.location().should(loc => expect(loc.pathname).to.eq('/appointments/32642/attendance'))
+  })
+  it('Not attended data page - search filter - prisoner number', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.viewAppointmentsAttendanceSummaryCard().click()
+
+    const selectDatePage = Page.verifyOnPage(SelectDatePage)
+    selectDatePage.dateChoice().find('input[value="other"]').check()
+    selectDatePage.selectDatePickerDate(tomorrow)
+
+    selectDatePage.confirmButton().click()
+    const dashboardPage = Page.verifyOnPage(DashboardPage)
+    dashboardPage.notAttendedStatLink().click()
+    const attendancePage = Page.verifyOnPage(AttendanceData)
+    attendancePage.searchBar().type('G5897GP')
+    attendancePage.searchbarSubmit().click()
+    attendancePage.subTitle().contains('7 not attended')
+    cy.location().should(loc => {
+      expect(loc.search).contains('searchTerm=G5897GP')
+    })
+  })
+  it('Not attended data page - search filter - name', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.viewAppointmentsAttendanceSummaryCard().click()
+
+    const selectDatePage = Page.verifyOnPage(SelectDatePage)
+    selectDatePage.dateChoice().find('input[value="other"]').check()
+    selectDatePage.selectDatePickerDate(tomorrow)
+
+    selectDatePage.confirmButton().click()
+    const dashboardPage = Page.verifyOnPage(DashboardPage)
+    dashboardPage.notAttendedStatLink().click()
+    const attendancePage = Page.verifyOnPage(AttendanceData)
+    attendancePage.title().contains('All not attended')
+    attendancePage.subTitle().contains('9 not attended')
+    attendancePage.searchBar().type('Aborah')
+    attendancePage.searchbarSubmit().click()
+    attendancePage.subTitle().contains('4 not attended')
+    attendancePage
+      .table()
+      .find('td')
+      .then(data => {
+        expect(data.get(0).innerText).to.contain('Aborah, Cudmastarie Hallone\nG5897GP')
+        expect(data.get(4).innerText).to.contain('Aborah, Cudmastarie Hallone\nG5897GP')
+        expect(data.get(8).innerText).to.contain('Aborah, Cudmastarie Hallone\nG5897GP')
+        expect(data.get(12).innerText).to.contain('Aborah, Cudmastarie Hallone\nG5897GP')
+      })
+  })
+  it('Not recorded data page - custom name filter', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.viewAppointmentsAttendanceSummaryCard().click()
+
+    const selectDatePage = Page.verifyOnPage(SelectDatePage)
+    selectDatePage.dateChoice().find('input[value="other"]').check()
+    selectDatePage.selectDatePickerDate(tomorrow)
+
+    selectDatePage.confirmButton().click()
+    const dashboardPage = Page.verifyOnPage(DashboardPage)
+    dashboardPage.notRecordedStatLink().click()
+    const attendancePage = Page.verifyOnPage(AttendanceData)
+    attendancePage.title().contains('All not recorded yet')
+    attendancePage.subTitle().contains('12 not recorded')
+    attendancePage.getButton('Show filter').click()
+    attendancePage.customNameFilter().type('candle')
+    attendancePage.getButton('Apply filters').eq(0).click()
+    attendancePage.getButton('Show filter').click()
+    attendancePage.customNameFilter().should('have.value', 'candle')
+    cy.location().should(loc => {
+      expect(loc.search).contains('customAppointmentName=candle')
+    })
+  })
+  it('Tier 1 data page', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.viewAppointmentsAttendanceSummaryCard().click()
+
+    const selectDatePage = Page.verifyOnPage(SelectDatePage)
+    selectDatePage.dateChoice().find('input[value="other"]').check()
+    selectDatePage.selectDatePickerDate(tomorrow)
+
+    selectDatePage.confirmButton().click()
+    const dashboardPage = Page.verifyOnPage(DashboardPage)
+    dashboardPage.tier1StatLink().click()
+    const attendancePage = Page.verifyOnPage(AttendanceData)
+    attendancePage.title().contains('Tier 1 appointments')
+    attendancePage.subTitle().contains('3 attendances recorded at 1 Tier 1 appointments')
   })
 })

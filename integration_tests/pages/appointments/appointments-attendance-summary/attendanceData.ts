@@ -15,5 +15,11 @@ export default class AttendanceData extends Page {
 
   searchBar = (): Cypress.Chainable => cy.get('#search-input')
 
+  searchbarSubmit = (): Cypress.Chainable => cy.get('[data-qa="searchbar-submit"]')
+
   appointmentName = (appId: number): Cypress.Chainable => cy.get(`[data-qa="appointmentName-${appId}"]`)
+
+  customNameFilter = (): Cypress.Chainable => cy.get('[name="customAppointmentName"]')
+
+  getButton = (value: string): Cypress.Chainable => cy.get(`button:contains(${value})`)
 }

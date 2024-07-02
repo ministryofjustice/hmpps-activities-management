@@ -47,7 +47,6 @@ export default class AttendanceDataRoutes {
         EventOrganiser[organiserCode as string],
       ),
     ])
-
     const prisonerNumbers = Array.from(new Set(appointments.map(prisoner => prisoner.prisonerNumber)))
     const prisonerDetails = new Map(
       (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)).map(prisonerDetail => [
@@ -64,7 +63,7 @@ export default class AttendanceDataRoutes {
     if (nameSearch) {
       enhancedAppointmentsForSearchedPrisoner = enhancedAppointments.filter(app => {
         const name = `${app.firstName} ${app.lastName}`.toLowerCase()
-        return name.includes(searchTerm)
+        return name.includes(searchTerm.toLowerCase())
       })
     }
 
