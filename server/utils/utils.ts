@@ -450,3 +450,6 @@ export const filterObjects = (objects: object[], iteratee: string, eq: unknown):
 export const excludeArrayObject = (objects: object[], iteratee: object): object[] => {
   return objects.filter(o => o !== iteratee)
 }
+
+// Anything with a number is considered not to be a name, so therefore an identifier (prison no, PNC no etc.)
+export const isPrisonerIdentifier = (searchTerm: string): boolean => /\d/.test(searchTerm)

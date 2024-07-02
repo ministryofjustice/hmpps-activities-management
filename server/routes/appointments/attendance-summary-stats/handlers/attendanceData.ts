@@ -11,6 +11,7 @@ import {
 import EventTier from '../../../../enum/eventTiers'
 import PrisonService from '../../../../services/prisonService'
 import EventOrganiser from '../../../../enum/eventOrganisers'
+import { isPrisonerIdentifier } from '../../../../utils/utils'
 
 export default class AttendanceDataRoutes {
   constructor(
@@ -27,23 +28,21 @@ export default class AttendanceDataRoutes {
       return res.redirect(`?date=${formatIsoDate(new Date())}`)
     }
 
-    const [categories, summaries, appointments] = await Promise.all([
+    let nameSearch = null
+    if (searchTerm && !isPrisonerIdentifier(searchTerm)) {
+      nameSearch = searchTerm
+    }
+
+    const [categories, appointments] = await Promise.all([
       this.activitiesService.getAppointmentCategories(user),
-      this.activitiesService.getAppointmentAttendanceSummaries(
+      this.activitiesService.getAppointmentsByStatusAndDate(
         user.activeCaseLoadId,
+        AttendanceStatus[attendanceState as string],
         new Date(date as string),
         user,
         appointmentName as string,
         customAppointmentName as string,
-      ),
-      this.activitiesService.getAppointmentsByStatusAndDate(
-        user.activeCaseLoadId,
-        AttendanceStatus[attendanceState as string],
-        date as string,
-        user,
-        appointmentName as string,
-        customAppointmentName as string,
-        searchTerm,
+        nameSearch === null ? searchTerm : null,
         EventTier[eventTier as string],
         EventOrganiser[organiserCode as string],
       ),
@@ -61,19 +60,26 @@ export default class AttendanceDataRoutes {
       enhanceAppointment(appointment, prisonerDetails.get(appointment.prisonerNumber)),
     )
 
+    let enhancedAppointmentsForSearchedPrisoner = null
+    if (nameSearch) {
+      enhancedAppointmentsForSearchedPrisoner = enhancedAppointments.filter(app => {
+        const name = `${app.firstName} ${app.lastName}`.toLowerCase()
+        return name.includes(searchTerm)
+      })
+    }
+
     return res.render('pages/appointments/attendance-summary-stats/attendanceData', {
       date,
       categories,
-      summariesNotCancelled: summaries.filter(s => !s.isCancelled),
       appointmentName: appointmentName ?? '',
       customAppointmentName: customAppointmentName ?? '',
       attendanceState,
-      appointments: enhancedAppointments,
+      appointments: enhancedAppointmentsForSearchedPrisoner || enhancedAppointments,
       title: getAttendanceDataTitle(AttendanceStatus[attendanceState as string], EventTier[eventTier as string]),
       subTitle: getAttendanceDataSubTitle(
         AttendanceStatus[attendanceState as string],
         EventTier[eventTier as string],
-        appointments.length,
+        enhancedAppointmentsForSearchedPrisoner?.length || enhancedAppointments.length,
         getSpecificAppointmentCount(appointments),
       ),
       showHostsFilter:

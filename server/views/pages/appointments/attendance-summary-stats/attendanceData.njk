@@ -14,7 +14,7 @@
 {% set pageTitle = "Appointments attendance data - " + date | formatDate %}
 {% set pageId = 'appointments-attendance-data' %}
 {% set hardBackLinkText = "Back" %}
-{% set hardBackLinkHref = "/appointments/attendance-summary/dashboard" %}
+{% set hardBackLinkHref = "/appointments/attendance-summary/dashboard?date="+date %}
 
 {% set rows = [] %}
 {% for appointment in appointments %}
@@ -30,7 +30,8 @@
         } },
         { html: "<a href="+appointment.appointmentHref+">"+appointment.appointmentName+'</a>' or '-',
         attributes: {
-          "data-sort-value": appointment.appointmentName
+          "data-sort-value": appointment.appointmentName,
+          "data-qa": "appointmentName-"+appointment.appointmentId
         } },
         { html: appointment.time + '<br>' + appointment.date,
         attributes: {
@@ -132,7 +133,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-three-quarters">
       <span class="govuk-caption-l">{{ date | formatDate }}</span>
-      <h1 class="govuk-heading-xl">{{ title }}</h1>
+      <h1 class="govuk-heading-xl" data-qa="title">{{ title }}</h1>
     </div>
     <div class="govuk-grid-column-one-quarter govuk-!-padding-right-0 govuk-!-text-align-right">
       <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
@@ -151,7 +152,7 @@
           <input type="hidden" name="eventTier" value="{{ eventTier }}"/>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
-          <label class="govuk-label" for="search-input">Search by prison number</label>
+          <label class="govuk-label" for="search-input">Search by name or prison number</label>
           {{ searchBar({
               inputParams: {
                   id: 'search-input',
@@ -178,7 +179,7 @@
         <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
       </div>
       <div>
-        <h2 class="govuk-heading-l">{{ subTitle }}</h2>
+        <h2 class="govuk-heading-l" data-qa="subTitle">{{ subTitle }}</h2>
         {% if rows.length %}
                 {{ govukTable({
                 attributes: {
@@ -203,7 +204,7 @@
                 classes: 'sticky-header'
             }) }}
         {% else %}
-        <p class="govuk-body">No attendances to show</p>
+        <p class="govuk-body" data-qa="no-results">No attendances to show</p>
         {% endif %}
       </div>
     </div>
