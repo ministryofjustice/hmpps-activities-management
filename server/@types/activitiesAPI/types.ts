@@ -73,4 +73,6 @@ export type WaitingListSearchRequest = components['schemas']['WaitingListSearchR
 export type WaitingListSearchParams = operations['searchWaitingLists']['parameters']['query']
 export type WaitingListApplicationPaged = components['schemas']['PagedWaitingListApplication']
 export type ScheduledAttendee = components['schemas']['ScheduledAttendee']
+export type SuspendedPrisonerActivityAttendance = components['schemas']['SuspendedPrisonerActivityAttendance']
+export type SuspendedPrisonerAttendance = components['schemas']['SuspendedPrisonerAttendance']
 export type AppointmentAttendeeByStatus = components['schemas']['AppointmentAttendeeByStatus']

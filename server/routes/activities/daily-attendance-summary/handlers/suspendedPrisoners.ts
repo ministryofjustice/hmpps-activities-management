@@ -4,7 +4,8 @@ import { convertToTitleCase, toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import PrisonService from '../../../../services/prisonService'
-import activityLocationDescription from '../../../../utils/activityLocationDescription'
+import { getActivityLocationDescription } from '../../../../utils/activityLocationDescription'
+import { ActivityCategoryEnum } from '../../../../data/activityCategoryEnum'
 
 export default class SuspendedPrisonersRoutes {
   constructor(
@@ -16,44 +17,40 @@ export default class SuspendedPrisonersRoutes {
     const { user } = res.locals
     const { date } = req.query
 
+    const categories = await this.activitiesService.getActivityCategories(user)
+
+    // Set the default filter values if they are not set
+    req.session.attendanceSummaryJourney ??= {}
+    req.session.attendanceSummaryJourney.categoryFilters ??= null
+    req.session.attendanceSummaryJourney.reasonFilter ??= 'BOTH'
+
+    const { categoryFilters, reasonFilter, searchTerm } = req.session.attendanceSummaryJourney
+
     if (!date) {
       return res.redirect('select-period')
     }
 
     const activityDate = toDate(req.query.date as string)
 
-    const scheduledActivities = await this.activitiesService.getScheduledActivitiesAtPrison(activityDate, user)
-    const suspendedAttendances = await this.activitiesService
-      .getAllAttendance(activityDate, user)
-      .then(r =>
-        r.filter(
-          a =>
-            a.attendanceReasonCode === AttendanceReason.SUSPENDED ||
-            a.attendanceReasonCode === AttendanceReason.AUTO_SUSPENDED,
-        ),
-      )
+    let reason = null
+    if (reasonFilter !== 'BOTH') reason = reasonFilter
+    const suspendedPrisonerAttendance = await this.activitiesService.getSuspendedPrisonersActivityAttendance(
+      activityDate,
+      user,
+      categoryFilters && categoryFilters.map(cf => ActivityCategoryEnum[categories.find(c => c.name === cf).code]),
+      reason,
+    )
+
+    req.session.attendanceSummaryJourney.categoryFilters = categories.map(c => c.name)
 
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(
-      _.uniq(suspendedAttendances.map(a => a.prisonerNumber)),
+      _.uniq(suspendedPrisonerAttendance.map(a => a.prisonerNumber)),
       user,
     )
 
-    const uniqueCategories = _.uniq(suspendedAttendances.map(c => c.categoryName))
-
-    // Set the default filter values if they are not set
-    req.session.attendanceSummaryJourney ??= {}
-    req.session.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
-    req.session.attendanceSummaryJourney.reasonFilter ??= 'BOTH'
-
-    const { categoryFilters, reasonFilter, searchTerm } = req.session.attendanceSummaryJourney
-
-    const attendancesMatchingFilter = suspendedAttendances
-      .filter(a => categoryFilters?.includes(a.categoryName))
-      .filter(a => reasonFilter === a.attendanceReasonCode || reasonFilter === 'BOTH')
-
-    const suspendedAttendancesByPrisoner = Object.values(_.groupBy(attendancesMatchingFilter, 'prisonerNumber'))
-      .map(attendances => {
-        const prisoner = prisoners.find(p => p.prisonerNumber === attendances[0].prisonerNumber)
+    const suspendedAttendancesByPrisoner = suspendedPrisonerAttendance
+      .map(match => {
+        const prisoner = prisoners.find(p => p.prisonerNumber === match.prisonerNumber)
 
         return {
           prisonerNumber: prisoner.prisonerNumber,
@@ -62,24 +59,22 @@ export default class SuspendedPrisonersRoutes {
           prisonCode: prisoner.prisonId,
           cellLocation: prisoner.cellLocation,
           sessions: _.sortBy(
-            attendances.map(a => {
-              const activity = scheduledActivities.find(act => act.id === a.scheduledInstanceId)
-
+            match.attendance.map(a => {
               return {
                 sessionId: a.scheduledInstanceId,
                 sessionSummary: a.activitySummary,
-                sessionStartTime: activity.startTime,
-                sessionEndTime: activity.endTime,
+                sessionStartTime: a.startTime,
+                sessionEndTime: a.endTime,
                 sessionSlot: a.timeSlot,
-                sessionLocation: activityLocationDescription(activity.activitySchedule),
+                sessionLocation: getActivityLocationDescription(a.inCell, a.onWing, a.offWing, a.internalLocation),
               }
             }),
             'sessionStartTime',
           ),
-          reason: attendances.find(a => a.attendanceReasonCode === AttendanceReason.AUTO_SUSPENDED)
+          reason: match.attendance.find(a => a.attendanceReasonCode === AttendanceReason.AUTO_SUSPENDED)
             ? 'Temporarily released or transferred'
             : 'Suspended',
-          timeSlots: attendances.map(a => a.timeSlot),
+          timeSlots: match.attendance.map(a => a.timeSlot),
         }
       })
       .filter(
@@ -88,7 +83,7 @@ export default class SuspendedPrisonersRoutes {
       )
 
     return res.render('pages/activities/daily-attendance-summary/suspended-prisoners', {
-      uniqueCategories,
+      uniqueCategories: categories,
       activityDate,
       suspendedAttendancesByPrisoner,
     })
