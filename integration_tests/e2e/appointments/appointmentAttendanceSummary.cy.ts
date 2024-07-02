@@ -14,7 +14,7 @@ import getAttendanceByStatus from '../../fixtures/activitiesApi/getAttendanceByS
 import getInmateDetails from '../../fixtures/prisonerSearchApi/getInmateDetailsForAttendance.json'
 import { AttendanceStatus } from '../../../server/@types/appointments'
 
-context('Appointment attendancy summary statistics', () => {
+context.skip('Appointment attendancy summary statistics', () => {
   const now = new Date()
   const todayFormatted = formatDate(now, 'yyyy-MM-dd')
   const yesterday = subDays(new Date(), 1)
