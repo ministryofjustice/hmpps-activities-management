@@ -33,15 +33,8 @@ export default class AttendanceDataRoutes {
       nameSearch = searchTerm
     }
 
-    const [categories, summaries, appointments] = await Promise.all([
+    const [categories, appointments] = await Promise.all([
       this.activitiesService.getAppointmentCategories(user),
-      this.activitiesService.getAppointmentAttendanceSummaries(
-        user.activeCaseLoadId,
-        new Date(date as string),
-        user,
-        appointmentName as string,
-        customAppointmentName as string,
-      ),
       this.activitiesService.getAppointmentsByStatusAndDate(
         user.activeCaseLoadId,
         AttendanceStatus[attendanceState as string],
@@ -78,7 +71,6 @@ export default class AttendanceDataRoutes {
     return res.render('pages/appointments/attendance-summary-stats/attendanceData', {
       date,
       categories,
-      summariesNotCancelled: summaries.filter(s => !s.isCancelled),
       appointmentName: appointmentName ?? '',
       customAppointmentName: customAppointmentName ?? '',
       attendanceState,
