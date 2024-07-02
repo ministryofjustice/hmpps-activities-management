@@ -2,11 +2,13 @@
 
 {% from "components/searchBar.njk" import searchBar %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "partials/attendance/activitiesTable.njk" import activitiesTable %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
@@ -17,6 +19,10 @@
     (('&sessionFilters=' + session.req.query.sessionFilters) if session.req.query.sessionFilters else '') +
     (('&categoryFilters=' + session.req.query.categoryFilters) if session.req.query.categoryFilters else '') +
     (('&locationFilters=' + session.req.query.locationFilters) if session.req.query.locationFilters else '') %}
+
+{% block meta %}
+    <meta name="autocompleteElements" content="locationId"/>
+{% endblock %}
 
 {% block content %}
     <form id="filter-form" method="POST" novalidate>
@@ -63,6 +69,60 @@
         </div>
 
         {% set filterOptionsHtml %}
+
+        {% if recordAttendanceSelectSlotFirst %}
+
+        {% set locationOptions = [{ value: '-', text: '' }] %}
+        {% for location in locations %}
+            {% set options = (locationOptions.push( { value: location.locationId, text: location.userDescription }), locationOptions) %}
+        {% endfor %}
+
+        {{ govukRadios({
+            id: "location-type",
+            name: "locationType",
+            items: [
+                {
+                    value: "ALL",
+                    text: "All Locations",
+                    checked: filterItems.locationType == 'ALL'
+                },
+                {
+                    value: "OUT_OF_CELL",
+                    text: "Search for a location",
+                    checked: filterItems.locationType == 'OUT_OF_CELL',
+                    conditional: {
+                        html: govukSelect({
+                            id: "locationId",
+                            name: "locationId",
+                            label: {
+                                text: "Start typing a location and select from the list of options."
+                            },
+                            errorMessage: validationErrors | findError('locationId'),
+                            value: filterItems.locationId,
+                            items: locationOptions
+                        })
+                    }
+                },
+                {
+                    value: "IN_CELL",
+                    text: "In cell",
+                    checked: filterItems.locationType == 'IN_CELL'
+                },
+                {
+                    value: "OFF_WING",
+                    text: "Off wing - not listed",
+                    checked: filterItems.locationType == 'OFF_WING'
+                },
+                {
+                    value: "ON_WING",
+                    text: "On wing - not listed",
+                    checked: filterItems.locationType == 'ON_WING'
+                }
+            ]
+        }) }}
+
+        {% endif %}
+
         {{ govukCheckboxes({
                 idPrefix: 'sessionFilters',
                 name: 'sessionFilters',
@@ -75,6 +135,7 @@
                 },
                 items: filterItems.sessionFilters
             }) }}
+
         {{ govukCheckboxes({
                 idPrefix: 'categoryFilters',
                 name: 'categoryFilters',
@@ -93,6 +154,8 @@
         <div class="govuk-!-margin-bottom-4">
             <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
         </div>
+
+        {% if not recordAttendanceSelectSlotFirst %}
         {{ govukCheckboxes({
                 idPrefix: 'locationFilters',
                 name: 'locationFilters',
@@ -108,12 +171,15 @@
                 },
                 items: filterItems.locationFilters
             }) }}
+        {%  endif %}
+
         {{ govukButton({
             text: 'Apply filters'
         }) }}
+
         {% endset %}
 
-        <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
+        <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter" data-filter-start-shown="true">
             <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
                 {{ mojFilter({
                     heading: {
