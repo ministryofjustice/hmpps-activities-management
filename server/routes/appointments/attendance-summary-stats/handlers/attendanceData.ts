@@ -45,7 +45,7 @@ export default class AttendanceDataRoutes {
       this.activitiesService.getAppointmentsByStatusAndDate(
         user.activeCaseLoadId,
         AttendanceStatus[attendanceState as string],
-        date as string,
+        new Date(date as string),
         user,
         appointmentName as string,
         customAppointmentName as string,

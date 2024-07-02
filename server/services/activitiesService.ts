@@ -451,7 +451,7 @@ export default class ActivitiesService {
   async getAppointmentsByStatusAndDate(
     prisonCode: string,
     status: AttendanceStatus,
-    date: string,
+    date: Date,
     user: ServiceUser,
     categoryCode?: string,
     customName?: string,
@@ -462,7 +462,7 @@ export default class ActivitiesService {
     return this.activitiesApiClient.AppointmentAttendeeByStatus(
       prisonCode,
       status,
-      date,
+      format(date, 'yyyy-MM-dd'),
       user,
       categoryCode ?? null,
       customName ?? null,

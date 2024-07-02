@@ -44,9 +44,10 @@ import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import appointmentSeriesDetails from './fixtures/appointment_series_details_1.json'
 import appointmentDetails from './fixtures/appointment_details_1.json'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
-import { AppointmentApplyTo } from '../@types/appointments'
+import { AppointmentApplyTo, AttendanceStatus } from '../@types/appointments'
 import calcCurrentWeek from '../utils/helpers/currentWeekCalculator'
 import { formatIsoDate } from '../utils/datePickerUtils'
+import EventTier from '../enum/eventTiers'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -923,6 +924,56 @@ describe('Activities Service', () => {
       const activeAgencies = await activitiesService.activeRolledPrisons()
 
       expect(activeAgencies).toEqual(['MDI', 'LPI'])
+    })
+  })
+
+  describe('getAppointmentsByStatusAndDate', () => {
+    it('should call the api client to get the basic appointments', async () => {
+      const prisonCode = 'MDI'
+      const date = new Date()
+      const status = AttendanceStatus.ATTENDED
+      await activitiesService.getAppointmentsByStatusAndDate(prisonCode, status, date, user)
+      expect(activitiesApiClient.AppointmentAttendeeByStatus).toHaveBeenCalledWith(
+        prisonCode,
+        status,
+        formatIsoDate(date),
+        user,
+        null,
+        null,
+        null,
+        null,
+        null,
+      )
+    })
+    it('should call the api client to get the appointments with filters', async () => {
+      const prisonCode = 'MDI'
+      const date = new Date()
+      const status = AttendanceStatus.NOT_ATTENDED
+      const categoryCode = 'OIC'
+      const customName = 'Adjudication Hearing'
+      const prisonerNumber = 'G6123VU'
+      const eventTier = EventTier.TIER_1
+      await activitiesService.getAppointmentsByStatusAndDate(
+        prisonCode,
+        status,
+        date,
+        user,
+        categoryCode,
+        customName,
+        prisonerNumber,
+        eventTier,
+      )
+      expect(activitiesApiClient.AppointmentAttendeeByStatus).toHaveBeenCalledWith(
+        prisonCode,
+        status,
+        formatIsoDate(date),
+        user,
+        categoryCode,
+        customName,
+        prisonerNumber,
+        eventTier,
+        null,
+      )
     })
   })
 })
