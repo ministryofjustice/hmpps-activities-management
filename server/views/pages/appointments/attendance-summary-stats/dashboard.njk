@@ -83,9 +83,9 @@
       }) }}
     </div>
     <div class="govuk-grid-column-full">
-      <h2 class="govuk-body-l" data-qa="appointmentsNotCancelledTotal">{{ attendanceSummary.attendeeCount }} attendees for 
+      <p class="govuk-body-l" data-qa="appointmentsNotCancelledTotal">{{ attendanceSummary.attendeeCount }} attendees for 
           <a href="/appointments/attendance/summaries?date={{ date | formatDate('yyyy-MM-dd') }}&appointmentName={{appointmentName}}&customAppointmentName={{customAppointmentName}}">{{ summariesNotCancelled | length }} appointment{{ "s" if summariesNotCancelled | length != 1 }}</a>
-      </h2>
+      </p>
     </div>
   </div>
   <div class="moj-filter-layout" data-module="activities-list-filter">
@@ -154,7 +154,7 @@
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
         <div class="govuk-grid-row govuk-!-margin-left-1">
-        <h3 class="govuk-heading-l">Attendance by tier</h3>
+        <h2 class="govuk-heading-l">Attendance by tier</h2>
         <p class="govuk-body-l">Attendances recorded at appointments in each tier.</p>
 
         {{ stat({
@@ -203,7 +203,7 @@
 
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         <div class="govuk-grid-row govuk-!-margin-bottom-6 govuk-!-margin-left-1">
-        <h3 class="govuk-body-l">Cancelled appointments</h3>
+        <h2 class="govuk-heading-l">Cancelled appointments</h2>
 
         {{ stat({
           heading: "Cancelled appointments",
