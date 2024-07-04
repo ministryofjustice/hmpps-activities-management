@@ -46,8 +46,14 @@ import {
   Slot,
   AddCaseNoteRequest,
   AppointmentUncancelRequest,
+  SuspendedPrisonerAttendance,
+  AppointmentAttendeeByStatus,
 } from '../@types/activitiesAPI/types'
+import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
+import { AttendanceStatus } from '../@types/appointments'
+import EventTier from '../enum/eventTiers'
+import EventOrganiser from '../enum/eventOrganisers'
 
 export default class ActivitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
@@ -80,6 +86,21 @@ export default class ActivitiesService {
       user,
       undefined,
       true,
+    )
+  }
+
+  getSuspendedPrisonersActivityAttendance(
+    date: Date,
+    user: ServiceUser,
+    categories?: ActivityCategoryEnum[],
+    reason?: string,
+  ): Promise<SuspendedPrisonerAttendance[]> {
+    return this.activitiesApiClient.getSuspendedPrisonersActivityAttendance(
+      user.activeCaseLoadId,
+      date,
+      user,
+      categories,
+      reason,
     )
   }
 
@@ -442,5 +463,29 @@ export default class ActivitiesService {
   async activeRolledPrisons(): Promise<string[]> {
     const r = await this.getRolledOutPrisons()
     return r.filter(item => item.activitiesRolledOut || item.appointmentsRolledOut).map(item => item.prisonCode)
+  }
+
+  async getAppointmentsByStatusAndDate(
+    prisonCode: string,
+    status: AttendanceStatus,
+    date: Date,
+    user: ServiceUser,
+    categoryCode?: string,
+    customName?: string,
+    prisonerNumber?: string,
+    eventTier?: EventTier,
+    organiserCode?: EventOrganiser,
+  ): Promise<AppointmentAttendeeByStatus[]> {
+    return this.activitiesApiClient.AppointmentAttendeeByStatus(
+      prisonCode,
+      status,
+      format(date, 'yyyy-MM-dd'),
+      user,
+      categoryCode ?? null,
+      customName ?? null,
+      prisonerNumber ?? null,
+      eventTier ?? null,
+      organiserCode ?? null,
+    )
   }
 }

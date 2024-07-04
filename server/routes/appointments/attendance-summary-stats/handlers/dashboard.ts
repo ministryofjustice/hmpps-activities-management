@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { datePickerDateToIsoDate, formatIsoDate, isValidIsoDate } from '../../../../utils/datePickerUtils'
 import ActivitiesService from '../../../../services/activitiesService'
-import getAttendanceSummary from '../../utils/attendanceUtils'
+import { getAttendanceSummary } from '../../utils/attendanceUtils'
 
 export default class DashboardRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}

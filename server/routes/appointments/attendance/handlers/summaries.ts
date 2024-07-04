@@ -5,7 +5,7 @@ import DateOption from '../../../../enum/dateOption'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { dateFromDateOption } from '../../../../utils/datePickerUtils'
-import getAttendanceSummary from '../../utils/attendanceUtils'
+import { getAttendanceSummary } from '../../utils/attendanceUtils'
 
 export default class SummariesRoutes {
   constructor(

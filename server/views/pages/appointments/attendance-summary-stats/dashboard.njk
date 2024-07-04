@@ -76,13 +76,16 @@
       <div class="govuk-hint govuk-!-font-size-16">Updated at {{ now | formatDate('HH:mm') }} on {{ now | formatDate('d MMMM yyyy') }}</div>
       {{ govukButton({
           text: "Refresh",
-          classes: "govuk-button--blue"
+          classes: "govuk-button--blue",
+          attributes: {
+            form: 'filter-form'
+          }
       }) }}
     </div>
     <div class="govuk-grid-column-full">
-      <h2 class="govuk-body-l" data-qa="appointmentsNotCancelledTotal">{{ attendanceSummary.attendeeCount }} attendees for 
+      <p class="govuk-body-l" data-qa="appointmentsNotCancelledTotal">{{ attendanceSummary.attendeeCount }} attendees for 
           <a href="/appointments/attendance/summaries?date={{ date | formatDate('yyyy-MM-dd') }}&appointmentName={{appointmentName}}&customAppointmentName={{customAppointmentName}}">{{ summariesNotCancelled | length }} appointment{{ "s" if summariesNotCancelled | length != 1 }}</a>
-      </h2>
+      </p>
     </div>
   </div>
   <div class="moj-filter-layout" data-module="activities-list-filter">
@@ -113,8 +116,9 @@
           forceDisplay: true,
           dataQa: 'attended',
           link: {
-            href: '#',
-            text: 'All attended'
+            href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.ATTENDED ,
+            text: 'All attended',
+            dataQa: 'attended-link'
           }
         }) }}
         {{ stat({
@@ -126,8 +130,9 @@
           forceDisplay: true,
           dataQa: 'notAttended',
           link: {
-            href: '#',
-            text: 'All not attended'
+            href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.NOT_ATTENDED ,
+            text: 'All not attended',
+            dataQa: 'notAttended-link'
           }
         }) }}
         {{ stat({
@@ -139,8 +144,9 @@
           dataQa: 'notRecorded',
           forceDisplay: true,
           link: {
-            href: '#',
-            text: 'All not recorded yet'
+            href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.NOT_RECORDED ,
+            text: 'All not recorded yet',
+            dataQa: 'notRecorded-link'
           }
         }) }}
         </div>
@@ -148,7 +154,7 @@
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
         <div class="govuk-grid-row govuk-!-margin-left-1">
-        <h3 class="govuk-heading-l">Attendance by tier</h3>
+        <h2 class="govuk-heading-l">Attendance by tier</h2>
         <p class="govuk-body-l">Attendances recorded at appointments in each tier.</p>
 
         {{ stat({
@@ -160,8 +166,9 @@
           dataQa: 'tier1',
           forceDisplay: true,
           link: {
-            href: '#',
-            text: 'All tier 1'
+            href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.EVENT_TIER + "&eventTier=" + EventTier.TIER_1,
+            text: 'All tier 1',
+            dataQa: 'tier1-link'
           }
         }) }}
         {{ stat({
@@ -173,8 +180,9 @@
           forceDisplay: true,
           dataQa: 'tier2',
           link: {
-            href: '#',
-            text: 'All tier 2'
+            href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.EVENT_TIER + "&eventTier=" + EventTier.TIER_2,
+            text: 'All tier 2',
+            dataQa: 'tier2-link'
           }
         }) }}
         {{ stat({
@@ -184,17 +192,18 @@
           percentage: attendanceSummary.foundationalPercentage,
           width: 'stat--med',
           forceDisplay: true,
-          dataQa: 'foundational',
+          dataQa: 'routine',
           link: {
-            href: '#',
-            text: 'All routine'
+            href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.EVENT_TIER + "&eventTier=" + EventTier.FOUNDATION,
+            text: 'All routine',
+            dataQa: 'routine-link'
           }
         }) }}
         </div>
 
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         <div class="govuk-grid-row govuk-!-margin-bottom-6 govuk-!-margin-left-1">
-        <h3 class="govuk-body-l">Cancelled appointments</h3>
+        <h2 class="govuk-heading-l">Cancelled appointments</h2>
 
         {{ stat({
           heading: "Cancelled appointments",
@@ -204,8 +213,9 @@
           forceDisplay: true,
           dataQa: 'cancelled',
           link: {
-            href: '#',
-            text: 'All cancelled'
+            href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.CANCELLED,
+            text: 'All cancelled',
+            dataQa: 'cancelled-link'
           }
         }) }}
         </div>

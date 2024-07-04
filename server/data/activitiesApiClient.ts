@@ -60,9 +60,15 @@ import {
   SuspendPrisonerRequest,
   UnsuspendPrisonerRequest,
   AppointmentUncancelRequest,
+  SuspendedPrisonerAttendance,
+  AppointmentAttendeeByStatus,
 } from '../@types/activitiesAPI/types'
+import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
 import TimeSlot from '../enum/timeSlot'
+import { AttendanceStatus } from '../@types/appointments'
+import EventTier from '../enum/eventTiers'
+import EventOrganiser from '../enum/eventOrganisers'
 
 const CASELOAD_HEADER = (caseloadId: string) => ({ 'Caseload-Id': caseloadId })
 
@@ -119,6 +125,25 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
         endDate: toDateString(endDate),
         slot,
         cancelled,
+      },
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  getSuspendedPrisonersActivityAttendance(
+    prisonCode: string,
+    date: Date,
+    user: ServiceUser,
+    categories?: ActivityCategoryEnum[],
+    reason?: string,
+  ): Promise<SuspendedPrisonerAttendance[]> {
+    return this.get({
+      path: `/attendances/${prisonCode}/suspended`,
+      query: {
+        date: toDateString(date),
+        ...(reason && { reason }),
+        ...(categories && { categories: categories.toString() }),
       },
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
@@ -698,6 +723,33 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: searchRequest,
       query: pageOptions,
+    })
+  }
+
+  async AppointmentAttendeeByStatus(
+    prisonCode: string,
+    status: AttendanceStatus,
+    date: string,
+    user: ServiceUser,
+    categoryCode: string,
+    customName: string,
+    prisonerNumber: string,
+    eventTier: EventTier,
+    organiserCode: EventOrganiser,
+  ): Promise<AppointmentAttendeeByStatus[]> {
+    const query = {
+      date,
+      ...(categoryCode && { categoryCode }),
+      ...(customName && { customName }),
+      ...(prisonerNumber && { prisonerNumber }),
+      ...(eventTier && { eventTier }),
+      ...(organiserCode && { organiserCode }),
+    }
+    return this.get({
+      path: `/appointments/${prisonCode}/${status}/attendance`,
+      query,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 }
