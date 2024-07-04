@@ -4,6 +4,12 @@
   }
 
   .moj-filter {
-    margin-right: 10px;
+    margin-right: 20px;
+  }
+
+  --filters-action-adjust: 180px;
+
+  :has(.moj-js-hidden) {
+    --filters-action-adjust: 0vw;
   }
 }

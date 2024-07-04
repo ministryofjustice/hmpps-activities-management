@@ -37,6 +37,12 @@
     bottom: -1px;
     background-color: $govuk-brand-colour;
     margin: 0 calc(50% - 50vw);
+    margin-top: 0;
+    margin-bottom: 0;
+    --half-table-width: 50%;
+    --half-viewport-width: 50vw;
+    margin-left: calc(var(--half-table-width) - var(--half-viewport-width) - var(--filters-action-adjust));
+    margin-right: calc(var(--half-table-width) - var(--half-viewport-width) + var(--filters-action-adjust));
     padding: 20px 0;
 
     &--active {
