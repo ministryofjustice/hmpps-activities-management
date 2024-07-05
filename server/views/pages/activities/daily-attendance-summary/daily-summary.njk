@@ -239,8 +239,53 @@
             visuallyHiddenText: 'prisoners'
         }) }}
     </div>
-
     {% if activitiesAttendanceUpdatesFlag %}
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+        <div class="govuk-grid-row govuk-!-margin-bottom-3">
+            <div class="govuk-grid-column-full">
+                <h2 class="govuk-heading-l">Attendance by tier</h2>
+                <p class="govuk-body-l">Attendances recorded at activities in each tier.</p>
+            </div>
+
+            {{ stat({
+            heading: "Tier 1",
+            number: totalAttendedTier1Activities[timeSlot],
+            visuallyHiddenText: "prisoners",
+            dataQa: 'tier1',
+            forceDisplay: true,
+            link: {
+                href: "#",
+                text: 'All tier 1',
+                dataQa: 'tier1-link'
+            }
+            }) }}
+
+            {{ stat({
+            heading: "Tier 2",
+            number: totalAttendedTier2Activities[timeSlot],
+            visuallyHiddenText: "prisoners",
+            dataQa: 'tier2',
+            forceDisplay: true,
+            link: {
+                href: "#",
+                text: 'All tier 2',
+                dataQa: 'tier2-link'
+            }
+            }) }}
+
+        {{ stat({
+          heading: "Routine (also called 'foundational')",
+          number: totalAttendedRoutineActivities[timeSlot],
+          visuallyHiddenText: "prisoners",
+          forceDisplay: true,
+          dataQa: 'routine',
+          link: {
+            href: "#",
+            text: 'All routine',
+            dataQa: 'routine-link'
+          }
+        }) }}
+        </div>
     {% endif %}
 
     {% if totalCancelledSessions[timeSlot] > 0 %}

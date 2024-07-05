@@ -4,6 +4,7 @@ import { parse } from 'date-fns'
 import DailySummaryRoutes from './dailySummary'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AllAttendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
+import EventTier from '../../../../enum/eventTiers'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -52,6 +53,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         activitySummary: 'Maths Level 1',
         categoryName: 'Education',
         attendanceRequired: true,
+        eventTier: EventTier.FOUNDATION,
       },
       {
         attendanceId: 2,
@@ -67,6 +69,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         activitySummary: 'Woodworking',
         categoryName: 'Prison Jobs',
         attendanceRequired: true,
+        eventTier: EventTier.TIER_1,
       },
       {
         attendanceId: 3,
@@ -82,6 +85,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         activitySummary: 'Woodworking',
         categoryName: 'Prison Jobs',
         attendanceRequired: true,
+        eventTier: EventTier.TIER_2,
       },
       {
         attendanceId: 4,
@@ -97,6 +101,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         activitySummary: 'Woodworking',
         categoryName: 'Prison Jobs',
         attendanceRequired: true,
+        eventTier: EventTier.FOUNDATION,
       },
       {
         attendanceId: 5,
@@ -112,6 +117,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         activitySummary: 'Woodworking',
         categoryName: 'Prison Jobs',
         attendanceRequired: true,
+        eventTier: EventTier.FOUNDATION,
       },
       {
         attendanceId: 6,
@@ -126,6 +132,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         activitySummary: 'Gym',
         categoryName: 'Exercise',
         attendanceRequired: false,
+        eventTier: EventTier.TIER_1,
       },
       {
         attendanceId: 7,
@@ -140,6 +147,39 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         activitySummary: 'Maths',
         categoryName: 'Education',
         attendanceRequired: false,
+        eventTier: EventTier.TIER_1,
+      },
+      {
+        attendanceId: 8,
+        scheduledInstanceId: 5,
+        prisonCode: 'MDI',
+        sessionDate: '2022-10-10',
+        timeSlot: 'PM',
+        status: 'COMPLETED',
+        attendanceReasonCode: 'ATTENDED',
+        issuePayment: true,
+        prisonerNumber: 'ZXY123',
+        activityId: 2,
+        activitySummary: 'Woodworking',
+        categoryName: 'Prison Jobs',
+        attendanceRequired: true,
+        eventTier: EventTier.FOUNDATION,
+      },
+      {
+        attendanceId: 9,
+        scheduledInstanceId: 6,
+        prisonCode: 'MDI',
+        sessionDate: '2022-10-10',
+        timeSlot: 'AM',
+        status: 'COMPLETED',
+        attendanceReasonCode: 'ATTENDED',
+        issuePayment: true,
+        prisonerNumber: 'ZXY123',
+        activityId: 2,
+        activitySummary: 'Woodworking',
+        categoryName: 'Prison Jobs',
+        attendanceRequired: true,
+        eventTier: EventTier.FOUNDATION,
       },
     ] as AllAttendance[]
 
@@ -214,22 +254,22 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalActivities: {
-          AM: 2,
-          DAY: 2,
+          AM: 3,
+          DAY: 4,
           ED: 0,
-          PM: 0,
+          PM: 1,
         },
         totalAllocated: {
-          AM: 5,
-          DAY: 5,
+          AM: 6,
+          DAY: 7,
           ED: 0,
-          PM: 0,
+          PM: 1,
         },
         totalAttended: {
-          AM: 1,
-          DAY: 1,
+          AM: 2,
+          DAY: 3,
           ED: 0,
-          PM: 0,
+          PM: 1,
         },
         totalCancelled: {
           AM: 0,
@@ -374,6 +414,24 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           DAY: 2,
           ED: 0,
           PM: 1,
+        },
+        totalAttendedRoutineActivities: {
+          AM: 1,
+          DAY: 2,
+          ED: 0,
+          PM: 1,
+        },
+        totalAttendedTier1Activities: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalAttendedTier2Activities: {
+          AM: 1,
+          DAY: 1,
+          ED: 0,
+          PM: 0,
         },
       })
     })
@@ -571,6 +629,24 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           DAY: 1,
           ED: 0,
           PM: 1,
+        },
+        totalAttendedRoutineActivities: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalAttendedTier1Activities: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalAttendedTier2Activities: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
         },
       })
     })

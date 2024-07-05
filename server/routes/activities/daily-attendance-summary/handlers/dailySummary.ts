@@ -225,7 +225,7 @@ export default class DailySummaryRoutes {
         } else if (attendance.eventTier === EventTier.TIER_2) {
           totalAttendedTier2Activities.DAY += 1
           totalAttendedTier2Activities[attendance.timeSlot] += 1
-        } else {
+        } else if (attendance.eventTier === EventTier.FOUNDATION) {
           totalAttendedRoutineActivities.DAY += 1
           totalAttendedRoutineActivities[attendance.timeSlot] += 1
         }
@@ -253,6 +253,9 @@ export default class DailySummaryRoutes {
       totalUnpaidOther,
       totalUnattendedActivities,
       totalUnattendedAllocated,
+      totalAttendedTier1Activities,
+      totalAttendedTier2Activities,
+      totalAttendedRoutineActivities,
     }
   }
 
