@@ -28,7 +28,7 @@
         { text: appointment.cellLocation or '-',attributes: {
           "data-sort-value": appointment.cellLocation
         } },
-        { html: "<a href="+appointment.appointmentHref+">"+appointment.appointmentName+'</a>' or '-',
+        { html: "<a href="+appointment.appointmentHref+" target='_blank'>"+appointment.appointmentName+'</a>' or '-',
         attributes: {
           "data-sort-value": appointment.appointmentName,
           "data-qa": "appointmentName-"+appointment.appointmentId

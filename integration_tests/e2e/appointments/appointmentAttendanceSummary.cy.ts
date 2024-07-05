@@ -202,8 +202,6 @@ context('Appointment attendancy summary statistics', () => {
         expect(data.get(2).innerText).to.contain('Monday Worship (Chaplaincy)')
         expect(data.get(3).innerText).to.contain('10:30 to 11:00\n1 July 2024')
       })
-    allAttendedPage.appointmentName(32642).first().click()
-    cy.location().should(loc => expect(loc.pathname).to.eq('/appointments/32642/attendance'))
   })
   it('Not attended data page - search filter - prisoner number', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
