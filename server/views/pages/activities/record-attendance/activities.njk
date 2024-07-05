@@ -80,10 +80,17 @@
         {{ govukRadios({
             id: "location-type",
             name: "locationType",
+            classes: "govuk-radios--small",
+            fieldset: {
+                legend: {
+                    text: 'Location',
+                    classes: 'govuk-fieldset__legend--m'
+                }
+            },
             items: [
                 {
                     value: "ALL",
-                    text: "All Locations",
+                    text: "All locations",
                     checked: filterItems.locationType == 'ALL'
                 },
                 {
@@ -95,7 +102,7 @@
                             id: "locationId",
                             name: "locationId",
                             label: {
-                                text: "Start typing a location and select from the list of options."
+                                text: "Start typing a location and select from the list."
                             },
                             errorMessage: validationErrors | findError('locationId'),
                             value: filterItems.locationId,
@@ -179,11 +186,16 @@
 
         {% endset %}
 
+
+        {% if recordAttendanceSelectSlotFirst %}
+        <div class="attendance-activities">
+        {%  endif %}
+
         <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter" data-filter-start-shown="true">
             <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
                 {{ mojFilter({
                     heading: {
-                        text: 'Filter'
+                        text: 'Filters'
                     },
                     optionsHtml: filterOptionsHtml
                 }) }}
@@ -238,6 +250,11 @@
                 </nav>
             </div>
         </div>
+
+        {% if recordAttendanceSelectSlotFirst %}
+        </div>
+        {% endif %}
+
     </form>
 {% endblock %}
 
