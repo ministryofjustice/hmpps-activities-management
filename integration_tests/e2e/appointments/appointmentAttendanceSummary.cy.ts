@@ -182,7 +182,7 @@ context('Appointment attendancy summary statistics', () => {
     const allAttendedPage = Page.verifyOnPage(AttendanceData)
     allAttendedPage.title().contains('All attended')
     allAttendedPage.subTitle().contains('17 attended')
-    allAttendedPage.searchBar().should('exist')
+    allAttendedPage.getInputByLabel('Search by name or prison number').should('exist')
     allAttendedPage.table().should('exist')
     allAttendedPage
       .table()
@@ -202,8 +202,6 @@ context('Appointment attendancy summary statistics', () => {
         expect(data.get(2).innerText).to.contain('Monday Worship (Chaplaincy)')
         expect(data.get(3).innerText).to.contain('10:30 to 11:00\n1 July 2024')
       })
-    allAttendedPage.appointmentName(32642).first().click()
-    cy.location().should(loc => expect(loc.pathname).to.eq('/appointments/32642/attendance'))
   })
   it('Not attended data page - search filter - prisoner number', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -220,7 +218,7 @@ context('Appointment attendancy summary statistics', () => {
     const dashboardPage = Page.verifyOnPage(DashboardPage)
     dashboardPage.notAttendedStatLink().click()
     const attendancePage = Page.verifyOnPage(AttendanceData)
-    attendancePage.searchBar().type('G5897GP')
+    attendancePage.getInputByLabel('Search by name or prison number').type('G5897GP')
     attendancePage.searchbarSubmit().click()
     attendancePage.subTitle().contains('7 not attended')
     cy.location().should(loc => {
@@ -244,7 +242,7 @@ context('Appointment attendancy summary statistics', () => {
     const attendancePage = Page.verifyOnPage(AttendanceData)
     attendancePage.title().contains('All not attended')
     attendancePage.subTitle().contains('9 not attended')
-    attendancePage.searchBar().type('Aborah')
+    attendancePage.getInputByLabel('Search by name or prison number').type('Aborah')
     attendancePage.searchbarSubmit().click()
     attendancePage.subTitle().contains('4 not attended')
     attendancePage

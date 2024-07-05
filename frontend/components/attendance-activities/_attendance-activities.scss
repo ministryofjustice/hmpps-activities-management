@@ -1,0 +1,15 @@
+.attendance-activities {
+  .govuk-table__cell--numeric {
+    padding-right: 5px;
+  }
+
+  .moj-filter {
+    margin-right: 20px;
+  }
+
+  --filters-action-adjust: 180px;
+
+  :has(.moj-js-hidden) {
+    --filters-action-adjust: 0vw;
+  }
+}

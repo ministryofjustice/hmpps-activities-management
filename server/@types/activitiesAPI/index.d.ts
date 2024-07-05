@@ -2854,10 +2854,10 @@ export interface components {
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -2988,6 +2988,7 @@ export interface components {
         | 'PRISONER_ALLOCATION_AMENDED'
         | 'PRISONER_ATTENDANCE_CREATED'
         | 'PRISONER_ATTENDANCE_AMENDED'
+        | 'PRISONER_ATTENDANCE_DELETED'
         | 'PRISONER_ATTENDANCE_EXPIRED'
         | 'APPOINTMENT_INSTANCE_CREATED'
         | 'APPOINTMENT_INSTANCE_UPDATED'
@@ -6480,10 +6481,10 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -7192,6 +7193,11 @@ export interface components {
        * @example true
        */
       attendanceRequired: boolean
+      /**
+       * @description event tier
+       * @enum {string}
+       */
+      eventTier?: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
     }
     /** @description suspended prisoner activity attendance */
     SuspendedPrisonerActivityAttendance: {
@@ -11425,7 +11431,8 @@ export interface operations {
           | 'SAA_INDUCTION'
           | 'SAA_INTERVENTIONS'
           | 'SAA_FAITH_SPIRITUALITY'
-          | 'SAA_NOT_IN_WORKSAA_OTHER'
+          | 'SAA_NOT_IN_WORK'
+          | 'SAA_OTHER'
         )[]
       }
       header?: never
