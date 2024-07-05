@@ -8,6 +8,7 @@ import AttendanceReason from '../../../../enum/attendanceReason'
 import TimeSlot from '../../../../enum/timeSlot'
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../../../@types/express'
+import EventTier from '../../../../enum/eventTiers'
 
 type CancelledActivity = {
   id: number
@@ -125,6 +126,9 @@ export default class DailySummaryRoutes {
     const totalUnpaidOther = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnattendedActivities = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnattendedAllocated = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalAttendedTier1Activities = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalAttendedTier2Activities = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalAttendedRoutineActivities = { DAY: 0, AM: 0, PM: 0, ED: 0 }
 
     _.uniqBy(attendances, 'scheduledInstanceId')
       .map(s => ({
@@ -150,6 +154,7 @@ export default class DailySummaryRoutes {
       }
       totalAllocated.DAY += 1
       totalAllocated[attendance.timeSlot] += 1
+
       if (attendance.status === AttendanceStatus.WAITING) {
         totalNotAttended.DAY += 1
         totalNotAttended[attendance.timeSlot] += 1
@@ -213,6 +218,17 @@ export default class DailySummaryRoutes {
       } else {
         totalAttended.DAY += 1
         totalAttended[attendance.timeSlot] += 1
+
+        if (attendance.eventTier === EventTier.TIER_1) {
+          totalAttendedTier1Activities.DAY += 1
+          totalAttendedTier1Activities[attendance.timeSlot] += 1
+        } else if (attendance.eventTier === EventTier.TIER_2) {
+          totalAttendedTier2Activities.DAY += 1
+          totalAttendedTier2Activities[attendance.timeSlot] += 1
+        } else {
+          totalAttendedRoutineActivities.DAY += 1
+          totalAttendedRoutineActivities[attendance.timeSlot] += 1
+        }
       }
     })
 
