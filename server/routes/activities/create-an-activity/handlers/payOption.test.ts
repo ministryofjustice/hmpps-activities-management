@@ -144,7 +144,9 @@ describe('Route Handlers - Create an activity - Pay option', () => {
       const requestObject = plainToInstance(PayOptionForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'paid', error: 'Select whether this activity should be paid or unpaid' }])
+      expect(errors).toEqual([
+        { property: 'paid', error: 'Select yes if people will be paid for attending this activity' },
+      ])
     })
 
     it('validation fails if value is invalid', async () => {
@@ -155,7 +157,9 @@ describe('Route Handlers - Create an activity - Pay option', () => {
       const requestObject = plainToInstance(PayOptionForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'paid', error: 'Select whether this activity should be paid or unpaid' }])
+      expect(errors).toEqual([
+        { property: 'paid', error: 'Select yes if people will be paid for attending this activity' },
+      ])
     })
 
     it('validation passes if valid value is provided', async () => {
