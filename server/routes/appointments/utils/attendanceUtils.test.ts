@@ -16,9 +16,6 @@ describe('getEventTierCounts', () => {
       tier1Count: 3,
       tier2Count: 10,
       foundationCount: 0,
-      tier1Percentage: 100,
-      tier2Percentage: 83,
-      foundationalPercentage: 0,
     })
   })
 })

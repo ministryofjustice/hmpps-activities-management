@@ -8,7 +8,7 @@ import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
 export class PayOptionForm {
   @Expose()
-  @IsEnum(YesNo, { message: 'Select whether this activity should be paid or unpaid' })
+  @IsEnum(YesNo, { message: 'Select yes if people will be paid for attending this activity' })
   paid: YesNo
 }
 

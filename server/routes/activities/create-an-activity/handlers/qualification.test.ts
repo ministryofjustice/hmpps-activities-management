@@ -70,7 +70,7 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'qualificationOption', error: 'Select which education levels or qualifications are required' },
+        { property: 'qualificationOption', error: 'Select yes if education levels or qualifications are required' },
       ])
     })
 
@@ -83,7 +83,7 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'qualificationOption', error: 'Select which education levels or qualifications are required' },
+        { property: 'qualificationOption', error: 'Select yes if education levels or qualifications are required' },
       ])
     })
 
