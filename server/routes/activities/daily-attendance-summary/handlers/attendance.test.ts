@@ -6,6 +6,7 @@ import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 import DailyAttendanceRoutes from './attendance'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import EventTier from '../../../../enum/eventTiers'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -57,6 +58,7 @@ describe('Route Handlers - Daily Attendance List', () => {
           activitySummary: 'Maths Level 1',
           categoryName: 'Education',
           attendanceRequired: true,
+          eventTier: EventTier.FOUNDATION,
         },
         {
           attendanceId: 2,
@@ -71,6 +73,7 @@ describe('Route Handlers - Daily Attendance List', () => {
           activitySummary: 'Woodworking',
           categoryName: 'Prison Jobs',
           attendanceRequired: true,
+          eventTier: EventTier.FOUNDATION,
         },
         {
           attendanceId: 3,
@@ -85,6 +88,7 @@ describe('Route Handlers - Daily Attendance List', () => {
           activitySummary: 'Woodworking',
           categoryName: 'Prison Jobs',
           attendanceRequired: true,
+          eventTier: EventTier.TIER_1,
         },
       ] as AllAttendance[]
 
@@ -125,7 +129,9 @@ describe('Route Handlers - Daily Attendance List', () => {
         session: {},
       } as unknown as Request
 
-      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue(mockApiResponse)
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user, undefined)
+        .mockResolvedValue(mockApiResponse)
 
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC123', 'ABC321'], res.locals.user)
@@ -155,6 +161,7 @@ describe('Route Handlers - Daily Attendance List', () => {
               status: 'WAITING',
               timeSlot: 'AM',
               attendanceRequired: true,
+              eventTier: EventTier.FOUNDATION,
             },
           },
           {
@@ -174,6 +181,7 @@ describe('Route Handlers - Daily Attendance List', () => {
               status: 'WAITING',
               timeSlot: 'AM',
               attendanceRequired: true,
+              eventTier: EventTier.FOUNDATION,
             },
           },
         ],
@@ -195,7 +203,9 @@ describe('Route Handlers - Daily Attendance List', () => {
       mockApiResponse[1].attendanceRequired = false
       mockPrisonApiResponse.pop()
 
-      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue(mockApiResponse)
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user, undefined)
+        .mockResolvedValue(mockApiResponse)
 
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC123'], res.locals.user)
@@ -225,6 +235,7 @@ describe('Route Handlers - Daily Attendance List', () => {
               status: 'WAITING',
               timeSlot: 'AM',
               attendanceRequired: true,
+              eventTier: EventTier.FOUNDATION,
             },
           },
         ],
@@ -243,7 +254,9 @@ describe('Route Handlers - Daily Attendance List', () => {
         session: {},
       } as unknown as Request
 
-      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue(mockApiResponse)
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user, undefined)
+        .mockResolvedValue(mockApiResponse)
 
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ZXY123'], res.locals.user)
@@ -281,6 +294,7 @@ describe('Route Handlers - Daily Attendance List', () => {
               status: 'COMPLETED',
               timeSlot: 'AM',
               attendanceRequired: true,
+              eventTier: EventTier.TIER_1,
             },
           },
         ],
@@ -292,7 +306,9 @@ describe('Route Handlers - Daily Attendance List', () => {
       const dateString = '2022-10-10'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
 
-      when(activitiesService.getAllAttendance).calledWith(date, res.locals.user).mockResolvedValue(mockApiResponse)
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user, undefined)
+        .mockResolvedValue(mockApiResponse)
 
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC321'], res.locals.user)
@@ -333,6 +349,7 @@ describe('Route Handlers - Daily Attendance List', () => {
               status: 'WAITING',
               timeSlot: 'AM',
               attendanceRequired: true,
+              eventTier: EventTier.FOUNDATION,
             },
           },
         ],

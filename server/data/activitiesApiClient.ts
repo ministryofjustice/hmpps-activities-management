@@ -490,9 +490,10 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  getAllAttendance(sessionDate: Date, user: ServiceUser): Promise<AllAttendance[]> {
+  getAllAttendance(sessionDate: Date, user: ServiceUser, eventTier?: EventTier): Promise<AllAttendance[]> {
     return this.get({
       path: `/attendances/${user.activeCaseLoadId}/${toDateString(sessionDate)}`,
+      query: { eventTier },
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })

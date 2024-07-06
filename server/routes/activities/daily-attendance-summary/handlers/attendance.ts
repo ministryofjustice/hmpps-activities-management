@@ -5,6 +5,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
+import EventTier from '../../../../enum/eventTiers'
 
 export default class DailyAttendanceRoutes {
   constructor(
@@ -14,13 +15,14 @@ export default class DailyAttendanceRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { date, status } = req.query
+    const { date, status, eventTier } = req.query
 
     if (!date) {
       return res.redirect('select-period')
     }
     const activityDate = toDate(req.query.date as string)
-    const attendances = await this.activitiesService.getAllAttendance(activityDate, user)
+    const tier = eventTier && EventTier[eventTier as string]
+    const attendances = await this.activitiesService.getAllAttendance(activityDate, user, tier)
     const mandatoryAttendances = attendances.filter(a => a.attendanceRequired)
     const attendancesForStatus = mandatoryAttendances.filter(a => {
       if (status === 'NotAttended') return a.status === AttendanceStatus.WAITING
