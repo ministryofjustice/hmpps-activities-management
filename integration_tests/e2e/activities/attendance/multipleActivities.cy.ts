@@ -16,21 +16,23 @@ import ActivitiesIndexPage from '../../../pages/activities'
 import getAttendanceReasons from '../../../fixtures/activitiesApi/getAttendanceReasons.json'
 import NotAttendedReasonPage from '../../../pages/recordAttendance/notAttendedReason'
 import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
+import { formatDate } from '../../../../server/utils/utils'
 
 context('Record attendance', () => {
-  const today = format(startOfToday(), 'yyyy-MM-dd')
+  const today = startOfToday()
+  const todayStr = format(today, 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.signIn()
 
-    getScheduledInstanceEnglishLevel1.date = today
-    getScheduledInstanceEnglishLevel2.date = today
+    getScheduledInstanceEnglishLevel1.date = todayStr
+    getScheduledInstanceEnglishLevel2.date = todayStr
 
     cy.stubEndpoint(
       'GET',
-      `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`,
+      `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${todayStr}`,
       getAttendanceSummary,
     )
 
@@ -43,7 +45,7 @@ context('Record attendance', () => {
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstanceEnglishLevel1)
     cy.stubEndpoint('GET', '/scheduled-instances/11', getScheduledInstanceEnglishLevel2)
     cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendeesForScheduledInstance)
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}`, getScheduledEvents)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${todayStr}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('PUT', '/attendances')
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
@@ -62,7 +64,7 @@ context('Record attendance', () => {
     recordAttendancePage.recordAttendanceCard().click()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
-    selectPeriodPage.enterDate(new Date(today))
+    selectPeriodPage.enterDate(new Date(todayStr))
     selectPeriodPage.selectAM()
     selectPeriodPage.selectPM()
     selectPeriodPage.continue()
@@ -73,9 +75,27 @@ context('Record attendance', () => {
     activitiesPage.getButton('Record or edit attendance').click()
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
-    attendanceListPage.assertRow(0, false, 'Andy, Booking', '3-3-017', 'English level 1', 'PM', 'Attended Pay')
+    attendanceListPage.assertRow(
+      0,
+      false,
+      'Andy, Booking',
+      '3-3-017',
+      'English level 1',
+      'PM',
+      'Attended Pay',
+      'View or Edit',
+    )
     attendanceListPage.assertRow(2, true, 'Aborah, Cudmastarie', '4-3-016', 'English level 1', 'PM', 'Not recorded')
-    attendanceListPage.assertRow(4, false, 'Andy, Booking', '3-3-017', 'English level 2', 'PM', 'Attended No pay')
+    attendanceListPage.assertRow(
+      4,
+      false,
+      'Andy, Booking',
+      '3-3-017',
+      'English level 2',
+      'PM',
+      'Attended No pay',
+      'View or Edit',
+    )
     attendanceListPage.assertRow(6, true, 'Aborah, Cudmastarie', '4-3-016', 'English level 2', 'PM', 'Not recorded')
     attendanceListPage.clickRows(3, 7)
 
@@ -96,6 +116,11 @@ context('Record attendance', () => {
 
     attendanceListPage.assertRow(2, false, 'Aborah, Cudmastarie', '4-3-016', 'English level 1', 'PM', 'Attended Pay')
     attendanceListPage.assertRow(6, false, 'Aborah, Cudmastarie', '4-3-016', 'English level 2', 'PM', 'Attended No pay')
+
+    attendanceListPage
+      .getLinkByText(`Go back to activities for ${formatDate(today, 'EEEE, d MMMM yyyy')} - AM and PM`)
+      .click()
+    Page.verifyOnPage(ActivitiesPage)
   })
 
   it('Mark non-attendances for multiple activities', () => {
@@ -109,7 +134,7 @@ context('Record attendance', () => {
     recordAttendancePage.recordAttendanceCard().click()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
-    selectPeriodPage.enterDate(new Date(today))
+    selectPeriodPage.enterDate(new Date(todayStr))
     selectPeriodPage.selectAM()
     selectPeriodPage.selectPM()
     selectPeriodPage.continue()
@@ -146,7 +171,16 @@ context('Record attendance', () => {
 
     Page.verifyOnPage(AttendanceListPage)
 
-    attendanceListPage.assertRow(3, false, 'Arianniver, Eeteljan', '1-3-024', 'English level 1', 'PM', 'Sick Pay')
-    attendanceListPage.assertRow(7, false, 'Arianniver, Eeteljan', '1-3-024', 'English level 2', 'PM', 'Sick No pay')
+    attendanceListPage.assertRow(3, false, 'Arianniver, Eeteljan', '1-3-024', 'English level 1', 'PM', 'Sick Pay', '')
+    attendanceListPage.assertRow(
+      7,
+      false,
+      'Arianniver, Eeteljan',
+      '1-3-024',
+      'English level 2',
+      'PM',
+      'Sick No pay',
+      '',
+    )
   })
 })
