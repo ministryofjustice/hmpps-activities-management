@@ -8,9 +8,19 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "components/searchBar.njk" import searchBar %}
 
+{% macro formatSessions(selectedSessions) %}
+    {% set comma = joiner(', ') %}
+    {%- for session in selectedSessions -%}
+        {{- ' and ' if loop.last and not loop.first else comma() }}
+        {{ session | upper }}
+    {%- endfor -%}
+{% endmacro %}
+
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
-{% set jsBackLink = true %}
+{% set activityDate = session.recordAttendanceRequests.activityDate | toDate | formatDate %}
+{% set hardBackLinkText = 'Go back to activities for ' + activityDate + ' - ' + formatSessions(selectedSessions) %}
+{% set hardBackLinkHref = '/activities/attendance/activities?date=' + session.recordAttendanceRequests.activityDate + '&sessionFilters=' + selectedSessions | join(",") %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -22,15 +32,11 @@
                     Record attendance at  {{  numActivities }} activities
                 {% endif %}
                 <span class="govuk-caption-l">
-                    {% set comma = joiner(', ') %}
-                    {%- for session in selectedSessions -%}
-                        {{- ' and ' if loop.last and not loop.first else comma() }}
-                        {{ session | upper }}
-                    {%- endfor -%}
+                    {{ formatSessions(selectedSessions) }}
                     {{- ' session' if selectedSessions | length == 1 else ' sessions' }}
                 </span>
 
-                <span class="govuk-caption-l">{{ selectedDate | toDate | formatDate }}</span>
+                <span class="govuk-caption-l">{{ activityDate }}</span>
 
                 <h2 class="govuk-heading-m">{{ attendanceRows | length }} allocations</h2>
             </h1>
@@ -226,9 +232,9 @@
 {% endmacro %}
 
 {% macro renderViewLink(attendee) %}
-    {% if attendee.attendance.status === 'COMPLETED' or attendee.attendance.attendanceHistory|length %}
+    {% if attendee.attendance.status === 'COMPLETED' or attendee.attendance.attendanceHistory | length %}
         <a href="/activities/attendance/activities/{{ attendee.instance.id }}/attendance-details/{{ attendee.attendance.id }}" class="govuk-link govuk-link--no-visited-state">
-            {% if attendee.attendance.editable and attendee.isAttendanceRequired %}
+            {% if attendee.attendance.editable and attendee.instance.activitySchedule.activity.attendanceRequired %}
                 View or Edit
             {% else %}
                 View

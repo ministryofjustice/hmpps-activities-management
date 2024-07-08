@@ -136,10 +136,12 @@ export default class ActivitiesRoutes {
   }
 
   POST_ATTENDANCES = async (req: Request, res: Response): Promise<void> => {
-    const { selectedInstanceIds } = req.body
+    const { selectedInstanceIds, activityDate, sessionFilters } = req.body
     req.session.recordAttendanceRequests = {
       mode: AttendActivityMode.MULTIPLE,
       selectedInstanceIds: selectedInstanceIds ? convertToArray(req.body.selectedInstanceIds) : [],
+      activityDate,
+      sessionFilters,
     }
     res.redirect('/activities/attendance/activities/attendance-list')
   }

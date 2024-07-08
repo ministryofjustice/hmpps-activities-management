@@ -12,4 +12,6 @@ export type RecordAttendanceRequests = {
   sessionCancellation?: SessionCancellationRequest
   mode?: AttendActivityMode
   selectedInstanceIds?: string[]
+  activityDate?: string
+  sessionFilters?: string[]
 }
