@@ -114,8 +114,26 @@ context('Record attendance', () => {
 
     Page.verifyOnPage(AttendanceListPage)
 
-    attendanceListPage.assertRow(2, false, 'Aborah, Cudmastarie', '4-3-016', 'English level 1', 'PM', 'Attended Pay')
-    attendanceListPage.assertRow(6, false, 'Aborah, Cudmastarie', '4-3-016', 'English level 2', 'PM', 'Attended No pay')
+    attendanceListPage.assertRow(
+      2,
+      false,
+      'Aborah, Cudmastarie',
+      '4-3-016',
+      'English level 1',
+      'PM',
+      'Attended Pay',
+      'View or Edit',
+    )
+    attendanceListPage.assertRow(
+      6,
+      false,
+      'Aborah, Cudmastarie',
+      '4-3-016',
+      'English level 2',
+      'PM',
+      'Attended No pay',
+      'View or Edit',
+    )
 
     attendanceListPage
       .getLinkByText(`Go back to activities for ${formatDate(today, 'EEEE, d MMMM yyyy')} - AM and PM`)
@@ -171,7 +189,16 @@ context('Record attendance', () => {
 
     Page.verifyOnPage(AttendanceListPage)
 
-    attendanceListPage.assertRow(3, false, 'Arianniver, Eeteljan', '1-3-024', 'English level 1', 'PM', 'Sick Pay', '')
+    attendanceListPage.assertRow(
+      3,
+      false,
+      'Arianniver, Eeteljan',
+      '1-3-024',
+      'English level 1',
+      'PM',
+      'Sick Pay',
+      'View or Edit',
+    )
     attendanceListPage.assertRow(
       7,
       false,
@@ -180,7 +207,7 @@ context('Record attendance', () => {
       'English level 2',
       'PM',
       'Sick No pay',
-      '',
+      'View or Edit',
     )
   })
 })

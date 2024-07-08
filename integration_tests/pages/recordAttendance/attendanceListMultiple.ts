@@ -38,7 +38,9 @@ export default class AttendanceListPage extends Page {
         if (viewLink) {
           cy.wrap($link).contains(viewLink)
         } else {
-          cy.wrap($link).should('have.value', '')
+          cy.wrap($link).should($el => {
+            expect($el.text().trim()).equal('')
+          })
         }
       })
       .parents('tr')
