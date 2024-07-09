@@ -310,8 +310,8 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getRolledOutPrisons()
   }
 
-  async getAllAttendance(sessionDate: Date, user: ServiceUser): Promise<AllAttendance[]> {
-    return this.activitiesApiClient.getAllAttendance(sessionDate, user)
+  async getAllAttendance(sessionDate: Date, user: ServiceUser, eventTier?: EventTier): Promise<AllAttendance[]> {
+    return this.activitiesApiClient.getAllAttendance(sessionDate, user, eventTier)
   }
 
   async searchAppointments(prisonCode: string, request: AppointmentSearchRequest, user: ServiceUser) {
