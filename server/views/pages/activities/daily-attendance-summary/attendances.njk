@@ -51,13 +51,29 @@
         </button>
     {% endset %}
 
+    {% if status == 'Attended' %}
+        {% if tier == EventTier.TIER_1 %}
+            {% set h1Title = "All Tier 1 attendances" %}
+        {% elif tier == EventTier.TIER_2 %}
+            {% set h1Title = "All Tier 2 attendances" %}
+        {% elif tier == EventTier.FOUNDATION %}
+            {% set h1Title = "All routine attendances" %}
+        {% else %}
+            {% set h1Title = "All attended" %}
+        {% endif %}
+    {% elif status == 'Absences' %}
+        {% set h1Title = "All absences" %}
+    {% elif status == 'NotAttended' %}
+        {% set h1Title = "All not attended yet" %}
+    {% else %} 
+        {# default #}
+        {% set h1Title = "Attendance summary" %}
+    {% endif %}
+
+
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">{{
-                    ("All not attended yet" if status == 'NotAttended') +
-                    ("All absences" if status == 'Absences') +
-                    ("All attended" if status == 'Attended')
-                }}
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">{{ h1Title }}
                 <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
             </h1>
             {{ searchInput({
@@ -248,7 +264,7 @@
                 attributes: { "aria-sort": "none" }
             },
             {
-                text: ""
+                html: '<span class="govuk-visually-hidden">View or edit</span>'
             } if status != "NotAttended"
         ] | removeUndefined,
         rows: attendanceRows

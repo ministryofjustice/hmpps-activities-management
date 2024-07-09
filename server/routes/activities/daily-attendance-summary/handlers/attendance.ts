@@ -72,6 +72,7 @@ export default class DailyAttendanceRoutes {
       uniqueCategories,
       status,
       attendees,
+      tier,
     })
   }
 

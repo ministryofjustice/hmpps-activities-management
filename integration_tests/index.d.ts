@@ -13,7 +13,7 @@ declare namespace Cypress {
     stubEndpoint(
       method: string,
       urlPattern: string,
-      responseFixture?: JSON,
+      responseFixture?: JSON | Array<unknown>,
       responseStatus?: number,
     ): Chainable<AUTWindow>
 
