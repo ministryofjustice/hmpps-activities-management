@@ -104,8 +104,6 @@ export default class AttendanceListRoutes {
     const { searchTerm } = req.query
     const { selectedInstanceIds } = req.session.recordAttendanceRequests
 
-    const selectedSessions = new Set<TimeSlot>()
-
     const instances = await Promise.all(
       selectedInstanceIds.map(async instanceId => this.activitiesService.getScheduledActivity(+instanceId, user)),
     )
@@ -121,8 +119,6 @@ export default class AttendanceListRoutes {
       await Promise.all(
         instances.map(async instance => {
           const session = getTimeSlotFromTime(instance.startTime)
-
-          selectedSessions.add(session)
 
           const allEvents = [
             ...otherEvents.activities,
@@ -176,7 +172,9 @@ export default class AttendanceListRoutes {
       numActivities,
       attendanceSummary: getAttendanceSummary(attendanceRows.flatMap(row => row.attendance)),
       selectedDate: instances[0].date,
-      selectedSessions: Object.values(TimeSlot).filter(t => selectedSessions.has(t)),
+      selectedSessions: Object.values(TimeSlot).filter(t =>
+        req.session.recordAttendanceRequests.sessionFilters.includes(t),
+      ),
     })
   }
 
