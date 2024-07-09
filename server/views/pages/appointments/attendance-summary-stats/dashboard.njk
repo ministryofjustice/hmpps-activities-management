@@ -110,7 +110,7 @@
         {{ stat({
           heading: "Attended",
           number: attendanceSummary.attended,
-          visuallyHiddenText: "prisoners, which is",
+          visuallyHiddenText: "prisoner, which is" if attendanceSummary.attended === 1 else "prisoners, which is",
           percentage: attendanceSummary.attendedPercentage,
           width: 'stat--small',
           forceDisplay: true,
@@ -124,7 +124,7 @@
         {{ stat({
           heading: "Not attended",
           number: attendanceSummary.notAttended,
-          visuallyHiddenText: "prisoners, which is",
+          visuallyHiddenText: "prisoner, which is" if attendanceSummary.notAttended === 1 else "prisoners, which is",
           percentage: attendanceSummary.notAttendedPercentage,
           width: 'stat--small',
           forceDisplay: true,
@@ -138,7 +138,7 @@
         {{ stat({
           heading: "Not recorded yet",
           number: attendanceSummary.notRecorded,
-          visuallyHiddenText: "prisoners, which is",
+          visuallyHiddenText: "prisoner, which is" if attendanceSummary.notRecorded === 1 else "prisoners, which is",
           percentage: attendanceSummary.notRecordedPercentage,
           width: 'stat--small',
           dataQa: 'notRecorded',
@@ -160,7 +160,7 @@
         {{ stat({
           heading: "Tier 1",
           number: attendanceSummary.tier1Count,
-          visuallyHiddenText: "prisoners",
+          visuallyHiddenText: "prisoner" if attendanceSummary.tier1Count === 1 else "prisoners",
           width: 'stat--small',
           dataQa: 'tier1',
           forceDisplay: true,
@@ -173,7 +173,7 @@
         {{ stat({
           heading: "Tier 2",
           number: attendanceSummary.tier2Count,
-          visuallyHiddenText: "prisoners",
+          visuallyHiddenText: "prisoner" if attendanceSummary.tier2Count === 1 else "prisoners",
           width: 'stat--small',
           forceDisplay: true,
           dataQa: 'tier2',
@@ -186,7 +186,7 @@
         {{ stat({
           heading: "Routine (also called 'foundational')",
           number: attendanceSummary.foundationCount,
-          visuallyHiddenText: "prisoners",
+          visuallyHiddenText: "prisoner" if attendanceSummary.foundationCount === 1 else "prisoners",
           width: 'stat--med',
           forceDisplay: true,
           dataQa: 'routine',
@@ -205,7 +205,7 @@
         {{ stat({
           heading: "Cancelled appointments",
           number: cancelledCount,
-          visuallyHiddenText: "prisoners, which is",
+          visuallyHiddenText: "appointments" if cancelledCount === 1 else "appointment",
           width: 'stat--med',
           forceDisplay: true,
           dataQa: 'cancelled',

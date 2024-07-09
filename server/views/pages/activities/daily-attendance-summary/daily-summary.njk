@@ -128,7 +128,7 @@
         {{ stat({
             heading: 'Not yet attended',
             number: totalNotAttended[timeSlot],
-            visuallyHiddenText: 'prisoners, which is',
+            visuallyHiddenText: "prisoner" if totalNotAttended[timeSlot] === 1 else "prisoners",
             percentage: (totalNotAttended[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
             link: {
                 href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=NotAttended#' + timeSlot | lower + '-tab',
@@ -139,7 +139,7 @@
         {{ stat({
             heading: 'Absences',
             number: totalAbsences[timeSlot],
-            visuallyHiddenText: 'prisoners, which is',
+            visuallyHiddenText: "prisoner" if totalAbsences[timeSlot] === 1 else "prisoners",
             percentage: (totalAbsences[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
             link: {
                 href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Absences#' + timeSlot | lower + '-tab',
@@ -150,7 +150,7 @@
         {{ stat({
             heading: 'Attended',
             number: totalAttended[timeSlot],
-            visuallyHiddenText: 'prisoners, which is',
+            visuallyHiddenText: "prisoner" if totalAttended[timeSlot] === 1 else "prisoners",
             percentage: (totalAttended[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
             link: {
                 href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended#' + timeSlot | lower + '-tab',
@@ -165,7 +165,7 @@
             {{ stat({
             heading: "Tier 1 attendances",
             number: totalAttendedTier1Activities[timeSlot],
-            visuallyHiddenText: "prisoners",
+            visuallyHiddenText: "prisoner" if totalAttendedTier1Activities[timeSlot] === 1 else "prisoners",
             dataQa: 'tier1',
             forceDisplay: true,
             link: {
@@ -178,7 +178,7 @@
             {{ stat({
             heading: "Tier 2 attendances",
             number: totalAttendedTier2Activities[timeSlot],
-            visuallyHiddenText: "prisoners",
+            visuallyHiddenText: "prisoner" if totalAttendedTier2Activities[timeSlot] === 1 else "prisoners",
             dataQa: 'tier2',
             forceDisplay: true,
             link: {
@@ -191,7 +191,7 @@
         {{ stat({
           heading: "Routine (also called 'foundational') attendances",
           number: totalAttendedRoutineActivities[timeSlot],
-          visuallyHiddenText: "prisoners",
+          visuallyHiddenText: "prisoner" if totalAttendedRoutineActivities[timeSlot] === 1 else "prisoners",
           forceDisplay: true,
           dataQa: 'routine',
           link: {
