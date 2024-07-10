@@ -146,7 +146,7 @@ export default {
       timeout: Number(get('REPORTING_API_TIMEOUT_RESPONSE', 10000)),
     },
     bookAVideoLinkApi: {
-      url: get('BOOK_A_VIDEO_LINK_API_URL', 'http://localhost:8095', requiredInProduction),
+      url: get('BOOK_A_VIDEO_LINK_API_URL', 'http://localhost:8095'),
       timeout: {
         response: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 5000)),
         deadline: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_DEADLINE', 5000)),
