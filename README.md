@@ -98,6 +98,7 @@ PRISON_REGISTER_API_URL=https://prison-register-dev.hmpps.service.justice.gov.uk
 INCENTIVES_API_URL=https://incentives-api-dev.hmpps.service.justice.gov.uk
 FRONTEND_COMPONENT_API_URL=https://frontend-components-dev.hmpps.service.justice.gov.uk
 MANAGE_USERS_API_URL=https://manage-users-api-dev.hmpps.service.justice.gov.uk
+BOOK_A_VIDEO_LINK_API_URL=https://book-a-video-link-api-dev.prison.service.justice.gov.uk
 API_CLIENT_ID=<ask the team>
 API_CLIENT_SECRET=<ask the team>
 SYSTEM_CLIENT_ID=<ask the team>
@@ -129,7 +130,3 @@ DPR integration has been started and first report is available [here](https://ac
 Not easy to test locally as endpoints are not available.
 
 Docs are [here](https://ministryofjustice.github.io/hmpps-digital-prison-reporting-frontend/components/list-report/)
-
-
-
-

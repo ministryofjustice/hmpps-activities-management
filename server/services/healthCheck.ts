@@ -67,6 +67,15 @@ const apiChecks = [
         ),
       ]
     : []),
+  ...(config.bookAVideoLinkToggleEnabled
+    ? [
+        service(
+          'bookAVideoLinkApi',
+          `${config.apis.bookAVideoLinkApi.url}/health/ping`,
+          config.apis.bookAVideoLinkApi.agent,
+        ),
+      ]
+    : []),
 ]
 
 export default function healthCheck(callback: HealthCheckCallback, checks = apiChecks): void {

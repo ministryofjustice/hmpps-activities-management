@@ -145,6 +145,14 @@ export default {
       url: get('REPORTING_API_URL', 'http://localhost:3010', requiredInProduction),
       timeout: Number(get('REPORTING_API_TIMEOUT_RESPONSE', 10000)),
     },
+    bookAVideoLinkApi: {
+      url: get('BOOK_A_VIDEO_LINK_API_URL', 'http://localhost:8095', requiredInProduction),
+      timeout: {
+        response: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 5000)),
+        deadline: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_DEADLINE', 5000)),
+      },
+      agent: new AgentConfig(Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 5000))),
+    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
@@ -183,6 +191,7 @@ export default {
   frontendComponentsApiToggleEnabled: Boolean(
     get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', true, requiredInProduction),
   ),
+  bookAVideoLinkToggleEnabled: Boolean(get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', false)),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
   },
