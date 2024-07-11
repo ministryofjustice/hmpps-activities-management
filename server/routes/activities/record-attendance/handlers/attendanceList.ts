@@ -78,8 +78,6 @@ export default class AttendanceListRoutes {
           alerts: att.alerts.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
         }
 
-        req.session.recordAttendanceRequests = { mode: AttendActivityMode.SINGLE }
-
         return {
           prisoner: attendee,
           attendance: instance.attendances.find(a => a.prisonerNumber === att.prisonerNumber),
@@ -90,12 +88,19 @@ export default class AttendanceListRoutes {
 
     const userMap = await this.userService.getUserMap([instance.cancelledBy], user)
 
+    const selectedSessions = req.session.recordAttendanceRequests.sessionFilters
+      ? Object.values(TimeSlot).filter(t => req.session.recordAttendanceRequests.sessionFilters.includes(t))
+      : []
+
+    req.session.recordAttendanceRequests.mode = AttendActivityMode.SINGLE
+
     res.render('pages/activities/record-attendance/attendance-list-single', {
       instance,
       isPayable: instance.activitySchedule.activity.paid,
       attendance,
       attendanceSummary: getAttendanceSummary(instance.attendances),
       userMap,
+      selectedSessions,
     })
   }
 
