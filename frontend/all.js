@@ -1,6 +1,7 @@
 import { nodeListForEach } from './utils'
 import BackLink from './components/back-link/back-link'
 import PrintButton from './components/print-button/print-button'
+import PrintSeparateSlipsButton from './components/print-button/print-separate-slips-button'
 import Card from './components/card/card'
 import StickySelect from './components/sticky-select/sticky-select'
 import AutoComplete from './components/autocomplete/autocomplete'
@@ -20,6 +21,11 @@ function initAll() {
   var $printButtons = document.querySelectorAll('[class*=js-print]')
   nodeListForEach($printButtons, function ($printButtons) {
     new PrintButton($printButtons)
+  })
+
+  var $printSeparateSlipsButtons = document.querySelectorAll('[class*=separate-slips-print]')
+  nodeListForEach($printSeparateSlipsButtons, function ($printSeparateSlipsButtons) {
+    new PrintSeparateSlipsButton($printSeparateSlipsButtons)
   })
 
   var $cards = document.querySelectorAll('.card--clickable')

@@ -1,3 +1,7 @@
+.separate-slip-print {
+  page-break-after: always !important;
+} 
+
 .movement-slip {
   margin-bottom: govuk-spacing(6);
   padding: govuk-spacing(4);
