@@ -1,9 +1,9 @@
 import Page from '../../page'
 
-export default class SelectPeriodPage extends Page {
+export default class AttendancePage extends Page {
   constructor() {
-    super('activities-page')
+    super('daily-attendance-detail-page')
   }
 
-  selectToday = () => cy.get('[value=today]').click()
+  title = () => cy.get('h1')
 }

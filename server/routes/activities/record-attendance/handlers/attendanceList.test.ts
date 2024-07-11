@@ -427,6 +427,7 @@ describe('Route Handlers - Attendance List', () => {
     beforeEach(() => {
       req.session.recordAttendanceRequests = {
         selectedInstanceIds: ['1', '2'],
+        sessionFilters: ['am', 'pm'],
       }
 
       when(activitiesService.getScheduledActivity).calledWith(2, res.locals.user).mockResolvedValue(instanceB)

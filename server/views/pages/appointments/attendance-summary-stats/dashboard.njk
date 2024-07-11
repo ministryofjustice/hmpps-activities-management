@@ -83,9 +83,9 @@
       }) }}
     </div>
     <div class="govuk-grid-column-full">
-      <h2 class="govuk-body-l" data-qa="appointmentsNotCancelledTotal">{{ attendanceSummary.attendeeCount }} attendees for 
+      <p class="govuk-body-l" data-qa="appointmentsNotCancelledTotal">{{ attendanceSummary.attendeeCount }} attendees for 
           <a href="/appointments/attendance/summaries?date={{ date | formatDate('yyyy-MM-dd') }}&appointmentName={{appointmentName}}&customAppointmentName={{customAppointmentName}}">{{ summariesNotCancelled | length }} appointment{{ "s" if summariesNotCancelled | length != 1 }}</a>
-      </h2>
+      </p>
     </div>
   </div>
   <div class="moj-filter-layout" data-module="activities-list-filter">
@@ -110,40 +110,43 @@
         {{ stat({
           heading: "Attended",
           number: attendanceSummary.attended,
-          visuallyHiddenText: "prisoners, which is",
+          visuallyHiddenText: "prisoner, which is" if attendanceSummary.attended === 1 else "prisoners, which is",
           percentage: attendanceSummary.attendedPercentage,
           width: 'stat--small',
           forceDisplay: true,
           dataQa: 'attended',
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.ATTENDED ,
-            text: 'All attended'
+            text: 'All attended',
+            dataQa: 'attended-link'
           }
         }) }}
         {{ stat({
           heading: "Not attended",
           number: attendanceSummary.notAttended,
-          visuallyHiddenText: "prisoners, which is",
+          visuallyHiddenText: "prisoner, which is" if attendanceSummary.notAttended === 1 else "prisoners, which is",
           percentage: attendanceSummary.notAttendedPercentage,
           width: 'stat--small',
           forceDisplay: true,
           dataQa: 'notAttended',
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.NOT_ATTENDED ,
-            text: 'All not attended'
+            text: 'All not attended',
+            dataQa: 'notAttended-link'
           }
         }) }}
         {{ stat({
           heading: "Not recorded yet",
           number: attendanceSummary.notRecorded,
-          visuallyHiddenText: "prisoners, which is",
+          visuallyHiddenText: "prisoner, which is" if attendanceSummary.notRecorded === 1 else "prisoners, which is",
           percentage: attendanceSummary.notRecordedPercentage,
           width: 'stat--small',
           dataQa: 'notRecorded',
           forceDisplay: true,
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.NOT_RECORDED ,
-            text: 'All not recorded yet'
+            text: 'All not recorded yet',
+            dataQa: 'notRecorded-link'
           }
         }) }}
         </div>
@@ -151,64 +154,65 @@
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
         <div class="govuk-grid-row govuk-!-margin-left-1">
-        <h3 class="govuk-heading-l">Attendance by tier</h3>
+        <h2 class="govuk-heading-l">Attendance by tier</h2>
         <p class="govuk-body-l">Attendances recorded at appointments in each tier.</p>
 
         {{ stat({
           heading: "Tier 1",
           number: attendanceSummary.tier1Count,
-          visuallyHiddenText: "prisoners, which is",
-          percentage: attendanceSummary.tier1Percentage,
+          visuallyHiddenText: "prisoner" if attendanceSummary.tier1Count === 1 else "prisoners",
           width: 'stat--small',
           dataQa: 'tier1',
           forceDisplay: true,
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.EVENT_TIER + "&eventTier=" + EventTier.TIER_1,
-            text: 'All tier 1'
+            text: 'All tier 1',
+            dataQa: 'tier1-link'
           }
         }) }}
         {{ stat({
           heading: "Tier 2",
           number: attendanceSummary.tier2Count,
-          visuallyHiddenText: "prisoners, which is",
-          percentage: attendanceSummary.tier2Percentage,
+          visuallyHiddenText: "prisoner" if attendanceSummary.tier2Count === 1 else "prisoners",
           width: 'stat--small',
           forceDisplay: true,
           dataQa: 'tier2',
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.EVENT_TIER + "&eventTier=" + EventTier.TIER_2,
-            text: 'All tier 2'
+            text: 'All tier 2',
+            dataQa: 'tier2-link'
           }
         }) }}
         {{ stat({
           heading: "Routine (also called 'foundational')",
           number: attendanceSummary.foundationCount,
-          visuallyHiddenText: "prisoners, which is",
-          percentage: attendanceSummary.foundationalPercentage,
+          visuallyHiddenText: "prisoner" if attendanceSummary.foundationCount === 1 else "prisoners",
           width: 'stat--med',
           forceDisplay: true,
-          dataQa: 'foundational',
+          dataQa: 'routine',
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.EVENT_TIER + "&eventTier=" + EventTier.FOUNDATION,
-            text: 'All routine'
+            text: 'All routine',
+            dataQa: 'routine-link'
           }
         }) }}
         </div>
 
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         <div class="govuk-grid-row govuk-!-margin-bottom-6 govuk-!-margin-left-1">
-        <h3 class="govuk-body-l">Cancelled appointments</h3>
+        <h2 class="govuk-heading-l">Cancelled appointments</h2>
 
         {{ stat({
           heading: "Cancelled appointments",
           number: cancelledCount,
-          visuallyHiddenText: "prisoners, which is",
+          visuallyHiddenText: "appointments" if cancelledCount === 1 else "appointment",
           width: 'stat--med',
           forceDisplay: true,
           dataQa: 'cancelled',
           link: {
             href: "/appointments/attendance-summary/attendance-data?date=" + date | formatDate('yyyy-MM-dd') + "&appointmentName=" + appointmentName + "&customAppointmentName=" + customAppointmentName + "&attendanceState=" + AttendanceStatus.CANCELLED,
-            text: 'All cancelled'
+            text: 'All cancelled',
+            dataQa: 'cancelled-link'
           }
         }) }}
         </div>

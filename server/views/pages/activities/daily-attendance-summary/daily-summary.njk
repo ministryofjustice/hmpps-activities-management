@@ -128,7 +128,7 @@
         {{ stat({
             heading: 'Not yet attended',
             number: totalNotAttended[timeSlot],
-            visuallyHiddenText: 'prisoners, which is',
+            visuallyHiddenText: "prisoner" if totalNotAttended[timeSlot] === 1 else "prisoners",
             percentage: (totalNotAttended[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
             link: {
                 href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=NotAttended#' + timeSlot | lower + '-tab',
@@ -139,7 +139,7 @@
         {{ stat({
             heading: 'Absences',
             number: totalAbsences[timeSlot],
-            visuallyHiddenText: 'prisoners, which is',
+            visuallyHiddenText: "prisoner" if totalAbsences[timeSlot] === 1 else "prisoners",
             percentage: (totalAbsences[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
             link: {
                 href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Absences#' + timeSlot | lower + '-tab',
@@ -150,7 +150,7 @@
         {{ stat({
             heading: 'Attended',
             number: totalAttended[timeSlot],
-            visuallyHiddenText: 'prisoners, which is',
+            visuallyHiddenText: "prisoner" if totalAttended[timeSlot] === 1 else "prisoners",
             percentage: (totalAttended[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
             link: {
                 href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended#' + timeSlot | lower + '-tab',
@@ -158,6 +158,50 @@
             }
         }) }}
     </div>
+
+    {% if activitiesAttendanceUpdatesFlag %}
+        <div class="govuk-grid-row govuk-!-margin-top-3 govuk-!-margin-bottom-3 tierActivityAttendanceStatsContainer">
+
+            {{ stat({
+            heading: "Tier 1 attendances",
+            number: totalAttendedTier1Activities[timeSlot],
+            visuallyHiddenText: "prisoner" if totalAttendedTier1Activities[timeSlot] === 1 else "prisoners",
+            dataQa: 'tier1',
+            forceDisplay: true,
+            link: {
+                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended' + '&eventTier=' + EventTier.TIER_1  +'#' + timeSlot | lower + '-tab',
+                text: 'All Tier 1 attendances',
+                dataQa: 'tier1-link'
+            }
+            }) }}
+
+            {{ stat({
+            heading: "Tier 2 attendances",
+            number: totalAttendedTier2Activities[timeSlot],
+            visuallyHiddenText: "prisoner" if totalAttendedTier2Activities[timeSlot] === 1 else "prisoners",
+            dataQa: 'tier2',
+            forceDisplay: true,
+            link: {
+                href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended' + '&eventTier=' + EventTier.TIER_2  +'#' + timeSlot | lower + '-tab',
+                text: 'All Tier 2 attendances',
+                dataQa: 'tier2-link'
+            }
+            }) }}
+
+        {{ stat({
+          heading: "Routine (also called 'foundational') attendances",
+          number: totalAttendedRoutineActivities[timeSlot],
+          visuallyHiddenText: "prisoner" if totalAttendedRoutineActivities[timeSlot] === 1 else "prisoners",
+          forceDisplay: true,
+          dataQa: 'routine',
+          link: {
+            href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=Attended' + '&eventTier=' + EventTier.FOUNDATION  +'#' + timeSlot | lower + '-tab',
+            text: 'All routine attendances',
+            dataQa: 'routine-link'
+          }
+        }) }}
+        </div>
+    {% endif %}
 
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 

@@ -7,11 +7,12 @@ import ActivitiesApiClient from './activitiesApiClient'
 import IncentivesApiClient from './incentivesApiClient'
 import FrontendComponentApiClient from './frontendComponentApiClient'
 import CaseNotesApiClient from './caseNotesApiClient'
+import BookAVideoLinkApiClient from './bookAVideoLinkApiClient'
 
 describe('DataAccess', () => {
   test('The correct rest clients are instantiated', () => {
     const clients = dataAccess()
-    expect(Object.values(clients).length).toBe(9)
+    expect(Object.values(clients).length).toBe(10)
     expect(clients.manageUsersApiClient).toBeInstanceOf(ManageUsersApiClient)
     expect(clients.caseNotesApiClient).toBeInstanceOf(CaseNotesApiClient)
     expect(clients.prisonApiClient).toBeInstanceOf(PrisonApiClient)
@@ -19,6 +20,7 @@ describe('DataAccess', () => {
     expect(clients.prisonRegisterApiClient).toBeInstanceOf(PrisonRegisterApiClient)
     expect(clients.incentivesApiClient).toBeInstanceOf(IncentivesApiClient)
     expect(clients.activitiesApiClient).toBeInstanceOf(ActivitiesApiClient)
+    expect(clients.bookAVideoLinkApiClient).toBeInstanceOf(BookAVideoLinkApiClient)
     expect(clients.frontendComponentApiClient).toBeInstanceOf(FrontendComponentApiClient)
   })
 })

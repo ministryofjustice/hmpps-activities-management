@@ -4,8 +4,8 @@
     "prisonCode": "RSI",
     "sessionDate": "2023-04-19",
     "timeSlot": "AM",
-    "status": "WAITING",
-    "attendanceReasonCode": null,
+    "status": "COMPLETED",
+    "attendanceReasonCode": "ATTENDED",
     "issuePayment": null,
     "prisonerNumber": "G4479GS",
     "scheduledInstanceId": 91408,
@@ -13,15 +13,16 @@
     "activitySummary": "English Level 1",
     "categoryName": "Education",
     "recordedTime": null,
-    "attendanceRequired": true
+    "attendanceRequired": true,
+    "eventTier": "TIER_2"
   },
   {
     "attendanceId": 2,
     "prisonCode": "RSI",
     "sessionDate": "2023-04-19",
     "timeSlot": "PM",
-    "status": "WAITING",
-    "attendanceReasonCode": null,
+    "status": "COMPLETED",
+    "attendanceReasonCode": "ATTENDED",
     "issuePayment": null,
     "prisonerNumber": "G4479GQ",
     "scheduledInstanceId": 91409,
@@ -29,15 +30,16 @@
     "activitySummary": "English Level 2",
     "categoryName": "Sports",
     "recordedTime": null,
-    "attendanceRequired": true
+    "attendanceRequired": true,
+    "eventTier": "FOUNDATION"
   },
   {
     "attendanceId": 3,
     "prisonCode": "RSI",
     "sessionDate": "2023-04-19",
     "timeSlot": "PM",
-    "status": "WAITING",
-    "attendanceReasonCode": null,
+    "status": "COMPLETED",
+    "attendanceReasonCode": "ATTENDED",
     "issuePayment": null,
     "prisonerNumber": "G4479GQ",
     "scheduledInstanceId": 91409,
@@ -45,15 +47,16 @@
     "activitySummary": "Football",
     "categoryName": "Education",
     "recordedTime": null,
-    "attendanceRequired": false
+    "attendanceRequired": false,
+    "eventTier": "TIER_2"
   },
   {
     "attendanceId": 2,
     "prisonCode": "RSI",
     "sessionDate": "2023-04-19",
     "timeSlot": "PM",
-    "status": "WAITING",
-    "attendanceReasonCode": null,
+    "status": "COMPLETED",
+    "attendanceReasonCode": "ATTENDED",
     "issuePayment": null,
     "prisonerNumber": "G4479GS",
     "scheduledInstanceId": 91409,
@@ -61,6 +64,7 @@
     "activitySummary": "English Level 2",
     "categoryName": "Education",
     "recordedTime": null,
-    "attendanceRequired": true
+    "attendanceRequired": true,
+    "eventTier": "TIER_2"
   }
 ]

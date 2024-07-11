@@ -16,6 +16,7 @@ import ActivitiesApiClient from './activitiesApiClient'
 import IncentivesApiClient from './incentivesApiClient'
 import FrontendComponentApiClient from './frontendComponentApiClient'
 import CaseNotesApiClient from './caseNotesApiClient'
+import BookAVideoLinkApiClient from './bookAVideoLinkApiClient'
 
 export default function dataAccess() {
   return {
@@ -27,6 +28,7 @@ export default function dataAccess() {
     incentivesApiClient: new IncentivesApiClient(),
     activitiesApiClient: new ActivitiesApiClient(),
     frontendComponentApiClient: new FrontendComponentApiClient(),
+    bookAVideoLinkApiClient: new BookAVideoLinkApiClient(),
     applicationInsightsClient: appInsightsClient,
   }
 }

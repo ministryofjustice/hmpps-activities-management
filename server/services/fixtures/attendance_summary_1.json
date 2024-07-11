@@ -74,5 +74,29 @@
       "absences": 2,
       "paid": 1
     }
+  },
+  {
+    "scheduledInstanceId": 444,
+    "activityId": 11,
+    "activityScheduleId": 11,
+    "summary": "Math 2",
+    "categoryId": 1,
+    "sessionDate": "2023-08-22",
+    "startTime": "18:00",
+    "endTime": "19:00",
+    "inCell": false,
+    "onWing": false,
+    "offWing": true,
+    "attendanceRequired": true,
+    "internalLocation": null,
+    "cancelled": false,
+    "attendanceSummary": {
+      "allocations": 5,
+      "attendees": 4,
+      "notRecorded": 3,
+      "attended": 1,
+      "absences": 2,
+      "paid": 1
+    }
   }
 ]
