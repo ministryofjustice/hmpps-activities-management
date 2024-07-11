@@ -61,8 +61,8 @@ context('Deallocation from activity', () => {
 
     const allocationDashboardPage = Page.verifyOnPage(AllocationDashboard)
     allocationDashboardPage.allocatedPeopleRows().should('have.length', 2)
-    allocationDashboardPage.selectAllocatedPrisonerByName('Harrison, Tim')
-    allocationDashboardPage.selectAllocatedPrisonerByName('Jacobson, Lee')
+    allocationDashboardPage.selectAllocatedPrisonerByName('Bloggs, Jo')
+    allocationDashboardPage.selectAllocatedPrisonerByName('Body, No')
     allocationDashboardPage.deallocateSelectedPrisoners()
 
     const endDatePage = Page.verifyOnPage(EndDatePage)
@@ -101,8 +101,8 @@ context('Deallocation from activity', () => {
 
     const allocationDashboardPage = Page.verifyOnPage(AllocationDashboard)
     allocationDashboardPage.allocatedPeopleRows().should('have.length', 2)
-    allocationDashboardPage.selectAllocatedPrisonerByName('Harrison, Tim')
-    allocationDashboardPage.selectAllocatedPrisonerByName('Jacobson, Lee')
+    allocationDashboardPage.selectAllocatedPrisonerByName('Bloggs, Jo')
+    allocationDashboardPage.selectAllocatedPrisonerByName('Body, No')
     allocationDashboardPage.deallocateSelectedPrisoners()
 
     const deallocationEndDecisionPage = Page.verifyOnPage(EndDecisionPage)
