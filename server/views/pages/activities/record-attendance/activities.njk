@@ -21,7 +21,9 @@
     (('&locationFilters=' + session.req.query.locationFilters) if session.req.query.locationFilters else '') %}
 
 {% block meta %}
-    <meta name="autocompleteElements" content="locationId"/>
+    {% if recordAttendanceSelectSlotFirst %}
+        <meta name="autocompleteElements" content="locationId"/>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
