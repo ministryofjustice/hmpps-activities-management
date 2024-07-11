@@ -1,0 +1,45 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+
+{% set pageTitle = "Choose how to end the allocation" %}
+{% set pageId = 'end-decision-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-l">Select how you want to end {{ session.allocateJourney.inmate.prisonerName }}'s allocation for this activity</h1>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{ govukRadios({
+                    name: "endDecision",
+                    fieldset: {
+                        legend: {
+                            text: "Choose how to end the allocation",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "BEFORE_START",
+                            text: "Remove them from the activity now, so they're removed before they are due to start attending"
+                        },
+                        {
+                            value: "AFTER_START",
+                            text: "Set the day they'll attend their last session"
+                        }
+                    ]
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

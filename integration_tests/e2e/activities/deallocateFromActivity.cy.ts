@@ -1,4 +1,4 @@
-import { addMonths } from 'date-fns'
+import { addDays, addMonths } from 'date-fns'
 import getActivities from '../../fixtures/activitiesApi/getActivities.json'
 import getAllocations from '../../fixtures/activitiesApi/getAllocations.json'
 import prisonerAllocations from '../../fixtures/activitiesApi/prisonerAllocations.json'
@@ -20,6 +20,8 @@ import AllocationDashboard from '../../pages/allocateToActivity/allocationDashbo
 import ManageActivitiesDashboardPage from '../../pages/activities/manageActivitiesDashboard'
 import ActivitiesIndexPage from '../../pages/activities'
 import DeallocationReasonPage from '../../pages/allocateToActivity/deallocationReason'
+import EndDecisionPage from '../../pages/allocateToActivity/endDecision'
+import { formatIsoDate } from '../../../server/utils/datePickerUtils'
 
 context('Deallocation from activity', () => {
   beforeEach(() => {
@@ -67,6 +69,45 @@ context('Deallocation from activity', () => {
     const endDate = addMonths(new Date(), 8)
     endDatePage.selectDatePickerDate(endDate)
     endDatePage.continue()
+
+    const deallocationReasonPage = Page.verifyOnPage(DeallocationReasonPage)
+    deallocationReasonPage.selectDeallocationReason('Withdrawn by staff')
+    deallocationReasonPage.continue()
+
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.confirmDeallocation()
+
+    Page.verifyOnPage(ConfirmationPage)
+  })
+
+  it('should click through deallocate from activity journey where active is yet to start', () => {
+    const getActivity2 = { ...getActivity }
+    getActivity2.schedules[0].startDate = formatIsoDate(addDays(new Date(), 1))
+    cy.stubEndpoint('GET', '/activities/2/filtered', getActivity2)
+
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.allocateToActivitiesCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
+    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.allocateToActivityCard().click()
+
+    const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
+    activitiesPage.activityRows().should('have.length', 3)
+    activitiesPage.selectActivityWithName('English level 1')
+
+    const allocationDashboardPage = Page.verifyOnPage(AllocationDashboard)
+    allocationDashboardPage.allocatedPeopleRows().should('have.length', 2)
+    allocationDashboardPage.selectAllocatedPrisonerByName('Harrison, Tim')
+    allocationDashboardPage.selectAllocatedPrisonerByName('Jacobson, Lee')
+    allocationDashboardPage.deallocateSelectedPrisoners()
+
+    const deallocationEndDecisionPage = Page.verifyOnPage(EndDecisionPage)
+    deallocationEndDecisionPage.selectEndDecisionRadio('BEFORE_START')
+    deallocationEndDecisionPage.continue()
 
     const deallocationReasonPage = Page.verifyOnPage(DeallocationReasonPage)
     deallocationReasonPage.selectDeallocationReason('Withdrawn by staff')

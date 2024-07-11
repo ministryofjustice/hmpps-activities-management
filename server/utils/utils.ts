@@ -433,6 +433,8 @@ export const removeUndefined = (arr: object[]) => arr.filter(Boolean)
 
 export const getScheduleIdFromActivity = (activity: Activity) => activity.schedules[0].id
 
+export const getScheduleStartDateFromActivity = (activity: Activity) => activity.schedules[0].startDate
+
 // Events should be sorted by time, then event name (summary)
 export const scheduledEventSort = (data: ScheduledEvent[]): ScheduledEvent[] => {
   return data.sort((p1, p2) => {
