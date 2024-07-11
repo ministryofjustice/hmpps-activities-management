@@ -1,5 +1,5 @@
-.separate-slip-print {
-  page-break-after: always !important;
+.separate-slip-print:not(:last-child){
+  page-break-after: always;
 } 
 
 .movement-slip {
