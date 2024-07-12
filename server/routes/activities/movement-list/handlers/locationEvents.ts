@@ -103,7 +103,6 @@ export default class LocationEventsRoutes {
                         .map(e => e.eventId)
                         .includes(ce.eventId),
                   )
-                  // Exclude any adjudications
                   .filter(
                     ce =>
                       !events
