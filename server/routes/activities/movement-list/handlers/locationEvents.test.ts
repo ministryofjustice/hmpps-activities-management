@@ -245,6 +245,14 @@ describe('Movement list routes - location events', () => {
               startTime: '09:00',
               endTime: '12:30',
             },
+            {
+              summary: 'Adjudication',
+              prisonerNumber: 'A1234BC',
+              startTime: '18:30',
+              endTime: '19:00',
+              oicHearingId: 1,
+              eventType: EventType.ADJUDICATION_HEARING,
+            },
           ],
         },
       ] as InternalLocationEvents[]
@@ -322,7 +330,16 @@ describe('Movement list routes - location events', () => {
             },
           ],
           visits: [],
-          adjudications: [],
+          adjudications: [
+            {
+              summary: 'Adjudication',
+              prisonerNumber: 'A1234BC',
+              startTime: '18:30',
+              endTime: '19:00',
+              oicHearingId: 1,
+              eventType: EventType.ADJUDICATION_HEARING,
+            },
+          ],
           courtHearings: [],
           externalTransfers: [],
         } as PrisonerScheduledEvents)
