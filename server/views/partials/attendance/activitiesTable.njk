@@ -16,7 +16,7 @@
                         id: 'activity-' + loop.index,
                         "data-sort-value": activity.summary
                     },
-                    classes: 'attendance-activities',
+                    classes: 'attendance-activities govuk-table__cell--alpha',
                     html: '
                         <p class="govuk-heading-s govuk-!-margin-bottom-0">
                             <a href="activities/' + activity.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (activity.summary | escape) + '<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
@@ -28,6 +28,7 @@
                         id: 'location-' + loop.index,
                         "data-sort-value": activityLocation
                     },
+                    classes: 'govuk-table__cell--alpha',
                     text: activityLocation
                 },
                 {
@@ -35,6 +36,7 @@
                         id: 'session-' + loop.index,
                         "data-sort-value": activity.sessionOrderIndex
                     },
+                    classes: 'govuk-table__cell--alpha align-right',              
                     text: activity.session | upper
                 },
                 {
@@ -90,23 +92,28 @@
                 },
                 {
                     text: "Session",
-                    attributes: { "aria-sort": "ascending" }
+                    attributes: { "aria-sort": "ascending" },
+                    classes: "numeric-col-width"
                 },
                 {
                     text: "Allocated",
-                    attributes: { "aria-sort": "none" }
+                    attributes: { "aria-sort": "none" },
+                    classes: "numeric-col-width"
                 },
                 {
                     text: "Attended",
-                    attributes: { "aria-sort": "none" }
+                    attributes: { "aria-sort": "none" },
+                    classes: "numeric-col-width"
                 },
                 {
                     text: "Not recorded",
-                    attributes: { "aria-sort": "none" }
+                    attributes: { "aria-sort": "none" },
+                    classes: "numeric-col-width"
                 },
                 {
                     text: "Absent",
-                    attributes: { "aria-sort": "none" }
+                    attributes: { "aria-sort": "none" },
+                    classes: "numeric-col-width"
                 }
             ],
             rows: rows,
