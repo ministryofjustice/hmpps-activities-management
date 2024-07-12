@@ -20,7 +20,12 @@
 
             <div class="govuk-button-group govuk-!-display-none-print">
                 {{ govukButton({
-                    text: "Print movement slip" + ("s" if appointment.attendees.length > 1 ),
+                    text: "Print one slip per page",
+                    classes: "govuk-button--blue separate-slips-print no-js-hidden",
+                    preventDoubleClick: true
+                }) }}
+                {{ govukButton({
+                    text: "Print multiple slips per page",
                     classes: "govuk-button--blue js-print no-js-hidden",
                     preventDoubleClick: true
                 }) }}
