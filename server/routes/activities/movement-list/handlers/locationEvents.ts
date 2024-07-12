@@ -103,6 +103,14 @@ export default class LocationEventsRoutes {
                         .map(e => e.eventId)
                         .includes(ce.eventId),
                   )
+                  // Exclude any adjudications
+                  .filter(
+                    ce =>
+                      !events
+                        .filter(e => e.eventType === EventType.ADJUDICATION_HEARING)
+                        .map(e => e.oicHearingId)
+                        .includes(ce.oicHearingId),
+                  )
                   // Exclude any event not considered a clash
                   .filter(ce => events.filter(e => eventClashes(ce, e)).length > 0),
               )
