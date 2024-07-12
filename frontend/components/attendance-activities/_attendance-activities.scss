@@ -1,10 +1,27 @@
 .attendance-activities {
+  .govuk-table__header {
+    padding-right: 15px;
+  }
   .govuk-table__cell--numeric {
     padding-right: 5px;
+    &:last-of-type {
+      padding-right: 10px;
+    }
+  }
+  .govuk-table__cell--alpha {
+    padding-right: 10px;
+  }
+  .align-right {
+    text-align: right;
+  }
+
+  .numeric-col-width {
+    max-width: 100px;
   }
 
   .moj-filter {
     margin-right: 20px;
+    box-shadow: none;
   }
 
   --filters-action-adjust: 180px;
