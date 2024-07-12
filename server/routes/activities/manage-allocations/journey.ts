@@ -41,3 +41,8 @@ export type AllocateToActivityJourney = {
     text: string
   }
 }
+
+export enum EndDecision {
+  BEFORE_START = 'BEFORE_START',
+  AFTER_START = 'AFTER_START',
+}

@@ -1,19 +1,25 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
 import { IsNotEmpty, ValidateIf } from 'class-validator'
-import { compareAsc } from 'date-fns'
+import { compareAsc, startOfToday } from 'date-fns'
 import PrisonService from '../../../../services/prisonService'
 import ActivityService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { Activity, ActivityPay, Allocation, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
-import { getScheduleIdFromActivity, getTimeSlotFromTime, parseDate } from '../../../../utils/utils'
+import {
+  getScheduleIdFromActivity,
+  getScheduleStartDateFromActivity,
+  getTimeSlotFromTime,
+  parseDate,
+} from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import { Slots } from '../../create-an-activity/journey'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import WaitlistRequester from '../../../../enum/waitlistRequester'
+import { parseIsoDate } from '../../../../utils/datePickerUtils'
 
 type Filters = {
   candidateQuery: string
@@ -149,11 +155,19 @@ export default class AllocationDashboardRoutes {
     const { user } = res.locals
     const { selectedAllocations } = req.body
     const activity = await this.activitiesService.getActivity(+activityId, user)
-    res.redirect(
-      `/activities/allocations/remove/end-date?allocationIds=${selectedAllocations}&scheduleId=${getScheduleIdFromActivity(
-        activity,
-      )}`,
-    )
+    if (parseIsoDate(getScheduleStartDateFromActivity(activity)) > startOfToday()) {
+      res.redirect(
+        `/activities/allocations/remove/end-decision?allocationIds=${selectedAllocations}&scheduleId=${getScheduleIdFromActivity(
+          activity,
+        )}`,
+      )
+    } else {
+      res.redirect(
+        `/activities/allocations/remove/end-date?allocationIds=${selectedAllocations}&scheduleId=${getScheduleIdFromActivity(
+          activity,
+        )}`,
+      )
+    }
   }
 
   VIEW_APPLICATION = async (req: Request, res: Response): Promise<void> => {

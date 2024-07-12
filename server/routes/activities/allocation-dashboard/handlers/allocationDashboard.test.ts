@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays } from 'date-fns'
+import { addDays, startOfYesterday } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import AllocationDashboardRoutes, { SelectedAllocation } from './allocationDashboard'
@@ -19,6 +19,7 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { associateErrorsWithProperty, toDateString } from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
@@ -754,21 +755,56 @@ describe('Route Handlers - Allocation dashboard', () => {
     ] as Prisoner[]
 
     beforeEach(() => {
-      when(activitiesService.getActivity).calledWith(atLeast(1)).mockResolvedValue(mockActivity)
-
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(atLeast(['G4793VF', 'A9477DY']))
         .mockResolvedValue(prisoners)
     })
 
-    it('should set session and redirect to deallocation date page', async () => {
+    it('should set session and redirect to de-allocation end date page', async () => {
       req.body.selectedAllocations = ['G4793VF', 'A9477DY']
-      req.params.activityId = '1'
+      req.params.activityId = '2'
+
+      const schedule = activitySchedule
+      schedule.startDate = formatIsoDate(startOfYesterday())
+
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(2))
+        .mockResolvedValue({
+          startDate: formatIsoDate(startOfYesterday()),
+          paid: true,
+          pay: [{ incentiveNomisCode: 'BAS' }, { incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
+          schedules: [schedule],
+        } as unknown as Activity)
 
       await handler.DEALLOCATE(req, res)
 
-      expect(res.redirect).toBeCalledWith(
-        '/activities/allocations/remove/end-date?allocationIds=G4793VF,A9477DY&scheduleId=1',
+      expect(res.redirect).toHaveBeenCalledWith(
+        expect.stringContaining('/activities/allocations/remove/end-date?allocationIds=G4793VF,A9477DY&scheduleId=1'),
+      )
+    })
+
+    it('should set session and redirect to de-allocation end decision page when activity is yet to start', async () => {
+      req.body.selectedAllocations = ['G4793VF', 'A9477DY']
+      req.params.activityId = '3'
+
+      const schedule = activitySchedule
+      schedule.startDate = formatIsoDate(tomorrow)
+
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(3))
+        .mockResolvedValue({
+          startDate: formatIsoDate(tomorrow),
+          paid: true,
+          pay: [{ incentiveNomisCode: 'BAS' }, { incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
+          schedules: [schedule],
+        } as unknown as Activity)
+
+      await handler.DEALLOCATE(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(
+        expect.stringContaining(
+          '/activities/allocations/remove/end-decision?allocationIds=G4793VF,A9477DY&scheduleId=1',
+        ),
       )
     })
   })

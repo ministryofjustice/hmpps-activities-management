@@ -12,6 +12,7 @@ import DeallocationCaseNoteRoutes, { DeallocationCaseNote } from './handlers/dea
 import DeallocationCaseNoteQuestionRoutes, {
   DeallocationCaseNoteQuestion,
 } from './handlers/deallocationCaseNoteQuestion'
+import EndDecisionRoutes from './handlers/endDecisionReason'
 
 export default function Index({ activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -21,6 +22,7 @@ export default function Index({ activitiesService, metricsService }: Services): 
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const cancelHandler = new CancelRoutes()
+  const deallocationEndDecisionHandler = new EndDecisionRoutes()
   const endDateHandler = new EndDateRoutes()
   const deallocationReasonHandler = new DeallocationReasonRoutes(activitiesService)
   const caseNoteHandler = new DeallocationCaseNoteRoutes()
@@ -30,6 +32,8 @@ export default function Index({ activitiesService, metricsService }: Services): 
 
   get('/cancel', cancelHandler.GET, true)
   post('/cancel', cancelHandler.POST, ConfirmCancelOptions)
+  get('/end-decision', deallocationEndDecisionHandler.GET, true)
+  post('/end-decision', deallocationEndDecisionHandler.POST)
   get('/end-date', endDateHandler.GET, true)
   post('/end-date', endDateHandler.POST, EndDate)
   get('/reason', deallocationReasonHandler.GET, true)
