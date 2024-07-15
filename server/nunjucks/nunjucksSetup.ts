@@ -212,7 +212,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('recordAttendanceSelectSlotFirst', config.recordAttendanceSelectSlotFirst)
-  njkEnv.addGlobal('appointmentsAttendanceSummaryFlag', config.appointmentsAttendanceSummaryFlag)
   njkEnv.addGlobal('activitiesAttendanceUpdatesFlag', config.activitiesAttendanceUpdatesFlag)
 
   // Date picker
