@@ -185,7 +185,6 @@ export default {
     },
   ] as RouteAuth[],
   spikesFeatureToggleEnabled: Boolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', false)),
-  appointmentsAttendanceSummaryFlag: Boolean(get('APPOINTMENTS_ATTENDANCE_SUMMARY_FLAG', false)),
   activitiesAttendanceUpdatesFlag: Boolean(get('ACTIVITY_ATTENDANCE_UPDATES', false)),
   recordAttendanceSelectSlotFirst: Boolean(get('RECORD_ATTENDANCE_SELECT_SLOT_FIRST', false)),
   frontendComponentsApiToggleEnabled: Boolean(
