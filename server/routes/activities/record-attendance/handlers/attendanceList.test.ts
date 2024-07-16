@@ -208,7 +208,6 @@ describe('Route Handlers - Attendance List', () => {
       params: { id: 1 },
       session: {
         notAttendedJourney: {},
-        recordAttendanceRequests: {},
       },
       body: {},
       query: {},
@@ -263,7 +262,7 @@ describe('Route Handlers - Attendance List', () => {
       },
     ] as unknown as ScheduledInstanceAttendance[]
 
-    it('should render with the expected view when there are no time sessions saved', async () => {
+    it('should render with the expected view', async () => {
       await handler.GET(req, res)
 
       expect(req.session.recordAttendanceRequests.mode).toEqual(AttendActivityMode.SINGLE)
@@ -276,26 +275,6 @@ describe('Route Handlers - Attendance List', () => {
         attendance,
         attendanceSummary: getAttendanceSummary(instanceA.attendances),
         isPayable: true,
-        selectedSessions: [],
-      })
-    })
-
-    it('should render with the expected view when there are time sessions saved', async () => {
-      req.session.recordAttendanceRequests.sessionFilters = ['am', 'ed']
-
-      await handler.GET(req, res)
-
-      expect(req.session.recordAttendanceRequests.mode).toEqual(AttendActivityMode.SINGLE)
-
-      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
-        instance: {
-          ...instanceA,
-          isAmendable: true,
-        },
-        attendance,
-        attendanceSummary: getAttendanceSummary(instanceA.attendances),
-        isPayable: true,
-        selectedSessions: ['am', 'ed'],
       })
     })
 
@@ -322,7 +301,6 @@ describe('Route Handlers - Attendance List', () => {
         attendance,
         attendanceSummary: getAttendanceSummary(instanceA.attendances),
         isPayable: true,
-        selectedSessions: [],
       })
     })
   })
