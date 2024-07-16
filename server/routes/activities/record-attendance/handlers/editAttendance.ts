@@ -8,6 +8,7 @@ import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { Attendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import { AttendActivityMode } from '../recordAttendanceRequests'
+import config from '../../../../config'
 
 enum EditAttendanceOptions {
   YES = 'yes',
@@ -93,12 +94,16 @@ export default class EditAttendanceRoutes {
       req.session.notAttendedJourney = {
         selectedPrisoners: [
           {
+            instanceId: +id,
             attendanceId: +attendanceId,
             prisonerNumber: attendance.prisonerNumber,
             prisonerName: attendee.name,
             otherEvents: attendee.otherEvents,
           },
         ],
+      }
+      if (config.recordAttendanceSelectSlotFirst) {
+        return res.redirect(`/activities/attendance/activities/not-attended-reason?preserveHistory=true`)
       }
       return res.redirect(`/activities/attendance/activities/${id}/not-attended-reason?preserveHistory=true`)
     }
