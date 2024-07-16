@@ -805,6 +805,7 @@ describe('Route Handlers - Attendance List', () => {
     })
   })
 
+  // TODO: SAA-1796 Remove
   describe('NOT_ATTENDED with toggle off', () => {
     it('non attendance should be redirected to the non attendance page', async () => {
       config.recordAttendanceSelectSlotFirst = false
