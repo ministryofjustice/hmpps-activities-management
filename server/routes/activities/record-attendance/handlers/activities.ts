@@ -79,8 +79,6 @@ export default class ActivitiesRoutes {
         return a.sessionOrderIndex - b.sessionOrderIndex
       })
 
-    req.session.recordAttendanceRequests = {}
-
     if (config.recordAttendanceSelectSlotFirst) {
       const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
       const uniqueLocations = _.uniqBy(locations, 'locationId')
@@ -139,17 +137,13 @@ export default class ActivitiesRoutes {
 
   POST_ATTENDANCES = async (req: Request, res: Response): Promise<void> => {
     const { selectedInstanceIds, activityDate, sessionFilters } = req.body
-    const selectedInstanceIdsArr = selectedInstanceIds ? convertToArray(selectedInstanceIds) : []
     req.session.recordAttendanceRequests = {
       mode: AttendActivityMode.MULTIPLE,
-      selectedInstanceIds: selectedInstanceIdsArr,
+      selectedInstanceIds: selectedInstanceIds ? convertToArray(req.body.selectedInstanceIds) : [],
       activityDate,
       sessionFilters,
     }
-    if (selectedInstanceIdsArr.length === 1) {
-      return res.redirect(`/activities/attendance/activities/${selectedInstanceIdsArr[0]}/attendance-list`)
-    }
-    return res.redirect('/activities/attendance/activities/attendance-list')
+    res.redirect('/activities/attendance/activities/attendance-list')
   }
 }
 

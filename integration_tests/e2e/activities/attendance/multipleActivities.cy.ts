@@ -3,8 +3,7 @@ import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
 import SelectPeriodPage from '../../../pages/recordAttendance/selectPeriod'
 import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
-import MultipleAttendanceListPage from '../../../pages/recordAttendance/attendanceListMultiple'
-import SingleAttendanceListPage from '../../../pages/recordAttendance/attendanceList'
+import AttendanceListPage from '../../../pages/recordAttendance/attendanceListMultiple'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
 import getScheduledInstanceEnglishLevel1 from '../../../fixtures/activitiesApi/getScheduledInstance93.json'
 import getScheduledInstanceEnglishLevel2 from '../../../fixtures/activitiesApi/getScheduledInstance11.json'
@@ -75,7 +74,7 @@ context('Record attendance', () => {
     activitiesPage.selectActivitiesWithNames('English level 1', 'English level 2')
     activitiesPage.getButton('Record or edit attendance').click()
 
-    const attendanceListPage = Page.verifyOnPage(MultipleAttendanceListPage)
+    const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
     attendanceListPage.assertRow(
       0,
       false,
@@ -113,7 +112,7 @@ context('Record attendance', () => {
 
     attendanceListPage.markAsAttended()
 
-    Page.verifyOnPage(MultipleAttendanceListPage)
+    Page.verifyOnPage(AttendanceListPage)
 
     attendanceListPage.assertRow(
       2,
@@ -162,7 +161,7 @@ context('Record attendance', () => {
     activitiesPage.selectActivitiesWithNames('English level 1', 'English level 2')
     activitiesPage.getButton('Record or edit attendance').click()
 
-    const attendanceListPage = Page.verifyOnPage(MultipleAttendanceListPage)
+    const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
     attendanceListPage.assertRow(3, true, 'Arianniver, Eeteljan', '1-3-024', 'English level 1', 'PM', 'Not recorded')
     attendanceListPage.assertRow(7, true, 'Arianniver, Eeteljan', '1-3-024', 'English level 2', 'PM', 'Not recorded')
     attendanceListPage.clickRows(3, 7)
@@ -188,7 +187,7 @@ context('Record attendance', () => {
 
     notAttendedReasonPage.submit()
 
-    Page.verifyOnPage(MultipleAttendanceListPage)
+    Page.verifyOnPage(AttendanceListPage)
 
     attendanceListPage.assertRow(
       3,
@@ -210,34 +209,5 @@ context('Record attendance', () => {
       'Sick No pay',
       'View or Edit',
     )
-  })
-
-  it('Mark attendances for single activity', () => {
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.recordAttendanceCard().click()
-
-    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
-    recordAttendancePage.recordAttendanceCard().click()
-
-    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
-    selectPeriodPage.enterDate(new Date(todayStr))
-    selectPeriodPage.selectAM()
-    selectPeriodPage.continue()
-
-    const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1')
-    activitiesPage.selectActivitiesWithNames('English level 1')
-    activitiesPage.getButton('Record or edit attendance').click()
-
-    const attendanceListPage = Page.verifyOnPage(SingleAttendanceListPage)
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Attended')
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Pay')
-
-    attendanceListPage.getLinkByText(`Go back to activities for ${formatDate(today, 'EEEE, d MMMM yyyy')} - AM`).click()
-
-    Page.verifyOnPage(ActivitiesPage)
   })
 })

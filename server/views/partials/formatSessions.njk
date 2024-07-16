@@ -1,7 +1,0 @@
-{% macro formatSessions(selectedSessions) %}
-    {% set comma = joiner(', ') %}
-    {%- for session in selectedSessions -%}
-        {{- ' and ' if loop.last and not loop.first else comma() }}
-        {{ session | upper }}
-    {%- endfor -%}
-{% endmacro %}
