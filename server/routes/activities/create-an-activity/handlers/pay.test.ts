@@ -3,6 +3,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { addDays, startOfDay } from 'date-fns'
 import PayRoutes, { Pay } from './pay'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -11,6 +12,7 @@ import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import { Activity, ActivityPay, ActivityUpdateRequest, PrisonPayBand } from '../../../../@types/activitiesAPI/types'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { CreateAnActivityJourney } from '../journey'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
@@ -22,6 +24,8 @@ describe('Route Handlers - Create an activity - Pay', () => {
   const handler = new PayRoutes(prisonService, activitiesService)
   let req: Request
   let res: Response
+  const tomorrow: Date = startOfDay(addDays(new Date(), 1))
+  const tomorrowStr: string = formatIsoDate(tomorrow)
 
   beforeEach(() => {
     res = {
@@ -384,8 +388,46 @@ describe('Route Handlers - Create an activity - Pay', () => {
         expect.arrayContaining([
           {
             property: 'bandId',
-            error:
-              'You can only use each pay band once for an incentive level. Select a pay band which has not already been used',
+            error: 'You can only use each pay band once for a combination of incentive level and start date',
+          },
+        ]),
+      )
+    })
+
+    it('validation fails if iep, band and start date combo is selected which already exists in session', async () => {
+      const pay: ActivityPay[] = [
+        {
+          incentiveLevel: 'Basic',
+          prisonPayBand: { id: 1 } as PrisonPayBand,
+          startDate: tomorrowStr,
+          rate: 1,
+          id: 0,
+          incentiveNomisCode: '',
+        },
+      ]
+      createJourney = {
+        pay,
+        flat: [],
+        minimumPayRate: 100,
+        maximumPayRate: 200,
+      }
+      const pathParams = { payRateType: 'single' }
+      const queryParams = {}
+      const body = {
+        rate: 1,
+        bandId: 1,
+        incentiveLevel: 'Basic',
+        startDate: tomorrow,
+      }
+
+      const requestObject = plainToInstance(Pay, { createJourney, pathParams, queryParams, ...body })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            property: 'bandId',
+            error: 'You can only use each pay band once for a combination of incentive level and start date',
           },
         ]),
       )
@@ -449,6 +491,33 @@ describe('Route Handlers - Create an activity - Pay', () => {
         rate: 0.7,
         bandId: 1,
         incentiveLevel: 'Basic',
+      }
+
+      const requestObject = plainToInstance(Pay, {
+        createJourney,
+        pathParams,
+        queryParams,
+        ...body,
+      })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
+    })
+
+    it('passes validation with same band ID, incentive level and different start date', async () => {
+      createJourney = {
+        pay: [{ incentiveLevel: 'Basic', prisonPayBand: { id: 1 }, startDate: '2024-06-30' }],
+        flat: [],
+        minimumPayRate: 70,
+        maximumPayRate: 100,
+      }
+      const pathParams = { payRateType: 'single' }
+      const queryParams = {}
+      const body = {
+        rate: 0.7,
+        bandId: 1,
+        incentiveLevel: 'Basic',
+        startDate: tomorrow,
       }
 
       const requestObject = plainToInstance(Pay, {

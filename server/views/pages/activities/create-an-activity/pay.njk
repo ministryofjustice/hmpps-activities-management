@@ -6,6 +6,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Create an activity - Pay" %}
@@ -33,7 +34,7 @@
 
                 {% if editMode %}
                     {{ govukInsetText({
-                        text: 'Any changes you make to this pay rate will take effect from tomorrow.'
+                        text: 'This change will replace the change set to take effect from ' + paymentStartDate | isoDateToDatePickerDate
                     }) }}
                  {% endif %}
 
@@ -121,6 +122,21 @@
                             },
                             items: incentiveLevelOptions,
                             errorMessage: validationErrors | findError('incentiveLevel')
+                        }) }}
+                        {{ hmppsDatePicker({
+                            id: 'startDate',
+                            name: 'startDate',
+                            label: {
+                                text: "Change the start date for this activity" if session.req.params.mode == 'edit' else "Enter the start date for this activity",
+                                classes: "govuk-label--l",
+                                isPageHeading: true
+                            },
+                            classes: 'hmpps-datepicker--fixed-width',
+                            hint: {
+                                text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'
+                            },
+                            errorMessage: validationErrors | findError('startDate'),
+                            value: paymentStartDate | isoDateToDatePickerDate
                         }) }}
                     {% endif %}
                 {% endif %}

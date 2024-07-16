@@ -37,12 +37,12 @@
                             actions: {
                                 items: [
                                     {
-                                        href: "pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + (("&" + preserveHistoryText) if preserveHistoryText),
-                                        text: "Change",
+                                        href: "pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.startDate + (("&" + preserveHistoryText) if preserveHistoryText),
+                                        text: "My Change",
                                         visuallyHiddenText: "change pay rate"
                                     },
                                     {
-                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + (("&" + preserveHistoryText) if preserveHistoryText),
+                                        href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.startDate + (("&" + preserveHistoryText) if preserveHistoryText),
                                         text: "Remove",
                                         visuallyHiddenText: "remove pay rate"
                                     }

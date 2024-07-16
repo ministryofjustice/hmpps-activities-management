@@ -15,7 +15,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
-            <h1 class="govuk-heading-l">Review pay rates</h1>
+            <h1 class="govuk-heading-l">Review pay rates test</h1>
 
             {{ govukButton({
                 text: "Add new pay rate",
@@ -39,10 +39,30 @@
                     {% set rows = (rows.push(
                         {
                             key: {
+                                text: "pay Band"
+                            },
+                            value: {
+                                text: pay.payBandId
+                            }
+                        }
+                    ), rows) %}
+                    {% set rows = (rows.push(
+                        {
+                            key: {
                                 text: "Amount"
                             },
                             value: {
                                 text: pay.rate | toMoney
+                            }
+                        }
+                    ), rows) %}
+                    {% set rows = (rows.push(
+                        {
+                            key: {
+                                text: "Start Date"
+                            },
+                            value: {
+                                text: pay.startDate | isoDateToDatePickerDate
                             }
                         }
                     ), rows) %}
@@ -59,7 +79,7 @@
 
                     {% set cardItems = [
                         {
-                            href: "../pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
+                            href: "../pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.startDate + "&preserveHistory=true",
                             text: "Change",
                             classes: "govuk-link--no-visited-state",
                             attributes: { 'data-qa': 'change-pay' }

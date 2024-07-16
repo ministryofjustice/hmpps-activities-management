@@ -27,6 +27,7 @@ export default class CheckPayRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    // TODO POST pay.startDate
     const { pay, flat } = req.session.createJourney
 
     if (pay.length === 0 && flat.length === 0) {

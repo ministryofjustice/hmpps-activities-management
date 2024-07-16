@@ -3,7 +3,7 @@ import PrisonService from '../../services/prisonService'
 import { ServiceUser } from '../../@types/express'
 import { Prisoner } from '../../@types/prisonerOffenderSearchImport/types'
 import { IncentiveLevel } from '../../@types/incentivesApi/types'
-import { ActivityPay, Allocation, PrisonPayBand } from '../../@types/activitiesAPI/types'
+import { ActivityPay, Allocation } from '../../@types/activitiesAPI/types'
 
 export type IepPay = {
   incentiveLevel: string
@@ -12,16 +12,24 @@ export type IepPay = {
 
 export type IepPayDisplay = {
   incentiveLevel: string
-  pays: DisplayPay[]
+  pays: Array<ActivityPay & { allocationCount: number; description?: string }>
 }
 
 export type DisplayPay = {
   allocationCount: number
   description: string
+  payBandId: number
   id: number
   incentiveNomisCode: string
   incentiveLevel?: string
-  prisonPayBand: PrisonPayBand
+  prisonPayBand: {
+    id: number
+    displaySequence: number
+    alias: string
+    description: string
+    nomisPayBand: number
+    prisonCode: string
+  }
   rate?: number
   pieceRate?: number
   pieceRateItems?: number
@@ -73,28 +81,16 @@ export default class IncentiveLevelPayMappingUtil {
 }
 
 export function groupPayBand(iepPay: IepPay[]): IepPayDisplay[] {
-  const iepPayDisplays: IepPayDisplay[] = []
+  const iepDisplay: IepPayDisplay[] = []
   iepPay.forEach(item => {
-    const iepPayDisplay: IepPayDisplay = {
+    iepDisplay.push({
       incentiveLevel: item.incentiveLevel,
-      pays: [],
-    }
-
-    item.pays.forEach(pay => {
-      const displayPay: DisplayPay = {
-        allocationCount: pay.allocationCount,
-        description: '',
-        incentiveLevel: pay.incentiveLevel,
-        id: pay.id,
-        incentiveNomisCode: pay.incentiveNomisCode,
-        prisonPayBand: pay.prisonPayBand,
-        rate: pay.rate,
-        startDate: pay.startDate,
-      }
-      iepPayDisplay.pays.push(displayPay)
+      pays: item.pays,
     })
-    iepPayDisplays.push(iepPayDisplay)
+  })
+  iepDisplay.forEach(item => {
+    item.pays.forEach(pay => {})
   })
 
-  return iepPayDisplays
+  return iepDisplay
 }
