@@ -12,19 +12,14 @@
 {% from "partials/attendance/otherEvent.njk" import otherEvent %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
-{% from "partials/formatSessions.njk" import formatSessions %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
+{% set jsBackLink = true %}
 {% set cancelledComment = '' %}
 {% if instance.comment !== undefined and instance.comment !== null %}
-  {% set cancelledComment = " - "+instance.comment %}
-{% endif %}
-{% set activityDate = instance.date | toDate | formatDate %}
-{% if selectedSessions.length > 0 %}
-    {% set hardBackLinkText = 'Go back to activities for ' + activityDate + ' - ' + formatSessions(selectedSessions) %}
-    {% set hardBackLinkHref = '/activities/attendance/activities?date=' + session.recordAttendanceRequests.activityDate + '&sessionFilters=' + selectedSessions | join(",") %}
+ {% set cancelledComment = " - "+instance.comment %}
 {% endif %}
 
 {% block content %}
@@ -48,7 +43,9 @@
                 <span class="govuk-caption-l">
                     {{ instance.startTime }} to {{ instance.endTime }} ({{ instance.startTime | getTimeSlotFromTime | upper }})
                 </span>
-                <span class="govuk-caption-l">{{ activityDate }}</span>
+                <span class="govuk-caption-l">
+                    {{ instance.date | toDate | formatDate }}
+                </span>
                 <span class="govuk-caption-l">
                     {{ 
                         ("In cell" if instance.activitySchedule.activity.inCell) or 

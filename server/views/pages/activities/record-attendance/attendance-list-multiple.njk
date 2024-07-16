@@ -6,8 +6,15 @@
 {% from "partials/attendance/otherEvent.njk" import otherEvent %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
-{% from "partials/formatSessions.njk" import formatSessions %}
 {% from "components/searchBar.njk" import searchBar %}
+
+{% macro formatSessions(selectedSessions) %}
+    {% set comma = joiner(', ') %}
+    {%- for session in selectedSessions -%}
+        {{- ' and ' if loop.last and not loop.first else comma() }}
+        {{ session | upper }}
+    {%- endfor -%}
+{% endmacro %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
