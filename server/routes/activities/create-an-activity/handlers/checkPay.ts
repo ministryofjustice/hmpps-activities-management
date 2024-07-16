@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import PrisonService from '../../../../services/prisonService'
-import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
+import IncentiveLevelPayMappingUtil, { groupPayBand } from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 
 export default class CheckPayRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
@@ -17,10 +17,11 @@ export default class CheckPayRoutes {
       createJourney.allocations,
       user,
     )
+    const displayPays = groupPayBand(incentiveLevelPays)
     const flatPay = req.session.createJourney.flat
 
     if (req.params.mode === 'edit') {
-      res.render(`pages/activities/create-an-activity/edit-pay`, { incentiveLevelPays, flatPay })
+      res.render(`pages/activities/create-an-activity/edit-pay`, { incentiveLevelPays, flatPay, displayPays })
     } else {
       res.render(`pages/activities/create-an-activity/check-pay`, { incentiveLevelPays, flatPay })
     }

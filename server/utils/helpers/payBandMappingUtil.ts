@@ -79,18 +79,3 @@ export default class IncentiveLevelPayMappingUtil {
       .value()
   }
 }
-
-export function groupPayBand(iepPay: IepPay[]): IepPayDisplay[] {
-  const iepDisplay: IepPayDisplay[] = []
-  iepPay.forEach(item => {
-    iepDisplay.push({
-      incentiveLevel: item.incentiveLevel,
-      pays: item.pays,
-    })
-  })
-  iepDisplay.forEach(item => {
-    item.pays.forEach(pay => {})
-  })
-
-  return iepDisplay
-}

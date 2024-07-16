@@ -11,8 +11,8 @@ import { CreateAnActivityJourney } from '../journey'
 import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import { AgencyPrisonerPayProfile } from '../../../../@types/prisonApiImport/types'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
-import { parseDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
 import Validator from '../../../../validators/validator'
+import { datePickerDateToIsoDate } from '../../../../utils/datePickerUtils'
 
 export class Pay {
   @Expose()
@@ -45,12 +45,12 @@ export class Pay {
   incentiveLevel: string
 
   @Expose()
-  @Validator(thisDate => thisDate === undefined || thisDate === null || thisDate > startOfToday(), {
-    message: 'Enter a date in the future',
-  })
-  @Validator(thisDate => thisDate === undefined || thisDate === null || thisDate < addDays(startOfToday(), 30), {
-    message: 'Enter a date no later than 30 days into the future',
-  })
+  // @Validator(thisDate => thisDate === undefined || thisDate === null || thisDate > startOfToday(), {
+  //   message: 'Enter a date in the future',
+  // })
+  // @Validator(thisDate => thisDate === undefined || thisDate === null, {
+  //   message: 'Enter a date no later than 30 days into the future',
+  // })
   startDate: string
 }
 
@@ -123,13 +123,14 @@ export default class PayRoutes {
     const originalIncentiveLevel = req.query.iep
     const { preserveHistory } = req.query
     const { rate, incentiveLevel, bandId, startDate } = req.body
+    const formattedStartDate = datePickerDateToIsoDate(startDate)
 
     // Remove any existing pay rates with the same iep, band and start date to avoid duplication
     const singlePayIndex = req.session.createJourney.pay.findIndex(
       p =>
         p.prisonPayBand.id === +originalBandId &&
         p.incentiveLevel === originalIncentiveLevel &&
-        p.startDate === startDate,
+        p.startDate === formattedStartDate,
     )
     const flatPayIndex = req.session.createJourney.flat.findIndex(p => p.prisonPayBand.id === +originalBandId)
     if (singlePayIndex >= 0) req.session.createJourney.pay.splice(singlePayIndex, 1)
@@ -150,7 +151,7 @@ export default class PayRoutes {
       prisonPayBand: { id: bandId, alias: String(bandAlias), displaySequence: +displaySequence },
       incentiveNomisCode: allIncentiveLevels.find(s2 => s2.levelName === incentiveLevel)?.levelCode,
       incentiveLevel,
-      startDate,
+      startDate: formattedStartDate,
     } as ActivityPay
 
     if (payRateType === 'single') {

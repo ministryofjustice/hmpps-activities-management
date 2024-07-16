@@ -1,9 +1,12 @@
 import _, { forEach } from 'lodash'
+import { startOfToday } from 'date-fns'
 import PrisonService from '../../services/prisonService'
 import { ServiceUser } from '../../@types/express'
 import { Prisoner } from '../../@types/prisonerOffenderSearchImport/types'
 import { IncentiveLevel } from '../../@types/incentivesApi/types'
 import { ActivityPay, Allocation, PrisonPayBand } from '../../@types/activitiesAPI/types'
+import { parseISODate, toMoney } from '../utils'
+import { isoDateToDatePickerDate } from '../datePickerUtils'
 
 export type IepPay = {
   incentiveLevel: string
@@ -17,7 +20,7 @@ export type IepPayDisplay = {
 
 export type DisplayPay = {
   allocationCount: number
-  description: string
+  description?: string
   id: number
   incentiveNomisCode: string
   incentiveLevel?: string
@@ -80,21 +83,47 @@ export function groupPayBand(iepPay: IepPay[]): IepPayDisplay[] {
       pays: [],
     }
 
-    item.pays.forEach(pay => {
-      const displayPay: DisplayPay = {
-        allocationCount: pay.allocationCount,
-        description: '',
-        incentiveLevel: pay.incentiveLevel,
-        id: pay.id,
-        incentiveNomisCode: pay.incentiveNomisCode,
-        prisonPayBand: pay.prisonPayBand,
-        rate: pay.rate,
-        startDate: pay.startDate,
-      }
-      iepPayDisplay.pays.push(displayPay)
+    // get distinct list of pay band IDs
+    // iterate band Id list & call new function, push result to IEP display pays
+
+    const uniquePayBandIds = item.pays
+      .map(pay => pay.prisonPayBand.id)
+      .filter((value, index, self) => self.indexOf(value) === index)
+
+    uniquePayBandIds.forEach(i => {
+      const pay = singleDisplayPayForPayBandId(item.pays, i)
+      iepPayDisplay.pays.push(pay)
     })
     iepPayDisplays.push(iepPayDisplay)
   })
 
   return iepPayDisplays
+}
+
+function singleDisplayPayForPayBandId(input: DisplayPay[], payBandId: number): DisplayPay {
+  const allForPayband = input.filter(a => a.prisonPayBand.id === payBandId)
+
+  if (allForPayband.length === 1) {
+    return allForPayband[0]
+  }
+
+  const currentPayband = input
+    .filter(
+      a => a.prisonPayBand.id === payBandId && (a.startDate == null || parseISODate(a.startDate) <= startOfToday()),
+    )
+    .sort(
+      (a, b) =>
+        (parseISODate(a.startDate) == null ? 0 : parseISODate(a.startDate).valueOf()) -
+        (parseISODate(b.startDate) == null ? 0 : parseISODate(b.startDate).valueOf()),
+    )
+    .pop()
+
+  const futurePaybands = input
+    .filter(a => a.prisonPayBand.id === payBandId && a.startDate != null && parseISODate(a.startDate) > startOfToday())
+    .sort((a, b) => parseISODate(a.startDate).valueOf() - parseISODate(b.startDate).valueOf())
+
+  if (futurePaybands.length > 0) {
+    currentPayband.description = `, set to change to ${toMoney(futurePaybands[0].rate)} from ${isoDateToDatePickerDate(futurePaybands[0].startDate)}`
+  }
+  return currentPayband
 }
