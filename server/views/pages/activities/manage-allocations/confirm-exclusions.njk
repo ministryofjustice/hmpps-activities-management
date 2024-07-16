@@ -11,7 +11,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">Modify someone’s activity schedule</span>
-            <h1 class="govuk-heading-xl">Check changes to when {{ session.allocateJourney.inmate.prisonerName }} should attend {{ session.allocateJourney.activity.name | safe }}</h1>
+            <h1 class="govuk-heading-l">Check changes to when {{ session.allocateJourney.inmate.prisonerName }} should attend {{ session.allocateJourney.activity.name | safe }}</h1>
 
             {% if newSlots | length %}
                 <h2 class="govuk-heading-l">Sessions you’re excluding {{ session.allocateJourney.inmate.prisonerName }} from</h2>
