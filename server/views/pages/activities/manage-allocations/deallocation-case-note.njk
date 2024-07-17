@@ -14,7 +14,7 @@
             <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <h1 class='govuk-heading-xl'>Add a case note for {{ session.allocateJourney.inmate.prisonerName }}</h1>
+                <h1 class='govuk-heading-l'>Add a case note for {{ session.allocateJourney.inmate.prisonerName }}</h1>
 
                 {{ govukRadios({
                     name: "type",

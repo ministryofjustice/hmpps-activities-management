@@ -14,7 +14,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">Manage suspensions from activities</span>
-            <h1 class='govuk-heading-xl'>
+            <h1 class='govuk-heading-l'>
                 {% if session.suspendJourney.allocations | length == 1 %}
                     When should {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspension from {{ session.suspendJourney.allocations[0].activityName | safe }} end?
                 {% else %}
