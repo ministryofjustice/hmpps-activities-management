@@ -15,9 +15,9 @@
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
             {% if session.allocateJourney.inmates | length == 1 %}
-                <h1 class="govuk-heading-xl">Why are you taking {{ session.allocateJourney.inmate.prisonerName }} off this activity?</h1>
+                <h1 class="govuk-heading-l">Why are you taking {{ session.allocateJourney.inmate.prisonerName }} off this activity?</h1>
             {% else %}
-                <h1 class="govuk-heading-xl">Why are you taking {{ session.allocateJourney.inmates | length }} people off this activity?</h1>
+                <h1 class="govuk-heading-l">Why are you taking {{ session.allocateJourney.inmates | length }} people off this activity?</h1>
             {% endif %}
 
             <form method="POST">
