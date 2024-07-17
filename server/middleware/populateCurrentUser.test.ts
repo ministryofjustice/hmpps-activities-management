@@ -31,12 +31,13 @@ afterEach(() => {
 
 describe('populateCurrentUser', () => {
   it('should add current user to res locals', async () => {
-    when(userServiceMock.getUser).mockResolvedValue({ displayName: 'Joe Bloggs' } as ServiceUser)
+    when(userServiceMock.getUser).mockResolvedValue({ displayName: 'Joe Bloggs', authSource: 'nomis' } as ServiceUser)
 
     await middleware(req, res, next)
 
     expect(res.locals.user).toEqual({
       displayName: 'Joe Bloggs',
+      authSource: 'nomis',
     })
     expect(next).toBeCalled()
   })

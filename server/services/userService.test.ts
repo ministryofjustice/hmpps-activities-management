@@ -112,18 +112,18 @@ describe('User service', () => {
 
       when(manageUsersApiClient.getUserByUsername)
         .calledWith(atLeast('jbloggs'))
-        .mockResolvedValue({ name: 'Joe Bloggs', username: 'jbloggs' } as UserDetails)
+        .mockResolvedValue({ name: 'Joe Bloggs', username: 'jbloggs', authSource: 'nomis' } as UserDetails)
 
       when(manageUsersApiClient.getUserByUsername)
         .calledWith(atLeast('jsmith'))
-        .mockResolvedValue({ name: 'John Smith', username: 'jsmith' } as UserDetails)
+        .mockResolvedValue({ name: 'John Smith', username: 'jsmith', authSource: 'nomis' } as UserDetails)
 
       const result = await userService.getUserMap(usernames, user as ServiceUser)
 
       expect(result).toEqual(
         new Map([
-          ['jbloggs', { name: 'Joe Bloggs', username: 'jbloggs' }],
-          ['jsmith', { name: 'John Smith', username: 'jsmith' }],
+          ['jbloggs', { name: 'Joe Bloggs', username: 'jbloggs', authSource: 'nomis' }],
+          ['jsmith', { name: 'John Smith', username: 'jsmith', authSource: 'nomis' }],
         ]),
       )
 
@@ -165,6 +165,22 @@ describe('User service', () => {
       )
 
       expect(manageUsersApiClient.getUserByUsername).toHaveBeenCalledWith('hmpps-book-a-video-link-client', {
+        authSource: 'nomis',
+      })
+    })
+
+    it('Returns External user as a User object if the user is not a prison user', async () => {
+      const usernames = ['external-user']
+
+      when(manageUsersApiClient.getUserByUsername)
+        .calledWith(atLeast('external-user'))
+        .mockResolvedValue({ name: 'John Smith', username: 'jsmith', authSource: 'auth' } as UserDetails)
+
+      const result = await userService.getUserMap(usernames, user as ServiceUser)
+
+      expect(result).toEqual(new Map([['external-user', { name: 'External user', username: 'external-user' }]]))
+
+      expect(manageUsersApiClient.getUserByUsername).toHaveBeenCalledWith('external-user', {
         authSource: 'nomis',
       })
     })
