@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber, Min, ValidateIf, ValidationArguments } from 'class-validator'
-import { startOfToday, addDays } from 'date-fns'
+import { addDays, startOfToday } from 'date-fns'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import IsNotDuplicatedForIep from '../../../../validators/bandNotDuplicatedForIep'
@@ -12,7 +12,7 @@ import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import { AgencyPrisonerPayProfile } from '../../../../@types/prisonApiImport/types'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 import Validator from '../../../../validators/validator'
-import { datePickerDateToIsoDate } from '../../../../utils/datePickerUtils'
+import { datePickerDateToIsoDate, parseDatePickerDate, parseIsoDate } from '../../../../utils/datePickerUtils'
 
 export class Pay {
   @Expose()
@@ -45,12 +45,12 @@ export class Pay {
   incentiveLevel: string
 
   @Expose()
-  // @Validator(thisDate => thisDate === undefined || thisDate === null || thisDate > startOfToday(), {
-  //   message: 'Enter a date in the future',
-  // })
-  // @Validator(thisDate => thisDate === undefined || thisDate === null, {
-  //   message: 'Enter a date no later than 30 days into the future',
-  // })
+  @Validator(startDate => startDate === undefined || parseDatePickerDate(startDate) > startOfToday(), {
+    message: 'Enter a date in the future',
+  })
+  @Validator(startDate => startDate === undefined || parseDatePickerDate(startDate) < addDays(startOfToday(), 30), {
+    message: 'Enter a date no later than 30 days into the future',
+  })
   startDate: string
 }
 
@@ -115,23 +115,29 @@ export default class PayRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    // Refactor should I be retrieving this from the session?
-    // req.body.startDate = formatIsoDate(req.body.startDate)
     const { user } = res.locals
     const { payRateType } = req.params
     const originalBandId = req.query.bandId
     const originalIncentiveLevel = req.query.iep
+    const originalPaymentStartDate = req.query.paymentStartDate
     const { preserveHistory } = req.query
     const { rate, incentiveLevel, bandId, startDate } = req.body
-    const formattedStartDate = datePickerDateToIsoDate(startDate)
 
     // Remove any existing pay rates with the same iep, band and start date to avoid duplication
-    const singlePayIndex = req.session.createJourney.pay.findIndex(
-      p =>
-        p.prisonPayBand.id === +originalBandId &&
-        p.incentiveLevel === originalIncentiveLevel &&
-        p.startDate === formattedStartDate,
-    )
+    // FIXME: handle original and new start date correctly
+    let singlePayIndex = 0
+    if (
+      (originalPaymentStartDate === undefined && startDate === undefined) ||
+      parseIsoDate(originalPaymentStartDate as string) > startOfToday()
+    ) {
+      singlePayIndex = req.session.createJourney.pay.findIndex(
+        p =>
+          p.prisonPayBand.id === +originalBandId &&
+          p.incentiveLevel === originalIncentiveLevel &&
+          p.startDate === originalPaymentStartDate,
+      )
+    }
+
     const flatPayIndex = req.session.createJourney.flat.findIndex(p => p.prisonPayBand.id === +originalBandId)
     if (singlePayIndex >= 0) req.session.createJourney.pay.splice(singlePayIndex, 1)
     if (flatPayIndex >= 0) req.session.createJourney.flat.splice(flatPayIndex, 1)
@@ -151,7 +157,7 @@ export default class PayRoutes {
       prisonPayBand: { id: bandId, alias: String(bandAlias), displaySequence: +displaySequence },
       incentiveNomisCode: allIncentiveLevels.find(s2 => s2.levelName === incentiveLevel)?.levelCode,
       incentiveLevel,
-      startDate: formattedStartDate,
+      startDate: startDate !== undefined ? datePickerDateToIsoDate(startDate) : undefined,
     } as ActivityPay
 
     if (payRateType === 'single') {

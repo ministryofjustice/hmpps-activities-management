@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import PrisonService from '../../../../services/prisonService'
-import IncentiveLevelPayMappingUtil, { groupPayBand } from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
+import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
+import { groupPayBand } from '../../../../utils/helpers/payBandMappingUtil'
 
 export default class CheckPayRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil

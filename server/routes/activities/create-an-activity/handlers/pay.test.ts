@@ -12,7 +12,7 @@ import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import { Activity, ActivityPay, ActivityUpdateRequest, PrisonPayBand } from '../../../../@types/activitiesAPI/types'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { CreateAnActivityJourney } from '../journey'
-import { formatIsoDate } from '../../../../utils/datePickerUtils'
+import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
@@ -506,7 +506,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
     it('passes validation with same band ID, incentive level and different start date', async () => {
       createJourney = {
-        pay: [{ incentiveLevel: 'Basic', prisonPayBand: { id: 1 }, startDate: '2024-06-30' }],
+        pay: [{ incentiveLevel: 'Basic', prisonPayBand: { id: 1 }, startDate: formatIsoDate(tomorrow) }],
         flat: [],
         minimumPayRate: 70,
         maximumPayRate: 100,
@@ -517,7 +517,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
         rate: 0.7,
         bandId: 1,
         incentiveLevel: 'Basic',
-        startDate: tomorrow,
+        startDate: formatDatePickerDate(addDays(tomorrow, 2)),
       }
 
       const requestObject = plainToInstance(Pay, {
