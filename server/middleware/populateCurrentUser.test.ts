@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
+import createHttpError from 'http-errors'
 import populateCurrentUser from './populateCurrentUser'
 import UserService from '../services/userService'
 import { ServiceUser } from '../@types/express'
@@ -38,6 +39,14 @@ describe('populateCurrentUser', () => {
       displayName: 'Joe Bloggs',
     })
     expect(next).toBeCalled()
+  })
+
+  it('should throw 403 http response if user is not a prison user', async () => {
+    when(userServiceMock.getUser).mockResolvedValue({ authSource: 'auth' } as ServiceUser)
+
+    await middleware(req, res, next)
+
+    expect(next).toBeCalledWith(createHttpError.Forbidden())
   })
 
   it('should catch error from user service and persist it to next', async () => {

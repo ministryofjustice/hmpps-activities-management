@@ -12,6 +12,7 @@ import {
   isYesterday,
   parse,
   parseISO,
+  set,
 } from 'date-fns'
 import { enGB } from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
@@ -97,6 +98,9 @@ export const parseDate = (date: string, fromFormat = 'yyyy-MM-dd') => {
   if (!date) return null
   return parse(date, fromFormat, new Date())
 }
+
+export const dateAtTime = (date: Date, time: Date): Date =>
+  set(date, { hours: time.getHours(), minutes: time.getMinutes() })
 
 export const parseISODate = (date: string) => {
   if (!date) return null
