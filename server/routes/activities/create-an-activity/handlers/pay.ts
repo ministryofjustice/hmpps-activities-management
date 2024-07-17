@@ -45,12 +45,19 @@ export class Pay {
   incentiveLevel: string
 
   @Expose()
-  @Validator(startDate => startDate === undefined || parseDatePickerDate(startDate) > startOfToday(), {
-    message: 'Enter a date in the future',
-  })
-  @Validator(startDate => startDate === undefined || parseDatePickerDate(startDate) < addDays(startOfToday(), 30), {
-    message: 'Enter a date no later than 30 days into the future',
-  })
+  @Validator(
+    startDate => startDate === undefined || startDate === '' || parseDatePickerDate(startDate) > startOfToday(),
+    {
+      message: 'Enter a date in the future',
+    },
+  )
+  @Validator(
+    startDate =>
+      startDate === undefined || startDate === '' || parseDatePickerDate(startDate) < addDays(startOfToday(), 30),
+    {
+      message: 'Enter a date no later than 30 days into the future',
+    },
+  )
   startDate: string
 }
 
@@ -125,7 +132,7 @@ export default class PayRoutes {
 
     // Remove any existing pay rates with the same iep, band and start date to avoid duplication
     // FIXME: handle original and new start date correctly
-    let singlePayIndex = 0
+    let singlePayIndex = -1
     if (
       (originalPaymentStartDate === undefined && startDate === undefined) ||
       parseIsoDate(originalPaymentStartDate as string) > startOfToday()

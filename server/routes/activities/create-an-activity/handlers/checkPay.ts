@@ -24,12 +24,11 @@ export default class CheckPayRoutes {
     if (req.params.mode === 'edit') {
       res.render(`pages/activities/create-an-activity/edit-pay`, { incentiveLevelPays, flatPay, displayPays })
     } else {
-      res.render(`pages/activities/create-an-activity/check-pay`, { incentiveLevelPays, flatPay })
+      res.render(`pages/activities/create-an-activity/check-pay`, { incentiveLevelPays, flatPay, displayPays })
     }
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    // TODO POST pay.startDate
     const { pay, flat } = req.session.createJourney
 
     if (pay.length === 0 && flat.length === 0) {

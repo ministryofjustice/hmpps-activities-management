@@ -77,6 +77,22 @@ describe('Route Handlers - Create an activity - Check pay', () => {
             ],
           },
         ],
+        displayPays: [
+          {
+            incentiveLevel: 'Standard',
+            pays: [
+              {
+                incentiveLevel: 'Standard',
+                bandId: 1,
+                bandAlias: 'Common',
+                rate: '150',
+                prisonPayBand: {
+                  id: 1,
+                },
+              },
+            ],
+          },
+        ],
       })
     })
 
