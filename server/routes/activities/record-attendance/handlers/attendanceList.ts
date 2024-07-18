@@ -14,7 +14,6 @@ import { EventType, Prisoner } from '../../../../@types/activities'
 import applyCancellationDisplayRule from '../../../../utils/applyCancellationDisplayRule'
 import UserService from '../../../../services/userService'
 import TimeSlot from '../../../../enum/timeSlot'
-import { AttendActivityMode } from '../recordAttendanceRequests'
 import config from '../../../../config'
 
 export class AttendanceList {
@@ -42,6 +41,7 @@ export default class AttendanceListRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const instanceId = +req.params.id
     const { user } = res.locals
+    const { mode } = req.query
 
     let attendance: ScheduledInstanceAttendance[] = []
 
@@ -78,8 +78,6 @@ export default class AttendanceListRoutes {
           alerts: att.alerts.filter(a => this.RELEVANT_ALERT_CODES.includes(a.alertCode)),
         }
 
-        req.session.recordAttendanceRequests = { mode: AttendActivityMode.SINGLE }
-
         return {
           prisoner: attendee,
           attendance: instance.attendances.find(a => a.prisonerNumber === att.prisonerNumber),
@@ -90,12 +88,21 @@ export default class AttendanceListRoutes {
 
     const userMap = await this.userService.getUserMap([instance.cancelledBy], user)
 
+    if (mode === 'standalone') {
+      req.session.recordAttendanceRequests = {}
+    }
+
+    const selectedSessions = req.session.recordAttendanceRequests?.sessionFilters
+      ? Object.values(TimeSlot).filter(t => req.session.recordAttendanceRequests.sessionFilters.includes(t))
+      : []
+
     res.render('pages/activities/record-attendance/attendance-list-single', {
       instance,
       isPayable: instance.activitySchedule.activity.paid,
       attendance,
       attendanceSummary: getAttendanceSummary(instance.attendances),
       userMap,
+      selectedSessions,
     })
   }
 
