@@ -50,7 +50,11 @@ context('Duplicate appointment', () => {
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/appointments/MDI/search', getAppointmentSearchResults)
-    cy.stubEndpoint('GET', '/users/jsmith', JSON.parse('{"name": "John Smith", "username": "jsmith"}'))
+    cy.stubEndpoint(
+      'GET',
+      '/users/jsmith',
+      JSON.parse('{"name": "John Smith", "username": "jsmith", "authSource": "nomis"}'),
+    )
     cy.stubEndpoint('GET', '/appointment-series/10/details', getGroupAppointmentSeriesDetails)
     cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlerts)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
