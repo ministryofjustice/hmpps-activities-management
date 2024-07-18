@@ -1,7 +1,7 @@
 import { startOfToday } from 'date-fns'
 import { PrisonPayBand } from '../../@types/activitiesAPI/types'
-import { parseISODate, toMoney } from '../utils'
-import { isoDateToDatePickerDate } from '../datePickerUtils'
+import { formatDate, parseISODate, toMoney } from '../utils'
+import { parseIsoDate } from '../datePickerUtils'
 import { IepPay } from './incentiveLevelPayMappingUtil'
 
 export type IepPayDisplay = {
@@ -69,7 +69,7 @@ function singleDisplayPayForPayBandId(input: DisplayPay[], payBandId: number): D
     .sort((a, b) => parseISODate(a.startDate).valueOf() - parseISODate(b.startDate).valueOf())
 
   if (futurePaybands.length > 0) {
-    currentPayband.description = `, set to change to ${toMoney(futurePaybands[0].rate)} from ${isoDateToDatePickerDate(futurePaybands[0].startDate)}`
+    currentPayband.description = `, set to change to ${toMoney(futurePaybands[0].rate)} from ${formatDate(parseIsoDate(futurePaybands[0].startDate))}`
     currentPayband.futurePaymentStart = futurePaybands[0].startDate
   }
   return currentPayband

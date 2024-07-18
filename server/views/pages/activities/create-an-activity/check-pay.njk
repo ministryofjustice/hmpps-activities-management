@@ -50,6 +50,12 @@
 
                     {% set cardItems = [
                         {
+                            href: "../pay-amount/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.futurePaymentStart + "&preserveHistory=true",
+                            text: "Change",
+                            classes: "govuk-link--no-visited-state",
+                            attributes: { 'data-qa': 'change-pay' }
+                        } if futurePayRatesFlag else
+                        {
                             href: "../pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.futurePaymentStart + "&preserveHistory=true",
                             text: "Change",
                             classes: "govuk-link--no-visited-state",

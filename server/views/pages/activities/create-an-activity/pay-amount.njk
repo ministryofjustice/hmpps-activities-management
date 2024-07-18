@@ -1,0 +1,51 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+
+{% set pageTitle = applicationName + " - Create an activity - Pay" %}
+{% set pageId = 'pay-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ activityJourneyCaption(session.createJourney) }}
+            <h1 class="govuk-heading-l">Change {{ iep }} incentive level: {{ band.alias }}</h1>
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type='hidden' name='incentiveLevel' value='{{ iep }}' />
+                <input type='hidden' name='bandId' value='{{ band.id }}' />
+
+                {{ govukInput({
+                    id: "rate",
+                    name: "rate",
+                    label: {
+                        text: "1. How much will someone be paid for a session?",
+                        classes: "govuk-label--s"
+                    },
+                    hint: {
+                        text: 'Minimum pay for people in your prison is £' + (minimumPayRate / 100) | toFixed + ' and maximum pay is £' + (maximumPayRate / 100) | toFixed + ' per session.'
+                    },
+                    prefix: {
+                        text: "£"
+                    },
+                    classes: "govuk-input--width-5",
+                    errorMessage: validationErrors | findError('rate'),
+                    value: formResponses.rate or (rate / 100) | toFixed
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

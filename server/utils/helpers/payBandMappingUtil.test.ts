@@ -2,6 +2,7 @@ import { addDays, subDays } from 'date-fns'
 import { IepPay } from './incentiveLevelPayMappingUtil'
 import { datePickerDateToIsoDate, formatIsoDate, isoDateToDatePickerDate } from '../datePickerUtils'
 import { groupPayBand } from './payBandMappingUtil'
+import { formatDate } from '../utils'
 
 describe('Route Handlers - Create an activity - Helper', () => {
   describe('getPayGroupedByDisplayPay', () => {
@@ -67,8 +68,11 @@ describe('Route Handlers - Create an activity - Helper', () => {
     })
 
     it('should group pay by incentive level and display pay with a future pay change', async () => {
-      const inFiveDays = formatIsoDate(addDays(new Date(), 5))
-      const formattedDate = isoDateToDatePickerDate(inFiveDays)
+      const inFiveDays = addDays(new Date(), 5)
+      const inFiveDaysStr = formatIsoDate(inFiveDays)
+      const formattedDatePicker = isoDateToDatePickerDate(inFiveDaysStr)
+      const messageDate = formatDate(inFiveDays)
+
       const iepPay = [
         {
           incentiveLevel: 'Basic',
@@ -80,7 +84,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
               incentiveNomisCode: 'BAS',
               prisonPayBand: { id: 3, displaySequence: 3 },
               rate: 100,
-              startDate: inFiveDays,
+              startDate: inFiveDaysStr,
             },
             {
               allocationCount: 0,
@@ -134,8 +138,8 @@ describe('Route Handlers - Create an activity - Helper', () => {
           pays: [
             {
               allocationCount: 0,
-              description: `, set to change to £1.00 from ${formattedDate}`,
-              futurePaymentStart: datePickerDateToIsoDate(formattedDate),
+              description: `, set to change to £1.00 from ${messageDate}`,
+              futurePaymentStart: datePickerDateToIsoDate(formattedDatePicker),
               incentiveLevel: 'Basic',
               id: 3,
               incentiveNomisCode: 'BAS',

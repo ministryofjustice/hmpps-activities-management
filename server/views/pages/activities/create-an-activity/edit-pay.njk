@@ -15,7 +15,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
-            <h1 class="govuk-heading-l">Review pay rates</h1>
+            <h1 class="govuk-heading-l">Review pay rates 2</h1>
 
             {{ govukButton({
                 text: "Add new pay rate",
@@ -34,7 +34,7 @@
 
             {% if futurePayRatesFlag %}
                 {% for displayPay in displayPays %}
-                    <h2 class="govuk-heading-m">{{ displayPay.incentiveLevel }} incentive level pay rates</h2>
+                    <h2 class="govuk-heading-m">{{ displayPay.incentiveLevel }} incentive level pay rates 2</h2>
                     {% for pay in displayPay.pays %}
                         {% set rows = [] %}
                         {% set rows = (rows.push(
@@ -60,12 +60,23 @@
 
                         {% set cardItems = [
                             {
-                                href: "../pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.futurePaymentStart + "&preserveHistory=true",
+                                href: "../pay-amount/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.futurePaymentStart + "&preserveHistory=true",
                                 text: "Change",
                                 classes: "govuk-link--no-visited-state",
                                 attributes: { 'data-qa': 'change-pay' }
                             }
                         ] %}
+                        {% if pay.description %}
+                            {% set cardItems = (cardItems.push(
+                                {
+                                    href: "../pay-cancel/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.futurePaymentStart + "&preserveHistory=true",
+                                    text: "Cancel",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'cancel-pay' }
+                                }
+                            ), cardItems) %}
+                        {% endif %}
+
                         {% if not pay.allocationCount %}
                             {% set cardItems = (cardItems.push(
                                 {

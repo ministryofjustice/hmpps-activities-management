@@ -1,0 +1,55 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+
+{% set pageTitle = applicationName + " - Create an activity - Pay" %}
+{% set pageId = 'pay-page' %}
+{% set jsBackLink = true %}
+
+{% set editMode = session.req.params.mode == 'edit' and iep and band %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ activityJourneyCaption(session.createJourney) }}
+            {% if editMode %}
+                <h1 class="govuk-heading-l">When does the change to {{ iep }} incentive level: {{ band.alias }} take effect?</h1>
+            {% endif %}
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type="hidden" name="rate" value="{{ rate }}" />
+                <input type='hidden' name='incentiveLevel' value='{{ iep }}' />
+                <input type='hidden' name='bandId' value='{{ band.id }}' />
+
+                {{ hmppsDatePicker({
+                    id: 'startDate',
+                    name: 'startDate',
+                    label: {
+                        text: "Change the start date for this activity" if session.req.params.mode == 'edit' else "Enter the start date for this activity",
+                        classes: "govuk-label--l",
+                        isPageHeading: true
+                    },
+                    classes: 'hmpps-datepicker--fixed-width',
+                    hint: {
+                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'
+                    },
+                    errorMessage: validationErrors | findError('startDate'),
+                    value: paymentStartDate | isoDateToDatePickerDate
+                }) }}
+
+
+                {{ govukButton({
+                    text: "Confirm"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
