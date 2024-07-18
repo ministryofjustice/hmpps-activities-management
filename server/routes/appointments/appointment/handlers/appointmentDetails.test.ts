@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { addDays, subDays } from 'date-fns'
 import { when } from 'jest-when'
+import createHttpError from 'http-errors'
 import AppointmentDetailsRoutes from './appointmentDetails'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate, toDateString } from '../../../../utils/utils'
@@ -9,6 +10,9 @@ import atLeast from '../../../../../jest.setup'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 import PrisonService from '../../../../services/prisonService'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
+import config from '../../../../config'
+import { LocationLenient } from '../../../../@types/prisonApiImportCustom'
+import { VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
 
 jest.mock('../../../../services/userService')
 jest.mock('../../../../services/prisonService')
@@ -42,6 +46,7 @@ describe('Route Handlers - Appointment Details', () => {
       appointmentSeries: {
         id: 9,
       },
+      category: {},
       startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
       startTime: '23:59',
       createdBy: 'joebloggs',
@@ -71,6 +76,70 @@ describe('Route Handlers - Appointment Details', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
         appointment,
+        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+      })
+    })
+
+    it('should redirect to view a video link booking', async () => {
+      config.bookAVideoLinkToggleEnabled = true
+      const vlbAppointment = {
+        ...appointment,
+        attendees: [{ prisoner: { prisonerNumber: 'ABC123' } }],
+        category: {
+          code: 'VLB',
+        },
+        prisonCode: 'MDI',
+        internalLocation: { id: 1 },
+      }
+
+      req = {
+        params: {
+          id: '10',
+        },
+        appointment: vlbAppointment,
+      } as unknown as Request
+
+      when(prisonService.getEventLocations)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValue([{ locationId: 1, locationPrefix: 'locationKey' } as LocationLenient])
+
+      when(bookAVideoLinkService.matchAppointmentToVideoLinkBooking)
+        .calledWith(atLeast('ABC123', 'locationKey'))
+        .mockResolvedValue({ videoLinkBookingId: 1 } as VideoLinkBooking)
+
+      await handler.GET(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('video-link-booking/1')
+    })
+
+    it('should render the VLB as an appointment if not found in BVLS API', async () => {
+      config.bookAVideoLinkToggleEnabled = true
+      const vlbAppointment = {
+        ...appointment,
+        attendees: [{ prisoner: { prisonerNumber: 'ABC123' } }],
+        category: {
+          code: 'VLB',
+        },
+        prisonCode: 'MDI',
+        internalLocation: { id: 1 },
+      }
+
+      req = {
+        params: {
+          id: '10',
+        },
+        appointment: vlbAppointment,
+      } as unknown as Request
+
+      prisonService.getEventLocations.mockResolvedValue([
+        { locationId: 1, locationPrefix: 'locationKey' } as LocationLenient,
+      ])
+      bookAVideoLinkService.matchAppointmentToVideoLinkBooking.mockRejectedValue(createHttpError.NotFound())
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
+        appointment: vlbAppointment,
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
       })
     })

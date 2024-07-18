@@ -4,6 +4,7 @@ import config from '../config'
 import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
 import BookAVideoLinkApiClient from './bookAVideoLinkApiClient'
+import { VideoBookingSearchRequest } from '../@types/bookAVideoLinkApi/types'
 
 const user = {} as ServiceUser
 
@@ -35,6 +36,29 @@ describe('bookAVideoLinkApiClient', () => {
         .reply(200, response)
 
       const output = await bookAVideoLinkApiClient.getVideoLinkBookingById(1, user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('match video link booking by appointment details', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      const requestBody = {
+        prisonerNumber: 'ABC123',
+        locationKey: 'locationKey',
+        date: '2024-02-20',
+        startTime: '14:00',
+        endTime: '15:00',
+      } as VideoBookingSearchRequest
+
+      fakeBookAVideoLinkApi
+        .post('/video-link-booking/search', requestBody)
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200, response)
+
+      const output = await bookAVideoLinkApiClient.matchAppointmentToVideoLinkBooking(requestBody, user)
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
