@@ -7,13 +7,19 @@ import { formatDate, toDateString } from '../../../../utils/utils'
 import UserService from '../../../../services/userService'
 import atLeast from '../../../../../jest.setup'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
+import PrisonService from '../../../../services/prisonService'
+import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 
 jest.mock('../../../../services/userService')
+jest.mock('../../../../services/prisonService')
+jest.mock('../../../../services/bookAVideoLinkService')
 
 const userService = new UserService(null, null, null) as jest.Mocked<UserService>
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
+const bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
 
 describe('Route Handlers - Appointment Details', () => {
-  const handler = new AppointmentDetailsRoutes(userService)
+  const handler = new AppointmentDetailsRoutes(userService, prisonService, bookAVideoLinkService)
   const tomorrow = addDays(new Date(), 1)
 
   let req: Request

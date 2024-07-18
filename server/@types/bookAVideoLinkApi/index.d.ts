@@ -88,6 +88,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/video-link-booking/search': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Endpoint to search for a unique matching video link booking. */
+    post: operations['searchForBooking']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/video-link-booking/request': {
     parameters: {
       query?: never
@@ -585,11 +602,213 @@ export interface components {
        * @example https://video.here.com
        */
       videoLinkUrl?: string
+    }
+    /** @description The request with the search criteria for a video booking */
+    VideoBookingSearchRequest: {
       /**
-       * @description Set to true when called by a prison request. Will default to false.
+       * @description The prisoner number (NOMIS ID)
+       * @example A1234AA
+       */
+      prisonerNumber: string
+      /**
+       * @description The location key for the appointment
+       * @example PVI-A-1-001
+       */
+      locationKey: string
+      /**
+       * Format: date
+       * @description The date for which the appointment starts
+       * @example 2022-12-23
+       */
+      date: string
+      /**
+       * Format: partial-time
+       * @description Start time for the appointment on the day
+       * @example 10:45
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description End time for the appointment on the day
+       * @example 11:45
+       */
+      endTime: string
+    }
+    /** @description A representation of a prison appointment */
+    PrisonAppointment: {
+      /**
+       * Format: int64
+       * @description The internal ID for this appointment
+       * @example 123
+       */
+      prisonAppointmentId: number
+      /**
+       * @description The prison code where this appointment will take place
+       * @example MDI
+       */
+      prisonCode: string
+      /**
+       * @description The prisoner number for the person attending this appointment
+       * @example AA1234A
+       */
+      prisonerNumber: string
+      /**
+       * @description The appointment type
+       * @example VLB
+       */
+      appointmentType: string
+      /**
+       * @description The comments for this appointment
+       * @example Please be on time
+       */
+      comments?: string
+      /**
+       * @description The location of the appointment at the prison
+       * @example VCC-ROOM-1
+       */
+      prisonLocKey: string
+      /**
+       * Format: date
+       * @description The date of the appointment
+       * @example 2024-04-05
+       */
+      appointmentDate: string
+      /**
+       * Format: partial-time
+       * @description The start time for this appointment
+       * @example 11:30
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time for this appointment
+       * @example 12:30
+       */
+      endTime: string
+    }
+    VideoLinkBooking: {
+      /**
+       * Format: int64
+       * @description The internal ID for this booking
+       * @example 123
+       */
+      videoLinkBookingId: number
+      /**
+       * @description The status of this booking
+       * @example ACTIVE
+       * @enum {string}
+       */
+      statusCode: 'ACTIVE' | 'CANCELLED'
+      /**
+       * @description The booking type
+       * @example COURT
+       * @enum {string}
+       */
+      bookingType: 'COURT' | 'PROBATION'
+      /** @description The prisone appointments related to this booking */
+      prisonAppointments: components['schemas']['PrisonAppointment'][]
+      /**
+       * @description The court code for booking type COURT, otherwise null
+       * @example DRBYMC
+       */
+      courtCode?: string
+      /**
+       * @description The court description for booking type COURT, otherwise null
+       * @example Derby Justice Centre
+       */
+      courtDescription?: string
+      /**
+       * @description The court hearing type for booking type COURT, otherwise null
+       * @example APPEAL
+       * @enum {string}
+       */
+      courtHearingType?:
+        | 'APPEAL'
+        | 'APPLICATION'
+        | 'BACKER'
+        | 'BAIL'
+        | 'CIVIL'
+        | 'CSE'
+        | 'CTA'
+        | 'IMMIGRATION_DEPORTATION'
+        | 'FAMILY'
+        | 'TRIAL'
+        | 'FCMH'
+        | 'FTR'
+        | 'GRH'
+        | 'MDA'
+        | 'MEF'
+        | 'NEWTON'
+        | 'PLE'
+        | 'PTPH'
+        | 'PTR'
+        | 'POCA'
+        | 'REMAND'
+        | 'SECTION_28'
+        | 'SEN'
+        | 'TRIBUNAL'
+        | 'OTHER'
+      /**
+       * @description The court hearing type description, for booking type COURT, otherwise null
+       * @example Appeal hearing
+       */
+      courtHearingTypeDescription?: string
+      /**
+       * @description The probation team code for booking type PROBATION, otherwise null
+       * @example BLKPPP
+       */
+      probationTeamCode?: string
+      /**
+       * @description The probation team description for booking type PROBATION, otherwise null
+       * @example Barnet PPOC
+       */
+      probationTeamDescription?: string
+      /**
+       * @description The probation meeting type for booking type PROBATION, otherwise null
+       * @example PSR
+       * @enum {string}
+       */
+      probationMeetingType?: 'PSR' | 'RR'
+      /**
+       * @description The probation meeting type description, required for booking type PROBATION
+       * @example Pre-sentence report
+       */
+      probationMeetingTypeDescription?: string
+      /**
+       * @description Free text comments for the video link booking
+       * @example Waiting to hear on legal representation
+       */
+      comments?: string
+      /**
+       * @description The video link for the appointment. Must be a valid URL
+       * @example https://video.here.com
+       */
+      videoLinkUrl?: string
+      /**
+       * @description True if the booking was made by a prison user.
        * @example false
        */
       createdByPrison?: boolean
+      /**
+       * @description Username of the person who created this booking.
+       * @example creator@email.com
+       */
+      createdBy: string
+      /**
+       * Format: date-time
+       * @description Date and time it was originally created.
+       */
+      createdAt: string
+      /**
+       * @description Username of the person who last amended this booking.
+       * @example amender@email.com
+       */
+      amendedBy?: string
+      /**
+       * Format: date-time
+       * @description Date and time of the last amendment to this booking.
+       */
+      amendedAt?: string
     }
     /** @description The request with the requested video link booking details */
     RequestVideoBookingRequest: {
@@ -791,182 +1010,6 @@ export interface components {
       pre?: components['schemas']['LocationAndInterval']
       main: components['schemas']['LocationAndInterval']
       post?: components['schemas']['LocationAndInterval']
-    }
-    /** @description A representation of a prison appointment */
-    PrisonAppointment: {
-      /**
-       * Format: int64
-       * @description The internal ID for this appointment
-       * @example 123
-       */
-      prisonAppointmentId: number
-      /**
-       * @description The prison code where this appointment will take place
-       * @example MDI
-       */
-      prisonCode: string
-      /**
-       * @description The prisoner number for the person attending this appointment
-       * @example AA1234A
-       */
-      prisonerNumber: string
-      /**
-       * @description The appointment type
-       * @example VLB
-       */
-      appointmentType: string
-      /**
-       * @description The comments for this appointment
-       * @example Please be on time
-       */
-      comments?: string
-      /**
-       * @description The location of the appointment at the prison
-       * @example VCC-ROOM-1
-       */
-      prisonLocKey: string
-      /**
-       * Format: date
-       * @description The date of the appointment
-       * @example 2024-04-05
-       */
-      appointmentDate: string
-      /**
-       * Format: partial-time
-       * @description The start time for this appointment
-       * @example 11:30
-       */
-      startTime: string
-      /**
-       * Format: partial-time
-       * @description The end time for this appointment
-       * @example 12:30
-       */
-      endTime: string
-    }
-    VideoLinkBooking: {
-      /**
-       * Format: int64
-       * @description The internal ID for this booking
-       * @example 123
-       */
-      videoLinkBookingId: number
-      /**
-       * @description The status of this booking
-       * @example ACTIVE
-       * @enum {string}
-       */
-      statusCode: 'ACTIVE' | 'CANCELLED'
-      /**
-       * @description The booking type
-       * @example COURT
-       * @enum {string}
-       */
-      bookingType: 'COURT' | 'PROBATION'
-      /** @description The prisone appointments related to this booking */
-      prisonAppointments: components['schemas']['PrisonAppointment'][]
-      /**
-       * @description The court code for booking type COURT, otherwise null
-       * @example DRBYMC
-       */
-      courtCode?: string
-      /**
-       * @description The court description for booking type COURT, otherwise null
-       * @example Derby Justice Centre
-       */
-      courtDescription?: string
-      /**
-       * @description The court hearing type for booking type COURT, otherwise null
-       * @example APPEAL
-       * @enum {string}
-       */
-      courtHearingType?:
-        | 'APPEAL'
-        | 'APPLICATION'
-        | 'BACKER'
-        | 'BAIL'
-        | 'CIVIL'
-        | 'CSE'
-        | 'CTA'
-        | 'IMMIGRATION_DEPORTATION'
-        | 'FAMILY'
-        | 'TRIAL'
-        | 'FCMH'
-        | 'FTR'
-        | 'GRH'
-        | 'MDA'
-        | 'MEF'
-        | 'NEWTON'
-        | 'PLE'
-        | 'PTPH'
-        | 'PTR'
-        | 'POCA'
-        | 'REMAND'
-        | 'SECTION_28'
-        | 'SEN'
-        | 'TRIBUNAL'
-        | 'OTHER'
-      /**
-       * @description The court hearing type description, for booking type COURT, otherwise null
-       * @example Appeal hearing
-       */
-      courtHearingTypeDescription?: string
-      /**
-       * @description The probation team code for booking type PROBATION, otherwise null
-       * @example BLKPPP
-       */
-      probationTeamCode?: string
-      /**
-       * @description The probation team description for booking type PROBATION, otherwise null
-       * @example Barnet PPOC
-       */
-      probationTeamDescription?: string
-      /**
-       * @description The probation meeting type for booking type PROBATION, otherwise null
-       * @example PSR
-       * @enum {string}
-       */
-      probationMeetingType?: 'PSR' | 'RR'
-      /**
-       * @description The probation meeting type description, required for booking type PROBATION
-       * @example Pre-sentence report
-       */
-      probationMeetingTypeDescription?: string
-      /**
-       * @description Free text comments for the video link booking
-       * @example Waiting to hear on legal representation
-       */
-      comments?: string
-      /**
-       * @description The video link for the appointment. Must be a valid URL
-       * @example https://video.here.com
-       */
-      videoLinkUrl?: string
-      /**
-       * @description Set to true when called by a prison request. Will default to false.
-       * @example false
-       */
-      createdByPrison?: boolean
-      /**
-       * @description Username of the person who created this booking.
-       * @example creator@email.com
-       */
-      createdBy: string
-      /**
-       * Format: date-time
-       * @description Date and time it was originally created.
-       */
-      createdAt: string
-      /**
-       * @description Username of the person who last amended this booking.
-       * @example amender@email.com
-       */
-      amendedBy?: string
-      /**
-       * Format: date-time
-       * @description Date and time of the last amendment to this booking.
-       */
-      amendedAt?: string
     }
     /** @description An item on a schedule i.e. prison appointments and their booking details */
     ScheduleItem: {
@@ -1292,7 +1335,7 @@ export interface components {
        * @example PRISON
        * @enum {string}
        */
-      contactType: 'OWNER' | 'COURT' | 'PROBATION' | 'PRISON' | 'THIRD_PARTY'
+      contactType: 'USER' | 'COURT' | 'PROBATION' | 'PRISON' | 'THIRD_PARTY'
       /**
        * @description Describes the contact name (optional)
        * @example Mr. Person-contact
@@ -1574,6 +1617,48 @@ export interface operations {
         }
         content: {
           'application/json': number
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  searchForBooking: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VideoBookingSearchRequest']
+      }
+    }
+    responses: {
+      /** @description The matching video link booking details */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['VideoLinkBooking']
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */
