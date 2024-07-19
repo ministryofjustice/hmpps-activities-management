@@ -7,9 +7,6 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentType } from '../../create-and-edit/appointmentJourney'
 import { PrisonAppointment, VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
 import { ServiceUser } from '../../../../@types/express'
-import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
-
-type Appointment = AppointmentDetails & { locationKey: string }
 
 export default class VideoLinkDetailsRoutes {
   constructor(
@@ -53,14 +50,7 @@ export default class VideoLinkDetailsRoutes {
     })
   }
 
-  private async fetchAppointments(
-    videoLinkBooking: VideoLinkBooking,
-    user: ServiceUser,
-  ): Promise<{
-    preAppointment?: Appointment
-    mainAppointment: Appointment
-    postAppointment?: Appointment
-  }> {
+  private fetchAppointments = async (videoLinkBooking: VideoLinkBooking, user: ServiceUser) => {
     const findAppointment = (type: string) => videoLinkBooking.prisonAppointments.find(a => a.appointmentType === type)
 
     const pre = findAppointment('VLB_COURT_PRE')
