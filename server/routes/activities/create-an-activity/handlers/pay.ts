@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
 import { IsNotEmpty, IsNumber, Min, ValidateIf, ValidationArguments } from 'class-validator'
-import { addDays, startOfToday } from 'date-fns'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import IsNotDuplicatedForIep from '../../../../validators/bandNotDuplicatedForIep'
@@ -11,8 +10,6 @@ import { CreateAnActivityJourney } from '../journey'
 import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import { AgencyPrisonerPayProfile } from '../../../../@types/prisonApiImport/types'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
-import Validator from '../../../../validators/validator'
-import { datePickerDateToIsoDate, parseDatePickerDate, parseIsoDate } from '../../../../utils/datePickerUtils'
 
 export class Pay {
   @Expose()
@@ -35,7 +32,8 @@ export class Pay {
   @Type(() => Number)
   @Min(1, { message: 'Select a pay band' })
   @IsNotDuplicatedForIep({
-    message: 'You can only use each pay band once for a combination of incentive level and start date',
+    message:
+      'You can only use each pay band once for an incentive level. Select a pay band which has not already been used',
   })
   bandId: number
 
@@ -43,22 +41,6 @@ export class Pay {
   @ValidateIf(o => o.pathParams.payRateType === 'single')
   @IsNotEmpty({ message: 'Select an incentive level for the pay rate' })
   incentiveLevel: string
-
-  @Expose()
-  @Validator(
-    startDate => startDate === undefined || startDate === '' || parseDatePickerDate(startDate) > startOfToday(),
-    {
-      message: 'Enter a date in the future',
-    },
-  )
-  @Validator(
-    startDate =>
-      startDate === undefined || startDate === '' || parseDatePickerDate(startDate) < addDays(startOfToday(), 30),
-    {
-      message: 'Enter a date no later than 30 days into the future',
-    },
-  )
-  startDate: string
 }
 
 export default class PayRoutes {
@@ -74,7 +56,7 @@ export default class PayRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { payRateType } = req.params
-    const { iep, bandId, paymentStartDate } = req.query
+    const { iep, bandId } = req.query
     const { createJourney } = req.session
 
     const [incentiveLevels, payBands, payProfile]: [IncentiveLevel[], PrisonPayBand[], AgencyPrisonerPayProfile] =
@@ -93,12 +75,8 @@ export default class PayRoutes {
     req.session.createJourney.maximumPayRate = maximumPayRate
 
     const rate =
-      req.session.createJourney?.pay?.find(
-        p =>
-          p.prisonPayBand.id === +bandId &&
-          p.incentiveLevel === iep &&
-          (p.startDate === paymentStartDate || p.startDate === undefined),
-      )?.rate || req.session.createJourney?.flat?.find(p => p.prisonPayBand.id === +bandId)?.rate
+      req.session.createJourney?.pay?.find(p => p.prisonPayBand.id === +bandId && p.incentiveLevel === iep)?.rate ||
+      req.session.createJourney?.flat?.find(p => p.prisonPayBand.id === +bandId)?.rate
 
     const hasAllocations = await this.helper
       .getPayGroupedByIncentiveLevel(createJourney.pay, createJourney.allocations, user)
@@ -110,7 +88,6 @@ export default class PayRoutes {
     res.render(`pages/activities/create-an-activity/pay`, {
       rate,
       iep,
-      paymentStartDate,
       band,
       payRateType,
       incentiveLevels,
@@ -126,25 +103,13 @@ export default class PayRoutes {
     const { payRateType } = req.params
     const originalBandId = req.query.bandId
     const originalIncentiveLevel = req.query.iep
-    const originalPaymentStartDate = req.query.paymentStartDate
     const { preserveHistory } = req.query
-    const { rate, incentiveLevel, bandId, startDate } = req.body
+    const { rate, incentiveLevel, bandId } = req.body
 
-    // Remove any existing pay rates with the same iep, band and start date to avoid duplication
-    // FIXME: handle original and new start date correctly
-    let singlePayIndex = -1
-    if (
-      (originalPaymentStartDate === undefined && startDate === undefined) ||
-      parseIsoDate(originalPaymentStartDate as string) > startOfToday()
-    ) {
-      singlePayIndex = req.session.createJourney.pay.findIndex(
-        p =>
-          p.prisonPayBand.id === +originalBandId &&
-          p.incentiveLevel === originalIncentiveLevel &&
-          p.startDate === originalPaymentStartDate,
-      )
-    }
-
+    // Remove any existing pay rates with the same iep and band to avoid duplication
+    const singlePayIndex = req.session.createJourney.pay.findIndex(
+      p => p.prisonPayBand.id === +originalBandId && p.incentiveLevel === originalIncentiveLevel,
+    )
     const flatPayIndex = req.session.createJourney.flat.findIndex(p => p.prisonPayBand.id === +originalBandId)
     if (singlePayIndex >= 0) req.session.createJourney.pay.splice(singlePayIndex, 1)
     if (flatPayIndex >= 0) req.session.createJourney.flat.splice(flatPayIndex, 1)
@@ -164,7 +129,6 @@ export default class PayRoutes {
       prisonPayBand: { id: bandId, alias: String(bandAlias), displaySequence: +displaySequence },
       incentiveNomisCode: allIncentiveLevels.find(s2 => s2.levelName === incentiveLevel)?.levelCode,
       incentiveLevel,
-      startDate: startDate !== undefined ? datePickerDateToIsoDate(startDate) : undefined,
     } as ActivityPay
 
     if (payRateType === 'single') {
@@ -210,7 +174,6 @@ export default class PayRoutes {
       incentiveLevel: p.incentiveLevel,
       payBandId: p.prisonPayBand.id,
       rate: p.rate,
-      startDate: p.startDate,
     }))
 
     const updatedActivity = {

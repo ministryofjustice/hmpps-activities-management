@@ -54,9 +54,9 @@
                             text: "Change",
                             classes: "govuk-link--no-visited-state",
                             attributes: { 'data-qa': 'change-pay' }
-                        } if futurePayRatesFlag else
+                        } if session.req.params.mode == 'edit' else
                         {
-                            href: "../pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.futurePaymentStart + "&preserveHistory=true",
+                            href: "pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.futurePaymentStart + "&preserveHistory=true",
                             text: "Change",
                             classes: "govuk-link--no-visited-state",
                             attributes: { 'data-qa': 'change-pay' }
@@ -65,7 +65,7 @@
                     {% if not pay.allocationCount %}
                         {% set cardItems = (cardItems.push(
                             {
-                                href: "../remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
+                                href: "remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
                                 text: "Delete pay rate",
                                 classes: "govuk-link--no-visited-state",
                                 attributes: { 'data-qa': 'remove-pay' }
