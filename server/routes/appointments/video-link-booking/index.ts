@@ -13,11 +13,7 @@ export default function Index({ bookAVideoLinkService, prisonService, userServic
   const videoLinkDetailsRoutes = new VideoLinkDetailsRoutes(bookAVideoLinkService, prisonService, userService)
 
   // Video link routes are only accessible when running locally or when feature toggle is provided
-  router.use((req, res, next) =>
-    process.env.NODE_ENV === 'production' && !config.bookAVideoLinkToggleEnabled
-      ? next(createHttpError.NotFound())
-      : next(),
-  )
+  router.use((req, res, next) => (!config.bookAVideoLinkToggleEnabled ? next(createHttpError.NotFound()) : next()))
 
   get('/', videoLinkDetailsRoutes.GET)
 

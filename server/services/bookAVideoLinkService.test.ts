@@ -35,6 +35,41 @@ describe('Book A Video link service', () => {
     })
   })
 
+  describe('matchAppointmentToVideoLinkBooking', () => {
+    it('should get the video link booking by ID', async () => {
+      const expectedResult = { videoLinkBookingId: 1 } as VideoLinkBooking
+
+      when(bookAVideoLinkClient.matchAppointmentToVideoLinkBooking).mockResolvedValue(expectedResult)
+
+      const prisonerNumber = 'ABC123'
+      const locationKey = 'locationKey'
+      const date = '2024-02-20'
+      const startTime = '14:00'
+      const endTime = '15:00'
+
+      const actualResult = await bookAVideoLinkService.matchAppointmentToVideoLinkBooking(
+        prisonerNumber,
+        locationKey,
+        date,
+        startTime,
+        endTime,
+        user,
+      )
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(bookAVideoLinkClient.matchAppointmentToVideoLinkBooking).toHaveBeenCalledWith(
+        {
+          prisonerNumber,
+          locationKey,
+          date,
+          startTime,
+          endTime,
+        },
+        user,
+      )
+    })
+  })
+
   describe('getAppointmentLocations', () => {
     it('should get the list of video conferencing locations categories from book a video link API', async () => {
       const expectedResult = [{ key: 'key', description: 'description' }] as Location[]

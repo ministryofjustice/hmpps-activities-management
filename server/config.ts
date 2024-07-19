@@ -190,7 +190,7 @@ export default {
   frontendComponentsApiToggleEnabled: Boolean(
     get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', true, requiredInProduction),
   ),
-  bookAVideoLinkToggleEnabled: Boolean(get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', false)),
+  bookAVideoLinkToggleEnabled: Boolean(get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', false)) || !production,
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
   },
