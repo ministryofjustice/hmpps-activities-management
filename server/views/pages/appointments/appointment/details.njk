@@ -259,7 +259,7 @@
                             text: "Extra information"
                         },
                         value: {
-                            html: '<span class="preserve-line-breaks">' + (appointment.extraInformation | escape) + '</span>'
+                            html: '<span class="preserve-line-breaks">' + ((appointment.extraInformation or "None provided" ) | escape) + '</span>'
                         },
                         actions: {
                             items: [

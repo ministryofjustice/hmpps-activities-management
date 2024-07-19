@@ -148,10 +148,10 @@ export default {
     bookAVideoLinkApi: {
       url: get('BOOK_A_VIDEO_LINK_API_URL', 'http://localhost:8095'),
       timeout: {
-        response: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 5000)),
-        deadline: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_DEADLINE', 5000)),
+        response: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 30000)),
+        deadline: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_DEADLINE', 30000)),
       },
-      agent: new AgentConfig(Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 5000))),
+      agent: new AgentConfig(Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 30000))),
     },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
