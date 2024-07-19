@@ -17,9 +17,41 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
-            <h1 class="govuk-heading-l">Cancel page</h1>
-
             <form method="POST">
+                
+                {% set otherDateHintHtml %}
+                  <div>The pay rate is set to change to {{ rate | toMoney }} from  {{ paymentStartDate | formatDate }}.</div>
+                {% endset %}
+
+                {{ govukRadios({
+                    name: "cancelOption",
+                    fieldset: {
+                        legend: {
+                            text: "Are you sure you want to cancel the change to " + iep + ": " + band.alias + " ?",
+                            classes: "govuk-fieldset__legend--l",
+                            isPageHeading: true
+                        }
+                    },
+                    items: [
+                        {
+                            value: "YES",
+                            text: "Yes",
+                            checked: formResponses.cancel == 'YES' 
+                        },
+                        {
+                            value: "NO",
+                            text: "No",
+                            checked: formResponses.cancel == 'NO'
+                        }
+                    ],
+                    hint: { html: otherDateHintHtml },
+                    errorMessage: validationErrors | findError('startDate')
+                }) }}
+
+
+                {{ govukButton({
+                    text: "Confirm"
+                }) }}
             </form>
         </div>
     </div>

@@ -9,8 +9,8 @@
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
-{% set pageTitle = applicationName + " - Create an activity - Pay" %}
-{% set pageId = 'pay-page' %}
+{% set pageTitle = applicationName + " - Create an activity - Pay amount" %}
+{% set pageId = 'pay-amount-page' %}
 {% set jsBackLink = true %}
 
 {% block content %}
@@ -23,6 +23,13 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <input type='hidden' name='incentiveLevel' value='{{ iep }}' />
                 <input type='hidden' name='bandId' value='{{ band.id }}' />
+
+            {% if paymentStartDate === 'undefined' %}
+            {% else %}
+                {{ govukInsetText({
+                text: 'This change will replace the change set to take effect from ' + paymentStartDate | formatDate
+                }) }}
+            {% endif %}
 
                 {{ govukInput({
                     id: "rate",

@@ -9,8 +9,8 @@
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
-{% set pageTitle = applicationName + " - Create an activity - Pay" %}
-{% set pageId = 'pay-page' %}
+{% set pageTitle = applicationName + " - Create an activity - Pay date option" %}
+{% set pageId = 'pay-date-option-page' %}
 {% set jsBackLink = true %}
 
 {% set editMode = session.req.params.mode == 'edit' and iep and band %}
@@ -19,9 +19,6 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
-            {% if editMode %}
-                <h1 class="govuk-heading-l">When does the change to {{ iep }} incentive level: {{ band.alias }} take effect?</h1>
-            {% endif %}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -29,20 +26,49 @@
                 <input type='hidden' name='incentiveLevel' value='{{ iep }}' />
                 <input type='hidden' name='bandId' value='{{ band.id }}' />
 
-                {{ hmppsDatePicker({
-                    id: 'startDate',
-                    name: 'startDate',
-                    label: {
-                        text: "Change the start date for this activity" if session.req.params.mode == 'edit' else "Enter the start date for this activity",
-                        classes: "govuk-label--l",
-                        isPageHeading: true
-                    },
-                    classes: 'hmpps-datepicker--fixed-width',
-                    hint: {
-                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'
+                {% set otherDateHintHtml %}
+                  <div>Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
+                  <br>
+                  <div>You can set the change to take effect up to 30 days from today.</div>
+                {% endset %}
+
+                {{ govukRadios({
+                    name: "dateOption",
+                    fieldset: {
+                        legend: {
+                            text: "When does the change to " + iep + ": " + band.alias + " take effect?",
+                            classes: "govuk-fieldset__legend--l",
+                            isPageHeading: true
+                        }
                     },
                     errorMessage: validationErrors | findError('startDate'),
-                    value: paymentStartDate | isoDateToDatePickerDate
+                    items: [
+                        {
+                            value: DateOption.TOMORROW,
+                            text: "Tomorrow - " + now | addDays(1) | formatDate,
+                            checked: formResponses.dateOption == DateOption.TOMORROW
+                        },
+                        {
+                            value: DateOption.OTHER,
+                            text: "A different date",
+                        label: { text: "Pay start date "},
+                            checked: formResponses.dateOption == DateOption.OTHER,
+                            conditional: { 
+                                html: hmppsDatePicker({
+                                id: 'startDate',
+                                name: 'startDate',
+                                classes: 'hmpps-datepicker--fixed-width',
+                                label: {
+                                    text: 'startDate',
+                                    classes: 'govuk-visually-hidden'
+                                },
+                                hint: { html: otherDateHintHtml },
+                                errorMessage: validationErrors | findError('startDate'),
+                                value: paymentStartDate | isoDateToDatePickerDate
+                              })
+                           }
+                        }
+                    ]
                 }) }}
 
 

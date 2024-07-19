@@ -1,24 +1,39 @@
 import { Request, Response } from 'express'
 import { addDays, startOfToday } from 'date-fns'
 import { Expose } from 'class-transformer'
+import { IsIn } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
-import { datePickerDateToIsoDate, parseDatePickerDate, parseIsoDate } from '../../../../utils/datePickerUtils'
+import {
+  datePickerDateToIsoDate,
+  formatIsoDate,
+  parseDatePickerDate,
+  parseIsoDate,
+} from '../../../../utils/datePickerUtils'
 import { formatDate } from '../../../../utils/utils'
 import Validator from '../../../../validators/validator'
+import DateOption from '../../../../enum/dateOption'
 
 export class PayDateOption {
   @Expose()
+  @IsIn(Object.values(DateOption), { message: 'Select when the change to TODO : TODO takes effect' })
+  dateOption: string
+
   @Validator(
-    startDate =>
-      startDate === undefined || startDate === '' || parseDatePickerDate(startDate) < addDays(startOfToday(), 30),
+    startDate => startDate === undefined || startDate === '' || parseDatePickerDate(startDate) > startOfToday(),
     {
-      message: 'Enter a date no later than 30 days into the future',
+      message: 'Enter a date in the future',
     },
   )
+  @Validator(startDate => parseDatePickerDate(startDate) < addDays(startOfToday(), 30), {
+    message: () => {
+      const thirtyDaysInFuture = formatDate(addDays(startOfToday(), 30))
+      return `The date that takes effect must be between tomorrow and ${thirtyDaysInFuture}`
+    },
+  })
   startDate: string
 }
 
@@ -56,7 +71,10 @@ export default class PayDateOptionRoutes {
     const originalIncentiveLevel = req.query.iep
     const originalPaymentStartDate = req.query.paymentStartDate
     const { preserveHistory } = req.query
-    const { rate, incentiveLevel, startDate } = req.body
+    const { rate, incentiveLevel, startDate, dateOption } = req.body
+
+    const changeDate =
+      dateOption === DateOption.TOMORROW ? formatIsoDate(addDays(new Date(), 1)) : datePickerDateToIsoDate(startDate)
 
     const bandId = Number(req.body.bandId)
     // FIXME: handle original and new start date correctly
@@ -92,7 +110,7 @@ export default class PayDateOptionRoutes {
       prisonPayBand: { id: bandId, alias: String(bandAlias), displaySequence: +displaySequence },
       incentiveNomisCode: allIncentiveLevels.find(s2 => s2.levelName === incentiveLevel)?.levelCode,
       incentiveLevel,
-      startDate: startDate !== undefined ? datePickerDateToIsoDate(startDate) : undefined,
+      startDate: changeDate,
     } as ActivityPay
 
     if (payRateType === 'single') {
@@ -111,8 +129,11 @@ export default class PayDateOptionRoutes {
     const { user } = res.locals
     const { activityId } = req.session.createJourney
     const { payRateType } = req.params
-    const { startDate } = req.body
+    const { startDate, dateOption } = req.body
     const bandId = Number(req.body.bandId)
+
+    const changeDate =
+      dateOption === DateOption.TOMORROW ? formatIsoDate(addDays(new Date(), 1)) : datePickerDateToIsoDate(startDate)
 
     const activityPay = req.session.createJourney.pay ?? []
     const activityFlatPay = req.session.createJourney.flat ?? []
@@ -170,8 +191,8 @@ export default class PayDateOptionRoutes {
           assigned to this pay rate. Your changes will take effect from tomorrow.`
     } else {
       let futurePayRateChangeMessage = ''
-      if (startDate != null) {
-        futurePayRateChangeMessage = `Your change will take effect from ${formatDate(parseDatePickerDate(startDate))}`
+      if (changeDate != null) {
+        futurePayRateChangeMessage = `Your change will take effect from ${formatDate(parseIsoDate(changeDate))}`
       }
       successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. ${futurePayRateChangeMessage}`
     }
