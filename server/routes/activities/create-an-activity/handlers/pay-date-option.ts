@@ -160,11 +160,6 @@ export default class PayDateOptionRoutes {
       .then(pays => pays.find(p => p.incentiveLevel === req.body.incentiveLevel)?.pays)
       .then(pays => pays?.find(p => p.prisonPayBand.id === +req.body.bandId).allocationCount)
 
-    let fromMessage = ''
-    if (startDate != null) {
-      fromMessage = `Your change will take effect from ${formatDate(parseDatePickerDate(startDate))}`
-    }
-
     let successMessage
     if (payRateType === 'flat') {
       successMessage = `You've added a flat rate for ${flatRateBandAlias}`
@@ -174,7 +169,11 @@ export default class PayDateOptionRoutes {
       successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. There are ${affectedAllocations} people 
           assigned to this pay rate. Your changes will take effect from tomorrow.`
     } else {
-      successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. ${fromMessage}`
+      let futurePayRateChangeMessage = ''
+      if (startDate != null) {
+        futurePayRateChangeMessage = `Your change will take effect from ${formatDate(parseDatePickerDate(startDate))}`
+      }
+      successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. ${futurePayRateChangeMessage}`
     }
 
     return res.redirectWithSuccess('../check-pay?preserveHistory=true', 'Activity updated', successMessage)

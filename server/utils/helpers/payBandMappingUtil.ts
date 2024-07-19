@@ -53,7 +53,7 @@ function singleDisplayPayForPayBandId(input: DisplayPay[], payBandId: number): D
     return allForPayband[0]
   }
 
-  const currentPayband = input
+  const possiblePayBands = input
     .filter(
       a => a.prisonPayBand.id === payBandId && (a.startDate == null || parseISODate(a.startDate) <= startOfToday()),
     )
@@ -62,15 +62,16 @@ function singleDisplayPayForPayBandId(input: DisplayPay[], payBandId: number): D
         (parseISODate(a.startDate) == null ? 0 : parseISODate(a.startDate).valueOf()) -
         (parseISODate(b.startDate) == null ? 0 : parseISODate(b.startDate).valueOf()),
     )
-    .pop()
+
+  const currentPayBand = possiblePayBands[possiblePayBands.length - 1]
 
   const futurePaybands = input
     .filter(a => a.prisonPayBand.id === payBandId && a.startDate != null && parseISODate(a.startDate) > startOfToday())
     .sort((a, b) => parseISODate(a.startDate).valueOf() - parseISODate(b.startDate).valueOf())
 
   if (futurePaybands.length > 0) {
-    currentPayband.description = `, set to change to ${toMoney(futurePaybands[0].rate)} from ${formatDate(parseIsoDate(futurePaybands[0].startDate))}`
-    currentPayband.futurePaymentStart = futurePaybands[0].startDate
+    currentPayBand.description = `, set to change to ${toMoney(futurePaybands[0].rate)} from ${formatDate(parseIsoDate(futurePaybands[0].startDate))}`
+    currentPayBand.futurePaymentStart = futurePaybands[0].startDate
   }
-  return currentPayband
+  return currentPayBand
 }
