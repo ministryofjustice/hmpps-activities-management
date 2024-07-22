@@ -3,6 +3,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "components/card.njk" import card %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
@@ -10,6 +11,7 @@
 {% set pageId = 'check-pay-page' %}
 {% set hardBackLinkText = 'Back to edit activity details' %}
 {% set hardBackLinkHref = "/activities/view/" + session.createJourney.activityId %}
+{# {% set cancelLinkHref = "/activities/create-an-activity/edit-pay" %} #}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -32,62 +34,137 @@
                 <p class="govuk-body">You must set at least one pay rate or <a href="pay-option?preserveHistoryText=true" class="govuk-link">change the activity to unpaid</a>.</p>
             {% endif %}
 
-            {% for incentiveLevelPay in incentiveLevelPays %}
-                <h2 class="govuk-heading-m">{{ incentiveLevelPay.incentiveLevel }} incentive level pay rates</h2>
-                {% for pay in incentiveLevelPay.pays %}
-                    {% set rows = [] %}
-                    {% set rows = (rows.push(
-                        {
-                            key: {
-                                text: "Amount"
-                            },
-                            value: {
-                                text: pay.rate | toMoney
-                            }
-                        }
-                    ), rows) %}
-                    {% set rows = (rows.push(
-                        {
-                            key: {
-                                text: "People on this rate"
-                            },
-                            value: {
-                                text: pay.allocationCount or "None"
-                            }
-                        }
-                    ), rows) %}
-
-                    {% set cardItems = [
-                        {
-                            href: "../pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
-                            text: "Change",
-                            classes: "govuk-link--no-visited-state",
-                            attributes: { 'data-qa': 'change-pay' }
-                        }
-                    ] %}
-                    {% if not pay.allocationCount %}
-                        {% set cardItems = (cardItems.push(
+            {% if futurePayRatesFlag %}
+                {% for displayPay in displayPays %}
+                    <h2 class="govuk-heading-m">{{ displayPay.incentiveLevel }} incentive level pay rates 2</h2>
+                    {% for pay in displayPay.pays %}
+                        {% set rows = [] %}
+                        {% set rows = (rows.push(
                             {
-                                href: "../remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
-                                text: "Delete pay rate",
+                                key: {
+                                    text: "Amount"
+                                },
+                                value: {
+                                    text: pay.rate | toMoney if pay.description === undefined else pay.rate | toMoney + pay.description
+                                }
+                            }
+                        ), rows) %}
+                        {% set rows = (rows.push(
+                            {
+                                key: {
+                                    text: "People on this rate"
+                                },
+                                value: {
+                                    text: pay.allocationCount or "None"
+                                }
+                            }
+                        ), rows) %}
+
+                        {% set cardItems = [
+                            {
+                                href: "../pay-amount/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.futurePaymentStart + "&preserveHistory=true",
+                                text: "Change",
                                 classes: "govuk-link--no-visited-state",
-                                attributes: { 'data-qa': 'remove-pay' }
+                                attributes: { 'data-qa': 'change-pay' }
                             }
-                        ), cardItems) %}
-                    {% endif %}
-                    {{ govukSummaryList({
-                        card: {
-                            title: {
-                                text: pay.prisonPayBand.alias
+                        ] %}
+                        {% if pay.description %}
+                            {% set cardItems = (cardItems.push(
+                                {
+                                    href: "../pay-cancel/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.futurePaymentStart + "&preserveHistory=true",
+                                    text: "Cancel",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'cancel-pay' }
+                                }
+                            ), cardItems) %}
+                        {% endif %}
+
+                        {% if not pay.allocationCount %}
+                            {% set cardItems = (cardItems.push(
+                                {
+                                    href: "../remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
+                                    text: "Delete pay rate",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'remove-pay' }
+                                }
+                            ), cardItems) %}
+                        {% endif %}
+                        {{ govukSummaryList({
+                            card: {
+                                title: {
+                                    text: pay.prisonPayBand.alias
+                                },
+                                actions: {
+                                    items: cardItems
+                                }
                             },
-                            actions: {
-                                items: cardItems
-                            }
-                        },
-                        rows: rows
-                    }) }}
+                            rows: rows
+                        }) }}
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
+            {% else %}
+                {% for incentiveLevelPay in incentiveLevelPays %}
+                    <h2 class="govuk-heading-m">{{ incentiveLevelPay.incentiveLevel }} incentive level pay rates</h2>
+                    {% for pay in incentiveLevelPay.pays %}
+                        {% set rows = [] %}
+                        {% set rows = (rows.push(
+                            {
+                                key: {
+                                    text: "Amount"
+                                },
+                                value: {
+                                    text: pay.rate | toMoney
+                                }
+                            }
+                        ), rows) %}
+                        {% set rows = (rows.push(
+                            {
+                                key: {
+                                    text: "People on this rate"
+                                },
+                                value: {
+                                    text: pay.allocationCount or "None"
+                                }
+                            }
+                        ), rows) %}
+
+                        {% set cardItems = [
+                            {
+                                href: "../pay/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.startDate + "&preserveHistory=true",
+                                text: "Change",
+                                classes: "govuk-link--no-visited-state",
+                                attributes: { 'data-qa': 'change-pay' }
+                            }
+                        ] %}
+                        {% if not pay.allocationCount %}
+                            {% set cardItems = (cardItems.push(
+                                {
+                                    href: "../remove-pay?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&preserveHistory=true",
+                                    text: "Delete pay rate",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'remove-pay' }
+                                }
+                            ), cardItems) %}
+                        {% endif %}
+                        {{ govukSummaryList({
+                            card: {
+                                title: {
+                                    text: pay.prisonPayBand.alias
+                                },
+                                actions: {
+                                    items: cardItems
+                                }
+                            },
+                            rows: rows
+                        }) }}
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+
+            {{ govukDetails({
+                summaryText: "History of pay changes",
+                text: "History of changes to pay rates for activity name"
+            }) }}
 
             <div class="govuk-!-margin-top-6">
                 {{ 

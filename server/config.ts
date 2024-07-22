@@ -191,6 +191,7 @@ export default {
     get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', true, requiredInProduction),
   ),
   bookAVideoLinkToggleEnabled: Boolean(get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', false)) || !production,
+  futurePayRatesToggleEnabled: Boolean(get('FUTURE_PAY_RATES_TOGGLE_ENABLED', false)),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
   },

@@ -10,7 +10,7 @@ jest.mock('../../../../utils/helpers/incentiveLevelPayMappingUtil', () => {
       getPayGroupedByIncentiveLevel: () => [
         {
           incentiveLevel: 'Standard',
-          pays: [{ incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Common', rate: '150' }],
+          pays: [{ incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Common', rate: '150', prisonPayBand: { id: 1 } }],
         },
       ],
     }
@@ -50,7 +50,9 @@ describe('Route Handlers - Create an activity - Check pay', () => {
             id: 1,
           },
           riskLevel: 'High',
-          pay: [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', bandId: 1, rate: 100 }],
+          pay: [
+            { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', bandId: 1, rate: 100, prisonPayBand: { id: 1 } },
+          ],
           flat: [],
           incentiveLevels: ['Standard', 'Enhanced'],
         },
@@ -70,7 +72,25 @@ describe('Route Handlers - Create an activity - Check pay', () => {
         incentiveLevelPays: [
           {
             incentiveLevel: 'Standard',
-            pays: [{ bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150' }],
+            pays: [
+              { bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150', prisonPayBand: { id: 1 } },
+            ],
+          },
+        ],
+        displayPays: [
+          {
+            incentiveLevel: 'Standard',
+            pays: [
+              {
+                incentiveLevel: 'Standard',
+                bandId: 1,
+                bandAlias: 'Common',
+                rate: '150',
+                prisonPayBand: {
+                  id: 1,
+                },
+              },
+            ],
           },
         ],
       })
@@ -84,7 +104,25 @@ describe('Route Handlers - Create an activity - Check pay', () => {
         incentiveLevelPays: [
           {
             incentiveLevel: 'Standard',
-            pays: [{ bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150' }],
+            pays: [
+              { bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150', prisonPayBand: { id: 1 } },
+            ],
+          },
+        ],
+        displayPays: [
+          {
+            incentiveLevel: 'Standard',
+            pays: [
+              {
+                incentiveLevel: 'Standard',
+                bandId: 1,
+                bandAlias: 'Common',
+                rate: '150',
+                prisonPayBand: {
+                  id: 1,
+                },
+              },
+            ],
           },
         ],
       })

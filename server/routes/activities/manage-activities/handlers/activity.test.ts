@@ -106,6 +106,7 @@ describe('Route Handlers - View Activity', () => {
           minimumEducationLevel: [],
         },
         incentiveLevelPays: [],
+        displayPays: [],
         schedule: activitySchedule,
         dailySlots: {
           '1': [

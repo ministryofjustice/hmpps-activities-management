@@ -1,0 +1,79 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+
+{% set pageTitle = applicationName + " - Create an activity - Pay date option" %}
+{% set pageId = 'pay-date-option-page' %}
+{% set jsBackLink = true %}
+
+{% set editMode = session.req.params.mode == 'edit' and iep and band %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ activityJourneyCaption(session.createJourney) }}
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type="hidden" name="rate" value="{{ rate }}" />
+                <input type='hidden' name='incentiveLevel' value='{{ iep }}' />
+                <input type='hidden' name='bandId' value='{{ band.id }}' />
+
+                {% set otherDateHintHtml %}
+                  <div>Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
+                  <br>
+                  <div>You can set the change to take effect up to 30 days from today.</div>
+                {% endset %}
+
+                {{ govukRadios({
+                    name: "dateOption",
+                    fieldset: {
+                        legend: {
+                            text: "When does the change to " + iep + ": " + band.alias + " take effect?",
+                            classes: "govuk-fieldset__legend--l",
+                            isPageHeading: true
+                        }
+                    },
+                    items: [
+                        {
+                            value: DateOption.TOMORROW,
+                            text: "Tomorrow - " + now | addDays(1) | formatDate,
+                            checked: formResponses.dateOption == DateOption.TOMORROW
+                        },
+                        {
+                            value: DateOption.OTHER,
+                            text: "A different date",
+                        label: { text: "Pay start date "},
+                            checked: formResponses.dateOption == DateOption.OTHER,
+                            conditional: { 
+                                html: hmppsDatePicker({
+                                id: 'startDate',
+                                name: 'startDate',
+                                classes: 'hmpps-datepicker--fixed-width',
+                                label: {
+                                    text: 'startDate',
+                                    classes: 'govuk-visually-hidden'
+                                },
+                                hint: { html: otherDateHintHtml },
+                                errorMessage: validationErrors | findError('startDate')
+                              })
+                           }
+                        }
+                    ]
+                }) }}
+
+
+                {{ govukButton({
+                    text: "Confirm"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
