@@ -168,8 +168,7 @@ export default class PayDateOptionRoutes {
 
     let successMessage
     if (affectedAllocations > 0) {
-      successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. There are ${affectedAllocations} people 
-          assigned to this pay rate. ${futurePayRateChangeMessage}`
+      successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. There are ${affectedAllocations} people assigned to this pay rate. ${futurePayRateChangeMessage}`
     } else {
       successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. ${futurePayRateChangeMessage}`
     }
