@@ -8,9 +8,8 @@ import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
-import { Activity, ActivityPay, ActivityUpdateRequest, PrisonPayBand } from '../../../../@types/activitiesAPI/types'
+import { PrisonPayBand } from '../../../../@types/activitiesAPI/types'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import { CreateAnActivityJourney } from '../journey'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
@@ -40,33 +39,59 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
       params: { payRateType: 'single' },
       session: {
         createJourney: {
-          activityId: 1,
+          activityId: 33,
           name: 'Maths level 1',
           category: {
             id: 1,
           },
-          riskLevel: 'High',
-          incentiveLevels: ['Basic', 'Standard'],
+          paid: true,
           pay: [
             {
+              id: 349,
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
               prisonPayBand: {
                 id: 17,
+                displaySequence: 1,
+                alias: 'Pay band 1 (Lowest)',
+                description: 'Pay band 1 (Lowest)',
+                nomisPayBand: 1,
+                prisonCode: 'RSI',
               },
+              rate: 50,
+              pieceRate: null,
+              pieceRateItems: null,
+              startDate: '2024-07-26',
+            },
+            {
+              id: 353,
+              incentiveNomisCode: 'BAS',
               incentiveLevel: 'Basic',
-              rate: 20,
-              startDate: '2024-03-09',
+              prisonPayBand: {
+                id: 18,
+                displaySequence: 2,
+                alias: 'Pay band 2',
+                description: 'Pay band 2',
+                nomisPayBand: 2,
+                prisonCode: 'RSI',
+              },
+              rate: 65,
+              pieceRate: null,
+              pieceRateItems: null,
+              startDate: undefined,
             },
           ],
           flat: [],
           allocations: [],
+          minimumPayRate: 50,
+          maximumPayRate: 250,
         },
       },
-      query: { iep: 'Basic', bandId: 17, paymentStartDate: '2024-03-09' },
     } as unknown as Request
 
     when(activitiesService.getPayBandsForPrison).mockResolvedValue([
       { id: 17, alias: 'Low', displaySequence: 1 },
-      { id: 2, alias: 'High', displaySequence: 2 },
+      { id: 18, alias: 'High', displaySequence: 2 },
       { id: 3, alias: 'High 2', displaySequence: 3 },
     ] as PrisonPayBand[])
   })
@@ -76,7 +101,9 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
   })
 
   describe('GET', () => {
-    it('should render page correctly', async () => {
+    it('should render page correctly and match pay with a payment start date', async () => {
+      req.query = { iep: 'Basic', bandId: '17', paymentStartDate: '2024-07-26' }
+
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
         .mockResolvedValueOnce([{ levelName: 'Standard' }] as IncentiveLevel[])
@@ -91,13 +118,44 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/pay-amount', {
-        rate: 20,
+        rate: 50,
         iep: 'Basic',
-        paymentStartDate: '2024-03-09',
+        paymentStartDate: '2024-07-26',
         band: { id: 17, alias: 'Low', displaySequence: 1 },
         payBands: [
           { id: 17, alias: 'Low', displaySequence: 1 },
-          { id: 2, alias: 'High', displaySequence: 2 },
+          { id: 18, alias: 'High', displaySequence: 2 },
+          { id: 3, alias: 'High 2', displaySequence: 3 },
+        ],
+        payRateType: 'single',
+        minimumPayRate: 10,
+        maximumPayRate: 300,
+      })
+    })
+    it('should render page correctly and match pay without a payment start date', async () => {
+      req.query = { iep: 'Basic', bandId: '18', paymentStartDate: 'undefined' }
+
+      when(prisonService.getIncentiveLevels)
+        .calledWith(atLeast('MDI'))
+        .mockResolvedValueOnce([{ levelName: 'Standard' }] as IncentiveLevel[])
+
+      when(prisonService.getPayProfile).calledWith(atLeast('MDI')).mockResolvedValue({
+        agencyId: 'MDI',
+        startDate: '2015-06-26',
+        autoPayFlag: true,
+        minHalfDayRate: 0.1,
+        maxHalfDayRate: 3,
+      })
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/pay-amount', {
+        rate: 65,
+        iep: 'Basic',
+        paymentStartDate: 'undefined',
+        band: { id: 18, alias: 'High', displaySequence: 2 },
+        payBands: [
+          { id: 17, alias: 'Low', displaySequence: 1 },
+          { id: 18, alias: 'High', displaySequence: 2 },
           { id: 3, alias: 'High 2', displaySequence: 3 },
         ],
         payRateType: 'single',
@@ -108,172 +166,33 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
   })
 
   describe('POST', () => {
-    it.skip('should add the selected pay to the session', async () => {
+    it('should redirect with no defined start date where a start date exists for the pay rate', async () => {
       req.body = {
-        rate: 1,
-        bandId: 2,
-        incentiveLevel: 'Basic',
-      }
-
-      when(prisonService.getIncentiveLevels)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValueOnce([
-          { levelCode: 'BAS', levelName: 'Basic' },
-          { levelCode: 'STD', levelName: 'Standard' },
-          { levelCode: 'ENH', levelName: 'Enhanced' },
-        ] as IncentiveLevel[])
-
-      await handler.POST(req, res)
-
-      expect(req.session.createJourney.pay).toEqual([
-        {
-          incentiveNomisCode: 'BAS',
-          incentiveLevel: 'Basic',
-          rate: 1,
-          prisonPayBand: {
-            alias: 'High',
-            displaySequence: 2,
-            id: 2,
-          },
-        },
-      ])
-      expect(res.redirect).toHaveBeenCalledWith('../check-pay')
-    })
-
-    it.skip('should add to existing pay in session', async () => {
-      when(prisonService.getIncentiveLevels)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValueOnce([
-          { levelCode: 'BAS', levelName: 'Basic' },
-          { levelCode: 'STD', levelName: 'Standard' },
-          { levelCode: 'ENH', levelName: 'Enhanced' },
-        ] as IncentiveLevel[])
-      req.session.createJourney.pay = [
-        {
-          incentiveNomisCode: 'BAS',
-          incentiveLevel: 'Basic',
-          prisonPayBand: { id: 2, alias: 'High', displaySequence: 2 },
-          rate: 1,
-        },
-      ] as ActivityPay[]
-
-      req.body = {
-        rate: 1,
-        bandId: 2,
-        incentiveLevel: 'Standard',
-      }
-
-      await handler.POST(req, res)
-
-      expect(req.session.createJourney.pay).toEqual([
-        {
-          incentiveNomisCode: 'BAS',
-          incentiveLevel: 'Basic',
-          rate: 1,
-          prisonPayBand: {
-            alias: 'High',
-            displaySequence: 2,
-            id: 2,
-          },
-        },
-        {
-          incentiveNomisCode: 'STD',
-          incentiveLevel: 'Standard',
-          rate: 1,
-          prisonPayBand: {
-            alias: 'High',
-            displaySequence: 2,
-            id: 2,
-          },
-        },
-      ])
-      expect(res.redirect).toHaveBeenCalledWith('../check-pay')
-    })
-
-    it.skip('should allow existing pay rate to be modified', async () => {
-      req.query = { bandId: '1', iep: 'Basic' }
-
-      req.body = {
-        rate: 2,
-        bandId: 2,
-        incentiveLevel: 'Basic',
-      }
-
-      req.session.createJourney.pay = [
-        {
-          incentiveNomisCode: 'BAS',
-          incentiveLevel: 'Basic',
-          prisonPayBand: { id: 1, alias: 'High', displaySequence: 2 },
-          rate: 1,
-        },
-      ] as ActivityPay[]
-
-      when(prisonService.getIncentiveLevels)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValueOnce([{ levelCode: 'BAS', levelName: 'Basic' }] as IncentiveLevel[])
-
-      await handler.POST(req, res)
-
-      expect(req.session.createJourney.pay).toEqual([
-        {
-          incentiveNomisCode: 'BAS',
-          incentiveLevel: 'Basic',
-          rate: 2,
-          prisonPayBand: {
-            alias: 'High',
-            displaySequence: 2,
-            id: 2,
-          },
-        },
-      ])
-    })
-
-    it.skip('should update activity pay rates if its an edit journey', async () => {
-      const payRates = [
-        { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 150 },
-        { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
-      ] as CreateAnActivityJourney['pay']
-
-      req.session.createJourney.pay = payRates
-      req.session.createJourney.flat = []
-
-      req.params = {
-        payRateType: 'flat',
-        mode: 'edit',
-      }
-      req.body = {
-        rate: 150,
+        rate: 72,
         bandId: 3,
+        incentiveLevel: 'Basic',
       }
-
-      prisonService.getIncentiveLevels = jest.fn()
-      when(prisonService.getIncentiveLevels)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue([
-          { levelCode: 'BAS', levelName: 'Basic' },
-          { levelCode: 'STD', levelName: 'Standard' },
-        ] as IncentiveLevel[])
-
-      when(activitiesService.getActivity).mockResolvedValue({ schedules: [] } as Activity)
+      req.query = { iep: 'Basic', bandId: '14', paymentStartDate: '2024-07-26' }
 
       await handler.POST(req, res)
 
-      const updatedActivity = {
-        paid: true,
-        attendanceRequired: true,
-        pay: [
-          { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 2, rate: 150 },
-          { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', payBandId: 1, rate: 100 },
-          { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', payBandId: 3, rate: 150 },
-          { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 3, rate: 150 },
-        ] as unknown as ActivityPay[],
-      } as unknown as ActivityUpdateRequest
+      expect(res.redirect).toHaveBeenCalledWith(
+        '../pay-date-option/single?iep=Basic&bandId=3&paymentStartDate=2024-07-26&rate=72&preserveHistory=true',
+      )
+    })
 
-      expect(activitiesService.updateActivity).toHaveBeenCalledWith(1, updatedActivity, res.locals.user)
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '../check-pay?preserveHistory=true',
-        'Activity updated',
-        `You've added a flat rate for High 2`,
+    it('should redirect with no defined start date where no start date exists for the pay rate', async () => {
+      req.body = {
+        rate: 71,
+        bandId: 2,
+        incentiveLevel: 'Basic',
+      }
+      req.query = { iep: 'Basic', bandId: '17' }
+
+      await handler.POST(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(
+        '../pay-date-option/single?iep=Basic&bandId=2&paymentStartDate=undefined&rate=71&preserveHistory=true',
       )
     })
   })
@@ -285,8 +204,8 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
       createJourney = { pay: [], flat: [] }
     })
 
-    it.skip('validation fails if values are not entered', async () => {
-      const pathParams = { payRateType: 'flat' }
+    it('validation fails if values are not entered', async () => {
+      const pathParams = { payRateType: 'single' }
       const queryParams = {}
       const body = {}
 
@@ -299,17 +218,13 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
             error: 'Enter a pay rate',
             property: 'rate',
           },
-          {
-            error: 'Select a pay band',
-            property: 'bandId',
-          },
         ]),
       )
     })
 
     it('fails validation if the entered rate is below the minimum rate for the prison', async () => {
       createJourney = { pay: [], flat: [], minimumPayRate: 70, maximumPayRate: 100 }
-      const pathParams = { payRateType: 'flat' }
+      const pathParams = { payRateType: 'single' }
       const queryParams = {}
       const body = {
         rate: 0.5,
@@ -334,7 +249,7 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
 
     it('fails validation if the entered rate is above the maximum rate for the prison', async () => {
       createJourney = { pay: [], flat: [], minimumPayRate: 70, maximumPayRate: 100 }
-      const pathParams = { payRateType: 'flat' }
+      const pathParams = { payRateType: 'single' }
       const queryParams = {}
       const body = {
         rate: 1.5,

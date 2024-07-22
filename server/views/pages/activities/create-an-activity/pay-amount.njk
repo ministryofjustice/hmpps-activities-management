@@ -23,9 +23,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <input type='hidden' name='incentiveLevel' value='{{ iep }}' />
                 <input type='hidden' name='bandId' value='{{ band.id }}' />
-
-            {% if paymentStartDate === 'undefined' %}
-            {% else %}
+            {% if paymentStartDate !== 'undefined' %}
                 {{ govukInsetText({
                 text: 'This change will replace the change set to take effect from ' + paymentStartDate | formatDate
                 }) }}

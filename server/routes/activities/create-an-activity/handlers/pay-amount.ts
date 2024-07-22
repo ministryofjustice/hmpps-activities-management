@@ -7,7 +7,6 @@ import PayRateBetweenMinAndMax from '../../../../validators/payRateBetweenMinAnd
 import { PrisonPayBand } from '../../../../@types/activitiesAPI/types'
 import { CreateAnActivityJourney } from '../journey'
 import { AgencyPrisonerPayProfile } from '../../../../@types/prisonApiImport/types'
-import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 
 export class PayAmount {
   @Expose()
@@ -28,15 +27,10 @@ export class PayAmount {
 }
 
 export default class PayAmountRoutes {
-  // TODO REMOVE HELPER
-  private readonly helper: IncentiveLevelPayMappingUtil
-
   constructor(
     private readonly prisonService: PrisonService,
     private readonly activitiesService: ActivitiesService,
-  ) {
-    this.helper = new IncentiveLevelPayMappingUtil(prisonService)
-  }
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
@@ -78,11 +72,11 @@ export default class PayAmountRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const originalPaymentStartDate = req.query.paymentStartDate
+    const { paymentStartDate } = req.query
     const { rate, incentiveLevel, bandId } = req.body
 
     return res.redirect(
-      `../pay-date-option/single?iep=${incentiveLevel}&bandId=${bandId}&paymentStartDate=${originalPaymentStartDate}&rate=${rate}&preserveHistory=true`,
+      `../pay-date-option/single?iep=${incentiveLevel}&bandId=${bandId}&paymentStartDate=${paymentStartDate}&rate=${rate}&preserveHistory=true`,
     )
   }
 }
