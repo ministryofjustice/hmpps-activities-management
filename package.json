@@ -19,7 +19,7 @@
     "lint": "eslint . --cache --max-warnings 0",
     "lint:fix": "eslint . --cache --max-warnings 0 --fix",
     "typecheck": "tsc && tsc -p integration_tests",
-    "test": "NODE_ENV=unit-test NODE_OPTIONS=--experimental-vm-modules jest --runInBand --detectOpenHandles --collectCoverage=true --testPathPattern='(server|frontend)/.*'",
+    "test": "NODE_ENV=unit-test TZ=utc NODE_OPTIONS=--experimental-vm-modules jest --runInBand --detectOpenHandles --collectCoverage=true --testPathPattern='(server|frontend)/.*'",
     "security_audit": "better-npm-audit audit",
     "int-test": "cypress run --config video=false",
     "int-test-ui": "cypress open --config watchForFileChanges=false",
