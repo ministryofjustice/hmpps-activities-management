@@ -41,7 +41,6 @@
                             isPageHeading: true
                         }
                     },
-                    errorMessage: validationErrors | findError('startDate'),
                     items: [
                         {
                             value: DateOption.TOMORROW,
@@ -63,8 +62,7 @@
                                     classes: 'govuk-visually-hidden'
                                 },
                                 hint: { html: otherDateHintHtml },
-                                errorMessage: validationErrors | findError('startDate'),
-                                value: paymentStartDate | isoDateToDatePickerDate
+                                errorMessage: validationErrors | findError('startDate')
                               })
                            }
                         }

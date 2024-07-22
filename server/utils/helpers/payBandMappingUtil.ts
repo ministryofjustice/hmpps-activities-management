@@ -69,6 +69,8 @@ function singleDisplayPayForPayBandId(input: DisplayPay[], payBandId: number): D
     .filter(a => a.prisonPayBand.id === payBandId && a.startDate != null && parseISODate(a.startDate) > startOfToday())
     .sort((a, b) => parseISODate(a.startDate).valueOf() - parseISODate(b.startDate).valueOf())
 
+  // TODO POSSIBLE CANCEL LINK FUNCTION HERE
+
   if (futurePaybands.length > 0) {
     currentPayBand.description = `, set to change to ${toMoney(futurePaybands[0].rate)} from ${formatDate(parseIsoDate(futurePaybands[0].startDate))}`
     currentPayBand.futurePaymentStart = futurePaybands[0].startDate

@@ -3,6 +3,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "components/card.njk" import card %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
@@ -10,6 +11,7 @@
 {% set pageId = 'check-pay-page' %}
 {% set hardBackLinkText = 'Back to edit activity details' %}
 {% set hardBackLinkHref = "/activities/view/" + session.createJourney.activityId %}
+{# {% set cancelLinkHref = "/activities/create-an-activity/edit-pay" %} #}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -43,7 +45,7 @@
                                     text: "Amount"
                                 },
                                 value: {
-                                    text: pay.rate | toMoney if pay.description === undefined else pay.rate | toMoney + pay.description
+                                    text: pay.rate | toMoney if pay.description === undefined else pay.rate | toMoney + pay.description 
                                 }
                             }
                         ), rows) %}
@@ -158,6 +160,11 @@
                     {% endfor %}
                 {% endfor %}
             {% endif %}
+
+            {{ govukDetails({
+                summaryText: "History of pay changes",
+                text: "History of changes to pay rates for activity name"
+            }) }}
             
             <div class="govuk-!-margin-top-6">
                 {{ 

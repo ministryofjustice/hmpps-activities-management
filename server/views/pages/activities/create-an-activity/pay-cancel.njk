@@ -18,6 +18,9 @@
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
             <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type='hidden' name='incentiveLevel' value='{{ iep }}' />
+                <input type='hidden' name='bandId' value='{{ band.id }}' />
                 
                 {% set otherDateHintHtml %}
                   <div>The pay rate is set to change to {{ rate | toMoney }} from  {{ paymentStartDate | formatDate }}.</div>

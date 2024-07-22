@@ -6,7 +6,6 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PayRateBetweenMinAndMax from '../../../../validators/payRateBetweenMinAndMax'
 import { PrisonPayBand } from '../../../../@types/activitiesAPI/types'
 import { CreateAnActivityJourney } from '../journey'
-import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import { AgencyPrisonerPayProfile } from '../../../../@types/prisonApiImport/types'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 
@@ -29,6 +28,7 @@ export class PayAmount {
 }
 
 export default class PayAmountRoutes {
+  // TODO REMOVE HELPER
   private readonly helper: IncentiveLevelPayMappingUtil
 
   constructor(
@@ -42,20 +42,16 @@ export default class PayAmountRoutes {
     const { user } = res.locals
     const { payRateType } = req.params
     const { iep, bandId, paymentStartDate } = req.query
-    const { createJourney } = req.session
 
-    const [incentiveLevels, payBands, payProfile]: [IncentiveLevel[], PrisonPayBand[], AgencyPrisonerPayProfile] =
-      await Promise.all([
-        this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user),
-        this.activitiesService.getPayBandsForPrison(user),
-        this.prisonService.getPayProfile(user.activeCaseLoadId),
-      ])
+    const [payBands, payProfile]: [PrisonPayBand[], AgencyPrisonerPayProfile] = await Promise.all([
+      this.activitiesService.getPayBandsForPrison(user),
+      this.prisonService.getPayProfile(user.activeCaseLoadId),
+    ])
 
     const minimumPayRate = payProfile.minHalfDayRate * 100
     const maximumPayRate = payProfile.maxHalfDayRate * 100
 
     req.session.createJourney.pay ??= []
-    req.session.createJourney.flat ??= []
     req.session.createJourney.minimumPayRate = minimumPayRate
     req.session.createJourney.maximumPayRate = maximumPayRate
 
@@ -67,11 +63,6 @@ export default class PayAmountRoutes {
           (p.startDate === paymentStartDate || p.startDate === undefined),
       )?.rate || req.session.createJourney?.flat?.find(p => p.prisonPayBand.id === +bandId)?.rate
 
-    const hasAllocations = await this.helper
-      .getPayGroupedByIncentiveLevel(createJourney.pay, createJourney.allocations, user)
-      .then(pays => pays.find(p => p.incentiveLevel === iep)?.pays)
-      .then(pays => pays?.find(p => p.prisonPayBand.id === +bandId).allocationCount > 0)
-
     const band = payBands.find(p => p.id === +bandId)
 
     res.render(`pages/activities/create-an-activity/pay-amount`, {
@@ -80,11 +71,9 @@ export default class PayAmountRoutes {
       paymentStartDate,
       band,
       payRateType,
-      incentiveLevels,
       payBands,
       minimumPayRate,
       maximumPayRate,
-      hasAllocations,
     })
   }
 

@@ -19,7 +19,12 @@ import DateOption from '../../../../enum/dateOption'
 
 export class PayDateOption {
   @Expose()
-  @IsIn(Object.values(DateOption), { message: 'Select when the change to TODO : TODO takes effect' })
+  @IsIn(Object.values(DateOption), {
+    message: () => {
+      return 'Select when the change to takes effect'
+      // TODO PASS IN IEP / BAND ALIAS
+    },
+  })
   dateOption: string
 
   @Validator(
@@ -35,6 +40,8 @@ export class PayDateOption {
     },
   })
   startDate: string
+
+  // TODO PASS IN VALID DATE VALIDATION
 }
 
 export default class PayDateOptionRoutes {
@@ -66,7 +73,6 @@ export default class PayDateOptionRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { payRateType } = req.params
     const originalBandId = req.query.bandId
     const originalIncentiveLevel = req.query.iep
     const originalPaymentStartDate = req.query.paymentStartDate
@@ -91,9 +97,7 @@ export default class PayDateOptionRoutes {
       )
     }
 
-    const flatPayIndex = req.session.createJourney.flat.findIndex(p => p.prisonPayBand.id === +originalBandId)
     if (singlePayIndex >= 0) req.session.createJourney.pay.splice(singlePayIndex, 1)
-    if (flatPayIndex >= 0) req.session.createJourney.flat.splice(flatPayIndex, 1)
 
     const [band, allIncentiveLevels]: [(string | number)[], IncentiveLevel[]] = await Promise.all([
       this.activitiesService
@@ -113,12 +117,7 @@ export default class PayDateOptionRoutes {
       startDate: changeDate,
     } as ActivityPay
 
-    if (payRateType === 'single') {
-      req.session.createJourney.pay.push(newRate)
-    } else {
-      req.session.createJourney.flat.push(newRate)
-    }
-
+    req.session.createJourney.pay.push(newRate)
     req.session.createJourney.attendanceRequired = true
 
     if (req.params.mode === 'edit') await this.updatePay(req, res)
@@ -128,7 +127,6 @@ export default class PayDateOptionRoutes {
   updatePay = async (req: Request, res: Response) => {
     const { user } = res.locals
     const { activityId } = req.session.createJourney
-    const { payRateType } = req.params
     const { startDate, dateOption } = req.body
     const bandId = Number(req.body.bandId)
 
@@ -136,25 +134,7 @@ export default class PayDateOptionRoutes {
       dateOption === DateOption.TOMORROW ? formatIsoDate(addDays(new Date(), 1)) : datePickerDateToIsoDate(startDate)
 
     const activityPay = req.session.createJourney.pay ?? []
-    const activityFlatPay = req.session.createJourney.flat ?? []
-
-    const flatRateBandAlias = activityFlatPay.find(p => p.prisonPayBand.id === req.body.bandId)?.prisonPayBand?.alias
     const singlePayBandAlias = activityPay.find(p => p.prisonPayBand.id === bandId)?.prisonPayBand?.alias
-
-    const incentiveLevels = await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user)
-
-    if (activityFlatPay && activityFlatPay.length > 0) {
-      const flatPayRates = activityFlatPay.flatMap(flatRate =>
-        incentiveLevels.flatMap(iep => ({
-          ...flatRate,
-          incentiveNomisCode: iep.levelCode,
-          incentiveLevel: iep.levelName,
-        })),
-      )
-
-      activityPay.push(...flatPayRates)
-      req.session.createJourney.flat = []
-    }
 
     const updatedPayRates = activityPay.map(p => ({
       incentiveNomisCode: p.incentiveNomisCode,
@@ -181,19 +161,16 @@ export default class PayDateOptionRoutes {
       .then(pays => pays.find(p => p.incentiveLevel === req.body.incentiveLevel)?.pays)
       .then(pays => pays?.find(p => p.prisonPayBand.id === +req.body.bandId).allocationCount)
 
+    let futurePayRateChangeMessage = ''
+    if (changeDate != null) {
+      futurePayRateChangeMessage = `Your change will take effect from ${formatDate(parseIsoDate(changeDate))}`
+    }
+
     let successMessage
-    if (payRateType === 'flat') {
-      successMessage = `You've added a flat rate for ${flatRateBandAlias}`
-    } else if (!req.query.bandId && !req.query.iep) {
-      successMessage = `You've added a pay rate for ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}`
-    } else if (affectedAllocations > 0) {
+    if (affectedAllocations > 0) {
       successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. There are ${affectedAllocations} people 
-          assigned to this pay rate. Your changes will take effect from tomorrow.`
+          assigned to this pay rate. ${futurePayRateChangeMessage}`
     } else {
-      let futurePayRateChangeMessage = ''
-      if (changeDate != null) {
-        futurePayRateChangeMessage = `Your change will take effect from ${formatDate(parseIsoDate(changeDate))}`
-      }
       successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. ${futurePayRateChangeMessage}`
     }
 
