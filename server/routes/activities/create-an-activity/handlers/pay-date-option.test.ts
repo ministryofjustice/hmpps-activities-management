@@ -15,11 +15,12 @@ import {
   Allocation,
   PrisonPayBand,
 } from '../../../../@types/activitiesAPI/types'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
 import PayDateOptionRoutes, { PayDateOption } from './pay-date-option'
 import DateOption from '../../../../enum/dateOption'
 import { ServiceUser } from '../../../../@types/express'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import { formatIsoDate, isoDateToDatePickerDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
@@ -102,6 +103,19 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
     schedules: [schedule],
   } as unknown as Activity
 
+  const tomorrow = addDays(new Date(), 1)
+  const tomorrowStr = formatIsoDate(tomorrow)
+  const tomorrowDatePicker = isoDateToDatePickerDate(tomorrowStr)
+  const tomorrowMessageDate = formatDate(tomorrow)
+
+  const inFiveDays = addDays(new Date(), 5)
+  const inFiveDaysStr = formatIsoDate(inFiveDays)
+  const inFiveDaysDatePicker = isoDateToDatePickerDate(inFiveDaysStr)
+  const inFiveDaysMessageDate = formatDate(inFiveDays)
+
+  const inThreeDays = addDays(new Date(), 3)
+  const inThreeDaysStr = formatIsoDate(inThreeDays)
+
   let req: Request
   let res: Response
 
@@ -144,7 +158,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               rate: 50,
               pieceRate: null,
               pieceRateItems: null,
-              startDate: '2024-07-26',
+              startDate: inThreeDaysStr,
             },
             {
               id: 353,
@@ -293,14 +307,14 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         rate: 72,
         bandId: 3,
         incentiveLevel: 'Basic',
-        startDate: '23/07/2024',
+        startDate: tomorrowStr,
         dateOption: DateOption.TOMORROW,
       }
       req.query = {
         preserveHistory: 'true',
         originalBandId: '17',
         originalIncentiveLevel: 'Basic',
-        originalPaymentStartDate: '2024-07-29',
+        originalPaymentStartDate: inThreeDaysStr,
       }
 
       when(activitiesService.getActivity).calledWith(atLeast(33, user)).defaultResolvedValue(activity)
@@ -310,7 +324,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../check-pay?preserveHistory=true',
         'Activity updated',
-        "You've changed Basic incentive level: High 2. Your change will take effect from Tuesday, 23 July 2024",
+        `You've changed Basic incentive level: High 2. Your change will take effect from ${tomorrowMessageDate}`,
       )
     })
 
@@ -319,14 +333,14 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         rate: 72,
         bandId: 3,
         incentiveLevel: 'Basic',
-        startDate: '28/07/2024',
+        startDate: inFiveDaysDatePicker,
         dateOption: DateOption.OTHER,
       }
       req.query = {
         preserveHistory: 'true',
         originalBandId: '17',
         originalIncentiveLevel: 'Basic',
-        originalPaymentStartDate: '2024-07-29',
+        originalPaymentStartDate: inThreeDaysStr,
       }
 
       when(activitiesService.getActivity).calledWith(atLeast(33, user)).defaultResolvedValue(activity)
@@ -336,7 +350,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../check-pay?preserveHistory=true',
         'Activity updated',
-        "You've changed Basic incentive level: High 2. Your change will take effect from Sunday, 28 July 2024",
+        `You've changed Basic incentive level: High 2. Your change will take effect from ${inFiveDaysMessageDate}`,
       )
     })
 
@@ -345,7 +359,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         rate: 72,
         bandId: 3,
         incentiveLevel: 'Basic',
-        startDate: '23/07/2024',
+        startDate: tomorrowDatePicker,
         dateOption: DateOption.TOMORROW,
       }
       req.query = {
@@ -362,7 +376,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../check-pay?preserveHistory=true',
         'Activity updated',
-        "You've changed Basic incentive level: High 2. Your change will take effect from Tuesday, 23 July 2024",
+        `You've changed Basic incentive level: High 2. Your change will take effect from ${tomorrowMessageDate}`,
       )
     })
 
@@ -371,7 +385,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         rate: 72,
         bandId: 3,
         incentiveLevel: 'Basic',
-        startDate: '28/07/2024',
+        startDate: inFiveDaysDatePicker,
         dateOption: DateOption.OTHER,
       }
       req.query = {
@@ -388,7 +402,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../check-pay?preserveHistory=true',
         'Activity updated',
-        "You've changed Basic incentive level: High 2. Your change will take effect from Sunday, 28 July 2024",
+        `You've changed Basic incentive level: High 2. Your change will take effect from ${inFiveDaysMessageDate}`,
       )
     })
 
@@ -479,7 +493,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         rate: 72,
         bandId: 17,
         incentiveLevel: 'Basic',
-        startDate: '28/07/2024',
+        startDate: inFiveDaysDatePicker,
         dateOption: DateOption.OTHER,
       }
       req.query = {
@@ -496,7 +510,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../check-pay?preserveHistory=true',
         'Activity updated',
-        "You've changed Basic incentive level: Pay band 1 (Lowest). There are 2 people assigned to this pay rate. Your change will take effect from Sunday, 28 July 2024",
+        `You've changed Basic incentive level: Pay band 1 (Lowest). There are 2 people assigned to this pay rate. Your change will take effect from ${inFiveDaysMessageDate}`,
       )
     })
   })
