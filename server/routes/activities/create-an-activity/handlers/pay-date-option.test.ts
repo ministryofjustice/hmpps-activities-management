@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { PayAmount } from './pay-amount'
+import { addDays } from 'date-fns'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
@@ -16,7 +16,7 @@ import {
   PrisonPayBand,
 } from '../../../../@types/activitiesAPI/types'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import PayDateOptionRoutes from './pay-date-option'
+import PayDateOptionRoutes, { PayDateOption } from './pay-date-option'
 import DateOption from '../../../../enum/dateOption'
 import { ServiceUser } from '../../../../@types/express'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -392,7 +392,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
       )
     })
 
-    it('should save a future payment change whith an allocation', async () => {
+    it('should save a future payment change with an allocation', async () => {
       const allocation1: Allocation = {
         id: 1,
         startDate: '2022-02-01',
@@ -502,32 +502,62 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
   })
 
   describe('type validation', () => {
-    // FIXME implement tests
+    // FIXME ADD DATE FNS TO TESTS
     let createJourney: unknown
 
     beforeEach(() => {
       createJourney = { pay: [], flat: [] }
     })
 
-    it.skip('validation fails if values are not entered', async () => {
+    it('validation fails if the start date is more than 30 days in the future', async () => {
       const pathParams = { payRateType: 'single' }
       const queryParams = {}
-      const body = {}
+      const body = {
+        rate: 72,
+        bandId: 17,
+        incentiveLevel: 'Basic',
+        startDate: '28/07/2025',
+        dateOption: DateOption.OTHER,
+      }
 
-      const requestObject = plainToInstance(PayAmount, { createJourney, pathParams, queryParams, ...body })
+      const requestObject = plainToInstance(PayDateOption, { createJourney, pathParams, queryParams, ...body })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
         expect.arrayContaining([
           {
-            error: 'Enter a pay rate',
-            property: 'rate',
+            error: 'The date that takes effect must be between tomorrow and Thursday, 22 August 2024',
+            property: 'startDate',
           },
         ]),
       )
     })
 
-    it.skip('passes validation', async () => {
+    it('validation fails if the start date is in the past', async () => {
+      const pathParams = { payRateType: 'single' }
+      const queryParams = {}
+      const body = {
+        rate: 72,
+        bandId: 17,
+        incentiveLevel: 'Basic',
+        startDate: '28/07/2023',
+        dateOption: DateOption.OTHER,
+      }
+
+      const requestObject = plainToInstance(PayDateOption, { createJourney, pathParams, queryParams, ...body })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: 'The change the date takes effect must be in the future',
+            property: 'startDate',
+          },
+        ]),
+      )
+    })
+
+    it('passes validation by selecting an acceptable date', async () => {
       createJourney = { pay: [], flat: [], minimumPayRate: 70, maximumPayRate: 100 }
       const pathParams = { payRateType: 'single' }
       const queryParams = {}
@@ -535,9 +565,12 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         rate: 0.7,
         bandId: 1,
         incentiveLevel: 'Basic',
+        bandAlias: 'Pay Band 1',
+        dateOption: DateOption.TOMORROW,
+        startDate: '24/07/2024',
       }
 
-      const requestObject = plainToInstance(PayAmount, {
+      const requestObject = plainToInstance(PayDateOption, {
         createJourney,
         pathParams,
         queryParams,

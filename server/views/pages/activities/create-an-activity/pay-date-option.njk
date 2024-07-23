@@ -24,7 +24,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <input type="hidden" name="rate" value="{{ rate }}" />
                 <input type='hidden' name='incentiveLevel' value='{{ iep }}' />
-                <input type='hidden' name='bandId' value='{{ band.id }}' />
+                <input type='hidden' name='bandAlias' value='{{ band.alias }}' />
 
                 {% set otherDateHintHtml %}
                   <div>Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>

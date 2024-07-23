@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { addDays, startOfToday } from 'date-fns'
 import { Expose } from 'class-transformer'
-import { IsIn } from 'class-validator'
+import { IsIn, ValidationArguments } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
@@ -17,12 +17,18 @@ import { formatDate } from '../../../../utils/utils'
 import Validator from '../../../../validators/validator'
 import DateOption from '../../../../enum/dateOption'
 
+const getIEPLevel = (args: ValidationArguments) => (args.object as PayDateOption)?.incentiveLevel
+const getBandAlias = (args: ValidationArguments) => (args.object as PayDateOption)?.bandAlias
+
 export class PayDateOption {
+  incentiveLevel: string
+
+  bandAlias: string
+
   @Expose()
   @IsIn(Object.values(DateOption), {
-    message: () => {
-      return 'Select when the change to takes effect'
-      // TODO PASS IN IEP / BAND ALIAS
+    message: args => {
+      return `Select when the change to ${getIEPLevel(args)}: ${getBandAlias(args)} takes effect`
     },
   })
   dateOption: string
@@ -30,7 +36,7 @@ export class PayDateOption {
   @Validator(
     startDate => startDate === undefined || startDate === '' || parseDatePickerDate(startDate) > startOfToday(),
     {
-      message: 'Enter a date in the future',
+      message: 'The change the date takes effect must be in the future',
     },
   )
   @Validator(startDate => parseDatePickerDate(startDate) < addDays(startOfToday(), 30), {

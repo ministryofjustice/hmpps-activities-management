@@ -4,6 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "components/card.njk" import card %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
@@ -11,7 +12,28 @@
 {% set pageId = 'check-pay-page' %}
 {% set hardBackLinkText = 'Back to edit activity details' %}
 {% set hardBackLinkHref = "/activities/view/" + session.createJourney.activityId %}
-{# {% set cancelLinkHref = "/activities/create-an-activity/edit-pay" %} #}
+{% set payChangesHistory %}
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Pay rate</th>
+            <th scope="col" class="govuk-table__header">Details of Change</th>
+            <th scope="col" class="govuk-table__header">Start Date</th>
+            </tr>
+        </thead>
+        {% for incentiveLevelPay in incentiveLevelPays %}
+                {% for pay in incentiveLevelPay.pays %}
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">{{ pay.incentiveLevel }} {{ pay.prisonPayBand.alias }}</td>
+                        <td class="govuk-table__cell">{{ pay.rate | toMoney }}{{ pay.description }}</td>
+                        <td class="govuk-table__cell">{{ pay.startDate | isoDateToDatePickerDate }}</td>
+                        </tr>
+                    </tbody>
+                {% endfor %}
+        {% endfor %}
+    </table>
+{% endset %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -46,7 +68,17 @@
                                 },
                                 value: {
                                     text: pay.rate | toMoney if pay.description === undefined else pay.rate | toMoney + pay.description
-                                }
+                                },
+                                actions: {
+                                    items: [{
+                                        href: "../pay-cancel/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.futurePaymentStart + "&preserveHistory=true",
+                                        text: "Cancel",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'cancel-pay', 
+                                        visuallyHiddenText: "Cancel pay change"
+                                        }
+                                        ]}
+                                } if pay.description
                             }
                         ), rows) %}
                         {% set rows = (rows.push(
@@ -68,16 +100,6 @@
                                 attributes: { 'data-qa': 'change-pay' }
                             }
                         ] %}
-                        {% if pay.description %}
-                            {% set cardItems = (cardItems.push(
-                                {
-                                    href: "../pay-cancel/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.futurePaymentStart + "&preserveHistory=true",
-                                    text: "Cancel",
-                                    classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'cancel-pay' }
-                                }
-                            ), cardItems) %}
-                        {% endif %}
 
                         {% if not pay.allocationCount %}
                             {% set cardItems = (cardItems.push(
@@ -161,10 +183,12 @@
                 {% endfor %}
             {% endif %}
 
-            {{ govukDetails({
-                summaryText: "History of pay changes",
-                text: "History of changes to pay rates for activity name"
-            }) }}
+            {% if futurePayRatesFlag %}
+                {{ govukDetails({
+                    summaryText: "History of pay changes",
+                    html: payChangesHistory
+                }) }}
+            {% endif %}
 
             <div class="govuk-!-margin-top-6">
                 {{ 
