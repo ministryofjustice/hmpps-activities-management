@@ -174,6 +174,7 @@ export default class PayRoutes {
       incentiveLevel: p.incentiveLevel,
       payBandId: p.prisonPayBand.id,
       rate: p.rate,
+      startDate: p.startDate,
     }))
 
     const updatedActivity = {
