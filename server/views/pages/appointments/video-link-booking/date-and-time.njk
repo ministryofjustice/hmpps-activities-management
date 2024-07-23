@@ -1,0 +1,177 @@
+{% extends "layout.njk" %}
+
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from "components/timePicker.njk" import timePicker %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageId = 'date-and-time-page' %}
+{% set jsBackLink = true %}
+{% set pageHeading = "Enter the date and time of the appointment" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session) }}
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method='POST'>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ hmppsDatePicker({
+                    id: "date",
+                    name: "date",
+                    label: {
+                        text: "Date",
+                        classes: "govuk-label--m"
+                    },
+                    hint: {
+                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
+                    },
+                    errorMessage: validationErrors | findError('date'),
+                    classes: 'hmpps-datepicker--fixed-width',
+                    value: formResponses.date or (session.bookAVideoLinkJourney.date | isoDateToDatePickerDate)
+                }) }}
+
+                {{ timePicker({
+                    id: 'startTime',
+                    name: 'startTime',
+                    label: {
+                        text: 'Start time',
+                        classes: "govuk-fieldset__legend--m"
+                    },
+                    renderedErrorMessage: validationErrors | findError('startTime'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.startTime or session.bookAVideoLinkJourney.startTime | isoDateToTimePicker
+                }) }}
+
+                {{ timePicker({
+                    id: 'endTime',
+                    name: 'endTime',
+                    label: {
+                        text: 'End time',
+                        classes: "govuk-fieldset__legend--m"
+                    },
+                    renderedErrorMessage: validationErrors | findError('endTime'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.endTime or session.bookAVideoLinkJourney.endTime | isoDateToTimePicker
+                }) }}
+
+                {% set items = [{ text: "Select prison room", value: "" }] %}
+                {% for room in rooms %}
+                    {% set items = (items.push({
+                        value: room.key,
+                        text: room.description,
+                        selected: formResponses.preLocation == room.key or session.bookAVideoLinkJourney.preLocationCode == room.key
+                    }), items) %}
+                {% endfor %}
+
+                {% set preLocationsHtml %}
+                    {{ govukSelect({
+                        name: "preLocation",
+                        id: "preLocation",
+                        label: {
+                            text: "Prison room for pre-court hearing briefing",
+                            classes: 'govuk-label--s'
+                        },
+                        items: items,
+                        errorMessage: validationErrors | findError("preLocation"),
+                        classes: "govuk-!-width-one-third"
+                    }) }}
+                {% endset -%}
+
+                {{ govukRadios({
+                    idPrefix: "preRequired",
+                    name: "preRequired",
+                    errorMessage: validationErrors | findError('preRequired'),
+                    fieldset: {
+                        legend: {
+                            text: "Do you want to add a pre-court hearing briefing?",
+                            classes: "govuk-fieldset__legend--s"
+                        }
+                    },
+                    hint: {
+                        text: "Pre-court briefings are scheduled for 15 minutes immediately before the start of the main hearing"
+                    },
+                    items: [
+                        {
+                            value: YesNo.YES,
+                            text: "Yes",
+                            checked: formResponses.preRequired == YesNo.YES or (session.bookAVideoLinkJourney.preLocationCode and not formResponses.preRequired),
+                            conditional: {
+                                html: preLocationsHtml
+                            }
+                        },
+                        {
+                            value: YesNo.NO,
+                            text: "No",
+                            checked: formResponses.preRequired == YesNo.NO or (session.bookAVideoLinkJourney.date and not session.bookAVideoLinkJourney.preLocationCode and not formResponses.preRequired)
+                        }
+                    ]
+                }) }}
+
+                {% set items = [{ text: "Select prison room", value: "" }] %}
+                {% for room in rooms %}
+                    {% set items = (items.push({
+                        value: room.key,
+                        text: room.description,
+                        selected: formResponses.postLocation == room.key or session.bookAVideoLinkJourney.postLocationCode == room.key
+                    }), items) %}
+                {% endfor %}
+                {% set postLocationsHtml %}
+                    {{ govukSelect({
+                        name: "postLocation",
+                        id: "postLocation",
+                        label: {
+                            text:  "Prison room for post-court hearing briefing",
+                            classes: 'govuk-label--s'
+                        },
+                        items: items,
+                        errorMessage: validationErrors | findError("postLocation"),
+                        classes: "govuk-!-width-one-third"
+                    }) }}
+                {% endset -%}
+
+                {{ govukRadios({
+                    idPrefix: "postRequired",
+                    name: "postRequired",
+                    errorMessage: validationErrors | findError('postRequired'),
+                    fieldset: {
+                        legend: {
+                            text: "Do you want to add a post-court hearing briefing?",
+                            classes: "govuk-fieldset__legend--s"
+                        }
+                    },
+                    hint: {
+                        text: "Post-court briefings are scheduled for 15 minutes immediately after the end of the main hearing"
+                    },
+                    items: [
+                        {
+                            value: YesNo.YES,
+                            text: "Yes",
+                            checked: formResponses.postRequired == YesNo.YES or (session.bookAVideoLinkJourney.postLocationCode and not formResponses.postRequired),
+                            conditional: {
+                                html: postLocationsHtml
+                            }
+                        },
+                        {
+                            value: YesNo.NO,
+                            text: "No",
+                            checked: formResponses.postRequired == YesNo.NO or (session.bookAVideoLinkJourney.date and not session.bookAVideoLinkJourney.postLocationCode and not formResponses.postRequired)
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

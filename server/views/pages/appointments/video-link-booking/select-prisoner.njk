@@ -1,0 +1,49 @@
+{% extends "layout.njk" %}
+
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageId = 'select-prisoner-page' %}
+{% set jsBackLink = true %}
+{% set pageHeading = "Select single attendee" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session) }}
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            <p>You cannot currently create a video link court hearing appointment with multiple attendees. Select one attendee for this appointment.</p>
+            <p>To create a hearing for multiple defendants, you’ll need to schedule separate appointments for the other people you’ve selected.</p>
+        </div>
+    </div>
+
+    {% set items = [] %}
+    {% for prisoner in session.bookAVideoLinkJourney.prisoners %}
+        {% set items = (items.push({
+            value: prisoner.number,
+            text: prisoner.name | toTitleCase + " (" + prisoner.number + ")"
+        }), items) %}
+    {% endfor %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method='POST'>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    name: "prisonerNumber",
+                    hint: {
+                        text: "Select the attendee for the appointment"
+                    },
+                    items: items,
+                    errorMessage: validationErrors | findError('prisonerNumber')
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -30,6 +30,10 @@ describe('Route Handlers - Create Appointment - Name', () => {
       code: 'GYMW',
       description: 'Gym - Weights',
     },
+    {
+      code: 'VLB',
+      description: 'Video Link - Court hearing',
+    },
   ] as AppointmentCategorySummary[]
 
   beforeEach(() => {
@@ -49,6 +53,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
       session: {
         appointmentJourney: {},
       },
+      params: { journeyId: 'journeyId' },
       flash: jest.fn(),
     } as unknown as Request
   })
@@ -67,6 +72,19 @@ describe('Route Handlers - Create Appointment - Name', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/name', {
         categories,
+      })
+    })
+
+    it('should remove VLB category for appointment sets', async () => {
+      req.session.appointmentJourney.type = AppointmentType.SET
+
+      when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
+      const filteredCategories = categories.filter(category => category.code !== 'VLB')
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/name', {
+        categories: filteredCategories,
       })
     })
   })

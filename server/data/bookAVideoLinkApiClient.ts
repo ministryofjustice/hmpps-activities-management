@@ -2,7 +2,15 @@ import config, { ApiConfig } from '../config'
 
 import AbstractHmppsRestClient from './abstractHmppsRestClient'
 import { ServiceUser } from '../@types/express'
-import { VideoLinkBooking, Location, VideoBookingSearchRequest } from '../@types/bookAVideoLinkApi/types'
+import {
+  VideoLinkBooking,
+  Location,
+  VideoBookingSearchRequest,
+  Court,
+  ReferenceCode,
+  CreateVideoBookingRequest,
+  AmendVideoBookingRequest,
+} from '../@types/bookAVideoLinkApi/types'
 
 export default class BookAVideoLinkApiClient extends AbstractHmppsRestClient {
   constructor() {
@@ -22,5 +30,25 @@ export default class BookAVideoLinkApiClient extends AbstractHmppsRestClient {
 
   public getAppointmentLocations(prisonCode: string, user: ServiceUser): Promise<Location[]> {
     return this.get({ path: `/prisons/${prisonCode}/locations` }, user)
+  }
+
+  public getAllEnabledCourts(user: ServiceUser): Promise<Court[]> {
+    return this.get({ path: '/courts/enabled' }, user)
+  }
+
+  public getReferenceCodesForGroup(groupCode: string, user: ServiceUser): Promise<ReferenceCode[]> {
+    return this.get({ path: `/reference-codes/group/${groupCode}` }, user)
+  }
+
+  public createVideoLinkBooking(request: CreateVideoBookingRequest, user: ServiceUser): Promise<number> {
+    return this.post({ path: '/video-link-booking', data: request }, user)
+  }
+
+  public amendVideoLinkBooking(
+    videoBookingId: number,
+    request: AmendVideoBookingRequest,
+    user: ServiceUser,
+  ): Promise<number> {
+    return this.put({ path: `/video-link-booking/id/${videoBookingId}`, data: request }, user)
   }
 }
