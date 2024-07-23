@@ -21,6 +21,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <input type='hidden' name='incentiveLevel' value='{{ iep }}' />
                 <input type='hidden' name='bandId' value='{{ band.id }}' />
+                <input type='hidden' name='startDate' value='{{ paymentStartDate }}' />
                 
                 {% set otherDateHintHtml %}
                   <div>The pay rate is set to change to {{ rate | toMoney }} from  {{ paymentStartDate | formatDate }}.</div>
@@ -37,14 +38,14 @@
                     },
                     items: [
                         {
-                            value: "YES",
+                            value: YesNo.YES,
                             text: "Yes",
-                            checked: formResponses.cancel == 'YES' 
+                            checked: formResponses.cancel == YesNo.YES
                         },
                         {
-                            value: "NO",
+                            value: YesNo.NO,
                             text: "No",
-                            checked: formResponses.cancel == 'NO'
+                            checked: formResponses.cancel == YesNo.NO
                         }
                     ],
                     hint: { html: otherDateHintHtml },

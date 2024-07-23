@@ -2,9 +2,7 @@ import { Request, Response } from 'express'
 import { IsEnum } from 'class-validator'
 import { Expose } from 'class-transformer'
 import { startOfToday } from 'date-fns'
-import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
-import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 import { YesNo } from '../../../../@types/activities'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
@@ -16,15 +14,7 @@ export class PayCancel {
 }
 
 export default class PayCancelRoutes {
-  // TODO REMOVE HELPER
-  private readonly helper: IncentiveLevelPayMappingUtil
-
-  constructor(
-    private readonly prisonService: PrisonService,
-    private readonly activitiesService: ActivitiesService,
-  ) {
-    this.helper = new IncentiveLevelPayMappingUtil(prisonService)
-  }
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
@@ -52,23 +42,28 @@ export default class PayCancelRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    // FIXME implement remove the future pay rate
     const { user } = res.locals
     const { preserveHistory } = req.query
-    const { startDate, incentiveLevel, band } = req.body
+    const { startDate, incentiveLevel } = req.body
     const { activityId } = req.session.createJourney
+
+    const bandId = Number(req.body.bandId)
 
     if (req.body.cancelOption === YesNo.YES) {
       let singlePayIndex = -1
       if (startDate === undefined || parseIsoDate(startDate as string) > startOfToday()) {
         singlePayIndex = req.session.createJourney.pay.findIndex(
-          p => p.prisonPayBand.id === band.id && p.incentiveLevel === incentiveLevel && p.startDate === startDate,
+          p => p.prisonPayBand.id === bandId && p.incentiveLevel === incentiveLevel && p.startDate === startDate,
         )
       }
 
       const activityPay = req.session.createJourney.pay ?? []
 
-      if (singlePayIndex >= 0) req.session.createJourney.pay.splice(singlePayIndex, 1)
+      let payBandAlias
+      if (singlePayIndex >= 0) {
+        payBandAlias = req.session.createJourney.pay[singlePayIndex].prisonPayBand.alias
+        req.session.createJourney.pay.splice(singlePayIndex, 1)
+      }
 
       const updatedPayRates = activityPay.map(p => ({
         incentiveNomisCode: p.incentiveNomisCode,
@@ -85,7 +80,11 @@ export default class PayCancelRoutes {
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, updatedActivity, user)
 
-      res.redirect(`../check-pay${preserveHistory ? '?preserveHistory=true' : ''}`)
+      return res.redirectWithSuccess(
+        `../check-pay${preserveHistory ? '?preserveHistory=true' : ''}`,
+        'Activity updated',
+        `You've cancelled the change to the pay amount for ${incentiveLevel}:${payBandAlias}.`,
+      )
     }
     return res.redirectOrReturn(`../check-pay${preserveHistory ? '?preserveHistory=true' : ''}`)
   }

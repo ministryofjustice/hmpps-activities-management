@@ -50,7 +50,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const payHandler = new PayRoutes(prisonService, activitiesService)
   const payAmountHandler = new PayAmountRoutes(prisonService, activitiesService)
   const payDateOptionHandler = new PayDateOptionRoutes(prisonService, activitiesService)
-  const payCancelHandler = new PayCancelRoutes(prisonService, activitiesService)
+  const payCancelHandler = new PayCancelRoutes(activitiesService)
   const checkPayHandler = new CheckPayRoutes(prisonService)
   const removePayHandler = new RemovePayRoutes(activitiesService, prisonService)
   const removeFlatRateHandler = new RemoveFlatRateRoutes()
