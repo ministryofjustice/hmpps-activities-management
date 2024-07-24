@@ -89,7 +89,6 @@ export default class PayDateOptionRoutes {
       dateOption === DateOption.TOMORROW ? formatIsoDate(addDays(new Date(), 1)) : datePickerDateToIsoDate(startDate)
 
     const bandId = Number(req.body.bandId)
-    // FIXME: handle original and new start date correctly
     let singlePayIndex = -1
     if (
       (originalPaymentStartDate === undefined && startDate === undefined) ||

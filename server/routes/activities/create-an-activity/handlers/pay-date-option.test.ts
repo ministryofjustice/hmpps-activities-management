@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
@@ -103,18 +103,35 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
     schedules: [schedule],
   } as unknown as Activity
 
+  const yesterday = subDays(new Date(), 1)
+  const yesterdayStr = formatIsoDate(yesterday)
+  const yesterdayDatePicker = isoDateToDatePickerDate(yesterdayStr)
+
+  const today = new Date()
+  const todayStr = formatIsoDate(today)
+  const todayDatePicker = isoDateToDatePickerDate(todayStr)
+
   const tomorrow = addDays(new Date(), 1)
   const tomorrowStr = formatIsoDate(tomorrow)
   const tomorrowDatePicker = isoDateToDatePickerDate(tomorrowStr)
   const tomorrowMessageDate = formatDate(tomorrow)
+
+  const inThreeDays = addDays(new Date(), 3)
+  const inThreeDaysStr = formatIsoDate(inThreeDays)
 
   const inFiveDays = addDays(new Date(), 5)
   const inFiveDaysStr = formatIsoDate(inFiveDays)
   const inFiveDaysDatePicker = isoDateToDatePickerDate(inFiveDaysStr)
   const inFiveDaysMessageDate = formatDate(inFiveDays)
 
-  const inThreeDays = addDays(new Date(), 3)
-  const inThreeDaysStr = formatIsoDate(inThreeDays)
+  const inTwentyNineDays = addDays(new Date(), 29)
+  const inTwentyNineDaysStr = formatIsoDate(inTwentyNineDays)
+  const inTwentyNineDaysDatePicker = isoDateToDatePickerDate(inTwentyNineDaysStr)
+
+  const inThirtyDays = addDays(new Date(), 30)
+  const inThirtyDaysStr = formatIsoDate(inThirtyDays)
+  const inThirtyDaysDatePicker = isoDateToDatePickerDate(inThirtyDaysStr)
+  const inThirtyDaysMessageDate = formatDate(inThirtyDays)
 
   let req: Request
   let res: Response
@@ -516,21 +533,20 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
   })
 
   describe('type validation', () => {
-    // FIXME ADD DATE FNS TO TESTS
     let createJourney: unknown
 
     beforeEach(() => {
       createJourney = { pay: [], flat: [] }
     })
 
-    it('validation fails if the start date is more than 30 days in the future', async () => {
+    it('validation fails if the start date is today', async () => {
       const pathParams = { payRateType: 'single' }
       const queryParams = {}
       const body = {
         rate: 72,
         bandId: 17,
         incentiveLevel: 'Basic',
-        startDate: '28/07/2025',
+        startDate: todayDatePicker,
         dateOption: DateOption.OTHER,
       }
 
@@ -540,7 +556,31 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
       expect(errors).toEqual(
         expect.arrayContaining([
           {
-            error: 'The date that takes effect must be between tomorrow and Thursday, 22 August 2024',
+            error: `The change the date takes effect must be in the future`,
+            property: 'startDate',
+          },
+        ]),
+      )
+    })
+
+    it('validation fails if the start date is 30 days in the future', async () => {
+      const pathParams = { payRateType: 'single' }
+      const queryParams = {}
+      const body = {
+        rate: 72,
+        bandId: 17,
+        incentiveLevel: 'Basic',
+        startDate: inThirtyDaysDatePicker,
+        dateOption: DateOption.OTHER,
+      }
+
+      const requestObject = plainToInstance(PayDateOption, { createJourney, pathParams, queryParams, ...body })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: `The date that takes effect must be between tomorrow and ${inThirtyDaysMessageDate}`,
             property: 'startDate',
           },
         ]),
@@ -554,7 +594,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         rate: 72,
         bandId: 17,
         incentiveLevel: 'Basic',
-        startDate: '28/07/2023',
+        startDate: yesterdayDatePicker,
         dateOption: DateOption.OTHER,
       }
 
@@ -571,7 +611,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
       )
     })
 
-    it('passes validation by selecting an acceptable date', async () => {
+    it('passes validation by selecting 29 days in the future date', async () => {
       createJourney = { pay: [], flat: [], minimumPayRate: 70, maximumPayRate: 100 }
       const pathParams = { payRateType: 'single' }
       const queryParams = {}
@@ -580,8 +620,8 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         bandId: 1,
         incentiveLevel: 'Basic',
         bandAlias: 'Pay Band 1',
-        dateOption: DateOption.TOMORROW,
-        startDate: '24/07/2024',
+        dateOption: DateOption.OTHER,
+        startDate: inTwentyNineDaysDatePicker,
       }
 
       const requestObject = plainToInstance(PayDateOption, {
