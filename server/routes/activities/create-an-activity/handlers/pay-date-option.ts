@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { addDays, startOfToday } from 'date-fns'
 import { Expose } from 'class-transformer'
-import { IsIn, ValidationArguments } from 'class-validator'
+import { IsIn, IsNotEmpty, ValidationArguments } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
@@ -33,21 +33,19 @@ export class PayDateOption {
   })
   dateOption: string
 
-  @Validator(
-    startDate => startDate === undefined || startDate === '' || parseDatePickerDate(startDate) > startOfToday(),
-    {
-      message: 'The change the date takes effect must be in the future',
-    },
-  )
+  @Validator(startDate => parseDatePickerDate(startDate) > startOfToday(), {
+    message: 'The change the date takes effect must be in the future',
+  })
   @Validator(startDate => parseDatePickerDate(startDate) < addDays(startOfToday(), 30), {
     message: () => {
       const thirtyDaysInFuture = formatDate(addDays(startOfToday(), 30))
       return `The date that takes effect must be between tomorrow and ${thirtyDaysInFuture}`
     },
   })
+  @IsNotEmpty({
+    message: 'Enter a valid date',
+  })
   startDate: string
-
-  // TODO PASS IN VALID DATE VALIDATION
 }
 
 export default class PayDateOptionRoutes {

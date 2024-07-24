@@ -63,7 +63,8 @@
                                     classes: 'govuk-visually-hidden'
                                 },
                                 hint: { html: otherDateHintHtml },
-                                errorMessage: validationErrors | findError('startDate')
+                                errorMessage: validationErrors | findError('startDate'),
+                                value: formResponses.startDate
                               })
                            }
                         }

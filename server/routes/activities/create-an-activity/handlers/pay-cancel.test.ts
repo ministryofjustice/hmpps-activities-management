@@ -187,6 +187,27 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         `You've cancelled the change to the pay amount for Basic:Pay band 1 (Lowest).`,
       )
     })
+
+    it('should not cancel existing future payment change when user selects no', async () => {
+      req.body = {
+        rate: 72,
+        bandId: 17,
+        incentiveLevel: 'Basic',
+        startDate: inThreeDaysStr,
+        cancelOption: YesNo.NO,
+      }
+      req.query = {
+        preserveHistory: 'true',
+      }
+
+      await handler.POST(req, res)
+
+      when(activitiesService.updateActivity).mockResolvedValue(undefined)
+
+      expect(activitiesService.updateActivity).not.toHaveBeenCalled()
+
+      expect(res.redirect).toHaveBeenCalledWith('../check-pay?preserveHistory=true')
+    })
   })
 
   describe('type validation', () => {

@@ -611,6 +611,29 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
       )
     })
 
+    it('validation fails if the start date is not selected', async () => {
+      const pathParams = { payRateType: 'single' }
+      const queryParams = {}
+      const body = {
+        rate: 72,
+        bandId: 17,
+        incentiveLevel: 'Basic',
+        dateOption: DateOption.OTHER,
+      }
+
+      const requestObject = plainToInstance(PayDateOption, { createJourney, pathParams, queryParams, ...body })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: 'Enter a valid date',
+            property: 'startDate',
+          },
+        ]),
+      )
+    })
+
     it('passes validation by selecting 29 days in the future date', async () => {
       createJourney = { pay: [], flat: [], minimumPayRate: 70, maximumPayRate: 100 }
       const pathParams = { payRateType: 'single' }

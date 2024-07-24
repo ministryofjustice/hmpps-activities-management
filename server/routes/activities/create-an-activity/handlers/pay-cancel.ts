@@ -86,6 +86,6 @@ export default class PayCancelRoutes {
         `You've cancelled the change to the pay amount for ${incentiveLevel}:${payBandAlias}.`,
       )
     }
-    return res.redirectOrReturn(`../check-pay${preserveHistory ? '?preserveHistory=true' : ''}`)
+    return res.redirect(`../check-pay${preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 }
