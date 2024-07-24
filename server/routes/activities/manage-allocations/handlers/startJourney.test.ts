@@ -9,10 +9,12 @@ import { IepSummary } from '../../../../@types/incentivesApi/types'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import findNextSchedulesInstance from '../../../../utils/helpers/nextScheduledInstanceCalculator'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/metricsService')
+jest.mock('../../../../utils/helpers/nextScheduledInstanceCalculator')
 
 const prisonService = new PrisonService(null, null, null)
 const activitiesService = new ActivitiesService(null)
@@ -52,6 +54,7 @@ describe('Route Handlers - Allocate - Start', () => {
           lastName: 'Bloggs',
           cellLocation: '1-2-001',
           prisonId: 'LEI',
+          status: 'ACTIVE IN',
         } as Prisoner)
 
       when(prisonService.getPrisonerIepSummary)
@@ -60,15 +63,30 @@ describe('Route Handlers - Allocate - Start', () => {
           iepLevel: 'Standard',
         } as IepSummary)
 
-      when(activitiesService.getActivitySchedule)
-        .calledWith(atLeast(1))
-        .mockResolvedValue({
+      const schedule = {
+        id: 1,
+        activity: {
           id: 1,
-          activity: { id: 1 },
-          description: 'Maths',
-          internalLocation: { description: 'Education room 1' },
-          startDate: '2023-07-26',
-        } as unknown as ActivitySchedule)
+          onWing: true,
+          offWing: false,
+          inCell: false,
+          paid: true,
+        },
+        description: 'Maths',
+        internalLocation: { description: 'Education room 1' },
+        startDate: '2023-07-26',
+        endDate: '2023-08-26',
+        scheduleWeeks: 2,
+        instances: [
+          {
+            id: 123,
+          },
+        ],
+      } as unknown as ActivitySchedule
+
+      when(activitiesService.getActivitySchedule).calledWith(atLeast(1)).mockResolvedValue(schedule)
+
+      when(findNextSchedulesInstance).calledWith(schedule).mockReturnValue(schedule.instances[0])
 
       await handler.GET(req, res)
 
@@ -82,6 +100,7 @@ describe('Route Handlers - Allocate - Start', () => {
             cellLocation: '1-2-001',
             incentiveLevel: 'Standard',
             prisonCode: 'LEI',
+            status: 'ACTIVE IN',
           },
         ],
         inmate: {
@@ -90,13 +109,23 @@ describe('Route Handlers - Allocate - Start', () => {
           cellLocation: '1-2-001',
           incentiveLevel: 'Standard',
           prisonCode: 'LEI',
+          status: 'ACTIVE IN',
         },
         activity: {
           activityId: 1,
           scheduleId: 1,
+          scheduleWeeks: 2,
           name: 'Maths',
           location: 'Education room 1',
           startDate: '2023-07-26',
+          endDate: '2023-08-26',
+          offWing: false,
+          onWing: true,
+          inCell: false,
+          paid: true,
+        },
+        scheduledInstance: {
+          id: 123,
         },
       })
       expect(metricsService.trackEvent).toBeCalledWith(

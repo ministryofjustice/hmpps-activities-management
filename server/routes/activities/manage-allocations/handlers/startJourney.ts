@@ -9,6 +9,7 @@ import { IepSummary } from '../../../../@types/incentivesApi/types'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { ServiceUser } from '../../../../@types/express'
+import findNextSchedulesInstance from '../../../../utils/helpers/nextScheduledInstanceCalculator'
 
 export default class StartJourneyRoutes {
   constructor(
@@ -57,6 +58,7 @@ export default class StartJourneyRoutes {
       },
       exclusions: [],
       updatedExclusions: [],
+      scheduledInstance: findNextSchedulesInstance(schedule),
     }
 
     // Before allocating check if the prisoner is in this prison

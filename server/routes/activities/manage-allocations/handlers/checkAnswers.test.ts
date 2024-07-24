@@ -6,6 +6,7 @@ import CheckAnswersRoutes from './checkAnswers'
 import atLeast from '../../../../../jest.setup'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
+import { StartDateOption } from '../journey'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -48,11 +49,13 @@ describe('Route Handlers - Allocate - Check answers', () => {
             location: 'Education room 1',
             startDate: '2022-01-01',
           },
+          startDateOptions: StartDateOption.START_DATE,
           startDate: '2023-01-01',
           deallocationReason: 'COMPLETED',
           endDate: '2023-02-01',
           updatedExclusions: [],
           deallocationCaseNote: { type: 'GEN', text: 'test case note' },
+          scheduledInstance: { id: 123 },
         },
       },
     } as unknown as Request
@@ -113,33 +116,55 @@ describe('Route Handlers - Allocate - Check answers', () => {
   })
 
   describe('POST', () => {
-    it('should create the allocation and redirect to confirmation page when in create mode', async () => {
-      req.params.mode = 'create'
-      await handler.POST(req, res)
-      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
-        1,
-        'ABC123',
-        1,
-        { username: 'joebloggs' },
-        '2023-01-01',
-        '2023-02-01',
-        [],
-      )
-      expect(res.redirect).toHaveBeenCalledWith('confirmation')
+    describe('New Allocation', () => {
+      it('should redirect to confirmation page when start date is a specific date', async () => {
+        req.params.mode = 'create'
+        await handler.POST(req, res)
+        expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
+          1,
+          'ABC123',
+          1,
+          { username: 'joebloggs' },
+          '2023-01-01',
+          '2023-02-01',
+          [],
+          null,
+        )
+        expect(res.redirect).toHaveBeenCalledWith('confirmation')
+      })
+
+      it('should redirect to confirmation page when start date is next session', async () => {
+        req.session.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
+        req.params.mode = 'create'
+        await handler.POST(req, res)
+        expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
+          1,
+          'ABC123',
+          1,
+          { username: 'joebloggs' },
+          '2023-01-01',
+          '2023-02-01',
+          [],
+          123,
+        )
+        expect(res.redirect).toHaveBeenCalledWith('confirmation')
+      })
     })
 
-    it('should deallocate and redirect to confirmation page when in remove mode', async () => {
-      req.params.mode = 'remove'
-      await handler.POST(req, res)
-      expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(
-        1,
-        ['ABC123'],
-        'COMPLETED',
-        { type: 'GEN', text: 'test case note' },
-        '2023-02-01',
-        { username: 'joebloggs' },
-      )
-      expect(res.redirect).toHaveBeenCalledWith('confirmation')
+    describe('Remove Allocation', () => {
+      it('should deallocate and redirect to confirmation page', async () => {
+        req.params.mode = 'remove'
+        await handler.POST(req, res)
+        expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(
+          1,
+          ['ABC123'],
+          'COMPLETED',
+          { type: 'GEN', text: 'test case note' },
+          '2023-02-01',
+          { username: 'joebloggs' },
+        )
+        expect(res.redirect).toHaveBeenCalledWith('confirmation')
+      })
     })
   })
 })

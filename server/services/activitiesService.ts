@@ -144,6 +144,7 @@ export default class ActivitiesService {
     startDate: string,
     endDate: string,
     exclusions: Slot[],
+    scheduleInstanceId?: number,
   ): Promise<void> {
     return this.activitiesApiClient.postAllocation(
       scheduleId,
@@ -153,6 +154,7 @@ export default class ActivitiesService {
       startDate,
       endDate,
       exclusions,
+      scheduleInstanceId,
     )
   }
 

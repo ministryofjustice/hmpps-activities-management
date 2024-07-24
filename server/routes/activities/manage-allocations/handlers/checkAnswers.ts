@@ -6,6 +6,7 @@ import activitySessionToDailyTimeSlots, {
 } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { mapActivityModelSlotsToJourney, parseDate } from '../../../../utils/utils'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
+import { StartDateOption } from '../journey'
 
 export default class CheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -38,6 +39,8 @@ export default class CheckAnswersRoutes {
       deallocationReason,
       deallocationCaseNote,
       updatedExclusions,
+      startDateOption,
+      scheduledInstance,
     } = req.session.allocateJourney
     const { user } = res.locals
 
@@ -50,6 +53,7 @@ export default class CheckAnswersRoutes {
         startDate,
         endDate,
         updatedExclusions,
+        startDateOption === StartDateOption.NEXT_SESSION ? scheduledInstance?.id : null,
       )
     }
 
