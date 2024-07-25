@@ -58,7 +58,7 @@ context('Allocate to activity', () => {
     cy.signIn()
   })
 
-  xit('should be able to allocate when selecting a specific start date', () => {
+  it('should be able to allocate when selecting a specific start date', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
