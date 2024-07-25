@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { addDays, startOfToday } from 'date-fns'
 import { Expose } from 'class-transformer'
-import { IsIn, IsNotEmpty, ValidationArguments } from 'class-validator'
+import { IsIn, IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
@@ -42,6 +42,7 @@ export class PayDateOption {
       return `The date that takes effect must be between tomorrow and ${thirtyDaysInFuture}`
     },
   })
+  @ValidateIf(o => o.dateOption === 'other')
   @IsNotEmpty({
     message: 'Enter a valid date',
   })

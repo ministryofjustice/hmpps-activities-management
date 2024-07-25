@@ -657,5 +657,29 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
 
       expect(errors).toHaveLength(0)
     })
+
+    it('passes validation by selecting tomorrow in the future date', async () => {
+      createJourney = { pay: [], flat: [], minimumPayRate: 70, maximumPayRate: 100 }
+      const pathParams = { payRateType: 'single' }
+      const queryParams = {}
+      const body = {
+        rate: 0.7,
+        bandId: 1,
+        incentiveLevel: 'Basic',
+        bandAlias: 'Pay Band 1',
+        dateOption: DateOption.TOMORROW,
+        startDate: tomorrow,
+      }
+
+      const requestObject = plainToInstance(PayDateOption, {
+        createJourney,
+        pathParams,
+        queryParams,
+        ...body,
+      })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
+    })
   })
 })

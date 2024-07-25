@@ -68,6 +68,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
     it('should render page correctly', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/check-pay', {
+        activityName: 'Maths level 1',
         flatPay: [],
         incentiveLevelPays: [
           {
@@ -100,6 +101,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       req.params.mode = 'edit'
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/edit-pay', {
+        activityName: 'Maths level 1',
         flatPay: [],
         incentiveLevelPays: [
           {

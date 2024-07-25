@@ -13,6 +13,7 @@ export default class CheckPayRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { createJourney } = req.session
+    const activityName = createJourney.name
     const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(
       createJourney.pay,
       createJourney.allocations,
@@ -22,9 +23,19 @@ export default class CheckPayRoutes {
     const flatPay = req.session.createJourney.flat
 
     if (req.params.mode === 'edit') {
-      res.render(`pages/activities/create-an-activity/edit-pay`, { incentiveLevelPays, flatPay, displayPays })
+      res.render(`pages/activities/create-an-activity/edit-pay`, {
+        incentiveLevelPays,
+        flatPay,
+        displayPays,
+        activityName,
+      })
     } else {
-      res.render(`pages/activities/create-an-activity/check-pay`, { incentiveLevelPays, flatPay, displayPays })
+      res.render(`pages/activities/create-an-activity/check-pay`, {
+        incentiveLevelPays,
+        flatPay,
+        displayPays,
+        activityName,
+      })
     }
   }
 
