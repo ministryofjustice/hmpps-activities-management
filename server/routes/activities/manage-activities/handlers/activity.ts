@@ -8,6 +8,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
 import { organiserDescriptions } from '../../../../enum/eventOrganisers'
+import { groupPayBand } from '../../../../utils/helpers/payBandMappingUtil'
 import { ActivitySchedule, Allocation } from '../../../../@types/activitiesAPI/types'
 
 export default class ActivityRoutes {
@@ -31,6 +32,8 @@ export default class ActivityRoutes {
     const journeySlots = mapActivityModelSlotsToJourney(schedule.slots)
     const dailySlots = activitySessionToDailyTimeSlots(schedule.scheduleWeeks, journeySlots)
     const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(activity.pay, schedule.allocations, user)
+    const displayPays = groupPayBand(incentiveLevelPays)
+
     const richStartDate = parseISO(activity.startDate)
     const currentWeek = calcCurrentWeek(richStartDate, schedule.scheduleWeeks)
 
@@ -40,6 +43,7 @@ export default class ActivityRoutes {
       payEditable,
       dailySlots,
       incentiveLevelPays,
+      displayPays,
       currentWeek,
       tier: eventTierDescriptions[activity.tier?.code],
       organiser: organiserDescriptions[activity.organiser?.code],

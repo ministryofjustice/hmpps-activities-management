@@ -196,8 +196,8 @@
                             text: "Pay rates"
                         },
                         value: {
-                            html: paySummary(schedule.activity.paid, incentiveLevelPays, payEditable)
-                        },
+                            html: paySummary(schedule.activity.paid, incentiveLevelPays, schedule.allocations, payEditable) if not futurePayRatesFlag else displayPaySummary(schedule.activity.paid, displayPays, schedule.allocations, payEditable)
+                    },
                         actions: {
                             items: [
                                 {
@@ -350,6 +350,28 @@
     {% else %}
         <p class="govuk-body govuk-!-margin-0">People are not paid for this activity</p>
         {% if not payEditable %}
+            <div class="govuk-hint">You cannot change this while people are allocated to the activity.</div>
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro displayPaySummary(activityPaid, displayPays, allocations) %}
+    {% if activityPaid %}
+        {% if incentiveLevelPays | length > 0 %}
+            {% for displayPay in displayPays %}
+                <div class="govuk-!-margin-bottom-2">
+                    <div class="govuk-!-font-weight-bold">{{ displayPay.incentiveLevel }} incentive level pay</div>
+                    {% for pay in displayPay.pays %}
+                        <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney if pay.description === undefined else pay.rate | toMoney + pay.description }} </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        {% else %}
+            None added yet
+        {% endif %}
+    {% else %}
+        <p class="govuk-body govuk-!-margin-0">People are not paid for this activity</p>
+        {% if allocations | length > 0 %}
             <div class="govuk-hint">You cannot change this while people are allocated to the activity.</div>
         {% endif %}
     {% endif %}

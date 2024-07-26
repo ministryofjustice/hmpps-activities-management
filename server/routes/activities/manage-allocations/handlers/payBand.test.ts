@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import PayBandRoutes, { PayBand } from './payBand'
+import PayBandRoutes, { PayBand, payBandDetail, payBandWithDescription } from './payBand'
 import atLeast from '../../../../../jest.setup'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -164,6 +164,70 @@ describe('Route Handlers - Allocate - Pay band', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
+    })
+  })
+
+  describe('multiple paybands', () => {
+    it('should create an array of pay bands with descriptions where there is a pay change in the future', async () => {
+      const originalPayBands: payBandDetail[] = [
+        {
+          bandId: 19,
+          bandAlias: 'Pay band 3',
+          rate: 75,
+          startDate: null,
+        },
+        {
+          bandId: 19,
+          bandAlias: 'Pay band 3',
+          rate: 95,
+          startDate: '2024-07-27',
+        },
+      ]
+
+      const result = payBandWithDescription(originalPayBands)
+      expect(result).toEqual([
+        {
+          bandId: 19,
+          bandAlias: 'Pay band 3',
+          rate: 75,
+          startDate: null,
+          description: ', set to change to £0.95 from Saturday, 27 July 2024',
+        },
+      ])
+    })
+
+    it('should create an array of pay bands with descriptions where there is a pay change in the past and future', async () => {
+      const originalPayBands: payBandDetail[] = [
+        {
+          bandId: 19,
+          bandAlias: 'Pay band 3',
+          rate: 75,
+          startDate: null,
+        },
+        {
+          bandId: 19,
+          bandAlias: 'Pay band 3',
+          rate: 83,
+          startDate: '2024-07-15',
+        },
+        {
+          bandId: 19,
+          bandAlias: 'Pay band 3',
+          rate: 95,
+          startDate: '2024-07-27',
+        },
+      ]
+
+      const result = payBandWithDescription(originalPayBands)
+      expect(result).toEqual([
+        {
+          bandId: 19,
+          bandAlias: 'Pay band 3',
+          rate: 83,
+          startDate: '2024-07-15',
+          description: ', set to change to £0.95 from Saturday, 27 July 2024',
+        },
+      ])
     })
   })
 })

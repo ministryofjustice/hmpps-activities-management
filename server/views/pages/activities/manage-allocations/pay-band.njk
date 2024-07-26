@@ -13,7 +13,7 @@
     {% set bandOptions = (bandOptions.push(
         {
             value: pay.bandId,
-            text: pay.bandAlias + ' - ' + pay.rate | toMoney,
+            text: pay.bandAlias + ' - ' + pay.rate | toMoney if pay.description === undefined else pay.bandAlias + ' - ' + pay.rate | toMoney + pay.description,
             checked: formResponses.payBand == pay.bandId or session.allocateJourney.inmate.payBand.id == pay.bandId
         }
     ), bandOptions) %}

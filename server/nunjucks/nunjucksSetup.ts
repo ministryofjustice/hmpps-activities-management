@@ -216,6 +216,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('recordAttendanceSelectSlotFirst', config.recordAttendanceSelectSlotFirst)
   njkEnv.addGlobal('allocateToNextSession', config.allocateToNextSession)
   njkEnv.addGlobal('activitiesAttendanceUpdatesFlag', config.activitiesAttendanceUpdatesFlag)
+  njkEnv.addGlobal('futurePayRatesFlag', config.futurePayRatesToggleEnabled)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)
