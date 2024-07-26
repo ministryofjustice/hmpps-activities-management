@@ -91,12 +91,11 @@
                           '
                 }) }}
 
-
                 {% if payRateType === "single" %}
-                    {% if session.req.params.mode == 'edit' and hasAllocations %}
-                        <input type='hidden' name='incentiveLevel' value='{{ iep }}' >
-                    {% elseif session.req.params.mode == 'create' and session.createJourney.incentiveLevel !== null %}
+                    {% if session.req.params.mode == 'create' and session.createJourney.incentiveLevel !== null %}
                         <input type='hidden' name='incentiveLevel' value='{{ session.createJourney.incentiveLevel }}' >
+                    {% elseif session.req.params.mode == 'edit' and (hasAllocations or iep) %}
+                        <input type='hidden' name='incentiveLevel' value='{{ iep }}' >
                     {% else %}
                         {% set incentiveLevelOptions = [] %}
                         {% for incentiveLevel in incentiveLevels %}
@@ -120,7 +119,9 @@
                                 text: 'Only prisoners with the specified incentive level can be allocated to this pay rate.'
                             },
                             items: incentiveLevelOptions,
-                            errorMessage: validationErrors | findError('incentiveLevel')
+                            errorMessage: validationErrors | findError('incentiveLevel'),
+                            attributes: {"data-qa": "incentiveLevelRadios"}
+                            
                         }) }}
                     {% endif %}
                 {% endif %}
