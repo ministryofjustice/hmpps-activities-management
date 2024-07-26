@@ -20,7 +20,8 @@ export default class IncentiveLevelPayMappingUtil {
   ): Promise<IepPay[]> {
     if (pay.length === 0) return []
 
-    const allocationsMaybe = allocations || []
+    let allocationsMaybe = allocations || []
+    allocationsMaybe = allocationsMaybe.filter(a => a.status !== 'ENDED')
 
     const allocatedPrisonerNumbers = allocationsMaybe.map(a => a.prisonerNumber)
     const [allocatedPrisoners, incentiveLevels]: [Prisoner[], IncentiveLevel[]] = await Promise.all([
