@@ -5,7 +5,7 @@ import { Prisoner } from '../../@types/prisonerOffenderSearchImport/types'
 import { IncentiveLevel } from '../../@types/incentivesApi/types'
 import { ActivityPay, Allocation } from '../../@types/activitiesAPI/types'
 
-type IepPay = {
+export type IepPay = {
   incentiveLevel: string
   pays: Array<ActivityPay & { allocationCount: number }>
 }

@@ -4971,6 +4971,12 @@ export interface components {
        * @example 10
        */
       pieceRateItems?: number
+      /**
+       * Format: string
+       * @description description = The effective start date for this pay rate
+       * @example 2024-06-18
+       */
+      startDate?: string
     }
     /** @description Describes a top-level activity */
     Activity: {
@@ -5291,6 +5297,12 @@ export interface components {
        * @example 10
        */
       pieceRateItems?: number
+      /**
+       * Format: string
+       * @description description = The effective start date for this pay rate
+       * @example 2024-06-18
+       */
+      startDate?: string
     }
     /** @description
      *       Describes the weekly schedule for an activity. There can be several of these defined for one activity.
