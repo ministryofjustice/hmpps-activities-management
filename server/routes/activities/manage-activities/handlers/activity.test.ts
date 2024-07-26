@@ -8,7 +8,7 @@ import PrisonService from '../../../../services/prisonService'
 import atLeast from '../../../../../jest.setup'
 
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
-import { Activity, ActivitySchedule } from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivitySchedule, Allocation } from '../../../../@types/activitiesAPI/types'
 import { toDateString } from '../../../../utils/utils'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
 import { organiserDescriptions } from '../../../../enum/eventOrganisers'
@@ -26,33 +26,6 @@ describe('Route Handlers - View Activity', () => {
   const handler = new ActivityRoutes(activitiesService, prisonService)
   let req: Request
   let res: Response
-
-  const mockActivity = {
-    attendanceRequired: false,
-    category: { code: 'EDUCATION', id: 1, name: 'Education' },
-    createdBy: '',
-    createdTime: '',
-    description: '',
-    eligibilityRules: [],
-    endDate: toDateString(nextWeek),
-    inCell: false,
-    outsideWork: false,
-    pay: [],
-    payPerSession: 'H',
-    pieceWork: false,
-    prisonCode: '',
-    riskLevel: '',
-    schedules: [activitySchedule],
-    startDate: toDateString(today),
-    summary: 'Maths Level 1',
-    tier: { code: '', description: '', id: 1 },
-    organiser: { id: 1 },
-    waitingList: [],
-    id: 1,
-    minimumEducationLevel: [],
-  } as unknown as Activity
-
-  when(activitiesService.getActivity).calledWith(atLeast(1)).mockResolvedValueOnce(mockActivity)
 
   beforeEach(() => {
     res = {
@@ -79,6 +52,228 @@ describe('Route Handlers - View Activity', () => {
 
   describe('GET', () => {
     it('should render page with view activity', async () => {
+      const mockActivity = {
+        attendanceRequired: false,
+        category: { code: 'EDUCATION', id: 1, name: 'Education' },
+        createdBy: '',
+        createdTime: '',
+        description: '',
+        eligibilityRules: [],
+        endDate: toDateString(nextWeek),
+        inCell: false,
+        outsideWork: false,
+        pay: [],
+        payPerSession: 'H',
+        pieceWork: false,
+        prisonCode: '',
+        riskLevel: '',
+        schedules: [activitySchedule],
+        startDate: toDateString(today),
+        summary: 'Maths Level 1',
+        tier: { code: '', description: '', id: 1 },
+        organiser: { id: 1 },
+        waitingList: [],
+        id: 1,
+        minimumEducationLevel: [],
+      } as unknown as Activity
+      when(activitiesService.getActivity).calledWith(atLeast(1)).mockResolvedValueOnce(mockActivity)
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-activities/view-activity', {
+        activity: {
+          attendanceRequired: false,
+          category: { code: 'EDUCATION', id: 1, name: 'Education' },
+          createdBy: '',
+          createdTime: '',
+          description: '',
+          eligibilityRules: [],
+          inCell: false,
+          outsideWork: false,
+          pay: [],
+          payPerSession: 'H',
+          pieceWork: false,
+          prisonCode: '',
+          riskLevel: '',
+          schedules: [activitySchedule],
+          startDate: toDateString(today),
+          endDate: toDateString(nextWeek),
+          summary: 'Maths Level 1',
+          tier: { code: '', description: '', id: 1 },
+          organiser: { id: 1 },
+          waitingList: [],
+          id: 1,
+          minimumEducationLevel: [],
+        },
+        incentiveLevelPays: [],
+        schedule: activitySchedule,
+        payEditable: true,
+        dailySlots: {
+          '1': [
+            {
+              day: 'Monday',
+              slots: ['am'],
+            },
+            {
+              day: 'Tuesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Wednesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Thursday',
+              slots: ['am'],
+            },
+            {
+              day: 'Friday',
+              slots: ['am'],
+            },
+            {
+              day: 'Saturday',
+              slots: ['am'],
+            },
+            {
+              day: 'Sunday',
+              slots: ['am'],
+            },
+          ],
+        },
+        currentWeek: 1,
+        tier: eventTierDescriptions[1],
+        organiser: organiserDescriptions[1],
+      })
+    })
+
+    it('should render page with view activity when the pay is not editable', async () => {
+      const mockActivity = {
+        attendanceRequired: false,
+        category: { code: 'EDUCATION', id: 1, name: 'Education' },
+        createdBy: '',
+        createdTime: '',
+        description: '',
+        eligibilityRules: [],
+        endDate: toDateString(nextWeek),
+        inCell: false,
+        outsideWork: false,
+        pay: [],
+        payPerSession: 'H',
+        pieceWork: false,
+        prisonCode: '',
+        riskLevel: '',
+        schedules: [activitySchedule],
+        startDate: toDateString(today),
+        summary: 'Maths Level 1',
+        tier: { code: '', description: '', id: 1 },
+        organiser: { id: 1 },
+        waitingList: [],
+        id: 1,
+        minimumEducationLevel: [],
+      } as unknown as Activity
+      mockActivity.schedules[0].activity.paid = false
+      when(activitiesService.getActivity).calledWith(atLeast(1)).mockResolvedValueOnce(mockActivity)
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-activities/view-activity', {
+        activity: {
+          attendanceRequired: false,
+          category: { code: 'EDUCATION', id: 1, name: 'Education' },
+          createdBy: '',
+          createdTime: '',
+          description: '',
+          eligibilityRules: [],
+          inCell: false,
+          outsideWork: false,
+          pay: [],
+          payPerSession: 'H',
+          pieceWork: false,
+          prisonCode: '',
+          riskLevel: '',
+          schedules: [activitySchedule],
+          startDate: toDateString(today),
+          endDate: toDateString(nextWeek),
+          summary: 'Maths Level 1',
+          tier: { code: '', description: '', id: 1 },
+          organiser: { id: 1 },
+          waitingList: [],
+          id: 1,
+          minimumEducationLevel: [],
+        },
+        incentiveLevelPays: [],
+        schedule: activitySchedule,
+        payEditable: false,
+        dailySlots: {
+          '1': [
+            {
+              day: 'Monday',
+              slots: ['am'],
+            },
+            {
+              day: 'Tuesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Wednesday',
+              slots: ['am'],
+            },
+            {
+              day: 'Thursday',
+              slots: ['am'],
+            },
+            {
+              day: 'Friday',
+              slots: ['am'],
+            },
+            {
+              day: 'Saturday',
+              slots: ['am'],
+            },
+            {
+              day: 'Sunday',
+              slots: ['am'],
+            },
+          ],
+        },
+        currentWeek: 1,
+        tier: eventTierDescriptions[1],
+        organiser: organiserDescriptions[1],
+      })
+    })
+
+    it('should render page with view activity when allocations are all ended', async () => {
+      const mockActivity = {
+        attendanceRequired: false,
+        category: { code: 'EDUCATION', id: 1, name: 'Education' },
+        createdBy: '',
+        createdTime: '',
+        description: '',
+        eligibilityRules: [],
+        endDate: toDateString(nextWeek),
+        inCell: false,
+        outsideWork: false,
+        pay: [],
+        payPerSession: 'H',
+        pieceWork: false,
+        prisonCode: '',
+        riskLevel: '',
+        schedules: [activitySchedule],
+        startDate: toDateString(today),
+        summary: 'Maths Level 1',
+        tier: { code: '', description: '', id: 1 },
+        organiser: { id: 1 },
+        waitingList: [],
+        id: 1,
+        minimumEducationLevel: [],
+      } as unknown as Activity
+      mockActivity.schedules[0].activity.paid = false
+
+      const modifiedAllocs: Allocation[] = mockActivity.schedules[0].allocations.map(obj => {
+        return { ...obj, status: 'ENDED' }
+      })
+      mockActivity.schedules[0].allocations = modifiedAllocs
+
+      when(activitiesService.getActivity).calledWith(atLeast(1)).mockResolvedValueOnce(mockActivity)
+
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-activities/view-activity', {
         activity: {
