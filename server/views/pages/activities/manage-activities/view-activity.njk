@@ -196,7 +196,7 @@
                             text: "Pay rates"
                         },
                         value: {
-                            html: paySummary(schedule.activity.paid, incentiveLevelPays, schedule.allocations)
+                            html: paySummary(schedule.activity.paid, incentiveLevelPays, payEditable)
                         },
                         actions: {
                             items: [
@@ -207,7 +207,7 @@
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
-                        } if not activityEnded and (schedule.activity.paid or schedule.allocations | length == 0)
+                        } if not activityEnded and payEditable
                     }
                 ]
             }) }}
@@ -333,7 +333,7 @@
     {% endif %}
 {% endmacro %}
 
-{% macro paySummary(activityPaid, incentiveLevelPays, allocations) %}
+{% macro paySummary(activityPaid, incentiveLevelPays, payEditable) %}
     {% if activityPaid %}
         {% if incentiveLevelPays | length > 0 %}
             {% for incentiveLevelPay in incentiveLevelPays %}
@@ -349,7 +349,7 @@
         {% endif %}
     {% else %}
         <p class="govuk-body govuk-!-margin-0">People are not paid for this activity</p>
-        {% if allocations | length > 0 %}
+        {% if not payEditable %}
             <div class="govuk-hint">You cannot change this while people are allocated to the activity.</div>
         {% endif %}
     {% endif %}

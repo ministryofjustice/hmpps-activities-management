@@ -8,6 +8,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
 import { organiserDescriptions } from '../../../../enum/eventOrganisers'
+import { ActivitySchedule, Allocation } from '../../../../@types/activitiesAPI/types'
 
 export default class ActivityRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
@@ -25,6 +26,7 @@ export default class ActivityRoutes {
 
     const activity = await this.activitiesService.getActivity(+activityId, res.locals.user)
     const schedule = activity.schedules[0]
+    const payEditable: boolean = editPay(schedule)
 
     const journeySlots = mapActivityModelSlotsToJourney(schedule.slots)
     const dailySlots = activitySessionToDailyTimeSlots(schedule.scheduleWeeks, journeySlots)
@@ -35,6 +37,7 @@ export default class ActivityRoutes {
     res.render('pages/activities/manage-activities/view-activity', {
       activity,
       schedule,
+      payEditable,
       dailySlots,
       incentiveLevelPays,
       currentWeek,
@@ -42,4 +45,12 @@ export default class ActivityRoutes {
       organiser: organiserDescriptions[activity.organiser?.code],
     })
   }
+}
+
+export function editPay(schedule: ActivitySchedule): boolean {
+  return schedule.activity.paid || allEnded(schedule.allocations)
+}
+
+function allEnded(allocations: Allocation[]): boolean {
+  return allocations.filter(alloc => alloc.status !== 'ENDED').length === 0
 }
