@@ -1,4 +1,4 @@
-import { addMonths } from 'date-fns'
+import { addMonths, addWeeks, format, subWeeks } from 'date-fns'
 import getActivities from '../../fixtures/activitiesApi/getActivities.json'
 import getSchedulesInActivity from '../../fixtures/activitiesApi/getSchedulesInActivity.json'
 import getAllocations from '../../fixtures/activitiesApi/getAllocations.json'
@@ -31,6 +31,12 @@ import ExclusionsPage from '../../pages/allocateToActivity/exclusions'
 
 context('Allocate to activity', () => {
   beforeEach(() => {
+    let currentDate = subWeeks(new Date(), 2)
+    getSchedule.instances.forEach(instance => {
+      /* eslint no-param-reassign: "error" */
+      instance.date = format(currentDate, 'yyyy-MM-dd')
+      currentDate = addWeeks(currentDate, 1)
+    })
     cy.task('reset')
     cy.task('stubSignIn')
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
@@ -52,7 +58,7 @@ context('Allocate to activity', () => {
     cy.signIn()
   })
 
-  it('should click through allocate to activity journey', () => {
+  it('should be able to allocate when selecting a specific start date', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -83,8 +89,72 @@ context('Allocate to activity', () => {
     beforeYouAllocatePage.getButton('Continue').click()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)
+    startDatePage.selectADifferentDate()
     const startDate = addMonths(new Date(), 1)
     startDatePage.selectDatePickerDate(startDate)
+    startDatePage.continue()
+
+    const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)
+    endDateOptionPage.addEndDate('Yes')
+    endDateOptionPage.continue()
+
+    const endDatePage = Page.verifyOnPage(EndDatePage)
+    const endDate = addMonths(new Date(), 8)
+    endDatePage.selectDatePickerDate(endDate)
+    endDatePage.continue()
+
+    const payBandPage = Page.verifyOnPage(PayBandPage)
+    payBandPage.selectPayBand('Medium - £1.75')
+    payBandPage.continue()
+
+    const exclusionsPage = Page.verifyOnPage(ExclusionsPage)
+    exclusionsPage.continue()
+
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.cancel()
+
+    const cancelPage = Page.verifyOnPage(CancelPage)
+    cancelPage.selectOption('No')
+    cancelPage.confirm()
+
+    const checkAnswersPage2 = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage2.confirmAllocation()
+
+    Page.verifyOnPage(ConfirmationPage)
+  })
+
+  it('should be able to allocate when selecting a specific start date', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.allocateToActivitiesCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
+    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.allocateToActivityCard().click()
+
+    const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
+    activitiesPage.activityRows().should('have.length', 3)
+    activitiesPage.selectActivityWithName('English level 1')
+
+    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    allocatePage.allocatedPeopleRows().should('have.length', 2)
+    allocatePage.tabWithTitle('Entry level English 1 schedule').click()
+    allocatePage.activeTimeSlots().should('have.length', 1)
+
+    allocatePage.tabWithTitle('Other people').click()
+    allocatePage.selectRiskLevelOption('Any Workplace Risk Assessment')
+    allocatePage.applyFilters()
+    allocatePage.candidateRows().should('have.length', 10)
+    allocatePage.selectCandidateWithName('Alfonso Cholak')
+
+    const beforeYouAllocatePage = Page.verifyOnPage(BeforeYouAllocate)
+    beforeYouAllocatePage.selectConfirmationRadio('yes')
+    beforeYouAllocatePage.getButton('Continue').click()
+
+    const startDatePage = Page.verifyOnPage(StartDatePage)
+    startDatePage.selectNextSession()
     startDatePage.continue()
 
     const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)

@@ -3,12 +3,13 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { convertToTitleCase, getScheduleIdFromActivity } from '../../../../utils/utils'
+import { asString, convertToTitleCase, getScheduleIdFromActivity } from '../../../../utils/utils'
+import findNextSchedulesInstance from '../../../../utils/helpers/nextScheduledInstanceCalculator'
 
 export default (prisonService: PrisonService, activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
     const { mode, allocationId } = req.params
-    const allocationIds = req.query.allocationIds as string[]
+    const allocationIds = req.query.allocationIds !== undefined ? asString(req.query.allocationIds).split(',') : []
     const { scheduleId } = req.query
     const { user } = res.locals
 
@@ -70,6 +71,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
       latestAllocationStartDate: allocations[allocations.length - 1].startDate,
       exclusions: [],
       updatedExclusions: [],
+      scheduledInstance: findNextSchedulesInstance(activity.schedules[0]),
     }
 
     if (req.params.mode === 'edit' || req.params.mode === 'exclude') {

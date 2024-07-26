@@ -143,8 +143,8 @@ describe('Activities Service', () => {
 
   describe('allocateToSchedule', () => {
     it('should call activities API client to post an allocation', async () => {
-      await activitiesService.allocateToSchedule(1, 'ABC123', 1, user, '2023-01-01', null, [])
-      expect(activitiesApiClient.postAllocation).toHaveBeenCalledWith(1, 'ABC123', 1, user, '2023-01-01', null, [])
+      await activitiesService.allocateToSchedule(1, 'ABC123', 1, user, '2023-01-01', null, [], 123)
+      expect(activitiesApiClient.postAllocation).toHaveBeenCalledWith(1, 'ABC123', 1, user, '2023-01-01', null, [], 123)
     })
   })
 
