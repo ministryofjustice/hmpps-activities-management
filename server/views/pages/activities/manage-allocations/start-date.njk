@@ -1,6 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 
 {% set pageTitle = applicationName + " - Allocation - Start date" %}
@@ -15,6 +16,55 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
+            {% if allocateToNextSession %}
+                {% set nextSessionSlot = session.allocateJourney.scheduledInstance.startTime | getTimeSlotFromTime | upper %}
+                {% set nextSessionDate =  session.allocateJourney.scheduledInstance.date | toDate | formatDate %}
+                {% if (now | formatDate) == nextSessionDate %}
+                    {% set nextSessionText = "today's " + nextSessionSlot + " session" %}
+                {% else %}
+                    {% set nextSessionText = session.allocateJourney.scheduledInstance.startTime | getTimeSlotFromTime | upper + " session on " + nextSessionDate %}
+                {% endif %}
+
+                {{ govukRadios({
+                    name: "startDateOption",
+                    fieldset: {
+                        legend: {
+                            text: "When do you want " + session.allocateJourney.inmate.prisonerName + " to start attending this activity?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--xl"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('startDateOption'),
+                    items: [
+                        {
+                            value: "NEXT_SESSION",
+                            text: "The next session - " + nextSessionText,
+                            checked: formResponses.startDateOption == 'NEXT_SESSION'
+                        },
+                        {
+                            value: "START_DATE",
+                            text: "A different date",
+                            checked: formResponses.startDateOption == 'START_DATE',
+                            conditional: {
+                                html: hmppsDatePicker({
+                                    id: 'startDate',
+                                    name: 'startDate',
+                                    classes: 'hmpps-datepicker--fixed-width',
+                                    label: {
+                                        text: 'Enter the date',
+                                        classes: 'govuk-visually-hidden'
+                                    },
+                                    hint: {
+                                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'
+                                    },
+                                    errorMessage: validationErrors | findError('startDate'),
+                                    value: formResponses.startDate or session.allocateJourney.startDate | isoDateToDatePickerDate
+                                })
+                            }
+                        }
+                    ]
+                }) }}
+            {% else %}
                 {{ hmppsDatePicker({
                     id: 'startDate',
                     name: 'startDate',
@@ -30,6 +80,7 @@
                     errorMessage: validationErrors | findError('startDate'),
                     value: formResponses.startDate or session.allocateJourney.startDate | isoDateToDatePickerDate
                 }) }}
+            {% endif %}
 
                 <div class="govuk-button-group">
                     {{ govukButton({

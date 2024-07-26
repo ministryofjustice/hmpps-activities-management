@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { ValidationArguments } from 'class-validator'
+import { IsEnum, ValidateIf, ValidationArguments } from 'class-validator'
 import { startOfToday } from 'date-fns'
-import { AllocateToActivityJourney } from '../journey'
+import { AllocateToActivityJourney, StartDateOption } from '../journey'
 import {
   formatIsoDate,
   isoDateToDatePickerDate,
@@ -12,9 +12,17 @@ import {
 import ActivitiesService from '../../../../services/activitiesService'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
+import config from '../../../../config'
 
 export class StartDate {
   @Expose()
+  @ValidateIf(_ => config.allocateToNextSession)
+  @IsEnum(StartDateOption, { message: 'Select whether start date is next session or a different date' })
+  @Transform(({ value }) => StartDateOption[value])
+  startDateOption: StartDateOption
+
+  @Expose()
+  @ValidateIf(o => o.startDateOption === StartDateOption.START_DATE || !config.allocateToNextSession)
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(date => date > startOfToday(), { message: 'Enter a date in the future' })
   @Validator((date, { allocateJourney }) => date >= parseIsoDate(allocateJourney.activity.startDate), {
@@ -55,12 +63,23 @@ export default class StartDateRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { allocationId } = req.params
+    const { startDateOption } = req.body
 
-    req.session.allocateJourney.startDate = formatIsoDate(req.body.startDate)
-    req.session.allocateJourney.latestAllocationStartDate = formatIsoDate(req.body.startDate)
+    const nextAvailableInstance = req.session.allocateJourney.scheduledInstance
+
+    const startDate =
+      startDateOption === StartDateOption.NEXT_SESSION ? nextAvailableInstance?.date : formatIsoDate(req.body.startDate)
+
+    req.session.allocateJourney.startDateOption = startDateOption
+    req.session.allocateJourney.startDate = startDate
+    req.session.allocateJourney.latestAllocationStartDate = startDate
 
     if (req.params.mode === 'edit') {
-      const allocationUpdate = { startDate: formatIsoDate(req.body.startDate) }
+      const allocationUpdate = {
+        startDate,
+        scheduleInstanceId: startDateOption === StartDateOption.NEXT_SESSION ? nextAvailableInstance?.id : null,
+      }
+
       await this.activitiesService.updateAllocation(+allocationId, allocationUpdate, user)
 
       const successMessage = `You've updated the start date for this allocation`

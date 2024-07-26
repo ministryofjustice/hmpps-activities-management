@@ -26,6 +26,7 @@ generic-service:
     ACTIVITY_ATTENDANCE_UPDATES: "true"
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-dev.hmpps-digital-prison-reporting-mi-dev.svc.cluster.local"
     BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED: "true"
+    ALLOCATE_TO_NEXT_SESSION: "true"
 
   allowlist: null
 

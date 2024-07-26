@@ -214,6 +214,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('recordAttendanceSelectSlotFirst', config.recordAttendanceSelectSlotFirst)
+  njkEnv.addGlobal('allocateToNextSession', config.allocateToNextSession)
   njkEnv.addGlobal('activitiesAttendanceUpdatesFlag', config.activitiesAttendanceUpdatesFlag)
   njkEnv.addGlobal('futurePayRatesFlag', config.futurePayRatesToggleEnabled)
 

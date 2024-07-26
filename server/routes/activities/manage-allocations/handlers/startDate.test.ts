@@ -6,6 +6,8 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import StartDateRoutes, { StartDate } from './startDate'
 import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
 import ActivitiesService from '../../../../services/activitiesService'
+import config from '../../../../config'
+import { StartDateOption } from '../journey'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -49,35 +51,214 @@ describe('Route Handlers - Edit allocation - Start date', () => {
   })
 
   describe('POST', () => {
-    it('should save entered start date in session and redirect to the end date option page', async () => {
-      req.body = { startDate: new Date() }
-      await handler.POST(req, res)
+    describe('Create', () => {
+      it('should save entered start date in session and redirect if user selected a specific date', async () => {
+        req.body = {
+          startDateOption: StartDateOption.START_DATE,
+          startDate: new Date(2024, 3, 23),
+        }
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date-option')
+        await handler.POST(req, res)
+
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date-option')
+        expect(req.session.allocateJourney.startDateOption).toEqual(StartDateOption.START_DATE)
+        expect(req.session.allocateJourney.startDate).toEqual('2024-04-23')
+        expect(req.session.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
+      })
+
+      it('should save next session start date in session and redirect if user selected the next session', async () => {
+        req.session.allocateJourney.scheduledInstance = {
+          attendances: [],
+          cancelled: false,
+          endTime: '',
+          startTime: '',
+          id: 123,
+          date: '2024-04-23',
+        }
+
+        req.body = {
+          startDateOption: StartDateOption.NEXT_SESSION,
+          startDate: new Date(),
+        }
+
+        await handler.POST(req, res)
+
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date-option')
+        expect(req.session.allocateJourney.startDateOption).toEqual(StartDateOption.NEXT_SESSION)
+        expect(req.session.allocateJourney.startDate).toEqual('2024-04-23')
+        expect(req.session.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
+      })
     })
 
-    it('edit mode should update the allocation and redirect with success', async () => {
-      req.params.mode = 'edit'
+    describe('Edit', () => {
+      beforeEach(() => {
+        req.params.mode = 'edit'
+      })
 
-      req.body = { startDate: new Date() }
-      await handler.POST(req, res)
+      it('should update the allocation and redirect with success if user selected a specific date', async () => {
+        req.body = { startDate: new Date(2024, 3, 23) }
 
-      expect(activitiesService.updateAllocation).toHaveBeenCalledWith(
-        1,
-        {
-          startDate: formatIsoDate(new Date()),
-        },
-        res.locals.user,
-      )
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        `/activities/allocations/view/1`,
-        'Allocation updated',
-        `You've updated the start date for this allocation`,
-      )
+        await handler.POST(req, res)
+
+        expect(req.session.allocateJourney.startDate).toEqual('2024-04-23')
+        expect(req.session.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
+
+        expect(activitiesService.updateAllocation).toHaveBeenCalledWith(
+          1,
+          {
+            startDate: formatIsoDate(req.body.startDate),
+            scheduleInstanceId: null,
+          },
+          res.locals.user,
+        )
+        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+          `/activities/allocations/view/1`,
+          'Allocation updated',
+          `You've updated the start date for this allocation`,
+        )
+      })
+
+      it('should update the allocation and redirect with success if user selected the next session', async () => {
+        req.session.allocateJourney.scheduledInstance = {
+          attendances: [],
+          cancelled: false,
+          endTime: '',
+          startTime: '',
+          id: 123,
+          date: '2024-04-23',
+        }
+
+        req.body = {
+          startDateOption: 'NEXT_SESSION',
+        }
+
+        await handler.POST(req, res)
+
+        expect(req.session.allocateJourney.startDate).toEqual('2024-04-23')
+        expect(req.session.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
+
+        expect(activitiesService.updateAllocation).toHaveBeenCalledWith(
+          1,
+          {
+            startDate: '2024-04-23',
+            scheduleInstanceId: 123,
+          },
+          res.locals.user,
+        )
+        expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+          `/activities/allocations/view/1`,
+          'Allocation updated',
+          `You've updated the start date for this allocation`,
+        )
+      })
     })
   })
 
   describe('type validation', () => {
+    // TODO: SAA-671 - remove
+    describe('legacy', () => {
+      const activityStartDate = addMonths(new Date(), 1)
+      const activityEndDate = addDays(activityStartDate, 2)
+
+      const allocateJourney = {
+        activity: {
+          startDate: formatIsoDate(activityStartDate),
+          endDate: formatIsoDate(activityEndDate),
+        },
+      }
+
+      beforeEach(() => {
+        config.allocateToNextSession = false
+      })
+
+      it('validation fails if a value is not entered', async () => {
+        const startDate = ''
+
+        const body = { startDate }
+
+        const requestObject = plainToInstance(StartDate, {
+          ...body,
+          allocateJourney,
+        })
+        const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+          errs.flatMap(associateErrorsWithProperty),
+        )
+
+        expect(errors).toEqual([{ property: 'startDate', error: 'Enter a valid start date' }])
+      })
+
+      it('validation fails if a bad value is entered', async () => {
+        const startDate = 'a/1/2023'
+
+        const body = { startDate }
+
+        const requestObject = plainToInstance(StartDate, {
+          ...body,
+          allocateJourney,
+        })
+        const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+          errs.flatMap(associateErrorsWithProperty),
+        )
+
+        expect(errors).toEqual([{ property: 'startDate', error: 'Enter a valid start date' }])
+      })
+
+      it('validation fails if start date is in past', async () => {
+        const yesterday = addDays(new Date(), -1)
+        const startDate = formatDatePickerDate(yesterday)
+
+        const body = { startDate }
+
+        const requestObject = plainToInstance(StartDate, {
+          ...body,
+          allocateJourney,
+        })
+        const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+        expect(errors).toEqual([{ property: 'startDate', error: 'Enter a date in the future' }])
+      })
+
+      it('validation fails if start date is before activity start date', async () => {
+        const startDate = addDays(activityStartDate, -1)
+
+        const body = {
+          startDate: formatDatePickerDate(startDate),
+        }
+
+        const requestObject = plainToInstance(StartDate, {
+          ...body,
+          allocateJourney,
+        })
+        const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+        expect(errors).toEqual([
+          {
+            property: 'startDate',
+            error: `Enter a date on or after the activity's start date, ${formatDatePickerDate(activityStartDate)}`,
+          },
+        ])
+      })
+
+      it('validation fails if start date is after activity end date', async () => {
+        const body = {
+          startDate: formatDatePickerDate(addDays(activityEndDate, 1)),
+        }
+
+        const requestObject = plainToInstance(StartDate, {
+          ...body,
+          allocateJourney,
+        })
+        const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+        expect(errors).toEqual([
+          {
+            property: 'startDate',
+            error: `Enter a date on or before the activity's end date, ${formatDatePickerDate(activityEndDate)}`,
+          },
+        ])
+      })
+    })
+
     const activityStartDate = addMonths(new Date(), 1)
     const activityEndDate = addDays(activityStartDate, 2)
 
@@ -88,10 +269,12 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       },
     }
 
-    it('validation fails if a value is not entered', async () => {
-      const startDate = ''
+    beforeEach(() => {
+      config.allocateToNextSession = true
+    })
 
-      const body = { startDate }
+    it('validation fails if start date option is not selected', async () => {
+      const body = {}
 
       const requestObject = plainToInstance(StartDate, {
         ...body,
@@ -101,78 +284,110 @@ describe('Route Handlers - Edit allocation - Start date', () => {
         errs.flatMap(associateErrorsWithProperty),
       )
 
-      expect(errors).toEqual([{ property: 'startDate', error: 'Enter a valid start date' }])
-    })
-
-    it('validation fails if a bad value is entered', async () => {
-      const startDate = 'a/1/2023'
-
-      const body = { startDate }
-
-      const requestObject = plainToInstance(StartDate, {
-        ...body,
-        allocateJourney,
-      })
-      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
-        errs.flatMap(associateErrorsWithProperty),
-      )
-
-      expect(errors).toEqual([{ property: 'startDate', error: 'Enter a valid start date' }])
-    })
-
-    it('validation fails if start date is in past', async () => {
-      const yesterday = addDays(new Date(), -1)
-      const startDate = formatDatePickerDate(yesterday)
-
-      const body = { startDate }
-
-      const requestObject = plainToInstance(StartDate, {
-        ...body,
-        allocateJourney,
-      })
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual([{ property: 'startDate', error: 'Enter a date in the future' }])
-    })
-
-    it('validation fails if start date is before activity start date', async () => {
-      const startDate = addDays(activityStartDate, -1)
-
-      const body = {
-        startDate: formatDatePickerDate(startDate),
-      }
-
-      const requestObject = plainToInstance(StartDate, {
-        ...body,
-        allocateJourney,
-      })
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
       expect(errors).toEqual([
-        {
-          property: 'startDate',
-          error: `Enter a date on or after the activity's start date, ${formatDatePickerDate(activityStartDate)}`,
-        },
+        { property: 'startDateOption', error: 'Select whether start date is next session or a different date' },
       ])
     })
 
-    it('validation fails if start date is after activity end date', async () => {
+    describe('Next Session', () => {
+      it('validation fails if start date option is not selected', async () => {
+        const body = { startDateOption: 'junk' }
+
+        const requestObject = plainToInstance(StartDate, {
+          ...body,
+          allocateJourney,
+        })
+        const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+          errs.flatMap(associateErrorsWithProperty),
+        )
+
+        expect(errors).toEqual([
+          {
+            property: 'startDateOption',
+            error: 'Select whether start date is next session or a different date',
+          },
+        ])
+      })
+    })
+
+    describe('Start Date', () => {
       const body = {
-        startDate: formatDatePickerDate(addDays(activityEndDate, 1)),
+        startDateOption: 'START_DATE',
+        startDate: '',
       }
 
-      const requestObject = plainToInstance(StartDate, {
-        ...body,
-        allocateJourney,
-      })
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      it('validation fails if a value is not entered', async () => {
+        const requestObject = plainToInstance(StartDate, {
+          ...body,
+          allocateJourney,
+        })
+        const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+          errs.flatMap(associateErrorsWithProperty),
+        )
 
-      expect(errors).toEqual([
-        {
-          property: 'startDate',
-          error: `Enter a date on or before the activity's end date, ${formatDatePickerDate(activityEndDate)}`,
-        },
-      ])
+        expect(errors).toEqual([{ property: 'startDate', error: 'Enter a valid start date' }])
+      })
+
+      it('validation fails if a bad value is entered', async () => {
+        body.startDate = 'a/1/2023'
+
+        const requestObject = plainToInstance(StartDate, {
+          ...body,
+          allocateJourney,
+        })
+        const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+          errs.flatMap(associateErrorsWithProperty),
+        )
+
+        expect(errors).toEqual([{ property: 'startDate', error: 'Enter a valid start date' }])
+      })
+
+      it('validation fails if start date is in past', async () => {
+        const yesterday = addDays(new Date(), -1)
+        body.startDate = formatDatePickerDate(yesterday)
+
+        const requestObject = plainToInstance(StartDate, {
+          ...body,
+          allocateJourney,
+        })
+        const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+        expect(errors).toEqual([{ property: 'startDate', error: 'Enter a date in the future' }])
+      })
+
+      it('validation fails if start date is before activity start date', async () => {
+        body.startDate = formatDatePickerDate(addDays(activityStartDate, -1))
+
+        const requestObject = plainToInstance(StartDate, {
+          ...body,
+          allocateJourney,
+        })
+        const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+        expect(errors).toEqual([
+          {
+            property: 'startDate',
+            error: `Enter a date on or after the activity's start date, ${formatDatePickerDate(activityStartDate)}`,
+          },
+        ])
+      })
+
+      it('validation fails if start date is after activity end date', async () => {
+        body.startDate = formatDatePickerDate(addDays(activityEndDate, 1))
+
+        const requestObject = plainToInstance(StartDate, {
+          ...body,
+          allocateJourney,
+        })
+        const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+        expect(errors).toEqual([
+          {
+            property: 'startDate',
+            error: `Enter a date on or before the activity's end date, ${formatDatePickerDate(activityEndDate)}`,
+          },
+        ])
+      })
     })
   })
 })
