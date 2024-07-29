@@ -96,6 +96,22 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
 
       expect(res.redirect).toHaveBeenCalledWith('pay/single?preserveHistory=true')
     })
+
+    it('should pass iep level in query', async () => {
+      req.body = {
+        incentiveLevel: 'Basic',
+      }
+      req.query = {
+        preserveHistory: 'true',
+      }
+      req.params = {
+        mode: 'edit',
+      }
+
+      await handler.POST(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('pay/single?preserveHistory=true&iep=Basic')
+    })
   })
 
   describe('type validation', () => {

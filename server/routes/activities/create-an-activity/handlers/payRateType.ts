@@ -28,15 +28,16 @@ export default class PayRateTypeRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { incentiveLevel } = req.body
     let payRateTypeOption
+    let iep
 
     if (incentiveLevel === 'FLAT_RATE') {
       payRateTypeOption = 'flat'
     } else {
       payRateTypeOption = 'single'
       req.session.createJourney.incentiveLevel = incentiveLevel
+      if (req.params?.mode === 'edit') iep = incentiveLevel
     }
-
     const { preserveHistory } = req.query
-    res.redirect(`pay/${payRateTypeOption}${preserveHistory ? '?preserveHistory=true' : ''}`)
+    res.redirect(`pay/${payRateTypeOption}${preserveHistory ? '?preserveHistory=true' : ''}${iep ? `&iep=${iep}` : ''}`)
   }
 }
