@@ -33,7 +33,7 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/category?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change category",
+                                    visuallyHiddenText: " category",
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
@@ -51,7 +51,7 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/name?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change activity name",
+                                    visuallyHiddenText: " activity name",
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
@@ -69,7 +69,7 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/tier?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change tier"
+                                    visuallyHiddenText: " tier"
                                 }
                             ] if not activityEnded and activity.category.code != 'SAA_NOT_IN_WORK'
                         }
@@ -86,7 +86,7 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/organiser?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change organiser"
+                                    visuallyHiddenText: " organiser"
                                 }
                             ]
                         } if not activityEnded
@@ -98,7 +98,7 @@
                             items: [{
                                 href: "/activities/edit/" + activity.id + "/attendance-required?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: "Change record attendance option"
+                                visuallyHiddenText: " record attendance option"
                             }]
                         } if not (activityEnded or schedule.activity.paid or (activity.attendanceRequired and activity.tier.code != 'FOUNDATION'))
                     }
@@ -120,7 +120,7 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/location?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change location",
+                                    visuallyHiddenText: " location",
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
@@ -138,7 +138,7 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/capacity?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change capacity",
+                                    visuallyHiddenText: " capacity",
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
@@ -162,7 +162,7 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/risk-level?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change risk level",
+                                    visuallyHiddenText: " risk level",
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
@@ -180,7 +180,7 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/check-education-level?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change education levels",
+                                    visuallyHiddenText: " education levels",
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
@@ -203,8 +203,9 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/" + ("check-pay" if schedule.activity.paid else "pay-option") + "?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change pay",
-                                    classes: "govuk-link--no-visited-state"
+                                    visuallyHiddenText: " pay",
+                                    classes: "govuk-link--no-visited-state",
+					                attributes: { "data-qa": "change-pay-link" }
                                 }
                             ]
                         } if not activityEnded and payEditable
@@ -232,7 +233,7 @@
                         {
                             href: "/activities/edit/" + activity.id + "/start-date?preserveHistory=true",
                             text: "Change",
-                            visuallyHiddenText: "change start date",
+                            visuallyHiddenText: " start date",
                             classes: "govuk-link--no-visited-state"
                         }
                     ]
@@ -251,7 +252,7 @@
                         {
                             href: "/activities/edit/" + activity.id + "/end-date?preserveHistory=true",
                             text: "Change",
-                            visuallyHiddenText: "change end date",
+                            visuallyHiddenText: " end date",
                             classes: "govuk-link--no-visited-state"
                         }
                     ]
@@ -279,7 +280,7 @@
                                 {
                                     href: "/activities/edit/" + activity.id + "/days-and-times/" + week + "?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: "change days and times",
+                                    visuallyHiddenText: " days and times",
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
@@ -301,7 +302,7 @@
                             {
                                 href: "/activities/edit/" + activity.id + "/bank-holiday-option?preserveHistory=true",
                                 text: "Change",
-                                visuallyHiddenText: "change bank holiday",
+                                visuallyHiddenText: " bank holiday",
                                 classes: "govuk-link--no-visited-state"
                             }
                         ]

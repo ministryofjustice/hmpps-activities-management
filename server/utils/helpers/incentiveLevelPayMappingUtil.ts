@@ -45,7 +45,7 @@ export default class IncentiveLevelPayMappingUtil {
               ...p,
               allocationCount: allocationsMaybe.filter(
                 a =>
-                  a.prisonPayBand.id === p.prisonPayBand.id &&
+                  a.prisonPayBand?.id === p.prisonPayBand.id &&
                   allocatedPrisoners.find(ap => ap.prisonerNumber === a.prisonerNumber).currentIncentive?.level
                     .description === iepPay.incentiveLevel,
               ).length,
