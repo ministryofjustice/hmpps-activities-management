@@ -2,17 +2,26 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { addDays, subDays } from 'date-fns'
+import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
 import PayBandRoutes, { PayBand, payBandDetail, payBandWithDescription } from './payBand'
 import atLeast from '../../../../../jest.setup'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Allocate - Pay band', () => {
+  const inThreeDays = addDays(new Date(), 3)
+  const inThreeDaysStr = formatIsoDate(inThreeDays)
+  const inThreeDaysMsg = formatDate(inThreeDaysStr)
+
+  const threeDaysAgo = subDays(new Date(), 3)
+  const threeDaysAgoStr = formatIsoDate(threeDaysAgo)
+
   const handler = new PayBandRoutes(activitiesService)
   let req: Request
   let res: Response
@@ -180,7 +189,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
           bandId: 19,
           bandAlias: 'Pay band 3',
           rate: 95,
-          startDate: '2024-07-27',
+          startDate: inThreeDaysStr,
         },
       ]
 
@@ -191,7 +200,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
           bandAlias: 'Pay band 3',
           rate: 75,
           startDate: null,
-          description: ', set to change to £0.95 from Saturday, 27 July 2024',
+          description: `, set to change to £0.95 from ${inThreeDaysMsg}`,
         },
       ])
     })
@@ -208,13 +217,13 @@ describe('Route Handlers - Allocate - Pay band', () => {
           bandId: 19,
           bandAlias: 'Pay band 3',
           rate: 83,
-          startDate: '2024-07-15',
+          startDate: threeDaysAgoStr,
         },
         {
           bandId: 19,
           bandAlias: 'Pay band 3',
           rate: 95,
-          startDate: '2024-07-27',
+          startDate: inThreeDaysStr,
         },
       ]
 
@@ -224,8 +233,8 @@ describe('Route Handlers - Allocate - Pay band', () => {
           bandId: 19,
           bandAlias: 'Pay band 3',
           rate: 83,
-          startDate: '2024-07-15',
-          description: ', set to change to £0.95 from Saturday, 27 July 2024',
+          startDate: threeDaysAgoStr,
+          description: `, set to change to £0.95 from ${inThreeDaysMsg}`,
         },
       ])
     })
