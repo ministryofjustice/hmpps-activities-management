@@ -393,7 +393,7 @@ export const mapActivityModelSlotsToJourney = (
     }
 
     daysOfWeek.forEach(d => {
-      const timeslots = weekSlots.filter(s => s[`${d.toLowerCase()}Flag`]).map(s => getTimeSlotFromTime(s.startTime))
+      const timeslots = weekSlots.filter(s => s[`${d.toLowerCase()}Flag`]).map(s => s.timeSlot)
       slots[week][`timeSlots${d}`] = timeslots.map(t => t.toUpperCase())
     })
   })
