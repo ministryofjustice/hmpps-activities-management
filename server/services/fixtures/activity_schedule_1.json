@@ -245,7 +245,8 @@
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Mon"],
-      "mondayFlag": true
+      "mondayFlag": true,
+      "timeSlot": "AM"
     },
     {
       "id": 1,
@@ -253,7 +254,8 @@
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Tue"],
-      "tuesdayFlag": true
+      "tuesdayFlag": true,
+      "timeSlot": "AM"
     },
     {
       "id": 1,
@@ -261,7 +263,8 @@
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Wed"],
-      "wednesdayFlag": true
+      "wednesdayFlag": true,
+      "timeSlot": "AM"
     },
     {
       "id": 1,
@@ -269,7 +272,8 @@
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Thu"],
-      "thursdayFlag": true
+      "thursdayFlag": true,
+      "timeSlot": "AM"
     },
     {
       "id": 1,
@@ -277,7 +281,8 @@
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Fri"],
-      "fridayFlag": true
+      "fridayFlag": true,
+      "timeSlot": "AM"
     },
     {
       "id": 1,
@@ -285,7 +290,8 @@
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Sat"],
-      "saturdayFlag": true
+      "saturdayFlag": true,
+      "timeSlot": "AM"
     },
     {
       "id": 1,
@@ -293,7 +299,8 @@
       "startTime": "10:00",
       "endTime": "11:00",
       "daysOfWeek": ["Sun"],
-      "sundayFlag": true
+      "sundayFlag": true,
+      "timeSlot": "AM"
     }
   ],
   "runsOnBankHoliday": false
