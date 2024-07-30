@@ -192,7 +192,8 @@
           "thursdayFlag": false,
           "fridayFlag": false,
           "saturdayFlag": false,
-          "sundayFlag": false
+          "sundayFlag": false,
+          "timeSlot": "AM"
         }
       ],
       "startDate": "2022-10-10",
@@ -360,7 +361,8 @@
           "id": 6,
           "startTime": "14:00",
           "endTime": "15:00",
-          "daysOfWeek": ["Tue"]
+          "daysOfWeek": ["Tue"],
+          "timeSlot": "PM"
         }
       ],
       "startDate": "2022-10-10",
@@ -512,7 +514,8 @@
           "id": 7,
           "startTime": "10:00",
           "endTime": "11:00",
-          "daysOfWeek": ["Thu"]
+          "daysOfWeek": ["Thu"],
+          "timeSlot": "AM"
         }
       ],
       "startDate": "2022-10-10",
@@ -664,7 +667,8 @@
           "id": 8,
           "startTime": "14:00",
           "endTime": "15:00",
-          "daysOfWeek": ["Thu"]
+          "daysOfWeek": ["Thu"],
+          "timeSlot": "PM"
         }
       ],
       "startDate": "2022-10-10",
