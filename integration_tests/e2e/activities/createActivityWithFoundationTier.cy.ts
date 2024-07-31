@@ -149,6 +149,7 @@ context('Create activity', () => {
     checkAnswersPage.assertRecordAttendance('No')
     checkAnswersPage.createActivity()
 
-    Page.verifyOnPage(ConfirmationPage)
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.payReviewLink().should('not.exist')
   })
 })

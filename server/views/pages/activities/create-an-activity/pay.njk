@@ -55,6 +55,14 @@
                     value: formResponses.rate or (rate / 100) | toFixed
                 }) }}
 
+                {% if futurePayRatesFlag and session.req.params.mode == 'create' %}
+                    {{ govukDetails({
+                        summaryText: "What to do if the pay amount is due to change soon",
+                        text: "Finish setting up the activity with the current pay rates. Then edit the activity. You can schedule changes to pay rates up to 30 days in advance.",
+                        attributes: { 'data-qa': 'futurePayRateDetails' }
+                    }) }}
+                {% endif %}
+
                 {% set payBandOptions = [
                     {
                         value: 0,
