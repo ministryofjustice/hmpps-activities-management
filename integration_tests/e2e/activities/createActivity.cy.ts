@@ -92,6 +92,7 @@ context('Create activity', () => {
     const payPage = Page.verifyOnPage(PayPage)
     payPage.enterPayAmount('1.00')
     payPage.selectPayBand('Low')
+    payPage.futurePayRateDetails().should('exist')
     payPage.reviewAndAddMoreRates()
 
     const checkPayPage = Page.verifyOnPage(CheckPayPage)
@@ -166,6 +167,7 @@ context('Create activity', () => {
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage.createActivity()
 
-    Page.verifyOnPage(ConfirmationPage)
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.payReviewLink().should('exist')
   })
 })

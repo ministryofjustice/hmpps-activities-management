@@ -66,6 +66,7 @@ context('Edit activity', () => {
     const payPage = Page.verifyOnPage(PayPage)
     payPage.enterPayAmount('1.00')
     payPage.selectPayBand('Low')
+    payPage.futurePayRateDetails().should('not.exist')
     payPage.radios().should('not.exist')
   })
 })

@@ -11,6 +11,8 @@ export default class PayPage extends Page {
 
   incentiveLevel = (text: string) => this.getInputByLabel(text).click()
 
+  futurePayRateDetails = () => cy.get('[data-qa="futurePayRateDetails"]')
+
   reviewAndAddMoreRates = () => cy.get('button').contains('Save and continue').click()
 
   radios = () => cy.get('[data-qa="incentiveLevelRadios"]')
