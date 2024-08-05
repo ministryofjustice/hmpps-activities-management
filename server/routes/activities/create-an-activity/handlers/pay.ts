@@ -81,7 +81,7 @@ export default class PayRoutes {
     const hasAllocations = await this.helper
       .getPayGroupedByIncentiveLevel(createJourney.pay, createJourney.allocations, user)
       .then(pays => pays.find(p => p.incentiveLevel === iep)?.pays)
-      .then(pays => pays?.find(p => p.prisonPayBand.id === +bandId).allocationCount > 0)
+      .then(pays => pays?.find(p => p.prisonPayBand.id === +bandId)?.allocationCount > 0)
 
     const band = payBands.find(p => p.id === +bandId)
 
@@ -174,6 +174,7 @@ export default class PayRoutes {
       incentiveLevel: p.incentiveLevel,
       payBandId: p.prisonPayBand.id,
       rate: p.rate,
+      startDate: p.startDate,
     }))
 
     const updatedActivity = {

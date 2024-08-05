@@ -215,12 +215,13 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     startDate: string,
     endDate: string,
     exclusions: Slot[],
+    scheduleInstanceId?: number,
   ): Promise<void> {
     return this.post({
       path: `/schedules/${scheduleId}/allocations`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
-      data: { prisonerNumber, payBandId, startDate, endDate, exclusions },
+      data: { prisonerNumber, payBandId, startDate, endDate, exclusions, scheduleInstanceId },
     })
   }
 

@@ -5,7 +5,7 @@ import { Prisoner } from '../../@types/prisonerOffenderSearchImport/types'
 import { IncentiveLevel } from '../../@types/incentivesApi/types'
 import { ActivityPay, Allocation } from '../../@types/activitiesAPI/types'
 
-type IepPay = {
+export type IepPay = {
   incentiveLevel: string
   pays: Array<ActivityPay & { allocationCount: number }>
 }
@@ -20,7 +20,8 @@ export default class IncentiveLevelPayMappingUtil {
   ): Promise<IepPay[]> {
     if (pay.length === 0) return []
 
-    const allocationsMaybe = allocations || []
+    let allocationsMaybe = allocations || []
+    allocationsMaybe = allocationsMaybe.filter(a => a.status !== 'ENDED')
 
     const allocatedPrisonerNumbers = allocationsMaybe.map(a => a.prisonerNumber)
     const [allocatedPrisoners, incentiveLevels]: [Prisoner[], IncentiveLevel[]] = await Promise.all([
@@ -44,7 +45,7 @@ export default class IncentiveLevelPayMappingUtil {
               ...p,
               allocationCount: allocationsMaybe.filter(
                 a =>
-                  a.prisonPayBand.id === p.prisonPayBand.id &&
+                  a.prisonPayBand?.id === p.prisonPayBand.id &&
                   allocatedPrisoners.find(ap => ap.prisonerNumber === a.prisonerNumber).currentIncentive?.level
                     .description === iepPay.incentiveLevel,
               ).length,

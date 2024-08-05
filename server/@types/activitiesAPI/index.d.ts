@@ -3031,6 +3031,8 @@ export interface components {
       endDate?: string
       /** @description The days and times that the prisoner is excluded from this activity's schedule */
       exclusions?: components['schemas']['Slot'][]
+      /** @description The scheduled instance id required when allocation starts today */
+      scheduleInstanceId?: number
     }
     /** @description
      *         Describes time slot and day (or days) the scheduled activity would run. At least one day must be specified.
@@ -4969,6 +4971,12 @@ export interface components {
        * @example 10
        */
       pieceRateItems?: number
+      /**
+       * Format: string
+       * @description description = The effective start date for this pay rate
+       * @example 2024-06-18
+       */
+      startDate?: string
     }
     /** @description Describes a top-level activity */
     Activity: {
@@ -5289,6 +5297,12 @@ export interface components {
        * @example 10
        */
       pieceRateItems?: number
+      /**
+       * Format: string
+       * @description description = The effective start date for this pay rate
+       * @example 2024-06-18
+       */
+      startDate?: string
     }
     /** @description
      *       Describes the weekly schedule for an activity. There can be several of these defined for one activity.
@@ -5894,6 +5908,8 @@ export interface components {
       payBandId?: number
       /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
       exclusions?: components['schemas']['Slot'][]
+      /** @description The scheduled instance id required when allocation starts today */
+      scheduleInstanceId?: number
     }
     /** @description The update request with the new activity details */
     ActivityUpdateRequest: {
