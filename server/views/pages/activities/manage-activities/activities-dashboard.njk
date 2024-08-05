@@ -55,7 +55,7 @@
                                 {
                                     attributes: {
                                         id: 'activity-' + loop.index,
-                                        "data-sort-value": activity.createdTime
+                                        "data-sort-value": activity.createdTime | getUnixTime 
                                     },
                                     text: activity.createdTime | parseISODate | formatDate('d MMM yyyy')
                                 },

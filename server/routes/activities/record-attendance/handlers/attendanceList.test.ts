@@ -16,7 +16,6 @@ import { AppointmentFrequency } from '../../../../@types/appointments'
 import UserService from '../../../../services/userService'
 import atLeast from '../../../../../jest.setup'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
-import { AttendActivityMode } from '../recordAttendanceRequests'
 import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
@@ -208,6 +207,7 @@ describe('Route Handlers - Attendance List', () => {
       params: { id: 1 },
       session: {
         notAttendedJourney: {},
+        recordAttendanceRequests: {},
       },
       body: {},
       query: {},
@@ -262,10 +262,10 @@ describe('Route Handlers - Attendance List', () => {
       },
     ] as unknown as ScheduledInstanceAttendance[]
 
-    it('should render with the expected view', async () => {
+    it('should render with the expected view when there are no time sessions saved', async () => {
       await handler.GET(req, res)
 
-      expect(req.session.recordAttendanceRequests.mode).toEqual(AttendActivityMode.SINGLE)
+      expect(req.session.recordAttendanceRequests.mode).toEqual(undefined)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
         instance: {
@@ -275,6 +275,26 @@ describe('Route Handlers - Attendance List', () => {
         attendance,
         attendanceSummary: getAttendanceSummary(instanceA.attendances),
         isPayable: true,
+        selectedSessions: [],
+      })
+    })
+
+    it('should render with the expected view when there are time sessions saved', async () => {
+      req.session.recordAttendanceRequests.sessionFilters = ['am', 'ed']
+
+      await handler.GET(req, res)
+
+      expect(req.session.recordAttendanceRequests.mode).toEqual(undefined)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
+        instance: {
+          ...instanceA,
+          isAmendable: true,
+        },
+        attendance,
+        attendanceSummary: getAttendanceSummary(instanceA.attendances),
+        isPayable: true,
+        selectedSessions: ['am', 'ed'],
       })
     })
 
@@ -290,7 +310,7 @@ describe('Route Handlers - Attendance List', () => {
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAttendanceRequests.mode).toEqual(AttendActivityMode.SINGLE)
+      expect(req.session.recordAttendanceRequests.mode).toEqual(undefined)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
         instance: {
@@ -301,6 +321,47 @@ describe('Route Handlers - Attendance List', () => {
         attendance,
         attendanceSummary: getAttendanceSummary(instanceA.attendances),
         isPayable: true,
+        selectedSessions: [],
+      })
+    })
+
+    it('Should clear any session data when called in standalone mode', async () => {
+      req.query.mode = 'standalone'
+      req.session.recordAttendanceRequests.sessionFilters = ['am', 'ed']
+
+      await handler.GET(req, res)
+
+      expect(req.session.recordAttendanceRequests).toEqual({})
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
+        instance: {
+          ...instanceA,
+          isAmendable: true,
+        },
+        attendance,
+        attendanceSummary: getAttendanceSummary(instanceA.attendances),
+        isPayable: true,
+        selectedSessions: [],
+      })
+    })
+
+    it('Should not clear session data', async () => {
+      req.query.mode = 'unknown'
+      req.session.recordAttendanceRequests.sessionFilters = ['am']
+
+      await handler.GET(req, res)
+
+      expect(req.session.recordAttendanceRequests.sessionFilters).toEqual(['am'])
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
+        instance: {
+          ...instanceA,
+          isAmendable: true,
+        },
+        attendance,
+        attendanceSummary: getAttendanceSummary(instanceA.attendances),
+        isPayable: true,
+        selectedSessions: ['am'],
       })
     })
   })

@@ -184,7 +184,8 @@
       "startTime": "10:00",
       "endTime": "11:00",
       "tuesdayFlag": true,
-      "daysOfWeek": ["Tue"]
+      "daysOfWeek": ["Tue"],
+      "timeSlot": "AM"
     }
   ],
   "startDate": "2022-10-10",

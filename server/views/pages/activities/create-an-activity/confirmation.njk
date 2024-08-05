@@ -17,6 +17,11 @@
             </p>
             <p class='govuk-body'>You can also:</p>
             <ul>
+            {% if futurePayRatesFlag and session.createJourney.paid == true %}
+                <li class='govuk-list govuk-list--bullet' data-qa='review-pay-link'>
+                    <a href="/activities/edit/{{ activityId }}/check-pay" class='govuk-link govuk-link--no-visited-state'>set up any changes to pay rates due in the next 30 days</a>
+                </li>
+            {% endif %}
                 <li class='govuk-list govuk-list--bullet'>
                     <a href='/activities/create/start' class='govuk-link govuk-link--no-visited-state'>create another activity</a>
                 </li>

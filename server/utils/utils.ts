@@ -12,16 +12,16 @@ import {
   isYesterday,
   parse,
   parseISO,
+  set,
 } from 'date-fns'
 import { enGB } from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
 import _ from 'lodash'
 import { FieldValidationError } from '../middleware/validationMiddleware'
-import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 import { Activity, ActivitySchedule, Attendance, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 // eslint-disable-next-line import/no-cycle
-import { CreateAnActivityJourney } from '../routes/activities/create-an-activity/journey'
+import { CreateAnActivityJourney, Slots } from '../routes/activities/create-an-activity/journey'
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
@@ -97,6 +97,9 @@ export const parseDate = (date: string, fromFormat = 'yyyy-MM-dd') => {
   if (!date) return null
   return parse(date, fromFormat, new Date())
 }
+
+export const dateAtTime = (date: Date, time: Date): Date =>
+  set(date, { hours: time.getHours(), minutes: time.getMinutes() })
 
 export const parseISODate = (date: string) => {
   if (!date) return null
@@ -174,30 +177,6 @@ export const compare = (field: string, reverse: boolean, primer: (x: any) => any
 }
 
 export const compareStrings = (l: string, r: string): number => l.localeCompare(r, 'en', { ignorePunctuation: true })
-
-export const comparePrisoners = (field: string, reverse: boolean) => {
-  let key: (x: Prisoner) => string | number
-  switch (field) {
-    case 'name':
-      key = (x: Prisoner) => [x.lastName.trim(), x.firstName.trim(), x.middleNames].join(' ').toLowerCase()
-      break
-    case 'prisonNumber':
-      key = (x: Prisoner) => x.prisonerNumber
-      break
-    case 'location':
-      key = (x: Prisoner) => x.cellLocation
-      break
-    default:
-      key = (x: Prisoner) => x[field]
-  }
-  const r = !reverse ? 1 : -1
-
-  return (left: Prisoner, right: Prisoner) => {
-    const a: string | number = key(left)
-    const b: string | number = key(right)
-    return r * (a < b ? -1 : 1)
-  }
-}
 
 export const removeBlanks = (array: unknown[]) => array.filter((item: unknown) => !!item)
 
@@ -386,11 +365,13 @@ export const mapJourneySlotsToActivityRequest = (fromSlots: CreateAnActivityJour
       if (!slotMap.has(timeSlot)) {
         slotMap.set(timeSlot, { weekNumber: +weekNumber, timeSlot } as Slot)
       }
-      slotMap.get(timeSlot)[day] = true
+      slotMap.get(timeSlot)[day as keyof Slots] = true
     }
 
     daysOfWeek.forEach(day => {
-      fromSlots[weekNumber][`timeSlots${day}`]?.forEach((slot: string) => setSlot(slot, day.toLowerCase()))
+      fromSlots[weekNumber][`timeSlots${day}` as keyof Slots]?.forEach((slot: string) =>
+        setSlot(slot, day.toLowerCase()),
+      )
     })
 
     slotMap.forEach(slot => slots.push(slot))
@@ -412,7 +393,7 @@ export const mapActivityModelSlotsToJourney = (
     }
 
     daysOfWeek.forEach(d => {
-      const timeslots = weekSlots.filter(s => s[`${d.toLowerCase()}Flag`]).map(s => getTimeSlotFromTime(s.startTime))
+      const timeslots = weekSlots.filter(s => s[`${d.toLowerCase()}Flag`]).map(s => s.timeSlot)
       slots[week][`timeSlots${d}`] = timeslots.map(t => t.toUpperCase())
     })
   })
@@ -447,7 +428,7 @@ export const scheduledEventSort = (data: ScheduledEvent[]): ScheduledEvent[] => 
 }
 
 export const filterObjects = (objects: object[], iteratee: string, eq: unknown): object[] =>
-  objects.filter(o => o[iteratee] === eq)
+  objects.filter(o => o[iteratee as keyof any] === eq)
 
 export const excludeArrayObject = (objects: object[], iteratee: object): object[] => {
   return objects.filter(o => o !== iteratee)

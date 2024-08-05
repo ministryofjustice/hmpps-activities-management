@@ -148,10 +148,10 @@ export default {
     bookAVideoLinkApi: {
       url: get('BOOK_A_VIDEO_LINK_API_URL', 'http://localhost:8095'),
       timeout: {
-        response: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 5000)),
-        deadline: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_DEADLINE', 5000)),
+        response: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 30000)),
+        deadline: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_DEADLINE', 30000)),
       },
-      agent: new AgentConfig(Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 5000))),
+      agent: new AgentConfig(Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 30000))),
     },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
@@ -185,12 +185,13 @@ export default {
     },
   ] as RouteAuth[],
   spikesFeatureToggleEnabled: Boolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', false)),
-  activitiesAttendanceUpdatesFlag: Boolean(get('ACTIVITY_ATTENDANCE_UPDATES', false)),
   recordAttendanceSelectSlotFirst: Boolean(get('RECORD_ATTENDANCE_SELECT_SLOT_FIRST', false)),
+  allocateToNextSession: Boolean(get('ALLOCATE_TO_NEXT_SESSION', false)),
   frontendComponentsApiToggleEnabled: Boolean(
     get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', true, requiredInProduction),
   ),
-  bookAVideoLinkToggleEnabled: Boolean(get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', false)),
+  bookAVideoLinkToggleEnabled: Boolean(get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', false)) || !production,
+  futurePayRatesToggleEnabled: Boolean(get('FUTURE_PAY_RATES_TOGGLE_ENABLED', false)),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
   },

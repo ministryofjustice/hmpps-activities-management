@@ -16,7 +16,7 @@ export default class AppointmentsManagementPage extends Page {
     cy.cardIsDisplayed(
       '[data-qa=search-appointments-card]',
       'Manage existing appointments',
-      'Edit the details of an appointment, including cancelling, adding and removing people, and printing movement slips.',
+      'Edit appointment details, add and remove people, cancel and copy appointments, and print movement slips.',
     )
 
   viewAppointmentsAttendanceSummaryCard = (): Cypress.Chainable =>

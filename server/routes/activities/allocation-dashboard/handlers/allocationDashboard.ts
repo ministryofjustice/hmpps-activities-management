@@ -7,12 +7,7 @@ import ActivityService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { Activity, ActivityPay, Allocation, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
-import {
-  getScheduleIdFromActivity,
-  getScheduleStartDateFromActivity,
-  getTimeSlotFromTime,
-  parseDate,
-} from '../../../../utils/utils'
+import { getScheduleIdFromActivity, getScheduleStartDateFromActivity, parseDate } from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import { Slots } from '../../create-an-activity/journey'
@@ -95,7 +90,7 @@ export default class AllocationDashboardRoutes {
 
         if (slot[`${dayLowerCase}Flag`]) {
           if (!slots[slot.weekNumber].days.includes(dayLowerCase)) slots[slot.weekNumber].days.push(dayLowerCase)
-          slots[slot.weekNumber][`timeSlots${day}`].push(getTimeSlotFromTime(slot.startTime).toUpperCase())
+          slots[slot.weekNumber][`timeSlots${day}`].push(slot.timeSlot)
         }
       })
     })

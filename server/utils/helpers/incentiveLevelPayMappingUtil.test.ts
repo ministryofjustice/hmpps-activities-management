@@ -27,7 +27,11 @@ describe('Route Handlers - Create an activity - Helper', () => {
             { incentiveLevel: 'Basic', prisonPayBand: { id: 3, displaySequence: 3 }, rate: 300 },
             { incentiveLevel: 'Enhanced', prisonPayBand: { id: 4, displaySequence: 4 }, rate: 400 },
           ],
-          allocations: [{ prisonerNumber: 'ABC123', prisonPayBand: { id: 1 } }],
+          allocations: [
+            { prisonerNumber: 'ABC123', prisonPayBand: { id: 1 }, status: 'ACTIVE' },
+            { prisonerNumber: 'ABC456', prisonPayBand: { id: 1 }, status: 'ACTIVE' },
+            { prisonerNumber: 'ABC789', prisonPayBand: { id: 1 }, status: 'ENDED' },
+          ],
         },
       },
     } as Request
@@ -43,7 +47,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
   })
 
   describe('getPayGroupedByIncentiveLevel', () => {
-    it('should group pay by incentive level', async () => {
+    it('should group pay by incentive level and exclude ended allocations', async () => {
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
         .mockResolvedValue([
@@ -52,9 +56,10 @@ describe('Route Handlers - Create an activity - Helper', () => {
           { levelName: 'Enhanced' },
         ] as IncentiveLevel[])
       when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(atLeast(['ABC123']))
+        .calledWith(atLeast(['ABC123', 'ABC456']))
         .mockResolvedValue([
           { prisonerNumber: 'ABC123', currentIncentive: { level: { description: 'Standard' } } },
+          { prisonerNumber: 'ABC456', currentIncentive: { level: { description: 'Standard' } } },
         ] as Prisoner[])
 
       const result = await helper.getPayGroupedByIncentiveLevel(
@@ -72,7 +77,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
         {
           incentiveLevel: 'Standard',
           pays: [
-            { allocationCount: 1, incentiveLevel: 'Standard', prisonPayBand: { id: 1, displaySequence: 1 }, rate: 100 },
+            { allocationCount: 2, incentiveLevel: 'Standard', prisonPayBand: { id: 1, displaySequence: 1 }, rate: 100 },
             { allocationCount: 0, incentiveLevel: 'Standard', prisonPayBand: { id: 2, displaySequence: 2 }, rate: 200 },
           ],
         },

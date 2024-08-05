@@ -7,6 +7,7 @@ import NameRoutes, { Name } from './handlers/name'
 import { Services } from '../../../services'
 import RiskLevelRoutes, { RiskLevel } from './handlers/riskLevel'
 import PayRoutes, { Pay } from './handlers/pay'
+import PayAmountRoutes, { PayAmount } from './handlers/pay-amount'
 import RemovePayRoutes, { ConfirmRemoveOptions } from './handlers/removePay'
 import RemoveFlatRateRoutes from './handlers/removeFlatRate'
 import QualificationRoutes, { Qualification } from './handlers/qualifications'
@@ -28,6 +29,8 @@ import TierRoutes, { TierForm } from './handlers/tier'
 import OrganiserRoutes, { OrganiserForm } from './handlers/organiser'
 import PayOption, { PayOptionForm } from './handlers/payOption'
 import AttendanceRequired, { AttendanceRequiredForm } from './handlers/attendanceRequired'
+import PayDateOptionRoutes, { PayDateOption } from './handlers/pay-date-option'
+import PayCancelRoutes, { PayCancel } from './handlers/pay-cancel'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -45,6 +48,9 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const payOption = new PayOption(activitiesService, prisonService)
   const payRateTypeHandler = new PayRateTypeRoutes(prisonService)
   const payHandler = new PayRoutes(prisonService, activitiesService)
+  const payAmountHandler = new PayAmountRoutes(prisonService, activitiesService)
+  const payDateOptionHandler = new PayDateOptionRoutes(prisonService, activitiesService)
+  const payCancelHandler = new PayCancelRoutes(activitiesService)
   const checkPayHandler = new CheckPayRoutes(prisonService)
   const removePayHandler = new RemovePayRoutes(activitiesService, prisonService)
   const removeFlatRateHandler = new RemoveFlatRateRoutes()
@@ -78,6 +84,12 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/pay-rate-type', payRateTypeHandler.POST, PayRateType)
   get('/pay/:payRateType', payHandler.GET, true)
   post('/pay/:payRateType', payHandler.POST, Pay)
+  get('/pay-amount/:payRateType', payAmountHandler.GET, true)
+  post('/pay-amount/:payRateType', payAmountHandler.POST, PayAmount)
+  get('/pay-date-option/:payRateType', payDateOptionHandler.GET, true)
+  post('/pay-date-option/:payRateType', payDateOptionHandler.POST, PayDateOption)
+  get('/pay-cancel/:payRateType', payCancelHandler.GET, true)
+  post('/pay-cancel/:payRateType', payCancelHandler.POST, PayCancel)
   get('/check-pay', checkPayHandler.GET, true)
   post('/check-pay', checkPayHandler.POST)
   get('/remove-pay', removePayHandler.GET, true)

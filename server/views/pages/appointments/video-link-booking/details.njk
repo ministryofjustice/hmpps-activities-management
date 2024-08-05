@@ -1,0 +1,220 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "pages/appointments/partials/attendee-list.njk" import attendeeList %}
+{% from "partials/service-user-name.njk" import serviceUserName %}
+
+{% set pageId = 'video-booking-details-page' %}
+{% set hardBackLinkText = 'Go to Appointments Dashboard' %}
+{% set hardBackLinkHref = '/appointments/search?startDate=' + mainAppointment.startDate | formatDate('yyyy-MM-dd') %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>{{ mainAppointment.appointmentName }}</h1>
+            <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ mainAppointment.startDate | formatDate }}</span>
+
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Video link booking details"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: '#',
+                                text: "Edit booking",
+                                classes: "govuk-link--no-visited-state"
+                            },
+                            {
+                                href: '#',
+                                text: "Cancel booking",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    } if isAmendable
+                },
+                rows: [
+                    {
+                        key: {
+                            text: "Court"
+                        },
+                        value: {
+                            text: videoBooking.courtDescription or videoBooking.probationTeamDescription
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Hearing type"
+                        },
+                        value: {
+                            text: videoBooking.courtHearingTypeDescription or videoBooking.probationMeetingTypeDescription
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Date"
+                        },
+                        value: {
+                            text: mainAppointment.startDate | formatDate
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Video Link URL"
+                        },
+                        value: {
+                            text: videoBooking.videoLinkUrl
+                        }
+                    } if videoBooking.videoLinkUrl,
+                    {
+                        key: {
+                            text: "Extra information"
+                        },
+                        value: {
+                            text: videoBooking.comments or "None provided"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: '#',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    }
+                ]
+            }) }}
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukTabs({
+                items: [
+                    {
+                        label: "Pre-court hearing",
+                        id: 'pre-appointment-tab',
+                        panel: {
+                            html: appointmentDetails(preAppointment, rooms, user)
+                        }
+                    } if preAppointment,
+                    {
+                        label: "Main hearing",
+                        id: 'main-appointment-tab',
+                        panel: {
+                            html: appointmentDetails(mainAppointment, rooms, user)
+                        }
+                    },
+                    {
+                        label: "Post-court hearing",
+                        id: 'post-appointment-tab',
+                        panel: {
+                            html: appointmentDetails(postAppointment, rooms, user)
+                        }
+                    } if postAppointment
+                ]
+            }) }}
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Video link booking history"
+                    }
+                },
+                rows: [
+                    {
+                        key: {
+                            text: "Created by"
+                        },
+                        value: {
+                            text: serviceUserName(userMap.get(videoBooking.createdBy))
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Date created"
+                        },
+                        value: {
+                            text: videoBooking.createdAt | parseISODate | formatDate
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Last edited by"
+                        },
+                        value: {
+                            text: serviceUserName(userMap.get(videoBooking.amendedBy))
+                        }
+                    } if videoBooking.amendedBy,
+                    {
+                        key: {
+                            text: "Date last edited"
+                        },
+                        value: {
+                            text: videoBooking.amendedAt | parseISODate | formatDate
+                        }
+                    } if videoBooking.amendedAt
+                ]
+            }) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% macro appointmentDetails(appointment, rooms, user) %}
+    {{ govukSummaryList({
+        card: {
+            title: {
+                text: "Appointment details"
+            }
+        },
+        rows: [
+            {
+                key: {
+                    text: "Location"
+                },
+                value: {
+                    text: (rooms | find('key', appointment.locationKey)).description
+                }
+            },
+            {
+                key: {
+                    text: "Start time"
+                },
+                value: {
+                    text: appointment.startTime
+                }
+            },
+            {
+                key: {
+                    text: "End time"
+                },
+                value: {
+                    text: appointment.endTime
+                }
+            }
+        ]
+    }) }}
+
+    {% if not appointment.isCancelled and not appointment.isDeleted %}
+        {% if not appointment.isExpired %}
+            {{ govukButton({
+                attributes: { id: 'print-movement-slips', target: "_blank", 'data-qa': 'print-movement-slips' },
+                text: "Print movement slip",
+                classes: "govuk-button--blue",
+                href: '/appointments/' + appointment.id + '/movement-slip'
+            }) }}
+        {% endif %}
+
+        {{ attendeeList(appointment, user) }}
+    {% endif %}
+{% endmacro %}

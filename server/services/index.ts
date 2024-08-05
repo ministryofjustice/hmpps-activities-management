@@ -7,6 +7,7 @@ import UnlockListService from './unlockListService'
 import MetricsService from './metricsService'
 import CaseNotesService from './caseNotesService'
 import AlertsFilterService from './alertsFilterService'
+import BookAVideoLinkService from './bookAVideoLinkService'
 
 export default function services() {
   const {
@@ -16,6 +17,7 @@ export default function services() {
     prisonerSearchApiClient,
     incentivesApiClient,
     activitiesApiClient,
+    bookAVideoLinkApiClient,
     applicationInsightsClient,
     caseNotesApiClient,
   } = dataAccess()
@@ -26,6 +28,7 @@ export default function services() {
     userService: new UserService(manageUsersApiClient, prisonRegisterApiClient, activitiesApiClient),
     prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient),
     activitiesService: new ActivitiesService(activitiesApiClient),
+    bookAVideoLinkService: new BookAVideoLinkService(bookAVideoLinkApiClient),
     caseNotesService: new CaseNotesService(caseNotesApiClient),
     ukBankHolidayService: new BankHolidayService(),
     alertsFilterService,

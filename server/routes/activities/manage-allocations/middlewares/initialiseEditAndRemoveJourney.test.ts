@@ -6,12 +6,14 @@ import initialiseEditAndRemoveJourney from './initialiseEditAndRemoveJourney'
 import PrisonService from '../../../../services/prisonService'
 import { AllocateToActivityJourney } from '../journey'
 import atLeast from '../../../../../jest.setup'
-import { Activity, Allocation } from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivitySchedule, Allocation, ScheduledInstance } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { getScheduleIdFromActivity } from '../../../../utils/utils'
+import findNextSchedulesInstance from '../../../../utils/helpers/nextScheduledInstanceCalculator'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
+jest.mock('../../../../utils/helpers/nextScheduledInstanceCalculator')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
@@ -33,7 +35,16 @@ describe('initialiseEditAndRemoveJourney', () => {
     prisonPayBand: { id: 1, alias: 'Low' },
   } as Allocation
 
-  const schedule = {
+  const instance: ScheduledInstance = {
+    id: 123,
+    cancelled: false,
+    date: '2024-08-23',
+    endTime: '14:00',
+    startTime: '13:00',
+    attendances: [],
+  }
+
+  const schedule: ActivitySchedule = {
     id: 1,
     internalLocation: {
       id: 14438,
@@ -41,7 +52,9 @@ describe('initialiseEditAndRemoveJourney', () => {
       description: 'A-Wing',
     },
     allocations: [allocation],
-  }
+    instances: [instance],
+    scheduleWeeks: 2,
+  } as ActivitySchedule
 
   const activity = {
     id: 2,
@@ -67,6 +80,8 @@ describe('initialiseEditAndRemoveJourney', () => {
     firstName: 'John',
     lastName: 'Smith',
     prisonerNumber: 'ABC1234',
+    prisonId: 'RSI',
+    status: 'ACTIVE IN',
     cellLocation: 'MDI-1-1-001',
     currentIncentive: { level: { description: 'Basic' } },
   } as Prisoner
@@ -89,6 +104,8 @@ describe('initialiseEditAndRemoveJourney', () => {
         user,
       },
     } as unknown as Response
+
+    when(findNextSchedulesInstance).calledWith(schedule).mockReturnValue(instance)
   })
 
   it('it should skip initialisation if not edit or remove mode', async () => {
@@ -134,6 +151,8 @@ describe('initialiseEditAndRemoveJourney', () => {
       inmate: {
         prisonerName: 'John Smith',
         prisonerNumber: 'ABC1234',
+        prisonCode: 'RSI',
+        status: 'ACTIVE IN',
         cellLocation: 'MDI-1-1-001',
         incentiveLevel: 'Basic',
         payBand: {
@@ -146,6 +165,8 @@ describe('initialiseEditAndRemoveJourney', () => {
         {
           prisonerName: 'John Smith',
           prisonerNumber: 'ABC1234',
+          prisonCode: 'RSI',
+          status: 'ACTIVE IN',
           cellLocation: 'MDI-1-1-001',
           incentiveLevel: 'Basic',
           payBand: {
@@ -165,10 +186,19 @@ describe('initialiseEditAndRemoveJourney', () => {
         inCell: activity.inCell,
         onWing: activity.onWing,
         offWing: activity.offWing,
+        scheduleWeeks: 2,
       },
       latestAllocationStartDate: allocation.startDate,
       exclusions: [],
       updatedExclusions: [],
+      scheduledInstance: {
+        id: 123,
+        cancelled: false,
+        date: '2024-08-23',
+        endTime: '14:00',
+        startTime: '13:00',
+        attendances: [],
+      },
     })
 
     expect(next).toHaveBeenCalledTimes(1)

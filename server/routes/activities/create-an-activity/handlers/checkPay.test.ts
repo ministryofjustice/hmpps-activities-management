@@ -10,7 +10,7 @@ jest.mock('../../../../utils/helpers/incentiveLevelPayMappingUtil', () => {
       getPayGroupedByIncentiveLevel: () => [
         {
           incentiveLevel: 'Standard',
-          pays: [{ incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Common', rate: '150' }],
+          pays: [{ incentiveLevel: 'Standard', bandId: 1, bandAlias: 'Common', rate: '150', prisonPayBand: { id: 1 } }],
         },
       ],
     }
@@ -50,7 +50,9 @@ describe('Route Handlers - Create an activity - Check pay', () => {
             id: 1,
           },
           riskLevel: 'High',
-          pay: [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', bandId: 1, rate: 100 }],
+          pay: [
+            { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', bandId: 1, rate: 100, prisonPayBand: { id: 1 } },
+          ],
           flat: [],
           incentiveLevels: ['Standard', 'Enhanced'],
         },
@@ -66,11 +68,30 @@ describe('Route Handlers - Create an activity - Check pay', () => {
     it('should render page correctly', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/check-pay', {
+        activityName: 'Maths level 1',
         flatPay: [],
         incentiveLevelPays: [
           {
             incentiveLevel: 'Standard',
-            pays: [{ bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150' }],
+            pays: [
+              { bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150', prisonPayBand: { id: 1 } },
+            ],
+          },
+        ],
+        displayPays: [
+          {
+            incentiveLevel: 'Standard',
+            pays: [
+              {
+                incentiveLevel: 'Standard',
+                bandId: 1,
+                bandAlias: 'Common',
+                rate: '150',
+                prisonPayBand: {
+                  id: 1,
+                },
+              },
+            ],
           },
         ],
       })
@@ -80,11 +101,30 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       req.params.mode = 'edit'
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/edit-pay', {
+        activityName: 'Maths level 1',
         flatPay: [],
         incentiveLevelPays: [
           {
             incentiveLevel: 'Standard',
-            pays: [{ bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150' }],
+            pays: [
+              { bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150', prisonPayBand: { id: 1 } },
+            ],
+          },
+        ],
+        displayPays: [
+          {
+            incentiveLevel: 'Standard',
+            pays: [
+              {
+                incentiveLevel: 'Standard',
+                bandId: 1,
+                bandAlias: 'Common',
+                rate: '150',
+                prisonPayBand: {
+                  id: 1,
+                },
+              },
+            ],
           },
         ],
       })

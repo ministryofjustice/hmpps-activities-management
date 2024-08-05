@@ -123,6 +123,7 @@ const stubAuthUser = (name: string) =>
         username: 'USER1',
         active: true,
         activeCaseLoadId: 'MDI',
+        authSource: 'nomis',
         name,
       },
     },

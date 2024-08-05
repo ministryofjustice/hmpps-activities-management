@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import nunjucks, { Environment } from 'nunjucks'
 import express, { Router } from 'express'
 import path from 'path'
@@ -176,6 +177,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('setAttribute', setAttribute)
   njkEnv.addFilter('removeUndefined', removeUndefined)
   njkEnv.addFilter('startOfDay', startOfDay)
+  njkEnv.addFilter('find', (l: any[], iteratee: string, eq: unknown) => l.find(o => o[iteratee] === eq))
   njkEnv.addFilter('filter', filterObjects)
   njkEnv.addFilter('flatMap', flatMap)
   njkEnv.addFilter('flatten', flatten)
@@ -212,7 +214,8 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('recordAttendanceSelectSlotFirst', config.recordAttendanceSelectSlotFirst)
-  njkEnv.addGlobal('activitiesAttendanceUpdatesFlag', config.activitiesAttendanceUpdatesFlag)
+  njkEnv.addGlobal('allocateToNextSession', config.allocateToNextSession)
+  njkEnv.addGlobal('futurePayRatesFlag', config.futurePayRatesToggleEnabled)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

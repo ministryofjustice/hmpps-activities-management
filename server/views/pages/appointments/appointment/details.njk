@@ -15,7 +15,7 @@
 {% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
 {% set pageId = 'appointment-details-page' %}
 {% set hardBackLinkText = 'Go to Appointments Dashboard' %}
-{% set hardBackLinkHref = '/appointments/search?startDate=' + appointments.startDate %}
+{% set hardBackLinkHref = '/appointments/search?startDate=' + appointment.startDate %}
 
 {% set appointmentLink = '/appointments/' + appointment.id  %}
 
@@ -259,7 +259,7 @@
                             text: "Extra information"
                         },
                         value: {
-                            html: '<span class="preserve-line-breaks">' + (appointment.extraInformation | escape) + '</span>'
+                            html: '<span class="preserve-line-breaks">' + ((appointment.extraInformation or "None provided" ) | escape) + '</span>'
                         },
                         actions: {
                             items: [

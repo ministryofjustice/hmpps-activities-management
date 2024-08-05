@@ -2,7 +2,6 @@ import { addDays, format, formatISO, parseISO, subDays } from 'date-fns'
 import { enGB } from 'date-fns/locale/en-GB'
 import {
   compare,
-  comparePrisoners,
   compareStrings,
   convertToTitleCase,
   existsInStringArray,
@@ -113,51 +112,6 @@ describe('utils', () => {
 
     it('returns ED if time is post 5pm and before midnight', () => {
       expect(getCurrentPeriod(+format(parseISO('2019-08-11T23:59:59.000'), 'H', { locale: enGB }))).toEqual('ED')
-    })
-  })
-
-  describe('comparePrisoners by name', () => {
-    it('sort by name asc', () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const results = prisoners.sort(comparePrisoners('name', false))
-      expect(results[0].lastName).toEqual('CHOLAK')
-    })
-    it('sort by name desc', () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const results = prisoners.sort(comparePrisoners('name', true))
-      expect(results[0].lastName).toEqual('SMITH')
-    })
-  })
-
-  describe('comparePrisoners by prisonerNumber', () => {
-    it('sort by name asc', () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const results = prisoners.sort(comparePrisoners('prisonNumber', false))
-      expect(results[0].lastName).toEqual('CHOLAK')
-    })
-    it('sort by name desc', () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const results = prisoners.sort(comparePrisoners('prisonNumber', true))
-      expect(results[0].lastName).toEqual('SMITH')
-    })
-  })
-
-  describe('comparePrisoners by location', () => {
-    it('sort by name asc', () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const results = prisoners.sort(comparePrisoners('location', false))
-      expect(results[0].lastName).toEqual('CHOLAK')
-    })
-    it('sort by name desc', () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const results = prisoners.sort(comparePrisoners('location', true))
-      expect(results[0].lastName).toEqual('SMITH')
     })
   })
 
