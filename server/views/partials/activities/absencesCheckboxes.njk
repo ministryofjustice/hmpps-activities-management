@@ -1,0 +1,38 @@
+{{ govukCheckboxes({
+    idPrefix: 'absenceReasonFilters',
+    name: 'absenceReasonFilters',
+    classes: "govuk-radios--small",
+    fieldset: {
+        legend: {
+            text: 'Absences',
+            classes: 'govuk-fieldset__legend--m'
+        }
+    },
+    items: absenceReasonFilters
+}) }}
+<div class="govuk-!-margin-bottom-4">
+    <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="absenceReasonFilters"></a>
+</div>
+{{ govukCheckboxes({
+    idPrefix: 'payFilters',
+    name: 'payFilters',
+    classes: "govuk-radios--small",
+    fieldset: {
+        legend: {
+            text: 'Pay',
+            classes: 'govuk-fieldset__legend--m'
+        }
+    },
+    items: [
+    {
+        value: 'true', 
+        text: 'Pay', 
+        checked: 'true' in session.attendanceSummaryJourney.payFilters
+    },
+    {
+        value: 'false', 
+        text: 'No pay', 
+        checked: 'false' in session.attendanceSummaryJourney.payFilters
+    }
+    ]
+}) }}

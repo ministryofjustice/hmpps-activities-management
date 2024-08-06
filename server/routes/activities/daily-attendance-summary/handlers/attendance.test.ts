@@ -7,6 +7,8 @@ import DailyAttendanceRoutes from './attendance'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import EventTier from '../../../../enum/eventTiers'
+import AttendanceReason from '../../../../enum/attendanceReason'
+import AttendanceStatus from '../../../../enum/attendanceStatus'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -38,6 +40,18 @@ describe('Route Handlers - Daily Attendance List', () => {
       },
     } as unknown as Request
   })
+
+  const absenceReasons = [
+    AttendanceReason.CANCELLED,
+    AttendanceReason.SICK,
+    AttendanceReason.NOT_REQUIRED,
+    AttendanceReason.REST,
+    AttendanceReason.CLASH,
+    AttendanceReason.REFUSED,
+    AttendanceReason.AUTO_SUSPENDED,
+    AttendanceReason.SUSPENDED,
+    AttendanceReason.OTHER,
+  ]
 
   describe('GET', () => {
     let mockApiResponse: AllAttendance[]
@@ -143,6 +157,7 @@ describe('Route Handlers - Daily Attendance List', () => {
         activityDate: date,
         status: 'NotAttended',
         uniqueCategories: ['Education', 'Prison Jobs'],
+        absenceReasons,
         attendees: [
           {
             name: 'Joe Bloggs',
@@ -217,6 +232,7 @@ describe('Route Handlers - Daily Attendance List', () => {
         activityDate: date,
         status: 'NotAttended',
         uniqueCategories: ['Education'],
+        absenceReasons,
         attendees: [
           {
             name: 'Joe Bloggs',
@@ -276,6 +292,7 @@ describe('Route Handlers - Daily Attendance List', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
         activityDate: date,
         status: 'Attended',
+        absenceReasons,
         attendees: [
           {
             name: 'Joe Bloggs',
@@ -331,6 +348,7 @@ describe('Route Handlers - Daily Attendance List', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
         activityDate: date,
         status: 'NotAttended',
+        absenceReasons,
         attendees: [
           {
             name: 'Alan Key',
@@ -354,6 +372,198 @@ describe('Route Handlers - Daily Attendance List', () => {
           },
         ],
         uniqueCategories: ['Education', 'Prison Jobs'],
+      })
+    })
+
+    it('should filter the activities based on the absence reason', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      const mockApiResponse2 = [
+        {
+          attendanceId: 1,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: 'WAITING',
+          attendanceReasonCode: null,
+          issuePayment: null,
+          prisonerNumber: 'ABC123',
+          activityId: 1,
+          activitySummary: 'Maths Level 1',
+          categoryName: 'Education',
+          attendanceRequired: true,
+          eventTier: EventTier.FOUNDATION,
+        },
+        {
+          activityId: 2,
+          activitySummary: 'Woodworking',
+          attendanceId: 2,
+          attendanceReasonCode: AttendanceReason.CANCELLED,
+          categoryName: 'Prison Jobs',
+          issuePayment: false,
+          prisonCode: 'MDI',
+          prisonerNumber: 'ABC321',
+          sessionDate: '2022-10-10',
+          status: AttendanceStatus.COMPLETED,
+          timeSlot: 'AM',
+          attendanceRequired: true,
+          eventTier: EventTier.FOUNDATION,
+        },
+        {
+          attendanceId: 3,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.ATTENDED,
+          issuePayment: true,
+          prisonerNumber: 'ZXY123',
+          activityId: 2,
+          activitySummary: 'Woodworking',
+          categoryName: 'Prison Jobs',
+          attendanceRequired: true,
+          eventTier: EventTier.TIER_1,
+        },
+      ] as AllAttendance[]
+
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user, undefined)
+        .mockResolvedValue(mockApiResponse2)
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC321'], res.locals.user)
+        .mockResolvedValue(mockPrisonApiResponse)
+
+      req = {
+        query: {
+          date: dateString,
+          status: 'Absences',
+        },
+        session: {
+          attendanceSummaryJourney: {
+            absenceReasonFilters: [AttendanceReason.CANCELLED],
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
+        activityDate: date,
+        status: 'Absences',
+        absenceReasons,
+        attendees: [
+          {
+            name: 'Alan Key',
+            prisonerNumber: 'ABC321',
+            location: 'MDI-1-002',
+            attendance: {
+              activityId: 2,
+              activitySummary: 'Woodworking',
+              attendanceId: 2,
+              attendanceReasonCode: AttendanceReason.CANCELLED,
+              categoryName: 'Prison Jobs',
+              issuePayment: false,
+              prisonCode: 'MDI',
+              prisonerNumber: 'ABC321',
+              sessionDate: '2022-10-10',
+              status: AttendanceStatus.COMPLETED,
+              timeSlot: 'AM',
+              attendanceRequired: true,
+              eventTier: EventTier.FOUNDATION,
+            },
+          },
+        ],
+        uniqueCategories: ['Prison Jobs'],
+      })
+    })
+    it('should filter the activities based on the pay arrangement', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      const mockApiResponse2 = [
+        {
+          activityId: 2,
+          activitySummary: 'Woodworking',
+          attendanceId: 2,
+          attendanceReasonCode: AttendanceReason.CANCELLED,
+          categoryName: 'Prison Jobs',
+          issuePayment: false,
+          prisonCode: 'MDI',
+          prisonerNumber: 'ABC321',
+          sessionDate: '2022-10-10',
+          status: AttendanceStatus.COMPLETED,
+          timeSlot: 'AM',
+          attendanceRequired: true,
+          eventTier: EventTier.FOUNDATION,
+        },
+        {
+          attendanceId: 3,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.OTHER,
+          issuePayment: true,
+          prisonerNumber: 'ABC321',
+          activityId: 2,
+          activitySummary: 'Woodworking',
+          categoryName: 'Prison Jobs',
+          attendanceRequired: true,
+          eventTier: EventTier.TIER_1,
+        },
+      ] as AllAttendance[]
+
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user, undefined)
+        .mockResolvedValue(mockApiResponse2)
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC321'], res.locals.user)
+        .mockResolvedValue(mockPrisonApiResponse)
+
+      req = {
+        query: {
+          date: dateString,
+          status: 'Absences',
+        },
+        session: {
+          attendanceSummaryJourney: {
+            payFilters: 'true',
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
+        activityDate: date,
+        status: 'Absences',
+        absenceReasons,
+        attendees: [
+          {
+            name: 'Alan Key',
+            prisonerNumber: 'ABC321',
+            location: 'MDI-1-002',
+            attendance: {
+              attendanceId: 3,
+              prisonCode: 'MDI',
+              sessionDate: '2022-10-10',
+              timeSlot: 'AM',
+              status: AttendanceStatus.COMPLETED,
+              attendanceReasonCode: AttendanceReason.OTHER,
+              issuePayment: true,
+              prisonerNumber: 'ABC321',
+              activityId: 2,
+              activitySummary: 'Woodworking',
+              categoryName: 'Prison Jobs',
+              attendanceRequired: true,
+              eventTier: EventTier.TIER_1,
+            },
+          },
+        ],
+        uniqueCategories: ['Prison Jobs'],
       })
     })
   })

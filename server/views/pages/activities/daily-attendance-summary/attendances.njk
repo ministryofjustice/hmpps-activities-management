@@ -35,61 +35,26 @@
         checked: reason in session.attendanceSummaryJourney.absenceReasonFilters
     }), absenceReasonFilters) %}
     {% endfor %}
+
+    {% if status == 'Absences' %}
+        {% include "../../../partials/activities/absencesCheckboxes.njk" %}
+    {% endif %}
     
-    {% set payFilters = [] %}
-    {% for payOption in payCategories %}
-        {% set payFilters = (payFilters.push({
-        value: payOption, 
-        text: payOption, 
-        checked: payOption in session.attendanceSummaryJourney.payFilters
-    }), payFilters) %}
-    {% endfor %}
-
     {{ govukCheckboxes({
-            idPrefix: 'absenceReasonFilters',
-            name: 'absenceReasonFilters',
-            classes: "govuk-radios--small",
-            fieldset: {
-                legend: {
-                    text: 'Absences',
-                    classes: 'govuk-fieldset__legend--m'
-                }
-            },
-            items: absenceReasonFilters
-        }) }}
-
-    <div class="govuk-!-margin-bottom-4">
-        <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="absenceReasonFilters"></a>
-    </div>
-
-    {{ govukCheckboxes({
-            idPrefix: 'payFilters',
-            name: 'payFilters',
-            classes: "govuk-radios--small",
-            fieldset: {
-                legend: {
-                    text: 'Pay',
-                    classes: 'govuk-fieldset__legend--m'
-                }
-            },
-            items: payFilters
-        }) }}
-
-    {{ govukCheckboxes({
-            idPrefix: 'categoryFilters',
-            name: 'categoryFilters',
-            classes: "govuk-radios--small",
-            hint: {
-                text: "Select all that apply"
-            },
-            fieldset: {
-                legend: {
-                    text: 'Categories',
-                    classes: 'govuk-fieldset__legend--m'
-                }
-            },
-            items: categoryFilters
-        }) }}
+        idPrefix: 'categoryFilters',
+        name: 'categoryFilters',
+        classes: "govuk-radios--small",
+        hint: {
+            text: "Select all that apply"
+        },
+        fieldset: {
+            legend: {
+                text: 'Categories',
+                classes: 'govuk-fieldset__legend--m'
+            }
+        },
+        items: categoryFilters
+    }) }}
 
     <div class="govuk-!-margin-bottom-4">
         <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>

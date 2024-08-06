@@ -6,11 +6,7 @@ import PrisonService from '../../../../services/prisonService'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import EventTier from '../../../../enum/eventTiers'
-
-enum PayCategory {
-  PAY = 'PAY',
-  NO_PAY = 'NO_PAY',
-}
+import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 
 export default class DailyAttendanceRoutes {
   constructor(
@@ -40,29 +36,28 @@ export default class DailyAttendanceRoutes {
 
     const uniqueCategories = _.uniq(attendancesForStatus.map(c => c.categoryName))
     const absenceReasons = Object.keys(AttendanceReason).filter(reason => reason !== AttendanceReason.ATTENDED)
-    const payCategories = Object.keys(PayCategory)
 
     // Set the default filter values if they are not set
     req.session.attendanceSummaryJourney ??= {}
     req.session.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
     req.session.attendanceSummaryJourney.absenceReasonFilters ??= absenceReasons
-    req.session.attendanceSummaryJourney.payFilters ??= payCategories
+    req.session.attendanceSummaryJourney.payFilters ??= ['true', 'false']
 
     const { categoryFilters, searchTerm, absenceReasonFilters, payFilters } = req.session.attendanceSummaryJourney
 
-    const attendancesMatchingCategoryFilter = attendancesForStatus.filter(a => categoryFilters.includes(a.categoryName))
-    // const attendancesMatchingPayFilter = attendancesMatchingCategoryFilter.filter(a =>
-    //   this.payFilter(a.issuePayment, payFilters),
-    // )
-    const attendancesMatchingAllFilters = attendancesMatchingCategoryFilter.filter(a =>
-      absenceReasonFilters.includes(a.attendanceReasonCode),
+    const attendancesMatchingFilter = this.filterAttendances(
+      attendancesForStatus,
+      categoryFilters,
+      status === 'Absences',
+      payFilters,
+      absenceReasonFilters,
     )
 
-    const prisonerNumbers = attendancesMatchingAllFilters.map(a => a.prisonerNumber)
+    const prisonerNumbers = attendancesMatchingFilter.map(a => a.prisonerNumber)
 
     const inmates = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 
-    const attendees = attendancesMatchingAllFilters
+    const attendees = attendancesMatchingFilter
       .map(a => ({
         inmate: inmates.find(i => i.prisonerNumber === a.prisonerNumber),
         prisonerNumber: a.prisonerNumber,
@@ -87,7 +82,6 @@ export default class DailyAttendanceRoutes {
       activityDate,
       uniqueCategories,
       absenceReasons,
-      payCategories,
       status,
       attendees,
       tier,
@@ -97,9 +91,28 @@ export default class DailyAttendanceRoutes {
   private includesSearchTerm = (propertyValue: string, searchTerm: string) =>
     !searchTerm || propertyValue.toLowerCase().includes(searchTerm.toLowerCase())
 
-  // private payFilter = (issuePayment: boolean, payFilter: string[]) => {
-  //   if (payFilter.includes(PayCategory.PAY) && issuePayment) return true
-  //   if (payFilter.includes(PayCategory.NO_PAY) && !issuePayment) return true
-  //   return false
-  // }
+  private payFilter = (issuePayment: boolean, payFilters: string[]) => {
+    if (Array.isArray(payFilters)) return true
+    return String(issuePayment) === payFilters
+  }
+
+  private filterAttendances = (
+    attendancesForStatus: AllAttendance[],
+    categoryFilters: string[],
+    absencesPage: boolean,
+    payFilters: string[],
+    absenceReasonFilters: string[],
+  ) => {
+    let attendancesMatchingAllFilters
+    const attendancesMatchingCategoryFilter = attendancesForStatus.filter(a => categoryFilters.includes(a.categoryName))
+    if (absencesPage) {
+      const attendancesMatchingPayFilter = attendancesMatchingCategoryFilter.filter(a =>
+        this.payFilter(a.issuePayment, payFilters),
+      )
+      attendancesMatchingAllFilters = attendancesMatchingPayFilter.filter(a =>
+        absenceReasonFilters.includes(a.attendanceReasonCode),
+      )
+    }
+    return attendancesMatchingAllFilters || attendancesMatchingCategoryFilter
+  }
 }

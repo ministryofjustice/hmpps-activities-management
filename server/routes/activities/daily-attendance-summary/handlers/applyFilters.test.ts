@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import ApplyFiltersRoutes from './applyFilters'
+import AttendanceReason from '../../../../enum/attendanceReason'
 
 describe('Route Handlers - applyFilters', () => {
   const handler = new ApplyFiltersRoutes()
@@ -31,6 +32,8 @@ describe('Route Handlers - applyFilters', () => {
         categoryFilters: ['Prison Jobs'],
         reasonFilter: 'SUSPENDED',
         searchTerm: 'search',
+        absenceReasonFilters: [AttendanceReason.SICK],
+        payFilters: ['true'],
       }
       await handler.APPLY(req, res)
 
@@ -38,6 +41,8 @@ describe('Route Handlers - applyFilters', () => {
         categoryFilters: ['Prison Jobs'],
         reasonFilter: 'SUSPENDED',
         searchTerm: 'search',
+        absenceReasonFilters: [AttendanceReason.SICK],
+        payFilters: ['true'],
       })
     })
 
@@ -46,6 +51,8 @@ describe('Route Handlers - applyFilters', () => {
         categoryFilters: [],
         reasonFilter: '',
         searchTerm: '',
+        absenceReasonFilters: [],
+        payFilters: [],
       }
       await handler.APPLY(req, res)
 
@@ -53,6 +60,8 @@ describe('Route Handlers - applyFilters', () => {
         categoryFilters: [],
         reasonFilter: '',
         searchTerm: '',
+        absenceReasonFilters: [],
+        payFilters: [],
       })
     })
   })
