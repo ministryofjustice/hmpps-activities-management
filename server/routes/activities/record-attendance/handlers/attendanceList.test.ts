@@ -16,7 +16,6 @@ import { AppointmentFrequency } from '../../../../@types/appointments'
 import UserService from '../../../../services/userService'
 import atLeast from '../../../../../jest.setup'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
-import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -805,7 +804,7 @@ describe('Route Handlers - Attendance List', () => {
           },
         ] as Prisoner[])
 
-      await handler.NOT_ATTENDED_MULTIPLE(req, res)
+      await handler.NOT_ATTENDED(req, res)
 
       expect(req.session.notAttendedJourney.selectedPrisoners).toEqual([
         {
@@ -841,50 +840,6 @@ describe('Route Handlers - Attendance List', () => {
       ])
 
       expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/not-attended-reason')
-    })
-  })
-
-  // TODO: SAA-1796 Remove
-  describe('NOT_ATTENDED with toggle off', () => {
-    it('non attendance should be redirected to the non attendance page', async () => {
-      config.recordAttendanceSelectSlotFirst = false
-
-      req = {
-        params: { id: 1 },
-        session: {
-          notAttendedJourney: {},
-        },
-        body: {
-          selectedAttendances: ['999-1-ABC123'],
-        },
-      } as unknown as Request
-
-      when(activitiesService.getScheduledEventsForPrisoners)
-        .calledWith(expect.any(Date), ['ABC123'], res.locals.user)
-        .mockResolvedValue({
-          activities: [],
-          appointments: [],
-          courtHearings: [],
-          visits: [],
-          adjudications: [],
-        } as PrisonerScheduledEvents)
-
-      when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['ABC123'], res.locals.user)
-        .mockResolvedValue([
-          {
-            prisonerNumber: 'ABC123',
-            firstName: 'Joe',
-            lastName: 'Bloggs',
-            cellLocation: 'MDI-1-001',
-            alerts: [],
-            category: 'A',
-          },
-        ] as Prisoner[])
-
-      await handler.NOT_ATTENDED(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/1/not-attended-reason')
     })
   })
 })
