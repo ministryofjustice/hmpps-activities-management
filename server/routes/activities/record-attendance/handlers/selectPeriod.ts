@@ -6,7 +6,6 @@ import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePicker
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
 import TimeSlot from '../../../../enum/timeSlot'
-import config from '../../../../config'
 import { convertToArray } from '../../../../utils/utils'
 
 enum PresetDateOptions {
@@ -30,7 +29,6 @@ export class TimePeriod {
   date: Date
 
   @Expose()
-  @ValidateIf(_ => config.recordAttendanceSelectSlotFirst)
   @IsNotEmpty({ message: 'Select a time period' })
   sessions: TimeSlot[]
 }

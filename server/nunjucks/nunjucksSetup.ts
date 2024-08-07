@@ -3,39 +3,39 @@
 import nunjucks, { Environment } from 'nunjucks'
 import express, { Router } from 'express'
 import path from 'path'
-import { addDays, addMonths, addWeeks, addYears, startOfDay, subDays, subMonths, subWeeks, getUnixTime } from 'date-fns'
-import { flatMap, sortBy, flatten } from 'lodash'
+import { addDays, addMonths, addWeeks, addYears, getUnixTime, startOfDay, subDays, subMonths, subWeeks } from 'date-fns'
+import { flatMap, flatten, sortBy } from 'lodash'
 import setUpDprNunjucksFilters from '@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/setUpNunjucksFilters'
 import {
   addDefaultSelectedValue,
   buildErrorSummaryList,
+  concatArrays,
   convertToTitleCase,
   dateInList,
+  excludeArrayObject,
   existsInStringArray,
+  filterObjects,
   findError,
+  firstNameLastName,
   formatDate,
+  fullName,
   getTimeSlotFromTime,
   initialiseName,
+  isTodayOrBefore,
+  padNumber,
+  parseDate,
+  parseISODate,
+  prisonerName,
+  removeUndefined,
+  setAttribute,
   setSelected,
+  sliceArray,
   startsWithAny,
+  toDate,
+  toDateString,
   toFixed,
   toMoney,
   toTimeItems,
-  fullName,
-  prisonerName,
-  toDate,
-  parseDate,
-  parseISODate,
-  isTodayOrBefore,
-  sliceArray,
-  toDateString,
-  padNumber,
-  firstNameLastName,
-  setAttribute,
-  removeUndefined,
-  filterObjects,
-  excludeArrayObject,
-  concatArrays,
 } from '../utils/utils'
 import config from '../config'
 import applicationVersion from '../applicationVersion'
@@ -47,11 +47,11 @@ import {
 } from '../utils/calendarUtilities'
 import { Services } from '../services'
 import { EventSource, EventType, YesNo } from '../@types/activities'
-import { AppointmentType, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { AppointmentJourneyMode, AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import {
+  AppointmentApplyTo,
   AppointmentCancellationReason,
   AppointmentFrequency,
-  AppointmentApplyTo,
   AttendanceStatus,
 } from '../@types/appointments'
 import TimeSlot from '../enum/timeSlot'
@@ -217,7 +217,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
-  njkEnv.addGlobal('recordAttendanceSelectSlotFirst', config.recordAttendanceSelectSlotFirst)
   njkEnv.addGlobal('allocateToNextSession', config.allocateToNextSession)
   njkEnv.addGlobal('futurePayRatesFlag', config.futurePayRatesToggleEnabled)
 

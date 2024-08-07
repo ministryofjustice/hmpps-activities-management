@@ -16,7 +16,6 @@ import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import { convertToTitleCase, getTimeSlotFromTime } from '../../../../utils/utils'
 import { YesNo } from '../../../../@types/activities'
-import config from '../../../../config'
 import { AttendActivityMode } from '../recordAttendanceRequests'
 
 const getPrisonerName = (args: ValidationArguments) => (args.object as NotAttendedData)?.prisonerName
@@ -26,7 +25,6 @@ export class NotAttendedData {
 
   prisonerName: string
 
-  @ValidateIf(res => config.recordAttendanceSelectSlotFirst)
   @Transform(({ value }) => +value)
   @IsPositive()
   instanceId: number
@@ -100,32 +98,7 @@ export class NotAttendedForm {
 export default class NotAttendedReasonRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  // TODO: SAA-1796 Remove
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    const instanceId = req.params.id
-    const { selectedPrisoners } = req.session.notAttendedJourney
-
-    const [attendanceReasons, instance] = await Promise.all([
-      this.activitiesService.getAttendanceReasons(user),
-      this.activitiesService.getScheduledActivity(+instanceId, user),
-    ])
-
-    const notAttendedReasons = attendanceReasons
-      .filter(r => r.displayInAbsence)
-      .sort((r1, r2) => r1.displaySequence - r2.displaySequence)
-
-    const isPayable = instance.activitySchedule.activity.paid
-
-    // TODO: SAA-1796 Remove the view also
-    res.render('pages/activities/record-attendance/not-attended-reason', {
-      notAttendedReasons,
-      selectedPrisoners,
-      isPayable,
-    })
-  }
-
-  GET_MULTIPLE = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { selectedPrisoners } = req.session.notAttendedJourney
 
@@ -157,44 +130,7 @@ export default class NotAttendedReasonRoutes {
     })
   }
 
-  // TODO: SAA-1796 Remove
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    const instanceId = req.params.id
-    const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
-    const { selectedPrisoners } = req.session.notAttendedJourney
-
-    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
-    const isPaid = instance.activitySchedule.activity.paid
-
-    const attendanceUpdates = selectedPrisoners.map(selectedPrisoner => {
-      const prisonerAttendance = notAttendedData.find(a => a.prisonerNumber === selectedPrisoner.prisonerNumber)
-      if (!prisonerAttendance) return null
-
-      return {
-        id: selectedPrisoner.attendanceId,
-        prisonCode: user.activeCaseLoadId,
-        status: AttendanceStatus.COMPLETED,
-        attendanceReason: prisonerAttendance.notAttendedReason,
-        comment: prisonerAttendance.getMoreDetails(),
-        issuePayment: prisonerAttendance.getIssuePayment() && isPaid,
-        caseNote: prisonerAttendance.getCaseNote(),
-        incentiveLevelWarningIssued: prisonerAttendance.getIncentiveLevelWarning(),
-        otherAbsenceReason: prisonerAttendance.getOtherAbsenceReason(),
-      }
-    })
-
-    await this.activitiesService.updateAttendances(attendanceUpdates, user)
-
-    const successMessage = `You've saved attendance details for ${
-      selectedPrisoners.length === 1
-        ? convertToTitleCase(selectedPrisoners[0].prisonerName)
-        : `${selectedPrisoners.length} people`
-    }`
-    res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
-  }
-
-  POST_MULTIPLE = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
     const { selectedPrisoners } = req.session.notAttendedJourney

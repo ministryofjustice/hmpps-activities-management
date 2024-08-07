@@ -14,7 +14,6 @@ import { EventType, Prisoner } from '../../../../@types/activities'
 import applyCancellationDisplayRule from '../../../../utils/applyCancellationDisplayRule'
 import UserService from '../../../../services/userService'
 import TimeSlot from '../../../../enum/timeSlot'
-import config from '../../../../config'
 
 export class AttendanceList {
   @Expose()
@@ -185,7 +184,6 @@ export default class AttendanceListRoutes {
     })
   }
 
-  // TODO: SAA-1796 Remove
   ATTENDED = async (req: Request, res: Response): Promise<void> => {
     const instanceId = +req.params.id
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
@@ -247,62 +245,7 @@ export default class AttendanceListRoutes {
     return res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
   }
 
-  // TODO: SAA-1796 Remove
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
-    if (config.recordAttendanceSelectSlotFirst) {
-      return this.NOT_ATTENDED_MULTIPLE(req, res)
-    }
-    const instanceId = req.params.id
-    const { user } = res.locals
-    const { selectedAttendances }: { selectedAttendances: string[] } = req.body
-
-    const selectedPrisoners: string[] = []
-    selectedAttendances.forEach(selectAttendee => selectedPrisoners.push(selectAttendee.split('-')[2]))
-
-    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
-
-    req.session.notAttendedJourney = {
-      selectedPrisoners: [],
-    }
-
-    const otherScheduledEvents = await this.activitiesService
-      .getScheduledEventsForPrisoners(toDate(instance.date), selectedPrisoners, user)
-      .then(response => [
-        ...response.activities,
-        ...response.appointments,
-        ...response.courtHearings,
-        ...response.visits,
-        ...response.adjudications,
-      ])
-      .then(events => events.filter(e => !e.cancelled))
-      .then(events => events.filter(e => e.scheduledInstanceId !== +instanceId))
-      .then(events => events.filter(e => eventClashes(e, instance)))
-
-    const nonAttendees = await this.prisonService
-      .searchInmatesByPrisonerNumbers(selectedPrisoners, user)
-      .then(inmates =>
-        inmates.map(i => ({
-          name: `${i.firstName} ${i.lastName}`,
-          prisonerNumber: i.prisonerNumber,
-          location: i.cellLocation,
-          otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
-          attendanceId: this.getAttendanceId(i.prisonerNumber, instance.attendances),
-        })),
-      )
-
-    nonAttendees.forEach(nonAttendee => {
-      req.session.notAttendedJourney.selectedPrisoners.push({
-        attendanceId: nonAttendee.attendanceId,
-        prisonerNumber: nonAttendee.prisonerNumber,
-        prisonerName: nonAttendee.name,
-        otherEvents: nonAttendee.otherEvents,
-      })
-    })
-
-    return res.redirect(`/activities/attendance/activities/${instanceId}/not-attended-reason`)
-  }
-
-  NOT_ATTENDED_MULTIPLE = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
 
