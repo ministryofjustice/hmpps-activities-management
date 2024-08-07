@@ -123,6 +123,11 @@ context('Daily Attendance', () => {
     const attendancePage = Page.verifyOnPage(AttendancePage)
 
     attendancePage.title().contains('All Tier 2 attendances')
+    attendancePage.getButton('Show filter').click()
+    attendancePage.absenceRadios().should('not.exist')
+    attendancePage.payRadios().should('not.exist')
+    attendancePage.categoriesRadios().should('exist')
+
     attendancePage.back()
     dailySummaryPage.selectTier1AttendanceLink()
     attendancePage.title().contains('All Tier 1 attendances')
