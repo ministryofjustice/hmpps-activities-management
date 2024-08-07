@@ -190,15 +190,15 @@ context('Daily Attendance', () => {
     attendancePage.count().contains('3 absences')
 
     attendancePage.getButton('Show filter').click()
-    attendancePage.payRadios().find('input[value="true"]').should('be.checked')
-    attendancePage.payRadios().find('input[value="false"]').should('be.checked')
+    attendancePage.payRadios().find('input[value="PAID"]').should('be.checked')
+    attendancePage.payRadios().find('input[value="NO_PAY"]').should('be.checked')
 
-    attendancePage.payRadios().find('input[value="false"]').uncheck()
+    attendancePage.payRadios().find('input[value="NO_PAY"]').uncheck()
     attendancePage.getButton('Apply filters').first().click()
 
     attendancePage.count().contains('2 absences')
-    attendancePage.payRadios().find('input[value="true"]').should('be.checked')
-    attendancePage.payRadios().find('input[value="false"]').should('not.be.checked')
+    attendancePage.payRadios().find('input[value="PAID"]').should('be.checked')
+    attendancePage.payRadios().find('input[value="NO_PAY"]').should('not.be.checked')
     cy.get('[data-qa="attendance"]').should('not.contain.text', 'No pay')
   })
 })
