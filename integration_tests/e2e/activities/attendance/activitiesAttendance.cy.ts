@@ -130,4 +130,70 @@ context('Daily Attendance', () => {
     dailySummaryPage.selectRoutineAttendanceLink()
     attendancePage.title().contains('All routine attendances')
   })
+  it('Absences page - filter on absence reason', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.attendanceSummaryCard().click()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.selectToday()
+    selectPeriodPage.continue()
+
+    const dailySummaryPage = Page.verifyOnPage(DailySummaryPage)
+    dailySummaryPage.absencesLink()
+
+    const attendancePage = Page.verifyOnPage(AttendancePage)
+    attendancePage.title().contains('All absences')
+    attendancePage.count().contains('3 absences')
+
+    attendancePage.getButton('Show filter').click()
+    attendancePage.absenceRadios().should('exist')
+    attendancePage.payRadios().should('exist')
+    attendancePage.categoriesRadios().should('exist')
+
+    attendancePage.clearAbsenceReasons()
+    attendancePage.absenceRadios().find('input[value="REST"]').check()
+    attendancePage.getButton('Apply filters').first().click()
+
+    attendancePage.count().contains('1 absence')
+    cy.get('[data-qa="attendance"]').contains('Rest day')
+  })
+  it('Absences page - filter on pay', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.attendanceSummaryCard().click()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.selectToday()
+    selectPeriodPage.continue()
+
+    const dailySummaryPage = Page.verifyOnPage(DailySummaryPage)
+    dailySummaryPage.absencesLink()
+
+    const attendancePage = Page.verifyOnPage(AttendancePage)
+    attendancePage.title().contains('All absences')
+    attendancePage.count().contains('3 absences')
+
+    attendancePage.getButton('Show filter').click()
+    attendancePage.payRadios().find('input[value="true"]').should('be.checked')
+    attendancePage.payRadios().find('input[value="false"]').should('be.checked')
+
+    attendancePage.payRadios().find('input[value="false"]').uncheck()
+    attendancePage.getButton('Apply filters').first().click()
+
+    attendancePage.count().contains('2 absences')
+    attendancePage.payRadios().find('input[value="true"]').should('be.checked')
+    attendancePage.payRadios().find('input[value="false"]').should('not.be.checked')
+    cy.get('[data-qa="attendance"]').should('not.contain.text', 'No pay')
+  })
 })

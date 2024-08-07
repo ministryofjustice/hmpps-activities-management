@@ -2,6 +2,7 @@
     idPrefix: 'absenceReasonFilters',
     name: 'absenceReasonFilters',
     classes: "govuk-radios--small",
+    attributes: { "data-qa": "absence-reasons-radio-buttons" },
     fieldset: {
         legend: {
             text: 'Absences',
@@ -11,12 +12,13 @@
     items: absenceReasonFilters
 }) }}
 <div class="govuk-!-margin-bottom-4">
-    <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="absenceReasonFilters"></a>
+    <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="absenceReasonFilters" data-qa="absenceReasonClear"></a>
 </div>
 {{ govukCheckboxes({
     idPrefix: 'payFilters',
     name: 'payFilters',
     classes: "govuk-radios--small",
+    attributes: { "data-qa": "pay-radio-buttons" },
     fieldset: {
         legend: {
             text: 'Pay',
