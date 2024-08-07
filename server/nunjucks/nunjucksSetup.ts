@@ -46,8 +46,8 @@ import {
   sortActivitiesByStartTime,
 } from '../utils/calendarUtilities'
 import { Services } from '../services'
-import { EventSource, EventType, YesNo } from '../@types/activities'
-import { AppointmentJourneyMode, AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { EventSource, EventType, PayNoPay, YesNo } from '../@types/activities'
+import { AppointmentType, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import {
   AppointmentApplyTo,
   AppointmentCancellationReason,
@@ -207,6 +207,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('AttendanceStatus', AttendanceStatus)
   njkEnv.addGlobal('AttendanceReason', AttendanceReason)
   njkEnv.addGlobal('EventTier', EventTier)
+  njkEnv.addGlobal('PayNoPay', PayNoPay)
   njkEnv.addGlobal('EventOrganiser', EventOrganiser)
   njkEnv.addGlobal('getAppointmentEditMessage', getAppointmentEditMessage)
   njkEnv.addGlobal('getConfirmAppointmentEditCta', getConfirmAppointmentEditCta)

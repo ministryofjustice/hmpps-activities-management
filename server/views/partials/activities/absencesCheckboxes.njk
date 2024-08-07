@@ -27,14 +27,14 @@
     },
     items: [
     {
-        value: 'true', 
+        value: PayNoPay.PAID, 
         text: 'Pay', 
-        checked: 'true' in session.attendanceSummaryJourney.payFilters
+        checked: PayNoPay.PAID in session.attendanceSummaryJourney.payFilters
     },
     {
-        value: 'false', 
+        value: PayNoPay.NO_PAY, 
         text: 'No pay', 
-        checked: 'false' in session.attendanceSummaryJourney.payFilters
+        checked: PayNoPay.NO_PAY in session.attendanceSummaryJourney.payFilters
     }
     ]
 }) }}

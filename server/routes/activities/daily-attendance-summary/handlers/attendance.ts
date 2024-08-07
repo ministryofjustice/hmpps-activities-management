@@ -7,6 +7,7 @@ import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import EventTier from '../../../../enum/eventTiers'
 import { AllAttendance } from '../../../../@types/activitiesAPI/types'
+import { PayNoPay } from '../../../../@types/activities'
 
 export default class DailyAttendanceRoutes {
   constructor(
@@ -41,7 +42,7 @@ export default class DailyAttendanceRoutes {
     req.session.attendanceSummaryJourney ??= {}
     req.session.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
     req.session.attendanceSummaryJourney.absenceReasonFilters ??= absenceReasons
-    req.session.attendanceSummaryJourney.payFilters ??= ['true', 'false']
+    req.session.attendanceSummaryJourney.payFilters ??= [PayNoPay.PAID, PayNoPay.NO_PAY]
 
     const { categoryFilters, searchTerm, absenceReasonFilters, payFilters } = req.session.attendanceSummaryJourney
 
@@ -91,16 +92,15 @@ export default class DailyAttendanceRoutes {
   private includesSearchTerm = (propertyValue: string, searchTerm: string) =>
     !searchTerm || propertyValue.toLowerCase().includes(searchTerm.toLowerCase())
 
-  private payFilter = (issuePayment: boolean, payFilters: string[]) => {
-    if (Array.isArray(payFilters)) return true
-    return String(issuePayment) === payFilters
+  private payFilter = (issuePayment: boolean, payFilters: PayNoPay[]) => {
+    return issuePayment ? payFilters.includes(PayNoPay.PAID) : payFilters.includes(PayNoPay.NO_PAY)
   }
 
   private filterAttendances = (
     attendancesForStatus: AllAttendance[],
     categoryFilters: string[],
     absencesPage: boolean,
-    payFilters: string[],
+    payFilters: PayNoPay[],
     absenceReasonFilters: string[],
   ) => {
     let attendancesMatchingAllFilters

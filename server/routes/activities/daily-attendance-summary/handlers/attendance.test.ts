@@ -9,6 +9,7 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import EventTier from '../../../../enum/eventTiers'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
+import { PayNoPay } from '../../../../@types/activities'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -530,7 +531,7 @@ describe('Route Handlers - Daily Attendance List', () => {
         },
         session: {
           attendanceSummaryJourney: {
-            payFilters: 'true',
+            payFilters: PayNoPay.PAID,
           },
         },
       } as unknown as Request
