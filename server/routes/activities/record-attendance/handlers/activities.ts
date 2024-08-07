@@ -8,7 +8,6 @@ import TimeSlot from '../../../../enum/timeSlot'
 import { AttendActivityMode } from '../recordAttendanceRequests'
 import PrisonService from '../../../../services/prisonService'
 import { LocationType } from '../../create-an-activity/handlers/location'
-import config from '../../../../config'
 
 export default class ActivitiesRoutes {
   constructor(
@@ -18,8 +17,7 @@ export default class ActivitiesRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    // TODO: SAA-1796 Remove locationFilters
-    const { date, searchTerm, sessionFilters, categoryFilters, locationFilters, locationId, locationType } = req.query
+    const { date, searchTerm, sessionFilters, categoryFilters, locationId, locationType } = req.query
 
     const activityDate = date ? toDate(asString(date)) : new Date()
 
@@ -33,7 +31,6 @@ export default class ActivitiesRoutes {
     const filterValues = {
       sessionFilters: sessionFilters !== undefined ? asString(sessionFilters).split(',') : null,
       categoryFilters: categoryFilters !== undefined ? asString(categoryFilters).split(',') : null,
-      locationFilters: locationFilters !== undefined ? asString(locationFilters).split(',') : null,
     }
 
     const locationTypeFilter = locationType !== undefined ? asString(locationType) : 'ALL'
@@ -47,21 +44,17 @@ export default class ActivitiesRoutes {
       .filter(a => filterValues.sessionFilters?.includes(getTimeSlotFromTime(a.startTime)) ?? true)
       .filter(a => selectedCategoryIds?.includes(a.categoryId) ?? true)
       .filter(a => {
-        if (config.recordAttendanceSelectSlotFirst) {
-          switch (locationTypeFilter) {
-            case LocationType.OUT_OF_CELL:
-              return a.internalLocation?.id === +asString(locationId)
-            case LocationType.IN_CELL:
-              return a.inCell
-            case LocationType.ON_WING:
-              return a.onWing
-            case LocationType.OFF_WING:
-              return a.offWing
-            default:
-              return true
-          }
-        } else {
-          return filterValues.locationFilters?.includes(a.inCell ? 'IN_CELL' : 'OUT_OF_CELL') ?? true
+        switch (locationTypeFilter) {
+          case LocationType.OUT_OF_CELL:
+            return a.internalLocation?.id === +asString(locationId)
+          case LocationType.IN_CELL:
+            return a.inCell
+          case LocationType.ON_WING:
+            return a.onWing
+          case LocationType.OFF_WING:
+            return a.offWing
+          default:
+            return true
         }
       })
 
@@ -81,59 +74,32 @@ export default class ActivitiesRoutes {
 
     req.session.recordAttendanceRequests = {}
 
-    if (config.recordAttendanceSelectSlotFirst) {
-      const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
-      const uniqueLocations = _.uniqBy(locations, 'locationId')
-
-      return res.render('pages/activities/record-attendance/activities', {
-        activityDate,
-        filterItems: filterItems(categories, filterValues, asString(locationId), locationTypeFilter),
-        selectedSessions: filterValues.sessionFilters,
-        activityRows,
-        locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
-      })
-    }
-    const activitiesBySession = {
-      am: filteredActivities.filter(a => getTimeSlotFromTime(a.startTime) === TimeSlot.AM),
-      pm: filteredActivities.filter(a => getTimeSlotFromTime(a.startTime) === TimeSlot.PM),
-      ed: filteredActivities.filter(a => getTimeSlotFromTime(a.startTime) === TimeSlot.ED),
-    }
+    const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
+    const uniqueLocations = _.uniqBy(locations, 'locationId')
 
     return res.render('pages/activities/record-attendance/activities', {
-      activitiesBySession,
       activityDate,
       filterItems: filterItems(categories, filterValues, asString(locationId), locationTypeFilter),
       selectedSessions: filterValues.sessionFilters,
       activityRows,
+      locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    // TODO: SAA-1796 Remove locationFilters
-    const { searchTerm, sessionFilters, categoryFilters, locationFilters, locationId, locationType } = req.body
+    const { searchTerm, sessionFilters, categoryFilters, locationId, locationType } = req.body
 
     const activityDate = req.query.date ?? formatDate(new Date(), 'YYYY-MM-dd')
     const sessionFiltersString = sessionFilters ? convertToArray(sessionFilters).join(',') : ''
     const categoryFiltersString = categoryFilters ? convertToArray(categoryFilters).join(',') : ''
 
-    let redirectUrl: string
+    const redirectUrl =
+      `activities?date=${activityDate}&searchTerm=${searchTerm ?? ''}` +
+      `&sessionFilters=${sessionFiltersString}` +
+      `&categoryFilters=${categoryFiltersString}` +
+      `&locationId=${locationId ?? ''}` +
+      `&locationType=${locationType ?? ''}`
 
-    if (config.recordAttendanceSelectSlotFirst) {
-      redirectUrl =
-        `activities?date=${activityDate}&searchTerm=${searchTerm ?? ''}` +
-        `&sessionFilters=${sessionFiltersString}` +
-        `&categoryFilters=${categoryFiltersString}` +
-        `&locationId=${locationId ?? ''}` +
-        `&locationType=${locationType ?? ''}`
-    } else {
-      const locationFiltersString = locationFilters ? convertToArray(locationFilters).join(',') : ''
-
-      redirectUrl =
-        `activities?date=${activityDate}&searchTerm=${searchTerm ?? ''}` +
-        `&sessionFilters=${sessionFiltersString}` +
-        `&categoryFilters=${categoryFiltersString}` +
-        `&locationFilters=${locationFiltersString}`
-    }
     res.redirect(redirectUrl)
   }
 
@@ -169,19 +135,7 @@ const filterItems = (
     { value: 'pm', text: 'Afternoon (PM)' },
     { value: 'ed', text: 'Evening (ED)' },
   ].map(c => ({ ...c, checked: filterValues.sessionFilters?.includes(c.value) ?? true }))
-  // TODO: SAA-1795: Remove locationFilters
-  const locationFilters = [
-    { value: 'IN_CELL', text: 'In cell' },
-    { value: 'OUT_OF_CELL', text: 'Out of cell' },
-  ].map(c => ({ ...c, checked: filterValues.locationFilters?.includes(c.value) ?? true }))
 
-  if (!config.recordAttendanceSelectSlotFirst) {
-    return {
-      sessionFilters,
-      categoryFilters,
-      locationFilters,
-    }
-  }
   return {
     sessionFilters,
     categoryFilters,

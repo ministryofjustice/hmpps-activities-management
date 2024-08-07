@@ -5,7 +5,6 @@ import { validate } from 'class-validator'
 import SelectPeriodRoutes, { TimePeriod } from './selectPeriod'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { formatDatePickerDate } from '../../../../utils/datePickerUtils'
-import config from '../../../../config'
 
 describe('Route Handlers - Select period', () => {
   const handler = new SelectPeriodRoutes()
@@ -66,23 +65,10 @@ describe('Route Handlers - Select period', () => {
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`activities?date=2022-12-01&sessionFilters=am,ed`)
     })
-
-    // TODO: Remove this when removing toggle
-    it('redirect with the expected query params for when no sessions are selected', async () => {
-      req.body = {
-        datePresetOption: 'other',
-        date: new Date('2022/12/01'),
-      }
-
-      await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`activities?date=2022-12-01`)
-    })
   })
 
   describe('type validation', () => {
     it('validation fails if values are not entered', async () => {
-      config.recordAttendanceSelectSlotFirst = true
-
       const body = {}
 
       const requestObject = plainToInstance(TimePeriod, body)

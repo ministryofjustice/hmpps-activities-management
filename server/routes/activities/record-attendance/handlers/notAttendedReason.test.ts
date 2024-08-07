@@ -9,7 +9,6 @@ import { YesNo } from '../../../../@types/activities'
 import AttendanceReasons from '../../../../enum/attendanceReason'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
-import config from '../../../../config'
 import { AttendActivityMode } from '../recordAttendanceRequests'
 
 jest.mock('../../../../services/activitiesService')
@@ -23,8 +22,6 @@ describe('Route Handlers - Non Attendance', () => {
   let res: Response
 
   beforeEach(() => {
-    config.recordAttendanceSelectSlotFirst = true
-
     res = {
       locals: {
         user: {
@@ -95,7 +92,7 @@ describe('Route Handlers - Non Attendance', () => {
     jest.resetAllMocks()
   })
 
-  describe('GET_MULTIPLE', () => {
+  describe('GET', () => {
     it('should render with the expected view', async () => {
       when(activitiesService.getScheduledActivity)
         .calledWith(1, res.locals.user)
@@ -158,7 +155,7 @@ describe('Route Handlers - Non Attendance', () => {
           },
         ] as AttendanceReason[])
 
-      await handler.GET_MULTIPLE(req, res)
+      await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/not-attended-reason-multiple', {
         notAttendedReasons: [
@@ -248,7 +245,7 @@ describe('Route Handlers - Non Attendance', () => {
             },
           } as ScheduledActivity)
 
-        await handler.POST_MULTIPLE(req, res)
+        await handler.POST(req, res)
 
         expect(activitiesService.updateAttendances).toHaveBeenCalledWith(
           [
