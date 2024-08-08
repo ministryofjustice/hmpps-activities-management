@@ -5,8 +5,8 @@ import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 
 export class ExtraInformation {
   @Expose()
-  @MaxLength(4000, { message: 'You must enter extra information which has no more than 4,000 characters' })
   @IsOptional()
+  @MaxLength(3600, { message: 'You must enter extra information which has no more than 3600 characters' })
   extraInformation: string
 }
 
@@ -18,13 +18,13 @@ export default class ExtraInformationRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { comments } = req.body
+    const { extraInformation } = req.body
     const { mode } = req.params
     const { user } = res.locals
 
     req.session.bookAVideoLinkJourney = {
       ...req.session.bookAVideoLinkJourney,
-      comments,
+      comments: extraInformation,
     }
 
     if (mode === 'amend') {

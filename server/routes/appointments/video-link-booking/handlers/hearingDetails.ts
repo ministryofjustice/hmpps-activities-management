@@ -19,6 +19,7 @@ export default class HearingDetailsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
 
+    // TODO: This should list all courts, not only the ones enabled in BVLS
     const agencies = await this.bookAVideoLinkService.getAllEnabledCourts(user)
     const hearingTypes = await this.bookAVideoLinkService.getCourtHearingTypes(user)
 

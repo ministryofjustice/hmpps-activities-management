@@ -63,7 +63,6 @@ describe('DateAndTimeRoutes', () => {
         preRequired: YesNo.YES,
         postRequired: YesNo.NO,
         preLocation: 'Room1',
-        postLocation: 'Room2',
       }
       req.query = { preserveHistory: 'true' }
 
@@ -80,7 +79,6 @@ describe('DateAndTimeRoutes', () => {
         preRequired: YesNo.YES,
         postRequired: YesNo.NO,
         preLocation: 'Room1',
-        postLocation: 'Room2',
       }
 
       await dateAndTimeRoutes.POST(req as Request, res as Response)
@@ -170,7 +168,28 @@ describe('DateAndTime', () => {
 
     const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
     expect(errors).toEqual(
-      expect.arrayContaining([{ error: 'Select if a pre-court hearing should be added', property: 'preRequired' }]),
+      expect.arrayContaining([
+        { error: 'Select if a pre-court hearing should be added', property: 'preRequired' },
+        { error: 'Select if a post-court hearing should be added', property: 'postRequired' },
+      ]),
+    )
+  })
+
+  it('should invalidate where pre and post meetings are required but rooms are not provided', async () => {
+    const dateAndTime = plainToInstance(DateAndTime, {
+      date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
+      startTime: { hour: 10, minute: 30 },
+      endTime: { hour: 11, minute: 30 },
+      preRequired: YesNo.YES,
+      postRequired: YesNo.YES,
+    })
+
+    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        { error: 'Select a room for the pre-court hearing', property: 'preLocation' },
+        { error: 'Select a room for the post-court hearing', property: 'postLocation' },
+      ]),
     )
   })
 })

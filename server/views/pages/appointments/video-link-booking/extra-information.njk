@@ -24,14 +24,14 @@
       </p>
       <form method="POST" {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing extra information" {% endif %}>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-        <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="4000">
+        <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="3600">
           <div class="govuk-form-group">
             {{ govukCharacterCount({
-                id: "comments",
-                name: "comments",
-                errorMessage: validationErrors | findError("comments"),
-                value: formResponses.comments or session.bookAVideoLinkJourney.comments,
-                maxlength: "4000"
+                id: "extraInformation",
+                name: "extraInformation",
+                errorMessage: validationErrors | findError("extraInformation"),
+                value: formResponses.extraInformation or session.bookAVideoLinkJourney.comments,
+                maxlength: "3600"
             }) }}
           </div>
         </div>
