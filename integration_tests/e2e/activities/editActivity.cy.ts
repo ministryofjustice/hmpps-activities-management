@@ -12,8 +12,10 @@ import prisonerAllocations from '../../fixtures/activitiesApi/prisonerAllocation
 import getCandidates from '../../fixtures/activitiesApi/getCandidates.json'
 
 import { formatIsoDate } from '../../../server/utils/datePickerUtils'
-import AllocationDashboard from '../../pages/allocateToActivity/allocationDashboard'
 import ViewActivityPage from '../../pages/createActivity/viewActivity'
+import PayAmountPage from '../../pages/createActivity/pay-amount'
+import PayDateOptionPage from '../../pages/createActivity/pay-date-option'
+import CancelPayRatePage from '../../pages/createActivity/cancel-pay-rate'
 
 context('Edit activity', () => {
   beforeEach(() => {
@@ -28,9 +30,7 @@ context('Edit activity', () => {
     cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', JSON.parse('[]'))
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('POST', '/schedules/2/allocations')
-  })
 
-  it('should show the correct elements when adding a pay rate on an existing activity', () => {
     const getActivity2 = { ...getActivity }
     getActivity2.schedules[0].startDate = formatIsoDate(addDays(new Date(), 1))
     getActivity2.schedules[0].activity.paid = true
@@ -48,10 +48,12 @@ context('Edit activity', () => {
     ]
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
     cy.stubEndpoint('GET', '/activities/2/filtered', getActivity2)
+    cy.stubEndpoint('PATCH', '/activities/MDI/activityId/2', getActivity2)
+  })
 
-    cy.visit('/activities/allocation-dashboard/2')
-    const allocation = Page.verifyOnPage(AllocationDashboard)
-    allocation.getLinkByText('adding or removing corresponding pay rates.').invoke('attr', 'target', '_self').click()
+  it('should follow create and then cancel future pay rate user journey', () => {
+    const twentyNineDaysAhead = addDays(new Date(), 29)
+    cy.visit('/activities/view/2')
 
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.changePayLink().click()
@@ -65,8 +67,28 @@ context('Edit activity', () => {
 
     const payPage = Page.verifyOnPage(PayPage)
     payPage.enterPayAmount('1.00')
-    payPage.selectPayBand('Low')
+    payPage.selectPayBand('High')
     payPage.futurePayRateDetails().should('not.exist')
     payPage.radios().should('not.exist')
+    payPage.saveAndContinue()
+
+    Page.verifyOnPage(CheckPayPage)
+    checkPayPage.changePay()
+
+    const payAmountPage = Page.verifyOnPage(PayAmountPage)
+    payAmountPage.enterPayAmount('{backspace}{backspace}{backspace}{backspace}1.35')
+    payAmountPage.continue()
+
+    const payDateOptionPage = Page.verifyOnPage(PayDateOptionPage)
+    payDateOptionPage.dateOptionOther()
+    payDateOptionPage.selectDatePickerDate(twentyNineDaysAhead)
+    payDateOptionPage.confirm()
+
+    Page.verifyOnPage(CheckPayPage)
+    checkPayPage.cancelPay()
+
+    const cancelPayRatePage = Page.verifyOnPage(CancelPayRatePage)
+    cancelPayRatePage.cancelPayRate()
+    cancelPayRatePage.confirm()
   })
 })
