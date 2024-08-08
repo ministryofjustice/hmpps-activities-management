@@ -3,6 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import QualificationRoutes, { Qualification } from './qualifications'
+import config from '../../../../config'
 
 describe('Route Handlers - Create an activity - Qualifications', () => {
   const handler = new QualificationRoutes()
@@ -18,6 +19,7 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirect: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -47,10 +49,11 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
       await handler.POST(req, res)
 
       expect(req.session.createJourney.qualificationOption).toEqual('yes')
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('education-level')
+      expect(res.redirect).toHaveBeenCalledWith('education-level')
     })
 
     it('No: should save the selected qualification option in session and redirect to the check answers page', async () => {
+      config.customStartEndTimesEnabled = false
       req.body = {
         qualificationOption: 'no',
       }
@@ -58,7 +61,18 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
       await handler.POST(req, res)
 
       expect(req.session.createJourney.qualificationOption).toEqual('no')
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('start-date')
+      expect(res.redirect).toHaveBeenCalledWith('start-date')
+    })
+    it('No: should save the selected qualification option in session and redirect to the check answers page', async () => {
+      config.customStartEndTimesEnabled = true
+      req.body = {
+        qualificationOption: 'no',
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.qualificationOption).toEqual('no')
+      expect(res.redirect).toHaveBeenCalledWith('schedule-frequency')
     })
   })
 
