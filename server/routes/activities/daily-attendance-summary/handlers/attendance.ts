@@ -6,6 +6,8 @@ import PrisonService from '../../../../services/prisonService'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import EventTier from '../../../../enum/eventTiers'
+import { AllAttendance } from '../../../../@types/activitiesAPI/types'
+import { PayNoPay } from '../../../../@types/activities'
 
 export default class DailyAttendanceRoutes {
   constructor(
@@ -21,7 +23,7 @@ export default class DailyAttendanceRoutes {
       return res.redirect('select-period')
     }
     const activityDate = toDate(req.query.date as string)
-    const tier = eventTier && EventTier[eventTier as string]
+    const tier = eventTier && EventTier[eventTier as keyof typeof EventTier]
     const attendances = await this.activitiesService.getAllAttendance(activityDate, user, tier)
     const mandatoryAttendances = attendances.filter(a => a.attendanceRequired)
     const attendancesForStatus = mandatoryAttendances.filter(a => {
@@ -34,14 +36,24 @@ export default class DailyAttendanceRoutes {
     })
 
     const uniqueCategories = _.uniq(attendancesForStatus.map(c => c.categoryName))
+    const absenceReasons = Object.keys(AttendanceReason).filter(reason => reason !== AttendanceReason.ATTENDED)
 
     // Set the default filter values if they are not set
     req.session.attendanceSummaryJourney ??= {}
     req.session.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
+    req.session.attendanceSummaryJourney.absenceReasonFilters ??= absenceReasons
+    req.session.attendanceSummaryJourney.payFilters ??= [PayNoPay.PAID, PayNoPay.NO_PAY]
 
-    const { categoryFilters, searchTerm } = req.session.attendanceSummaryJourney
+    const { categoryFilters, searchTerm, absenceReasonFilters, payFilters } = req.session.attendanceSummaryJourney
 
-    const attendancesMatchingFilter = attendancesForStatus.filter(a => categoryFilters.includes(a.categoryName))
+    const attendancesMatchingFilter = this.filterAttendances(
+      attendancesForStatus,
+      categoryFilters,
+      status === 'Absences',
+      payFilters,
+      absenceReasonFilters,
+    )
+
     const prisonerNumbers = attendancesMatchingFilter.map(a => a.prisonerNumber)
 
     const inmates = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
@@ -70,6 +82,7 @@ export default class DailyAttendanceRoutes {
     return res.render('pages/activities/daily-attendance-summary/attendances', {
       activityDate,
       uniqueCategories,
+      absenceReasons,
       status,
       attendees,
       tier,
@@ -78,4 +91,28 @@ export default class DailyAttendanceRoutes {
 
   private includesSearchTerm = (propertyValue: string, searchTerm: string) =>
     !searchTerm || propertyValue.toLowerCase().includes(searchTerm.toLowerCase())
+
+  private payFilter = (issuePayment: boolean, payFilters: PayNoPay[]) => {
+    return issuePayment ? payFilters.includes(PayNoPay.PAID) : payFilters.includes(PayNoPay.NO_PAY)
+  }
+
+  private filterAttendances = (
+    attendancesForStatus: AllAttendance[],
+    categoryFilters: string[],
+    absencesPage: boolean,
+    payFilters: PayNoPay[],
+    absenceReasonFilters: string[],
+  ) => {
+    let attendancesMatchingAllFilters
+    const attendancesMatchingCategoryFilter = attendancesForStatus.filter(a => categoryFilters.includes(a.categoryName))
+    if (absencesPage) {
+      const attendancesMatchingPayFilter = attendancesMatchingCategoryFilter.filter(a =>
+        this.payFilter(a.issuePayment, payFilters),
+      )
+      attendancesMatchingAllFilters = attendancesMatchingPayFilter.filter(a =>
+        absenceReasonFilters.includes(a.attendanceReasonCode),
+      )
+    }
+    return attendancesMatchingAllFilters || attendancesMatchingCategoryFilter
+  }
 }

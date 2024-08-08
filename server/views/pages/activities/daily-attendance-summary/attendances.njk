@@ -27,21 +27,36 @@
         }), categoryFilters) %}
     {% endfor %}
 
+    {% set absenceReasonFilters = [] %}
+    {% for reason in absenceReasons %}
+        {% set absenceReasonFilters = (absenceReasonFilters.push({
+        value: reason, 
+        text: reason | absenceReasonDisplayConverter, 
+        checked: reason in session.attendanceSummaryJourney.absenceReasonFilters
+    }), absenceReasonFilters) %}
+    {% endfor %}
+
+    {% if status == 'Absences' %}
+        {% include "../../../partials/activities/absencesCheckboxes.njk" %}
+    {% endif %}
+    
     {{ govukCheckboxes({
-            idPrefix: 'categoryFilters',
-            name: 'categoryFilters',
-            classes: "govuk-radios--small",
-            hint: {
-                text: "Select all that apply"
-            },
-            fieldset: {
-                legend: {
-                    text: 'Categories',
-                    classes: 'govuk-fieldset__legend--m'
-                }
-            },
-            items: categoryFilters
-        }) }}
+        idPrefix: 'categoryFilters',
+        name: 'categoryFilters',
+        classes: "govuk-radios--small",
+        hint: {
+            text: "Select all that apply"
+        },
+        attributes: { "data-qa": "category-radio-buttons" },
+        fieldset: {
+            legend: {
+                text: 'Categories',
+                classes: 'govuk-fieldset__legend--m'
+            }
+        },
+        items: categoryFilters
+    }) }}
+
     <div class="govuk-!-margin-bottom-4">
         <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
     </div>

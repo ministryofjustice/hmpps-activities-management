@@ -56,6 +56,11 @@ export enum YesNo {
   NO = 'NO',
 }
 
+export enum PayNoPay {
+  PAID = 'PAID',
+  NO_PAY = 'NO_PAY',
+}
+
 export enum EventType {
   ACTIVITY = 'ACTIVITY',
   APPOINTMENT = 'APPOINTMENT',

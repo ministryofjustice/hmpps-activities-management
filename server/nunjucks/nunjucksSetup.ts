@@ -46,8 +46,8 @@ import {
   sortActivitiesByStartTime,
 } from '../utils/calendarUtilities'
 import { Services } from '../services'
-import { EventSource, EventType, YesNo } from '../@types/activities'
-import { AppointmentJourneyMode, AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { EventSource, EventType, PayNoPay, YesNo } from '../@types/activities'
+import { AppointmentType, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 import {
   AppointmentApplyTo,
   AppointmentCancellationReason,
@@ -68,6 +68,8 @@ import WaitlistRequester from '../enum/waitlistRequester'
 import { SERVICE_AS_USERNAME } from '../services/userService'
 import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
+import AttendanceReason from '../enum/attendanceReason'
+import absenceReasonDisplayConverter from '../utils/helpers/absenceReasonConverter'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -183,6 +185,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('flatten', flatten)
   njkEnv.addFilter('sortBy', sortBy)
   njkEnv.addFilter('excludeArray', excludeArrayObject)
+  njkEnv.addFilter('absenceReasonDisplayConverter', absenceReasonDisplayConverter)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
@@ -202,7 +205,9 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('AppointmentApplyTo', AppointmentApplyTo)
   njkEnv.addGlobal('AppointmentCancellationReason', AppointmentCancellationReason)
   njkEnv.addGlobal('AttendanceStatus', AttendanceStatus)
+  njkEnv.addGlobal('AttendanceReason', AttendanceReason)
   njkEnv.addGlobal('EventTier', EventTier)
+  njkEnv.addGlobal('PayNoPay', PayNoPay)
   njkEnv.addGlobal('EventOrganiser', EventOrganiser)
   njkEnv.addGlobal('getAppointmentEditMessage', getAppointmentEditMessage)
   njkEnv.addGlobal('getConfirmAppointmentEditCta', getConfirmAppointmentEditCta)
