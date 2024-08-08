@@ -35,8 +35,10 @@ export class Filters {
 
 export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
-    const { categoryFilters, reasonFilter, searchTerm } = req.body
+    const { categoryFilters, reasonFilter, searchTerm, absenceReasonFilters, payFilters } = req.body
     req.session.attendanceSummaryJourney.categoryFilters = categoryFilters ?? []
+    req.session.attendanceSummaryJourney.absenceReasonFilters = absenceReasonFilters ?? []
+    req.session.attendanceSummaryJourney.payFilters = payFilters ?? []
     req.session.attendanceSummaryJourney.reasonFilter = reasonFilter ?? 'BOTH'
     req.session.attendanceSummaryJourney.searchTerm = searchTerm ?? null
 
