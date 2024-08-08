@@ -140,7 +140,7 @@
                         {% set row = row.concat(
                             {
                                 html: showEvents(prisonerEvents.events, location),
-                                attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-events' }
+                                attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-events', 'data-sort-value': showEvents(prisonerEvents.events, location)  }
                             }, {
                                 html: showEvents(prisonerEvents.clashingEvents, location),
                                 attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-clashing-events' }
