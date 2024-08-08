@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty, MaxLength } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
+import { AppointmentType } from '../appointmentJourney'
+import config from '../../../../config'
 
 export class Name {
   @Expose()
@@ -17,14 +19,21 @@ export default class NameRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { type } = req.session.appointmentJourney
 
-    const categories = await this.activitiesService.getAppointmentCategories(user)
+    const categories = await this.activitiesService.getAppointmentCategories(user).then(cat => {
+      if (type === AppointmentType.SET && config.bookAVideoLinkToggleEnabled) {
+        return cat.filter(c => c.code !== 'VLB')
+      }
+      return cat
+    })
 
     res.render(`pages/appointments/create-and-edit/name`, { categories })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { categoryCode, customName } = req.body
+    const { journeyId } = req.params
     const { user } = res.locals
 
     const category = await this.activitiesService
@@ -46,6 +55,15 @@ export default class NameRoutes {
     } else {
       req.session.appointmentJourney.customName = null
       req.session.appointmentJourney.appointmentName = category.description
+    }
+
+    if (config.bookAVideoLinkToggleEnabled && category.code === 'VLB') {
+      req.session.bookAVideoLinkJourney = {
+        prisoners: req.session.appointmentJourney.prisoners,
+      }
+      req.session.appointmentJourney = null
+
+      return res.redirect(`../../video-link-booking/create/${journeyId}/select-prisoner`)
     }
 
     return res.redirectOrReturn('tier')

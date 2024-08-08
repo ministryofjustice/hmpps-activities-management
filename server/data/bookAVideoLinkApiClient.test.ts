@@ -4,7 +4,11 @@ import config from '../config'
 import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
 import BookAVideoLinkApiClient from './bookAVideoLinkApiClient'
-import { VideoBookingSearchRequest } from '../@types/bookAVideoLinkApi/types'
+import {
+  AmendVideoBookingRequest,
+  CreateVideoBookingRequest,
+  VideoBookingSearchRequest,
+} from '../@types/bookAVideoLinkApi/types'
 
 const user = {} as ServiceUser
 
@@ -78,6 +82,73 @@ describe('bookAVideoLinkApiClient', () => {
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('get enabled courts', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+
+      fakeBookAVideoLinkApi
+        .get(`/courts/enabled`)
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200, response)
+
+      const output = await bookAVideoLinkApiClient.getAllEnabledCourts(user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('get reference codes by group', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+
+      fakeBookAVideoLinkApi
+        .get(`/reference-codes/group/GROUP`)
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200, response)
+
+      const output = await bookAVideoLinkApiClient.getReferenceCodesForGroup('GROUP', user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('createVideoLinkBooking', () => {
+    it('should post the correct data', async () => {
+      const response = { data: 'data' }
+
+      fakeBookAVideoLinkApi
+        .post('/video-link-booking', { bookingType: 'COURT' })
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(201, response)
+
+      const output = await bookAVideoLinkApiClient.createVideoLinkBooking(
+        { bookingType: 'COURT' } as CreateVideoBookingRequest,
+        user,
+      )
+      expect(output).toEqual(response)
+    })
+  })
+
+  describe('amendVideoLinkBooking', () => {
+    it('should put the correct data', async () => {
+      const response = { data: 'data' }
+
+      fakeBookAVideoLinkApi
+        .put(`/video-link-booking/id/1`, { bookingType: 'COURT' })
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200, response)
+
+      const output = await bookAVideoLinkApiClient.amendVideoLinkBooking(
+        1,
+        { bookingType: 'COURT' } as AmendVideoBookingRequest,
+        user,
+      )
+      expect(output).toEqual(response)
     })
   })
 })

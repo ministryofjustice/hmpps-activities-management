@@ -96,30 +96,6 @@ describe('Validation', () => {
     extraInformation: string
   }
 
-  it('should fail validation when extraInformation is empty and category code is VLB', async () => {
-    const body = {
-      extraInformation: '',
-      appointmentJourney: {
-        category: {
-          code: 'VLB',
-        },
-      },
-    }
-
-    const requestObject = plainToInstance(ExtraInfoForm, body)
-    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-    // Expecting a specific validation error related to extraInformation
-    expect(errors).toEqual(
-      expect.arrayContaining([
-        {
-          property: 'extraInformation',
-          error: 'Enter the court name and any extra information',
-        },
-      ]),
-    )
-  })
-
   it('should pass validation when extraInformation is empty and category code is not VLB', async () => {
     const body = {
       extraInformation: '',

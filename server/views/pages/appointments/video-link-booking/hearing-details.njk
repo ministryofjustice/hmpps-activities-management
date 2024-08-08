@@ -1,0 +1,81 @@
+{% extends "layout.njk" %}
+
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageId = 'hearing-details-page' %}
+{% set jsBackLink = true %}
+{% set pageHeading = "Enter the hearing details" %}
+
+{% block meta %}
+    {% if session.req.params.mode == 'create' %}
+        <meta name="autocompleteElements" content="agencyCode"/>
+    {% endif %}
+    <meta name="autocompleteElements" content="hearingTypeCode"/>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session) }}
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method='POST' {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing hearing type" {% endif %}>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {% set items = [{ text: "", value: "" }] %}
+                {% for agency in agencies %}
+                    {% set items = (items.push({
+                        value: agency.code,
+                        text: agency.description,
+                        selected: formResponses.agencyCode == agency.code or session.bookAVideoLinkJourney.agencyCode == agency.code
+                    }), items) %}
+                {% endfor %}
+
+                {% if session.req.params.mode == 'create' %}
+                    {{ govukSelect({
+                        name: "agencyCode",
+                        id: "agencyCode",
+                        label: {
+                            text: "Which court is the booking for?",
+                            classes: 'govuk-label--s'
+                        },
+                        items: items,
+                        errorMessage: validationErrors | findError("agencyCode")
+                    }) }}
+                {% else %}
+                    <input type="hidden" name="agencyCode" value="{{ session.bookAVideoLinkJourney.agencyCode }}">
+                {% endif %}
+
+                {% set items = [{ text: "", value: "" }] %}
+                {% for hearingType in hearingTypes %}
+                    {% set items = (items.push({
+                        value: hearingType.code,
+                        text: hearingType.description,
+                        selected: formResponses.hearingTypeCode == hearingType.code or session.bookAVideoLinkJourney.hearingTypeCode == hearingType.code
+                    }), items) %}
+                {% endfor %}
+
+                {{ govukSelect({
+                    name: "hearingTypeCode",
+                    id: "hearingTypeCode",
+                    label: {
+                        text: "Which type of hearing is this?",
+                        classes: 'govuk-label--s'
+                    },
+                    items: items,
+                    errorMessage: validationErrors | findError("hearingTypeCode")
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

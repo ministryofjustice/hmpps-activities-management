@@ -1,128 +1,122 @@
 import { Request, Response } from 'express'
-import { when } from 'jest-when'
 import VideoLinkDetailsRoutes from './videoLinkDetails'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import PrisonService from '../../../../services/prisonService'
 import UserService from '../../../../services/userService'
-import ActivitiesService from '../../../../services/activitiesService'
-import atLeast from '../../../../../jest.setup'
-import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import { VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
+
+jest.mock('../../../../services/bookAVideoLinkService')
+jest.mock('../../../../services/prisonService')
+jest.mock('../../../../services/userService')
 
 describe('VideoLinkDetailsRoutes', () => {
-  let bookAVideoLinkService: BookAVideoLinkService
-  let activitiesService: ActivitiesService
-  let prisonService: PrisonService
-  let userService: UserService
-  let videoLinkDetailsRoutes: VideoLinkDetailsRoutes
   let req: Partial<Request>
   let res: Partial<Response>
+  let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
+  let prisonService: jest.Mocked<PrisonService>
+  let userService: jest.Mocked<UserService>
+  let videoLinkDetailsRoutes: VideoLinkDetailsRoutes
 
   beforeEach(() => {
-    bookAVideoLinkService = new BookAVideoLinkService(null)
-    activitiesService = new ActivitiesService(null)
-    prisonService = new PrisonService(null, null, null)
-    userService = new UserService(null, null, null)
-
-    videoLinkDetailsRoutes = new VideoLinkDetailsRoutes(
-      bookAVideoLinkService,
-      activitiesService,
-      prisonService,
-      userService,
-    )
-
     req = {
-      params: {
-        vlbId: '123',
-      },
-    }
-
+      params: { vlbId: '1' },
+    } as unknown as Request
     res = {
-      locals: {
-        user: { username: 'test-user' },
-      },
+      locals: { user: {} },
       render: jest.fn(),
-    }
+    } as unknown as Response
+    bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
+    prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
+    userService = new UserService(null, null, null) as jest.Mocked<UserService>
+    videoLinkDetailsRoutes = new VideoLinkDetailsRoutes(bookAVideoLinkService, prisonService, userService)
   })
 
-  it('should render the video link booking details page with all necessary data', async () => {
-    const mockVideoBooking = {
-      createdBy: 'user1',
-      amendedBy: 'user2',
-      statusCode: 'ACTIVE',
-      prisonAppointments: [
-        {
-          appointmentType: 'VLB_COURT_PRE',
-          startDate: '2024-07-19',
-          startTime: '09:45',
-          endTime: '10:00',
-          prisonerNumber: 'A1234BC',
-        },
-        {
-          appointmentType: 'VLB_COURT_MAIN',
-          startDate: '2024-07-19',
-          startTime: '10:00',
-          endTime: '11:00',
-          prisonerNumber: 'A1234BC',
-        },
-        {
-          appointmentType: 'VLB_COURT_POST',
-          startDate: '2024-07-19',
-          startTime: '11:00',
-          endTime: '11:15',
-          prisonerNumber: 'A1234BC',
-        },
-      ],
-    }
+  describe('GET', () => {
+    it('should render the video link booking details page', async () => {
+      const videoBooking = {
+        videoLinkBookingId: 1,
+        statusCode: 'ACTIVE',
+        bookingType: 'COURT',
+        prisonAppointments: [
+          {
+            prisonAppointmentId: 1,
+            prisonCode: 'PRISON1',
+            prisonerNumber: 'A1234BC',
+            appointmentType: 'VLB_COURT_PRE',
+            appointmentDate: '2023-10-01',
+            startTime: '10:00',
+            endTime: '10:30',
+          },
+          {
+            prisonAppointmentId: 2,
+            prisonCode: 'PRISON1',
+            prisonerNumber: 'A1234BC',
+            appointmentType: 'VLB_COURT_MAIN',
+            appointmentDate: '2023-10-01',
+            startTime: '10:30',
+            endTime: '11:00',
+          },
+          {
+            prisonAppointmentId: 3,
+            prisonCode: 'PRISON1',
+            prisonerNumber: 'A1234BC',
+            appointmentType: 'VLB_COURT_POST',
+            appointmentDate: '2023-10-01',
+            startTime: '11:00',
+            endTime: '11:30',
+          },
+        ],
+        createdBy: 'user1',
+        amendedBy: 'user2',
+        createdAt: '2023-09-01T10:00:00Z',
+        amendedAt: '2023-09-02T10:00:00Z',
+      } as VideoLinkBooking
 
-    const mockSearchAppointments = [
-      { appointmentId: 1, startTime: '09:45', endTime: '10:00' },
-      { appointmentId: 2, startTime: '10:00', endTime: '11:00' },
-      { appointmentId: 3, startTime: '11:00', endTime: '11:15' },
-    ]
+      bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoBooking)
+      prisonService.getInmateByPrisonerNumber.mockResolvedValue({
+        prisonerNumber: 'A1234BC',
+        firstName: 'John',
+        lastName: 'Doe',
+        dateOfBirth: '1980-01-01',
+        prisonId: 'PRISON1',
+      } as Prisoner)
+      bookAVideoLinkService.getAppointmentLocations.mockResolvedValue([
+        { key: 'Room1', description: 'Room 1', enabled: true },
+      ])
+      userService.getUserMap.mockResolvedValue(
+        new Map([
+          ['user1', { username: 'user1', active: true, name: 'User One', authSource: 'auth', userId: 'user1' }],
+          ['user2', { username: 'user2', active: true, name: 'User Two', authSource: 'auth', userId: 'user2' }],
+        ]) as Map<string, UserDetails>,
+      )
+      bookAVideoLinkService.bookingIsAmendable.mockReturnValue(true)
 
-    const mockPreAppointment = { id: 1, startDate: '2024-07-19', startTime: '14:00' } as AppointmentDetails
-    const mockMainAppointment = {
-      id: 2,
-      attendees: [{ prisoner: { prisonerNumber: 'A1234BC' } }],
-    } as AppointmentDetails
-    const mockPostAppointment = { id: 3 } as AppointmentDetails
+      await videoLinkDetailsRoutes.GET(req as Request, res as Response)
 
-    const mockPrisoner = { prisonId: 'MDI' }
-    const mockRooms = [{ id: 1, description: 'Room 1' }]
-    const mockUserMap = { user1: 'User One', user2: 'User Two' }
-
-    bookAVideoLinkService.getVideoLinkBookingById = jest.fn().mockResolvedValue(mockVideoBooking)
-    activitiesService.searchAppointments = jest.fn().mockResolvedValue(mockSearchAppointments)
-    activitiesService.getAppointmentDetails = jest.fn()
-    when(activitiesService.getAppointmentDetails).calledWith(atLeast(1)).mockResolvedValue(mockPreAppointment)
-    when(activitiesService.getAppointmentDetails).calledWith(atLeast(2)).mockResolvedValue(mockMainAppointment)
-    when(activitiesService.getAppointmentDetails).calledWith(atLeast(3)).mockResolvedValue(mockPostAppointment)
-    prisonService.getInmateByPrisonerNumber = jest.fn().mockResolvedValue(mockPrisoner)
-    bookAVideoLinkService.getAppointmentLocations = jest.fn().mockResolvedValue(mockRooms)
-    userService.getUserMap = jest.fn().mockResolvedValue(mockUserMap)
-    bookAVideoLinkService.bookingIsAmendable = jest.fn().mockReturnValue(true)
-
-    await videoLinkDetailsRoutes.GET(req as Request, res as Response)
-
-    expect(bookAVideoLinkService.getVideoLinkBookingById).toHaveBeenCalledWith(123, res.locals.user)
-    expect(prisonService.getInmateByPrisonerNumber).toHaveBeenCalledWith('A1234BC', res.locals.user)
-    expect(bookAVideoLinkService.getAppointmentLocations).toHaveBeenCalledWith('MDI', res.locals.user)
-    expect(userService.getUserMap).toHaveBeenCalledWith(['user1', 'user2'], res.locals.user)
-    expect(bookAVideoLinkService.bookingIsAmendable).toHaveBeenCalledWith(
-      new Date('2024-07-19'),
-      new Date(1970, 0, 1, 14, 0),
-      'ACTIVE',
-    )
-
-    expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/details', {
-      videoBooking: mockVideoBooking,
-      preAppointment: mockPreAppointment,
-      mainAppointment: mockMainAppointment,
-      postAppointment: mockPostAppointment,
-      prisoner: mockPrisoner,
-      rooms: mockRooms,
-      userMap: mockUserMap,
-      isAmendable: true,
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/video-link-booking/details',
+        expect.objectContaining({
+          videoBooking,
+          preAppointment: videoBooking.prisonAppointments[0],
+          mainAppointment: videoBooking.prisonAppointments[1],
+          postAppointment: videoBooking.prisonAppointments[2],
+          prisoner: {
+            prisonerNumber: 'A1234BC',
+            firstName: 'John',
+            lastName: 'Doe',
+            dateOfBirth: '1980-01-01',
+            prisonId: 'PRISON1',
+          },
+          rooms: [{ key: 'Room1', description: 'Room 1', enabled: true }],
+          userMap: new Map([
+            ['user1', { username: 'user1', active: true, name: 'User One', authSource: 'auth', userId: 'user1' }],
+            ['user2', { username: 'user2', active: true, name: 'User Two', authSource: 'auth', userId: 'user2' }],
+          ]),
+          isAmendable: true,
+        }),
+      )
     })
   })
 })

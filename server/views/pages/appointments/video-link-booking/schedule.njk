@@ -1,0 +1,180 @@
+{% extends "layout.njk" %}
+
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageId = 'appointment-schedule-page' %}
+{% set jsBackLink = true %}
+{% set pageHeading = "Review scheduled events to avoid clashes" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session) }}
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Appointment name"
+                        },
+                        value: {
+                            text: "Video Link - Court Hearing"
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Name of attendee"
+                        },
+                        value: {
+                            html: showProfileLink({
+                                name: session.bookAVideoLinkJourney.prisoner.name,
+                                prisonerNumber: session.bookAVideoLinkJourney.prisoner.number,
+                                cellLocation: session.bookAVideoLinkJourney.prisoner.cellLocation
+                            })
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Date"
+                        },
+                        value: {
+                            text: session.bookAVideoLinkJourney.date | parseISODate | formatDate
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
+                                    text: "Change",
+                                    visuallyHiddenText: "date",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Main hearing time"
+                        },
+                        value: {
+                            text: (session.bookAVideoLinkJourney.startTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookAVideoLinkJourney.endTime | parseISODate | formatDate('HH:mm'))
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
+                                    text: "Change",
+                                    visuallyHiddenText: "time",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }) }}
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m">Attendee events on {{ session.bookAVideoLinkJourney.date | parseISODate | formatDate }}</h2>
+            <div class="govuk-summary-card appointment-schedule">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h3 class="govuk-summary-card__title">{{ session.bookAVideoLinkJourney.prisoner.name | toTitleCase}}, {{ session.bookAVideoLinkJourney.prisoner.number }}</h3>
+                </div>
+                <div class="govuk-summary-card__content">
+                    {% if scheduledEvents.length > 0 %}
+                        {% set scheduledEventRows = [] %}
+                        {% for scheduledEvent in scheduledEvents %}
+                            {% set scheduledEventRows = (scheduledEventRows.push([
+                                {
+                                    text: timeText(scheduledEvent)
+                                },
+                                {
+                                    text: scheduledEvent.summary | trim
+                                },
+                                {
+                                    text: eventTypeText(scheduledEvent),
+                                    classes: "no-break"
+                                },
+                                {
+                                    text: (scheduledEvent.internalLocationUserDescription or scheduledEvent.internalLocationDescription) | trim
+                                }
+                            ]), scheduledEventRows) %}
+                        {% endfor %}
+
+                        {{ govukTable({
+                            head: [
+                                {
+                                    text: "Time",
+                                    classes: "govuk-!-border-bottom-2",
+                                    attributes: { "aria-sort": "ascending" }
+                                },
+                                {
+                                    text: "Event name",
+                                    attributes: { "aria-sort": "none" }
+                                },
+                                {
+                                    text: "Type",
+                                    attributes: { "aria-sort": "none" }
+                                },
+                                {
+                                    text: "Location",
+                                    attributes: { "aria-sort": "none" }
+                                }
+                            ],
+                            rows: scheduledEventRows,
+                            classes: 'govuk-!-margin-bottom-2',
+                            attributes: {
+                                'data-module': 'moj-sortable-table'
+                            }
+                        }) }}
+                    {% else %}
+                        <p class="govuk-body">No other events scheduled.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST" {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing schedule" {% endif %}>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% macro timeText(scheduledEvent) %}
+    {% if scheduledEvent.eventType != EventType.EXTERNAL_TRANSFER and scheduledEvent.eventType != EventType.COURT_HEARING %}
+        {{ scheduledEvent.startTime + (" to " + scheduledEvent.endTime if scheduledEvent.endTime) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro eventTypeText(scheduledEvent) %}
+    {% if scheduledEvent.eventType == EventType.ACTIVITY %}
+        Activity
+    {% elseif scheduledEvent.eventType == EventType.APPOINTMENT %}
+        Appointment
+    {% elseif scheduledEvent.eventType == EventType.COURT_HEARING %}
+        Court hearing
+    {% elseif scheduledEvent.eventType == EventType.VISIT %}
+        Visit
+    {% elseif scheduledEvent.eventType == EventType.EXTERNAL_TRANSFER %}
+        External transfer
+    {% elseif scheduledEvent.eventType == EventType.ADJUDICATION_HEARING %}
+        Adjudication hearing
+    {% endif %}
+{% endmacro %}

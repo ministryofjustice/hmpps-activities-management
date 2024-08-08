@@ -436,3 +436,8 @@ export const excludeArrayObject = (objects: object[], iteratee: object): object[
 
 // Anything with a number is considered not to be a name, so therefore an identifier (prison no, PNC no etc.)
 export const isPrisonerIdentifier = (searchTerm: string): boolean => /\d/.test(searchTerm)
+
+export const simpleTimeToDate = (time: { hour: string; minute: string }): Date =>
+  time && (time.hour || time.minute)
+    ? parse(`${time.hour}:${time.minute}`, 'HH:mm', new Date(0), { locale: enGB })
+    : null

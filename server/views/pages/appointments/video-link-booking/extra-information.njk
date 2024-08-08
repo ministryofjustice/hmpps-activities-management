@@ -1,0 +1,44 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+
+{% set pageHeading = "Add extra information" %}
+
+{% set pageId = 'appointment-extra-information-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ appointmentTypeCaption(session) }}
+        <h1 class="govuk-heading-l">
+            <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information (optional)</label>
+        </h1>
+        <p class="govuk-body" data-qa="first-paragraph">
+            Add any important information for who’s attending about how to prepare for their appointment. It will be printed on their movement slip.
+        </p>
+      <p class="govuk-body">
+          Wing staff will see the words ‘Extra information’ on the printed unlock list, but for confidentiality the full message will be viewable only in the appointment details within this service.
+      </p>
+      <form method="POST" {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing extra information" {% endif %}>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="3600">
+          <div class="govuk-form-group">
+            {{ govukCharacterCount({
+                id: "extraInformation",
+                name: "extraInformation",
+                errorMessage: validationErrors | findError("extraInformation"),
+                value: formResponses.extraInformation or session.bookAVideoLinkJourney.comments,
+                maxlength: "3600"
+            }) }}
+          </div>
+        </div>
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}
