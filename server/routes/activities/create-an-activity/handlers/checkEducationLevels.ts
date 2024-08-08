@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
+import config from '../../../../config'
 
 export default class CheckPayRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -25,6 +26,7 @@ export default class CheckPayRoutes {
       req.session.returnTo = returnTo
       return res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     }
+    if (config.customStartEndTimesEnabled) return res.redirectOrReturn(`schedule-frequency`)
     return res.redirectOrReturn(`start-date`)
   }
 }

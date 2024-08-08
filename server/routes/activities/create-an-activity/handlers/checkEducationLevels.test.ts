@@ -6,6 +6,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
+import config from '../../../../config'
 
 jest.mock('../../../../services/prisonService')
 
@@ -90,8 +91,14 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
 
   describe('POST', () => {
     it('should add the minimum education level to the session and redirect', async () => {
+      config.customStartEndTimesEnabled = false
       await handler.POST(req, res)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('start-date')
+    })
+    it('should add the minimum education level to the session and redirect', async () => {
+      config.customStartEndTimesEnabled = true
+      await handler.POST(req, res)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule-frequency')
     })
   })
 
