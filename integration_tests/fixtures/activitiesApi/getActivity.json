@@ -768,21 +768,6 @@
       "pieceRateItems": 10
     },
     {
-      "id": 18,
-      "incentiveLevel": "Enhanced",
-      "prisonPayBand": {
-        "id": 13,
-        "displaySequence": 3,
-        "alias": "High",
-        "description": "Pay band 3 (highest)",
-        "nomisPayBand": 3,
-        "prisonCode": "MDI"
-      },
-      "rate": 225,
-      "pieceRate": 225,
-      "pieceRateItems": 10
-    },
-    {
       "id": 15,
       "incentiveLevel": "Standard",
       "prisonPayBand": {

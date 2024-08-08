@@ -15,4 +15,8 @@ export default class CheckPayPage extends Page {
   addAnother = () => cy.get('a').contains('Add a pay rate').click()
 
   addNewPayRate = () => cy.get('a').contains('Add new pay rate').click()
+
+  changePay = () => cy.get('a').contains('Change').click()
+
+  cancelPay = () => cy.get('a').contains('Cancel').click()
 }
