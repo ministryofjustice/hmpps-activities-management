@@ -4,47 +4,47 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% from "pages/appointments/partials/attendee-list.njk" import attendeeList %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
 
 {% set pageId = 'video-booking-details-page' %}
 {% set hardBackLinkText = 'Go to Appointments Dashboard' %}
-{% set hardBackLinkHref = '/appointments/search?startDate=' + mainAppointment.startDate | formatDate('yyyy-MM-dd') %}
+{% set hardBackLinkHref = '/appointments/search?startDate=' + mainAppointment.appointmentDate | formatDate('yyyy-MM-dd') %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>{{ mainAppointment.appointmentName }}</h1>
-            <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ mainAppointment.startDate | formatDate }}</span>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>Video Link - Court Hearing</h1>
+            <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ mainAppointment.appointmentDate | formatDate }}</span>
 
             {{ govukSummaryList({
                 card: {
                     title: {
                         text: "Video link booking details"
-                    },
-                    actions: {
-                        items: [
-                            {
-                                href: '#',
-                                text: "Edit booking",
-                                classes: "govuk-link--no-visited-state"
-                            },
-                            {
-                                href: '#',
-                                text: "Cancel booking",
-                                classes: "govuk-link--no-visited-state"
-                            }
-                        ]
-                    } if isAmendable
+                    }
                 },
                 rows: [
+                    {
+                        key: {
+                            text: "Attendee"
+                        },
+                        value: {
+                            html: showProfileLink({
+                                name: prisoner | fullName,
+                                prisonerNumber: prisoner.prisonerNumber,
+                                cellLocation: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonId == user.activeCaseLoadId),
+                                inCaseLoad: prisoner.prisonId == user.activeCaseLoadId
+                            })
+                        }
+                    },
                     {
                         key: {
                             text: "Court"
                         },
                         value: {
-                            text: videoBooking.courtDescription or videoBooking.probationTeamDescription
+                            text: videoBooking.courtDescription
                         }
                     },
                     {
@@ -52,16 +52,85 @@
                             text: "Hearing type"
                         },
                         value: {
-                            text: videoBooking.courtHearingTypeDescription or videoBooking.probationMeetingTypeDescription
-                        }
+                            text: videoBooking.courtHearingTypeDescription
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/hearing-details',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
                     },
                     {
                         key: {
                             text: "Date"
                         },
                         value: {
-                            text: mainAppointment.startDate | formatDate
-                        }
+                            text: mainAppointment.appointmentDate | formatDate
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/date-and-time',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    },
+                    {
+                        key: {
+                            text: "Room for hearing"
+                        },
+                        value: {
+                            text: (rooms | find('key', mainAppointment.prisonLocKey)).description
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/location',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    },
+                    {
+                        key: {
+                            text: "Hearing start time"
+                        },
+                        value: {
+                            text: mainAppointment.startTime
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/date-and-time',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    },
+                    {
+                        key: {
+                            text: "Hearing end time"
+                        },
+                        value: {
+                            text: mainAppointment.endTime
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/date-and-time',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
                     },
                     {
                         key: {
@@ -81,7 +150,7 @@
                         actions: {
                             items: [
                                 {
-                                    href: '#',
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/extra-information',
                                     text: "Change",
                                     classes: "govuk-link--no-visited-state"
                                 }
@@ -95,30 +164,93 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ govukTabs({
-                items: [
+
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Pre-court hearing"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: 'amend/' + videoBooking.videoLinkBookingId + '/date-and-time',
+                                text: "Change",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    } if isAmendable
+                },
+                classes: 'govuk-summary-list--no-keys' if not preAppointment,
+                rows: [
                     {
-                        label: "Pre-court hearing",
-                        id: 'pre-appointment-tab',
-                        panel: {
-                            html: appointmentDetails(preAppointment, rooms, user)
-                        }
-                    } if preAppointment,
-                    {
-                        label: "Main hearing",
-                        id: 'main-appointment-tab',
-                        panel: {
-                            html: appointmentDetails(mainAppointment, rooms, user)
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: (rooms | find('key', preAppointment.prisonLocKey)).description
                         }
                     },
                     {
-                        label: "Post-court hearing",
-                        id: 'post-appointment-tab',
-                        panel: {
-                            html: appointmentDetails(postAppointment, rooms, user)
+                        key: {
+                            text: "Start time"
+                        },
+                        value: {
+                            text: preAppointment.startTime
                         }
-                    } if postAppointment
-                ]
+                    },
+                    {
+                        key: {
+                            text: "End time"
+                        },
+                        value: {
+                            text: preAppointment.endTime
+                        }
+                    }
+                ] if preAppointment else [ { value: { text: 'Not scheduled' } } ]
+            }) }}
+
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Post-court hearing"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: 'amend/' + videoBooking.videoLinkBookingId + '/date-and-time',
+                                text: "Change",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    } if isAmendable
+                },
+                classes: 'govuk-summary-list--no-keys' if not postAppointment,
+                rows: [
+                    {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: (rooms | find('key', postAppointment.prisonLocKey)).description
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Start time"
+                        },
+                        value: {
+                            text: postAppointment.startTime
+                        }
+                    },
+                    {
+                        key: {
+                            text: "End time"
+                        },
+                        value: {
+                            text: postAppointment.endTime
+                        }
+                    }
+                ] if postAppointment else [ { value: { text: 'Not scheduled' } } ]
             }) }}
         </div>
     </div>
@@ -183,7 +315,7 @@
                     text: "Location"
                 },
                 value: {
-                    text: (rooms | find('key', appointment.locationKey)).description
+                    text: (rooms | find('key', appointment.prisonLocKey)).description
                 }
             },
             {
@@ -204,17 +336,4 @@
             }
         ]
     }) }}
-
-    {% if not appointment.isCancelled and not appointment.isDeleted %}
-        {% if not appointment.isExpired %}
-            {{ govukButton({
-                attributes: { id: 'print-movement-slips', target: "_blank", 'data-qa': 'print-movement-slips' },
-                text: "Print movement slip",
-                classes: "govuk-button--blue",
-                href: '/appointments/' + appointment.id + '/movement-slip'
-            }) }}
-        {% endif %}
-
-        {{ attendeeList(appointment, user) }}
-    {% endif %}
 {% endmacro %}

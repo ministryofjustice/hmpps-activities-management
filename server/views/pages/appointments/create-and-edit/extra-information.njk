@@ -14,20 +14,22 @@
 {% set pageId = 'appointment-extra-information-page' %}
 {% set jsBackLink = true %}
 
+{% set vlbSpecialCase = session.appointmentJourney.category.code == 'VLB' and not bookAVideoLinkToggleEnabled %}
+
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       {{ appointmentTypeCaption(session) }}
       {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
         <h1 class="govuk-heading-l">
-            {% if session.appointmentJourney.category.code == 'VLB' %}
+            {% if vlbSpecialCase %}
                          <label class="govuk-label govuk-label--l" for="extraInformation">Enter the court name and any extra information</label>
                 {% else %}
                         <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information (optional)</label>
              {% endif %}
         </h1>
         <p class="govuk-body" data-qa="first-paragraph">
-            {% if session.appointmentJourney.category.code == 'VLB' %}
+            {% if vlbSpecialCase %}
                  Enter the court the booking is for, plus:
                  <ul>
                      <li class='govuk-list govuk-list--bullet'> details of any briefings before or after the hearing </li>
@@ -39,14 +41,14 @@
             {% endif %}
       {% else %}
         <h1 class="govuk-heading-l">
-            {% if session.appointmentJourney.category.code == 'VLB' %}
+            {% if vlbSpecialCase %}
                  <label class="govuk-label govuk-label--l" for="extraInformation">Enter the court name and any extra information</label>
             {% else %}
                 <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information (optional)</label>
             {% endif %}
         </h1>
             <p class="govuk-body" data-qa="first-paragraph">
-                {% if session.appointmentJourney.category.code == 'VLB' %}
+                {% if vlbSpecialCase %}
                          Enter the court the booking is for, plus:
                          <ul>
                              <li class='govuk-list govuk-list--bullet'> details of any briefings before or after the hearing </li>

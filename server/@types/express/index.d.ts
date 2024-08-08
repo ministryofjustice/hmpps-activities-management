@@ -16,6 +16,7 @@ import { WaitListApplicationJourney } from '../../routes/activities/waitlist-app
 import { SuspendJourney } from '../../routes/activities/suspensions/journey'
 import { UserDetails } from '../manageUsersApiImport/types'
 import { MovementListJourney } from '../../routes/activities/movement-list/journey'
+import { BookAVideoLinkJourney } from '../../routes/appointments/video-link-booking/journey'
 
 export default {}
 
@@ -35,6 +36,7 @@ declare module 'express-session' {
     appointmentJourney: AppointmentJourney
     appointmentSetJourney: AppointmentSetJourney
     editAppointmentJourney: EditAppointmentJourney
+    bookAVideoLinkJourney: BookAVideoLinkJourney
     calendarSpikeJourney: CalendarSpikeJourney
     attendanceSummaryJourney: AttendanceSummaryJourney
     unlockListJourney: UnlockListJourney

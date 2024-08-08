@@ -1,4 +1,4 @@
-import { addDays, isValid, parse, subDays, startOfToday } from 'date-fns'
+import { addDays, isValid, parse, subDays, startOfToday, parseISO } from 'date-fns'
 import { formatDate } from './utils'
 import DateOption from '../enum/dateOption'
 
@@ -22,7 +22,7 @@ export const parseDatePickerDate = (datePickerDate: string): Date => {
 
 export const parseIsoDate = (isoDate: string): Date => {
   if (!isoDate) return null
-  const date = parse(isoDate, 'yyyy-MM-dd', startOfToday())
+  const date = parseISO(isoDate)
 
   if (!isValid(date)) return new Date(NaN)
 
@@ -52,6 +52,11 @@ export const datePickerDateToIsoDate = (datePickerDate: string): string => {
 export const isoDateToDatePickerDate = (isoDate: string): string => {
   const date = parseIsoDate(isoDate)
   return formatDatePickerDate(date)
+}
+
+export const isoDateToTimePicker = (isoDate: string): { hour: number; minute: number } => {
+  const date = parseIsoDate(isoDate)
+  return date ? { hour: date.getHours(), minute: date.getMinutes() } : null
 }
 
 export const dateFromDateOption = (dateOption: DateOption, isoDate?: string) => {

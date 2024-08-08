@@ -1,0 +1,298 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+
+{% set pageTitle = "Check and confirm appointment details" %}
+{% set pageId = 'appointment-check-answers-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">{{ pageTitle }}</h1>
+
+            <form method="POST" data-module="form-spinner" data-loading-text="Preparing your appointments">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <h2 class="govuk-heading-m">Appointment details</h2>
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                                text: "Appointment name"
+                            },
+                            value: {
+                                text: "Video Link - Court Hearing"
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Name of attendee"
+                            },
+                            value: {
+                                html: showProfileLink({
+                                    name: session.bookAVideoLinkJourney.prisoner.name,
+                                    prisonerNumber: session.bookAVideoLinkJourney.prisoner.number,
+                                    cellLocation: session.bookAVideoLinkJourney.prisoner.cellLocation
+                                })
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Court"
+                            },
+                            value: {
+                                text: (courts | find('code', session.bookAVideoLinkJourney.agencyCode)).description
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "hearing-details?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change court",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-court' }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Hearing type"
+                            },
+                            value: {
+                                text: (hearingTypes | find('code', session.bookAVideoLinkJourney.hearingTypeCode)).description
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "hearing-details?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change hearing type",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-hearing-type' }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    attributes: { 'data-qa': 'appointment-details' }
+                }) }}
+
+                <h2 class="govuk-heading-m">Scheduling information</h2>
+                {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Pre-court hearing"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "date-and-time?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "pre-court hearing",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    },
+                    rows: [
+                        {
+                            key: {
+                                text: "Location"
+                            },
+                            value: {
+                                text: (rooms | find('key', session.bookAVideoLinkJourney.preLocationCode)).description
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Start time"
+                            },
+                            value: {
+                                text: session.bookAVideoLinkJourney.preHearingStartTime | parseISODate | formatDate('HH:mm')
+                            }
+                        },
+                        {
+                            key: {
+                                text: "End time"
+                            },
+                            value: {
+                                text: session.bookAVideoLinkJourney.preHearingEndTime | parseISODate | formatDate('HH:mm')
+                            }
+                        }
+                    ] if session.bookAVideoLinkJourney.preLocationCode else [{ value: { text: "No pre-court hearing" } }],
+                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not session.bookAVideoLinkJourney.preLocationCode
+                }) }}
+
+                {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Main hearing"
+                        }
+                    },
+                    rows: [
+                        {
+                            key: {
+                                text: "Location"
+                            },
+                            value: {
+                                text: (rooms | find('key', session.bookAVideoLinkJourney.locationCode)).description
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "location?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change location",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-location' }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Date"
+                            },
+                            value: {
+                                text: session.bookAVideoLinkJourney.date | parseISODate | formatDate
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "date-and-time?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change date",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-date' }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Start time"
+                            },
+                            value: {
+                                text: session.bookAVideoLinkJourney.startTime | parseISODate | formatDate('HH:mm')
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "date-and-time?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change start time",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-start-time' }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "End time"
+                            },
+                            value: {
+                                text: session.bookAVideoLinkJourney.endTime | parseISODate | formatDate('HH:mm')
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "date-and-time?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change end time",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-end-time' }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }) }}
+
+                {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Post-court hearing"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "date-and-time?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "post-court hearing",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    },
+                    rows: [
+                        {
+                            key: {
+                                text: "Location"
+                            },
+                            value: {
+                                text: (rooms | find('key', session.bookAVideoLinkJourney.postLocationCode)).description
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Start time"
+                            },
+                            value: {
+                                text: session.bookAVideoLinkJourney.postHearingStartTime | parseISODate | formatDate('HH:mm')
+                            }
+                        },
+                        {
+                            key: {
+                                text: "End time"
+                            },
+                            value: {
+                                text: session.bookAVideoLinkJourney.postHearingEndTime | parseISODate | formatDate('HH:mm')
+                            }
+                        }
+                    ] if session.bookAVideoLinkJourney.postLocationCode else [{ value: { text: "No post-court hearing" } }],
+                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not session.bookAVideoLinkJourney.postLocationCode
+                }) }}
+
+                <h2 class="govuk-heading-m">Extra information</h2>
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                                text: "Extra information"
+                            },
+                            value: {
+                                html: '<span class="preserve-line-breaks">' + (session.bookAVideoLinkJourney.comments | escape) + '</span>'
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "extra-information?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "extra information",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-extra-information' }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    attributes: { 'data-qa': 'extra-information' }
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Confirm",
+                        preventDoubleClick: true
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+

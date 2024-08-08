@@ -63,7 +63,7 @@ import {
 import ServiceName from '../enum/serviceName'
 import DateOption from '../enum/dateOption'
 import { PrisonerStatus } from '../@types/prisonApiImportCustom'
-import { isoDateToDatePickerDate, parseIsoDate } from '../utils/datePickerUtils'
+import { isoDateToDatePickerDate, isoDateToTimePicker, parseIsoDate } from '../utils/datePickerUtils'
 import WaitlistRequester from '../enum/waitlistRequester'
 import { SERVICE_AS_USERNAME } from '../services/userService'
 import EventTier from '../enum/eventTiers'
@@ -220,10 +220,12 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('allocateToNextSession', config.allocateToNextSession)
   njkEnv.addGlobal('futurePayRatesFlag', config.futurePayRatesToggleEnabled)
+  njkEnv.addGlobal('bookAVideoLinkToggleEnabled', config.bookAVideoLinkToggleEnabled)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)
   njkEnv.addFilter('isoDateToDatePickerDate', isoDateToDatePickerDate)
+  njkEnv.addFilter('isoDateToTimePicker', isoDateToTimePicker)
   njkEnv.addGlobal('exampleDatePickerDate', () => `29/9/${formatDate(addYears(new Date(), 1), 'yyyy')}`)
 
   return njkEnv

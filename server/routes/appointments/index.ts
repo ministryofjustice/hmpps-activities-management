@@ -32,7 +32,7 @@ export default function routes(services: Services): Router {
   router.use('/series/:appointmentSeriesId(\\d+)', appointmentSeriesDetailsRoutes(services))
   router.use('/set/:appointmentSetId(\\d+)', appointmentSetDetailsRoutes(services))
   router.use('/:appointmentId(\\d+)', appointmentDetailsRoutes(services))
-  router.use('/video-link-booking/:vlbId(\\d+)', videoLinkDetailsRoutes(services))
+  router.use('/video-link-booking', videoLinkDetailsRoutes(services))
 
   // Appointments attendance summary statistics routes
   router.use('/attendance-summary', appointmentAttendanceSummaryStatistics(services))
