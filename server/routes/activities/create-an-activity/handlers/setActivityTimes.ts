@@ -19,9 +19,9 @@ export default class ActivityTimesOptionRoutes {
     const { user } = res.locals
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
 
-    // TODO: this will have to be passed through from previous pages once we do split regimes, rather than hardcoded
     const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(
       regimeTimes,
+      // TODO: the week will have to be passed through from previous pages once we do split regimes, rather than hardcoded as ['1']
       req.session.createJourney.slots['1'] as ActivityDaysAndSlots,
     )
 
