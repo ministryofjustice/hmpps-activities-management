@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import ActivitiesApiClient from '../data/activitiesApiClient'
+import ActivitiesApiClient, { PrisonRegime } from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
@@ -108,7 +108,7 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getScheduledActivity(id, user)
   }
 
-  getPrisonRegime(prisonCode: string, user: ServiceUser) {
+  getPrisonRegime(prisonCode: string, user: ServiceUser): Promise<PrisonRegime[]> {
     return this.activitiesApiClient.getPrisonRegime(prisonCode, user)
   }
 

@@ -5,23 +5,13 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+{% from "partials/activities/prisonRegimeTimesSummary.njk" import prisonRegimeTimesSummary %}
 
 {% set pageTitle = applicationName + " - Create a schedule - Activity times option" %}
 {% set pageId = 'activity-times-option-page' %}
 {% set jsBackLink = true %}
 {% set regimeTimes %}
-    <table class="govuk-table">
-        {% for schedule in regimeTimes %}
-            <tbody class="govuk-table__body">
-                <tr class="govuk-table__row">
-                <td class="govuk-table__cell">{{ schedule.daysOfWeek }}</td>
-                <td class="govuk-table__cell">AM - {{ schedule.amStart }} to {{ schedule.amFinish }}</td>
-                <td class="govuk-table__cell">PM - {{ schedule.pmStart }} to {{ schedule.pmFinish }}</td>
-                <td class="govuk-table__cell">ED - {{ schedule.edStart }} to {{ schedule.edFinish }}</td>
-                </tr>
-            </tbody>
-        {% endfor %}
-    </table>
+    {{ prisonRegimeTimesSummary(regimeTimes) }}
 {% endset %}
 
 {% block content %}

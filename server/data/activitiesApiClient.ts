@@ -72,6 +72,18 @@ import EventOrganiser from '../enum/eventOrganisers'
 
 const CASELOAD_HEADER = (caseloadId: string) => ({ 'Caseload-Id': caseloadId })
 
+export type PrisonRegime = {
+  id: number
+  prisonCode: string
+  amStart: string
+  amFinish: string
+  pmStart: string
+  pmFinish: string
+  edStart: string
+  edFinish: string
+  dayOfWeek: string
+}
+
 export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   constructor() {
     super('Activities Management API', config.apis.activitiesApi as ApiConfig)
@@ -284,7 +296,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async getPrisonRegime(prisonCode: string, user: ServiceUser): Promise<ActivitySchedule> {
+  async getPrisonRegime(prisonCode: string, user: ServiceUser): Promise<PrisonRegime[]> {
     return this.get({
       path: `/prison/prison-regime/${prisonCode}`,
       authToken: user.token,

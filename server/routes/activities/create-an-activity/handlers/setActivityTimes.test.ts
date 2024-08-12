@@ -1,18 +1,90 @@
 import { Request, Response } from 'express'
-import { plainToInstance } from 'class-transformer'
-import { validate } from 'class-validator'
-import { when } from 'jest-when'
-import ActivityTimesOptionRoutes, { ActivityTimesOption } from './setActivityTimes'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import ActivityTimesOptionRoutes from './setActivityTimes'
 import ActivitiesService from '../../../../services/activitiesService'
-import atLeast from '../../../../../jest.setup'
-import activity from '../../../../services/fixtures/activity_1.json'
-import { Activity } from '../../../../@types/activitiesAPI/types'
-import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+
+const prisonRegime = [
+  {
+    id: 3,
+    prisonCode: 'RSI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'MONDAY',
+  },
+  {
+    id: 3,
+    prisonCode: 'RSI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'TUESDAY',
+  },
+  {
+    id: 3,
+    prisonCode: 'RSI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'WEDNESDAY',
+  },
+  {
+    id: 3,
+    prisonCode: 'RSI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'THURSDAY',
+  },
+  {
+    id: 3,
+    prisonCode: 'RSI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'FRIDAY',
+  },
+  {
+    id: 3,
+    prisonCode: 'RSI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'SATURDAY',
+  },
+  {
+    id: 3,
+    prisonCode: 'RSI',
+    amStart: '08:30',
+    amFinish: '11:45',
+    pmStart: '13:45',
+    pmFinish: '16:45',
+    edStart: '17:30',
+    edFinish: '19:15',
+    dayOfWeek: 'SUNDAY',
+  },
+]
 
 describe('Route Handlers - Create an activity schedule - activity times option', () => {
   const handler = new ActivityTimesOptionRoutes(activitiesService)
@@ -33,16 +105,31 @@ describe('Route Handlers - Create an activity schedule - activity times option',
 
     req = {
       session: {
-        createJourney: {},
+        createJourney: {
+          slots: {
+            '1': {
+              days: ['tuesday', 'friday'],
+              timeSlotsTuesday: ['AM'],
+              timeSlotsFriday: ['PM', 'ED'],
+            },
+          },
+        },
       },
       params: {},
     } as unknown as Request
+
+    activitiesService.getPrisonRegime.mockReturnValue(Promise.resolve(prisonRegime))
   })
 
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/activity-times-option')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/activity-times-option', {
+        regimeTimes: [
+          { amFinish: '11:45', amStart: '08:30', dayOfWeek: 'TUESDAY' },
+          { dayOfWeek: 'FRIDAY', edFinish: '19:15', edStart: '17:30', pmFinish: '16:45', pmStart: '13:45' },
+        ],
+      })
     })
   })
 
