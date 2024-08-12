@@ -108,6 +108,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getScheduledActivity(id, user)
   }
 
+  getPrisonRegime(prisonCode: string, user: ServiceUser) {
+    return this.activitiesApiClient.getPrisonRegime(prisonCode, user)
+  }
+
   createActivity(createBody: ActivityCreateRequest, user: ServiceUser): Promise<Activity> {
     return this.activitiesApiClient.postActivityCreation(createBody, user)
   }
