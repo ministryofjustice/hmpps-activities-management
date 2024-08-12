@@ -24,13 +24,11 @@ export default class QualificationRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.createJourney.qualificationOption = req.body.qualificationOption
 
-    if (config.customStartEndTimesEnabled) {
-      if (req.body.qualificationOption === QualificationOption.YES) return res.redirect(`education-level`)
-      return res.redirect(`schedule-frequency`)
-    }
-
     if (req.body.qualificationOption === QualificationOption.YES) {
       return res.redirect(`education-level`)
+    }
+    if (config.customStartEndTimesEnabled) {
+      return res.redirect(`schedule-frequency`)
     }
     return res.redirect(`start-date`)
   }
