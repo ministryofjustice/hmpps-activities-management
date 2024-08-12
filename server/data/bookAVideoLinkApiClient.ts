@@ -33,7 +33,7 @@ export default class BookAVideoLinkApiClient extends AbstractHmppsRestClient {
   }
 
   public getAllEnabledCourts(user: ServiceUser): Promise<Court[]> {
-    return this.get({ path: '/courts/enabled' }, user)
+    return this.get({ path: '/courts', query: { enabledOnly: false } }, user)
   }
 
   public getReferenceCodesForGroup(groupCode: string, user: ServiceUser): Promise<ReferenceCode[]> {
