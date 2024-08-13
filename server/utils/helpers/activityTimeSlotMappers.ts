@@ -63,9 +63,7 @@ export function activitySlotsMinusExclusions(
   activitySlots: ActivityScheduleSlot[],
 ): ActivityScheduleSlot[] {
   return activitySlots.map(s => {
-    const exclusion = exclusions.find(
-      e => e.weekNumber === s.weekNumber && e.timeSlot === s.timeSlot,
-    )
+    const exclusion = exclusions.find(e => e.weekNumber === s.weekNumber && e.timeSlot === s.timeSlot)
 
     return exclusion
       ? {
