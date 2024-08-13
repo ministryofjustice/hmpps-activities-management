@@ -281,7 +281,7 @@ describe('Route Handlers - Attendance List', () => {
     })
 
     it('should render with the expected view when there are time sessions saved', async () => {
-      req.session.recordAttendanceRequests.sessionFilters = ['am', 'ed']
+      req.session.recordAttendanceRequests.sessionFilters = ['AM', 'ED']
 
       await handler.GET(req, res)
 
