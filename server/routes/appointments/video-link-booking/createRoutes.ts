@@ -11,7 +11,7 @@ import CheckBookingRoutes from './handlers/checkBooking'
 import ConfirmationRoutes from './handlers/confirmation'
 import ScheduleRoutes from './handlers/schedule'
 
-export default function CreateRoutes({ bookAVideoLinkService, activitiesService }: Services): Router {
+export default function CreateRoutes({ bookAVideoLinkService, prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -28,7 +28,7 @@ export default function CreateRoutes({ bookAVideoLinkService, activitiesService 
   const hearingDetails = new HearingDetailsRoutes(bookAVideoLinkService)
   const location = new LocationRoutes(bookAVideoLinkService)
   const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
-  const schedule = new ScheduleRoutes(activitiesService, bookAVideoLinkService)
+  const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService)
   const extraInformation = new ExtraInformationRoutes(bookAVideoLinkService)
   const checkBooking = new CheckBookingRoutes(bookAVideoLinkService)
   const confirmation = new ConfirmationRoutes(bookAVideoLinkService)
