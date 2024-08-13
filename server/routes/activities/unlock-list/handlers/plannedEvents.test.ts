@@ -69,7 +69,7 @@ describe('Unlock list routes - planned events', () => {
         session: {
           unlockListJourney: {
             locationKey: 'A',
-            timeSlot: 'am',
+            timeSlot: 'AM',
             // No filters supplied in session
           },
         },
@@ -100,7 +100,7 @@ describe('Unlock list routes - planned events', () => {
 
       expect(unlockListService.getFilteredUnlockList).toHaveBeenCalledWith(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'A',
         ['A', 'B', 'C'],
         'With',
@@ -121,7 +121,7 @@ describe('Unlock list routes - planned events', () => {
             { name: 'C-Wing', key: 'C', children: [] },
           ],
         },
-        timeSlot: 'am',
+        timeSlot: 'AM',
         unlockListItems,
         movementCounts: {
           leavingWing: 2,
@@ -141,7 +141,7 @@ describe('Unlock list routes - planned events', () => {
         session: {
           unlockListJourney: {
             locationKey: 'A',
-            timeSlot: 'am',
+            timeSlot: 'AM',
             stayingOrLeavingFilter: 'Leaving',
             activityFilter: 'With',
             subLocationFilters: ['A'],
@@ -195,7 +195,7 @@ describe('Unlock list routes - planned events', () => {
             { name: 'C-Wing', key: 'C', children: [] },
           ],
         },
-        timeSlot: 'am',
+        timeSlot: 'AM',
         unlockListItems,
         movementCounts: {
           leavingWing: 2,

@@ -34,7 +34,7 @@ describe('Route Handlers - Select period', () => {
     it("redirect with the expected query params for when today's date is selected", async () => {
       req.body = {
         datePresetOption: 'today',
-        sessions: ['am', 'ed'],
+        sessions: ['AM', 'ED'],
       }
 
       const todaysDate = format(new Date(), 'yyyy-MM-dd')
@@ -46,7 +46,7 @@ describe('Route Handlers - Select period', () => {
     it("redirect with the expected query params for when yesterday's date is selected", async () => {
       req.body = {
         datePresetOption: 'yesterday',
-        sessions: ['am', 'ed'],
+        sessions: ['AM', 'ED'],
       }
 
       const yesterdaysDate = format(subDays(new Date(), 1), 'yyyy-MM-dd')
@@ -59,7 +59,7 @@ describe('Route Handlers - Select period', () => {
       req.body = {
         datePresetOption: 'other',
         date: new Date('2022/12/01'),
-        sessions: ['am', 'ed'],
+        sessions: ['AM', 'ED'],
       }
 
       await handler.POST(req, res)
@@ -83,7 +83,7 @@ describe('Route Handlers - Select period', () => {
     it('validation fails if invalid preset option is entered', async () => {
       const body = {
         datePresetOption: 'invalid',
-        sessions: ['am', 'ed'],
+        sessions: ['AM', 'ED'],
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
@@ -96,7 +96,7 @@ describe('Route Handlers - Select period', () => {
       const body = {
         datePresetOption: 'other',
         date: {},
-        sessions: ['am', 'ed'],
+        sessions: ['AM', 'ED'],
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
@@ -111,7 +111,7 @@ describe('Route Handlers - Select period', () => {
       const body = {
         datePresetOption: 'other',
         date: '2022/2/31',
-        sessions: ['am', 'ed'],
+        sessions: ['AM', 'ED'],
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
@@ -126,7 +126,7 @@ describe('Route Handlers - Select period', () => {
       const body = {
         datePresetOption: 'other',
         date: formatDatePickerDate(addDays(new Date(), 61)),
-        sessions: ['am', 'ed'],
+        sessions: ['AM', 'ED'],
       }
 
       const requestObject = plainToInstance(TimePeriod, body)
@@ -139,7 +139,7 @@ describe('Route Handlers - Select period', () => {
       const body = {
         datePresetOption: 'other',
         date: '27/2/2022',
-        sessions: ['am', 'ed'],
+        sessions: ['AM', 'ED'],
       }
 
       const requestObject = plainToInstance(TimePeriod, body)

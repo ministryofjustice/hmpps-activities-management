@@ -193,7 +193,7 @@
 
                     {{ activitiesTable(activityRows, activityDate, filterParams, now) }}
 
-                    {% if activitiesBySession['am'].length == 0 and activitiesBySession['pm'].length == 0 and activitiesBySession['ed'].length == 0 %}
+                    {% if activitiesBySession['AM'].length == 0 and activitiesBySession['PM'].length == 0 and activitiesBySession['ED'].length == 0 %}
                         {{ govukWarningText({
                             text: "There are no matching activities.",
                             iconFallbackText: "Warning"

@@ -62,19 +62,19 @@
                                     },
                                     items: [
                                         {
-                                            value: "am",
+                                            value: "AM",
                                             text: "AM session",
                                             checked: not exclusionsForDay | filter('timeSlot', 'AM') | length,
                                             disabled: (daySlots.day + 'AM') in disabledSlots
                                         } if 'AM' in daySlots.slots,
                                         {
-                                            value: "pm",
+                                            value: "PM",
                                             text: "PM session",
                                             checked: not exclusionsForDay | filter('timeSlot', 'PM') | length,
                                             disabled: (daySlots.day + 'PM') in disabledSlots
                                         } if 'PM' in daySlots.slots,
                                         {
-                                            value: "ed",
+                                            value: "ED",
                                             text: "ED session",
                                             checked: not exclusionsForDay | filter('timeSlot', 'ED') | length,
                                             disabled: (daySlots.day + 'ED') in disabledSlots

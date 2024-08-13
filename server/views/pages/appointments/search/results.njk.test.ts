@@ -16,7 +16,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
       username: '',
     },
     startDate: formatIsoDate(new Date()),
-    timeSlots: ['am'],
+    timeSlots: ['AM'],
     appointmentNameFilters: [{}],
     appointmentName: '',
     locations: [{}],
@@ -36,7 +36,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
         username: 'test.user',
       },
       startDate: formatIsoDate(new Date()),
-      timeSlots: ['am', 'pm'],
+      timeSlots: ['AM', 'PM'],
       appointmentNameFilters: ['Chaplaincy', 'Medical - Doctor', 'Gym - Weights'],
       appointmentName: 'Medical - Doctor',
       locations: [

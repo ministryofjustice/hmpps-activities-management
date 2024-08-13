@@ -112,7 +112,7 @@ describe('Route Handlers - View Activity', () => {
           '1': [
             {
               day: 'Monday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Tuesday',
@@ -120,23 +120,23 @@ describe('Route Handlers - View Activity', () => {
             },
             {
               day: 'Wednesday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Thursday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Friday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Saturday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Sunday',
-              slots: ['am'],
+              slots: ['AM'],
             },
           ],
         },

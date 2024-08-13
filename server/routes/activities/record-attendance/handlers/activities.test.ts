@@ -227,29 +227,29 @@ describe('Route Handlers - Activities', () => {
             { value: 'SAA_INDUSTRIES', text: 'Packing', checked: true },
           ],
           sessionFilters: [
-            { value: 'am', text: 'Morning (AM)', checked: true },
-            { value: 'pm', text: 'Afternoon (PM)', checked: true },
-            { value: 'ed', text: 'Evening (ED)', checked: false },
+            { value: 'AM', text: 'Morning (AM)', checked: true },
+            { value: 'PM', text: 'Afternoon (PM)', checked: true },
+            { value: 'ED', text: 'Evening (ED)', checked: false },
           ],
           locationType: 'ALL',
           locationId: null,
         },
         activityDate: date,
-        selectedSessions: ['am', 'pm'],
+        selectedSessions: ['AM', 'PM'],
         activityRows: [
           {
             ...attendanceSummaryResponse[1],
-            session: 'am',
+            session: 'AM',
             sessionOrderIndex: 0,
           },
           {
             ...attendanceSummaryResponse[0],
-            session: 'pm',
+            session: 'PM',
             sessionOrderIndex: 1,
           },
           {
             ...attendanceSummaryResponse[2],
-            session: 'pm',
+            session: 'PM',
             sessionOrderIndex: 1,
           },
         ],
@@ -282,9 +282,9 @@ describe('Route Handlers - Activities', () => {
             { value: 'SAA_INDUSTRIES', text: 'Packing', checked: true },
           ],
           sessionFilters: [
-            { value: 'am', text: 'Morning (AM)', checked: true },
-            { value: 'pm', text: 'Afternoon (PM)', checked: true },
-            { value: 'ed', text: 'Evening (ED)', checked: true },
+            { value: 'AM', text: 'Morning (AM)', checked: true },
+            { value: 'PM', text: 'Afternoon (PM)', checked: true },
+            { value: 'ED', text: 'Evening (ED)', checked: true },
           ],
           locationId: null,
           locationType: 'ALL',
@@ -294,7 +294,7 @@ describe('Route Handlers - Activities', () => {
         activityRows: [
           {
             ...attendanceSummaryResponse[2],
-            session: 'pm',
+            session: 'PM',
             sessionOrderIndex: 1,
           },
         ],
@@ -303,7 +303,7 @@ describe('Route Handlers - Activities', () => {
     })
 
     it('should filter the activities based on the time slot', async () => {
-      req.query = { date: dateString, sessionFilters: 'am' }
+      req.query = { date: dateString, sessionFilters: 'PM' }
 
       await handler.GET(req, res)
 
@@ -314,19 +314,19 @@ describe('Route Handlers - Activities', () => {
             { value: 'SAA_INDUSTRIES', text: 'Packing', checked: true },
           ],
           sessionFilters: [
-            { value: 'am', text: 'Morning (AM)', checked: true },
-            { value: 'pm', text: 'Afternoon (PM)', checked: false },
-            { value: 'ed', text: 'Evening (ED)', checked: false },
+            { value: 'AM', text: 'Morning (AM)', checked: true },
+            { value: 'PM', text: 'Afternoon (PM)', checked: false },
+            { value: 'ED', text: 'Evening (ED)', checked: false },
           ],
           locationId: null,
           locationType: 'ALL',
         },
         activityDate: date,
-        selectedSessions: ['am'],
+        selectedSessions: ['AM'],
         activityRows: [
           {
             ...attendanceSummaryResponse[1],
-            session: 'am',
+            session: 'AM',
             sessionOrderIndex: 0,
           },
         ],
@@ -346,9 +346,9 @@ describe('Route Handlers - Activities', () => {
             { value: 'SAA_INDUSTRIES', text: 'Packing', checked: false },
           ],
           sessionFilters: [
-            { value: 'am', text: 'Morning (AM)', checked: true },
-            { value: 'pm', text: 'Afternoon (PM)', checked: true },
-            { value: 'ed', text: 'Evening (ED)', checked: true },
+            { value: 'AM', text: 'Morning (AM)', checked: true },
+            { value: 'PM', text: 'Afternoon (PM)', checked: true },
+            { value: 'ED', text: 'Evening (ED)', checked: true },
           ],
           locationId: null,
           locationType: 'ALL',
@@ -358,17 +358,17 @@ describe('Route Handlers - Activities', () => {
         activityRows: [
           {
             ...attendanceSummaryResponse[0],
-            session: 'pm',
+            session: 'PM',
             sessionOrderIndex: 1,
           },
           {
             ...attendanceSummaryResponse[2],
-            session: 'pm',
+            session: 'PM',
             sessionOrderIndex: 1,
           },
           {
             ...attendanceSummaryResponse[3],
-            session: 'ed',
+            session: 'ED',
             sessionOrderIndex: 2,
           },
         ],
@@ -412,9 +412,9 @@ describe('Route Handlers - Activities', () => {
               { value: 'SAA_INDUSTRIES', text: 'Packing', checked: true },
             ],
             sessionFilters: [
-              { value: 'am', text: 'Morning (AM)', checked: true },
-              { value: 'pm', text: 'Afternoon (PM)', checked: true },
-              { value: 'ed', text: 'Evening (ED)', checked: true },
+              { value: 'AM', text: 'Morning (AM)', checked: true },
+              { value: 'PM', text: 'Afternoon (PM)', checked: true },
+              { value: 'ED', text: 'Evening (ED)', checked: true },
             ],
             locationId: null,
             locationType: 'IN_CELL',
@@ -424,7 +424,7 @@ describe('Route Handlers - Activities', () => {
           activityRows: [
             {
               ...attendanceSummaryResponse[0],
-              session: 'pm',
+              session: 'PM',
               sessionOrderIndex: 1,
             },
           ],
@@ -447,9 +447,9 @@ describe('Route Handlers - Activities', () => {
               { value: 'SAA_INDUSTRIES', text: 'Packing', checked: true },
             ],
             sessionFilters: [
-              { value: 'am', text: 'Morning (AM)', checked: true },
-              { value: 'pm', text: 'Afternoon (PM)', checked: true },
-              { value: 'ed', text: 'Evening (ED)', checked: true },
+              { value: 'AM', text: 'Morning (AM)', checked: true },
+              { value: 'PM', text: 'Afternoon (PM)', checked: true },
+              { value: 'ED', text: 'Evening (ED)', checked: true },
             ],
             locationId: null,
             locationType: 'ON_WING',
@@ -459,7 +459,7 @@ describe('Route Handlers - Activities', () => {
           activityRows: [
             {
               ...attendanceSummaryResponse[2],
-              session: 'pm',
+              session: 'PM',
               sessionOrderIndex: 1,
             },
           ],
@@ -482,9 +482,9 @@ describe('Route Handlers - Activities', () => {
               { value: 'SAA_INDUSTRIES', text: 'Packing', checked: true },
             ],
             sessionFilters: [
-              { value: 'am', text: 'Morning (AM)', checked: true },
-              { value: 'pm', text: 'Afternoon (PM)', checked: true },
-              { value: 'ed', text: 'Evening (ED)', checked: true },
+              { value: 'AM', text: 'Morning (AM)', checked: true },
+              { value: 'PM', text: 'Afternoon (PM)', checked: true },
+              { value: 'ED', text: 'Evening (ED)', checked: true },
             ],
             locationId: null,
             locationType: 'OFF_WING',
@@ -494,7 +494,7 @@ describe('Route Handlers - Activities', () => {
           activityRows: [
             {
               ...attendanceSummaryResponse[3],
-              session: 'ed',
+              session: 'ED',
               sessionOrderIndex: 2,
             },
           ],
@@ -518,9 +518,9 @@ describe('Route Handlers - Activities', () => {
               { value: 'SAA_INDUSTRIES', text: 'Packing', checked: true },
             ],
             sessionFilters: [
-              { value: 'am', text: 'Morning (AM)', checked: true },
-              { value: 'pm', text: 'Afternoon (PM)', checked: true },
-              { value: 'ed', text: 'Evening (ED)', checked: true },
+              { value: 'AM', text: 'Morning (AM)', checked: true },
+              { value: 'PM', text: 'Afternoon (PM)', checked: true },
+              { value: 'ED', text: 'Evening (ED)', checked: true },
             ],
             locationId: '100',
             locationType: 'OUT_OF_CELL',
@@ -530,7 +530,7 @@ describe('Route Handlers - Activities', () => {
           activityRows: [
             {
               ...attendanceSummaryResponse[1],
-              session: 'am',
+              session: 'AM',
               sessionOrderIndex: 0,
             },
           ],
@@ -546,7 +546,7 @@ describe('Route Handlers - Activities', () => {
         body: {
           selectedInstanceIds: [345, 567],
           activityDate: '2024-01-24',
-          sessionFilters: ['am', 'ed'],
+          sessionFilters: ['AM', 'ED'],
         },
         session: {},
       } as unknown as Request
@@ -557,7 +557,7 @@ describe('Route Handlers - Activities', () => {
         mode: AttendActivityMode.MULTIPLE,
         selectedInstanceIds: [345, 567],
         activityDate: '2024-01-24',
-        sessionFilters: ['am', 'ed'],
+        sessionFilters: ['AM', 'ED'],
       })
 
       expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/attendance-list')

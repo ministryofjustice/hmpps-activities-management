@@ -293,7 +293,7 @@ describe('Route Handlers - Attendance List', () => {
         attendance,
         attendanceSummary: getAttendanceSummary(instanceA.attendances),
         isPayable: true,
-        selectedSessions: ['am', 'ed'],
+        selectedSessions: ['AM', 'ED'],
       })
     })
 
@@ -326,7 +326,7 @@ describe('Route Handlers - Attendance List', () => {
 
     it('Should clear any session data when called in standalone mode', async () => {
       req.query.mode = 'standalone'
-      req.session.recordAttendanceRequests.sessionFilters = ['am', 'ed']
+      req.session.recordAttendanceRequests.sessionFilters = ['AM', 'ED']
 
       await handler.GET(req, res)
 
@@ -346,11 +346,11 @@ describe('Route Handlers - Attendance List', () => {
 
     it('Should not clear session data', async () => {
       req.query.mode = 'unknown'
-      req.session.recordAttendanceRequests.sessionFilters = ['am']
+      req.session.recordAttendanceRequests.sessionFilters = ['AM']
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAttendanceRequests.sessionFilters).toEqual(['am'])
+      expect(req.session.recordAttendanceRequests.sessionFilters).toEqual(['AM'])
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
         instance: {
@@ -360,7 +360,7 @@ describe('Route Handlers - Attendance List', () => {
         attendance,
         attendanceSummary: getAttendanceSummary(instanceA.attendances),
         isPayable: true,
-        selectedSessions: ['am'],
+        selectedSessions: ['AM'],
       })
     })
   })
@@ -487,7 +487,7 @@ describe('Route Handlers - Attendance List', () => {
     beforeEach(() => {
       req.session.recordAttendanceRequests = {
         selectedInstanceIds: ['1', '2'],
-        sessionFilters: ['am', 'pm'],
+        sessionFilters: ['AM', 'PM'],
       }
 
       when(activitiesService.getScheduledActivity).calledWith(2, res.locals.user).mockResolvedValue(instanceB)
@@ -550,7 +550,7 @@ describe('Route Handlers - Attendance List', () => {
         attendanceRows: [
           {
             instance: instanceA,
-            session: 'am',
+            session: 'AM',
             prisoner: prisonersToAttend[0],
             attendance: instanceA.attendances[0],
             otherEvents: [
@@ -574,7 +574,7 @@ describe('Route Handlers - Attendance List', () => {
           },
           {
             instance: instanceA,
-            session: 'am',
+            session: 'AM',
             prisoner: prisonersToAttend[1],
             attendance: instanceA.attendances[1],
             otherEvents: [],
@@ -583,7 +583,7 @@ describe('Route Handlers - Attendance List', () => {
           },
           {
             instance: instanceA,
-            session: 'am',
+            session: 'AM',
             prisoner: prisonersToAttend[2],
             attendance: instanceA.attendances[2],
             otherEvents: [],
@@ -592,7 +592,7 @@ describe('Route Handlers - Attendance List', () => {
           },
           {
             instance: instanceB,
-            session: 'pm',
+            session: 'PM',
             prisoner: prisonersToAttend[0],
             attendance: instanceB.attendances[0],
             otherEvents: [],
@@ -601,7 +601,7 @@ describe('Route Handlers - Attendance List', () => {
           },
           {
             instance: instanceB,
-            session: 'pm',
+            session: 'PM',
             prisoner: prisonersToAttend[3],
             attendance: instanceB.attendances[1],
             otherEvents: [
@@ -620,7 +620,7 @@ describe('Route Handlers - Attendance List', () => {
         numActivities: 2,
         attendanceSummary: getAttendanceSummary([...instanceA.attendances, ...instanceB.attendances]),
         selectedDate: instanceA.date,
-        selectedSessions: ['am', 'pm'],
+        selectedSessions: ['AM', 'PM'],
       })
     })
 
@@ -639,7 +639,7 @@ describe('Route Handlers - Attendance List', () => {
         attendanceRows: [
           {
             instance: instanceA,
-            session: 'am',
+            session: 'AM',
             prisoner: prisonersToAttend[0],
             attendance: instanceA.attendances[0],
             otherEvents: [
@@ -663,7 +663,7 @@ describe('Route Handlers - Attendance List', () => {
           },
           {
             instance: instanceB,
-            session: 'pm',
+            session: 'PM',
             prisoner: prisonersToAttend[0],
             attendance: instanceB.attendances[0],
             otherEvents: [],
@@ -674,7 +674,7 @@ describe('Route Handlers - Attendance List', () => {
         numActivities: 2,
         attendanceSummary: getAttendanceSummary(expectedSummary),
         selectedDate: instanceA.date,
-        selectedSessions: ['am', 'pm'],
+        selectedSessions: ['AM', 'PM'],
       })
     })
 

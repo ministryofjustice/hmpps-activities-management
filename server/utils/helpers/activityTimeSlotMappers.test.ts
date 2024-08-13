@@ -31,19 +31,19 @@ describe('Activity session slots to daily time slots mapper', () => {
       '1': [
         {
           day: 'Monday',
-          slots: ['am', 'pm', 'ed'],
+          slots: ['AM', 'PM', 'ED'],
         },
         {
           day: 'Tuesday',
-          slots: ['am', 'pm'],
+          slots: ['AM', 'PM'],
         },
         {
           day: 'Wednesday',
-          slots: ['am'],
+          slots: ['AM'],
         },
         {
           day: 'Thursday',
-          slots: ['pm'],
+          slots: ['PM'],
         },
         {
           day: 'Friday',
@@ -55,7 +55,7 @@ describe('Activity session slots to daily time slots mapper', () => {
         },
         {
           day: 'Sunday',
-          slots: ['ed'],
+          slots: ['ED'],
         },
       ],
     })
