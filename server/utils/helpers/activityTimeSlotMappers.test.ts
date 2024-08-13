@@ -7,6 +7,7 @@ import activitySessionToDailyTimeSlots, {
   mapSlotsToWeeklyTimeSlots,
 } from './activityTimeSlotMappers'
 import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
+import TimeSlot from '../../enum/timeSlot'
 
 describe('Activity session slots to daily time slots mapper', () => {
   it("should map a activity session's slots to daily time slots", () => {
@@ -100,6 +101,7 @@ describe('Activity session slots to daily time slots mapper', () => {
         weekNumber: 2,
         startTime: '09:00',
         endTime: '12:00',
+        timeSlot: TimeSlot.AM,
         mondayFlag: true,
         tuesdayFlag: true,
         wednesdayFlag: true,
@@ -132,6 +134,7 @@ describe('Activity session slots to daily time slots mapper', () => {
         weekNumber: 2,
         startTime: '09:00',
         endTime: '12:00',
+        TimeSlot: TimeSlot.AM,
         mondayFlag: false,
         tuesdayFlag: true,
         wednesdayFlag: false,

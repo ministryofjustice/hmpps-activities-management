@@ -176,7 +176,7 @@ describe('Route Handlers - Activities', () => {
     it('should render with the expected view', async () => {
       req.query = {
         date: dateString,
-        sessionFilters: 'pm,ed',
+        sessionFilters: 'PM,ED',
         categoryFilters: 'SAA_EDUCATION',
         locationType: LocationType.IN_CELL,
         locationId: '100',
@@ -214,7 +214,7 @@ describe('Route Handlers - Activities', () => {
     it('should render with the expected view when multiple sessions are returned', async () => {
       req.query = {
         date: dateString,
-        sessionFilters: 'am,pm',
+        sessionFilters: 'AM,PM',
         categoryFilters: 'SAA_EDUCATION,SAA_INDUSTRIES',
       }
 
@@ -380,7 +380,7 @@ describe('Route Handlers - Activities', () => {
       req = {
         query: {
           date: dateString,
-          sessionFilters: 'am,pm',
+          sessionFilters: 'AM,PM',
           categoryFilters: 'SAA_EDUCATION,SAA_INDUSTRIES',
           locationFilters: 'IN_CELL,OUT_OF_CELL',
         },
