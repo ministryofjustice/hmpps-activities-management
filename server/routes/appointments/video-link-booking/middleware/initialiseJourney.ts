@@ -35,7 +35,6 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
         {
           appointmentType: 'INDIVIDUAL',
           startDate: mainAppointment.appointmentDate,
-          endDate: mainAppointment.appointmentDate,
           categoryCode: 'VLB',
           prisonerNumbers: [prisoner.prisonerNumber],
         },
