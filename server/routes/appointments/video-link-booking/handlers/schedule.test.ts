@@ -4,8 +4,10 @@ import ActivitiesService from '../../../../services/activitiesService'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { ScheduledEvent } from '../../../../@types/activitiesAPI/types'
+import PrisonService from '../../../../services/prisonService'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/bookAVideoLinkService')
 jest.mock('../../../../utils/datePickerUtils')
 
@@ -13,6 +15,7 @@ describe('ScheduleRoutes', () => {
   let req: Partial<Request>
   let res: Partial<Response>
   let activitiesService: jest.Mocked<ActivitiesService>
+  let prisonService: jest.Mocked<PrisonService>
   let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
   let scheduleRoutes: ScheduleRoutes
 
@@ -35,7 +38,7 @@ describe('ScheduleRoutes', () => {
     } as unknown as Response
     activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
     bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
-    scheduleRoutes = new ScheduleRoutes(activitiesService, bookAVideoLinkService)
+    scheduleRoutes = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService)
   })
 
   describe('GET', () => {

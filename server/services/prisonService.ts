@@ -53,6 +53,10 @@ export default class PrisonService {
     return this.prisonApiClient.getEventLocations(prisonCode, user)
   }
 
+  async getInternalLocationByKey(key: string, user: ServiceUser): Promise<LocationLenient> {
+    return this.prisonApiClient.getInternalLocationByKey(key, user)
+  }
+
   async getReferenceCodes(domain: string, user: ServiceUser): Promise<ReferenceCode[]> {
     return this.prisonApiClient.getReferenceCodes(domain, user)
   }

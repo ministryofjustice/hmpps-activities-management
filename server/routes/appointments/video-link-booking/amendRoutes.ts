@@ -8,7 +8,7 @@ import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
 import ScheduleRoutes from './handlers/schedule'
 
-export default function AmendRoutes({ bookAVideoLinkService, activitiesService }: Services): Router {
+export default function AmendRoutes({ bookAVideoLinkService, prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -24,7 +24,7 @@ export default function AmendRoutes({ bookAVideoLinkService, activitiesService }
   const hearingDetails = new HearingDetailsRoutes(bookAVideoLinkService)
   const location = new LocationRoutes(bookAVideoLinkService)
   const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
-  const schedule = new ScheduleRoutes(activitiesService, bookAVideoLinkService)
+  const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService)
   const extraInformation = new ExtraInformationRoutes(bookAVideoLinkService)
 
   get('/hearing-details', hearingDetails.GET)

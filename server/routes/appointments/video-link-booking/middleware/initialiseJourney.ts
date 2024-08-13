@@ -1,8 +1,9 @@
 import { RequestHandler } from 'express'
 import { parse } from 'date-fns'
+import _ from 'lodash'
 import { Services } from '../../../../services'
 
-export default ({ bookAVideoLinkService, prisonService }: Services): RequestHandler => {
+export default ({ activitiesService, bookAVideoLinkService, prisonService }: Services): RequestHandler => {
   return async (req, res, next) => {
     const { bookingId } = req.params
     const { user } = res.locals
@@ -22,8 +23,39 @@ export default ({ bookAVideoLinkService, prisonService }: Services): RequestHand
 
     const prisoner = await prisonService.getInmateByPrisonerNumber(mainAppointment?.prisonerNumber, user)
 
+    const locationIds = await Promise.all(
+      _.uniq([mainAppointment?.prisonLocKey, preAppointment?.prisonLocKey, postAppointment?.prisonLocKey])
+        .filter(Boolean)
+        .map(code => prisonService.getInternalLocationByKey(code, user)),
+    ).then(locations => locations.map(l => l.locationId))
+
+    const existingVlbAppointments = await activitiesService
+      .searchAppointments(
+        user.activeCaseLoadId,
+        {
+          appointmentType: 'INDIVIDUAL',
+          startDate: mainAppointment.appointmentDate,
+          endDate: mainAppointment.appointmentDate,
+          categoryCode: 'VLB',
+          prisonerNumbers: [prisoner.prisonerNumber],
+        },
+        user,
+      )
+      .then(apps =>
+        apps.filter(
+          app =>
+            locationIds.includes(app.internalLocation.id) &&
+            [
+              [mainAppointment?.startTime, mainAppointment?.endTime],
+              [preAppointment?.startTime, preAppointment?.endTime],
+              [postAppointment?.startTime, postAppointment?.endTime],
+            ].some(([startTime, endTime]) => startTime === app.startTime && endTime === app.endTime),
+        ),
+      )
+
     req.session.bookAVideoLinkJourney = {
       bookingId: Number(bookingId),
+      appointmentIds: existingVlbAppointments.map(a => a.appointmentId),
       bookingStatus: booking.statusCode,
       type: booking.bookingType,
       prisoner: {
