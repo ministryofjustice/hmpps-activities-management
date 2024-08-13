@@ -119,7 +119,6 @@ const attendanceSummaryResponse = [
   },
 ]
 
-
 describe('Route Handlers - Activities', () => {
   const handler = new ActivitiesRoutes(activitiesService, prisonService)
 
