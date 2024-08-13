@@ -7,7 +7,6 @@ import PrisonService from '../../../../services/prisonService'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import { AttendActivityMode } from '../recordAttendanceRequests'
 import { LocationType } from '../../create-an-activity/handlers/location'
-import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -15,113 +14,113 @@ jest.mock('../../../../services/prisonService')
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
-let AM = "AM" as const;
-let PM = "PM" as const;
-let ED = "ED" as const;
+const AM = 'AM' as const
+const PM = 'PM' as const
+const ED = 'ED' as const
 
 
 const attendanceSummaryResponse = [
   {
-    "scheduledInstanceId": 144,
-    "activityId": 1,
-    "activityScheduleId": 1,
-    "summary": "Math 1",
-    "categoryId": 1,
-    "sessionDate": "2023-08-22",
-    "startTime": "13:00",
-    "endTime": "16:30",
-    "inCell": true,
-    "onWing": false,
-    "offWing": false,
-    "timeSlot": PM,
-    "attendanceRequired": true,
-    "cancelled": false,
-    "attendanceSummary": {
-      "allocations": 1,
-      "attendees": 1,
-      "notRecorded": 0,
-      "attended": 1,
-      "absences": 0,
-      "paid": 1
-    }
-  },
-  {
-    "scheduledInstanceId": 189,
-    "activityId": 5,
-    "activityScheduleId": 5,
-    "summary": "Packing",
-    "categoryId": 2,
-    "sessionDate": "2023-08-22",
-    "startTime": "09:00",
-    "endTime": "12:00",
-    "timeSlot": AM,
-    "inCell": false,
-    "onWing": false,
-    "offWing": false,
-    "attendanceRequired": false,
-    "internalLocation": {
-      "id": 100,
-      "code": "MDI-WORK-1",
-      "description": "WORKSHOP 1"
+    scheduledInstanceId: 144,
+    activityId: 1,
+    activityScheduleId: 1,
+    summary: 'Math 1',
+    categoryId: 1,
+    sessionDate: '2023-08-22',
+    startTime: '13:00',
+    endTime: '16:30',
+    inCell: true,
+    onWing: false,
+    offWing: false,
+    timeSlot: PM,
+    attendanceRequired: true,
+    cancelled: false,
+    attendanceSummary: {
+      allocations: 1,
+      attendees: 1,
+      notRecorded: 0,
+      attended: 1,
+      absences: 0,
+      paid: 1,
     },
-    "cancelled": false,
-    "attendanceSummary": {
-      "allocations": 2,
-      "attendees": 2,
-      "notRecorded": 1,
-      "attended": 1,
-      "absences": 0,
-      "paid": 1
-    }
   },
   {
-    "scheduledInstanceId": 236,
-    "activityId": 10,
-    "activityScheduleId": 10,
-    "summary": "English 2",
-    "categoryId": 1,
-    "sessionDate": "2023-08-22",
-    "startTime": "13:00",
-    "endTime": "16:30",
-    "timeSlot": PM,
-    "inCell": false,
-    "onWing": true,
-    "offWing": false,
-    "attendanceRequired": true,
-    "cancelled": false,
-    "attendanceSummary": {
-      "allocations": 4,
-      "attendees": 4,
-      "notRecorded": 3,
-      "attended": 1,
-      "absences": 2,
-      "paid": 1
-    }
+    scheduledInstanceId: 189,
+    activityId: 5,
+    activityScheduleId: 5,
+    summary: 'Packing',
+    categoryId: 2,
+    sessionDate: '2023-08-22',
+    startTime: '09:00',
+    endTime: '12:00',
+    timeSlot: AM,
+    inCell: false,
+    onWing: false,
+    offWing: false,
+    attendanceRequired: false,
+    internalLocation: {
+      id: 100,
+      code: 'MDI-WORK-1',
+      description: 'WORKSHOP 1',
+    },
+    cancelled: false,
+    attendanceSummary: {
+      allocations: 2,
+      attendees: 2,
+      notRecorded: 1,
+      attended: 1,
+      absences: 0,
+      paid: 1,
+    },
   },
   {
-    "scheduledInstanceId": 444,
-    "activityId": 11,
-    "activityScheduleId": 11,
-    "summary": "Math 2",
-    "categoryId": 1,
-    "sessionDate": "2023-08-22",
-    "startTime": "18:00",
-    "endTime": "19:00",
-    "timeSlot": ED,
-    "inCell": false,
-    "onWing": false,
-    "offWing": true,
-    "attendanceRequired": true,
-    "cancelled": false,
-    "attendanceSummary": {
-      "allocations": 5,
-      "attendees": 4,
-      "notRecorded": 3,
-      "attended": 1,
-      "absences": 2,
-      "paid": 1
-    }
-  }
+    scheduledInstanceId: 236,
+    activityId: 10,
+    activityScheduleId: 10,
+    summary: 'English 2',
+    categoryId: 1,
+    sessionDate: '2023-08-22',
+    startTime: '13:00',
+    endTime: '16:30',
+    timeSlot: PM,
+    inCell: false,
+    onWing: true,
+    offWing: false,
+    attendanceRequired: true,
+    cancelled: false,
+    attendanceSummary: {
+      allocations: 4,
+      attendees: 4,
+      notRecorded: 3,
+      attended: 1,
+      absences: 2,
+      paid: 1,
+    },
+  },
+  {
+    scheduledInstanceId: 444,
+    activityId: 11,
+    activityScheduleId: 11,
+    summary: 'Math 2',
+    categoryId: 1,
+    sessionDate: '2023-08-22',
+    startTime: '18:00',
+    endTime: '19:00',
+    timeSlot: ED,
+    inCell: false,
+    onWing: false,
+    offWing: true,
+    attendanceRequired: true,
+    cancelled: false,
+    attendanceSummary: {
+      allocations: 5,
+      attendees: 4,
+      notRecorded: 3,
+      attended: 1,
+      absences: 2,
+      paid: 1,
+    },
+  },
 ]
 
 
