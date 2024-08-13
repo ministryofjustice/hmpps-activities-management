@@ -349,6 +349,7 @@ describe('Route Handlers - View Activity', () => {
     it('should return true when schedule activity is paid', async () => {
       const schedule: ActivitySchedule = {
         id: 34,
+        usePrisonRegimeTime: true,
         instances: [
           {
             id: 153,
@@ -521,6 +522,7 @@ describe('Route Handlers - View Activity', () => {
     it('should return true when schedule not paid and allocations are all ended', async () => {
       const schedule: ActivitySchedule = {
         id: 34,
+        usePrisonRegimeTime: true,
         instances: [
           {
             id: 153,
@@ -693,6 +695,7 @@ describe('Route Handlers - View Activity', () => {
     it('should return false when schedule activity is not paid and not all allocations are ended', async () => {
       const schedule: ActivitySchedule = {
         id: 34,
+        usePrisonRegimeTime: true,
         instances: [
           {
             id: 153,

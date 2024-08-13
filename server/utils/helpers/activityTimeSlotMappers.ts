@@ -47,7 +47,7 @@ export function mapActivityScheduleSlotsToSlots(activityScheduleSlot: ActivitySc
 
   return activityScheduleSlot.map(input => ({
     weekNumber: input.weekNumber,
-    timeSlot: getTimeSlotFromTime(input.startTime).toUpperCase(),
+    timeSlot: TimeSlot[getTimeSlotFromTime(input.startTime)],
     monday: input.mondayFlag,
     tuesday: input.tuesdayFlag,
     wednesday: input.wednesdayFlag,
