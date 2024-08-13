@@ -7,17 +7,13 @@ import PrisonService from '../../../../services/prisonService'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import { AttendActivityMode } from '../recordAttendanceRequests'
 import { LocationType } from '../../create-an-activity/handlers/location'
+import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
-
-const AM = 'AM' as const
-const PM = 'PM' as const
-const ED = 'ED' as const
-
 
 const attendanceSummaryResponse = [
   {
@@ -32,7 +28,7 @@ const attendanceSummaryResponse = [
     inCell: true,
     onWing: false,
     offWing: false,
-    timeSlot: PM,
+    timeSlot: TimeSlot.PM,
     attendanceRequired: true,
     cancelled: false,
     attendanceSummary: {
@@ -53,7 +49,7 @@ const attendanceSummaryResponse = [
     sessionDate: '2023-08-22',
     startTime: '09:00',
     endTime: '12:00',
-    timeSlot: AM,
+    timeSlot: TimeSlot.AM,
     inCell: false,
     onWing: false,
     offWing: false,
@@ -82,7 +78,7 @@ const attendanceSummaryResponse = [
     sessionDate: '2023-08-22',
     startTime: '13:00',
     endTime: '16:30',
-    timeSlot: PM,
+    timeSlot: TimeSlot.PM,
     inCell: false,
     onWing: true,
     offWing: false,
@@ -106,7 +102,7 @@ const attendanceSummaryResponse = [
     sessionDate: '2023-08-22',
     startTime: '18:00',
     endTime: '19:00',
-    timeSlot: ED,
+    timeSlot: TimeSlot.ED,
     inCell: false,
     onWing: false,
     offWing: true,
