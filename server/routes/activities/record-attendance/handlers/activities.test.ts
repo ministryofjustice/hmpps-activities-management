@@ -303,7 +303,7 @@ describe('Route Handlers - Activities', () => {
     })
 
     it('should filter the activities based on the time slot', async () => {
-      req.query = { date: dateString, sessionFilters: 'PM' }
+      req.query = { date: dateString, sessionFilters: 'AM' }
 
       await handler.GET(req, res)
 

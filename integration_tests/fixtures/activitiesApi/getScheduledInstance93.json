@@ -3,6 +3,7 @@
   "date": "2023-02-02",
   "startTime": "14:00",
   "endTime": "15:00",
+  "timeSlot": "PM",
   "cancelled": false,
   "cancelledTime": null,
   "cancelledBy": null,
