@@ -55,7 +55,7 @@
             {% set endDateOption = ('remove-end-date-option' if session.allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
 
             {% if session.req.params.mode == 'create' %}
-                {% set nextSessionSlot = session.allocateJourney.scheduledInstance.timeSlot | upper %}
+                {% set nextSessionSlot = session.allocateJourney.scheduledInstance.timeSlot %}
                 {% set nextSessionDate =  session.allocateJourney.scheduledInstance.date | toDate | formatDate %}
                 {% if session.allocateJourney.startDateOption == 'NEXT_SESSION' and (now | formatDate) == nextSessionDate %}
                     {% set startDateText = "today's " + nextSessionSlot + " session" %}

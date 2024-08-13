@@ -49,7 +49,7 @@
                                 {% set exclusionsForDay = exclusions | filter('weekNumber', weekNumber | int) | filter(daySlots.day | lower, true) %}
                                 {% for timeSlot in ['AM', 'PM', 'ED'] %}
                                     {% if (daySlots.day + timeSlot) in disabledSlots %}
-                                        <input type='hidden' name='week{{ weekNumber }}[{{ daySlots.day | lower }}]' value='{{ timeSlot | lower }}'/>
+                                        <input type='hidden' name='week{{ weekNumber }}[{{ daySlots.day | lower }}]' value='{{ timeSlot }}'/>
                                     {% endif %}
                                 {% endfor %}
                                 {{ govukCheckboxes({

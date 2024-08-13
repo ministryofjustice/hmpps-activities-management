@@ -68,6 +68,7 @@ describe('Activity session slots to daily time slots mapper', () => {
       weekNumber: 2,
       startTime: '09:00',
       endTime: '12:00',
+      timeSlot: TimeSlot.AM,
       mondayFlag: true,
       tuesdayFlag: false,
       wednesdayFlag: true,
