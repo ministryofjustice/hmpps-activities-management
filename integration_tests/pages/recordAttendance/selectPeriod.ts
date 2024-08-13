@@ -10,9 +10,9 @@ export default class SelectPeriodPage extends Page {
     this.selectDatePickerDate(date)
   }
 
-  selectAM = () => cy.get('[value=am]').click()
+  selectAM = () => cy.get('[value=AM]').click()
 
-  selectPM = () => cy.get('[value=pm]').click()
+  selectPM = () => cy.get('[value=PM]').click()
 
-  selectED = () => cy.get('[value=ed]').click()
+  selectED = () => cy.get('[value=ED]').click()
 }

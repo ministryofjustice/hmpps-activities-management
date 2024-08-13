@@ -7,7 +7,7 @@ export default class ChooseDateAndLocationPage extends Page {
 
   selectToday = () => cy.get('[value=today]').click()
 
-  selectAM = () => cy.get('[value=am]').click()
+  selectAM = () => cy.get('[value=AN]').click()
 
   selectLocation = (location: string) => cy.get(`[value="${location}"]`).click()
 }

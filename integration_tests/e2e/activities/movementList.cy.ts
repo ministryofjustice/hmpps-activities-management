@@ -21,12 +21,12 @@ context('Create activity', () => {
     cy.signIn()
     cy.stubEndpoint(
       'GET',
-      `/locations/prison/MDI/events-summaries\\?date=${today}&timeSlot=am`,
+      `/locations/prison/MDI/events-summaries\\?date=${today}&timeSlot=AM`,
       getInteralLocationEvents,
     )
     cy.stubEndpoint(
       'POST',
-      `/scheduled-events/prison/MDI/locations\\?date=${today}&timeSlot=am`,
+      `/scheduled-events/prison/MDI/locations\\?date=${today}&timeSlot=AM`,
       getScheduledEventLocations,
     )
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
