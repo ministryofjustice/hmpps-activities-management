@@ -170,7 +170,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       req.params.mode = 'create'
       req.body = {
         week2: {
-          monday: ['am'],
+          monday: ['AM'],
         },
       }
       await handler.POST(req, res)
@@ -209,7 +209,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
 
       req.body = {
         week2: {
-          monday: ['am'],
+          monday: ['AM'],
         },
       }
 
