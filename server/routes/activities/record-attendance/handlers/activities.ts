@@ -131,9 +131,9 @@ const filterItems = (
     checked: filterValues.categoryFilters?.includes(category.code) ?? true,
   }))
   const sessionFilters = [
-    { value: 'am', text: 'Morning (AM)' },
-    { value: 'pm', text: 'Afternoon (PM)' },
-    { value: 'ed', text: 'Evening (ED)' },
+    { value: 'AM', text: 'Morning (AM)' },
+    { value: 'PM', text: 'Afternoon (PM)' },
+    { value: 'ED', text: 'Evening (ED)' },
   ].map(c => ({ ...c, checked: filterValues.sessionFilters?.includes(c.value) ?? true }))
 
   return {
