@@ -40,7 +40,7 @@ describe('Route Handlers - Select period', () => {
       const todaysDate = format(new Date(), 'yyyy-MM-dd')
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`activities?date=${todaysDate}&sessionFilters=am,ed`)
+      expect(res.redirect).toHaveBeenCalledWith(`activities?date=${todaysDate}&sessionFilters=AM,ED`)
     })
 
     it("redirect with the expected query params for when yesterday's date is selected", async () => {
@@ -52,7 +52,7 @@ describe('Route Handlers - Select period', () => {
       const yesterdaysDate = format(subDays(new Date(), 1), 'yyyy-MM-dd')
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`activities?date=${yesterdaysDate}&sessionFilters=am,ed`)
+      expect(res.redirect).toHaveBeenCalledWith(`activities?date=${yesterdaysDate}&sessionFilters=AM,ED`)
     })
 
     it('redirect with the expected query params for when a custom date is selected', async () => {
@@ -63,7 +63,7 @@ describe('Route Handlers - Select period', () => {
       }
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`activities?date=2022-12-01&sessionFilters=am,ed`)
+      expect(res.redirect).toHaveBeenCalledWith(`activities?date=2022-12-01&sessionFilters=AM,ED`)
     })
   })
 
