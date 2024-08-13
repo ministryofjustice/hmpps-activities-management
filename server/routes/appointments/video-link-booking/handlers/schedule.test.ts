@@ -37,16 +37,33 @@ describe('ScheduleRoutes', () => {
       redirectOrReturn: jest.fn(),
     } as unknown as Response
     activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+    prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
     bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
     scheduleRoutes = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService)
   })
 
   describe('GET', () => {
-    it('renders schedule view with scheduled events', async () => {
+    it('renders schedule view with scheduled events, internal location events, and rooms', async () => {
       const scheduledEvents = [
         { id: 1, type: 'activity', cancelled: false, prisonCode: 'PRISON1', eventSource: 'source1' },
         { id: 2, type: 'appointment', cancelled: false, prisonCode: 'PRISON2', eventSource: 'source2' },
       ] as unknown as ScheduledEvent[]
+      const internalLocationEvents = [
+        {
+          id: 1,
+          prisonCode: 'PRISON1',
+          code: 'LOC1',
+          description: 'Location 1',
+          events: scheduledEvents,
+        },
+      ]
+      const rooms = [
+        {
+          key: 'ROOM1',
+          description: 'Room 1',
+          enabled: true,
+        },
+      ]
       activitiesService.getScheduledEventsForPrisoners.mockResolvedValue({
         activities: [scheduledEvents[0]],
         appointments: [scheduledEvents[1]],
@@ -55,32 +72,16 @@ describe('ScheduleRoutes', () => {
         externalTransfers: [],
         adjudications: [],
       })
-      ;(parseIsoDate as jest.Mock).mockReturnValue(new Date('2023-10-01'))
-
-      await scheduleRoutes.GET(req as Request, res as Response)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/schedule', { scheduledEvents })
-    })
-
-    it('filters out cancelled events', async () => {
-      const scheduledEvents = [
-        { id: 1, type: 'activity', cancelled: false, prisonCode: 'PRISON1', eventSource: 'source1' },
-        { id: 2, type: 'appointment', cancelled: true, prisonCode: 'PRISON2', eventSource: 'source2' },
-      ] as unknown as ScheduledEvent[]
-      activitiesService.getScheduledEventsForPrisoners.mockResolvedValue({
-        activities: [scheduledEvents[0]],
-        appointments: [scheduledEvents[1]],
-        courtHearings: [],
-        visits: [],
-        externalTransfers: [],
-        adjudications: [],
-      })
+      activitiesService.getInternalLocationEvents.mockResolvedValue(internalLocationEvents)
+      bookAVideoLinkService.getAppointmentLocations.mockResolvedValue(rooms)
       ;(parseIsoDate as jest.Mock).mockReturnValue(new Date('2023-10-01'))
 
       await scheduleRoutes.GET(req as Request, res as Response)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/schedule', {
-        scheduledEvents: [scheduledEvents[0]],
+        prisonerScheduledEvents: [scheduledEvents[0], scheduledEvents[1]],
+        internalLocationEvents,
+        rooms,
       })
     })
   })

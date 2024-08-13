@@ -51,4 +51,16 @@ describe('prisonApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('getInternalLocationByKey', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'locationData' }
+
+      fakePrisonApi.get('/api/locations/code/KEY123').matchHeader('authorization', `Bearer token`).reply(200, response)
+
+      const output = await prisonApiClient.getInternalLocationByKey('KEY123', user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })
