@@ -16,6 +16,7 @@ import { AppointmentFrequency } from '../../../../@types/appointments'
 import UserService from '../../../../services/userService'
 import atLeast from '../../../../../jest.setup'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
+import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -173,6 +174,7 @@ describe('Route Handlers - Attendance List', () => {
     date: today,
     startTime: '10:00',
     endTime: '11:00',
+    timeSlot: TimeSlot.AM,
     activitySchedule: {
       id: 2,
       activity: {
@@ -446,6 +448,7 @@ describe('Route Handlers - Attendance List', () => {
       date: today,
       startTime: '13:00',
       endTime: '14:00',
+      timeSlot: TimeSlot.PM,
       activitySchedule: {
         id: 2,
         activity: {
