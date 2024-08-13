@@ -170,7 +170,7 @@ describe('Unlock list routes - planned events', () => {
 
       expect(unlockListService.getFilteredUnlockList).toHaveBeenCalledWith(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'A',
         ['A'],
         'With',
@@ -181,7 +181,7 @@ describe('Unlock list routes - planned events', () => {
       )
 
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        MetricsEvent.CREATE_UNLOCK_LIST(new Date('2022-01-01'), 'am', 'A-Wing', 2, res.locals.user),
+        MetricsEvent.CREATE_UNLOCK_LIST(new Date('2022-01-01'), 'AM', 'A-Wing', 2, res.locals.user),
       )
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/planned-events', {

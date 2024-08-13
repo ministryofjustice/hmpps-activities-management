@@ -79,7 +79,7 @@ describe('Unlock list routes - select date and location', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${todaysDate}`)
-      expect(req.session.unlockListJourney.timeSlot).toEqual('am')
+      expect(req.session.unlockListJourney.timeSlot).toEqual('AM')
       expect(req.session.unlockListJourney.locationKey).toEqual('here')
     })
 
@@ -94,7 +94,7 @@ describe('Unlock list routes - select date and location', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${tomorrowsDate}`)
-      expect(req.session.unlockListJourney.timeSlot).toEqual('am')
+      expect(req.session.unlockListJourney.timeSlot).toEqual('AM')
       expect(req.session.unlockListJourney.locationKey).toEqual('here')
     })
 
@@ -109,7 +109,7 @@ describe('Unlock list routes - select date and location', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=2022-12-01`)
-      expect(req.session.unlockListJourney.timeSlot).toEqual('am')
+      expect(req.session.unlockListJourney.timeSlot).toEqual('AM')
       expect(req.session.unlockListJourney.locationKey).toEqual('here')
     })
   })
@@ -164,7 +164,7 @@ describe('Unlock list routes - select date and location', () => {
       const body = {
         datePresetOption: 'other',
         date: '2022/2/31',
-        activitySlot: 'am',
+        activitySlot: 'AM',
         locationKey: 'here',
       }
 
@@ -196,7 +196,7 @@ describe('Unlock list routes - select date and location', () => {
       const body = {
         datePresetOption: 'other',
         date: formatDatePickerDate(dateIn60Days),
-        activitySlot: 'am',
+        activitySlot: 'AM',
         locationKey: 'here',
       }
 
