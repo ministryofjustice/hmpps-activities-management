@@ -17,12 +17,12 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
             {% if allocateToNextSession %}
-                {% set nextSessionSlot = session.allocateJourney.scheduledInstance.startTime | getTimeSlotFromTime | upper %}
+                {% set nextSessionSlot = session.allocateJourney.scheduledInstance.timeSlot %}
                 {% set nextSessionDate =  session.allocateJourney.scheduledInstance.date | toDate | formatDate %}
                 {% if (now | formatDate) == nextSessionDate %}
                     {% set nextSessionText = "today's " + nextSessionSlot + " session" %}
                 {% else %}
-                    {% set nextSessionText = session.allocateJourney.scheduledInstance.startTime | getTimeSlotFromTime | upper + " session on " + nextSessionDate %}
+                    {% set nextSessionText = session.allocateJourney.scheduledInstance.timeSlot + " session on " + nextSessionDate %}
                 {% endif %}
 
                 {{ govukRadios({

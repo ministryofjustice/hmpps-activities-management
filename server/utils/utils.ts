@@ -121,15 +121,6 @@ export const getCurrentPeriod = (hour: number): string => {
   return 'ED'
 }
 
-export const getTimeSlotFromTime = (time: string): TimeSlot => {
-  const hour = +time.split(':')[0]
-  const afternoonSplit = 12
-  const eveningSplit = 17
-  if (hour < afternoonSplit) return TimeSlot.AM
-  if (hour < eveningSplit) return TimeSlot.PM
-  return TimeSlot.ED
-}
-
 export const simplifyTime = (time: string): string => {
   const splitTime = time.split(':')
   return `${splitTime[0]}:${splitTime[1]}`

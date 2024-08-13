@@ -2,7 +2,6 @@ import { uniq } from 'lodash'
 import TimeSlot from '../../enum/timeSlot'
 import { Slots } from '../../routes/activities/create-an-activity/journey'
 import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
-import { getTimeSlotFromTime } from '../utils'
 
 export interface WeeklyTimeSlots {
   [weekNumber: string]: {
@@ -47,7 +46,7 @@ export function mapActivityScheduleSlotsToSlots(activityScheduleSlot: ActivitySc
 
   return activityScheduleSlot.map(input => ({
     weekNumber: input.weekNumber,
-    timeSlot: TimeSlot[getTimeSlotFromTime(input.startTime)],
+    timeSlot: input.timeSlot,
     monday: input.mondayFlag,
     tuesday: input.tuesdayFlag,
     wednesday: input.wednesdayFlag,
@@ -65,7 +64,7 @@ export function activitySlotsMinusExclusions(
 ): ActivityScheduleSlot[] {
   return activitySlots.map(s => {
     const exclusion = exclusions.find(
-      e => e.weekNumber === s.weekNumber && e.timeSlot === getTimeSlotFromTime(s.startTime).toString().toUpperCase(),
+      e => e.weekNumber === s.weekNumber && e.timeSlot === s.timeSlot,
     )
 
     return exclusion

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
-import { getTimeSlotFromTime, toDate } from '../../../../utils/utils'
+import { toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import cancellationReasons from '../../record-attendance/cancellationReasons'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
@@ -290,7 +290,7 @@ export default class DailySummaryRoutes {
       cancelledActivities.map(a => ({
         id: a.id,
         category: a.activitySchedule.activity.category.name,
-        timeSlot: getTimeSlotFromTime(a.startTime),
+        timeSlot: TimeSlot[a.timeSlot],
         cancelledReason: a.cancelledReason,
         activityId: a.activitySchedule.activity.id,
       })),
