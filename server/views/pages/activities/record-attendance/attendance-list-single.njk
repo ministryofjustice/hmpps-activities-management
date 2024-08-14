@@ -46,7 +46,7 @@
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
                 {{ instance.activitySchedule.activity.summary }} - record attendance
                 <span class="govuk-caption-l">
-                    {{ instance.startTime }} to {{ instance.endTime }} ({{ instance.startTime | getTimeSlotFromTime | upper }})
+                    {{ instance.startTime }} to {{ instance.endTime }} ({{ instance.timeSlot }})
                 </span>
                 <span class="govuk-caption-l">{{ activityDate }}</span>
                 <span class="govuk-caption-l">

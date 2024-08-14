@@ -14,7 +14,7 @@ import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
-import { convertToTitleCase, getTimeSlotFromTime } from '../../../../utils/utils'
+import { convertToTitleCase } from '../../../../utils/utils'
 import { YesNo } from '../../../../@types/activities'
 import { AttendActivityMode } from '../recordAttendanceRequests'
 
@@ -119,7 +119,7 @@ export default class NotAttendedReasonRoutes {
         ...prisoner,
         instanceId: instance.id,
         activityName: instance.activitySchedule.activity.summary,
-        session: getTimeSlotFromTime(instance.startTime),
+        session: instance.timeSlot,
         isPayable: instance.activitySchedule.activity.paid,
       }
     })

@@ -4,6 +4,7 @@ import { parse } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import CancelledSessionsRoutes from './cancelledSessions'
+import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -39,6 +40,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
         id: 1,
         startTime: '10:00',
         endTime: '11:00',
+        timeSlot: TimeSlot.AM,
         activitySchedule: {
           activity: {
             summary: 'Maths level 1',
@@ -60,6 +62,7 @@ describe('Route Handlers - Cancelled Sessions List', () => {
         id: 2,
         startTime: '13:00',
         endTime: '14:00',
+        timeSlot: TimeSlot.PM,
         activitySchedule: {
           activity: {
             summary: 'Packing',

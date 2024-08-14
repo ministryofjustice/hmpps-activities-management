@@ -1,7 +1,7 @@
 enum TimeSlot {
-  AM = 'am',
-  PM = 'pm',
-  ED = 'ed',
+  AM = 'AM',
+  PM = 'PM',
+  ED = 'ED',
 }
 
 export default TimeSlot
