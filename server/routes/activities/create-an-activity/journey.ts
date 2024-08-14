@@ -1,20 +1,28 @@
 // eslint-disable-next-line import/no-cycle
 import { ActivityPay, Allocation } from '../../../@types/activitiesAPI/types'
+import TimeSlot from '../../../enum/timeSlot'
 
 export enum ScheduleFrequency {
   WEEKLY = 1,
   BI_WEEKLY = 2,
 }
 
-export type Slots = {
+export type DailySlots = {
   days?: string[]
-  timeSlotsMonday?: string[]
-  timeSlotsTuesday?: string[]
-  timeSlotsWednesday?: string[]
-  timeSlotsThursday?: string[]
-  timeSlotsFriday?: string[]
-  timeSlotsSaturday?: string[]
-  timeSlotsSunday?: string[]
+  timeSlotsMonday?: DailySlot[]
+  timeSlotsTuesday?: DailySlot[]
+  timeSlotsWednesday?: DailySlot[]
+  timeSlotsThursday?: DailySlot[]
+  timeSlotsFriday?: DailySlot[]
+  timeSlotsSaturday?: DailySlot[]
+  timeSlotsSunday?: DailySlot[]
+}
+
+// TODO custom
+export type DailySlot = {
+  timeSlot: TimeSlot
+  customStartTime?: string
+  customEndTime?: string
 }
 
 export type CreateAnActivityJourney = {
@@ -48,7 +56,7 @@ export type CreateAnActivityJourney = {
   latestAllocationStartDate?: string
   earliestAllocationStartDate?: string
   scheduleWeeks?: number
-  slots?: { [weekNumber: string]: Slots }
+  slots?: DailySlots
   inCell?: boolean
   onWing?: boolean
   offWing?: boolean

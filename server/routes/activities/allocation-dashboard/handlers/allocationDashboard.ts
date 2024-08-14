@@ -10,7 +10,7 @@ import { Activity, ActivityPay, Allocation, PrisonerAllocations } from '../../..
 import { getScheduleIdFromActivity, getScheduleStartDateFromActivity, parseDate } from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
-import { Slots } from '../../create-an-activity/journey'
+import { DailySlots } from '../../create-an-activity/journey'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import WaitlistRequester from '../../../../enum/waitlistRequester'
@@ -79,7 +79,7 @@ export default class AllocationDashboardRoutes {
 
     const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-    const slots: { [weekNumber: string]: Slots } = {}
+    const slots: { [weekNumber: string]: DailySlots } = {}
     activity.schedules[0].slots.forEach(slot => {
       daysOfWeek.forEach(day => {
         const dayLowerCase = day.toLowerCase()

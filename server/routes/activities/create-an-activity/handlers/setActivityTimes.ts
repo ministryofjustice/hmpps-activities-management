@@ -17,7 +17,9 @@ export default class ActivityTimesOptionRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { scheduleId } = req.query
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+    const activitySchedule = await this.activitiesService.getActivitySchedule(+scheduleId, user)
 
     const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(
       regimeTimes,
@@ -27,10 +29,17 @@ export default class ActivityTimesOptionRoutes {
 
     res.render(`pages/activities/create-an-activity/activity-times-option`, {
       regimeTimes: applicableRegimeTimesForActivity,
+      activitySchedule,
     })
   }
 
-  // TODO
-  // eslint-disable-next-line no-empty-function, @typescript-eslint/no-unused-vars
-  POST = async (req: Request, res: Response): Promise<void> => {}
+  POST = async (req: Request, res: Response): Promise<void> => {
+    // const { user } = res.locals
+    // const { preserveHistory } = req.query
+    // const { activityId } = req.session.createJourney
+    // const customTimesPage = `pages/activities/create-an-activity/custom-activity-times-page`
+    // if (usePrisonRegimeTime) {
+    //   res.redirectOrReturn('location')
+    // } else res.redirectOrReturn(customTimesPage)
+  }
 }

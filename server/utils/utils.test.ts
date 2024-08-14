@@ -22,9 +22,12 @@ import {
   parseDate,
   toFixed,
   asString,
+  mapJourneySlotsToActivityRequest,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
-import { Attendance } from '../@types/activitiesAPI/types'
+import { Attendance, Slot } from '../@types/activitiesAPI/types'
+import { DailySlots } from '../routes/activities/create-an-activity/journey'
+import TimeSlot from '../enum/timeSlot'
 
 describe('utils', () => {
   describe('convert to title case', () => {
@@ -350,5 +353,121 @@ describe('utils', () => {
     ])('%test asString(%value)', ({ value, expected }) => {
       expect(asString(value)).toEqual(expected)
     })
+  })
+
+  describe('map journey slots to activity request', () => {
+    it('should create activity timeslots', () => {
+      const journeySlots: DailySlots = {
+        days: ['Monday', 'Tuesday'],
+        timeSlotsMonday: [{ timeSlot: TimeSlot.AM, customStartTime: '09:00', customEndTime: '11:00' }],
+        timeSlotsTuesday: [
+          { timeSlot: TimeSlot.PM, customStartTime: '12:00', customEndTime: '15:00' },
+          { timeSlot: TimeSlot.ED, customStartTime: '16:45', customEndTime: '19:00' },
+        ],
+      }
+      const slots: Slot[] = mapJourneySlotsToActivityRequest(journeySlots)
+
+      const mondayMorningSlot: Slot = {
+        weekNumber: 0,
+        timeSlot: TimeSlot.AM,
+        monday: true,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY'],
+        customStartTime: '09:00',
+        customEndTime: '11:00',
+      }
+      const tuesdayAfternoonSlot: Slot = {
+        weekNumber: 0,
+        timeSlot: TimeSlot.PM,
+        monday: false,
+        tuesday: true,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['TUESDAY'],
+        customStartTime: '12:00',
+        customEndTime: '15:00',
+      }
+      const tuesdayEveningSlot: Slot = {
+        weekNumber: 0,
+        timeSlot: TimeSlot.ED,
+        monday: false,
+        tuesday: true,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['TUESDAY'],
+        customStartTime: '16:45',
+        customEndTime: '19:00',
+      }
+      const expectedSlots: Slot[] = [mondayMorningSlot, tuesdayAfternoonSlot, tuesdayEveningSlot]
+      expect(slots).toEqual(expectedSlots)
+    })
+
+    // it('should create activity timeslots', () => {
+    //   const journeySlots: DailySlots = {
+    //     days: ['Monday', 'Tuesday'],
+    //     timeSlotsMonday: [{ timeSlot: TimeSlot.AM, customStartTime: '09:00', customEndTime: '11:00' }],
+    //     timeSlotsTuesday: [
+    //       { timeSlot: TimeSlot.PM, customStartTime: '12:00', customEndTime: '15:00' },
+    //       { timeSlot: TimeSlot.ED, customStartTime: '16:45', customEndTime: '19:00' },
+    //     ],
+    //   }
+    //   const slots: Slot[] = mapJourneySlotsToActivityRequest(journeySlots)
+
+    //   const mondayMorningSlot: Slot = {
+    //     weekNumber: 0,
+    //     timeSlot: TimeSlot.AM,
+    //     monday: true,
+    //     tuesday: false,
+    //     wednesday: false,
+    //     thursday: false,
+    //     friday: false,
+    //     saturday: false,
+    //     sunday: false,
+    //     daysOfWeek: ['MONDAY'],
+    //     customStartTime: '09:00',
+    //     customEndTime: '11:00',
+    //   }
+    //   const tuesdayAfternoonSlot: Slot = {
+    //     weekNumber: 0,
+    //     timeSlot: TimeSlot.PM,
+    //     monday: false,
+    //     tuesday: true,
+    //     wednesday: false,
+    //     thursday: false,
+    //     friday: false,
+    //     saturday: false,
+    //     sunday: false,
+    //     daysOfWeek: ['TUESDAY'],
+    //     customStartTime: '12:00',
+    //     customEndTime: '15:00',
+    //   }
+    //   const tuesdayEveningSlot: Slot = {
+    //     weekNumber: 0,
+    //     timeSlot: TimeSlot.ED,
+    //     monday: false,
+    //     tuesday: true,
+    //     wednesday: false,
+    //     thursday: false,
+    //     friday: false,
+    //     saturday: false,
+    //     sunday: false,
+    //     daysOfWeek: ['TUESDAY'],
+    //     customStartTime: '16:45',
+    //     customEndTime: '19:00',
+    //   }
+    //   const expectedSlots: Slot[] = [mondayMorningSlot, tuesdayAfternoonSlot, tuesdayEveningSlot]
+    //   expect(slots).toEqual(expectedSlots)
+    // })
   })
 })

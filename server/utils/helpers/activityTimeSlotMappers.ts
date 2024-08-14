@@ -1,6 +1,6 @@
 import { uniq } from 'lodash'
 import TimeSlot from '../../enum/timeSlot'
-import { Slots } from '../../routes/activities/create-an-activity/journey'
+import { DailySlots } from '../../routes/activities/create-an-activity/journey'
 import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
 
 export interface WeeklyTimeSlots {
@@ -24,7 +24,7 @@ const toTimeSlot = (timeSlot: string): TimeSlot => TimeSlot[timeSlot]
 
 export default function activitySessionToDailyTimeSlots(
   scheduleWeeks: number,
-  scheduleSlots: { [weekNumber: string]: Slots },
+  scheduleSlots: { [weekNumber: string]: DailySlots },
 ) {
   const dailySlots: WeeklyTimeSlots = {}
   for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
