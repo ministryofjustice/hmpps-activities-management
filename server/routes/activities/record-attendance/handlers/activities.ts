@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { addDays, startOfDay } from 'date-fns'
 import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
-import { asString, convertToArray, formatDate, getTimeSlotFromTime, toDate } from '../../../../utils/utils'
+import { asString, convertToArray, formatDate, toDate } from '../../../../utils/utils'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import { AttendActivityMode } from '../recordAttendanceRequests'
@@ -41,7 +41,7 @@ export default class ActivitiesRoutes {
 
     const filteredActivities = activityAttendanceSummary
       .filter(a => (searchTerm ? a.summary.toLowerCase().includes(asString(searchTerm).toLowerCase()) : true))
-      .filter(a => filterValues.sessionFilters?.includes(getTimeSlotFromTime(a.startTime)) ?? true)
+      .filter(a => filterValues.sessionFilters?.includes(a.timeSlot) ?? true)
       .filter(a => selectedCategoryIds?.includes(a.categoryId) ?? true)
       .filter(a => {
         switch (locationTypeFilter) {
@@ -60,7 +60,7 @@ export default class ActivitiesRoutes {
 
     const activityRows = filteredActivities
       .map(a => {
-        const session = getTimeSlotFromTime(a.startTime)
+        const session = TimeSlot[a.timeSlot]
         return {
           ...a,
           session,
@@ -131,9 +131,9 @@ const filterItems = (
     checked: filterValues.categoryFilters?.includes(category.code) ?? true,
   }))
   const sessionFilters = [
-    { value: 'am', text: 'Morning (AM)' },
-    { value: 'pm', text: 'Afternoon (PM)' },
-    { value: 'ed', text: 'Evening (ED)' },
+    { value: 'AM', text: 'Morning (AM)' },
+    { value: 'PM', text: 'Afternoon (PM)' },
+    { value: 'ED', text: 'Evening (ED)' },
   ].map(c => ({ ...c, checked: filterValues.sessionFilters?.includes(c.value) ?? true }))
 
   return {

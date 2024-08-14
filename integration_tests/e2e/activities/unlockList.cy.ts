@@ -50,7 +50,7 @@ context('Create activity', () => {
       '/prison/MDI/prisoners\\?page=0&size=1024&cellLocationPrefix=MDI-1-&sort=cellLocation',
       getPrisonPrisoners,
     )
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}&timeSlot=am`, getScheduledEvents)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}&timeSlot=AM`, getScheduledEvents)
   })
 
   it('should show correct alerts', () => {

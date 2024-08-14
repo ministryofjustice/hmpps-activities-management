@@ -2,6 +2,6 @@
     {% set comma = joiner(', ') %}
     {%- for session in selectedSessions -%}
         {{- ' and ' if loop.last and not loop.first else comma() }}
-        {{ session | upper }}
+        {{ session }}
     {%- endfor -%}
 {% endmacro %}

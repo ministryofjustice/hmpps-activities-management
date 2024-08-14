@@ -37,7 +37,7 @@
                     {% set comma = joiner(', ') %}
                     {%- for session in selectedSessions -%}
                         {{  ' - ' if loop.first and session }}
-                        {{- ' and ' if loop.last and not loop.first else comma() }}{{ session | upper }}
+                        {{- ' and ' if loop.last and not loop.first else comma() }}{{ session }}
                     {%- endfor -%}
                 </span>
                 <ul class="govuk-list govuk-!-margin-bottom-4">
@@ -193,7 +193,7 @@
 
                     {{ activitiesTable(activityRows, activityDate, filterParams, now) }}
 
-                    {% if activitiesBySession['am'].length == 0 and activitiesBySession['pm'].length == 0 and activitiesBySession['ed'].length == 0 %}
+                    {% if activitiesBySession['AM'].length == 0 and activitiesBySession['PM'].length == 0 and activitiesBySession['ED'].length == 0 %}
                         {{ govukWarningText({
                             text: "There are no matching activities.",
                             iconFallbackText: "Warning"

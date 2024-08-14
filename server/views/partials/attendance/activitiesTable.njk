@@ -7,7 +7,7 @@
     {% for activity in activities %}
         {% set activityLocation = ("In cell" if activity.inCell) or ("On wing" if activity.onWing) or ("Off wing" if activity.offWing) or activity.internalLocation.description | capitalize %}
         {% set rows = (rows.push({
-            visuallyHiddenText: 'Select ' + activity.summary + ' ' + (activity.session | upper),
+            visuallyHiddenText: 'Select ' + activity.summary + ' ' + (activity.session),
             value: activity.scheduledInstanceId,
             selectable: not activity.cancelled and activity.attendanceRequired and activity.attendanceSummary.allocations > 0 and not ((activity.sessionDate | toDateString) > (now | toDateString)),
             items: [
@@ -37,7 +37,7 @@
                         "data-sort-value": activity.sessionOrderIndex
                     },
                     classes: 'govuk-table__cell--alpha align-right',              
-                    text: activity.session | upper
+                    text: activity.session
                 },
                 {
                     attributes: {

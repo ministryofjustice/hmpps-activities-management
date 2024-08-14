@@ -220,7 +220,7 @@ describe('Unlock list service', () => {
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
@@ -252,7 +252,7 @@ describe('Unlock list service', () => {
         '2022-01-01',
         ['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'],
         user,
-        'am',
+        'AM',
       )
     })
 
@@ -262,7 +262,7 @@ describe('Unlock list service', () => {
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'HB1',
         ['C-Wing'],
         'Both',
@@ -281,7 +281,7 @@ describe('Unlock list service', () => {
         '2022-01-01',
         [],
         user,
-        'am',
+        'AM',
       )
     })
   })
@@ -293,7 +293,7 @@ describe('Unlock list service', () => {
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'With',
@@ -313,7 +313,7 @@ describe('Unlock list service', () => {
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
@@ -334,7 +334,7 @@ describe('Unlock list service', () => {
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
@@ -354,7 +354,7 @@ describe('Unlock list service', () => {
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
@@ -374,7 +374,7 @@ describe('Unlock list service', () => {
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'HB1',
         ['A-Wing'],
         'Both',
@@ -394,7 +394,7 @@ describe('Unlock list service', () => {
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'HB1',
         [],
         'Both',
@@ -420,7 +420,7 @@ describe('Unlock list service', () => {
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'With',
@@ -451,7 +451,7 @@ describe('Unlock list service', () => {
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'With',
@@ -522,7 +522,7 @@ describe('Unlock list service', () => {
 
       const unlockListItems = await unlockListService.getFilteredUnlockList(
         new Date('2022-01-01'),
-        'am',
+        'AM',
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'With',

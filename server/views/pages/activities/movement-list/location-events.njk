@@ -9,7 +9,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
-{% set pageTitle = (locations[0].description + " - movement list" if locations | length == 1 else "Movement lists for " + locations | length + " locations") + " - " + date | toDate | formatDate + " " + timeSlot | upper + " session" %}
+{% set pageTitle = (locations[0].description + " - movement list" if locations | length == 1 else "Movement lists for " + locations | length + " locations") + " - " + date | toDate | formatDate + " " + timeSlot + " session" %}
 {% set pageId = 'movement-list-location-events-page' %}
 {% set hardBackLinkText = 'Back' %}
 {% set hardBackLinkHref = "locations?dateOption=" + session.movementListJourney.dateOption + "&date=" + session.movementListJourney.date + "&timeSlot=" + session.movementListJourney.timeSlot %}
@@ -154,7 +154,7 @@
                         <div class="govuk-grid-row movement-list__location">
                             <div class="govuk-grid-column-two-thirds">
                                 <h1 class="govuk-heading-l govuk-!-margin-0">{{ location.description }} - movement list</h1>
-                                <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot | upper }} session</span>
+                                <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot }} session</span>
                                 <span class="govuk-caption-l" data-qa="date-caption">{{ date | toDate | formatDate }}</span>
                             </div>
                         </div>

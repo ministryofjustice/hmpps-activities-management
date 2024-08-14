@@ -19,7 +19,6 @@ import {
   firstNameLastName,
   formatDate,
   fullName,
-  getTimeSlotFromTime,
   initialiseName,
   isTodayOrBefore,
   padNumber,
@@ -160,7 +159,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('addWeeks', addWeeks)
   njkEnv.addFilter('isClashing', isClashing)
   njkEnv.addFilter('existsInStringArray', existsInStringArray)
-  njkEnv.addFilter('getTimeSlotFromTime', getTimeSlotFromTime)
   njkEnv.addFilter('startsWithAny', startsWithAny)
   njkEnv.addFilter('toFixed', toFixed)
   njkEnv.addFilter('padNumber', padNumber)

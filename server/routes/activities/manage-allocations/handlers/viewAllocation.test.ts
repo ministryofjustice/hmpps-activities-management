@@ -159,27 +159,27 @@ describe('Route Handlers - Allocation dashboard', () => {
             },
             {
               day: 'Tuesday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Wednesday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Thursday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Friday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Saturday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Sunday',
-              slots: ['am'],
+              slots: ['AM'],
             },
           ],
         },
@@ -247,27 +247,27 @@ describe('Route Handlers - Allocation dashboard', () => {
             },
             {
               day: 'Tuesday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Wednesday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Thursday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Friday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Saturday',
-              slots: ['am'],
+              slots: ['AM'],
             },
             {
               day: 'Sunday',
-              slots: ['am'],
+              slots: ['AM'],
             },
           ],
         },

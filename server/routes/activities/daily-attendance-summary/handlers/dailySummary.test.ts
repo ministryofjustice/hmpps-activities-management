@@ -5,6 +5,7 @@ import DailySummaryRoutes from './dailySummary'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AllAttendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import EventTier from '../../../../enum/eventTiers'
+import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -188,6 +189,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         id: 1,
         startTime: '10:00',
         endTime: '11:00',
+        timeSlot: TimeSlot.AM,
         activitySchedule: {
           activity: { id: 2, summary: 'Woodworking', category: { name: 'Prison Jobs' } },
           description: 'Houseblock 1',
@@ -199,6 +201,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         id: 2,
         startTime: '10:00',
         endTime: '11:00',
+        timeSlot: TimeSlot.AM,
         activitySchedule: {
           activity: { id: 3, summary: 'Gym', category: { name: 'Exercise' } },
           description: 'Houseblock 1',
@@ -210,6 +213,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         id: 3,
         startTime: '13:00',
         endTime: '14:00',
+        timeSlot: TimeSlot.PM,
         activitySchedule: {
           activity: { id: 4, summary: 'Maths', category: { name: 'Education' } },
           description: 'Houseblock 1',
