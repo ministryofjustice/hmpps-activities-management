@@ -38,4 +38,8 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
       authToken: user.token,
     })
   }
+
+  async getInternalLocationByKey(key: string, user: ServiceUser): Promise<LocationLenient> {
+    return this.get({ path: `/api/locations/code/${key}`, authToken: user.token })
+  }
 }

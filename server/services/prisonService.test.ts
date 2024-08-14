@@ -100,6 +100,20 @@ describe('Prison Service', () => {
     })
   })
 
+  describe('getInternalLocationByKey', () => {
+    it('should get the location data based on the provided location key from the prisons API', async () => {
+      const locationKey = 'XYZ123'
+      const expectedResult = { data: 'response' } as unknown as LocationLenient
+
+      when(prisonApiClient.getInternalLocationByKey).calledWith(atLeast(locationKey)).mockResolvedValue(expectedResult)
+
+      const actualResult = await prisonService.getInternalLocationByKey(locationKey, user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(prisonApiClient.getInternalLocationByKey).toHaveBeenCalledWith(locationKey, user)
+    })
+  })
+
   describe('getReferenceCodes', () => {
     it('should get the reference codes for the supplied domain from the prisons API', async () => {
       const expectedResult = [{ data: 'response' }] as unknown as ReferenceCode[]
