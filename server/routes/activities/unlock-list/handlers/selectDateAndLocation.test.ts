@@ -71,7 +71,7 @@ describe('Unlock list routes - select date and location', () => {
     it("redirect with the expected query params for when today's date is selected", async () => {
       req.body = {
         datePresetOption: 'today',
-        activitySlot: 'am',
+        activitySlot: 'AM',
         locationKey: 'here',
       }
       const todaysDate = format(new Date(), 'yyyy-MM-dd')
@@ -79,14 +79,14 @@ describe('Unlock list routes - select date and location', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${todaysDate}`)
-      expect(req.session.unlockListJourney.timeSlot).toEqual('am')
+      expect(req.session.unlockListJourney.timeSlot).toEqual('AM')
       expect(req.session.unlockListJourney.locationKey).toEqual('here')
     })
 
     it("redirect with the expected query params for when tomorrow's date is selected", async () => {
       req.body = {
         datePresetOption: 'tomorrow',
-        activitySlot: 'am',
+        activitySlot: 'AM',
         locationKey: 'here',
       }
       const tomorrowsDate = format(addDays(new Date(), 1), 'yyyy-MM-dd')
@@ -94,7 +94,7 @@ describe('Unlock list routes - select date and location', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${tomorrowsDate}`)
-      expect(req.session.unlockListJourney.timeSlot).toEqual('am')
+      expect(req.session.unlockListJourney.timeSlot).toEqual('AM')
       expect(req.session.unlockListJourney.locationKey).toEqual('here')
     })
 
@@ -102,14 +102,14 @@ describe('Unlock list routes - select date and location', () => {
       req.body = {
         datePresetOption: 'other',
         date: new Date('2022-12-01'),
-        activitySlot: 'am',
+        activitySlot: 'AM',
         locationKey: 'here',
       }
 
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=2022-12-01`)
-      expect(req.session.unlockListJourney.timeSlot).toEqual('am')
+      expect(req.session.unlockListJourney.timeSlot).toEqual('AM')
       expect(req.session.unlockListJourney.locationKey).toEqual('here')
     })
   })
@@ -148,7 +148,7 @@ describe('Unlock list routes - select date and location', () => {
       const body = {
         datePresetOption: 'other',
         date: {},
-        activitySlot: 'am',
+        activitySlot: 'AM',
         locationKey: 'some location',
       }
 
@@ -164,7 +164,7 @@ describe('Unlock list routes - select date and location', () => {
       const body = {
         datePresetOption: 'other',
         date: '2022/2/31',
-        activitySlot: 'am',
+        activitySlot: 'AM',
         locationKey: 'here',
       }
 
@@ -181,7 +181,7 @@ describe('Unlock list routes - select date and location', () => {
       const body = {
         datePresetOption: 'other',
         date: formatDatePickerDate(dateIn59Days),
-        activitySlot: 'am',
+        activitySlot: 'AM',
         locationKey: 'here',
       }
 
@@ -196,7 +196,7 @@ describe('Unlock list routes - select date and location', () => {
       const body = {
         datePresetOption: 'other',
         date: formatDatePickerDate(dateIn60Days),
-        activitySlot: 'am',
+        activitySlot: 'AM',
         locationKey: 'here',
       }
 
@@ -211,7 +211,7 @@ describe('Unlock list routes - select date and location', () => {
       const body = {
         datePresetOption: 'other',
         date: formatDatePickerDate(dateIn61Days),
-        activitySlot: 'am',
+        activitySlot: 'AM',
         locationKey: 'some location',
       }
 

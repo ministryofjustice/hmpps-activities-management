@@ -10,6 +10,7 @@ import AttendanceReasons from '../../../../enum/attendanceReason'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { AttendActivityMode } from '../recordAttendanceRequests'
+import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -99,6 +100,7 @@ describe('Route Handlers - Non Attendance', () => {
         .mockResolvedValue({
           id: 1,
           startTime: '09:00',
+          timeSlot: TimeSlot.AM,
           activitySchedule: {
             id: 2,
             activity: {
@@ -114,6 +116,7 @@ describe('Route Handlers - Non Attendance', () => {
         .mockResolvedValue({
           id: 2,
           startTime: '09:00',
+          timeSlot: TimeSlot.AM,
           activitySchedule: {
             id: 3,
             activity: {
@@ -179,7 +182,7 @@ describe('Route Handlers - Non Attendance', () => {
             attendanceId: 1,
             prisonerNumber: 'ABC123',
             prisonerName: 'JOE BLOGGS',
-            session: 'am',
+            session: 'AM',
             activityName: 'Maths 1',
             isPayable: true,
           },
@@ -188,7 +191,7 @@ describe('Route Handlers - Non Attendance', () => {
             attendanceId: 2,
             prisonerNumber: 'ABC123',
             prisonerName: 'JOE BLOGGS',
-            session: 'am',
+            session: 'AM',
             activityName: 'English 1',
             isPayable: false,
           },
@@ -197,7 +200,7 @@ describe('Route Handlers - Non Attendance', () => {
             attendanceId: 3,
             prisonerNumber: 'XYZ123',
             prisonerName: 'MARY SMITH',
-            session: 'am',
+            session: 'AM',
             activityName: 'English 1',
             isPayable: false,
           },
@@ -220,6 +223,7 @@ describe('Route Handlers - Non Attendance', () => {
           .mockResolvedValue({
             id: 1,
             startTime: '09:00',
+            timeSlot: TimeSlot.AM,
             activitySchedule: {
               id: 2,
               activity: {
@@ -235,6 +239,7 @@ describe('Route Handlers - Non Attendance', () => {
           .mockResolvedValue({
             id: 2,
             startTime: '09:00',
+            timeSlot: TimeSlot.AM,
             activitySchedule: {
               id: 3,
               activity: {

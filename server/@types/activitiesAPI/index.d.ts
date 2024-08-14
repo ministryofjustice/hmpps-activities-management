@@ -523,6 +523,26 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/job/fix-zero-pay': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Trigger the job fix zero pay activities
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
+    post: operations['triggerFixZeroPayJob']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/job/create-scheduled-instances': {
     parameters: {
       query?: never
@@ -1319,30 +1339,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/prison/{prisonCode}/schedules': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /**
-     * Get a list of activity schedules at a given prison
-     * @description Returns zero or more activity schedules at a given prison.
-     *
-     *     Requires one of the following roles:
-     *     * PRISON
-     *     * ACTIVITY_ADMIN
-     */
-    get: operations['getSchedulesByPrisonCode']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/prison/{prisonCode}/prison-pay-bands': {
     parameters: {
       query?: never
@@ -1359,30 +1355,6 @@ export interface paths {
      *     * ACTIVITY_ADMIN
      */
     get: operations['getPrisonPayBands']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/prison/{prisonCode}/locations': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /**
-     * Get scheduled prison locations
-     * @description Returns a list of zero or more scheduled prison locations for the supplied criteria.
-     *
-     *     Requires one of the following roles:
-     *     * PRISON
-     *     * ACTIVITY_ADMIN
-     */
-    get: operations['getScheduledPrisonLocations']
     put?: never
     post?: never
     delete?: never
@@ -2322,7 +2294,7 @@ export interface components {
       applyTo: 'THIS_APPOINTMENT' | 'THIS_AND_ALL_FUTURE_APPOINTMENTS' | 'ALL_FUTURE_APPOINTMENTS'
     }
     /** @description
-     *       Described on the UI as an "Appointment" and represents the scheduled event on a specific date and time.
+     *       Described on the UI as an 'Appointment' and represents the scheduled event on a specific date and time.
      *       All updates and cancellations happen at this appointment level with the parent appointment series being immutable.
      *        */
     Appointment: {
@@ -2353,7 +2325,7 @@ export interface components {
       /**
        * @description
        *         Free text name further describing the appointment. Used as part of the appointment name with the
-       *         format "Custom name (Category description) if specified.
+       *         format 'Custom name (Category description) if specified.
        *
        * @example Meeting with the governor
        */
@@ -2471,7 +2443,7 @@ export interface components {
       isCancelled: boolean
     }
     /** @description
-     *       Described on the UI as an "Attendee". A prisoner attending a specific appointment in an appointment series or set.
+     *       Described on the UI as an 'Attendee'. A prisoner attending a specific appointment in an appointment series or set.
      *        */
     AppointmentAttendee: {
       /**
@@ -2560,7 +2532,7 @@ export interface components {
       removedBy?: string
     }
     /** @description
-     *       Described on the UI as an "Appointment series" and only shown for repeat appointments.
+     *       Described on the UI as an 'Appointment series' and only shown for repeat appointments.
      *       The top level of the standard appointment hierarchy containing the initial property values common to all appointments
      *       in the series.
      *       Contains the collection of all the child appointments in the series plus the schedule definition if the appointment series repeats.
@@ -2598,7 +2570,7 @@ export interface components {
       /**
        * @description
        *         Free text name further describing the appointment series. Used as part of the appointment name with the
-       *         format "Custom name (Category description) if specified.
+       *         format 'Custom name (Category description) if specified.
        *
        * @example Meeting with the governor
        */
@@ -2775,14 +2747,14 @@ export interface components {
       /**
        * @description The prisoner or prisoners that attended the appointment
        * @example [
-       *       "A1234BC"
+       *       'A1234BC'
        *     ]
        */
       attendedPrisonNumbers: string[]
       /**
        * @description The prisoner or prisoners that did not attended the appointment
        * @example [
-       *       "A1234BC"
+       *       'A1234BC'
        *     ]
        */
       nonAttendedPrisonNumbers: string[]
@@ -2810,15 +2782,15 @@ export interface components {
       /**
        * @description The prisoner or prisoners to retrieve waiting list applications for.
        * @example [
-       *       "A1234BC"
+       *       'A1234BC'
        *     ]
        */
       prisonerNumbers?: string[]
       /**
        * @description Filter by the status of the application. PENDING, APPROVED or DECLINED.
        * @example [
-       *       "DECLINED",
-       *       "PENDING"
+       *       'DECLINED',
+       *       'PENDING'
        *     ]
        */
       status?: ('PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED')[]
@@ -2854,10 +2826,10 @@ export interface components {
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -3019,7 +2991,7 @@ export interface components {
       payBandId?: number
       /**
        * Format: date
-       * @description The future date when the prisoner will start the activity
+       * @description The date when the prisoner will start the activity
        * @example 2022-09-10
        */
       startDate: string
@@ -3031,7 +3003,10 @@ export interface components {
       endDate?: string
       /** @description The days and times that the prisoner is excluded from this activity's schedule */
       exclusions?: components['schemas']['Slot'][]
-      /** @description The scheduled instance id required when allocation starts today */
+      /**
+       * Format: int64
+       * @description The scheduled instance id required when allocation starts today
+       */
       scheduleInstanceId?: number
     }
     /** @description
@@ -3047,10 +3022,10 @@ export interface components {
        */
       weekNumber: number
       /**
-       * @description The time slot of the activity schedule, morning afternoon or evening e.g. AM, PM or ED
-       * @example AM
+       * @description The time slot of the activity schedule
+       * @enum {string}
        */
-      timeSlot: string
+      timeSlot: 'AM' | 'PM' | 'ED'
       monday: boolean
       tuesday: boolean
       wednesday: boolean
@@ -3058,6 +3033,10 @@ export interface components {
       friday: boolean
       saturday: boolean
       sunday: boolean
+      /** Format: partial-time */
+      customStartTime?: string
+      /** Format: partial-time */
+      customEndTime?: string
       daysOfWeek: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[]
     }
     /** @description Describes a prisons scheduled events */
@@ -3921,7 +3900,7 @@ export interface components {
       /**
        * @description
        *         Free text name further describing the appointment instance. Used as part of the appointment name with the
-       *         format "Appointment description (Category description) if specified.
+       *         format 'Appointment description (Category description) if specified.
        *
        * @example Meeting with the governor
        */
@@ -4200,22 +4179,14 @@ export interface components {
        */
       startDate: string
       /**
-       * Format: date
-       * @description
-       *         The end date of the date range to match with the appointments. Start date must be supplied if an end date
-       *         is specified. Will restrict the search results to appointments that have a start date within the date range.
-       *
-       */
-      endDate?: string
-      /**
        * @description
        *         The time slot to match with the appointments. Will restrict the search results to appointments that have a start
        *         time between the times defined by the prison for that time slot when this search parameter is supplied.
        *
        * @example [
-       *       "AM",
-       *       "PM",
-       *       "ED"
+       *       'AM',
+       *       'PM',
+       *       'ED'
        *     ]
        */
       timeSlots?: ('AM' | 'PM' | 'ED')[]
@@ -4251,7 +4222,7 @@ export interface components {
        *         is supplied.
        *
        * @example [
-       *       "A1234BC"
+       *       'A1234BC'
        *     ]
        */
       prisonerNumbers?: string[]
@@ -4363,7 +4334,7 @@ export interface components {
       prisonCode: string
       /** @description
        *         The appointment's name combining the optional custom name with the category description. If custom name has been
-       *         specified, the name format will be "Custom name (Category description)"
+       *         specified, the name format will be 'Custom name (Category description)'
        *          */
       appointmentName: string
       /** @description
@@ -4376,7 +4347,7 @@ export interface components {
       /**
        * @description
        *         Free text name further describing the appointment. Used as part of the appointment name with the
-       *         format "Custom name (Category description) if specified.
+       *         format 'Custom name (Category description) if specified.
        *
        * @example Meeting with the governor
        */
@@ -4407,6 +4378,11 @@ export interface components {
        * @example 13:30
        */
       endTime?: string
+      /**
+       * @description time slot
+       * @enum {string}
+       */
+      timeSlot: 'AM' | 'PM' | 'ED'
       /**
        * @description Indicates whether the appointment series was specified to repeat via its schedule
        * @example false
@@ -4497,7 +4473,7 @@ export interface components {
       /**
        * @description
        *         Free text name further describing the appointment series. Will be used to create the appointment name using the
-       *         format "Custom name (Category description) if specified.
+       *         format 'Custom name (Category description) if specified.
        *
        * @example Meeting with the governor
        */
@@ -4530,7 +4506,7 @@ export interface components {
       appointments: components['schemas']['AppointmentSetAppointment'][]
     }
     /** @description
-     *       Described on the UI as an "Appointment set" or "set of back-to-back appointments".
+     *       Described on the UI as an 'Appointment set' or 'set of back-to-back appointments'.
      *       Contains the initial property values common to all appointment series and appointments in the set.
      *       The properties at this level cannot be changed via the API.
      *        */
@@ -4556,7 +4532,7 @@ export interface components {
       /**
        * @description
        *         Free text name further describing the appointment set. Used as part of the appointment name with the
-       *         format "Custom name (Category description) if specified.
+       *         format 'Custom name (Category description) if specified.
        *
        * @example Meeting with the governor
        */
@@ -4615,7 +4591,7 @@ export interface components {
       /**
        * @description The prisoner or prisoners attending the appointment or appointments in the series
        * @example [
-       *       "A1234BC"
+       *       'A1234BC'
        *     ]
        */
       prisonerNumbers: string[]
@@ -4639,7 +4615,7 @@ export interface components {
       /**
        * @description
        *         Free text name further describing the appointment series. Will be used to create the appointment name using the
-       *         format "Custom name (Category description) if specified.
+       *         format 'Custom name (Category description) if specified.
        *
        * @example Meeting with the governor
        */
@@ -4972,9 +4948,9 @@ export interface components {
        */
       pieceRateItems?: number
       /**
-       * Format: string
-       * @description description = The effective start date for this pay rate
-       * @example 2024-06-18
+       * Format: date
+       * @description The effective start date for this pay rate
+       * @example 2022-12-23
        */
       startDate?: string
     }
@@ -5298,8 +5274,8 @@ export interface components {
        */
       pieceRateItems?: number
       /**
-       * Format: string
-       * @description description = The effective start date for this pay rate
+       * Format: date
+       * @description The effective start date for this pay rate
        * @example 2024-06-18
        */
       startDate?: string
@@ -5371,6 +5347,8 @@ export interface components {
        * @example Adam Smith
        */
       updatedBy?: string
+      /** @description a flag to indicate if this activity is scheduled according to prison standard regime times */
+      usePrisonRegimeTime: boolean
     }
     /** @description
      *       Describes a slot for an activity schedule. There can be several of these defined for one activity schedule.
@@ -5845,14 +5823,14 @@ export interface components {
       /**
        * @description The prisoner or prisoners to remove from the appointment or appointments
        * @example [
-       *       "A1234BC"
+       *       'A1234BC'
        *     ]
        */
       removePrisonerNumbers?: string[]
       /**
        * @description The new prisoner or prisoners that will be attending the appointment or appointments
        * @example [
-       *       "A1234BC"
+       *       'A1234BC'
        *     ]
        */
       addPrisonerNumbers?: string[]
@@ -5908,7 +5886,10 @@ export interface components {
       payBandId?: number
       /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
       exclusions?: components['schemas']['Slot'][]
-      /** @description The scheduled instance id required when allocation starts today */
+      /**
+       * Format: int64
+       * @description The scheduled instance id required when allocation starts today
+       */
       scheduleInstanceId?: number
     }
     /** @description The update request with the new activity details */
@@ -6027,13 +6008,13 @@ export interface components {
       date: string
       /**
        * @description A list of bookings and the number of paid attendances for each
-       * @example { [ "bookingId": 12345, "count": 2 ] }
+       * @example { [ 'bookingId': 12345, 'count': 2 ] }
        */
       bookings: components['schemas']['BookingCount'][]
     }
     /**
      * @description The count for a booking ID
-     * @example { [ "bookingId": 12345, "count": 2 ] }
+     * @example { [ 'bookingId': 12345, 'count': 2 ] }
      */
     BookingCount: {
       /**
@@ -6058,7 +6039,7 @@ export interface components {
       prisonCode: string
       /**
        * @description A list of bookings and the number of active allocations for each
-       * @example { [ "bookingId": 12345, "count": 2 ] }
+       * @example { [ 'bookingId': 12345, 'count': 2 ] }
        */
       bookings: components['schemas']['BookingCount'][]
     }
@@ -6497,10 +6478,10 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -6540,6 +6521,11 @@ export interface components {
        * @example 10:00
        */
       endTime: string
+      /**
+       * @description Time slot of the scheduled instance
+       * @enum {string}
+       */
+      timeSlot: 'AM' | 'PM' | 'ED'
       /**
        * @description Flag to indicate if this scheduled instance has been cancelled since being scheduled
        * @example false
@@ -6640,6 +6626,8 @@ export interface components {
        * @example 2022-10-21
        */
       endDate?: string
+      /** @description a flag to indicate if this activity is scheduled according to prison standard regime times */
+      usePrisonRegimeTime: boolean
     }
     /** @description Describes a prisoner scheduled to attend to an activity */
     ScheduledAttendee: {
@@ -6766,6 +6754,11 @@ export interface components {
        */
       endTime: string
       /**
+       * @description time slot of scheduled instance
+       * @enum {string}
+       */
+      timeSlot: 'AM' | 'PM' | 'ED'
+      /**
        * @description Flag to indicate if the location of the activity is in cell
        * @example false
        */
@@ -6822,10 +6815,15 @@ export interface components {
        * @example 2022-09-30
        */
       appointmentsRolloutDate?: string
+      /**
+       * Format: int32
+       * @description max days to expire events based on prisoner movement, default is 21
+       */
+      maxDaysToExpiry: number
     }
     DlqMessage: {
       body: {
-        [key: string]: Record<string, never> | undefined
+        [key: string]: Record<string, never>
       }
       messageId: string
     }
@@ -6927,11 +6925,10 @@ export interface components {
        */
       edFinish: string
       /**
-       * Format: int32
-       * @description The maximum number of days to expiry
-       * @example 21
+       * @description day of week the regime is applicable to
+       * @enum {string}
        */
-      maxDaysToExpiry: number
+      dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
     }
     Location: {
       /**
@@ -7304,7 +7301,7 @@ export interface components {
       prisonCode: string
       /** @description
        *         The appointment's name combining the optional custom name with the category description. If custom name has been
-       *         specified, the name format will be "Custom name (Category description)"
+       *         specified, the name format will be 'Custom name (Category description)'
        *          */
       appointmentName: string
       internalLocation?: components['schemas']['AppointmentLocationSummary']
@@ -7367,7 +7364,7 @@ export interface components {
       eventTierType?: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
     }
     /** @description
-     *       Described on the UI as an "Attendee". A prisoner attending a specific appointment in an appointment series or set.
+     *       Described on the UI as an 'Attendee'. A prisoner attending a specific appointment in an appointment series or set.
      *       Contains the limited summary information needed to display the prisoner information and whether they attended or not.
      *        */
     AppointmentAttendeeSummary: {
@@ -7405,7 +7402,7 @@ export interface components {
       attendanceRecordedBy?: string
     }
     /** @description
-     *       Described on the UI as an "Appointment" and represents the scheduled event on a specific date and time.
+     *       Described on the UI as an 'Appointment' and represents the scheduled event on a specific date and time.
      *       Contains the full details of all the appointment properties and the summary collection of prisoners attending this appointment.
      *       An appointment is part of either a series of an appointments on a schedule or a set of appointments on the same day.
      *       The summary information of which appointment collection they are part of is included in these details.
@@ -7439,7 +7436,7 @@ export interface components {
       prisonCode: string
       /** @description
        *         The appointment's name combining the optional custom name with the category description. If custom name has been
-       *         specified, the name format will be "Custom name (Category description)"
+       *         specified, the name format will be 'Custom name (Category description)'
        *          */
       appointmentName: string
       /** @description
@@ -7453,7 +7450,7 @@ export interface components {
       /**
        * @description
        *         Free text name further describing the appointment. Used as part of the appointment name with the
-       *         format "Custom name (Category description) if specified.
+       *         format 'Custom name (Category description) if specified.
        *
        * @example Meeting with the governor
        */
@@ -7559,7 +7556,7 @@ export interface components {
       cancelledBy?: string
     }
     /** @description
-     *       Described on the UI as an "Appointment series" and only shown for repeat appointments.
+     *       Described on the UI as an 'Appointment series' and only shown for repeat appointments.
      *       The top level of the standard appointment hierarchy containing summary information of a limited set of the initial
      *       property values common to all appointments in the series as well as the count of appointments in the series.
      *       The properties at this level cannot be changed via the API however the child appointment property values can be changed
@@ -7593,7 +7590,7 @@ export interface components {
       scheduledAppointmentCount: number
     }
     /** @description
-     *       Described on the UI as an "Appointment set" or "set of back-to-back appointments".
+     *       Described on the UI as an 'Appointment set' or 'set of back-to-back appointments'.
      *       Contains the limited summary information needed to display the fact that an appointment was created as part of a set.
      *        */
     AppointmentSetSummary: {
@@ -7671,7 +7668,7 @@ export interface components {
       category?: string
     }
     /** @description
-     *       Described on the UI as an "Appointment set" or "set of back-to-back appointments".
+     *       Described on the UI as an 'Appointment set' or 'set of back-to-back appointments'.
      *       Contains the full details of the initial property values common to all appointments in the set for display purposes.
      *       The properties at this level cannot be changed via the API.
      *        */
@@ -7689,14 +7686,14 @@ export interface components {
       prisonCode: string
       /** @description
        *         The appointment set's name combining the optional custom name with the category description. If custom name has been
-       *         specified, the name format will be "Custom name (Category description)"
+       *         specified, the name format will be 'Custom name (Category description)'
        *          */
       appointmentName: string
       category: components['schemas']['AppointmentCategorySummary']
       /**
        * @description
        *         Free text name further describing the appointment set. Used as part of the appointment name with the
-       *         format "Custom name (Category description) if specified.
+       *         format 'Custom name (Category description) if specified.
        *
        * @example Meeting with the governor
        */
@@ -7741,7 +7738,7 @@ export interface components {
       updatedBy?: string
     }
     /** @description
-     *       Described on the UI as an "Appointment series" and only shown for repeat appointments.
+     *       Described on the UI as an 'Appointment series' and only shown for repeat appointments.
      *       The top level of the standard appointment hierarchy containing full details of the initial property values common to
      *       all appointments in the series for display purposes.
      *       Contains the summary collection of all the child appointments in the series plus the schedule definition if the
@@ -7772,7 +7769,7 @@ export interface components {
       prisonCode: string
       /** @description
        *         The appointment series' name combining the optional custom name with the category description. If custom name has been
-       *         specified, the name format will be "Custom name (Category description)"
+       *         specified, the name format will be 'Custom name (Category description)'
        *          */
       appointmentName: string
       category: components['schemas']['AppointmentCategorySummary']
@@ -7781,7 +7778,7 @@ export interface components {
       /**
        * @description
        *         Free text name further describing the appointment series. Used as part of the appointment name with the
-       *         format "Custom name (Category description) if specified.
+       *         format 'Custom name (Category description) if specified.
        *
        * @example Meeting with the governor
        */
@@ -7857,7 +7854,7 @@ export interface components {
       appointments: components['schemas']['AppointmentSummary'][]
     }
     /** @description
-     *       Described on the UI as an "Appointment" and represents the scheduled event on a specific date and time.
+     *       Described on the UI as an 'Appointment' and represents the scheduled event on a specific date and time.
      *       Contains the summary information of a limited set the appointment properties. N.B. does not contain
      *       information on the prisoners attending this appointment to improve API performance.
      *       All updates and cancellations happen at this appointment level with the parent appointment series or set being immutable.
@@ -9085,6 +9082,33 @@ export interface operations {
     responses: {
       /** @description Created */
       201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'text/plain': string
+        }
+      }
+    }
+  }
+  triggerFixZeroPayJob: {
+    parameters: {
+      query?: {
+        /** @description If supplied will deallocate prisoners. */
+        deallocate?: boolean
+        /** @description If supplied will deallocate prisoners. */
+        makeUnpaid?: boolean
+        /** @description If supplied will deallocate prisoners. */
+        allocate?: boolean
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Accepted */
+      202: {
         headers: {
           [name: string]: unknown
         }
@@ -10832,53 +10856,6 @@ export interface operations {
       }
     }
   }
-  getSchedulesByPrisonCode: {
-    parameters: {
-      query?: {
-        /** @description Date of activity, default today */
-        date?: string
-        /** @description AM, PM or ED */
-        timeSlot?: 'AM' | 'PM' | 'ED'
-        /** @description The internal NOMIS location id of the activity */
-        locationId?: number
-      }
-      header?: never
-      path: {
-        prisonCode: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Activity schedules found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ActivitySchedule'][]
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
   getPrisonPayBands: {
     parameters: {
       query?: never
@@ -10897,51 +10874,6 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['PrisonPayBand'][]
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getScheduledPrisonLocations: {
-    parameters: {
-      query?: {
-        /** @description Date of activity, default today */
-        date?: string
-        /** @description AM, PM or ED */
-        timeSlot?: 'AM' | 'PM' | 'ED'
-      }
-      header?: never
-      path: {
-        prisonCode: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Locations found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['InternalLocation'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */
@@ -11073,7 +11005,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['PrisonRegime']
+          'application/json': components['schemas']['PrisonRegime'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */
@@ -11087,15 +11019,6 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description The prison regime for this prison code was not found. */
-      404: {
         headers: {
           [name: string]: unknown
         }
@@ -11394,7 +11317,9 @@ export interface operations {
   }
   getAttendanceByDate: {
     parameters: {
-      query?: never
+      query?: {
+        eventTier?: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
+      }
       header?: never
       path: {
         prisonCode: string

@@ -38,6 +38,7 @@ describe('User service', () => {
       prisonCode: 'MDI',
       activitiesRolledOut: true,
       appointmentsRolledOut: true,
+      maxDaysToExpiry: 21,
     })
   })
 

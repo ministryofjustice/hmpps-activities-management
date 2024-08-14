@@ -229,8 +229,8 @@ describe('Activities Service', () => {
   describe('getRolledOutPrisons', () => {
     it('should fetch rolled out prisons', async () => {
       const mockResponse = [
-        { prisonCode: 'MDI', activitiesRolledOut: true, appointmentsRolledOut: true },
-        { prisonCode: 'LEI', activitiesRolledOut: true, appointmentsRolledOut: false },
+        { prisonCode: 'MDI', activitiesRolledOut: true, appointmentsRolledOut: true, maxDaysToExpiry: 21 },
+        { prisonCode: 'LEI', activitiesRolledOut: true, appointmentsRolledOut: false, maxDaysToExpiry: 21 },
       ]
       activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
 
@@ -892,8 +892,8 @@ describe('Activities Service', () => {
   describe('Check rolled out Prisons', () => {
     it('should return all agencies when one of either appointments or activities is rolled out', async () => {
       const mockResponse = [
-        { prisonCode: 'MDI', activitiesRolledOut: false, appointmentsRolledOut: true },
-        { prisonCode: 'LEI', activitiesRolledOut: true, appointmentsRolledOut: false },
+        { prisonCode: 'MDI', activitiesRolledOut: false, appointmentsRolledOut: true, maxDaysToExpiry: 21 },
+        { prisonCode: 'LEI', activitiesRolledOut: true, appointmentsRolledOut: false, maxDaysToExpiry: 21 },
       ]
       activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
 
@@ -904,8 +904,8 @@ describe('Activities Service', () => {
 
     it('should return an empty array if no activities or appointments have been rolled out.', async () => {
       const mockResponse = [
-        { prisonCode: 'MDI', activitiesRolledOut: false, appointmentsRolledOut: false },
-        { prisonCode: 'LEI', activitiesRolledOut: false, appointmentsRolledOut: false },
+        { prisonCode: 'MDI', activitiesRolledOut: false, appointmentsRolledOut: false, maxDaysToExpiry: 21 },
+        { prisonCode: 'LEI', activitiesRolledOut: false, appointmentsRolledOut: false, maxDaysToExpiry: 21 },
       ]
       activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
 
@@ -916,8 +916,8 @@ describe('Activities Service', () => {
 
     it('should return all agencies when both activities and appointments are rolled out', async () => {
       const mockResponse = [
-        { prisonCode: 'MDI', activitiesRolledOut: true, appointmentsRolledOut: true },
-        { prisonCode: 'LPI', activitiesRolledOut: true, appointmentsRolledOut: true },
+        { prisonCode: 'MDI', activitiesRolledOut: true, appointmentsRolledOut: true, maxDaysToExpiry: 21 },
+        { prisonCode: 'LPI', activitiesRolledOut: true, appointmentsRolledOut: true, maxDaysToExpiry: 21 },
       ]
       activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
 

@@ -5,6 +5,7 @@ import ExclusionRoutes from './exclusions'
 import atLeast from '../../../../../jest.setup'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
+import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -58,6 +59,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
           {
             id: 1,
             weekNumber: 1,
+            timeSlot: TimeSlot.AM,
             startTime: '09:00',
             endTime: '12:00',
             mondayFlag: true,
@@ -74,6 +76,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
             weekNumber: 2,
             startTime: '09:00',
             endTime: '12:00',
+            timeSlot: TimeSlot.AM,
             mondayFlag: true,
             tuesdayFlag: true,
             wednesdayFlag: true,
@@ -167,7 +170,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       req.params.mode = 'create'
       req.body = {
         week2: {
-          monday: ['am'],
+          monday: ['AM'],
         },
       }
       await handler.POST(req, res)
@@ -206,7 +209,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
 
       req.body = {
         week2: {
-          monday: ['am'],
+          monday: ['AM'],
         },
       }
 

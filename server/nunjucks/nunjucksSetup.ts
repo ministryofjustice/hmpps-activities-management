@@ -14,12 +14,12 @@ import {
   dateInList,
   excludeArrayObject,
   existsInStringArray,
+  filterNot,
   filterObjects,
   findError,
   firstNameLastName,
   formatDate,
   fullName,
-  getTimeSlotFromTime,
   initialiseName,
   isTodayOrBefore,
   padNumber,
@@ -160,7 +160,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('addWeeks', addWeeks)
   njkEnv.addFilter('isClashing', isClashing)
   njkEnv.addFilter('existsInStringArray', existsInStringArray)
-  njkEnv.addFilter('getTimeSlotFromTime', getTimeSlotFromTime)
   njkEnv.addFilter('startsWithAny', startsWithAny)
   njkEnv.addFilter('toFixed', toFixed)
   njkEnv.addFilter('padNumber', padNumber)
@@ -181,6 +180,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('startOfDay', startOfDay)
   njkEnv.addFilter('find', (l: any[], iteratee: string, eq: unknown) => l.find(o => o[iteratee] === eq))
   njkEnv.addFilter('filter', filterObjects)
+  njkEnv.addFilter('filterNot', filterNot)
   njkEnv.addFilter('flatMap', flatMap)
   njkEnv.addFilter('flatten', flatten)
   njkEnv.addFilter('sortBy', sortBy)

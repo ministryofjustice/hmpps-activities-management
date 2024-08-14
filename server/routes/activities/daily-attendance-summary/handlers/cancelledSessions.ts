@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { getTimeSlotFromTime, toDate } from '../../../../utils/utils'
+import { toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 
 export default class CancelledSessionsRoutes {
@@ -25,7 +25,7 @@ export default class CancelledSessionsRoutes {
         onWing: session.activitySchedule.activity.onWing,
         offWing: session.activitySchedule.activity.offWing,
         location: session.activitySchedule.internalLocation?.description,
-        timeSlot: getTimeSlotFromTime(session.startTime).toUpperCase(),
+        timeSlot: session.timeSlot,
         reason: session.cancelledReason,
         allocated: session.activitySchedule.activity.allocated,
         comment: session.comment,
