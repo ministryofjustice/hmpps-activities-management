@@ -136,7 +136,7 @@
                 <h1 class="govuk-heading-l">Attendance record for {{ attendee.name | toTitleCase }}</h1>
                 <div class="govuk-inset-text">
                     <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a>
-                    on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.startTime | getTimeSlotFromTime | upper }}) 
+                    on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.timeSlot }}) 
                </div>
                {% if attendance.status === 'WAITING' %}
                    <h2 class="govuk-heading-m">Attendance record reset</h2>

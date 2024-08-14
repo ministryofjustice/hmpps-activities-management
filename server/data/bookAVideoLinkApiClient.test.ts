@@ -90,7 +90,7 @@ describe('bookAVideoLinkApiClient', () => {
       const response = { data: 'data' }
 
       fakeBookAVideoLinkApi
-        .get(`/courts/enabled`)
+        .get(`/courts?enabledOnly=false`)
         .matchHeader('authorization', `Bearer accessToken`)
         .reply(200, response)
 

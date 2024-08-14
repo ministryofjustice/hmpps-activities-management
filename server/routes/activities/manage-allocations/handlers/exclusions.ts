@@ -104,7 +104,7 @@ export default class ExclusionRoutes {
   private mapBodyToSlots(body: Schedule): Slot[] {
     const convertTimeSlotToSlot = (weekNumber: number, daysOfWeek: DayOfWeek[], timeSlot: TimeSlot): Slot => ({
       weekNumber,
-      timeSlot: timeSlot.toUpperCase(),
+      timeSlot: TimeSlot[timeSlot.toUpperCase()],
       daysOfWeek,
       monday: daysOfWeek.includes('MONDAY'),
       tuesday: daysOfWeek.includes('TUESDAY'),

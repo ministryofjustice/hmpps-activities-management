@@ -3,7 +3,7 @@ import { startOfDay, startOfToday } from 'date-fns'
 import { Expose, Transform } from 'class-transformer'
 import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
-import { asString, eventClashes, getAttendanceSummary, getTimeSlotFromTime, toDate } from '../../../../utils/utils'
+import { asString, eventClashes, getAttendanceSummary, toDate } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 import { Attendance, AttendanceUpdateRequest, ScheduledEvent } from '../../../../@types/activitiesAPI/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
@@ -124,7 +124,7 @@ export default class AttendanceListRoutes {
     const attendanceRows = (
       await Promise.all(
         instances.map(async instance => {
-          const session = getTimeSlotFromTime(instance.startTime)
+          const session = instance.timeSlot
 
           const allEvents = [
             ...otherEvents.activities,

@@ -19,7 +19,6 @@ import { ValidationError } from 'class-validator'
 import _ from 'lodash'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Activity, ActivitySchedule, Attendance, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
-import TimeSlot from '../enum/timeSlot'
 // eslint-disable-next-line import/no-cycle
 import { CreateAnActivityJourney, Slots } from '../routes/activities/create-an-activity/journey'
 
@@ -119,15 +118,6 @@ export const getCurrentPeriod = (hour: number): string => {
   if (hour < afternoonSplit) return 'AM'
   if (hour < eveningSplit) return 'PM'
   return 'ED'
-}
-
-export const getTimeSlotFromTime = (time: string): TimeSlot => {
-  const hour = +time.split(':')[0]
-  const afternoonSplit = 12
-  const eveningSplit = 17
-  if (hour < afternoonSplit) return TimeSlot.AM
-  if (hour < eveningSplit) return TimeSlot.PM
-  return TimeSlot.ED
 }
 
 export const simplifyTime = (time: string): string => {

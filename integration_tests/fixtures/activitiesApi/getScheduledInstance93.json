@@ -3,6 +3,7 @@
   "date": "2023-02-02",
   "startTime": "14:00",
   "endTime": "15:00",
+  "timeSlot": "PM",
   "cancelled": false,
   "cancelledTime": null,
   "cancelledBy": null,
@@ -107,7 +108,8 @@
         "id": 8,
         "startTime": "14:00",
         "endTime": "15:00",
-        "daysOfWeek": ["Thu"]
+        "daysOfWeek": ["Thu"],
+        "timeSlot": "PM"
       }
     ],
     "startDate": "2022-10-10",

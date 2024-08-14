@@ -7,5 +7,5 @@ export default class ChooseDetailsPage extends Page {
 
   selectToday = () => cy.get('[value=today]').click()
 
-  selectAM = () => cy.get('[value=am]').click()
+  selectAM = () => cy.get('[value=AM]').click()
 }

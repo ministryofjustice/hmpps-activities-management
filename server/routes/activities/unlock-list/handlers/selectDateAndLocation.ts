@@ -14,9 +14,9 @@ enum PresetDateOptions {
 }
 
 enum ActivitySlotOptions {
-  AM = 'am',
-  PM = 'pm',
-  ED = 'ed',
+  AM = 'AM',
+  PM = 'PM',
+  ED = 'ED',
 }
 
 export class DateAndLocation {

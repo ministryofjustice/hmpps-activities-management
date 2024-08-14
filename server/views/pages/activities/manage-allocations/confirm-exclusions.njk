@@ -78,6 +78,6 @@
 {% macro formatSlots(slots) %}
     {%- set comma = joiner(', ') -%}
     {%- for slot in slots -%}
-        {{ ' and ' if loop.last and not loop.first else comma() }}{{ slot | upper }}
+        {{ ' and ' if loop.last and not loop.first else comma() }}{{ slot }}
     {%- endfor -%}
 {% endmacro %}

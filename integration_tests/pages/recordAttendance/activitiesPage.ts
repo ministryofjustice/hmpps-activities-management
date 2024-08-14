@@ -76,5 +76,5 @@ export default class ActivitiesPage extends Page {
       .should(checkbox ? 'exist' : 'not.exist')
   }
 
-  sessionPMCheckbox = () => cy.get(`[name=sessionFilters][value="pm"]`)
+  sessionPMCheckbox = () => cy.get(`[name=sessionFilters][value="PM"]`)
 }

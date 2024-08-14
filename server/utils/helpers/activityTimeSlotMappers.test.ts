@@ -7,6 +7,7 @@ import activitySessionToDailyTimeSlots, {
   mapSlotsToWeeklyTimeSlots,
 } from './activityTimeSlotMappers'
 import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
+import TimeSlot from '../../enum/timeSlot'
 
 describe('Activity session slots to daily time slots mapper', () => {
   it("should map a activity session's slots to daily time slots", () => {
@@ -31,19 +32,19 @@ describe('Activity session slots to daily time slots mapper', () => {
       '1': [
         {
           day: 'Monday',
-          slots: ['am', 'pm', 'ed'],
+          slots: ['AM', 'PM', 'ED'],
         },
         {
           day: 'Tuesday',
-          slots: ['am', 'pm'],
+          slots: ['AM', 'PM'],
         },
         {
           day: 'Wednesday',
-          slots: ['am'],
+          slots: ['AM'],
         },
         {
           day: 'Thursday',
-          slots: ['pm'],
+          slots: ['PM'],
         },
         {
           day: 'Friday',
@@ -55,7 +56,7 @@ describe('Activity session slots to daily time slots mapper', () => {
         },
         {
           day: 'Sunday',
-          slots: ['ed'],
+          slots: ['ED'],
         },
       ],
     })
@@ -67,6 +68,7 @@ describe('Activity session slots to daily time slots mapper', () => {
       weekNumber: 2,
       startTime: '09:00',
       endTime: '12:00',
+      timeSlot: TimeSlot.AM,
       mondayFlag: true,
       tuesdayFlag: false,
       wednesdayFlag: true,
@@ -100,6 +102,7 @@ describe('Activity session slots to daily time slots mapper', () => {
         weekNumber: 2,
         startTime: '09:00',
         endTime: '12:00',
+        timeSlot: TimeSlot.AM,
         mondayFlag: true,
         tuesdayFlag: true,
         wednesdayFlag: true,
@@ -132,6 +135,7 @@ describe('Activity session slots to daily time slots mapper', () => {
         weekNumber: 2,
         startTime: '09:00',
         endTime: '12:00',
+        timeSlot: TimeSlot.AM,
         mondayFlag: false,
         tuesdayFlag: true,
         wednesdayFlag: false,
