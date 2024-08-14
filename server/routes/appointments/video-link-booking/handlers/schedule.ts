@@ -22,25 +22,25 @@ export default class ScheduleRoutes {
         .map(code => this.prisonService.getInternalLocationByKey(code, user)),
     )
 
-    const prisonerScheduledEvents = await this.activitiesService
-      .getScheduledEventsForPrisoners(parseIsoDate(date), [prisoner.number], user)
-      .then(response => [
-        ...response.activities,
-        ...response.appointments,
-        ...response.courtHearings,
-        ...response.visits,
-        ...response.externalTransfers,
-        ...response.adjudications,
-      ])
-
-    const internalLocationEvents = await this.activitiesService.getInternalLocationEvents(
-      user.activeCaseLoadId,
-      parseIsoDate(date),
-      locations.map(l => l.locationId),
-      user,
-    )
-
-    const rooms = await this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonCode, user)
+    const [prisonerScheduledEvents, internalLocationEvents, rooms] = await Promise.all([
+      this.activitiesService
+        .getScheduledEventsForPrisoners(parseIsoDate(date), [prisoner.number], user)
+        .then(response => [
+          ...response.activities,
+          ...response.appointments,
+          ...response.courtHearings,
+          ...response.visits,
+          ...response.externalTransfers,
+          ...response.adjudications,
+        ]),
+      this.activitiesService.getInternalLocationEvents(
+        user.activeCaseLoadId,
+        parseIsoDate(date),
+        locations.map(l => l.locationId),
+        user,
+      ),
+      this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonCode, user),
+    ])
 
     return res.render('pages/appointments/video-link-booking/schedule', {
       prisonerScheduledEvents,
