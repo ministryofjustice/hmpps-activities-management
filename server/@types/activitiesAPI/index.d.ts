@@ -5690,6 +5690,11 @@ export interface components {
        */
       endTime: string
       /**
+       * @description The timeslot
+       * @enum {string}
+       */
+      timeSlot: 'AM' | 'PM' | 'ED'
+      /**
        * @description Flag to indicate if this scheduled instance has been cancelled since being scheduled
        * @example false
        */
