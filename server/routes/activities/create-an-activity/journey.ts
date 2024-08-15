@@ -44,6 +44,7 @@ export type CreateAnActivityJourney = {
   }>
   startDate?: string
   endDateOption?: string
+  removeEndDate?: string
   endDate?: string
   latestAllocationStartDate?: string
   earliestAllocationStartDate?: string
