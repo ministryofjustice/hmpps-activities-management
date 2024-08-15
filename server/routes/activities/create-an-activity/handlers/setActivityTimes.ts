@@ -17,9 +17,9 @@ export default class ActivityTimesOptionRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { scheduleId } = req.query
+    // const { scheduleId } = req.query
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
-    const activitySchedule = await this.activitiesService.getActivitySchedule(+scheduleId, user)
+    // const activitySchedule = await this.activitiesService.getActivitySchedule(+scheduleId, user)
 
     const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(
       regimeTimes,
@@ -29,7 +29,7 @@ export default class ActivityTimesOptionRoutes {
 
     res.render(`pages/activities/create-an-activity/activity-times-option`, {
       regimeTimes: applicableRegimeTimesForActivity,
-      activitySchedule,
+      // activitySchedule,
     })
   }
 

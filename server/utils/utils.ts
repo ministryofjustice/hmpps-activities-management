@@ -20,8 +20,7 @@ import _ from 'lodash'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Activity, ActivitySchedule, Attendance, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
 // eslint-disable-next-line import/no-cycle
-import { CreateAnActivityJourney, DailySlot, DailySlots } from '../routes/activities/create-an-activity/journey'
-import TimeSlot from '../enum/timeSlot'
+import { CreateAnActivityJourney, Slots } from '../routes/activities/create-an-activity/journey'
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
@@ -347,31 +346,26 @@ export const eventClashes = (event: ScheduledEvent, thisEvent: { startTime: stri
   )
 }
 
-export const mapJourneySlotsToActivityRequest = (dailySlots: DailySlots): Slot[] => {
+export const mapJourneySlotsToActivityRequest = (fromSlots: CreateAnActivityJourney['slots']): Slot[] => {
   const slots: Slot[] = []
 
-  Object.keys(dailySlots).forEach(weekNumber => {
+  Object.keys(fromSlots).forEach(weekNumber => {
     const slotMap: Map<string, Slot> = new Map()
-    const setSlot = (dailySlot: DailySlot, day: string) => {
-      if (!slotMap.has(dailySlot.timeSlot)) {
-        slotMap.set(dailySlot.timeSlot, {
-          weekNumber: +weekNumber,
-          timeSlot: dailySlot.timeSlot,
-          customStartTime: dailySlot.customStartTime,
-          customEndTime: dailySlot.customEndTime,
-        } as Slot)
+    const setSlot = (timeSlot: string, day: string) => {
+      if (!slotMap.has(timeSlot)) {
+        slotMap.set(timeSlot, { weekNumber: +weekNumber, timeSlot } as Slot)
       }
-      // slotMap.get(dailySlot.timeSlot)[day as keyof Slots] = true
+      slotMap.get(timeSlot)[day as keyof Slots] = true
     }
 
-    //   daysOfWeek.forEach(day => {
-    //     fromSlots[weekNumber][`timeSlots${day}` as keyof Slots]?.forEach((slot: string) =>
-    //       setSlot(slot, day.toLowerCase()),
-    //     )
-    //   })
+    daysOfWeek.forEach(day => {
+      fromSlots[weekNumber][`timeSlots${day}` as keyof Slots]?.forEach((slot: string) =>
+        setSlot(slot, day.toLowerCase()),
+      )
+    })
+
     slotMap.forEach(slot => slots.push(slot))
   })
-
   return slots
 }
 
@@ -380,18 +374,18 @@ export const mapActivityModelSlotsToJourney = (
 ): CreateAnActivityJourney['slots'] => {
   const slots: CreateAnActivityJourney['slots'] = {}
 
-  // const weekNumbers = _.uniq(fromSlots.map(s => s.weekNumber))
-  // weekNumbers.forEach(week => {
-  //   const weekSlots = fromSlots.filter(s => s.weekNumber === week)
-  //   slots[week] = {
-  //     days: daysOfWeek.filter(d => weekSlots.find(s => s[`${d.toLowerCase()}Flag`])).map(d => d.toLowerCase()),
-  //   }
+  const weekNumbers = _.uniq(fromSlots.map(s => s.weekNumber))
+  weekNumbers.forEach(week => {
+    const weekSlots = fromSlots.filter(s => s.weekNumber === week)
+    slots[week] = {
+      days: daysOfWeek.filter(d => weekSlots.find(s => s[`${d.toLowerCase()}Flag`])).map(d => d.toLowerCase()),
+    }
 
-  //   daysOfWeek.forEach(d => {
-  //     const timeslots = weekSlots.filter(s => s[`${d.toLowerCase()}Flag`]).map(s => s.timeSlot)
-  //     slots[week][`timeSlots${d}`] = timeslots.map(t => t.toUpperCase())
-  //   })
-  // })
+    daysOfWeek.forEach(d => {
+      const timeslots = weekSlots.filter(s => s[`${d.toLowerCase()}Flag`]).map(s => s.timeSlot)
+      slots[week][`timeSlots${d}`] = timeslots.map(t => t.toUpperCase())
+    })
+  })
 
   return slots
 }

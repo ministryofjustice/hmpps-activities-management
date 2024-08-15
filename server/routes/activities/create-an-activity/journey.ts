@@ -7,22 +7,15 @@ export enum ScheduleFrequency {
   BI_WEEKLY = 2,
 }
 
-export type DailySlots = {
+export type Slots = {
   days?: string[]
-  timeSlotsMonday?: DailySlot[]
-  timeSlotsTuesday?: DailySlot[]
-  timeSlotsWednesday?: DailySlot[]
-  timeSlotsThursday?: DailySlot[]
-  timeSlotsFriday?: DailySlot[]
-  timeSlotsSaturday?: DailySlot[]
-  timeSlotsSunday?: DailySlot[]
-}
-
-// TODO custom
-export type DailySlot = {
-  timeSlot: TimeSlot
-  customStartTime?: string
-  customEndTime?: string
+  timeSlotsMonday?: string[]
+  timeSlotsTuesday?: string[]
+  timeSlotsWednesday?: string[]
+  timeSlotsThursday?: string[]
+  timeSlotsFriday?: string[]
+  timeSlotsSaturday?: string[]
+  timeSlotsSunday?: string[]
 }
 
 export type CreateAnActivityJourney = {
@@ -56,7 +49,7 @@ export type CreateAnActivityJourney = {
   latestAllocationStartDate?: string
   earliestAllocationStartDate?: string
   scheduleWeeks?: number
-  slots?: DailySlots
+  slots?: { [weekNumber: string]: Slots }
   inCell?: boolean
   onWing?: boolean
   offWing?: boolean
