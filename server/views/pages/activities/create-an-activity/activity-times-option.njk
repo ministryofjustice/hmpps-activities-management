@@ -22,16 +22,16 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
-                    id: "ActivtyTimesOption",
-                    name: "ActivtyTimesOption",
+                    id: "usePrisonRegimeTime",
+                    name: "usePrisonRegimeTime",
                     items: [
                         {
-                            value: "regime",
+                            value: "true",
                             text: "Use the prison\'s regime times",
                             checked: session.createJourney.usePrisonRegimeTime == true
                         },
                         {
-                            value: "custom",
+                            value: "false",
                             text: "Select the start and end times",
                             checked: session.createJourney.usePrisonRegimeTime == false
                         }

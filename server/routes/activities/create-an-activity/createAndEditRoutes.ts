@@ -19,7 +19,7 @@ import EndDateOptionRoutes, { EndDateOption } from './handlers/endDateOption'
 import EndDateRoutes, { EndDate } from './handlers/endDate'
 import DaysAndTimesRoutes, { DaysAndTimes } from './handlers/daysAndTimes'
 import BankHolidayOptionRoutes, { BankHolidayOption } from './handlers/bankHoliday'
-import ActivityTimesOptionRoutes, { ActivityTimesOption } from './handlers/setActivityTimes'
+import ActivityTimesOptionRoutes, { ActivityTimesOption } from './handlers/setActivityTimesOption'
 import LocationRoutes, { Location } from './handlers/location'
 import CapacityRoutes, { Capacity } from './handlers/capacity'
 import PayRateTypeRoutes, { PayRateType } from './handlers/payRateType'
@@ -32,6 +32,7 @@ import PayOption, { PayOptionForm } from './handlers/payOption'
 import AttendanceRequired, { AttendanceRequiredForm } from './handlers/attendanceRequired'
 import PayDateOptionRoutes, { PayDateOption } from './handlers/pay-date-option'
 import PayCancelRoutes, { PayCancel } from './handlers/pay-cancel'
+import ActivitySessionTimesRoutes, { ActivitySessionTimes } from './handlers/setActivitySessionTimes'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -65,7 +66,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const scheduleFrequencyHandler = new ScheduleFrequencyRoutes()
   const daysAndTimesHandler = new DaysAndTimesRoutes(activitiesService)
   const bankHolidayHandler = new BankHolidayOptionRoutes(activitiesService)
-  const activityTimesHandler = new ActivityTimesOptionRoutes(activitiesService)
+  const activityTimesOptionHandler = new ActivityTimesOptionRoutes(activitiesService)
+  const activitySessionTimesHandler = new ActivitySessionTimesRoutes(activitiesService)
   const locationHandler = new LocationRoutes(activitiesService, prisonService)
   const capacityHandler = new CapacityRoutes(activitiesService)
   const confirmCapacityRouteHandler = new ConfirmCapacityRoutes(activitiesService)
@@ -117,8 +119,10 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/days-and-times/:weekNumber(\\d+)', daysAndTimesHandler.POST, DaysAndTimes)
   get('/bank-holiday-option', bankHolidayHandler.GET, true)
   post('/bank-holiday-option', bankHolidayHandler.POST, BankHolidayOption)
-  get('/activity-times-option', activityTimesHandler.GET, true)
-  post('/activity-times-option', activityTimesHandler.POST, ActivityTimesOption)
+  get('/activity-times-option', activityTimesOptionHandler.GET, true)
+  post('/activity-times-option', activityTimesOptionHandler.POST, ActivityTimesOption)
+  get('/activity-session-times', activitySessionTimesHandler.GET, true)
+  post('/activity-session-times', activitySessionTimesHandler.POST, ActivitySessionTimes)
   get('/location', locationHandler.GET, true)
   post('/location', locationHandler.POST, Location)
   get('/capacity', capacityHandler.GET, true)

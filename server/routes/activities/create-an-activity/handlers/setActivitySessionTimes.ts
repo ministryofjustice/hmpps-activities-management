@@ -6,20 +6,18 @@ import getApplicableDaysAndSlotsInRegime, {
   ActivityDaysAndSlots,
 } from '../../../../utils/helpers/applicableRegimeTimeUtil'
 
-export class ActivityTimesOption {
+export class ActivitySessionTimes {
   @Expose()
   @IsNotEmpty({ message: 'Select how to set the activity start and end times' })
   usePrisonRegimeTime: boolean
 }
 
-export default class ActivityTimesOptionRoutes {
+export default class ActivitySessionTimesRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    // const { scheduleId } = req.query
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
-    // const activitySchedule = await this.activitiesService.getActivitySchedule(+scheduleId, user)
 
     const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(
       regimeTimes,
@@ -27,9 +25,8 @@ export default class ActivityTimesOptionRoutes {
       req.session.createJourney.slots['1'] as ActivityDaysAndSlots,
     )
 
-    res.render(`pages/activities/create-an-activity/activity-times-option`, {
+    res.render(`pages/activities/create-an-activity/activity-session-times`, {
       regimeTimes: applicableRegimeTimesForActivity,
-      // activitySchedule,
     })
   }
 

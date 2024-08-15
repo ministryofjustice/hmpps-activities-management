@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import ActivityTimesOptionRoutes from './setActivityTimes'
+import ActivityTimesOptionRoutes from './setActivityTimesOption'
 import ActivitiesService from '../../../../services/activitiesService'
 
 jest.mock('../../../../services/activitiesService')
