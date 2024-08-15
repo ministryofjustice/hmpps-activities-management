@@ -41,6 +41,7 @@ describe('initialiseEditAndRemoveJourney', () => {
     date: '2024-08-23',
     endTime: '14:00',
     startTime: '13:00',
+    timeSlot: 'AM',
     attendances: [],
   }
 
@@ -197,6 +198,7 @@ describe('initialiseEditAndRemoveJourney', () => {
         date: '2024-08-23',
         endTime: '14:00',
         startTime: '13:00',
+        timeSlot: 'AM',
         attendances: [],
       },
     })

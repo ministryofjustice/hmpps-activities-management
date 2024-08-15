@@ -71,6 +71,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
           attendances: [],
           cancelled: false,
           endTime: '',
+          timeSlot: 'AM',
           startTime: '',
           id: 123,
           date: '2024-04-23',
@@ -124,6 +125,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
           cancelled: false,
           endTime: '',
           startTime: '',
+          timeSlot: 'AM',
           id: 123,
           date: '2024-04-23',
         }
