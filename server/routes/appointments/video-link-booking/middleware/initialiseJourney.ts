@@ -2,9 +2,10 @@ import { RequestHandler } from 'express'
 import { parse } from 'date-fns'
 import _ from 'lodash'
 import { Services } from '../../../../services'
+import asyncMiddleware from '../../../../middleware/asyncMiddleware'
 
 export default ({ activitiesService, bookAVideoLinkService, prisonService }: Services): RequestHandler => {
-  return async (req, res, next) => {
+  return asyncMiddleware(async (req, res, next) => {
     const { bookingId } = req.params
     const { user } = res.locals
 
@@ -81,5 +82,5 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
     }
 
     return next()
-  }
+  })
 }
