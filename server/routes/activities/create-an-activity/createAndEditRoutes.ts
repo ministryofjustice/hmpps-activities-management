@@ -112,7 +112,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/end-date', endDateHandler.GET, true)
   post('/end-date', endDateHandler.POST, EndDate)
   get('/remove-end-date', removeEndDateHandler.GET, true)
-  post('/remove-end-date', removeEndDateHandler.POST.bind(removeEndDateHandler), RemoveEndDateOptions)
+  post('/remove-end-date', removeEndDateHandler.POST, RemoveEndDateOptions)
   get('/schedule-frequency', scheduleFrequencyHandler.GET, true)
   post('/schedule-frequency', scheduleFrequencyHandler.POST, ScheduleFrequencyForm)
   get('/days-and-times/:weekNumber(\\d+)', daysAndTimesHandler.GET, true)
