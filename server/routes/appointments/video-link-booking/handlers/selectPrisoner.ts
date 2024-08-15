@@ -4,7 +4,7 @@ import { IsNotEmpty } from 'class-validator'
 
 export class Prisoner {
   @Expose()
-  @IsNotEmpty({ message: 'Select an attendee' })
+  @IsNotEmpty({ message: 'Select one attendee for this appointment' })
   prisonerNumber: string
 }
 

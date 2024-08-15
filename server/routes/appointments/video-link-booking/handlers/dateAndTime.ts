@@ -40,6 +40,7 @@ export class DateAndTime {
   endTime: Date
 
   @Expose()
+  @ValidateIf(o => o.bookAVideoLinkJourney.type === 'COURT')
   @IsEnum(YesNo, { message: 'Select if a pre-court hearing should be added' })
   preRequired: YesNo
 
@@ -50,6 +51,7 @@ export class DateAndTime {
   preLocation: string
 
   @Expose()
+  @ValidateIf(o => o.bookAVideoLinkJourney.type === 'COURT')
   @IsEnum(YesNo, { message: 'Select if a post-court hearing should be added' })
   postRequired: YesNo
 

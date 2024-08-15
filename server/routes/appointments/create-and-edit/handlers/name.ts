@@ -59,6 +59,7 @@ export default class NameRoutes {
 
     if (config.bookAVideoLinkToggleEnabled && category.code === 'VLB') {
       req.session.bookAVideoLinkJourney = {
+        type: 'COURT',
         prisoners: req.session.appointmentJourney.prisoners,
       }
       req.session.appointmentJourney = null
