@@ -45,7 +45,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
   })
 
   describe('POST', () => {
-    it('should save selected option in session and redirect to end date edit page', async () => {
+    it('edit - should save selected option in session and redirect to end date edit page', async () => {
       req.body = {
         removeEndDate: 'change',
       }
@@ -65,7 +65,27 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`/activities/edit/1/end-date?preserveHistory=true`)
     })
 
-    it('should send a null end date to the API', async () => {
+    it('create - should save selected option in session and redirect to end date edit page', async () => {
+      req.body = {
+        removeEndDate: 'change',
+      }
+
+      req.session.createJourney = {
+        activityId: 1,
+        name: 'Maths level 1',
+      }
+
+      req.params = {
+        mode: 'create',
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.removeEndDate).toEqual('change')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith(`end-date?preserveHistory=true`)
+    })
+
+    it('edit - should send a null end date to the API', async () => {
       when(activitiesService.updateActivity)
         .calledWith(
           atLeast({
@@ -95,6 +115,34 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
         'Activity updated',
         "You've successfully removed the end date for Maths level 1.",
       )
+    })
+
+    it('create - should send a null end date to the API', async () => {
+      when(activitiesService.updateActivity)
+        .calledWith(
+          atLeast({
+            endDate: null,
+          }),
+        )
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      req.body = {
+        removeEndDate: 'remove',
+      }
+
+      req.session.createJourney = {
+        activityId: 1,
+        name: 'Maths level 1',
+      }
+
+      req.params = {
+        mode: 'create',
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.removeEndDate).toEqual('remove')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })
   })
 
