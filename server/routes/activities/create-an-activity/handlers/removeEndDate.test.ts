@@ -8,6 +8,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -15,6 +16,7 @@ const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesS
 
 describe('Route Handlers - Create an activity schedule - Remove end date', () => {
   const handler = new RemoveEndDateRoutes(activitiesService)
+  const today = formatIsoDate(new Date())
   let req: Request
   let res: Response
 
@@ -45,7 +47,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
   })
 
   describe('POST', () => {
-    it('edit - should save selected option in session and redirect to end date edit page', async () => {
+    it('edit - should retrieve correct end date and redirect to end date edit page', async () => {
       req.body = {
         removeEndDate: 'change',
       }
@@ -53,6 +55,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
       req.session.createJourney = {
         activityId: 1,
         name: 'Maths level 1',
+        endDate: today,
       }
 
       req.params = {
@@ -61,11 +64,11 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.removeEndDate).toEqual('change')
+      expect(req.session.createJourney.endDate).toEqual(today)
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`/activities/edit/1/end-date?preserveHistory=true`)
     })
 
-    it('create - should save selected option in session and redirect to end date edit page', async () => {
+    it('create - should retain end date and redirect to end date edit page', async () => {
       req.body = {
         removeEndDate: 'change',
       }
@@ -73,6 +76,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
       req.session.createJourney = {
         activityId: 1,
         name: 'Maths level 1',
+        endDate: today,
       }
 
       req.params = {
@@ -81,7 +85,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.removeEndDate).toEqual('change')
+      expect(req.session.createJourney.endDate).toEqual(today)
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`end-date?preserveHistory=true`)
     })
 
@@ -101,6 +105,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
       req.session.createJourney = {
         activityId: 1,
         name: 'Maths level 1',
+        endDate: today,
       }
 
       req.params = {
@@ -109,7 +114,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.removeEndDate).toEqual('remove')
+      expect(req.session.createJourney.endDate).toEqual(null)
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
@@ -117,15 +122,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
       )
     })
 
-    it('create - should send a null end date to the API', async () => {
-      when(activitiesService.updateActivity)
-        .calledWith(
-          atLeast({
-            endDate: null,
-          }),
-        )
-        .mockResolvedValueOnce(activity as unknown as Activity)
-
+    it('create - should remove end date from session', async () => {
       req.body = {
         removeEndDate: 'remove',
       }
@@ -133,6 +130,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
       req.session.createJourney = {
         activityId: 1,
         name: 'Maths level 1',
+        endDate: today,
       }
 
       req.params = {
@@ -140,8 +138,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
       }
 
       await handler.POST(req, res)
-
-      expect(req.session.createJourney.removeEndDate).toEqual('remove')
+      expect(req.session.createJourney.endDate).toEqual(null)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })
   })

@@ -18,25 +18,25 @@ export default class RemoveEndDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createJourney.removeEndDate = req.body.removeEndDate
     if (req.body.removeEndDate && req.body.removeEndDate === 'change') {
       if (req.params.mode === 'edit') {
-        res.redirectOrReturn(`/activities/edit/${req.session.createJourney.activityId}/end-date?preserveHistory=true`)
+        return res.redirectOrReturn(
+          `/activities/edit/${req.session.createJourney.activityId}/end-date?preserveHistory=true`,
+        )
       }
-      res.redirectOrReturn('end-date?preserveHistory=true')
-    } else {
-      req.session.createJourney.endDate = null
-
-      if (req.params.mode === 'edit') {
-        const { user } = res.locals
-        const { activityId, name, endDate } = req.session.createJourney
-        const activity = { endDate, removeEndDate: true } as ActivityUpdateRequest
-        await this.activitiesService.updateActivity(activityId, activity, user)
-
-        const successMessage = `You've successfully removed the end date for ${name}.`
-        res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
-      }
-      res.redirectOrReturn('check-answers')
+      return res.redirectOrReturn('end-date?preserveHistory=true')
     }
+
+    req.session.createJourney.endDate = null
+    if (req.params.mode === 'edit') {
+      const { user } = res.locals
+      const { activityId, name, endDate } = req.session.createJourney
+      const activity = { endDate, removeEndDate: true } as ActivityUpdateRequest
+      await this.activitiesService.updateActivity(activityId, activity, user)
+
+      const successMessage = `You've successfully removed the end date for ${name}.`
+      return res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
+    }
+    return res.redirectOrReturn('check-answers')
   }
 }
