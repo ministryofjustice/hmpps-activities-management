@@ -21,6 +21,7 @@ export default class ExtraInformationRoutes {
     const { extraInformation } = req.body
     const { mode } = req.params
     const { user } = res.locals
+    const { type } = req.session.bookAVideoLinkJourney
 
     req.session.bookAVideoLinkJourney = {
       ...req.session.bookAVideoLinkJourney,
@@ -30,7 +31,11 @@ export default class ExtraInformationRoutes {
     if (mode === 'amend') {
       await this.bookAVideoLinkService.amendVideoLinkBooking(req.session.bookAVideoLinkJourney, user)
 
-      const successHeading = "You've changed the extra information for this court hearing"
+      const successHeading =
+        type === 'COURT'
+          ? "You've changed the extra information for this court hearing"
+          : "You've changed the extra information for this probation meeting"
+
       return res.redirectWithSuccess(
         `/appointments/video-link-booking/${req.session.bookAVideoLinkJourney.bookingId}`,
         successHeading,

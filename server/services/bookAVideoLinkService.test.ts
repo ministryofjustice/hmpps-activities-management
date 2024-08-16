@@ -147,6 +147,18 @@ describe('Book A Video link service', () => {
     })
   })
 
+  describe('getProbationMeetingTypes', () => {
+    it('should call getReferenceCodesForGroup on the api client', async () => {
+      const expectedResult = [{ code: 'TYPE1', description: 'Type 1' }] as ReferenceCode[]
+      bookAVideoLinkClient.getReferenceCodesForGroup.mockResolvedValue(expectedResult)
+
+      const result = await bookAVideoLinkService.getProbationMeetingTypes(user)
+
+      expect(bookAVideoLinkClient.getReferenceCodesForGroup).toHaveBeenCalledWith('PROBATION_MEETING_TYPE', user)
+      expect(result).toEqual(expectedResult)
+    })
+  })
+
   describe('createVideoLinkBooking', () => {
     it('Posts a request to create a court hearing booking only', async () => {
       bookAVideoLinkClient.createVideoLinkBooking.mockResolvedValue(1)

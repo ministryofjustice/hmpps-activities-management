@@ -58,7 +58,15 @@ describe('LocationRoutes', () => {
 
       await locationRoutes.POST(req as Request, res as Response)
 
-      expect(res.redirect).toHaveBeenCalledWith('date-and-time?preserveHistory=true')
+      expect(res.redirect).toHaveBeenCalledWith('schedule?preserveHistory=true')
+    })
+
+    it('redirects to schedule when mode is amend', async () => {
+      req.params.mode = 'amend'
+
+      await locationRoutes.POST(req as Request, res as Response)
+
+      expect(res.redirect).toHaveBeenCalledWith('schedule')
     })
   })
 })

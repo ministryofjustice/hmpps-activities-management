@@ -32,6 +32,7 @@ import PayOption, { PayOptionForm } from './handlers/payOption'
 import AttendanceRequired, { AttendanceRequiredForm } from './handlers/attendanceRequired'
 import PayDateOptionRoutes, { PayDateOption } from './handlers/pay-date-option'
 import PayCancelRoutes, { PayCancel } from './handlers/pay-cancel'
+import RemoveEndDateRoutes, { RemoveEndDateOptions } from './handlers/removeEndDate'
 import ActivitySessionTimesRoutes, { ActivitySessionTimes } from './handlers/setActivitySessionTimes'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
@@ -62,6 +63,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const checkEducationLevelHandler = new CheckEducationLevelRoutes(activitiesService)
   const startDateHandler = new StartDateRoutes(activitiesService)
   const endDateOptionHandler = new EndDateOptionRoutes()
+  const removeEndDateHandler = new RemoveEndDateRoutes(activitiesService)
   const endDateHandler = new EndDateRoutes(activitiesService)
   const scheduleFrequencyHandler = new ScheduleFrequencyRoutes()
   const daysAndTimesHandler = new DaysAndTimesRoutes(activitiesService)
@@ -113,6 +115,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/end-date-option', endDateOptionHandler.POST, EndDateOption)
   get('/end-date', endDateHandler.GET, true)
   post('/end-date', endDateHandler.POST, EndDate)
+  get('/remove-end-date', removeEndDateHandler.GET, true)
+  post('/remove-end-date', removeEndDateHandler.POST, RemoveEndDateOptions)
   get('/schedule-frequency', scheduleFrequencyHandler.GET, true)
   post('/schedule-frequency', scheduleFrequencyHandler.POST, ScheduleFrequencyForm)
   get('/days-and-times/:weekNumber(\\d+)', daysAndTimesHandler.GET, true)

@@ -88,7 +88,7 @@
                     } if session.bookAVideoLinkJourney.preLocationCode,
                     {
                         key: {
-                            text: "Main hearing time"
+                            text: "Main hearing time" if session.bookAVideoLinkJourney.type == 'COURT' else "Meeting time"
                         },
                         value: {
                             text: (session.bookAVideoLinkJourney.startTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookAVideoLinkJourney.endTime | parseISODate | formatDate('HH:mm'))
@@ -106,7 +106,7 @@
                     },
                     {
                         key: {
-                            text: "Main hearing room"
+                            text: "Main hearing room" if session.bookAVideoLinkJourney.type == 'COURT' else "Meeting room"
                         },
                         value: {
                             text: (rooms | find('key', session.bookAVideoLinkJourney.locationCode)).description
