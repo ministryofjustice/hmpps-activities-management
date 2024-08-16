@@ -1,6 +1,9 @@
 import { Request, Response } from 'express'
-import ActivityTimesOptionRoutes from './setActivityTimesOption'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
+import ActivityTimesOptionRoutes, { ActivityTimesOption } from './setActivityTimesOption'
 import ActivitiesService from '../../../../services/activitiesService'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -133,75 +136,38 @@ describe('Route Handlers - Create an activity schedule - activity times option',
     })
   })
 
-  // describe('POST', () => {
-  //   it('should save selected option in session and redirect to location page', async () => {
-  //     req.body = {
-  //       runsOnBankHoliday: 'yes',
-  //     }
+  describe('POST', () => {
+    it('when using prison regime times redirect to the location page', async () => {
+      req.body = {
+        usePrisonRegimeTime: 'true',
+      }
+      await handler.POST(req, res)
 
-  //     await handler.POST(req, res)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+    })
 
-  //     expect(req.session.createJourney.runsOnBankHoliday).toEqual(true)
-  //     expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
-  //   })
+    it('when using prison custom times redirect to the activity session times page', async () => {
+      req.body = {
+        usePrisonRegimeTime: 'false',
+      }
+      await handler.POST(req, res)
 
-  //   it('should save selected option in session and redirect to set activity times page, if custom start End times flag is enabled', async () => {
-  //     config.customStartEndTimesEnabled = true
-  //     req.body = {
-  //       runsOnBankHoliday: 'yes',
-  //     }
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('activity-session-times')
+    })
+  })
 
-  //     await handler.POST(req, res)
+  describe('type validation', () => {
+    it('validation fails if a value is not entered', async () => {
+      const body = {
+        usePrisonRegimeTime: '',
+      }
 
-  //     expect(req.session.createJourney.runsOnBankHoliday).toEqual(true)
-  //     expect(res.redirectOrReturn).toBeCalledWith('../set-activity-times')
-  //   })
+      const requestObject = plainToInstance(ActivityTimesOption, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-  //   it('should save entered end date in database', async () => {
-  //     const updatedActivity = {
-  //       runsOnBankHoliday: true,
-  //     }
-
-  //     when(activitiesService.updateActivity)
-  //       .calledWith(atLeast(updatedActivity))
-  //       .mockResolvedValueOnce(activity as unknown as Activity)
-
-  //     const runsOnBankHoliday = true
-
-  //     req = {
-  //       session: {
-  //         createJourney: { activityId: 1, name: 'Maths level 1' },
-  //       },
-  //       params: {
-  //         mode: 'edit',
-  //       },
-  //       body: {
-  //         runsOnBankHoliday,
-  //       },
-  //     } as unknown as Request
-
-  //     await handler.POST(req, res)
-
-  //     expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-  //       '/activities/view/1',
-  //       'Activity updated',
-  //       "You've updated the bank holiday option for Maths level 1",
-  //     )
-  //   })
-  // })
-
-  // describe('type validation', () => {
-  //   it('validation fails if a value is not entered', async () => {
-  //     const body = {
-  //       runsOnBankHoliday: '',
-  //     }
-
-  //     const requestObject = plainToInstance(BankHolidayOption, body)
-  //     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-  //     expect(errors).toEqual([
-  //       { property: 'runsOnBankHoliday', error: 'Select if the activity will run on bank holidays' },
-  //     ])
-  //   })
-  // })
+      expect(errors).toEqual([
+        { property: 'usePrisonRegimeTime', error: 'Select how the to set the activity start and end times' },
+      ])
+    })
+  })
 })

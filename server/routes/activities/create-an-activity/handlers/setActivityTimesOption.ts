@@ -1,9 +1,15 @@
 import { Request, Response } from 'express'
+import { IsNotEmpty } from 'class-validator'
+import { Expose } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import getApplicableDaysAndSlotsInRegime from '../../../../utils/helpers/applicableRegimeTimeUtil'
 import { Slots } from '../journey'
 
-export class ActivityTimesOption {}
+export class ActivityTimesOption {
+  @Expose()
+  @IsNotEmpty({ message: 'Select how the to set the activity start and end times' })
+  usePrisonRegimeTime: string
+}
 
 export default class ActivityTimesOptionRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
