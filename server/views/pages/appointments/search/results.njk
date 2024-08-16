@@ -7,6 +7,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
+{% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "partials/appointments/location-text.njk" import locationText %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
@@ -33,15 +34,13 @@
 
 {% macro appointmentResultActions(result) %}
     {% if result.isCancelled %}
-        <div class="govuk-!-margin-bottom-1">
-            {{ govukTag({
-                text: 'Cancelled',
-                classes: "govuk-tag--red"
-            })}}
-        </div>
+        {{ govukTag({
+            text: 'Cancelled',
+            classes: "govuk-tag--red"
+        })}}
     {% endif %}
 
-    <a href="/appointments/{{ result.appointmentId }}" class="govuk-link--no-visited-state">
+    <a href="/appointments/{{ result.appointmentId }}" class="govuk-link--no-visited-state govuk-!-display-inline-block govuk-!-margin-top-1 govuk-!-display-none-print">
         {{ "Manage details" if not result.isExpired and not result.isCancelled else "View" }} <span class="govuk-visually-hidden"> appointment</span>
     </a>
 {% endmacro %}
@@ -76,7 +75,7 @@
 {% endfor %}
 
 {% block content %}
-    <div class="govuk-grid-row">
+    <div class="govuk-grid-row govuk-!-display-none-print">
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-l govuk-!-margin-0">Appointments dashboard</h1>
             <span class="govuk-caption-l govuk-!-margin-bottom-3" data-qa="start-date-caption">{{ startDate | parseIsoDate | formatDate }}</span>
@@ -304,7 +303,14 @@
         </div>
         <div class="moj-filter-layout__content">
             <div class="moj-action-bar govuk-!-display-none-print">
-                <div class="moj-action-bar__filter moj-action-bar__filter--no-actions"></div>
+                <div class="moj-action-bar__filter"></div>
+                {{ mojButtonMenu({
+                    items: [{
+                        text: "Print these appointments",
+                        classes: "govuk-button--blue js-print no-js-hidden",
+                        preventDoubleClick: true
+                    }]
+                }) }}
             </div>
 
             {{ govukTable({
@@ -313,6 +319,7 @@
                     'data-qa': 'search-results'
                 },
                 caption: "Showing " + results | length + " appointment" + ("s" if results | length != 1),
+                captionClasses: 'govuk-!-display-none-print',
                 classes: "sticky-header",
                 head: [
                 {
