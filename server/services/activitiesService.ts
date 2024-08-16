@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import ActivitiesApiClient, { PrisonRegime } from '../data/activitiesApiClient'
+import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
 import {
   ActivityCategory,
@@ -48,6 +48,7 @@ import {
   AppointmentUncancelRequest,
   SuspendedPrisonerAttendance,
   AppointmentAttendeeByStatus,
+  PrisonRegime,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'

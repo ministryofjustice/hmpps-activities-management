@@ -1,6 +1,6 @@
-import { PrisonRegime } from '../../data/activitiesApiClient'
 import { convertToTitleCase } from '../utils'
 import { Slots } from '../../routes/activities/create-an-activity/journey'
+import { PrisonRegime } from '../../@types/activitiesAPI/types'
 
 type DaysAndSlotsInRegime = {
   dayOfWeek: string

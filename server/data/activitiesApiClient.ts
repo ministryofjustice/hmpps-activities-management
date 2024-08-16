@@ -62,6 +62,7 @@ import {
   AppointmentUncancelRequest,
   SuspendedPrisonerAttendance,
   AppointmentAttendeeByStatus,
+  PrisonRegime,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -71,18 +72,6 @@ import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
 
 const CASELOAD_HEADER = (caseloadId: string) => ({ 'Caseload-Id': caseloadId })
-
-export type PrisonRegime = {
-  id: number
-  prisonCode: string
-  amStart: string
-  amFinish: string
-  pmStart: string
-  pmFinish: string
-  edStart: string
-  edFinish: string
-  dayOfWeek: string
-}
 
 export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   constructor() {

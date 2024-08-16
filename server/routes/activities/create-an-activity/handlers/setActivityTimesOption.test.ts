@@ -4,12 +4,13 @@ import { validate } from 'class-validator'
 import ActivityTimesOptionRoutes, { ActivityTimesOption } from './setActivityTimesOption'
 import ActivitiesService from '../../../../services/activitiesService'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { PrisonRegime } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
-const prisonRegime = [
+const prisonRegime: PrisonRegime[] = [
   {
     id: 3,
     prisonCode: 'RSI',

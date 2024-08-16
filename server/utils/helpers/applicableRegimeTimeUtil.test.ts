@@ -1,6 +1,7 @@
 import getApplicableDaysAndSlotsInRegime from './applicableRegimeTimeUtil'
+import { PrisonRegime } from '../../@types/activitiesAPI/types'
 
-const prisonRegime = [
+const prisonRegime: PrisonRegime[] = [
   {
     id: 3,
     prisonCode: 'RSI',
@@ -80,7 +81,7 @@ const prisonRegime = [
   },
 ]
 
-const prisonRegime2 = [
+const prisonRegime2: PrisonRegime[] = [
   {
     id: 3,
     prisonCode: 'RSI',
