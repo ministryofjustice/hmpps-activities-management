@@ -89,8 +89,11 @@ describe('DateAndTimeRoutes', () => {
 })
 
 describe('DateAndTime', () => {
+  const bookAVideoLinkJourney = { type: 'COURT' }
+
   it('should validate a valid DateAndTime instance', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
+      bookAVideoLinkJourney,
       date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 11, minute: 30 },
@@ -104,6 +107,7 @@ describe('DateAndTime', () => {
 
   it('should invalidate an instance with a past date', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
+      bookAVideoLinkJourney,
       date: formatDate(startOfYesterday(), 'dd/MM/yyyy'),
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 11, minute: 30 },
@@ -119,6 +123,7 @@ describe('DateAndTime', () => {
 
   it('should invalidate an instance with endTime before startTime', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
+      bookAVideoLinkJourney,
       date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 9, minute: 30 },
@@ -134,6 +139,7 @@ describe('DateAndTime', () => {
 
   it('should invalidate an instance with missing required fields', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
+      bookAVideoLinkJourney,
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 11, minute: 30 },
       preRequired: YesNo.NO,
@@ -146,6 +152,7 @@ describe('DateAndTime', () => {
 
   it('should invalidate an instance with invalid date format', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
+      bookAVideoLinkJourney,
       date: 'invalid date',
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 11, minute: 30 },
@@ -159,6 +166,7 @@ describe('DateAndTime', () => {
 
   it('should invalidate an instance with invalid enum values', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
+      bookAVideoLinkJourney,
       date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 11, minute: 30 },
@@ -177,6 +185,7 @@ describe('DateAndTime', () => {
 
   it('should invalidate where pre and post meetings are required but rooms are not provided', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
+      bookAVideoLinkJourney,
       date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 11, minute: 30 },
@@ -191,5 +200,17 @@ describe('DateAndTime', () => {
         { error: 'Select a room for the post-court hearing', property: 'postLocation' },
       ]),
     )
+  })
+
+  it('should pass missing pre and post meetings for probation bookings', async () => {
+    const dateAndTime = plainToInstance(DateAndTime, {
+      bookAVideoLinkJourney: { type: 'PROBATION' },
+      date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
+      startTime: { hour: 10, minute: 30 },
+      endTime: { hour: 11, minute: 30 },
+    })
+
+    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
+    expect(errors).toEqual([])
   })
 })

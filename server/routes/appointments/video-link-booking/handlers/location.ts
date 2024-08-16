@@ -23,10 +23,14 @@ export default class LocationRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { location } = req.body
+    const { mode } = req.params
     const { preserveHistory } = req.query
 
     req.session.bookAVideoLinkJourney.locationCode = location
 
-    return res.redirect(`date-and-time${preserveHistory ? '?preserveHistory=true' : ''}`)
+    if (mode === 'amend' || preserveHistory) {
+      return res.redirect(`schedule${preserveHistory ? '?preserveHistory=true' : ''}`)
+    }
+    return res.redirect(`date-and-time`)
   }
 }

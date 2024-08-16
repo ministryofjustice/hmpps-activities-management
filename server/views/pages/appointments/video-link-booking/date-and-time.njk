@@ -77,7 +77,7 @@
                         name: "preLocation",
                         id: "preLocation",
                         label: {
-                            text: "Prison room for pre-court hearing briefing",
+                            text: "Select the prison room for pre-court hearing briefing",
                             classes: 'govuk-label--s'
                         },
                         items: items,
@@ -114,7 +114,7 @@
                             checked: formResponses.preRequired == YesNo.NO or (session.bookAVideoLinkJourney.date and not session.bookAVideoLinkJourney.preLocationCode and not formResponses.preRequired)
                         }
                     ]
-                }) }}
+                }) if session.bookAVideoLinkJourney.type == 'COURT' }}
 
                 {% set items = [{ text: "Select prison room", value: "" }] %}
                 {% for room in rooms %}
@@ -129,7 +129,7 @@
                         name: "postLocation",
                         id: "postLocation",
                         label: {
-                            text:  "Prison room for post-court hearing briefing",
+                            text:  "Select the prison room for post-court hearing briefing",
                             classes: 'govuk-label--s'
                         },
                         items: items,
@@ -166,7 +166,7 @@
                             checked: formResponses.postRequired == YesNo.NO or (session.bookAVideoLinkJourney.date and not session.bookAVideoLinkJourney.postLocationCode and not formResponses.postRequired)
                         }
                     ]
-                }) }}
+                }) if session.bookAVideoLinkJourney.type == 'COURT' }}
 
                 {{ govukButton({
                     text: "Continue"
