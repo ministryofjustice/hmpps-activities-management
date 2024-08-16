@@ -143,6 +143,121 @@ describe('Route Handlers - Create an activity - Check answers', () => {
       expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
     })
 
+    it('should create the activity with custom time slots and redirect to confirmation page', async () => {
+      const reqWithCustomSlots = {
+        session: {
+          createJourney: {
+            name: 'Maths level 1',
+            category: {
+              id: 1,
+            },
+            tierCode: EventTier.TIER_1,
+            organiserCode: Organiser.PRISONER,
+            riskLevel: 'High',
+            paid: true,
+            pay: [{ incentiveLevel: 'Standard', prisonPayBand: { id: 1 }, rate: 100 }],
+            incentiveLevels: ['Standard', 'Enhanced'],
+            educationLevels: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
+            startDate: '2023-01-17',
+            endDateOption: 'yes',
+            endDate: '2023-01-18',
+            scheduleWeeks: 1,
+            customSlots: [
+              {
+                customStartTime: '09:15',
+                customEndTime: '11:30',
+                daysOfWeek: ['MONDAY'],
+                friday: false,
+                monday: true,
+                saturday: false,
+                sunday: false,
+                thursday: false,
+                timeSlot: 'AM',
+                tuesday: false,
+                wednesday: false,
+                weekNumber: 1,
+              },
+              {
+                customStartTime: '18:15',
+                customEndTime: '21:45',
+                daysOfWeek: ['TUESDAY'],
+                friday: false,
+                monday: false,
+                saturday: false,
+                sunday: false,
+                thursday: false,
+                timeSlot: 'ED',
+                tuesday: true,
+                wednesday: false,
+                weekNumber: 1,
+              },
+            ],
+            location: {
+              id: 26149,
+              name: 'Gym',
+            },
+            capacity: 12,
+          },
+        },
+      } as unknown as Request
+
+      const expectedActivity = {
+        prisonCode: 'MDI',
+        summary: 'Maths level 1',
+        categoryId: 1,
+        tierCode: EventTier.TIER_1,
+        organiserCode: Organiser.PRISONER,
+        riskLevel: 'High',
+        minimumEducationLevel: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
+        paid: true,
+        pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
+        description: 'Maths level 1',
+        startDate: '2023-01-17',
+        endDate: '2023-01-18',
+        locationId: 26149,
+        capacity: 12,
+        scheduleWeeks: 1,
+        slots: [
+          {
+            customStartTime: '09:15',
+            customEndTime: '11:30',
+            daysOfWeek: ['MONDAY'],
+            friday: false,
+            monday: true,
+            saturday: false,
+            sunday: false,
+            thursday: false,
+            timeSlot: 'AM',
+            tuesday: false,
+            wednesday: false,
+            weekNumber: 1,
+          },
+          {
+            customStartTime: '18:15',
+            customEndTime: '21:45',
+            daysOfWeek: ['TUESDAY'],
+            friday: false,
+            monday: false,
+            saturday: false,
+            sunday: false,
+            thursday: false,
+            timeSlot: 'ED',
+            tuesday: true,
+            wednesday: false,
+            weekNumber: 1,
+          },
+        ],
+      }
+
+      when(activitiesService.createActivity)
+        .calledWith(atLeast(expectedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      await handler.POST(reqWithCustomSlots, res)
+      expect(activitiesService.createActivity).toHaveBeenCalledWith(expectedActivity, res.locals.user)
+      expect(res.redirect).toHaveBeenCalledWith('confirmation/1')
+    })
+
     it('should create the activity when no education levels selected', async () => {
       const expectedActivity = {
         prisonCode: 'MDI',
