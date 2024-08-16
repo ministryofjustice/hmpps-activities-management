@@ -69,7 +69,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
       await handler.POST(req, res)
 
       expect(req.session.createJourney.runsOnBankHoliday).toEqual(true)
-      expect(res.redirect).toBeCalledWith('activity-times-option')
+      expect(res.redirect).toBeCalledWith('session-times-option')
     })
 
     it('should save entered end date in database', async () => {

@@ -5,13 +5,13 @@ import ActivitiesService from '../../../../services/activitiesService'
 import getApplicableDaysAndSlotsInRegime from '../../../../utils/helpers/applicableRegimeTimeUtil'
 import { Slots } from '../journey'
 
-export class ActivityTimesOption {
+export class SessionTimesOption {
   @Expose()
   @IsNotEmpty({ message: 'Select how the to set the activity start and end times' })
   usePrisonRegimeTime: string
 }
 
-export default class ActivityTimesOptionRoutes {
+export default class SessionTimesOptionRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -24,7 +24,7 @@ export default class ActivityTimesOptionRoutes {
       req.session.createJourney.slots['1'] as Slots,
     )
 
-    res.render(`pages/activities/create-an-activity/activity-times-option`, {
+    res.render(`pages/activities/create-an-activity/session-times-option`, {
       regimeTimes: applicableRegimeTimesForActivity,
     })
   }
@@ -33,6 +33,6 @@ export default class ActivityTimesOptionRoutes {
     const { usePrisonRegimeTime } = req.body
     if (usePrisonRegimeTime === 'true') {
       res.redirectOrReturn('location')
-    } else res.redirectOrReturn(`activity-session-times`)
+    } else res.redirectOrReturn(`session-times`)
   }
 }

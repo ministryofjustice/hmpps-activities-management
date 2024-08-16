@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import ActivityTimesOptionRoutes, { ActivityTimesOption } from './setActivityTimesOption'
+import SessionTimesOptionRoutes, { SessionTimesOption } from './sessionTimesOption'
 import ActivitiesService from '../../../../services/activitiesService'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { PrisonRegime } from '../../../../@types/activitiesAPI/types'
@@ -91,7 +91,7 @@ const prisonRegime: PrisonRegime[] = [
 ]
 
 describe('Route Handlers - Create an activity schedule - activity times option', () => {
-  const handler = new ActivityTimesOptionRoutes(activitiesService)
+  const handler = new SessionTimesOptionRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -128,7 +128,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/activity-times-option', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/session-times-option', {
         regimeTimes: [
           { amFinish: '11:45', amStart: '08:30', dayOfWeek: 'TUESDAY' },
           { dayOfWeek: 'FRIDAY', edFinish: '19:15', edStart: '17:30', pmFinish: '16:45', pmStart: '13:45' },
@@ -153,7 +153,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
       }
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('activity-session-times')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('session-times')
     })
   })
 
@@ -163,7 +163,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
         usePrisonRegimeTime: '',
       }
 
-      const requestObject = plainToInstance(ActivityTimesOption, body)
+      const requestObject = plainToInstance(SessionTimesOption, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([

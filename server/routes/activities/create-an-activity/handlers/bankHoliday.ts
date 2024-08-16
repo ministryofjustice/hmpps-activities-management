@@ -33,7 +33,7 @@ export default class BankHolidayOptionRoutes {
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     } else if (config.customStartEndTimesEnabled === true) {
-      res.redirect('activity-times-option')
+      res.redirect('session-times-option')
     }
     // If the location has already been set, skip the location page
     else if (req.session.createJourney.inCell) res.redirectOrReturn('capacity')

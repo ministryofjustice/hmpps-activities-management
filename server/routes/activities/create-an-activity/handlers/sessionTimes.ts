@@ -5,7 +5,7 @@ import { Slots } from '../journey'
 import { journeySlotsToCustomSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { Slot } from '../../../../@types/activitiesAPI/types'
 
-export class ActivitySessionTimes {
+export class SessionTimes {
   // @Expose()
   // @IsNotEmpty({ message: 'Select how to set the activity start and end times' })
   // usePrisonRegimeTime: boolean
@@ -114,7 +114,7 @@ function getHardCodedCustomSlots(): Slot[] {
   ] as Slot[]
 }
 
-export default class ActivitySessionTimesRoutes {
+export default class SessionTimesRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -128,7 +128,7 @@ export default class ActivitySessionTimesRoutes {
 
     const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(regimeTimes, slots)
 
-    res.render(`pages/activities/create-an-activity/activity-session-times`, {
+    res.render(`pages/activities/create-an-activity/session-times`, {
       regimeTimes: applicableRegimeTimesForActivity,
       customSlots,
     })
