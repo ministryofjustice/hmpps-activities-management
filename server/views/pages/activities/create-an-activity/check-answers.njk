@@ -190,7 +190,7 @@
                     actions: {
                         items: [
                             {
-                                href: "end-date?preserveHistory=true",
+                                href: "remove-end-date" if session.createJourney.endDate else "end-date?preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "change end date"
                             }
