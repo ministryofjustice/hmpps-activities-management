@@ -13,7 +13,7 @@ describe('ExtraInformationRoutes', () => {
   beforeEach(() => {
     req = {
       session: {
-        bookAVideoLinkJourney: {},
+        bookAVideoLinkJourney: { type: 'COURT' },
       },
       body: {},
       params: {},
@@ -51,6 +51,24 @@ describe('ExtraInformationRoutes', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/video-link-booking/1',
         "You've changed the extra information for this court hearing",
+      )
+    })
+
+    it('redirects with success message when mode is amend for probation booking', async () => {
+      req.session.bookAVideoLinkJourney.type = 'PROBATION'
+      req.body.comments = 'Some comments'
+      req.params.mode = 'amend'
+      req.session.bookAVideoLinkJourney.bookingId = 1
+
+      await extraInformationRoutes.POST(req as Request, res as Response)
+
+      expect(bookAVideoLinkService.amendVideoLinkBooking).toHaveBeenCalledWith(
+        req.session.bookAVideoLinkJourney,
+        res.locals.user,
+      )
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '/appointments/video-link-booking/1',
+        "You've changed the extra information for this probation meeting",
       )
     })
 

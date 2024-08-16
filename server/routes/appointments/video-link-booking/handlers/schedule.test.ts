@@ -23,6 +23,7 @@ describe('ScheduleRoutes', () => {
     req = {
       session: {
         bookAVideoLinkJourney: {
+          type: 'COURT',
           prisoner: { number: 'A1234BC' },
           date: '2023-10-01',
         },
@@ -100,6 +101,23 @@ describe('ScheduleRoutes', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/video-link-booking/1',
         "You've changed the schedule for this court hearing",
+      )
+    })
+
+    it('redirects with success message when mode is amend and booking type PROBATION', async () => {
+      req.params.mode = 'amend'
+      req.session.bookAVideoLinkJourney.type = 'PROBATION'
+      req.session.bookAVideoLinkJourney.bookingId = 1
+
+      await scheduleRoutes.POST(req as Request, res as Response)
+
+      expect(bookAVideoLinkService.amendVideoLinkBooking).toHaveBeenCalledWith(
+        req.session.bookAVideoLinkJourney,
+        res.locals.user,
+      )
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '/appointments/video-link-booking/1',
+        "You've changed the schedule for this probation meeting",
       )
     })
 

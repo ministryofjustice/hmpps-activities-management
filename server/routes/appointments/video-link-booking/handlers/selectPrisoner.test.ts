@@ -66,7 +66,9 @@ describe('SelectPrisonerRoutes', () => {
 
       const errors = await validate(prisoner).then(errs => errs.flatMap(associateErrorsWithProperty))
       expect(errors.length).toBeGreaterThan(0)
-      expect(errors).toEqual(expect.arrayContaining([{ error: 'Select an attendee', property: 'prisonerNumber' }]))
+      expect(errors).toEqual(
+        expect.arrayContaining([{ error: 'Select one attendee for this appointment', property: 'prisonerNumber' }]),
+      )
     })
   })
 })

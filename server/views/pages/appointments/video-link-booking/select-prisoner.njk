@@ -6,15 +6,15 @@
 
 {% set pageId = 'select-prisoner-page' %}
 {% set jsBackLink = true %}
-{% set pageHeading = "Select single attendee" %}
+{% set pageHeading = "Select one attendee for this appointment" %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session) }}
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-            <p>You cannot currently create a video link court hearing appointment with multiple attendees. Select one attendee for this appointment.</p>
-            <p>To create a hearing for multiple defendants, you’ll need to schedule separate appointments for the other people you’ve selected.</p>
+            <p>You cannot currently add more than one person to a video link court hearing appointment.</p>
+            <p>To create a hearing for multiple defendants, you need to schedule an appointment for each person for the same time.</p>
         </div>
     </div>
 
@@ -33,15 +33,12 @@
 
                 {{ govukRadios({
                     name: "prisonerNumber",
-                    hint: {
-                        text: "Select the attendee for the appointment"
-                    },
                     items: items,
                     errorMessage: validationErrors | findError('prisonerNumber')
                 }) }}
 
                 {{ govukButton({
-                    text: "Continue"
+                    text: "Select and continue"
                 }) }}
             </form>
         </div>

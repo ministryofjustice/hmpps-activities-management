@@ -19,13 +19,13 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
       date ? parse(date, 'yyyy-MM-dd', new Date()).toISOString() : undefined
 
     const preAppointment = getAppointment('VLB_COURT_PRE')
-    const mainAppointment = getAppointment('VLB_COURT_MAIN')
+    const mainAppointment = getAppointment('VLB_COURT_MAIN') || getAppointment('VLB_PROBATION')
     const postAppointment = getAppointment('VLB_COURT_POST')
 
-    const prisoner = await prisonService.getInmateByPrisonerNumber(mainAppointment?.prisonerNumber, user)
+    const prisoner = await prisonService.getInmateByPrisonerNumber(mainAppointment.prisonerNumber, user)
 
     const locationIds = await Promise.all(
-      _.uniq([mainAppointment?.prisonLocKey, preAppointment?.prisonLocKey, postAppointment?.prisonLocKey])
+      _.uniq([mainAppointment.prisonLocKey, preAppointment?.prisonLocKey, postAppointment?.prisonLocKey])
         .filter(Boolean)
         .map(code => prisonService.getInternalLocationByKey(code, user)),
     ).then(locations => locations.map(l => l.locationId))
@@ -46,7 +46,7 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
           app =>
             locationIds.includes(app.internalLocation.id) &&
             [
-              [mainAppointment?.startTime, mainAppointment?.endTime],
+              [mainAppointment.startTime, mainAppointment.endTime],
               [preAppointment?.startTime, preAppointment?.endTime],
               [postAppointment?.startTime, postAppointment?.endTime],
             ].some(([startTime, endTime]) => startTime === app.startTime && endTime === app.endTime),
@@ -65,8 +65,8 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
         cellLocation: prisoner.cellLocation,
         status: prisoner.status,
       },
-      agencyCode: booking.courtCode,
-      hearingTypeCode: booking.courtHearingType,
+      agencyCode: booking.courtCode || booking.probationTeamCode,
+      hearingTypeCode: booking.courtHearingType || booking.probationMeetingType,
       date: parseDateToISOString(mainAppointment.appointmentDate),
       startTime: parseTimeToISOString(mainAppointment.startTime),
       endTime: parseTimeToISOString(mainAppointment.endTime),
@@ -74,7 +74,7 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
       preHearingEndTime: parseTimeToISOString(preAppointment?.endTime),
       postHearingStartTime: parseTimeToISOString(postAppointment?.startTime),
       postHearingEndTime: parseTimeToISOString(postAppointment?.endTime),
-      locationCode: mainAppointment?.prisonLocKey,
+      locationCode: mainAppointment.prisonLocKey,
       preLocationCode: preAppointment?.prisonLocKey,
       postLocationCode: postAppointment?.prisonLocKey,
       comments: booking.comments,
