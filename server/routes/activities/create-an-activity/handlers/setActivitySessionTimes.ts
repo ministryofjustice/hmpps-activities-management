@@ -123,6 +123,7 @@ export default class ActivitySessionTimesRoutes {
 
     // TODO: the week will have to be passed through from previous pages once we do split regimes, rather than hardcoded as ['1']
     const slots: Slots = req.session.createJourney.slots['1']
+    // TODO: implement real custom slots
     const customSlots: Slot[] = journeySlotsToCustomSlots(slots)
 
     const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(regimeTimes, slots)
