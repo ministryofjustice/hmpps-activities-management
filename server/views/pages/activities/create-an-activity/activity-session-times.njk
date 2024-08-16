@@ -1,6 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% from "components/timePicker.njk" import timePicker %}
@@ -16,36 +17,12 @@
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-            <h2 class="govuk-heading-m">Week 1</h2>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                    {{ timePicker({
-                        id: 'startTime',
-                        name: 'startTime',
-                        label: {
-                            text: 'Start time',
-                            classes: "govuk-fieldset__legend--m"
-                        },
-                        renderedErrorMessage: validationErrors | findError('startTime'),
-                        validationErrors: validationErrors,
-                        formResponses: formResponses.startTime or session.editAppointmentJourney.startTime or session.appointmentJourney.startTime
-                    }) }}
-                    {{ timePicker({
-                        id: 'endTime',
-                        name: 'endTime',
-                        label: {
-                            text: 'End time',
-                            classes: "govuk-fieldset__legend--m"
-                        },
-                        renderedErrorMessage: validationErrors | findError('endTime'),
-                        validationErrors: validationErrors,
-                        formResponses: formResponses.endTime or session.editAppointmentJourney.endTime or session.appointmentJourney.endTime
-                    }) }}
                 {{ govukButton({
                     text: "Continue"
                 }) }}
             </form>
-             <h2 class="govuk-heading-m">Week 2</h2>
         </div>
     </div>
 {% endblock %}
