@@ -8,6 +8,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -26,6 +27,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
         },
       },
       render: jest.fn(),
+      redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
@@ -47,6 +49,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
 
   describe('POST', () => {
     it('should save selected option in session and redirect to location page', async () => {
+      config.customStartEndTimesEnabled = false
       req.body = {
         runsOnBankHoliday: 'yes',
       }
@@ -55,6 +58,18 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
 
       expect(req.session.createJourney.runsOnBankHoliday).toEqual(true)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+    })
+
+    it('should save selected option in session and redirect to set activity times page, if custom start End times flag is enabled', async () => {
+      config.customStartEndTimesEnabled = true
+      req.body = {
+        runsOnBankHoliday: 'yes',
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.session.createJourney.runsOnBankHoliday).toEqual(true)
+      expect(res.redirect).toBeCalledWith('session-times-option')
     })
 
     it('should save entered end date in database', async () => {

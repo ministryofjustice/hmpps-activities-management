@@ -366,7 +366,6 @@ export const mapJourneySlotsToActivityRequest = (fromSlots: CreateAnActivityJour
 
     slotMap.forEach(slot => slots.push(slot))
   })
-
   return slots
 }
 

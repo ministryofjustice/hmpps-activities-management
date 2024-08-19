@@ -1,0 +1,30 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% macro prisonRegimeTimesSummary(regimeTimes = []) %}
+  {% set rows = [] %}
+  {% for schedule in regimeTimes %}
+        {% set scheduleHTML %}
+            {% if schedule.amStart %}<p>AM - {{schedule.amStart}} to {{schedule.amFinish}}</p>{% endif %}
+            {% if schedule.pmStart %}<p>PM - {{schedule.pmStart}} to {{schedule.pmFinish}}</p>{% endif %}
+            {% if schedule.edStart %}<p>ED - {{schedule.edStart}} to {{schedule.edFinish}}</p>{% endif %} 
+        {% endset %}
+
+        {% set rows = (rows.push({
+          key: {
+              text: schedule.dayOfWeek | toTitleCase
+          },
+          value: {
+              html: scheduleHTML | safe
+          }
+        }), rows) %}
+
+    {% endfor %}
+
+    {% if rows.length %}
+      {{ govukSummaryList({
+          rows: rows,
+          attributes: { "data-qa": "prisonRegimeTimesSummary" }
+      }) }}
+    {% endif %}
+
+{% endmacro %}

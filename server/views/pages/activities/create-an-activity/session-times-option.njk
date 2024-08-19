@@ -1,0 +1,54 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+{% from "partials/activities/prisonRegimeTimesSummary.njk" import prisonRegimeTimesSummary %}
+
+{% set pageTitle = applicationName + " - Create a schedule - Activity times option" %}
+{% set pageId = 'activity-times-option-page' %}
+{% set jsBackLink = true %}
+{% set regimeTimes %}
+    {{ prisonRegimeTimesSummary(regimeTimes) }}
+{% endset %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ activityJourneyCaption(session.createJourney) }}
+            <h1 class="govuk-heading-l">Select how to set the activity start and end times</h1>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukRadios({
+                    id: "usePrisonRegimeTime",
+                    name: "usePrisonRegimeTime",
+                    items: [
+                        {
+                            value: "true",
+                            text: "Use the prison\'s regime times",
+                            checked: session.createJourney.usePrisonRegimeTime == true
+                        },
+                        {
+                            value: "false",
+                            text: "Select the start and end times",
+                            checked: session.createJourney.usePrisonRegimeTime == false
+                        }
+                    ],
+                    errorMessage: validationErrors | findError('usePrisonRegimeTime'),
+                    hint: {
+                        text: "If the sessions of this activity do not follow the prison\'s regime times, you can set different start and end times."
+                    }
+                }) }}
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+                {{ govukDetails({
+                summaryText: "Check the prison\'s regime times for the sessions when this activity runs",
+                html: regimeTimes
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -48,6 +48,7 @@ import {
   AppointmentUncancelRequest,
   SuspendedPrisonerAttendance,
   AppointmentAttendeeByStatus,
+  PrisonRegime,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
@@ -106,6 +107,10 @@ export default class ActivitiesService {
 
   getScheduledActivity(id: number, user: ServiceUser): Promise<ScheduledActivity> {
     return this.activitiesApiClient.getScheduledActivity(id, user)
+  }
+
+  getPrisonRegime(prisonCode: string, user: ServiceUser): Promise<PrisonRegime[]> {
+    return this.activitiesApiClient.getPrisonRegime(prisonCode, user)
   }
 
   createActivity(createBody: ActivityCreateRequest, user: ServiceUser): Promise<Activity> {

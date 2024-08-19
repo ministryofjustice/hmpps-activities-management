@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
-import { ActivityCreateRequest } from '../../../../@types/activitiesAPI/types'
+import { ActivityCreateRequest, Slot } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import { mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
@@ -41,7 +41,10 @@ export default class CheckAnswersRoutes {
     const { user } = res.locals
     const { createJourney } = req.session
 
-    const slots = mapJourneySlotsToActivityRequest(createJourney.slots)
+    const slots: Slot[] =
+      createJourney.customSlots !== undefined
+        ? createJourney.customSlots
+        : mapJourneySlotsToActivityRequest(createJourney.slots)
 
     const activity = {
       prisonCode: user.activeCaseLoadId,
