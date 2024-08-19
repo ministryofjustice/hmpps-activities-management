@@ -1,7 +1,9 @@
 import { Request, Response } from 'express'
 import { parseISO } from 'date-fns'
 import PrisonService from '../../../../services/prisonService'
-import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
+import activitySessionToDailyTimeSlots, {
+  activityScheduleSlotsToCustomTimeSlots,
+} from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import { mapActivityModelSlotsToJourney } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -31,6 +33,9 @@ export default class ActivityRoutes {
 
     const journeySlots = mapActivityModelSlotsToJourney(schedule.slots)
     const dailySlots = activitySessionToDailyTimeSlots(schedule.scheduleWeeks, journeySlots)
+    const customSlots = schedule.usePrisonRegimeTime
+      ? undefined
+      : activityScheduleSlotsToCustomTimeSlots(1, schedule.slots)
     const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(activity.pay, schedule.allocations, user)
     const displayPays = groupPayBand(incentiveLevelPays)
 
@@ -42,6 +47,7 @@ export default class ActivityRoutes {
       schedule,
       payEditable,
       dailySlots,
+      customSlots,
       incentiveLevelPays,
       displayPays,
       currentWeek,

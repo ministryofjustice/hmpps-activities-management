@@ -10,6 +10,19 @@ export interface WeeklyTimeSlots {
   }[]
 }
 
+export interface TimeSlotWithStartEnd {
+  timeSlot: TimeSlot
+  startTime: string
+  endTime: string
+}
+
+export interface WeeklyCustomTimeSlots {
+  [weekNumber: string]: {
+    day: string
+    slots: TimeSlotWithStartEnd[]
+  }[]
+}
+
 export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -39,6 +52,61 @@ export default function activitySessionToDailyTimeSlots(
     }))
   }
   return dailySlots
+}
+
+export function activityScheduleSlotsToCustomTimeSlots(
+  scheduleWeek: number,
+  slots: ActivityScheduleSlot[],
+): WeeklyCustomTimeSlots {
+  const customSlots: WeeklyCustomTimeSlots = {}
+
+  customSlots[scheduleWeek] = daysOfWeek.map(day => ({
+    day,
+    slots: getCustomSlotsForDay(day, slots),
+  }))
+
+  return customSlots
+}
+
+function getCustomSlotsForDay(day: string, slots: ActivityScheduleSlot[]): TimeSlotWithStartEnd[] {
+  const timeSlots: TimeSlotWithStartEnd[] = []
+  slots.forEach(slot => {
+    if (slot.daysOfWeek.includes(day.substring(0, 3))) {
+      timeSlots.push({
+        timeSlot: slot.timeSlot as TimeSlot,
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+      })
+    }
+  })
+  timeSlots.sort((a, b) => timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot])
+  return timeSlots
+}
+
+export function slotsToCustomTimeSlots(scheduleWeek: number, slots: Slot[]): WeeklyCustomTimeSlots {
+  const customSlots: WeeklyCustomTimeSlots = {}
+
+  customSlots[scheduleWeek] = daysOfWeek.map(day => ({
+    day,
+    slots: getCustomSlotsFromSlotForDay(day, slots),
+  }))
+
+  return customSlots
+}
+
+function getCustomSlotsFromSlotForDay(day: string, slots: Slot[]): TimeSlotWithStartEnd[] {
+  const timeSlots: TimeSlotWithStartEnd[] = []
+  slots.forEach(slot => {
+    if (slot.daysOfWeek.includes(day.toUpperCase() as DayOfWeek)) {
+      timeSlots.push({
+        timeSlot: slot.timeSlot as TimeSlot,
+        startTime: slot.customStartTime,
+        endTime: slot.customEndTime,
+      })
+    }
+  })
+  timeSlots.sort((a, b) => timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot])
+  return timeSlots
 }
 
 export function mapActivityScheduleSlotsToSlots(activityScheduleSlot: ActivityScheduleSlot[]): Slot[] {

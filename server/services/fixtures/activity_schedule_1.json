@@ -315,5 +315,6 @@
       "timeSlot": "AM"
     }
   ],
-  "runsOnBankHoliday": false
+  "runsOnBankHoliday": false,
+  "usePrisonRegimeTime": true
 }
