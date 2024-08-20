@@ -6,12 +6,13 @@ import CheckAnswersRoutes from './checkAnswers'
 import activity from '../../../../services/fixtures/activity_1.json'
 import atLeast from '../../../../../jest.setup'
 import PrisonService from '../../../../services/prisonService'
-import { Activity } from '../../../../@types/activitiesAPI/types'
+import { Activity, Slot } from '../../../../@types/activitiesAPI/types'
 import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
 import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
 import Organiser, { organiserDescriptions } from '../../../../enum/eventOrganisers'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
+import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -103,6 +104,120 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           req.session.createJourney.scheduleWeeks,
           req.session.createJourney.slots,
         ),
+        organiser: organiserDescriptions[req.session.createJourney.organiserCode],
+        tier: eventTierDescriptions[req.session.createJourney.tierCode],
+      })
+    })
+
+    it('should render page with data from session when there are custom slots', async () => {
+      const customSlots: Slot[] = [
+        {
+          customStartTime: '09:00',
+          customEndTime: '11:00',
+          daysOfWeek: ['TUESDAY'],
+          friday: false,
+          monday: false,
+          saturday: false,
+          sunday: false,
+          thursday: false,
+          timeSlot: TimeSlot.AM,
+          tuesday: true,
+          wednesday: false,
+          weekNumber: 1,
+        },
+        {
+          customStartTime: '13:00',
+          customEndTime: '15:00',
+          daysOfWeek: ['FRIDAY'],
+          friday: false,
+          monday: false,
+          saturday: false,
+          sunday: false,
+          thursday: false,
+          timeSlot: TimeSlot.PM,
+          tuesday: true,
+          wednesday: false,
+          weekNumber: 1,
+        },
+        {
+          customStartTime: '19:00',
+          customEndTime: '21:00',
+          daysOfWeek: ['FRIDAY'],
+          friday: false,
+          monday: false,
+          saturday: false,
+          sunday: false,
+          thursday: false,
+          timeSlot: TimeSlot.ED,
+          tuesday: true,
+          wednesday: false,
+          weekNumber: 1,
+        },
+      ]
+
+      req.session.createJourney.customSlots = customSlots
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/check-answers', {
+        incentiveLevelPays: [
+          {
+            incentiveLevel: 'Standard',
+            pays: [{ bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150' }],
+          },
+        ],
+        dailySlots: activitySessionToDailyTimeSlots(
+          req.session.createJourney.scheduleWeeks,
+          req.session.createJourney.slots,
+        ),
+        customSlots: {
+          '1': [
+            {
+              day: 'Monday',
+              slots: [],
+            },
+            {
+              day: 'Tuesday',
+              slots: [
+                {
+                  startTime: '09:00',
+                  endTime: '11:00',
+                  timeSlot: TimeSlot.AM,
+                },
+              ],
+            },
+            {
+              day: 'Wednesday',
+              slots: [],
+            },
+            {
+              day: 'Thursday',
+              slots: [],
+            },
+            {
+              day: 'Friday',
+              slots: [
+                {
+                  startTime: '13:00',
+                  endTime: '15:00',
+                  timeSlot: TimeSlot.PM,
+                },
+                {
+                  startTime: '19:00',
+                  endTime: '21:00',
+                  timeSlot: TimeSlot.ED,
+                },
+              ],
+            },
+            {
+              day: 'Saturday',
+              slots: [],
+            },
+            {
+              day: 'Sunday',
+              slots: [],
+            },
+          ],
+        },
         organiser: organiserDescriptions[req.session.createJourney.organiserCode],
         tier: eventTierDescriptions[req.session.createJourney.tierCode],
       })
