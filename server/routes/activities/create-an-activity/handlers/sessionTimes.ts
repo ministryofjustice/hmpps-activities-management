@@ -1,117 +1,26 @@
 import { Request, Response } from 'express'
+import { ValidateNested } from 'class-validator'
+import { Transform, plainToInstance } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import getApplicableDaysAndSlotsInRegime from '../../../../utils/helpers/applicableRegimeTimeUtil'
 import { Slots } from '../journey'
 import { journeySlotsToCustomSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { Slot } from '../../../../@types/activitiesAPI/types'
+import TimeSlot from '../../../../enum/timeSlot'
+import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 
 export class SessionTimes {
-  // @Expose()
-  // @IsNotEmpty({ message: 'Select how to set the activity start and end times' })
-  // usePrisonRegimeTime: boolean
-}
+  @Transform(({ value }) =>
+    Object.keys(value).reduce((acc, k) => acc.set(k, plainToInstance(SimpleTime, value[k])), new Map()),
+  )
+  @ValidateNested()
+  startTime: Map<string, SimpleTime>
 
-function getHardCodedCustomSlots(): Slot[] {
-  return [
-    {
-      customStartTime: '09:15',
-      customEndTime: '11:30',
-      daysOfWeek: ['MONDAY'],
-      friday: false,
-      monday: true,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: 'AM',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '18:15',
-      customEndTime: '21:45',
-      daysOfWeek: ['MONDAY'],
-      friday: false,
-      monday: true,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: 'ED',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '14:45',
-      customEndTime: '16:00',
-      daysOfWeek: ['TUESDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: 'PM',
-      tuesday: true,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customSartTime: '07:30',
-      customEndTime: '10:14',
-      daysOfWeek: ['THURSDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: true,
-      timeSlot: 'AM',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '15:12',
-      customEndTime: '16:35',
-      daysOfWeek: ['THURSDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: true,
-      timeSlot: 'PM',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '18:56',
-      customEndTime: '19:55',
-      daysOfWeek: ['THURSDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: true,
-      timeSlot: 'ED',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '21:03',
-      customEndTime: '22:54',
-      daysOfWeek: ['SATURDAY'],
-      friday: false,
-      monday: false,
-      saturday: true,
-      sunday: false,
-      thursday: false,
-      timeSlot: 'ED',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-  ] as Slot[]
+  @Transform(({ value }) =>
+    Object.keys(value).reduce((acc, k) => acc.set(k, plainToInstance(SimpleTime, value[k])), new Map()),
+  )
+  @ValidateNested()
+  endTime: Map<string, SimpleTime>
 }
 
 export default class SessionTimesRoutes {
@@ -128,16 +37,78 @@ export default class SessionTimesRoutes {
 
     const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(regimeTimes, slots)
 
+    const sessionSlots: { dayOfWeek: string; timeSlot: TimeSlot; start: string; finish: string; isFirst: boolean }[] =
+      []
+
+    applicableRegimeTimesForActivity.forEach(day => {
+      if (day.amStart) {
+        sessionSlots.push({
+          dayOfWeek: day.dayOfWeek,
+          timeSlot: TimeSlot.AM,
+          start: day.amStart,
+          finish: day.amFinish,
+          isFirst: true,
+        })
+      }
+      if (day.pmStart) {
+        sessionSlots.push({
+          dayOfWeek: day.dayOfWeek,
+          timeSlot: TimeSlot.PM,
+          start: day.pmStart,
+          finish: day.pmFinish,
+          isFirst: !day.amStart,
+        })
+      }
+      if (day.edStart) {
+        sessionSlots.push({
+          dayOfWeek: day.dayOfWeek,
+          timeSlot: TimeSlot.ED,
+          start: day.edStart,
+          finish: day.edFinish,
+          isFirst: !day.amStart && !day.pmStart,
+        })
+      }
+    })
+
     res.render(`pages/activities/create-an-activity/session-times`, {
       regimeTimes: applicableRegimeTimesForActivity,
       customSlots,
+      sessionSlots,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const customSlots: Slot[] = getHardCodedCustomSlots()
-    req.session.createJourney.customSlots = customSlots
+    const { startTime, endTime }: SessionTimes = req.body
 
+    const startTimeObj = Array.from(startTime.keys()).reduce((acc, value) => {
+      acc[value] = startTime.get(value)
+      return value
+    })
+
+    const endTimeObj = Array.from(endTime.keys()).reduce((acc, value) => {
+      acc[value] = endTime.get(value)
+      return value
+    })
+
+    req.body.startTime = startTimeObj
+    req.body.endTime = endTimeObj
+
+    // const customSlots = req.session.createJourney.customSlots.map(customSlot => ({
+    //   customStartTime: startTimeObj,
+    //   customEndTime: endTimeObj,
+    //   daysOfWeek: customSlot.daysOfWeek,
+    //   friday: customSlot.friday,
+    //   monday: customSlot.monday,
+    //   saturday: customSlot.saturday,
+    //   sunday: customSlot.sunday,
+    //   thursday: customSlot.thursday,
+    //   timeSlot: customSlot.timeSlot,
+    //   tuesday: customSlot.tuesday,
+    //   wednesday: customSlot.wednesday,
+    //   weekNumber: 1,
+    // }))
+    // // const { customSlots } = req.body
+    // req.session.createJourney.customSlots = customSlots
     res.redirectOrReturn('location')
   }
 }
