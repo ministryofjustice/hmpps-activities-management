@@ -64,12 +64,14 @@ export default class ActivitiesRoutes {
         return {
           ...a,
           session,
-          sessionOrderIndex: Object.values(TimeSlot).indexOf(session),
         }
       })
       .filter(a => !filterValues.sessionFilters || filterValues.sessionFilters.includes(a.session))
       .sort((a, b) => {
-        return a.sessionOrderIndex - b.sessionOrderIndex
+        if (a.startTime !== b.startTime) {
+          return a.startTime.localeCompare(b.startTime)
+        }
+        return a.endTime.localeCompare(b.endTime)
       })
 
     req.session.recordAttendanceRequests = {}

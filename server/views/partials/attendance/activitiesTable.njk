@@ -34,10 +34,10 @@
                 {
                     attributes: {
                         id: 'session-' + loop.index,
-                        "data-sort-value": activity.sessionOrderIndex
+                        "data-sort-value": 'x' + activity.startTime + ' to ' + activity.endTime
                     },
                     classes: 'govuk-table__cell--alpha align-right',              
-                    text: activity.session
+                    text: activity.startTime + ' to ' + activity.endTime
                 },
                 {
                     attributes: {
