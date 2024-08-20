@@ -6,8 +6,11 @@
 
 {% set pageId = 'hearing-details-page' %}
 {% set jsBackLink = true %}
-{% set pageHeading = "Enter the hearing details" %}
-
+{% if session.req.params == 'create' %}
+    {% set pageHeading = "Enter the court and type of hearing" %}
+{% else %}
+    {% set pageHeading = "Enter the type of hearing" if videoBooking.bookingType == 'COURT' else "Enter the type of meeting" %}
+{% endif %}
 {% block meta %}
     {% if session.req.params.mode == 'create' %}
         <meta name="autocompleteElements" content="agencyCode"/>
@@ -25,7 +28,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method='POST' {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing hearing type" {% endif %}>
+            <form method='POST' {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="{{ 'Changing hearing type' if session.bookAVideoLinkJourney.type == 'COURT' else 'Changing meeting type' }}" {% endif %}>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {% set items = [{ text: "", value: "" }] %}
@@ -42,7 +45,7 @@
                         name: "agencyCode",
                         id: "agencyCode",
                         label: {
-                            text: "Which court is the booking for?",
+                            text: "Select the court the booking is for",
                             classes: 'govuk-label--s'
                         },
                         items: items,
@@ -65,7 +68,7 @@
                     name: "hearingTypeCode",
                     id: "hearingTypeCode",
                     label: {
-                        text: "Which type of hearing is this?",
+                        text: "Select the type of hearing" if session.bookAVideoLinkJourney.type == 'COURT' else "Select the type of meeting",
                         classes: 'govuk-label--s'
                     },
                     items: items,

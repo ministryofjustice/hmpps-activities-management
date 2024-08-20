@@ -24,20 +24,13 @@ export default class LocationRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { location } = req.body
     const { mode } = req.params
-    const { user } = res.locals
+    const { preserveHistory } = req.query
 
     req.session.bookAVideoLinkJourney.locationCode = location
 
-    if (mode === 'amend') {
-      await this.bookAVideoLinkService.amendVideoLinkBooking(req.session.bookAVideoLinkJourney, user)
-
-      const successHeading = "You've changed the location for this court hearing"
-      return res.redirectWithSuccess(
-        `/appointments/video-link-booking/${req.session.bookAVideoLinkJourney.bookingId}`,
-        successHeading,
-      )
+    if (mode === 'amend' || preserveHistory) {
+      return res.redirect(`schedule${preserveHistory ? '?preserveHistory=true' : ''}`)
     }
-
-    return res.redirectOrReturn('date-and-time')
+    return res.redirect(`date-and-time`)
   }
 }

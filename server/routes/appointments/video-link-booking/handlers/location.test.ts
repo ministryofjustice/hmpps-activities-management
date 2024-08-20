@@ -21,13 +21,12 @@ describe('LocationRoutes', () => {
       },
       body: {},
       params: {},
+      query: {},
     } as unknown as Request
     res = {
       locals: { user: {} },
       render: jest.fn(),
       redirect: jest.fn(),
-      redirectWithSuccess: jest.fn(),
-      redirectOrReturn: jest.fn(),
     } as unknown as Response
     bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
     locationRoutes = new LocationRoutes(bookAVideoLinkService)
@@ -48,30 +47,26 @@ describe('LocationRoutes', () => {
   })
 
   describe('POST', () => {
-    it('redirects with success message when mode is amend', async () => {
-      req.body.location = 'Room 1'
-      req.params.mode = 'amend'
-      req.session.bookAVideoLinkJourney.bookingId = 1
-
+    it('redirects to date and time page', async () => {
       await locationRoutes.POST(req as Request, res as Response)
 
-      expect(bookAVideoLinkService.amendVideoLinkBooking).toHaveBeenCalledWith(
-        req.session.bookAVideoLinkJourney,
-        res.locals.user,
-      )
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/appointments/video-link-booking/1',
-        "You've changed the location for this court hearing",
-      )
+      expect(res.redirect).toHaveBeenCalledWith('date-and-time')
     })
 
-    it('redirects to date-and-time when mode is not amend', async () => {
-      req.body.location = 'Room 1'
-      req.params.mode = 'create'
+    it('persists the preserveHistory query param', async () => {
+      req.query.preserveHistory = 'true'
 
       await locationRoutes.POST(req as Request, res as Response)
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('date-and-time')
+      expect(res.redirect).toHaveBeenCalledWith('schedule?preserveHistory=true')
+    })
+
+    it('redirects to schedule when mode is amend', async () => {
+      req.params.mode = 'amend'
+
+      await locationRoutes.POST(req as Request, res as Response)
+
+      expect(res.redirect).toHaveBeenCalledWith('schedule')
     })
   })
 })

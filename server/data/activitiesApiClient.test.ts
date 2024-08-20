@@ -99,6 +99,20 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('get`prisonRegimeSchedule`', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi
+        .get('/prison/prison-regime/MDI')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
+      const output = await activitiesApiClient.getPrisonRegime('MDI', user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getActivitySchedule', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }

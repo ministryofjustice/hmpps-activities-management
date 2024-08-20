@@ -290,11 +290,11 @@
     {
       "id": 1,
       "weekNumber": 1,
-      "startTime": "10:00",
-      "endTime": "11:00",
+      "startTime": "14:30",
+      "endTime": "17:23",
       "daysOfWeek": ["Fri"],
       "fridayFlag": true,
-      "timeSlot": "AM"
+      "timeSlot": "PM"
     },
     {
       "id": 1,
@@ -309,12 +309,12 @@
       "id": 1,
       "weekNumber": 1,
       "startTime": "10:00",
-      "endTime": "11:00",
+      "endTime": "11:45",
       "daysOfWeek": ["Sun"],
       "sundayFlag": true,
       "timeSlot": "AM"
     }
   ],
   "runsOnBankHoliday": false,
-  "usePrisonRegimeTime": true
+  "usePrisonRegimeTime": false
 }

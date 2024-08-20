@@ -2,6 +2,7 @@ import { AppointmentPrisonerDetails } from '../create-and-edit/appointmentPrison
 
 export type BookAVideoLinkJourney = {
   bookingId?: number
+  appointmentIds?: number[]
   bookingStatus?: string
   type?: string
   prisoners?: AppointmentPrisonerDetails[]

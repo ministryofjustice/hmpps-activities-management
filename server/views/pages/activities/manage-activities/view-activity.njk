@@ -5,6 +5,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "../../../partials/activities/days-and-times.njk" import daysAndTimes %}
+{% from "../../../partials/activities/days-and-custom-times.njk" import daysAndCustomTimes %}
 
 {% set pageTitle = applicationName + " - Activities Dashboard - View activity" %}
 {% set pageId = 'view-activity-page' %}
@@ -250,7 +251,7 @@
                 actions: {
                     items: [
                         {
-                            href: "/activities/edit/" + activity.id + "/end-date?preserveHistory=true",
+                            href: "/activities/edit/" + activity.id + ("/remove-end-date" if schedule.endDate else "/end-date?preserveHistory=true"),
                             text: "Change",
                             visuallyHiddenText: " end date",
                             classes: "govuk-link--no-visited-state"
@@ -268,26 +269,49 @@
                 }
             }), dateAndScheduleRows) %}
 
-            {% for week, slots in dailySlots %}
-                {% set dateAndScheduleRows = (dateAndScheduleRows.push(
-                    {
-                        key: {
+            {% if not customSlots %}
+                {% for week, slots in dailySlots %}
+                    {% set dateAndScheduleRows = (dateAndScheduleRows.push(
+                        {
+                            key: {
+                                text: "Week " + week
+                            },
+                            value: { html: daysAndTimes(slots) },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "/activities/edit/" + activity.id + "/days-and-times/" + week + "?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: " days and times",
+                                        classes: "govuk-link--no-visited-state"
+                                    }
+                                ]
+                            } if not activityEnded
+                        }
+                    ), dateAndScheduleRows) %}
+                {% endfor %}
+            {% else %}
+                {% for week, slots in customSlots %}
+                    {% set dateAndScheduleRows = (dateAndScheduleRows.push(
+                        {
+                            key: {
                             text: "Week " + week
                         },
-                        value: { html: daysAndTimes(slots) },
-                        actions: {
+                            value: { html: daysAndCustomTimes(slots) },
+                            actions: {
                             items: [
                                 {
-                                    href: "/activities/edit/" + activity.id + "/days-and-times/" + week + "?preserveHistory=true",
+                                    href: "/activities/edit/" + activity.id + "/session-times?preserveHistory=true",
                                     text: "Change",
-                                    visuallyHiddenText: " days and times",
+                                    visuallyHiddenText: " session times",
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
                         } if not activityEnded
-                    }
-                ), dateAndScheduleRows) %}
-            {% endfor %}
+                        }
+                    ), dateAndScheduleRows) %}
+                {% endfor %}
+            {% endif %}
 
             {% set dateAndScheduleRows = (dateAndScheduleRows.push(
                 {

@@ -10,6 +10,19 @@ export interface WeeklyTimeSlots {
   }[]
 }
 
+export interface CustomTimeSlot {
+  timeSlot: TimeSlot
+  startTime: string
+  endTime: string
+}
+
+export interface WeeklyCustomTimeSlots {
+  [weekNumber: string]: {
+    day: string
+    slots: CustomTimeSlot[]
+  }[]
+}
+
 export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -39,6 +52,61 @@ export default function activitySessionToDailyTimeSlots(
     }))
   }
   return dailySlots
+}
+
+export function activityScheduleSlotsToCustomTimeSlots(
+  scheduleWeek: number,
+  slots: ActivityScheduleSlot[],
+): WeeklyCustomTimeSlots {
+  const customTimeSlots: WeeklyCustomTimeSlots = {}
+
+  customTimeSlots[scheduleWeek] = daysOfWeek.map(day => ({
+    day,
+    slots: getCustomSlotsForDay(day, slots),
+  }))
+
+  return customTimeSlots
+}
+
+function getCustomSlotsForDay(day: string, slots: ActivityScheduleSlot[]): CustomTimeSlot[] {
+  const customTimeSlots: CustomTimeSlot[] = []
+  slots.forEach(slot => {
+    if (slot.daysOfWeek.includes(day.substring(0, 3))) {
+      customTimeSlots.push({
+        timeSlot: slot.timeSlot as TimeSlot,
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+      })
+    }
+  })
+  customTimeSlots.sort((a, b) => timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot])
+  return customTimeSlots
+}
+
+export function slotsToCustomTimeSlots(scheduleWeek: number, slots: Slot[]): WeeklyCustomTimeSlots {
+  const customSlots: WeeklyCustomTimeSlots = {}
+
+  customSlots[scheduleWeek] = daysOfWeek.map(day => ({
+    day,
+    slots: getCustomTimeSlotsForDay(day, slots),
+  }))
+
+  return customSlots
+}
+
+function getCustomTimeSlotsForDay(day: string, slots: Slot[]): CustomTimeSlot[] {
+  const timeSlots: CustomTimeSlot[] = []
+  slots.forEach(slot => {
+    if (slot.daysOfWeek.includes(day.toUpperCase() as DayOfWeek)) {
+      timeSlots.push({
+        timeSlot: slot.timeSlot as TimeSlot,
+        startTime: slot.customStartTime,
+        endTime: slot.customEndTime,
+      })
+    }
+  })
+  timeSlots.sort((a, b) => timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot])
+  return timeSlots
 }
 
 export function mapActivityScheduleSlotsToSlots(activityScheduleSlot: ActivityScheduleSlot[]): Slot[] {
@@ -166,4 +234,66 @@ export function calculateUniqueSlots(slotsA: Slot[], slotsB: Slot[]): Slot[] {
         : slot
     })
     .filter(s => s.daysOfWeek.length > 0)
+}
+
+export function journeySlotsToCustomSlots(journeySlots: Slots): Slot[] {
+  const slots: Slot[] = []
+
+  journeySlots.timeSlotsMonday.forEach(timeSlot => {
+    const slot = createSlot('MONDAY', timeSlot)
+    slot.monday = true
+    slots.push(slot)
+  })
+  journeySlots.timeSlotsTuesday.forEach(timeSlot => {
+    const slot = createSlot('TUESDAY', timeSlot)
+    slot.tuesday = true
+    slots.push(slot)
+  })
+  journeySlots.timeSlotsWednesday.forEach(timeSlot => {
+    const slot = createSlot('WEDNESDAY', timeSlot)
+    slot.wednesday = true
+    slots.push(slot)
+  })
+  journeySlots.timeSlotsThursday.forEach(timeSlot => {
+    const slot = createSlot('THURSDAY', timeSlot)
+    slot.thursday = true
+    slots.push(slot)
+  })
+  journeySlots.timeSlotsFriday.forEach(timeSlot => {
+    const slot = createSlot('FRIDAY', timeSlot)
+    slot.friday = true
+    slots.push(slot)
+  })
+  journeySlots.timeSlotsSaturday.forEach(timeSlot => {
+    const slot = createSlot('SATURDAY', timeSlot)
+    slot.saturday = true
+    slots.push(slot)
+  })
+  journeySlots.timeSlotsSunday.forEach(timeSlot => {
+    const slot = createSlot('SUNDAY', timeSlot)
+    slot.sunday = true
+    slots.push(slot)
+  })
+  return slots
+}
+
+function createSlot(
+  day: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY',
+  timeSlot: string,
+) {
+  const slot: Slot = {
+    customEndTime: '',
+    customStartTime: '',
+    daysOfWeek: [day],
+    friday: false,
+    monday: false,
+    saturday: false,
+    sunday: false,
+    thursday: false,
+    timeSlot: timeSlot as TimeSlot,
+    tuesday: false,
+    wednesday: false,
+    weekNumber: 1,
+  }
+  return slot
 }

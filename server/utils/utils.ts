@@ -366,7 +366,6 @@ export const mapJourneySlotsToActivityRequest = (fromSlots: CreateAnActivityJour
 
     slotMap.forEach(slot => slots.push(slot))
   })
-
   return slots
 }
 
@@ -419,6 +418,9 @@ export const scheduledEventSort = (data: ScheduledEvent[]): ScheduledEvent[] => 
 
 export const filterObjects = (objects: object[], iteratee: string, eq: unknown): object[] =>
   objects.filter(o => o[iteratee as keyof any] === eq)
+
+export const filterNot = (objects: object[], iteratee: string, notEq: unknown): object[] =>
+  objects.filter(o => o[iteratee as keyof any] !== notEq)
 
 export const excludeArrayObject = (objects: object[], iteratee: object): object[] => {
   return objects.filter(o => o !== iteratee)

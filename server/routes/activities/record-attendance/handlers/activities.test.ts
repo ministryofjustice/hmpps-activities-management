@@ -204,7 +204,6 @@ describe('Route Handlers - Activities', () => {
           {
             ...attendanceSummaryResponse[0],
             session: 'PM',
-            sessionOrderIndex: 1,
           },
         ],
         locations: [],
@@ -240,17 +239,14 @@ describe('Route Handlers - Activities', () => {
           {
             ...attendanceSummaryResponse[1],
             session: 'AM',
-            sessionOrderIndex: 0,
           },
           {
             ...attendanceSummaryResponse[0],
             session: 'PM',
-            sessionOrderIndex: 1,
           },
           {
             ...attendanceSummaryResponse[2],
             session: 'PM',
-            sessionOrderIndex: 1,
           },
         ],
         locations: [],
@@ -295,7 +291,6 @@ describe('Route Handlers - Activities', () => {
           {
             ...attendanceSummaryResponse[2],
             session: 'PM',
-            sessionOrderIndex: 1,
           },
         ],
         locations: [],
@@ -327,7 +322,6 @@ describe('Route Handlers - Activities', () => {
           {
             ...attendanceSummaryResponse[1],
             session: 'AM',
-            sessionOrderIndex: 0,
           },
         ],
         locations: [],
@@ -359,17 +353,14 @@ describe('Route Handlers - Activities', () => {
           {
             ...attendanceSummaryResponse[0],
             session: 'PM',
-            sessionOrderIndex: 1,
           },
           {
             ...attendanceSummaryResponse[2],
             session: 'PM',
-            sessionOrderIndex: 1,
           },
           {
             ...attendanceSummaryResponse[3],
             session: 'ED',
-            sessionOrderIndex: 2,
           },
         ],
         locations: [],
@@ -425,7 +416,6 @@ describe('Route Handlers - Activities', () => {
             {
               ...attendanceSummaryResponse[0],
               session: 'PM',
-              sessionOrderIndex: 1,
             },
           ],
           locations: [],
@@ -460,7 +450,6 @@ describe('Route Handlers - Activities', () => {
             {
               ...attendanceSummaryResponse[2],
               session: 'PM',
-              sessionOrderIndex: 1,
             },
           ],
           locations: [],
@@ -495,7 +484,6 @@ describe('Route Handlers - Activities', () => {
             {
               ...attendanceSummaryResponse[3],
               session: 'ED',
-              sessionOrderIndex: 2,
             },
           ],
           locations: [],
@@ -531,7 +519,6 @@ describe('Route Handlers - Activities', () => {
             {
               ...attendanceSummaryResponse[1],
               session: 'AM',
-              sessionOrderIndex: 0,
             },
           ],
           locations: [],

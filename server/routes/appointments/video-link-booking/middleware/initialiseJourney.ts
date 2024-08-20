@@ -1,9 +1,11 @@
 import { RequestHandler } from 'express'
 import { parse } from 'date-fns'
+import _ from 'lodash'
 import { Services } from '../../../../services'
+import asyncMiddleware from '../../../../middleware/asyncMiddleware'
 
-export default ({ bookAVideoLinkService, prisonService }: Services): RequestHandler => {
-  return async (req, res, next) => {
+export default ({ activitiesService, bookAVideoLinkService, prisonService }: Services): RequestHandler => {
+  return asyncMiddleware(async (req, res, next) => {
     const { bookingId } = req.params
     const { user } = res.locals
 
@@ -17,13 +19,43 @@ export default ({ bookAVideoLinkService, prisonService }: Services): RequestHand
       date ? parse(date, 'yyyy-MM-dd', new Date()).toISOString() : undefined
 
     const preAppointment = getAppointment('VLB_COURT_PRE')
-    const mainAppointment = getAppointment('VLB_COURT_MAIN')
+    const mainAppointment = getAppointment('VLB_COURT_MAIN') || getAppointment('VLB_PROBATION')
     const postAppointment = getAppointment('VLB_COURT_POST')
 
-    const prisoner = await prisonService.getInmateByPrisonerNumber(mainAppointment?.prisonerNumber, user)
+    const prisoner = await prisonService.getInmateByPrisonerNumber(mainAppointment.prisonerNumber, user)
+
+    const locationIds = await Promise.all(
+      _.uniq([mainAppointment.prisonLocKey, preAppointment?.prisonLocKey, postAppointment?.prisonLocKey])
+        .filter(Boolean)
+        .map(code => prisonService.getInternalLocationByKey(code, user)),
+    ).then(locations => locations.map(l => l.locationId))
+
+    const existingVlbAppointments = await activitiesService
+      .searchAppointments(
+        user.activeCaseLoadId,
+        {
+          appointmentType: 'INDIVIDUAL',
+          startDate: mainAppointment.appointmentDate,
+          categoryCode: 'VLB',
+          prisonerNumbers: [prisoner.prisonerNumber],
+        },
+        user,
+      )
+      .then(apps =>
+        apps.filter(
+          app =>
+            locationIds.includes(app.internalLocation.id) &&
+            [
+              [mainAppointment.startTime, mainAppointment.endTime],
+              [preAppointment?.startTime, preAppointment?.endTime],
+              [postAppointment?.startTime, postAppointment?.endTime],
+            ].some(([startTime, endTime]) => startTime === app.startTime && endTime === app.endTime),
+        ),
+      )
 
     req.session.bookAVideoLinkJourney = {
       bookingId: Number(bookingId),
+      appointmentIds: existingVlbAppointments.map(a => a.appointmentId),
       bookingStatus: booking.statusCode,
       type: booking.bookingType,
       prisoner: {
@@ -33,8 +65,8 @@ export default ({ bookAVideoLinkService, prisonService }: Services): RequestHand
         cellLocation: prisoner.cellLocation,
         status: prisoner.status,
       },
-      agencyCode: booking.courtCode,
-      hearingTypeCode: booking.courtHearingType,
+      agencyCode: booking.courtCode || booking.probationTeamCode,
+      hearingTypeCode: booking.courtHearingType || booking.probationMeetingType,
       date: parseDateToISOString(mainAppointment.appointmentDate),
       startTime: parseTimeToISOString(mainAppointment.startTime),
       endTime: parseTimeToISOString(mainAppointment.endTime),
@@ -42,7 +74,7 @@ export default ({ bookAVideoLinkService, prisonService }: Services): RequestHand
       preHearingEndTime: parseTimeToISOString(preAppointment?.endTime),
       postHearingStartTime: parseTimeToISOString(postAppointment?.startTime),
       postHearingEndTime: parseTimeToISOString(postAppointment?.endTime),
-      locationCode: mainAppointment?.prisonLocKey,
+      locationCode: mainAppointment.prisonLocKey,
       preLocationCode: preAppointment?.prisonLocKey,
       postLocationCode: postAppointment?.prisonLocKey,
       comments: booking.comments,
@@ -50,5 +82,5 @@ export default ({ bookAVideoLinkService, prisonService }: Services): RequestHand
     }
 
     return next()
-  }
+  })
 }

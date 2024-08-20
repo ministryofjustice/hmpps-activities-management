@@ -19,6 +19,7 @@ import EndDateOptionRoutes, { EndDateOption } from './handlers/endDateOption'
 import EndDateRoutes, { EndDate } from './handlers/endDate'
 import DaysAndTimesRoutes, { DaysAndTimes } from './handlers/daysAndTimes'
 import BankHolidayOptionRoutes, { BankHolidayOption } from './handlers/bankHoliday'
+import SessionTimesOptionRoutes, { SessionTimesOption } from './handlers/sessionTimesOption'
 import LocationRoutes, { Location } from './handlers/location'
 import CapacityRoutes, { Capacity } from './handlers/capacity'
 import PayRateTypeRoutes, { PayRateType } from './handlers/payRateType'
@@ -31,6 +32,8 @@ import PayOption, { PayOptionForm } from './handlers/payOption'
 import AttendanceRequired, { AttendanceRequiredForm } from './handlers/attendanceRequired'
 import PayDateOptionRoutes, { PayDateOption } from './handlers/pay-date-option'
 import PayCancelRoutes, { PayCancel } from './handlers/pay-cancel'
+import RemoveEndDateRoutes, { RemoveEndDateOptions } from './handlers/removeEndDate'
+import SessionTimesRoutes, { SessionTimes } from './handlers/sessionTimes'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -60,10 +63,13 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const checkEducationLevelHandler = new CheckEducationLevelRoutes(activitiesService)
   const startDateHandler = new StartDateRoutes(activitiesService)
   const endDateOptionHandler = new EndDateOptionRoutes()
+  const removeEndDateHandler = new RemoveEndDateRoutes(activitiesService)
   const endDateHandler = new EndDateRoutes(activitiesService)
   const scheduleFrequencyHandler = new ScheduleFrequencyRoutes()
   const daysAndTimesHandler = new DaysAndTimesRoutes(activitiesService)
   const bankHolidayHandler = new BankHolidayOptionRoutes(activitiesService)
+  const sessionTimesOptionHandler = new SessionTimesOptionRoutes(activitiesService)
+  const sessionTimesHandler = new SessionTimesRoutes(activitiesService)
   const locationHandler = new LocationRoutes(activitiesService, prisonService)
   const capacityHandler = new CapacityRoutes(activitiesService)
   const confirmCapacityRouteHandler = new ConfirmCapacityRoutes(activitiesService)
@@ -109,12 +115,18 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/end-date-option', endDateOptionHandler.POST, EndDateOption)
   get('/end-date', endDateHandler.GET, true)
   post('/end-date', endDateHandler.POST, EndDate)
+  get('/remove-end-date', removeEndDateHandler.GET, true)
+  post('/remove-end-date', removeEndDateHandler.POST, RemoveEndDateOptions)
   get('/schedule-frequency', scheduleFrequencyHandler.GET, true)
   post('/schedule-frequency', scheduleFrequencyHandler.POST, ScheduleFrequencyForm)
   get('/days-and-times/:weekNumber(\\d+)', daysAndTimesHandler.GET, true)
   post('/days-and-times/:weekNumber(\\d+)', daysAndTimesHandler.POST, DaysAndTimes)
   get('/bank-holiday-option', bankHolidayHandler.GET, true)
   post('/bank-holiday-option', bankHolidayHandler.POST, BankHolidayOption)
+  get('/session-times-option', sessionTimesOptionHandler.GET, true)
+  post('/session-times-option', sessionTimesOptionHandler.POST, SessionTimesOption)
+  get('/session-times', sessionTimesHandler.GET, true)
+  post('/session-times', sessionTimesHandler.POST, SessionTimes)
   get('/location', locationHandler.GET, true)
   post('/location', locationHandler.POST, Location)
   get('/capacity', capacityHandler.GET, true)

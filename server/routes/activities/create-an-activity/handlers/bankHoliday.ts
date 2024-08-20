@@ -3,6 +3,7 @@ import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
+import config from '../../../../config'
 
 export class BankHolidayOption {
   @Expose()
@@ -31,6 +32,8 @@ export default class BankHolidayOptionRoutes {
       const returnTo = `/activities/view/${req.session.createJourney.activityId}`
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
+    } else if (config.customStartEndTimesEnabled === true) {
+      res.redirect('session-times-option')
     }
     // If the location has already been set, skip the location page
     else if (req.session.createJourney.inCell) res.redirectOrReturn('capacity')
