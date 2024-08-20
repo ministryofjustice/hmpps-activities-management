@@ -10,7 +10,7 @@ export interface WeeklyTimeSlots {
   }[]
 }
 
-export interface TimeSlotWithStartEnd {
+export interface CustomTimeSlot {
   timeSlot: TimeSlot
   startTime: string
   endTime: string
@@ -19,7 +19,7 @@ export interface TimeSlotWithStartEnd {
 export interface WeeklyCustomTimeSlots {
   [weekNumber: string]: {
     day: string
-    slots: TimeSlotWithStartEnd[]
+    slots: CustomTimeSlot[]
   }[]
 }
 
@@ -58,29 +58,29 @@ export function activityScheduleSlotsToCustomTimeSlots(
   scheduleWeek: number,
   slots: ActivityScheduleSlot[],
 ): WeeklyCustomTimeSlots {
-  const customSlots: WeeklyCustomTimeSlots = {}
+  const customTimeSlots: WeeklyCustomTimeSlots = {}
 
-  customSlots[scheduleWeek] = daysOfWeek.map(day => ({
+  customTimeSlots[scheduleWeek] = daysOfWeek.map(day => ({
     day,
     slots: getCustomSlotsForDay(day, slots),
   }))
 
-  return customSlots
+  return customTimeSlots
 }
 
-function getCustomSlotsForDay(day: string, slots: ActivityScheduleSlot[]): TimeSlotWithStartEnd[] {
-  const timeSlots: TimeSlotWithStartEnd[] = []
+function getCustomSlotsForDay(day: string, slots: ActivityScheduleSlot[]): CustomTimeSlot[] {
+  const customTimeSlots: CustomTimeSlot[] = []
   slots.forEach(slot => {
     if (slot.daysOfWeek.includes(day.substring(0, 3))) {
-      timeSlots.push({
+      customTimeSlots.push({
         timeSlot: slot.timeSlot as TimeSlot,
         startTime: slot.startTime,
         endTime: slot.endTime,
       })
     }
   })
-  timeSlots.sort((a, b) => timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot])
-  return timeSlots
+  customTimeSlots.sort((a, b) => timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot])
+  return customTimeSlots
 }
 
 export function slotsToCustomTimeSlots(scheduleWeek: number, slots: Slot[]): WeeklyCustomTimeSlots {
@@ -88,14 +88,14 @@ export function slotsToCustomTimeSlots(scheduleWeek: number, slots: Slot[]): Wee
 
   customSlots[scheduleWeek] = daysOfWeek.map(day => ({
     day,
-    slots: getCustomSlotsFromSlotForDay(day, slots),
+    slots: getCustomTimeSlotsForDay(day, slots),
   }))
 
   return customSlots
 }
 
-function getCustomSlotsFromSlotForDay(day: string, slots: Slot[]): TimeSlotWithStartEnd[] {
-  const timeSlots: TimeSlotWithStartEnd[] = []
+function getCustomTimeSlotsForDay(day: string, slots: Slot[]): CustomTimeSlot[] {
+  const timeSlots: CustomTimeSlot[] = []
   slots.forEach(slot => {
     if (slot.daysOfWeek.includes(day.toUpperCase() as DayOfWeek)) {
       timeSlots.push({
