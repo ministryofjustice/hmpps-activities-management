@@ -114,17 +114,19 @@
                     }
                 },
                 {
-                    html: attendee.instance.activitySchedule.activity.summary,
+                    text: attendee.instance.activitySchedule.activity.summary,
                     attributes: {
                         "data-qa": "activity"
                     }
                 },
                 {
-                    html: attendee.session,
+                    text: attendee.instance.startTime + ' to ' + attendee.instance.endTime,
                     attributes: {
-                        "data-qa": "session"
+                        "data-qa": "time",
+                        "data-sort-value": 'x' + attendee.instance.startTime + ' to ' + attendee.instance.endTime
                     }
-                },                {
+                },
+                {
                     html: renderOtherEvents(attendee.otherEvents),
                     attributes: {
                         "data-qa": "other-events"
@@ -167,7 +169,7 @@
                     classes: 'hmpps-max-width-240'
                 },
                 {
-                    text: "Session",
+                    text: "Time",
                     attributes: { "aria-sort": "ascending" }
                 },
                 {

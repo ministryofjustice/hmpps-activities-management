@@ -39,7 +39,7 @@ export default class ActivitiesPage extends Page {
         })
     })
 
-  assertRow(rowNum, checkbox, activityName, location, session, scheduled, attended, notRecorded, notAttended) {
+  assertRow(rowNum, checkbox, activityName, location, time, scheduled, attended, notRecorded, notAttended) {
     cy.get(`[data-module=activities-sticky-select] tr`)
       .eq(rowNum)
       .find('td')
@@ -49,7 +49,7 @@ export default class ActivitiesPage extends Page {
           .should(checkbox ? 'exist' : 'not.exist')
         expect($data.get(1).innerText).to.contain(activityName)
         expect($data.get(2).innerText).to.contain(location)
-        expect($data.get(3).innerText).to.contain(session)
+        expect($data.get(3).innerText).to.contain(time)
         expect($data.get(4).innerText).to.contain(scheduled)
         expect($data.get(5).innerText).to.contain(attended)
         expect($data.get(6).innerText).to.contain(notRecorded)
