@@ -95,8 +95,22 @@ export default class SessionTimesRoutes {
     const { startTime, endTime }: SessionTimes = req.body
 
     const customSlots: Slot[] = createCustomSlots(startTime, endTime)
-    req.session.createJourney.customSlots = customSlots
 
-    res.redirectOrReturn('location')
+    // validate slots
+    const slotsWithStartAfterEnd: Slot[] = customSlots.filter(
+      (customSlot: Slot) => customSlot.customStartTime.localeCompare(customSlot.customEndTime) >= 0,
+    )
+    if (slotsWithStartAfterEnd.length > 0) {
+      slotsWithStartAfterEnd.forEach(customSlot => {
+        res.addValidationError(
+          `endTime-${customSlot.daysOfWeek}-${customSlot.timeSlot}`,
+          'Select an end time after the start time',
+        )
+      })
+      return res.validationFailed()
+    }
+
+    req.session.createJourney.customSlots = customSlots
+    return res.redirectOrReturn(`location`)
   }
 }

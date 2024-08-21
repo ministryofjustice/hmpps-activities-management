@@ -1,9 +1,12 @@
 import { Request, Response } from 'express'
-import SessionTimesRoutes from './sessionTimes'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
+import SessionTimesRoutes, { SessionTimes } from './sessionTimes'
 import ActivitiesService from '../../../../services/activitiesService'
 import { PrisonRegime } from '../../../../@types/activitiesAPI/types'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import TimeSlot from '../../../../enum/timeSlot'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -104,6 +107,8 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirectOrReturnWithSuccess: jest.fn(),
+      validationFailed: jest.fn(),
+      addValidationError: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -204,8 +209,174 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
     })
   })
 
-  // FIXME: validation needs implementing
-  // describe('type validation', () => {
-  //   it('validation fails if a value is not entered', async () => {})
-  // })
+  describe('Validation', () => {
+    it('should pass validation if start and end times set correctly', async () => {
+      const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+      const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+      const startTime = new SimpleTime()
+      startTime.hour = 10
+      startTime.minute = 30
+
+      startMap.set('MONDAY-AM', startTime)
+
+      const endTime = new SimpleTime()
+      endTime.hour = 11
+      endTime.minute = 30
+
+      endMap.set('MONDAY-AM', endTime)
+
+      const startTime2 = new SimpleTime()
+      startTime2.hour = 19
+      startTime2.minute = 30
+
+      startMap.set('FRIDAY-ED', startTime2)
+
+      const endTime2 = new SimpleTime()
+      endTime2.hour = 21
+      endTime2.minute = 15
+
+      endMap.set('FRIDAY-ED', endTime2)
+
+      const body = {
+        startTime: startMap,
+        endTime: endMap,
+      }
+
+      const requestObject = plainToInstance(SessionTimes, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors.length).toBe(0)
+    })
+
+    it('should fail validation when no start time hour specified', async () => {
+      const body = {
+        startTime: {
+          'MONDAY-AM': {
+            hour: null as number,
+            minute: 0,
+          },
+        },
+      }
+
+      const requestObject = plainToInstance(SessionTimes, body)
+      const errors = await validate(requestObject).then(errs =>
+        errs[0].children[0].children.flatMap(associateErrorsWithProperty),
+      )
+
+      expect(errors).toEqual(expect.arrayContaining([{ error: 'Select an hour', property: 'hour' }]))
+    })
+
+    it('should fail validation when no start time minute specified', async () => {
+      const body = {
+        startTime: {
+          'MONDAY-AM': {
+            hour: 12,
+            minute: null as number,
+          },
+        },
+      }
+
+      const requestObject = plainToInstance(SessionTimes, body)
+      const errors = await validate(requestObject).then(errs =>
+        errs[0].children[0].children.flatMap(associateErrorsWithProperty),
+      )
+
+      expect(errors).toEqual(expect.arrayContaining([{ error: 'Select a minute', property: 'minute' }]))
+    })
+
+    it('should fail validation when no end time hour specified', async () => {
+      const body = {
+        endTime: {
+          'MONDAY-AM': {
+            hour: null as number,
+            minute: 0,
+          },
+        },
+      }
+
+      const requestObject = plainToInstance(SessionTimes, body)
+      const errors = await validate(requestObject).then(errs =>
+        errs[0].children[0].children.flatMap(associateErrorsWithProperty),
+      )
+
+      expect(errors).toEqual(expect.arrayContaining([{ error: 'Select an hour', property: 'hour' }]))
+    })
+
+    it('should fail validation when no end time minute specified', async () => {
+      const body = {
+        endTime: {
+          'MONDAY-AM': {
+            hour: 12,
+            minute: null as number,
+          },
+        },
+      }
+
+      const requestObject = plainToInstance(SessionTimes, body)
+      const errors = await validate(requestObject).then(errs =>
+        errs[0].children[0].children.flatMap(associateErrorsWithProperty),
+      )
+
+      expect(errors).toEqual(expect.arrayContaining([{ error: 'Select a minute', property: 'minute' }]))
+    })
+
+    it('should fail validation if end time is before start time', async () => {
+      const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+      const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+      const startTime = new SimpleTime()
+      startTime.hour = 10
+      startTime.minute = 30
+
+      startMap.set('MONDAY-AM', startTime)
+
+      const endTime = new SimpleTime()
+      endTime.hour = 9
+      endTime.minute = 44
+
+      endMap.set('MONDAY-AM', endTime)
+
+      req.body = {
+        startTime: startMap,
+        endTime: endMap,
+      }
+
+      await handler.POST(req, res)
+
+      expect(res.addValidationError).toHaveBeenCalledWith(
+        `endTime-MONDAY-AM`,
+        'Select an end time after the start time',
+      )
+    })
+
+    it('should fail validation if end time is the same as start time', async () => {
+      const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+      const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+      const startTime = new SimpleTime()
+      startTime.hour = 10
+      startTime.minute = 30
+
+      startMap.set('MONDAY-AM', startTime)
+
+      const endTime = new SimpleTime()
+      endTime.hour = 10
+      endTime.minute = 30
+
+      endMap.set('MONDAY-AM', endTime)
+
+      req.body = {
+        startTime: startMap,
+        endTime: endMap,
+      }
+
+      await handler.POST(req, res)
+
+      expect(res.addValidationError).toHaveBeenCalledWith(
+        `endTime-MONDAY-AM`,
+        'Select an end time after the start time',
+      )
+    })
+  })
 })
