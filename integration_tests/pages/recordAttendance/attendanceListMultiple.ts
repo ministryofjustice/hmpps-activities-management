@@ -9,45 +9,27 @@ export default class AttendanceListPage extends Page {
 
   markAsNotAttended = () => cy.get('button').contains('Mark as not attended').click()
 
-  assertRow(rowNum, checkbox, name, location, activity, session, attendanceAndPay, viewLink = '') {
-    cy.get(`[data-module=activities-sticky-select] tr`)
+  assertRow(rowNum, checkbox, name, location, activity, time, attendanceAndPay, viewLink = '') {
+    cy.get('[data-module=activities-sticky-select] tr')
       .eq(rowNum + 1)
       .find('td')
-      .eq(1)
-      .contains(name)
-      .parents('tr')
-      .find('td')
-      .eq(2)
-      .contains(location)
-      .parents('tr')
-      .find('td')
-      .eq(3)
-      .contains(activity)
-      .parents('tr')
-      .find('td')
-      .eq(4)
-      .contains(session)
-      .parents('tr')
-      .find('td')
-      .eq(6)
-      .contains(attendanceAndPay)
-      .parents('tr')
-      .find('td')
-      .eq(7)
-      .then($link => {
+      .then($data => {
+        cy.wrap($data.get(0))
+          .find('input[type=checkbox]')
+          .should(checkbox ? 'exist' : 'not.exist')
+        expect($data.get(1).innerText).to.contain(name)
+        expect($data.get(2).innerText).to.contain(location)
+        expect($data.get(3).innerText).to.contain(activity)
+        expect($data.get(4).innerText).to.contain(time)
+        expect($data.get(6).innerText).to.contain(attendanceAndPay)
         if (viewLink) {
-          cy.wrap($link).contains(viewLink)
+          cy.wrap($data.get(7)).contains(viewLink)
         } else {
-          cy.wrap($link).should($el => {
+          cy.wrap($data.get(7)).should($el => {
             expect($el.text().trim()).equal('')
           })
         }
       })
-      .parents('tr')
-      .find('td')
-      .eq(0)
-      .find('input[type=checkbox]')
-      .should(checkbox ? 'exist' : 'not.exist')
   }
 
   clickRow = rowNum => {
