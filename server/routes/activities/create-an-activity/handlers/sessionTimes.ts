@@ -1,117 +1,71 @@
 import { Request, Response } from 'express'
+import { ValidateNested } from 'class-validator'
+import { plainToInstance, Transform } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
-import getApplicableDaysAndSlotsInRegime from '../../../../utils/helpers/applicableRegimeTimeUtil'
+import getApplicableDaysAndSlotsInRegime, {
+  DaysAndSlotsInRegime,
+} from '../../../../utils/helpers/applicableRegimeTimeUtil'
 import { Slots } from '../journey'
-import { journeySlotsToCustomSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { Slot } from '../../../../@types/activitiesAPI/types'
+import TimeSlot from '../../../../enum/timeSlot'
+import SimpleTime from '../../../../commonValidationTypes/simpleTime'
+import { createCustomSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
 
+type SessionSlot = {
+  dayOfWeek: string
+  timeSlot: TimeSlot
+  start: string
+  finish: string
+  isFirst: boolean
+}
 export class SessionTimes {
-  // @Expose()
-  // @IsNotEmpty({ message: 'Select how to set the activity start and end times' })
-  // usePrisonRegimeTime: boolean
+  // validate start before end & sessions (do not overlap???)
+  @Transform(({ value }) =>
+    Object.keys(value).reduce((acc, k) => acc.set(k, plainToInstance(SimpleTime, value[k])), new Map()),
+  )
+  @ValidateNested()
+  startTime: Map<string, SimpleTime>
+
+  @Transform(({ value }) =>
+    Object.keys(value).reduce((acc, k) => acc.set(k, plainToInstance(SimpleTime, value[k])), new Map()),
+  )
+  @ValidateNested()
+  endTime: Map<string, SimpleTime>
 }
 
-function getHardCodedCustomSlots(): Slot[] {
-  return [
-    {
-      customStartTime: '09:15',
-      customEndTime: '11:30',
-      daysOfWeek: ['MONDAY'],
-      friday: false,
-      monday: true,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: 'AM',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '18:15',
-      customEndTime: '21:45',
-      daysOfWeek: ['MONDAY'],
-      friday: false,
-      monday: true,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: 'ED',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '14:45',
-      customEndTime: '16:00',
-      daysOfWeek: ['TUESDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: 'PM',
-      tuesday: true,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customSartTime: '07:30',
-      customEndTime: '10:14',
-      daysOfWeek: ['THURSDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: true,
-      timeSlot: 'AM',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '15:12',
-      customEndTime: '16:35',
-      daysOfWeek: ['THURSDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: true,
-      timeSlot: 'PM',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '18:56',
-      customEndTime: '19:55',
-      daysOfWeek: ['THURSDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: true,
-      timeSlot: 'ED',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '21:03',
-      customEndTime: '22:54',
-      daysOfWeek: ['SATURDAY'],
-      friday: false,
-      monday: false,
-      saturday: true,
-      sunday: false,
-      thursday: false,
-      timeSlot: 'ED',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-  ] as Slot[]
+function createSessionSlots(applicableRegimeTimesForActivity: DaysAndSlotsInRegime[]): SessionSlot[] {
+  const sessionSlots: SessionSlot[] = []
+  applicableRegimeTimesForActivity.forEach(day => {
+    if (day.amStart) {
+      sessionSlots.push({
+        dayOfWeek: day.dayOfWeek,
+        timeSlot: TimeSlot.AM,
+        start: day.amStart,
+        finish: day.amFinish,
+        isFirst: true,
+      })
+    }
+    if (day.pmStart) {
+      sessionSlots.push({
+        dayOfWeek: day.dayOfWeek,
+        timeSlot: TimeSlot.PM,
+        start: day.pmStart,
+        finish: day.pmFinish,
+        isFirst: !day.amStart,
+      })
+    }
+    if (day.edStart) {
+      sessionSlots.push({
+        dayOfWeek: day.dayOfWeek,
+        timeSlot: TimeSlot.ED,
+        start: day.edStart,
+        finish: day.edFinish,
+        isFirst: !day.amStart && !day.pmStart,
+      })
+    }
+  })
+
+  return sessionSlots
 }
 
 export default class SessionTimesRoutes {
@@ -123,19 +77,24 @@ export default class SessionTimesRoutes {
 
     // TODO: the week will have to be passed through from previous pages once we do split regimes, rather than hardcoded as ['1']
     const slots: Slots = req.session.createJourney.slots['1']
-    // TODO: implement real custom slots
-    const customSlots: Slot[] = journeySlotsToCustomSlots(slots)
 
-    const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(regimeTimes, slots)
+    const applicableRegimeTimesForActivity: DaysAndSlotsInRegime[] = getApplicableDaysAndSlotsInRegime(
+      regimeTimes,
+      slots,
+    )
+
+    const sessionSlots: SessionSlot[] = createSessionSlots(applicableRegimeTimesForActivity)
 
     res.render(`pages/activities/create-an-activity/session-times`, {
       regimeTimes: applicableRegimeTimesForActivity,
-      customSlots,
+      sessionSlots,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const customSlots: Slot[] = getHardCodedCustomSlots()
+    const { startTime, endTime }: SessionTimes = req.body
+
+    const customSlots: Slot[] = createCustomSlots(startTime, endTime)
     req.session.createJourney.customSlots = customSlots
 
     res.redirectOrReturn('location')

@@ -2,7 +2,7 @@ import { convertToTitleCase } from '../utils'
 import { Slots } from '../../routes/activities/create-an-activity/journey'
 import { PrisonRegime } from '../../@types/activitiesAPI/types'
 
-type DaysAndSlotsInRegime = {
+export type DaysAndSlotsInRegime = {
   dayOfWeek: string
   amStart?: string
   amFinish?: string
@@ -12,7 +12,10 @@ type DaysAndSlotsInRegime = {
   edFinish?: string
 }
 
-export default function getApplicableDaysAndSlotsInRegime(regimeTimes: PrisonRegime[], daysAndSlots: Slots) {
+export default function getApplicableDaysAndSlotsInRegime(
+  regimeTimes: PrisonRegime[],
+  daysAndSlots: Slots,
+): DaysAndSlotsInRegime[] {
   return daysAndSlots.days
     .map((day: string) => {
       const dayUpper: string = day.toUpperCase()

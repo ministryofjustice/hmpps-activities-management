@@ -1,7 +1,9 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% from "components/timePicker.njk" import timePicker %}
@@ -9,7 +11,6 @@
 {% set pageTitle = applicationName + " - Create a schedule - Activity session times" %}
 {% set pageId = 'activity-session-times-page' %}
 {% set pageHeading = "Select the start and end times for the sessions when this activity runs" %}
-
 {% set jsBackLink = true %}
 
 {% block content %}
@@ -17,8 +18,55 @@
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            {{ validationErrors | dump }}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                        {% set rows = [] %} 
+                        {% for customSlot in sessionSlots %}                  
+                            {% set rows = (rows.push([
+                                {
+                                    html: customSlot.dayOfWeek | title if customSlot.isFirst
+                                },
+                                {
+                                    html: customSlot.timeSlot
+                                },
+                                {
+                                    html: timePicker({
+                                        id: 'startTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
+                                        name: 'startTime[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('startTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                                        validationErrors: validationErrors,
+                                        formResponses: formResponses.startTime
+                                    })
+                                },
+                                {
+                                    html: timePicker({
+                                        id: 'endTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
+                                        name: 'endTime[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('endTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                                        validationErrors: validationErrors,
+                                        formResponses: formResponses.endTime
+                                    })
+                                }]), rows) %}
+                        {% endfor %}
+                    
+                    {{ govukTable({
+                        head: [
+                                {
+                                text: "Day"
+                                },
+                                 {
+                                text: "Session"
+                                },
+                                {
+                                text: "Start Time"
+                                },
+                                {
+                                text: "End Time"
+                                }
+                            ],
+                        rows: rows                      
+                    }) }}
                 {{ govukButton({
                     text: "Continue"
                 }) }}

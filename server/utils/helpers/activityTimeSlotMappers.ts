@@ -2,6 +2,7 @@ import { uniq } from 'lodash'
 import TimeSlot from '../../enum/timeSlot'
 import { Slots } from '../../routes/activities/create-an-activity/journey'
 import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
+import SimpleTime from '../../commonValidationTypes/simpleTime'
 
 export interface WeeklyTimeSlots {
   [weekNumber: string]: {
@@ -236,63 +237,33 @@ export function calculateUniqueSlots(slotsA: Slot[], slotsB: Slot[]): Slot[] {
     .filter(s => s.daysOfWeek.length > 0)
 }
 
-export function journeySlotsToCustomSlots(journeySlots: Slots): Slot[] {
-  const slots: Slot[] = []
+export function createCustomSlots(startTimes: Map<string, SimpleTime>, endTimes: Map<string, SimpleTime>): Slot[] {
+  const customSlots: Slot[] = []
 
-  journeySlots.timeSlotsMonday.forEach(timeSlot => {
-    const slot = createSlot('MONDAY', timeSlot)
-    slot.monday = true
-    slots.push(slot)
+  startTimes.forEach((value, key) => {
+    const slot: Slot = createSlot(key, value, endTimes.get(key))
+    customSlots.push(slot)
   })
-  journeySlots.timeSlotsTuesday.forEach(timeSlot => {
-    const slot = createSlot('TUESDAY', timeSlot)
-    slot.tuesday = true
-    slots.push(slot)
-  })
-  journeySlots.timeSlotsWednesday.forEach(timeSlot => {
-    const slot = createSlot('WEDNESDAY', timeSlot)
-    slot.wednesday = true
-    slots.push(slot)
-  })
-  journeySlots.timeSlotsThursday.forEach(timeSlot => {
-    const slot = createSlot('THURSDAY', timeSlot)
-    slot.thursday = true
-    slots.push(slot)
-  })
-  journeySlots.timeSlotsFriday.forEach(timeSlot => {
-    const slot = createSlot('FRIDAY', timeSlot)
-    slot.friday = true
-    slots.push(slot)
-  })
-  journeySlots.timeSlotsSaturday.forEach(timeSlot => {
-    const slot = createSlot('SATURDAY', timeSlot)
-    slot.saturday = true
-    slots.push(slot)
-  })
-  journeySlots.timeSlotsSunday.forEach(timeSlot => {
-    const slot = createSlot('SUNDAY', timeSlot)
-    slot.sunday = true
-    slots.push(slot)
-  })
-  return slots
+
+  return customSlots
 }
 
-function createSlot(
-  day: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY',
-  timeSlot: string,
-) {
+export function createSlot(daySlot: string, startTime: SimpleTime, endTime: SimpleTime): Slot {
+  const day: DayOfWeek = daySlot.substring(0, daySlot.indexOf('-')) as DayOfWeek
+  const timeSlot: TimeSlot = daySlot.substring(daySlot.indexOf('-') + 1) as TimeSlot
+
   const slot: Slot = {
-    customEndTime: '',
-    customStartTime: '',
+    customStartTime: startTime.toIsoString(),
+    customEndTime: endTime.toIsoString(),
     daysOfWeek: [day],
-    friday: false,
-    monday: false,
-    saturday: false,
-    sunday: false,
-    thursday: false,
-    timeSlot: timeSlot as TimeSlot,
-    tuesday: false,
-    wednesday: false,
+    monday: day === 'MONDAY',
+    tuesday: day === 'TUESDAY',
+    wednesday: day === 'WEDNESDAY',
+    thursday: day === 'THURSDAY',
+    friday: day === 'FRIDAY',
+    saturday: day === 'SATURDAY',
+    sunday: day === 'SUNDAY',
+    timeSlot,
     weekNumber: 1,
   }
   return slot
