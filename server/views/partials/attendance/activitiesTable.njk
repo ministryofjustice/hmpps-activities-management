@@ -33,10 +33,10 @@
                 },
                 {
                     attributes: {
-                        id: 'session-' + loop.index,
+                        id: 'time-' + loop.index,
                         "data-sort-value": 'x' + activity.startTime + ' to ' + activity.endTime
                     },
-                    classes: 'govuk-table__cell--alpha align-right',              
+                    classes: 'govuk-table__cell--alpha',
                     text: activity.startTime + ' to ' + activity.endTime
                 },
                 {
@@ -91,9 +91,8 @@
                     attributes: { "aria-sort": "none" }
                 },
                 {
-                    text: "Session",
-                    attributes: { "aria-sort": "ascending" },
-                    classes: "numeric-col-width"
+                    text: "Time",
+                    attributes: { "aria-sort": "ascending" }
                 },
                 {
                     text: "Allocated",

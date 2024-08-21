@@ -82,22 +82,38 @@ context('Record attendance', () => {
       'Andy, Booking',
       '3-3-017',
       'English level 1',
-      'PM',
+      '14:00 to 15:00',
       'Attended Pay',
       'View or Edit',
     )
-    attendanceListPage.assertRow(2, true, 'Aborah, Cudmastarie', '4-3-016', 'English level 1', 'PM', 'Not recorded')
+    attendanceListPage.assertRow(
+      2,
+      true,
+      'Aborah, Cudmastarie',
+      '4-3-016',
+      'English level 1',
+      '14:00 to 15:00',
+      'Not recorded',
+    )
     attendanceListPage.assertRow(
       4,
       false,
       'Andy, Booking',
       '3-3-017',
       'English level 2',
-      'PM',
+      '14:15 to 15:15',
       'Attended No pay',
       'View or Edit',
     )
-    attendanceListPage.assertRow(6, true, 'Aborah, Cudmastarie', '4-3-016', 'English level 2', 'PM', 'Not recorded')
+    attendanceListPage.assertRow(
+      6,
+      true,
+      'Aborah, Cudmastarie',
+      '4-3-016',
+      'English level 2',
+      '14:15 to 15:15',
+      'Not recorded',
+    )
     attendanceListPage.clickRows(3, 7)
 
     getScheduledInstanceEnglishLevel1.attendances[2].status = 'COMPLETED'
@@ -121,7 +137,7 @@ context('Record attendance', () => {
       'Aborah, Cudmastarie',
       '4-3-016',
       'English level 1',
-      'PM',
+      '14:00 to 15:00',
       'Attended Pay',
       'View or Edit',
     )
@@ -131,7 +147,7 @@ context('Record attendance', () => {
       'Aborah, Cudmastarie',
       '4-3-016',
       'English level 2',
-      'PM',
+      '14:15 to 15:15',
       'Attended No pay',
       'View or Edit',
     )
@@ -163,8 +179,24 @@ context('Record attendance', () => {
     activitiesPage.getButton('Record or edit attendance').click()
 
     const attendanceListPage = Page.verifyOnPage(MultipleAttendanceListPage)
-    attendanceListPage.assertRow(3, true, 'Arianniver, Eeteljan', '1-3-024', 'English level 1', 'PM', 'Not recorded')
-    attendanceListPage.assertRow(7, true, 'Arianniver, Eeteljan', '1-3-024', 'English level 2', 'PM', 'Not recorded')
+    attendanceListPage.assertRow(
+      3,
+      true,
+      'Arianniver, Eeteljan',
+      '1-3-024',
+      'English level 1',
+      '14:00 to 15:00',
+      'Not recorded',
+    )
+    attendanceListPage.assertRow(
+      7,
+      true,
+      'Arianniver, Eeteljan',
+      '1-3-024',
+      'English level 2',
+      '14:15 to 15:15',
+      'Not recorded',
+    )
     attendanceListPage.clickRows(3, 7)
 
     cy.log('Marking non-attendance...')
@@ -196,7 +228,7 @@ context('Record attendance', () => {
       'Arianniver, Eeteljan',
       '1-3-024',
       'English level 1',
-      'PM',
+      '14:00 to 15:00',
       'Sick Pay',
       'View or Edit',
     )
@@ -206,7 +238,7 @@ context('Record attendance', () => {
       'Arianniver, Eeteljan',
       '1-3-024',
       'English level 2',
-      'PM',
+      '14:15 to 15:15',
       'Sick No pay',
       'View or Edit',
     )
