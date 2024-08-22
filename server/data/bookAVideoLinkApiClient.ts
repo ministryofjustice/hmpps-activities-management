@@ -32,7 +32,7 @@ export default class BookAVideoLinkApiClient extends AbstractHmppsRestClient {
     return this.get({ path: `/prisons/${prisonCode}/locations` }, user)
   }
 
-  public getAllEnabledCourts(user: ServiceUser): Promise<Court[]> {
+  public getAllCourts(user: ServiceUser): Promise<Court[]> {
     return this.get({ path: '/courts', query: { enabledOnly: false } }, user)
   }
 

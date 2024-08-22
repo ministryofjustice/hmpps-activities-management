@@ -18,6 +18,13 @@
                 You have successfully scheduled an appointment for 1 person on {{ vlb.prisonAppointments[0].appointmentDate | toDate | formatDate }}
             </p>
 
+            {% if not court.enabled %}
+            <h2 class="govuk-heading-m">Email {{ court.description }} to confirm the booking</h2>
+            <p class="govuk-body">
+                You must email {{ court.description }} to confirm the booking. This is because they do not yet have access to the Book a video link service.
+            </p>
+            {% endif %}
+
             <h2 class="govuk-heading-m">What you can do next</h2>
             <p class="govuk-body">
                 <a href="/appointments" class="govuk-link govuk-link--no-visited-state" data-qa="create-another-link">Schedule another appointment</a>
