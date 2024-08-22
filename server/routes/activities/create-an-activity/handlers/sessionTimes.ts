@@ -17,7 +17,6 @@ type SessionSlot = {
   timeSlot: TimeSlot
   start: string
   finish: string
-  isFirst: boolean
 }
 export class SessionTimes {
   @Transform(({ value }) =>
@@ -42,7 +41,6 @@ function createSessionSlots(applicableRegimeTimesForActivity: DaysAndSlotsInRegi
         timeSlot: TimeSlot.AM,
         start: day.amStart,
         finish: day.amFinish,
-        isFirst: true,
       })
     }
     if (day.pmStart) {
@@ -51,7 +49,6 @@ function createSessionSlots(applicableRegimeTimesForActivity: DaysAndSlotsInRegi
         timeSlot: TimeSlot.PM,
         start: day.pmStart,
         finish: day.pmFinish,
-        isFirst: !day.amStart,
       })
     }
     if (day.edStart) {
@@ -60,7 +57,6 @@ function createSessionSlots(applicableRegimeTimesForActivity: DaysAndSlotsInRegi
         timeSlot: TimeSlot.ED,
         start: day.edStart,
         finish: day.edFinish,
-        isFirst: !day.amStart && !day.pmStart,
       })
     }
   })

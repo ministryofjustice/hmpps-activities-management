@@ -143,21 +143,18 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
             timeSlot: 'AM',
             start: '08:30',
             finish: '11:45',
-            isFirst: true,
           },
           {
             dayOfWeek: 'FRIDAY',
             timeSlot: 'PM',
             start: '13:45',
             finish: '16:45',
-            isFirst: true,
           },
           {
             dayOfWeek: 'FRIDAY',
             timeSlot: 'ED',
             start: '17:30',
             finish: '19:15',
-            isFirst: false,
           },
         ],
       })
