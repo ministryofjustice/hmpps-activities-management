@@ -270,6 +270,7 @@
             }), dateAndScheduleRows) %}
 
             {% if not customSlots %}
+                {% set href = if not customStartEndTimesEnabled "/activities/edit/" + activity.id + "/days-and-times/" + week + "?preserveHistory=true" else "/activities/edit/" + activity.id + "/custom-times-change-option?preserveHistory=true" %}
                 {% for week, slots in dailySlots %}
                     {% set dateAndScheduleRows = (dateAndScheduleRows.push(
                         {
@@ -280,7 +281,7 @@
                             actions: {
                                 items: [
                                     {
-                                        href: "/activities/edit/" + activity.id + "/days-and-times/" + week + "?preserveHistory=true",
+                                        href,
                                         text: "Change",
                                         visuallyHiddenText: " days and times",
                                         classes: "govuk-link--no-visited-state"

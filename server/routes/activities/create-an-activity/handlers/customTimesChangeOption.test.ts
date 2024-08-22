@@ -102,7 +102,7 @@ describe('Select what you want to change in this activity’s schedule page', ()
       }
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('days-and-times/1')
+      expect(res.redirect).toHaveBeenCalledWith('days-and-times/1?preserveHistory=true')
     })
 
     it('redirects to the appropriate if the user selects to change the activity start and end times and they are using custom times', async () => {
@@ -126,19 +126,4 @@ describe('Select what you want to change in this activity’s schedule page', ()
       expect(res.redirect).toHaveBeenCalledWith('session-times')
     })
   })
-
-  // describe('type validation', () => {
-  //   it('validation fails if a value is not entered', async () => {
-  //     const body = {
-  //       usePrisonRegimeTime: '',
-  //     }
-
-  //     const requestObject = plainToInstance(SessionTimesOption, body)
-  //     const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-  //     expect(errors).toEqual([
-  //       { property: 'usePrisonRegimeTime', error: 'Select how the to set the activity start and end times' },
-  //     ])
-  //   })
-  // })
 })

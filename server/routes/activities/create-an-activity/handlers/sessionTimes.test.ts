@@ -1,9 +1,12 @@
 import { Request, Response } from 'express'
+import { when } from 'jest-when'
+import atLeast from '../../../../../jest.setup'
 import SessionTimesRoutes from './sessionTimes'
 import ActivitiesService from '../../../../services/activitiesService'
-import { PrisonRegime } from '../../../../@types/activitiesAPI/types'
+import { Activity, PrisonRegime } from '../../../../@types/activitiesAPI/types'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import TimeSlot from '../../../../enum/timeSlot'
+import activity from '../../../../services/fixtures/activity_1.json'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -102,8 +105,10 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
         },
       },
       render: jest.fn(),
+      redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirectOrReturnWithSuccess: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -200,7 +205,73 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
         },
       ])
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+      expect(res.redirect).toHaveBeenCalledWith('location')
+    })
+
+    it('saves data and returns to view activity page if the user is in edit mode', async () => {
+      const updatedActivity = {
+        slots: [
+          {
+            customStartTime: '05:30',
+            customEndTime: '09:44',
+            daysOfWeek: ['MONDAY'],
+            friday: false,
+            monday: true,
+            saturday: false,
+            sunday: false,
+            thursday: false,
+            timeSlot: TimeSlot.AM,
+            tuesday: false,
+            wednesday: false,
+            weekNumber: 1,
+          },
+        ],
+        scheduleWeeks: 1,
+      }
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+      const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+      const startTime = new SimpleTime()
+      startTime.hour = 5
+      startTime.minute = 30
+
+      startMap.set('MONDAY-AM', startTime)
+
+      const endTime = new SimpleTime()
+      endTime.hour = 9
+      endTime.minute = 44
+
+      endMap.set('MONDAY-AM', endTime)
+
+      req = {
+        params: {
+          mode: 'edit',
+        },
+        body: {
+          startTime: startMap,
+          endTime: endMap,
+        },
+        session: {
+          createJourney: {
+            activityId: 1,
+            name: 'Test activity',
+            scheduleWeeks: 1,
+          },
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+      expect(activitiesService.updateActivity).toHaveBeenCalledWith(1, updatedActivity, res.locals.user)
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        `/activities/view/1`,
+        'Activity updated',
+        `You've updated the daily schedule for Test activity`,
+      )
     })
   })
 

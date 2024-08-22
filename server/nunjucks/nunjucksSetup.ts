@@ -223,6 +223,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('allocateToNextSession', config.allocateToNextSession)
   njkEnv.addGlobal('futurePayRatesFlag', config.futurePayRatesToggleEnabled)
   njkEnv.addGlobal('bookAVideoLinkToggleEnabled', config.bookAVideoLinkToggleEnabled)
+  njkEnv.addGlobal('customStartEndTimesEnabled', config.customStartEndTimesEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
   njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
 

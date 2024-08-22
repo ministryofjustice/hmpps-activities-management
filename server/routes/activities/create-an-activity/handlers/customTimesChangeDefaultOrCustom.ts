@@ -18,7 +18,7 @@ export class DefaultOrCustomOption {
   selectHowToChangeTimes: DefaultOrCustomTimes
 }
 
-export default class customTimesChangeDefaultOrCustomRoutes {
+export default class CustomTimesChangeDefaultOrCustomRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -35,21 +35,18 @@ export default class customTimesChangeDefaultOrCustomRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { activityId, name } = req.session.createJourney
-    const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+    const { activityId, name, scheduleWeeks } = req.session.createJourney
 
     if (req.body.selectHowToChangeTimes === DefaultOrCustomTimes.DEFAULT_PRISON_REGIME) {
-      console.log(regimeTimes)
-      //  regime times need to be converted tolook like Slot[]
+      const slots = mapJourneySlotsToActivityRequest(req.session.createJourney.slots)
 
-
-      // const slots = mapJourneySlotsToActivityRequest(regimeTimes)
-
-      // const activity = { slots } as ActivityUpdateRequest
-      // await this.activitiesService.updateActivity(activityId, activity, user)
-
-      // const successMessage = `You've updated the daily schedule for ${name}`
-      // return res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
+      const activity = {
+        slots,
+        scheduleWeeks,
+      } as ActivityUpdateRequest
+      await this.activitiesService.updateActivity(activityId, activity, user)
+      const successMessage = `You've updated the daily schedule for ${name}`
+      return res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
     }
 
     // if the user wants to select the start and end times to change, go to sessionTimes page? Need to introduce edit mode to that page maybe?

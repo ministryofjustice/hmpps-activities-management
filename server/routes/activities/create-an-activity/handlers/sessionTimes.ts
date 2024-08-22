@@ -6,7 +6,7 @@ import getApplicableDaysAndSlotsInRegime, {
   DaysAndSlotsInRegime,
 } from '../../../../utils/helpers/applicableRegimeTimeUtil'
 import { Slots } from '../journey'
-import { Slot } from '../../../../@types/activitiesAPI/types'
+import { ActivityUpdateRequest, Slot } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import { createCustomSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
@@ -92,11 +92,23 @@ export default class SessionTimesRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
     const { startTime, endTime }: SessionTimes = req.body
+    const { activityId, name, scheduleWeeks } = req.session.createJourney
 
     const customSlots: Slot[] = createCustomSlots(startTime, endTime)
     req.session.createJourney.customSlots = customSlots
 
-    res.redirectOrReturn('location')
+    if (req.params.mode === 'edit') {
+      const activity = {
+        slots: req.session.createJourney.customSlots,
+        scheduleWeeks,
+      } as ActivityUpdateRequest
+      await this.activitiesService.updateActivity(activityId, activity, user)
+      const successMessage = `You've updated the daily schedule for ${name}`
+      return res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
+    }
+
+    return res.redirect('location')
   }
 }

@@ -25,7 +25,7 @@ export default class CustomTimesChangeOptionRoutes {
     const activity = await this.activitiesService.getActivity(+req.params.activityId, res.locals.user)
     const { usePrisonRegimeTime, scheduleWeeks } = activity.schedules[0]
     if (req.body.selectWhatYouWantToChange === ScheduleChangeOption.DAYS_AND_SESSIONS) {
-      return res.redirect(`days-and-times/${scheduleWeeks}`)
+      return res.redirect(`days-and-times/${scheduleWeeks}?preserveHistory=true`)
     }
     if (!usePrisonRegimeTime) return res.redirect('custom-times-change-default-or-custom')
     return res.redirect('session-times')
