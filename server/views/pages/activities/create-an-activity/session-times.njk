@@ -35,8 +35,7 @@
                                         name: 'startTimes[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
                                         renderedErrorMessage: validationErrors | findError('startTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.startTimes,
-                                        value: formResponses.startTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot]
+                                        formResponses: formResponses.startTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot]
                                 })
                                 },
                                 {
@@ -45,8 +44,7 @@
                                         name: 'endTimes[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
                                         renderedErrorMessage: validationErrors | findError('endTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.endTimes,
-                                        value: formResponses.endTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot]
+                                        formResponses: formResponses.endTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot]
                                         })
                                 }]), rows) %}
                         {% endfor %}
