@@ -10,55 +10,6 @@ jest.mock('../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
-// const slots = [
-//   {
-//     id: 1575,
-//     timeSlot: 'AM',
-//     weekNumber: 1,
-//     startTime: '09:15',
-//     endTime: '11:30',
-//     daysOfWeek: ['Mon'],
-//     mondayFlag: true,
-//     tuesdayFlag: false,
-//     wednesdayFlag: false,
-//     thursdayFlag: false,
-//     fridayFlag: false,
-//     saturdayFlag: false,
-//     sundayFlag: false,
-//   },
-//   {
-//     id: 1576,
-//     timeSlot: 'ED',
-//     weekNumber: 1,
-//     startTime: '18:15',
-//     endTime: '21:45',
-//     daysOfWeek: ['Mon'],
-//     mondayFlag: true,
-//     tuesdayFlag: false,
-//     wednesdayFlag: false,
-//     thursdayFlag: false,
-//     fridayFlag: false,
-//     saturdayFlag: false,
-//     sundayFlag: false,
-//   },
-// ]
-
-// const activity = {
-//   id: 1,
-//   schedules: [
-//     {
-//       id: 1,
-//       description: 'Test activity',
-//       capacity: 10,
-//       scheduleWeeks: 1,
-//       slots,
-//       startDate: '2024-08-26',
-//       runsOnBankHoliday: false,
-//       usePrisonRegimeTime: false,
-//     },
-//   ],
-// } as Activity
-
 const prisonRegime: PrisonRegime[] = [
   {
     id: 3,

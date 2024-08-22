@@ -10,6 +10,7 @@ import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
 import { CreateAnActivityJourney } from '../journey'
+import config from '../../../../config'
 
 export class DaysAndTimes {
   @Expose()
@@ -117,7 +118,17 @@ export default class DaysAndTimesRoutes {
       // If create journey, redirect to next journey page
       if (!preserveHistory) return res.redirect('../bank-holiday-option')
       // If from edit page, edit slots
-      if (req.params.mode === 'edit') return this.editSlots(req, res)
+      if (req.params.mode === 'edit') {
+        const activity = await this.activitiesService.getActivity(
+          +req.session.createJourney.activityId,
+          res.locals.user,
+        )
+        const { usePrisonRegimeTime } = activity.schedules[0]
+        if (config.customStartEndTimesEnabled && !usePrisonRegimeTime) {
+          return res.redirect('../session-times')
+        }
+        return this.editSlots(req, res)
+      }
       return res.redirect('../check-answers')
     }
     if (preserveHistory && !fromScheduleFrequency) {

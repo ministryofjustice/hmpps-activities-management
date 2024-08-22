@@ -9,6 +9,8 @@ import DaysAndTimesRoutes, { DaysAndTimes } from './daysAndTimes'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
+import config from '../../../../config'
+import { Activity } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../utils/helpers/activityScheduleValidator')
@@ -255,6 +257,47 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           'Activity updated',
           "You've updated the daily schedule for Maths level 1",
         )
+      })
+
+      it('should save slots when editing existing activity - custom slots being user', async () => {
+        const activityFromApi = {
+          id: 1,
+          schedules: [
+            {
+              usePrisonRegimeTime: false,
+            },
+          ],
+        } as Activity
+
+        activitiesService.getActivity.mockReturnValue(Promise.resolve(activityFromApi))
+
+        config.customStartEndTimesEnabled = true
+        req = {
+          session: {
+            createJourney: {
+              activityId: 1,
+              name: 'Maths level 1',
+              slots: {},
+              scheduleWeeks: 1,
+            },
+          },
+          params: {
+            weekNumber: '1',
+            mode: 'edit',
+          },
+          query: {
+            preserveHistory: true,
+          },
+          body: {
+            days: ['tuesday', 'friday'],
+            timeSlotsTuesday: ['AM'],
+            timeSlotsFriday: ['PM', 'ED'],
+          },
+        } as unknown as Request
+
+        await handler.POST(req, res, next)
+
+        expect(res.redirect).toHaveBeenCalledWith('../session-times')
       })
 
       it("should update session and redirect to next week's slots when editing schedule frequency", async () => {
