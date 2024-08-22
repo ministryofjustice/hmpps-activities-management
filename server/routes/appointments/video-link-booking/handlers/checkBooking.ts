@@ -10,7 +10,7 @@ export default class CheckBookingRoutes {
 
     const [rooms, courts, hearingTypes] = await Promise.all([
       this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonCode, user),
-      this.bookAVideoLinkService.getAllEnabledCourts(user),
+      this.bookAVideoLinkService.getAllCourts(user),
       this.bookAVideoLinkService.getCourtHearingTypes(user),
     ])
 
