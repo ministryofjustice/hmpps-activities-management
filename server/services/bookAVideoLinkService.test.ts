@@ -126,11 +126,11 @@ describe('Book A Video link service', () => {
 
   describe('getAllEnabledCourts', () => {
     it('should call getAllEnabledCourts on the api client', async () => {
-      bookAVideoLinkClient.getAllEnabledCourts.mockResolvedValue([])
+      bookAVideoLinkClient.getAllCourts.mockResolvedValue([])
 
-      const result = await bookAVideoLinkService.getAllEnabledCourts(user)
+      const result = await bookAVideoLinkService.getAllCourts(user)
 
-      expect(bookAVideoLinkClient.getAllEnabledCourts).toHaveBeenCalledWith(user)
+      expect(bookAVideoLinkClient.getAllCourts).toHaveBeenCalledWith(user)
       expect(result).toEqual([])
     })
   })
