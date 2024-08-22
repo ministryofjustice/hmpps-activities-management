@@ -24,28 +24,30 @@
                         {% for customSlot in sessionSlots %}                  
                             {% set rows = (rows.push([
                                 {
-                                    html: customSlot.dayOfWeek | title if customSlot.isFirst
+                                    html: customSlot.dayOfWeek | title
                                 },
                                 {
                                     html: customSlot.timeSlot
                                 },
                                 {
                                     html: timePicker({
-                                        id: 'startTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
-                                        name: 'startTime[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
-                                        renderedErrorMessage: validationErrors | findError('startTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                                        id: 'startTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
+                                        name: 'startTimes[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('startTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.startTime
-                                    })
+                                        formResponses: formResponses.startTimes,
+                                        value: formResponses.startTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot]
+                                })
                                 },
                                 {
                                     html: timePicker({
-                                        id: 'endTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
-                                        name: 'endTime[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
-                                        renderedErrorMessage: validationErrors | findError('endTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                                        id: 'endTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
+                                        name: 'endTimes[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('endTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.endTime
-                                    })
+                                        formResponses: formResponses.endTimes,
+                                        value: formResponses.endTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot]
+                                        })
                                 }]), rows) %}
                         {% endfor %}
                     
@@ -58,10 +60,10 @@
                                 text: "Session"
                                 },
                                 {
-                                text: "Start Time"
+                                text: "Start time"
                                 },
                                 {
-                                text: "End Time"
+                                text: "End time"
                                 }
                             ],
                         rows: rows                      

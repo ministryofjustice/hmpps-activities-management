@@ -182,8 +182,8 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       endMap.set('MONDAY-AM', endTime)
 
       req.body = {
-        startTime: startMap,
-        endTime: endMap,
+        startTimes: startMap,
+        endTimes: endMap,
       }
 
       await handler.POST(req, res)
@@ -239,8 +239,8 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       endMap.set('FRIDAY-ED', endTime2)
 
       const body = {
-        startTime: startMap,
-        endTime: endMap,
+        startTimes: startMap,
+        endTimes: endMap,
       }
 
       const requestObject = plainToInstance(SessionTimes, body)
@@ -251,7 +251,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
 
     it('should fail validation when no start time hour specified', async () => {
       const body = {
-        startTime: {
+        startTimes: {
           'MONDAY-AM': {
             hour: null as number,
             minute: 0,
@@ -269,7 +269,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
 
     it('should fail validation when no start time minute specified', async () => {
       const body = {
-        startTime: {
+        startTimes: {
           'MONDAY-AM': {
             hour: 12,
             minute: null as number,
@@ -287,7 +287,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
 
     it('should fail validation when no end time hour specified', async () => {
       const body = {
-        endTime: {
+        endTimes: {
           'MONDAY-AM': {
             hour: null as number,
             minute: 0,
@@ -305,7 +305,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
 
     it('should fail validation when no end time minute specified', async () => {
       const body = {
-        endTime: {
+        endTimes: {
           'MONDAY-AM': {
             hour: 12,
             minute: null as number,
@@ -338,14 +338,14 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       endMap.set('MONDAY-AM', endTime)
 
       req.body = {
-        startTime: startMap,
-        endTime: endMap,
+        startTimes: startMap,
+        endTimes: endMap,
       }
 
       await handler.POST(req, res)
 
       expect(res.addValidationError).toHaveBeenCalledWith(
-        `endTime-MONDAY-AM`,
+        `endTimes-MONDAY-AM`,
         'Select an end time after the start time',
       )
     })
@@ -367,16 +367,177 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       endMap.set('MONDAY-AM', endTime)
 
       req.body = {
-        startTime: startMap,
-        endTime: endMap,
+        startTimes: startMap,
+        endTimes: endMap,
       }
 
       await handler.POST(req, res)
 
       expect(res.addValidationError).toHaveBeenCalledWith(
-        `endTime-MONDAY-AM`,
+        `endTimes-MONDAY-AM`,
         'Select an end time after the start time',
       )
     })
+
+    it('should fail validation if afternoon start is before the morning start time', async () => {
+      const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+      const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+      const startTime = new SimpleTime()
+      startTime.hour = 10
+      startTime.minute = 30
+
+      startMap.set('FRIDAY-AM', startTime)
+
+      const endTime = new SimpleTime()
+      endTime.hour = 11
+      endTime.minute = 30
+
+      endMap.set('FRIDAY-AM', endTime)
+
+      const startTime2 = new SimpleTime()
+      startTime2.hour = 9
+      startTime2.minute = 30
+
+      startMap.set('FRIDAY-PM', startTime2)
+
+      const endTime2 = new SimpleTime()
+      endTime2.hour = 21
+      endTime2.minute = 15
+
+      endMap.set('FRIDAY-PM', endTime2)
+
+      req.body = {
+        startTimes: startMap,
+        endTimes: endMap,
+      }
+
+      await handler.POST(req, res)
+
+      expect(res.addValidationError).toHaveBeenCalledWith(
+        `startTimes-FRIDAY-PM`,
+        'Start time must be after the earlier session start time',
+      )
+    })
+
+    it('should fail validation if evening start is before the morning start time', async () => {
+      const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+      const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+      const startTime = new SimpleTime()
+      startTime.hour = 10
+      startTime.minute = 30
+
+      startMap.set('FRIDAY-AM', startTime)
+
+      const endTime = new SimpleTime()
+      endTime.hour = 11
+      endTime.minute = 30
+
+      endMap.set('FRIDAY-AM', endTime)
+
+      const startTime2 = new SimpleTime()
+      startTime2.hour = 9
+      startTime2.minute = 30
+
+      startMap.set('FRIDAY-ED', startTime2)
+
+      const endTime2 = new SimpleTime()
+      endTime2.hour = 21
+      endTime2.minute = 15
+
+      endMap.set('FRIDAY-ED', endTime2)
+
+      req.body = {
+        startTimes: startMap,
+        endTimes: endMap,
+      }
+
+      await handler.POST(req, res)
+
+      expect(res.addValidationError).toHaveBeenCalledWith(
+        `startTimes-FRIDAY-ED`,
+        'Start time must be after the earlier session start time',
+      )
+    })
+
+    it('should fail validation if evening start is before the afternoon start time', async () => {
+      const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+      const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+      const startTime = new SimpleTime()
+      startTime.hour = 13
+      startTime.minute = 30
+
+      startMap.set('FRIDAY-PM', startTime)
+
+      const endTime = new SimpleTime()
+      endTime.hour = 15
+      endTime.minute = 30
+
+      endMap.set('FRIDAY-PM', endTime)
+
+      const startTime2 = new SimpleTime()
+      startTime2.hour = 9
+      startTime2.minute = 30
+
+      startMap.set('FRIDAY-ED', startTime2)
+
+      const endTime2 = new SimpleTime()
+      endTime2.hour = 21
+      endTime2.minute = 15
+
+      endMap.set('FRIDAY-ED', endTime2)
+
+      req.body = {
+        startTimes: startMap,
+        endTimes: endMap,
+      }
+
+      await handler.POST(req, res)
+
+      expect(res.addValidationError).toHaveBeenCalledWith(
+        `startTimes-FRIDAY-ED`,
+        'Start time must be after the earlier session start time',
+      )
+    })
+  })
+
+  it('should pass validation if evening start is before the afternoon start time but days do no match', async () => {
+    const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+    const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+    const startTime = new SimpleTime()
+    startTime.hour = 13
+    startTime.minute = 30
+
+    startMap.set('FRIDAY-PM', startTime)
+
+    const endTime = new SimpleTime()
+    endTime.hour = 15
+    endTime.minute = 30
+
+    endMap.set('FRIDAY-PM', endTime)
+
+    const startTime2 = new SimpleTime()
+    startTime2.hour = 9
+    startTime2.minute = 30
+
+    startMap.set('SATURDAY-ED', startTime2)
+
+    const endTime2 = new SimpleTime()
+    endTime2.hour = 21
+    endTime2.minute = 15
+
+    endMap.set('SATURDAY-ED', endTime2)
+
+    req.body = {
+      startTimes: startMap,
+      endTimes: endMap,
+    }
+
+    await handler.POST(req, res)
+
+    expect(res.addValidationError).toBeCalledTimes(0)
   })
 })

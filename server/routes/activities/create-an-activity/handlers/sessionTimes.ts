@@ -19,18 +19,18 @@ type SessionSlot = {
   isFirst: boolean
 }
 export class SessionTimes {
-  // validate start before end & sessions (do not overlap???)
+  // validate sessions (do not overlap???)
   @Transform(({ value }) =>
     Object.keys(value).reduce((acc, k) => acc.set(k, plainToInstance(SimpleTime, value[k])), new Map()),
   )
   @ValidateNested()
-  startTime: Map<string, SimpleTime>
+  startTimes: Map<string, SimpleTime>
 
   @Transform(({ value }) =>
     Object.keys(value).reduce((acc, k) => acc.set(k, plainToInstance(SimpleTime, value[k])), new Map()),
   )
   @ValidateNested()
-  endTime: Map<string, SimpleTime>
+  endTimes: Map<string, SimpleTime>
 }
 
 function createSessionSlots(applicableRegimeTimesForActivity: DaysAndSlotsInRegime[]): SessionSlot[] {
@@ -68,6 +68,35 @@ function createSessionSlots(applicableRegimeTimesForActivity: DaysAndSlotsInRegi
   return sessionSlots
 }
 
+function startDateBeforeEarlierSession(customSlot: Slot, allSlots: Slot[]): boolean {
+  if (customSlot.timeSlot === TimeSlot.AM) {
+    return false
+  }
+  const amSlotStartTime: string = allSlots.find(
+    slot => slot.timeSlot === TimeSlot.AM && slot.daysOfWeek[0] === customSlot.daysOfWeek[0],
+  )?.customStartTime
+
+  const pmSlotStartTime: string = allSlots.find(
+    slot => slot.timeSlot === TimeSlot.PM && slot.daysOfWeek[0] === customSlot.daysOfWeek[0],
+  )?.customStartTime
+
+  if (
+    (amSlotStartTime !== undefined &&
+      customSlot.timeSlot === TimeSlot.PM &&
+      customSlot.customStartTime.localeCompare(amSlotStartTime) <= 0) ||
+    (amSlotStartTime !== undefined &&
+      customSlot.timeSlot === TimeSlot.ED &&
+      customSlot.customStartTime.localeCompare(amSlotStartTime) <= 0) ||
+    (pmSlotStartTime !== undefined &&
+      customSlot.timeSlot === TimeSlot.ED &&
+      customSlot.customStartTime.localeCompare(pmSlotStartTime) <= 0)
+  ) {
+    return true
+  }
+
+  return false
+}
+
 export default class SessionTimesRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
@@ -92,9 +121,9 @@ export default class SessionTimesRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { startTime, endTime }: SessionTimes = req.body
+    const { startTimes, endTimes }: SessionTimes = req.body
 
-    const customSlots: Slot[] = createCustomSlots(startTime, endTime)
+    const customSlots: Slot[] = createCustomSlots(startTimes, endTimes)
 
     // validate slots
     const slotsWithStartAfterEnd: Slot[] = customSlots.filter(
@@ -103,8 +132,21 @@ export default class SessionTimesRoutes {
     if (slotsWithStartAfterEnd.length > 0) {
       slotsWithStartAfterEnd.forEach(customSlot => {
         res.addValidationError(
-          `endTime-${customSlot.daysOfWeek}-${customSlot.timeSlot}`,
+          `endTimes-${customSlot.daysOfWeek}-${customSlot.timeSlot}`,
           'Select an end time after the start time',
+        )
+      })
+      return res.validationFailed()
+    }
+
+    const slotsWithStartBeforeEarlierSession: Slot[] = customSlots.filter((customSlot: Slot) =>
+      startDateBeforeEarlierSession(customSlot, customSlots),
+    )
+    if (slotsWithStartBeforeEarlierSession.length > 0) {
+      slotsWithStartBeforeEarlierSession.forEach(customSlot => {
+        res.addValidationError(
+          `startTimes-${customSlot.daysOfWeek}-${customSlot.timeSlot}`,
+          'Start time must be after the earlier session start time',
         )
       })
       return res.validationFailed()
