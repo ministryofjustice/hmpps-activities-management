@@ -270,8 +270,8 @@
             }), dateAndScheduleRows) %}
 
             {% if not customSlots %}
-                {% set href = if not customStartEndTimesEnabled "/activities/edit/" + activity.id + "/days-and-times/" + week + "?preserveHistory=true" else "/activities/edit/" + activity.id + "/custom-times-change-option?preserveHistory=true" %}
                 {% for week, slots in dailySlots %}
+                {% set href = "/activities/edit/" + activity.id + "/days-and-times/" + week + "?preserveHistory=true" if not customStartEndTimesEnabled else "/activities/edit/" + activity.id + "/custom-times-change-option?preserveHistory=true" %}
                     {% set dateAndScheduleRows = (dateAndScheduleRows.push(
                         {
                             key: {
@@ -281,7 +281,7 @@
                             actions: {
                                 items: [
                                     {
-                                        href,
+                                        href: href,
                                         text: "Change",
                                         visuallyHiddenText: " days and times",
                                         classes: "govuk-link--no-visited-state"
