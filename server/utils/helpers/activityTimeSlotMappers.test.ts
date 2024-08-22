@@ -1,4 +1,4 @@
-import { CreateAnActivityJourney } from '../../routes/activities/create-an-activity/journey'
+import { CreateAnActivityJourney, Slots } from '../../routes/activities/create-an-activity/journey'
 import activitySessionToDailyTimeSlots, {
   activitySlotsMinusExclusions,
   calculateUniqueSlots,
@@ -7,8 +7,9 @@ import activitySessionToDailyTimeSlots, {
   mapActivityScheduleSlotsToSlots,
   mapSlotsToCompleteWeeklyTimeSlots,
   mapSlotsToWeeklyTimeSlots,
+  regimeSlotsToSchedule,
 } from './activityTimeSlotMappers'
-import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
+import { ActivityScheduleSlot, PrisonRegime, Slot } from '../../@types/activitiesAPI/types'
 import TimeSlot from '../../enum/timeSlot'
 import SimpleTime from '../../commonValidationTypes/simpleTime'
 
@@ -548,5 +549,163 @@ describe('Create custom slots from session time', () => {
     ]
 
     expect(expected).toEqual(customSlots)
+  })
+
+  describe('Create scheduled slots from selected regime times', () => {
+    const regimeTimes = [
+      {
+        id: 1,
+        dayOfWeek: 'MONDAY',
+        prisonCode: 'RSI',
+        amStart: '09:00',
+        amFinish: '10:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'TUESDAY',
+        prisonCode: 'RSI',
+        amStart: '09:00',
+        amFinish: '10:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'WEDNESDAY',
+        prisonCode: 'RSI',
+        amStart: '09:00',
+        amFinish: '10:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'THURSDAY',
+        prisonCode: 'RSI',
+        amStart: '09:00',
+        amFinish: '10:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'FRIDAY',
+        prisonCode: 'RSI',
+        amStart: '10:00',
+        amFinish: '11:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'SATURDAY',
+        prisonCode: 'RSI',
+        amStart: '10:00',
+        amFinish: '11:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'SUNDAY',
+        prisonCode: 'RSI',
+        amStart: '10:00',
+        amFinish: '11:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+    ] as PrisonRegime[]
+
+    it('should map slots correctly', () => {
+      const scheduledSlots = {
+        1: {
+          days: ['monday', 'friday'],
+          timeSlotsMonday: ['AM', 'PM'],
+          timeSlotsTuesday: [],
+          timeSlotsWednesday: ['ED'],
+          timeSlotsThursday: [],
+          timeSlotsFriday: ['AM'],
+          timeSlotsSaturday: [],
+          timeSlotsSunday: [],
+        },
+      } as { [weekNumber: string]: Slots }
+
+      const schedule = regimeSlotsToSchedule(1, scheduledSlots, regimeTimes)
+
+      expect(schedule).toEqual({
+        1: [
+          {
+            day: 'Monday',
+            slots: [
+              { timeSlot: 'AM', startTime: '09:00', endTime: '10:00' },
+              { timeSlot: 'PM', startTime: '12:00', endTime: '13:00' },
+            ],
+          },
+          { day: 'Tuesday', slots: [] },
+          {
+            day: 'Wednesday',
+            slots: [{ timeSlot: 'ED', startTime: '17:00', endTime: '18:00' }],
+          },
+          { day: 'Thursday', slots: [] },
+          {
+            day: 'Friday',
+            slots: [{ timeSlot: 'AM', startTime: '10:00', endTime: '11:00' }],
+          },
+          { day: 'Saturday', slots: [] },
+          { day: 'Sunday', slots: [] },
+        ],
+      })
+    })
+
+    it('should ignore any unknown slots', () => {
+      const scheduledSlots = {
+        1: {
+          days: ['monday', 'friday'],
+          timeSlotsMonday: ['AM', 'XX'],
+          timeSlotsTuesday: [],
+          timeSlotsWednesday: ['ED'],
+          timeSlotsThursday: [''],
+          timeSlotsFriday: [],
+          timeSlotsSaturday: [],
+          timeSlotsSunday: [],
+        },
+      } as { [weekNumber: string]: Slots }
+
+      const schedule = regimeSlotsToSchedule(1, scheduledSlots, regimeTimes)
+
+      expect(schedule).toEqual({
+        1: [
+          {
+            day: 'Monday',
+            slots: [{ timeSlot: 'AM', startTime: '09:00', endTime: '10:00' }],
+          },
+          { day: 'Tuesday', slots: [] },
+          {
+            day: 'Wednesday',
+            slots: [{ timeSlot: 'ED', startTime: '17:00', endTime: '18:00' }],
+          },
+          { day: 'Thursday', slots: [] },
+          { day: 'Friday', slots: [] },
+          { day: 'Saturday', slots: [] },
+          { day: 'Sunday', slots: [] },
+        ],
+      })
+    })
   })
 })

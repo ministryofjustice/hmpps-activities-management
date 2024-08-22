@@ -3,9 +3,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityCreateRequest, Slot } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import { mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
-import activitySessionToDailyTimeSlots, {
-  slotsToCustomTimeSlots,
-} from '../../../../utils/helpers/activityTimeSlotMappers'
+import { customSlotsToSchedule, regimeSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
 import { organiserDescriptions } from '../../../../enum/eventOrganisers'
@@ -31,13 +29,20 @@ export default class CheckAnswersRoutes {
       createJourney.allocations,
       user,
     )
-    const customSlots =
-      createJourney.customSlots !== undefined ? slotsToCustomTimeSlots(1, createJourney.customSlots) : undefined
+
+    const getSlots = async () => {
+      if (createJourney.customSlots === undefined) {
+        const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+        return regimeSlotsToSchedule(1, createJourney.slots, regimeTimes)
+      }
+      return customSlotsToSchedule(1, createJourney.customSlots)
+    }
+
+    const slots = await getSlots()
 
     res.render(`pages/activities/create-an-activity/check-answers`, {
       incentiveLevelPays,
-      dailySlots: activitySessionToDailyTimeSlots(createJourney.scheduleWeeks, createJourney.slots),
-      customSlots,
+      slots,
       tier: eventTierDescriptions[createJourney.tierCode],
       organiser: organiserDescriptions[createJourney.organiserCode],
     })
