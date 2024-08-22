@@ -26,7 +26,7 @@ export default class HearingDetailsRoutes {
     const { user } = res.locals
     const { type } = req.session.bookAVideoLinkJourney
 
-    const agencies = await this.bookAVideoLinkService.getAllEnabledCourts(user)
+    const agencies = await this.bookAVideoLinkService.getAllCourts(user)
     const hearingTypes =
       type === 'COURT'
         ? await this.bookAVideoLinkService.getCourtHearingTypes(user)

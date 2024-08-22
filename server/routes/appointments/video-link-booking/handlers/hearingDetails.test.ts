@@ -34,7 +34,7 @@ describe('HearingDetailsRoutes', () => {
     it('renders hearing details view with agencies and hearing types', async () => {
       const agencies = [{ code: 'COURT1', description: 'Court 1' }] as Court[]
       const hearingTypes = [{ code: 'TYPE1', description: 'Type 1' }] as ReferenceCode[]
-      bookAVideoLinkService.getAllEnabledCourts.mockResolvedValue(agencies)
+      bookAVideoLinkService.getAllCourts.mockResolvedValue(agencies)
       bookAVideoLinkService.getCourtHearingTypes.mockResolvedValue(hearingTypes)
 
       await hearingDetailsRoutes.GET(req as Request, res as Response)
@@ -51,7 +51,7 @@ describe('HearingDetailsRoutes', () => {
 
       const agencies = [{ code: 'COURT1', description: 'Court 1' }] as Court[]
       const hearingTypes = [{ code: 'TYPE1', description: 'Type 1' }] as ReferenceCode[]
-      bookAVideoLinkService.getAllEnabledCourts.mockResolvedValue(agencies)
+      bookAVideoLinkService.getAllCourts.mockResolvedValue(agencies)
       bookAVideoLinkService.getProbationMeetingTypes.mockResolvedValue(hearingTypes)
 
       await hearingDetailsRoutes.GET(req as Request, res as Response)
