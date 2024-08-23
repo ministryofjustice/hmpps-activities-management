@@ -49,7 +49,6 @@ export default class CustomTimesChangeDefaultOrCustomRoutes {
       return res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
     }
 
-    // if the user wants to select the start and end times to change, go to sessionTimes page? Need to introduce edit mode to that page maybe?
     return res.redirect('session-times')
   }
 }
