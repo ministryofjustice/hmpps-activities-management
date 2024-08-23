@@ -1,8 +1,9 @@
 import { uniq } from 'lodash'
 import TimeSlot from '../../enum/timeSlot'
 import { Slots } from '../../routes/activities/create-an-activity/journey'
-import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
+import { ActivityScheduleSlot, PrisonRegime, Slot } from '../../@types/activitiesAPI/types'
 import SimpleTime from '../../commonValidationTypes/simpleTime'
+import logger from '../../../logger'
 
 export interface WeeklyTimeSlots {
   [weekNumber: string]: {
@@ -84,7 +85,7 @@ function getCustomSlotsForDay(day: string, slots: ActivityScheduleSlot[]): Custo
   return customTimeSlots
 }
 
-export function slotsToCustomTimeSlots(scheduleWeek: number, slots: Slot[]): WeeklyCustomTimeSlots {
+export function customSlotsToSchedule(scheduleWeek: number, slots: Slot[]): WeeklyCustomTimeSlots {
   const customSlots: WeeklyCustomTimeSlots = {}
 
   customSlots[scheduleWeek] = daysOfWeek.map(day => ({
@@ -93,6 +94,62 @@ export function slotsToCustomTimeSlots(scheduleWeek: number, slots: Slot[]): Wee
   }))
 
   return customSlots
+}
+
+export function regimeSlotsToSchedule(
+  scheduleWeeks: number,
+  selectedSlots: { [weekNumber: string]: Slots },
+  regimeTimes: PrisonRegime[],
+): WeeklyCustomTimeSlots {
+  const scheduledSlots: WeeklyCustomTimeSlots = {}
+
+  for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
+    const slots = selectedSlots[weekNumber] ?? {}
+
+    scheduledSlots[weekNumber] = daysOfWeek.map(day => {
+      const regimeSlotsForTheDay = regimeTimes.find(t => t.dayOfWeek === day.toUpperCase())
+      const selectedSlotsForTheDay = (slots[`timeSlots${day}`] || []) as string[]
+      const scheduledSlotsForTheDay: CustomTimeSlot[] = selectedSlotsForTheDay
+        .map(selectSlot => {
+          const timeSlot = toTimeSlot(selectSlot)
+          switch (timeSlot) {
+            case TimeSlot.AM: {
+              return {
+                timeSlot,
+                startTime: regimeSlotsForTheDay.amStart,
+                endTime: regimeSlotsForTheDay.amFinish,
+              }
+            }
+            case TimeSlot.PM: {
+              return {
+                timeSlot,
+                startTime: regimeSlotsForTheDay.pmStart,
+                endTime: regimeSlotsForTheDay.pmFinish,
+              }
+            }
+            case TimeSlot.ED: {
+              return {
+                timeSlot,
+                startTime: regimeSlotsForTheDay.edStart,
+                endTime: regimeSlotsForTheDay.edFinish,
+              }
+            }
+            default: {
+              logger.warn(`Unknown time slot ${selectSlot}`)
+              return null
+            }
+          }
+        })
+        .filter(Boolean)
+
+      return {
+        day,
+        slots: scheduledSlotsForTheDay,
+      }
+    })
+  }
+
+  return scheduledSlots
 }
 
 function getCustomTimeSlotsForDay(day: string, slots: Slot[]): CustomTimeSlot[] {

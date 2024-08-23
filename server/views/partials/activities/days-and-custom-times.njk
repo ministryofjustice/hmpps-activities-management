@@ -5,7 +5,6 @@
     {% for day in customSlots %}
         {% if showIndividualUnscheduled or day.slots | length %}
             {% set scheduleText %}
-                {% set comma = joiner(', ') %}
                 {% for slot in day.slots -%}
                     <div class='govuk-summary-list__key--normal-key-weight'>
                         {{ slot.timeSlot }}  ({{ slot.startTime }} to {{ slot.endTime }})
