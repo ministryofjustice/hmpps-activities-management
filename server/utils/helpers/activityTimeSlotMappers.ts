@@ -98,13 +98,13 @@ export function customSlotsToSchedule(scheduleWeek: number, slots: Slot[]): Week
 
 export function regimeSlotsToSchedule(
   scheduleWeeks: number,
-  scheduleSlots: { [weekNumber: string]: Slots },
+  selectedSlots: { [weekNumber: string]: Slots },
   regimeTimes: PrisonRegime[],
 ): WeeklyCustomTimeSlots {
   const scheduledSlots: WeeklyCustomTimeSlots = {}
 
   for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
-    const slots = scheduleSlots[weekNumber] ?? {}
+    const slots = selectedSlots[weekNumber] ?? {}
 
     scheduledSlots[weekNumber] = daysOfWeek.map(day => {
       const regimeSlotsForTheDay = regimeTimes.find(t => t.dayOfWeek === day.toUpperCase())

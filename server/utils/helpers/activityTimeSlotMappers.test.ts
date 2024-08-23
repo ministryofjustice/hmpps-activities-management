@@ -632,7 +632,7 @@ describe('Create custom slots from session time', () => {
       },
     ] as PrisonRegime[]
 
-    it('should map slots correctly', () => {
+    it('should map slots correctly for weekly', () => {
       const scheduledSlots = {
         1: {
           days: ['monday', 'friday'],
@@ -666,6 +666,63 @@ describe('Create custom slots from session time', () => {
           {
             day: 'Friday',
             slots: [{ timeSlot: 'AM', startTime: '10:00', endTime: '11:00' }],
+          },
+          { day: 'Saturday', slots: [] },
+          { day: 'Sunday', slots: [] },
+        ],
+      })
+    })
+
+    it('should map slots correctly for bi-weekly', () => {
+      const scheduledSlots = {
+        1: {
+          days: ['monday', 'tuesday'],
+          timeSlotsMonday: ['AM'],
+          timeSlotsTuesday: ['AM'],
+          timeSlotsWednesday: [],
+          timeSlotsThursday: [],
+          timeSlotsFriday: [],
+          timeSlotsSaturday: [],
+          timeSlotsSunday: [],
+        },
+        2: {
+          days: ['wednesday', 'thursday', 'friday'],
+          timeSlotsMonday: [],
+          timeSlotsTuesday: [],
+          timeSlotsWednesday: ['PM'],
+          timeSlotsThursday: ['PM'],
+          timeSlotsFriday: ['PM', 'ED'],
+          timeSlotsSaturday: [],
+          timeSlotsSunday: [],
+        },
+      } as { [weekNumber: string]: Slots }
+
+      const schedule = regimeSlotsToSchedule(2, scheduledSlots, regimeTimes)
+
+      expect(schedule).toEqual({
+        1: [
+          {
+            day: 'Monday',
+            slots: [{ timeSlot: 'AM', startTime: '09:00', endTime: '10:00' }],
+          },
+          { day: 'Tuesday', slots: [{ timeSlot: 'AM', startTime: '09:00', endTime: '10:00' }] },
+          { day: 'Wednesday', slots: [] },
+          { day: 'Thursday', slots: [] },
+          { day: 'Friday', slots: [] },
+          { day: 'Saturday', slots: [] },
+          { day: 'Sunday', slots: [] },
+        ],
+        2: [
+          { day: 'Monday', slots: [] },
+          { day: 'Tuesday', slots: [] },
+          { day: 'Wednesday', slots: [{ timeSlot: 'PM', startTime: '12:00', endTime: '13:00' }] },
+          { day: 'Thursday', slots: [{ timeSlot: 'PM', startTime: '12:00', endTime: '13:00' }] },
+          {
+            day: 'Friday',
+            slots: [
+              { timeSlot: 'PM', startTime: '12:00', endTime: '13:00' },
+              { timeSlot: 'ED', startTime: '17:00', endTime: '18:00' },
+            ],
           },
           { day: 'Saturday', slots: [] },
           { day: 'Sunday', slots: [] },
