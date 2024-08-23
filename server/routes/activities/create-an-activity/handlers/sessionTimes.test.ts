@@ -138,10 +138,6 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/session-times', {
-        regimeTimes: [
-          { amFinish: '11:45', amStart: '08:30', dayOfWeek: 'TUESDAY' },
-          { dayOfWeek: 'FRIDAY', edFinish: '19:15', edStart: '17:30', pmFinish: '16:45', pmStart: '13:45' },
-        ],
         sessionSlots: [
           {
             dayOfWeek: 'TUESDAY',

@@ -7,10 +7,14 @@ import getApplicableDaysAndSlotsInRegime, {
   DaysAndSlotsInRegime,
 } from '../../../../utils/helpers/applicableRegimeTimeUtil'
 import { Slots } from '../journey'
-import { ActivityUpdateRequest, Slot } from '../../../../@types/activitiesAPI/types'
+import { ActivityUpdateRequest, PrisonRegime, Slot } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
-import { createCustomSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
+import {
+  createCustomSlots,
+  transformActivitySlotsToDailySlots,
+} from '../../../../utils/helpers/activityTimeSlotMappers'
+import { ServiceUser } from '../../../../@types/express'
 
 type SessionSlot = {
   dayOfWeek: string
@@ -104,18 +108,15 @@ export default class SessionTimesRoutes {
     const { user } = res.locals
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
 
-    // TODO: the week will have to be passed through from previous pages once we do split regimes, rather than hardcoded as ['1']
-    const slots: Slots = req.session.createJourney.slots['1']
-
-    const applicableRegimeTimesForActivity: DaysAndSlotsInRegime[] = getApplicableDaysAndSlotsInRegime(
+    const sessionSlots = await this.getDaysAndSlots(
       regimeTimes,
-      slots,
+      req.session.createJourney.slots['1'],
+      req.params.mode === 'edit',
+      +req.session.createJourney.activityId,
+      user,
     )
 
-    const sessionSlots: SessionSlot[] = createSessionSlots(applicableRegimeTimesForActivity)
-
     res.render(`pages/activities/create-an-activity/session-times`, {
-      regimeTimes: applicableRegimeTimesForActivity,
       sessionSlots,
     })
   }
@@ -179,5 +180,25 @@ export default class SessionTimesRoutes {
     }
 
     return res.redirect('location')
+  }
+
+  private getDaysAndSlots = async (
+    regimeTimes: PrisonRegime[],
+    slots: Slots,
+    editModeActive: boolean,
+    activityId: number,
+    user: ServiceUser,
+  ): Promise<DaysAndSlotsInRegime[]> => {
+    if (editModeActive) {
+      const activity = await this.activitiesService.getActivity(activityId, user)
+      const activitySchedule = activity.schedules[0]
+      const existingSlots = transformActivitySlotsToDailySlots(activitySchedule.slots)
+      return createSessionSlots(existingSlots)
+    }
+    const applicableRegimeTimesForActivity: DaysAndSlotsInRegime[] = getApplicableDaysAndSlotsInRegime(
+      regimeTimes,
+      slots,
+    )
+    return createSessionSlots(applicableRegimeTimesForActivity)
   }
 }

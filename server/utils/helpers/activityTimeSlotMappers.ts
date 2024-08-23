@@ -3,6 +3,7 @@ import TimeSlot from '../../enum/timeSlot'
 import { Slots } from '../../routes/activities/create-an-activity/journey'
 import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
 import SimpleTime from '../../commonValidationTypes/simpleTime'
+import { DaysAndSlotsInRegime } from './applicableRegimeTimeUtil'
 
 export interface WeeklyTimeSlots {
   [weekNumber: string]: {
@@ -266,4 +267,29 @@ export function createSlot(daySlot: string, startTime: SimpleTime, endTime: Simp
     weekNumber: 1,
   }
   return slot
+}
+
+export function transformActivitySlotsToDailySlots(activitySlots: ActivityScheduleSlot[]): DaysAndSlotsInRegime[] {
+  const transformedSlots: { [key: string]: DaysAndSlotsInRegime } = {}
+
+  activitySlots.forEach((slot: { daysOfWeek: string[]; timeSlot: string; startTime: string; endTime: string }) => {
+    const dayOfWeek = getFullDayFromAbbreviation(slot.daysOfWeek[0])
+    if (!transformedSlots[dayOfWeek]) {
+      transformedSlots[dayOfWeek] = {
+        dayOfWeek,
+      }
+    }
+    if (slot.timeSlot === 'AM') {
+      transformedSlots[dayOfWeek].amStart = slot.startTime
+      transformedSlots[dayOfWeek].amFinish = slot.endTime
+    } else if (slot.timeSlot === 'PM') {
+      transformedSlots[dayOfWeek].pmStart = slot.startTime
+      transformedSlots[dayOfWeek].pmFinish = slot.endTime
+    } else if (slot.timeSlot === 'ED') {
+      transformedSlots[dayOfWeek].edStart = slot.startTime
+      transformedSlots[dayOfWeek].edFinish = slot.endTime
+    }
+  })
+
+  return Object.values(transformedSlots)
 }

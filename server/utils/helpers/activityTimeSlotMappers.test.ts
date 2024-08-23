@@ -7,6 +7,7 @@ import activitySessionToDailyTimeSlots, {
   mapActivityScheduleSlotsToSlots,
   mapSlotsToCompleteWeeklyTimeSlots,
   mapSlotsToWeeklyTimeSlots,
+  transformActivitySlotsToDailySlots,
 } from './activityTimeSlotMappers'
 import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
 import TimeSlot from '../../enum/timeSlot'
@@ -548,5 +549,180 @@ describe('Create custom slots from session time', () => {
     ]
 
     expect(expected).toEqual(customSlots)
+  })
+})
+
+describe('transformActivitySlotsToDailySlots', () => {
+  it('should transform slots from the activity (from api) to the desired format - only am present', () => {
+    const activitySlots = [
+      {
+        id: 1,
+        timeSlot: TimeSlot.AM,
+        weekNumber: 1,
+        startTime: '05:00',
+        endTime: '07:00',
+        daysOfWeek: ['Mon'],
+        mondayFlag: true,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+    ]
+    const result = transformActivitySlotsToDailySlots(activitySlots)
+    const expectedResult = [{ dayOfWeek: 'MONDAY', amStart: '05:00', amFinish: '07:00' }]
+    expect(result).toEqual(expectedResult)
+  })
+  it('should transform slots from the activity (from api) to the desired format - am and pm present on same day', () => {
+    const activitySlots = [
+      {
+        id: 1,
+        timeSlot: TimeSlot.AM,
+        weekNumber: 1,
+        startTime: '05:00',
+        endTime: '07:00',
+        daysOfWeek: ['Mon'],
+        mondayFlag: true,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 2,
+        timeSlot: TimeSlot.PM,
+        weekNumber: 1,
+        startTime: '15:30',
+        endTime: '17:00',
+        daysOfWeek: ['Mon'],
+        mondayFlag: true,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+    ]
+    const result = transformActivitySlotsToDailySlots(activitySlots)
+    const expectedResult = [
+      { dayOfWeek: 'MONDAY', amStart: '05:00', amFinish: '07:00', pmStart: '15:30', pmFinish: '17:00' },
+    ]
+    expect(result).toEqual(expectedResult)
+  })
+  it('should transform slots from the activity (from api) to the desired format - am and pm present on different days', () => {
+    const activitySlots = [
+      {
+        id: 1,
+        timeSlot: TimeSlot.AM,
+        weekNumber: 1,
+        startTime: '05:00',
+        endTime: '07:00',
+        daysOfWeek: ['Mon'],
+        mondayFlag: true,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 2,
+        timeSlot: TimeSlot.PM,
+        weekNumber: 1,
+        startTime: '15:30',
+        endTime: '17:00',
+        daysOfWeek: ['Tue'],
+        mondayFlag: false,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+    ]
+    const result = transformActivitySlotsToDailySlots(activitySlots)
+    const expectedResult = [
+      { dayOfWeek: 'MONDAY', amStart: '05:00', amFinish: '07:00' },
+      { dayOfWeek: 'TUESDAY', pmStart: '15:30', pmFinish: '17:00' },
+    ]
+    expect(result).toEqual(expectedResult)
+  })
+  it('should transform slots from the activity (from api) to the desired format - all types of slots present', () => {
+    const activitySlots = [
+      {
+        id: 1,
+        timeSlot: TimeSlot.AM,
+        weekNumber: 1,
+        startTime: '05:00',
+        endTime: '07:00',
+        daysOfWeek: ['Mon'],
+        mondayFlag: true,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 2,
+        timeSlot: TimeSlot.PM,
+        weekNumber: 1,
+        startTime: '15:30',
+        endTime: '17:00',
+        daysOfWeek: ['Mon'],
+        mondayFlag: true,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 3,
+        timeSlot: TimeSlot.PM,
+        weekNumber: 1,
+        startTime: '15:30',
+        endTime: '17:00',
+        daysOfWeek: ['Tue'],
+        mondayFlag: false,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 4,
+        timeSlot: TimeSlot.ED,
+        weekNumber: 1,
+        startTime: '17:30',
+        endTime: '20:00',
+        daysOfWeek: ['Wed'],
+        mondayFlag: false,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+    ]
+    const result = transformActivitySlotsToDailySlots(activitySlots)
+    const expectedResult = [
+      { dayOfWeek: 'MONDAY', amStart: '05:00', amFinish: '07:00', pmStart: '15:30', pmFinish: '17:00' },
+      { dayOfWeek: 'TUESDAY', pmStart: '15:30', pmFinish: '17:00' },
+      { dayOfWeek: 'WEDNESDAY', edStart: '17:30', edFinish: '20:00' },
+    ]
+    expect(result).toEqual(expectedResult)
   })
 })

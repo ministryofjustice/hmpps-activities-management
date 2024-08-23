@@ -20,6 +20,7 @@ import {
   firstNameLastName,
   formatDate,
   fullName,
+  getSplitTime,
   initialiseName,
   isTodayOrBefore,
   padNumber,
@@ -145,14 +146,8 @@ export function registerNunjucks(app?: express.Express): Environment {
     const name = njkEnv.getFilter('prisonerName')(str, false)
     return name.val || null
   })
-  njkEnv.addFilter('getSplitTime', time => {
-    const splitTime = time.split(':')
-    return {
-      hour: splitTime[0][0] === '0' ? splitTime[0][1] : splitTime[0],
-      minute: splitTime[1],
-    }
-  })
 
+  njkEnv.addFilter('getSplitTime', getSplitTime)
   njkEnv.addFilter('setSelected', setSelected)
   njkEnv.addFilter('addDefaultSelectedValue', addDefaultSelectedValue)
   njkEnv.addFilter('toTimeItems', toTimeItems)
