@@ -19,7 +19,7 @@
                     name: "removeEndDate",
                     fieldset: {
                         legend: {
-                            text: "Do you want to change or remove this activity's end date?",
+                            text: "Select if you want to change or remove this activity's end date",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }
@@ -27,11 +27,11 @@
                     items: [
                         {
                             value: "change",
-                            text: "Change the date"
+                            text: "Change the end date to a different date"
                         },
                         {
                             value: "remove",
-                            text: "Remove it"
+                            text: "Remove the end date"
                         }
                     ],
                     errorMessage: validationErrors | findError('removeEndDate')

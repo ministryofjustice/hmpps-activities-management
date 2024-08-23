@@ -146,10 +146,10 @@ export function registerNunjucks(app?: express.Express): Environment {
     return name.val || null
   })
   njkEnv.addFilter('getSplitTime', time => {
-    const split = time.split(':')
+    const splitTime = time.split(':')
     return {
-      hour: split[0],
-      minute: split[1],
+      hour: splitTime[0][0] === '0' ? splitTime[0][1] : splitTime[0],
+      minute: splitTime[1],
     }
   })
 

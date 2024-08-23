@@ -249,8 +249,7 @@ export function createCustomSlots(startTimes: Map<string, SimpleTime>, endTimes:
 }
 
 export function createSlot(daySlot: string, startTime: SimpleTime, endTime: SimpleTime): Slot {
-  const day: DayOfWeek = daySlot.substring(0, daySlot.indexOf('-')) as DayOfWeek
-  const timeSlot: TimeSlot = daySlot.substring(daySlot.indexOf('-') + 1) as TimeSlot
+  const [day, timeSlot] = daySlot.split('-') as [DayOfWeek, TimeSlot]
 
   const slot: Slot = {
     customStartTime: startTime.toIsoString(),

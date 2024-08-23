@@ -18,39 +18,36 @@
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-            {{ validationErrors | dump }}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                         {% set rows = [] %} 
                         {% for customSlot in sessionSlots %}     
                             {% set formattedStart = customSlot.start | getSplitTime %}
                             {% set formattedFinish = customSlot.finish | getSplitTime %}
-                            {# <h1>{{customSlot.start}}</h1>
-                            <h1>{{customSlot.finish}}</h1> #}
                             {% set rows = (rows.push([
                                 {
-                                    html: customSlot.dayOfWeek | title if customSlot.isFirst
+                                    html: customSlot.dayOfWeek | title
                                 },
                                 {
                                     html: customSlot.timeSlot
                                 },
                                 {
                                     html: timePicker({
-                                        id: 'startTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
-                                        name: 'startTime[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
-                                        renderedErrorMessage: validationErrors | findError('startTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                                        id: 'startTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
+                                        name: 'startTimes[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('startTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.startTime or formattedStart
-                                    })
+                                        formResponses: formResponses.startTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedStart
+                                })
                                 },
                                 {
                                     html: timePicker({
-                                        id: 'endTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
-                                        name: 'endTime[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
-                                        renderedErrorMessage: validationErrors | findError('endTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                                        id: 'endTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
+                                        name: 'endTimes[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('endTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.endTime or formattedFinish
-                                    })
+                                        formResponses: formResponses.endTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedFinish
+                                        })
                                 }]), rows) %}
                         {% endfor %}
                     
@@ -63,10 +60,10 @@
                                 text: "Session"
                                 },
                                 {
-                                text: "Start Time"
+                                text: "Start time"
                                 },
                                 {
-                                text: "End Time"
+                                text: "End time"
                                 }
                             ],
                         rows: rows                      

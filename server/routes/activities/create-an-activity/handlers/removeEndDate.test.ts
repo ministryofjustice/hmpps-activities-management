@@ -153,7 +153,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'removeEndDate', error: "Select if you want to change this activity's end date or remove it" },
+        { property: 'removeEndDate', error: "Select if you want to change or remove this activity's end date" },
       ])
     })
   })

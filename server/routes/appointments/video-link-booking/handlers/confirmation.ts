@@ -10,7 +10,10 @@ export default class ConfirmationRoutes {
     req.session.bookAVideoLinkJourney = null
 
     const vlb = await this.bookAVideoLinkService.getVideoLinkBookingById(+vlbId, user)
+    const court = await this.bookAVideoLinkService
+      .getAllCourts(user)
+      .then(courts => courts.find(c => c.code === vlb.courtCode))
 
-    return res.render('pages/appointments/video-link-booking/confirmation', { vlb })
+    return res.render('pages/appointments/video-link-booking/confirmation', { vlb, court })
   }
 }

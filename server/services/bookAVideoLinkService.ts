@@ -45,8 +45,8 @@ export default class BookAVideoLinkService {
     return bookingStatus !== 'CANCELLED' && exactTimeOfBooking > now
   }
 
-  public async getAllEnabledCourts(user: ServiceUser) {
-    return this.bookAVideoLinkApiClient.getAllEnabledCourts(user)
+  public async getAllCourts(user: ServiceUser) {
+    return this.bookAVideoLinkApiClient.getAllCourts(user)
   }
 
   public getCourtHearingTypes(user: ServiceUser) {

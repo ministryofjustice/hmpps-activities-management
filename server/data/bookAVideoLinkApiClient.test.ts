@@ -94,7 +94,7 @@ describe('bookAVideoLinkApiClient', () => {
         .matchHeader('authorization', `Bearer accessToken`)
         .reply(200, response)
 
-      const output = await bookAVideoLinkApiClient.getAllEnabledCourts(user)
+      const output = await bookAVideoLinkApiClient.getAllCourts(user)
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
