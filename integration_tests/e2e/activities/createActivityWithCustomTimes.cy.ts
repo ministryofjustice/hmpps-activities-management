@@ -4,11 +4,17 @@ import Page from '../../pages/page'
 import CategoryPage from '../../pages/createActivity/category'
 import ActivityNamePage from '../../pages/createActivity/name'
 import RiskLevelPage from '../../pages/createActivity/riskLevel'
+import PayRateTypePage from '../../pages/createActivity/payRateType'
+import PayPage from '../../pages/createActivity/pay'
+import CheckPayPage from '../../pages/createActivity/checkPay'
 import QualificationPage from '../../pages/createActivity/qualification'
+import EducationLevelPage from '../../pages/createActivity/educationLevel'
+import CheckEducationLevelsPage from '../../pages/createActivity/checkEducationLevels'
 import getCategories from '../../fixtures/activitiesApi/getCategories.json'
 import getActivities from '../../fixtures/activitiesApi/getActivities.json'
 import moorlandPayBands from '../../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 import moorlandIncentiveLevels from '../../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
+import educationLevels from '../../fixtures/prisonApi/educationLevels.json'
 import studyAreas from '../../fixtures/prisonApi/studyAreas.json'
 import CheckAnswersPage from '../../pages/createActivity/checkAnswers'
 import ConfirmationPage from '../../pages/createActivity/confirmation'
@@ -26,11 +32,12 @@ import CapacityPage from '../../pages/createSchedule/capacity'
 import ManageActivitiesDashboardPage from '../../pages/activities/manageActivitiesDashboard'
 import ActivitiesIndexPage from '../../pages/activities'
 import ActivityTierPage from '../../pages/createActivity/tier'
+import ActivityOrganiserPage from '../../pages/createActivity/organiser'
 import PayOptionPage from '../../pages/createActivity/pay-option'
-import AttendanceRequired from '../../pages/createActivity/recordAttendance'
 import SessionTimesOptionPage from '../../pages/createSchedule/sessionTimesOption'
+import SessionTimesPage from '../../pages/createSchedule/sessionTimes'
 
-context('Create activity', () => {
+context('Create activity with custom times', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -40,13 +47,14 @@ context('Create activity', () => {
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
+    cy.stubEndpoint('GET', '/api/reference-domains/domains/EDU_LEVEL/codes', educationLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/STUDY_AREA/codes', studyAreas)
     cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
     cy.stubEndpoint('GET', '/api/agencies/MDI/pay-profile', getPayProfile)
     cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
   })
 
-  const whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen = () => {
+  it('should click through create activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -66,18 +74,60 @@ context('Create activity', () => {
     activityNamePage.continue()
 
     const activityTierPage = Page.verifyOnPage(ActivityTierPage)
-    activityTierPage.selectActivityTier('Routine activities also called "Foundation"')
+    activityTierPage.selectActivityTier('Tier 2')
     activityTierPage.continue()
+
+    const activitOrganiserPage = Page.verifyOnPage(ActivityOrganiserPage)
+    activitOrganiserPage.selectOrganiser('Prison staff')
+    activitOrganiserPage.continue()
 
     const riskLevelPage = Page.verifyOnPage(RiskLevelPage)
     riskLevelPage.selectRiskLevel('Only people with a low workplace risk assessment are suitable')
     riskLevelPage.continue()
-  }
 
-  const whenWeProceedToTheCheckAnswersScreen = () => {
+    const payOptionPage = Page.verifyOnPage(PayOptionPage)
+    payOptionPage.selectPayOption('Yes')
+    payOptionPage.continue()
+
+    const payRateTypePage = Page.verifyOnPage(PayRateTypePage)
+    payRateTypePage.incentiveLevel('Standard')
+    payRateTypePage.continue()
+
+    const payPage = Page.verifyOnPage(PayPage)
+    payPage.enterPayAmount('1.00')
+    payPage.selectPayBand('Low')
+    payPage.futurePayRateDetails().should('exist')
+    payPage.reviewAndAddMoreRates()
+
+    const checkPayPage = Page.verifyOnPage(CheckPayPage)
+    checkPayPage.payRows().should('have.length', 1)
+    checkPayPage.addAnother()
+
+    const payRateTypePage2 = Page.verifyOnPage(PayRateTypePage)
+    payRateTypePage2.incentiveLevel('Enhanced')
+    payRateTypePage2.continue()
+
+    const payPage2 = Page.verifyOnPage(PayPage)
+    payPage2.enterPayAmount('1.50')
+    payPage2.selectPayBand('Medium')
+    payPage2.reviewAndAddMoreRates()
+
+    const checkPayPage2 = Page.verifyOnPage(CheckPayPage)
+    checkPayPage2.payRows().should('have.length', 2)
+    checkPayPage2.continuePayRates()
+
     const qualificationPage = Page.verifyOnPage(QualificationPage)
-    qualificationPage.selectQualification('No')
+    qualificationPage.selectQualification('Yes')
     qualificationPage.continue()
+
+    const educationLevelPage = Page.verifyOnPage(EducationLevelPage)
+    educationLevelPage.selectStudyArea('English Language')
+    educationLevelPage.selectEducationLevel('Reading Measure 17.0')
+    educationLevelPage.continue()
+
+    const checkEducationLevelPage = Page.verifyOnPage(CheckEducationLevelsPage)
+    checkEducationLevelPage.educationLevelRows().should('have.length', 1)
+    checkEducationLevelPage.getButton('Confirm').click()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)
     const startDate = addMonths(new Date(), 1)
@@ -98,11 +148,7 @@ context('Create activity', () => {
     scheduleFrequencyPage.continue()
 
     const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
-    daysAndTimesPage.selectDayTimeCheckboxes([
-      ['Monday', ['AM session']],
-      ['Wednesday', ['AM session', 'PM session']],
-      ['Thursday', ['AM session', 'PM session', 'ED session']],
-    ])
+    daysAndTimesPage.selectDayTimeCheckboxes([['Monday', ['AM session']]])
     daysAndTimesPage.continue()
 
     const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
@@ -110,8 +156,13 @@ context('Create activity', () => {
     bankHolidayPage.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
-    sessionTimesOptionPage.useSessionOption("Use the prison's regime times")
+    sessionTimesOptionPage.useSessionOption('Select the start and end times')
     sessionTimesOptionPage.continue()
+
+    const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
+    sessionTimesPage.selectStartTime(10, 45, 'MONDAY', 'AM')
+    sessionTimesPage.selectEndTime(11, 50, 'MONDAY', 'AM')
+    sessionTimesPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectSearchForLocation()
@@ -121,42 +172,11 @@ context('Create activity', () => {
     const capacityPage = Page.verifyOnPage(CapacityPage)
     capacityPage.enterCapacity('6')
     capacityPage.continue()
-  }
-
-  it('should create a foundation tier activity when we record attendance', () => {
-    whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen()
-
-    const attendanceRequiredPage = Page.verifyOnPage(AttendanceRequired)
-    attendanceRequiredPage.selectRecordAttendance('Yes')
-    attendanceRequiredPage.continue()
-
-    const payOptionPage = Page.verifyOnPage(PayOptionPage)
-    payOptionPage.selectPayOption('No')
-    payOptionPage.continue()
-
-    whenWeProceedToTheCheckAnswersScreen()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
-    checkAnswersPage.assertRecordAttendance('Yes')
-    checkAnswersPage.createActivity()
-
-    Page.verifyOnPage(ConfirmationPage)
-  })
-
-  it('should create a foundation tier activity when we do not record attendance', () => {
-    whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen()
-
-    const attendanceRequiredPage = Page.verifyOnPage(AttendanceRequired)
-    attendanceRequiredPage.selectRecordAttendance('No')
-    attendanceRequiredPage.continue()
-
-    whenWeProceedToTheCheckAnswersScreen()
-
-    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
-    checkAnswersPage.assertRecordAttendance('No')
     checkAnswersPage.createActivity()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
-    confirmationPage.payReviewLink().should('not.exist')
+    confirmationPage.payReviewLink().should('exist')
   })
 })
