@@ -35,8 +35,9 @@ import ActivityTierPage from '../../pages/createActivity/tier'
 import ActivityOrganiserPage from '../../pages/createActivity/organiser'
 import PayOptionPage from '../../pages/createActivity/pay-option'
 import SessionTimesOptionPage from '../../pages/createSchedule/sessionTimesOption'
+import SessionTimesPage from '../../pages/createSchedule/sessionTimes'
 
-context('Create activity', () => {
+context('Create activity with custom times', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -53,8 +54,7 @@ context('Create activity', () => {
     cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
   })
 
-  // TODO Fix me
-  xit('should click through create activity journey', () => {
+  it('should click through create activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -148,11 +148,7 @@ context('Create activity', () => {
     scheduleFrequencyPage.continue()
 
     const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
-    daysAndTimesPage.selectDayTimeCheckboxes([
-      ['Monday', ['AM session']],
-      ['Wednesday', ['AM session', 'PM session']],
-      ['Thursday', ['AM session', 'PM session', 'ED session']],
-    ])
+    daysAndTimesPage.selectDayTimeCheckboxes([['Monday', ['AM session']]])
     daysAndTimesPage.continue()
 
     const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
@@ -160,8 +156,13 @@ context('Create activity', () => {
     bankHolidayPage.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
-    sessionTimesOptionPage.useSessionOption("Use the prison's regime times")
+    sessionTimesOptionPage.useSessionOption('Select the start and end times')
     sessionTimesOptionPage.continue()
+
+    const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
+    sessionTimesPage.selectStartTime(10, 45, 'MONDAY', 'AM')
+    sessionTimesPage.selectEndTime(11, 50, 'MONDAY', 'AM')
+    sessionTimesPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectSearchForLocation()

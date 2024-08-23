@@ -14,6 +14,7 @@ import CheckAnswersPage from '../../pages/createActivity/checkAnswers'
 import ConfirmationPage from '../../pages/createActivity/confirmation'
 import getEventLocations from '../../fixtures/prisonApi/getEventLocations.json'
 import getPayProfile from '../../fixtures/prisonApi/getPayProfile.json'
+import getPrisonRegime from '../../fixtures/activitiesApi/getPrisonRegime.json'
 import StartDatePage from '../../pages/createSchedule/startDate'
 import EndDateOptionPage from '../../pages/createSchedule/endDateOption'
 import EndDatePage from '../../pages/createSchedule/endDate'
@@ -27,6 +28,7 @@ import ActivitiesIndexPage from '../../pages/activities'
 import ActivityTierPage from '../../pages/createActivity/tier'
 import PayOptionPage from '../../pages/createActivity/pay-option'
 import AttendanceRequired from '../../pages/createActivity/recordAttendance'
+import SessionTimesOptionPage from '../../pages/createSchedule/sessionTimesOption'
 
 context('Create activity', () => {
   beforeEach(() => {
@@ -34,6 +36,7 @@ context('Create activity', () => {
     cy.task('stubSignIn')
     cy.signIn()
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
+    cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
@@ -105,6 +108,10 @@ context('Create activity', () => {
     const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
     bankHolidayPage.runOnBankHoliday('Yes')
     bankHolidayPage.continue()
+
+    const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
+    sessionTimesOptionPage.useSessionOption("Use the prison's regime times")
+    sessionTimesOptionPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectSearchForLocation()

@@ -220,6 +220,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('allocateToNextSession', config.allocateToNextSession)
   njkEnv.addGlobal('futurePayRatesFlag', config.futurePayRatesToggleEnabled)
+  njkEnv.addGlobal('customStartEndTimesEnabled', config.customStartEndTimesEnabled)
   njkEnv.addGlobal('bookAVideoLinkToggleEnabled', config.bookAVideoLinkToggleEnabled)
 
   // Date picker
