@@ -145,6 +145,14 @@ export function registerNunjucks(app?: express.Express): Environment {
     const name = njkEnv.getFilter('prisonerName')(str, false)
     return name.val || null
   })
+  njkEnv.addFilter('getSplitTime', time => {
+    const split = time.split(':')
+    return {
+      hour: split[0],
+      minute: split[1],
+    }
+  })
+
   njkEnv.addFilter('setSelected', setSelected)
   njkEnv.addFilter('addDefaultSelectedValue', addDefaultSelectedValue)
   njkEnv.addFilter('toTimeItems', toTimeItems)

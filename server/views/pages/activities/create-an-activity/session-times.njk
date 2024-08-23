@@ -22,7 +22,11 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                         {% set rows = [] %} 
-                        {% for customSlot in sessionSlots %}                  
+                        {% for customSlot in sessionSlots %}     
+                            {% set formattedStart = customSlot.start | getSplitTime %}
+                            {% set formattedFinish = customSlot.finish | getSplitTime %}
+                            {# <h1>{{customSlot.start}}</h1>
+                            <h1>{{customSlot.finish}}</h1> #}
                             {% set rows = (rows.push([
                                 {
                                     html: customSlot.dayOfWeek | title if customSlot.isFirst
@@ -36,7 +40,7 @@
                                         name: 'startTime[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
                                         renderedErrorMessage: validationErrors | findError('startTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.startTime
+                                        formResponses: formResponses.startTime or formattedStart
                                     })
                                 },
                                 {
@@ -45,7 +49,7 @@
                                         name: 'endTime[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
                                         renderedErrorMessage: validationErrors | findError('endTime-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.endTime
+                                        formResponses: formResponses.endTime or formattedFinish
                                     })
                                 }]), rows) %}
                         {% endfor %}
