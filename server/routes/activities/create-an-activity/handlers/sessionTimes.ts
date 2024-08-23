@@ -165,6 +165,6 @@ export default class SessionTimesRoutes {
     }
 
     req.session.createJourney.customSlots = customSlots
-    return res.redirectOrReturn(`location`)
+    return res.redirectOrReturn(`bank-holiday-option`)
   }
 }

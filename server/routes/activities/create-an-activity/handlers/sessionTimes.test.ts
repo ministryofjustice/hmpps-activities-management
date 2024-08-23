@@ -162,7 +162,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
   })
 
   describe('POST', () => {
-    it('when using custom times redirect to the location page', async () => {
+    it('when using custom times redirect to the bank holiday page', async () => {
       const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
       const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
 
@@ -202,7 +202,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
         },
       ])
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
     })
   })
 
