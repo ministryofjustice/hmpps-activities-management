@@ -9,6 +9,7 @@ import activitySessionToDailyTimeSlots, {
   mapSlotsToWeeklyTimeSlots,
   transformActivitySlotsToDailySlots,
   regimeSlotsToSchedule,
+  calculateDayTimeSlotReduction,
 } from './activityTimeSlotMappers'
 import { ActivityScheduleSlot, PrisonRegime, Slot } from '../../@types/activitiesAPI/types'
 import TimeSlot from '../../enum/timeSlot'
@@ -940,5 +941,218 @@ describe('transformActivitySlotsToDailySlots', () => {
       { dayOfWeek: 'WEDNESDAY', edStart: '17:30', edFinish: '20:00' },
     ]
     expect(result).toEqual(expectedResult)
+  })
+})
+
+describe('calculateDayTimeSlotReduction', () => {
+  it('should return true when any array in the newly chosen days/slots are shorter than in the existing days/slots', () => {
+    const existingActivitySlots = [
+      {
+        id: 1713,
+        timeSlot: 'AM',
+        weekNumber: 1,
+        startTime: '08:30',
+        endTime: '11:45',
+        daysOfWeek: ['Mon', 'Tue'],
+        mondayFlag: true,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 1714,
+        timeSlot: 'PM',
+        weekNumber: 1,
+        startTime: '13:45',
+        endTime: '16:45',
+        daysOfWeek: ['Tue'],
+        mondayFlag: false,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+    ] as ActivityScheduleSlot[]
+    const newlyChosenSlots = {
+      '1': {
+        days: ['monday'],
+        timeSlotsMonday: ['AM'],
+        timeSlotsTuesday: [],
+        timeSlotsWednesday: [],
+        timeSlotsThursday: [],
+        timeSlotsFriday: [],
+        timeSlotsSaturday: [],
+        timeSlotsSunday: [],
+      },
+    } as CreateAnActivityJourney['slots']
+    const result = calculateDayTimeSlotReduction(existingActivitySlots, newlyChosenSlots)
+    expect(result).toEqual({
+      timeSlotReduction: true,
+      timeSlots: [
+        {
+          customEndTime: '11:45',
+          customStartTime: '08:30',
+          daysOfWeek: ['MONDAY', 'TUESDAY'],
+          friday: false,
+          monday: true,
+          saturday: false,
+          sunday: false,
+          thursday: false,
+          timeSlot: 'AM',
+          tuesday: true,
+          wednesday: false,
+          weekNumber: 1,
+        },
+      ],
+    })
+  })
+  it('should return false when no changes have been made to the number of days or slots', () => {
+    const existingActivitySlots = [
+      {
+        id: 1713,
+        timeSlot: 'AM',
+        weekNumber: 1,
+        startTime: '08:30',
+        endTime: '11:45',
+        daysOfWeek: ['Mon', 'Tue'],
+        mondayFlag: true,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 1714,
+        timeSlot: 'PM',
+        weekNumber: 1,
+        startTime: '13:45',
+        endTime: '16:45',
+        daysOfWeek: ['Tue'],
+        mondayFlag: false,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+    ] as ActivityScheduleSlot[]
+    const newlyChosenSlots = {
+      '1': {
+        days: ['monday', 'tuesday'],
+        timeSlotsMonday: ['AM'],
+        timeSlotsTuesday: ['AM', 'PM'],
+        timeSlotsWednesday: [],
+        timeSlotsThursday: [],
+        timeSlotsFriday: [],
+        timeSlotsSaturday: [],
+        timeSlotsSunday: [],
+      },
+    } as CreateAnActivityJourney['slots']
+    const result = calculateDayTimeSlotReduction(existingActivitySlots, newlyChosenSlots)
+    expect(result).toEqual({ timeSlotReduction: false, timeSlots: null })
+  })
+  it('should return false when there have been slots added compared to the existing activity schedule', () => {
+    const existingActivitySlots = [
+      {
+        id: 1713,
+        timeSlot: 'AM',
+        weekNumber: 1,
+        startTime: '08:30',
+        endTime: '11:45',
+        daysOfWeek: ['Mon', 'Tue'],
+        mondayFlag: true,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 1714,
+        timeSlot: 'PM',
+        weekNumber: 1,
+        startTime: '13:45',
+        endTime: '16:45',
+        daysOfWeek: ['Tue'],
+        mondayFlag: false,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+    ] as ActivityScheduleSlot[]
+    const newlyChosenSlots = {
+      '1': {
+        days: ['monday', 'tuesday'],
+        timeSlotsMonday: ['AM'],
+        timeSlotsTuesday: ['AM', 'PM'],
+        timeSlotsWednesday: ['AM'],
+        timeSlotsThursday: [],
+        timeSlotsFriday: [],
+        timeSlotsSaturday: [],
+        timeSlotsSunday: [],
+      },
+    } as CreateAnActivityJourney['slots']
+    const result = calculateDayTimeSlotReduction(existingActivitySlots, newlyChosenSlots)
+    expect(result).toEqual({ timeSlotReduction: false, timeSlots: null })
+  })
+  it('should return true when all new slots are empty', () => {
+    const existingActivitySlots = [
+      {
+        id: 1713,
+        timeSlot: 'AM',
+        weekNumber: 1,
+        startTime: '08:30',
+        endTime: '11:45',
+        daysOfWeek: ['Mon', 'Tue'],
+        mondayFlag: true,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 1714,
+        timeSlot: 'PM',
+        weekNumber: 1,
+        startTime: '13:45',
+        endTime: '16:45',
+        daysOfWeek: ['Tue'],
+        mondayFlag: false,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+    ] as ActivityScheduleSlot[]
+    const newlyChosenSlots = {
+      '1': {
+        days: [],
+        timeSlotsMonday: [],
+        timeSlotsTuesday: [],
+        timeSlotsWednesday: [],
+        timeSlotsThursday: [],
+        timeSlotsFriday: [],
+        timeSlotsSaturday: [],
+        timeSlotsSunday: [],
+      },
+    } as CreateAnActivityJourney['slots']
+    const result = calculateDayTimeSlotReduction(existingActivitySlots, newlyChosenSlots)
+    expect(result).toEqual({ timeSlotReduction: true, timeSlots: [] })
   })
 })
