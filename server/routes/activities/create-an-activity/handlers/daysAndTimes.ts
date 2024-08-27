@@ -142,7 +142,7 @@ export default class DaysAndTimesRoutes {
           return this.editCustomSlots(req, res, dayOrSlotRemoved.timeSlots)
         }
 
-        // if using custom times (and the user has not only removed a day/session), go to the screen where times can be edited
+        // if using custom times (and the user has added (etc.) days/sessions), go to the screen where times can be edited
         if (!usingRegimeTimes) {
           return res.redirect('../session-times')
         }

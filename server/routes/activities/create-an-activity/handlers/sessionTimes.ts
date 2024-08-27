@@ -68,6 +68,46 @@ function createSessionSlots(applicableRegimeTimesForActivity: DaysAndSlotsInRegi
   return sessionSlots
 }
 
+function addNewEmptySlotsIfRequired(sessionSlots: SessionSlot[], newlySelectedSlots: Slots): SessionSlot[] {
+  // Make the day format match
+  const days = newlySelectedSlots.days.map(day => day.toUpperCase())
+
+  days.forEach(day => {
+    const timeSlotsKey = `timeSlots${day.charAt(0).toUpperCase() + day.slice(1).toLowerCase()}`
+    const timeSlots = newlySelectedSlots[timeSlotsKey]
+
+    timeSlots.forEach((slot: string) => {
+      const slotExists = sessionSlots.some(item => item.dayOfWeek === day && item.timeSlot === slot)
+
+      if (!slotExists) {
+        // Add missing slot with undefined start and finish times
+        sessionSlots.push({
+          dayOfWeek: day,
+          timeSlot: slot as TimeSlot,
+          start: undefined,
+          finish: undefined,
+        })
+      }
+    })
+  })
+
+  // We need to make sure that they're in the correct order
+  const timeSlotOrder = {
+    AM: 1,
+    PM: 2,
+    ED: 3,
+  }
+
+  const sortedSessionSlots = sessionSlots.sort((a, b) => {
+    if (a.dayOfWeek < b.dayOfWeek) return -1
+    if (a.dayOfWeek > b.dayOfWeek) return 1
+    // If the day is the same, sort by the time slot order
+    return timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot]
+  })
+
+  return sortedSessionSlots
+}
+
 function startDateBeforeEarlierSession(customSlot: Slot, allSlots: Slot[]): boolean {
   // no need to check if it's AM
   if (customSlot.timeSlot === TimeSlot.AM) {
@@ -107,12 +147,13 @@ export default class SessionTimesRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+    const { activityId, slots } = req.session.createJourney
 
     const sessionSlots = await this.getDaysAndSlots(
       regimeTimes,
-      req.session.createJourney.slots['1'],
+      slots['1'],
       req.params.mode === 'edit',
-      +req.session.createJourney.activityId,
+      +activityId,
       user,
     )
 
@@ -193,7 +234,8 @@ export default class SessionTimesRoutes {
       const activity = await this.activitiesService.getActivity(activityId, user)
       const activitySchedule = activity.schedules[0]
       const existingSlots = transformActivitySlotsToDailySlots(activitySchedule.slots)
-      return createSessionSlots(existingSlots)
+      const sessionSlots = createSessionSlots(existingSlots)
+      return addNewEmptySlotsIfRequired(sessionSlots, slots)
     }
     const applicableRegimeTimesForActivity: DaysAndSlotsInRegime[] = getApplicableDaysAndSlotsInRegime(
       regimeTimes,

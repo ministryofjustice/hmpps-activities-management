@@ -390,8 +390,8 @@ export function calculateDayTimeSlotReduction(
 
   convertedActivitySlots.days = Array.from(new Set(convertedActivitySlots.days))
   const newlyChosenSlots = newSlots['1']
-
-  const timeSlotsReduced = Object.keys(convertedActivitySlots).some(
+  const timeSlotsForEachDay = Object.keys(convertedActivitySlots).filter(key => key !== 'days')
+  const timeSlotsReduced = timeSlotsForEachDay.some(
     key => newlyChosenSlots[key].length < convertedActivitySlots[key].length,
   )
 
