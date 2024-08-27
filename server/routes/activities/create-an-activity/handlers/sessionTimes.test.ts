@@ -3,7 +3,7 @@ import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import atLeast from '../../../../../jest.setup'
-import SessionTimesRoutes, { SessionTimes } from './sessionTimes'
+import SessionTimesRoutes, { addNewEmptySlotsIfRequired, SessionTimes } from './sessionTimes'
 import ActivitiesService from '../../../../services/activitiesService'
 import { Activity, PrisonRegime } from '../../../../@types/activitiesAPI/types'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
@@ -161,6 +161,37 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
           },
         ],
       })
+    })
+  })
+
+  describe('addNewEmptySlotsIfRequired function', () => {
+    it("shouldn't add any empty slots if there are no newly selected ones", () => {
+      const sessionSlots = [
+        { dayOfWeek: 'MONDAY', timeSlot: TimeSlot.AM, start: '10:00', finish: '11:00' },
+        { dayOfWeek: 'MONDAY', timeSlot: TimeSlot.PM, start: '12:00', finish: '13:00' },
+      ]
+      const newlySelectedSlots = {
+        days: ['monday'],
+        timeSlotsMonday: ['AM', 'PM'],
+      }
+      const result = addNewEmptySlotsIfRequired(sessionSlots, newlySelectedSlots)
+      expect(result).toEqual(sessionSlots)
+    })
+    it('should add empty slots if there are new ones present, with undefined times', () => {
+      const sessionSlots = [{ dayOfWeek: 'MONDAY', timeSlot: TimeSlot.AM, start: '10:00', finish: '11:00' }]
+      const newlySelectedSlots = {
+        days: ['monday', 'tuesday'],
+        timeSlotsMonday: ['AM', 'PM'],
+        timeSlotsTuesday: ['AM', 'PM', 'ED'],
+      }
+      const result = addNewEmptySlotsIfRequired(sessionSlots, newlySelectedSlots)
+      expect(result).toEqual([
+        { dayOfWeek: 'MONDAY', timeSlot: TimeSlot.AM, start: '10:00', finish: '11:00' },
+        { dayOfWeek: 'MONDAY', timeSlot: TimeSlot.PM, start: undefined, finish: undefined },
+        { dayOfWeek: 'TUESDAY', timeSlot: TimeSlot.AM, start: undefined, finish: undefined },
+        { dayOfWeek: 'TUESDAY', timeSlot: TimeSlot.PM, start: undefined, finish: undefined },
+        { dayOfWeek: 'TUESDAY', timeSlot: TimeSlot.ED, start: undefined, finish: undefined },
+      ])
     })
   })
 
