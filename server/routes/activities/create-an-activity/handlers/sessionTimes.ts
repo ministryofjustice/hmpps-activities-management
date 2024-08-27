@@ -166,6 +166,7 @@ export default class SessionTimesRoutes {
     const { user } = res.locals
     const { activityId, name, scheduleWeeks } = req.session.createJourney
     const { startTimes, endTimes }: SessionTimes = req.body
+    const { preserveHistory } = req.query
 
     const startTimesObj = Array.from(startTimes.keys()).reduce((acc, key) => {
       acc[key] = startTimes.get(key)
@@ -218,6 +219,10 @@ export default class SessionTimesRoutes {
       await this.activitiesService.updateActivity(activityId, activity, user)
       const successMessage = `You've updated the daily schedule for ${name}`
       return res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
+    }
+
+    if (preserveHistory === 'true') {
+      return res.redirect('check-answers')
     }
 
     return res.redirectOrReturn(`bank-holiday-option`)

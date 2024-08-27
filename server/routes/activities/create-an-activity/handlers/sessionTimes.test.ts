@@ -131,6 +131,8 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       params: {},
     } as unknown as Request
 
+    req.query = {}
+
     activitiesService.getPrisonRegime.mockReturnValue(Promise.resolve(prisonRegime))
   })
 
@@ -163,7 +165,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
   })
 
   describe('POST', () => {
-    it('when using custom times redirect to the bank holiday page', async () => {
+    beforeEach(() => {
       const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
       const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
 
@@ -183,9 +185,9 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
         startTimes: startMap,
         endTimes: endMap,
       }
+    })
 
-      await handler.POST(req, res)
-
+    afterEach(() => {
       expect(req.session.createJourney.customSlots).toEqual([
         {
           customStartTime: '05:30',
@@ -202,8 +204,24 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
           weekNumber: 1,
         },
       ])
+    })
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
+    describe('Create journey', () => {
+      it('when using custom times redirect to the bank holiday page', async () => {
+        await handler.POST(req, res)
+
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
+      })
+    })
+
+    describe('Change data from check answers page', () => {
+      it('when using custom times redirect to the check answers page', async () => {
+        req.query.preserveHistory = 'true'
+
+        await handler.POST(req, res)
+
+        expect(res.redirect).toHaveBeenCalledWith('check-answers')
+      })
     })
 
     it('saves data and returns to view activity page if the user is in edit mode', async () => {
@@ -254,6 +272,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
           startTimes: startMap,
           endTimes: endMap,
         },
+        query: {},
         session: {
           createJourney: {
             activityId: 1,

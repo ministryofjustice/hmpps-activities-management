@@ -70,39 +70,38 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       })
     })
 
-    it.each([
-      ['greater than schedule weeks', '3'],
-      ['less than 1', '0'],
-      ['a decimal', '1.1'],
-      ['not a valid number', 'invalid'],
-    ])('should render 404 error if week number is %s', async (desc: string, weekNumber: string) => {
-      req.session.createJourney.scheduleWeeks = 2
-      req.params.weekNumber = weekNumber
+    describe('Validation', () => {
+      it.each([
+        ['greater than schedule weeks', '3'],
+        ['less than 1', '0'],
+        ['a decimal', '1.1'],
+        ['not a valid number', 'invalid'],
+      ])('should render 404 error if week number is %s', async (desc: string, weekNumber: string) => {
+        req.session.createJourney.scheduleWeeks = 2
+        req.params.weekNumber = weekNumber
 
-      await handler.GET(req, res, next)
-      expect(next).toHaveBeenCalledWith(createHttpError.NotFound())
-    })
+        await handler.GET(req, res, next)
+        expect(next).toHaveBeenCalledWith(createHttpError.NotFound())
+      })
 
-    it.each([
-      ['greater than schedule weeks', '3'],
-      ['less than 1', '0'],
-      ['a decimal', '1.1'],
-      ['not a valid number', 'invalid'],
-    ])('should render 404 error if week number is %s', async (desc: string, weekNumber: string) => {
-      req.session.createJourney.scheduleWeeks = 2
-      req.params.weekNumber = weekNumber
+      it.each([
+        ['greater than schedule weeks', '3'],
+        ['less than 1', '0'],
+        ['a decimal', '1.1'],
+        ['not a valid number', 'invalid'],
+      ])('should render 404 error if week number is %s', async (desc: string, weekNumber: string) => {
+        req.session.createJourney.scheduleWeeks = 2
+        req.params.weekNumber = weekNumber
 
-      await handler.GET(req, res, next)
-      expect(next).toHaveBeenCalledWith(createHttpError.NotFound())
+        await handler.GET(req, res, next)
+        expect(next).toHaveBeenCalledWith(createHttpError.NotFound())
+      })
     })
   })
 
   describe('POST', () => {
     describe('Create journey', () => {
-      it('should save slots in session and redirect to bank holiday page if last week in schedule, if custom start End times flag is enabled', async () => {
-        config.customStartEndTimesEnabled = false
-
-        req.session.createJourney.scheduleWeeks = 1
+      beforeEach(() => {
         req.params = {
           weekNumber: '1',
         }
@@ -111,125 +110,213 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           timeSlotsTuesday: ['AM'],
           timeSlotsFriday: ['PM', 'ED'],
         }
-
-        await handler.POST(req, res, next)
-
-        expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-        expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-        expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-        expect(res.redirect).toHaveBeenCalledWith('../bank-holiday-option')
       })
 
-      it('should save slots in session and redirect to set activity times page, if custom start End times flag is enabled', async () => {
-        config.customStartEndTimesEnabled = true
+      describe('Custom Start Time Disabled', () => {
+        beforeEach(() => {
+          config.customStartEndTimesEnabled = false
+        })
 
-        req.session.createJourney.scheduleWeeks = 1
-        req.params = {
-          weekNumber: '1',
-        }
-        req.body = {
-          days: ['tuesday', 'friday'],
-          timeSlotsTuesday: ['AM'],
-          timeSlotsFriday: ['PM', 'ED'],
-        }
+        it('should save slots in session and redirect to bank holiday page if last week in schedule', async () => {
+          req.session.createJourney.scheduleWeeks = 1
 
-        await handler.POST(req, res, next)
+          await handler.POST(req, res, next)
 
-        expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-        expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-        expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-        expect(res.redirect).toBeCalledWith('../session-times-option')
+          expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+          expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+          expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+          expect(res.redirect).toHaveBeenCalledWith('../bank-holiday-option')
+        })
+
+        it("should save slots in session and redirect to next week's slots if not last week in schedule", async () => {
+          req.session.createJourney.scheduleWeeks = 2
+
+          await handler.POST(req, res, next)
+
+          expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+          expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+          expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+          expect(res.redirect).toHaveBeenCalledWith('2')
+        })
       })
 
-      it("should save slots in session and redirect to next week's slots if not last week in schedule", async () => {
-        req.session.createJourney.scheduleWeeks = 2
-        req.params = {
-          weekNumber: '1',
-        }
-        req.body = {
-          days: ['tuesday', 'friday'],
-          timeSlotsTuesday: ['AM'],
-          timeSlotsFriday: ['PM', 'ED'],
-        }
+      describe('Custom Start Time Enabled', () => {
+        beforeEach(() => {
+          config.customStartEndTimesEnabled = true
+        })
 
-        await handler.POST(req, res, next)
+        it('should save slots in session and redirect to set activity times page', async () => {
+          req.session.createJourney.scheduleWeeks = 1
 
-        expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-        expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-        expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-        expect(res.redirect).toHaveBeenCalledWith('2')
-      })
-    })
+          await handler.POST(req, res, next)
 
-    describe("Edit a week's slots from check answers page", () => {
-      it('should save slots in session and redirect back to check answers page', async () => {
-        req.session.createJourney.scheduleWeeks = 2
-        req.params = {
-          weekNumber: '1',
-        }
-        req.query = {
-          preserveHistory: 'true',
-        }
-        req.body = {
-          days: ['tuesday', 'friday'],
-          timeSlotsTuesday: ['AM'],
-          timeSlotsFriday: ['PM', 'ED'],
-        }
-
-        await handler.POST(req, res, next)
-
-        expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-        expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-        expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-        expect(res.redirect).toHaveBeenCalledWith('../check-answers')
-      })
-    })
-
-    describe("Edit a week's slots when editing schedule frequency from check answers page", () => {
-      it("should save slots to session and redirect to next week's slots", async () => {
-        req.session.createJourney.scheduleWeeks = 2
-        req.params = {
-          weekNumber: '1',
-        }
-        req.query = {
-          preserveHistory: 'true',
-          fromScheduleFrequency: 'true',
-        }
-        req.body = {
-          days: ['tuesday', 'friday'],
-          timeSlotsTuesday: ['AM'],
-          timeSlotsFriday: ['PM', 'ED'],
-        }
-
-        await handler.POST(req, res, next)
-
-        expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-        expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-        expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-        expect(res.redirect).toHaveBeenCalledWith('2?preserveHistory=true&fromScheduleFrequency=true')
+          expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+          expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+          expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+          expect(res.redirect).toBeCalledWith('../session-times-option')
+        })
       })
 
-      it('should save slots to session and redirect back to check answers page', async () => {
-        req.session.createJourney.scheduleWeeks = 2
-        req.params = {
-          weekNumber: '2',
-        }
-        req.query = {
-          preserveHistory: 'true',
-          fromScheduleFrequency: 'true',
-        }
-        req.body = {
-          days: ['tuesday', 'friday'],
-          timeSlotsTuesday: ['AM'],
-          timeSlotsFriday: ['PM', 'ED'],
-        }
+      describe('Change data from check answers page', () => {
+        describe('Custom Start Time Disabled', () => {
+          beforeEach(() => {
+            config.customStartEndTimesEnabled = false
+          })
 
-        await handler.POST(req, res, next)
+          describe("Change a week's slots", () => {
+            it('should save slots in session and redirect back to check answers page', async () => {
+              req.session.createJourney.scheduleWeeks = 2
+              req.params = {
+                weekNumber: '1',
+              }
+              req.query = {
+                preserveHistory: 'true',
+              }
 
-        expect(req.session.createJourney.slots['2'].days).toEqual(['tuesday', 'friday'])
-        expect(req.session.createJourney.slots['2'].timeSlotsTuesday).toEqual(['AM'])
-        expect(req.session.createJourney.slots['2'].timeSlotsFriday).toEqual(['PM', 'ED'])
-        expect(res.redirect).toHaveBeenCalledWith('../check-answers')
+              await handler.POST(req, res, next)
+
+              expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+              expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+              expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+              expect(res.redirect).toHaveBeenCalledWith('../check-answers')
+            })
+          })
+
+          describe('Change schedule frequency', () => {
+            beforeEach(() => {
+              req.session.createJourney.scheduleWeeks = 2
+
+              req.query = {
+                preserveHistory: 'true',
+                fromScheduleFrequency: 'true',
+              }
+            })
+
+            it("should save slots in session and redirect to next week's slots if not last week in schedule", async () => {
+              req.params = {
+                weekNumber: '1',
+              }
+
+              await handler.POST(req, res, next)
+
+              expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+              expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+              expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+              expect(res.redirect).toHaveBeenCalledWith('2?preserveHistory=true&fromScheduleFrequency=true')
+            })
+
+            it('should save slots to session and redirect back to check answers page if last week in schedule', async () => {
+              req.params = {
+                weekNumber: '2',
+              }
+
+              await handler.POST(req, res, next)
+
+              expect(req.session.createJourney.slots['2'].days).toEqual(['tuesday', 'friday'])
+              expect(req.session.createJourney.slots['2'].timeSlotsTuesday).toEqual(['AM'])
+              expect(req.session.createJourney.slots['2'].timeSlotsFriday).toEqual(['PM', 'ED'])
+              expect(res.redirect).toHaveBeenCalledWith('../check-answers')
+            })
+          })
+        })
+
+        describe('Custom Start Time Enabled', () => {
+          beforeEach(() => {
+            config.customStartEndTimesEnabled = true
+
+            req.params = {
+              weekNumber: '1',
+            }
+            req.query = {
+              preserveHistory: 'true',
+            }
+          })
+
+          describe("Change a week's slots", () => {
+            it('should save slots in session and redirect to check answers if first week of bi-weekly schedule', async () => {
+              req.session.createJourney.scheduleWeeks = 2
+
+              await handler.POST(req, res, next)
+
+              expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+              expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+              expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+              expect(res.redirect).toHaveBeenCalledWith('../check-answers')
+            })
+
+            it('should save slots in session and redirect to set activity times page if one week schedule', async () => {
+              req.session.createJourney.scheduleWeeks = 1
+
+              await handler.POST(req, res, next)
+
+              expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+              expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+              expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+              expect(res.redirect).toBeCalledWith('../session-times-option?preserveHistory=true')
+            })
+          })
+
+          describe('Change to weekly schedule frequency', () => {
+            beforeEach(() => {
+              req.session.createJourney.scheduleWeeks = 1
+
+              req.query = {
+                preserveHistory: 'true',
+                fromScheduleFrequency: 'true',
+              }
+            })
+
+            it('should save slots in session and redirect to set activity times page', async () => {
+              req.params = {
+                weekNumber: '1',
+              }
+
+              await handler.POST(req, res, next)
+
+              expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+              expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+              expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+              expect(res.redirect).toBeCalledWith('../session-times-option?preserveHistory=true')
+            })
+          })
+
+          describe('Change to bi-weekly schedule frequency', () => {
+            beforeEach(() => {
+              req.session.createJourney.scheduleWeeks = 2
+
+              req.query = {
+                preserveHistory: 'true',
+                fromScheduleFrequency: 'true',
+              }
+            })
+
+            it("should save slots in session and redirect to next week's slots if not last week in schedule", async () => {
+              req.params = {
+                weekNumber: '1',
+              }
+
+              await handler.POST(req, res, next)
+
+              expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+              expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+              expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+              expect(res.redirect).toHaveBeenCalledWith('2?preserveHistory=true&fromScheduleFrequency=true')
+            })
+
+            it('should save slots to session and redirect back to check answers page if last week in schedule', async () => {
+              req.params = {
+                weekNumber: '2',
+              }
+
+              await handler.POST(req, res, next)
+
+              expect(req.session.createJourney.slots['2'].days).toEqual(['tuesday', 'friday'])
+              expect(req.session.createJourney.slots['2'].timeSlotsTuesday).toEqual(['AM'])
+              expect(req.session.createJourney.slots['2'].timeSlotsFriday).toEqual(['PM', 'ED'])
+              expect(res.redirect).toHaveBeenCalledWith('../check-answers')
+            })
+          })
+        })
       })
     })
 

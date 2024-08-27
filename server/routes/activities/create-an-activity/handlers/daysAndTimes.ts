@@ -117,10 +117,15 @@ export default class DaysAndTimesRoutes {
 
     if (scheduleWeeks === weekNumberInt) {
       // If create journey, redirect to next journey page
+
       if (!preserveHistory) {
-        if (config.customStartEndTimesEnabled === true) {
-          return res.redirect('../session-times-option')
+        // TODO: Fix once bi-weekly sorted
+        if (scheduleWeeks !== 2) {
+          if (config.customStartEndTimesEnabled === true) {
+            return res.redirect('../session-times-option')
+          }
         }
+
         return res.redirect('../bank-holiday-option')
       }
       // If from edit page, edit slots
@@ -149,8 +154,17 @@ export default class DaysAndTimesRoutes {
         // if using prison regime times, save and skip to success
         return this.editSlots(req, res)
       }
+
+      // TODO: Fix once bi-weekly sorted
+      if (scheduleWeeks !== 2) {
+        if (config.customStartEndTimesEnabled === true) {
+          return res.redirect('../session-times-option?preserveHistory=true')
+        }
+      }
+
       return res.redirect('../check-answers')
     }
+
     if (preserveHistory && !fromScheduleFrequency) {
       // If this is a week-specific slot edit (not from schedule frequency page)
       if (req.params.mode === 'edit') return this.editSlots(req, res)
