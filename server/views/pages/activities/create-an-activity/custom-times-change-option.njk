@@ -1,0 +1,45 @@
+{% extends "layout.njk" %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+
+{% set pageTitle = applicationName + " - Create a schedule - Activity session times" %}
+{% set pageId = 'custom-times-change-option-page' %}
+{% set pageHeading = "Select what you want to change in this activity’s schedule" %}
+
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ activityJourneyCaption(session.createJourney) }}
+            <form method="POST">
+            {{ govukRadios({
+            name: "selectWhatYouWantToChange",
+            fieldset: {
+                legend: {
+                text: pageHeading,
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--l"
+                }
+            },
+            errorMessage: validationErrors | findError('selectWhatYouWantToChange'),
+            items: [
+                {
+                value: ScheduleChangeOption.DAYS_AND_SESSIONS,
+                text: "Days and sessions when this activity runs"
+                },
+                {
+                value: ScheduleChangeOption.START_END_TIMES,
+                text: "Activity start and end times"
+                }
+            ]
+            }) }}
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            {{ govukButton({
+                text: "Continue"
+            }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

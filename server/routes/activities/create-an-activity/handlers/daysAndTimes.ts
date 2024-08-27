@@ -123,7 +123,17 @@ export default class DaysAndTimesRoutes {
         return res.redirect('../bank-holiday-option')
       }
       // If from edit page, edit slots
-      if (req.params.mode === 'edit') return this.editSlots(req, res)
+      if (req.params.mode === 'edit') {
+        const activity = await this.activitiesService.getActivity(
+          +req.session.createJourney.activityId,
+          res.locals.user,
+        )
+        const { usePrisonRegimeTime } = activity.schedules[0]
+        if (config.customStartEndTimesEnabled && !usePrisonRegimeTime) {
+          return res.redirect('../session-times')
+        }
+        return this.editSlots(req, res)
+      }
       return res.redirect('../check-answers')
     }
     if (preserveHistory && !fromScheduleFrequency) {

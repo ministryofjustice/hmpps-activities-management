@@ -433,3 +433,11 @@ export const simpleTimeToDate = (time: { hour: string; minute: string }): Date =
   time && (time.hour || time.minute)
     ? parse(`${time.hour}:${time.minute}`, 'HH:mm', new Date(0), { locale: enGB })
     : null
+
+export const getSplitTime = (time: string) => {
+  const splitTime = time.split(':')
+  return {
+    hour: splitTime[0][0] === '0' ? splitTime[0][1] : splitTime[0],
+    minute: splitTime[1][0] === '0' ? splitTime[1][1] : splitTime[1],
+  }
+}
