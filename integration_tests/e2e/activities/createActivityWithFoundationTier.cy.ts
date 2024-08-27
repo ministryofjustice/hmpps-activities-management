@@ -123,7 +123,6 @@ context('Create activity', () => {
     capacityPage.continue()
   }
 
-  // TODO Fix me
   it('should create a foundation tier activity when we record attendance', () => {
     whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen()
 
@@ -144,7 +143,6 @@ context('Create activity', () => {
     Page.verifyOnPage(ConfirmationPage)
   })
 
-  // TODO Fix me
   it('should create a foundation tier activity when we do not record attendance', () => {
     whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen()
 

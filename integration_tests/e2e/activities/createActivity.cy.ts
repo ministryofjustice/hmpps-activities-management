@@ -53,7 +53,6 @@ context('Create activity', () => {
     cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
   })
 
-  // TODO Fix me
   it('should click through create activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
