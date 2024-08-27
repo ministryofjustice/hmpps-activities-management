@@ -99,7 +99,9 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
   describe('POST', () => {
     describe('Create journey', () => {
-      it('should save slots in session and redirect to bank holiday page if last week in schedule', async () => {
+      it('should save slots in session and redirect to bank holiday page if last week in schedule, if custom start End times flag is enabled', async () => {
+        config.customStartEndTimesEnabled = false
+
         req.session.createJourney.scheduleWeeks = 1
         req.params = {
           weekNumber: '1',
@@ -116,6 +118,27 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
         expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
         expect(res.redirect).toHaveBeenCalledWith('../bank-holiday-option')
+      })
+
+      it('should save slots in session and redirect to set activity times page, if custom start End times flag is enabled', async () => {
+        config.customStartEndTimesEnabled = true
+
+        req.session.createJourney.scheduleWeeks = 1
+        req.params = {
+          weekNumber: '1',
+        }
+        req.body = {
+          days: ['tuesday', 'friday'],
+          timeSlotsTuesday: ['AM'],
+          timeSlotsFriday: ['PM', 'ED'],
+        }
+
+        await handler.POST(req, res, next)
+
+        expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+        expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+        expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+        expect(res.redirect).toBeCalledWith('../session-times-option')
       })
 
       it("should save slots in session and redirect to next week's slots if not last week in schedule", async () => {

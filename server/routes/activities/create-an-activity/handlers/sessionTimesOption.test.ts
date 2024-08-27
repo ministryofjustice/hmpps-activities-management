@@ -138,13 +138,13 @@ describe('Route Handlers - Create an activity schedule - activity times option',
   })
 
   describe('POST', () => {
-    it('when using prison regime times redirect to the location page', async () => {
+    it('when using prison regime times redirect to the bak holiday page', async () => {
       req.body = {
         usePrisonRegimeTime: 'true',
       }
       await handler.POST(req, res)
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
     })
 
     it('when using prison custom times redirect to the activity session times page', async () => {

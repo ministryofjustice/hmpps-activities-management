@@ -116,7 +116,12 @@ export default class DaysAndTimesRoutes {
 
     if (scheduleWeeks === weekNumberInt) {
       // If create journey, redirect to next journey page
-      if (!preserveHistory) return res.redirect('../bank-holiday-option')
+      if (!preserveHistory) {
+        if (config.customStartEndTimesEnabled === true) {
+          return res.redirect('../session-times-option')
+        }
+        return res.redirect('../bank-holiday-option')
+      }
       // If from edit page, edit slots
       if (req.params.mode === 'edit') {
         const activity = await this.activitiesService.getActivity(

@@ -32,7 +32,7 @@ export default class SessionTimesOptionRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { usePrisonRegimeTime } = req.body
     if (usePrisonRegimeTime === 'true') {
-      res.redirectOrReturn('location')
+      res.redirectOrReturn('bank-holiday-option')
     } else res.redirectOrReturn(`session-times`)
   }
 }

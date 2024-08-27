@@ -151,10 +151,6 @@ context('Create activity with custom times', () => {
     daysAndTimesPage.selectDayTimeCheckboxes([['Monday', ['AM session']]])
     daysAndTimesPage.continue()
 
-    const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
-    bankHolidayPage.runOnBankHoliday('Yes')
-    bankHolidayPage.continue()
-
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
     sessionTimesOptionPage.useSessionOption('Select the start and end times')
     sessionTimesOptionPage.continue()
@@ -163,6 +159,10 @@ context('Create activity with custom times', () => {
     sessionTimesPage.selectStartTime(10, 45, 'MONDAY', 'AM')
     sessionTimesPage.selectEndTime(11, 50, 'MONDAY', 'AM')
     sessionTimesPage.continue()
+
+    const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
+    bankHolidayPage.runOnBankHoliday('Yes')
+    bankHolidayPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectSearchForLocation()

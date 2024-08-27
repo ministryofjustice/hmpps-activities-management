@@ -179,7 +179,7 @@ export default class SessionTimesRoutes {
       return res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
     }
 
-    return res.redirect('location')
+    return res.redirectOrReturn(`bank-holiday-option`)
   }
 
   private getDaysAndSlots = async (

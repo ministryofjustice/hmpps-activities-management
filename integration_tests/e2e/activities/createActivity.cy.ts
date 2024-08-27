@@ -54,7 +54,7 @@ context('Create activity', () => {
   })
 
   // TODO Fix me
-  xit('should click through create activity journey', () => {
+  it('should click through create activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -155,13 +155,13 @@ context('Create activity', () => {
     ])
     daysAndTimesPage.continue()
 
-    const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
-    bankHolidayPage.runOnBankHoliday('Yes')
-    bankHolidayPage.continue()
-
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
     sessionTimesOptionPage.useSessionOption("Use the prison's regime times")
     sessionTimesOptionPage.continue()
+
+    const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
+    bankHolidayPage.runOnBankHoliday('Yes')
+    bankHolidayPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectSearchForLocation()

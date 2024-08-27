@@ -105,13 +105,13 @@ context('Create activity', () => {
     ])
     daysAndTimesPage.continue()
 
-    const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
-    bankHolidayPage.runOnBankHoliday('Yes')
-    bankHolidayPage.continue()
-
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
     sessionTimesOptionPage.useSessionOption("Use the prison's regime times")
     sessionTimesOptionPage.continue()
+
+    const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
+    bankHolidayPage.runOnBankHoliday('Yes')
+    bankHolidayPage.continue()
 
     const locationPage = Page.verifyOnPage(LocationPage)
     locationPage.selectSearchForLocation()
@@ -124,7 +124,7 @@ context('Create activity', () => {
   }
 
   // TODO Fix me
-  xit('should create a foundation tier activity when we record attendance', () => {
+  it('should create a foundation tier activity when we record attendance', () => {
     whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen()
 
     const attendanceRequiredPage = Page.verifyOnPage(AttendanceRequired)
@@ -145,7 +145,7 @@ context('Create activity', () => {
   })
 
   // TODO Fix me
-  xit('should create a foundation tier activity when we do not record attendance', () => {
+  it('should create a foundation tier activity when we do not record attendance', () => {
     whenWeAreCreatingAnActivityAndHaveReachedTheAttendanceRequiredScreen()
 
     const attendanceRequiredPage = Page.verifyOnPage(AttendanceRequired)
