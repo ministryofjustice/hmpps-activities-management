@@ -77,45 +77,43 @@ export function getMatchingSlots(existingSlots: DaysAndSlotsInRegime[], newlySel
   return addNewEmptySlotsIfRequired(filteredSessionSlots, newlySelectedSlots)
 }
 
-function filterUnrequiredSlots(
+export function filterUnrequiredSlots(
   existingSlots: DaysAndSlotsInRegime[],
   newlySelectedSlots: Slots,
 ): DaysAndSlotsInRegime[] {
-  return existingSlots.flatMap(slot => {
+  const dailySlots: { [day: string]: DaysAndSlotsInRegime } = {}
+
+  existingSlots.forEach(slot => {
     const day = slot.dayOfWeek.toLowerCase()
     if (!newlySelectedSlots.days.includes(day)) {
-      return []
+      return
     }
 
     const selectedTimeSlots = newlySelectedSlots[`timeSlots${_.capitalize(day)}` as keyof Slots]
-    const newSlots: DaysAndSlotsInRegime[] = []
+
+    if (!dailySlots[day]) {
+      dailySlots[day] = { dayOfWeek: slot.dayOfWeek }
+    }
+
+    const currentSlot = dailySlots[day]
 
     if (slot.amStart && slot.amFinish && selectedTimeSlots.includes('AM')) {
-      newSlots.push({
-        dayOfWeek: slot.dayOfWeek,
-        amStart: slot.amStart,
-        amFinish: slot.amFinish,
-      })
+      currentSlot.amStart = slot.amStart
+      currentSlot.amFinish = slot.amFinish
     }
 
     if (slot.pmStart && slot.pmFinish && selectedTimeSlots.includes('PM')) {
-      newSlots.push({
-        dayOfWeek: slot.dayOfWeek,
-        pmStart: slot.pmStart,
-        pmFinish: slot.pmFinish,
-      })
+      currentSlot.pmStart = slot.pmStart
+      currentSlot.pmFinish = slot.pmFinish
     }
 
     if (slot.edStart && slot.edFinish && selectedTimeSlots.includes('ED')) {
-      newSlots.push({
-        dayOfWeek: slot.dayOfWeek,
-        edStart: slot.edStart,
-        edFinish: slot.edFinish,
-      })
+      currentSlot.edStart = slot.edStart
+      currentSlot.edFinish = slot.edFinish
     }
-
-    return newSlots
   })
+
+  return Object.values(dailySlots)
 }
 
 export function addNewEmptySlotsIfRequired(sessionSlots: SessionSlot[], newlySelectedSlots: Slots): SessionSlot[] {

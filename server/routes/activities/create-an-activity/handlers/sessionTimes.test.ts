@@ -3,7 +3,7 @@ import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import atLeast from '../../../../../jest.setup'
-import SessionTimesRoutes, { addNewEmptySlotsIfRequired, SessionTimes } from './sessionTimes'
+import SessionTimesRoutes, { addNewEmptySlotsIfRequired, SessionTimes, filterUnrequiredSlots } from './sessionTimes'
 import ActivitiesService from '../../../../services/activitiesService'
 import { Activity, PrisonRegime } from '../../../../@types/activitiesAPI/types'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
@@ -192,6 +192,106 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
         { dayOfWeek: 'TUESDAY', timeSlot: TimeSlot.PM, start: undefined, finish: undefined },
         { dayOfWeek: 'TUESDAY', timeSlot: TimeSlot.ED, start: undefined, finish: undefined },
       ])
+    })
+  })
+
+  describe('filterUnrequiredSlots function', () => {
+    it('Should remove sessions from sessionSlots if they are not selected anymore', () => {
+      const sessionSlots = [
+        {
+          dayOfWeek: 'MONDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+        {
+          dayOfWeek: 'WEDNESDAY',
+          edStart: '17:30',
+          edFinish: '20:45',
+        },
+        {
+          dayOfWeek: 'FRIDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+      ]
+      const newlySelectedSlots = {
+        days: ['monday', 'wednesday', 'friday'],
+        timeSlotsMonday: ['AM'],
+        timeSlotsWednesday: ['ED'],
+        timeSlotsFriday: ['PM'],
+      }
+      const expectedSlots = [
+        {
+          dayOfWeek: 'MONDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+        },
+        {
+          dayOfWeek: 'WEDNESDAY',
+          edStart: '17:30',
+          edFinish: '20:45',
+        },
+        {
+          dayOfWeek: 'FRIDAY',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+      ]
+      const result = filterUnrequiredSlots(sessionSlots, newlySelectedSlots)
+      expect(result).toEqual(expectedSlots)
+    })
+    it('Should return the same slots if nothing has changed', () => {
+      const sessionSlots = [
+        {
+          dayOfWeek: 'MONDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+        {
+          dayOfWeek: 'TUESDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+        {
+          dayOfWeek: 'WEDNESDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+        {
+          dayOfWeek: 'THURSDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+        {
+          dayOfWeek: 'FRIDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+      ]
+      const newlySelectedSlots = {
+        days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+        timeSlotsMonday: ['AM', 'PM'],
+        timeSlotsTuesday: ['AM', 'PM'],
+        timeSlotsWednesday: ['AM', 'PM'],
+        timeSlotsThursday: ['AM', 'PM'],
+        timeSlotsFriday: ['AM', 'PM'],
+      }
+      const result = filterUnrequiredSlots(sessionSlots, newlySelectedSlots)
+      expect(result).toEqual(sessionSlots)
     })
   })
 
