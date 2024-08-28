@@ -9,6 +9,7 @@ import activitySessionToDailyTimeSlots, {
   mapSlotsToWeeklyTimeSlots,
   transformActivitySlotsToDailySlots,
   regimeSlotsToSchedule,
+  allocationSlotsToSchedule,
 } from './activityTimeSlotMappers'
 import { ActivityScheduleSlot, PrisonRegime, Slot } from '../../@types/activitiesAPI/types'
 import TimeSlot from '../../enum/timeSlot'
@@ -791,6 +792,7 @@ describe('transformActivitySlotsToDailySlots', () => {
     const expectedResult = [{ dayOfWeek: 'MONDAY', amStart: '05:00', amFinish: '07:00' }]
     expect(result).toEqual(expectedResult)
   })
+
   it('should transform slots from the activity (from api) to the desired format - am and pm present on same day', () => {
     const activitySlots = [
       {
@@ -830,6 +832,7 @@ describe('transformActivitySlotsToDailySlots', () => {
     ]
     expect(result).toEqual(expectedResult)
   })
+
   it('should transform slots from the activity (from api) to the desired format - am and pm present on different days', () => {
     const activitySlots = [
       {
@@ -870,6 +873,7 @@ describe('transformActivitySlotsToDailySlots', () => {
     ]
     expect(result).toEqual(expectedResult)
   })
+
   it('should transform slots from the activity (from api) to the desired format - all types of slots present', () => {
     const activitySlots = [
       {
@@ -940,5 +944,92 @@ describe('transformActivitySlotsToDailySlots', () => {
       { dayOfWeek: 'WEDNESDAY', edStart: '17:30', edFinish: '20:00' },
     ]
     expect(result).toEqual(expectedResult)
+  })
+
+  describe('allocationSlotsToSchedule', () => {
+    it('should transform allocations slots to schedule', () => {
+      const allocationSlots: ActivityScheduleSlot[] = [
+        {
+          id: 1,
+          timeSlot: 'AM',
+          weekNumber: 1,
+          startTime: '08:00',
+          endTime: '09:00',
+          daysOfWeek: ['Mon', 'Tue'],
+          mondayFlag: true,
+          tuesdayFlag: true,
+          wednesdayFlag: false,
+          thursdayFlag: false,
+          fridayFlag: false,
+          saturdayFlag: false,
+          sundayFlag: false,
+        },
+        {
+          id: 2,
+          timeSlot: 'ED',
+          weekNumber: 2,
+          startTime: '17:20',
+          endTime: '19:00',
+          daysOfWeek: ['Thu'],
+          mondayFlag: false,
+          tuesdayFlag: false,
+          wednesdayFlag: false,
+          thursdayFlag: true,
+          fridayFlag: false,
+          saturdayFlag: false,
+          sundayFlag: false,
+        },
+        {
+          id: 3,
+          timeSlot: 'PM',
+          weekNumber: 2,
+          startTime: '12:00',
+          endTime: '13:00',
+          daysOfWeek: ['Thu'],
+          mondayFlag: false,
+          tuesdayFlag: false,
+          wednesdayFlag: false,
+          thursdayFlag: true,
+          fridayFlag: false,
+          saturdayFlag: false,
+          sundayFlag: false,
+        },
+      ]
+
+      const schedule = allocationSlotsToSchedule(2, allocationSlots)
+
+      expect(schedule).toEqual({
+        1: [
+          {
+            day: 'Monday',
+            slots: [{ timeSlot: 'AM', startTime: '08:00', endTime: '09:00' }],
+          },
+          {
+            day: 'Tuesday',
+            slots: [{ timeSlot: 'AM', startTime: '08:00', endTime: '09:00' }],
+          },
+          { day: 'Wednesday', slots: [] },
+          { day: 'Thursday', slots: [] },
+          { day: 'Friday', slots: [] },
+          { day: 'Saturday', slots: [] },
+          { day: 'Sunday', slots: [] },
+        ],
+        2: [
+          { day: 'Monday', slots: [] },
+          { day: 'Tuesday', slots: [] },
+          { day: 'Wednesday', slots: [] },
+          {
+            day: 'Thursday',
+            slots: [
+              { timeSlot: 'PM', startTime: '12:00', endTime: '13:00' },
+              { timeSlot: 'ED', startTime: '17:20', endTime: '19:00' },
+            ],
+          },
+          { day: 'Friday', slots: [] },
+          { day: 'Saturday', slots: [] },
+          { day: 'Sunday', slots: [] },
+        ],
+      })
+    })
   })
 })

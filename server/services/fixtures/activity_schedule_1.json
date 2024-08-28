@@ -281,8 +281,8 @@
     {
       "id": 1,
       "weekNumber": 1,
-      "startTime": "10:00",
-      "endTime": "11:00",
+      "startTime": "11:00",
+      "endTime": "12:00",
       "daysOfWeek": ["Thu"],
       "thursdayFlag": true,
       "timeSlot": "AM"
@@ -290,8 +290,8 @@
     {
       "id": 1,
       "weekNumber": 1,
-      "startTime": "10:00",
-      "endTime": "11:00",
+      "startTime": "11:00",
+      "endTime": "12:00",
       "daysOfWeek": ["Fri"],
       "fridayFlag": true,
       "timeSlot": "AM"
@@ -299,8 +299,8 @@
     {
       "id": 1,
       "weekNumber": 1,
-      "startTime": "10:00",
-      "endTime": "11:00",
+      "startTime": "11:00",
+      "endTime": "12:00",
       "daysOfWeek": ["Sat"],
       "saturdayFlag": true,
       "timeSlot": "AM"
@@ -308,8 +308,8 @@
     {
       "id": 1,
       "weekNumber": 1,
-      "startTime": "10:00",
-      "endTime": "11:00",
+      "startTime": "11:00",
+      "endTime": "12:00",
       "daysOfWeek": ["Sun"],
       "sundayFlag": true,
       "timeSlot": "AM"

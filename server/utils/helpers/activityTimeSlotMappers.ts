@@ -97,6 +97,38 @@ export function customSlotsToSchedule(scheduleWeek: number, slots: Slot[]): Week
   return customSlots
 }
 
+export function allocationSlotsToSchedule(
+  scheduleWeeks: number,
+  allocationSlots: ActivityScheduleSlot[],
+): WeeklyCustomTimeSlots {
+  const scheduledSlots: WeeklyCustomTimeSlots = {}
+
+  for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
+    scheduledSlots[weekNumber] = daysOfWeek.map(day => {
+      return { day, slots: [] }
+    })
+  }
+
+  allocationSlots.forEach(slot => {
+    slot.daysOfWeek.forEach(dayOfWeek => {
+      const selectedSlot = scheduledSlots[slot.weekNumber].find(customTimeSlot =>
+        customTimeSlot.day.startsWith(dayOfWeek),
+      )
+      selectedSlot.slots.push({
+        timeSlot: toTimeSlot(slot.timeSlot),
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+      })
+    })
+  })
+
+  Object.values(scheduledSlots).forEach(slot =>
+    slot.forEach(s => s.slots.sort((a, b) => timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot])),
+  )
+
+  return scheduledSlots
+}
+
 export function regimeSlotsToSchedule(
   scheduleWeeks: number,
   selectedSlots: { [weekNumber: string]: Slots },
