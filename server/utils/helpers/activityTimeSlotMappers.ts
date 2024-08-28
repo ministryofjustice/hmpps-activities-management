@@ -383,7 +383,7 @@ export function calculateDayTimeSlotReduction(
     Object.entries(dayMap).forEach(([flag, day]) => {
       if (slot[flag as keyof TimeSlot]) {
         convertedActivitySlots.days.push(day)
-        convertedActivitySlots[`timeSlots${day.charAt(0).toUpperCase() + day.slice(1)}`].push(slot.timeSlot)
+        convertedActivitySlots[`timeSlots${_.capitalize(day}`].push(slot.timeSlot)
       }
     })
   })
