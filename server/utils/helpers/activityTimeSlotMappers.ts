@@ -1,7 +1,7 @@
 import { uniq } from 'lodash'
 import TimeSlot from '../../enum/timeSlot'
-import { CreateAnActivityJourney, Slots } from '../../routes/activities/create-an-activity/journey'
-import { ActivityScheduleSlot, ActivityUpdateRequest, PrisonRegime, Slot } from '../../@types/activitiesAPI/types'
+import { Slots } from '../../routes/activities/create-an-activity/journey'
+import { ActivityScheduleSlot, PrisonRegime, Slot } from '../../@types/activitiesAPI/types'
 import SimpleTime from '../../commonValidationTypes/simpleTime'
 import { DaysAndSlotsInRegime } from './applicableRegimeTimeUtil'
 import logger from '../../../logger'
@@ -36,7 +36,7 @@ const timeSlotOrder = {
   [TimeSlot.ED]: 2,
 }
 
-const toTimeSlot = (timeSlot: string): TimeSlot => TimeSlot[timeSlot]
+const toTimeSlot = (timeSlot: string): TimeSlot => TimeSlot[timeSlot as keyof typeof TimeSlot]
 
 export default function activitySessionToDailyTimeSlots(
   scheduleWeeks: number,
@@ -349,104 +349,4 @@ export function transformActivitySlotsToDailySlots(activitySlots: ActivitySchedu
   })
 
   return Object.values(transformedSlots)
-}
-
-export function calculateDayTimeSlotReduction(
-  existingActivitySlots: ActivityScheduleSlot[],
-  newSlots: CreateAnActivityJourney['slots'],
-): {
-  timeSlotReduction: boolean
-  timeSlots: ActivityUpdateRequest['slots']
-} {
-  const convertedActivitySlots: Slots = {
-    days: [],
-    timeSlotsMonday: [],
-    timeSlotsTuesday: [],
-    timeSlotsWednesday: [],
-    timeSlotsThursday: [],
-    timeSlotsFriday: [],
-    timeSlotsSaturday: [],
-    timeSlotsSunday: [],
-  }
-
-  const dayMap = {
-    mondayFlag: 'monday',
-    tuesdayFlag: 'tuesday',
-    wednesdayFlag: 'wednesday',
-    thursdayFlag: 'thursday',
-    fridayFlag: 'friday',
-    saturdayFlag: 'saturday',
-    sundayFlag: 'sunday',
-  }
-
-  existingActivitySlots.forEach(slot => {
-    Object.entries(dayMap).forEach(([flag, day]) => {
-      if (slot[flag as keyof TimeSlot]) {
-        convertedActivitySlots.days.push(day)
-        convertedActivitySlots[`timeSlots${_.capitalize(day}`].push(slot.timeSlot)
-      }
-    })
-  })
-
-  convertedActivitySlots.days = Array.from(new Set(convertedActivitySlots.days))
-  const newlyChosenSlots = newSlots['1']
-  const timeSlotsForEachDay = Object.keys(convertedActivitySlots).filter(key => key !== 'days')
-  const timeSlotsReduced = timeSlotsForEachDay.some(
-    key => newlyChosenSlots[key].length < convertedActivitySlots[key].length,
-  )
-
-  if (!timeSlotsReduced) {
-    return {
-      timeSlotReduction: timeSlotsReduced,
-      timeSlots: null,
-    }
-  }
-
-  const filteredActivities = existingActivitySlots.filter(slot => {
-    const dayOfWeek = getFullDayFromAbbreviation(slot.daysOfWeek[0]).toLowerCase() // Assumes single day per slot?
-    const { timeSlot } = slot
-
-    if (!newlyChosenSlots.days.includes(dayOfWeek)) {
-      return false
-    }
-
-    switch (dayOfWeek) {
-      case 'monday':
-        return newlyChosenSlots.timeSlotsMonday.includes(timeSlot)
-      case 'tuesday':
-        return newlyChosenSlots.timeSlotsTuesday.includes(timeSlot)
-      case 'wednesday':
-        return newlyChosenSlots.timeSlotsWednesday.includes(timeSlot)
-      case 'thursday':
-        return newlyChosenSlots.timeSlotsThursday.includes(timeSlot)
-      case 'friday':
-        return newlyChosenSlots.timeSlotsFriday.includes(timeSlot)
-      case 'saturday':
-        return newlyChosenSlots.timeSlotsSaturday.includes(timeSlot)
-      case 'sunday':
-        return newlyChosenSlots.timeSlotsSunday.includes(timeSlot)
-      default:
-        return false
-    }
-  })
-
-  const formattedFilteredActivities = filteredActivities.map(slot => ({
-    weekNumber: slot.weekNumber,
-    timeSlot: slot.timeSlot as 'AM' | 'PM' | 'ED',
-    monday: slot.mondayFlag,
-    tuesday: slot.tuesdayFlag,
-    wednesday: slot.wednesdayFlag,
-    thursday: slot.thursdayFlag,
-    friday: slot.fridayFlag,
-    saturday: slot.saturdayFlag,
-    sunday: slot.sundayFlag,
-    customStartTime: slot.startTime,
-    customEndTime: slot.endTime,
-    daysOfWeek: slot.daysOfWeek.map(day => getFullDayFromAbbreviation(day) as DayOfWeek),
-  }))
-
-  return {
-    timeSlotReduction: timeSlotsReduced,
-    timeSlots: formattedFilteredActivities,
-  }
 }

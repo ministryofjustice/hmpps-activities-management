@@ -68,12 +68,62 @@ function createSessionSlots(applicableRegimeTimesForActivity: DaysAndSlotsInRegi
   return sessionSlots
 }
 
+export function getMatchingSlots(existingSlots: DaysAndSlotsInRegime[], newlySelectedSlots: Slots): SessionSlot[] {
+  // remove slots we don't want anymore
+  const filteredSlots = filterUnrequiredSlots(existingSlots, newlySelectedSlots)
+  // convert to sessionSlots for ease
+  const filteredSessionSlots = createSessionSlots(filteredSlots)
+  // add empty slots for new times to be added
+  return addNewEmptySlotsIfRequired(filteredSessionSlots, newlySelectedSlots)
+}
+
+function filterUnrequiredSlots(
+  existingSlots: DaysAndSlotsInRegime[],
+  newlySelectedSlots: Slots,
+): DaysAndSlotsInRegime[] {
+  return existingSlots.flatMap(slot => {
+    const day = slot.dayOfWeek.toLowerCase()
+    if (!newlySelectedSlots.days.includes(day)) {
+      return []
+    }
+
+    const selectedTimeSlots = newlySelectedSlots[`timeSlots${_.capitalize(day)}` as keyof Slots]
+    const newSlots: DaysAndSlotsInRegime[] = []
+
+    if (slot.amStart && slot.amFinish && selectedTimeSlots.includes('AM')) {
+      newSlots.push({
+        dayOfWeek: slot.dayOfWeek,
+        amStart: slot.amStart,
+        amFinish: slot.amFinish,
+      })
+    }
+
+    if (slot.pmStart && slot.pmFinish && selectedTimeSlots.includes('PM')) {
+      newSlots.push({
+        dayOfWeek: slot.dayOfWeek,
+        pmStart: slot.pmStart,
+        pmFinish: slot.pmFinish,
+      })
+    }
+
+    if (slot.edStart && slot.edFinish && selectedTimeSlots.includes('ED')) {
+      newSlots.push({
+        dayOfWeek: slot.dayOfWeek,
+        edStart: slot.edStart,
+        edFinish: slot.edFinish,
+      })
+    }
+
+    return newSlots
+  })
+}
+
 export function addNewEmptySlotsIfRequired(sessionSlots: SessionSlot[], newlySelectedSlots: Slots): SessionSlot[] {
   // Make the day format match
   const days = newlySelectedSlots.days.map(day => day.toUpperCase())
 
   days.forEach(day => {
-    const timeSlotsKey = `timeSlots${day.charAt(0).toUpperCase() + day.slice(1).toLowerCase()}`
+    const timeSlotsKey = `timeSlots${_.capitalize(day)}` as keyof Slots
     const timeSlots = newlySelectedSlots[timeSlotsKey]
 
     timeSlots.forEach((slot: string) => {
@@ -239,8 +289,7 @@ export default class SessionTimesRoutes {
       const activity = await this.activitiesService.getActivity(activityId, user)
       const activitySchedule = activity.schedules[0]
       const existingSlots = transformActivitySlotsToDailySlots(activitySchedule.slots)
-      const sessionSlots = createSessionSlots(existingSlots)
-      return addNewEmptySlotsIfRequired(sessionSlots, slots)
+      return getMatchingSlots(existingSlots, slots)
     }
     const applicableRegimeTimesForActivity: DaysAndSlotsInRegime[] = getApplicableDaysAndSlotsInRegime(
       regimeTimes,

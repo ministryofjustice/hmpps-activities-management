@@ -11,7 +11,6 @@ import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
 import { CreateAnActivityJourney } from '../journey'
 import config from '../../../../config'
-import { calculateDayTimeSlotReduction } from '../../../../utils/helpers/activityTimeSlotMappers'
 
 export class DaysAndTimes {
   @Expose()
@@ -139,13 +138,6 @@ export default class DaysAndTimesRoutes {
           res.locals.user,
         )
         const usingRegimeTimes = activity.schedules[0].usePrisonRegimeTime
-        const existingActivitySlots = activity.schedules[0].slots
-        const dayOrSlotRemoved = calculateDayTimeSlotReduction(existingActivitySlots, req.session.createJourney.slots)
-
-        if (!usingRegimeTimes && dayOrSlotRemoved.timeSlotReduction) {
-          // If the user has removed a day/session and the activity uses custom times, save and skip to success
-          return this.editCustomSlots(req, res, dayOrSlotRemoved.timeSlots)
-        }
 
         // if using custom times (and the user has added (etc.) days/sessions), go to the screen where times can be edited
         if (!usingRegimeTimes) {
