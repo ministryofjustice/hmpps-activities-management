@@ -373,7 +373,8 @@ describe('Route Handlers - Activities', () => {
           date: dateString,
           sessionFilters: 'AM,PM',
           categoryFilters: 'SAA_EDUCATION,SAA_INDUSTRIES',
-          locationFilters: 'IN_CELL,OUT_OF_CELL',
+          LocationId: '',
+          locationType: LocationType.IN_CELL,
         },
         session: {
           recordAttendanceRequests: {
