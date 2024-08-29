@@ -435,6 +435,7 @@ export const simpleTimeToDate = (time: { hour: string; minute: string }): Date =
     : null
 
 export const getSplitTime = (time: string) => {
+  if (!time) return undefined
   const splitTime = time.split(':')
   return {
     hour: splitTime[0][0] === '0' ? splitTime[0][1] : splitTime[0],

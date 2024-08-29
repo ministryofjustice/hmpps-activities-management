@@ -129,14 +129,21 @@ export default class DaysAndTimesRoutes {
       }
       // If from edit page, edit slots
       if (req.params.mode === 'edit') {
+        if (!config.customStartEndTimesEnabled) {
+          return this.editSlots(req, res)
+        }
+
         const activity = await this.activitiesService.getActivity(
           +req.session.createJourney.activityId,
           res.locals.user,
         )
-        const { usePrisonRegimeTime } = activity.schedules[0]
-        if (config.customStartEndTimesEnabled && !usePrisonRegimeTime) {
+        const usingRegimeTimes = activity.schedules[0].usePrisonRegimeTime
+
+        // if using custom times (and the user has added (etc.) days/sessions), go to the screen where times can be edited
+        if (!usingRegimeTimes) {
           return res.redirect('../session-times')
         }
+        // if using prison regime times, save and skip to success
         return this.editSlots(req, res)
       }
 
@@ -176,6 +183,22 @@ export default class DaysAndTimesRoutes {
     await this.activitiesService.updateActivity(activityId, activity, user)
     const successMessage = `You've updated the daily schedule for ${req.session.createJourney.name}`
 
+    const returnTo = `/activities/view/${req.session.createJourney.activityId}`
+    req.session.returnTo = returnTo
+    res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
+  }
+
+  private async editCustomSlots(req: Request, res: Response, newTimeSlots: ActivityUpdateRequest['slots']) {
+    const { user } = res.locals
+    const { activityId, scheduleWeeks } = req.session.createJourney
+
+    const updatedActivity = {
+      slots: newTimeSlots,
+      scheduleWeeks,
+    } as ActivityUpdateRequest
+    await this.activitiesService.updateActivity(activityId, updatedActivity, user)
+
+    const successMessage = `You've updated the daily schedule for ${req.session.createJourney.name}`
     const returnTo = `/activities/view/${req.session.createJourney.activityId}`
     req.session.returnTo = returnTo
     res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)

@@ -36,7 +36,7 @@ const timeSlotOrder = {
   [TimeSlot.ED]: 2,
 }
 
-const toTimeSlot = (timeSlot: string): TimeSlot => TimeSlot[timeSlot]
+const toTimeSlot = (timeSlot: string): TimeSlot => TimeSlot[timeSlot as keyof typeof TimeSlot]
 
 export default function activitySessionToDailyTimeSlots(
   scheduleWeeks: number,
