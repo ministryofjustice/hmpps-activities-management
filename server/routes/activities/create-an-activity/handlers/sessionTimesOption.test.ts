@@ -103,6 +103,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
         },
       },
       render: jest.fn(),
+      redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
@@ -119,6 +120,23 @@ describe('Route Handlers - Create an activity schedule - activity times option',
           },
         },
       },
+      customSlots: [
+        {
+          id: 1,
+          timeSlot: 'AM',
+          weekNumber: 1,
+          startTIme: '10:00',
+          endTime: '11:00',
+          daysOfWeek: ['MONDAY', 'TUESDAY'],
+          mondayFlag: true,
+          tuesdayFlag: true,
+          wednesdayFlag: false,
+          thursdayFlag: false,
+          fridayFlag: false,
+          saturdayFlag: false,
+          sundayFlag: false,
+        },
+      ],
       params: {},
     } as unknown as Request
 
@@ -138,22 +156,58 @@ describe('Route Handlers - Create an activity schedule - activity times option',
   })
 
   describe('POST', () => {
-    it('when using prison regime times redirect to the location page', async () => {
-      req.body = {
-        usePrisonRegimeTime: 'true',
-      }
-      await handler.POST(req, res)
-
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+    beforeEach(() => {
+      req.query = {}
     })
 
-    it('when using prison custom times redirect to the activity session times page', async () => {
-      req.body = {
-        usePrisonRegimeTime: 'false',
-      }
-      await handler.POST(req, res)
+    describe('Create Journey', () => {
+      it('when using prison regime times redirect to the bank holiday page', async () => {
+        req.body = {
+          usePrisonRegimeTime: 'true',
+        }
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('session-times')
+        await handler.POST(req, res)
+
+        expect(req.session.createJourney.customSlots).toEqual(undefined)
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
+      })
+
+      it('when using prison custom times redirect to the activity session times page', async () => {
+        req.body = {
+          usePrisonRegimeTime: 'false',
+        }
+
+        await handler.POST(req, res)
+
+        expect(res.redirect).toHaveBeenCalledWith('session-times')
+      })
+    })
+
+    describe('Change data from check answers page', () => {
+      beforeEach(() => {
+        req.query.preserverHistory = 'true'
+      })
+
+      it('when using prison regime times redirect to the bank holiday page', async () => {
+        req.body = {
+          usePrisonRegimeTime: 'true',
+        }
+        await handler.POST(req, res)
+
+        expect(req.session.createJourney.customSlots).toEqual(undefined)
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
+      })
+
+      it('when using prison custom times redirect to the activity session times page', async () => {
+        req.body = {
+          usePrisonRegimeTime: 'false',
+        }
+        req.query.preserveHistory = 'true'
+
+        await handler.POST(req, res)
+
+        expect(res.redirect).toHaveBeenCalledWith('session-times?preserveHistory=true')
+      })
     })
   })
 

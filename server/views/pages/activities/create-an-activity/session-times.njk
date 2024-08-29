@@ -9,7 +9,7 @@
 {% from "components/timePicker.njk" import timePicker %}
 
 {% set pageTitle = applicationName + " - Create a schedule - Activity session times" %}
-{% set pageId = 'activity-session-times-page' %}
+{% set pageId = 'session-times-page' %}
 {% set pageHeading = "Select the start and end times for the sessions when this activity runs" %}
 {% set jsBackLink = true %}
 
@@ -21,7 +21,9 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                         {% set rows = [] %} 
-                        {% for customSlot in sessionSlots %}                  
+                        {% for customSlot in sessionSlots %}     
+                            {% set formattedStart = customSlot.start | getSplitTime %}
+                            {% set formattedFinish = customSlot.finish | getSplitTime %}
                             {% set rows = (rows.push([
                                 {
                                     html: customSlot.dayOfWeek | title
@@ -35,7 +37,7 @@
                                         name: 'startTimes[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
                                         renderedErrorMessage: validationErrors | findError('startTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.startTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot]
+                                        formResponses: formResponses.startTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedStart
                                 })
                                 },
                                 {
@@ -44,7 +46,7 @@
                                         name: 'endTimes[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
                                         renderedErrorMessage: validationErrors | findError('endTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.endTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot]
+                                        formResponses: formResponses.endTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedFinish
                                         })
                                 }]), rows) %}
                         {% endfor %}

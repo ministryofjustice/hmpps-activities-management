@@ -1,12 +1,15 @@
 import { Request, Response } from 'express'
+import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import SessionTimesRoutes, { SessionTimes } from './sessionTimes'
+import atLeast from '../../../../../jest.setup'
+import SessionTimesRoutes, { addNewEmptySlotsIfRequired, SessionTimes, filterUnrequiredSlots } from './sessionTimes'
 import ActivitiesService from '../../../../services/activitiesService'
-import { PrisonRegime } from '../../../../@types/activitiesAPI/types'
+import { Activity, PrisonRegime } from '../../../../@types/activitiesAPI/types'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import TimeSlot from '../../../../enum/timeSlot'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import activity from '../../../../services/fixtures/activity_1.json'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -106,7 +109,9 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       },
       render: jest.fn(),
       redirectOrReturn: jest.fn(),
+      redirect: jest.fn(),
       redirectOrReturnWithSuccess: jest.fn(),
+      redirectWithSuccess: jest.fn(),
       validationFailed: jest.fn(),
       addValidationError: jest.fn(),
     } as unknown as Response
@@ -126,6 +131,8 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       params: {},
     } as unknown as Request
 
+    req.query = {}
+
     activitiesService.getPrisonRegime.mockReturnValue(Promise.resolve(prisonRegime))
   })
 
@@ -133,10 +140,6 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/session-times', {
-        regimeTimes: [
-          { amFinish: '11:45', amStart: '08:30', dayOfWeek: 'TUESDAY' },
-          { dayOfWeek: 'FRIDAY', edFinish: '19:15', edStart: '17:30', pmFinish: '16:45', pmStart: '13:45' },
-        ],
         sessionSlots: [
           {
             dayOfWeek: 'TUESDAY',
@@ -161,8 +164,139 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
     })
   })
 
+  describe('addNewEmptySlotsIfRequired function', () => {
+    it("shouldn't add any empty slots if there are no newly selected ones", () => {
+      const sessionSlots = [
+        { dayOfWeek: 'MONDAY', timeSlot: TimeSlot.AM, start: '10:00', finish: '11:00' },
+        { dayOfWeek: 'MONDAY', timeSlot: TimeSlot.PM, start: '12:00', finish: '13:00' },
+      ]
+      const newlySelectedSlots = {
+        days: ['monday'],
+        timeSlotsMonday: ['AM', 'PM'],
+      }
+      const result = addNewEmptySlotsIfRequired(sessionSlots, newlySelectedSlots)
+      expect(result).toEqual(sessionSlots)
+    })
+    it('should add empty slots if there are new ones present, with undefined times', () => {
+      const sessionSlots = [{ dayOfWeek: 'MONDAY', timeSlot: TimeSlot.AM, start: '10:00', finish: '11:00' }]
+      const newlySelectedSlots = {
+        days: ['monday', 'tuesday'],
+        timeSlotsMonday: ['AM', 'PM'],
+        timeSlotsTuesday: ['AM', 'PM', 'ED'],
+      }
+      const result = addNewEmptySlotsIfRequired(sessionSlots, newlySelectedSlots)
+      expect(result).toEqual([
+        { dayOfWeek: 'MONDAY', timeSlot: TimeSlot.AM, start: '10:00', finish: '11:00' },
+        { dayOfWeek: 'MONDAY', timeSlot: TimeSlot.PM, start: undefined, finish: undefined },
+        { dayOfWeek: 'TUESDAY', timeSlot: TimeSlot.AM, start: undefined, finish: undefined },
+        { dayOfWeek: 'TUESDAY', timeSlot: TimeSlot.PM, start: undefined, finish: undefined },
+        { dayOfWeek: 'TUESDAY', timeSlot: TimeSlot.ED, start: undefined, finish: undefined },
+      ])
+    })
+  })
+
+  describe('filterUnrequiredSlots function', () => {
+    it('Should remove sessions from sessionSlots if they are not selected anymore', () => {
+      const sessionSlots = [
+        {
+          dayOfWeek: 'MONDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+        {
+          dayOfWeek: 'WEDNESDAY',
+          edStart: '17:30',
+          edFinish: '20:45',
+        },
+        {
+          dayOfWeek: 'FRIDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+      ]
+      const newlySelectedSlots = {
+        days: ['monday', 'wednesday', 'friday'],
+        timeSlotsMonday: ['AM'],
+        timeSlotsWednesday: ['ED'],
+        timeSlotsFriday: ['PM'],
+      }
+      const expectedSlots = [
+        {
+          dayOfWeek: 'MONDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+        },
+        {
+          dayOfWeek: 'WEDNESDAY',
+          edStart: '17:30',
+          edFinish: '20:45',
+        },
+        {
+          dayOfWeek: 'FRIDAY',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+      ]
+      const result = filterUnrequiredSlots(sessionSlots, newlySelectedSlots)
+      expect(result).toEqual(expectedSlots)
+    })
+    it('Should return the same slots if nothing has changed', () => {
+      const sessionSlots = [
+        {
+          dayOfWeek: 'MONDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+        {
+          dayOfWeek: 'TUESDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+        {
+          dayOfWeek: 'WEDNESDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+        {
+          dayOfWeek: 'THURSDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+        {
+          dayOfWeek: 'FRIDAY',
+          amStart: '07:30',
+          amFinish: '11:45',
+          pmStart: '14:00',
+          pmFinish: '17:30',
+        },
+      ]
+      const newlySelectedSlots = {
+        days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+        timeSlotsMonday: ['AM', 'PM'],
+        timeSlotsTuesday: ['AM', 'PM'],
+        timeSlotsWednesday: ['AM', 'PM'],
+        timeSlotsThursday: ['AM', 'PM'],
+        timeSlotsFriday: ['AM', 'PM'],
+      }
+      const result = filterUnrequiredSlots(sessionSlots, newlySelectedSlots)
+      expect(result).toEqual(sessionSlots)
+    })
+  })
+
   describe('POST', () => {
-    it('when using custom times redirect to the location page', async () => {
+    beforeEach(() => {
       const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
       const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
 
@@ -182,9 +316,9 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
         startTimes: startMap,
         endTimes: endMap,
       }
+    })
 
-      await handler.POST(req, res)
-
+    afterEach(() => {
       expect(req.session.createJourney.customSlots).toEqual([
         {
           customStartTime: '05:30',
@@ -201,8 +335,91 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
           weekNumber: 1,
         },
       ])
+    })
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
+    describe('Create journey', () => {
+      it('when using custom times redirect to the bank holiday page', async () => {
+        await handler.POST(req, res)
+
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
+      })
+    })
+
+    describe('Change data from check answers page', () => {
+      it('when using custom times redirect to the check answers page', async () => {
+        req.query.preserveHistory = 'true'
+
+        await handler.POST(req, res)
+
+        expect(res.redirect).toHaveBeenCalledWith('check-answers')
+      })
+    })
+
+    it('saves data and returns to view activity page if the user is in edit mode', async () => {
+      const updatedActivity = {
+        slots: [
+          {
+            customStartTime: '05:30',
+            customEndTime: '09:44',
+            daysOfWeek: ['MONDAY'],
+            friday: false,
+            monday: true,
+            saturday: false,
+            sunday: false,
+            thursday: false,
+            timeSlot: TimeSlot.AM,
+            tuesday: false,
+            wednesday: false,
+            weekNumber: 1,
+          },
+        ],
+        scheduleWeeks: 1,
+      }
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+      const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+      const startTime = new SimpleTime()
+      startTime.hour = 5
+      startTime.minute = 30
+
+      startMap.set('MONDAY-AM', startTime)
+
+      const endTime = new SimpleTime()
+      endTime.hour = 9
+      endTime.minute = 44
+
+      endMap.set('MONDAY-AM', endTime)
+
+      req = {
+        params: {
+          mode: 'edit',
+        },
+        body: {
+          startTimes: startMap,
+          endTimes: endMap,
+        },
+        query: {},
+        session: {
+          createJourney: {
+            activityId: 1,
+            name: 'Test activity',
+            scheduleWeeks: 1,
+          },
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+      expect(activitiesService.updateActivity).toHaveBeenCalledWith(1, updatedActivity, res.locals.user)
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        `/activities/view/1`,
+        'Activity updated',
+        `You've updated the daily schedule for Test activity`,
+      )
     })
   })
 

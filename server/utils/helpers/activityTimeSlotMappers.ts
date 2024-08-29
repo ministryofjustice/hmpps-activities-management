@@ -3,6 +3,7 @@ import TimeSlot from '../../enum/timeSlot'
 import { Slots } from '../../routes/activities/create-an-activity/journey'
 import { ActivityScheduleSlot, PrisonRegime, Slot } from '../../@types/activitiesAPI/types'
 import SimpleTime from '../../commonValidationTypes/simpleTime'
+import { DaysAndSlotsInRegime } from './applicableRegimeTimeUtil'
 import logger from '../../../logger'
 
 export interface WeeklyTimeSlots {
@@ -35,7 +36,7 @@ const timeSlotOrder = {
   [TimeSlot.ED]: 2,
 }
 
-const toTimeSlot = (timeSlot: string): TimeSlot => TimeSlot[timeSlot]
+const toTimeSlot = (timeSlot: string): TimeSlot => TimeSlot[timeSlot as keyof typeof TimeSlot]
 
 export default function activitySessionToDailyTimeSlots(
   scheduleWeeks: number,
@@ -94,6 +95,38 @@ export function customSlotsToSchedule(scheduleWeek: number, slots: Slot[]): Week
   }))
 
   return customSlots
+}
+
+export function allocationSlotsToSchedule(
+  scheduleWeeks: number,
+  allocationSlots: ActivityScheduleSlot[],
+): WeeklyCustomTimeSlots {
+  const scheduledSlots: WeeklyCustomTimeSlots = {}
+
+  for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
+    scheduledSlots[weekNumber] = daysOfWeek.map(day => {
+      return { day, slots: [] }
+    })
+  }
+
+  allocationSlots.forEach(slot => {
+    slot.daysOfWeek.forEach(dayOfWeek => {
+      const selectedSlot = scheduledSlots[slot.weekNumber].find(customTimeSlot =>
+        customTimeSlot.day.startsWith(dayOfWeek),
+      )
+      selectedSlot.slots.push({
+        timeSlot: toTimeSlot(slot.timeSlot),
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+      })
+    })
+  })
+
+  Object.values(scheduledSlots).forEach(slot =>
+    slot.forEach(s => s.slots.sort((a, b) => timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot])),
+  )
+
+  return scheduledSlots
 }
 
 export function regimeSlotsToSchedule(
@@ -323,4 +356,29 @@ export function createSlot(daySlot: string, startTime: SimpleTime, endTime: Simp
     weekNumber: 1,
   }
   return slot
+}
+
+export function transformActivitySlotsToDailySlots(activitySlots: ActivityScheduleSlot[]): DaysAndSlotsInRegime[] {
+  const transformedSlots: { [key: string]: DaysAndSlotsInRegime } = {}
+
+  activitySlots.forEach((slot: { daysOfWeek: string[]; timeSlot: string; startTime: string; endTime: string }) => {
+    const dayOfWeek = getFullDayFromAbbreviation(slot.daysOfWeek[0])
+    if (!transformedSlots[dayOfWeek]) {
+      transformedSlots[dayOfWeek] = {
+        dayOfWeek,
+      }
+    }
+    if (slot.timeSlot === 'AM') {
+      transformedSlots[dayOfWeek].amStart = slot.startTime
+      transformedSlots[dayOfWeek].amFinish = slot.endTime
+    } else if (slot.timeSlot === 'PM') {
+      transformedSlots[dayOfWeek].pmStart = slot.startTime
+      transformedSlots[dayOfWeek].pmFinish = slot.endTime
+    } else if (slot.timeSlot === 'ED') {
+      transformedSlots[dayOfWeek].edStart = slot.startTime
+      transformedSlots[dayOfWeek].edFinish = slot.endTime
+    }
+  })
+
+  return Object.values(transformedSlots)
 }
