@@ -9,7 +9,7 @@ import activitySessionToDailyTimeSlots, {
   mapSlotsToWeeklyTimeSlots,
   transformActivitySlotsToDailySlots,
   regimeSlotsToSchedule,
-  allocationSlotsToSchedule,
+  sessionSlotsToSchedule,
 } from './activityTimeSlotMappers'
 import { ActivityScheduleSlot, PrisonRegime, Slot } from '../../@types/activitiesAPI/types'
 import TimeSlot from '../../enum/timeSlot'
@@ -946,7 +946,7 @@ describe('transformActivitySlotsToDailySlots', () => {
     expect(result).toEqual(expectedResult)
   })
 
-  describe('allocationSlotsToSchedule', () => {
+  describe('sessionSlotsToSchedule', () => {
     it('should transform allocations slots to schedule', () => {
       const allocationSlots: ActivityScheduleSlot[] = [
         {
@@ -996,7 +996,7 @@ describe('transformActivitySlotsToDailySlots', () => {
         },
       ]
 
-      const schedule = allocationSlotsToSchedule(2, allocationSlots)
+      const schedule = sessionSlotsToSchedule(2, allocationSlots)
 
       expect(schedule).toEqual({
         1: [
