@@ -1,0 +1,58 @@
+{% extends "layout.njk" %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "partials/activities/prisonRegimeTimesSummary.njk" import prisonRegimeTimesSummary %}
+
+{% set pageTitle = applicationName + " - Create a schedule - Activity session times" %}
+{% set pageId = 'custom-times-change-default-or-custom-page' %}
+{% set pageHeading = "Select how to change the activity start and end times" %}
+
+{% set jsBackLink = true %}
+
+{% set regimeTimes %}
+    {{ prisonRegimeTimesSummary(regimeTimes) }}
+{% endset %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ activityJourneyCaption(session.createJourney) }}
+            <form method="POST">
+            {{ govukRadios({
+            name: "selectHowToChangeTimes",
+            fieldset: {
+                legend: {
+                text: pageHeading,
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--l"
+                }
+            },
+            hint: {
+                text: 'This activity has sessions that run at different times to the prison regime. You can change all times to follow the prison regime, or select times to change.'
+            },
+            errorMessage: validationErrors | findError('selectHowToChangeTimes'),
+            items: [
+                {
+                value: DefaultOrCustomTimes.DEFAULT_PRISON_REGIME,
+                text: "Change all start and end times to prison regime times"
+                },
+                {
+                value: DefaultOrCustomTimes.CUSTOM_START_END_TIMES,
+                text: "Select start and end times to change"
+                }
+            ]
+            }) }}
+            {{ govukDetails({
+            summaryText: "Check the prison\'s regime times for the sessions when this activity runs",
+            html: regimeTimes
+            }) }}
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            {{ govukButton({
+                text: "Continue"
+            }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

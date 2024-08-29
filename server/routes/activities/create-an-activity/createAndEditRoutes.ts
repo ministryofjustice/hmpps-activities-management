@@ -34,6 +34,10 @@ import PayDateOptionRoutes, { PayDateOption } from './handlers/pay-date-option'
 import PayCancelRoutes, { PayCancel } from './handlers/pay-cancel'
 import RemoveEndDateRoutes, { RemoveEndDateOptions } from './handlers/removeEndDate'
 import SessionTimesRoutes, { SessionTimes } from './handlers/sessionTimes'
+import CustomTimesChangeOptionRoutes, { ScheduleOption } from './handlers/customTimesChangeOption'
+import CustomTimesChangeDefaultOrCustomRoutes, {
+  DefaultOrCustomOption,
+} from './handlers/customTimesChangeDefaultOrCustom'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -70,6 +74,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const bankHolidayHandler = new BankHolidayOptionRoutes(activitiesService)
   const sessionTimesOptionHandler = new SessionTimesOptionRoutes(activitiesService)
   const sessionTimesHandler = new SessionTimesRoutes(activitiesService)
+  const customTimesChangeOptionHandler = new CustomTimesChangeOptionRoutes(activitiesService)
+  const CustomTimesChangeDefaultOrCustomHandler = new CustomTimesChangeDefaultOrCustomRoutes(activitiesService)
   const locationHandler = new LocationRoutes(activitiesService, prisonService)
   const capacityHandler = new CapacityRoutes(activitiesService)
   const confirmCapacityRouteHandler = new ConfirmCapacityRoutes(activitiesService)
@@ -127,6 +133,10 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/session-times-option', sessionTimesOptionHandler.POST, SessionTimesOption)
   get('/session-times', sessionTimesHandler.GET, true)
   post('/session-times', sessionTimesHandler.POST, SessionTimes)
+  get('/custom-times-change-option', customTimesChangeOptionHandler.GET)
+  post('/custom-times-change-option', customTimesChangeOptionHandler.POST, ScheduleOption)
+  get('/custom-times-change-default-or-custom', CustomTimesChangeDefaultOrCustomHandler.GET)
+  post('/custom-times-change-default-or-custom', CustomTimesChangeDefaultOrCustomHandler.POST, DefaultOrCustomOption)
   get('/location', locationHandler.GET, true)
   post('/location', locationHandler.POST, Location)
   get('/capacity', capacityHandler.GET, true)

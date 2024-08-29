@@ -20,6 +20,7 @@ import {
   firstNameLastName,
   formatDate,
   fullName,
+  getSplitTime,
   initialiseName,
   isTodayOrBefore,
   padNumber,
@@ -70,6 +71,8 @@ import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
 import AttendanceReason from '../enum/attendanceReason'
 import absenceReasonDisplayConverter from '../utils/helpers/absenceReasonConverter'
+import { ScheduleChangeOption } from '../routes/activities/create-an-activity/handlers/customTimesChangeOption'
+import { DefaultOrCustomTimes } from '../routes/activities/create-an-activity/handlers/customTimesChangeDefaultOrCustom'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -143,6 +146,8 @@ export function registerNunjucks(app?: express.Express): Environment {
     const name = njkEnv.getFilter('prisonerName')(str, false)
     return name.val || null
   })
+
+  njkEnv.addFilter('getSplitTime', getSplitTime)
   njkEnv.addFilter('setSelected', setSelected)
   njkEnv.addFilter('addDefaultSelectedValue', addDefaultSelectedValue)
   njkEnv.addFilter('toTimeItems', toTimeItems)
@@ -220,7 +225,11 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('allocateToNextSession', config.allocateToNextSession)
   njkEnv.addGlobal('futurePayRatesFlag', config.futurePayRatesToggleEnabled)
+  njkEnv.addGlobal('customStartEndTimesEnabled', config.customStartEndTimesEnabled)
   njkEnv.addGlobal('bookAVideoLinkToggleEnabled', config.bookAVideoLinkToggleEnabled)
+  njkEnv.addGlobal('customStartEndTimesEnabled', config.customStartEndTimesEnabled)
+  njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
+  njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

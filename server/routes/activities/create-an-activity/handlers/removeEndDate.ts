@@ -6,7 +6,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 
 export class RemoveEndDateOptions {
   @Expose()
-  @IsNotEmpty({ message: "Select if you want to change this activity's end date or remove it" })
+  @IsNotEmpty({ message: "Select if you want to change or remove this activity's end date" })
   removeEndDate: string
 }
 

@@ -1,117 +1,192 @@
 import { Request, Response } from 'express'
+import { ValidateNested } from 'class-validator'
+import { plainToInstance, Transform } from 'class-transformer'
+import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
-import getApplicableDaysAndSlotsInRegime from '../../../../utils/helpers/applicableRegimeTimeUtil'
+import getApplicableDaysAndSlotsInRegime, {
+  DaysAndSlotsInRegime,
+} from '../../../../utils/helpers/applicableRegimeTimeUtil'
 import { Slots } from '../journey'
-import { journeySlotsToCustomSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
-import { Slot } from '../../../../@types/activitiesAPI/types'
+import { ActivityUpdateRequest, PrisonRegime, Slot } from '../../../../@types/activitiesAPI/types'
+import TimeSlot from '../../../../enum/timeSlot'
+import SimpleTime from '../../../../commonValidationTypes/simpleTime'
+import {
+  createCustomSlots,
+  transformActivitySlotsToDailySlots,
+} from '../../../../utils/helpers/activityTimeSlotMappers'
+import { ServiceUser } from '../../../../@types/express'
 
+type SessionSlot = {
+  dayOfWeek: string
+  timeSlot: TimeSlot
+  start: string
+  finish: string
+}
 export class SessionTimes {
-  // @Expose()
-  // @IsNotEmpty({ message: 'Select how to set the activity start and end times' })
-  // usePrisonRegimeTime: boolean
+  @Transform(({ value }) =>
+    Object.keys(value).reduce((acc, k) => acc.set(k, plainToInstance(SimpleTime, value[k])), new Map()),
+  )
+  @ValidateNested()
+  startTimes: Map<string, SimpleTime>
+
+  @Transform(({ value }) =>
+    Object.keys(value).reduce((acc, k) => acc.set(k, plainToInstance(SimpleTime, value[k])), new Map()),
+  )
+  @ValidateNested()
+  endTimes: Map<string, SimpleTime>
 }
 
-function getHardCodedCustomSlots(): Slot[] {
-  return [
-    {
-      customStartTime: '09:15',
-      customEndTime: '11:30',
-      daysOfWeek: ['MONDAY'],
-      friday: false,
-      monday: true,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: 'AM',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '18:15',
-      customEndTime: '21:45',
-      daysOfWeek: ['MONDAY'],
-      friday: false,
-      monday: true,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: 'ED',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '14:45',
-      customEndTime: '16:00',
-      daysOfWeek: ['TUESDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: 'PM',
-      tuesday: true,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customSartTime: '07:30',
-      customEndTime: '10:14',
-      daysOfWeek: ['THURSDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: true,
-      timeSlot: 'AM',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '15:12',
-      customEndTime: '16:35',
-      daysOfWeek: ['THURSDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: true,
-      timeSlot: 'PM',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '18:56',
-      customEndTime: '19:55',
-      daysOfWeek: ['THURSDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: true,
-      timeSlot: 'ED',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-    {
-      customStartTime: '21:03',
-      customEndTime: '22:54',
-      daysOfWeek: ['SATURDAY'],
-      friday: false,
-      monday: false,
-      saturday: true,
-      sunday: false,
-      thursday: false,
-      timeSlot: 'ED',
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    },
-  ] as Slot[]
+function createSessionSlots(applicableRegimeTimesForActivity: DaysAndSlotsInRegime[]): SessionSlot[] {
+  const sessionSlots: SessionSlot[] = []
+  applicableRegimeTimesForActivity.forEach(day => {
+    if (day.amStart) {
+      sessionSlots.push({
+        dayOfWeek: day.dayOfWeek,
+        timeSlot: TimeSlot.AM,
+        start: day.amStart,
+        finish: day.amFinish,
+      })
+    }
+    if (day.pmStart) {
+      sessionSlots.push({
+        dayOfWeek: day.dayOfWeek,
+        timeSlot: TimeSlot.PM,
+        start: day.pmStart,
+        finish: day.pmFinish,
+      })
+    }
+    if (day.edStart) {
+      sessionSlots.push({
+        dayOfWeek: day.dayOfWeek,
+        timeSlot: TimeSlot.ED,
+        start: day.edStart,
+        finish: day.edFinish,
+      })
+    }
+  })
+
+  return sessionSlots
+}
+
+export function getMatchingSlots(existingSlots: DaysAndSlotsInRegime[], newlySelectedSlots: Slots): SessionSlot[] {
+  // remove slots we don't want anymore
+  const filteredSlots = filterUnrequiredSlots(existingSlots, newlySelectedSlots)
+  // convert to sessionSlots for ease
+  const filteredSessionSlots = createSessionSlots(filteredSlots)
+  // add empty slots for new times to be added
+  return addNewEmptySlotsIfRequired(filteredSessionSlots, newlySelectedSlots)
+}
+
+export function filterUnrequiredSlots(
+  existingSlots: DaysAndSlotsInRegime[],
+  newlySelectedSlots: Slots,
+): DaysAndSlotsInRegime[] {
+  const dailySlots: { [day: string]: DaysAndSlotsInRegime } = {}
+
+  existingSlots.forEach(slot => {
+    const day = slot.dayOfWeek.toLowerCase()
+    if (!newlySelectedSlots.days.includes(day)) {
+      return
+    }
+
+    const selectedTimeSlots = newlySelectedSlots[`timeSlots${_.capitalize(day)}` as keyof Slots]
+
+    if (!dailySlots[day]) {
+      dailySlots[day] = { dayOfWeek: slot.dayOfWeek }
+    }
+
+    const currentSlot = dailySlots[day]
+
+    if (slot.amStart && slot.amFinish && selectedTimeSlots.includes('AM')) {
+      currentSlot.amStart = slot.amStart
+      currentSlot.amFinish = slot.amFinish
+    }
+
+    if (slot.pmStart && slot.pmFinish && selectedTimeSlots.includes('PM')) {
+      currentSlot.pmStart = slot.pmStart
+      currentSlot.pmFinish = slot.pmFinish
+    }
+
+    if (slot.edStart && slot.edFinish && selectedTimeSlots.includes('ED')) {
+      currentSlot.edStart = slot.edStart
+      currentSlot.edFinish = slot.edFinish
+    }
+  })
+
+  return Object.values(dailySlots)
+}
+
+export function addNewEmptySlotsIfRequired(sessionSlots: SessionSlot[], newlySelectedSlots: Slots): SessionSlot[] {
+  // Make the day format match
+  const days = newlySelectedSlots.days.map(day => day.toUpperCase())
+
+  days.forEach(day => {
+    const timeSlotsKey = `timeSlots${_.capitalize(day)}` as keyof Slots
+    const timeSlots = newlySelectedSlots[timeSlotsKey]
+
+    timeSlots.forEach((slot: string) => {
+      const slotExists = sessionSlots.some(item => item.dayOfWeek === day && item.timeSlot === slot)
+
+      if (!slotExists) {
+        // Add missing slot with undefined start and finish times
+        sessionSlots.push({
+          dayOfWeek: day,
+          timeSlot: slot as TimeSlot,
+          start: undefined,
+          finish: undefined,
+        })
+      }
+    })
+  })
+
+  // We need to make sure that they're in the correct order
+  const timeSlotOrder = {
+    AM: 1,
+    PM: 2,
+    ED: 3,
+  }
+
+  const sortedSessionSlots = sessionSlots.sort((a, b) => {
+    if (a.dayOfWeek < b.dayOfWeek) return -1
+    if (a.dayOfWeek > b.dayOfWeek) return 1
+    // If the day is the same, sort by the time slot order
+    return timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot]
+  })
+
+  return sortedSessionSlots
+}
+
+function startDateBeforeEarlierSession(customSlot: Slot, allSlots: Slot[]): boolean {
+  // no need to check if it's AM
+  if (customSlot.timeSlot === TimeSlot.AM) {
+    return false
+  }
+  const amSlotStartTime: string = allSlots.find(
+    slot => slot.timeSlot === TimeSlot.AM && _.isEqual(slot.daysOfWeek, customSlot.daysOfWeek),
+  )?.customStartTime
+
+  // check any PM or ED session is after any AM start time
+  if (
+    amSlotStartTime !== undefined &&
+    ((customSlot.timeSlot === TimeSlot.PM && customSlot.customStartTime.localeCompare(amSlotStartTime) <= 0) ||
+      (customSlot.timeSlot === TimeSlot.ED && customSlot.customStartTime.localeCompare(amSlotStartTime) <= 0))
+  ) {
+    return true
+  }
+
+  const pmSlotStartTime: string = allSlots.find(
+    slot => slot.timeSlot === TimeSlot.PM && _.isEqual(slot.daysOfWeek, customSlot.daysOfWeek),
+  )?.customStartTime
+
+  // check an ED session is after any PM start time
+  if (
+    pmSlotStartTime !== undefined &&
+    customSlot.timeSlot === TimeSlot.ED &&
+    customSlot.customStartTime.localeCompare(pmSlotStartTime) <= 0
+  ) {
+    return true
+  }
+  return false
 }
 
 export default class SessionTimesRoutes {
@@ -120,24 +195,104 @@ export default class SessionTimesRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+    const { activityId, slots } = req.session.createJourney
 
-    // TODO: the week will have to be passed through from previous pages once we do split regimes, rather than hardcoded as ['1']
-    const slots: Slots = req.session.createJourney.slots['1']
-    // TODO: implement real custom slots
-    const customSlots: Slot[] = journeySlotsToCustomSlots(slots)
-
-    const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(regimeTimes, slots)
+    const sessionSlots = await this.getDaysAndSlots(
+      regimeTimes,
+      slots['1'],
+      req.params.mode === 'edit',
+      +activityId,
+      user,
+    )
 
     res.render(`pages/activities/create-an-activity/session-times`, {
-      regimeTimes: applicableRegimeTimesForActivity,
-      customSlots,
+      sessionSlots,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const customSlots: Slot[] = getHardCodedCustomSlots()
+    const { user } = res.locals
+    const { activityId, name, scheduleWeeks } = req.session.createJourney
+    const { startTimes, endTimes }: SessionTimes = req.body
+    const { preserveHistory } = req.query
+
+    const startTimesObj = Array.from(startTimes.keys()).reduce((acc, key) => {
+      acc[key] = startTimes.get(key)
+      return acc
+    }, {})
+
+    const endTimesObj = Array.from(endTimes.keys()).reduce((acc, key) => {
+      acc[key] = endTimes.get(key)
+      return acc
+    }, {})
+    req.body.startTimes = startTimesObj
+    req.body.endTimes = endTimesObj
+
+    const customSlots: Slot[] = createCustomSlots(startTimes, endTimes)
+
+    // validate slots
+    const slotsWithStartAfterEnd: Slot[] = customSlots.filter(
+      (customSlot: Slot) => customSlot.customStartTime.localeCompare(customSlot.customEndTime) >= 0,
+    )
+    if (slotsWithStartAfterEnd.length > 0) {
+      slotsWithStartAfterEnd.forEach(customSlot => {
+        res.addValidationError(
+          `endTimes-${customSlot.daysOfWeek}-${customSlot.timeSlot}`,
+          'Select an end time after the start time',
+        )
+      })
+      return res.validationFailed()
+    }
+
+    const slotsStartingBeforeEarlierSession: Slot[] = customSlots.filter((customSlot: Slot) =>
+      startDateBeforeEarlierSession(customSlot, customSlots),
+    )
+    if (slotsStartingBeforeEarlierSession.length > 0) {
+      slotsStartingBeforeEarlierSession.forEach(customSlot => {
+        res.addValidationError(
+          `startTimes-${customSlot.daysOfWeek}-${customSlot.timeSlot}`,
+          'Start time must be after the earlier session start time',
+        )
+      })
+      return res.validationFailed()
+    }
+
     req.session.createJourney.customSlots = customSlots
 
-    res.redirectOrReturn('location')
+    if (req.params.mode === 'edit') {
+      const activity = {
+        slots: req.session.createJourney.customSlots,
+        scheduleWeeks,
+      } as ActivityUpdateRequest
+      await this.activitiesService.updateActivity(activityId, activity, user)
+      const successMessage = `You've updated the daily schedule for ${name}`
+      return res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
+    }
+
+    if (preserveHistory === 'true') {
+      return res.redirect('check-answers')
+    }
+
+    return res.redirectOrReturn(`bank-holiday-option`)
+  }
+
+  private getDaysAndSlots = async (
+    regimeTimes: PrisonRegime[],
+    slots: Slots,
+    editModeActive: boolean,
+    activityId: number,
+    user: ServiceUser,
+  ): Promise<DaysAndSlotsInRegime[]> => {
+    if (editModeActive) {
+      const activity = await this.activitiesService.getActivity(activityId, user)
+      const activitySchedule = activity.schedules[0]
+      const existingSlots = transformActivitySlotsToDailySlots(activitySchedule.slots)
+      return getMatchingSlots(existingSlots, slots)
+    }
+    const applicableRegimeTimesForActivity: DaysAndSlotsInRegime[] = getApplicableDaysAndSlotsInRegime(
+      regimeTimes,
+      slots,
+    )
+    return createSessionSlots(applicableRegimeTimesForActivity)
   }
 }

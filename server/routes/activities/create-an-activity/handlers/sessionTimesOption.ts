@@ -31,8 +31,21 @@ export default class SessionTimesOptionRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { usePrisonRegimeTime } = req.body
+    const { preserveHistory } = req.query
+
     if (usePrisonRegimeTime === 'true') {
-      res.redirectOrReturn('location')
-    } else res.redirectOrReturn(`session-times`)
+      req.session.createJourney.customSlots = undefined
+      if (preserveHistory === 'true') {
+        return res.redirect('check-answers')
+      }
+      return res.redirectOrReturn('bank-holiday-option')
+    }
+
+    let redirectParams = ''
+    if (preserveHistory === 'true') {
+      redirectParams += '?preserveHistory=true'
+    }
+
+    return res.redirect(`session-times${redirectParams}`)
   }
 }

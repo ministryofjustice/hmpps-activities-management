@@ -183,7 +183,7 @@
                                     classes: "no-break"
                                 },
                                 {
-                                    text: (scheduledEvent.internalLocationUserDescription or scheduledEvent.internalLocationDescription) | trim
+                                    text: locationText(scheduledEvent)
                                 }
                             ]), scheduledEventRows) %}
                         {% endfor %}
@@ -310,5 +310,19 @@
         External transfer
     {% elseif scheduledEvent.eventType == EventType.ADJUDICATION_HEARING %}
         Adjudication hearing
+    {% endif %}
+{% endmacro %}
+
+{% macro locationText(scheduledEvent) %}
+    {% if scheduledEvent.eventType != EventType.EXTERNAL_TRANSFER and scheduledEvent.eventType != EventType.COURT_HEARING %}
+        {% if scheduledEvent.inCell %}
+            In cell
+        {% elseif scheduledEvent.onWing %}
+            On wing
+        {% elseif scheduledEvent.offWing %}
+            Off wing
+        {% else %}
+            {{ (scheduledEvent.internalLocationUserDescription or scheduledEvent.internalLocationDescription) | trim }}
+        {% endif %}
     {% endif %}
 {% endmacro %}

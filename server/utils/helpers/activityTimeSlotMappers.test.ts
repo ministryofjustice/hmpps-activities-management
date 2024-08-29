@@ -1,17 +1,19 @@
 import { CreateAnActivityJourney, Slots } from '../../routes/activities/create-an-activity/journey'
 import activitySessionToDailyTimeSlots, {
-  activityScheduleSlotsToCustomTimeSlots,
   activitySlotsMinusExclusions,
   calculateUniqueSlots,
-  journeySlotsToCustomSlots,
+  createCustomSlots,
+  createSlot,
   mapActivityScheduleSlotsToSlots,
   mapSlotsToCompleteWeeklyTimeSlots,
   mapSlotsToWeeklyTimeSlots,
-  slotsToCustomTimeSlots,
-  WeeklyCustomTimeSlots,
+  transformActivitySlotsToDailySlots,
+  regimeSlotsToSchedule,
+  allocationSlotsToSchedule,
 } from './activityTimeSlotMappers'
-import { ActivityScheduleSlot, Slot } from '../../@types/activitiesAPI/types'
+import { ActivityScheduleSlot, PrisonRegime, Slot } from '../../@types/activitiesAPI/types'
 import TimeSlot from '../../enum/timeSlot'
+import SimpleTime from '../../commonValidationTypes/simpleTime'
 
 describe('Activity session slots to daily time slots mapper', () => {
   it("should map a activity session's slots to daily time slots", () => {
@@ -376,23 +378,21 @@ describe('calculateUniqueSlots', () => {
   })
 })
 
-describe('Journey slots to custom slots mapper', () => {
-  it('should map a journey slot to custom slots', () => {
-    const slots: Slots = {
-      timeSlotsMonday: ['AM', 'PM', 'ED'],
-      timeSlotsTuesday: ['AM', 'PM'],
-      timeSlotsWednesday: ['AM'],
-      timeSlotsThursday: ['PM'],
-      timeSlotsFriday: ['ED'],
-      timeSlotsSaturday: ['PM'],
-      timeSlotsSunday: ['AM'],
-    }
+describe('Create custom slots from session time', () => {
+  it('should map a monday morning session time to a custom slot', () => {
+    const startTime = new SimpleTime()
+    startTime.hour = 5
+    startTime.minute = 30
 
-    const customSlots: Slot[] = journeySlotsToCustomSlots(slots)
+    const endTime = new SimpleTime()
+    endTime.hour = 9
+    endTime.minute = 45
+
+    const expected: Slot = createSlot('MONDAY-AM', startTime, endTime)
 
     const mondayAM: Slot = {
-      customEndTime: '',
-      customStartTime: '',
+      customStartTime: '05:30',
+      customEndTime: '09:45',
       daysOfWeek: ['MONDAY'],
       friday: false,
       monday: true,
@@ -404,55 +404,23 @@ describe('Journey slots to custom slots mapper', () => {
       wednesday: false,
       weekNumber: 1,
     }
+    expect(expected).toEqual(mondayAM)
+  })
 
-    const mondayPM: Slot = {
-      customEndTime: '',
-      customStartTime: '',
-      daysOfWeek: ['MONDAY'],
-      friday: false,
-      monday: true,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: TimeSlot.PM,
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    }
+  it('should map a tuesday afternoon session time to a custom slot', () => {
+    const startTime = new SimpleTime()
+    startTime.hour = 15
+    startTime.minute = 30
 
-    const mondayED: Slot = {
-      customEndTime: '',
-      customStartTime: '',
-      daysOfWeek: ['MONDAY'],
-      friday: false,
-      monday: true,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: TimeSlot.ED,
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    }
+    const endTime = new SimpleTime()
+    endTime.hour = 17
+    endTime.minute = 45
 
-    const tuesdayAM: Slot = {
-      customEndTime: '',
-      customStartTime: '',
-      daysOfWeek: ['TUESDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: TimeSlot.AM,
-      tuesday: true,
-      wednesday: false,
-      weekNumber: 1,
-    }
+    const expected: Slot = createSlot('TUESDAY-PM', startTime, endTime)
 
     const tuesdayPM: Slot = {
-      customEndTime: '',
-      customStartTime: '',
+      customStartTime: '15:30',
+      customEndTime: '17:45',
       daysOfWeek: ['TUESDAY'],
       friday: false,
       monday: false,
@@ -464,40 +432,23 @@ describe('Journey slots to custom slots mapper', () => {
       wednesday: false,
       weekNumber: 1,
     }
+    expect(expected).toEqual(tuesdayPM)
+  })
 
-    const wednesdayAM: Slot = {
-      customEndTime: '',
-      customStartTime: '',
-      daysOfWeek: ['WEDNESDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: false,
-      timeSlot: TimeSlot.AM,
-      tuesday: false,
-      wednesday: true,
-      weekNumber: 1,
-    }
+  it('should map a friday evening session time to a custom slot', () => {
+    const startTime = new SimpleTime()
+    startTime.hour = 21
+    startTime.minute = 30
 
-    const thursdayPM: Slot = {
-      customEndTime: '',
-      customStartTime: '',
-      daysOfWeek: ['THURSDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: false,
-      thursday: true,
-      timeSlot: TimeSlot.PM,
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    }
+    const endTime = new SimpleTime()
+    endTime.hour = 23
+    endTime.minute = 45
+
+    const expected: Slot = createSlot('FRIDAY-ED', startTime, endTime)
 
     const fridayED: Slot = {
-      customEndTime: '',
-      customStartTime: '',
+      customStartTime: '21:30',
+      customEndTime: '23:45',
       daysOfWeek: ['FRIDAY'],
       friday: true,
       monday: false,
@@ -509,59 +460,347 @@ describe('Journey slots to custom slots mapper', () => {
       wednesday: false,
       weekNumber: 1,
     }
-
-    const saturdayPM: Slot = {
-      customEndTime: '',
-      customStartTime: '',
-      daysOfWeek: ['SATURDAY'],
-      friday: false,
-      monday: false,
-      saturday: true,
-      sunday: false,
-      thursday: false,
-      timeSlot: TimeSlot.PM,
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    }
-
-    const sundayPM: Slot = {
-      customEndTime: '',
-      customStartTime: '',
-      daysOfWeek: ['SUNDAY'],
-      friday: false,
-      monday: false,
-      saturday: false,
-      sunday: true,
-      thursday: false,
-      timeSlot: TimeSlot.AM,
-      tuesday: false,
-      wednesday: false,
-      weekNumber: 1,
-    }
-
-    expect(customSlots).toEqual([
-      mondayAM,
-      mondayPM,
-      mondayED,
-      tuesdayAM,
-      tuesdayPM,
-      wednesdayAM,
-      thursdayPM,
-      fridayED,
-      saturdayPM,
-      sundayPM,
-    ])
+    expect(expected).toEqual(fridayED)
   })
 
-  it('schedule week and activity schedule slots to custom time slots', () => {
-    const slots: ActivityScheduleSlot[] = [
+  it('should map custom start and end times to an array of custom slot', () => {
+    const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+    const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
+
+    const startTime = new SimpleTime()
+    startTime.hour = 5
+    startTime.minute = 30
+
+    startMap.set('MONDAY-AM', startTime)
+
+    const startTime2 = new SimpleTime()
+    startTime2.hour = 15
+    startTime2.minute = 45
+
+    startMap.set('WEDNESDAY-PM', startTime2)
+
+    const startTime3 = new SimpleTime()
+    startTime3.hour = 19
+    startTime3.minute = 34
+
+    startMap.set('FRIDAY-ED', startTime3)
+
+    const endTime = new SimpleTime()
+    endTime.hour = 9
+    endTime.minute = 45
+
+    endMap.set('MONDAY-AM', endTime)
+
+    const endTime2 = new SimpleTime()
+    endTime2.hour = 17
+    endTime2.minute = 41
+
+    endMap.set('WEDNESDAY-PM', endTime2)
+
+    const endTime3 = new SimpleTime()
+    endTime3.hour = 21
+    endTime3.minute = 22
+
+    endMap.set('FRIDAY-ED', endTime3)
+
+    const expected: Slot[] = createCustomSlots(startMap, endMap)
+
+    const customSlots: Slot[] = [
       {
-        id: 52,
-        timeSlot: 'AM',
+        customStartTime: '05:30',
+        customEndTime: '09:45',
+        daysOfWeek: ['MONDAY'],
+        friday: false,
+        monday: true,
+        saturday: false,
+        sunday: false,
+        thursday: false,
+        timeSlot: TimeSlot.AM,
+        tuesday: false,
+        wednesday: false,
         weekNumber: 1,
-        startTime: '09:15',
-        endTime: '11:30',
+      },
+      {
+        customStartTime: '15:45',
+        customEndTime: '17:41',
+        daysOfWeek: ['WEDNESDAY'],
+        friday: false,
+        monday: false,
+        saturday: false,
+        sunday: false,
+        thursday: false,
+        timeSlot: TimeSlot.PM,
+        tuesday: false,
+        wednesday: true,
+        weekNumber: 1,
+      },
+      {
+        customStartTime: '19:34',
+        customEndTime: '21:22',
+        daysOfWeek: ['FRIDAY'],
+        friday: true,
+        monday: false,
+        saturday: false,
+        sunday: false,
+        thursday: false,
+        timeSlot: TimeSlot.ED,
+        tuesday: false,
+        wednesday: false,
+        weekNumber: 1,
+      },
+    ]
+
+    expect(expected).toEqual(customSlots)
+  })
+
+  describe('Create scheduled slots from selected regime times', () => {
+    const regimeTimes = [
+      {
+        id: 1,
+        dayOfWeek: 'MONDAY',
+        prisonCode: 'RSI',
+        amStart: '09:00',
+        amFinish: '10:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'TUESDAY',
+        prisonCode: 'RSI',
+        amStart: '09:00',
+        amFinish: '10:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'WEDNESDAY',
+        prisonCode: 'RSI',
+        amStart: '09:00',
+        amFinish: '10:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'THURSDAY',
+        prisonCode: 'RSI',
+        amStart: '09:00',
+        amFinish: '10:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'FRIDAY',
+        prisonCode: 'RSI',
+        amStart: '10:00',
+        amFinish: '11:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'SATURDAY',
+        prisonCode: 'RSI',
+        amStart: '10:00',
+        amFinish: '11:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'SUNDAY',
+        prisonCode: 'RSI',
+        amStart: '10:00',
+        amFinish: '11:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+    ] as PrisonRegime[]
+
+    it('should map slots correctly for weekly', () => {
+      const scheduledSlots = {
+        1: {
+          days: ['monday', 'friday'],
+          timeSlotsMonday: ['AM', 'PM'],
+          timeSlotsTuesday: [],
+          timeSlotsWednesday: ['ED'],
+          timeSlotsThursday: [],
+          timeSlotsFriday: ['AM'],
+          timeSlotsSaturday: [],
+          timeSlotsSunday: [],
+        },
+      } as { [weekNumber: string]: Slots }
+
+      const schedule = regimeSlotsToSchedule(1, scheduledSlots, regimeTimes)
+
+      expect(schedule).toEqual({
+        1: [
+          {
+            day: 'Monday',
+            slots: [
+              { timeSlot: 'AM', startTime: '09:00', endTime: '10:00' },
+              { timeSlot: 'PM', startTime: '12:00', endTime: '13:00' },
+            ],
+          },
+          { day: 'Tuesday', slots: [] },
+          {
+            day: 'Wednesday',
+            slots: [{ timeSlot: 'ED', startTime: '17:00', endTime: '18:00' }],
+          },
+          { day: 'Thursday', slots: [] },
+          {
+            day: 'Friday',
+            slots: [{ timeSlot: 'AM', startTime: '10:00', endTime: '11:00' }],
+          },
+          { day: 'Saturday', slots: [] },
+          { day: 'Sunday', slots: [] },
+        ],
+      })
+    })
+
+    it('should map slots correctly for bi-weekly', () => {
+      const scheduledSlots = {
+        1: {
+          days: ['monday', 'tuesday'],
+          timeSlotsMonday: ['AM'],
+          timeSlotsTuesday: ['AM'],
+          timeSlotsWednesday: [],
+          timeSlotsThursday: [],
+          timeSlotsFriday: [],
+          timeSlotsSaturday: [],
+          timeSlotsSunday: [],
+        },
+        2: {
+          days: ['wednesday', 'thursday', 'friday'],
+          timeSlotsMonday: [],
+          timeSlotsTuesday: [],
+          timeSlotsWednesday: ['PM'],
+          timeSlotsThursday: ['PM'],
+          timeSlotsFriday: ['PM', 'ED'],
+          timeSlotsSaturday: [],
+          timeSlotsSunday: [],
+        },
+      } as { [weekNumber: string]: Slots }
+
+      const schedule = regimeSlotsToSchedule(2, scheduledSlots, regimeTimes)
+
+      expect(schedule).toEqual({
+        1: [
+          {
+            day: 'Monday',
+            slots: [{ timeSlot: 'AM', startTime: '09:00', endTime: '10:00' }],
+          },
+          { day: 'Tuesday', slots: [{ timeSlot: 'AM', startTime: '09:00', endTime: '10:00' }] },
+          { day: 'Wednesday', slots: [] },
+          { day: 'Thursday', slots: [] },
+          { day: 'Friday', slots: [] },
+          { day: 'Saturday', slots: [] },
+          { day: 'Sunday', slots: [] },
+        ],
+        2: [
+          { day: 'Monday', slots: [] },
+          { day: 'Tuesday', slots: [] },
+          { day: 'Wednesday', slots: [{ timeSlot: 'PM', startTime: '12:00', endTime: '13:00' }] },
+          { day: 'Thursday', slots: [{ timeSlot: 'PM', startTime: '12:00', endTime: '13:00' }] },
+          {
+            day: 'Friday',
+            slots: [
+              { timeSlot: 'PM', startTime: '12:00', endTime: '13:00' },
+              { timeSlot: 'ED', startTime: '17:00', endTime: '18:00' },
+            ],
+          },
+          { day: 'Saturday', slots: [] },
+          { day: 'Sunday', slots: [] },
+        ],
+      })
+    })
+
+    it('should ignore any unknown slots', () => {
+      const scheduledSlots = {
+        1: {
+          days: ['monday', 'friday'],
+          timeSlotsMonday: ['AM', 'XX'],
+          timeSlotsTuesday: [],
+          timeSlotsWednesday: ['ED'],
+          timeSlotsThursday: [''],
+          timeSlotsFriday: [],
+          timeSlotsSaturday: [],
+          timeSlotsSunday: [],
+        },
+      } as { [weekNumber: string]: Slots }
+
+      const schedule = regimeSlotsToSchedule(1, scheduledSlots, regimeTimes)
+
+      expect(schedule).toEqual({
+        1: [
+          {
+            day: 'Monday',
+            slots: [{ timeSlot: 'AM', startTime: '09:00', endTime: '10:00' }],
+          },
+          { day: 'Tuesday', slots: [] },
+          {
+            day: 'Wednesday',
+            slots: [{ timeSlot: 'ED', startTime: '17:00', endTime: '18:00' }],
+          },
+          { day: 'Thursday', slots: [] },
+          { day: 'Friday', slots: [] },
+          { day: 'Saturday', slots: [] },
+          { day: 'Sunday', slots: [] },
+        ],
+      })
+    })
+  })
+})
+
+describe('transformActivitySlotsToDailySlots', () => {
+  it('should transform slots from the activity (from api) to the desired format - only am present', () => {
+    const activitySlots = [
+      {
+        id: 1,
+        timeSlot: TimeSlot.AM,
+        weekNumber: 1,
+        startTime: '05:00',
+        endTime: '07:00',
+        daysOfWeek: ['Mon'],
+        mondayFlag: true,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+    ]
+    const result = transformActivitySlotsToDailySlots(activitySlots)
+    const expectedResult = [{ dayOfWeek: 'MONDAY', amStart: '05:00', amFinish: '07:00' }]
+    expect(result).toEqual(expectedResult)
+  })
+
+  it('should transform slots from the activity (from api) to the desired format - am and pm present on same day', () => {
+    const activitySlots = [
+      {
+        id: 1,
+        timeSlot: TimeSlot.AM,
+        weekNumber: 1,
+        startTime: '05:00',
+        endTime: '07:00',
         daysOfWeek: ['Mon'],
         mondayFlag: true,
         tuesdayFlag: false,
@@ -572,11 +811,36 @@ describe('Journey slots to custom slots mapper', () => {
         sundayFlag: false,
       },
       {
-        id: 53,
-        timeSlot: 'ED',
+        id: 2,
+        timeSlot: TimeSlot.PM,
         weekNumber: 1,
-        startTime: '18:15',
-        endTime: '21:45',
+        startTime: '15:30',
+        endTime: '17:00',
+        daysOfWeek: ['Mon'],
+        mondayFlag: true,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+    ]
+    const result = transformActivitySlotsToDailySlots(activitySlots)
+    const expectedResult = [
+      { dayOfWeek: 'MONDAY', amStart: '05:00', amFinish: '07:00', pmStart: '15:30', pmFinish: '17:00' },
+    ]
+    expect(result).toEqual(expectedResult)
+  })
+
+  it('should transform slots from the activity (from api) to the desired format - am and pm present on different days', () => {
+    const activitySlots = [
+      {
+        id: 1,
+        timeSlot: TimeSlot.AM,
+        weekNumber: 1,
+        startTime: '05:00',
+        endTime: '07:00',
         daysOfWeek: ['Mon'],
         mondayFlag: true,
         tuesdayFlag: false,
@@ -587,11 +851,67 @@ describe('Journey slots to custom slots mapper', () => {
         sundayFlag: false,
       },
       {
-        id: 54,
-        timeSlot: 'PM',
+        id: 2,
+        timeSlot: TimeSlot.PM,
         weekNumber: 1,
-        startTime: '14:45',
-        endTime: '16:00',
+        startTime: '15:30',
+        endTime: '17:00',
+        daysOfWeek: ['Tue'],
+        mondayFlag: false,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+    ]
+    const result = transformActivitySlotsToDailySlots(activitySlots)
+    const expectedResult = [
+      { dayOfWeek: 'MONDAY', amStart: '05:00', amFinish: '07:00' },
+      { dayOfWeek: 'TUESDAY', pmStart: '15:30', pmFinish: '17:00' },
+    ]
+    expect(result).toEqual(expectedResult)
+  })
+
+  it('should transform slots from the activity (from api) to the desired format - all types of slots present', () => {
+    const activitySlots = [
+      {
+        id: 1,
+        timeSlot: TimeSlot.AM,
+        weekNumber: 1,
+        startTime: '05:00',
+        endTime: '07:00',
+        daysOfWeek: ['Mon'],
+        mondayFlag: true,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 2,
+        timeSlot: TimeSlot.PM,
+        weekNumber: 1,
+        startTime: '15:30',
+        endTime: '17:00',
+        daysOfWeek: ['Mon'],
+        mondayFlag: true,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 3,
+        timeSlot: TimeSlot.PM,
+        weekNumber: 1,
+        startTime: '15:30',
+        endTime: '17:00',
         daysOfWeek: ['Tue'],
         mondayFlag: false,
         tuesdayFlag: true,
@@ -602,196 +922,12 @@ describe('Journey slots to custom slots mapper', () => {
         sundayFlag: false,
       },
       {
-        id: 55,
-        timeSlot: 'AM',
+        id: 4,
+        timeSlot: TimeSlot.ED,
         weekNumber: 1,
-        startTime: '08:30',
-        endTime: '11:45',
-        daysOfWeek: ['Thu'],
-        mondayFlag: false,
-        tuesdayFlag: false,
-        wednesdayFlag: false,
-        thursdayFlag: true,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-      },
-      {
-        id: 56,
-        timeSlot: 'PM',
-        weekNumber: 1,
-        startTime: '15:12',
-        endTime: '16:35',
-        daysOfWeek: ['Thu'],
-        mondayFlag: false,
-        tuesdayFlag: false,
-        wednesdayFlag: false,
-        thursdayFlag: true,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-      },
-      {
-        id: 57,
-        timeSlot: 'ED',
-        weekNumber: 1,
-        startTime: '18:56',
-        endTime: '19:55',
-        daysOfWeek: ['Thu'],
-        mondayFlag: false,
-        tuesdayFlag: false,
-        wednesdayFlag: false,
-        thursdayFlag: true,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-      },
-      {
-        id: 58,
-        timeSlot: 'ED',
-        weekNumber: 1,
-        startTime: '21:03',
-        endTime: '22:54',
-        daysOfWeek: ['Sat'],
-        mondayFlag: false,
-        tuesdayFlag: false,
-        wednesdayFlag: false,
-        thursdayFlag: false,
-        fridayFlag: false,
-        saturdayFlag: true,
-        sundayFlag: false,
-      },
-    ]
-
-    const customSlots: WeeklyCustomTimeSlots = activityScheduleSlotsToCustomTimeSlots(1, slots)
-
-    expect(customSlots).toEqual({
-      '1': [
-        {
-          day: 'Monday',
-          slots: [
-            {
-              timeSlot: 'AM',
-              startTime: '09:15',
-              endTime: '11:30',
-            },
-            {
-              timeSlot: 'ED',
-              startTime: '18:15',
-              endTime: '21:45',
-            },
-          ],
-        },
-        {
-          day: 'Tuesday',
-          slots: [
-            {
-              timeSlot: 'PM',
-              startTime: '14:45',
-              endTime: '16:00',
-            },
-          ],
-        },
-        {
-          day: 'Wednesday',
-          slots: [],
-        },
-        {
-          day: 'Thursday',
-          slots: [
-            {
-              timeSlot: 'AM',
-              startTime: '08:30',
-              endTime: '11:45',
-            },
-            {
-              timeSlot: 'PM',
-              startTime: '15:12',
-              endTime: '16:35',
-            },
-            {
-              timeSlot: 'ED',
-              startTime: '18:56',
-              endTime: '19:55',
-            },
-          ],
-        },
-        {
-          day: 'Friday',
-          slots: [],
-        },
-        {
-          day: 'Saturday',
-          slots: [
-            {
-              timeSlot: 'ED',
-              startTime: '21:03',
-              endTime: '22:54',
-            },
-          ],
-        },
-        {
-          day: 'Sunday',
-          slots: [],
-        },
-      ],
-    })
-  })
-
-  it('schedule week and activity schedule slots out of order to custom time slots', () => {
-    const slots: ActivityScheduleSlot[] = [
-      {
-        id: 56,
-        timeSlot: 'PM',
-        weekNumber: 1,
-        startTime: '15:12',
-        endTime: '16:35',
-        daysOfWeek: ['Thu'],
-        mondayFlag: false,
-        tuesdayFlag: false,
-        wednesdayFlag: false,
-        thursdayFlag: true,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-      },
-      {
-        id: 53,
-        timeSlot: 'ED',
-        weekNumber: 1,
-        startTime: '18:15',
-        endTime: '21:45',
-        daysOfWeek: ['Mon'],
-        mondayFlag: true,
-        tuesdayFlag: false,
-        wednesdayFlag: false,
-        thursdayFlag: false,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-      },
-      {
-        id: 52,
-        timeSlot: 'AM',
-        weekNumber: 1,
-        startTime: '09:15',
-        endTime: '11:30',
-        daysOfWeek: ['Mon'],
-        mondayFlag: true,
-        tuesdayFlag: false,
-        wednesdayFlag: false,
-        thursdayFlag: false,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-      },
-      {
-        id: 54,
-        timeSlot: 'PM',
-        weekNumber: 1,
-        startTime: '14:45',
-        endTime: '16:00',
-        daysOfWeek: ['Tue'],
+        startTime: '17:30',
+        endTime: '20:00',
+        daysOfWeek: ['Wed'],
         mondayFlag: false,
         tuesdayFlag: true,
         wednesdayFlag: false,
@@ -800,479 +936,100 @@ describe('Journey slots to custom slots mapper', () => {
         saturdayFlag: false,
         sundayFlag: false,
       },
-      {
-        id: 55,
-        timeSlot: 'AM',
-        weekNumber: 1,
-        startTime: '08:30',
-        endTime: '11:45',
-        daysOfWeek: ['Thu'],
-        mondayFlag: false,
-        tuesdayFlag: false,
-        wednesdayFlag: false,
-        thursdayFlag: true,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-      },
-      {
-        id: 57,
-        timeSlot: 'ED',
-        weekNumber: 1,
-        startTime: '18:56',
-        endTime: '19:55',
-        daysOfWeek: ['Thu'],
-        mondayFlag: false,
-        tuesdayFlag: false,
-        wednesdayFlag: false,
-        thursdayFlag: true,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-      },
-      {
-        id: 58,
-        timeSlot: 'ED',
-        weekNumber: 1,
-        startTime: '21:03',
-        endTime: '22:54',
-        daysOfWeek: ['Sat'],
-        mondayFlag: false,
-        tuesdayFlag: false,
-        wednesdayFlag: false,
-        thursdayFlag: false,
-        fridayFlag: false,
-        saturdayFlag: true,
-        sundayFlag: false,
-      },
     ]
-
-    const customSlots: WeeklyCustomTimeSlots = activityScheduleSlotsToCustomTimeSlots(1, slots)
-
-    expect(customSlots).toEqual({
-      '1': [
-        {
-          day: 'Monday',
-          slots: [
-            {
-              timeSlot: 'AM',
-              startTime: '09:15',
-              endTime: '11:30',
-            },
-            {
-              timeSlot: 'ED',
-              startTime: '18:15',
-              endTime: '21:45',
-            },
-          ],
-        },
-        {
-          day: 'Tuesday',
-          slots: [
-            {
-              timeSlot: 'PM',
-              startTime: '14:45',
-              endTime: '16:00',
-            },
-          ],
-        },
-        {
-          day: 'Wednesday',
-          slots: [],
-        },
-        {
-          day: 'Thursday',
-          slots: [
-            {
-              timeSlot: 'AM',
-              startTime: '08:30',
-              endTime: '11:45',
-            },
-            {
-              timeSlot: 'PM',
-              startTime: '15:12',
-              endTime: '16:35',
-            },
-            {
-              timeSlot: 'ED',
-              startTime: '18:56',
-              endTime: '19:55',
-            },
-          ],
-        },
-        {
-          day: 'Friday',
-          slots: [],
-        },
-        {
-          day: 'Saturday',
-          slots: [
-            {
-              timeSlot: 'ED',
-              startTime: '21:03',
-              endTime: '22:54',
-            },
-          ],
-        },
-        {
-          day: 'Sunday',
-          slots: [],
-        },
-      ],
-    })
+    const result = transformActivitySlotsToDailySlots(activitySlots)
+    const expectedResult = [
+      { dayOfWeek: 'MONDAY', amStart: '05:00', amFinish: '07:00', pmStart: '15:30', pmFinish: '17:00' },
+      { dayOfWeek: 'TUESDAY', pmStart: '15:30', pmFinish: '17:00' },
+      { dayOfWeek: 'WEDNESDAY', edStart: '17:30', edFinish: '20:00' },
+    ]
+    expect(result).toEqual(expectedResult)
   })
 
-  it('schedule week and slots to custom time slots', () => {
-    const slots: Slot[] = [
-      {
-        customStartTime: '09:15',
-        customEndTime: '11:30',
-        daysOfWeek: ['MONDAY'],
-        friday: false,
-        monday: true,
-        saturday: false,
-        sunday: false,
-        thursday: false,
-        timeSlot: 'AM',
-        tuesday: false,
-        wednesday: false,
-        weekNumber: 1,
-      },
-      {
-        customStartTime: '18:15',
-        customEndTime: '21:45',
-        daysOfWeek: ['MONDAY'],
-        friday: false,
-        monday: true,
-        saturday: false,
-        sunday: false,
-        thursday: false,
-        timeSlot: 'ED',
-        tuesday: false,
-        wednesday: false,
-        weekNumber: 1,
-      },
-      {
-        customStartTime: '14:45',
-        customEndTime: '16:00',
-        daysOfWeek: ['TUESDAY'],
-        friday: false,
-        monday: false,
-        saturday: false,
-        sunday: false,
-        thursday: false,
-        timeSlot: 'PM',
-        tuesday: true,
-        wednesday: false,
-        weekNumber: 1,
-      },
-      {
-        customStartTime: '07:30',
-        customEndTime: '10:14',
-        daysOfWeek: ['THURSDAY'],
-        friday: false,
-        monday: false,
-        saturday: false,
-        sunday: false,
-        thursday: true,
-        timeSlot: 'AM',
-        tuesday: false,
-        wednesday: false,
-        weekNumber: 1,
-      },
-      {
-        customStartTime: '15:12',
-        customEndTime: '16:35',
-        daysOfWeek: ['THURSDAY'],
-        friday: false,
-        monday: false,
-        saturday: false,
-        sunday: false,
-        thursday: true,
-        timeSlot: 'PM',
-        tuesday: false,
-        wednesday: false,
-        weekNumber: 1,
-      },
-      {
-        customStartTime: '18:56',
-        customEndTime: '19:55',
-        daysOfWeek: ['THURSDAY'],
-        friday: false,
-        monday: false,
-        saturday: false,
-        sunday: false,
-        thursday: true,
-        timeSlot: 'ED',
-        tuesday: false,
-        wednesday: false,
-        weekNumber: 1,
-      },
-      {
-        customStartTime: '21:03',
-        customEndTime: '22:54',
-        daysOfWeek: ['SATURDAY'],
-        friday: false,
-        monday: false,
-        saturday: true,
-        sunday: false,
-        thursday: false,
-        timeSlot: 'ED',
-        tuesday: false,
-        wednesday: false,
-        weekNumber: 1,
-      },
-    ]
+  describe('allocationSlotsToSchedule', () => {
+    it('should transform allocations slots to schedule', () => {
+      const allocationSlots: ActivityScheduleSlot[] = [
+        {
+          id: 1,
+          timeSlot: 'AM',
+          weekNumber: 1,
+          startTime: '08:00',
+          endTime: '09:00',
+          daysOfWeek: ['Mon', 'Tue'],
+          mondayFlag: true,
+          tuesdayFlag: true,
+          wednesdayFlag: false,
+          thursdayFlag: false,
+          fridayFlag: false,
+          saturdayFlag: false,
+          sundayFlag: false,
+        },
+        {
+          id: 2,
+          timeSlot: 'ED',
+          weekNumber: 2,
+          startTime: '17:20',
+          endTime: '19:00',
+          daysOfWeek: ['Thu'],
+          mondayFlag: false,
+          tuesdayFlag: false,
+          wednesdayFlag: false,
+          thursdayFlag: true,
+          fridayFlag: false,
+          saturdayFlag: false,
+          sundayFlag: false,
+        },
+        {
+          id: 3,
+          timeSlot: 'PM',
+          weekNumber: 2,
+          startTime: '12:00',
+          endTime: '13:00',
+          daysOfWeek: ['Thu'],
+          mondayFlag: false,
+          tuesdayFlag: false,
+          wednesdayFlag: false,
+          thursdayFlag: true,
+          fridayFlag: false,
+          saturdayFlag: false,
+          sundayFlag: false,
+        },
+      ]
 
-    const customSlots: WeeklyCustomTimeSlots = slotsToCustomTimeSlots(1, slots)
+      const schedule = allocationSlotsToSchedule(2, allocationSlots)
 
-    expect(customSlots).toEqual({
-      '1': [
-        {
-          day: 'Monday',
-          slots: [
-            {
-              timeSlot: 'AM',
-              startTime: '09:15',
-              endTime: '11:30',
-            },
-            {
-              timeSlot: 'ED',
-              startTime: '18:15',
-              endTime: '21:45',
-            },
-          ],
-        },
-        {
-          day: 'Tuesday',
-          slots: [
-            {
-              timeSlot: 'PM',
-              startTime: '14:45',
-              endTime: '16:00',
-            },
-          ],
-        },
-        {
-          day: 'Wednesday',
-          slots: [],
-        },
-        {
-          day: 'Thursday',
-          slots: [
-            {
-              timeSlot: 'AM',
-              startTime: '07:30',
-              endTime: '10:14',
-            },
-            {
-              timeSlot: 'PM',
-              startTime: '15:12',
-              endTime: '16:35',
-            },
-            {
-              timeSlot: 'ED',
-              startTime: '18:56',
-              endTime: '19:55',
-            },
-          ],
-        },
-        {
-          day: 'Friday',
-          slots: [],
-        },
-        {
-          day: 'Saturday',
-          slots: [
-            {
-              timeSlot: 'ED',
-              startTime: '21:03',
-              endTime: '22:54',
-            },
-          ],
-        },
-        {
-          day: 'Sunday',
-          slots: [],
-        },
-      ],
-    })
-  })
-
-  it('schedule week and slots out of order to custom time slots', () => {
-    const slots: Slot[] = [
-      {
-        customStartTime: '14:45',
-        customEndTime: '16:00',
-        daysOfWeek: ['TUESDAY'],
-        friday: false,
-        monday: false,
-        saturday: false,
-        sunday: false,
-        thursday: false,
-        timeSlot: 'PM',
-        tuesday: true,
-        wednesday: false,
-        weekNumber: 1,
-      },
-      {
-        customStartTime: '09:15',
-        customEndTime: '11:30',
-        daysOfWeek: ['MONDAY'],
-        friday: false,
-        monday: true,
-        saturday: false,
-        sunday: false,
-        thursday: false,
-        timeSlot: 'AM',
-        tuesday: false,
-        wednesday: false,
-        weekNumber: 1,
-      },
-      {
-        customStartTime: '18:15',
-        customEndTime: '21:45',
-        daysOfWeek: ['MONDAY'],
-        friday: false,
-        monday: true,
-        saturday: false,
-        sunday: false,
-        thursday: false,
-        timeSlot: 'ED',
-        tuesday: false,
-        wednesday: false,
-        weekNumber: 1,
-      },
-      {
-        customStartTime: '07:30',
-        customEndTime: '10:14',
-        daysOfWeek: ['THURSDAY'],
-        friday: false,
-        monday: false,
-        saturday: false,
-        sunday: false,
-        thursday: true,
-        timeSlot: 'AM',
-        tuesday: false,
-        wednesday: false,
-        weekNumber: 1,
-      },
-      {
-        customStartTime: '21:03',
-        customEndTime: '22:54',
-        daysOfWeek: ['SATURDAY'],
-        friday: false,
-        monday: false,
-        saturday: true,
-        sunday: false,
-        thursday: false,
-        timeSlot: 'ED',
-        tuesday: false,
-        wednesday: false,
-        weekNumber: 1,
-      },
-      {
-        customStartTime: '15:12',
-        customEndTime: '16:35',
-        daysOfWeek: ['THURSDAY'],
-        friday: false,
-        monday: false,
-        saturday: false,
-        sunday: false,
-        thursday: true,
-        timeSlot: 'PM',
-        tuesday: false,
-        wednesday: false,
-        weekNumber: 1,
-      },
-      {
-        customStartTime: '18:56',
-        customEndTime: '19:55',
-        daysOfWeek: ['THURSDAY'],
-        friday: false,
-        monday: false,
-        saturday: false,
-        sunday: false,
-        thursday: true,
-        timeSlot: 'ED',
-        tuesday: false,
-        wednesday: false,
-        weekNumber: 1,
-      },
-    ]
-
-    const customSlots: WeeklyCustomTimeSlots = slotsToCustomTimeSlots(1, slots)
-
-    expect(customSlots).toEqual({
-      '1': [
-        {
-          day: 'Monday',
-          slots: [
-            {
-              timeSlot: 'AM',
-              startTime: '09:15',
-              endTime: '11:30',
-            },
-            {
-              timeSlot: 'ED',
-              startTime: '18:15',
-              endTime: '21:45',
-            },
-          ],
-        },
-        {
-          day: 'Tuesday',
-          slots: [
-            {
-              timeSlot: 'PM',
-              startTime: '14:45',
-              endTime: '16:00',
-            },
-          ],
-        },
-        {
-          day: 'Wednesday',
-          slots: [],
-        },
-        {
-          day: 'Thursday',
-          slots: [
-            {
-              timeSlot: 'AM',
-              startTime: '07:30',
-              endTime: '10:14',
-            },
-            {
-              timeSlot: 'PM',
-              startTime: '15:12',
-              endTime: '16:35',
-            },
-            {
-              timeSlot: 'ED',
-              startTime: '18:56',
-              endTime: '19:55',
-            },
-          ],
-        },
-        {
-          day: 'Friday',
-          slots: [],
-        },
-        {
-          day: 'Saturday',
-          slots: [
-            {
-              timeSlot: 'ED',
-              startTime: '21:03',
-              endTime: '22:54',
-            },
-          ],
-        },
-        {
-          day: 'Sunday',
-          slots: [],
-        },
-      ],
+      expect(schedule).toEqual({
+        1: [
+          {
+            day: 'Monday',
+            slots: [{ timeSlot: 'AM', startTime: '08:00', endTime: '09:00' }],
+          },
+          {
+            day: 'Tuesday',
+            slots: [{ timeSlot: 'AM', startTime: '08:00', endTime: '09:00' }],
+          },
+          { day: 'Wednesday', slots: [] },
+          { day: 'Thursday', slots: [] },
+          { day: 'Friday', slots: [] },
+          { day: 'Saturday', slots: [] },
+          { day: 'Sunday', slots: [] },
+        ],
+        2: [
+          { day: 'Monday', slots: [] },
+          { day: 'Tuesday', slots: [] },
+          { day: 'Wednesday', slots: [] },
+          {
+            day: 'Thursday',
+            slots: [
+              { timeSlot: 'PM', startTime: '12:00', endTime: '13:00' },
+              { timeSlot: 'ED', startTime: '17:20', endTime: '19:00' },
+            ],
+          },
+          { day: 'Friday', slots: [] },
+          { day: 'Saturday', slots: [] },
+          { day: 'Sunday', slots: [] },
+        ],
+      })
     })
   })
 })

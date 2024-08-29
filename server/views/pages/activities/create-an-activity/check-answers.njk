@@ -2,9 +2,7 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
-{% from "partials/activities/days-and-times.njk" import daysAndTimes %}
 {% from "../../../partials/activities/days-and-custom-times.njk" import daysAndCustomTimes %}
 
 {% set pageTitle = applicationName + " - Create an activity - Check answers" %}
@@ -216,43 +214,23 @@
                     }
                 }
             ] %}
-            {% if not customSlots %}
-                {% for week, slots in dailySlots %}
-                    {% set scheduleRows = (scheduleRows.push(
-                        {
-                            key: {
-                                text: 'Week ' + week
-                            },
-                            value: { html: daysAndTimes(slots) },
-                            actions: {
-                                items: [{
-                                    href: "days-and-times/" + week + "?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "Change schedule"
-                                }]
-                            }
-                        }
-                    ), scheduleRows) %}
-                {% endfor %}
-            {% else %}
-                {% for week, slots in customSlots %}
-                    {% set scheduleRows = (scheduleRows.push(
-                        {
-                            key: {
-                            text: 'Week ' + week
-                        },
-                            value: { html: daysAndCustomTimes(slots) },
-                            actions: {
-                            items: [{
-                                href: "session-times?preserveHistory=true",
-                                text: "Change",
-                                visuallyHiddenText: "Change schedule"
-                            }]
-                        }
-                        }
-                    ), scheduleRows) %}
-                {% endfor %}
-            {% endif %}
+            {% for week, slots in slots %}
+                {% set scheduleRows = (scheduleRows.push(
+                    {
+                        key: {
+                        text: 'Week ' + week
+                    },
+                        value: { html: daysAndCustomTimes(slots) },
+                        actions: {
+                        items: [{
+                            href: "days-and-times/" + week + "?preserveHistory=true",
+                            text: "Change",
+                            visuallyHiddenText: "Change schedule"
+                        }]
+                    }
+                    }
+                ), scheduleRows) %}
+            {% endfor %}
             {% set scheduleRows = (scheduleRows.push(
                 {
                     key: { text: "Runs on bank holidays" },

@@ -6,8 +6,8 @@ import CheckAnswersRoutes from './checkAnswers'
 import activity from '../../../../services/fixtures/activity_1.json'
 import atLeast from '../../../../../jest.setup'
 import PrisonService from '../../../../services/prisonService'
-import { Activity, Slot } from '../../../../@types/activitiesAPI/types'
-import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
+import { Activity, PrisonRegime, Slot } from '../../../../@types/activitiesAPI/types'
+import { regimeSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
 import Organiser, { organiserDescriptions } from '../../../../enum/eventOrganisers'
 import MetricsService from '../../../../services/metricsService'
@@ -91,6 +91,90 @@ describe('Route Handlers - Create an activity - Check answers', () => {
   })
 
   describe('GET', () => {
+    const regimeTimes = [
+      {
+        id: 1,
+        dayOfWeek: 'MONDAY',
+        prisonCode: 'RSI',
+        amStart: '09:00',
+        amFinish: '10:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'TUESDAY',
+        prisonCode: 'RSI',
+        amStart: '09:00',
+        amFinish: '10:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'WEDNESDAY',
+        prisonCode: 'RSI',
+        amStart: '09:00',
+        amFinish: '10:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'THURSDAY',
+        prisonCode: 'RSI',
+        amStart: '09:00',
+        amFinish: '10:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'FRIDAY',
+        prisonCode: 'RSI',
+        amStart: '10:00',
+        amFinish: '11:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'SATURDAY',
+        prisonCode: 'RSI',
+        amStart: '10:00',
+        amFinish: '11:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+      {
+        id: 1,
+        dayOfWeek: 'SUNDAY',
+        prisonCode: 'RSI',
+        amStart: '10:00',
+        amFinish: '11:00',
+        pmStart: '12:00',
+        pmFinish: '13:00',
+        edStart: '17:00',
+        edFinish: '18:00',
+      },
+    ] as PrisonRegime[]
+
+    beforeEach(() => {
+      when(activitiesService.getPrisonRegime).calledWith(atLeast('MDI')).mockResolvedValueOnce(regimeTimes)
+    })
+
     it('should render page with data from session', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/check-answers', {
@@ -100,9 +184,10 @@ describe('Route Handlers - Create an activity - Check answers', () => {
             pays: [{ bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150' }],
           },
         ],
-        dailySlots: activitySessionToDailyTimeSlots(
+        slots: regimeSlotsToSchedule(
           req.session.createJourney.scheduleWeeks,
           req.session.createJourney.slots,
+          regimeTimes,
         ),
         organiser: organiserDescriptions[req.session.createJourney.organiserCode],
         tier: eventTierDescriptions[req.session.createJourney.tierCode],
@@ -158,6 +243,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
       req.session.createJourney.customSlots = customSlots
 
       await handler.GET(req, res)
+
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/check-answers', {
         incentiveLevelPays: [
           {
@@ -165,11 +251,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
             pays: [{ bandAlias: 'Common', bandId: 1, incentiveLevel: 'Standard', rate: '150' }],
           },
         ],
-        dailySlots: activitySessionToDailyTimeSlots(
-          req.session.createJourney.scheduleWeeks,
-          req.session.createJourney.slots,
-        ),
-        customSlots: {
+        slots: {
           '1': [
             {
               day: 'Monday',

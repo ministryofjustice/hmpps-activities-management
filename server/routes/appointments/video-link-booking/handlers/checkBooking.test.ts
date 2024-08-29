@@ -41,7 +41,7 @@ describe('CheckBookingRoutes', () => {
         { key: 'Room1', description: 'Room 1', enabled: true },
         { key: 'Room2', description: 'Room 2', enabled: true },
       ])
-      bookAVideoLinkService.getAllEnabledCourts.mockResolvedValue([
+      bookAVideoLinkService.getAllCourts.mockResolvedValue([
         { courtId: 1, code: 'Court1', description: 'Court 1', enabled: true },
         { courtId: 2, code: 'Court2', description: 'Court 2', enabled: true },
       ])

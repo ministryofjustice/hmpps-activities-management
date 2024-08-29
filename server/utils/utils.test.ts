@@ -22,6 +22,7 @@ import {
   parseDate,
   toFixed,
   asString,
+  getSplitTime,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { Attendance } from '../@types/activitiesAPI/types'
@@ -350,5 +351,35 @@ describe('utils', () => {
     ])('%test asString(%value)', ({ value, expected }) => {
       expect(asString(value)).toEqual(expected)
     })
+  })
+})
+
+describe('getSplitTime', () => {
+  it('converts a time where no numbers are zero', () => {
+    const time = '15:25'
+    const result = getSplitTime(time)
+    const expectedResult = {
+      hour: '15',
+      minute: '25',
+    }
+    expect(result).toEqual(expectedResult)
+  })
+  it('converts a time where there is a leading zero in the hour', () => {
+    const time = '07:30'
+    const result = getSplitTime(time)
+    const expectedResult = {
+      hour: '7',
+      minute: '30',
+    }
+    expect(result).toEqual(expectedResult)
+  })
+  it('converts a time where there is a leading zero in the minute', () => {
+    const time = '15:00'
+    const result = getSplitTime(time)
+    const expectedResult = {
+      hour: '15',
+      minute: '0',
+    }
+    expect(result).toEqual(expectedResult)
   })
 })
