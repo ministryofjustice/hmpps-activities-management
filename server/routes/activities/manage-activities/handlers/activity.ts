@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { parseISO } from 'date-fns'
 import PrisonService from '../../../../services/prisonService'
-import { allocationSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
+import { sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import ActivitiesService from '../../../../services/activitiesService'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
@@ -28,7 +28,7 @@ export default class ActivityRoutes {
     const schedule = activity.schedules[0]
     const payEditable: boolean = editPay(schedule)
 
-    const slots = allocationSlotsToSchedule(schedule.scheduleWeeks, schedule.slots)
+    const slots = sessionSlotsToSchedule(schedule.scheduleWeeks, schedule.slots)
     const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(activity.pay, schedule.allocations, user)
     const displayPays = groupPayBand(incentiveLevelPays)
 

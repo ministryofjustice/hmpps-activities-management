@@ -2,10 +2,7 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { convertToTitleCase, parseDate } from '../../../../utils/utils'
-import {
-  activitySlotsMinusExclusions,
-  allocationSlotsToSchedule,
-} from '../../../../utils/helpers/activityTimeSlotMappers'
+import { activitySlotsMinusExclusions, sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 
 export default class ViewAllocationsRoutes {
@@ -32,7 +29,7 @@ export default class ViewAllocationsRoutes {
       const schedule = schedules.find(s => s.id === allocation.scheduleId)
 
       const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
-      const slots = allocationSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
+      const slots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
 
       return {
         allocation,

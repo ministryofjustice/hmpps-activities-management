@@ -97,9 +97,9 @@ export function customSlotsToSchedule(scheduleWeek: number, slots: Slot[]): Week
   return customSlots
 }
 
-export function allocationSlotsToSchedule(
+export function sessionSlotsToSchedule(
   scheduleWeeks: number,
-  allocationSlots: ActivityScheduleSlot[],
+  sessionSlots: ActivityScheduleSlot[],
 ): WeeklyCustomTimeSlots {
   const scheduledSlots: WeeklyCustomTimeSlots = {}
 
@@ -109,7 +109,7 @@ export function allocationSlotsToSchedule(
     })
   }
 
-  allocationSlots.forEach(slot => {
+  sessionSlots.forEach(slot => {
     slot.daysOfWeek.forEach(dayOfWeek => {
       const selectedSlot = scheduledSlots[slot.weekNumber].find(customTimeSlot =>
         customTimeSlot.day.startsWith(dayOfWeek),
