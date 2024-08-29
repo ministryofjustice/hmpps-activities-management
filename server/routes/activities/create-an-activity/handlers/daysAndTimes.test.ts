@@ -369,12 +369,29 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         )
       })
 
-      it('should save slots when editing existing activity - custom slots being user', async () => {
+      it('should save slots when editing existing activity - custom slots being used', async () => {
         const activityFromApi = {
           id: 1,
           schedules: [
             {
               usePrisonRegimeTime: false,
+              slots: [
+                {
+                  id: 5,
+                  weekNumber: 1,
+                  timeSlot: 'AM',
+                  startTime: '10:00',
+                  endTime: '11:00',
+                  daysOfWeek: ['Tue'],
+                  mondayFlag: false,
+                  tuesdayFlag: true,
+                  wednesdayFlag: false,
+                  thursdayFlag: false,
+                  fridayFlag: false,
+                  saturdayFlag: false,
+                  sundayFlag: false,
+                },
+              ],
             },
           ],
         } as Activity
