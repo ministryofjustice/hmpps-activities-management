@@ -165,7 +165,7 @@ context('Edit activity', () => {
       ['Monday', ['AM session']],
       ['Wednesday', ['AM session', 'PM session']],
     ])
-    daysAndTimesPage.continue()
+    daysAndTimesPage.updateButton()
 
     const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
     sessionTimesPage.checkTime('--', '--', '--', '--', 'MONDAY', 'AM')

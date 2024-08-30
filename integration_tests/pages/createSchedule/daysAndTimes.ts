@@ -21,5 +21,5 @@ export default class DaysAndTimesPage extends Page {
 
   uncheckAllCheckboxes = () => cy.get('[type="checkbox"]').uncheck({ force: true })
 
-  continue = () => cy.get('button').contains('Update days and times').click()
+  updateButton = () => cy.get('button').contains('Update days and sessions').click()
 }

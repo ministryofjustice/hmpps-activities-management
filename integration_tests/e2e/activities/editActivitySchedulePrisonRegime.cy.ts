@@ -146,7 +146,7 @@ context('Edit activity', () => {
     daysAndTimesPage.getInputById('timeSlotsThursday-3').should('be.checked')
 
     daysAndTimesPage.checkboxes().find('input[value="thursday"]').uncheck()
-    daysAndTimesPage.continue()
+    daysAndTimesPage.updateButton()
 
     Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.assertNotificationContents(
@@ -164,7 +164,7 @@ context('Edit activity', () => {
     const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
 
     daysAndTimesPage.getInputById('timeSlotsWednesday-2').check()
-    daysAndTimesPage.continue()
+    daysAndTimesPage.updateButton()
 
     Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.assertNotificationContents(
