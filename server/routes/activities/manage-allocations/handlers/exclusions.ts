@@ -7,6 +7,7 @@ import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import TimeSlot from '../../../../enum/timeSlot'
 import {
   DayOfWeek,
+  DayOfWeekEnum,
   calculateUniqueSlots,
   mapActivityScheduleSlotsToSlots,
   mapSlotsToCompleteWeeklyTimeSlots,
@@ -106,13 +107,13 @@ export default class ExclusionRoutes {
       weekNumber,
       timeSlot: TimeSlot[timeSlot.toUpperCase()],
       daysOfWeek,
-      monday: daysOfWeek.includes('MONDAY'),
-      tuesday: daysOfWeek.includes('TUESDAY'),
-      wednesday: daysOfWeek.includes('WEDNESDAY'),
-      thursday: daysOfWeek.includes('THURSDAY'),
-      friday: daysOfWeek.includes('FRIDAY'),
-      saturday: daysOfWeek.includes('SATURDAY'),
-      sunday: daysOfWeek.includes('SUNDAY'),
+      monday: daysOfWeek.includes(DayOfWeekEnum.MONDAY),
+      tuesday: daysOfWeek.includes(DayOfWeekEnum.TUESDAY),
+      wednesday: daysOfWeek.includes(DayOfWeekEnum.WEDNESDAY),
+      thursday: daysOfWeek.includes(DayOfWeekEnum.THURSDAY),
+      friday: daysOfWeek.includes(DayOfWeekEnum.FRIDAY),
+      saturday: daysOfWeek.includes(DayOfWeekEnum.SATURDAY),
+      sunday: daysOfWeek.includes(DayOfWeekEnum.SUNDAY),
     })
 
     // Iterate over week1 and week2 in the Schedule object

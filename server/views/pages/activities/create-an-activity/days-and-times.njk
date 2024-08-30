@@ -17,16 +17,16 @@
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
             {% if session.createJourney.scheduleWeeks > 1 %}
-                <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }} of {{ session.createJourney.scheduleWeeks }}: {{ 'change' if session.req.params.mode == 'edit' else 'enter' }} the days and times when this activity runs</h1>
+                <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }} of {{ session.createJourney.scheduleWeeks }}: {{ 'change' if session.req.params.mode == 'edit' else 'select' }} the days and times when this activity runs</h1>
             {% else %}
-                <h1 class="govuk-heading-l">{{ 'Change' if session.req.params.mode == 'edit' else 'Enter' }} the days and times when this activity runs</h1>
+                <h1 class="govuk-heading-l">{{ 'Change' if session.req.params.mode == 'edit' else 'Select' }} the days and times when this activity runs</h1>
             {% endif %}
 
             <p class="govuk-body">Select each day that the activity will run, then select the slots when the activity will run on that day.</p>
 
             {% if session.req.params.mode == 'edit' %}
-                <p class="govuk-body">Any changes you make will take effect tomorrow</p>
-                <p class="govuk-body">You should update any unlock lists that have been printed</p>
+                <p class="govuk-body">Any changes you make will take effect tomorrow.</p>
+                <p class="govuk-body">You should update any unlock lists that have been printed.</p>
             {% elseif session.createJourney.scheduleWeeks > 1 and session.req.params.weekNumber == 1 %}
                 <p class="govuk-body">Your chosen start date will fall in week 1 of your schedule, even if there are no sessions planned for the rest of the week</p>
             {% endif %}
@@ -103,7 +103,7 @@
                 {% if session.req.params.mode == 'edit' %}
                     <div class="govuk-button-group">
                         {{ govukButton({
-                            text: "Update days and times",
+                            text: "Update days and sessions",
                             preventDoubleClick: true
                         }) }}
                         <a class="govuk-link js-backlink" href="/">Cancel</a>

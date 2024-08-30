@@ -7,7 +7,7 @@ import { Slots } from '../journey'
 
 export class SessionTimesOption {
   @Expose()
-  @IsNotEmpty({ message: 'Select how the to set the activity start and end times' })
+  @IsNotEmpty({ message: 'Select how to set the activity start and end times' })
   usePrisonRegimeTime: string
 }
 
