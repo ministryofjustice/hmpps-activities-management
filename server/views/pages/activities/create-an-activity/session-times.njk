@@ -10,14 +10,19 @@
 
 {% set pageTitle = applicationName + " - Create a schedule - Activity session times" %}
 {% set pageId = 'session-times-page' %}
-{% set pageHeading = "Select the start and end times for the sessions when this activity runs" %}
+{% set createPageHeading = "Select the start and end times for the sessions when this activity runs" %}
+{% set editPageHeading = "Change the start and end times for the sessions when this activity runs" %}
 {% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
-            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            {% if session.req.params.mode == 'edit' %}
+            <h1 class="govuk-heading-l">{{ editPageHeading }}</h1>
+            {% else %}
+            <h1 class="govuk-heading-l">{{ createPageHeading }}</h1>
+            {% endif %}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                         {% set rows = [] %} 
