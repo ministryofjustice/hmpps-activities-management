@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
-import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import { parseDate } from '../../../../utils/utils'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
@@ -10,7 +9,8 @@ import {
   DayOfWeekEnum,
   calculateUniqueSlots,
   mapActivityScheduleSlotsToSlots,
-  mapSlotsToCompleteWeeklyTimeSlots,
+  sessionSlotsToSchedule,
+  WeeklyCustomTimeSlots,
 } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { Slot } from '../../../../@types/activitiesAPI/types'
 
@@ -61,26 +61,95 @@ export default class ExclusionRoutes {
     const { user } = res.locals
     const { activity, exclusions, inmate } = req.session.allocateJourney
 
-    const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
-    const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
+    const activitySchedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
 
-    const weeklySlots = mapSlotsToCompleteWeeklyTimeSlots(slots, schedule.scheduleWeeks)
+    const weeklySchedule = sessionSlotsToSchedule(activitySchedule.scheduleWeeks, activitySchedule.slots)
 
-    // Add all slots to an array
-    const daySlotsList = Object.values(weeklySlots).flatMap(dailySlots =>
-      dailySlots.flatMap(daySlots => daySlots.slots.map(slot => `${daySlots.day}${slot}`)),
-    )
-    // Find day slots with more than one occurance
-    const disabledSlots = _.uniq(daySlotsList.filter(s => daySlotsList.filter(s2 => s2 === s).length > 1))
+    const currentWeekNumber = calcCurrentWeek(parseDate(activitySchedule.startDate), activitySchedule.scheduleWeeks)
+
+    const weeks = []
+
+    const weekDaysUsed = this.getAllWeekDaysUsed(weeklySchedule)
+
+    const disabledSlots = this.getDisabledSlots(weeklySchedule)
+
+    for (let i = 0; i < activitySchedule.scheduleWeeks; i += 1) {
+      const weekNumber = i + 1
+      const currentWeek = weekNumber === currentWeekNumber
+
+      const weekDays = weeklySchedule[weekNumber]
+        .filter(weekDay => weekDaysUsed.has(weekDay.day))
+        .map(weekDay => {
+          const { day } = weekDay
+          const slots = weekDay.slots.map(slot => {
+            const excluded =
+              exclusions.filter(
+                exclusion =>
+                  exclusion.weekNumber === weekNumber &&
+                  exclusion.timeSlot === slot.timeSlot &&
+                  exclusion[day.toLowerCase()],
+              ).length > 0
+
+            const disabled = disabledSlots.includes(`${day}-${slot.timeSlot}`)
+
+            return {
+              ...slot,
+              excluded,
+              disabled,
+            }
+          })
+          return { day, slots }
+        })
+
+      weeks.push({
+        weekNumber,
+        currentWeek,
+        weekDays,
+      })
+    }
 
     res.render('pages/activities/manage-allocations/exclusions', {
       prisonerName: inmate.prisonerName,
-      scheduleWeeks: schedule.scheduleWeeks,
-      currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
-      weeklySlots,
-      exclusions,
-      disabledSlots,
+      weeks,
+      disabledSlotsExist: disabledSlots.length > 0,
     })
+  }
+
+  /**
+   * Get a list of all weekdays used across all weeks. For example if Monday is in week 1 and Wednesday is in week 2
+   * then we return a list containing Monday and Wednesday
+   * @param weeklySchedule The weekly schedule
+   * @returns The set of days, e.g. ['Monday', 'Wednesday']
+   */
+  private getAllWeekDaysUsed(weeklySchedule: WeeklyCustomTimeSlots): Set<string> {
+    const weekDaysUsed: Set<string> = new Set<string>()
+
+    Object.values(weeklySchedule).forEach(week =>
+      week.forEach(weekDay => {
+        if (weekDay.slots.length > 0) {
+          weekDaysUsed.add(weekDay.day)
+        }
+      }),
+    )
+
+    return weekDaysUsed
+  }
+
+  /**
+   * Currently, any slots which are the same in more than one week, e.g. Monday AM in weeks 1 and 2 cannot be changed
+   *
+   * @param weeklySchedule The weekly schedule
+   * @returns The array of disabled week / time slots, e.g. ['Tuesday-AM', 'Wednesday-ED']
+   */
+  private getDisabledSlots(weeklySchedule: WeeklyCustomTimeSlots): string[] {
+    const allDaysAndActiveSlots = Object.values(weeklySchedule)
+      .flatMap(week => week.flatMap(weekDay => weekDay.slots.map(day => `${weekDay.day}-${day.timeSlot}`)))
+      .reduce((acc, str) => {
+        acc.set(str, (acc.get(str) || 0) + 1)
+        return acc
+      }, new Map<string, number>())
+
+    return Array.from(allDaysAndActiveSlots.keys()).filter(key => allDaysAndActiveSlots.get(key) > 1)
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

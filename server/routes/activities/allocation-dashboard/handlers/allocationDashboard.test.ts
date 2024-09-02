@@ -270,31 +270,73 @@ describe('Route Handlers - Allocation dashboard', () => {
             '1': [
               {
                 day: 'Monday',
-                slots: ['AM'],
+                slots: [
+                  {
+                    timeSlot: 'AM',
+                    startTime: '10:00',
+                    endTime: '11:00',
+                  },
+                ],
               },
               {
                 day: 'Tuesday',
-                slots: ['AM'],
+                slots: [
+                  {
+                    timeSlot: 'AM',
+                    startTime: '10:00',
+                    endTime: '11:00',
+                  },
+                ],
               },
               {
                 day: 'Wednesday',
-                slots: ['AM'],
+                slots: [
+                  {
+                    timeSlot: 'AM',
+                    startTime: '10:00',
+                    endTime: '11:00',
+                  },
+                ],
               },
               {
                 day: 'Thursday',
-                slots: ['AM'],
+                slots: [
+                  {
+                    timeSlot: 'AM',
+                    startTime: '11:00',
+                    endTime: '12:00',
+                  },
+                ],
               },
               {
                 day: 'Friday',
-                slots: ['AM'],
+                slots: [
+                  {
+                    timeSlot: 'AM',
+                    startTime: '11:00',
+                    endTime: '12:00',
+                  },
+                ],
               },
               {
                 day: 'Saturday',
-                slots: ['AM'],
+                slots: [
+                  {
+                    timeSlot: 'AM',
+                    startTime: '11:00',
+                    endTime: '12:00',
+                  },
+                ],
               },
               {
                 day: 'Sunday',
-                slots: ['AM'],
+                slots: [
+                  {
+                    timeSlot: 'AM',
+                    startTime: '11:00',
+                    endTime: '12:00',
+                  },
+                ],
               },
             ],
           },

@@ -11,7 +11,7 @@ import { getScheduleIdFromActivity, getScheduleStartDateFromActivity, parseDate 
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import { Slots } from '../../create-an-activity/journey'
-import activitySessionToDailyTimeSlots from '../../../../utils/helpers/activityTimeSlotMappers'
+import { sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import WaitlistRequester from '../../../../enum/waitlistRequester'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
@@ -95,9 +95,13 @@ export default class AllocationDashboardRoutes {
       })
     })
 
+    const dailySlots = sessionSlotsToSchedule(activity.schedules[0].scheduleWeeks, activity.schedules[0].slots)
+
     const richStartDate = parseDate(activity.schedules[0].startDate)
 
     const activeAllocations = activity.schedules[0].allocations.filter(a => a.status === 'ACTIVE').length
+
+    const currentWeek = calcCurrentWeek(richStartDate, activity.schedules[0].scheduleWeeks)
 
     res.render('pages/activities/allocation-dashboard/allocation-dashboard', {
       activity,
@@ -110,8 +114,8 @@ export default class AllocationDashboardRoutes {
       filters,
       suitableForIep,
       suitableForWra,
-      dailySlots: activitySessionToDailyTimeSlots(activity.schedules[0].scheduleWeeks, slots),
-      currentWeek: calcCurrentWeek(richStartDate, activity.schedules[0].scheduleWeeks),
+      dailySlots,
+      currentWeek,
       scheduleWeeks: activity.schedules[0].scheduleWeeks,
       activeAllocations,
     })
