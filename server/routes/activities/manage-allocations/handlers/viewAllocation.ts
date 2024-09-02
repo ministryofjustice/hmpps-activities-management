@@ -1,12 +1,10 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
-import { convertToTitleCase, mapActivityModelSlotsToJourney, parseDate } from '../../../../utils/utils'
+import { convertToTitleCase, parseDate } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import activitySessionToDailyTimeSlots, {
-  activitySlotsMinusExclusions,
-} from '../../../../utils/helpers/activityTimeSlotMappers'
+import { activitySlotsMinusExclusions, sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import UserService from '../../../../services/userService'
 import CaseNotesService from '../../../../services/caseNotesService'
@@ -43,8 +41,7 @@ export default class ViewAllocationRoutes {
 
     const schedule = activity.schedules[0]
     const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
-    const journeySlots = mapActivityModelSlotsToJourney(allocationSlots)
-    const dailySlots = activitySessionToDailyTimeSlots(schedule.scheduleWeeks, journeySlots)
+    const dailySlots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
 
     const currentWeek = calcCurrentWeek(parseDate(activity.startDate), schedule.scheduleWeeks)
 
