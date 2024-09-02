@@ -23,11 +23,13 @@ export default class CustomTimesChangeOptionRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const activity = await this.activitiesService.getActivity(+req.params.activityId, res.locals.user)
-    const { usePrisonRegimeTime, scheduleWeeks } = activity.schedules[0]
+    const { usePrisonRegimeTime } = activity.schedules[0]
+    const { weekNumber } = req.params
+
     if (req.body.selectWhatYouWantToChange === ScheduleChangeOption.DAYS_AND_SESSIONS) {
-      return res.redirect(`days-and-times/${scheduleWeeks}?preserveHistory=true`)
+      return res.redirect(`../days-and-times/${weekNumber}?preserveHistory=true`)
     }
-    if (!usePrisonRegimeTime) return res.redirect('custom-times-change-default-or-custom')
-    return res.redirect('session-times')
+    if (!usePrisonRegimeTime) return res.redirect('../custom-times-change-default-or-custom')
+    return res.redirect('../session-times')
   }
 }
