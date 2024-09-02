@@ -6,4 +6,6 @@ export default class ViewActivityPage extends Page {
   }
 
   changePayLink = () => cy.get('[data-qa="change-pay-link"]')
+
+  changeScheduleLink = () => cy.get('[data-qa="change-schedule-link"]')
 }

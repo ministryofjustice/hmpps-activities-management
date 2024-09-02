@@ -10,12 +10,17 @@ import getActivity from '../../fixtures/activitiesApi/getActivity.json'
 import getAllocations from '../../fixtures/activitiesApi/getAllocations.json'
 import prisonerAllocations from '../../fixtures/activitiesApi/prisonerAllocations.json'
 import getCandidates from '../../fixtures/activitiesApi/getCandidates.json'
+import getPrisonRegime from '../../fixtures/activitiesApi/getPrisonRegime.json'
 
 import { formatIsoDate } from '../../../server/utils/datePickerUtils'
 import ViewActivityPage from '../../pages/createActivity/viewActivity'
 import PayAmountPage from '../../pages/createActivity/pay-amount'
 import PayDateOptionPage from '../../pages/createActivity/pay-date-option'
 import CancelPayRatePage from '../../pages/createActivity/cancel-pay-rate'
+import CustomTimesChangeOptionPage from '../../pages/createSchedule/customTimesChangeOption'
+import DaysAndTimesPage from '../../pages/createSchedule/daysAndTimes'
+import SessionTimesPage from '../../pages/createSchedule/sessionTimes'
+import CustomTimesChangeDefaultCustom from '../../pages/createSchedule/customTimesChangeDefaultCustom'
 
 context('Edit activity', () => {
   beforeEach(() => {
@@ -30,10 +35,59 @@ context('Edit activity', () => {
     cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', JSON.parse('[]'))
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('POST', '/schedules/2/allocations')
+    cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
 
     const getActivity2 = { ...getActivity }
     getActivity2.schedules[0].startDate = formatIsoDate(addDays(new Date(), 1))
     getActivity2.schedules[0].activity.paid = true
+    getActivity2.schedules[0].usePrisonRegimeTime = false
+    getActivity2.schedules[0].slots = [
+      {
+        id: 5,
+        weekNumber: 1,
+        startTime: '10:00',
+        endTime: '11:00',
+        daysOfWeek: ['Tue'],
+        mondayFlag: false,
+        tuesdayFlag: true,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+        timeSlot: 'AM',
+      },
+      {
+        id: 6,
+        weekNumber: 1,
+        startTime: '10:00',
+        endTime: '11:00',
+        daysOfWeek: ['Wed'],
+        mondayFlag: false,
+        tuesdayFlag: false,
+        wednesdayFlag: true,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+        timeSlot: 'AM',
+      },
+      {
+        id: 6,
+        weekNumber: 1,
+        startTime: '13:00',
+        endTime: '16:00',
+        daysOfWeek: ['Wed'],
+        mondayFlag: false,
+        tuesdayFlag: false,
+        wednesdayFlag: true,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+        timeSlot: 'PM',
+      },
+    ]
     const inmateDetails = [
       {
         prisonerNumber: 'A9477DY',
@@ -90,5 +144,88 @@ context('Edit activity', () => {
     const cancelPayRatePage = Page.verifyOnPage(CancelPayRatePage)
     cancelPayRatePage.cancelPayRate()
     cancelPayRatePage.confirm()
+  })
+  it('should allow the user to change an activity - changing days/sessions if using custom times', () => {
+    cy.visit('/activities/view/2')
+    const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
+    viewActivityPage.changeScheduleLink().click()
+
+    const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
+    customTimesChangeOptionPage.changeDaysAndSessions('Days and sessions when this activity runs')
+    customTimesChangeOptionPage.continue()
+
+    const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
+    daysAndTimesPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
+    daysAndTimesPage.getInputById('timeSlotsTuesday').should('be.checked')
+    daysAndTimesPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
+    daysAndTimesPage.getInputById('timeSlotsWednesday').should('be.checked')
+    daysAndTimesPage.getInputById('timeSlotsWednesday-2').should('be.checked')
+    daysAndTimesPage.uncheckAllCheckboxes()
+    daysAndTimesPage.selectDayTimeCheckboxes([
+      ['Monday', ['AM session']],
+      ['Wednesday', ['AM session', 'PM session']],
+    ])
+    daysAndTimesPage.updateButton()
+
+    const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
+    sessionTimesPage.checkTime('--', '--', '--', '--', 'MONDAY', 'AM')
+    sessionTimesPage.checkTime('10', '00', '11', '00', 'WEDNESDAY', 'AM')
+    sessionTimesPage.checkTime('13', '00', '16', '00', 'WEDNESDAY', 'PM')
+
+    sessionTimesPage.selectStartTime(10, 45, 'MONDAY', 'AM')
+    sessionTimesPage.selectEndTime(11, 50, 'MONDAY', 'AM')
+    sessionTimesPage.continue()
+
+    Page.verifyOnPage(ViewActivityPage)
+    viewActivityPage.assertNotificationContents(
+      'Activity updated',
+      `You've updated the daily schedule for English level 1`,
+    )
+  })
+  it('should allow the user to change an activity - changing times if currently using custom times', () => {
+    cy.visit('/activities/view/2')
+    const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
+    viewActivityPage.changeScheduleLink().click()
+
+    const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
+    customTimesChangeOptionPage.changeDaysAndSessions('Activity start and end times')
+    customTimesChangeOptionPage.continue()
+
+    const customTimesChangeDefaultCustomPage = Page.verifyOnPage(CustomTimesChangeDefaultCustom)
+    customTimesChangeDefaultCustomPage.changeTimes('Select start and end times to change')
+    customTimesChangeDefaultCustomPage.continue()
+    const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
+    sessionTimesPage.checkTime('10', '00', '11', '00', 'TUESDAY', 'AM')
+    sessionTimesPage.checkTime('10', '00', '11', '00', 'WEDNESDAY', 'AM')
+    sessionTimesPage.checkTime('13', '00', '16', '00', 'WEDNESDAY', 'PM')
+
+    sessionTimesPage.clearTime('TUESDAY', 'AM')
+    sessionTimesPage.selectStartTime(9, 30, 'TUESDAY', 'AM')
+    sessionTimesPage.selectEndTime(11, 50, 'TUESDAY', 'AM')
+    sessionTimesPage.continue()
+    Page.verifyOnPage(ViewActivityPage)
+    viewActivityPage.assertNotificationContents(
+      'Activity updated',
+      `You've updated the daily schedule for English level 1`,
+    )
+  })
+  it('should allow the user to change an activity - changing times if currently using custom times - change to regime times', () => {
+    cy.visit('/activities/view/2')
+    const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
+    viewActivityPage.changeScheduleLink().click()
+
+    const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
+    customTimesChangeOptionPage.changeDaysAndSessions('Activity start and end times')
+    customTimesChangeOptionPage.continue()
+
+    const customTimesChangeDefaultCustomPage = Page.verifyOnPage(CustomTimesChangeDefaultCustom)
+    customTimesChangeDefaultCustomPage.changeTimes('Change all start and end times to prison regime times')
+    customTimesChangeDefaultCustomPage.continue()
+
+    Page.verifyOnPage(ViewActivityPage)
+    viewActivityPage.assertNotificationContents(
+      'Activity updated',
+      `You've updated the daily schedule for English level 1`,
+    )
   })
 })

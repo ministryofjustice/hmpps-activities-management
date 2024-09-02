@@ -60,18 +60,6 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
       expect(res.redirectOrReturn).toHaveBeenCalledWith('location')
     })
 
-    it('should save selected option in session and redirect to set activity times page, if custom start End times flag is enabled', async () => {
-      config.customStartEndTimesEnabled = true
-      req.body = {
-        runsOnBankHoliday: 'yes',
-      }
-
-      await handler.POST(req, res)
-
-      expect(req.session.createJourney.runsOnBankHoliday).toEqual(true)
-      expect(res.redirect).toBeCalledWith('session-times-option')
-    })
-
     it('should save entered end date in database', async () => {
       const updatedActivity = {
         runsOnBankHoliday: true,

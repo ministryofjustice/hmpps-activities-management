@@ -35,8 +35,9 @@ import ActivityTierPage from '../../pages/createActivity/tier'
 import ActivityOrganiserPage from '../../pages/createActivity/organiser'
 import PayOptionPage from '../../pages/createActivity/pay-option'
 import SessionTimesOptionPage from '../../pages/createSchedule/sessionTimesOption'
+import SessionTimesPage from '../../pages/createSchedule/sessionTimes'
 
-context('Create activity', () => {
+context('Create activity with custom times', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -147,16 +148,17 @@ context('Create activity', () => {
     scheduleFrequencyPage.continue()
 
     const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
-    daysAndTimesPage.selectDayTimeCheckboxes([
-      ['Monday', ['AM session']],
-      ['Wednesday', ['AM session', 'PM session']],
-      ['Thursday', ['AM session', 'PM session', 'ED session']],
-    ])
+    daysAndTimesPage.selectDayTimeCheckboxes([['Monday', ['AM session']]])
     daysAndTimesPage.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
-    sessionTimesOptionPage.useSessionOption("Use the prison's regime times")
+    sessionTimesOptionPage.useSessionOption('Select the start and end times')
     sessionTimesOptionPage.continue()
+
+    const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
+    sessionTimesPage.selectStartTime(10, 45, 'MONDAY', 'AM')
+    sessionTimesPage.selectEndTime(11, 50, 'MONDAY', 'AM')
+    sessionTimesPage.continue()
 
     const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
     bankHolidayPage.runOnBankHoliday('Yes')

@@ -269,49 +269,27 @@
                 }
             }), dateAndScheduleRows) %}
 
-            {% if not customSlots %}
-                {% for week, slots in dailySlots %}
-                    {% set dateAndScheduleRows = (dateAndScheduleRows.push(
-                        {
-                            key: {
-                                text: "Week " + week
-                            },
-                            value: { html: daysAndTimes(slots) },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "/activities/edit/" + activity.id + "/days-and-times/" + week + "?preserveHistory=true",
-                                        text: "Change",
-                                        visuallyHiddenText: " days and times",
-                                        classes: "govuk-link--no-visited-state"
-                                    }
-                                ]
-                            } if not activityEnded
-                        }
-                    ), dateAndScheduleRows) %}
-                {% endfor %}
-            {% else %}
-                {% for week, slots in customSlots %}
-                    {% set dateAndScheduleRows = (dateAndScheduleRows.push(
-                        {
-                            key: {
-                            text: "Week " + week
-                        },
-                            value: { html: daysAndCustomTimes(slots) },
-                            actions: {
+            {% for week, slots in slots %}
+                {% set dateAndScheduleRows = (dateAndScheduleRows.push(
+                    {
+                        key: {
+                        text: "Week " + week
+                    },
+                        value: { html: daysAndCustomTimes(slots) },
+                        actions: {
                             items: [
                                 {
-                                    href: "/activities/edit/" + activity.id + "/session-times?preserveHistory=true",
+                                    href: "/activities/edit/" + activity.id + "/custom-times-change-option?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: " session times",
-                                    classes: "govuk-link--no-visited-state"
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-schedule-link" }
                                 }
                             ]
-                        } if not activityEnded
-                        }
-                    ), dateAndScheduleRows) %}
-                {% endfor %}
-            {% endif %}
+                            } if not activityEnded
+                    }
+                ), dateAndScheduleRows) %}
+            {% endfor %}
 
             {% set dateAndScheduleRows = (dateAndScheduleRows.push(
                 {

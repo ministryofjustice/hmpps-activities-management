@@ -8,12 +8,10 @@ import PrisonService from '../../../../services/prisonService'
 import atLeast from '../../../../../jest.setup'
 
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
-import activityScheduleCustomTimes from '../../../../services/fixtures/activity_schedule_3.json'
 import { Activity, ActivitySchedule, Allocation } from '../../../../@types/activitiesAPI/types'
 import { toDateString } from '../../../../utils/utils'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
 import { organiserDescriptions } from '../../../../enum/eventOrganisers'
-import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -110,142 +108,15 @@ describe('Route Handlers - View Activity', () => {
         displayPays: [],
         schedule: activitySchedule,
         payEditable: true,
-        dailySlots: {
-          '1': [
-            {
-              day: 'Monday',
-              slots: ['AM'],
-            },
-            {
-              day: 'Tuesday',
-              slots: ['AM'],
-            },
-            {
-              day: 'Wednesday',
-              slots: ['AM'],
-            },
-            {
-              day: 'Thursday',
-              slots: ['AM'],
-            },
-            {
-              day: 'Friday',
-              slots: ['AM'],
-            },
-            {
-              day: 'Saturday',
-              slots: ['AM'],
-            },
-            {
-              day: 'Sunday',
-              slots: ['AM'],
-            },
-          ],
-        },
-        currentWeek: 1,
-        tier: eventTierDescriptions[1],
-        organiser: organiserDescriptions[1],
-      })
-    })
-
-    it('should render page with view activity when there are custom slots', async () => {
-      const mockActivity = {
-        attendanceRequired: false,
-        category: { code: 'EDUCATION', id: 1, name: 'Education' },
-        createdBy: '',
-        createdTime: '',
-        description: '',
-        eligibilityRules: [],
-        endDate: toDateString(nextWeek),
-        inCell: false,
-        outsideWork: false,
-        pay: [],
-        payPerSession: 'H',
-        pieceWork: false,
-        prisonCode: '',
-        riskLevel: '',
-        schedules: [activityScheduleCustomTimes],
-        startDate: toDateString(today),
-        summary: 'Maths Level 1',
-        tier: { code: '', description: '', id: 1 },
-        organiser: { id: 1 },
-        waitingList: [],
-        id: 1,
-        minimumEducationLevel: [],
-      } as unknown as Activity
-      when(activitiesService.getActivity).calledWith(atLeast(1)).mockResolvedValueOnce(mockActivity)
-
-      await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-activities/view-activity', {
-        activity: {
-          attendanceRequired: false,
-          category: { code: 'EDUCATION', id: 1, name: 'Education' },
-          createdBy: '',
-          createdTime: '',
-          description: '',
-          eligibilityRules: [],
-          inCell: false,
-          outsideWork: false,
-          pay: [],
-          payPerSession: 'H',
-          pieceWork: false,
-          prisonCode: '',
-          riskLevel: '',
-          schedules: [activityScheduleCustomTimes],
-          startDate: toDateString(today),
-          endDate: toDateString(nextWeek),
-          summary: 'Maths Level 1',
-          tier: { code: '', description: '', id: 1 },
-          organiser: { id: 1 },
-          waitingList: [],
-          id: 1,
-          minimumEducationLevel: [],
-        },
-        incentiveLevelPays: [],
-        displayPays: [],
-        schedule: activityScheduleCustomTimes,
-        payEditable: true,
-        dailySlots: {
-          '1': [
-            {
-              day: 'Monday',
-              slots: ['AM'],
-            },
-            {
-              day: 'Tuesday',
-              slots: ['AM'],
-            },
-            {
-              day: 'Wednesday',
-              slots: ['AM'],
-            },
-            {
-              day: 'Thursday',
-              slots: ['AM'],
-            },
-            {
-              day: 'Friday',
-              slots: ['PM'],
-            },
-            {
-              day: 'Saturday',
-              slots: ['AM'],
-            },
-            {
-              day: 'Sunday',
-              slots: ['AM'],
-            },
-          ],
-        },
-        customSlots: {
+        slots: {
           '1': [
             {
               day: 'Monday',
               slots: [
                 {
-                  startTime: '10:00',
                   endTime: '11:00',
-                  timeSlot: TimeSlot.AM,
+                  startTime: '10:00',
+                  timeSlot: 'AM',
                 },
               ],
             },
@@ -253,9 +124,9 @@ describe('Route Handlers - View Activity', () => {
               day: 'Tuesday',
               slots: [
                 {
-                  startTime: '10:00',
                   endTime: '11:00',
-                  timeSlot: TimeSlot.AM,
+                  startTime: '10:00',
+                  timeSlot: 'AM',
                 },
               ],
             },
@@ -263,9 +134,9 @@ describe('Route Handlers - View Activity', () => {
               day: 'Wednesday',
               slots: [
                 {
-                  startTime: '10:00',
                   endTime: '11:00',
-                  timeSlot: TimeSlot.AM,
+                  startTime: '10:00',
+                  timeSlot: 'AM',
                 },
               ],
             },
@@ -273,9 +144,9 @@ describe('Route Handlers - View Activity', () => {
               day: 'Thursday',
               slots: [
                 {
-                  startTime: '10:00',
-                  endTime: '11:00',
-                  timeSlot: TimeSlot.AM,
+                  endTime: '12:00',
+                  startTime: '11:00',
+                  timeSlot: 'AM',
                 },
               ],
             },
@@ -283,9 +154,9 @@ describe('Route Handlers - View Activity', () => {
               day: 'Friday',
               slots: [
                 {
-                  startTime: '14:30',
-                  endTime: '17:23',
-                  timeSlot: TimeSlot.PM,
+                  endTime: '12:00',
+                  startTime: '11:00',
+                  timeSlot: 'AM',
                 },
               ],
             },
@@ -293,9 +164,9 @@ describe('Route Handlers - View Activity', () => {
               day: 'Saturday',
               slots: [
                 {
-                  startTime: '10:00',
-                  endTime: '11:00',
-                  timeSlot: TimeSlot.AM,
+                  endTime: '12:00',
+                  startTime: '11:00',
+                  timeSlot: 'AM',
                 },
               ],
             },
@@ -303,9 +174,9 @@ describe('Route Handlers - View Activity', () => {
               day: 'Sunday',
               slots: [
                 {
-                  startTime: '10:00',
-                  endTime: '11:45',
-                  timeSlot: TimeSlot.AM,
+                  endTime: '12:00',
+                  startTime: '11:00',
+                  timeSlot: 'AM',
                 },
               ],
             },
@@ -375,35 +246,77 @@ describe('Route Handlers - View Activity', () => {
         incentiveLevelPays: [],
         schedule: activitySchedule,
         payEditable: false,
-        dailySlots: {
+        slots: {
           '1': [
             {
               day: 'Monday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '11:00',
+                  startTime: '10:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
             {
               day: 'Tuesday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '11:00',
+                  startTime: '10:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
             {
               day: 'Wednesday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '11:00',
+                  startTime: '10:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
             {
               day: 'Thursday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '12:00',
+                  startTime: '11:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
             {
               day: 'Friday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '12:00',
+                  startTime: '11:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
             {
               day: 'Saturday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '12:00',
+                  startTime: '11:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
             {
               day: 'Sunday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '12:00',
+                  startTime: '11:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
           ],
         },
@@ -477,35 +390,77 @@ describe('Route Handlers - View Activity', () => {
         incentiveLevelPays: [],
         schedule: activitySchedule,
         payEditable: true,
-        dailySlots: {
+        slots: {
           '1': [
             {
               day: 'Monday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '11:00',
+                  startTime: '10:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
             {
               day: 'Tuesday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '11:00',
+                  startTime: '10:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
             {
               day: 'Wednesday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '11:00',
+                  startTime: '10:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
             {
               day: 'Thursday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '12:00',
+                  startTime: '11:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
             {
               day: 'Friday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '12:00',
+                  startTime: '11:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
             {
               day: 'Saturday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '12:00',
+                  startTime: '11:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
             {
               day: 'Sunday',
-              slots: ['AM'],
+              slots: [
+                {
+                  endTime: '12:00',
+                  startTime: '11:00',
+                  timeSlot: 'AM',
+                },
+              ],
             },
           ],
         },

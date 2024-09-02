@@ -4,7 +4,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
-{% from "partials/activities/days-and-times.njk" import daysAndTimes %}
+{% from "partials/activities/days-and-custom-times.njk" import daysAndCustomTimes %}
 {% from "partials/activities/suspension-badge.njk" import suspensionBadge %}
 
 {% set pageTitle = applicationName + " - Suspensions - View allocations" %}
@@ -32,8 +32,8 @@
                 {% set rows = [] %}
                 {% for activity in activities | sortBy('allocation.activitySummary') %}
                     {% set slotsHtml %}
-                        {% for week, slots in activity.scheduledSlots %}
-                            {% if activity.scheduledSlots | length > 1 %}
+                        {% for week, slots in activity.slots %}
+                            {% if activity.slots | length > 1 %}
                                 <div class='govuk-heading-s govuk-!-margin-bottom-1'>
                                     Week {{ week }}
                                     {{ govukTag({
@@ -41,7 +41,7 @@
                                     }) if activity.currentWeek == week }}
                                 </div>
                             {% endif %}
-                            {{ daysAndTimes(slots, false, false) }}
+                            {{  daysAndCustomTimes(slots, false, false) }}
                         {% endfor %}
                     {% endset %}
 
@@ -73,7 +73,6 @@
                 {% endfor %}
 
                 {{ govukSummaryList({
-                    classes: 'govuk-summary-list--equal-widths',
                     rows: rows
                 }) }}
 

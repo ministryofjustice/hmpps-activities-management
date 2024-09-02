@@ -95,7 +95,7 @@ describe('Route Handlers - Suspensions - View allocations', () => {
               exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
             },
             currentWeek: 1,
-            scheduledSlots: {
+            slots: {
               '1': [
                 {
                   day: 'Monday',
@@ -103,27 +103,63 @@ describe('Route Handlers - Suspensions - View allocations', () => {
                 },
                 {
                   day: 'Tuesday',
-                  slots: ['AM'],
+                  slots: [
+                    {
+                      timeSlot: 'AM',
+                      startTime: '10:00',
+                      endTime: '11:00',
+                    },
+                  ],
                 },
                 {
                   day: 'Wednesday',
-                  slots: ['AM'],
+                  slots: [
+                    {
+                      timeSlot: 'AM',
+                      startTime: '10:00',
+                      endTime: '11:00',
+                    },
+                  ],
                 },
                 {
                   day: 'Thursday',
-                  slots: ['AM'],
+                  slots: [
+                    {
+                      timeSlot: 'AM',
+                      startTime: '11:00',
+                      endTime: '12:00',
+                    },
+                  ],
                 },
                 {
                   day: 'Friday',
-                  slots: ['AM'],
+                  slots: [
+                    {
+                      timeSlot: 'AM',
+                      startTime: '11:00',
+                      endTime: '12:00',
+                    },
+                  ],
                 },
                 {
                   day: 'Saturday',
-                  slots: ['AM'],
+                  slots: [
+                    {
+                      timeSlot: 'AM',
+                      startTime: '11:00',
+                      endTime: '12:00',
+                    },
+                  ],
                 },
                 {
                   day: 'Sunday',
-                  slots: ['AM'],
+                  slots: [
+                    {
+                      timeSlot: 'AM',
+                      startTime: '11:00',
+                      endTime: '12:00',
+                    },
+                  ],
                 },
               ],
             },

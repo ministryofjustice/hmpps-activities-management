@@ -761,9 +761,13 @@
             ] %}
             {% for timeSlot in ['AM', 'PM', 'ED'] %}
                 {% set slotMatches = false %}
+                {% set times = '' %}
 
                 {% for slot in day.slots %}
-                    {% set slotMatches = (slot == timeSlot) or slotMatches %}
+                    {% if (slot.timeSlot == timeSlot) and not slotMatches %}
+                        {% set slotMatches = true %}
+                        {% set times = (slot.startTime + ' to ' + slot.endTime) %}
+                    {% endif %}
                 {% endfor %}
 
                 {% set columns = (columns.push(
@@ -771,7 +775,8 @@
                         html: govukTag({
                             text: "Yes" if slotMatches else "No",
                             classes: "govuk-tag--grey" if not slotMatches
-                        })
+                        }) + (times if slotMatches),
+                        classes: 'govuk-!-width-one-quarter'
                     }
                 ), columns) %}
             {% endfor %}

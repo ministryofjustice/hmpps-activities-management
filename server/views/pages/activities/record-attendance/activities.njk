@@ -18,7 +18,8 @@
 {% set filterParams = (('&searchTerm=' + session.req.query.searchTerm) if session.req.query.searchTerm else '') +
     (('&sessionFilters=' + session.req.query.sessionFilters) if session.req.query.sessionFilters else '') +
     (('&categoryFilters=' + session.req.query.categoryFilters) if session.req.query.categoryFilters else '') +
-    (('&locationFilters=' + session.req.query.locationFilters) if session.req.query.locationFilters else '') %}
+    (('&locationId=' + session.req.query.locationId) if session.req.query.locationId else '') +
+    (('&locationType=' + session.req.query.locationType) if session.req.query.locationType else '') %}
 
 {% block meta %}
         <meta name="autocompleteElements" content="locationId"/>
@@ -152,22 +153,6 @@
         <div class="govuk-!-margin-bottom-4">
             <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
         </div>
-
-        {{ govukCheckboxes({
-            idPrefix: 'locationFilters',
-            name: 'locationFilters',
-            classes: "govuk-checkboxes--small",
-            formGroup: {
-                classes: "govuk-!-margin-bottom-4"
-            },
-            fieldset: {
-                legend: {
-                    text: 'Locations',
-                    classes: 'govuk-fieldset__legend--m'
-                }
-            },
-            items: filterItems.locationFilters
-        }) }}
 
         {{ govukButton({
             text: 'Apply filters'
