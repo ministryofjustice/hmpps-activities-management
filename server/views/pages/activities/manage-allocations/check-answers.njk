@@ -3,7 +3,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "partials/activities/days-and-times.njk" import daysAndTimes %}
+{% from "partials/activities/days-and-custom-times.njk" import daysAndCustomTimes %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Check answers" %}
@@ -48,7 +48,7 @@
                             }) if currentWeek == week }}
                         </div>
                     {% endif %}
-                    {{ daysAndTimes(slots, false, false) }}
+                    {{ daysAndCustomTimes(slots, false, false) }}
                 {% endfor %}
             {% endset %}
 
