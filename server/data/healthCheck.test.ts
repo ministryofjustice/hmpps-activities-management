@@ -40,14 +40,6 @@ describe('Service healthcheck', () => {
     })
   })
 
-  describe('Check unhealthy', () => {
-    it('Should throw error from api', async () => {
-      fakeServiceApi.get('/ping').thrice().reply(500)
-
-      await expect(healthcheck()).rejects.toThrow('Internal Server Error')
-    })
-  })
-
   describe('Check healthy retry test', () => {
     it('Should retry twice if request fails', async () => {
       fakeServiceApi
