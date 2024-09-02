@@ -23,6 +23,7 @@
   "schedules": [
     {
       "id": 2,
+      "usePrisonRegimeTime": false,
       "instances": [
         {
           "id": 45,

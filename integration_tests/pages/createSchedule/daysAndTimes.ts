@@ -5,6 +5,8 @@ export default class DaysAndTimesPage extends Page {
     super('create-schedule-days-and-times-page')
   }
 
+  checkboxes = () => cy.get('[data-qa="day-session-checkboxes"]')
+
   selectDayTimeCheckboxes = (checkboxes: [string, string[]][]) =>
     checkboxes.forEach(dayCheckbox => {
       const input = this.getInputByLabel(dayCheckbox[0]).click()
@@ -16,4 +18,8 @@ export default class DaysAndTimesPage extends Page {
         .then(conditionalContainerId => cy.get(`#${conditionalContainerId}`).as('conditionalContainer'))
       dayCheckbox[1].forEach(timeCheckbox => cy.get('@conditionalContainer').contains('label', timeCheckbox).click())
     })
+
+  uncheckAllCheckboxes = () => cy.get('[type="checkbox"]').uncheck({ force: true })
+
+  updateButton = () => cy.get('button').contains('Update days and sessions').click()
 }

@@ -45,6 +45,9 @@
                     name: "days",
                     errorMessage: validationErrors | findError('days'),
                     values: formResponses.days or selectedDays,
+                    attributes: {
+                        'data-qa': 'day-session-checkboxes'
+                    },
                     items: [
                         {
                             value: "monday",
