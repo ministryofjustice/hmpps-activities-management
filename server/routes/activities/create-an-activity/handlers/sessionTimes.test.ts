@@ -3,13 +3,19 @@ import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import atLeast from '../../../../../jest.setup'
-import SessionTimesRoutes, { addNewEmptySlotsIfRequired, SessionTimes, filterUnrequiredSlots } from './sessionTimes'
+import SessionTimesRoutes, {
+  addNewEmptySlotsIfRequired,
+  filterUnrequiredSlots,
+  SessionSlot,
+  SessionTimes,
+} from './sessionTimes'
 import ActivitiesService from '../../../../services/activitiesService'
 import { Activity, PrisonRegime } from '../../../../@types/activitiesAPI/types'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import TimeSlot from '../../../../enum/timeSlot'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import activity from '../../../../services/fixtures/activity_1.json'
+import { DaysAndSlotsInRegime } from '../../../../utils/helpers/applicableRegimeTimeUtil'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -126,6 +132,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
               timeSlotsFriday: ['PM', 'ED'],
             },
           },
+          scheduleWeeks: 1,
         },
       },
       params: {},
@@ -138,28 +145,34 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
+      const expectedSessionSlots: Map<string, DaysAndSlotsInRegime[] | SessionSlot[]> = new Map<
+        string,
+        DaysAndSlotsInRegime[] | SessionSlot[]
+      >()
+      expectedSessionSlots.set('1', [
+        {
+          dayOfWeek: 'TUESDAY',
+          timeSlot: TimeSlot.AM,
+          start: '08:30',
+          finish: '11:45',
+        },
+        {
+          dayOfWeek: 'FRIDAY',
+          timeSlot: TimeSlot.PM,
+          start: '13:45',
+          finish: '16:45',
+        },
+        {
+          dayOfWeek: 'FRIDAY',
+          timeSlot: TimeSlot.ED,
+          start: '17:30',
+          finish: '19:15',
+        },
+      ])
+
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/session-times', {
-        sessionSlots: [
-          {
-            dayOfWeek: 'TUESDAY',
-            timeSlot: 'AM',
-            start: '08:30',
-            finish: '11:45',
-          },
-          {
-            dayOfWeek: 'FRIDAY',
-            timeSlot: 'PM',
-            start: '13:45',
-            finish: '16:45',
-          },
-          {
-            dayOfWeek: 'FRIDAY',
-            timeSlot: 'ED',
-            start: '17:30',
-            finish: '19:15',
-          },
-        ],
+        sessionSlots: expectedSessionSlots,
       })
     })
   })
@@ -304,13 +317,13 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       startTime.hour = 5
       startTime.minute = 30
 
-      startMap.set('MONDAY-AM', startTime)
+      startMap.set('1-MONDAY-AM', startTime)
 
       const endTime = new SimpleTime()
       endTime.hour = 9
       endTime.minute = 44
 
-      endMap.set('MONDAY-AM', endTime)
+      endMap.set('1-MONDAY-AM', endTime)
 
       req.body = {
         startTimes: startMap,
@@ -387,13 +400,13 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       startTime.hour = 5
       startTime.minute = 30
 
-      startMap.set('MONDAY-AM', startTime)
+      startMap.set('1-MONDAY-AM', startTime)
 
       const endTime = new SimpleTime()
       endTime.hour = 9
       endTime.minute = 44
 
-      endMap.set('MONDAY-AM', endTime)
+      endMap.set('1-MONDAY-AM', endTime)
 
       req = {
         params: {
@@ -543,13 +556,13 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       startTime.hour = 10
       startTime.minute = 30
 
-      startMap.set('MONDAY-AM', startTime)
+      startMap.set('1-MONDAY-AM', startTime)
 
       const endTime = new SimpleTime()
       endTime.hour = 9
       endTime.minute = 44
 
-      endMap.set('MONDAY-AM', endTime)
+      endMap.set('1-MONDAY-AM', endTime)
 
       req.body = {
         startTimes: startMap,
@@ -559,7 +572,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       await handler.POST(req, res)
 
       expect(res.addValidationError).toHaveBeenCalledWith(
-        `endTimes-MONDAY-AM`,
+        `endTimes-1-MONDAY-AM`,
         'Select an end time after the start time',
       )
     })
@@ -572,13 +585,13 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       startTime.hour = 10
       startTime.minute = 30
 
-      startMap.set('MONDAY-AM', startTime)
+      startMap.set('1-MONDAY-AM', startTime)
 
       const endTime = new SimpleTime()
       endTime.hour = 10
       endTime.minute = 30
 
-      endMap.set('MONDAY-AM', endTime)
+      endMap.set('1-MONDAY-AM', endTime)
 
       req.body = {
         startTimes: startMap,
@@ -588,7 +601,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       await handler.POST(req, res)
 
       expect(res.addValidationError).toHaveBeenCalledWith(
-        `endTimes-MONDAY-AM`,
+        `endTimes-1-MONDAY-AM`,
         'Select an end time after the start time',
       )
     })
@@ -601,25 +614,25 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       startTime.hour = 10
       startTime.minute = 30
 
-      startMap.set('FRIDAY-AM', startTime)
+      startMap.set('1-FRIDAY-AM', startTime)
 
       const endTime = new SimpleTime()
       endTime.hour = 11
       endTime.minute = 30
 
-      endMap.set('FRIDAY-AM', endTime)
+      endMap.set('1-FRIDAY-AM', endTime)
 
       const startTime2 = new SimpleTime()
       startTime2.hour = 9
       startTime2.minute = 30
 
-      startMap.set('FRIDAY-PM', startTime2)
+      startMap.set('1-FRIDAY-PM', startTime2)
 
       const endTime2 = new SimpleTime()
       endTime2.hour = 21
       endTime2.minute = 15
 
-      endMap.set('FRIDAY-PM', endTime2)
+      endMap.set('1-FRIDAY-PM', endTime2)
 
       req.body = {
         startTimes: startMap,
@@ -629,7 +642,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       await handler.POST(req, res)
 
       expect(res.addValidationError).toHaveBeenCalledWith(
-        `startTimes-FRIDAY-PM`,
+        `startTimes-1-FRIDAY-PM`,
         'Start time must be after the earlier session start time',
       )
     })
@@ -642,25 +655,25 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       startTime.hour = 10
       startTime.minute = 30
 
-      startMap.set('FRIDAY-AM', startTime)
+      startMap.set('1-FRIDAY-AM', startTime)
 
       const endTime = new SimpleTime()
       endTime.hour = 11
       endTime.minute = 30
 
-      endMap.set('FRIDAY-AM', endTime)
+      endMap.set('1-FRIDAY-AM', endTime)
 
       const startTime2 = new SimpleTime()
       startTime2.hour = 9
       startTime2.minute = 30
 
-      startMap.set('FRIDAY-ED', startTime2)
+      startMap.set('1-FRIDAY-ED', startTime2)
 
       const endTime2 = new SimpleTime()
       endTime2.hour = 21
       endTime2.minute = 15
 
-      endMap.set('FRIDAY-ED', endTime2)
+      endMap.set('1-FRIDAY-ED', endTime2)
 
       req.body = {
         startTimes: startMap,
@@ -670,7 +683,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       await handler.POST(req, res)
 
       expect(res.addValidationError).toHaveBeenCalledWith(
-        `startTimes-FRIDAY-ED`,
+        `startTimes-1-FRIDAY-ED`,
         'Start time must be after the earlier session start time',
       )
     })
@@ -683,25 +696,25 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       startTime.hour = 13
       startTime.minute = 30
 
-      startMap.set('FRIDAY-PM', startTime)
+      startMap.set('1-FRIDAY-PM', startTime)
 
       const endTime = new SimpleTime()
       endTime.hour = 15
       endTime.minute = 30
 
-      endMap.set('FRIDAY-PM', endTime)
+      endMap.set('1-FRIDAY-PM', endTime)
 
       const startTime2 = new SimpleTime()
       startTime2.hour = 9
       startTime2.minute = 30
 
-      startMap.set('FRIDAY-ED', startTime2)
+      startMap.set('1-FRIDAY-ED', startTime2)
 
       const endTime2 = new SimpleTime()
       endTime2.hour = 21
       endTime2.minute = 15
 
-      endMap.set('FRIDAY-ED', endTime2)
+      endMap.set('1-FRIDAY-ED', endTime2)
 
       req.body = {
         startTimes: startMap,
@@ -711,7 +724,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       await handler.POST(req, res)
 
       expect(res.addValidationError).toHaveBeenCalledWith(
-        `startTimes-FRIDAY-ED`,
+        `startTimes-1-FRIDAY-ED`,
         'Start time must be after the earlier session start time',
       )
     })

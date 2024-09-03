@@ -119,7 +119,7 @@ export default class DaysAndTimesRoutes {
 
       if (!preserveHistory) {
         // TODO: Fix once bi-weekly sorted
-        if (scheduleWeeks !== 2) {
+        if (scheduleWeeks !== 2 || config.twoWeeklyCustomStartEndTimesEnabled === true) {
           if (config.customStartEndTimesEnabled === true) {
             return res.redirect('../session-times-option')
           }
@@ -148,7 +148,7 @@ export default class DaysAndTimesRoutes {
       }
 
       // TODO: Fix once bi-weekly sorted
-      if (scheduleWeeks !== 2) {
+      if (scheduleWeeks !== 2 || config.twoWeeklyCustomStartEndTimesEnabled === true) {
         if (config.customStartEndTimesEnabled === true) {
           return res.redirect('../session-times-option?preserveHistory=true')
         }

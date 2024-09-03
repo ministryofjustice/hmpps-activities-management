@@ -313,7 +313,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
               expect(req.session.createJourney.slots['2'].days).toEqual(['tuesday', 'friday'])
               expect(req.session.createJourney.slots['2'].timeSlotsTuesday).toEqual(['AM'])
               expect(req.session.createJourney.slots['2'].timeSlotsFriday).toEqual(['PM', 'ED'])
-              expect(res.redirect).toHaveBeenCalledWith('../check-answers')
+              expect(res.redirect).toHaveBeenCalledWith('../session-times-option?preserveHistory=true')
             })
           })
         })

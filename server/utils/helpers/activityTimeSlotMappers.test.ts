@@ -388,7 +388,7 @@ describe('Create custom slots from session time', () => {
     endTime.hour = 9
     endTime.minute = 45
 
-    const expected: Slot = createSlot('MONDAY-AM', startTime, endTime)
+    const expected: Slot = createSlot('1-MONDAY-AM', startTime, endTime)
 
     const mondayAM: Slot = {
       customStartTime: '05:30',
@@ -416,7 +416,7 @@ describe('Create custom slots from session time', () => {
     endTime.hour = 17
     endTime.minute = 45
 
-    const expected: Slot = createSlot('TUESDAY-PM', startTime, endTime)
+    const expected: Slot = createSlot('1-TUESDAY-PM', startTime, endTime)
 
     const tuesdayPM: Slot = {
       customStartTime: '15:30',
@@ -444,7 +444,7 @@ describe('Create custom slots from session time', () => {
     endTime.hour = 23
     endTime.minute = 45
 
-    const expected: Slot = createSlot('FRIDAY-ED', startTime, endTime)
+    const expected: Slot = createSlot('2-FRIDAY-ED', startTime, endTime)
 
     const fridayED: Slot = {
       customStartTime: '21:30',
@@ -458,7 +458,7 @@ describe('Create custom slots from session time', () => {
       timeSlot: TimeSlot.ED,
       tuesday: false,
       wednesday: false,
-      weekNumber: 1,
+      weekNumber: 2,
     }
     expect(expected).toEqual(fridayED)
   })
@@ -471,37 +471,37 @@ describe('Create custom slots from session time', () => {
     startTime.hour = 5
     startTime.minute = 30
 
-    startMap.set('MONDAY-AM', startTime)
+    startMap.set('1-MONDAY-AM', startTime)
 
     const startTime2 = new SimpleTime()
     startTime2.hour = 15
     startTime2.minute = 45
 
-    startMap.set('WEDNESDAY-PM', startTime2)
+    startMap.set('1-WEDNESDAY-PM', startTime2)
 
     const startTime3 = new SimpleTime()
     startTime3.hour = 19
     startTime3.minute = 34
 
-    startMap.set('FRIDAY-ED', startTime3)
+    startMap.set('1-FRIDAY-ED', startTime3)
 
     const endTime = new SimpleTime()
     endTime.hour = 9
     endTime.minute = 45
 
-    endMap.set('MONDAY-AM', endTime)
+    endMap.set('1-MONDAY-AM', endTime)
 
     const endTime2 = new SimpleTime()
     endTime2.hour = 17
     endTime2.minute = 41
 
-    endMap.set('WEDNESDAY-PM', endTime2)
+    endMap.set('1-WEDNESDAY-PM', endTime2)
 
     const endTime3 = new SimpleTime()
     endTime3.hour = 21
     endTime3.minute = 22
 
-    endMap.set('FRIDAY-ED', endTime3)
+    endMap.set('1-FRIDAY-ED', endTime3)
 
     const expected: Slot[] = createCustomSlots(startMap, endMap)
 

@@ -16,7 +16,7 @@ import {
 } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { ServiceUser } from '../../../../@types/express'
 
-type SessionSlot = {
+export type SessionSlot = {
   dayOfWeek: string
   timeSlot: TimeSlot
   start: string
@@ -195,11 +195,12 @@ export default class SessionTimesRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
-    const { activityId, slots } = req.session.createJourney
+    const { activityId, slots, scheduleWeeks } = req.session.createJourney
 
-    const sessionSlots = await this.getDaysAndSlots(
+    const sessionSlots = await this.getDaysAndSlotsByWeek(
       regimeTimes,
-      slots['1'],
+      slots,
+      scheduleWeeks,
       req.params.mode === 'edit',
       +activityId,
       user,
@@ -237,7 +238,7 @@ export default class SessionTimesRoutes {
     if (slotsWithStartAfterEnd.length > 0) {
       slotsWithStartAfterEnd.forEach(customSlot => {
         res.addValidationError(
-          `endTimes-${customSlot.daysOfWeek}-${customSlot.timeSlot}`,
+          `endTimes-${customSlot.weekNumber}-${customSlot.daysOfWeek}-${customSlot.timeSlot}`,
           'Select an end time after the start time',
         )
       })
@@ -250,7 +251,7 @@ export default class SessionTimesRoutes {
     if (slotsStartingBeforeEarlierSession.length > 0) {
       slotsStartingBeforeEarlierSession.forEach(customSlot => {
         res.addValidationError(
-          `startTimes-${customSlot.daysOfWeek}-${customSlot.timeSlot}`,
+          `startTimes-${customSlot.weekNumber}-${customSlot.daysOfWeek}-${customSlot.timeSlot}`,
           'Start time must be after the earlier session start time',
         )
       })
@@ -274,6 +275,37 @@ export default class SessionTimesRoutes {
     }
 
     return res.redirectOrReturn(`bank-holiday-option`)
+  }
+
+  private getDaysAndSlotsByWeek = async (
+    regimeTimes: PrisonRegime[],
+    slots: { [p: string]: Slots },
+    scheduleWeeks: number,
+    editModeActive: boolean,
+    activityId: number,
+    user: ServiceUser,
+  ): Promise<Map<string, DaysAndSlotsInRegime[]>> => {
+    const sessionSlots: Map<string, DaysAndSlotsInRegime[] | SessionSlot[]> = new Map<
+      string,
+      DaysAndSlotsInRegime[] | SessionSlot[]
+    >()
+
+    if (editModeActive) {
+      const activity = await this.activitiesService.getActivity(activityId, user)
+      const activitySchedule = activity.schedules[0]
+      const existingSlots = transformActivitySlotsToDailySlots(activitySchedule.slots)
+      return sessionSlots.set('1', getMatchingSlots(existingSlots, slots['1']))
+    }
+
+    for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
+      const applicableRegimeTimesForActivity: DaysAndSlotsInRegime[] = getApplicableDaysAndSlotsInRegime(
+        regimeTimes,
+        slots[weekNumber.toString()],
+      )
+      sessionSlots.set(weekNumber.toString(), createSessionSlots(applicableRegimeTimesForActivity))
+    }
+
+    return sessionSlots
   }
 
   private getDaysAndSlots = async (

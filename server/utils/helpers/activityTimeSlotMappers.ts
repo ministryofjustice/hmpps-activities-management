@@ -339,7 +339,7 @@ export function createCustomSlots(startTimes: Map<string, SimpleTime>, endTimes:
 }
 
 export function createSlot(daySlot: string, startTime: SimpleTime, endTime: SimpleTime): Slot {
-  const [day, timeSlot] = daySlot.split('-') as [DayOfWeek, TimeSlot]
+  const [week, day, timeSlot] = daySlot.split('-') as [string, DayOfWeek, TimeSlot]
 
   const slot: Slot = {
     customStartTime: startTime.toIsoString(),
@@ -353,7 +353,7 @@ export function createSlot(daySlot: string, startTime: SimpleTime, endTime: Simp
     saturday: day === 'SATURDAY',
     sunday: day === 'SUNDAY',
     timeSlot,
-    weekNumber: 1,
+    weekNumber: Number(week),
   }
   return slot
 }
