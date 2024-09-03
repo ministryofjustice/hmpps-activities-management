@@ -156,8 +156,8 @@ context('Create activity with custom times', () => {
     sessionTimesOptionPage.continue()
 
     const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
-    sessionTimesPage.selectStartTime(10, 45, 'MONDAY', 'AM')
-    sessionTimesPage.selectEndTime(11, 50, 'MONDAY', 'AM')
+    sessionTimesPage.selectStartTime(10, 45, '1', 'MONDAY', 'AM')
+    sessionTimesPage.selectEndTime(11, 50, '1', 'MONDAY', 'AM')
     sessionTimesPage.continue()
 
     const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
