@@ -282,6 +282,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
           describe('Change to bi-weekly schedule frequency', () => {
             beforeEach(() => {
+              config.twoWeeklyCustomStartEndTimesEnabled = true
               req.session.createJourney.scheduleWeeks = 2
 
               req.query = {
