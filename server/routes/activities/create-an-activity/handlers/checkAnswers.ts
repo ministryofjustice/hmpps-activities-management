@@ -35,8 +35,7 @@ export default class CheckAnswersRoutes {
         const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
         return regimeSlotsToSchedule(createJourney.scheduleWeeks, createJourney.slots, regimeTimes)
       }
-      // TODO: Need to fix for bi-weekly
-      return customSlotsToSchedule(1, createJourney.customSlots)
+      return customSlotsToSchedule(createJourney.scheduleWeeks, createJourney.customSlots)
     }
 
     const slots = await getSlots()

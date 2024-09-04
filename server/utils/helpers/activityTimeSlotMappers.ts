@@ -86,13 +86,16 @@ function getCustomSlotsForDay(day: string, slots: ActivityScheduleSlot[]): Custo
   return customTimeSlots
 }
 
-export function customSlotsToSchedule(scheduleWeek: number, slots: Slot[]): WeeklyCustomTimeSlots {
+export function customSlotsToSchedule(scheduleWeeks: number, slots: Slot[]): WeeklyCustomTimeSlots {
   const customSlots: WeeklyCustomTimeSlots = {}
 
-  customSlots[scheduleWeek] = daysOfWeek.map(day => ({
-    day,
-    slots: getCustomTimeSlotsForDay(day, slots),
-  }))
+  for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
+    const slotsForSpecifiedWeek = slots.filter(slot => slot.weekNumber === weekNumber)
+    customSlots[weekNumber] = daysOfWeek.map(day => ({
+      day,
+      slots: getCustomTimeSlotsForDay(day, slotsForSpecifiedWeek),
+    }))
+  }
 
   return customSlots
 }

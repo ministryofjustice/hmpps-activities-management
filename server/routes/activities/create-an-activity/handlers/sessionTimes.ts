@@ -284,11 +284,8 @@ export default class SessionTimesRoutes {
     editModeActive: boolean,
     activityId: number,
     user: ServiceUser,
-  ): Promise<Map<string, DaysAndSlotsInRegime[]>> => {
-    const sessionSlots: Map<string, DaysAndSlotsInRegime[] | SessionSlot[]> = new Map<
-      string,
-      DaysAndSlotsInRegime[] | SessionSlot[]
-    >()
+  ): Promise<Map<string, DaysAndSlotsInRegime[] | SessionSlot[]>> => {
+    const sessionSlots = new Map<string, DaysAndSlotsInRegime[] | SessionSlot[]>()
 
     if (editModeActive) {
       const activity = await this.activitiesService.getActivity(activityId, user)
