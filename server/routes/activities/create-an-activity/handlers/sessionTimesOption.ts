@@ -16,12 +16,11 @@ export default class SessionTimesOptionRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { weekNumber } = req.params
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
-
     const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(
       regimeTimes,
-      // TODO: the week will have to be passed through from previous pages once we do split regimes, rather than hardcoded as ['1']
-      req.session.createJourney.slots['1'] as Slots,
+      req.session.createJourney.slots[weekNumber] as Slots,
     )
 
     res.render(`pages/activities/create-an-activity/session-times-option`, {
@@ -46,6 +45,6 @@ export default class SessionTimesOptionRoutes {
       redirectParams += '?preserveHistory=true'
     }
 
-    return res.redirect(`session-times${redirectParams}`)
+    return res.redirect(`../session-times${redirectParams}`)
   }
 }

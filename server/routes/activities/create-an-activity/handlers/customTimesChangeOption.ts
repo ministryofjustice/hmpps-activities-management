@@ -29,7 +29,7 @@ export default class CustomTimesChangeOptionRoutes {
     if (req.body.selectWhatYouWantToChange === ScheduleChangeOption.DAYS_AND_SESSIONS) {
       return res.redirect(`../days-and-times/${weekNumber}?preserveHistory=true`)
     }
-    if (!usePrisonRegimeTime) return res.redirect('../custom-times-change-default-or-custom')
+    if (!usePrisonRegimeTime) return res.redirect(`../custom-times-change-default-or-custom/${weekNumber}`)
     return res.redirect('../session-times')
   }
 }

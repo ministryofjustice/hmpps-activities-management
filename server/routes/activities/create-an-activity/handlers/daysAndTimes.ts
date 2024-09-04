@@ -121,7 +121,7 @@ export default class DaysAndTimesRoutes {
         // TODO: Fix once bi-weekly sorted
         if (scheduleWeeks !== 2 || config.twoWeeklyCustomStartEndTimesEnabled === true) {
           if (config.customStartEndTimesEnabled === true) {
-            return res.redirect('../session-times-option')
+            return res.redirect(`../session-times-option/${weekNumberInt}`)
           }
         }
 
@@ -132,16 +132,10 @@ export default class DaysAndTimesRoutes {
         if (!config.customStartEndTimesEnabled) {
           return this.editSlots(req, res)
         }
-
-        const activity = await this.activitiesService.getActivity(
-          +req.session.createJourney.activityId,
-          res.locals.user,
-        )
-        const usingRegimeTimes = activity.schedules[0].usePrisonRegimeTime
-
         // if using custom times (and the user has added (etc.) days/sessions), go to the screen where times can be edited
+        const usingRegimeTimes = await this.onPrisonRegime(req, res)
         if (!usingRegimeTimes) {
-          return res.redirect('../session-times')
+          return res.redirect(`../session-times/${weekNumber}`)
         }
         // if using prison regime times, save and skip to success
         return this.editSlots(req, res)
@@ -150,7 +144,7 @@ export default class DaysAndTimesRoutes {
       // TODO: Fix once bi-weekly sorted
       if (scheduleWeeks !== 2 || config.twoWeeklyCustomStartEndTimesEnabled === true) {
         if (config.customStartEndTimesEnabled === true) {
-          return res.redirect('../session-times-option?preserveHistory=true')
+          return res.redirect(`../session-times-option/${weekNumber}?preserveHistory=true`)
         }
       }
 
@@ -159,7 +153,14 @@ export default class DaysAndTimesRoutes {
 
     if (preserveHistory && !fromScheduleFrequency) {
       // If this is a week-specific slot edit (not from schedule frequency page)
-      if (req.params.mode === 'edit') return this.editSlots(req, res)
+      if (req.params.mode === 'edit') {
+        const usingRegimeTimes = await this.onPrisonRegime(req, res)
+        // if using custom times (and the user has added (etc.) days/sessions), go to the screen where times can be edited
+        if (!usingRegimeTimes) {
+          return res.redirect('../session-times')
+        }
+        return this.editSlots(req, res)
+      }
       return res.redirect('../check-answers')
     }
 
@@ -172,6 +173,11 @@ export default class DaysAndTimesRoutes {
     return res.redirect(`${weekNumberInt + 1}${redirectParams}`)
   }
 
+  private async onPrisonRegime(req: Request, res: Response) {
+    const activity = await this.activitiesService.getActivity(+req.session.createJourney.activityId, res.locals.user)
+    return activity.schedules[0].usePrisonRegimeTime
+  }
+
   private async editSlots(req: Request, res: Response) {
     const { user } = res.locals
     const { activityId, scheduleWeeks } = req.session.createJourney
@@ -181,23 +187,6 @@ export default class DaysAndTimesRoutes {
       scheduleWeeks,
     } as ActivityUpdateRequest
     await this.activitiesService.updateActivity(activityId, activity, user)
-    const successMessage = `You've updated the daily schedule for ${req.session.createJourney.name}`
-
-    const returnTo = `/activities/view/${req.session.createJourney.activityId}`
-    req.session.returnTo = returnTo
-    res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
-  }
-
-  private async editCustomSlots(req: Request, res: Response, newTimeSlots: ActivityUpdateRequest['slots']) {
-    const { user } = res.locals
-    const { activityId, scheduleWeeks } = req.session.createJourney
-
-    const updatedActivity = {
-      slots: newTimeSlots,
-      scheduleWeeks,
-    } as ActivityUpdateRequest
-    await this.activitiesService.updateActivity(activityId, updatedActivity, user)
-
     const successMessage = `You've updated the daily schedule for ${req.session.createJourney.name}`
     const returnTo = `/activities/view/${req.session.createJourney.activityId}`
     req.session.returnTo = returnTo

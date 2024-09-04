@@ -112,9 +112,13 @@ describe('Select what you want to change in this activity’s schedule page', ()
       req.body = {
         selectWhatYouWantToChange: ScheduleChangeOption.START_END_TIMES,
       }
+      req.params = {
+        weekNumber: '1',
+      }
+
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('../custom-times-change-default-or-custom')
+      expect(res.redirect).toHaveBeenCalledWith('../custom-times-change-default-or-custom/1')
     })
 
     it('redirects to the appropriate if the user selects to change the activity start and end times and they are using regime times', async () => {

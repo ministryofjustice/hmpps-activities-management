@@ -153,7 +153,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
           expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
           expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-          expect(res.redirect).toBeCalledWith('../session-times-option')
+          expect(res.redirect).toBeCalledWith('../session-times-option/1')
         })
       })
 
@@ -252,7 +252,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
               expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
               expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
               expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-              expect(res.redirect).toBeCalledWith('../session-times-option?preserveHistory=true')
+              expect(res.redirect).toBeCalledWith('../session-times-option/1?preserveHistory=true')
             })
           })
 
@@ -276,7 +276,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
               expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
               expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
               expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-              expect(res.redirect).toBeCalledWith('../session-times-option?preserveHistory=true')
+              expect(res.redirect).toBeCalledWith('../session-times-option/1?preserveHistory=true')
             })
           })
 
@@ -314,7 +314,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
               expect(req.session.createJourney.slots['2'].days).toEqual(['tuesday', 'friday'])
               expect(req.session.createJourney.slots['2'].timeSlotsTuesday).toEqual(['AM'])
               expect(req.session.createJourney.slots['2'].timeSlotsFriday).toEqual(['PM', 'ED'])
-              expect(res.redirect).toHaveBeenCalledWith('../session-times-option?preserveHistory=true')
+              expect(res.redirect).toHaveBeenCalledWith('../session-times-option/2?preserveHistory=true')
             })
           })
         })
@@ -322,7 +322,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
     })
 
     describe("Edit a week's slots from activity details page", () => {
-      it('should save slots when editing existing activity', async () => {
+      it('should save slots when editing existing activity - using regime times', async () => {
         req = {
           session: {
             createJourney: {
@@ -345,6 +345,34 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
             timeSlotsFriday: ['PM', 'ED'],
           },
         } as unknown as Request
+
+        const activityFromApi = {
+          id: 1,
+          schedules: [
+            {
+              usePrisonRegimeTime: true,
+              slots: [
+                {
+                  id: 5,
+                  weekNumber: 1,
+                  timeSlot: 'AM',
+                  startTime: '8:30',
+                  endTime: '11:45',
+                  daysOfWeek: ['Tue'],
+                  mondayFlag: false,
+                  tuesdayFlag: true,
+                  wednesdayFlag: false,
+                  thursdayFlag: false,
+                  fridayFlag: false,
+                  saturdayFlag: false,
+                  sundayFlag: false,
+                },
+              ],
+            },
+          ],
+        } as Activity
+
+        activitiesService.getActivity.mockReturnValue(Promise.resolve(activityFromApi))
 
         await handler.POST(req, res, next)
 
@@ -425,7 +453,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         await handler.POST(req, res, next)
 
-        expect(res.redirect).toHaveBeenCalledWith('../session-times')
+        expect(res.redirect).toHaveBeenCalledWith('../session-times/1')
       })
 
       it("should update session and redirect to next week's slots when editing schedule frequency", async () => {

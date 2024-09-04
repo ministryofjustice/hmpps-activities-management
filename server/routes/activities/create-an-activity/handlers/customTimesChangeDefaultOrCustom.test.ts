@@ -131,6 +131,9 @@ describe('Select how to change the activity start and end times page', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
+      req.params = {
+        weekNumber: '1',
+      }
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/create-an-activity/custom-times-change-default-or-custom',
@@ -213,7 +216,7 @@ describe('Select how to change the activity start and end times page', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('session-times')
+      expect(res.redirect).toHaveBeenCalledWith('../session-times')
     })
   })
 })
