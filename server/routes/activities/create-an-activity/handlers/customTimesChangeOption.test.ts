@@ -97,12 +97,15 @@ describe('Select what you want to change in this activity’s schedule page', ()
 
   describe('POST', () => {
     it('redirects to the day and times page if the user selects to change the days and sessions', async () => {
+      req.params = {
+        weekNumber: '1',
+      }
       req.body = {
         selectWhatYouWantToChange: ScheduleChangeOption.DAYS_AND_SESSIONS,
       }
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('days-and-times/1?preserveHistory=true')
+      expect(res.redirect).toHaveBeenCalledWith('../days-and-times/1?preserveHistory=true')
     })
 
     it('redirects to the appropriate if the user selects to change the activity start and end times and they are using custom times', async () => {
@@ -111,7 +114,7 @@ describe('Select what you want to change in this activity’s schedule page', ()
       }
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('custom-times-change-default-or-custom')
+      expect(res.redirect).toHaveBeenCalledWith('../custom-times-change-default-or-custom')
     })
 
     it('redirects to the appropriate if the user selects to change the activity start and end times and they are using regime times', async () => {
@@ -123,7 +126,7 @@ describe('Select what you want to change in this activity’s schedule page', ()
       }
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('session-times')
+      expect(res.redirect).toHaveBeenCalledWith('../session-times')
     })
   })
 })

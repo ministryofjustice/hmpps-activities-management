@@ -5,7 +5,12 @@
 
 {% set pageTitle = applicationName + " - Create a schedule - Activity session times" %}
 {% set pageId = 'custom-times-change-option-page' %}
+
+{% if session.createJourney.scheduleWeeks > 1 %}
+{% set pageHeading = "Week "+session.req.params.weekNumber+" of "+session.createJourney.scheduleWeeks+": Select what you want to change in this activity’s schedule" %}
+{% else %}
 {% set pageHeading = "Select what you want to change in this activity’s schedule" %}
+{% endif %}
 
 {% set jsBackLink = true %}
 
