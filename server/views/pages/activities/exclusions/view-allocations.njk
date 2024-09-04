@@ -3,7 +3,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
-{% from "partials/activities/days-and-times.njk" import daysAndTimes %}
+{% from "partials/activities/days-and-custom-times.njk" import daysAndCustomTimes %}
 {% from "partials/activities/suspension-badge.njk" import suspensionBadge %}
 
 {% set pageTitle = applicationName + " - Exclusions - View allocations" %}
@@ -36,7 +36,7 @@
                                     }) if activity.currentWeek == week }}
                                 </div>
                             {% endif %}
-                            {{ daysAndTimes(slots, false, false) }}
+                            {{ daysAndCustomTimes(slots, false, false) }}
                         {% endfor %}
                     {% endset %}
 
