@@ -4,7 +4,6 @@ import ActivitiesService from '../../../../services/activitiesService'
 import ExclusionRoutes from './exclusions'
 import atLeast from '../../../../../jest.setup'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
-import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
@@ -42,7 +41,20 @@ describe('Route Handlers - Allocation - Exclusions', () => {
             scheduleId: 1,
             name: 'Test Activity',
           },
-          exclusions: [],
+          exclusions: [
+            {
+              weekNumber: 2,
+              timeSlot: 'AM',
+              monday: false,
+              tuesday: false,
+              wednesday: false,
+              thursday: false,
+              friday: true,
+              saturday: false,
+              sunday: false,
+              daysOfWeek: ['FRIDAY'],
+            },
+          ],
           updatedExclusions: [],
         },
       },
@@ -59,9 +71,9 @@ describe('Route Handlers - Allocation - Exclusions', () => {
           {
             id: 1,
             weekNumber: 1,
-            timeSlot: TimeSlot.AM,
-            startTime: '09:00',
-            endTime: '12:00',
+            timeSlot: TimeSlot.PM,
+            startTime: '13:35',
+            endTime: '14:00',
             mondayFlag: true,
             tuesdayFlag: false,
             wednesdayFlag: false,
@@ -73,18 +85,33 @@ describe('Route Handlers - Allocation - Exclusions', () => {
           },
           {
             id: 2,
-            weekNumber: 2,
-            startTime: '09:00',
-            endTime: '12:00',
+            weekNumber: 1,
             timeSlot: TimeSlot.AM,
-            mondayFlag: true,
-            tuesdayFlag: true,
+            startTime: '09:20',
+            endTime: '12:20',
+            mondayFlag: false,
+            tuesdayFlag: false,
             wednesdayFlag: true,
-            thursdayFlag: true,
+            thursdayFlag: false,
+            fridayFlag: false,
+            saturdayFlag: false,
+            sundayFlag: false,
+            daysOfWeek: ['Wed'],
+          },
+          {
+            id: 3,
+            weekNumber: 2,
+            startTime: '10:00',
+            endTime: '11:00',
+            timeSlot: TimeSlot.AM,
+            mondayFlag: false,
+            tuesdayFlag: false,
+            wednesdayFlag: true,
+            thursdayFlag: false,
             fridayFlag: true,
-            saturdayFlag: true,
-            sundayFlag: true,
-            daysOfWeek: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            saturdayFlag: false,
+            sundayFlag: false,
+            daysOfWeek: ['Wed', 'Fri'],
           },
         ],
       } as ActivitySchedule)
@@ -92,75 +119,76 @@ describe('Route Handlers - Allocation - Exclusions', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
+      jest.useFakeTimers().setSystemTime(new Date('2024-08-30'))
+
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/exclusions', {
-        currentWeek: calcCurrentWeek(new Date('2022-01-01'), 2),
-        weeklySlots: {
-          1: [
-            {
-              day: 'MONDAY',
-              slots: ['AM'],
-            },
-            {
-              day: 'TUESDAY',
-              slots: [],
-            },
-            {
-              day: 'WEDNESDAY',
-              slots: [],
-            },
-            {
-              day: 'THURSDAY',
-              slots: [],
-            },
-            {
-              day: 'FRIDAY',
-              slots: [],
-            },
-            {
-              day: 'SATURDAY',
-              slots: [],
-            },
-            {
-              day: 'SUNDAY',
-              slots: [],
-            },
-          ],
-          2: [
-            {
-              day: 'MONDAY',
-              slots: ['AM'],
-            },
-            {
-              day: 'TUESDAY',
-              slots: ['AM'],
-            },
-            {
-              day: 'WEDNESDAY',
-              slots: ['AM'],
-            },
-            {
-              day: 'THURSDAY',
-              slots: ['AM'],
-            },
-            {
-              day: 'FRIDAY',
-              slots: ['AM'],
-            },
-            {
-              day: 'SATURDAY',
-              slots: ['AM'],
-            },
-            {
-              day: 'SUNDAY',
-              slots: ['AM'],
-            },
-          ],
-        },
-        exclusions: [],
-        disabledSlots: ['MONDAYAM'],
         prisonerName: 'John Smith',
-        scheduleWeeks: 2,
+        disabledSlotsExist: true,
+        weeks: [
+          {
+            weekNumber: 1,
+            currentWeek: false,
+            weekDays: [
+              {
+                day: 'Monday',
+                slots: [
+                  {
+                    timeSlot: 'PM',
+                    startTime: '13:35',
+                    endTime: '14:00',
+                    excluded: false,
+                    disabled: false,
+                  },
+                ],
+              },
+              {
+                day: 'Wednesday',
+                slots: [
+                  {
+                    timeSlot: 'AM',
+                    startTime: '09:20',
+                    endTime: '12:20',
+                    excluded: false,
+                    disabled: true,
+                  },
+                ],
+              },
+              { day: 'Friday', slots: [] },
+            ],
+          },
+          {
+            weekNumber: 2,
+            currentWeek: true,
+            weekDays: [
+              { day: 'Monday', slots: [] },
+              {
+                day: 'Wednesday',
+                slots: [
+                  {
+                    timeSlot: 'AM',
+                    startTime: '10:00',
+                    endTime: '11:00',
+                    excluded: false,
+                    disabled: true,
+                  },
+                ],
+              },
+              {
+                day: 'Friday',
+                slots: [
+                  {
+                    timeSlot: 'AM',
+                    startTime: '10:00',
+                    endTime: '11:00',
+                    excluded: true,
+                    disabled: false,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       })
     })
   })
@@ -177,7 +205,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       expect(req.session.allocateJourney.updatedExclusions).toEqual([
         {
           weekNumber: 1,
-          timeSlot: 'AM',
+          timeSlot: 'PM',
           monday: true,
           tuesday: false,
           wednesday: false,
@@ -188,16 +216,28 @@ describe('Route Handlers - Allocation - Exclusions', () => {
           daysOfWeek: ['MONDAY'],
         },
         {
+          weekNumber: 1,
+          timeSlot: 'AM',
+          monday: false,
+          tuesday: false,
+          wednesday: true,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['WEDNESDAY'],
+        },
+        {
           weekNumber: 2,
           timeSlot: 'AM',
           monday: false,
-          tuesday: true,
+          tuesday: false,
           wednesday: true,
-          thursday: true,
+          thursday: false,
           friday: true,
-          saturday: true,
-          sunday: true,
-          daysOfWeek: ['TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['WEDNESDAY', 'FRIDAY'],
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
@@ -220,7 +260,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       expect(req.session.allocateJourney.updatedExclusions).toEqual([
         {
           weekNumber: 1,
-          timeSlot: 'AM',
+          timeSlot: 'PM',
           monday: true,
           tuesday: false,
           wednesday: false,
@@ -231,16 +271,28 @@ describe('Route Handlers - Allocation - Exclusions', () => {
           daysOfWeek: ['MONDAY'],
         },
         {
+          weekNumber: 1,
+          timeSlot: 'AM',
+          monday: false,
+          tuesday: false,
+          wednesday: true,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['WEDNESDAY'],
+        },
+        {
           weekNumber: 2,
           timeSlot: 'AM',
           monday: false,
-          tuesday: true,
+          tuesday: false,
           wednesday: true,
-          thursday: true,
+          thursday: false,
           friday: true,
-          saturday: true,
-          sunday: true,
-          daysOfWeek: ['TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['WEDNESDAY', 'FRIDAY'],
         },
       ])
 
@@ -260,7 +312,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       expect(req.session.allocateJourney.updatedExclusions).toEqual([
         {
           weekNumber: 1,
-          timeSlot: 'AM',
+          timeSlot: 'PM',
           monday: true,
           tuesday: false,
           wednesday: false,
@@ -271,16 +323,28 @@ describe('Route Handlers - Allocation - Exclusions', () => {
           daysOfWeek: ['MONDAY'],
         },
         {
+          weekNumber: 1,
+          timeSlot: 'AM',
+          monday: false,
+          tuesday: false,
+          wednesday: true,
+          thursday: false,
+          friday: false,
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['WEDNESDAY'],
+        },
+        {
           weekNumber: 2,
           timeSlot: 'AM',
-          monday: true,
-          tuesday: true,
+          monday: false,
+          tuesday: false,
           wednesday: true,
-          thursday: true,
+          thursday: false,
           friday: true,
-          saturday: true,
-          sunday: true,
-          daysOfWeek: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['WEDNESDAY', 'FRIDAY'],
         },
       ])
 

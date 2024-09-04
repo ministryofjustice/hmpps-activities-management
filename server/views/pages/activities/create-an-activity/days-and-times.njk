@@ -17,9 +17,9 @@
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
             {% if session.createJourney.scheduleWeeks > 1 %}
-                <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }} of {{ session.createJourney.scheduleWeeks }}: {{ 'change' if session.req.params.mode == 'edit' else 'select' }} the days and times when this activity runs</h1>
+                <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }} of {{ session.createJourney.scheduleWeeks }}: {{ 'change' if session.req.params.mode == 'edit' else 'select' }} the days and sessions when this activity runs</h1>
             {% else %}
-                <h1 class="govuk-heading-l">{{ 'Change' if session.req.params.mode == 'edit' else 'Select' }} the days and times when this activity runs</h1>
+                <h1 class="govuk-heading-l">{{ 'Change' if session.req.params.mode == 'edit' else 'Select' }} the days and sessions when this activity runs</h1>
             {% endif %}
 
             <p class="govuk-body">Select each day that the activity will run, then select the slots when the activity will run on that day.</p>
@@ -45,6 +45,9 @@
                     name: "days",
                     errorMessage: validationErrors | findError('days'),
                     values: formResponses.days or selectedDays,
+                    attributes: {
+                        'data-qa': 'day-session-checkboxes'
+                    },
                     items: [
                         {
                             value: "monday",

@@ -26,11 +26,28 @@ export interface WeeklyCustomTimeSlots {
   }[]
 }
 
-export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
+export type DayOfWeek =
+  | DayOfWeekEnum.MONDAY
+  | DayOfWeekEnum.TUESDAY
+  | DayOfWeekEnum.WEDNESDAY
+  | DayOfWeekEnum.THURSDAY
+  | DayOfWeekEnum.FRIDAY
+  | DayOfWeekEnum.SATURDAY
+  | DayOfWeekEnum.SUNDAY
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-const timeSlotOrder = {
+export enum DayOfWeekEnum {
+  MONDAY = 'MONDAY',
+  TUESDAY = 'TUESDAY',
+  WEDNESDAY = 'WEDNESDAY',
+  THURSDAY = 'THURSDAY',
+  FRIDAY = 'FRIDAY',
+  SATURDAY = 'SATURDAY',
+  SUNDAY = 'SUNDAY',
+}
+
+export const timeSlotOrder = {
   [TimeSlot.AM]: 0,
   [TimeSlot.PM]: 1,
   [TimeSlot.ED]: 2,
@@ -364,23 +381,26 @@ export function createSlot(daySlot: string, startTime: SimpleTime, endTime: Simp
 export function transformActivitySlotsToDailySlots(activitySlots: ActivityScheduleSlot[]): DaysAndSlotsInRegime[] {
   const transformedSlots: { [key: string]: DaysAndSlotsInRegime } = {}
 
-  activitySlots.forEach((slot: { daysOfWeek: string[]; timeSlot: string; startTime: string; endTime: string }) => {
-    const dayOfWeek = getFullDayFromAbbreviation(slot.daysOfWeek[0])
-    if (!transformedSlots[dayOfWeek]) {
-      transformedSlots[dayOfWeek] = {
-        dayOfWeek,
+  activitySlots.forEach((slot: ActivityScheduleSlot) => {
+    slot.daysOfWeek.forEach((abbreviation: string) => {
+      const dayOfWeek = getFullDayFromAbbreviation(abbreviation)
+
+      if (!transformedSlots[dayOfWeek]) {
+        transformedSlots[dayOfWeek] = {
+          dayOfWeek,
+        }
       }
-    }
-    if (slot.timeSlot === 'AM') {
-      transformedSlots[dayOfWeek].amStart = slot.startTime
-      transformedSlots[dayOfWeek].amFinish = slot.endTime
-    } else if (slot.timeSlot === 'PM') {
-      transformedSlots[dayOfWeek].pmStart = slot.startTime
-      transformedSlots[dayOfWeek].pmFinish = slot.endTime
-    } else if (slot.timeSlot === 'ED') {
-      transformedSlots[dayOfWeek].edStart = slot.startTime
-      transformedSlots[dayOfWeek].edFinish = slot.endTime
-    }
+      if (slot.timeSlot === TimeSlot.AM) {
+        transformedSlots[dayOfWeek].amStart = slot.startTime
+        transformedSlots[dayOfWeek].amFinish = slot.endTime
+      } else if (slot.timeSlot === TimeSlot.PM) {
+        transformedSlots[dayOfWeek].pmStart = slot.startTime
+        transformedSlots[dayOfWeek].pmFinish = slot.endTime
+      } else if (slot.timeSlot === TimeSlot.ED) {
+        transformedSlots[dayOfWeek].edStart = slot.startTime
+        transformedSlots[dayOfWeek].edFinish = slot.endTime
+      }
+    })
   })
 
   return Object.values(transformedSlots)

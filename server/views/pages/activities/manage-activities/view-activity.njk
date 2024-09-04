@@ -4,7 +4,6 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
-{% from "../../../partials/activities/days-and-times.njk" import daysAndTimes %}
 {% from "../../../partials/activities/days-and-custom-times.njk" import daysAndCustomTimes %}
 
 {% set pageTitle = applicationName + " - Activities Dashboard - View activity" %}
@@ -282,7 +281,8 @@
                                     href: "/activities/edit/" + activity.id + "/custom-times-change-option?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: " session times",
-                                    classes: "govuk-link--no-visited-state"
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { "data-qa": "change-schedule-link" }
                                 }
                             ]
                             } if not activityEnded

@@ -12,6 +12,8 @@ import TimeSlot from '../../../../enum/timeSlot'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import {
   createCustomSlots,
+  DayOfWeekEnum,
+  timeSlotOrder,
   transformActivitySlotsToDailySlots,
 } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { ServiceUser } from '../../../../@types/express'
@@ -22,6 +24,7 @@ export type SessionSlot = {
   start: string
   finish: string
 }
+
 export class SessionTimes {
   @Transform(({ value }) =>
     Object.keys(value).reduce((acc, k) => acc.set(k, plainToInstance(SimpleTime, value[k])), new Map()),
@@ -74,7 +77,9 @@ export function getMatchingSlots(existingSlots: DaysAndSlotsInRegime[], newlySel
   // convert to sessionSlots for ease
   const filteredSessionSlots = createSessionSlots(filteredSlots)
   // add empty slots for new times to be added
-  return addNewEmptySlotsIfRequired(filteredSessionSlots, newlySelectedSlots)
+  const emptySlotsAdded = addNewEmptySlotsIfRequired(filteredSessionSlots, newlySelectedSlots)
+  // Sort the days and slots
+  return sortSlots(emptySlotsAdded)
 }
 
 export function filterUnrequiredSlots(
@@ -116,6 +121,28 @@ export function filterUnrequiredSlots(
   return Object.values(dailySlots)
 }
 
+export function sortSlots(sessionSlots: SessionSlot[]) {
+  const dayOfWeekOrder: { [key in DayOfWeekEnum]: number } = {
+    [DayOfWeekEnum.MONDAY]: 0,
+    [DayOfWeekEnum.TUESDAY]: 1,
+    [DayOfWeekEnum.WEDNESDAY]: 2,
+    [DayOfWeekEnum.THURSDAY]: 3,
+    [DayOfWeekEnum.FRIDAY]: 4,
+    [DayOfWeekEnum.SATURDAY]: 5,
+    [DayOfWeekEnum.SUNDAY]: 6,
+  }
+
+  return sessionSlots.sort((a, b) => {
+    const dayComparison =
+      dayOfWeekOrder[a.dayOfWeek as keyof typeof DayOfWeekEnum] -
+      dayOfWeekOrder[b.dayOfWeek as keyof typeof DayOfWeekEnum]
+    if (dayComparison !== 0) {
+      return dayComparison
+    }
+    return timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot]
+  })
+}
+
 export function addNewEmptySlotsIfRequired(sessionSlots: SessionSlot[], newlySelectedSlots: Slots): SessionSlot[] {
   // Make the day format match
   const days = newlySelectedSlots.days.map(day => day.toUpperCase())
@@ -139,21 +166,7 @@ export function addNewEmptySlotsIfRequired(sessionSlots: SessionSlot[], newlySel
     })
   })
 
-  // We need to make sure that they're in the correct order
-  const timeSlotOrder = {
-    AM: 1,
-    PM: 2,
-    ED: 3,
-  }
-
-  const sortedSessionSlots = sessionSlots.sort((a, b) => {
-    if (a.dayOfWeek < b.dayOfWeek) return -1
-    if (a.dayOfWeek > b.dayOfWeek) return 1
-    // If the day is the same, sort by the time slot order
-    return timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot]
-  })
-
-  return sortedSessionSlots
+  return sessionSlots
 }
 
 function startDateBeforeEarlierSession(customSlot: Slot, allSlots: Slot[]): boolean {
