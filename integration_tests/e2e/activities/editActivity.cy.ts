@@ -168,12 +168,12 @@ context('Edit activity', () => {
     daysAndTimesPage.updateButton()
 
     const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
-    sessionTimesPage.checkTime('--', '--', '--', '--', 'MONDAY', 'AM')
-    sessionTimesPage.checkTime('10', '00', '11', '00', 'WEDNESDAY', 'AM')
-    sessionTimesPage.checkTime('13', '00', '16', '00', 'WEDNESDAY', 'PM')
+    sessionTimesPage.checkTime('--', '--', '--', '--', '1', 'MONDAY', 'AM')
+    sessionTimesPage.checkTime('10', '00', '11', '00', '1', 'WEDNESDAY', 'AM')
+    sessionTimesPage.checkTime('13', '00', '16', '00', '1', 'WEDNESDAY', 'PM')
 
-    sessionTimesPage.selectStartTime(10, 45, 'MONDAY', 'AM')
-    sessionTimesPage.selectEndTime(11, 50, 'MONDAY', 'AM')
+    sessionTimesPage.selectStartTime(10, 45, '1', 'MONDAY', 'AM')
+    sessionTimesPage.selectEndTime(11, 50, '1', 'MONDAY', 'AM')
     sessionTimesPage.continue()
 
     Page.verifyOnPage(ViewActivityPage)
@@ -195,13 +195,13 @@ context('Edit activity', () => {
     customTimesChangeDefaultCustomPage.changeTimes('Select start and end times to change')
     customTimesChangeDefaultCustomPage.continue()
     const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
-    sessionTimesPage.checkTime('10', '00', '11', '00', 'TUESDAY', 'AM')
-    sessionTimesPage.checkTime('10', '00', '11', '00', 'WEDNESDAY', 'AM')
-    sessionTimesPage.checkTime('13', '00', '16', '00', 'WEDNESDAY', 'PM')
+    sessionTimesPage.checkTime('10', '00', '11', '00', '1', 'TUESDAY', 'AM')
+    sessionTimesPage.checkTime('10', '00', '11', '00', '1', 'WEDNESDAY', 'AM')
+    sessionTimesPage.checkTime('13', '00', '16', '00', '1', 'WEDNESDAY', 'PM')
 
-    sessionTimesPage.clearTime('TUESDAY', 'AM')
-    sessionTimesPage.selectStartTime(9, 30, 'TUESDAY', 'AM')
-    sessionTimesPage.selectEndTime(11, 50, 'TUESDAY', 'AM')
+    sessionTimesPage.clearTime('1', 'TUESDAY', 'AM')
+    sessionTimesPage.selectStartTime(9, 30, '1', 'TUESDAY', 'AM')
+    sessionTimesPage.selectEndTime(11, 50, '1', 'TUESDAY', 'AM')
     sessionTimesPage.continue()
     Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.assertNotificationContents(

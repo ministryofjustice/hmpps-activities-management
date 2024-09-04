@@ -181,12 +181,12 @@ context('Edit activity', () => {
     customTimesChangeOptionPage.continue()
     const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
 
-    sessionTimesPage.checkTableRow('Monday', 'AM', 0, '08', '30', '11', '45')
-    sessionTimesPage.checkTableRow('Tuesday', 'AM', 4, '08', '30', '11', '45')
-    sessionTimesPage.checkTableRow('Tuesday', 'PM', 8, '13', '45', '16', '45')
-    sessionTimesPage.checkTableRow('Wednesday', 'AM', 12, '08', '30', '11', '45')
-    sessionTimesPage.checkTableRow('Wednesday', 'PM', 16, '13', '45', '16', '45')
-    sessionTimesPage.checkTableRow('Thursday', 'ED', 20, '17', '30', '19', '15')
+    sessionTimesPage.checkTableRow('1', 'Monday', 'AM', 0, '08', '30', '11', '45')
+    sessionTimesPage.checkTableRow('1', 'Tuesday', 'AM', 4, '08', '30', '11', '45')
+    sessionTimesPage.checkTableRow('1', 'Tuesday', 'PM', 8, '13', '45', '16', '45')
+    sessionTimesPage.checkTableRow('1', 'Wednesday', 'AM', 12, '08', '30', '11', '45')
+    sessionTimesPage.checkTableRow('1', 'Wednesday', 'PM', 16, '13', '45', '16', '45')
+    sessionTimesPage.checkTableRow('1', 'Thursday', 'ED', 20, '17', '30', '19', '15')
 
     sessionTimesPage.continue()
   })
