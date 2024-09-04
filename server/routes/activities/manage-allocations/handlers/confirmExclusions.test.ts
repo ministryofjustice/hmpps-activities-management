@@ -1,6 +1,10 @@
 import { Request, Response } from 'express'
+import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
 import ConfirmExclusionsRoutes from './confirmExclusions'
+import atLeast from '../../../../../jest.setup'
+import activitySchedule from '../../../../services/fixtures/activity_schedule_bi_weekly_1.json'
+import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -76,25 +80,48 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(1))
+        .mockResolvedValue(activitySchedule as unknown as ActivitySchedule)
+
       await handler.GET(req, res)
+
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/confirm-exclusions', {
-        newSlots: {
-          2: [
-            {
-              day: 'MONDAY',
-              slots: ['AM'],
-            },
-            {
-              day: 'THURSDAY',
-              slots: ['AM'],
-            },
-          ],
-        },
-        removedSlots: {
+        addedSlots: {
           2: [
             {
               day: 'TUESDAY',
-              slots: ['AM'],
+              slots: [
+                {
+                  timeSlot: 'AM',
+                  startTime: '10:30',
+                  endTime: '11:30',
+                },
+              ],
+            },
+          ],
+        },
+        excludedSlots: {
+          2: [
+            {
+              day: 'MONDAY',
+              slots: [
+                {
+                  timeSlot: 'AM',
+                  startTime: '10:30',
+                  endTime: '11:30',
+                },
+              ],
+            },
+            {
+              day: 'THURSDAY',
+              slots: [
+                {
+                  timeSlot: 'AM',
+                  startTime: '10:30',
+                  endTime: '11:30',
+                },
+              ],
             },
           ],
         },
