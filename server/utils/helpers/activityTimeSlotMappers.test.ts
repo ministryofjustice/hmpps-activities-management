@@ -196,31 +196,124 @@ describe('mapSlotsToWeeklyTimeSlots', () => {
       },
     ] as Slot[]
 
-    const weeklyTimeSlots = mapSlotsToWeeklyTimeSlots(slots)
+    const scheduleSlots: ActivityScheduleSlot[] = [
+      {
+        id: 1,
+        weekNumber: 1,
+        timeSlot: 'AM',
+        startTime: '10:00',
+        endTime: '11:00',
+        daysOfWeek: ['Mon'],
+        mondayFlag: true,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 2,
+        weekNumber: 1,
+        timeSlot: 'PM',
+        startTime: '17:00',
+        endTime: '18:00',
+        daysOfWeek: ['Thu', 'Fri'],
+        mondayFlag: false,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: true,
+        fridayFlag: true,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 3,
+        weekNumber: 2,
+        timeSlot: 'PM',
+        startTime: '18:10',
+        endTime: '19:10',
+        daysOfWeek: ['Mon'],
+        mondayFlag: true,
+        tuesdayFlag: false,
+        wednesdayFlag: false,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+      {
+        id: 4,
+        weekNumber: 2,
+        timeSlot: 'PM',
+        startTime: '18:15',
+        endTime: '19:15',
+        daysOfWeek: ['Wed'],
+        mondayFlag: false,
+        tuesdayFlag: false,
+        wednesdayFlag: true,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
+      },
+    ]
+
+    const weeklyTimeSlots = mapSlotsToWeeklyTimeSlots(slots, scheduleSlots)
 
     expect(weeklyTimeSlots).toEqual({
       1: [
         {
           day: 'MONDAY',
-          slots: ['AM'],
+          slots: [
+            {
+              timeSlot: TimeSlot.AM,
+              startTime: '10:00',
+              endTime: '11:00',
+            },
+          ],
         },
         {
           day: 'THURSDAY',
-          slots: ['PM'],
+          slots: [
+            {
+              timeSlot: TimeSlot.PM,
+              startTime: '17:00',
+              endTime: '18:00',
+            },
+          ],
         },
         {
           day: 'FRIDAY',
-          slots: ['PM'],
+          slots: [
+            {
+              timeSlot: TimeSlot.PM,
+              startTime: '17:00',
+              endTime: '18:00',
+            },
+          ],
         },
       ],
       2: [
         {
           day: 'MONDAY',
-          slots: ['PM'],
+          slots: [
+            {
+              timeSlot: TimeSlot.PM,
+              startTime: '18:10',
+              endTime: '19:10',
+            },
+          ],
         },
         {
           day: 'WEDNESDAY',
-          slots: ['PM'],
+          slots: [
+            {
+              timeSlot: TimeSlot.PM,
+              startTime: '18:15',
+              endTime: '19:15',
+            },
+          ],
         },
       ],
     })

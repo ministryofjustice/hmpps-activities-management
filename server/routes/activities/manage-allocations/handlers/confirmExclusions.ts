@@ -7,14 +7,20 @@ export default class ConfirmExclusionsRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response) => {
+    const { user } = res.locals
     const { exclusions, updatedExclusions } = req.session.allocateJourney
 
-    const newSlots = calculateUniqueSlots(updatedExclusions, exclusions)
-    const removedSlots = calculateUniqueSlots(exclusions, updatedExclusions)
+    const excludedSlots = calculateUniqueSlots(updatedExclusions, exclusions)
+    const addedSlots = calculateUniqueSlots(exclusions, updatedExclusions)
+
+    const schedule = await this.activitiesService.getActivitySchedule(
+      req.session.allocateJourney.activity.scheduleId,
+      user,
+    )
 
     res.render('pages/activities/manage-allocations/confirm-exclusions', {
-      newSlots: mapSlotsToWeeklyTimeSlots(newSlots),
-      removedSlots: mapSlotsToWeeklyTimeSlots(removedSlots),
+      excludedSlots: mapSlotsToWeeklyTimeSlots(excludedSlots, schedule.slots),
+      addedSlots: mapSlotsToWeeklyTimeSlots(addedSlots, schedule.slots),
     })
   }
 
