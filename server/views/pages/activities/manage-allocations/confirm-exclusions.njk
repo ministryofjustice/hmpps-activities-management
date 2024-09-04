@@ -1,7 +1,6 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "partials/activities/days-and-times.njk" import daysAndTimes %}
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Confirm Exclusions" %}
 {% set pageId = 'confirm-exclusions-page' %}
@@ -13,20 +12,10 @@
             <span class="govuk-caption-xl">Modify someone’s activity schedule</span>
             <h1 class="govuk-heading-l">Check changes to when {{ session.allocateJourney.inmate.prisonerName }} should attend {{ session.allocateJourney.activity.name | safe }}</h1>
 
-            {% if newSlots | length %}
+            {% if excludedSlots | length %}
                 <h2 class="govuk-heading-l">Sessions you’re excluding {{ session.allocateJourney.inmate.prisonerName }} from</h2>
 
-                {% for weekNumber, newWeekSlots in newSlots %}
-                    {% if session.allocateJourney.activity.scheduleWeeks > 1 %}
-                        <h3 class="govuk-heading-m">Week {{ weekNumber }}</h3>
-                    {% endif %}
-
-                    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
-                        {% for newSlot in newWeekSlots %}
-                            <li>{{ newSlot.day | capitalize }} {{ formatSlots(newSlot.slots) }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endfor %}
+                {{  formatSchedule(excludedSlots) }}
 
                 <p class="govuk-body">This means they will not:</p>
 
@@ -40,25 +29,15 @@
                 <p class="govuk-body">Changes take effect from tomorrow.</p>
             {% endif %}
 
-            {% if removedSlots | length %}
+            {% if addedSlots | length %}
                 <h2 class="govuk-heading-l">Sessions you’re adding {{ session.allocateJourney.inmate.prisonerName }} to</h2>
 
-               {% for weekNumber, removedWeekSlots in removedSlots %}
-                    {% if session.allocateJourney.activity.scheduleWeeks > 1 %}
-                        <h3 class="govuk-heading-m">Week {{ weekNumber }}</h3>
-                    {% endif %}
-
-                    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
-                        {% for removedSlot in removedWeekSlots %}
-                            <li>{{ removedSlot.day | capitalize }} {{ formatSlots(removedSlot.slots) }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endfor %}
+                {{ formatSchedule(addedSlots) }}
 
                 <p class="govuk-body">This will be on unlock, movement and attendance lists from tomorrow.</p>
             {% endif %}
 
-            {% if removedSlots | length == 0 and newSlots | length == 0  %}
+            {% if addedSlots | length == 0 and excludedSlots | length == 0  %}
                 <p class="govuk-body">You are not making any changes to when {{ session.allocateJourney.inmate.prisonerName }} should attend.</p>
             {% endif %}
 
@@ -75,9 +54,18 @@
     </div>
 {% endblock %}
 
-{% macro formatSlots(slots) %}
-    {%- set comma = joiner(', ') -%}
-    {%- for slot in slots -%}
-        {{ ' and ' if loop.last and not loop.first else comma() }}{{ slot }}
-    {%- endfor -%}
+{% macro formatSchedule(weeks) %}
+    {% for weekNumber, weekDays in weeks %}
+        {% if session.allocateJourney.activity.scheduleWeeks > 1 %}
+            <h3 class="govuk-heading-m">Week {{ weekNumber }}</h3>
+        {% endif %}
+
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
+            {% for weekDay in weekDays %}
+                {% for slot in weekDay.slots %}
+                    <li>{{ weekDay.day | capitalize }} {{ slot.timeSlot }} ({{ slot.startTime }} to {{  slot.endTime }})</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    {% endfor %}
 {% endmacro %}

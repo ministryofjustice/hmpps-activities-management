@@ -1,10 +1,8 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AddCaseNoteRequest, DeallocationReasonCode } from '../../../../@types/activitiesAPI/types'
-import activitySessionToDailyTimeSlots, {
-  activitySlotsMinusExclusions,
-} from '../../../../utils/helpers/activityTimeSlotMappers'
-import { mapActivityModelSlotsToJourney, parseDate } from '../../../../utils/utils'
+import { activitySlotsMinusExclusions, sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
+import { parseDate } from '../../../../utils/utils'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import { StartDateOption } from '../journey'
 
@@ -18,8 +16,7 @@ export default class CheckAnswersRoutes {
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
     const allocationSlots = activitySlotsMinusExclusions(updatedExclusions, schedule.slots)
-    const journeySlots = mapActivityModelSlotsToJourney(allocationSlots)
-    const dailySlots = activitySessionToDailyTimeSlots(schedule.scheduleWeeks, journeySlots)
+    const dailySlots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
     const currentWeek = calcCurrentWeek(parseDate(activity.startDate), schedule.scheduleWeeks)
 
     res.render('pages/activities/manage-allocations/check-answers', {
