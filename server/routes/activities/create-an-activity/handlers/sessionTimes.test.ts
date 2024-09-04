@@ -16,6 +16,7 @@ import TimeSlot from '../../../../enum/timeSlot'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { DaysAndSlotsInRegime } from '../../../../utils/helpers/applicableRegimeTimeUtil'
+import activitySchedule from '../../../../services/fixtures/activity_schedule_bi_weekly_1.json'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -167,6 +168,160 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
           timeSlot: TimeSlot.ED,
           start: '17:30',
           finish: '19:15',
+        },
+      ])
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/session-times', {
+        sessionSlots: expectedSessionSlots,
+      })
+    })
+
+    it('should render the expected view in edit mode with a two weekly schedule', async () => {
+      const mockActivity = {
+        attendanceRequired: false,
+        category: { code: 'EDUCATION', id: 1, name: 'Education' },
+        createdBy: '',
+        createdTime: '',
+        description: 'A basic maths course suitable for introduction to the subject',
+        eligibilityRules: [],
+        inCell: false,
+        outsideWork: false,
+        pay: [],
+        payPerSession: 'H',
+        pieceWork: false,
+        prisonCode: '',
+        riskLevel: '',
+        schedules: [activitySchedule],
+        summary: 'Maths Level 1',
+        tier: { code: '', description: '', id: 0 },
+        waitingList: [],
+        id: 1,
+        minimumEducationLevel: [],
+      } as unknown as Activity
+
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce({
+          ...mockActivity,
+        })
+
+      req.params.mode = 'edit'
+      req.session.createJourney.activityId = 1
+      req.session.createJourney.scheduleWeeks = 2
+      req.session.createJourney.slots = {
+        '1': {
+          days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+          timeSlotsMonday: ['AM'],
+          timeSlotsTuesday: ['AM'],
+          timeSlotsWednesday: ['AM'],
+          timeSlotsThursday: ['AM'],
+          timeSlotsFriday: ['AM'],
+          timeSlotsSaturday: ['AM'],
+          timeSlotsSunday: ['AM'],
+        },
+        '2': {
+          days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+          timeSlotsMonday: ['AM'],
+          timeSlotsTuesday: ['AM'],
+          timeSlotsWednesday: ['AM'],
+          timeSlotsThursday: ['AM'],
+          timeSlotsFriday: ['AM'],
+          timeSlotsSaturday: ['AM'],
+          timeSlotsSunday: ['AM'],
+        },
+      }
+
+      const expectedSessionSlots: Map<string, DaysAndSlotsInRegime[] | SessionSlot[]> = new Map<
+        string,
+        DaysAndSlotsInRegime[] | SessionSlot[]
+      >()
+      expectedSessionSlots.set('1', [
+        {
+          dayOfWeek: 'MONDAY',
+          timeSlot: TimeSlot.AM,
+          start: '10:00',
+          finish: '11:00',
+        },
+        {
+          dayOfWeek: 'TUESDAY',
+          timeSlot: TimeSlot.AM,
+          start: '10:00',
+          finish: '11:00',
+        },
+        {
+          dayOfWeek: 'WEDNESDAY',
+          timeSlot: TimeSlot.AM,
+          start: '10:00',
+          finish: '11:00',
+        },
+        {
+          dayOfWeek: 'THURSDAY',
+          timeSlot: TimeSlot.AM,
+          start: '11:00',
+          finish: '12:00',
+        },
+        {
+          dayOfWeek: 'FRIDAY',
+          timeSlot: TimeSlot.AM,
+          start: '11:00',
+          finish: '12:00',
+        },
+        {
+          dayOfWeek: 'SATURDAY',
+          timeSlot: TimeSlot.AM,
+          start: '11:00',
+          finish: '12:00',
+        },
+        {
+          dayOfWeek: 'SUNDAY',
+          timeSlot: TimeSlot.AM,
+          start: '11:00',
+          finish: '12:00',
+        },
+      ])
+      expectedSessionSlots.set('2', [
+        {
+          dayOfWeek: 'MONDAY',
+          timeSlot: TimeSlot.AM,
+          start: '10:30',
+          finish: '11:30',
+        },
+        {
+          dayOfWeek: 'TUESDAY',
+          timeSlot: TimeSlot.AM,
+          start: '10:30',
+          finish: '11:30',
+        },
+        {
+          dayOfWeek: 'WEDNESDAY',
+          timeSlot: TimeSlot.AM,
+          start: '10:30',
+          finish: '11:30',
+        },
+        {
+          dayOfWeek: 'THURSDAY',
+          timeSlot: TimeSlot.AM,
+          start: '10:30',
+          finish: '11:30',
+        },
+        {
+          dayOfWeek: 'FRIDAY',
+          timeSlot: TimeSlot.AM,
+          start: '10:30',
+          finish: '11:30',
+        },
+        {
+          dayOfWeek: 'SATURDAY',
+          timeSlot: TimeSlot.AM,
+          start: '10:30',
+          finish: '11:30',
+        },
+        {
+          dayOfWeek: 'SUNDAY',
+          timeSlot: TimeSlot.AM,
+          start: '10:30',
+          finish: '11:30',
         },
       ])
 

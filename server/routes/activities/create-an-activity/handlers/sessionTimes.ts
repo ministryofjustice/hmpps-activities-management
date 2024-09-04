@@ -303,8 +303,14 @@ export default class SessionTimesRoutes {
     if (editModeActive) {
       const activity = await this.activitiesService.getActivity(activityId, user)
       const activitySchedule = activity.schedules[0]
-      const existingSlots = transformActivitySlotsToDailySlots(activitySchedule.slots)
-      return sessionSlots.set('1', getMatchingSlots(existingSlots, slots['1']))
+
+      for (let weekNumber = 1; weekNumber <= activitySchedule.scheduleWeeks; weekNumber += 1) {
+        const existingSlots = transformActivitySlotsToDailySlots(
+          activitySchedule.slots.filter(slot => slot.weekNumber === weekNumber),
+        )
+        sessionSlots.set(weekNumber.toString(), getMatchingSlots(existingSlots, slots[weekNumber.toString()]))
+      }
+      return sessionSlots
     }
 
     for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
