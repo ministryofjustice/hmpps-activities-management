@@ -92,6 +92,7 @@
 {% macro summaryHtml(timeSlot, timeSlotDescription, activityDate) %}
     {% set cancelledSessionsRows = [] %}
     {% for cancelledSession in cancelledSessions %}
+        {% set sesstionTimes = cancelledSession.startTime + ' to ' + cancelledSession.endTime %}
         {% if timeSlot === 'DAY' or timeSlot === cancelledSession.timeSlot %}
             {% set cancelledSessionsRows = (cancelledSessionsRows.push([
                 {
@@ -105,8 +106,8 @@
                     classes: 'govuk-table_cell'
                 },
                 {
-                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": cancelledSession.timeSlot },
-                    text: cancelledSession.timeSlot,
+                    attributes: { id: 'cell-location-' + loop.index, "data-sort-value": 'x' + sesstionTimes },
+                    text: cancelledSession.timeSlot + ' ' + sesstionTimes,
                     classes: 'govuk-table_cell'
                 },
                 {
