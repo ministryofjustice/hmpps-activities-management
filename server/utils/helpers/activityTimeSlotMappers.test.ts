@@ -1,19 +1,25 @@
 import { CreateAnActivityJourney, Slots } from '../../routes/activities/create-an-activity/journey'
 import activitySessionToDailyTimeSlots, {
   activitySlotsMinusExclusions,
+  addNewEmptySlotsIfRequired,
   calculateUniqueSlots,
   createCustomSlots,
+  createSessionSlots,
   createSlot,
+  filterNotRequiredSlots,
+  getMatchingSlots,
   mapActivityScheduleSlotsToSlots,
   mapSlotsToCompleteWeeklyTimeSlots,
   mapSlotsToWeeklyTimeSlots,
-  transformActivitySlotsToDailySlots,
   regimeSlotsToSchedule,
+  SessionSlot,
   sessionSlotsToSchedule,
+  transformActivitySlotsToDailySlots,
 } from './activityTimeSlotMappers'
 import { ActivityScheduleSlot, PrisonRegime, Slot } from '../../@types/activitiesAPI/types'
 import TimeSlot from '../../enum/timeSlot'
 import SimpleTime from '../../commonValidationTypes/simpleTime'
+import { DaysAndSlotsInRegime } from './applicableRegimeTimeUtil'
 
 describe('Activity session slots to daily time slots mapper', () => {
   it("should map a activity session's slots to daily time slots", () => {
@@ -1124,5 +1130,383 @@ describe('transformActivitySlotsToDailySlots', () => {
         ],
       })
     })
+  })
+})
+
+describe('addNewEmptySlotsIfRequired', () => {
+  it("shouldn't add any empty slots if there are no newly selected ones", () => {
+    const sessionSlots = [
+      { dayOfWeek: 'MONDAY', timeSlot: TimeSlot.AM, start: '10:00', finish: '11:00' },
+      { dayOfWeek: 'MONDAY', timeSlot: TimeSlot.PM, start: '12:00', finish: '13:00' },
+    ]
+    const newlySelectedSlots = {
+      days: ['monday'],
+      timeSlotsMonday: ['AM', 'PM'],
+    }
+    const result = addNewEmptySlotsIfRequired(sessionSlots, newlySelectedSlots)
+    expect(result).toEqual(sessionSlots)
+  })
+  it('should add empty slots if there are new ones present, with undefined times', () => {
+    const sessionSlots = [{ dayOfWeek: 'MONDAY', timeSlot: TimeSlot.AM, start: '10:00', finish: '11:00' }]
+    const newlySelectedSlots = {
+      days: ['monday', 'tuesday'],
+      timeSlotsMonday: ['AM', 'PM'],
+      timeSlotsTuesday: ['AM', 'PM', 'ED'],
+    }
+    const result = addNewEmptySlotsIfRequired(sessionSlots, newlySelectedSlots)
+    expect(result).toEqual([
+      { dayOfWeek: 'MONDAY', timeSlot: TimeSlot.AM, start: '10:00', finish: '11:00' },
+      { dayOfWeek: 'MONDAY', timeSlot: TimeSlot.PM, start: undefined, finish: undefined },
+      { dayOfWeek: 'TUESDAY', timeSlot: TimeSlot.AM, start: undefined, finish: undefined },
+      { dayOfWeek: 'TUESDAY', timeSlot: TimeSlot.PM, start: undefined, finish: undefined },
+      { dayOfWeek: 'TUESDAY', timeSlot: TimeSlot.ED, start: undefined, finish: undefined },
+    ])
+  })
+})
+
+describe('filterNotRequiredSlots', () => {
+  it('Should remove sessions from sessionSlots if they are not selected anymore', () => {
+    const sessionSlots = [
+      {
+        dayOfWeek: 'MONDAY',
+        amStart: '07:30',
+        amFinish: '11:45',
+        pmStart: '14:00',
+        pmFinish: '17:30',
+      },
+      {
+        dayOfWeek: 'WEDNESDAY',
+        edStart: '17:30',
+        edFinish: '20:45',
+      },
+      {
+        dayOfWeek: 'FRIDAY',
+        amStart: '07:30',
+        amFinish: '11:45',
+        pmStart: '14:00',
+        pmFinish: '17:30',
+      },
+    ]
+    const newlySelectedSlots = {
+      days: ['monday', 'wednesday', 'friday'],
+      timeSlotsMonday: ['AM'],
+      timeSlotsWednesday: ['ED'],
+      timeSlotsFriday: ['PM'],
+    }
+    const expectedSlots = [
+      {
+        dayOfWeek: 'MONDAY',
+        amStart: '07:30',
+        amFinish: '11:45',
+      },
+      {
+        dayOfWeek: 'WEDNESDAY',
+        edStart: '17:30',
+        edFinish: '20:45',
+      },
+      {
+        dayOfWeek: 'FRIDAY',
+        pmStart: '14:00',
+        pmFinish: '17:30',
+      },
+    ]
+    const result = filterNotRequiredSlots(sessionSlots, newlySelectedSlots)
+    expect(result).toEqual(expectedSlots)
+  })
+  it('Should return the same slots if nothing has changed', () => {
+    const sessionSlots = [
+      {
+        dayOfWeek: 'MONDAY',
+        amStart: '07:30',
+        amFinish: '11:45',
+        pmStart: '14:00',
+        pmFinish: '17:30',
+      },
+      {
+        dayOfWeek: 'TUESDAY',
+        amStart: '07:30',
+        amFinish: '11:45',
+        pmStart: '14:00',
+        pmFinish: '17:30',
+      },
+      {
+        dayOfWeek: 'WEDNESDAY',
+        amStart: '07:30',
+        amFinish: '11:45',
+        pmStart: '14:00',
+        pmFinish: '17:30',
+      },
+      {
+        dayOfWeek: 'THURSDAY',
+        amStart: '07:30',
+        amFinish: '11:45',
+        pmStart: '14:00',
+        pmFinish: '17:30',
+      },
+      {
+        dayOfWeek: 'FRIDAY',
+        amStart: '07:30',
+        amFinish: '11:45',
+        pmStart: '14:00',
+        pmFinish: '17:30',
+      },
+    ]
+    const newlySelectedSlots = {
+      days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+      timeSlotsMonday: ['AM', 'PM'],
+      timeSlotsTuesday: ['AM', 'PM'],
+      timeSlotsWednesday: ['AM', 'PM'],
+      timeSlotsThursday: ['AM', 'PM'],
+      timeSlotsFriday: ['AM', 'PM'],
+    }
+    const result = filterNotRequiredSlots(sessionSlots, newlySelectedSlots)
+    expect(result).toEqual(sessionSlots)
+  })
+})
+
+describe('createSessionSlots', () => {
+  it('Should create sessionSlots on the same day', () => {
+    const morning: DaysAndSlotsInRegime = {
+      dayOfWeek: 'MONDAY',
+      amStart: '08:45',
+      amFinish: '09:45',
+    }
+
+    const afternoon: DaysAndSlotsInRegime = {
+      dayOfWeek: 'MONDAY',
+      pmStart: '14:00',
+      pmFinish: '17:30',
+    }
+
+    const evening: DaysAndSlotsInRegime = {
+      dayOfWeek: 'MONDAY',
+      edStart: '19:00',
+      edFinish: '20:30',
+    }
+
+    const daysAndSlotsInRegime: DaysAndSlotsInRegime[] = [morning, afternoon, evening]
+
+    const expectedSessionSlots: SessionSlot[] = [
+      {
+        dayOfWeek: 'MONDAY',
+        timeSlot: TimeSlot.AM,
+        start: '08:45',
+        finish: '09:45',
+      },
+      {
+        dayOfWeek: 'MONDAY',
+        timeSlot: TimeSlot.PM,
+        start: '14:00',
+        finish: '17:30',
+      },
+      {
+        dayOfWeek: 'MONDAY',
+        timeSlot: TimeSlot.ED,
+        start: '19:00',
+        finish: '20:30',
+      },
+    ]
+
+    const result: SessionSlot[] = createSessionSlots(daysAndSlotsInRegime)
+    expect(result).toEqual(expectedSessionSlots)
+  })
+
+  it('Should create sessionSlots on different days', () => {
+    const morning: DaysAndSlotsInRegime = {
+      dayOfWeek: 'MONDAY',
+      amStart: '08:45',
+      amFinish: '09:45',
+    }
+
+    const afternoon: DaysAndSlotsInRegime = {
+      dayOfWeek: 'TUESDAY',
+      pmStart: '14:00',
+      pmFinish: '17:30',
+    }
+
+    const evening: DaysAndSlotsInRegime = {
+      dayOfWeek: 'FRIDAY',
+      edStart: '19:00',
+      edFinish: '20:30',
+    }
+
+    const daysAndSlotsInRegime: DaysAndSlotsInRegime[] = [morning, afternoon, evening]
+
+    const expectedSessionSlots: SessionSlot[] = [
+      {
+        dayOfWeek: 'MONDAY',
+        timeSlot: TimeSlot.AM,
+        start: '08:45',
+        finish: '09:45',
+      },
+      {
+        dayOfWeek: 'TUESDAY',
+        timeSlot: TimeSlot.PM,
+        start: '14:00',
+        finish: '17:30',
+      },
+      {
+        dayOfWeek: 'FRIDAY',
+        timeSlot: TimeSlot.ED,
+        start: '19:00',
+        finish: '20:30',
+      },
+    ]
+
+    const result: SessionSlot[] = createSessionSlots(daysAndSlotsInRegime)
+    expect(result).toEqual(expectedSessionSlots)
+  })
+
+  it('Should create sessionSlots with  multiple on different days', () => {
+    const morning: DaysAndSlotsInRegime = {
+      dayOfWeek: 'MONDAY',
+      amStart: '08:45',
+      amFinish: '09:45',
+    }
+
+    const morning2: DaysAndSlotsInRegime = {
+      dayOfWeek: 'TUESDAY',
+      amStart: '08:45',
+      amFinish: '09:45',
+    }
+
+    const afternoon: DaysAndSlotsInRegime = {
+      dayOfWeek: 'TUESDAY',
+      pmStart: '14:00',
+      pmFinish: '17:30',
+    }
+
+    const afternoon2: DaysAndSlotsInRegime = {
+      dayOfWeek: 'WEDNESDAY',
+      pmStart: '14:00',
+      pmFinish: '17:30',
+    }
+
+    const evening: DaysAndSlotsInRegime = {
+      dayOfWeek: 'FRIDAY',
+      edStart: '19:00',
+      edFinish: '20:30',
+    }
+
+    const evening2: DaysAndSlotsInRegime = {
+      dayOfWeek: 'SATURDAY',
+      edStart: '19:00',
+      edFinish: '20:30',
+    }
+
+    const daysAndSlotsInRegime: DaysAndSlotsInRegime[] = [morning, morning2, afternoon, afternoon2, evening, evening2]
+
+    const expectedSessionSlots: SessionSlot[] = [
+      {
+        dayOfWeek: 'MONDAY',
+        timeSlot: TimeSlot.AM,
+        start: '08:45',
+        finish: '09:45',
+      },
+      {
+        dayOfWeek: 'TUESDAY',
+        timeSlot: TimeSlot.AM,
+        start: '08:45',
+        finish: '09:45',
+      },
+      {
+        dayOfWeek: 'TUESDAY',
+        timeSlot: TimeSlot.PM,
+        start: '14:00',
+        finish: '17:30',
+      },
+      {
+        dayOfWeek: 'WEDNESDAY',
+        timeSlot: TimeSlot.PM,
+        start: '14:00',
+        finish: '17:30',
+      },
+      {
+        dayOfWeek: 'FRIDAY',
+        timeSlot: TimeSlot.ED,
+        start: '19:00',
+        finish: '20:30',
+      },
+      {
+        dayOfWeek: 'SATURDAY',
+        timeSlot: TimeSlot.ED,
+        start: '19:00',
+        finish: '20:30',
+      },
+    ]
+
+    const result: SessionSlot[] = createSessionSlots(daysAndSlotsInRegime)
+    expect(result).toEqual(expectedSessionSlots)
+  })
+})
+
+describe('getMatchingSlots', () => {
+  it('Should get matching slots', () => {
+    const morning: DaysAndSlotsInRegime = {
+      dayOfWeek: 'MONDAY',
+      amStart: '08:45',
+      amFinish: '09:45',
+    }
+
+    const morning2: DaysAndSlotsInRegime = {
+      dayOfWeek: 'FRIDAY',
+      amStart: '06:40',
+      amFinish: '09:45',
+    }
+
+    const afternoon: DaysAndSlotsInRegime = {
+      dayOfWeek: 'MONDAY',
+      pmStart: '14:00',
+      pmFinish: '17:30',
+    }
+
+    const evening: DaysAndSlotsInRegime = {
+      dayOfWeek: 'WEDNESDAY',
+      edStart: '19:00',
+      edFinish: '20:30',
+    }
+
+    const daysAndSlotsInRegime: DaysAndSlotsInRegime[] = [morning, morning2, afternoon, evening]
+
+    const scheduledSlots: Slots = {
+      days: ['monday', 'wednesday', 'friday'],
+      timeSlotsMonday: ['AM', 'PM'],
+      timeSlotsTuesday: [],
+      timeSlotsWednesday: ['ED'],
+      timeSlotsThursday: [],
+      timeSlotsFriday: ['AM'],
+      timeSlotsSaturday: [],
+      timeSlotsSunday: [],
+    }
+
+    const expectedSessionSlots: SessionSlot[] = [
+      {
+        dayOfWeek: 'MONDAY',
+        timeSlot: TimeSlot.AM,
+        start: '08:45',
+        finish: '09:45',
+      },
+      {
+        dayOfWeek: 'MONDAY',
+        timeSlot: TimeSlot.PM,
+        start: '14:00',
+        finish: '17:30',
+      },
+      {
+        dayOfWeek: 'WEDNESDAY',
+        timeSlot: TimeSlot.ED,
+        start: '19:00',
+        finish: '20:30',
+      },
+      {
+        dayOfWeek: 'FRIDAY',
+        timeSlot: TimeSlot.AM,
+        start: '06:40',
+        finish: '09:45',
+      },
+    ]
+
+    const result: SessionSlot[] = getMatchingSlots(daysAndSlotsInRegime, scheduledSlots)
+    expect(result).toEqual(expectedSessionSlots)
   })
 })
