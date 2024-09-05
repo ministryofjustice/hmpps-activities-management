@@ -1,4 +1,6 @@
 import { RequestHandler, Router } from 'express'
+import createHttpError from 'http-errors'
+import { parseISO } from 'date-fns'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import type { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
@@ -18,6 +20,21 @@ export default function AmendRoutes({ bookAVideoLinkService, prisonService, acti
   // Book a video link journey is required in session for the following routes
   router.use((req, res, next) => {
     if (!req.session.bookAVideoLinkJourney) return res.redirect('/appointments')
+    return next()
+  })
+
+  router.use((req, res, next) => {
+    const { date, preHearingStartTime, startTime, bookingStatus } = req.session.bookAVideoLinkJourney
+    if (
+      !bookAVideoLinkService.bookingIsAmendable(
+        parseISO(date),
+        parseISO(preHearingStartTime || startTime),
+        bookingStatus,
+      )
+    ) {
+      return next(createHttpError.NotFound())
+    }
+
     return next()
   })
 

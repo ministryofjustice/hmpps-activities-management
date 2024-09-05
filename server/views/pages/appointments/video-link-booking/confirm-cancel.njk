@@ -1,0 +1,36 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Are you sure you want to cancel " + (session.bookAVideoLinkJourney.prisoner.name | toTitleCase) + "'s booking?" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-l">{{ pageTitle }}</h1>
+            {{ govukInsetText({
+                html: "The cancellation of a booking cannot be reversed."
+            }) }}
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form method='POST' data-module="form-spinner" data-loading-text="Cancelling booking">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Yes, cancel the booking",
+                        classes: "govuk-button--warning",
+                        preventDoubleClick: true,
+                        type: "submit"
+                    }) }}
+
+                    <a href='../../../{{ session.req.params.bookingId }}' class="govuk-link govuk-link--no-visited-state">Return to view the booking</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

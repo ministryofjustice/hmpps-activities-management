@@ -51,4 +51,8 @@ export default class BookAVideoLinkApiClient extends AbstractHmppsRestClient {
   ): Promise<number> {
     return this.put({ path: `/video-link-booking/id/${videoBookingId}`, data: request }, user)
   }
+
+  public cancelVideoLinkBooking(videoBookingId: number, user: ServiceUser): Promise<number> {
+    return this.delete({ path: `/video-link-booking/id/${videoBookingId}` }, user)
+  }
 }

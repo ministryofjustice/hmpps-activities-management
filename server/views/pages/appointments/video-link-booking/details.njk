@@ -2,6 +2,7 @@
 
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% from "partials/showProfileLink.njk" import showProfileLink %}
@@ -15,6 +16,17 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            {% if videoBooking.statusCode == 'CANCELLED' %}
+                {% set cancelledAppointmentHeadingHtml %}
+                    <h3 class="govuk-notification-banner__heading">Video link booking cancelled</h3>
+                    <p class="govuk-body">This video link booking was cancelled by {{ serviceUserName(userMap.get(videoBooking.amendedBy)) }} on {{ videoBooking.amendedAt | parseISODate | formatDate }}</p>
+                {% endset %}
+                {{ govukNotificationBanner({
+                    type: 'important',
+                    html: cancelledAppointmentHeadingHtml
+                }) }}
+            {% endif %}
+
             <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
             <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>Video Link - Court Hearing</h1>
             <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ mainAppointment.appointmentDate | formatDate }}</span>
@@ -23,7 +35,16 @@
                 card: {
                     title: {
                         text: "Video link booking details"
-                    }
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: 'cancel/' + videoBooking.videoLinkBookingId + '/confirm',
+                                text: "Cancel video link booking",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    } if isAmendable
                 },
                 rows: [
                     {

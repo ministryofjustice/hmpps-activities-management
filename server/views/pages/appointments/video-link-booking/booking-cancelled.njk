@@ -1,0 +1,20 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "This video link booking has been cancelled" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukPanel({ titleText: pageTitle, classes: 'govuk-!-margin-bottom-6' }) }}
+
+            <p class='govuk-body'>We have emailed you confirming the cancellation. An email has also been sent to the court.</p>
+
+            <div class="govuk-button-group">
+                {{ govukButton({ text: "Return to appointments dashboard", href: '/appointments/search?startDate=' + date | parseIsoDate | formatDate('yyyy-MM-dd') }) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
