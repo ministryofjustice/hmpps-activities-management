@@ -172,7 +172,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
         await handler.POST(req, res)
 
         expect(req.session.createJourney.customSlots).toEqual(undefined)
-        expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('../bank-holiday-option')
       })
 
       it('when using prison custom times redirect to the activity session times page', async () => {
@@ -198,7 +198,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
         await handler.POST(req, res)
 
         expect(req.session.createJourney.customSlots).toEqual(undefined)
-        expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('../bank-holiday-option')
       })
 
       it('when using prison custom times redirect to the activity session times page', async () => {

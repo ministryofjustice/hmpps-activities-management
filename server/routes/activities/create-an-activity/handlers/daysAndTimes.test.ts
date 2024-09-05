@@ -453,7 +453,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         await handler.POST(req, res, next)
 
-        expect(res.redirect).toHaveBeenCalledWith('../session-times/1')
+        expect(res.redirect).toHaveBeenCalledWith('../session-times')
       })
 
       it("should update session and redirect to next week's slots when editing schedule frequency", async () => {
