@@ -13,101 +13,43 @@ context('Edit activity', () => {
     cy.task('stubSignIn')
     cy.signIn()
 
-    const getActivity3 = { ...getActivity }
-    getActivity3.id = 3
-    getActivity3.schedules[0].usePrisonRegimeTime = true
-    getActivity3.schedules[0].slots = [
+    const getActivity4 = { ...getActivity }
+    getActivity4.id = 4
+    getActivity4.schedules[0].usePrisonRegimeTime = true
+    getActivity4.schedules[0].scheduleWeeks = 2
+    getActivity4.schedules[0].slots = [
       {
-        id: 5,
+        id: 2051,
+        timeSlot: 'AM',
         weekNumber: 1,
         startTime: '08:30',
         endTime: '11:45',
-        daysOfWeek: ['Mon'],
+        daysOfWeek: ['Mon', 'Tue', 'Wed', 'Thu'],
         mondayFlag: true,
-        tuesdayFlag: false,
-        wednesdayFlag: false,
-        thursdayFlag: false,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-        timeSlot: 'AM',
-      },
-      {
-        id: 5,
-        weekNumber: 1,
-        startTime: '08:30',
-        endTime: '11:45',
-        daysOfWeek: ['Tue'],
-        mondayFlag: false,
         tuesdayFlag: true,
-        wednesdayFlag: false,
-        thursdayFlag: false,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-        timeSlot: 'AM',
-      },
-      {
-        id: 5,
-        weekNumber: 1,
-        startTime: '13:45',
-        endTime: '16:45',
-        daysOfWeek: ['Tue'],
-        mondayFlag: false,
-        tuesdayFlag: true,
-        wednesdayFlag: false,
-        thursdayFlag: false,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-        timeSlot: 'PM',
-      },
-      {
-        id: 6,
-        weekNumber: 1,
-        startTime: '08:30',
-        endTime: '11:45',
-        daysOfWeek: ['Wed'],
-        mondayFlag: false,
-        tuesdayFlag: false,
         wednesdayFlag: true,
-        thursdayFlag: false,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-        timeSlot: 'AM',
-      },
-      {
-        id: 6,
-        weekNumber: 1,
-        startTime: '13:45',
-        endTime: '16:45',
-        daysOfWeek: ['Wed'],
-        mondayFlag: false,
-        tuesdayFlag: false,
-        wednesdayFlag: true,
-        thursdayFlag: false,
-        fridayFlag: false,
-        saturdayFlag: false,
-        sundayFlag: false,
-        timeSlot: 'PM',
-      },
-      {
-        id: 6,
-        weekNumber: 1,
-        startTime: '17:30',
-        endTime: '19:15',
-        daysOfWeek: ['Thu'],
-        mondayFlag: false,
-        tuesdayFlag: false,
-        wednesdayFlag: false,
         thursdayFlag: true,
         fridayFlag: false,
         saturdayFlag: false,
         sundayFlag: false,
-        timeSlot: 'ED',
+      },
+      {
+        id: 2052,
+        timeSlot: 'PM',
+        weekNumber: 2,
+        startTime: '13:45',
+        endTime: '16:45',
+        daysOfWeek: ['Mon', 'Tue', 'Wed'],
+        mondayFlag: true,
+        tuesdayFlag: true,
+        wednesdayFlag: true,
+        thursdayFlag: false,
+        fridayFlag: false,
+        saturdayFlag: false,
+        sundayFlag: false,
       },
     ]
+
     const inmateDetails = [
       {
         prisonerNumber: 'A9477DY',
@@ -122,28 +64,27 @@ context('Edit activity', () => {
     ]
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
-    cy.stubEndpoint('GET', '/activities/3/filtered', getActivity3)
-    cy.stubEndpoint('PATCH', '/activities/MDI/activityId/3', getActivity3)
+    cy.stubEndpoint('GET', '/activities/4/filtered', getActivity4)
+    cy.stubEndpoint('PATCH', '/activities/MDI/activityId/4', getActivity4)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
   })
   it('changing days/sessions if using prison regime times - removing a day', () => {
-    cy.visit('/activities/view/3')
+    cy.visit('/activities/view/4')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
-    viewActivityPage.changeScheduleLink().click()
+    viewActivityPage.changeScheduleLink().first().click()
     const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
     customTimesChangeOptionPage.changeDaysAndSessions('Days and sessions when this activity runs')
     customTimesChangeOptionPage.continue()
     const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
+    daysAndTimesPage.title().contains('Week 1 of 2')
     daysAndTimesPage.checkboxes().find('input[value="monday"]').should('be.checked')
     daysAndTimesPage.getInputById('timeSlotsMonday').should('be.checked')
     daysAndTimesPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
     daysAndTimesPage.getInputById('timeSlotsTuesday').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsTuesday-2').should('be.checked')
     daysAndTimesPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
     daysAndTimesPage.getInputById('timeSlotsWednesday').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsWednesday-2').should('be.checked')
     daysAndTimesPage.checkboxes().find('input[value="thursday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsThursday-3').should('be.checked')
+    daysAndTimesPage.getInputById('timeSlotsThursday').should('be.checked')
 
     daysAndTimesPage.checkboxes().find('input[value="thursday"]').uncheck()
     daysAndTimesPage.updateButton()
@@ -155,15 +96,22 @@ context('Edit activity', () => {
     )
   })
   it('changing days/sessions if using prison regime times - adding a day', () => {
-    cy.visit('/activities/view/3')
+    cy.visit('/activities/view/4')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
-    viewActivityPage.changeScheduleLink().click()
+    viewActivityPage.changeScheduleLink().last().click()
     const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
     customTimesChangeOptionPage.changeDaysAndSessions('Days and sessions when this activity runs')
     customTimesChangeOptionPage.continue()
     const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
+    daysAndTimesPage.title().contains('Week 2 of 2')
+    daysAndTimesPage.checkboxes().find('input[value="monday"]').should('be.checked')
+    daysAndTimesPage.getInputById('timeSlotsMonday-2').should('be.checked')
+    daysAndTimesPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
+    daysAndTimesPage.getInputById('timeSlotsTuesday-2').should('be.checked')
+    daysAndTimesPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
+    daysAndTimesPage.getInputById('timeSlotsWednesday-2').should('be.checked')
 
-    daysAndTimesPage.getInputById('timeSlotsWednesday-2').check()
+    daysAndTimesPage.getInputById('timeSlotsWednesday').check()
     daysAndTimesPage.updateButton()
 
     Page.verifyOnPage(ViewActivityPage)
@@ -173,9 +121,9 @@ context('Edit activity', () => {
     )
   })
   it('changing times if currently using regime times', () => {
-    cy.visit('/activities/view/3')
+    cy.visit('/activities/view/4')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
-    viewActivityPage.changeScheduleLink().click()
+    viewActivityPage.changeScheduleLink().first().click()
     const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
     customTimesChangeOptionPage.changeDaysAndSessions('Activity start and end times')
     customTimesChangeOptionPage.continue()
@@ -183,11 +131,13 @@ context('Edit activity', () => {
 
     sessionTimesPage.checkTableRow('1', 'Monday', 'AM', 0, '08', '30', '11', '45')
     sessionTimesPage.checkTableRow('1', 'Tuesday', 'AM', 4, '08', '30', '11', '45')
-    sessionTimesPage.checkTableRow('1', 'Tuesday', 'PM', 8, '13', '45', '16', '45')
-    sessionTimesPage.checkTableRow('1', 'Wednesday', 'AM', 12, '08', '30', '11', '45')
-    sessionTimesPage.checkTableRow('1', 'Wednesday', 'PM', 16, '13', '45', '16', '45')
-    sessionTimesPage.checkTableRow('1', 'Thursday', 'ED', 20, '17', '30', '19', '15')
+    sessionTimesPage.checkTableRow('1', 'Wednesday', 'AM', 8, '08', '30', '11', '45')
+    sessionTimesPage.checkTableRow('1', 'Thursday', 'AM', 12, '08', '30', '11', '45')
+    sessionTimesPage.checkTableRow('2', 'Monday', 'PM', 16, '13', '45', '16', '45')
+    sessionTimesPage.checkTableRow('2', 'Tuesday', 'PM', 20, '13', '45', '16', '45')
+    sessionTimesPage.checkTableRow('2', 'Wednesday', 'PM', 24, '13', '45', '16', '45')
 
+    sessionTimesPage.selectStartTime(10, 45, '1', 'MONDAY', 'AM')
     sessionTimesPage.continue()
   })
 })

@@ -5,6 +5,8 @@ export default class DaysAndTimesPage extends Page {
     super('create-schedule-days-and-times-page')
   }
 
+  title = () => cy.get('h1')
+
   checkboxes = () => cy.get('[data-qa="day-session-checkboxes"]')
 
   selectDayTimeCheckboxes = (checkboxes: [string, string[]][]) =>
