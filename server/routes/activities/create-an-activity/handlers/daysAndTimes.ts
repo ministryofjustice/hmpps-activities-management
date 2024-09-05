@@ -116,7 +116,6 @@ export default class DaysAndTimesRoutes {
 
     if (scheduleWeeks === weekNumberInt) {
       // If create journey, redirect to next journey page
-
       if (!preserveHistory) {
         // TODO: Fix once bi-weekly sorted
         if (scheduleWeeks !== 2 || config.twoWeeklyCustomStartEndTimesEnabled === true) {
@@ -135,8 +134,9 @@ export default class DaysAndTimesRoutes {
         // if using custom times (and the user has added (etc.) days/sessions), go to the screen where times can be edited
         const usingRegimeTimes = await this.onPrisonRegime(req, res)
         if (!usingRegimeTimes) {
-          return res.redirect(`../session-times/${weekNumber}`)
+          return res.redirect(`../session-times`)
         }
+
         // if using prison regime times, save and skip to success
         return this.editSlots(req, res)
       }

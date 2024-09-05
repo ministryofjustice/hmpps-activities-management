@@ -35,9 +35,9 @@ export default class SessionTimesOptionRoutes {
     if (usePrisonRegimeTime === 'true') {
       req.session.createJourney.customSlots = undefined
       if (preserveHistory === 'true') {
-        return res.redirect('check-answers')
+        return res.redirect('../check-answers')
       }
-      return res.redirectOrReturn('bank-holiday-option')
+      return res.redirectOrReturn('../bank-holiday-option')
     }
 
     let redirectParams = ''
