@@ -273,4 +273,11 @@ describe('Book A Video link service', () => {
       expect(bookAVideoLinkClient.createVideoLinkBooking).toHaveBeenCalledWith(expectedBody, user)
     })
   })
+
+  describe('cancelVideoLinkBooking', () => {
+    it('calls the cancel booking endpoint', async () => {
+      await bookAVideoLinkService.cancelVideoLinkBooking({ bookingId: 1 }, user)
+      expect(bookAVideoLinkClient.cancelVideoLinkBooking).toHaveBeenCalledWith(1, user)
+    })
+  })
 })

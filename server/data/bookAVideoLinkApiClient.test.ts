@@ -151,4 +151,17 @@ describe('bookAVideoLinkApiClient', () => {
       expect(output).toEqual(response)
     })
   })
+
+  describe('cancelVideoLinkBooking', () => {
+    it('should delete', async () => {
+      fakeBookAVideoLinkApi
+        .delete(`/video-link-booking/id/1`)
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200)
+
+      await bookAVideoLinkApiClient.cancelVideoLinkBooking(1, user)
+
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })
