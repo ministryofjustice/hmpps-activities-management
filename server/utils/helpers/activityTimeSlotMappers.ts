@@ -53,12 +53,19 @@ export const timeSlotOrder = {
   [TimeSlot.ED]: 2,
 }
 
+export type SessionSlot = {
+  dayOfWeek: string
+  timeSlot: TimeSlot
+  start: string
+  finish: string
+}
+
 const toTimeSlot = (timeSlot: string): TimeSlot => TimeSlot[timeSlot as keyof typeof TimeSlot]
 
 export default function activitySessionToDailyTimeSlots(
   scheduleWeeks: number,
   scheduleSlots: { [weekNumber: string]: Slots },
-) {
+): WeeklyTimeSlots {
   const dailySlots: WeeklyTimeSlots = {}
   for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
     const slots = scheduleSlots[weekNumber] ?? {}
@@ -72,35 +79,6 @@ export default function activitySessionToDailyTimeSlots(
     }))
   }
   return dailySlots
-}
-
-export function activityScheduleSlotsToCustomTimeSlots(
-  scheduleWeek: number,
-  slots: ActivityScheduleSlot[],
-): WeeklyCustomTimeSlots {
-  const customTimeSlots: WeeklyCustomTimeSlots = {}
-
-  customTimeSlots[scheduleWeek] = daysOfWeek.map(day => ({
-    day,
-    slots: getCustomSlotsForDay(day, slots),
-  }))
-
-  return customTimeSlots
-}
-
-function getCustomSlotsForDay(day: string, slots: ActivityScheduleSlot[]): CustomTimeSlot[] {
-  const customTimeSlots: CustomTimeSlot[] = []
-  slots.forEach(slot => {
-    if (slot.daysOfWeek.includes(day.substring(0, 3))) {
-      customTimeSlots.push({
-        timeSlot: slot.timeSlot as TimeSlot,
-        startTime: slot.startTime,
-        endTime: slot.endTime,
-      })
-    }
-  })
-  customTimeSlots.sort((a, b) => timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot])
-  return customTimeSlots
 }
 
 export function customSlotsToSchedule(scheduleWeeks: number, slots: Slot[]): WeeklyCustomTimeSlots {
@@ -423,4 +401,134 @@ export function transformActivitySlotsToDailySlots(activitySlots: ActivitySchedu
   })
 
   return Object.values(transformedSlots)
+}
+
+export function createSessionSlots(applicableRegimeTimesForActivity: DaysAndSlotsInRegime[]): SessionSlot[] {
+  const sessionSlots: SessionSlot[] = []
+  applicableRegimeTimesForActivity.forEach(day => {
+    if (day.amStart) {
+      sessionSlots.push({
+        dayOfWeek: day.dayOfWeek,
+        timeSlot: TimeSlot.AM,
+        start: day.amStart,
+        finish: day.amFinish,
+      })
+    }
+    if (day.pmStart) {
+      sessionSlots.push({
+        dayOfWeek: day.dayOfWeek,
+        timeSlot: TimeSlot.PM,
+        start: day.pmStart,
+        finish: day.pmFinish,
+      })
+    }
+    if (day.edStart) {
+      sessionSlots.push({
+        dayOfWeek: day.dayOfWeek,
+        timeSlot: TimeSlot.ED,
+        start: day.edStart,
+        finish: day.edFinish,
+      })
+    }
+  })
+
+  return sessionSlots
+}
+
+export function filterNotRequiredSlots(
+  existingSlots: DaysAndSlotsInRegime[],
+  newlySelectedSlots: Slots,
+): DaysAndSlotsInRegime[] {
+  const dailySlots: { [day: string]: DaysAndSlotsInRegime } = {}
+
+  existingSlots.forEach(slot => {
+    const day = slot.dayOfWeek.toLowerCase()
+    if (!newlySelectedSlots.days.includes(day)) {
+      return
+    }
+
+    const selectedTimeSlots = newlySelectedSlots[`timeSlots${_.capitalize(day)}` as keyof Slots]
+
+    if (!dailySlots[day]) {
+      dailySlots[day] = { dayOfWeek: slot.dayOfWeek }
+    }
+
+    const currentSlot = dailySlots[day]
+
+    if (slot.amStart && slot.amFinish && selectedTimeSlots.includes('AM')) {
+      currentSlot.amStart = slot.amStart
+      currentSlot.amFinish = slot.amFinish
+    }
+
+    if (slot.pmStart && slot.pmFinish && selectedTimeSlots.includes('PM')) {
+      currentSlot.pmStart = slot.pmStart
+      currentSlot.pmFinish = slot.pmFinish
+    }
+
+    if (slot.edStart && slot.edFinish && selectedTimeSlots.includes('ED')) {
+      currentSlot.edStart = slot.edStart
+      currentSlot.edFinish = slot.edFinish
+    }
+  })
+
+  return Object.values(dailySlots)
+}
+
+export function addNewEmptySlotsIfRequired(sessionSlots: SessionSlot[], newlySelectedSlots: Slots): SessionSlot[] {
+  // Make the day format match
+  const days = newlySelectedSlots.days.map(day => day.toUpperCase())
+
+  days.forEach(day => {
+    const timeSlotsKey = `timeSlots${_.capitalize(day)}` as keyof Slots
+    const timeSlots = newlySelectedSlots[timeSlotsKey]
+
+    timeSlots.forEach((slot: string) => {
+      const slotExists = sessionSlots.some(item => item.dayOfWeek === day && item.timeSlot === slot)
+
+      if (!slotExists) {
+        // Add missing slot with undefined start and finish times
+        sessionSlots.push({
+          dayOfWeek: day,
+          timeSlot: slot as TimeSlot,
+          start: undefined,
+          finish: undefined,
+        })
+      }
+    })
+  })
+
+  return sessionSlots
+}
+
+export function sortSlots(sessionSlots: SessionSlot[]) {
+  const dayOfWeekOrder: { [key in DayOfWeekEnum]: number } = {
+    [DayOfWeekEnum.MONDAY]: 0,
+    [DayOfWeekEnum.TUESDAY]: 1,
+    [DayOfWeekEnum.WEDNESDAY]: 2,
+    [DayOfWeekEnum.THURSDAY]: 3,
+    [DayOfWeekEnum.FRIDAY]: 4,
+    [DayOfWeekEnum.SATURDAY]: 5,
+    [DayOfWeekEnum.SUNDAY]: 6,
+  }
+
+  return sessionSlots.sort((a, b) => {
+    const dayComparison =
+      dayOfWeekOrder[a.dayOfWeek as keyof typeof DayOfWeekEnum] -
+      dayOfWeekOrder[b.dayOfWeek as keyof typeof DayOfWeekEnum]
+    if (dayComparison !== 0) {
+      return dayComparison
+    }
+    return timeSlotOrder[a.timeSlot] - timeSlotOrder[b.timeSlot]
+  })
+}
+
+export function getMatchingSlots(existingSlots: DaysAndSlotsInRegime[], newlySelectedSlots: Slots): SessionSlot[] {
+  // remove slots we don't want anymore
+  const filteredSlots: DaysAndSlotsInRegime[] = filterNotRequiredSlots(existingSlots, newlySelectedSlots)
+  // convert to sessionSlots for ease
+  const filteredSessionSlots: SessionSlot[] = createSessionSlots(filteredSlots)
+  // add empty slots for new times to be added
+  const emptySlotsAdded: SessionSlot[] = addNewEmptySlotsIfRequired(filteredSessionSlots, newlySelectedSlots)
+  // Sort the days and slots
+  return sortSlots(emptySlotsAdded)
 }
