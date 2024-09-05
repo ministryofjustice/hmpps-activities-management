@@ -9,7 +9,6 @@ import DaysAndTimesRoutes, { DaysAndTimes } from './daysAndTimes'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
-import config from '../../../../config'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
@@ -113,21 +112,6 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       })
 
       describe('Custom Start Time Disabled', () => {
-        beforeEach(() => {
-          config.customStartEndTimesEnabled = false
-        })
-
-        it('should save slots in session and redirect to bank holiday page if last week in schedule', async () => {
-          req.session.createJourney.scheduleWeeks = 1
-
-          await handler.POST(req, res, next)
-
-          expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-          expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-          expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-          expect(res.redirect).toHaveBeenCalledWith('../bank-holiday-option')
-        })
-
         it("should save slots in session and redirect to next week's slots if not last week in schedule", async () => {
           req.session.createJourney.scheduleWeeks = 2
 
@@ -141,10 +125,6 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       })
 
       describe('Custom Start Time Enabled', () => {
-        beforeEach(() => {
-          config.customStartEndTimesEnabled = true
-        })
-
         it('should save slots in session and redirect to set activity times page', async () => {
           req.session.createJourney.scheduleWeeks = 1
 
@@ -159,10 +139,6 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
       describe('Change data from check answers page', () => {
         describe('Custom Start Time Disabled', () => {
-          beforeEach(() => {
-            config.customStartEndTimesEnabled = false
-          })
-
           describe("Change a week's slots", () => {
             it('should save slots in session and redirect back to check answers page', async () => {
               req.session.createJourney.scheduleWeeks = 2
@@ -222,8 +198,6 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         describe('Custom Start Time Enabled', () => {
           beforeEach(() => {
-            config.customStartEndTimesEnabled = true
-
             req.params = {
               weekNumber: '1',
             }
@@ -398,7 +372,6 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         activitiesService.getActivity.mockReturnValue(Promise.resolve(activityFromApi))
 
-        config.customStartEndTimesEnabled = true
         req = {
           session: {
             createJourney: {

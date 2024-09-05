@@ -8,7 +8,6 @@ import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
-import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -49,7 +48,6 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
 
   describe('POST', () => {
     it('should save selected option in session and redirect to location page', async () => {
-      config.customStartEndTimesEnabled = false
       req.body = {
         runsOnBankHoliday: 'yes',
       }

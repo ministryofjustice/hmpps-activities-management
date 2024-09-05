@@ -10,7 +10,6 @@ import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
 import { CreateAnActivityJourney } from '../journey'
-import config from '../../../../config'
 
 export class DaysAndTimes {
   @Expose()
@@ -120,19 +119,13 @@ export default class DaysAndTimesRoutes {
       if (!preserveHistory) {
         // TODO: Fix once bi-weekly sorted
         if (scheduleWeeks !== 2) {
-          if (config.customStartEndTimesEnabled === true) {
-            return res.redirect('../session-times-option')
-          }
+          return res.redirect('../session-times-option')
         }
 
         return res.redirect('../bank-holiday-option')
       }
       // If from edit page, edit slots
       if (req.params.mode === 'edit') {
-        if (!config.customStartEndTimesEnabled) {
-          return this.editSlots(req, res)
-        }
-
         const activity = await this.activitiesService.getActivity(
           +req.session.createJourney.activityId,
           res.locals.user,
@@ -149,11 +142,8 @@ export default class DaysAndTimesRoutes {
 
       // TODO: Fix once bi-weekly sorted
       if (scheduleWeeks !== 2) {
-        if (config.customStartEndTimesEnabled === true) {
-          return res.redirect('../session-times-option?preserveHistory=true')
-        }
+        return res.redirect('../session-times-option?preserveHistory=true')
       }
-
       return res.redirect('../check-answers')
     }
 
