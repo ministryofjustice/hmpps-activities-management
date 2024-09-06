@@ -1,4 +1,4 @@
-import { uniq } from 'lodash'
+import _, { uniq } from 'lodash'
 import TimeSlot from '../../enum/timeSlot'
 import { Slots } from '../../routes/activities/create-an-activity/journey'
 import { ActivityScheduleSlot, PrisonRegime, Slot } from '../../@types/activitiesAPI/types'
@@ -271,19 +271,38 @@ const getFullDayFromAbbreviation = (abbrDay: string): DayOfWeek => {
   return daysMap[abbrDay] as DayOfWeek
 }
 
-export function mapSlotsToWeeklyTimeSlots(slots: Slot[]): WeeklyTimeSlots {
+/**
+ * Will return the weeks and days that have slots and include tje scheduled details for the activities slots
+ * @param slots The slots selected
+ * @param scheduleSlots The scheduled slots for the activity
+ * @return Any weeks days and slot which are matched
+ */
+export function mapSlotsToWeeklyTimeSlots(slots: Slot[], scheduleSlots: ActivityScheduleSlot[]): WeeklyCustomTimeSlots {
   return uniq(slots.map(s => s.weekNumber)).reduce(
     (acc, weekNumber) => ({
       ...acc,
       [weekNumber]: daysOfWeek
         .map(d => d.toUpperCase())
         .map(day => {
-          const timeSlots = slots
-            .filter(slot => slot.weekNumber === weekNumber)
-            .filter(s => (s.daysOfWeek as string[]).includes(day))
-            .map(slot => slot.timeSlot as TimeSlot)
+          const timeSlots: CustomTimeSlot[] = slots
+            .filter(slot => slot.weekNumber === weekNumber && (slot.daysOfWeek as string[]).includes(day))
+            .map(slot => {
+              const shortDayName: string = _.capitalize(day.substring(0, 3))
+              const matchedScheduleSlot = scheduleSlots.find(
+                scheduleSlot =>
+                  scheduleSlot.weekNumber === slot.weekNumber &&
+                  scheduleSlot.timeSlot === slot.timeSlot &&
+                  scheduleSlot.daysOfWeek.includes(shortDayName),
+              )
+              return {
+                timeSlot: toTimeSlot(matchedScheduleSlot.timeSlot),
+                startTime: matchedScheduleSlot.startTime,
+                endTime: matchedScheduleSlot.endTime,
+              }
+            })
 
           if (timeSlots.length === 0) return null
+
           return {
             day,
             slots: timeSlots,

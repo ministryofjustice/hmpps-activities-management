@@ -1,9 +1,10 @@
 import AttendanceReason from '../../enum/attendanceReason'
 
+// TODO AMEND TO Temporarily absent
 export default function absenceReasonDisplayConverter(reason: AttendanceReason): string {
   switch (reason) {
     case AttendanceReason.AUTO_SUSPENDED:
-      return 'Automatically suspended'
+      return 'Temporarily absent'
     case AttendanceReason.CANCELLED:
       return 'Cancelled'
     case AttendanceReason.CLASH:
