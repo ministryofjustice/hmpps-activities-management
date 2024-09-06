@@ -101,7 +101,7 @@ export default class DailyAttendanceRoutes {
     categoryFilters: string[],
     absencesPage: boolean,
     payFilters: PayNoPay[],
-    absenceReasonFilters: string[],
+    absenceReasonFilters: string | string[],
   ) => {
     let attendancesMatchingAllFilters
     const attendancesMatchingCategoryFilter = attendancesForStatus.filter(a => categoryFilters.includes(a.categoryName))
@@ -109,9 +109,12 @@ export default class DailyAttendanceRoutes {
       const attendancesMatchingPayFilter = attendancesMatchingCategoryFilter.filter(a =>
         this.payFilter(a.issuePayment, payFilters),
       )
-      attendancesMatchingAllFilters = attendancesMatchingPayFilter.filter(a =>
-        absenceReasonFilters.includes(a.attendanceReasonCode),
-      )
+      attendancesMatchingAllFilters = attendancesMatchingPayFilter.filter(a => {
+        if (Array.isArray(absenceReasonFilters)) {
+          return absenceReasonFilters.some(reason => reason === a.attendanceReasonCode)
+        }
+        return a.attendanceReasonCode === absenceReasonFilters
+      })
     }
     return attendancesMatchingAllFilters || attendancesMatchingCategoryFilter
   }
