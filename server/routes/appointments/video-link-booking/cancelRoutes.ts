@@ -36,7 +36,7 @@ export default function CancelRoutes({ bookAVideoLinkService }: Services): Route
   })
 
   const confirmCancel = new ConfirmCancelRoutes(bookAVideoLinkService)
-  const cancelConfirmed = new CancelConfirmedRoutes()
+  const cancelConfirmed = new CancelConfirmedRoutes(bookAVideoLinkService)
 
   get('/confirm', confirmCancel.GET)
   post('/confirm', confirmCancel.POST)

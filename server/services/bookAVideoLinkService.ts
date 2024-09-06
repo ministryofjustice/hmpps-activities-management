@@ -49,6 +49,10 @@ export default class BookAVideoLinkService {
     return this.bookAVideoLinkApiClient.getAllCourts(user)
   }
 
+  public async getAllProbationTeams(user: ServiceUser) {
+    return this.bookAVideoLinkApiClient.getAllProbationTeams(user)
+  }
+
   public getCourtHearingTypes(user: ServiceUser) {
     return this.bookAVideoLinkApiClient.getReferenceCodesForGroup('COURT_HEARING_TYPE', user)
   }
