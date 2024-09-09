@@ -124,13 +124,24 @@ describe('Book A Video link service', () => {
     })
   })
 
-  describe('getAllEnabledCourts', () => {
-    it('should call getAllEnabledCourts on the api client', async () => {
+  describe('getAllCourts', () => {
+    it('should call getAllCourts on the api client', async () => {
       bookAVideoLinkClient.getAllCourts.mockResolvedValue([])
 
       const result = await bookAVideoLinkService.getAllCourts(user)
 
       expect(bookAVideoLinkClient.getAllCourts).toHaveBeenCalledWith(user)
+      expect(result).toEqual([])
+    })
+  })
+
+  describe('getAllProbationTeams', () => {
+    it('should call getAllProbationTeams on the api client', async () => {
+      bookAVideoLinkClient.getAllProbationTeams.mockResolvedValue([])
+
+      const result = await bookAVideoLinkService.getAllProbationTeams(user)
+
+      expect(bookAVideoLinkClient.getAllProbationTeams).toHaveBeenCalledWith(user)
       expect(result).toEqual([])
     })
   })
@@ -271,6 +282,13 @@ describe('Book A Video link service', () => {
       await bookAVideoLinkService.createVideoLinkBooking(journey, user)
 
       expect(bookAVideoLinkClient.createVideoLinkBooking).toHaveBeenCalledWith(expectedBody, user)
+    })
+  })
+
+  describe('cancelVideoLinkBooking', () => {
+    it('calls the cancel booking endpoint', async () => {
+      await bookAVideoLinkService.cancelVideoLinkBooking({ bookingId: 1 }, user)
+      expect(bookAVideoLinkClient.cancelVideoLinkBooking).toHaveBeenCalledWith(1, user)
     })
   })
 })

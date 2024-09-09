@@ -10,6 +10,7 @@ import {
   ReferenceCode,
   CreateVideoBookingRequest,
   AmendVideoBookingRequest,
+  ProbationTeam,
 } from '../@types/bookAVideoLinkApi/types'
 
 export default class BookAVideoLinkApiClient extends AbstractHmppsRestClient {
@@ -36,6 +37,10 @@ export default class BookAVideoLinkApiClient extends AbstractHmppsRestClient {
     return this.get({ path: '/courts', query: { enabledOnly: false } }, user)
   }
 
+  public getAllProbationTeams(user: ServiceUser): Promise<ProbationTeam[]> {
+    return this.get({ path: '/probation-teams', query: { enabledOnly: false } }, user)
+  }
+
   public getReferenceCodesForGroup(groupCode: string, user: ServiceUser): Promise<ReferenceCode[]> {
     return this.get({ path: `/reference-codes/group/${groupCode}` }, user)
   }
@@ -50,5 +55,9 @@ export default class BookAVideoLinkApiClient extends AbstractHmppsRestClient {
     user: ServiceUser,
   ): Promise<number> {
     return this.put({ path: `/video-link-booking/id/${videoBookingId}`, data: request }, user)
+  }
+
+  public cancelVideoLinkBooking(videoBookingId: number, user: ServiceUser): Promise<number> {
+    return this.delete({ path: `/video-link-booking/id/${videoBookingId}` }, user)
   }
 }
