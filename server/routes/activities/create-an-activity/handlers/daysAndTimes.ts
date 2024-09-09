@@ -69,7 +69,7 @@ export default class DaysAndTimesRoutes {
   }
 
   POST = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { scheduleWeeks } = req.session.createJourney
+    const { scheduleWeeks, customSlots } = req.session.createJourney
     const { weekNumber } = req.params
     const selectedDays = req.body.days
     const { preserveHistory, fromScheduleFrequency } = req.query
@@ -114,16 +114,17 @@ export default class DaysAndTimesRoutes {
       return res.validationFailed()
     }
 
-    if (scheduleWeeks === weekNumberInt) {
+    if (
+      scheduleWeeks === weekNumberInt ||
+      (config.twoWeeklyCustomStartEndTimesEnabled === true && customSlots !== undefined)
+    ) {
       // If create journey, redirect to next journey page
       if (!preserveHistory) {
-        // TODO: Fix once bi-weekly sorted
         if (scheduleWeeks !== 2 || config.twoWeeklyCustomStartEndTimesEnabled === true) {
           if (config.customStartEndTimesEnabled === true) {
             return res.redirect(`../session-times-option/${weekNumberInt}`)
           }
         }
-
         return res.redirect('../bank-holiday-option')
       }
       // If from edit page, edit slots
