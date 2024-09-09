@@ -512,6 +512,64 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         expect(res.redirect).toHaveBeenCalledWith('../session-times')
       })
+      it('should redirect to session-times page if preserveHistory is true, fromScheduleFrequency is false, custom times are being used and it is not the final week in the schedule', async () => {
+        const activityFromApi = {
+          id: 1,
+          schedules: [
+            {
+              usePrisonRegimeTime: false,
+              slots: [
+                {
+                  id: 5,
+                  weekNumber: 1,
+                  timeSlot: 'AM',
+                  startTime: '10:00',
+                  endTime: '11:00',
+                  daysOfWeek: ['Tue'],
+                  mondayFlag: false,
+                  tuesdayFlag: true,
+                  wednesdayFlag: false,
+                  thursdayFlag: false,
+                  fridayFlag: false,
+                  saturdayFlag: false,
+                  sundayFlag: false,
+                },
+              ],
+            },
+          ],
+        } as Activity
+
+        activitiesService.getActivity.mockReturnValue(Promise.resolve(activityFromApi))
+
+        config.customStartEndTimesEnabled = true
+        req = {
+          session: {
+            createJourney: {
+              activityId: 1,
+              name: 'Maths level 1',
+              slots: {},
+              scheduleWeeks: 2,
+            },
+          },
+          query: {
+            preserveHistory: true,
+            fromScheduleFrequency: false,
+          },
+          params: {
+            weekNumber: '1',
+            mode: 'edit',
+          },
+          body: {
+            days: ['tuesday', 'friday'],
+            timeSlotsTuesday: ['AM'],
+            timeSlotsFriday: ['PM', 'ED'],
+          },
+        } as unknown as Request
+
+        await handler.POST(req, res, next)
+
+        expect(res.redirect).toHaveBeenCalledWith('../session-times')
+      })
 
       it("should update session and redirect to next week's slots when editing schedule frequency", async () => {
         req = {
