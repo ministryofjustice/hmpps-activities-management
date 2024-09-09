@@ -140,10 +140,16 @@
                         {% set row = row.concat(
                             {
                                 html: showEvents(prisonerEvents.events, location),
-                                attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-events', 'data-sort-value': showEvents(prisonerEvents.events, location)  }
-                            }, {
+                                attributes: {
+                                    'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-events',
+                                    'data-sort-value': prisonerEvents.events[0].summary
+                                }
+                            },
+                            {
                                 html: showEvents(prisonerEvents.clashingEvents, location),
-                                attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-clashing-events' }
+                                attributes: {
+                                    'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-clashing-events'
+                                }
                             }
                         ) %}
 
@@ -199,7 +205,8 @@
 
                                 {% set headRows = headRows.concat(
                                     {
-                                        text: "Activity"
+                                        text: "Activity",
+                                        attributes: { "aria-sort": "none" }
                                     }, {
                                         text: "Clashing events"
                                     }
