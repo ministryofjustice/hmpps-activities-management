@@ -246,6 +246,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
             })
 
             it('should save slots in session and redirect to session times option if first week of bi-weekly schedule and using custom times', async () => {
+              config.twoWeeklyCustomStartEndTimesEnabled = true
               req.session.createJourney.scheduleWeeks = 2
               req.session.createJourney.customSlots = [
                 {
