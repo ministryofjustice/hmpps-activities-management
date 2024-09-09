@@ -46,7 +46,8 @@
           1,
           {
             "argsIgnorePattern": "res|next|^err|_",
-            "ignoreRestSiblings": true
+            "ignoreRestSiblings": true,
+            "caughtErrorsIgnorePattern": "e"
           }
         ],
         "@typescript-eslint/semi": 0,
