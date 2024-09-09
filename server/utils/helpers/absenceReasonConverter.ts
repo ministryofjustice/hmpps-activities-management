@@ -1,7 +1,6 @@
 import AttendanceReason from '../../enum/attendanceReason'
 
-// TODO AMEND TO Temporarily absent
-export default function absenceReasonDisplayConverter(reason: AttendanceReason): string {
+export function absenceReasonDisplayConverter(reason: AttendanceReason): string {
   switch (reason) {
     case AttendanceReason.AUTO_SUSPENDED:
       return 'Temporarily absent'
@@ -24,4 +23,12 @@ export default function absenceReasonDisplayConverter(reason: AttendanceReason):
     default:
       return null
   }
+}
+
+export const absenceReasonCheckboxMatch = (
+  checkbox: AttendanceReason,
+  absenceReasonFilters: AttendanceReason | Array<AttendanceReason>,
+) => {
+  if (!Array.isArray(absenceReasonFilters)) return absenceReasonFilters === checkbox
+  return absenceReasonFilters.includes(checkbox)
 }
