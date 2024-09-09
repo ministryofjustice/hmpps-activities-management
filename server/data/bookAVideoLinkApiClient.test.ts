@@ -85,7 +85,7 @@ describe('bookAVideoLinkApiClient', () => {
     })
   })
 
-  describe('get enabled courts', () => {
+  describe('get courts', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
 
@@ -95,6 +95,22 @@ describe('bookAVideoLinkApiClient', () => {
         .reply(200, response)
 
       const output = await bookAVideoLinkApiClient.getAllCourts(user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('get probation teams', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+
+      fakeBookAVideoLinkApi
+        .get(`/probation-teams?enabledOnly=false`)
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200, response)
+
+      const output = await bookAVideoLinkApiClient.getAllProbationTeams(user)
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
@@ -149,6 +165,19 @@ describe('bookAVideoLinkApiClient', () => {
         user,
       )
       expect(output).toEqual(response)
+    })
+  })
+
+  describe('cancelVideoLinkBooking', () => {
+    it('should delete', async () => {
+      fakeBookAVideoLinkApi
+        .delete(`/video-link-booking/id/1`)
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200)
+
+      await bookAVideoLinkApiClient.cancelVideoLinkBooking(1, user)
+
+      expect(nock.isDone()).toBe(true)
     })
   })
 })
