@@ -32,7 +32,7 @@
         {% set absenceReasonFilters = (absenceReasonFilters.push({
         value: reason, 
         text: reason | absenceReasonDisplayConverter, 
-        checked: reason in session.attendanceSummaryJourney.absenceReasonFilters
+        checked: reason | absenceReasonCheckboxMatch(session.attendanceSummaryJourney.absenceReasonFilters)
     }), absenceReasonFilters) %}
     {% endfor %}
 

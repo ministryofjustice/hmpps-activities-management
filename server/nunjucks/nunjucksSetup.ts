@@ -70,7 +70,7 @@ import { SERVICE_AS_USERNAME } from '../services/userService'
 import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
 import AttendanceReason from '../enum/attendanceReason'
-import absenceReasonDisplayConverter from '../utils/helpers/absenceReasonConverter'
+import { absenceReasonDisplayConverter, absenceReasonCheckboxMatch } from '../utils/helpers/absenceReasonConverter'
 import { ScheduleChangeOption } from '../routes/activities/create-an-activity/handlers/customTimesChangeOption'
 import { DefaultOrCustomTimes } from '../routes/activities/create-an-activity/handlers/customTimesChangeDefaultOrCustom'
 
@@ -191,6 +191,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('sortBy', sortBy)
   njkEnv.addFilter('excludeArray', excludeArrayObject)
   njkEnv.addFilter('absenceReasonDisplayConverter', absenceReasonDisplayConverter)
+  njkEnv.addFilter('absenceReasonCheckboxMatch', absenceReasonCheckboxMatch)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
