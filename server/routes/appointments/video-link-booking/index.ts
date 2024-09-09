@@ -17,6 +17,7 @@ export default function Index(services: Services): Router {
 
   const videoLinkDetailsRoutes = new VideoLinkDetailsRoutes(
     services.bookAVideoLinkService,
+    services.activitiesService,
     services.prisonService,
     services.userService,
   )
