@@ -6,6 +6,7 @@ import VideoLinkDetailsRoutes from './handlers/videoLinkDetails'
 import config from '../../../config'
 import createRoutes from './createRoutes'
 import amendRoutes from './amendRoutes'
+import cancelRoutes from './cancelRoutes'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 import initialiseJourney from './middleware/initialiseJourney'
 
@@ -28,6 +29,9 @@ export default function Index(services: Services): Router {
 
   router.use('/:mode(amend)/:bookingId', insertJourneyIdentifier())
   router.use('/:mode(amend)/:bookingId/:journeyId', initialiseJourney(services), amendRoutes(services))
+
+  router.use('/:mode(cancel)/:bookingId', insertJourneyIdentifier())
+  router.use('/:mode(cancel)/:bookingId/:journeyId', initialiseJourney(services), cancelRoutes(services))
 
   return router
 }

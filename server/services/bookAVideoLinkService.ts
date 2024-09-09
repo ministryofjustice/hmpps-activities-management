@@ -49,6 +49,10 @@ export default class BookAVideoLinkService {
     return this.bookAVideoLinkApiClient.getAllCourts(user)
   }
 
+  public async getAllProbationTeams(user: ServiceUser) {
+    return this.bookAVideoLinkApiClient.getAllProbationTeams(user)
+  }
+
   public getCourtHearingTypes(user: ServiceUser) {
     return this.bookAVideoLinkApiClient.getReferenceCodesForGroup('COURT_HEARING_TYPE', user)
   }
@@ -64,7 +68,11 @@ export default class BookAVideoLinkService {
 
   public amendVideoLinkBooking(journey: BookAVideoLinkJourney, user: ServiceUser) {
     const request = this.buildBookingRequest<AmendVideoBookingRequest>(journey)
-    return this.bookAVideoLinkApiClient.amendVideoLinkBooking(journey.bookingId, request, user).then()
+    return this.bookAVideoLinkApiClient.amendVideoLinkBooking(journey.bookingId, request, user)
+  }
+
+  public cancelVideoLinkBooking(journey: BookAVideoLinkJourney, user: ServiceUser) {
+    return this.bookAVideoLinkApiClient.cancelVideoLinkBooking(journey.bookingId, user)
   }
 
   private buildBookingRequest<T extends VideoBookingRequest>(journey: BookAVideoLinkJourney): T {
