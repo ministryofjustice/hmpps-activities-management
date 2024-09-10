@@ -1,6 +1,5 @@
 {% extends "layout.njk" %}
 
-{% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -30,6 +29,22 @@
             <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
             <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>Video Link - Court Hearing</h1>
             <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ mainAppointment.appointmentDate | formatDate }}</span>
+
+            {% if videoBooking.statusCode != 'CANCELLED' and isAmendable %}
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <div class="govuk-button-group">
+                            {{ govukButton({
+                                attributes: { id: 'print-movement-slip', target: "_blank", 'data-qa': 'print-movement-slip' },
+                                text: "Print movement slip",
+                                classes: "govuk-button--blue govuk-link govuk-link--no-visited-state",
+                                preventDoubleClick: true,
+                                href: '/appointments/' + mainAppointmentId + '/movement-slip'
+                            }) }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
 
             {{ govukSummaryList({
                 card: {
