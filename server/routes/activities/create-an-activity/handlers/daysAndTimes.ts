@@ -142,7 +142,6 @@ export default class DaysAndTimesRoutes {
         return this.editSlots(req, res)
       }
 
-      // TODO: Fix once bi-weekly sorted
       if (scheduleWeeks !== 2 || config.twoWeeklyCustomStartEndTimesEnabled === true) {
         if (config.customStartEndTimesEnabled === true) {
           return res.redirect(`../session-times-option/${weekNumber}?preserveHistory=true`)
