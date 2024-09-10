@@ -12,8 +12,8 @@ export default function Index(): Router {
     '/waitlist-agg',
     ReportListUtils.createReportListRequestHandler({
       title: 'Waitlist Aggregate Report',
-      definitionName: 'waitlist-agg',
-      variantName: 'days-on-waitlist',
+      definitionName: 'waitlist-list-001',
+      variantName: 'waitlist-aggregate-001',
       apiUrl: config.apis.reporting.url,
       apiTimeout: config.apis.reporting.timeout,
       layoutTemplate: 'layout.njk',
