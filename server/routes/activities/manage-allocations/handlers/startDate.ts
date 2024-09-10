@@ -12,17 +12,15 @@ import {
 import ActivitiesService from '../../../../services/activitiesService'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
-import config from '../../../../config'
 
 export class StartDate {
   @Expose()
-  @ValidateIf(_ => config.allocateToNextSession)
   @IsEnum(StartDateOption, { message: 'Select whether start date is next session or a different date' })
   @Transform(({ value }) => StartDateOption[value])
   startDateOption: StartDateOption
 
   @Expose()
-  @ValidateIf(o => o.startDateOption === StartDateOption.START_DATE || !config.allocateToNextSession)
+  @ValidateIf(o => o.startDateOption === StartDateOption.START_DATE)
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(date => date > startOfToday(), { message: 'Enter a date in the future' })
   @Validator((date, { allocateJourney }) => date >= parseIsoDate(allocateJourney.activity.startDate), {

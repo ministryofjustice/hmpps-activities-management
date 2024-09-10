@@ -3,11 +3,14 @@ import { parse, parseISO } from 'date-fns'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import PrisonService from '../../../../services/prisonService'
 import UserService from '../../../../services/userService'
-import { VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
+import { PrisonAppointment, VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
+import ActivitiesService from '../../../../services/activitiesService'
+import { ServiceUser } from '../../../../@types/express'
 
 export default class VideoLinkDetailsRoutes {
   constructor(
     private readonly bookAVideoLinkService: BookAVideoLinkService,
+    private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
     private readonly userService: UserService,
   ) {}
@@ -20,9 +23,12 @@ export default class VideoLinkDetailsRoutes {
     const { preAppointment, mainAppointment, postAppointment } = this.fetchAppointments(videoBooking)
 
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(mainAppointment.prisonerNumber, user)
-    const rooms = await this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonId, user)
 
-    const userMap = await this.userService.getUserMap([videoBooking.createdBy, videoBooking.amendedBy], user)
+    const [rooms, userMap, mainAppointmentId] = await Promise.all([
+      this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonId, user),
+      this.userService.getUserMap([videoBooking.createdBy, videoBooking.amendedBy], user),
+      this.fetchMainAppointmentFromActivitiesAPI(mainAppointment, user).then(a => a.appointmentId),
+    ])
 
     const earliestAppointment = preAppointment || mainAppointment
     const date = parseISO(earliestAppointment.appointmentDate)
@@ -31,6 +37,7 @@ export default class VideoLinkDetailsRoutes {
 
     res.render('pages/appointments/video-link-booking/details', {
       videoBooking,
+      mainAppointmentId,
       preAppointment,
       mainAppointment,
       postAppointment,
@@ -53,5 +60,28 @@ export default class VideoLinkDetailsRoutes {
       mainAppointment,
       postAppointment,
     }
+  }
+
+  private fetchMainAppointmentFromActivitiesAPI = async (mainAppointment: PrisonAppointment, user: ServiceUser) => {
+    const location = await this.prisonService.getInternalLocationByKey(mainAppointment.prisonLocKey, user)
+    return this.activitiesService
+      .searchAppointments(
+        user.activeCaseLoadId,
+        {
+          appointmentType: 'INDIVIDUAL',
+          startDate: mainAppointment.appointmentDate,
+          categoryCode: 'VLB',
+          prisonerNumbers: [mainAppointment.prisonerNumber],
+        },
+        user,
+      )
+      .then(apps =>
+        apps.find(
+          app =>
+            location.locationId === app.internalLocation.id &&
+            mainAppointment.startTime === app.startTime &&
+            mainAppointment.endTime === app.endTime,
+        ),
+      )
   }
 }

@@ -48,7 +48,7 @@ import {
 } from '../utils/calendarUtilities'
 import { Services } from '../services'
 import { EventSource, EventType, PayNoPay, YesNo } from '../@types/activities'
-import { AppointmentType, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
+import { AppointmentJourneyMode, AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import {
   AppointmentApplyTo,
   AppointmentCancellationReason,
@@ -70,7 +70,7 @@ import { SERVICE_AS_USERNAME } from '../services/userService'
 import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
 import AttendanceReason from '../enum/attendanceReason'
-import { absenceReasonDisplayConverter, absenceReasonCheckboxMatch } from '../utils/helpers/absenceReasonConverter'
+import { absenceReasonCheckboxMatch, absenceReasonDisplayConverter } from '../utils/helpers/absenceReasonConverter'
 import { ScheduleChangeOption } from '../routes/activities/create-an-activity/handlers/customTimesChangeOption'
 import { DefaultOrCustomTimes } from '../routes/activities/create-an-activity/handlers/customTimesChangeDefaultOrCustom'
 
@@ -224,7 +224,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
-  njkEnv.addGlobal('allocateToNextSession', config.allocateToNextSession)
   njkEnv.addGlobal('futurePayRatesFlag', config.futurePayRatesToggleEnabled)
   njkEnv.addGlobal('customStartEndTimesEnabled', config.customStartEndTimesEnabled)
   njkEnv.addGlobal('bookAVideoLinkToggleEnabled', config.bookAVideoLinkToggleEnabled)

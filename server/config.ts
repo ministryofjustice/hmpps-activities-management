@@ -185,7 +185,6 @@ export default {
     },
   ] as RouteAuth[],
   spikesFeatureToggleEnabled: Boolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', false)),
-  allocateToNextSession: Boolean(get('ALLOCATE_TO_NEXT_SESSION', false)),
   frontendComponentsApiToggleEnabled: Boolean(
     get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', true, requiredInProduction),
   ),
