@@ -228,6 +228,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('customStartEndTimesEnabled', config.customStartEndTimesEnabled)
   njkEnv.addGlobal('bookAVideoLinkToggleEnabled', config.bookAVideoLinkToggleEnabled)
   njkEnv.addGlobal('customStartEndTimesEnabled', config.customStartEndTimesEnabled)
+  njkEnv.addGlobal('twoWeeklyCustomStartEndTimesEnabled', config.twoWeeklyCustomStartEndTimesEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
   njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
 

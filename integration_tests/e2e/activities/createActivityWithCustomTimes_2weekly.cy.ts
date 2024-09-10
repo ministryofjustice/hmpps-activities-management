@@ -37,7 +37,7 @@ import PayOptionPage from '../../pages/createActivity/pay-option'
 import SessionTimesOptionPage from '../../pages/createSchedule/sessionTimesOption'
 import SessionTimesPage from '../../pages/createSchedule/sessionTimes'
 
-context('Create activity with custom times', () => {
+context('Create activity with custom times for a 2 weekly schedule', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -144,12 +144,16 @@ context('Create activity with custom times', () => {
     endDatePage.continue()
 
     const scheduleFrequencyPage = Page.verifyOnPage(ScheduleFrequencyPage)
-    scheduleFrequencyPage.selectScheduleFrequency('Weekly')
+    scheduleFrequencyPage.selectScheduleFrequency('2 Weekly')
     scheduleFrequencyPage.continue()
 
     const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
     daysAndTimesPage.selectDayTimeCheckboxes([['Monday', ['AM session']]])
     daysAndTimesPage.continue()
+
+    const daysAndTimesPageWeek2 = Page.verifyOnPage(DaysAndTimesPage)
+    daysAndTimesPageWeek2.selectDayTimeCheckboxes([['Tuesday', ['PM session']]])
+    daysAndTimesPageWeek2.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
     sessionTimesOptionPage.useSessionOption('Select the start and end times')
@@ -158,6 +162,8 @@ context('Create activity with custom times', () => {
     const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
     sessionTimesPage.selectStartTime(10, 45, '1', 'MONDAY', 'AM')
     sessionTimesPage.selectEndTime(11, 50, '1', 'MONDAY', 'AM')
+    sessionTimesPage.selectStartTime(14, 35, '2', 'TUESDAY', 'PM')
+    sessionTimesPage.selectEndTime(16, 50, '2', 'TUESDAY', 'PM')
     sessionTimesPage.continue()
 
     const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)

@@ -145,6 +145,9 @@ describe('Route Handlers - Create an activity schedule - activity times option',
 
   describe('GET', () => {
     it('should render the expected view', async () => {
+      req.params = {
+        weekNumber: '1',
+      }
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/session-times-option', {
         regimeTimes: [
@@ -169,7 +172,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
         await handler.POST(req, res)
 
         expect(req.session.createJourney.customSlots).toEqual(undefined)
-        expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('../bank-holiday-option')
       })
 
       it('when using prison custom times redirect to the activity session times page', async () => {
@@ -179,7 +182,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
 
         await handler.POST(req, res)
 
-        expect(res.redirect).toHaveBeenCalledWith('session-times')
+        expect(res.redirect).toHaveBeenCalledWith('../session-times')
       })
     })
 
@@ -195,7 +198,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
         await handler.POST(req, res)
 
         expect(req.session.createJourney.customSlots).toEqual(undefined)
-        expect(res.redirectOrReturn).toHaveBeenCalledWith('bank-holiday-option')
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('../bank-holiday-option')
       })
 
       it('when using prison custom times redirect to the activity session times page', async () => {
@@ -206,7 +209,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
 
         await handler.POST(req, res)
 
-        expect(res.redirect).toHaveBeenCalledWith('session-times?preserveHistory=true')
+        expect(res.redirect).toHaveBeenCalledWith('../session-times?preserveHistory=true')
       })
     })
   })

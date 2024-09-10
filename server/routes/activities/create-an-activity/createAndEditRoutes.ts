@@ -129,14 +129,18 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/days-and-times/:weekNumber(\\d+)', daysAndTimesHandler.POST, DaysAndTimes)
   get('/bank-holiday-option', bankHolidayHandler.GET, true)
   post('/bank-holiday-option', bankHolidayHandler.POST, BankHolidayOption)
-  get('/session-times-option', sessionTimesOptionHandler.GET, true)
-  post('/session-times-option', sessionTimesOptionHandler.POST, SessionTimesOption)
+  get('/session-times-option/:weekNumber(\\d+)', sessionTimesOptionHandler.GET, true)
+  post('/session-times-option/:weekNumber(\\d+)', sessionTimesOptionHandler.POST, SessionTimesOption)
   get('/session-times', sessionTimesHandler.GET, true)
   post('/session-times', sessionTimesHandler.POST, SessionTimes)
-  get('/custom-times-change-option', customTimesChangeOptionHandler.GET)
-  post('/custom-times-change-option', customTimesChangeOptionHandler.POST, ScheduleOption)
-  get('/custom-times-change-default-or-custom', CustomTimesChangeDefaultOrCustomHandler.GET)
-  post('/custom-times-change-default-or-custom', CustomTimesChangeDefaultOrCustomHandler.POST, DefaultOrCustomOption)
+  get('/custom-times-change-option/:weekNumber(\\d+)', customTimesChangeOptionHandler.GET)
+  post('/custom-times-change-option/:weekNumber(\\d+)', customTimesChangeOptionHandler.POST, ScheduleOption)
+  get('/custom-times-change-default-or-custom/:weekNumber(\\d+)', CustomTimesChangeDefaultOrCustomHandler.GET)
+  post(
+    '/custom-times-change-default-or-custom/:weekNumber(\\d+)',
+    CustomTimesChangeDefaultOrCustomHandler.POST,
+    DefaultOrCustomOption,
+  )
   get('/location', locationHandler.GET, true)
   post('/location', locationHandler.POST, Location)
   get('/capacity', capacityHandler.GET, true)

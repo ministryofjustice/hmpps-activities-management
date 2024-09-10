@@ -7,7 +7,12 @@
 
 {% set pageTitle = applicationName + " - Create a schedule - Activity session times" %}
 {% set pageId = 'custom-times-change-default-or-custom-page' %}
-{% set pageHeading = "Select how to change the activity start and end times" %}
+
+{% if session.createJourney.scheduleWeeks > 1 %}
+    {% set pageHeading = "Week "+session.req.params.weekNumber+" of "+session.createJourney.scheduleWeeks+": Select how to change the activity start and end times" %}
+{% else %}
+    {% set pageHeading = "Select how to change the activity start and end times" %}
+{% endif %}
 
 {% set jsBackLink = true %}
 

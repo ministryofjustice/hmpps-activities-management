@@ -25,8 +25,17 @@
             {% endif %}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% for week, customSlots in sessionSlots %}
+                    {% if sessionSlots | length > 1 %}
+                        <div class='govuk-heading-s govuk-!-margin-bottom-1'>
+                            Week {{ week }}
+                            {{ govukTag({
+                                text: "Current week", classes: 'govuk-tag--green govuk-!-margin-left-2'
+                            }) if currentWeek == week }}
+                        </div>
+                    {% endif %}
                         {% set rows = [] %} 
-                        {% for customSlot in sessionSlots %}     
+                        {% for customSlot in customSlots %}
                             {% set formattedStart = customSlot.start | getSplitTime %}
                             {% set formattedFinish = customSlot.finish | getSplitTime %}
                             {% set rows = (rows.push([
@@ -38,20 +47,20 @@
                                 },
                                 {
                                     html: timePicker({
-                                        id: 'startTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
-                                        name: 'startTimes[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
-                                        renderedErrorMessage: validationErrors | findError('startTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                                        id: 'startTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
+                                        name: 'startTimes[' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('startTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.startTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedStart
+                                        formResponses: formResponses.startTimes[week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedStart
                                 })
                                 },
                                 {
                                     html: timePicker({
-                                        id: 'endTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
-                                        name: 'endTimes[' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
-                                        renderedErrorMessage: validationErrors | findError('endTimes-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                                        id: 'endTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
+                                        name: 'endTimes[' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('endTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.endTimes[customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedFinish
+                                        formResponses: formResponses.endTimes[week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedFinish
                                         })
                                 }]), rows) %}
                         {% endfor %}
@@ -74,6 +83,7 @@
                         rows: rows,
                         attributes: {"data-qa": "session-times-table"}         
                     }) }}
+                {% endfor %}
                 {{ govukButton({
                     text: "Continue"
                 }) }}
