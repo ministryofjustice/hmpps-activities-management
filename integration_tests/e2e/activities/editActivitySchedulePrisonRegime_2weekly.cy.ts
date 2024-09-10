@@ -68,7 +68,7 @@ context('Edit activity', () => {
     cy.stubEndpoint('PATCH', '/activities/MDI/activityId/4', getActivity4)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
   })
-  it('changing days/sessions if using prison regime times - removing a day', () => {
+  it('should remove a day when updating from the default regime times', () => {
     cy.visit('/activities/view/4')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.changeScheduleLink().first().click()
@@ -95,7 +95,7 @@ context('Edit activity', () => {
       `You've updated the daily schedule for English level 1`,
     )
   })
-  it('changing days/sessions if using prison regime times - adding a day', () => {
+  it('should add a day when updating from the default regime times', () => {
     cy.visit('/activities/view/4')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.changeScheduleLink().last().click()
@@ -120,7 +120,7 @@ context('Edit activity', () => {
       `You've updated the daily schedule for English level 1`,
     )
   })
-  it('changing times if currently using regime times', () => {
+  it('should change times if currently using regime times', () => {
     cy.visit('/activities/view/4')
     const viewActivityPage = Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.changeScheduleLink().first().click()
@@ -139,5 +139,6 @@ context('Edit activity', () => {
 
     sessionTimesPage.selectStartTime(10, 45, '1', 'MONDAY', 'AM')
     sessionTimesPage.continue()
+    Page.verifyOnPage(ViewActivityPage)
   })
 })
