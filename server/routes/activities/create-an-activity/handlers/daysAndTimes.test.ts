@@ -10,7 +10,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
 import config from '../../../../config'
-import { Activity } from '../../../../@types/activitiesAPI/types'
+import { Activity, Slot } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
@@ -246,20 +246,18 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
             })
 
             it('should save slots in session and redirect to session times option if first week of bi-weekly schedule and using custom times', async () => {
-              config.twoWeeklyCustomStartEndTimesEnabled = true
-              req.session.createJourney.scheduleWeeks = 2
-              req.session.createJourney.customSlots = [
+              const customSlots: Slot[] = [
                 {
                   customStartTime: '05:30',
                   customEndTime: '09:45',
                   daysOfWeek: ['TUESDAY'],
                   friday: false,
-                  monday: true,
+                  monday: false,
                   saturday: false,
                   sunday: false,
                   thursday: false,
                   timeSlot: TimeSlot.AM,
-                  tuesday: false,
+                  tuesday: true,
                   wednesday: false,
                   weekNumber: 1,
                 },
@@ -267,14 +265,14 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
                   customStartTime: '15:45',
                   customEndTime: '17:41',
                   daysOfWeek: ['FRIDAY'],
-                  friday: false,
+                  friday: true,
                   monday: false,
                   saturday: false,
                   sunday: false,
                   thursday: false,
                   timeSlot: TimeSlot.PM,
                   tuesday: false,
-                  wednesday: true,
+                  wednesday: false,
                   weekNumber: 1,
                 },
                 {
@@ -293,11 +291,16 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
                 },
               ]
 
+              config.twoWeeklyCustomStartEndTimesEnabled = true
+              req.session.createJourney.scheduleWeeks = 2
+              req.session.createJourney.customSlots = customSlots
+
               await handler.POST(req, res, next)
 
               expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
               expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
               expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+              expect(req.session.createJourney.customSlots).toEqual(customSlots)
               expect(res.redirect).toHaveBeenCalledWith('../session-times-option/1?preserveHistory=true')
             })
 
