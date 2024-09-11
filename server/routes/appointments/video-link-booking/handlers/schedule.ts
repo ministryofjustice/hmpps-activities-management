@@ -67,6 +67,6 @@ export default class ScheduleRoutes {
       )
     }
 
-    return res.redirectOrReturn('extra-information')
+    return res.redirectOrReturn('court-hearing-link')
   }
 }
