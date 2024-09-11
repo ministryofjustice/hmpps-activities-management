@@ -156,6 +156,20 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
           expect(res.redirect).toBeCalledWith('../session-times-option/1')
         })
+
+        it('should save slots in session and redirect to set activity times page for a single session', async () => {
+          req.session.createJourney.scheduleWeeks = 1
+          req.body = {
+            days: ['friday'],
+            timeSlotsFriday: 'PM',
+          }
+
+          await handler.POST(req, res, next)
+
+          expect(req.session.createJourney.slots['1'].days).toEqual(['friday'])
+          expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM'])
+          expect(res.redirect).toBeCalledWith('../session-times-option/1')
+        })
       })
 
       describe('Change data from check answers page', () => {
@@ -338,6 +352,31 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
               expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
               expect(res.redirect).toBeCalledWith('../session-times-option/1?preserveHistory=true')
             })
+
+            it('should move to the second week of two weeks when changed to no days selected', async () => {
+              req.session.createJourney.scheduleWeeks = 2
+              req.session.createJourney.slots = {
+                '1': {
+                  days: ['tuesday', 'friday'],
+                  timeSlotsTuesday: ['AM'],
+                  timeSlotsFriday: ['PM', 'ED'],
+                },
+              }
+              req.params = {
+                weekNumber: '1',
+              }
+              req.query.preserveHistory = undefined
+              req.body.days = undefined
+
+              await handler.POST(req, res, next)
+
+              expect(req.session.createJourney.slots).toEqual({
+                '1': {
+                  days: [],
+                },
+              })
+              expect(res.redirect).toBeCalledWith('2')
+            })
           })
 
           describe('Change to bi-weekly schedule frequency', () => {
@@ -515,6 +554,157 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         expect(res.redirect).toHaveBeenCalledWith('../session-times')
       })
+
+      it('should save slots when editing existing activity - regime slots being used', async () => {
+        const activityFromApi = {
+          id: 1,
+          schedules: [
+            {
+              usePrisonRegimeTime: true,
+              slots: [
+                {
+                  id: 5,
+                  weekNumber: 1,
+                  timeSlot: 'AM',
+                  startTime: '10:00',
+                  endTime: '11:00',
+                  daysOfWeek: ['Tue'],
+                  mondayFlag: false,
+                  tuesdayFlag: true,
+                  wednesdayFlag: false,
+                  thursdayFlag: false,
+                  fridayFlag: false,
+                  saturdayFlag: false,
+                  sundayFlag: false,
+                },
+              ],
+            },
+          ],
+        } as Activity
+
+        activitiesService.getActivity.mockReturnValue(Promise.resolve(activityFromApi))
+
+        config.customStartEndTimesEnabled = true
+        req = {
+          session: {
+            createJourney: {
+              activityId: 1,
+              name: 'Maths level 1',
+              slots: {},
+              scheduleWeeks: 1,
+            },
+          },
+          params: {
+            weekNumber: '1',
+            mode: 'edit',
+          },
+          query: {
+            preserveHistory: true,
+          },
+          body: {
+            days: ['tuesday', 'friday'],
+            timeSlotsTuesday: ['AM'],
+            timeSlotsFriday: ['PM', 'ED'],
+          },
+        } as unknown as Request
+
+        await handler.POST(req, res, next)
+
+        expect(activitiesService.updateActivity).toHaveBeenCalledWith(
+          1,
+          {
+            scheduleWeeks: 1,
+            slots: [
+              { timeSlot: 'AM', tuesday: true, weekNumber: 1 },
+              { friday: true, timeSlot: 'PM', weekNumber: 1 },
+              { friday: true, timeSlot: 'ED', weekNumber: 1 },
+            ],
+          },
+          { activeCaseLoadId: 'MDI', username: 'joebloggs' },
+        )
+
+        expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+          '/activities/view/1',
+          'Activity updated',
+          "You've updated the daily schedule for Maths level 1",
+        )
+      })
+
+      it('should save slots when editing existing activity - regime slots being used - custom times disabled', async () => {
+        const activityFromApi = {
+          id: 1,
+          schedules: [
+            {
+              usePrisonRegimeTime: true,
+              slots: [
+                {
+                  id: 5,
+                  weekNumber: 1,
+                  timeSlot: 'AM',
+                  startTime: '10:00',
+                  endTime: '11:00',
+                  daysOfWeek: ['Tue'],
+                  mondayFlag: false,
+                  tuesdayFlag: true,
+                  wednesdayFlag: false,
+                  thursdayFlag: false,
+                  fridayFlag: false,
+                  saturdayFlag: false,
+                  sundayFlag: false,
+                },
+              ],
+            },
+          ],
+        } as Activity
+
+        activitiesService.getActivity.mockReturnValue(Promise.resolve(activityFromApi))
+
+        config.customStartEndTimesEnabled = false
+        req = {
+          session: {
+            createJourney: {
+              activityId: 1,
+              name: 'Maths level 1',
+              slots: {},
+              scheduleWeeks: 1,
+            },
+          },
+          params: {
+            weekNumber: '1',
+            mode: 'edit',
+          },
+          query: {
+            preserveHistory: true,
+          },
+          body: {
+            days: ['tuesday', 'friday'],
+            timeSlotsTuesday: ['AM'],
+            timeSlotsFriday: ['PM', 'ED'],
+          },
+        } as unknown as Request
+
+        await handler.POST(req, res, next)
+
+        expect(activitiesService.updateActivity).toHaveBeenCalledWith(
+          1,
+          {
+            scheduleWeeks: 1,
+            slots: [
+              { timeSlot: 'AM', tuesday: true, weekNumber: 1 },
+              { friday: true, timeSlot: 'PM', weekNumber: 1 },
+              { friday: true, timeSlot: 'ED', weekNumber: 1 },
+            ],
+          },
+          { activeCaseLoadId: 'MDI', username: 'joebloggs' },
+        )
+
+        expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+          '/activities/view/1',
+          'Activity updated',
+          "You've updated the daily schedule for Maths level 1",
+        )
+      })
+
       it('should redirect to session-times page if preserveHistory is true, fromScheduleFrequency is false, custom times are being used and it is not the final week in the schedule', async () => {
         const activityFromApi = {
           id: 1,
@@ -668,6 +858,47 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         'timeSlotsMonday',
         `You cannot select Monday. This is because the activity starts on ${startDateStr} and ends on ${endDateStr}`,
       )
+      expect(res.validationFailed).toBeCalledTimes(1)
+    })
+
+    it('validation fails if any slots are outside date range second week', async () => {
+      req.session.createJourney.scheduleWeeks = 2
+      req.params = {
+        weekNumber: '2',
+      }
+      req.body = {
+        days: ['tuesday', 'friday'],
+        timeSlotsTuesday: ['AM'],
+        timeSlotsFriday: ['PM', 'ED'],
+      }
+
+      findActivitySlotErrorsMock.mockReturnValue([{ weekNumber: 2, day: 'Monday' }])
+
+      await handler.POST(req, res, next)
+
+      const startDateStr = formatDate(startDate)
+      const endDateStr = formatDate(endDate)
+      expect(res.addValidationError).toBeCalledTimes(1)
+      expect(res.addValidationError).toHaveBeenCalledWith(
+        'timeSlotsMonday',
+        `You cannot select Monday. As this activity starts on ${startDateStr} and ends on ${endDateStr}, there cannot be a Monday session in week 2`,
+      )
+      expect(res.validationFailed).toBeCalledTimes(1)
+    })
+
+    it('validation fails if no slots are selected', async () => {
+      req.session.createJourney.scheduleWeeks = 1
+      req.params = {
+        weekNumber: '1',
+      }
+      req.body = {
+        days: undefined,
+      }
+
+      await handler.POST(req, res, next)
+
+      expect(res.validationFailed).toBeCalledTimes(1)
+      expect(res.validationFailed).toHaveBeenCalledWith('days', `You must select at least 1 slot across the schedule`)
       expect(res.validationFailed).toBeCalledTimes(1)
     })
   })
