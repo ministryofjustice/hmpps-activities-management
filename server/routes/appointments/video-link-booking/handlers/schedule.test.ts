@@ -126,7 +126,7 @@ describe('ScheduleRoutes', () => {
 
       await scheduleRoutes.POST(req as Request, res as Response)
 
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('extra-information')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('court-hearing-link')
     })
   })
 })
