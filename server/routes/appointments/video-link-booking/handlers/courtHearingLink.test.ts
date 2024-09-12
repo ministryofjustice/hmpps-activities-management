@@ -1,13 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { startOfTomorrow, startOfYesterday } from 'date-fns'
 import createHttpError from 'http-errors'
-import { DateAndTime } from './dateAndTime'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
-import { YesNo } from '../../../../@types/activities'
-import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
-import CourtHearingLinkRoutes from './courtHearingLink'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
+import CourtHearingLinkRoutes, { CourtHearingLink } from './courtHearingLink'
 
 jest.mock('../../../../services/bookAVideoLinkService')
 
@@ -88,129 +85,66 @@ describe('CourtHearingLinkRoutes', () => {
   })
 })
 
-describe('DateAndTime', () => {
-  const bookAVideoLinkJourney = { type: 'COURT' }
-
-  it('should validate a valid DateAndTime instance', async () => {
-    const dateAndTime = plainToInstance(DateAndTime, {
-      bookAVideoLinkJourney,
-      date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 11, minute: 30 },
-      preRequired: YesNo.NO,
-      postRequired: YesNo.NO,
+describe('CourtHearingLink', () => {
+  it('should validate a valid CourtHearingLink instance - required', async () => {
+    const courtHearingLink = plainToInstance(CourtHearingLink, {
+      required: 'yes',
+      videoLinkUrl: 'valid court link',
     })
 
-    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
+    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
     expect(errors).toHaveLength(0)
   })
 
-  it('should invalidate an instance with a past date', async () => {
-    const dateAndTime = plainToInstance(DateAndTime, {
-      bookAVideoLinkJourney,
-      date: formatDate(startOfYesterday(), 'dd/MM/yyyy'),
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 11, minute: 30 },
-      preRequired: YesNo.NO,
-      postRequired: YesNo.NO,
+  it('should validate a valid CourtHearingLink instance - not required', async () => {
+    const courtHearingLink = plainToInstance(CourtHearingLink, {
+      required: 'no',
     })
 
-    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toEqual(
-      expect.arrayContaining([{ error: "Enter a date which is on or after today's date", property: 'date' }]),
-    )
+    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
+    expect(errors).toHaveLength(0)
   })
 
-  it('should invalidate an instance with endTime before startTime', async () => {
-    const dateAndTime = plainToInstance(DateAndTime, {
-      bookAVideoLinkJourney,
-      date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 9, minute: 30 },
-      preRequired: YesNo.NO,
-      postRequired: YesNo.NO,
+  it('should validate an invalid enum', async () => {
+    const courtHearingLink = plainToInstance(CourtHearingLink, {
+      required: 'invalid',
     })
 
-    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toEqual(
-      expect.arrayContaining([{ error: 'Select a end time that is after the start time', property: 'endTime' }]),
-    )
+    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
+    expect(errors).toEqual(expect.arrayContaining([{ error: 'Select either yes or no', property: 'required' }]))
   })
 
-  it('should invalidate an instance with missing required fields', async () => {
-    const dateAndTime = plainToInstance(DateAndTime, {
-      bookAVideoLinkJourney,
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 11, minute: 30 },
-      preRequired: YesNo.NO,
-      postRequired: YesNo.NO,
+  it('should validate a blank video link where it is required', async () => {
+    const courtHearingLink = plainToInstance(CourtHearingLink, {
+      required: 'yes',
+      videoLinkUrl: '',
     })
 
-    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toEqual(expect.arrayContaining([{ error: 'Enter a date', property: 'date' }]))
-  })
-
-  it('should invalidate an instance with invalid date format', async () => {
-    const dateAndTime = plainToInstance(DateAndTime, {
-      bookAVideoLinkJourney,
-      date: 'invalid date',
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 11, minute: 30 },
-      preRequired: YesNo.NO,
-      postRequired: YesNo.NO,
-    })
-
-    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toEqual(expect.arrayContaining([{ error: 'Enter a valid date', property: 'date' }]))
-  })
-
-  it('should invalidate an instance with invalid enum values', async () => {
-    const dateAndTime = plainToInstance(DateAndTime, {
-      bookAVideoLinkJourney,
-      date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 11, minute: 30 },
-      preRequired: 'INVALID_ENUM',
-      postRequired: 'INVALID_ENUM',
-    })
-
-    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
+    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
     expect(errors).toEqual(
       expect.arrayContaining([
-        { error: 'Select if a pre-court hearing should be added', property: 'preRequired' },
-        { error: 'Select if a post-court hearing should be added', property: 'postRequired' },
+        {
+          error: 'Enter the court hearing link',
+          property: 'videoLinkUrl',
+        },
       ]),
     )
   })
 
-  it('should invalidate where pre and post meetings are required but rooms are not provided', async () => {
-    const dateAndTime = plainToInstance(DateAndTime, {
-      bookAVideoLinkJourney,
-      date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 11, minute: 30 },
-      preRequired: YesNo.YES,
-      postRequired: YesNo.YES,
+  it('should validate a court link which is too long', async () => {
+    const courtHearingLink = plainToInstance(CourtHearingLink, {
+      required: 'yes',
+      videoLinkUrl: 'a'.repeat(121),
     })
 
-    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
+    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
     expect(errors).toEqual(
       expect.arrayContaining([
-        { error: 'Select a room for the pre-court hearing', property: 'preLocation' },
-        { error: 'Select a room for the post-court hearing', property: 'postLocation' },
+        {
+          error: 'You must enter a court hearing link which has no more than 120 characters',
+          property: 'videoLinkUrl',
+        },
       ]),
     )
-  })
-
-  it('should pass missing pre and post meetings for probation bookings', async () => {
-    const dateAndTime = plainToInstance(DateAndTime, {
-      bookAVideoLinkJourney: { type: 'PROBATION' },
-      date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 11, minute: 30 },
-    })
-
-    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toEqual([])
   })
 })
