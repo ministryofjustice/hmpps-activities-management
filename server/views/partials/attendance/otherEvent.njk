@@ -1,4 +1,5 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "partials/showLocation.njk" import showLocation %}
 
 {% macro otherEvent(event) %}
   <div class="govuk-body govuk-!-margin-0">
@@ -21,7 +22,7 @@
       </div>
       {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
         <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.startTime }}{{ " to " + event.endTime if event.endTime }}</div>
-        <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.internalLocationUserDescription or event.internalLocationDescription }}</div>
+        <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ showLocation(event) }}</div>
       {% endif %}
   </div>
 {% endmacro %}
