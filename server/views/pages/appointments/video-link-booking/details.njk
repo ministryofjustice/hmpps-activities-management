@@ -170,12 +170,21 @@
                     },
                     {
                         key: {
-                            text: "Video Link URL"
+                            text: "Court hearing link"
                         },
                         value: {
-                            text: videoBooking.videoLinkUrl
-                        }
-                    } if videoBooking.videoLinkUrl,
+                            text: videoBooking.videoLinkUrl or "Not entered"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/court-hearing-link',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    } if videoBooking.bookingType == 'COURT',
                     {
                         key: {
                             text: "Extra information"

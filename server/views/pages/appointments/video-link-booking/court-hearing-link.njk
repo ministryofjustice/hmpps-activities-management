@@ -1,0 +1,76 @@
+{% extends "layout.njk" %}
+
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageId = 'court-hearing-link-page' %}
+{% set jsBackLink = true %}
+{% set pageHeading = "Do you know the link for this video link hearing?" %}
+{% block meta %}
+    {% if session.req.params.mode == 'create' %}
+        <meta name="autocompleteElements" content="agencyCode"/>
+    {% endif %}
+    <meta name="autocompleteElements" content="hearingTypeCode"/>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session) }}
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method='POST' {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="{{ 'Changing court hearing link' }}" {% endif %}>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {% set courtHearingLinkHtml %}
+                    {{ govukInput({
+                        name: "videoLinkUrl",
+                        id: "videoLinkUrl",
+                        label: {
+                            text: "Court hearing link"
+                        },
+                        value: formResponses.videoLinkUrl or session.bookAVideoLinkJourney.videoLinkUrl,
+                        errorMessage: validationErrors | findError("videoLinkUrl")
+                    }) }}
+                {% endset %}
+
+                {{ govukRadios({
+                    idPrefix: "required",
+                    name: "required",
+                    errorMessage: validationErrors | findError('required'),
+                    fieldset: {
+                        legend: {
+                            text: "Do you know the link for this video link hearing?",
+                            classes: "govuk-visually-hidden"
+                        }
+                    },
+                    items: [
+                        {
+                            value: 'yes',
+                            text: "Yes",
+                            checked: formResponses.required == 'yes' or session.bookAVideoLinkJourney.videoLinkUrl,
+                            conditional: {
+                                html: courtHearingLinkHtml
+                            }
+                        },
+                        {
+                            value: 'no',
+                            text: "No",
+                            checked: formResponses.required == 'no' or (not session.bookAVideoLinkJourney.videoLinkUrl and (session.req.params.mode == 'amend' or session.req.query.preserveHistory == 'true') and not formResponses)
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

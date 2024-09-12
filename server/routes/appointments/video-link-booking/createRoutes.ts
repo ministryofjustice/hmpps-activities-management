@@ -10,6 +10,7 @@ import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInform
 import CheckBookingRoutes from './handlers/checkBooking'
 import ConfirmationRoutes from './handlers/confirmation'
 import ScheduleRoutes from './handlers/schedule'
+import CourtHearingLinkRoutes, { CourtHearingLink } from './handlers/courtHearingLink'
 
 export default function CreateRoutes({ bookAVideoLinkService, prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -29,6 +30,7 @@ export default function CreateRoutes({ bookAVideoLinkService, prisonService, act
   const location = new LocationRoutes(bookAVideoLinkService)
   const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
   const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService)
+  const courtHearingLink = new CourtHearingLinkRoutes(bookAVideoLinkService)
   const extraInformation = new ExtraInformationRoutes(bookAVideoLinkService)
   const checkBooking = new CheckBookingRoutes(bookAVideoLinkService)
   const confirmation = new ConfirmationRoutes(bookAVideoLinkService)
@@ -43,6 +45,8 @@ export default function CreateRoutes({ bookAVideoLinkService, prisonService, act
   post('/date-and-time', dateAndTime.POST, DateAndTime)
   get('/schedule', schedule.GET)
   post('/schedule', schedule.POST)
+  get('/court-hearing-link', courtHearingLink.GET)
+  post('/court-hearing-link', courtHearingLink.POST, CourtHearingLink)
   get('/extra-information', extraInformation.GET)
   post('/extra-information', extraInformation.POST, ExtraInformation)
   get('/check-answers', checkBooking.GET)
