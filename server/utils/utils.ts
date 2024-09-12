@@ -405,7 +405,7 @@ export const getScheduleIdFromActivity = (activity: Activity) => activity.schedu
 
 export const getScheduleStartDateFromActivity = (activity: Activity) => activity.schedules[0].startDate
 
-export const getAllocationStartDateFromActivity = (activity: Activity, id: Number) =>
+export const getAllocationStartDateFromActivity = (activity: Activity, id: number) =>
   activity.schedules[0].allocations.filter(allocation => allocation.id === id)[0].startDate
 
 // Events should be sorted by time, then event name (summary)
