@@ -808,7 +808,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       const schedule = activitySchedule
       schedule.startDate = formatIsoDate(startOfYesterday())
-
+    
       when(activitiesService.getActivity)
         .calledWith(atLeast(2))
         .mockResolvedValue({
@@ -831,6 +831,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       const schedule = activitySchedule
       schedule.startDate = formatIsoDate(tomorrow)
+      schedule.allocations.filter(a => a.id === 2)[0].startDate = schedule.startDate
 
       when(activitiesService.getActivity)
         .calledWith(atLeast(3))
