@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { ValidateNested } from 'class-validator'
 import { plainToInstance, Transform } from 'class-transformer'
 import _ from 'lodash'
+import { parseISO } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import getApplicableDaysAndSlotsInRegime, {
   DaysAndSlotsInRegime,
@@ -18,6 +19,7 @@ import {
   transformActivitySlotsToDailySlots,
 } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { ServiceUser } from '../../../../@types/express'
+import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 
 export class SessionTimes {
   @Transform(({ value }) =>
@@ -71,6 +73,9 @@ export default class SessionTimesRoutes {
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
     const { activityId, slots, scheduleWeeks } = req.session.createJourney
 
+    const richStartDate = parseISO(req.session.createJourney.startDate)
+    const currentWeek = calcCurrentWeek(richStartDate, scheduleWeeks)
+
     const sessionSlots = await this.getDaysAndSlotsByWeek(
       regimeTimes,
       slots,
@@ -82,6 +87,7 @@ export default class SessionTimesRoutes {
 
     res.render(`pages/activities/create-an-activity/session-times`, {
       sessionSlots,
+      currentWeek,
     })
   }
 
