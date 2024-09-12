@@ -74,7 +74,7 @@ describe('bookAVideoLinkApiClient', () => {
       const response = { data: 'data' }
 
       fakeBookAVideoLinkApi
-        .get(`/prisons/MDI/locations`)
+        .get(`/prisons/MDI/locations?videoLinkOnly=false`)
         .matchHeader('authorization', `Bearer accessToken`)
         .reply(200, response)
 

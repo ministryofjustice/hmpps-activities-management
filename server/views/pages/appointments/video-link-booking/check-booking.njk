@@ -75,6 +75,24 @@
                                     }
                                 ]
                             }
+                        },
+                        {
+                            key: {
+                                text: "Court hearing link"
+                            },
+                            value: {
+                                text: session.bookAVideoLinkJourney.videoLinkUrl or "Not entered"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "court-hearing-link?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change court video link",
+                                        classes: "govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
                         }
                     ],
                     attributes: { 'data-qa': 'appointment-details' }

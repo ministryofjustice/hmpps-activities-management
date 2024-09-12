@@ -9,6 +9,7 @@ import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
 import ScheduleRoutes from './handlers/schedule'
+import CourtHearingLinkRoutes, { CourtHearingLink } from './handlers/courtHearingLink'
 
 export default function AmendRoutes({ bookAVideoLinkService, prisonService, activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -42,6 +43,7 @@ export default function AmendRoutes({ bookAVideoLinkService, prisonService, acti
   const location = new LocationRoutes(bookAVideoLinkService)
   const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
   const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService)
+  const courtHearingLink = new CourtHearingLinkRoutes(bookAVideoLinkService)
   const extraInformation = new ExtraInformationRoutes(bookAVideoLinkService)
 
   get('/hearing-details', hearingDetails.GET)
@@ -52,6 +54,8 @@ export default function AmendRoutes({ bookAVideoLinkService, prisonService, acti
   post('/date-and-time', dateAndTime.POST, DateAndTime)
   get('/schedule', schedule.GET)
   post('/schedule', schedule.POST)
+  get('/court-hearing-link', courtHearingLink.GET)
+  post('/court-hearing-link', courtHearingLink.POST, CourtHearingLink)
   get('/extra-information', extraInformation.GET)
   post('/extra-information', extraInformation.POST, ExtraInformation)
 

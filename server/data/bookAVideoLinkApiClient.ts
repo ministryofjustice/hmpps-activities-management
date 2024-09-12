@@ -30,7 +30,7 @@ export default class BookAVideoLinkApiClient extends AbstractHmppsRestClient {
   }
 
   public getAppointmentLocations(prisonCode: string, user: ServiceUser): Promise<Location[]> {
-    return this.get({ path: `/prisons/${prisonCode}/locations` }, user)
+    return this.get({ path: `/prisons/${prisonCode}/locations`, query: { videoLinkOnly: false } }, user)
   }
 
   public getAllCourts(user: ServiceUser): Promise<Court[]> {
