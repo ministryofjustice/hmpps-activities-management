@@ -1146,6 +1146,14 @@ describe('addNewEmptySlotsIfRequired', () => {
     const result = addNewEmptySlotsIfRequired(sessionSlots, newlySelectedSlots)
     expect(result).toEqual(sessionSlots)
   })
+
+  it('should return an empty array if there are no slots selected', () => {
+    const sessionSlots: SessionSlot[] = []
+    const newlySelectedSlots: Slots = undefined
+    const result = addNewEmptySlotsIfRequired(sessionSlots, newlySelectedSlots)
+    expect(result).toEqual(sessionSlots)
+  })
+
   it('should add empty slots if there are new ones present, with undefined times', () => {
     const sessionSlots = [{ dayOfWeek: 'MONDAY', timeSlot: TimeSlot.AM, start: '10:00', finish: '11:00' }]
     const newlySelectedSlots = {

@@ -475,6 +475,9 @@ export function filterNotRequiredSlots(
 }
 
 export function addNewEmptySlotsIfRequired(sessionSlots: SessionSlot[], newlySelectedSlots: Slots): SessionSlot[] {
+  if (newlySelectedSlots === undefined) {
+    return []
+  }
   // Make the day format match
   const days = newlySelectedSlots.days.map(day => day.toUpperCase())
 

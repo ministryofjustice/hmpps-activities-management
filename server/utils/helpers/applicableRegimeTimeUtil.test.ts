@@ -1,5 +1,6 @@
 import getApplicableDaysAndSlotsInRegime from './applicableRegimeTimeUtil'
 import { PrisonRegime } from '../../@types/activitiesAPI/types'
+import { Slots } from '../../routes/activities/create-an-activity/journey'
 
 const prisonRegime: PrisonRegime[] = [
   {
@@ -364,5 +365,11 @@ describe('Returns only the days and times that are required for the activity', (
         edFinish: '19:15',
       },
     ])
+  })
+
+  it('No days selected returns empty array', () => {
+    const activityDaysAndSlots: Slots = undefined
+    const result = getApplicableDaysAndSlotsInRegime(prisonRegime2, activityDaysAndSlots)
+    expect(result).toEqual([])
   })
 })
