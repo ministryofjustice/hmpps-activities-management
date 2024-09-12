@@ -16,6 +16,10 @@ export default function getApplicableDaysAndSlotsInRegime(
   regimeTimes: PrisonRegime[],
   daysAndSlots: Slots,
 ): DaysAndSlotsInRegime[] {
+  if (daysAndSlots === undefined) {
+    return []
+  }
+
   return daysAndSlots.days
     .map((day: string) => {
       const dayUpper: string = day.toUpperCase()
