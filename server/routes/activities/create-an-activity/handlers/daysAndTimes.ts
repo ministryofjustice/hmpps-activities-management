@@ -9,7 +9,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
-import { CreateAnActivityJourney } from '../journey'
+import { CreateAnActivityJourney, Slots } from '../journey'
 import config from '../../../../config'
 
 export class DaysAndTimes {
@@ -69,7 +69,7 @@ export default class DaysAndTimesRoutes {
   }
 
   POST = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { scheduleWeeks, customSlots } = req.session.createJourney
+    const { scheduleWeeks } = req.session.createJourney
     const { weekNumber } = req.params
     const selectedDays = req.body.days
     const { preserveHistory, fromScheduleFrequency } = req.query
@@ -82,7 +82,7 @@ export default class DaysAndTimesRoutes {
     const weekNumberInt = +weekNumber
 
     if (!selectedDays) {
-      const updatedSlots = { ...slots }
+      const updatedSlots: { [p: string]: Slots } = { ...slots }
       updatedSlots[weekNumberInt] = { days: [] }
 
       const hasDaysSelected = Object.values(updatedSlots).find(slot => slot?.days?.length > 0)
@@ -91,33 +91,14 @@ export default class DaysAndTimesRoutes {
       }
       req.session.createJourney.slots = updatedSlots
     } else {
-      const weeklySlots = this.getSessionSlots(req, weekNumberInt)
-
-      weeklySlots.days = convertToArray(selectedDays)
-
-      const sanitizeTimeSlots = (timeSlots: string | string[]): string[] => {
-        if (typeof timeSlots === 'string') return [timeSlots]
-        if (Array.isArray(timeSlots)) return [...timeSlots]
-        return []
-      }
-
-      daysOfWeek.forEach(day => {
-        if (weeklySlots.days.find(selectedDay => selectedDay === day.toLowerCase())) {
-          weeklySlots[`timeSlots${day}`] = sanitizeTimeSlots(req.body[`timeSlots${day}`])
-        } else {
-          weeklySlots[`timeSlots${day}`] = []
-        }
-      })
+      this.updateWeeklySlots(req, weekNumber, selectedDays)
     }
 
     if (this.findSlotErrors(req.session.createJourney, weekNumberInt, res)) {
       return res.validationFailed()
     }
 
-    if (
-      scheduleWeeks === weekNumberInt ||
-      (config.twoWeeklyCustomStartEndTimesEnabled === true && customSlots !== undefined)
-    ) {
+    if (scheduleWeeks === weekNumberInt) {
       // If create journey, redirect to next journey page
       if (!preserveHistory) {
         if (scheduleWeeks !== 2 || config.twoWeeklyCustomStartEndTimesEnabled === true) {
@@ -193,7 +174,27 @@ export default class DaysAndTimesRoutes {
     res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
   }
 
-  private getSessionSlots = (req: Request, weekNumber: number) => {
+  private updateWeeklySlots(req: Request, weekNumber: string, selectedDays: string | string[]) {
+    const weeklySlots: Slots = this.getSessionSlots(req, +weekNumber)
+
+    weeklySlots.days = convertToArray(selectedDays)
+
+    const sanitizeTimeSlots = (timeSlots: string | string[]): string[] => {
+      if (typeof timeSlots === 'string') return [timeSlots]
+      if (Array.isArray(timeSlots)) return [...timeSlots]
+      return []
+    }
+
+    daysOfWeek.forEach(day => {
+      if (weeklySlots.days.find(selectedDay => selectedDay === day.toLowerCase())) {
+        weeklySlots[`timeSlots${day}`] = sanitizeTimeSlots(req.body[`timeSlots${day}`])
+      } else {
+        weeklySlots[`timeSlots${day}`] = []
+      }
+    })
+  }
+
+  private getSessionSlots = (req: Request, weekNumber: number): Slots => {
     req.session.createJourney.slots ??= {}
     req.session.createJourney.slots[weekNumber] ??= {
       days: [],
