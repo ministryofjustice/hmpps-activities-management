@@ -2,21 +2,26 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { subDays } from 'date-fns'
 import atLeast from '../../../../../jest.setup'
 import SessionTimesRoutes, { SessionTimes } from './sessionTimes'
 import ActivitiesService from '../../../../services/activitiesService'
 import { Activity, PrisonRegime } from '../../../../@types/activitiesAPI/types'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import TimeSlot from '../../../../enum/timeSlot'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty, toDateString } from '../../../../utils/utils'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { DaysAndSlotsInRegime } from '../../../../utils/helpers/applicableRegimeTimeUtil'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_bi_weekly_1.json'
 import { DayOfWeekEnum, SessionSlot } from '../../../../utils/helpers/activityTimeSlotMappers'
+import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 
 jest.mock('../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+
+const eightDaysAgo = subDays(new Date(), 8)
+const startDate = toDateString(eightDaysAgo)
 
 const prisonRegime: PrisonRegime[] = [
   {
@@ -130,6 +135,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
             },
           },
           scheduleWeeks: 1,
+          startDate,
         },
       },
       params: {},
@@ -142,6 +148,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
+      const currentWeek = calcCurrentWeek(eightDaysAgo, 1)
       const expectedSessionSlots: Map<string, DaysAndSlotsInRegime[] | SessionSlot[]> = new Map<
         string,
         DaysAndSlotsInRegime[] | SessionSlot[]
@@ -170,6 +177,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/session-times', {
         sessionSlots: expectedSessionSlots,
+        currentWeek,
       })
     })
 
@@ -195,6 +203,8 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
         id: 1,
         minimumEducationLevel: [],
       } as unknown as Activity
+
+      const currentWeek = calcCurrentWeek(eightDaysAgo, 2)
 
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
@@ -324,6 +334,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/session-times', {
         sessionSlots: expectedSessionSlots,
+        currentWeek,
       })
     })
   })
