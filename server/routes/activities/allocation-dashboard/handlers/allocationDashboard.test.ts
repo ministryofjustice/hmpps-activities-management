@@ -821,7 +821,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.DEALLOCATE(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        expect.stringContaining('/activities/allocations/remove/end-date?allocationIds=G4793VF,A9477DY&scheduleId=1'),
+        expect.stringContaining('/activities/allocations/remove/end-date?allocationIds=1&scheduleId=1'),
       )
     })
 
