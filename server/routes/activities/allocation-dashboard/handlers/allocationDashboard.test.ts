@@ -821,12 +821,12 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.DEALLOCATE(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        expect.stringContaining('/activities/allocations/remove/end-date?allocationIds=1&scheduleId=1'),
+        expect.stringContaining('/activities/allocations/remove/end-date?allocationIds=G4793VF,A9477DY&scheduleId=1'),
       )
     })
 
     it('should set session and redirect to de-allocation end decision page when activity is yet to start', async () => {
-      req.body.selectedAllocations = ['G4793VF', 'A9477DY']
+      req.body.selectedAllocations = ['1']
       req.params.activityId = '3'
 
       const schedule = activitySchedule
