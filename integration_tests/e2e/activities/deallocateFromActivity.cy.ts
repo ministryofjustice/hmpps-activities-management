@@ -83,7 +83,7 @@ context('Deallocation from activity', () => {
   it('should click through deallocate from activity journey where active is yet to start', () => {
     const getActivity2 = { ...getActivity }
     getActivity2.schedules[0].startDate = formatIsoDate(addDays(new Date(), 1))
-    getActivity2.schedules[0].allocations.forEach(a => a.startDate = getActivity2.schedules[0].startDate)
+    getActivity2.schedules[0].allocations.forEach(a => (a.startDate = getActivity2.schedules[0].startDate))
 
     cy.stubEndpoint('GET', '/activities/2/filtered', getActivity2)
 
