@@ -7,7 +7,7 @@ import ActivityService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { Activity, ActivityPay, Allocation, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
-import { getScheduleIdFromActivity, getScheduleStartDateFromActivity, parseDate } from '../../../../utils/utils'
+import { getAllocationStartDateFromActivity, getScheduleIdFromActivity, parseDate } from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import { Slots } from '../../create-an-activity/journey'
@@ -154,7 +154,12 @@ export default class AllocationDashboardRoutes {
     const { user } = res.locals
     const { selectedAllocations } = req.body
     const activity = await this.activitiesService.getActivity(+activityId, user)
-    if (parseIsoDate(getScheduleStartDateFromActivity(activity)) > startOfToday()) {
+    const allocationIds = selectedAllocations.toString().split(',')
+
+    if (
+      allocationIds.length === 1 &&
+      parseIsoDate(getAllocationStartDateFromActivity(activity, +allocationIds[0])) > startOfToday()
+    ) {
       res.redirect(
         `/activities/allocations/remove/end-decision?allocationIds=${selectedAllocations}&scheduleId=${getScheduleIdFromActivity(
           activity,
