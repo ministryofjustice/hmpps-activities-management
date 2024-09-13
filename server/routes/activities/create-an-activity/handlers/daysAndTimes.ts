@@ -9,7 +9,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
-import { CreateAnActivityJourney, Slots } from '../journey'
+import { CreateAnActivityJourney, ScheduleFrequency, Slots } from '../journey'
 import config from '../../../../config'
 
 export class DaysAndTimes {
@@ -141,6 +141,14 @@ export default class DaysAndTimesRoutes {
           return res.redirect('../session-times')
         }
         return this.editSlots(req, res)
+      }
+      // if 2 weekly, create, change then redirect to the session-times-option
+      if (
+        scheduleWeeks === ScheduleFrequency.BI_WEEKLY &&
+        req.params.mode === 'create' &&
+        config.twoWeeklyCustomStartEndTimesEnabled === true
+      ) {
+        return res.redirect(`../session-times-option/${weekNumber}?preserveHistory=true`)
       }
       return res.redirect('../check-answers')
     }
