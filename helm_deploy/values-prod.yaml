@@ -21,6 +21,7 @@ generic-service:
     MANAGE_USERS_API_URL: "https://manage-users-api.hmpps.service.justice.gov.uk"
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-prod.hmpps-digital-prison-reporting-mi-prod.svc.cluster.local"
     CUSTOM_START_END_TIMES_ENABLED: "true"
+    TWO_WEEKLY_CUSTOM_START_END_TIMES_ENABLED: "true"
 
   allowlist:
     groups:
