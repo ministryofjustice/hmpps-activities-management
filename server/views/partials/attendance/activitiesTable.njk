@@ -1,11 +1,12 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "components/sticky-select.njk" import stickySelect %}
+{% from "partials/showLocation.njk" import showLocation %}
 
 {% macro activitiesTable(activities, activityDate, filterParams, now) %}
     {% set rows = [] %}
 
     {% for activity in activities %}
-        {% set activityLocation = ("In cell" if activity.inCell) or ("On wing" if activity.onWing) or ("Off wing" if activity.offWing) or activity.internalLocation.description | capitalize %}
+        {% set activityLocation = showLocation(activity, makeCapitals = true) %}
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + activity.summary + ' ' + (activity.session),
             value: activity.scheduledInstanceId,
