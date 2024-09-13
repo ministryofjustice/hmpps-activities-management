@@ -826,11 +826,12 @@ describe('Route Handlers - Allocation dashboard', () => {
     })
 
     it('should set session and redirect to de-allocation end decision page when activity is yet to start', async () => {
-      req.body.selectedAllocations = ['G4793VF', 'A9477DY']
+      req.body.selectedAllocations = ['1']
       req.params.activityId = '3'
 
       const schedule = activitySchedule
       schedule.startDate = formatIsoDate(tomorrow)
+      schedule.allocations.filter(a => a.id === 1)[0].startDate = schedule.startDate
 
       when(activitiesService.getActivity)
         .calledWith(atLeast(3))
@@ -844,9 +845,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       await handler.DEALLOCATE(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        expect.stringContaining(
-          '/activities/allocations/remove/end-decision?allocationIds=G4793VF,A9477DY&scheduleId=1',
-        ),
+        expect.stringContaining('/activities/allocations/remove/end-decision?allocationIds=1&scheduleId=1'),
       )
     })
   })

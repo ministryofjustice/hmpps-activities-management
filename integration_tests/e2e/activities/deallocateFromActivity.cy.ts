@@ -83,6 +83,10 @@ context('Deallocation from activity', () => {
   it('should click through deallocate from activity journey where active is yet to start', () => {
     const getActivity2 = { ...getActivity }
     getActivity2.schedules[0].startDate = formatIsoDate(addDays(new Date(), 1))
+    for (let i = 0; i < getActivity2.schedules[0].allocations.length; i += 1) {
+      getActivity2.schedules[0].allocations[i].startDate = getActivity2.schedules[0].startDate
+    }
+
     cy.stubEndpoint('GET', '/activities/2/filtered', getActivity2)
 
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -99,10 +103,15 @@ context('Deallocation from activity', () => {
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
+    cy.stubEndpoint(
+      'POST',
+      '/prisoner-search/prisoner-numbers',
+      getInmateDetails.filter(f => f.prisonerNumber === 'G4793VF'),
+    )
+
     const allocationDashboardPage = Page.verifyOnPage(AllocationDashboard)
     allocationDashboardPage.allocatedPeopleRows().should('have.length', 2)
     allocationDashboardPage.selectAllocatedPrisonerByName('Bloggs, Jo')
-    allocationDashboardPage.selectAllocatedPrisonerByName('Body, No')
     allocationDashboardPage.deallocateSelectedPrisoners()
 
     const deallocationEndDecisionPage = Page.verifyOnPage(EndDecisionPage)
@@ -110,7 +119,7 @@ context('Deallocation from activity', () => {
     deallocationEndDecisionPage.continue()
 
     const deallocationReasonPage = Page.verifyOnPage(DeallocationReasonPage)
-    deallocationReasonPage.selectDeallocationReason('Withdrawn by staff')
+    deallocationReasonPage.selectDeallocationReason('Health')
     deallocationReasonPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)

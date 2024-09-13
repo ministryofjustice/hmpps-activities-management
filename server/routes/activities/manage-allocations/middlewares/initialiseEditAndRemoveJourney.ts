@@ -16,7 +16,6 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
     if ((mode !== 'remove' && mode !== 'edit' && mode !== 'exclude') || req.session.allocateJourney) return next()
 
     if (!scheduleId && !allocationId) return res.redirect('back')
-
     const allocations = allocationId
       ? [await activitiesService.getAllocation(+allocationId, user)]
       : await activitiesService
