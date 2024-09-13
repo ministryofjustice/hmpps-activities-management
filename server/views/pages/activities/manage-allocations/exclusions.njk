@@ -35,7 +35,7 @@
                 <div class="govuk-grid-row">
                 {% for week in weeks %}
                     <div class="govuk-grid-column-one-half">
-                    {% if weeks | length %}
+                    {% if weeks.length > 1 %}
                         <h2 class="govuk-heading-l govuk-!-margin-bottom-6">
                             Week {{ week.weekNumber }}
                             {{ govukTag({
