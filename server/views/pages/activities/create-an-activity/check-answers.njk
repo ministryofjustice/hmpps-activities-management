@@ -3,7 +3,8 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
-{% from "../../../partials/activities/days-and-custom-times.njk" import daysAndCustomTimes %}
+{% from "partials/activities/days-and-custom-times.njk" import daysAndCustomTimes %}
+{% from "partials/showLocation.njk" import showLocation %}
 
 {% set pageTitle = applicationName + " - Create an activity - Check answers" %}
 {% set pageId = 'check-answers-page' %}
@@ -257,7 +258,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: locationText(session.createJourney)
+                            text: showLocation(session.createJourney)
                         },
                         actions: {
                             items: [
@@ -338,14 +339,3 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro locationText(journey) %}
-    {% if journey.inCell %}
-        {{ "In cell" }}
-    {% elseif journey.onWing %}
-        {{ "On wing" }}
-    {% elseif journey.offWing %}
-        {{ "Off wing" }}
-    {% else %}
-        {{ journey.location.name }}
-    {% endif %}
-{% endmacro %}

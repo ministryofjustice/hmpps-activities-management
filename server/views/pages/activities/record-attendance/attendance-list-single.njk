@@ -14,6 +14,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/formatSessions.njk" import formatSessions %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
+{% from "partials/showLocation.njk" import showLocation %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'attendance-list-page' %}
@@ -49,13 +50,7 @@
                     {{ instance.startTime }} to {{ instance.endTime }} ({{ instance.timeSlot }})
                 </span>
                 <span class="govuk-caption-l">{{ activityDate }}</span>
-                <span class="govuk-caption-l">
-                    {{ 
-                        ("In cell" if instance.activitySchedule.activity.inCell) or 
-                        ("On wing" if instance.activitySchedule.activity.onWing) or 
-                        ("Off wing" if instance.activitySchedule.activity.offWing) or 
-                        instance.activitySchedule.activity.location | capitalize }}
-                </span>
+                <span class="govuk-caption-l">{{ showLocation(instance.activitySchedule.activity, instance.activitySchedule.internalLocation.description, true) }} </span>
             </h1>
 
             <div class="govuk-button-group govuk-!-display-none-print">
