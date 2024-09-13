@@ -3,9 +3,9 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
-
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/showLocation.njk" import showLocation %}
 
 {% set pageTitle = appointmentJourneyTitle("Check and confirm set" if session.appointmentJourney.type == AppointmentType.SET else "Check and confirm appointment details", session.appointmentJourney) %}
 {% set pageId = 'appointment-check-answers-page' %}
@@ -68,14 +68,6 @@
     } if session.appointmentJourney.organiserCode
 ] %}
 
-{% macro locationText(journey) %}
-    {% if journey.inCell %}
-        {{ "In cell" }}
-    {% else %}
-        {{ journey.location.description }}
-    {% endif %}
-{% endmacro %}
-
 {% set schedulingInformationRows = [] %}
 {% set schedulingInformationRows = (schedulingInformationRows.push(
     {
@@ -83,7 +75,7 @@
             text: "Location"
         },
         value: {
-            text: locationText(session.appointmentJourney)
+            text: showLocation(session.appointmentJourney, session.appointmentJourney.location.description)
         },
         actions: {
             items: [

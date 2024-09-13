@@ -6,7 +6,7 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% from "partials/service-user-name.njk" import serviceUserName %}
-{% from "partials/appointments/location-text.njk" import locationText %}
+{% from "partials/showLocation.njk" import showLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
@@ -79,7 +79,7 @@
                 <div class="govuk-grid-column-two-thirds">
                     <h1 class="govuk-heading-l govuk-!-margin-0">{{ appointmentSet.appointmentName }}</h1>
                     <span class="govuk-caption-l">{{ appointmentSet.startDate | toDate | formatDate }}</span>
-                    <span class="govuk-caption-l">{{ locationText(appointmentSet) }}</span>
+                    <span class="govuk-caption-l">{{ showLocation(appointmentSet) }}</span>
                     <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ appointmentSet.appointments | length + (" attendee" if appointmentSet.appointments.length == 1 else " attendees") }}</h2>
                 </div>
             </div>
