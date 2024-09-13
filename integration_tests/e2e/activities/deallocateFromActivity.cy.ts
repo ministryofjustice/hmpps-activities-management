@@ -103,6 +103,12 @@ context('Deallocation from activity', () => {
     activitiesPage.activityRows().should('have.length', 3)
     activitiesPage.selectActivityWithName('English level 1')
 
+    cy.stubEndpoint(
+      'POST',
+      '/prisoner-search/prisoner-numbers',
+      getInmateDetails.filter(f => f.prisonerNumber === 'G4793VF'),
+    )
+
     const allocationDashboardPage = Page.verifyOnPage(AllocationDashboard)
     allocationDashboardPage.allocatedPeopleRows().should('have.length', 2)
     allocationDashboardPage.selectAllocatedPrisonerByName('Bloggs, Jo')
@@ -113,7 +119,7 @@ context('Deallocation from activity', () => {
     deallocationEndDecisionPage.continue()
 
     const deallocationReasonPage = Page.verifyOnPage(DeallocationReasonPage)
-    deallocationReasonPage.selectDeallocationReason('Withdrawn by staff')
+    deallocationReasonPage.selectDeallocationReason('Health')
     deallocationReasonPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
