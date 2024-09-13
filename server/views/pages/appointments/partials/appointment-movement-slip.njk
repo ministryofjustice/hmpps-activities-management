@@ -1,4 +1,4 @@
-{% from "partials/appointments/location-text.njk" import locationText %}
+{% from "partials/showLocation.njk" import showLocation %}
 
 {% macro appointmentMovementSlip(appointment, caseLoadDescription, printedAt) %}
     {% macro labelAndValue(label, value, rowClasses, valueClasses) %}
@@ -33,7 +33,7 @@
                     '<li>' + appointmentTime(appointment) + '</li>' +
                     '<li>' + (appointment.startDate | toDate | formatDate) + '</li>' +
                 '</ul>') }}
-                {{ labelAndValue('Location', locationText(appointment)) }}
+                {{ labelAndValue('Location', showLocation(appointment)) }}
                 {{ labelAndValue('Extra information', appointment.extraInformation | escape, 'movement-slip__row--no-border', 'preserve-line-breaks') if appointment.extraInformation }}
             </dl>
 

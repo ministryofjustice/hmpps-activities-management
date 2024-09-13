@@ -1,5 +1,6 @@
 {% macro showLocation(event, internalLocation, makeCapitals = false) %}
-    {%  set location = '' %}
+    {% set location = '' %}
+
     {% if event.inCell %}
         {% set location = "In cell" %}
     {% elseif event.onWing %}
@@ -19,9 +20,11 @@
         %}
     {% endif %}
 
-    {% if makeCapitals %}
-        {{ location | trim | capitalize }}
-    {% else %}
-        {{ location | trim }}
+    {% if location %}
+        {% if makeCapitals %}
+            {{ location | trim | capitalize }}
+        {% else %}
+            {{ location | trim }}
+        {% endif %}
     {% endif %}
 {% endmacro %}
