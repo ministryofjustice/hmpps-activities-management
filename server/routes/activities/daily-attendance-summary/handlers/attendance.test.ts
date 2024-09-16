@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { parse } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AllAttendance } from '../../../../@types/activitiesAPI/types'
+import { Activity, AllAttendance } from '../../../../@types/activitiesAPI/types'
 import DailyAttendanceRoutes from './attendance'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -56,6 +56,8 @@ describe('Route Handlers - Daily Attendance List', () => {
 
   describe('GET', () => {
     let mockApiResponse: AllAttendance[]
+    let mockActivityApiResponse: Activity
+    let mockActivityApiResponse2: Activity
     let mockPrisonApiResponse: Prisoner[]
 
     beforeEach(() => {
@@ -107,6 +109,85 @@ describe('Route Handlers - Daily Attendance List', () => {
         },
       ] as AllAttendance[]
 
+      mockActivityApiResponse = {
+        id: 1,
+        schedules: [
+          {
+            id: 843,
+            description: 'Test activity',
+            capacity: 10,
+            scheduleWeeks: 1,
+            slots: [
+              {
+                id: 1575,
+                timeSlot: 'AM',
+                weekNumber: 1,
+                startTime: '09:15',
+                endTime: '11:30',
+                daysOfWeek: ['Mon'],
+                mondayFlag: true,
+                tuesdayFlag: false,
+                wednesdayFlag: false,
+                thursdayFlag: false,
+                fridayFlag: false,
+                saturdayFlag: false,
+                sundayFlag: false,
+              },
+            ],
+            startDate: '2024-08-26',
+            runsOnBankHoliday: false,
+            usePrisonRegimeTime: false,
+          },
+        ],
+      } as Activity
+
+      mockActivityApiResponse2 = {
+        id: 2,
+        schedules: [
+          {
+            id: 843,
+            description: 'Test activity',
+            capacity: 10,
+            scheduleWeeks: 1,
+            slots: [
+              {
+                id: 1575,
+                timeSlot: 'AM',
+                weekNumber: 1,
+                startTime: '09:00',
+                endTime: '12:30',
+                daysOfWeek: ['Mon'],
+                mondayFlag: true,
+                tuesdayFlag: false,
+                wednesdayFlag: false,
+                thursdayFlag: false,
+                fridayFlag: false,
+                saturdayFlag: false,
+                sundayFlag: false,
+              },
+              {
+                id: 1576,
+                timeSlot: 'ED',
+                weekNumber: 1,
+                startTime: '18:15',
+                endTime: '21:45',
+                daysOfWeek: ['Mon'],
+                mondayFlag: true,
+                tuesdayFlag: false,
+                wednesdayFlag: false,
+                thursdayFlag: false,
+                fridayFlag: false,
+                saturdayFlag: false,
+                sundayFlag: false,
+              },
+            ],
+            startDate: '2024-08-26',
+            runsOnBankHoliday: false,
+            usePrisonRegimeTime: false,
+          },
+        ],
+      } as Activity
+
       mockPrisonApiResponse = [
         {
           prisonerNumber: 'ABC123',
@@ -148,6 +229,9 @@ describe('Route Handlers - Daily Attendance List', () => {
         .calledWith(date, res.locals.user, undefined)
         .mockResolvedValue(mockApiResponse)
 
+      when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(mockActivityApiResponse)
+      when(activitiesService.getActivity).calledWith(2, res.locals.user).mockResolvedValue(mockActivityApiResponse2)
+
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC123', 'ABC321'], res.locals.user)
         .mockResolvedValue(mockPrisonApiResponse)
@@ -179,6 +263,8 @@ describe('Route Handlers - Daily Attendance List', () => {
               attendanceRequired: true,
               eventTier: EventTier.FOUNDATION,
             },
+            activityStartTime: '09:15',
+            activityEndTime: '11:30',
           },
           {
             name: 'Alan Key',
@@ -199,6 +285,8 @@ describe('Route Handlers - Daily Attendance List', () => {
               attendanceRequired: true,
               eventTier: EventTier.FOUNDATION,
             },
+            activityStartTime: '09:00',
+            activityEndTime: '12:30',
           },
         ],
       })
@@ -223,6 +311,8 @@ describe('Route Handlers - Daily Attendance List', () => {
         .calledWith(date, res.locals.user, undefined)
         .mockResolvedValue(mockApiResponse)
 
+      when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(mockActivityApiResponse)
+
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC123'], res.locals.user)
         .mockResolvedValue(mockPrisonApiResponse)
@@ -239,6 +329,8 @@ describe('Route Handlers - Daily Attendance List', () => {
             name: 'Joe Bloggs',
             prisonerNumber: 'ABC123',
             location: 'MDI-1-001',
+            activityStartTime: '09:15',
+            activityEndTime: '11:30',
             attendance: {
               activityId: 1,
               activitySummary: 'Maths Level 1',
@@ -275,6 +367,8 @@ describe('Route Handlers - Daily Attendance List', () => {
         .calledWith(date, res.locals.user, undefined)
         .mockResolvedValue(mockApiResponse)
 
+      when(activitiesService.getActivity).calledWith(2, res.locals.user).mockResolvedValue(mockActivityApiResponse2)
+
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ZXY123'], res.locals.user)
         .mockResolvedValue([
@@ -299,6 +393,8 @@ describe('Route Handlers - Daily Attendance List', () => {
             name: 'Joe Bloggs',
             prisonerNumber: 'ZXY123',
             location: 'MDI-1-001',
+            activityEndTime: '12:30',
+            activityStartTime: '09:00',
             attendance: {
               activityId: 2,
               activitySummary: 'Woodworking',
@@ -328,6 +424,8 @@ describe('Route Handlers - Daily Attendance List', () => {
         .calledWith(date, res.locals.user, undefined)
         .mockResolvedValue(mockApiResponse)
 
+      when(activitiesService.getActivity).calledWith(2, res.locals.user).mockResolvedValue(mockActivityApiResponse2)
+
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC321'], res.locals.user)
         .mockResolvedValue(mockPrisonApiResponse)
@@ -355,6 +453,8 @@ describe('Route Handlers - Daily Attendance List', () => {
             name: 'Alan Key',
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
+            activityEndTime: '12:30',
+            activityStartTime: '09:00',
             attendance: {
               activityId: 2,
               activitySummary: 'Woodworking',
@@ -432,6 +532,8 @@ describe('Route Handlers - Daily Attendance List', () => {
         .calledWith(date, res.locals.user, undefined)
         .mockResolvedValue(mockApiResponse2)
 
+      when(activitiesService.getActivity).calledWith(2, res.locals.user).mockResolvedValue(mockActivityApiResponse2)
+
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC321'], res.locals.user)
         .mockResolvedValue(mockPrisonApiResponse)
@@ -459,6 +561,8 @@ describe('Route Handlers - Daily Attendance List', () => {
             name: 'Alan Key',
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
+            activityStartTime: '09:00',
+            activityEndTime: '12:30',
             attendance: {
               activityId: 2,
               activitySummary: 'Woodworking',
@@ -520,6 +624,8 @@ describe('Route Handlers - Daily Attendance List', () => {
         .calledWith(date, res.locals.user, undefined)
         .mockResolvedValue(mockApiResponse2)
 
+      when(activitiesService.getActivity).calledWith(2, res.locals.user).mockResolvedValue(mockActivityApiResponse2)
+
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC321'], res.locals.user)
         .mockResolvedValue(mockPrisonApiResponse)
@@ -547,6 +653,8 @@ describe('Route Handlers - Daily Attendance List', () => {
             name: 'Alan Key',
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
+            activityStartTime: '09:00',
+            activityEndTime: '12:30',
             attendance: {
               attendanceId: 3,
               prisonCode: 'MDI',

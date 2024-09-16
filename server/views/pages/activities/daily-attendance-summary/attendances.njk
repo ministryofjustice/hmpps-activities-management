@@ -186,6 +186,12 @@
         {% set attendanceRows = [] %}
         {% for attendee in attendees %}
             {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
+
+                {% set sessionHtml = '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list?mode=standalone" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>' %}
+                {% if status == 'Absences' %}
+                    {% set sessionHtml = sessionHtml + '<p>' + (attendee.activityStartTime) + ' to ' + (attendee.activityEndTime) + '</p>' %}
+                {% endif %}
+
                 {% set attendanceRows = (attendanceRows.push([
                 {
                     attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name | prisonerNameForSorting },
@@ -204,7 +210,7 @@
                 },
                 {
                     attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.attendance.activitySummary },
-                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list?mode=standalone" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>',
+                    html: sessionHtml,
                     classes: 'govuk-table__cell'
                 },
                 {
@@ -246,7 +252,8 @@
         {{ govukTable({
         attributes: {
             'data-module': 'moj-sortable-table',
-            id: 'attendee-list-table'
+            id: 'attendee-list-table',
+            'data-qa': 'attendance-table'
         },
         classes: "alternating-row-shading fixed-layout-table sticky-header",
         captionClasses: "govuk-visually-hidden",
