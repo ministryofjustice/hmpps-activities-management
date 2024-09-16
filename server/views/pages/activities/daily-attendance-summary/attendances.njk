@@ -188,12 +188,12 @@
             {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
                 {% set activityNameHtml = '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list?mode=standalone" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>' %}
                 {% if status == 'Absences' %}
-                    {% set activityNameHtml = activityNameHtml + '<p>' + (attendee.activityStartTime) + ' to ' + (attendee.activityEndTime) + '</p>' %}
+                    {% set activityNameHtml = activityNameHtml + '<p>' + (attendee.attendance.startTime) + ' to ' + (attendee.attendance.endTime) + '</p>' %}
                 {% endif %}
 
                 {% set sessionNameHtml = attendee.attendance.timeSlot %}
                 {% if status == 'Attended' and (tier == EventTier.TIER_1 or tier == EventTier.TIER_2) %}
-                    {% set sessionNameHtml = attendee.attendance.timeSlot + '<br>' + (attendee.activityStartTime) + ' to ' + (attendee.activityEndTime)  %}
+                    {% set sessionNameHtml = attendee.attendance.timeSlot + '<br>' + (attendee.attendance.startTime) + ' to ' + (attendee.attendance.endTime)  %}
                 {% endif %}
 
                 {% set attendanceRows = (attendanceRows.push([
