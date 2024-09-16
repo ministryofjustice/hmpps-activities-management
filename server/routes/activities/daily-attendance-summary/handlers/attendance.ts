@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
-import { getDayName, toDate } from '../../../../utils/utils'
+import { format } from 'date-fns/format'
+import { toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
@@ -61,7 +62,7 @@ export default class DailyAttendanceRoutes {
     const inmates = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 
     const enhancedAttendanceData = await this.enhanceAttendanceInfo(attendancesMatchingFilter, user)
-    const chosenDay = getDayName(date as string)
+    const chosenDay = format(new Date(date as string), 'EEEE')
     const attendees = attendancesMatchingFilter
       .map(a => ({
         inmate: inmates.find(i => i.prisonerNumber === a.prisonerNumber),

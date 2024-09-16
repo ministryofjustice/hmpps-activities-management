@@ -11,10 +11,9 @@ import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceD
 import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
 import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
-import { getDayName } from '../../../../server/utils/utils'
 
 const today = format(startOfToday(), 'yyyy-MM-dd')
-const day = getDayName(today).slice(0, 3)
+const day = format(new Date(today), 'EEEE').slice(0, 3)
 
 const inmateDetails = [
   {

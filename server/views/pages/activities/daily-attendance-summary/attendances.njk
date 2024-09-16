@@ -186,10 +186,14 @@
         {% set attendanceRows = [] %}
         {% for attendee in attendees %}
             {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
-
-                {% set sessionHtml = '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list?mode=standalone" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>' %}
+                {% set activityNameHtml = '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list?mode=standalone" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>' %}
                 {% if status == 'Absences' %}
-                    {% set sessionHtml = sessionHtml + '<p>' + (attendee.activityStartTime) + ' to ' + (attendee.activityEndTime) + '</p>' %}
+                    {% set activityNameHtml = activityNameHtml + '<p>' + (attendee.activityStartTime) + ' to ' + (attendee.activityEndTime) + '</p>' %}
+                {% endif %}
+
+                {% set sessionNameHtml = attendee.attendance.timeSlot %}
+                {% if status == 'Attended' and (tier == EventTier.TIER_1 or tier == EventTier.TIER_2) %}
+                    {% set sessionNameHtml = attendee.attendance.timeSlot + '<br>' + (attendee.activityStartTime) + ' to ' + (attendee.activityEndTime)  %}
                 {% endif %}
 
                 {% set attendanceRows = (attendanceRows.push([
@@ -210,12 +214,12 @@
                 },
                 {
                     attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.attendance.activitySummary },
-                    html: sessionHtml,
+                    html: activityNameHtml,
                     classes: 'govuk-table__cell'
                 },
                 {
                     attributes: { id: 'session-' + loop.index, "data-sort-value": attendee.attendance.timeSlot },
-                    text: attendee.attendance.timeSlot,
+                    html: sessionNameHtml,
                     classes: 'govuk-table__cell'
                 } if (status == "NotAttended" or status == "Attended") and tab == "day-tab",
                 {
