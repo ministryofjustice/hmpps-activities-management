@@ -23,6 +23,7 @@ import {
   toFixed,
   asString,
   getSplitTime,
+  getDayName,
 } from './utils'
 import prisoners from './fixtures/prisoners-1.json'
 import { Attendance } from '../@types/activitiesAPI/types'
@@ -381,5 +382,18 @@ describe('getSplitTime', () => {
       minute: '0',
     }
     expect(result).toEqual(expectedResult)
+  })
+})
+
+describe('getDayName', () => {
+  it('should return Monday', () => {
+    const date = '2024-09-16'
+    const result = getDayName(date)
+    expect(result).toEqual('Monday')
+  })
+  it('should return Saturday', () => {
+    const date = '2024-11-16'
+    const result = getDayName(date)
+    expect(result).toEqual('Saturday')
   })
 })
