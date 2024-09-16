@@ -429,6 +429,12 @@ export const excludeArrayObject = (objects: object[], iteratee: object): object[
   return objects.filter(o => o !== iteratee)
 }
 
+export const getDayName = (chosenDay: string) => {
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const dayOfWeekNumber = new Date(chosenDay).getDay()
+  return dayNames[dayOfWeekNumber]
+}
+
 // Anything with a number is considered not to be a name, so therefore an identifier (prison no, PNC no etc.)
 export const isPrisonerIdentifier = (searchTerm: string): boolean => /\d/.test(searchTerm)
 

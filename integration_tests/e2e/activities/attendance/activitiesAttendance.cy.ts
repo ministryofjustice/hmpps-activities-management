@@ -11,6 +11,10 @@ import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceD
 import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
 import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
+import { getDayName } from '../../../../server/utils/utils'
+
+const today = format(startOfToday(), 'yyyy-MM-dd')
+const day = getDayName(today).slice(0, 3)
 
 const inmateDetails = [
   {
@@ -40,10 +44,10 @@ const activity1 = {
       slots: [
         {
           id: 1,
-          startTime: '14:00',
-          endTime: '15:00',
-          daysOfWeek: ['Tue'],
-          timeSlot: 'PM',
+          startTime: '11:00',
+          endTime: '12:00',
+          daysOfWeek: [day],
+          timeSlot: 'AM',
         },
       ],
       startDate: '2022-10-10',
@@ -68,7 +72,7 @@ const activity2 = {
           id: 7,
           startTime: '10:00',
           endTime: '11:00',
-          daysOfWeek: ['Thu'],
+          daysOfWeek: [day],
           timeSlot: 'AM',
         },
       ],
@@ -79,8 +83,6 @@ const activity2 = {
 }
 
 context('Daily Attendance', () => {
-  const today = format(startOfToday(), 'yyyy-MM-dd')
-
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -222,6 +224,10 @@ context('Daily Attendance', () => {
 
     attendancePage.count().contains('1 absence')
     cy.get('[data-qa="attendance"]').contains('Rest day')
+    attendancePage
+      .table()
+      .find('td')
+      .then($data => expect($data.get(2).innerText).to.contain('11:00 to 12:00'))
   })
   it('Absences page - filter on pay', () => {
     const indexPage = Page.verifyOnPage(IndexPage)

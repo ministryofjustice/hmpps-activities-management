@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
-import { toDate } from '../../../../utils/utils'
+import { getDayName, toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
@@ -61,7 +61,7 @@ export default class DailyAttendanceRoutes {
     const inmates = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 
     const enhancedAttendanceData = await this.enhanceAttendanceInfo(attendancesMatchingFilter, user)
-    const chosenDay = this.getDayName(date as string)
+    const chosenDay = getDayName(date as string)
     const attendees = attendancesMatchingFilter
       .map(a => ({
         inmate: inmates.find(i => i.prisonerNumber === a.prisonerNumber),
@@ -107,12 +107,6 @@ export default class DailyAttendanceRoutes {
     )
 
     return new Map(activities.map(activity => [activity.id, activity.schedules[0].slots]))
-  }
-
-  private getDayName = (chosenDay: string) => {
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-    const dayOfWeekNumber = new Date(chosenDay).getDay()
-    return dayNames[dayOfWeekNumber]
   }
 
   private getAppropriateActivityTimes = (slots: ActivityScheduleSlot[], chosenDay: string, timeSlot: TimeSlot) => {
