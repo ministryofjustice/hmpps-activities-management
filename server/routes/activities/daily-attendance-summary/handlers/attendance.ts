@@ -105,6 +105,7 @@ export default class DailyAttendanceRoutes {
     const activities = await Promise.all(
       uniqueActivityIds.map(attendance => this.activitiesService.getActivity(attendance, user)),
     )
+
     return new Map(activities.map(activity => [activity.id, activity.schedules[0].slots]))
   }
 

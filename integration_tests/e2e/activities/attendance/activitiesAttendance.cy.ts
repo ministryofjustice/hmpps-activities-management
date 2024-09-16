@@ -25,6 +25,59 @@ const inmateDetails = [
   },
 ]
 
+const activity1 = {
+  id: 794,
+  schedules: [
+    {
+      id: 1,
+      instances: [],
+      allocations: [],
+      description: 'Entry level English 2',
+      suspensions: [],
+      internalLocation: {},
+      capacity: 10,
+      activity: {},
+      slots: [
+        {
+          id: 1,
+          startTime: '14:00',
+          endTime: '15:00',
+          daysOfWeek: ['Tue'],
+          timeSlot: 'PM',
+        },
+      ],
+      startDate: '2022-10-10',
+      endDate: null,
+    },
+  ],
+}
+const activity2 = {
+  id: 793,
+  schedules: [
+    {
+      id: 1,
+      instances: [],
+      allocations: [],
+      description: 'Entry level English 3',
+      suspensions: [],
+      internalLocation: {},
+      capacity: 10,
+      activity: {},
+      slots: [
+        {
+          id: 7,
+          startTime: '10:00',
+          endTime: '11:00',
+          daysOfWeek: ['Thu'],
+          timeSlot: 'AM',
+        },
+      ],
+      startDate: '2022-10-10',
+      endDate: null,
+    },
+  ],
+}
+
 context('Daily Attendance', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
 
@@ -49,6 +102,8 @@ context('Daily Attendance', () => {
     )
     cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
+    cy.stubEndpoint('GET', '/activities/794/filtered', activity1)
+    cy.stubEndpoint('GET', '/activities/793/filtered', activity2)
   })
 
   it('should display the correct counts on the summary page', () => {
