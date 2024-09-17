@@ -104,7 +104,7 @@ context('Daily Attendance', () => {
     activitiesPage.assertRow(4, true, 'Maths level 1', 'B wing', '09:20 to 10:20', '18', '4', '2', '0')
   })
 
-  it('has the correct title for tier pages', () => {
+  it('has the correct title for tier pages and times listed in the correct cells', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -123,17 +123,19 @@ context('Daily Attendance', () => {
     const attendancePage = Page.verifyOnPage(AttendancePage)
 
     attendancePage.title().contains('All Tier 2 attendances')
+    attendancePage.checkTableCell(3, '09:00 to 11:45')
     attendancePage.getButton('Show filter').click()
     attendancePage.absenceRadios().should('not.exist')
     attendancePage.payRadios().should('not.exist')
     attendancePage.categoriesRadios().should('exist')
-
     attendancePage.back()
     dailySummaryPage.selectTier1AttendanceLink()
     attendancePage.title().contains('All Tier 1 attendances')
+    attendancePage.checkTableCell(3, '09:00 to 11:45')
     attendancePage.back()
     dailySummaryPage.selectRoutineAttendanceLink()
     attendancePage.title().contains('All routine attendances')
+    attendancePage.checkTableCell(3, 'AM')
   })
   it('Absences page - filter on absence reason', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -167,10 +169,7 @@ context('Daily Attendance', () => {
 
     attendancePage.count().contains('1 absence')
     cy.get('[data-qa="attendance"]').contains('Rest day')
-    attendancePage
-      .table()
-      .find('td')
-      .then($data => expect($data.get(2).innerText).to.contain('09:00 to 11:45'))
+    attendancePage.checkTableCell(2, '09:00 to 11:45')
   })
   it('Absences page - filter on pay', () => {
     const indexPage = Page.verifyOnPage(IndexPage)

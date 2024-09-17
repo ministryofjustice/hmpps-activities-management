@@ -18,4 +18,10 @@ export default class AttendancePage extends Page {
   categoriesRadios = () => cy.get('[data-qa="category-radio-buttons"]')
 
   table = () => cy.get('[data-qa="attendance-table"]')
+
+  checkTableCell = (cellNumber, contents) => {
+    cy.get('[data-qa="attendance-table"]')
+      .find('td')
+      .then($data => expect($data.get(cellNumber).innerText).to.contain(contents))
+  }
 }
