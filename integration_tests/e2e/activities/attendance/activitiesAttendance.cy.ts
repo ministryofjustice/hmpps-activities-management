@@ -170,7 +170,7 @@ context('Daily Attendance', () => {
     attendancePage
       .table()
       .find('td')
-      .then($data => expect($data.get(2).innerText).to.contain('11:00 to 12:00'))
+      .then($data => expect($data.get(2).innerText).to.contain('09:00 to 11:45'))
   })
   it('Absences page - filter on pay', () => {
     const indexPage = Page.verifyOnPage(IndexPage)

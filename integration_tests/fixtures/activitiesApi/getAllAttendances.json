@@ -14,7 +14,9 @@
     "categoryName": "Education",
     "recordedTime": null,
     "attendanceRequired": true,
-    "eventTier": "TIER_2"
+    "eventTier": "TIER_2",
+    "startTime": "09:00",
+    "endTime": "11:45"
   },
   {
     "attendanceId": 2,
@@ -31,7 +33,9 @@
     "categoryName": "Sports",
     "recordedTime": null,
     "attendanceRequired": true,
-    "eventTier": "FOUNDATION"
+    "eventTier": "FOUNDATION",
+    "startTime": "13:00",
+    "endTime": "16:45"
   },
   {
     "attendanceId": 3,
@@ -48,7 +52,9 @@
     "categoryName": "Education",
     "recordedTime": null,
     "attendanceRequired": false,
-    "eventTier": "TIER_2"
+    "eventTier": "TIER_2",
+    "startTime": "13:00",
+    "endTime": "16:45"
   },
   {
     "attendanceId": 2,
@@ -65,7 +71,9 @@
     "categoryName": "Education",
     "recordedTime": null,
     "attendanceRequired": true,
-    "eventTier": "TIER_2"
+    "eventTier": "TIER_2",
+    "startTime": "13:00",
+    "endTime": "16:45"
   },
   {
     "attendanceId": 4,
@@ -82,7 +90,9 @@
     "categoryName": "Education",
     "recordedTime": null,
     "attendanceRequired": true,
-    "eventTier": "TIER_2"
+    "eventTier": "TIER_2",
+    "startTime": "13:00",
+    "endTime": "16:45"
   },
   {
     "attendanceId": 5,
@@ -99,7 +109,9 @@
     "categoryName": "Education",
     "recordedTime": null,
     "attendanceRequired": true,
-    "eventTier": "TIER_2"
+    "eventTier": "TIER_2",
+    "startTime": "13:00",
+    "endTime": "16:45"
   },
   {
     "attendanceId": 6,
@@ -116,6 +128,8 @@
     "categoryName": "Education",
     "recordedTime": null,
     "attendanceRequired": true,
-    "eventTier": "TIER_2"
+    "eventTier": "TIER_2",
+    "startTime": "09:00",
+    "endTime": "11:45"
   }
 ]
