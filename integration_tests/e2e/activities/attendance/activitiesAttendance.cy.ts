@@ -204,4 +204,23 @@ context('Daily Attendance', () => {
     attendancePage.payRadios().find('input[value="NO_PAY"]').should('not.be.checked')
     cy.get('[data-qa="attendance"]').should('not.contain.text', 'No pay')
   })
+  it('should show the session times on the not attended page', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.attendanceSummaryCard().click()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.selectToday()
+    selectPeriodPage.continue()
+
+    const dailySummaryPage = Page.verifyOnPage(DailySummaryPage)
+    dailySummaryPage.notAttendedLink()
+    const attendancePage = Page.verifyOnPage(AttendancePage)
+    attendancePage.checkTableCell(3, '09:00 to 11:45')
+  })
 })
