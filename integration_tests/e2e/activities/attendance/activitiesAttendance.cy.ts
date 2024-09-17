@@ -11,10 +11,8 @@ import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceD
 import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
 import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
-import { getDayName } from '../../../../server/utils/utils'
 
 const today = format(startOfToday(), 'yyyy-MM-dd')
-const day = getDayName(today).slice(0, 3)
 
 const inmateDetails = [
   {
@@ -28,59 +26,6 @@ const inmateDetails = [
     lastName: 'AISHO',
   },
 ]
-
-const activity1 = {
-  id: 794,
-  schedules: [
-    {
-      id: 1,
-      instances: [],
-      allocations: [],
-      description: 'Entry level English 2',
-      suspensions: [],
-      internalLocation: {},
-      capacity: 10,
-      activity: {},
-      slots: [
-        {
-          id: 1,
-          startTime: '11:00',
-          endTime: '12:00',
-          daysOfWeek: [day],
-          timeSlot: 'AM',
-        },
-      ],
-      startDate: '2022-10-10',
-      endDate: null,
-    },
-  ],
-}
-const activity2 = {
-  id: 793,
-  schedules: [
-    {
-      id: 1,
-      instances: [],
-      allocations: [],
-      description: 'Entry level English 3',
-      suspensions: [],
-      internalLocation: {},
-      capacity: 10,
-      activity: {},
-      slots: [
-        {
-          id: 7,
-          startTime: '10:00',
-          endTime: '11:00',
-          daysOfWeek: [day],
-          timeSlot: 'AM',
-        },
-      ],
-      startDate: '2022-10-10',
-      endDate: null,
-    },
-  ],
-}
 
 context('Daily Attendance', () => {
   beforeEach(() => {
@@ -104,8 +49,6 @@ context('Daily Attendance', () => {
     )
     cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
-    cy.stubEndpoint('GET', '/activities/794/filtered', activity1)
-    cy.stubEndpoint('GET', '/activities/793/filtered', activity2)
   })
 
   it('should display the correct counts on the summary page', () => {
@@ -161,7 +104,7 @@ context('Daily Attendance', () => {
     activitiesPage.assertRow(4, true, 'Maths level 1', 'B wing', '09:20 to 10:20', '18', '4', '2', '0')
   })
 
-  it('has the correct title for tier pages', () => {
+  it('has the correct title for tier pages and times listed in the correct cells', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -180,17 +123,19 @@ context('Daily Attendance', () => {
     const attendancePage = Page.verifyOnPage(AttendancePage)
 
     attendancePage.title().contains('All Tier 2 attendances')
+    attendancePage.checkTableCell(3, '09:00 to 11:45')
     attendancePage.getButton('Show filter').click()
     attendancePage.absenceRadios().should('not.exist')
     attendancePage.payRadios().should('not.exist')
     attendancePage.categoriesRadios().should('exist')
-
     attendancePage.back()
     dailySummaryPage.selectTier1AttendanceLink()
     attendancePage.title().contains('All Tier 1 attendances')
+    attendancePage.checkTableCell(3, '09:00 to 11:45')
     attendancePage.back()
     dailySummaryPage.selectRoutineAttendanceLink()
     attendancePage.title().contains('All routine attendances')
+    attendancePage.checkTableCell(3, 'AM')
   })
   it('Absences page - filter on absence reason', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -224,10 +169,7 @@ context('Daily Attendance', () => {
 
     attendancePage.count().contains('1 absence')
     cy.get('[data-qa="attendance"]').contains('Rest day')
-    attendancePage
-      .table()
-      .find('td')
-      .then($data => expect($data.get(2).innerText).to.contain('11:00 to 12:00'))
+    attendancePage.checkTableCell(2, '09:00 to 11:45')
   })
   it('Absences page - filter on pay', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
