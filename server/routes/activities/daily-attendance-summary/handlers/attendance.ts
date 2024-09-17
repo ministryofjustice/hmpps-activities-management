@@ -1,15 +1,13 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
-import { getDayName, toDate } from '../../../../utils/utils'
+import { toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import EventTier from '../../../../enum/eventTiers'
-import { ActivityScheduleSlot, AllAttendance } from '../../../../@types/activitiesAPI/types'
+import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 import { PayNoPay } from '../../../../@types/activities'
-import { ServiceUser } from '../../../../@types/express'
-import TimeSlot from '../../../../enum/timeSlot'
 
 export default class DailyAttendanceRoutes {
   constructor(
@@ -60,18 +58,11 @@ export default class DailyAttendanceRoutes {
 
     const inmates = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 
-    const enhancedAttendanceData = await this.enhanceAttendanceInfo(attendancesMatchingFilter, user)
-    const chosenDay = getDayName(date as string)
     const attendees = attendancesMatchingFilter
       .map(a => ({
         inmate: inmates.find(i => i.prisonerNumber === a.prisonerNumber),
         prisonerNumber: a.prisonerNumber,
         attendance: a,
-        activityDetails: this.getAppropriateActivityTimes(
-          enhancedAttendanceData.get(a.activityId),
-          chosenDay,
-          TimeSlot[a.timeSlot as keyof typeof TimeSlot],
-        ),
       }))
       .map(a => ({
         name: `${a.inmate.firstName} ${a.inmate.lastName}`,
@@ -80,8 +71,6 @@ export default class DailyAttendanceRoutes {
         attendance: a.attendance,
         status: a.inmate.status,
         prisonCode: a.inmate.prisonId,
-        activityStartTime: a.activityDetails.startTime,
-        activityEndTime: a.activityDetails.endTime,
       }))
       .filter(
         a =>
@@ -98,25 +87,6 @@ export default class DailyAttendanceRoutes {
       attendees,
       tier,
     })
-  }
-
-  private enhanceAttendanceInfo = async (attendanceData: AllAttendance[], user: ServiceUser) => {
-    const uniqueActivityIds = _.uniq(attendanceData.map(attendance => attendance.activityId))
-    const activities = await Promise.all(
-      uniqueActivityIds.map(attendance => this.activitiesService.getActivity(attendance, user)),
-    )
-
-    return new Map(activities.map(activity => [activity.id, activity.schedules[0].slots]))
-  }
-
-  private getAppropriateActivityTimes = (slots: ActivityScheduleSlot[], chosenDay: string, timeSlot: TimeSlot) => {
-    const slotsForDay = slots.filter(slot => slot.daysOfWeek.includes(chosenDay.slice(0, 3)))
-    const matchingSlot = slotsForDay.length > 1 ? slotsForDay.find(slot => slot.timeSlot === timeSlot) : slotsForDay[0]
-
-    return {
-      startTime: matchingSlot?.startTime,
-      endTime: matchingSlot?.endTime,
-    }
   }
 
   private includesSearchTerm = (propertyValue: string, searchTerm: string) =>

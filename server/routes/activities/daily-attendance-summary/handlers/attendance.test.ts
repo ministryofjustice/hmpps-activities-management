@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { parse } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
-import { Activity, AllAttendance } from '../../../../@types/activitiesAPI/types'
+import { AllAttendance } from '../../../../@types/activitiesAPI/types'
 import DailyAttendanceRoutes from './attendance'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -56,8 +56,6 @@ describe('Route Handlers - Daily Attendance List', () => {
 
   describe('GET', () => {
     let mockApiResponse: AllAttendance[]
-    let mockActivityApiResponse: Activity
-    let mockActivityApiResponse2: Activity
     let mockPrisonApiResponse: Prisoner[]
 
     beforeEach(() => {
@@ -67,6 +65,8 @@ describe('Route Handlers - Daily Attendance List', () => {
           prisonCode: 'MDI',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
+          startTime: '09:15',
+          endTime: '11:30',
           status: 'WAITING',
           attendanceReasonCode: null,
           issuePayment: null,
@@ -82,6 +82,8 @@ describe('Route Handlers - Daily Attendance List', () => {
           prisonCode: 'MDI',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
+          startTime: '09:00',
+          endTime: '12:30',
           status: 'WAITING',
           attendanceReasonCode: null,
           issuePayment: null,
@@ -97,6 +99,8 @@ describe('Route Handlers - Daily Attendance List', () => {
           prisonCode: 'MDI',
           sessionDate: '2022-10-10',
           timeSlot: 'AM',
+          startTime: '09:00',
+          endTime: '12:30',
           status: 'COMPLETED',
           attendanceReasonCode: 'ATTENDED',
           issuePayment: true,
@@ -108,85 +112,6 @@ describe('Route Handlers - Daily Attendance List', () => {
           eventTier: EventTier.TIER_1,
         },
       ] as AllAttendance[]
-
-      mockActivityApiResponse = {
-        id: 1,
-        schedules: [
-          {
-            id: 843,
-            description: 'Test activity',
-            capacity: 10,
-            scheduleWeeks: 1,
-            slots: [
-              {
-                id: 1575,
-                timeSlot: 'AM',
-                weekNumber: 1,
-                startTime: '09:15',
-                endTime: '11:30',
-                daysOfWeek: ['Mon'],
-                mondayFlag: true,
-                tuesdayFlag: false,
-                wednesdayFlag: false,
-                thursdayFlag: false,
-                fridayFlag: false,
-                saturdayFlag: false,
-                sundayFlag: false,
-              },
-            ],
-            startDate: '2024-08-26',
-            runsOnBankHoliday: false,
-            usePrisonRegimeTime: false,
-          },
-        ],
-      } as Activity
-
-      mockActivityApiResponse2 = {
-        id: 2,
-        schedules: [
-          {
-            id: 843,
-            description: 'Test activity',
-            capacity: 10,
-            scheduleWeeks: 1,
-            slots: [
-              {
-                id: 1575,
-                timeSlot: 'AM',
-                weekNumber: 1,
-                startTime: '09:00',
-                endTime: '12:30',
-                daysOfWeek: ['Mon'],
-                mondayFlag: true,
-                tuesdayFlag: false,
-                wednesdayFlag: false,
-                thursdayFlag: false,
-                fridayFlag: false,
-                saturdayFlag: false,
-                sundayFlag: false,
-              },
-              {
-                id: 1576,
-                timeSlot: 'ED',
-                weekNumber: 1,
-                startTime: '18:15',
-                endTime: '21:45',
-                daysOfWeek: ['Mon'],
-                mondayFlag: true,
-                tuesdayFlag: false,
-                wednesdayFlag: false,
-                thursdayFlag: false,
-                fridayFlag: false,
-                saturdayFlag: false,
-                sundayFlag: false,
-              },
-            ],
-            startDate: '2024-08-26',
-            runsOnBankHoliday: false,
-            usePrisonRegimeTime: false,
-          },
-        ],
-      } as Activity
 
       mockPrisonApiResponse = [
         {
@@ -229,9 +154,6 @@ describe('Route Handlers - Daily Attendance List', () => {
         .calledWith(date, res.locals.user, undefined)
         .mockResolvedValue(mockApiResponse)
 
-      when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(mockActivityApiResponse)
-      when(activitiesService.getActivity).calledWith(2, res.locals.user).mockResolvedValue(mockActivityApiResponse2)
-
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC123', 'ABC321'], res.locals.user)
         .mockResolvedValue(mockPrisonApiResponse)
@@ -262,9 +184,9 @@ describe('Route Handlers - Daily Attendance List', () => {
               timeSlot: 'AM',
               attendanceRequired: true,
               eventTier: EventTier.FOUNDATION,
+              startTime: '09:15',
+              endTime: '11:30',
             },
-            activityStartTime: '09:15',
-            activityEndTime: '11:30',
           },
           {
             name: 'Alan Key',
@@ -284,9 +206,9 @@ describe('Route Handlers - Daily Attendance List', () => {
               timeSlot: 'AM',
               attendanceRequired: true,
               eventTier: EventTier.FOUNDATION,
+              startTime: '09:00',
+              endTime: '12:30',
             },
-            activityStartTime: '09:00',
-            activityEndTime: '12:30',
           },
         ],
       })
@@ -311,8 +233,6 @@ describe('Route Handlers - Daily Attendance List', () => {
         .calledWith(date, res.locals.user, undefined)
         .mockResolvedValue(mockApiResponse)
 
-      when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(mockActivityApiResponse)
-
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC123'], res.locals.user)
         .mockResolvedValue(mockPrisonApiResponse)
@@ -329,8 +249,6 @@ describe('Route Handlers - Daily Attendance List', () => {
             name: 'Joe Bloggs',
             prisonerNumber: 'ABC123',
             location: 'MDI-1-001',
-            activityStartTime: '09:15',
-            activityEndTime: '11:30',
             attendance: {
               activityId: 1,
               activitySummary: 'Maths Level 1',
@@ -345,6 +263,8 @@ describe('Route Handlers - Daily Attendance List', () => {
               timeSlot: 'AM',
               attendanceRequired: true,
               eventTier: EventTier.FOUNDATION,
+              startTime: '09:15',
+              endTime: '11:30',
             },
           },
         ],
@@ -366,8 +286,6 @@ describe('Route Handlers - Daily Attendance List', () => {
       when(activitiesService.getAllAttendance)
         .calledWith(date, res.locals.user, undefined)
         .mockResolvedValue(mockApiResponse)
-
-      when(activitiesService.getActivity).calledWith(2, res.locals.user).mockResolvedValue(mockActivityApiResponse2)
 
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ZXY123'], res.locals.user)
@@ -393,8 +311,6 @@ describe('Route Handlers - Daily Attendance List', () => {
             name: 'Joe Bloggs',
             prisonerNumber: 'ZXY123',
             location: 'MDI-1-001',
-            activityEndTime: '12:30',
-            activityStartTime: '09:00',
             attendance: {
               activityId: 2,
               activitySummary: 'Woodworking',
@@ -409,6 +325,8 @@ describe('Route Handlers - Daily Attendance List', () => {
               timeSlot: 'AM',
               attendanceRequired: true,
               eventTier: EventTier.TIER_1,
+              startTime: '09:00',
+              endTime: '12:30',
             },
           },
         ],
@@ -423,8 +341,6 @@ describe('Route Handlers - Daily Attendance List', () => {
       when(activitiesService.getAllAttendance)
         .calledWith(date, res.locals.user, undefined)
         .mockResolvedValue(mockApiResponse)
-
-      when(activitiesService.getActivity).calledWith(2, res.locals.user).mockResolvedValue(mockActivityApiResponse2)
 
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC321'], res.locals.user)
@@ -453,8 +369,6 @@ describe('Route Handlers - Daily Attendance List', () => {
             name: 'Alan Key',
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
-            activityEndTime: '12:30',
-            activityStartTime: '09:00',
             attendance: {
               activityId: 2,
               activitySummary: 'Woodworking',
@@ -469,6 +383,8 @@ describe('Route Handlers - Daily Attendance List', () => {
               timeSlot: 'AM',
               attendanceRequired: true,
               eventTier: EventTier.FOUNDATION,
+              startTime: '09:00',
+              endTime: '12:30',
             },
           },
         ],
@@ -495,6 +411,8 @@ describe('Route Handlers - Daily Attendance List', () => {
           categoryName: 'Education',
           attendanceRequired: true,
           eventTier: EventTier.FOUNDATION,
+          startTime: '09:15',
+          endTime: '11:30',
         },
         {
           activityId: 2,
@@ -510,6 +428,8 @@ describe('Route Handlers - Daily Attendance List', () => {
           timeSlot: 'AM',
           attendanceRequired: true,
           eventTier: EventTier.FOUNDATION,
+          startTime: '09:00',
+          endTime: '12:30',
         },
         {
           attendanceId: 3,
@@ -525,14 +445,14 @@ describe('Route Handlers - Daily Attendance List', () => {
           categoryName: 'Prison Jobs',
           attendanceRequired: true,
           eventTier: EventTier.TIER_1,
+          startTime: '09:00',
+          endTime: '12:30',
         },
       ] as AllAttendance[]
 
       when(activitiesService.getAllAttendance)
         .calledWith(date, res.locals.user, undefined)
         .mockResolvedValue(mockApiResponse2)
-
-      when(activitiesService.getActivity).calledWith(2, res.locals.user).mockResolvedValue(mockActivityApiResponse2)
 
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC321'], res.locals.user)
@@ -561,8 +481,6 @@ describe('Route Handlers - Daily Attendance List', () => {
             name: 'Alan Key',
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
-            activityStartTime: '09:00',
-            activityEndTime: '12:30',
             attendance: {
               activityId: 2,
               activitySummary: 'Woodworking',
@@ -577,6 +495,8 @@ describe('Route Handlers - Daily Attendance List', () => {
               timeSlot: 'AM',
               attendanceRequired: true,
               eventTier: EventTier.FOUNDATION,
+              startTime: '09:00',
+              endTime: '12:30',
             },
           },
         ],
@@ -602,6 +522,8 @@ describe('Route Handlers - Daily Attendance List', () => {
           timeSlot: 'AM',
           attendanceRequired: true,
           eventTier: EventTier.FOUNDATION,
+          startTime: '09:00',
+          endTime: '12:30',
         },
         {
           attendanceId: 3,
@@ -617,14 +539,14 @@ describe('Route Handlers - Daily Attendance List', () => {
           categoryName: 'Prison Jobs',
           attendanceRequired: true,
           eventTier: EventTier.TIER_1,
+          startTime: '09:00',
+          endTime: '12:30',
         },
       ] as AllAttendance[]
 
       when(activitiesService.getAllAttendance)
         .calledWith(date, res.locals.user, undefined)
         .mockResolvedValue(mockApiResponse2)
-
-      when(activitiesService.getActivity).calledWith(2, res.locals.user).mockResolvedValue(mockActivityApiResponse2)
 
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC321'], res.locals.user)
@@ -653,8 +575,6 @@ describe('Route Handlers - Daily Attendance List', () => {
             name: 'Alan Key',
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
-            activityStartTime: '09:00',
-            activityEndTime: '12:30',
             attendance: {
               attendanceId: 3,
               prisonCode: 'MDI',
@@ -669,6 +589,8 @@ describe('Route Handlers - Daily Attendance List', () => {
               categoryName: 'Prison Jobs',
               attendanceRequired: true,
               eventTier: EventTier.TIER_1,
+              startTime: '09:00',
+              endTime: '12:30',
             },
           },
         ],
