@@ -21,12 +21,6 @@
                 <p class='govuk-body'>Unselect a session to exclude {{ prisonerName | safe }}. They will no longer be scheduled to attend that session.</p>
                 <p class='govuk-body'>Select a session to add it to their schedule.</p>
             {% endif %}
-
-            {% if disabledSlotsExist %}
-                {{ govukInsetText({
-                    text: "You cannot change if " + prisonerName | safe + " should attend a session where the activity runs in the same session in both week."
-                }) }}
-            {% endif %}
         </div>
         <div class="govuk-grid-column-full">
             <form method="POST">
@@ -48,15 +42,11 @@
                             {% if weekDay.slots | length %}
                                 {% set items = [] %}
                                 {% for slot in weekDay.slots %}
-                                    {% if slot.disabled %}
-                                        <input type='hidden' name='week{{ week.weekNumber }}[{{ weekDay.day | lower }}]' value='{{ slot.timeSlot }}'/>
-                                    {% endif %}
                                     {% set items = items.concat(
                                         {
                                             value: slot.timeSlot,
                                             text: slot.timeSlot + ' (' + slot.startTime + ' to ' + slot.endTime + ')',
-                                            checked: not slot.excluded,
-                                            disabled: slot.disabled
+                                            checked: not slot.excluded
                                         }
                                     ) %}
                                 {% endfor %}

@@ -71,8 +71,6 @@ export default class ExclusionRoutes {
 
     const weekDaysUsed = this.getAllWeekDaysUsed(weeklySchedule)
 
-    const disabledSlots = this.getDisabledSlots(weeklySchedule)
-
     for (let i = 0; i < activitySchedule.scheduleWeeks; i += 1) {
       const weekNumber = i + 1
       const currentWeek = weekNumber === currentWeekNumber
@@ -90,12 +88,9 @@ export default class ExclusionRoutes {
                   exclusion[day.toLowerCase()],
               ).length > 0
 
-            const disabled = disabledSlots.includes(`${day}-${slot.timeSlot}`)
-
             return {
               ...slot,
               excluded,
-              disabled,
             }
           })
           return { day, slots }
@@ -111,7 +106,6 @@ export default class ExclusionRoutes {
     res.render('pages/activities/manage-allocations/exclusions', {
       prisonerName: inmate.prisonerName,
       weeks,
-      disabledSlotsExist: disabledSlots.length > 0,
     })
   }
 
@@ -133,23 +127,6 @@ export default class ExclusionRoutes {
     )
 
     return weekDaysUsed
-  }
-
-  /**
-   * Currently, any slots which are the same in more than one week, e.g. Monday AM in weeks 1 and 2 cannot be changed
-   *
-   * @param weeklySchedule The weekly schedule
-   * @returns The array of disabled week / time slots, e.g. ['Tuesday-AM', 'Wednesday-ED']
-   */
-  private getDisabledSlots(weeklySchedule: WeeklyCustomTimeSlots): string[] {
-    const allDaysAndActiveSlots = Object.values(weeklySchedule)
-      .flatMap(week => week.flatMap(weekDay => weekDay.slots.map(day => `${weekDay.day}-${day.timeSlot}`)))
-      .reduce((acc, str) => {
-        acc.set(str, (acc.get(str) || 0) + 1)
-        return acc
-      }, new Map<string, number>())
-
-    return Array.from(allDaysAndActiveSlots.keys()).filter(key => allDaysAndActiveSlots.get(key) > 1)
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
