@@ -13,8 +13,6 @@ export default class DailySummaryPage extends Page {
 
   notAttendedLink = () => cy.get('[data-qa=not-attended-link]').first().click()
 
-  cancelledLink = () => cy.get('[data-qa=cancelled-link]').first().click()
-
   tier2AttendanceStat = () => cy.get('[data-qa=tier2]').children('span')
 
   selectTier1AttendanceLink = () => cy.get('[data-qa=tier1-link]').first().click()
