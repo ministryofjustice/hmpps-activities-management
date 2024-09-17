@@ -124,7 +124,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/exclusions', {
         prisonerName: 'John Smith',
-        disabledSlotsExist: true,
         weeks: [
           {
             weekNumber: 1,
@@ -138,7 +137,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
                     startTime: '13:35',
                     endTime: '14:00',
                     excluded: false,
-                    disabled: false,
                   },
                 ],
               },
@@ -150,7 +148,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
                     startTime: '09:20',
                     endTime: '12:20',
                     excluded: false,
-                    disabled: true,
                   },
                 ],
               },
@@ -170,7 +167,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
                     startTime: '10:00',
                     endTime: '11:00',
                     excluded: false,
-                    disabled: true,
                   },
                 ],
               },
@@ -182,7 +178,6 @@ describe('Route Handlers - Allocation - Exclusions', () => {
                     startTime: '10:00',
                     endTime: '11:00',
                     excluded: true,
-                    disabled: false,
                   },
                 ],
               },
