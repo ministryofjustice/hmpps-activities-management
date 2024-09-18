@@ -110,7 +110,7 @@ describe('Route Handlers - Select period for changes', () => {
       const results = changeEvents.content.map(item => {
         return {
           ...item,
-          name: 'Bobson, Bob',
+          name: 'Bob Bobson',
           cellLocation: '1-12-123',
         }
       })
