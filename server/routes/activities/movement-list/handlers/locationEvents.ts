@@ -8,6 +8,7 @@ import { eventClashes, scheduledEventSort } from '../../../../utils/utils'
 import { ScheduledEvent } from '../../../../@types/activitiesAPI/types'
 import { dateFromDateOption, formatIsoDate } from '../../../../utils/datePickerUtils'
 import AlertsFilterService from '../../../../services/alertsFilterService'
+import applyCancellationDisplayRule from '../../../../utils/applyCancellationDisplayRule'
 
 export default class LocationEventsRoutes {
   constructor(
@@ -111,7 +112,9 @@ export default class LocationEventsRoutes {
                         .includes(ce.oicHearingId),
                   )
                   // Exclude any event not considered a clash
-                  .filter(ce => events.filter(e => eventClashes(ce, e)).length > 0),
+                  .filter(ce => events.filter(e => eventClashes(ce, e)).length > 0)
+                  // Exclude cancelled appointments that have expired
+                  .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e)),
               )
 
               return {
