@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { addWeeks, format, parse } from 'date-fns'
+import { addWeeks, format, parse, subDays } from 'date-fns'
 import { when } from 'jest-when'
 import LocationEventsRoutes from './locationEvents'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -11,6 +11,8 @@ import { EventType, MovementListLocation } from '../../../../@types/activities'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { PrisonerStatus } from '../../../../@types/prisonApiImportCustom'
 import AlertsFilterService from '../../../../services/alertsFilterService'
+import { toDateString } from '../../../../utils/utils'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -741,6 +743,185 @@ describe('Movement list routes - location events', () => {
               ...prisoner,
               events: internalLocationEvents[0].events,
               clashingEvents: [] as ScheduledEvent[],
+            },
+          ],
+        },
+      ] as MovementListLocation[],
+      alertOptions: alertFilterOptions,
+    })
+  })
+
+  it('clashing events includes appointments filtering out expired cancelled appointments', async () => {
+    const dateOption = DateOption.TODAY
+    const dateQueryParam = format(new Date(), 'yyyy-MM-dd')
+    const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
+    const timeSlot = TimeSlot.AM
+    req.query = {
+      locationIds: `${internalLocation.id}`,
+      dateOption,
+      timeSlot,
+    }
+
+    const internalLocationEvents = [
+      {
+        ...internalLocation,
+        events: [
+          {
+            scheduledInstanceId: 1,
+            prisonerNumber: 'A1234BC',
+            startTime: '09:00',
+            endTime: '12:30',
+          },
+        ],
+      },
+    ] as InternalLocationEvents[]
+    when(activitiesService.getInternalLocationEvents)
+      .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+      .mockResolvedValue(internalLocationEvents)
+
+    when(activitiesService.getScheduledEventsForPrisoners)
+      .calledWith(date, [prisoner.prisonerNumber], res.locals.user)
+      .mockResolvedValue({
+        activities: [],
+        appointments: [
+          {
+            autoSuspended: false,
+            cancelled: true,
+            inCell: false,
+            offWing: false,
+            onWing: false,
+            outsidePrison: false,
+            priority: 0,
+            suspended: false,
+            appointmentSeriesId: 3,
+            appointmentId: 2,
+            appointmentAttendeeId: 2,
+            eventType: 'APPOINTMENT',
+            eventSource: 'SAA',
+            summary: 'Appointment clashing and displayed',
+            startTime: '10:30',
+            endTime: '11:00',
+            prisonerNumber: 'A1234BC',
+            date: dateQueryParam,
+            appointmentSeriesCancellationStartDate: toDateString(subDays(date, 1)),
+            appointmentSeriesFrequency: AppointmentFrequency.DAILY,
+          },
+          {
+            autoSuspended: false,
+            cancelled: true,
+            inCell: false,
+            offWing: false,
+            onWing: false,
+            outsidePrison: false,
+            priority: 0,
+            suspended: false,
+            appointmentSeriesId: 3,
+            appointmentId: 3,
+            appointmentAttendeeId: 2,
+            eventType: 'APPOINTMENT',
+            eventSource: 'SAA',
+            summary: 'Appointment clashing and not displayed',
+            startTime: '10:30',
+            endTime: '11:00',
+            prisonerNumber: 'A1234BC',
+            date: dateQueryParam,
+            appointmentSeriesCancellationStartDate: toDateString(subDays(date, 2)),
+            appointmentSeriesFrequency: AppointmentFrequency.DAILY,
+          },
+        ],
+        visits: [
+          {
+            summary: 'Visit',
+            prisonerNumber: 'A1234BC',
+            startTime: '09:30',
+            endTime: '10:00',
+          },
+        ],
+        adjudications: [
+          {
+            summary: 'Adjudication',
+            prisonerNumber: 'A1234BC',
+            startTime: '10:00',
+            endTime: '10:30',
+          },
+        ],
+        courtHearings: [
+          {
+            summary: 'Court hearing',
+            prisonerNumber: 'A1234BC',
+            startTime: '10:30',
+            endTime: '11:00',
+          },
+        ],
+        externalTransfers: [
+          {
+            summary: 'External transfer',
+            prisonerNumber: 'A1234BC',
+            startTime: '09:30',
+          },
+        ],
+      } as PrisonerScheduledEvents)
+
+    await handler.GET(req, res)
+
+    expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
+      dateOption,
+      date: dateQueryParam,
+      timeSlot,
+      locations: [
+        {
+          ...internalLocationEvents[0],
+          prisonerEvents: [
+            {
+              ...prisoner,
+              events: internalLocationEvents[0].events,
+              clashingEvents: [
+                {
+                  summary: 'External transfer',
+                  prisonerNumber: 'A1234BC',
+                  startTime: '09:30',
+                },
+                {
+                  summary: 'Visit',
+                  prisonerNumber: 'A1234BC',
+                  startTime: '09:30',
+                  endTime: '10:00',
+                },
+                {
+                  summary: 'Adjudication',
+                  prisonerNumber: 'A1234BC',
+                  startTime: '10:00',
+                  endTime: '10:30',
+                },
+                {
+                  autoSuspended: false,
+                  cancelled: true,
+                  inCell: false,
+                  offWing: false,
+                  onWing: false,
+                  outsidePrison: false,
+                  priority: 0,
+                  suspended: false,
+                  appointmentSeriesId: 3,
+                  appointmentId: 2,
+                  appointmentAttendeeId: 2,
+                  eventType: 'APPOINTMENT',
+                  eventSource: 'SAA',
+                  summary: 'Appointment clashing and displayed',
+                  startTime: '10:30',
+                  endTime: '11:00',
+                  prisonerNumber: 'A1234BC',
+                  date: dateQueryParam,
+                  appointmentSeriesCancellationStartDate: toDateString(subDays(date, 1)),
+                  appointmentSeriesFrequency: AppointmentFrequency.DAILY,
+                },
+                {
+                  summary: 'Court hearing',
+                  prisonerNumber: 'A1234BC',
+                  startTime: '10:30',
+                  endTime: '11:00',
+                },
+              ] as ScheduledEvent[],
             },
           ],
         },
