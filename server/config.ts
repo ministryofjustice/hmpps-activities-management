@@ -13,7 +13,7 @@ const toBoolean = (value: string): boolean => {
 
 function get<T>(name: string, fallback: T, options = { requireInProduction: false }): T | string {
   if (process.env[name]) {
-    return process.env[name] as T
+    return process.env[name]
   }
   if (fallback !== undefined && (!production || !options.requireInProduction)) {
     return fallback
