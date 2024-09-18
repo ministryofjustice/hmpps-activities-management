@@ -132,7 +132,8 @@
             percentage: (totalNotAttended[timeSlot] / totalAllocated[timeSlot] * 100) | toFixed(1),
             link: {
                 href: 'attendance?date=' + activityDate | formatDate('yyyy-MM-dd') + '&status=NotAttended#' + timeSlot | lower + '-tab',
-                text: 'All not yet attended'
+                text: 'All not yet attended',
+                dataQa: 'not-attended-link'
             }
         }) }}
 
