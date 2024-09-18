@@ -7,9 +7,13 @@ const Roles = {
   ACTIVITY_HUB: 'ROLE_ACTIVITY_HUB',
 }
 
+const toBoolean = (value: string): boolean => {
+  return value === 'true'
+}
+
 function get<T>(name: string, fallback: T, options = { requireInProduction: false }): T | string {
   if (process.env[name]) {
-    return process.env[name]
+    return process.env[name] as T
   }
   if (fallback !== undefined && (!production || !options.requireInProduction)) {
     return fallback
@@ -184,14 +188,16 @@ export default {
       roles: [Roles.ACTIVITY_HUB],
     },
   ] as RouteAuth[],
-  spikesFeatureToggleEnabled: Boolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', false)),
-  frontendComponentsApiToggleEnabled: Boolean(
-    get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', true, requiredInProduction),
+  spikesFeatureToggleEnabled: toBoolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', 'false')),
+  frontendComponentsApiToggleEnabled: toBoolean(
+    get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', 'true', requiredInProduction),
   ),
-  bookAVideoLinkToggleEnabled: Boolean(get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', false, requiredInProduction)),
-  futurePayRatesToggleEnabled: Boolean(get('FUTURE_PAY_RATES_TOGGLE_ENABLED', false)),
-  customStartEndTimesEnabled: Boolean(get('CUSTOM_START_END_TIMES_ENABLED', false)),
-  twoWeeklyCustomStartEndTimesEnabled: Boolean(get('TWO_WEEKLY_CUSTOM_START_END_TIMES_ENABLED', false)),
+  bookAVideoLinkToggleEnabled: toBoolean(
+    get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
+  ),
+  futurePayRatesToggleEnabled: toBoolean(get('FUTURE_PAY_RATES_TOGGLE_ENABLED', 'false')),
+  customStartEndTimesEnabled: toBoolean(get('CUSTOM_START_END_TIMES_ENABLED', 'false')),
+  twoWeeklyCustomStartEndTimesEnabled: toBoolean(get('TWO_WEEKLY_CUSTOM_START_END_TIMES_ENABLED', 'false')),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
   },
