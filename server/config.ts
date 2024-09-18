@@ -146,7 +146,7 @@ export default {
       timeout: Number(get('REPORTING_API_TIMEOUT_RESPONSE', 10000)),
     },
     bookAVideoLinkApi: {
-      url: get('BOOK_A_VIDEO_LINK_API_URL', 'http://localhost:8095'),
+      url: get('BOOK_A_VIDEO_LINK_API_URL', 'http://localhost:8095', requiredInProduction),
       timeout: {
         response: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 30000)),
         deadline: Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_DEADLINE', 30000)),
@@ -188,7 +188,7 @@ export default {
   frontendComponentsApiToggleEnabled: Boolean(
     get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', true, requiredInProduction),
   ),
-  bookAVideoLinkToggleEnabled: Boolean(get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', false)) || !production,
+  bookAVideoLinkToggleEnabled: Boolean(get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', false, requiredInProduction)),
   futurePayRatesToggleEnabled: Boolean(get('FUTURE_PAY_RATES_TOGGLE_ENABLED', false)),
   customStartEndTimesEnabled: Boolean(get('CUSTOM_START_END_TIMES_ENABLED', false)),
   twoWeeklyCustomStartEndTimesEnabled: Boolean(get('TWO_WEEKLY_CUSTOM_START_END_TIMES_ENABLED', false)),
