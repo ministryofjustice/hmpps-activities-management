@@ -108,6 +108,7 @@
     {% set options = 
         ({ text: "Alert updated", classes: "govuk-tag--red" } if 'alerts-updated' in event.eventType) or
         ({ text: "Non-association", classes: "govuk-tag--orange" } if 'non-association' in event.eventType) or
+        ({ text: "Prisoner received", classes: "govuk-tag--green" } if 'prisoner.received' in event.eventType) or
         ({ text: "IEP status", classes: "govuk-tag--green" } if 'iep-review' in event.eventType) or
         ({ text: "Activities suspended", classes: "govuk-tag--green" } if ('activities-changed' in event.eventType and event.eventDescription === 'ACTIVITY_SUSPENDED')) or
         ({ text: "Activities ended", classes: "govuk-tag--green" } if ('activities-changed' in event.eventType and event.eventDescription === 'ACTIVITY_ENDED')) or
