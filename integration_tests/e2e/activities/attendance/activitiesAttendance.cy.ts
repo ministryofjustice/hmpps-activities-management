@@ -12,6 +12,8 @@ import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
 import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
 
+const today = format(startOfToday(), 'yyyy-MM-dd')
+
 const inmateDetails = [
   {
     prisonerNumber: 'G4479GS',
@@ -26,8 +28,6 @@ const inmateDetails = [
 ]
 
 context('Daily Attendance', () => {
-  const today = format(startOfToday(), 'yyyy-MM-dd')
-
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -104,7 +104,7 @@ context('Daily Attendance', () => {
     activitiesPage.assertRow(4, true, 'Maths level 1', 'B wing', '09:20 to 10:20', '18', '4', '2', '0')
   })
 
-  it('has the correct title for tier pages', () => {
+  it('has the correct title for tier pages and times listed in the correct cells', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -123,17 +123,19 @@ context('Daily Attendance', () => {
     const attendancePage = Page.verifyOnPage(AttendancePage)
 
     attendancePage.title().contains('All Tier 2 attendances')
+    attendancePage.checkTableCell(3, '09:00 to 11:45')
     attendancePage.getButton('Show filter').click()
     attendancePage.absenceRadios().should('not.exist')
     attendancePage.payRadios().should('not.exist')
     attendancePage.categoriesRadios().should('exist')
-
     attendancePage.back()
     dailySummaryPage.selectTier1AttendanceLink()
     attendancePage.title().contains('All Tier 1 attendances')
+    attendancePage.checkTableCell(3, '09:00 to 11:45')
     attendancePage.back()
     dailySummaryPage.selectRoutineAttendanceLink()
     attendancePage.title().contains('All routine attendances')
+    attendancePage.checkTableCell(3, 'AM')
   })
   it('Absences page - filter on absence reason', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -167,6 +169,7 @@ context('Daily Attendance', () => {
 
     attendancePage.count().contains('1 absence')
     cy.get('[data-qa="attendance"]').contains('Rest day')
+    attendancePage.checkTableCell(2, '09:00 to 11:45')
   })
   it('Absences page - filter on pay', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -200,5 +203,24 @@ context('Daily Attendance', () => {
     attendancePage.payRadios().find('input[value="PAID"]').should('be.checked')
     attendancePage.payRadios().find('input[value="NO_PAY"]').should('not.be.checked')
     cy.get('[data-qa="attendance"]').should('not.contain.text', 'No pay')
+  })
+  it('should show the session times on the not attended page', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.attendanceSummaryCard().click()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.selectToday()
+    selectPeriodPage.continue()
+
+    const dailySummaryPage = Page.verifyOnPage(DailySummaryPage)
+    dailySummaryPage.notAttendedLink()
+    const attendancePage = Page.verifyOnPage(AttendancePage)
+    attendancePage.checkTableCell(3, '09:00 to 11:45')
   })
 })

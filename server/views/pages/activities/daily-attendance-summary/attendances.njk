@@ -186,6 +186,16 @@
         {% set attendanceRows = [] %}
         {% for attendee in attendees %}
             {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
+                {% set activityNameHtml = '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list?mode=standalone" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>' %}
+                {% if status == 'Absences' or (tab != 'day-tab' and ((tier == EventTier.TIER_1 or tier == EventTier.TIER_2) or (status == 'NotAttended'))) %}
+                    {% set activityNameHtml = activityNameHtml + '<br>' + (attendee.attendance.startTime) + ' to ' + (attendee.attendance.endTime) %}
+                {% endif %}
+
+                {% set sessionNameHtml = attendee.attendance.timeSlot %}
+                {% if (status == 'Attended' and (tier == EventTier.TIER_1 or tier == EventTier.TIER_2)) or status == 'NotAttended' %}
+                    {% set sessionNameHtml = attendee.attendance.timeSlot + '<br>' + (attendee.attendance.startTime) + ' to ' + (attendee.attendance.endTime)  %}
+                {% endif %}
+
                 {% set attendanceRows = (attendanceRows.push([
                 {
                     attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name | prisonerNameForSorting },
@@ -204,12 +214,12 @@
                 },
                 {
                     attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.attendance.activitySummary },
-                    html: '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list?mode=standalone" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>',
+                    html: activityNameHtml,
                     classes: 'govuk-table__cell'
                 },
                 {
                     attributes: { id: 'session-' + loop.index, "data-sort-value": attendee.attendance.timeSlot },
-                    text: attendee.attendance.timeSlot,
+                    html: sessionNameHtml,
                     classes: 'govuk-table__cell'
                 } if (status == "NotAttended" or status == "Attended") and tab == "day-tab",
                 {
@@ -246,7 +256,8 @@
         {{ govukTable({
         attributes: {
             'data-module': 'moj-sortable-table',
-            id: 'attendee-list-table'
+            id: 'attendee-list-table',
+            'data-qa': 'attendance-table'
         },
         classes: "alternating-row-shading fixed-layout-table sticky-header",
         captionClasses: "govuk-visually-hidden",

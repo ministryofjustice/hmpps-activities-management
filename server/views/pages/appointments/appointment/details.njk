@@ -9,8 +9,7 @@
 
 {% from "pages/appointments/partials/attendee-list.njk" import attendeeList %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
-
-{% from "partials/appointments/location-text.njk" import locationText %}
+{% from "partials/showLocation.njk" import showLocation %}
 
 {% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
 {% set pageId = 'appointment-details-page' %}
@@ -187,7 +186,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: locationText(appointment)
+                            text: showLocation(appointment)
                         },
                         actions: {
                             items: [
@@ -284,7 +283,7 @@
             <h1 class="govuk-heading-l govuk-!-margin-0">{{ appointment.appointmentName }}</h1>
             <span class="govuk-caption-l">{{ appointment.startDate | toDate | formatDate }}</span>
             <span class="govuk-caption-l">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }}</span>
-            <span class="govuk-caption-l">{{ locationText(appointment) }}</span>
+            <span class="govuk-caption-l">{{ showLocation(appointment) }}</span>
             <h2 class="govuk-heading-m govuk-!-margin-top-6">{{ appointment.attendees | length + (" attendee" if appointment.attendees.length == 1 else " attendees") }}</h2>
         </div>
     </div>

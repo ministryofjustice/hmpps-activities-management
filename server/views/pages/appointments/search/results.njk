@@ -9,7 +9,7 @@
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
 {% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
-{% from "partials/appointments/location-text.njk" import locationText %}
+{% from "partials/showLocation.njk" import showLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
 {% set pageTitle = "Appointments Management - Appointment Search Results" %}
@@ -56,7 +56,7 @@
             text: result.appointmentName,
             attributes: { 'data-qa': 'result-appointment-name-' + index }
         }, {
-            text: locationText(result),
+            text: showLocation(result),
             attributes: { 'data-qa': 'result-location-' + index }
         }, {
             html: attendees(result.attendees, prisonersDetails),

@@ -76,6 +76,62 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/queue-admin/retry-dlq/{dlqName}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** @description
+     *
+     *     Requires one of the following roles:
+     *     * ACTIVITY_QUEUE_ADMIN */
+    put: operations['retryDlq']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/queue-admin/retry-all-dlqs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put: operations['retryAllDlqs']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/queue-admin/purge-queue/{queueName}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** @description
+     *
+     *     Requires one of the following roles:
+     *     * ACTIVITY_QUEUE_ADMIN */
+    put: operations['purgeQueue']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/attendances': {
     parameters: {
       query?: never
@@ -321,6 +377,29 @@ export interface paths {
      *     * ACTIVITY_ADMIN
      */
     post: operations['getScheduledEventsForMultipleLocations']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/rollout/prison-regime/{agencyId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Creates a prison regime for a given prison
+     * @description If a regine exists it will overwrite it.  Called via migration dashboard only
+     *
+     *     Requires one of the following roles:
+     *     * ACTIVITY_ADMIN
+     */
+    post: operations['setPrisonRegimeSlots']
     delete?: never
     options?: never
     head?: never
@@ -1239,6 +1318,26 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/queue-admin/get-dlq-messages/{dlqName}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** @description
+     *
+     *     Requires one of the following roles:
+     *     * ACTIVITY_QUEUE_ADMIN */
+    get: operations['getDlqMessages']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/prisons/{prisonCode}/scheduled-instances': {
     parameters: {
       query?: never
@@ -1909,32 +2008,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/activities/{activityId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /**
-     * Get an activity by its id
-     * @deprecated
-     * @description Returns a single activity and its details by its unique identifier.
-     *
-     *     Requires one of the following roles:
-     *     * PRISON
-     *     * ACTIVITY_ADMIN
-     *     * NOMIS_ACTIVITIES
-     */
-    get: operations['getActivityById']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/activities/{activityId}/schedules': {
     parameters: {
       query?: never
@@ -2145,6 +2218,14 @@ export interface components {
        * @example Resume tomorrow
        */
       comment?: string
+    }
+    RetryDlqResult: {
+      /** Format: int32 */
+      messagesFoundCount: number
+    }
+    PurgeQueueResult: {
+      /** Format: int32 */
+      messagesFoundCount: number
     }
     /** @description Request object for updating an attendance record */
     AttendanceUpdateRequest: {
@@ -2734,18 +2815,18 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject'][]
+      /** Format: int32 */
+      pageSize?: number
       paged?: boolean
       /** Format: int32 */
       pageNumber?: number
-      /** Format: int32 */
-      pageSize?: number
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -2754,9 +2835,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject'][]
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
@@ -3206,6 +3287,78 @@ export interface components {
       description: string
       /** @description Collection of scheduled events due to take place at the internal location */
       events: components['schemas']['ScheduledEvent'][]
+    }
+    /** @description prison regime slots for a day of the week */
+    PrisonRegimeSlot: {
+      /** @enum {string} */
+      dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
+      /** Format: partial-time */
+      amStart: string
+      /** Format: partial-time */
+      amFinish: string
+      /** Format: partial-time */
+      pmStart: string
+      /** Format: partial-time */
+      pmFinish: string
+      /** Format: partial-time */
+      edStart: string
+      /** Format: partial-time */
+      edFinish: string
+    }
+    /** @description Describes a top-level activity */
+    PrisonRegime: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this prison regime
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prison code where this activity takes place
+       * @example MDI
+       */
+      prisonCode: string
+      /**
+       * Format: partial-time
+       * @description The start time for the am slot
+       * @example 09:00
+       */
+      amStart: string
+      /**
+       * Format: partial-time
+       * @description The end time for the am slot
+       * @example 12:00
+       */
+      amFinish: string
+      /**
+       * Format: partial-time
+       * @description The start time for the pm slot
+       * @example 13:00
+       */
+      pmStart: string
+      /**
+       * Format: partial-time
+       * @description The end time for the pm slot
+       * @example 16:30
+       */
+      pmFinish: string
+      /**
+       * Format: partial-time
+       * @description The start time for the ed slot
+       * @example 18:00
+       */
+      edStart: string
+      /**
+       * Format: partial-time
+       * @description The end time for the ed slot
+       * @example 20:00
+       */
+      edFinish: string
+      /**
+       * @description day of week the regime is applicable to
+       * @enum {string}
+       */
+      dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
     }
     /** @description A prisoner who is allocated to an activity */
     Allocation: {
@@ -6399,10 +6552,10 @@ export interface components {
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
     }
     PageActivityCandidate: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -6411,9 +6564,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject'][]
-      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Describes one instance of an activity schedule */
@@ -6742,6 +6895,19 @@ export interface components {
        */
       maxDaysToExpiry: number
     }
+    DlqMessage: {
+      body: {
+        [key: string]: Record<string, never> | undefined
+      }
+      messageId: string
+    }
+    GetDlqResult: {
+      /** Format: int32 */
+      messagesFoundCount: number
+      /** Format: int32 */
+      messagesReturnedCount: number
+      messages: components['schemas']['DlqMessage'][]
+    }
     /** @description Summarises an activity */
     ActivitySummary: {
       /**
@@ -6782,61 +6948,6 @@ export interface components {
        * @enum {string}
        */
       activityState: 'ARCHIVED' | 'LIVE'
-    }
-    /** @description Describes a top-level activity */
-    PrisonRegime: {
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this prison regime
-       * @example 123456
-       */
-      id: number
-      /**
-       * @description The prison code where this activity takes place
-       * @example MDI
-       */
-      prisonCode: string
-      /**
-       * Format: partial-time
-       * @description The start time for the am slot
-       * @example 09:00
-       */
-      amStart: string
-      /**
-       * Format: partial-time
-       * @description The end time for the am slot
-       * @example 12:00
-       */
-      amFinish: string
-      /**
-       * Format: partial-time
-       * @description The start time for the pm slot
-       * @example 13:00
-       */
-      pmStart: string
-      /**
-       * Format: partial-time
-       * @description The end time for the pm slot
-       * @example 16:30
-       */
-      pmFinish: string
-      /**
-       * Format: partial-time
-       * @description The start time for the ed slot
-       * @example 18:00
-       */
-      edStart: string
-      /**
-       * Format: partial-time
-       * @description The end time for the ed slot
-       * @example 20:00
-       */
-      edFinish: string
-      /**
-       * @description day of week the regime is applicable to
-       * @enum {string}
-       */
-      dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
     }
     Location: {
       /**
@@ -7065,6 +7176,18 @@ export interface components {
        * @example AM
        */
       timeSlot: string
+      /**
+       * Format: partial-time
+       * @description The start time
+       * @example 9:00
+       */
+      startTime: string
+      /**
+       * Format: partial-time
+       * @description The end time
+       * @example 11:30
+       */
+      endTime: string
       /**
        * @description WAITING, COMPLETED.
        * @example WAITING
@@ -8066,6 +8189,70 @@ export interface operations {
       }
     }
   }
+  retryDlq: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        dlqName: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['RetryDlqResult']
+        }
+      }
+    }
+  }
+  retryAllDlqs: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['RetryDlqResult'][]
+        }
+      }
+    }
+  }
+  purgeQueue: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        queueName: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['PurgeQueueResult']
+        }
+      }
+    }
+  }
   markAttendances: {
     parameters: {
       query?: never
@@ -8686,6 +8873,32 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  setPrisonRegimeSlots: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        agencyId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PrisonRegimeSlot'][]
+      }
+    }
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PrisonRegime'][]
         }
       }
     }
@@ -10626,6 +10839,30 @@ export interface operations {
       }
     }
   }
+  getDlqMessages: {
+    parameters: {
+      query?: {
+        maxMessages?: number
+      }
+      header?: never
+      path: {
+        dlqName: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['GetDlqResult']
+        }
+      }
+    }
+  }
   getActivityScheduleInstancesByDateRange: {
     parameters: {
       query: {
@@ -11892,57 +12129,6 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getActivityById: {
-    parameters: {
-      query?: never
-      header?: {
-        'Caseload-Id'?: string
-      }
-      path: {
-        activityId: number
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Activity found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Activity']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description The activity for this ID was not found. */
-      404: {
         headers: {
           [name: string]: unknown
         }

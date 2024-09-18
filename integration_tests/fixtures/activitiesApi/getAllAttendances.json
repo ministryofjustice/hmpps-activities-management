@@ -14,7 +14,9 @@
     "categoryName": "Education",
     "recordedTime": null,
     "attendanceRequired": true,
-    "eventTier": "TIER_2"
+    "eventTier": "TIER_2",
+    "startTime": "09:00",
+    "endTime": "11:45"
   },
   {
     "attendanceId": 2,
@@ -31,7 +33,9 @@
     "categoryName": "Sports",
     "recordedTime": null,
     "attendanceRequired": true,
-    "eventTier": "FOUNDATION"
+    "eventTier": "FOUNDATION",
+    "startTime": "13:00",
+    "endTime": "16:45"
   },
   {
     "attendanceId": 3,
@@ -48,7 +52,9 @@
     "categoryName": "Education",
     "recordedTime": null,
     "attendanceRequired": false,
-    "eventTier": "TIER_2"
+    "eventTier": "TIER_2",
+    "startTime": "13:00",
+    "endTime": "16:45"
   },
   {
     "attendanceId": 2,
@@ -65,7 +71,9 @@
     "categoryName": "Education",
     "recordedTime": null,
     "attendanceRequired": true,
-    "eventTier": "TIER_2"
+    "eventTier": "TIER_2",
+    "startTime": "13:00",
+    "endTime": "16:45"
   },
   {
     "attendanceId": 4,
@@ -82,7 +90,9 @@
     "categoryName": "Education",
     "recordedTime": null,
     "attendanceRequired": true,
-    "eventTier": "TIER_2"
+    "eventTier": "TIER_2",
+    "startTime": "13:00",
+    "endTime": "16:45"
   },
   {
     "attendanceId": 5,
@@ -99,7 +109,9 @@
     "categoryName": "Education",
     "recordedTime": null,
     "attendanceRequired": true,
-    "eventTier": "TIER_2"
+    "eventTier": "TIER_2",
+    "startTime": "13:00",
+    "endTime": "16:45"
   },
   {
     "attendanceId": 6,
@@ -116,6 +128,27 @@
     "categoryName": "Education",
     "recordedTime": null,
     "attendanceRequired": true,
-    "eventTier": "TIER_2"
+    "eventTier": "TIER_2",
+    "startTime": "09:00",
+    "endTime": "11:45"
+  },
+  {
+    "attendanceId": 7,
+    "prisonCode": "RSI",
+    "sessionDate": "2023-04-19",
+    "timeSlot": "AM",
+    "status": "WAITING",
+    "attendanceReasonCode": null,
+    "issuePayment": false,
+    "prisonerNumber": "G4479GQ",
+    "scheduledInstanceId": 91409,
+    "activityId": 794,
+    "activitySummary": "English Level 4",
+    "categoryName": "Education",
+    "recordedTime": null,
+    "attendanceRequired": true,
+    "eventTier": null,
+    "startTime": "09:00",
+    "endTime": "11:45"
   }
 ]

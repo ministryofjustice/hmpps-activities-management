@@ -6,6 +6,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/showLocation.njk" import showLocation %}
 
 {% if session.appointmentJourney.type == AppointmentType.SET %}
     {% set pageTitle = appointmentJourneyTitle("No attendees for set" if prisoners.length == 0 else "Avoid clashes", session.appointmentJourney) %}
@@ -316,15 +317,7 @@
 
 {% macro locationText(scheduledEvent) %}
     {% if scheduledEvent.eventType != EventType.EXTERNAL_TRANSFER and scheduledEvent.eventType != EventType.COURT_HEARING %}
-        {% if scheduledEvent.inCell %}
-            In cell
-        {% elseif scheduledEvent.onWing %}
-            On wing
-        {% elseif scheduledEvent.offWing %}
-            Off wing
-        {% else %}
-            {{ (scheduledEvent.internalLocationUserDescription or scheduledEvent.internalLocationDescription) | trim }}
-        {% endif %}
+        {{ showLocation(scheduledEvent) }}
     {% endif %}
 {% endmacro %}
 
