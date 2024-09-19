@@ -4,6 +4,7 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "partials/showLocation.njk" import showLocation %}
 
 {% set pageTitle = "Appointment attendance summaries" %}
 {% set pageId = 'appointment-attendance-summaries-page' %}
@@ -41,7 +42,7 @@
                 "data-sort-value": summary.appointmentName + " " + summary.startTime + (" to " + summary.endTime if summary.endTime)
             }
         }, {
-            text: summary.internalLocation.description,
+            text: showLocation(summary, summary.internalLocation.description),
             attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-location' }
         }, {
             text: summary.startTime + (" to " + summary.endTime if summary.endTime),
