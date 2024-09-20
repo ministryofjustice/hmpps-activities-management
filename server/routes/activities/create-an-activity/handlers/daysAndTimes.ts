@@ -74,9 +74,7 @@ export default class DaysAndTimesRoutes {
     const preserveHistoryBool = req.query.preserveHistory === 'true'
     const fromScheduleFrequencyBool = req.query.fromScheduleFrequency === 'true'
 
-    if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) {
-      return next(createHttpError.NotFound())
-    }
+    if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) return next(createHttpError.NotFound())
 
     req.session.createJourney.slots ??= {}
     const { slots } = req.session.createJourney
@@ -88,14 +86,15 @@ export default class DaysAndTimesRoutes {
       return res.validationFailed()
     }
 
-    if (scheduleWeeks === 1) {
+    if (scheduleWeeks === ScheduleFrequency.WEEKLY) {
       return this.handleOneScheduledWeek(req, res, preserveHistoryBool, weekNumberInt)
     }
-    if (scheduleWeeks === 2) {
+    if (scheduleWeeks === ScheduleFrequency.BI_WEEKLY) {
       return this.handleTwoScheduledWeeks(req, res, preserveHistoryBool, weekNumberInt, fromScheduleFrequencyBool)
     }
 
-    return res.redirect(this.getRedirectUrl(weekNumberInt, preserveHistoryBool, fromScheduleFrequencyBool))
+    // redirect back to the activities page as we've lost the scheduleWeeks value
+    return res.redirect('/activities')
   }
 
   private async handleOneScheduledWeek(req: Request, res: Response, preserveHistory: boolean, weekNumber: number) {
