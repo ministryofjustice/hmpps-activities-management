@@ -102,9 +102,8 @@ export default class DaysAndTimesRoutes {
       return this.editDaysAndTimes(req, res)
     }
 
-    const redirectUrl = `../session-times-option/${weekNumber}`
-    if (preserveHistory) return res.redirect(`${redirectUrl}?preserveHistory=true`)
-    return res.redirect(redirectUrl)
+    const queryParams = preserveHistory ? `?preserveHistory=true` : ``
+    return res.redirect(`../session-times-option/${weekNumber}${queryParams}`)
   }
 
   private async handleTwoScheduledWeeks(
