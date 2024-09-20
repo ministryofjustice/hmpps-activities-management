@@ -25,7 +25,6 @@ generic-service:
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-dev.hmpps-digital-prison-reporting-mi-dev.svc.cluster.local"
     BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED: "true"
     CUSTOM_START_END_TIMES_ENABLED: "true"
-    TWO_WEEKLY_CUSTOM_START_END_TIMES_ENABLED: "true"
     FUTURE_PAY_RATES_TOGGLE_ENABLED: "true"
 
   allowlist: null

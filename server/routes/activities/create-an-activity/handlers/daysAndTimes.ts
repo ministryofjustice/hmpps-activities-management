@@ -10,7 +10,6 @@ import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
 import { CreateAnActivityJourney, ScheduleFrequency, Slots } from '../journey'
-import config from '../../../../config'
 
 export class DaysAndTimes {
   @Expose()
@@ -72,94 +71,102 @@ export default class DaysAndTimesRoutes {
     const { scheduleWeeks } = req.session.createJourney
     const { weekNumber } = req.params
     const selectedDays = req.body.days
-    const { preserveHistory, fromScheduleFrequency } = req.query
+    const preserveHistoryBool = req.query.preserveHistory === 'true'
+    const fromScheduleFrequencyBool = req.query.fromScheduleFrequency === 'true'
 
-    if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) return next(createHttpError.NotFound())
+    if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) {
+      return next(createHttpError.NotFound())
+    }
 
     req.session.createJourney.slots ??= {}
-
     const { slots } = req.session.createJourney
     const weekNumberInt = +weekNumber
 
-    if (!selectedDays) {
-      const updatedSlots: { [p: string]: Slots } = { ...slots }
-      updatedSlots[weekNumberInt] = { days: [] }
-
-      const hasDaysSelected = Object.values(updatedSlots).find(slot => slot?.days?.length > 0)
-      if ((scheduleWeeks === weekNumberInt || preserveHistory) && !hasDaysSelected) {
-        return res.validationFailed('days', 'You must select at least 1 slot across the schedule')
-      }
-      req.session.createJourney.slots = updatedSlots
-    } else {
-      this.updateWeeklySlots(req, weekNumber, selectedDays)
-    }
+    this.handleSelectedDays(req, slots, weekNumberInt, scheduleWeeks, selectedDays, preserveHistoryBool, res, next)
 
     if (this.findSlotErrors(req.session.createJourney, weekNumberInt, res)) {
       return res.validationFailed()
     }
 
-    if (scheduleWeeks === weekNumberInt) {
-      // If create journey, redirect to next journey page
-      if (!preserveHistory) {
-        if (scheduleWeeks !== 2 || config.twoWeeklyCustomStartEndTimesEnabled === true) {
-          if (config.customStartEndTimesEnabled === true) {
-            return res.redirect(`../session-times-option/${weekNumberInt}`)
-          }
-        }
-        return res.redirect('../bank-holiday-option')
-      }
-      // If from edit page, edit slots
-      if (req.params.mode === 'edit') {
-        if (!config.customStartEndTimesEnabled) {
-          return this.editSlots(req, res)
-        }
-        // if using custom times (and the user has added (etc.) days/sessions), go to the screen where times can be edited
-        const usingRegimeTimes = await this.onPrisonRegime(req, res)
-        if (!usingRegimeTimes) {
-          return res.redirect(`../session-times`)
-        }
-
-        // if using prison regime times, save and skip to success
-        return this.editSlots(req, res)
-      }
-
-      if (scheduleWeeks !== 2 || config.twoWeeklyCustomStartEndTimesEnabled === true) {
-        if (config.customStartEndTimesEnabled === true) {
-          return res.redirect(`../session-times-option/${weekNumber}?preserveHistory=true`)
-        }
-      }
-
-      return res.redirect('../check-answers')
+    if (scheduleWeeks === 1) {
+      return this.handleOneScheduledWeek(req, res, preserveHistoryBool, weekNumberInt)
+    }
+    if (scheduleWeeks === 2) {
+      return this.handleTwoScheduledWeeks(req, res, preserveHistoryBool, weekNumberInt, fromScheduleFrequencyBool)
     }
 
+    return res.redirect(this.getRedirectUrl(weekNumberInt, preserveHistoryBool, fromScheduleFrequencyBool))
+  }
+
+  private async handleOneScheduledWeek(req: Request, res: Response, preserveHistory: boolean, weekNumber: number) {
+    if (req.params.mode === 'edit') {
+      this.editDaysAndTimes(req, res)
+    }
+
+    const redirectUrl = `../session-times-option/${weekNumber}`
+    if (preserveHistory) return res.redirect(`${redirectUrl}?preserveHistory=true`)
+    return res.redirect(redirectUrl)
+  }
+
+  private async handleTwoScheduledWeeks(
+    req: Request,
+    res: Response,
+    preserveHistory: boolean,
+    weekNumber: number,
+    fromScheduleFrequency: boolean,
+  ) {
     if (preserveHistory && !fromScheduleFrequency) {
-      // If this is a week-specific slot edit (not from schedule frequency page)
       if (req.params.mode === 'edit') {
-        const usingRegimeTimes = await this.onPrisonRegime(req, res)
-        // if using custom times (and the user has added (etc.) days/sessions), go to the screen where times can be edited
-        if (!usingRegimeTimes) {
-          return res.redirect('../session-times')
-        }
-        return this.editSlots(req, res)
+        this.editDaysAndTimes(req, res)
       }
-      // if 2 weekly, create, change then redirect to the session-times-option
-      if (
-        scheduleWeeks === ScheduleFrequency.BI_WEEKLY &&
-        req.params.mode === 'create' &&
-        config.twoWeeklyCustomStartEndTimesEnabled === true
-      ) {
-        return res.redirect(`../session-times-option/${weekNumber}?preserveHistory=true`)
-      }
-      return res.redirect('../check-answers')
-    }
 
+      return res.redirect(`../session-times-option/${weekNumber}?preserveHistory=true`)
+    }
+    // escape cycle if in the second week of the bi-weekly schedule & fromScheduleFrequency page
+    if (weekNumber === ScheduleFrequency.BI_WEEKLY && fromScheduleFrequency)
+      return res.redirect(`../session-times-option/${weekNumber}?preserveHistory=true&fromScheduleFrequency=true`)
+
+    // go to second week in bi-weekly schedule
+    return res.redirect(this.getRedirectUrl(weekNumber, preserveHistory, fromScheduleFrequency))
+  }
+
+  private getRedirectUrl(weekNumber: number, preserveHistory: boolean, fromScheduleFrequencyBool: boolean) {
     let redirectParams = ''
     if (preserveHistory) {
-      redirectParams += `?preserveHistory=true`
-      redirectParams += fromScheduleFrequency ? `&fromScheduleFrequency=true` : ''
+      redirectParams += '?preserveHistory=true'
+      redirectParams += fromScheduleFrequencyBool ? '&fromScheduleFrequency=true' : ''
     }
+    return `${weekNumber + 1}${redirectParams}`
+  }
 
-    return res.redirect(`${weekNumberInt + 1}${redirectParams}`)
+  // eslint-disable-next-line consistent-return
+  private handleSelectedDays(
+    req: Request,
+    slots: { [key: number]: Slots },
+    weekNumber: number,
+    scheduleWeeks: number,
+    selectedDays: string[],
+    preserveHistory: boolean,
+    res: Response,
+    next: NextFunction,
+  ) {
+    if (!selectedDays) {
+      const updatedSlots: { [p: string]: Slots } = { ...slots }
+      updatedSlots[weekNumber] = { days: [] }
+
+      const hasDaysSelected = Object.values(updatedSlots).find(slot => slot?.days?.length > 0)
+      if ((scheduleWeeks === weekNumber || preserveHistory) && !hasDaysSelected) {
+        return res.validationFailed('days', 'You must select at least 1 slot across the schedule')
+      }
+      req.session.createJourney.slots = updatedSlots
+    } else {
+      this.updateWeeklySlots(req, weekNumber.toString(), selectedDays)
+    }
+  }
+
+  private async editDaysAndTimes(req: Request, res: Response) {
+    const usingRegimeTimes = await this.onPrisonRegime(req, res)
+    return usingRegimeTimes ? this.editSlots(req, res) : res.redirect('../session-times')
   }
 
   private async onPrisonRegime(req: Request, res: Response) {
