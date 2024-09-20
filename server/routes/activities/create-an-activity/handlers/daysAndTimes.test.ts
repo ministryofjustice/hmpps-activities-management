@@ -200,7 +200,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         })
 
         describe("Change a week's slots", () => {
-          it('should save slots in session and redirect to session times option if first week of bi-weekly schedule and using custom times', async () => {
+          it('should save slots in session and redirect if first week of bi-weekly schedule and using custom times', async () => {
             const customSlots: Slot[] = [
               {
                 customStartTime: '05:30',
@@ -255,7 +255,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
             expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
             expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
             expect(req.session.createJourney.customSlots).toEqual(customSlots)
-            expect(res.redirect).toHaveBeenCalledWith('../session-times-option/1?preserveHistory=true')
+            expect(res.redirect).toHaveBeenCalledWith('2?preserveHistory=true')
           })
         })
 

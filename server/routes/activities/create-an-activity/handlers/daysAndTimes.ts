@@ -100,7 +100,7 @@ export default class DaysAndTimesRoutes {
 
   private async handleOneScheduledWeek(req: Request, res: Response, preserveHistory: boolean, weekNumber: number) {
     if (req.params.mode === 'edit') {
-      this.editDaysAndTimes(req, res)
+      return this.editDaysAndTimes(req, res)
     }
 
     const redirectUrl = `../session-times-option/${weekNumber}`
@@ -115,18 +115,23 @@ export default class DaysAndTimesRoutes {
     weekNumber: number,
     fromScheduleFrequency: boolean,
   ) {
-    if (preserveHistory && !fromScheduleFrequency) {
-      if (req.params.mode === 'edit') {
-        this.editDaysAndTimes(req, res)
+    if (fromScheduleFrequency) {
+      if (weekNumber === ScheduleFrequency.BI_WEEKLY) {
+        const queryParams = preserveHistory
+          ? `?preserveHistory=true&fromScheduleFrequency=true`
+          : '?fromScheduleFrequency=true'
+        return res.redirect(`../session-times-option/${weekNumber}${queryParams}`)
       }
-
-      return res.redirect(`../session-times-option/${weekNumber}?preserveHistory=true`)
+      return res.redirect(this.getRedirectUrl(weekNumber, preserveHistory, fromScheduleFrequency))
     }
-    // escape cycle if in the second week of the bi-weekly schedule & fromScheduleFrequency page
-    if (weekNumber === ScheduleFrequency.BI_WEEKLY && fromScheduleFrequency)
-      return res.redirect(`../session-times-option/${weekNumber}?preserveHistory=true&fromScheduleFrequency=true`)
 
-    // go to second week in bi-weekly schedule
+    if (req.params.mode === 'edit') {
+      return this.editDaysAndTimes(req, res)
+    }
+    if (weekNumber === ScheduleFrequency.BI_WEEKLY) {
+      const queryParams = preserveHistory ? `?preserveHistory=true` : ''
+      return res.redirect(`../session-times-option/${weekNumber}${queryParams}`)
+    }
     return res.redirect(this.getRedirectUrl(weekNumber, preserveHistory, fromScheduleFrequency))
   }
 
