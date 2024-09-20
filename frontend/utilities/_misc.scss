@@ -172,3 +172,9 @@ body {
 .no-break{
   word-break: normal !important;
 }
+
+.moj-datepicker--fixed-width {
+  .moj-datepicker__wrapper {
+    width: 215px;
+  }
+}

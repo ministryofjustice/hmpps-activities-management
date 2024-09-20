@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 
 {% set pageTitle = "Choose date of appointments" %}
 {% set pageId = 'appointments-search-select-date-page' %}
@@ -16,7 +16,7 @@
 
                 <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
 
-                {{ hmppsDatePicker({
+                {{ mojDatePicker({
                     id: "startDate",
                     name: "startDate",
                     label: {
@@ -28,7 +28,7 @@
                         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
                     },
                     errorMessage: validationErrors | findError('startDate'),
-                    classes: 'hmpps-datepicker--fixed-width',
+                    classes: 'moj-datepicker--fixed-width',
                     value: formResponses.startDate or startDate
                 }) }}
                 

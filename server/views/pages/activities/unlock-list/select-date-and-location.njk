@@ -2,7 +2,7 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 
 {% set pageTitle = applicationName + " - Unlock list" %}
 {% set pageId = 'select-date-and-location-page' %}
@@ -50,14 +50,14 @@
                             label: { text: "Unlock date "},
                             checked: formResponses.datePresetOption == 'other',
                             conditional: { html:
-                              hmppsDatePicker({
+                              mojDatePicker({
                                 id: 'date',
                                 name: 'date',
                                 label: {
                                     text: 'Other date',
                                     classes: 'govuk-visually-hidden'
                                 },
-                                classes: 'hmpps-datepicker--fixed-width',
+                                classes: 'moj-datepicker--fixed-width',
                                 hint: { html: otherDateHintHtml },
                                 errorMessage: validationErrors | findError('date'),
                                 value: formResponses.date or date
