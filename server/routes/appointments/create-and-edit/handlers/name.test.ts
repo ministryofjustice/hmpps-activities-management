@@ -7,6 +7,7 @@ import NameRoutes, { Name } from './name'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentCategorySummary } from '../../../../@types/activitiesAPI/types'
 import { AppointmentType } from '../appointmentJourney'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -76,6 +77,7 @@ describe('Route Handlers - Create Appointment - Name', () => {
     })
 
     it('should remove VLB category for appointment sets', async () => {
+      config.bookAVideoLinkToggleEnabled = true
       req.session.appointmentJourney.type = AppointmentType.SET
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
