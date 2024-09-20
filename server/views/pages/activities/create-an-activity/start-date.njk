@@ -18,6 +18,7 @@
                 {{ mojDatePicker({
                     id: 'startDate',
                     name: 'startDate',
+                    leadingZeros: true,
                     label: {
                         text: "Change the start date for this activity" if session.req.params.mode == 'edit' else "Enter the start date for this activity",
                         classes: "govuk-label--l",
