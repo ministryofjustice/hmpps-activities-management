@@ -200,7 +200,64 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         })
 
         describe("Change a week's slots", () => {
-          it('should save slots in session and redirect if first week of bi-weekly schedule and using custom times', async () => {
+          it('should save slots in session and redirect to session times option page if 1 scheduled week and using custom times', async () => {
+            const customSlots: Slot[] = [
+              {
+                customStartTime: '05:30',
+                customEndTime: '09:45',
+                daysOfWeek: ['TUESDAY'],
+                friday: false,
+                monday: false,
+                saturday: false,
+                sunday: false,
+                thursday: false,
+                timeSlot: TimeSlot.AM,
+                tuesday: true,
+                wednesday: false,
+                weekNumber: 1,
+              },
+              {
+                customStartTime: '15:45',
+                customEndTime: '17:41',
+                daysOfWeek: ['FRIDAY'],
+                friday: true,
+                monday: false,
+                saturday: false,
+                sunday: false,
+                thursday: false,
+                timeSlot: TimeSlot.PM,
+                tuesday: false,
+                wednesday: false,
+                weekNumber: 1,
+              },
+              {
+                customStartTime: '19:34',
+                customEndTime: '21:22',
+                daysOfWeek: ['FRIDAY'],
+                friday: true,
+                monday: false,
+                saturday: false,
+                sunday: false,
+                thursday: false,
+                timeSlot: TimeSlot.ED,
+                tuesday: false,
+                wednesday: false,
+                weekNumber: 1,
+              },
+            ]
+
+            req.session.createJourney.scheduleWeeks = 1
+            req.session.createJourney.customSlots = customSlots
+
+            await handler.POST(req, res, next)
+
+            expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+            expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+            expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+            expect(req.session.createJourney.customSlots).toEqual(customSlots)
+            expect(res.redirect).toHaveBeenCalledWith('../session-times-option/1?preserveHistory=true')
+          })
+          it('should save slots in session and redirect to the second weeks schedule if first week of bi-weekly schedule and using custom times', async () => {
             const customSlots: Slot[] = [
               {
                 customStartTime: '05:30',
@@ -256,6 +313,64 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
             expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
             expect(req.session.createJourney.customSlots).toEqual(customSlots)
             expect(res.redirect).toHaveBeenCalledWith('2?preserveHistory=true')
+          })
+          it('should save slots in session and redirect to session times option page if second week of bi-weekly schedule and using custom times', async () => {
+            req.params.weekNumber = '2'
+            const customSlots: Slot[] = [
+              {
+                customStartTime: '05:30',
+                customEndTime: '09:45',
+                daysOfWeek: ['TUESDAY'],
+                friday: false,
+                monday: false,
+                saturday: false,
+                sunday: false,
+                thursday: false,
+                timeSlot: TimeSlot.AM,
+                tuesday: true,
+                wednesday: false,
+                weekNumber: 2,
+              },
+              {
+                customStartTime: '15:45',
+                customEndTime: '17:41',
+                daysOfWeek: ['FRIDAY'],
+                friday: true,
+                monday: false,
+                saturday: false,
+                sunday: false,
+                thursday: false,
+                timeSlot: TimeSlot.PM,
+                tuesday: false,
+                wednesday: false,
+                weekNumber: 2,
+              },
+              {
+                customStartTime: '19:34',
+                customEndTime: '21:22',
+                daysOfWeek: ['FRIDAY'],
+                friday: true,
+                monday: false,
+                saturday: false,
+                sunday: false,
+                thursday: false,
+                timeSlot: TimeSlot.ED,
+                tuesday: false,
+                wednesday: false,
+                weekNumber: 2,
+              },
+            ]
+
+            req.session.createJourney.scheduleWeeks = 2
+            req.session.createJourney.customSlots = customSlots
+
+            await handler.POST(req, res, next)
+
+            expect(req.session.createJourney.slots['2'].days).toEqual(['tuesday', 'friday'])
+            expect(req.session.createJourney.slots['2'].timeSlotsTuesday).toEqual(['AM'])
+            expect(req.session.createJourney.slots['2'].timeSlotsFriday).toEqual(['PM', 'ED'])
+            expect(req.session.createJourney.customSlots).toEqual(customSlots)
+            expect(res.redirect).toHaveBeenCalledWith('../session-times-option/2?preserveHistory=true')
           })
         })
 

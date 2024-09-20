@@ -128,6 +128,7 @@ export default class DaysAndTimesRoutes {
     if (req.params.mode === 'edit') {
       return this.editDaysAndTimes(req, res)
     }
+
     if (weekNumber === ScheduleFrequency.BI_WEEKLY) {
       const queryParams = preserveHistory ? `?preserveHistory=true` : ''
       return res.redirect(`../session-times-option/${weekNumber}${queryParams}`)
