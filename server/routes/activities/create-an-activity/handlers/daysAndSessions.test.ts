@@ -5,7 +5,7 @@ import { addDays } from 'date-fns'
 import { NextFunction } from 'express-serve-static-core'
 import createHttpError from 'http-errors'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
-import DaysAndTimesRoutes, { DaysAndTimes } from './daysAndTimes'
+import DaysAndSessionsRoutes, { DaysAndSessions } from './daysAndSessions'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
@@ -19,7 +19,7 @@ const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesS
 const findActivitySlotErrorsMock = validateSlotChanges as jest.MockedFunction<typeof validateSlotChanges>
 
 describe('Route Handlers - Create an activity schedule - Days and times', () => {
-  const handler = new DaysAndTimesRoutes(activitiesService)
+  const handler = new DaysAndSessionsRoutes(activitiesService)
   let req: Request
   let res: Response
   let next: NextFunction
@@ -884,7 +884,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           timeSlotsFriday: ['PM', 'ED'],
         }
 
-        const requestObject = plainToInstance(DaysAndTimes, body)
+        const requestObject = plainToInstance(DaysAndSessions, body)
         const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
         expect(errors).toEqual([{ property: 'timeSlotsTuesday', error: 'Select at least one time slot for Tuesday' }])

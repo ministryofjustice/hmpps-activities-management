@@ -11,7 +11,7 @@ import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { validateSlotChanges } from '../../../../utils/helpers/activityScheduleValidator'
 import { CreateAnActivityJourney, ScheduleFrequency, Slots } from '../journey'
 
-export class DaysAndTimes {
+export class DaysAndSessions {
   @Expose()
   days: string[]
 
@@ -53,7 +53,7 @@ export class DaysAndTimes {
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-export default class DaysAndTimesRoutes {
+export default class DaysAndSessionsRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -70,7 +70,7 @@ export default class DaysAndTimesRoutes {
   POST = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { scheduleWeeks } = req.session.createJourney
     const { weekNumber } = req.params
-    const selectedDays = req.body.days
+    const selectedDaysForWeek = req.body.days
     const preserveHistoryBool = req.query.preserveHistory === 'true'
     const fromScheduleFrequencyBool = req.query.fromScheduleFrequency === 'true'
 
@@ -80,58 +80,43 @@ export default class DaysAndTimesRoutes {
     const { slots } = req.session.createJourney
     const weekNumberInt = +weekNumber
 
-    this.handleSelectedDays(req, slots, weekNumberInt, scheduleWeeks, selectedDays, preserveHistoryBool, res, next)
+    if (!selectedDaysForWeek) {
+      this.handleSelectedDays(req, slots, weekNumberInt, scheduleWeeks, preserveHistoryBool, res)
+    } else {
+      this.updateWeeklySlots(req, weekNumber.toString(), selectedDaysForWeek)
+    }
 
     if (this.findSlotErrors(req.session.createJourney, weekNumberInt, res)) {
       return res.validationFailed()
     }
 
-    if (scheduleWeeks === ScheduleFrequency.WEEKLY) {
-      return this.handleOneScheduledWeek(req, res, preserveHistoryBool, weekNumberInt)
-    }
-    if (scheduleWeeks === ScheduleFrequency.BI_WEEKLY) {
-      return this.handleTwoScheduledWeeks(req, res, preserveHistoryBool, weekNumberInt, fromScheduleFrequencyBool)
-    }
-
-    // redirect back to the activities page as we've lost the scheduleWeeks value
-    return res.redirect('/activities')
-  }
-
-  private async handleOneScheduledWeek(req: Request, res: Response, preserveHistory: boolean, weekNumber: number) {
-    if (req.params.mode === 'edit') {
-      return this.editDaysAndTimes(req, res)
-    }
-
-    const queryParams = preserveHistory ? `?preserveHistory=true` : ``
-    return res.redirect(`../session-times-option/${weekNumber}${queryParams}`)
-  }
-
-  private async handleTwoScheduledWeeks(
-    req: Request,
-    res: Response,
-    preserveHistory: boolean,
-    weekNumber: number,
-    fromScheduleFrequency: boolean,
-  ) {
-    if (fromScheduleFrequency) {
-      if (weekNumber === ScheduleFrequency.BI_WEEKLY) {
-        const queryParams = preserveHistory
+    if (fromScheduleFrequencyBool && scheduleWeeks === ScheduleFrequency.BI_WEEKLY) {
+      if (weekNumberInt === ScheduleFrequency.BI_WEEKLY) {
+        const queryParams = preserveHistoryBool
           ? `?preserveHistory=true&fromScheduleFrequency=true`
           : '?fromScheduleFrequency=true'
         return res.redirect(`../session-times-option/${weekNumber}${queryParams}`)
       }
-      return res.redirect(this.getRedirectUrl(weekNumber, preserveHistory, fromScheduleFrequency))
+      return res.redirect(this.getRedirectUrl(weekNumberInt, preserveHistoryBool, fromScheduleFrequencyBool))
     }
 
     if (req.params.mode === 'edit') {
-      return this.editDaysAndTimes(req, res)
+      return this.editDaysAndSessions(req, res)
     }
 
-    if (weekNumber === ScheduleFrequency.BI_WEEKLY) {
-      const queryParams = preserveHistory ? `?preserveHistory=true` : ''
+    const queryParams = preserveHistoryBool ? `?preserveHistory=true` : ``
+
+    if (scheduleWeeks === ScheduleFrequency.WEEKLY) {
       return res.redirect(`../session-times-option/${weekNumber}${queryParams}`)
     }
-    return res.redirect(this.getRedirectUrl(weekNumber, preserveHistory, fromScheduleFrequency))
+    if (scheduleWeeks === ScheduleFrequency.BI_WEEKLY) {
+      if (weekNumberInt === ScheduleFrequency.BI_WEEKLY) {
+        return res.redirect(`../session-times-option/${weekNumber}${queryParams}`)
+      }
+      return res.redirect(this.getRedirectUrl(weekNumberInt, preserveHistoryBool, fromScheduleFrequencyBool))
+    }
+    // redirect back to the activities page as we've lost the scheduleWeeks value
+    return res.redirect('/activities')
   }
 
   private getRedirectUrl(weekNumber: number, preserveHistory: boolean, fromScheduleFrequencyBool: boolean) {
@@ -149,26 +134,20 @@ export default class DaysAndTimesRoutes {
     slots: { [key: number]: Slots },
     weekNumber: number,
     scheduleWeeks: number,
-    selectedDays: string[],
     preserveHistory: boolean,
     res: Response,
-    next: NextFunction,
   ) {
-    if (!selectedDays) {
-      const updatedSlots: { [p: string]: Slots } = { ...slots }
-      updatedSlots[weekNumber] = { days: [] }
+    const updatedSlots: { [p: string]: Slots } = { ...slots }
+    updatedSlots[weekNumber] = { days: [] }
 
-      const hasDaysSelected = Object.values(updatedSlots).find(slot => slot?.days?.length > 0)
-      if ((scheduleWeeks === weekNumber || preserveHistory) && !hasDaysSelected) {
-        return res.validationFailed('days', 'You must select at least 1 slot across the schedule')
-      }
-      req.session.createJourney.slots = updatedSlots
-    } else {
-      this.updateWeeklySlots(req, weekNumber.toString(), selectedDays)
+    const hasDaysSelected = Object.values(updatedSlots).find(slot => slot?.days?.length > 0)
+    if ((scheduleWeeks === weekNumber || preserveHistory) && !hasDaysSelected) {
+      return res.validationFailed('days', 'You must select at least 1 slot across the schedule')
     }
+    req.session.createJourney.slots = updatedSlots
   }
 
-  private async editDaysAndTimes(req: Request, res: Response) {
+  private async editDaysAndSessions(req: Request, res: Response) {
     const usingRegimeTimes = await this.onPrisonRegime(req, res)
     return usingRegimeTimes ? this.editSlots(req, res) : res.redirect('../session-times')
   }
@@ -198,15 +177,9 @@ export default class DaysAndTimesRoutes {
 
     weeklySlots.days = convertToArray(selectedDays)
 
-    const sanitizeTimeSlots = (timeSlots: string | string[]): string[] => {
-      if (typeof timeSlots === 'string') return [timeSlots]
-      if (Array.isArray(timeSlots)) return [...timeSlots]
-      return []
-    }
-
     daysOfWeek.forEach(day => {
       if (weeklySlots.days.find(selectedDay => selectedDay === day.toLowerCase())) {
-        weeklySlots[`timeSlots${day}`] = sanitizeTimeSlots(req.body[`timeSlots${day}`])
+        weeklySlots[`timeSlots${day}`] = convertToArray(req.body[`timeSlots${day}`])
       } else {
         weeklySlots[`timeSlots${day}`] = []
       }

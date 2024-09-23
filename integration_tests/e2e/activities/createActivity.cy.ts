@@ -25,7 +25,7 @@ import StartDatePage from '../../pages/createSchedule/startDate'
 import EndDateOptionPage from '../../pages/createSchedule/endDateOption'
 import EndDatePage from '../../pages/createSchedule/endDate'
 import ScheduleFrequencyPage from '../../pages/createSchedule/scheduleFrequency'
-import DaysAndTimesPage from '../../pages/createSchedule/daysAndTimes'
+import DaysAndSessionsPage from '../../pages/createSchedule/daysAndSessions'
 import BankHolidayPage from '../../pages/createSchedule/bankHoliday'
 import LocationPage from '../../pages/createSchedule/location'
 import CapacityPage from '../../pages/createSchedule/capacity'
@@ -146,13 +146,13 @@ context('Create activity', () => {
     scheduleFrequencyPage.selectScheduleFrequency('Weekly')
     scheduleFrequencyPage.continue()
 
-    const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
-    daysAndTimesPage.selectDayTimeCheckboxes([
+    const daysAndSessionsPage = Page.verifyOnPage(DaysAndSessionsPage)
+    daysAndSessionsPage.selectDayTimeCheckboxes([
       ['Monday', ['AM session']],
       ['Wednesday', ['AM session', 'PM session']],
       ['Thursday', ['AM session', 'PM session', 'ED session']],
     ])
-    daysAndTimesPage.continue()
+    daysAndSessionsPage.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
     sessionTimesOptionPage.useSessionOption("Use the prison's regime times")

@@ -3,7 +3,7 @@ import getPrisonRegime from '../../fixtures/activitiesApi/getPrisonRegime.json'
 import moorlandIncentiveLevels from '../../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
 import ViewActivityPage from '../../pages/createActivity/viewActivity'
 import CustomTimesChangeOptionPage from '../../pages/createSchedule/customTimesChangeOption'
-import DaysAndTimesPage from '../../pages/createSchedule/daysAndTimes'
+import DaysAndSessionsPage from '../../pages/createSchedule/daysAndSessions'
 import SessionTimesPage from '../../pages/createSchedule/sessionTimes'
 import Page from '../../pages/page'
 
@@ -75,19 +75,19 @@ context('Edit activity', () => {
     const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
     customTimesChangeOptionPage.changeDaysAndSessions('Days and sessions when this activity runs')
     customTimesChangeOptionPage.continue()
-    const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
-    daysAndTimesPage.title().contains('Week 1 of 2')
-    daysAndTimesPage.checkboxes().find('input[value="monday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsMonday').should('be.checked')
-    daysAndTimesPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsTuesday').should('be.checked')
-    daysAndTimesPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsWednesday').should('be.checked')
-    daysAndTimesPage.checkboxes().find('input[value="thursday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsThursday').should('be.checked')
+    const daysAndSessionsPage = Page.verifyOnPage(DaysAndSessionsPage)
+    daysAndSessionsPage.title().contains('Week 1 of 2')
+    daysAndSessionsPage.checkboxes().find('input[value="monday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsMonday').should('be.checked')
+    daysAndSessionsPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsTuesday').should('be.checked')
+    daysAndSessionsPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsWednesday').should('be.checked')
+    daysAndSessionsPage.checkboxes().find('input[value="thursday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsThursday').should('be.checked')
 
-    daysAndTimesPage.checkboxes().find('input[value="thursday"]').uncheck()
-    daysAndTimesPage.updateButton()
+    daysAndSessionsPage.checkboxes().find('input[value="thursday"]').uncheck()
+    daysAndSessionsPage.updateButton()
 
     Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.assertNotificationContents(
@@ -102,17 +102,17 @@ context('Edit activity', () => {
     const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
     customTimesChangeOptionPage.changeDaysAndSessions('Days and sessions when this activity runs')
     customTimesChangeOptionPage.continue()
-    const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
-    daysAndTimesPage.title().contains('Week 2 of 2')
-    daysAndTimesPage.checkboxes().find('input[value="monday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsMonday-2').should('be.checked')
-    daysAndTimesPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsTuesday-2').should('be.checked')
-    daysAndTimesPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsWednesday-2').should('be.checked')
+    const daysAndSessionsPage = Page.verifyOnPage(DaysAndSessionsPage)
+    daysAndSessionsPage.title().contains('Week 2 of 2')
+    daysAndSessionsPage.checkboxes().find('input[value="monday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsMonday-2').should('be.checked')
+    daysAndSessionsPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsTuesday-2').should('be.checked')
+    daysAndSessionsPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsWednesday-2').should('be.checked')
 
-    daysAndTimesPage.getInputById('timeSlotsWednesday').check()
-    daysAndTimesPage.updateButton()
+    daysAndSessionsPage.getInputById('timeSlotsWednesday').check()
+    daysAndSessionsPage.updateButton()
 
     Page.verifyOnPage(ViewActivityPage)
     viewActivityPage.assertNotificationContents(

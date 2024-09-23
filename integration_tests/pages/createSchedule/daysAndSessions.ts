@@ -1,6 +1,6 @@
 import Page from '../page'
 
-export default class DaysAndTimesPage extends Page {
+export default class DaysAndSessionsPage extends Page {
   constructor() {
     super('create-schedule-days-and-times-page')
   }
