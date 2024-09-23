@@ -17,7 +17,7 @@ import CheckEducationLevelRoutes from './handlers/checkEducationLevels'
 import StartDateRoutes, { StartDate } from './handlers/startDate'
 import EndDateOptionRoutes, { EndDateOption } from './handlers/endDateOption'
 import EndDateRoutes, { EndDate } from './handlers/endDate'
-import DaysAndTimesRoutes, { DaysAndTimes } from './handlers/daysAndTimes'
+import DaysAndSessionsRoutes, { DaysAndSessions } from './handlers/daysAndSessions'
 import BankHolidayOptionRoutes, { BankHolidayOption } from './handlers/bankHoliday'
 import SessionTimesOptionRoutes, { SessionTimesOption } from './handlers/sessionTimesOption'
 import LocationRoutes, { Location } from './handlers/location'
@@ -70,7 +70,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const removeEndDateHandler = new RemoveEndDateRoutes(activitiesService)
   const endDateHandler = new EndDateRoutes(activitiesService)
   const scheduleFrequencyHandler = new ScheduleFrequencyRoutes()
-  const daysAndTimesHandler = new DaysAndTimesRoutes(activitiesService)
+  const daysAndSessionsHandler = new DaysAndSessionsRoutes(activitiesService)
   const bankHolidayHandler = new BankHolidayOptionRoutes(activitiesService)
   const sessionTimesOptionHandler = new SessionTimesOptionRoutes(activitiesService)
   const sessionTimesHandler = new SessionTimesRoutes(activitiesService)
@@ -125,8 +125,8 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/remove-end-date', removeEndDateHandler.POST, RemoveEndDateOptions)
   get('/schedule-frequency', scheduleFrequencyHandler.GET, true)
   post('/schedule-frequency', scheduleFrequencyHandler.POST, ScheduleFrequencyForm)
-  get('/days-and-times/:weekNumber(\\d+)', daysAndTimesHandler.GET, true)
-  post('/days-and-times/:weekNumber(\\d+)', daysAndTimesHandler.POST, DaysAndTimes)
+  get('/days-and-times/:weekNumber(\\d+)', daysAndSessionsHandler.GET, true)
+  post('/days-and-times/:weekNumber(\\d+)', daysAndSessionsHandler.POST, DaysAndSessions)
   get('/bank-holiday-option', bankHolidayHandler.GET, true)
   post('/bank-holiday-option', bankHolidayHandler.POST, BankHolidayOption)
   get('/session-times-option/:weekNumber(\\d+)', sessionTimesOptionHandler.GET, true)

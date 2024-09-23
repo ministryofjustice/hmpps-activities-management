@@ -12,7 +12,7 @@ import getPrisonRegime from '../../fixtures/activitiesApi/getPrisonRegime.json'
 import { formatIsoDate } from '../../../server/utils/datePickerUtils'
 import ViewActivityPage from '../../pages/createActivity/viewActivity'
 import CustomTimesChangeOptionPage from '../../pages/createSchedule/customTimesChangeOption'
-import DaysAndTimesPage from '../../pages/createSchedule/daysAndTimes'
+import DaysAndSessionsPage from '../../pages/createSchedule/daysAndSessions'
 import SessionTimesPage from '../../pages/createSchedule/sessionTimes'
 import CustomTimesChangeDefaultCustom from '../../pages/createSchedule/customTimesChangeDefaultCustom'
 
@@ -94,21 +94,21 @@ context('Edit activity - 2 weekly', () => {
     customTimesChangeOptionPage.changeDaysAndSessions('Days and sessions when this activity runs')
     customTimesChangeOptionPage.continue()
 
-    const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
-    daysAndTimesPage.checkboxes().find('input[value="monday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsMonday').should('be.checked')
-    daysAndTimesPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsTuesday').should('be.checked')
-    daysAndTimesPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsWednesday').should('be.checked')
-    daysAndTimesPage.checkboxes().find('input[value="thursday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsThursday').should('be.checked')
-    daysAndTimesPage.uncheckAllCheckboxes()
-    daysAndTimesPage.selectDayTimeCheckboxes([
+    const daysAndSessionsPage = Page.verifyOnPage(DaysAndSessionsPage)
+    daysAndSessionsPage.checkboxes().find('input[value="monday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsMonday').should('be.checked')
+    daysAndSessionsPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsTuesday').should('be.checked')
+    daysAndSessionsPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsWednesday').should('be.checked')
+    daysAndSessionsPage.checkboxes().find('input[value="thursday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsThursday').should('be.checked')
+    daysAndSessionsPage.uncheckAllCheckboxes()
+    daysAndSessionsPage.selectDayTimeCheckboxes([
       ['Monday', ['AM session']],
       ['Wednesday', ['AM session', 'PM session']],
     ])
-    daysAndTimesPage.updateButton()
+    daysAndSessionsPage.updateButton()
 
     const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
     sessionTimesPage.checkTime('09', '00', '12', '00', '1', 'MONDAY', 'AM')

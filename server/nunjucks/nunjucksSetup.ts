@@ -225,10 +225,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('futurePayRatesFlag', config.futurePayRatesToggleEnabled)
-  njkEnv.addGlobal('customStartEndTimesEnabled', config.customStartEndTimesEnabled)
   njkEnv.addGlobal('bookAVideoLinkToggleEnabled', config.bookAVideoLinkToggleEnabled)
-  njkEnv.addGlobal('customStartEndTimesEnabled', config.customStartEndTimesEnabled)
-  njkEnv.addGlobal('twoWeeklyCustomStartEndTimesEnabled', config.twoWeeklyCustomStartEndTimesEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
   njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
 
