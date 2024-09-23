@@ -18,7 +18,7 @@ import PayAmountPage from '../../pages/createActivity/pay-amount'
 import PayDateOptionPage from '../../pages/createActivity/pay-date-option'
 import CancelPayRatePage from '../../pages/createActivity/cancel-pay-rate'
 import CustomTimesChangeOptionPage from '../../pages/createSchedule/customTimesChangeOption'
-import DaysAndTimesPage from '../../pages/createSchedule/daysAndTimes'
+import DaysAndSessionsPage from '../../pages/createSchedule/daysAndSessions'
 import SessionTimesPage from '../../pages/createSchedule/sessionTimes'
 import CustomTimesChangeDefaultCustom from '../../pages/createSchedule/customTimesChangeDefaultCustom'
 
@@ -154,18 +154,18 @@ context('Edit activity', () => {
     customTimesChangeOptionPage.changeDaysAndSessions('Days and sessions when this activity runs')
     customTimesChangeOptionPage.continue()
 
-    const daysAndTimesPage = Page.verifyOnPage(DaysAndTimesPage)
-    daysAndTimesPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsTuesday').should('be.checked')
-    daysAndTimesPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsWednesday').should('be.checked')
-    daysAndTimesPage.getInputById('timeSlotsWednesday-2').should('be.checked')
-    daysAndTimesPage.uncheckAllCheckboxes()
-    daysAndTimesPage.selectDayTimeCheckboxes([
+    const daysAndSessionsPage = Page.verifyOnPage(DaysAndSessionsPage)
+    daysAndSessionsPage.checkboxes().find('input[value="tuesday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsTuesday').should('be.checked')
+    daysAndSessionsPage.checkboxes().find('input[value="wednesday"]').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsWednesday').should('be.checked')
+    daysAndSessionsPage.getInputById('timeSlotsWednesday-2').should('be.checked')
+    daysAndSessionsPage.uncheckAllCheckboxes()
+    daysAndSessionsPage.selectDayTimeCheckboxes([
       ['Monday', ['AM session']],
       ['Wednesday', ['AM session', 'PM session']],
     ])
-    daysAndTimesPage.updateButton()
+    daysAndSessionsPage.updateButton()
 
     const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
     sessionTimesPage.checkTime('--', '--', '--', '--', '1', 'MONDAY', 'AM')

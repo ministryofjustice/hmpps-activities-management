@@ -196,8 +196,6 @@ export default {
     get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
   ),
   futurePayRatesToggleEnabled: toBoolean(get('FUTURE_PAY_RATES_TOGGLE_ENABLED', 'false')),
-  customStartEndTimesEnabled: toBoolean(get('CUSTOM_START_END_TIMES_ENABLED', 'false')),
-  twoWeeklyCustomStartEndTimesEnabled: toBoolean(get('TWO_WEEKLY_CUSTOM_START_END_TIMES_ENABLED', 'false')),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
   },

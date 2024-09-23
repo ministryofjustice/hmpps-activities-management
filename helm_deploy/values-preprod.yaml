@@ -24,8 +24,6 @@ generic-service:
     BOOK_A_VIDEO_LINK_API_URL: "https://book-a-video-link-api-preprod.prison.service.justice.gov.uk"
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-preprod.hmpps-digital-prison-reporting-mi-preprod.svc.cluster.local"
     BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED: "true"
-    CUSTOM_START_END_TIMES_ENABLED: "true"
-    TWO_WEEKLY_CUSTOM_START_END_TIMES_ENABLED: "true"
     FUTURE_PAY_RATES_TOGGLE_ENABLED: "true"
 
   allowlist:
