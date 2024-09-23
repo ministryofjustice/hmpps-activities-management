@@ -3,7 +3,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
-{% from "components/hmppsDatePicker.njk" import hmppsDatePicker %}
+{% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = applicationName + " - Allocation - End date" %}
@@ -25,15 +25,16 @@
                     {% endif %}
                 {% endset %}
 
-                {{ hmppsDatePicker({
+                {{ mojDatePicker({
                     id: 'endDate',
                     name: 'endDate',
+                    leadingZeros: 'true',
                     label: {
                         text: pageHeading,
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
-                    classes: 'hmpps-datepicker--fixed-width',
+                    classes: 'moj-datepicker--fixed-width',
                     hint: {
                         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'
                     },

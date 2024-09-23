@@ -2,7 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
-{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 
 {% set pageTitle = applicationName + " - Waitlist - Request date" %}
 {% set pageId = 'request-date-page' %}
@@ -15,15 +15,16 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 <span class="govuk-caption-xl">{{ session.waitListApplicationJourney.activity.activityName }}</span>
-                {{ hmppsDatePicker({
+                {{ mojDatePicker({
                     id: 'requestDate',
                     name: 'requestDate',
+                    leadingZeros: 'true',
                     label: {
                         text: "Change the date of " + session.waitListApplicationJourney.prisoner.name + "'s application",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
-                    classes: 'hmpps-datepicker--fixed-width',
+                    classes: 'moj-datepicker--fixed-width',
                     hint: {
                         html: govukInsetText({ text: 'If the application has not been dated, use today\'s date.' }) +
                             '<div>Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.</div>'
