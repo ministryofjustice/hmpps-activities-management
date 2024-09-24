@@ -31,6 +31,7 @@ export type AllocateToActivityJourney = {
     paid?: boolean
   }
   startDateOption?: StartDateOption
+  deallocateTodayOption?: DeallocateTodayOption
   startDate?: string
   endDate?: string
   deallocationReason?: string
@@ -52,4 +53,9 @@ export enum EndDecision {
 export enum StartDateOption {
   NEXT_SESSION = 'NEXT_SESSION',
   START_DATE = 'START_DATE',
+}
+
+export enum DeallocateTodayOption {
+  TODAY = 'TODAY',
+  FUTURE_DATE = 'FUTURE_DATE',
 }

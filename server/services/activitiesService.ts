@@ -375,8 +375,9 @@ export default class ActivitiesService {
     caseNote: AddCaseNoteRequest,
     endDate: string,
     user: ServiceUser,
+    scheduleInstanceId?: number,
   ) {
-    const request: PrisonerDeallocationRequest = { prisonerNumbers, reasonCode, caseNote, endDate }
+    const request: PrisonerDeallocationRequest = { prisonerNumbers, reasonCode, caseNote, endDate, scheduleInstanceId }
     return this.activitiesApiClient.deallocateFromActivity(scheduleId, request, user)
   }
 
