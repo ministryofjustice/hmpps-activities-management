@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
-{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 {% from "components/timePicker.njk" import timePicker %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
@@ -24,9 +24,10 @@
             <form method='POST'>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ hmppsDatePicker({
+                {{ mojDatePicker({
                     id: "date",
                     name: "date",
+                    leadingZeros: 'true',
                     label: {
                         text: "Date",
                         classes: "govuk-label--m"
@@ -35,7 +36,7 @@
                         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
                     },
                     errorMessage: validationErrors | findError('date'),
-                    classes: 'hmpps-datepicker--fixed-width',
+                    classes: 'moj-datepicker--fixed-width',
                     value: formResponses.date or (session.bookAVideoLinkJourney.date | isoDateToDatePickerDate)
                 }) }}
 

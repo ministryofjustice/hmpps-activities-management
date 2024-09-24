@@ -8,7 +8,7 @@
 {% from "moj/components/pagination/macro.njk" import mojPagination %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "components/sticky-select.njk" import stickySelect %}
-{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
 {% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
@@ -46,9 +46,10 @@
                     }
                 }) }}
 
-                {{ hmppsDatePicker({
+                {{ mojDatePicker({
                     id: 'dateFrom',
                     name: 'dateFrom',
+                    leadingZeros: 'true',
                     label: {
                         text: "Application date from",
                         classes: "govuk-label--s"
@@ -57,9 +58,10 @@
                     value: formResponses.dateFrom or (filters.applicationDateFrom | isoDateToDatePickerDate)
                 }) }}
 
-                {{ hmppsDatePicker({
+                {{ mojDatePicker({
                     id: 'dateTo',
                     name: 'dateTo',
+                    leadingZeros: 'true',
                     label: {
                         text: "Application date to",
                         classes: "govuk-label--s"
