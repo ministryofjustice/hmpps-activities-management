@@ -63,6 +63,8 @@ export default abstract class Page {
 
   continue = () => cy.get('button').contains('Continue').click()
 
+  submit = () => cy.get('button').contains('Submit').click()
+
   confirm = () => cy.get('button').contains('Confirm').click()
 
   saveAndContinue = () => cy.get('button').contains('Save and continue').click()

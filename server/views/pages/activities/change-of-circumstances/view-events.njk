@@ -53,9 +53,15 @@
         {% endfor %}
 
         {% if rows.length == 0 %}
-            <div class="govuk-body">
-                <h3>There are no changes to show for this date.</h3>
-                <p>To view changes for a different date select the back link and enter different date.</p>
+            <div class="govuk-body" data-qa="no-data-p">
+                {% if isToday %}
+                <p>There are no changes to show for today.</p>
+                {% elif isYesterday %}
+                <p>There are no changes to show for yesterday.</p>
+                {% else %}
+                <p>There are no changes to show for {{ date | formatDate('d MMMM yyyy') }}.</p>
+                {% endif %}
+                <p class="govuk-body"><a href="/activities/change-of-circumstances/select-period" data-qa="no-data-link">Select a different date</a></p>
             </div>
         {% else %}
 

@@ -15,6 +15,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
                     name: "datePresetOption",
+                    attributes: { "data-qa": "datePresetOption" },
                     fieldset: {
                         legend: {
                             text: "Select the date",

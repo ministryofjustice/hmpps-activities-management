@@ -114,7 +114,14 @@ describe('Route Handlers - Select period for changes', () => {
           cellLocation: '1-12-123',
         }
       })
-      const viewContext = { date: `2023-05-16`, page: 0, changeEvents: results, pagination }
+      const viewContext = {
+        date: `2023-05-16`,
+        page: 0,
+        changeEvents: results,
+        pagination,
+        isToday: false,
+        isYesterday: false,
+      }
       expect(res.render).toHaveBeenCalledWith('pages/activities/change-of-circumstances/view-events', viewContext)
     })
   })
