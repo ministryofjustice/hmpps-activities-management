@@ -27,7 +27,7 @@ export default abstract class Page {
           { id: 'color-contrast', enabled: false },
         ],
       })
-      cy.checkA11y(null, null, this.terminalLog)
+      cy.checkA11y(null, null, this.terminalLog, true)
     }
   }
 

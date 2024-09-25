@@ -9,7 +9,7 @@ export default class ChangesInCircumstancesDatePage extends Page {
 
   radioTodayClick = (): Cypress.Chainable => cy.get('#datePresetOption').click()
 
-  radioYesterdayClick = (): Cypress.Chainable => cy.get('#datePresetOption-1').click()
+  radioYesterdayClick = (): Cypress.Chainable => cy.get('#datePresetOption-2').click()
 
-  radioOtherClick = (): Cypress.Chainable => cy.get('#datePresetOption-2').click()
+  radioOtherClick = (): Cypress.Chainable => cy.get('#datePresetOption-3').click()
 }
