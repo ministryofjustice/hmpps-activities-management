@@ -619,6 +619,7 @@ describe('Activities Service', () => {
         reasonCode: 'PERSONAL',
         endDate: '2023-05-31',
         caseNote: { type: 'GEN', text: 'test case note' },
+        scheduleInstanceId: 765,
       }
 
       await activitiesService.deallocateFromActivity(
@@ -628,6 +629,7 @@ describe('Activities Service', () => {
         { type: 'GEN', text: 'test case note' },
         '2023-05-31',
         user,
+        765,
       )
       expect(activitiesApiClient.deallocateFromActivity).toHaveBeenCalledWith(1, body, user)
     })

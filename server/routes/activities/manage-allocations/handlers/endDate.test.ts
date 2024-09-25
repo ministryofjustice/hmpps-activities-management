@@ -1,10 +1,13 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays, startOfToday } from 'date-fns'
+import { addDays, addMinutes, startOfToday, subMinutes } from 'date-fns'
+import { formatDate } from 'date-fns/format'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import EndDateRoutes, { EndDate } from './endDate'
 import { formatDatePickerDate, formatIsoDate, isoDateToDatePickerDate } from '../../../../utils/datePickerUtils'
+import { DeallocateTodayOption } from '../journey'
+import config from '../../../../config'
 
 describe('Route Handlers - Edit allocation - End date', () => {
   const handler = new EndDateRoutes()
@@ -40,9 +43,97 @@ describe('Route Handlers - Edit allocation - End date', () => {
   })
 
   describe('GET', () => {
-    it('should render the expected view', async () => {
+    const now = new Date()
+
+    beforeEach(() => {
+      config.deallocateTodaySessionEnabled = true
+
+      const inmate = {
+        prisonerNumber: 'ABC123',
+        prisonerName: '',
+        prisonCode: '',
+        status: '',
+      }
+
+      req.session.allocateJourney = {
+        inmate,
+        inmates: [inmate],
+        activity: {
+          scheduleId: 0,
+          name: '',
+          startDate: '',
+        },
+        scheduledInstance: {
+          attendances: [],
+          cancelled: false,
+          endTime: '',
+          id: 0,
+          timeSlot: undefined,
+          date: formatIsoDate(now),
+          startTime: formatDate(addMinutes(now, 2), 'HH:mm'),
+        },
+      }
+    })
+
+    it('should redirect to the dellocate today option view if there are sessions later today and only one prisoner is being deallocated', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/end-date')
+
+      expect(res.redirect).toHaveBeenCalledWith('deallocate-today-option')
+    })
+
+    describe('should render end date view', () => {
+      it('when feature toggle is false', async () => {
+        config.deallocateTodaySessionEnabled = false
+
+        await handler.GET(req, res)
+
+        expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/end-date')
+      })
+
+      it('when multiple inmates are being deallocated', async () => {
+        req.session.allocateJourney.inmates = [
+          {
+            prisonerNumber: 'ABC123',
+            prisonerName: '',
+            prisonCode: '',
+            status: '',
+          },
+          {
+            prisonerNumber: 'DE3455',
+            prisonerName: '',
+            prisonCode: '',
+            status: '',
+          },
+        ]
+
+        await handler.GET(req, res)
+
+        expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/end-date')
+      })
+
+      it('when next session is tomorrow', async () => {
+        req.session.allocateJourney.scheduledInstance.date = formatIsoDate(addDays(now, 1))
+
+        await handler.GET(req, res)
+
+        expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/end-date')
+      })
+
+      it('when there are no sessions later today', async () => {
+        req.session.allocateJourney.scheduledInstance.startTime = formatDate(subMinutes(now, 1), 'HH:mm')
+
+        await handler.GET(req, res)
+
+        expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/end-date')
+      })
+
+      it('when there option has already been set', async () => {
+        req.session.allocateJourney.deallocateTodayOption = DeallocateTodayOption.TODAY
+
+        await handler.GET(req, res)
+
+        expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/end-date')
+      })
     })
   })
 

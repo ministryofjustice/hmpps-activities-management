@@ -2178,6 +2178,11 @@ export interface components {
        */
       endDate: string
       caseNote?: components['schemas']['AddCaseNoteRequest']
+      /**
+       * Format: int64
+       * @description The scheduled instance id required when de-allocation is a session later today
+       */
+      scheduleInstanceId?: number
     }
     ErrorResponse: {
       /** Format: int32 */
