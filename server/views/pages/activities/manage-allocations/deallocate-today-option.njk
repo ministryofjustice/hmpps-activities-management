@@ -1,0 +1,47 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Choose whether to de-allocate from session later today" %}
+{% set pageId = 'deallocate-today-option-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <h1 class="govuk-heading-l">Select how you want to end {{ session.allocateJourney.inmate.prisonerName }}'s allocation for this activity</h1>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{ govukRadios({
+                    name: "deallocateTodayOption",
+                    fieldset: {
+                        legend: {
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    items: [
+                        {
+                            value: 'TODAY',
+                            text: "Remove them now - they will not be due to attend any sessions today that have not already started",
+                            hint: {
+                                text: "Unlock and movement lists for later today may need to be printed again."
+                            }
+                        },
+                        {
+                            value: 'FUTURE_DATE',
+                            text: "Set the day they'll attend their last session"
+                        }
+                    ]
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

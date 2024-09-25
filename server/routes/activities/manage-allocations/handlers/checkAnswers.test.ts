@@ -6,7 +6,7 @@ import CheckAnswersRoutes from './checkAnswers'
 import atLeast from '../../../../../jest.setup'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
-import { StartDateOption } from '../journey'
+import { DeallocateTodayOption, StartDateOption } from '../journey'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -194,9 +194,11 @@ describe('Route Handlers - Allocate - Check answers', () => {
     })
 
     describe('Remove Allocation', () => {
-      it('should deallocate and redirect to confirmation page', async () => {
+      it('should deallocate and redirect to confirmation page when deallocating sessions from a future day', async () => {
         req.params.mode = 'remove'
+
         await handler.POST(req, res)
+
         expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(
           1,
           ['ABC123'],
@@ -204,6 +206,25 @@ describe('Route Handlers - Allocate - Check answers', () => {
           { type: 'GEN', text: 'test case note' },
           '2023-02-01',
           { username: 'joebloggs' },
+          null,
+        )
+        expect(res.redirect).toHaveBeenCalledWith('confirmation')
+      })
+
+      it('should deallocate and redirect to confirmation page when deallocating sessions today', async () => {
+        req.params.mode = 'remove'
+        req.session.allocateJourney.deallocateTodayOption = DeallocateTodayOption.TODAY
+
+        await handler.POST(req, res)
+
+        expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(
+          1,
+          ['ABC123'],
+          'COMPLETED',
+          { type: 'GEN', text: 'test case note' },
+          '2023-02-01',
+          { username: 'joebloggs' },
+          123,
         )
         expect(res.redirect).toHaveBeenCalledWith('confirmation')
       })

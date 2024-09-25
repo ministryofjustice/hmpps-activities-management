@@ -4,7 +4,7 @@ import { AddCaseNoteRequest, DeallocationReasonCode } from '../../../../@types/a
 import { activitySlotsMinusExclusions, sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { parseDate } from '../../../../utils/utils'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
-import { StartDateOption } from '../journey'
+import { DeallocateTodayOption, StartDateOption } from '../journey'
 
 export default class CheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -38,6 +38,7 @@ export default class CheckAnswersRoutes {
       updatedExclusions,
       startDateOption,
       scheduledInstance,
+      deallocateTodayOption,
     } = req.session.allocateJourney
     const { user } = res.locals
 
@@ -62,6 +63,7 @@ export default class CheckAnswersRoutes {
         deallocationCaseNote as AddCaseNoteRequest,
         endDate,
         user,
+        deallocateTodayOption === DeallocateTodayOption.TODAY ? scheduledInstance.id : null,
       )
     }
 

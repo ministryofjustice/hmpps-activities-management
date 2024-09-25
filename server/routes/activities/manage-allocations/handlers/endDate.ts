@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { startOfToday } from 'date-fns'
+import { isPast, isToday, startOfToday } from 'date-fns'
 import { AllocateToActivityJourney } from '../journey'
 import {
   formatIsoDate,
@@ -10,6 +10,8 @@ import {
 } from '../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
+import { parseDate } from '../../../../utils/utils'
+import config from '../../../../config'
 
 export class EndDate {
   @Expose()
@@ -51,7 +53,26 @@ export class EndDate {
 }
 
 export default class EndDateRoutes {
-  GET = async (req: Request, res: Response) => res.render('pages/activities/manage-allocations/end-date')
+  GET = async (req: Request, res: Response): Promise<void> => {
+    const { allocateJourney } = req.session
+    const nextAvailableInstance = allocateJourney.scheduledInstance
+    const nextSessionDateAndTime = parseDate(
+      `${nextAvailableInstance.date}T${nextAvailableInstance.startTime}`,
+      "yyyy-MM-dd'T'HH:mm",
+    )
+
+    if (
+      config.deallocateTodaySessionEnabled &&
+      allocateJourney.inmates.length === 1 &&
+      isToday(nextSessionDateAndTime) &&
+      !isPast(nextSessionDateAndTime) &&
+      !allocateJourney.deallocateTodayOption
+    ) {
+      return res.redirect('deallocate-today-option')
+    }
+
+    return res.render('pages/activities/manage-allocations/end-date')
+  }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.allocateJourney.endDate = formatIsoDate(req.body.endDate)
