@@ -1,0 +1,43 @@
+{
+  "content": [
+    {
+      "eventReviewId": 1,
+      "serviceIdentifier": null,
+      "eventType": "prison-offender-events.prisoner.non-association-detail.changed",
+      "eventTime": "2023-05-16T12:17:53",
+      "prisonCode": "MDI",
+      "bookingId": 1,
+      "prisonerNumber": "A1234AA",
+      "eventData": "Some data",
+      "acknowledgedTime": null,
+      "acknowledgedBy": null
+    },
+    {
+      "eventReviewId": 2,
+      "serviceIdentifier": null,
+      "eventType": "prison-offender-events.prisoner.non-association-detail.changed",
+      "eventTime": "2023-05-16T14:00:00",
+      "prisonCode": "MDI",
+      "bookingId": 1,
+      "prisonerNumber": "A1234AB",
+      "eventData": "Some data",
+      "acknowledgedTime": null,
+      "acknowledgedBy": null
+    },
+    {
+      "eventReviewId": 3,
+      "serviceIdentifier": null,
+      "eventType": "prison-offender-events.prisoner.non-association-detail.changed",
+      "eventTime": "2023-05-16T15:20:00",
+      "prisonCode": "MDI",
+      "bookingId": 1,
+      "prisonerNumber": "A1234AC",
+      "eventData": "Some data",
+      "acknowledgedTime": null,
+      "acknowledgedBy": null
+    }
+  ],
+  "totalElements": 3,
+  "totalPages": 1,
+  "pageNumber": 0
+}

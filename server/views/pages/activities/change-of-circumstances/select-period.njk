@@ -15,6 +15,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
                     name: "datePresetOption",
+                    attributes: { "data-qa": "datePresetOption" },
                     fieldset: {
                         legend: {
                             text: "Select the date",
@@ -42,6 +43,10 @@
                                 html: mojDatePicker({
                                     id: 'date',
                                     name: 'date',
+                                    label: {
+                                        text: 'Date',
+                                        classes: "govuk-visually-hidden"
+                                    },
                                     leadingZeros: 'true',
                                     hint: {
                                         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'

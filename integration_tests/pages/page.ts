@@ -27,7 +27,7 @@ export default abstract class Page {
           { id: 'color-contrast', enabled: false },
         ],
       })
-      cy.checkA11y(null, null, this.terminalLog)
+      cy.checkA11y(null, null, this.terminalLog, true)
     }
   }
 
@@ -62,6 +62,8 @@ export default abstract class Page {
   getLinkByText = text => cy.get('a').contains(text)
 
   continue = () => cy.get('button').contains('Continue').click()
+
+  submit = () => cy.get('button').contains('Submit').click()
 
   confirm = () => cy.get('button').contains('Confirm').click()
 

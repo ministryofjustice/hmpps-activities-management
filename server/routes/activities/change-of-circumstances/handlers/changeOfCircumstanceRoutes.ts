@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { isToday, isYesterday } from 'date-fns'
 import { getPagination, PaginationRequest } from '../../../../utils/paginationUtils'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
@@ -43,7 +44,14 @@ export default class ChangeOfCircumstanceRoutes {
     })
 
     // Build view context and render the results
-    const viewContext = { date: queryDate, page, changeEvents, pagination }
+    const viewContext = {
+      date: queryDate,
+      page,
+      changeEvents,
+      pagination,
+      isToday: isToday(queryDate),
+      isYesterday: isYesterday(queryDate),
+    }
     res.render('pages/activities/change-of-circumstances/view-events', viewContext)
   }
 
