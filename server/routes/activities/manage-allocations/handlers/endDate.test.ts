@@ -73,6 +73,8 @@ describe('Route Handlers - Edit allocation - End date', () => {
           startTime: formatDate(addMinutes(now, 2), 'HH:mm'),
         },
       }
+
+      req.params.mode = 'remove'
     })
 
     it('should redirect to the dellocate today option view if there are sessions later today and only one prisoner is being deallocated', async () => {
@@ -84,6 +86,14 @@ describe('Route Handlers - Edit allocation - End date', () => {
     describe('should render end date view', () => {
       it('when feature toggle is false', async () => {
         config.deallocateTodaySessionEnabled = false
+
+        await handler.GET(req, res)
+
+        expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/end-date')
+      })
+
+      it('when mode is not remove', async () => {
+        req.params.mode = 'create'
 
         await handler.GET(req, res)
 
