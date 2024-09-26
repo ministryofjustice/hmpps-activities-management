@@ -12,6 +12,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <span class="govuk-caption-l">Record activity attendance</span>
                 <h1 class="govuk-heading-l">Change attendance details for {{ attendee.name | toTitleCase }}</h1>
                 <div class="govuk-inset-text">
                     <a href="/activities/attendance/activities/{{ instance.id }}/attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a> {{ instance.startTime }} - {{ instance.endTime }} on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}

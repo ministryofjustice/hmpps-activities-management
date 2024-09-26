@@ -171,6 +171,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
+            <span class="govuk-caption-l">Record activity attendance</span>
             <h1 class="govuk-heading-l">Select a reason why people did not attend</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -207,9 +208,11 @@
                             ), notAttendedReasonOptions) %}
                         {% endif %}
                     {% endfor %}
-                        <hr class="govuk-!-margin-bottom-6" />
+                        {% if rows.length > 1 %}
+                        {% if not loop.first %}<hr class="govuk-!-margin-bottom-6" />{% endif %}
                         <h2 class="govuk-heading-m govuk-!-margin-bottom-0">{{ row.prisonerName | toTitleCase | prisonerName }}</h2>
                         <div class="govuk-hint">{{ row.prisonerNumber }}</div>
+                        {% endif %}
                     {{ govukRadios({
                         fieldset: {
                             legend: {

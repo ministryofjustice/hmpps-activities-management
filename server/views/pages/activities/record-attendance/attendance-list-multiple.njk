@@ -9,7 +9,7 @@
 {% from "partials/formatSessions.njk" import formatSessions %}
 {% from "components/searchBar.njk" import searchBar %}
 
-{% set pageTitle = applicationName + " - Record attendance" %}
+{% set pageTitle = applicationName %}
 {% set pageId = 'attendance-list-page' %}
 {% set activityDate = session.recordAttendanceRequests.activityDate | toDate | formatDate %}
 {% set hardBackLinkText = 'Go back to activities for ' + activityDate + ' - ' + formatSessions(selectedSessions) %}
@@ -18,9 +18,11 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
+                <span class="govuk-caption-l">Record activity attendance</span>
                 {% if numActivities == 1 %}
-                    {{ attendanceRows[0].instance.activitySchedule.activity.summary }} - record attendance
+                    {{ attendanceRows[0].instance.activitySchedule.activity.summary }}
                 {% else %}
                     Record attendance at  {{  numActivities }} activities
                 {% endif %}
