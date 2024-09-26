@@ -63,6 +63,7 @@ export default class EndDateRoutes {
 
     if (
       config.deallocateTodaySessionEnabled &&
+      req.params.mode === 'remove' &&
       allocateJourney.inmates.length === 1 &&
       isToday(nextSessionDateAndTime) &&
       !isPast(nextSessionDateAndTime) &&
