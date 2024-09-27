@@ -13,6 +13,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <span class="govuk-caption-l">Record activity attendance</span>
                 <h1 class="govuk-heading-l">Are you sure you want to remove pay for {{ attendee.name | toTitleCase }}?</h1>
                 {{ govukRadios({
                   name: "removePayOption",

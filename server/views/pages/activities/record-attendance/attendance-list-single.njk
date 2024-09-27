@@ -16,7 +16,7 @@
 {% from "partials/service-user-name.njk" import serviceUserName %}
 {% from "partials/showLocation.njk" import showLocation %}
 
-{% set pageTitle = applicationName + " - Record attendance" %}
+{% set pageTitle = applicationName %}
 {% set pageId = 'attendance-list-page' %}
 {% set cancelledComment = '' %}
 {% if instance.comment !== undefined and instance.comment !== null %}
@@ -45,7 +45,8 @@
             {% endif %}
 
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
-                {{ instance.activitySchedule.activity.summary }} - record attendance
+                <span class="govuk-caption-l">Record activity attendance <span class="govuk-visually-hidden">for</span></span>
+                {{ instance.activitySchedule.activity.summary }}
                 <span class="govuk-caption-l">
                     {{ instance.startTime }} to {{ instance.endTime }} ({{ instance.timeSlot }})
                 </span>
