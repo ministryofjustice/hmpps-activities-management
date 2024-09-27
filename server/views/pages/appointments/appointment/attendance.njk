@@ -32,7 +32,7 @@
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l" data-qa="caption">Record appointment attendance</span>
             <h1 class="govuk-heading-l govuk-!-margin-0" data-qa='heading'>{{ appointment.appointmentName }}</h1>
-            <span class="govuk-caption-l" data-qa="date-caption">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }} ({{ appointment.timeSlot }})</span>
+            <span class="govuk-caption-l" data-qa="date-caption">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }}</span>
             <span class="govuk-caption-l" data-qa="date-caption">{{ appointment.startDate | toDate | formatDate }}</span>
             <span class="govuk-caption-l govuk-!-margin-bottom-4">{{ showLocation(appointment) }}</span>
 
