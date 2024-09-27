@@ -19,7 +19,7 @@
 
                 {% set pageHeading %}
                     {% if session.allocateJourney.inmates | length == 1 %}
-                        When do you want {{ session.allocateJourney.inmate.prisonerName }} to attend their last session of {{ session.allocateJourney.activity.name | safe }}?
+                        When do you want {{ session.allocateJourney.inmate.prisonerName | safe }} to attend their last session of {{ session.allocateJourney.activity.name | safe }}?
                     {% else %}
                         When do you want {{ session.allocateJourney.inmates | length }} people to attend their last session of {{ session.allocateJourney.activity.name | safe }}?
                     {% endif %}
