@@ -1,0 +1,78 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% from "components/timePicker.njk" import timePicker %}
+
+{% set pageTitle = applicationName + " - Administration - Amend regime times" %}
+{% set pageId = 'regime-times-page' %}
+{% set pageHeading = "Amend the start and end times for the prison regime schedule" %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% for week, customSlots in regimeSlots %}
+                        {% set rows = [] %} 
+                        {% for customSlot in customSlots %}
+                            {% set formattedStart = customSlot.start | getSplitTime %}
+                            {% set formattedFinish = customSlot.finish | getSplitTime %}
+                            {% set rows = (rows.push([
+                                {
+                                    html: customSlot.dayOfWeek | title
+                                },
+                                {
+                                    html: customSlot.timeSlot
+                                },
+                                {
+                                    html: timePicker({
+                                        id: 'startTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
+                                        name: 'startTimes[' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('startTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                                        validationErrors: validationErrors,
+                                        formResponses: formResponses.startTimes[week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedStart
+                                })
+                                },
+                                {
+                                    html: timePicker({
+                                        id: 'endTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
+                                        name: 'endTimes[' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('endTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                                        validationErrors: validationErrors,
+                                        formResponses: formResponses.endTimes[week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedFinish
+                                        })
+                                }]), rows) %}
+                        {% endfor %}
+                    
+                    {{ govukTable({
+                        head: [
+                                {
+                                text: "Day"
+                                },
+                                 {
+                                text: "Session"
+                                },
+                                {
+                                text: "Start time"
+                                },
+                                {
+                                text: "End time"
+                                }
+                            ],
+                        rows: rows,
+                        attributes: {"data-qa": "session-times-table"}         
+                    }) }}
+                {% endfor %} 
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
