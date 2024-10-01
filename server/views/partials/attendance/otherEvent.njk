@@ -24,5 +24,44 @@
         <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.startTime }}{{ " to " + event.endTime if event.endTime }}</div>
         <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ showLocation(event) }}</div>
       {% endif %}
+      {{ renderAttendance(event) }}
+      {{ renderPayStatus(event) }}
   </div>
+{% endmacro %}
+
+{% macro renderPayStatus(event) %}
+    {% if event.attendanceStatus and event.attendanceStatus != 'WAITING' %}
+        {% if event.issuePayment %}
+            {{ govukTag({
+                text: "Paid",
+                classes: "govuk-tag--small govuk-tag--green"
+            }) }}
+        {% elseif event.paid %}
+            {{ govukTag({
+                text: "No pay",
+                classes: "govuk-tag--small govuk-tag--red"
+            }) }}
+        {% else %}
+            {{ govukTag({
+                text: "Unpaid",
+                classes: "govuk-tag--small govuk-tag--green"
+            }) }}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro renderAttendance(event) %}
+    {% if event.attendanceStatus == 'COMPLETED' %}
+        {% if event.attendanceReasonCode == 'ATTENDED' %}
+            {{ govukTag({
+                text: "Attended",
+                classes: "govuk-tag--small govuk-tag--green"
+            })  }}
+        {% else %}
+            {{ govukTag({
+                text: "Did not attend",
+                classes: "govuk-tag--small govuk-tag--red"
+            })  }}
+        {% endif %}
+    {%  endif %}
 {% endmacro %}

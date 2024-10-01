@@ -14,14 +14,24 @@ export default class AttendanceListPage extends Page {
       .find('td:nth-child(1) input')
       .click({ force: true })
 
-  checkAttendanceStatus = (name, status) =>
+  checkAttendanceStatuses = (name, ...statuses: string[]) =>
+    this.checkStatuses(name, 'td[data-qa="attendance"]', statuses)
+
+  checkClashingEventsStatuses = (name, ...statuses: string[]) =>
+    this.checkStatuses(name, 'td[data-qa="other-events"]', statuses)
+
+  checkStatuses = (name: string, selector: string, statuses: string[]) =>
     cy
       .get('#attendanceList')
       .find('td[data-qa="prisoner-details"]')
       .contains(name)
       .parents('tr')
-      .find('td[data-qa="attendance"]')
-      .contains(status)
+      .find(selector)
+      .then($data => {
+        statuses.forEach(status => {
+          expect($data.text()).to.contain(status)
+        })
+      })
 
   markAsAttended = () => cy.get('button').contains('Mark as attended').click()
 

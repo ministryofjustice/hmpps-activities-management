@@ -3258,6 +3258,28 @@ export interface components {
        * @enum {string}
        */
       appointmentSeriesFrequency?: 'WEEKDAY' | 'DAILY' | 'WEEKLY' | 'FORTNIGHTLY' | 'MONTHLY'
+      /**
+       * @description Set to true if this activity is a paid activity
+       * @example false
+       */
+      paidActivity: ?boolean
+      /**
+       * @description Should activity payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * @description The activity attendance status - WAITING or COMPLETED
+       * @example WAITING
+       * @enum {string}
+       */
+      attendanceStatus?: string
+      /**
+       * @description The code for the activity (non) attendance reason
+       * @example SICK
+       * @enum {string}
+       */
+      attendanceReasonCode?: string
     }
     /** @description
      *       The details of an internal location that has events scheduled to take place there. Supports movement lists.
