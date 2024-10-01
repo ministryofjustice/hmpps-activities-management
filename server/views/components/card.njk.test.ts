@@ -1,4 +1,4 @@
-import cheerio from 'cheerio'
+import * as cheerio from 'cheerio'
 import nunjucks, { Template } from 'nunjucks'
 import { registerNunjucks } from '../../nunjucks/nunjucksSetup'
 
