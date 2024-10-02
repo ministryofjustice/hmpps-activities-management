@@ -344,6 +344,89 @@ export function calculateUniqueSlots(slotsA: Slot[], slotsB: Slot[]): Slot[] {
     .filter(s => s.daysOfWeek.length > 0)
 }
 
+export function calculateExclusionSlots(exclusions: Slot[], updatedExclusions: Slot[]): Slot[] {
+  const addedSlots: Slot[] = []
+
+  exclusions.forEach(exclusion => {
+    const filteredExclusions = updatedExclusions.filter(
+      e => e.timeSlot === exclusion.timeSlot && e.weekNumber === exclusion.weekNumber,
+    )
+    const days: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[] =
+      exclusion.daysOfWeek
+
+    const daysToAdd: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[] = []
+    days.forEach(day => {
+      const dayNotFound = filteredExclusions.filter(s => s.daysOfWeek.includes(day)).length === 0
+      if (dayNotFound) {
+        daysToAdd.push(day)
+      }
+    })
+    if (daysToAdd.length > 0) {
+      const slot: Slot = {
+        weekNumber: exclusion.weekNumber,
+        timeSlot: exclusion.timeSlot,
+        customStartTime: exclusion.customStartTime,
+        customEndTime: exclusion.customEndTime,
+        monday: daysToAdd.includes('MONDAY'),
+        tuesday: daysToAdd.includes('TUESDAY'),
+        wednesday: daysToAdd.includes('WEDNESDAY'),
+        thursday: daysToAdd.includes('THURSDAY'),
+        friday: daysToAdd.includes('FRIDAY'),
+        saturday: daysToAdd.includes('SATURDAY'),
+        sunday: daysToAdd.includes('SUNDAY'),
+        daysOfWeek: daysToAdd,
+      }
+      addedSlots.push(slot)
+    }
+  })
+
+  return addedSlots
+}
+
+// merge exclusions on timeslot & week
+export function mergeExclusionSlots(exclusions: Slot[]): Slot[] {
+  const mergeSlots: Slot[] = []
+
+  exclusions.forEach(exclusion => {
+    const filteredExclusions = exclusions.filter(
+      e => e.weekNumber === exclusion.weekNumber && e.timeSlot === exclusion.timeSlot,
+    )
+
+    if (filteredExclusions.length === 1) {
+      mergeSlots.push(exclusion)
+    } else if (filteredExclusions.length > 1) {
+      // check it's present
+      const added = mergeSlots.find(
+        merged => merged.weekNumber === exclusion.weekNumber && merged.timeSlot === exclusion.timeSlot,
+      )
+      if (added) {
+        const days: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[] =
+          exclusion.daysOfWeek
+
+        const daysToAdd: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[] = []
+        days.forEach(day => {
+          if (!added.daysOfWeek.includes(day)) {
+            daysToAdd.push(day)
+          }
+        })
+        if (daysToAdd.length > 0) {
+          added.monday = added.monday || daysToAdd.includes('MONDAY')
+          added.tuesday = added.tuesday || daysToAdd.includes('TUESDAY')
+          added.wednesday = added.wednesday || daysToAdd.includes('WEDNESDAY')
+          added.thursday = added.thursday || daysToAdd.includes('THURSDAY')
+          added.friday = added.friday || daysToAdd.includes('FRIDAY')
+          added.saturday = added.saturday || daysToAdd.includes('SATURDAY')
+          added.sunday = added.sunday || daysToAdd.includes('SUNDAY')
+          added.daysOfWeek.push(...daysToAdd)
+        }
+      } else {
+        mergeSlots.push(exclusion)
+      }
+    }
+  })
+  return mergeSlots
+}
+
 export function createCustomSlots(startTimes: Map<string, SimpleTime>, endTimes: Map<string, SimpleTime>): Slot[] {
   const customSlots: Slot[] = []
 

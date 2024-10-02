@@ -2,6 +2,7 @@ import { CreateAnActivityJourney, Slots } from '../../routes/activities/create-a
 import activitySessionToDailyTimeSlots, {
   activitySlotsMinusExclusions,
   addNewEmptySlotsIfRequired,
+  calculateExclusionSlots,
   calculateUniqueSlots,
   createCustomSlots,
   createSessionSlots,
@@ -11,6 +12,7 @@ import activitySessionToDailyTimeSlots, {
   mapActivityScheduleSlotsToSlots,
   mapSlotsToCompleteWeeklyTimeSlots,
   mapSlotsToWeeklyTimeSlots,
+  mergeExclusionSlots,
   regimeSlotsToSchedule,
   SessionSlot,
   sessionSlotsToSchedule,
@@ -472,6 +474,321 @@ describe('calculateUniqueSlots', () => {
         saturday: false,
         sunday: false,
         daysOfWeek: ['MONDAY'],
+      },
+    ])
+  })
+
+  it('should find correct added slots', () => {
+    const exclusions: Slot[] = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        customStartTime: null,
+        customEndTime: null,
+        daysOfWeek: ['TUESDAY', 'WEDNESDAY', 'THURSDAY'],
+      },
+    ]
+
+    const updatedExclusions: Slot[] = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['FRIDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'TUESDAY'],
+      },
+    ]
+
+    const expectedAddedSlot: Slot[] = calculateExclusionSlots(exclusions, updatedExclusions)
+
+    expect(expectedAddedSlot).toEqual([
+      {
+        customEndTime: null,
+        customStartTime: null,
+        daysOfWeek: ['WEDNESDAY', 'THURSDAY'],
+        friday: false,
+        monday: false,
+        saturday: false,
+        sunday: false,
+        thursday: true,
+        timeSlot: 'AM',
+        tuesday: false,
+        wednesday: true,
+        weekNumber: 1,
+      },
+    ])
+  })
+
+  it('should added no slots when all are found', () => {
+    const exclusions: Slot[] = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        customStartTime: null,
+        customEndTime: null,
+        daysOfWeek: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'],
+      },
+    ]
+
+    const updatedExclusions: Slot[] = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['FRIDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'],
+      },
+    ]
+
+    const expectedAddedSlot: Slot[] = calculateExclusionSlots(exclusions, updatedExclusions)
+
+    expect(expectedAddedSlot).toEqual([])
+  })
+
+  it('should merge exclusionn slots for week and timeslot', () => {
+    const exclusions: Slot[] = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['FRIDAY'],
+      },
+    ]
+
+    const expectedAddedSlot: Slot[] = mergeExclusionSlots(exclusions)
+
+    expect(expectedAddedSlot).toEqual([
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'],
+      },
+    ])
+  })
+
+  it('should merge exclusionnslots for multi week and multi timeslot', () => {
+    const exclusions: Slot[] = [
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'AM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['FRIDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'WEDNESDAY', 'THURSDAY'],
+      },
+      {
+        weekNumber: 1,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['FRIDAY'],
+      },
+      {
+        weekNumber: 2,
+        timeSlot: 'AM',
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'SUNDAY'],
+      },
+      {
+        weekNumber: 2,
+        timeSlot: 'AM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['SATURDAY'],
+      },
+      {
+        weekNumber: 2,
+        timeSlot: 'PM',
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: false,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['MONDAY', 'THURSDAY'],
+      },
+      {
+        weekNumber: 2,
+        timeSlot: 'PM',
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        daysOfWeek: ['WEDNESDAY', 'FRIDAY'],
+      },
+    ]
+
+    const expectedAddedSlot: Slot[] = mergeExclusionSlots(exclusions)
+
+    expect(expectedAddedSlot).toEqual([
+      {
+        daysOfWeek: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'],
+        friday: true,
+        monday: true,
+        saturday: false,
+        sunday: false,
+        thursday: true,
+        timeSlot: 'AM',
+        tuesday: true,
+        wednesday: true,
+        weekNumber: 1,
+      },
+      {
+        daysOfWeek: ['MONDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'],
+        friday: true,
+        monday: true,
+        saturday: false,
+        sunday: false,
+        thursday: true,
+        timeSlot: 'PM',
+        tuesday: true,
+        wednesday: true,
+        weekNumber: 1,
+      },
+      {
+        daysOfWeek: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'SUNDAY', 'SATURDAY'],
+        friday: false,
+        monday: true,
+        saturday: true,
+        sunday: false,
+        thursday: true,
+        timeSlot: 'AM',
+        tuesday: true,
+        wednesday: true,
+        weekNumber: 2,
+      },
+      {
+        daysOfWeek: ['MONDAY', 'THURSDAY', 'WEDNESDAY', 'FRIDAY'],
+        friday: true,
+        monday: true,
+        saturday: false,
+        sunday: false,
+        thursday: true,
+        timeSlot: 'PM',
+        tuesday: true,
+        wednesday: true,
+        weekNumber: 2,
       },
     ])
   })

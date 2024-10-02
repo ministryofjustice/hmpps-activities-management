@@ -1,7 +1,12 @@
 import { Request, Response } from 'express'
 import { AllocationUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
-import { calculateUniqueSlots, mapSlotsToWeeklyTimeSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
+import {
+  calculateExclusionSlots,
+  calculateUniqueSlots,
+  mapSlotsToWeeklyTimeSlots,
+  mergeExclusionSlots,
+} from '../../../../utils/helpers/activityTimeSlotMappers'
 
 export default class ConfirmExclusionsRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -10,8 +15,8 @@ export default class ConfirmExclusionsRoutes {
     const { user } = res.locals
     const { exclusions, updatedExclusions } = req.session.allocateJourney
 
-    const excludedSlots = calculateUniqueSlots(updatedExclusions, exclusions)
-    const addedSlots = calculateUniqueSlots(exclusions, updatedExclusions)
+    const excludedSlots = calculateExclusionSlots(updatedExclusions, exclusions)
+    const addedSlots = calculateExclusionSlots(exclusions, updatedExclusions)
 
     const schedule = await this.activitiesService.getActivitySchedule(
       req.session.allocateJourney.activity.scheduleId,
@@ -33,7 +38,9 @@ export default class ConfirmExclusionsRoutes {
     const removedSlots = calculateUniqueSlots(exclusions, updatedExclusions)
 
     if (newSlots.length > 0 || removedSlots.length > 0) {
-      const allocation = { exclusions: updatedExclusions } as AllocationUpdateRequest
+      const mergedExclusions = mergeExclusionSlots(updatedExclusions)
+
+      const allocation = { exclusions: mergedExclusions } as AllocationUpdateRequest
       await this.activitiesService.updateAllocation(+allocationId, allocation, user)
 
       const successMessage = `You have changed when ${inmate.prisonerName} should attend ${activity.name}`
