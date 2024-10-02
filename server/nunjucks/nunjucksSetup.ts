@@ -100,8 +100,8 @@ export default function nunjucksSetup(app: express.Express, { ukBankHolidayServi
 
   // Cachebusting version string
   if (production) {
-    // Version only changes on reboot
-    app.locals.version = Date.now().toString()
+    // Version only changes with each commit
+    app.locals.version = applicationVersion.shortHash
   } else {
     // Version changes every request
     router.use((req, res, next) => {
