@@ -83,6 +83,7 @@ context('Record attendance', () => {
       '3-3-017',
       'English level 1',
       '14:00 to 15:00',
+      ['Did not attend', 'Paid'],
       'Attended Pay',
       'View or Edit',
     )
@@ -93,6 +94,7 @@ context('Record attendance', () => {
       '4-3-016',
       'English level 1',
       '14:00 to 15:00',
+      ['Attended', 'Paid'],
       'Not recorded',
     )
     attendanceListPage.assertRow(
@@ -102,6 +104,7 @@ context('Record attendance', () => {
       '3-3-017',
       'English level 2',
       '14:15 to 15:15',
+      ['Attended', 'Unpaid', 'Did not attend', 'Paid'],
       'Attended No pay',
       'View or Edit',
     )
@@ -112,6 +115,7 @@ context('Record attendance', () => {
       '4-3-016',
       'English level 2',
       '14:15 to 15:15',
+      [],
       'Not recorded',
     )
     attendanceListPage.clickRows(3, 7)
@@ -138,6 +142,7 @@ context('Record attendance', () => {
       '4-3-016',
       'English level 1',
       '14:00 to 15:00',
+      [],
       'Attended Pay',
       'View or Edit',
     )
@@ -148,6 +153,7 @@ context('Record attendance', () => {
       '4-3-016',
       'English level 2',
       '14:15 to 15:15',
+      [],
       'Attended No pay',
       'View or Edit',
     )
@@ -186,6 +192,7 @@ context('Record attendance', () => {
       '1-3-024',
       'English level 1',
       '14:00 to 15:00',
+      [],
       'Not recorded',
     )
     attendanceListPage.assertRow(
@@ -195,6 +202,7 @@ context('Record attendance', () => {
       '1-3-024',
       'English level 2',
       '14:15 to 15:15',
+      [],
       'Not recorded',
     )
     attendanceListPage.clickRows(3, 7)
@@ -229,6 +237,7 @@ context('Record attendance', () => {
       '1-3-024',
       'English level 1',
       '14:00 to 15:00',
+      [],
       'Sick Pay',
       'View or Edit',
     )
@@ -239,6 +248,7 @@ context('Record attendance', () => {
       '1-3-024',
       'English level 2',
       '14:15 to 15:15',
+      [],
       'Sick No pay',
       'View or Edit',
     )
@@ -265,8 +275,7 @@ context('Record attendance', () => {
     activitiesPage.getButton('Record or edit attendance').click()
 
     const attendanceListPage = Page.verifyOnPage(SingleAttendanceListPage)
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Attended')
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Pay')
+    attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Attended', 'Pay')
     attendanceListPage
       .backLink()
       .contains(`Go back to activities for ${formatDate(today, 'EEEE, d MMMM yyyy')} - AM`)
