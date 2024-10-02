@@ -9,7 +9,17 @@ export default class AttendanceListPage extends Page {
 
   markAsNotAttended = () => cy.get('button').contains('Mark as not attended').click()
 
-  assertRow(rowNum, checkbox, name, location, activity, time, attendanceAndPay, viewLink = '') {
+  assertRow(
+    rowNum,
+    checkbox,
+    name,
+    location,
+    activity,
+    time,
+    clashingEventStatuses: string[],
+    attendanceAndPay,
+    viewLink = '',
+  ) {
     cy.get('[data-module=activities-sticky-select] tr')
       .eq(rowNum + 1)
       .find('td')
@@ -21,6 +31,7 @@ export default class AttendanceListPage extends Page {
         expect($data.get(2).innerText).to.contain(location)
         expect($data.get(3).innerText).to.contain(activity)
         expect($data.get(4).innerText).to.contain(time)
+        clashingEventStatuses.forEach(status => expect($data.get(5).innerText).to.contain(status))
         expect($data.get(6).innerText).to.contain(attendanceAndPay)
         if (viewLink) {
           cy.wrap($data.get(7)).contains(viewLink)
