@@ -23,7 +23,11 @@
       "date": "2023-02-02",
       "startTime": "14:00",
       "endTime": "15:00",
-      "priority": 5
+      "priority": 5,
+      "paidActivity": false,
+      "issuePayment": null,
+      "attendanceStatus": "COMPLETED",
+      "attendanceReasonCode": "ATTENDED"
     },
     {
       "eventSource": "SAA",
@@ -59,7 +63,11 @@
       "date": "2023-02-02",
       "startTime": "14:00",
       "endTime": "15:00",
-      "priority": 5
+      "priority": 5,
+      "paidActivity": false,
+      "issuePayment": null,
+      "attendanceStatus": "COMPLETED",
+      "attendanceReasonCode": "ATTENDED"
     },
     {
       "eventSource": "SAA",
@@ -95,7 +103,11 @@
       "date": "2023-02-02",
       "startTime": "14:30",
       "endTime": "17:00",
-      "priority": 5
+      "priority": 5,
+      "paidActivity": true,
+      "issuePayment": true,
+      "attendanceStatus": "COMPLETED",
+      "attendanceReasonCode": "ATTENDED"
     },
     {
       "eventSource": "SAA",
@@ -113,7 +125,11 @@
       "date": "2023-02-02",
       "startTime": "14:30",
       "endTime": "17:00",
-      "priority": 5
+      "priority": 5,
+      "paidActivity": true,
+      "issuePayment": true,
+      "attendanceStatus": "COMPLETED",
+      "attendanceReasonCode": "SICK"
     },
     {
       "eventSource": "SAA",
@@ -131,7 +147,11 @@
       "date": "2023-02-02",
       "startTime": "14:30",
       "endTime": "17:00",
-      "priority": 5
+      "priority": 5,
+      "paidActivity": true,
+      "issuePayment": false,
+      "attendanceStatus": "COMPLETED",
+      "attendanceReasonCode": "ATTENDED"
     },
     {
       "eventSource": "SAA",

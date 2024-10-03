@@ -73,8 +73,9 @@ context('Record attendance', () => {
     activitiesPage.selectActivityWithName('English level 1')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Attended')
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Pay')
+    attendanceListPage.checkClashingEventsStatuses('Aborah, Cudmastarie', 'Attended', 'Paid')
+    attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Attended', 'Pay')
+    attendanceListPage.checkClashingEventsStatuses('Andy, Booking', 'Paid', 'Did not attend')
     attendanceListPage.selectPrisoner('Aborah, Cudmastarie')
     attendanceListPage.selectPrisoner('Arianniver, Eeteljan')
     attendanceListPage.markAsAttended()
@@ -93,10 +94,8 @@ context('Record attendance', () => {
     cancelSessionConfirmPage.confirm()
 
     Page.verifyOnPage(AttendanceListPage)
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Cancelled')
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Pay')
-    attendanceListPage.checkAttendanceStatus('Aisho, Egurztof', 'Cancelled')
-    attendanceListPage.checkAttendanceStatus('Aisho, Egurztof', 'Pay')
+    attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Cancelled', 'Pay')
+    attendanceListPage.checkAttendanceStatuses('Aisho, Egurztof', 'Cancelled', 'Pay')
     attendanceListPage.assertNotificationContents(
       'Session cancelled',
       'This activity session has been cancelled by USER1 - J. Smith on Thursday, 2 February 2023 for the following reason:',

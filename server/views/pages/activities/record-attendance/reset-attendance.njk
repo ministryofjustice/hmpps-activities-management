@@ -13,6 +13,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <span class="govuk-caption-l">Record activity attendance</span>
                 {{ govukRadios({
                     name: "confirm",
                     fieldset: {
