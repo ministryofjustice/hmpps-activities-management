@@ -2,7 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 
 {% set pageTitle = applicationName + " - Allocation - Start date" %}
 {% set pageId = 'allocation-start-date-page' %}
@@ -45,11 +45,11 @@
                             text: "A different date",
                             checked: formResponses.startDateOption == 'START_DATE',
                             conditional: {
-                                html: mojDatePicker({
+                                html: hmppsDatePicker({
                                     id: 'startDate',
                                     name: 'startDate',
-                                    leadingZeros: 'true',
-                                    classes: 'moj-datepicker--fixed-width',
+
+                                    classes: 'hmpps-datepicker--fixed-width',
                                     label: {
                                         text: 'Enter the date',
                                         classes: 'govuk-visually-hidden'

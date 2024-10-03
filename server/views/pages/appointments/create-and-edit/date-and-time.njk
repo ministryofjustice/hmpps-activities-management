@@ -2,7 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "components/timePicker.njk" import timePicker %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
@@ -28,10 +28,10 @@
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ mojDatePicker({
+                {{ hmppsDatePicker({
                     id: "startDate",
                     name: "startDate",
-                    leadingZeros: 'true',
+
                     label: {
                         text: "Date",
                         classes: "govuk-label--m"
@@ -40,7 +40,7 @@
                         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
                     },
                     errorMessage: validationErrors | findError('startDate'),
-                    classes: 'moj-datepicker--fixed-width',
+                    classes: 'hmpps-datepicker--fixed-width',
                     value: formResponses.startDate or ((session.editAppointmentJourney.startDate or session.appointmentJourney.startDate) | isoDateToDatePickerDate)
                 }) }}
                 {% if session.appointmentJourney.mode != AppointmentJourneyMode.COPY %}

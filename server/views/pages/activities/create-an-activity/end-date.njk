@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
@@ -16,16 +16,16 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{ activityJourneyCaption(session.createJourney) }}
-                {{ mojDatePicker({
+                {{ hmppsDatePicker({
                     id: 'endDate',
                     name: 'endDate',
-                    leadingZeros: 'true',
+
                     label: {
                         text: "Change the end date for this activity" if session.req.params.mode == 'edit' else "Enter the end date for this activity",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
-                    classes: 'moj-datepicker--fixed-width',
+                    classes: 'hmpps-datepicker--fixed-width',
                     hint: {
                         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'
                     },

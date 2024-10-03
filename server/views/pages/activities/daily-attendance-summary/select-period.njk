@@ -2,7 +2,7 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 
 {% set pageTitle = applicationName + " - " + title %}
 {% set pageId = 'select-period-page' %}
@@ -43,11 +43,11 @@
                             text: "A different date",
                             checked: formResponses.datePresetOption == 'other',
                             conditional: { 
-                                html: mojDatePicker({
+                                html: hmppsDatePicker({
                                     id: 'date',
                                     name: 'date',
-                                    leadingZeros: 'true',
-                                    classes: 'moj-datepicker--fixed-width',
+
+                                    classes: 'hmpps-datepicker--fixed-width',
                                     hint: {
                                         html: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
                                     },

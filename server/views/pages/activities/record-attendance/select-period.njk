@@ -3,7 +3,7 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
+{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'select-period-page' %}
@@ -44,11 +44,11 @@
                             text: "A different date",
                             checked: formResponses.datePresetOption == 'other',
                             conditional: { 
-                                html: mojDatePicker({
+                                html: hmppsDatePicker({
                                     id: 'date',
                                     name: 'date',
-                                    leadingZeros: 'true',
-                                    classes: 'moj-datepicker--fixed-width',
+
+                                    classes: 'hmpps-datepicker--fixed-width',
                                     label: {
                                         text: 'Other date',
                                         classes: 'govuk-visually-hidden'
