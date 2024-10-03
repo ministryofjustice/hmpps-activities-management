@@ -7,7 +7,7 @@ export default class SelectDatePage extends Page {
 
   dateChoice = (): Cypress.Chainable => cy.get('[data-qa="dateChoiceRadios"]')
 
-  datePicker = (): Cypress.Chainable => cy.get('.hmpps-datepicker--fixed-width')
+  datePicker = (): Cypress.Chainable => cy.get('.moj-datepicker--fixed-width')
 
   confirmButton = (): Cypress.Chainable => cy.get('[data-qa="select-date-submit"]')
 

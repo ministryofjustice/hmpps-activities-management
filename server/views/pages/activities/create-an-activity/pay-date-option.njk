@@ -2,7 +2,7 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Create an activity - Pay date option" %}
@@ -50,11 +50,11 @@
                             label: { text: "Pay start date "},
                             checked: formResponses.dateOption == DateOption.OTHER,
                             conditional: { 
-                                html: hmppsDatePicker({
+                                html: mojDatePicker({
                                 id: 'startDate',
                                 name: 'startDate',
-
-                                classes: 'hmpps-datepicker--fixed-width',
+                                leadingZeros: 'true',
+                                classes: 'moj-datepicker--fixed-width',
                                 label: {
                                     text: 'startDate',
                                     classes: 'govuk-visually-hidden'

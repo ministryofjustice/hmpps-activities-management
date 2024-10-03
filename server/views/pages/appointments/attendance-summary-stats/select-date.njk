@@ -2,7 +2,7 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 
 {% set pageTitle = "Choose date of attendance summary" %}
 {% set pageId = 'appointment-attendance-summary-stats-select-date-page' %}
@@ -50,11 +50,11 @@
                             label: { text: "Movement date "},
                             checked: formResponses.dateOption == DateOption.OTHER,
                             conditional: { 
-                                html: hmppsDatePicker({
+                                html: mojDatePicker({
                                 id: 'date',
                                 name: 'date',
-
-                                classes: 'hmpps-datepicker--fixed-width',
+                                leadingZeros: 'true',
+                                classes: 'moj-datepicker--fixed-width',
                                 label: {
                                     text: 'Date',
                                     classes: 'govuk-visually-hidden'
