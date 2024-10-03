@@ -8,7 +8,7 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
-{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 {% from "partials/showLocation.njk" import showLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 
@@ -179,10 +179,10 @@
     {% endif %}
 
     {% set filterOptionsHtml %}
-        {{ hmppsDatePicker({
+        {{ mojDatePicker({
             id: 'startDate',
             name: 'startDate',
-
+            leadingZeros: 'true',
             label: {
                 text: "Date",
                 classes: "govuk-label--s"

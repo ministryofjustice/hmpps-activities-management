@@ -1,7 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from 'components/hmppsDatePicker.njk' import hmppsDatePicker %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Create a schedule - Start date" %}
@@ -15,16 +15,16 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{ activityJourneyCaption(session.createJourney) }}
-                {{ hmppsDatePicker({
+                {{ mojDatePicker({
                     id: 'startDate',
                     name: 'startDate',
-
+                    leadingZeros: 'true',
                     label: {
                         text: "Change the start date for this activity" if session.req.params.mode == 'edit' else "Enter the start date for this activity",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
-                    classes: 'hmpps-datepicker--fixed-width',
+                    classes: 'moj-datepicker--fixed-width',
                     hint: {
                         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select'
                     },
