@@ -108,17 +108,17 @@ export default abstract class Page {
     cy.readFile(downloadPath).should('exist')
   }
 
-  datePickerDialog = (): Cypress.Chainable => cy.get('.moj-datepicker__dialog')
+  datePickerDialog = (): Cypress.Chainable => cy.get('.hmpps-datepicker__dialog')
 
   openDatePicker = () => {
     this.datePickerDialog().should('not.be.visible')
-    cy.get('.moj-js-datepicker-toggle').click()
+    cy.get('.hmpps-datepicker-button').click()
     this.datePickerDialog().should('be.visible')
     cy.checkA11y(null, null, this.terminalLog)
   }
 
   closeDatePicker = () => {
-    this.datePickerDialog().find(`button:contains('Close')`).click()
+    this.datePickerDialog().find(`button:contains('Cancel')`).click()
     this.datePickerDialog().should('not.be.visible')
     cy.checkA11y(null, null, this.terminalLog)
   }
@@ -129,27 +129,28 @@ export default abstract class Page {
     // Select month and year
     const month = getMonth(date)
     const year = getYear(date)
-    cy.get('.moj-datepicker__dialog-title').then($datePickerTitle => {
+    cy.get('.hmpps-datepicker__dialog__title').then($datePickerTitle => {
       const datePickerTitle = $datePickerTitle.text().trim()
 
       const selectedYear = +datePickerTitle.split(' ')[1]
       const yearDelta = Math.abs(selectedYear - year)
       for (let i = 0; i < yearDelta; i += 1) {
-        cy.get(`.moj-js-datepicker-${year > selectedYear ? 'next' : 'prev'}-year`).click()
+        cy.get(`.js-datepicker-${year > selectedYear ? 'next' : 'prev'}-year`).click()
       }
 
       const selectedMonth = getMonth(parse(datePickerTitle.split(' ')[0], 'MMMM', new Date()))
       const monthDelta = Math.abs(selectedMonth - month)
       for (let i = 0; i < monthDelta; i += 1) {
-        cy.get(`.moj-js-datepicker-${month > selectedMonth ? 'next' : 'prev'}-month`).click()
+        cy.get(`.js-datepicker-${month > selectedMonth ? 'next' : 'prev'}-month`).click()
       }
     })
 
     cy.checkA11y(null, null, this.terminalLog)
 
     // Select day
-    cy.get('.moj-datepicker__calendar')
-      .find('button:visible')
+    cy.get('.hmpps-datepicker__dialog__table')
+      .find('button')
+      .filter(':visible')
       .contains(new RegExp(`^${getDate(date).toString()}$`))
       .click()
 
@@ -157,16 +158,16 @@ export default abstract class Page {
   }
 
   assertDatePickerDate = (date: Date) => {
-    cy.get('.moj-js-datepicker-input').should('have.value', formatDatePickerDate(date))
+    cy.get('.hmpps-js-datepicker-input').should('have.value', formatDatePickerDate(date))
     this.openDatePicker()
     // Verify month and year are displayed
-    cy.get('.moj-datepicker__dialog-title').should('contain.text', format(date, 'MMMM yyyy'))
+    cy.get('.hmpps-datepicker__dialog__title').should('contain.text', format(date, 'MMMM yyyy'))
     // Verify day is selected
-    cy.get('.moj-datepicker__calendar')
-      .find('button:visible')
+    cy.get('.hmpps-datepicker__dialog__table')
+      .find('button')
+      .filter(':visible')
       .contains(new RegExp(`^${getDate(date).toString()}$`))
-      .parent()
-      .should('have.class', 'moj-datepicker__button--selected')
+      .should('have.class', 'hmpps-datepicker-selected')
     this.closeDatePicker()
   }
 
