@@ -35,6 +35,8 @@ export type DayOfWeek =
   | DayOfWeekEnum.SATURDAY
   | DayOfWeekEnum.SUNDAY
 
+export type DaysOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
+
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 export enum DayOfWeekEnum {
@@ -351,10 +353,9 @@ export function calculateExclusionSlots(exclusions: Slot[], updatedExclusions: S
     const filteredExclusions = updatedExclusions.filter(
       e => e.timeSlot === exclusion.timeSlot && e.weekNumber === exclusion.weekNumber,
     )
-    const days: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[] =
-      exclusion.daysOfWeek
+    const days: DaysOfWeek[] = exclusion.daysOfWeek
 
-    const daysToAdd: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[] = []
+    const daysToAdd: DaysOfWeek[] = []
     days.forEach(day => {
       const dayNotFound = filteredExclusions.filter(s => s.daysOfWeek.includes(day)).length === 0
       if (dayNotFound) {
@@ -367,13 +368,13 @@ export function calculateExclusionSlots(exclusions: Slot[], updatedExclusions: S
         timeSlot: exclusion.timeSlot,
         customStartTime: exclusion.customStartTime,
         customEndTime: exclusion.customEndTime,
-        monday: daysToAdd.includes('MONDAY'),
-        tuesday: daysToAdd.includes('TUESDAY'),
-        wednesday: daysToAdd.includes('WEDNESDAY'),
-        thursday: daysToAdd.includes('THURSDAY'),
-        friday: daysToAdd.includes('FRIDAY'),
-        saturday: daysToAdd.includes('SATURDAY'),
-        sunday: daysToAdd.includes('SUNDAY'),
+        monday: daysToAdd.includes(DayOfWeekEnum.MONDAY),
+        tuesday: daysToAdd.includes(DayOfWeekEnum.TUESDAY),
+        wednesday: daysToAdd.includes(DayOfWeekEnum.WEDNESDAY),
+        thursday: daysToAdd.includes(DayOfWeekEnum.THURSDAY),
+        friday: daysToAdd.includes(DayOfWeekEnum.FRIDAY),
+        saturday: daysToAdd.includes(DayOfWeekEnum.SATURDAY),
+        sunday: daysToAdd.includes(DayOfWeekEnum.SUNDAY),
         daysOfWeek: daysToAdd,
       }
       addedSlots.push(slot)
@@ -400,23 +401,22 @@ export function mergeExclusionSlots(exclusions: Slot[]): Slot[] {
         merged => merged.weekNumber === exclusion.weekNumber && merged.timeSlot === exclusion.timeSlot,
       )
       if (added) {
-        const days: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[] =
-          exclusion.daysOfWeek
+        const days: DaysOfWeek[] = exclusion.daysOfWeek
 
-        const daysToAdd: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[] = []
+        const daysToAdd: DaysOfWeek[] = []
         days.forEach(day => {
           if (!added.daysOfWeek.includes(day)) {
             daysToAdd.push(day)
           }
         })
         if (daysToAdd.length > 0) {
-          added.monday = added.monday || daysToAdd.includes('MONDAY')
-          added.tuesday = added.tuesday || daysToAdd.includes('TUESDAY')
-          added.wednesday = added.wednesday || daysToAdd.includes('WEDNESDAY')
-          added.thursday = added.thursday || daysToAdd.includes('THURSDAY')
-          added.friday = added.friday || daysToAdd.includes('FRIDAY')
-          added.saturday = added.saturday || daysToAdd.includes('SATURDAY')
-          added.sunday = added.sunday || daysToAdd.includes('SUNDAY')
+          added.monday = added.monday || daysToAdd.includes(DayOfWeekEnum.MONDAY)
+          added.tuesday = added.tuesday || daysToAdd.includes(DayOfWeekEnum.TUESDAY)
+          added.wednesday = added.wednesday || daysToAdd.includes(DayOfWeekEnum.WEDNESDAY)
+          added.thursday = added.thursday || daysToAdd.includes(DayOfWeekEnum.THURSDAY)
+          added.friday = added.friday || daysToAdd.includes(DayOfWeekEnum.FRIDAY)
+          added.saturday = added.saturday || daysToAdd.includes(DayOfWeekEnum.SATURDAY)
+          added.sunday = added.sunday || daysToAdd.includes(DayOfWeekEnum.SUNDAY)
           added.daysOfWeek.push(...daysToAdd)
         }
       } else {
