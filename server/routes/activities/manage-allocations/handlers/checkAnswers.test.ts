@@ -5,6 +5,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import CheckAnswersRoutes from './checkAnswers'
 import atLeast from '../../../../../jest.setup'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
+import activitySchedule2 from '../../../../services/fixtures/activity_schedule_2.json'
 import { ActivitySchedule } from '../../../../@types/activitiesAPI/types'
 import { DeallocateTodayOption, StartDateOption } from '../journey'
 
@@ -155,6 +156,118 @@ describe('Route Handlers - Allocate - Check answers', () => {
         },
       })
     })
+
+    it('should render page with data from session with custom scheduled slots', async () => {
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(876))
+        .mockResolvedValue(activitySchedule2 as unknown as ActivitySchedule)
+
+      when(activitiesService.getDeallocationReasons).mockResolvedValue([
+        { code: 'COMPLETED', description: 'Completed' },
+      ])
+
+      req.session.allocateJourney.activity = {
+        activityId: 877,
+        scheduleId: 876,
+        name: 'EDUCATION COURSE ALBANY',
+        location: 'SITE 2',
+        inCell: false,
+        onWing: false,
+        offWing: false,
+        startDate: '2024-09-24',
+        endDate: null,
+        scheduleWeeks: 1,
+        paid: true,
+      }
+      req.session.allocateJourney.updatedExclusions = [
+        {
+          weekNumber: 1,
+          timeSlot: 'AM',
+          monday: false,
+          tuesday: false,
+          wednesday: false,
+          thursday: false,
+          friday: true,
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['FRIDAY'],
+        },
+        {
+          weekNumber: 1,
+          timeSlot: 'AM',
+          monday: true,
+          tuesday: true,
+          wednesday: true,
+          thursday: true,
+          friday: false,
+          saturday: false,
+          sunday: false,
+          daysOfWeek: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'],
+        },
+      ]
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/check-answers', {
+        deallocationReason: { code: 'COMPLETED', description: 'Completed' },
+        currentWeek: 1,
+        dailySlots: {
+          '1': [
+            {
+              day: 'Monday',
+              slots: [
+                {
+                  timeSlot: 'PM',
+                  startTime: '13:40',
+                  endTime: '16:50',
+                },
+              ],
+            },
+            {
+              day: 'Tuesday',
+              slots: [
+                {
+                  timeSlot: 'PM',
+                  startTime: '13:40',
+                  endTime: '16:50',
+                },
+              ],
+            },
+            {
+              day: 'Wednesday',
+              slots: [
+                {
+                  timeSlot: 'PM',
+                  startTime: '13:40',
+                  endTime: '16:50',
+                },
+              ],
+            },
+            {
+              day: 'Thursday',
+              slots: [
+                {
+                  timeSlot: 'PM',
+                  startTime: '13:40',
+                  endTime: '16:50',
+                },
+              ],
+            },
+            {
+              day: 'Friday',
+              slots: [],
+            },
+            {
+              day: 'Saturday',
+              slots: [],
+            },
+            {
+              day: 'Sunday',
+              slots: [],
+            },
+          ],
+        },
+      })
+    })
   })
 
   describe('POST', () => {
@@ -170,6 +283,99 @@ describe('Route Handlers - Allocate - Check answers', () => {
           '2023-01-01',
           '2023-02-01',
           [],
+          null,
+        )
+        expect(res.redirect).toHaveBeenCalledWith('confirmation')
+      })
+
+      it('should redirect to confirmation page when with custom scheduled slots and exclusions', async () => {
+        req.params.mode = 'create'
+        req.session.allocateJourney.activity = {
+          activityId: 877,
+          scheduleId: 876,
+          name: 'EDUCATION COURSE ALBANY',
+          location: 'SITE 2',
+          inCell: false,
+          onWing: false,
+          offWing: false,
+          startDate: '2024-09-24',
+          endDate: null,
+          scheduleWeeks: 1,
+          paid: true,
+        }
+        req.session.allocateJourney.updatedExclusions = [
+          {
+            weekNumber: 1,
+            timeSlot: 'AM',
+            monday: true,
+            tuesday: false,
+            wednesday: true,
+            thursday: false,
+            friday: true,
+            saturday: false,
+            sunday: false,
+            daysOfWeek: ['FRIDAY', 'MONDAY', 'WEDNESDAY'],
+          },
+          {
+            weekNumber: 1,
+            timeSlot: 'AM',
+            monday: true,
+            tuesday: false,
+            wednesday: true,
+            thursday: false,
+            friday: false,
+            saturday: false,
+            sunday: false,
+            daysOfWeek: ['MONDAY', 'WEDNESDAY'],
+          },
+          {
+            weekNumber: 1,
+            timeSlot: 'PM',
+            monday: false,
+            tuesday: true,
+            wednesday: false,
+            thursday: true,
+            friday: false,
+            saturday: false,
+            sunday: false,
+            daysOfWeek: ['TUESDAY', 'THURSDAY'],
+          },
+        ]
+
+        await handler.POST(req, res)
+        expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
+          876,
+          'ABC123',
+          1,
+          { username: 'joebloggs' },
+          '2023-01-01',
+          '2023-02-01',
+          [
+            {
+              weekNumber: 1,
+              timeSlot: 'AM',
+              monday: true,
+              tuesday: false,
+              wednesday: true,
+              thursday: false,
+              friday: true,
+              saturday: false,
+              sunday: false,
+              daysOfWeek: ['FRIDAY', 'MONDAY', 'WEDNESDAY'],
+            },
+            {
+              weekNumber: 1,
+              timeSlot: 'PM',
+              monday: false,
+              tuesday: true,
+              wednesday: false,
+              thursday: true,
+              friday: false,
+              saturday: false,
+              sunday: false,
+              daysOfWeek: ['TUESDAY', 'THURSDAY'],
+            },
+          ],
           null,
         )
         expect(res.redirect).toHaveBeenCalledWith('confirmation')
