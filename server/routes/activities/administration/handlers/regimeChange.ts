@@ -56,6 +56,66 @@ export default class RegimeChangeRoutes {
 
     const updatedRegimeTimes: PrisonRegime[] = getPrisonRegimes(startTimes, endTimes, currentRegimeTimes)
 
+    // validate slots
+    const slotsWithStartAfterEndAm: PrisonRegime[] = updatedRegimeTimes.filter(
+      regimeSlot => regimeSlot.amStart.localeCompare(regimeSlot.amFinish) >= 0,
+    )
+
+    const slotsWithStartAfterEndPm: PrisonRegime[] = updatedRegimeTimes.filter(
+      regimeSlot => regimeSlot.pmStart.localeCompare(regimeSlot.pmFinish) >= 0,
+    )
+
+    const slotsWithStartAfterEndEd: PrisonRegime[] = updatedRegimeTimes.filter(
+      regimeSlot => regimeSlot.edStart.localeCompare(regimeSlot.edFinish) >= 0,
+    )
+
+    const slotsWithStartTimesAfterEarlierSession: PrisonRegime[] = updatedRegimeTimes.filter(
+      regimeSlot =>
+        regimeSlot.amStart.localeCompare(regimeSlot.pmStart) >= 0 ||
+        regimeSlot.pmStart.localeCompare(regimeSlot.edStart) >= 0 ||
+        regimeSlot.amStart.localeCompare(regimeSlot.edStart) >= 0,
+    )
+
+    if (slotsWithStartTimesAfterEarlierSession.length > 0) {
+      slotsWithStartTimesAfterEarlierSession.forEach(regimeSlot => {
+        res.addValidationError(
+          `startTimes-prisonRegimeTimes-${regimeSlot.dayOfWeek}-AM`,
+          'Check start times for this day. Start time must be before the earlier session start time',
+        )
+      })
+      return res.validationFailed()
+    }
+
+    if (slotsWithStartAfterEndAm.length > 0) {
+      slotsWithStartAfterEndAm.forEach(regimeSlotAM => {
+        res.addValidationError(
+          `endTimes-prisonRegimeTimes-${regimeSlotAM.dayOfWeek}-AM`,
+          'Select an end time after the start time',
+        )
+      })
+      return res.validationFailed()
+    }
+
+    if (slotsWithStartAfterEndPm.length > 0) {
+      slotsWithStartAfterEndPm.forEach(regimeSlotPM => {
+        res.addValidationError(
+          `endTimes-prisonRegimeTimes-${regimeSlotPM.dayOfWeek}-PM`,
+          'Select an end time after the start time',
+        )
+      })
+      return res.validationFailed()
+    }
+
+    if (slotsWithStartAfterEndEd.length > 0) {
+      slotsWithStartAfterEndEd.forEach(regimeSlotED => {
+        res.addValidationError(
+          `endTimes-prisonRegimeTimes-${regimeSlotED.dayOfWeek}-ED`,
+          'Select an end time after the start time',
+        )
+      })
+      return res.validationFailed()
+    }
+
     await this.activitiesService.updatePrisonRegime(updatedRegimeTimes, user.activeCaseLoadId, user)
     const successMessage = `You've updated the regime schedule`
     return res.redirectWithSuccess(`/activities/admin`, 'Regime updated', successMessage)

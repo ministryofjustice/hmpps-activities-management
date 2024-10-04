@@ -20,32 +20,32 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {% for week, customSlots in regimeSlots %}
                         {% set rows = [] %} 
-                        {% for customSlot in customSlots %}
-                            {% set formattedStart = customSlot.start | getSplitTime %}
-                            {% set formattedFinish = customSlot.finish | getSplitTime %}
+                        {% for regimeSlot in customSlots %}
+                            {% set formattedStart = regimeSlot.start | getSplitTime %}
+                            {% set formattedFinish = regimeSlot.finish | getSplitTime %}
                             {% set rows = (rows.push([
                                 {
-                                    html: customSlot.dayOfWeek | title
+                                    html: regimeSlot.dayOfWeek | title
                                 },
                                 {
-                                    html: customSlot.timeSlot
+                                    html: regimeSlot.timeSlot
                                 },
                                 {
                                     html: timePicker({
-                                        id: 'startTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
-                                        name: 'startTimes[' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
-                                        renderedErrorMessage: validationErrors | findError('startTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                                        id: 'startTimes-' + week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot,
+                                        name: 'startTimes[' + week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('startTimes-' + week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.startTimes[week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedStart
+                                        formResponses: formResponses.startTimes[week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot] or formattedStart
                                 })
                                 },
                                 {
                                     html: timePicker({
-                                        id: 'endTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot,
-                                        name: 'endTimes[' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot + ']',
-                                        renderedErrorMessage: validationErrors | findError('endTimes-' + week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot),
+                                        id: 'endTimes-' + week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot,
+                                        name: 'endTimes[' + week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('endTimes-' + week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.endTimes[week + '-' + customSlot.dayOfWeek + '-' + customSlot.timeSlot] or formattedFinish
+                                        formResponses: formResponses.endTimes[week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot] or formattedFinish
                                         })
                                 }]), rows) %}
                         {% endfor %}
