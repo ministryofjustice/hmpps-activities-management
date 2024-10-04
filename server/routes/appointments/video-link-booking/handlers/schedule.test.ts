@@ -46,8 +46,24 @@ describe('ScheduleRoutes', () => {
   describe('GET', () => {
     it('renders schedule view with scheduled events, internal location events, and rooms', async () => {
       const scheduledEvents = [
-        { id: 1, type: 'activity', cancelled: false, prisonCode: 'PRISON1', eventSource: 'source1' },
-        { id: 2, type: 'appointment', cancelled: false, prisonCode: 'PRISON2', eventSource: 'source2' },
+        {
+          id: 1,
+          type: 'activity',
+          cancelled: false,
+          prisonCode: 'PRISON1',
+          eventSource: 'source1',
+          scheduledInstanceId: 1,
+          prisonerNumber: 'ABC123',
+        },
+        {
+          id: 2,
+          type: 'appointment',
+          cancelled: false,
+          prisonCode: 'PRISON2',
+          eventSource: 'source2',
+          appointmentId: 1,
+          prisonerNumber: 'ABC123',
+        },
       ] as unknown as ScheduledEvent[]
       const internalLocationEvents = [
         {
@@ -55,7 +71,18 @@ describe('ScheduleRoutes', () => {
           prisonCode: 'PRISON1',
           code: 'LOC1',
           description: 'Location 1',
-          events: scheduledEvents,
+          events: [
+            ...scheduledEvents,
+            {
+              id: 3,
+              type: 'activity',
+              cancelled: false,
+              prisonCode: 'PRISON1',
+              eventSource: 'source1',
+              scheduledInstanceId: 1,
+              prisonerNumber: 'XYZ321',
+            } as unknown as ScheduledEvent,
+          ],
         },
       ]
       const rooms = [
@@ -81,7 +108,10 @@ describe('ScheduleRoutes', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/schedule', {
         prisonerScheduledEvents: [scheduledEvents[0], scheduledEvents[1]],
-        internalLocationEvents,
+        internalLocationEvents: internalLocationEvents.map(ile => ({
+          ...ile,
+          events: scheduledEvents,
+        })),
         rooms,
       })
     })
