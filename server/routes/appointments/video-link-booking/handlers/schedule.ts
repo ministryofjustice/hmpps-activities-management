@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import _ from 'lodash'
+import _, { uniqWith } from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
@@ -33,12 +33,22 @@ export default class ScheduleRoutes {
           ...response.externalTransfers,
           ...response.adjudications,
         ]),
-      this.activitiesService.getInternalLocationEvents(
-        user.activeCaseLoadId,
-        parseIsoDate(date),
-        locations.map(l => l.locationId),
-        user,
-      ),
+      this.activitiesService
+        .getInternalLocationEvents(
+          user.activeCaseLoadId,
+          parseIsoDate(date),
+          locations.map(l => l.locationId),
+          user,
+        )
+        .then(events =>
+          events.map(location => ({
+            ...location,
+            events: uniqWith(
+              location.events,
+              (a, b) => a.scheduledInstanceId === b.scheduledInstanceId && a.appointmentId === b.appointmentId,
+            ),
+          })),
+        ),
       this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonCode, user),
     ])
 
