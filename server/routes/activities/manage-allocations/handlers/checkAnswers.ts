@@ -1,7 +1,11 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AddCaseNoteRequest, DeallocationReasonCode } from '../../../../@types/activitiesAPI/types'
-import { activitySlotsMinusExclusions, sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
+import {
+  activitySlotsMinusExclusions,
+  mergeExclusionSlots,
+  sessionSlotsToSchedule,
+} from '../../../../utils/helpers/activityTimeSlotMappers'
 import { parseDate } from '../../../../utils/utils'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import { DeallocateTodayOption, StartDateOption } from '../journey'
@@ -15,7 +19,8 @@ export default class CheckAnswersRoutes {
     const deallocationReasons = await this.activitiesService.getDeallocationReasons(user)
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
-    const allocationSlots = activitySlotsMinusExclusions(updatedExclusions, schedule.slots)
+
+    const allocationSlots = activitySlotsMinusExclusions(mergeExclusionSlots(updatedExclusions), schedule.slots) // incorrect
     const dailySlots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
     const currentWeek = calcCurrentWeek(parseDate(activity.startDate), schedule.scheduleWeeks)
 
@@ -50,7 +55,7 @@ export default class CheckAnswersRoutes {
         user,
         startDate,
         endDate,
-        updatedExclusions,
+        mergeExclusionSlots(updatedExclusions),
         startDateOption === StartDateOption.NEXT_SESSION ? scheduledInstance?.id : null,
       )
     }
