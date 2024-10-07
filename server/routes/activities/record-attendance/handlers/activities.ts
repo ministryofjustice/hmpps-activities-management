@@ -5,7 +5,6 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { asString, convertToArray, formatDate, toDate } from '../../../../utils/utils'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
-import { AttendActivityMode } from '../journey'
 import PrisonService from '../../../../services/prisonService'
 import { LocationType } from '../../create-an-activity/handlers/location'
 
@@ -109,7 +108,6 @@ export default class ActivitiesRoutes {
     const { selectedInstanceIds, activityDate, sessionFilters } = req.body
     const selectedInstanceIdsArr = selectedInstanceIds ? convertToArray(selectedInstanceIds) : []
     req.session.recordAttendanceJourney = {
-      mode: AttendActivityMode.MULTIPLE,
       selectedInstanceIds: selectedInstanceIdsArr,
       activityDate,
       sessionFilters,

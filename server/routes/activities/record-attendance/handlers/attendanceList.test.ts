@@ -307,8 +307,6 @@ describe('Route Handlers - Attendance List', () => {
     it('should render with the expected view when there are no time sessions saved', async () => {
       await handler.GET(req, res)
 
-      expect(req.session.recordAttendanceJourney.mode).toEqual(undefined)
-
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
         instance: {
           ...instanceA,
@@ -325,8 +323,6 @@ describe('Route Handlers - Attendance List', () => {
       req.session.recordAttendanceJourney.sessionFilters = ['AM', 'ED']
 
       await handler.GET(req, res)
-
-      expect(req.session.recordAttendanceJourney.mode).toEqual(undefined)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
         instance: {
@@ -351,8 +347,6 @@ describe('Route Handlers - Attendance List', () => {
         } as ScheduledActivity)
 
       await handler.GET(req, res)
-
-      expect(req.session.recordAttendanceJourney.mode).toEqual(undefined)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
         instance: {

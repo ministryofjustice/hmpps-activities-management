@@ -5,7 +5,6 @@ import ActivitiesRoutes from './activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
-import { AttendActivityMode } from '../journey'
 import { LocationType } from '../../create-an-activity/handlers/location'
 import TimeSlot from '../../../../enum/timeSlot'
 
@@ -375,11 +374,7 @@ describe('Route Handlers - Activities', () => {
           categoryFilters: 'SAA_EDUCATION,SAA_INDUSTRIES',
           locationType: LocationType.IN_CELL,
         },
-        session: {
-          recordAttendanceJourney: {
-            mode: AttendActivityMode.MULTIPLE,
-          },
-        },
+        session: {},
       } as unknown as Request
 
       await handler.GET(req, res)
@@ -541,7 +536,6 @@ describe('Route Handlers - Activities', () => {
       await handler.POST_ATTENDANCES(req, res)
 
       expect(req.session.recordAttendanceJourney).toEqual({
-        mode: AttendActivityMode.MULTIPLE,
         selectedInstanceIds: [345, 567],
         activityDate: '2024-01-24',
         sessionFilters: ['AM', 'ED'],
@@ -561,7 +555,6 @@ describe('Route Handlers - Activities', () => {
       await handler.POST_ATTENDANCES(req, res)
 
       expect(req.session.recordAttendanceJourney).toEqual({
-        mode: AttendActivityMode.MULTIPLE,
         selectedInstanceIds: [345],
       })
 

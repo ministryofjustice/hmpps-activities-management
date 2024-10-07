@@ -1,6 +1,5 @@
 export type RecordAttendanceJourney = {
   sessionCancellation?: SessionCancellationRequest
-  mode?: AttendActivityMode
   selectedInstanceIds?: string[]
   activityDate?: string
   sessionFilters?: string[]
@@ -19,11 +18,6 @@ type NotAttendedJourney = {
       summary?: string
     }[]
   }>
-}
-
-export enum AttendActivityMode {
-  MULTIPLE = 'MULTIPLE',
-  SINGLE = 'SINGLE',
 }
 
 export type SessionCancellationRequest = {
