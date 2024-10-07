@@ -21,12 +21,9 @@ export default class UncancelSessionRoutes {
 
     if (confirm === 'yes') {
       await this.activitiesService.uncancelScheduledActivity(instanceId, user)
-      return res.redirectWithSuccess(
-        `/activities/attendance/activities/${instanceId}/attendance-list`,
-        `Session no longer cancelled`,
-      )
+      return res.redirectWithSuccess(`../../activities/${instanceId}/attendance-list`, `Session no longer cancelled`)
     }
 
-    return res.redirect(`/activities/attendance/activities/${instanceId}/attendance-list`)
+    return res.redirect(`../../activities/${instanceId}/attendance-list`)
   }
 }

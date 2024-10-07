@@ -8,7 +8,7 @@
             <div class="govuk-!-margin-right-2 event-details">
                 <div class="govuk-!-font-weight-bold">
                     {% if event.eventType === 'ACTIVITY' and event.eventSource === 'SAA' %}
-                        <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list?mode=standalone&preserveHistory=true"
+                        <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list"
                         class="govuk-link govuk-link--no-visited-state"
                         target="_blank">
                             {{- event.summary | trim -}}<span class="govuk-visually-hidden"> (opens in new tab)</span>

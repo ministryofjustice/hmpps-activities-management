@@ -36,8 +36,8 @@ export default class CancelSessionRoutes {
 
     const textReason = cancellationReasons[reason]
 
-    req.session.recordAttendanceRequests = {
-      ...req.session.recordAttendanceRequests,
+    req.session.recordAttendanceJourney = {
+      ...req.session.recordAttendanceJourney,
       sessionCancellation: { reason: textReason, comment },
     }
 

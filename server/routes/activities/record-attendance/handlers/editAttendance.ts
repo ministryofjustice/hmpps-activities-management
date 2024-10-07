@@ -7,7 +7,6 @@ import { eventClashes, toDate } from '../../../../utils/utils'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { Attendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
-import { AttendActivityMode } from '../recordAttendanceRequests'
 
 enum EditAttendanceOptions {
   YES = 'yes',
@@ -50,6 +49,7 @@ export default class EditAttendanceRoutes {
     const { user } = res.locals
     const { id } = req.params
     const { attendanceId } = req.params
+
     if (req.body.attendanceOption === EditAttendanceOptions.YES) {
       const attendances = [
         {
@@ -62,10 +62,9 @@ export default class EditAttendanceRoutes {
       ]
       await this.activitiesService.updateAttendances(attendances, user)
 
-      const returnUrl =
-        req.session.recordAttendanceRequests.mode === AttendActivityMode.MULTIPLE
-          ? '/activities/attendance/activities/attendance-list'
-          : `/activities/attendance/activities/${id}/attendance-list`
+      const returnUrl = req.session.recordAttendanceJourney.singleInstanceSelected
+        ? '../../attendance-list'
+        : '../../../attendance-list'
 
       return res.redirect(returnUrl)
     }
@@ -90,7 +89,7 @@ export default class EditAttendanceRoutes {
         name: `${i.firstName} ${i.lastName}`,
         otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
       }))
-      req.session.notAttendedJourney = {
+      req.session.recordAttendanceJourney.notAttended = {
         selectedPrisoners: [
           {
             instanceId: +id,
@@ -101,10 +100,10 @@ export default class EditAttendanceRoutes {
           },
         ],
       }
-      return res.redirect(`/activities/attendance/activities/not-attended-reason?preserveHistory=true`)
+      return res.redirect(`../../../not-attended-reason?preserveHistory=true`)
     }
 
     // If not "yes" or "no", assume "reset"
-    return res.redirect(`/activities/attendance/activities/${id}/attendance-details/${attendanceId}/reset-attendance`)
+    return res.redirect(`../../../${id}/attendance-details/${attendanceId}/reset-attendance`)
   }
 }

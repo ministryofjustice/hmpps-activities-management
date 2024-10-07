@@ -25,7 +25,7 @@
 {% set activityDate = instance.date | toDate | formatDate %}
 {% if selectedSessions.length > 0 %}
     {% set hardBackLinkText = 'Go back to activities for ' + activityDate + ' - ' + formatSessions(selectedSessions) %}
-    {% set hardBackLinkHref = '/activities/attendance/activities?date=' + session.recordAttendanceRequests.activityDate + '&sessionFilters=' + selectedSessions | join(",") %}
+    {% set hardBackLinkHref = '../../activities?date=' + instance.date + '&sessionFilters=' + selectedSessions | join(",") %}
 {% endif %}
 
 {% block content %}

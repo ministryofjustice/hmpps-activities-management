@@ -24,7 +24,7 @@
 
                 {% if event.eventType == EventType.ACTIVITY and event.eventSource =='SAA' %}
                     <div>
-                        <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list?mode=standalone"
+                        <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list"
                            class="govuk-link govuk-link--no-visited-state" target="_blank">
                             {{ event.summary | trim }}
                         </a>
