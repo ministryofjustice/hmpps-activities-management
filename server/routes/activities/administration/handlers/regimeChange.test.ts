@@ -1625,7 +1625,7 @@ describe('Route Handlers - Change Regime times', () => {
 
       expect(res.addValidationError).toHaveBeenCalledWith(
         `startTimes-prisonRegimeTimes-MONDAY-AM`,
-        'Check start times for this day. Start time must be before the earlier session start time',
+        'Start time must be before any later session start times',
       )
     })
 
@@ -1857,7 +1857,7 @@ describe('Route Handlers - Change Regime times', () => {
 
       expect(res.addValidationError).toHaveBeenCalledWith(
         `startTimes-prisonRegimeTimes-FRIDAY-AM`,
-        'Check start times for this day. Start time must be before the earlier session start time',
+        'Start time must be before any later session start times',
       )
     })
 
@@ -2090,7 +2090,7 @@ describe('Route Handlers - Change Regime times', () => {
 
       expect(res.addValidationError).toHaveBeenCalledWith(
         `startTimes-prisonRegimeTimes-SUNDAY-AM`,
-        'Check start times for this day. Start time must be before the earlier session start time',
+        'Start time must be before any later session start times',
       )
     })
   })

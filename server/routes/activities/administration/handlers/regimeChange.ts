@@ -40,23 +40,22 @@ export default class RegimeChangeRoutes {
     const { user } = res.locals
     const { startTimes, endTimes }: RegimeTimes = req.body
 
-    const startTimesObj = Array.from(startTimes.keys()).reduce((acc, key) => {
-      acc[key] = startTimes.get(key)
-      return acc
-    }, {})
-
-    const endTimesObj = Array.from(endTimes.keys()).reduce((acc, key) => {
-      acc[key] = endTimes.get(key)
-      return acc
-    }, {})
-    req.body.startTimes = startTimesObj
-    req.body.endTimes = endTimesObj
-
     const currentRegimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
 
     const updatedRegimeTimes: PrisonRegime[] = getPrisonRegimes(startTimes, endTimes, currentRegimeTimes)
 
     // validate slots
+    if (this.validateSlots(updatedRegimeTimes, res)) {
+      return res.validationFailed()
+    }
+
+    await this.activitiesService.updatePrisonRegime(updatedRegimeTimes, user.activeCaseLoadId, user)
+    const successMessage = `You've updated the regime schedule`
+    return res.redirectWithSuccess(`/activities/admin`, 'Regime updated', successMessage)
+  }
+
+  private validateSlots(updatedRegimeTimes: PrisonRegime[], res: Response): boolean {
+    let failed = false
     const slotsWithStartAfterEndAm: PrisonRegime[] = updatedRegimeTimes.filter(
       regimeSlot => regimeSlot.amStart.localeCompare(regimeSlot.amFinish) >= 0,
     )
@@ -80,10 +79,10 @@ export default class RegimeChangeRoutes {
       slotsWithStartTimesAfterEarlierSession.forEach(regimeSlot => {
         res.addValidationError(
           `startTimes-prisonRegimeTimes-${regimeSlot.dayOfWeek}-AM`,
-          'Check start times for this day. Start time must be before the earlier session start time',
+          'Start time must be before any later session start times',
         )
       })
-      return res.validationFailed()
+      failed = true
     }
 
     if (slotsWithStartAfterEndAm.length > 0) {
@@ -93,7 +92,7 @@ export default class RegimeChangeRoutes {
           'Select an end time after the start time',
         )
       })
-      return res.validationFailed()
+      failed = true
     }
 
     if (slotsWithStartAfterEndPm.length > 0) {
@@ -103,7 +102,7 @@ export default class RegimeChangeRoutes {
           'Select an end time after the start time',
         )
       })
-      return res.validationFailed()
+      failed = true
     }
 
     if (slotsWithStartAfterEndEd.length > 0) {
@@ -113,12 +112,9 @@ export default class RegimeChangeRoutes {
           'Select an end time after the start time',
         )
       })
-      return res.validationFailed()
+      failed = true
     }
-
-    await this.activitiesService.updatePrisonRegime(updatedRegimeTimes, user.activeCaseLoadId, user)
-    const successMessage = `You've updated the regime schedule`
-    return res.redirectWithSuccess(`/activities/admin`, 'Regime updated', successMessage)
+    return failed
   }
 
   private getDaysAndSlots = async (regimeTimes: PrisonRegime[]): Promise<Map<string, DaysAndSlotsInRegime[]>> => {
