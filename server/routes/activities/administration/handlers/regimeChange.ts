@@ -40,6 +40,19 @@ export default class RegimeChangeRoutes {
     const { user } = res.locals
     const { startTimes, endTimes }: RegimeTimes = req.body
 
+    const startTimesObj = Array.from(startTimes.keys()).reduce((acc, key) => {
+      acc[key] = startTimes.get(key)
+      return acc
+    }, {})
+
+    const endTimesObj = Array.from(endTimes.keys()).reduce((acc, key) => {
+      acc[key] = endTimes.get(key)
+      return acc
+    }, {})
+
+    req.body.startTimes = startTimesObj
+    req.body.endTimes = endTimesObj
+
     const currentRegimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
 
     const updatedRegimeTimes: PrisonRegime[] = getPrisonRegimes(startTimes, endTimes, currentRegimeTimes)
