@@ -25,6 +25,7 @@ generic-service:
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-preprod.hmpps-digital-prison-reporting-mi-preprod.svc.cluster.local"
     BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED: "true"
     FUTURE_PAY_RATES_TOGGLE_ENABLED: "true"
+    DEALLOCATE_TODAY_SESSION_TOGGLE_ENABLED: "true"
 
   allowlist:
     moj-official-tgw-prod: 51.149.250.0/24
