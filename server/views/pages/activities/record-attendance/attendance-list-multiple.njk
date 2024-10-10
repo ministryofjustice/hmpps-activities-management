@@ -11,9 +11,9 @@
 
 {% set pageTitle = applicationName %}
 {% set pageId = 'attendance-list-page' %}
-{% set activityDate = session.recordAttendanceRequests.activityDate | toDate | formatDate %}
+{% set activityDate = session.recordAttendanceJourney.activityDate | toDate | formatDate %}
 {% set hardBackLinkText = 'Go back to activities for ' + activityDate + ' - ' + formatSessions(selectedSessions) %}
-{% set hardBackLinkHref = '/activities/attendance/activities?date=' + session.recordAttendanceRequests.activityDate + '&sessionFilters=' + selectedSessions | join(",") %}
+{% set hardBackLinkHref = '/activities/attendance/activities?date=' + session.recordAttendanceJourney.activityDate + '&sessionFilters=' + selectedSessions | join(",") %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -230,7 +230,7 @@
 
 {% macro renderViewLink(attendee) %}
     {% if attendee.attendance.status === 'COMPLETED' or attendee.attendance.attendanceHistory | length %}
-        <a href="/activities/attendance/activities/{{ attendee.instance.id }}/attendance-details/{{ attendee.attendance.id }}" class="govuk-link govuk-link--no-visited-state">
+        <a href="{{ attendee.instance.id }}/attendance-details/{{ attendee.attendance.id }}" class="govuk-link govuk-link--no-visited-state">
             {% if attendee.attendance.editable and attendee.instance.activitySchedule.activity.attendanceRequired %}
                 View or Edit
             {% else %}

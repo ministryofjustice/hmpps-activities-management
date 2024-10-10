@@ -10,7 +10,6 @@ import ResetAttendanceRoutes, { ResetAttendance } from './resetAttendance'
 import { YesNo } from '../../../../@types/activities'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import { AttendActivityMode } from '../recordAttendanceRequests'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -54,11 +53,9 @@ describe('Route Handlers - Reset Attendance', () => {
     } as unknown as Response
 
     req = {
+      session: {},
       params: { id: 1, attendanceId: 1 },
       body: {},
-      session: {
-        notAttendedJourney: {},
-      },
     } as unknown as Request
   })
 
@@ -90,18 +87,18 @@ describe('Route Handlers - Reset Attendance', () => {
 
     describe('Journey is from updating a single activity instance', () => {
       beforeEach(() => {
-        req.session.recordAttendanceRequests = {
-          mode: AttendActivityMode.SINGLE,
+        req.session.recordAttendanceJourney = {
+          singleInstanceSelected: true,
         }
       })
 
       it.each([
-        [AttendActivityMode.SINGLE, '1/attendance-list'],
-        [AttendActivityMode.MULTIPLE, 'attendance-list'],
+        [true, '1/attendance-list'],
+        [false, 'attendance-list'],
       ])(
-        'should reset attendance and display success message when reset has been confirmed and mode = %s',
-        async (mode: AttendActivityMode, url: string) => {
-          req.session.recordAttendanceRequests = { mode }
+        'should reset attendance and display success message when reset has been confirmed and singleInstanceSelected = %s',
+        async (singleInstanceSelected: boolean, url: string) => {
+          req.session.recordAttendanceJourney.singleInstanceSelected = singleInstanceSelected
 
           when(activitiesService.getAttendanceDetails).mockResolvedValue(attendance)
           when(prisonService.getInmateByPrisonerNumber)
@@ -123,7 +120,7 @@ describe('Route Handlers - Reset Attendance', () => {
             res.locals.user,
           )
           expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-            `/activities/attendance/activities/${url}`,
+            `../../../${url}`,
             'Attendance reset',
             `Attendance for ${prisoner.firstName} ${prisoner.lastName} has been reset`,
           )
@@ -131,18 +128,18 @@ describe('Route Handlers - Reset Attendance', () => {
       )
 
       it.each([
-        [AttendActivityMode.SINGLE, '1/attendance-list'],
-        [AttendActivityMode.MULTIPLE, 'attendance-list'],
+        [true, '1/attendance-list'],
+        [false, 'attendance-list'],
       ])(
-        'should return back to attendance list page and not reset attendance if not confirmed and mode = %s',
-        async (mode: AttendActivityMode, url: string) => {
+        'should return back to attendance list page and not reset attendance if not confirmed and singleInstanceSelected = %s',
+        async (singleInstanceSelected: boolean, url: string) => {
           req.body.confirm = YesNo.NO
-          req.session.recordAttendanceRequests = { mode }
+          req.session.recordAttendanceJourney.singleInstanceSelected = singleInstanceSelected
 
           await handler.POST(req, res)
 
           expect(activitiesService.updateAttendances).toBeCalledTimes(0)
-          expect(res.redirect).toHaveBeenCalledWith(`/activities/attendance/activities/${url}`)
+          expect(res.redirect).toHaveBeenCalledWith(`../../../${url}`)
         },
       )
     })

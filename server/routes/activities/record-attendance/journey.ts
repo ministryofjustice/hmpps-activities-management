@@ -1,4 +1,13 @@
-export type NotAttendedJourney = {
+export type RecordAttendanceJourney = {
+  sessionCancellation?: SessionCancellationRequest
+  selectedInstanceIds?: string[]
+  activityDate?: string
+  sessionFilters?: string[]
+  singleInstanceSelected?: boolean
+  notAttended?: NotAttendedJourney
+}
+
+type NotAttendedJourney = {
   selectedPrisoners?: Array<{
     instanceId?: number
     attendanceId?: number
@@ -9,4 +18,9 @@ export type NotAttendedJourney = {
       summary?: string
     }[]
   }>
+}
+
+export type SessionCancellationRequest = {
+  reason: string
+  comment?: string
 }

@@ -249,8 +249,7 @@ describe('Route Handlers - Attendance List', () => {
     req = {
       params: { id: 1 },
       session: {
-        notAttendedJourney: {},
-        recordAttendanceRequests: {},
+        recordAttendanceJourney: {},
       },
       body: {},
       query: {},
@@ -308,8 +307,6 @@ describe('Route Handlers - Attendance List', () => {
     it('should render with the expected view when there are no time sessions saved', async () => {
       await handler.GET(req, res)
 
-      expect(req.session.recordAttendanceRequests.mode).toEqual(undefined)
-
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
         instance: {
           ...instanceA,
@@ -323,11 +320,9 @@ describe('Route Handlers - Attendance List', () => {
     })
 
     it('should render with the expected view when there are time sessions saved', async () => {
-      req.session.recordAttendanceRequests.sessionFilters = ['AM', 'ED']
+      req.session.recordAttendanceJourney.sessionFilters = ['AM', 'ED']
 
       await handler.GET(req, res)
-
-      expect(req.session.recordAttendanceRequests.mode).toEqual(undefined)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
         instance: {
@@ -353,8 +348,6 @@ describe('Route Handlers - Attendance List', () => {
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAttendanceRequests.mode).toEqual(undefined)
-
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
         instance: {
           ...instanceA,
@@ -368,33 +361,13 @@ describe('Route Handlers - Attendance List', () => {
       })
     })
 
-    it('Should clear any session data when called in standalone mode', async () => {
-      req.query.mode = 'standalone'
-      req.session.recordAttendanceRequests.sessionFilters = ['AM', 'ED']
-
-      await handler.GET(req, res)
-
-      expect(req.session.recordAttendanceRequests).toEqual({})
-
-      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
-        instance: {
-          ...instanceA,
-          isAmendable: true,
-        },
-        attendance,
-        attendanceSummary: getAttendanceSummary(instanceA.attendances),
-        isPayable: true,
-        selectedSessions: [],
-      })
-    })
-
     it('Should not clear session data', async () => {
       req.query.mode = 'unknown'
-      req.session.recordAttendanceRequests.sessionFilters = ['AM']
+      req.session.recordAttendanceJourney.sessionFilters = ['AM']
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAttendanceRequests.sessionFilters).toEqual(['AM'])
+      expect(req.session.recordAttendanceJourney.sessionFilters).toEqual(['AM'])
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
         instance: {
@@ -530,7 +503,7 @@ describe('Route Handlers - Attendance List', () => {
     ]
 
     beforeEach(() => {
-      req.session.recordAttendanceRequests = {
+      req.session.recordAttendanceJourney = {
         selectedInstanceIds: ['1', '2'],
         sessionFilters: ['AM', 'PM'],
       }
@@ -782,109 +755,117 @@ describe('Route Handlers - Attendance List', () => {
       )
     })
 
-    it('should update session with for non-attendance', async () => {
-      req = {
-        session: {
-          notAttendedJourney: {},
-        },
-        body: {
-          selectedAttendances: ['1-111-ABC123', '2-333-XYZ345'],
-        },
-      } as unknown as Request
+    it.each([
+      [true, '../not-attended-reason'],
+      [false, 'not-attended-reason'],
+    ])(
+      'should update session with for selected non-attendance prisoners when singleInstanceSelected = %s',
+      async (singleInstanceSelected: boolean, url: string) => {
+        req = {
+          body: {
+            selectedAttendances: ['1-111-ABC123', '2-333-XYZ345'],
+          },
+          session: {
+            recordAttendanceJourney: {
+              singleInstanceSelected,
+            },
+          },
+        } as unknown as Request
 
-      when(activitiesService.getScheduledEventsForPrisoners)
-        .calledWith(expect.any(Date), ['ABC123', 'XYZ345'], res.locals.user)
-        .mockResolvedValue({
-          activities: [
+        when(activitiesService.getScheduledEventsForPrisoners)
+          .calledWith(expect.any(Date), ['ABC123', 'XYZ345'], res.locals.user)
+          .mockResolvedValue({
+            activities: [
+              {
+                prisonerNumber: 'ABC123',
+                cancelled: true,
+                scheduledInstanceId: 344,
+                startTime: '09:00',
+                endTime: '12:00',
+              },
+            ],
+            appointments: [
+              {
+                prisonerNumber: 'ABC123',
+                cancelled: false,
+                scheduledInstanceId: null,
+                startTime: '09:00',
+                endTime: '12:00',
+              },
+            ],
+            courtHearings: [
+              {
+                prisonerNumber: 'ABC123',
+                cancelled: false,
+                scheduledInstanceId: null,
+                startTime: '14:00',
+                endTime: '15:00',
+              },
+            ],
+            visits: [
+              {
+                prisonerNumber: 'XYZ345',
+                cancelled: false,
+                scheduledInstanceId: null,
+                startTime: '19:00',
+                endTime: '12:00',
+              },
+            ],
+            adjudications: [],
+          } as PrisonerScheduledEvents)
+
+        when(prisonService.searchInmatesByPrisonerNumbers)
+          .calledWith(['ABC123', 'XYZ345'], res.locals.user)
+          .mockResolvedValue([
             {
               prisonerNumber: 'ABC123',
-              cancelled: true,
-              scheduledInstanceId: 344,
-              startTime: '09:00',
-              endTime: '12:00',
+              firstName: 'Joe',
+              lastName: 'Bloggs',
             },
-          ],
-          appointments: [
-            {
-              prisonerNumber: 'ABC123',
-              cancelled: false,
-              scheduledInstanceId: null,
-              startTime: '09:00',
-              endTime: '12:00',
-            },
-          ],
-          courtHearings: [
-            {
-              prisonerNumber: 'ABC123',
-              cancelled: false,
-              scheduledInstanceId: null,
-              startTime: '14:00',
-              endTime: '15:00',
-            },
-          ],
-          visits: [
             {
               prisonerNumber: 'XYZ345',
-              cancelled: false,
-              scheduledInstanceId: null,
-              startTime: '19:00',
-              endTime: '12:00',
+              firstName: 'Mary',
+              lastName: 'Smith',
             },
-          ],
-          adjudications: [],
-        } as PrisonerScheduledEvents)
+          ] as Prisoner[])
 
-      when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['ABC123', 'XYZ345'], res.locals.user)
-        .mockResolvedValue([
+        await handler.NOT_ATTENDED(req, res)
+
+        expect(req.session.recordAttendanceJourney.notAttended.selectedPrisoners).toEqual([
           {
+            instanceId: 1,
+            attendanceId: 1001,
             prisonerNumber: 'ABC123',
-            firstName: 'Joe',
-            lastName: 'Bloggs',
+            prisonerName: 'Joe Bloggs',
+            otherEvents: [
+              {
+                prisonerNumber: 'ABC123',
+                cancelled: false,
+                scheduledInstanceId: null,
+                startTime: '09:00',
+                endTime: '12:00',
+              },
+            ],
           },
           {
+            instanceId: 2,
+            attendanceId: 2002,
             prisonerNumber: 'XYZ345',
-            firstName: 'Mary',
-            lastName: 'Smith',
+            prisonerName: 'Mary Smith',
+            otherEvents: [
+              {
+                prisonerNumber: 'XYZ345',
+                cancelled: false,
+                scheduledInstanceId: null,
+                startTime: '19:00',
+                endTime: '12:00',
+              },
+            ],
           },
-        ] as Prisoner[])
+        ])
 
-      await handler.NOT_ATTENDED(req, res)
-
-      expect(req.session.notAttendedJourney.selectedPrisoners).toEqual([
-        {
-          instanceId: 1,
-          attendanceId: 1001,
-          prisonerNumber: 'ABC123',
-          prisonerName: 'Joe Bloggs',
-          otherEvents: [
-            {
-              prisonerNumber: 'ABC123',
-              cancelled: false,
-              scheduledInstanceId: null,
-              startTime: '09:00',
-              endTime: '12:00',
-            },
-          ],
-        },
-        {
-          instanceId: 2,
-          attendanceId: 2002,
-          prisonerNumber: 'XYZ345',
-          prisonerName: 'Mary Smith',
-          otherEvents: [
-            {
-              prisonerNumber: 'XYZ345',
-              cancelled: false,
-              scheduledInstanceId: null,
-              startTime: '19:00',
-              endTime: '12:00',
-            },
-          ],
-        },
-      ])
-
-      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/not-attended-reason')
-    })
+        expect(res.redirect).toHaveBeenCalledWith(url)
+      },
+    )
   })
 })

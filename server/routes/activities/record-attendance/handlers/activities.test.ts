@@ -5,7 +5,6 @@ import ActivitiesRoutes from './activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
-import { AttendActivityMode } from '../recordAttendanceRequests'
 import { LocationType } from '../../create-an-activity/handlers/location'
 import TimeSlot from '../../../../enum/timeSlot'
 
@@ -375,16 +374,12 @@ describe('Route Handlers - Activities', () => {
           categoryFilters: 'SAA_EDUCATION,SAA_INDUSTRIES',
           locationType: LocationType.IN_CELL,
         },
-        session: {
-          recordAttendanceRequests: {
-            mode: AttendActivityMode.MULTIPLE,
-          },
-        },
+        session: {},
       } as unknown as Request
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAttendanceRequests).toEqual({})
+      expect(req.session.recordAttendanceJourney).toEqual({})
     })
 
     describe('Filter by location', () => {
@@ -540,14 +535,13 @@ describe('Route Handlers - Activities', () => {
 
       await handler.POST_ATTENDANCES(req, res)
 
-      expect(req.session.recordAttendanceRequests).toEqual({
-        mode: AttendActivityMode.MULTIPLE,
+      expect(req.session.recordAttendanceJourney).toEqual({
         selectedInstanceIds: [345, 567],
         activityDate: '2024-01-24',
         sessionFilters: ['AM', 'ED'],
       })
 
-      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/attendance-list')
+      expect(res.redirect).toHaveBeenCalledWith('attendance-list')
     })
 
     it('should save the selected instance ids and redirect when a single instance is chosen', async () => {
@@ -560,12 +554,11 @@ describe('Route Handlers - Activities', () => {
 
       await handler.POST_ATTENDANCES(req, res)
 
-      expect(req.session.recordAttendanceRequests).toEqual({
-        mode: AttendActivityMode.MULTIPLE,
+      expect(req.session.recordAttendanceJourney).toEqual({
         selectedInstanceIds: [345],
       })
 
-      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/345/attendance-list')
+      expect(res.redirect).toHaveBeenCalledWith('345/attendance-list')
     })
   })
 })

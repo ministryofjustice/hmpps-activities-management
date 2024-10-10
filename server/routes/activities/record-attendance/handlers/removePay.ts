@@ -46,8 +46,8 @@ export default class RemovePayRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { id } = req.params
     const { attendanceId } = req.params
+
     if (req.body.removePayOption === 'yes') {
       const attendances = [
         {
@@ -62,6 +62,7 @@ export default class RemovePayRoutes {
       ]
       await this.activitiesService.updateAttendances(attendances, user)
     }
-    return res.redirect(`/activities/attendance/activities/${id}/attendance-details/${attendanceId}`)
+
+    return res.redirect(`../../attendance-details/${attendanceId}`)
   }
 }

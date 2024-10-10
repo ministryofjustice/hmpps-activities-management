@@ -3,8 +3,7 @@ import { CreateAnActivityJourney } from '../../routes/activities/create-an-activ
 import { AppointmentJourney } from '../../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../../routes/appointments/create-and-edit/editAppointmentJourney'
 import { CalendarSpikeJourney } from '../../routes/spikes/handlers/journey'
-import { NotAttendedJourney } from '../../routes/activities/record-attendance/journey'
-import { RecordAttendanceRequests } from '../../routes/activities/record-attendance/recordAttendanceRequests'
+import { RecordAttendanceJourney } from '../../routes/activities/record-attendance/journey'
 import { JourneyMetrics } from '../../routes/journeyMetrics'
 
 // eslint-disable-next-line import/no-cycle
@@ -42,8 +41,7 @@ declare module 'express-session' {
     unlockListJourney: UnlockListJourney
     movementListJourney: MovementListJourney
     waitListApplicationJourney: WaitListApplicationJourney
-    notAttendedJourney: NotAttendedJourney
-    recordAttendanceRequests: RecordAttendanceRequests
+    recordAttendanceJourney: RecordAttendanceJourney
     journeyMetrics: JourneyMetrics
     // Map containing per journey session data. See comment above, the startNewJourney and populateJourney
     // middlewares and the appointment routes in index.ts

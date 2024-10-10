@@ -9,7 +9,6 @@ import { YesNo } from '../../../../@types/activities'
 import AttendanceReasons from '../../../../enum/attendanceReason'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
-import { AttendActivityMode } from '../recordAttendanceRequests'
 import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
@@ -36,17 +35,14 @@ describe('Route Handlers - Non Attendance', () => {
 
     req = {
       session: {
-        notAttendedJourney: {
-          activityInstance: {
-            date: '2023-10-25',
-            startTime: '09:00',
-            activitySchedule: { activity: { summary: 'Test activity' }, internalLocation: { description: 'Room 1' } },
+        recordAttendanceJourney: {
+          notAttended: {
+            selectedPrisoners: [
+              { instanceId: 1, attendanceId: 1, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' },
+              { instanceId: 2, attendanceId: 2, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' },
+              { instanceId: 2, attendanceId: 3, prisonerNumber: 'XYZ123', prisonerName: 'MARY SMITH' },
+            ],
           },
-          selectedPrisoners: [
-            { instanceId: 1, attendanceId: 1, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' },
-            { instanceId: 2, attendanceId: 2, prisonerNumber: 'ABC123', prisonerName: 'JOE BLOGGS' },
-            { instanceId: 2, attendanceId: 3, prisonerNumber: 'XYZ123', prisonerName: 'MARY SMITH' },
-          ],
         },
       },
       body: plainToInstance(NotAttendedForm, {
@@ -211,12 +207,12 @@ describe('Route Handlers - Non Attendance', () => {
 
   describe('POST_MULTIPLE', () => {
     it.each([
-      [AttendActivityMode.SINGLE, '/1/attendance-list'],
-      [AttendActivityMode.MULTIPLE, '/attendance-list'],
+      [true, '1/attendance-list'],
+      [false, 'attendance-list'],
     ])(
-      'non attendance should be redirected to the non attendance page and mode is %s',
-      async (mode: AttendActivityMode, url: string) => {
-        req.session.recordAttendanceRequests = { mode }
+      'non-attendance should be redirected to the non-attendance reason page and singleInstanceSelected = %s',
+      async (singleInstanceSelected: boolean, url: string) => {
+        req.session.recordAttendanceJourney.singleInstanceSelected = singleInstanceSelected
 
         when(activitiesService.getScheduledActivity)
           .calledWith(1, res.locals.user)
@@ -291,7 +287,7 @@ describe('Route Handlers - Non Attendance', () => {
           res.locals.user,
         )
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-          `/activities/attendance/activities${url}`,
+          `${url}`,
           'Attendance recorded',
           "You've saved attendance details for 3 people",
         )

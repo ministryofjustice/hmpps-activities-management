@@ -186,7 +186,7 @@
         {% set attendanceRows = [] %}
         {% for attendee in attendees %}
             {% if timeSlot === 'DAY' or timeSlot === attendee.attendance.timeSlot %}
-                {% set activityNameHtml = '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list?mode=standalone" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>' %}
+                {% set activityNameHtml = '<a href="/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a>' %}
                 {% if status == 'Absences' or (tab != 'day-tab' and ((tier == EventTier.TIER_1 or tier == EventTier.TIER_2) or (status == 'NotAttended'))) %}
                     {% set activityNameHtml = activityNameHtml + '<br>' + (attendee.attendance.startTime) + ' to ' + (attendee.attendance.endTime) %}
                 {% endif %}

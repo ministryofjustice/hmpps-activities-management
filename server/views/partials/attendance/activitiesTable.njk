@@ -20,7 +20,7 @@
                     classes: 'attendance-activities govuk-table__cell--alpha',
                     html: '
                         <p class="govuk-heading-s govuk-!-margin-bottom-0">
-                            <a href="activities/' + activity.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (activity.summary | escape) + '<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
+                            <a href="../activities/' + activity.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (activity.summary | escape) + '<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
                         </p>
                         <div>' + activityCancelledTag(activity.cancelled) + '</div>'
                 },
@@ -120,7 +120,7 @@
             actions: [
                 {
                     text: 'Record or edit attendance',
-                    formAction: '/activities/attendance/activities/attendance-list'
+                    formAction: 'activities/attendance-list'
                 }
             ],
             itemsDescription: 'activity',

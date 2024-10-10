@@ -51,7 +51,7 @@ import {
   PrisonRegime,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
-import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
+import { SessionCancellationRequest } from '../routes/activities/record-attendance/journey'
 import { AttendanceStatus } from '../@types/appointments'
 import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
