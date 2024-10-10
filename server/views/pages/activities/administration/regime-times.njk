@@ -18,9 +18,9 @@
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {% for week, customSlots in regimeSlots %}
+                {% for prisonRegimeSchedule, slots in regimeSlots %}
                         {% set rows = [] %} 
-                        {% for regimeSlot in customSlots %}
+                        {% for regimeSlot in slots %}
                             {% set formattedStart = regimeSlot.start | getSplitTime %}
                             {% set formattedFinish = regimeSlot.finish | getSplitTime %}
                             {% set rows = (rows.push([
@@ -32,20 +32,20 @@
                                 },
                                 {
                                     html: timePicker({
-                                        id: 'startTimes-' + week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot,
-                                        name: 'startTimes[' + week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot + ']',
-                                        renderedErrorMessage: validationErrors | findError('startTimes-' + week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot),
+                                        id: 'startTimes-' + prisonRegimeSchedule + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot,
+                                        name: 'startTimes[' + prisonRegimeSchedule + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('startTimes-' + prisonRegimeSchedule + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.startTimes[week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot] or formattedStart
+                                        formResponses: formResponses.startTimes[prisonRegimeSchedule + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot] or formattedStart
                                 })
                                 },
                                 {
                                     html: timePicker({
-                                        id: 'endTimes-' + week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot,
-                                        name: 'endTimes[' + week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot + ']',
-                                        renderedErrorMessage: validationErrors | findError('endTimes-' + week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot),
+                                        id: 'endTimes-' + prisonRegimeSchedule + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot,
+                                        name: 'endTimes[' + prisonRegimeSchedule + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot + ']',
+                                        renderedErrorMessage: validationErrors | findError('endTimes-' + prisonRegimeSchedule + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot),
                                         validationErrors: validationErrors,
-                                        formResponses: formResponses.endTimes[week + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot] or formattedFinish
+                                        formResponses: formResponses.endTimes[prisonRegimeSchedule + '-' + regimeSlot.dayOfWeek + '-' + regimeSlot.timeSlot] or formattedFinish
                                         })
                                 }]), rows) %}
                         {% endfor %}

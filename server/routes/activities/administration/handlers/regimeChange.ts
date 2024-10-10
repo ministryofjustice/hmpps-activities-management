@@ -26,7 +26,92 @@ export default class RegimeChangeRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+    const defaultRegime: PrisonRegime[] = [
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'MONDAY',
+      },
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'TUESDAY',
+      },
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'WEDNESDAY',
+      },
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'THURSDAY',
+      },
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'FRIDAY',
+      },
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'SATURDAY',
+      },
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'SUNDAY',
+      },
+    ]
+
+    let regimeTimes
+    try {
+      regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+    } catch (error) {
+      if (error.status === 404) regimeTimes = defaultRegime
+    }
 
     const regimeSlots = await this.getDaysAndSlots(regimeTimes)
 
@@ -39,6 +124,85 @@ export default class RegimeChangeRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { startTimes, endTimes }: RegimeTimes = req.body
+    const defaultRegime: PrisonRegime[] = [
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'MONDAY',
+      },
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'TUESDAY',
+      },
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'WEDNESDAY',
+      },
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'THURSDAY',
+      },
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'FRIDAY',
+      },
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'SATURDAY',
+      },
+      {
+        id: 0,
+        prisonCode: user.activeCaseLoadId,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'SUNDAY',
+      },
+    ]
 
     const startTimesObj = Array.from(startTimes.keys()).reduce((acc, key) => {
       acc[key] = startTimes.get(key)
@@ -53,9 +217,14 @@ export default class RegimeChangeRoutes {
     req.body.startTimes = startTimesObj
     req.body.endTimes = endTimesObj
 
-    const currentRegimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+    let regimeTimes
+    try {
+      regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
+    } catch (error) {
+      if (error.status === 404) regimeTimes = defaultRegime
+    }
 
-    const updatedRegimeTimes: PrisonRegime[] = getPrisonRegimes(startTimes, endTimes, currentRegimeTimes)
+    const updatedRegimeTimes: PrisonRegime[] = getPrisonRegimes(startTimes, endTimes, regimeTimes)
 
     // validate slots
     if (this.validateSlots(updatedRegimeTimes, res)) {
