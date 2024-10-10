@@ -1,0 +1,27 @@
+{% extends "homepageLayout.njk" %}
+{% from "components/card.njk" import card %}
+
+{% set pageTitle = applicationName + " - Administer activities" %}
+{% set pageId = 'activities-admin-page' %}
+{% set hardBackLinkHref = "/activities" %}
+{% set hardBackLinkText = "Back to all activities, unlock and attendance tasks" %}
+
+{% block heading %}
+    <h1 class="govuk-heading-l">Activities Administration</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="card-group govuk-grid-row">
+        {% if 'ROLE_MIGRATE_ACTIVITIES' in user.roles %}
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "href": "/activities/admin/regime",
+                "clickable": "true",
+                "heading": "Change Regime Times",
+                "description": "Manage site regime times.",
+                "data-qa": "adminRegime"
+            }) }}
+        {% endif %}
+        </div>
+    </div>
+{% endblock %}

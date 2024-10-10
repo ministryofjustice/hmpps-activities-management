@@ -113,6 +113,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getPrisonRegime(prisonCode, user)
   }
 
+  updatePrisonRegime(regimeSchedule: PrisonRegime[], prisonCode: string, user: ServiceUser): Promise<void> {
+    return this.activitiesApiClient.updatePrisonRegime(regimeSchedule, prisonCode, user)
+  }
+
   createActivity(createBody: ActivityCreateRequest, user: ServiceUser): Promise<Activity> {
     return this.activitiesApiClient.postActivityCreation(createBody, user)
   }

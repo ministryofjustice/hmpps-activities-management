@@ -293,6 +293,15 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  async updatePrisonRegime(regimeSchedule: PrisonRegime[], agencyId: string, user: ServiceUser): Promise<void> {
+    return this.post({
+      path: `/rollout/prison-regime/${agencyId}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: regimeSchedule,
+    })
+  }
+
   async getAttendees(id: number, user: ServiceUser): Promise<ScheduledAttendee[]> {
     return this.get({
       path: `/scheduled-instances/${id}/scheduled-attendees`,
