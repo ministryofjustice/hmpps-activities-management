@@ -4,17 +4,29 @@
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% from "components/timePicker.njk" import timePicker %}
 
 {% set pageTitle = applicationName + " - Administration - Amend regime times" %}
 {% set pageId = 'regime-times-page' %}
-{% set pageHeading = "Amend the start and end times for the prison regime schedule" %}
+{% if createMode %}
+    {% set pageHeading = "Create the start and end times for the prison regime schedule" %}
+{% else %}
+    {% set pageHeading = "Amend the start and end times for the prison regime schedule" %}
+{% endif %}
 {% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-m">Important</h2>
+            {{ govukWarningText({
+                text: "This page is for configuring prison regime times before migrating a prison from NOMIS to the new Activities service in DPS.
+                Do not use it for prisons that are already using the new Activities service.
+                For help or guidance, email DPSActivity@digital.justice.gov.uk.",
+                iconFallbackText: "Warning"
+            }) }}
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

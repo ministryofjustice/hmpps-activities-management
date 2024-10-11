@@ -105,12 +105,13 @@ export default class RegimeChangeRoutes {
         dayOfWeek: 'SUNDAY',
       },
     ]
-
+    let createMode = false
     let regimeTimes
     try {
       regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
     } catch (error) {
       if (error.status === 404) regimeTimes = defaultRegime
+      createMode = true
     }
 
     const regimeSlots = await this.getDaysAndSlots(regimeTimes)
@@ -118,6 +119,7 @@ export default class RegimeChangeRoutes {
     res.render('pages/activities/administration/regime-times', {
       regimeTimes,
       regimeSlots,
+      createMode,
     })
   }
 

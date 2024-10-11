@@ -346,6 +346,7 @@ describe('Route Handlers - Change Regime times', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/administration/regime-times', {
+        createMode: false,
         regimeTimes,
         regimeSlots: regimeSchedule,
       })
