@@ -508,7 +508,9 @@ describe('Route Handlers - Attendance List', () => {
         sessionFilters: ['AM', 'PM'],
       }
 
-      when(activitiesService.getScheduledActivity).calledWith(2, res.locals.user).mockResolvedValue(instanceB)
+      when(activitiesService.getScheduledActivities)
+        .calledWith([1, 2], res.locals.user)
+        .mockResolvedValue([instanceA, instanceB])
 
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['ABC123', 'ABC321', 'ZXY123', 'XYZ345'], res.locals.user)
@@ -558,10 +560,6 @@ describe('Route Handlers - Attendance List', () => {
     })
 
     it('should retrieve attendances', async () => {
-      req.body = {
-        selectedAttendances: ['999-1', '999-2'],
-      }
-
       await handler.GET_ATTENDANCES(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-multiple', {
@@ -643,10 +641,6 @@ describe('Route Handlers - Attendance List', () => {
     })
 
     it('should retrieve filtered attendances', async () => {
-      req.body = {
-        selectedAttendances: ['999-1', '999-2'],
-      }
-
       req.query.searchTerm = 'jOe'
 
       await handler.GET_ATTENDANCES(req, res)
@@ -719,8 +713,9 @@ describe('Route Handlers - Attendance List', () => {
         },
       }
 
-      when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(scheduledActivityA)
-      when(activitiesService.getScheduledActivity).calledWith(2, res.locals.user).mockResolvedValue(scheduledActivityB)
+      when(activitiesService.getScheduledActivities)
+        .calledWith([1, 2], res.locals.user)
+        .mockResolvedValue([scheduledActivityA, scheduledActivityB])
 
       req.body = {
         selectedAttendances: ['1-111', '2-222'],
@@ -771,6 +766,35 @@ describe('Route Handlers - Attendance List', () => {
             },
           },
         } as unknown as Request
+
+        const scheduledActivityA = {
+          ...instanceA,
+          activitySchedule: {
+            ...instanceA.activitySchedule,
+            activity: {
+              ...instanceA.activitySchedule.activity,
+              paid: false,
+            },
+          },
+        }
+
+        const scheduledActivityB = {
+          ...instanceB,
+          activitySchedule: {
+            ...instanceB.activitySchedule,
+            activity: {
+              ...instanceB.activitySchedule.activity,
+              paid: true,
+            },
+          },
+        }
+
+        when(activitiesService.getScheduledActivity)
+          .calledWith(1, res.locals.user)
+          .mockResolvedValue(scheduledActivityA)
+        when(activitiesService.getScheduledActivity)
+          .calledWith(2, res.locals.user)
+          .mockResolvedValue(scheduledActivityB)
 
         when(activitiesService.getScheduledEventsForPrisoners)
           .calledWith(expect.any(Date), ['ABC123', 'XYZ345'], res.locals.user)
