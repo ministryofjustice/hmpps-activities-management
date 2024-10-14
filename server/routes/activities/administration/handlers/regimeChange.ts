@@ -26,85 +26,8 @@ export default class RegimeChangeRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const defaultRegime: PrisonRegime[] = [
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'MONDAY',
-      },
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'TUESDAY',
-      },
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'WEDNESDAY',
-      },
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'THURSDAY',
-      },
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'FRIDAY',
-      },
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'SATURDAY',
-      },
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'SUNDAY',
-      },
-    ]
+    const defaultRegime = this.defaultPrisonRegime(user.activeCaseLoadId)
+
     let createMode = false
     let regimeTimes
     try {
@@ -126,85 +49,7 @@ export default class RegimeChangeRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { startTimes, endTimes }: RegimeTimes = req.body
-    const defaultRegime: PrisonRegime[] = [
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'MONDAY',
-      },
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'TUESDAY',
-      },
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'WEDNESDAY',
-      },
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'THURSDAY',
-      },
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'FRIDAY',
-      },
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'SATURDAY',
-      },
-      {
-        id: 0,
-        prisonCode: user.activeCaseLoadId,
-        amStart: '-',
-        amFinish: '-',
-        pmStart: '-',
-        pmFinish: '-',
-        edStart: '-',
-        edFinish: '-',
-        dayOfWeek: 'SUNDAY',
-      },
-    ]
+    const defaultRegime = this.defaultPrisonRegime(user.activeCaseLoadId)
 
     const startTimesObj = Array.from(startTimes.keys()).reduce((acc, key) => {
       acc[key] = startTimes.get(key)
@@ -307,6 +152,88 @@ export default class RegimeChangeRoutes {
     regimeSlots.set('prisonRegimeTimes', createSessionSlots(regimeTimes))
 
     return regimeSlots
+  }
+
+  private defaultPrisonRegime(prisonCode: string): PrisonRegime[] {
+    return [
+      {
+        id: 0,
+        prisonCode,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'MONDAY',
+      },
+      {
+        id: 0,
+        prisonCode,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'TUESDAY',
+      },
+      {
+        id: 0,
+        prisonCode,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'WEDNESDAY',
+      },
+      {
+        id: 0,
+        prisonCode,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'THURSDAY',
+      },
+      {
+        id: 0,
+        prisonCode,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'FRIDAY',
+      },
+      {
+        id: 0,
+        prisonCode,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'SATURDAY',
+      },
+      {
+        id: 0,
+        prisonCode,
+        amStart: '-',
+        amFinish: '-',
+        pmStart: '-',
+        pmFinish: '-',
+        edStart: '-',
+        edFinish: '-',
+        dayOfWeek: 'SUNDAY',
+      },
+    ]
   }
 }
 
