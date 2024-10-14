@@ -1,4 +1,5 @@
 import Page from '../page'
+import Chainable = Cypress.Chainable
 
 export default class AttendanceListPage extends Page {
   constructor() {
@@ -43,14 +44,20 @@ export default class AttendanceListPage extends Page {
       })
   }
 
-  clickRow = rowNum => {
-    cy.get(`[data-module=activities-sticky-select] tr`)
+  clickRow = rowNum =>
+    cy
+      .get(`[data-module=activities-sticky-select] tr`)
       .eq(rowNum)
       .find('td')
       .eq(0)
       .find('input[type=checkbox]')
       .click({ force: true })
-  }
 
-  clickRows = (...rownNums: number[]) => rownNums.forEach(rowNum => this.clickRow(rowNum))
+  clickRows = (...rownNums: number[]): Chainable<JQuery> => {
+    let last = null
+    rownNums.forEach(rowNum => {
+      last = this.clickRow(rowNum)
+    })
+    return last
+  }
 }

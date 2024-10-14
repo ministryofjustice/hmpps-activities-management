@@ -109,6 +109,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getScheduledActivity(id, user)
   }
 
+  getScheduledActivities(ids: number[], user: ServiceUser): Promise<ScheduledActivity[]> {
+    return this.activitiesApiClient.getScheduledActivities(ids, user)
+  }
+
   getPrisonRegime(prisonCode: string, user: ServiceUser): Promise<PrisonRegime[]> {
     return this.activitiesApiClient.getPrisonRegime(prisonCode, user)
   }

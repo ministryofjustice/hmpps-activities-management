@@ -1200,6 +1200,31 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/scheduled-instances': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get scheduled instances by their ids
+     * @description Returns a list of scheduled instances.
+     *
+     *     Requires one of the following roles:
+     *     * PRISON
+     *     * ACTIVITY_ADMIN
+     *     * NOMIS_ACTIVITIES
+     */
+    get: never
+    put?: never
+    post: operations['activityScheduleInstance']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/scheduled-instances/{instanceId}/scheduled-attendees': {
     parameters: {
       query?: never

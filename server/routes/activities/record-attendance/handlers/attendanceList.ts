@@ -3,7 +3,7 @@ import { startOfDay, startOfToday } from 'date-fns'
 import { Expose, Transform } from 'class-transformer'
 import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
-import { asString, eventClashes, getAttendanceSummary, toDate } from '../../../../utils/utils'
+import { asString, convertToNumberArray, eventClashes, getAttendanceSummary, toDate } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 import { Attendance, AttendanceUpdateRequest, ScheduledEvent } from '../../../../@types/activitiesAPI/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
@@ -111,8 +111,9 @@ export default class AttendanceListRoutes {
     const { searchTerm } = req.query
     const { selectedInstanceIds } = req.session.recordAttendanceJourney
 
-    const instances = await Promise.all(
-      selectedInstanceIds.map(async instanceId => this.activitiesService.getScheduledActivity(+instanceId, user)),
+    const instances = await this.activitiesService.getScheduledActivities(
+      convertToNumberArray(selectedInstanceIds),
+      user,
     )
 
     const prisonerNumbers = _.uniq(instances.flatMap(instance => instance.attendances.map(att => att.prisonerNumber)))
@@ -217,11 +218,9 @@ export default class AttendanceListRoutes {
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
     const { user } = res.locals
 
-    const instances = await Promise.all(
-      _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0])).map(async instanceId =>
-        this.activitiesService.getScheduledActivity(instanceId, user),
-      ),
-    )
+    const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
+
+    const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
 
     const attendances: AttendanceUpdateRequest[] = selectedAttendances.flatMap(selectedAttendance => {
       const [instanceId, attendanceId] = selectedAttendance.split('-')
