@@ -34,13 +34,13 @@ export default function Index(services: Services): Router {
 
   router.use(
     '/:mode(suspend)/:prisonerNumber/:journeyId',
-    initialiseSuspendJourney(services.prisonService, services.activitiesService),
+    asyncMiddleware(initialiseSuspendJourney(services.prisonService, services.activitiesService)),
     suspendRoutes(services),
   )
 
   router.use(
     '/:mode(unsuspend)/:prisonerNumber/:journeyId',
-    initialiseSuspendJourney(services.prisonService, services.activitiesService),
+    asyncMiddleware(initialiseSuspendJourney(services.prisonService, services.activitiesService)),
     unsuspendRoutes(services),
   )
 
