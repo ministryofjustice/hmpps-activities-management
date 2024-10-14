@@ -7,31 +7,25 @@ import { addDays, addMonths, addWeeks, addYears, getUnixTime, startOfDay, subDay
 import { flatMap, flatten, sortBy } from 'lodash'
 import setUpDprNunjucksFilters from '@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/setUpNunjucksFilters'
 import {
-  addDefaultSelectedValue,
   buildErrorSummaryList,
   concatArrays,
   convertToTitleCase,
   dateInList,
   excludeArrayObject,
-  existsInStringArray,
   filterNot,
-  filterObjects,
   findError,
   firstNameLastName,
   formatDate,
   fullName,
   getSplitTime,
   initialiseName,
-  isTodayOrBefore,
   padNumber,
   parseDate,
   parseISODate,
   prisonerName,
   removeUndefined,
   setAttribute,
-  setSelected,
   sliceArray,
-  startsWithAny,
   toDate,
   toDateString,
   toFixed,
@@ -148,8 +142,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   })
 
   njkEnv.addFilter('getSplitTime', getSplitTime)
-  njkEnv.addFilter('setSelected', setSelected)
-  njkEnv.addFilter('addDefaultSelectedValue', addDefaultSelectedValue)
   njkEnv.addFilter('toTimeItems', toTimeItems)
   njkEnv.addFilter('findError', findError)
   njkEnv.addFilter('buildErrorSummaryList', buildErrorSummaryList)
@@ -164,8 +156,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('getUnixTime', getUnixTime)
   njkEnv.addFilter('addWeeks', addWeeks)
   njkEnv.addFilter('isClashing', isClashing)
-  njkEnv.addFilter('existsInStringArray', existsInStringArray)
-  njkEnv.addFilter('startsWithAny', startsWithAny)
   njkEnv.addFilter('toFixed', toFixed)
   njkEnv.addFilter('padNumber', padNumber)
   njkEnv.addFilter('toMoney', toMoney)
@@ -174,7 +164,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('parseDate', parseDate)
   njkEnv.addFilter('parseISODate', parseISODate)
   njkEnv.addFilter('toDateString', toDateString)
-  njkEnv.addFilter('todayOrBefore', isTodayOrBefore)
   njkEnv.addFilter('sliceArray', sliceArray)
   njkEnv.addFilter('addDays', addDays)
   njkEnv.addFilter('addWeeks', addWeeks)
@@ -184,7 +173,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('removeUndefined', removeUndefined)
   njkEnv.addFilter('startOfDay', startOfDay)
   njkEnv.addFilter('find', (l: any[], iteratee: string, eq: unknown) => l.find(o => o[iteratee] === eq))
-  njkEnv.addFilter('filter', filterObjects)
   njkEnv.addFilter('filterNot', filterNot)
   njkEnv.addFilter('flatMap', flatMap)
   njkEnv.addFilter('flatten', flatten)
