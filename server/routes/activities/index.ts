@@ -17,6 +17,7 @@ import { Services } from '../../services'
 import rolloutMiddleware from '../../middleware/rolloutMiddleware'
 import ServiceName from '../../enum/serviceName'
 import addServiceReturnLink from '../../middleware/addServiceReturnLink'
+import adminRoutes from './administration'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -28,6 +29,7 @@ export default function Index(services: Services): Router {
 
   router.use(homeRoutes())
   router.use(manageActivitiesRoutes(services))
+  router.use(adminRoutes(services))
   router.use(createAndEditActivitiesRoutes(services))
   router.use('/allocation-dashboard', allocationDashboardRoutes(services))
   router.use('/allocations', allocationRoutes(services))
