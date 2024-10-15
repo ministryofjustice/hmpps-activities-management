@@ -141,6 +141,10 @@ export function registerNunjucks(app?: express.Express): Environment {
     const name = njkEnv.getFilter('prisonerName')(str, false)
     return name.val || null
   })
+  njkEnv.addFilter('possessive', str => {
+    if (!str) return ''
+    return `${str}${str.toLowerCase().endsWith('s') ? '’' : '’s'}`
+  })
 
   njkEnv.addFilter('getSplitTime', getSplitTime)
   njkEnv.addFilter('toTimeItems', toTimeItems)

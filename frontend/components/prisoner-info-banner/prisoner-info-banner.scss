@@ -1,0 +1,15 @@
+.prisonerInfoBanner {
+    background-color: govuk-colour("light-grey");
+    display: flex;
+
+    &__item {
+        padding-bottom: 0;
+        margin-right: govuk-spacing(2);
+    }
+
+    &__prisoner-image {
+        width: 90px;
+        height: 100%;
+        margin-right: govuk-spacing(5);
+      }
+}
