@@ -13,9 +13,12 @@
             <span class="govuk-caption-xl">{{ activity.description }}</span>
             <h1 class="govuk-heading-l">{{ prisonerName | possessive }} non-associations</h1>
         </div>
+        {{ prisonerInfoBanner(prisonerName, prisoner.prisonerNumber, prisoner.cellLocation) }}
     </div>
     <div class="govuk-grid-row">
-        {{ prisonerInfoBanner(prisonerName, prisoner.prisonerNumber, prisoner.cellLocation) }}
+        <p class="govuk-body govuk-!-margin-top-5">Check if attending this activity could mean {{ prisonerName }} coming into contact with someone they must be kept apart from.</p>
+        <h2 class="govuk-heading-m">People allocated to {{ activity.description }}</h2>
+        <h2 class="govuk-heading-m">Other people in {{ user.activeCaseLoadDescription }}</h2>
     </div>
 
 {% endblock %}

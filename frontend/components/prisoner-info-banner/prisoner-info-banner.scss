@@ -1,6 +1,8 @@
 .prisonerInfoBanner {
     background-color: govuk-colour("light-grey");
     display: flex;
+    flex-direction: row;
+    align-items: start;
     padding: govuk-spacing(3);
 
     &__item {
