@@ -189,6 +189,6 @@
   },
   "overrides": {
     "rollup": "~4.22.4",
-    "cookie": "~0.7.0"
+    "cookie": "~0.7.2"
   }
 }
