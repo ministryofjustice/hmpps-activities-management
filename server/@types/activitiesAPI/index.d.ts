@@ -1200,6 +1200,31 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/scheduled-instances': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get scheduled instances by their ids
+     * @description Returns a list of scheduled instances.
+     *
+     *     Requires one of the following roles:
+     *     * PRISON
+     *     * ACTIVITY_ADMIN
+     *     * NOMIS_ACTIVITIES
+     */
+    get: never
+    put?: never
+    post: operations['activityScheduleInstance']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/scheduled-instances/{instanceId}/scheduled-attendees': {
     parameters: {
       query?: never
@@ -3258,6 +3283,28 @@ export interface components {
        * @enum {string}
        */
       appointmentSeriesFrequency?: 'WEEKDAY' | 'DAILY' | 'WEEKLY' | 'FORTNIGHTLY' | 'MONTHLY'
+      /**
+       * @description Set to true if this activity is a paid activity
+       * @example false
+       */
+      paidActivity: ?boolean
+      /**
+       * @description Should activity payment be issued for SICK, REST or OTHER
+       * @example true
+       */
+      issuePayment?: boolean
+      /**
+       * @description The activity attendance status - WAITING or COMPLETED
+       * @example WAITING
+       * @enum {string}
+       */
+      attendanceStatus?: string
+      /**
+       * @description The code for the activity (non) attendance reason
+       * @example SICK
+       * @enum {string}
+       */
+      attendanceReasonCode?: string
     }
     /** @description
      *       The details of an internal location that has events scheduled to take place there. Supports movement lists.

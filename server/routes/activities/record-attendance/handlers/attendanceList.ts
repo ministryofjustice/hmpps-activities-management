@@ -3,7 +3,7 @@ import { startOfDay, startOfToday } from 'date-fns'
 import { Expose, Transform } from 'class-transformer'
 import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
-import { asString, eventClashes, getAttendanceSummary, toDate } from '../../../../utils/utils'
+import { asString, convertToNumberArray, eventClashes, getAttendanceSummary, toDate } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 import { Attendance, AttendanceUpdateRequest, ScheduledEvent } from '../../../../@types/activitiesAPI/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
@@ -40,7 +40,6 @@ export default class AttendanceListRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const instanceId = +req.params.id
     const { user } = res.locals
-    const { mode } = req.query
 
     let attendance: ScheduledInstanceAttendance[] = []
 
@@ -87,13 +86,15 @@ export default class AttendanceListRoutes {
 
     const userMap = await this.userService.getUserMap([instance.cancelledBy], user)
 
-    if (mode === 'standalone') {
-      req.session.recordAttendanceRequests = {}
+    if (!req.session.recordAttendanceJourney) {
+      req.session.recordAttendanceJourney = {}
     }
 
-    const selectedSessions = req.session.recordAttendanceRequests?.sessionFilters
-      ? Object.values(TimeSlot).filter(t => req.session.recordAttendanceRequests.sessionFilters.includes(t))
+    const selectedSessions = req.session.recordAttendanceJourney?.sessionFilters
+      ? Object.values(TimeSlot).filter(t => req.session.recordAttendanceJourney.sessionFilters.includes(t))
       : []
+
+    req.session.recordAttendanceJourney.singleInstanceSelected = true
 
     res.render('pages/activities/record-attendance/attendance-list-single', {
       instance,
@@ -108,10 +109,11 @@ export default class AttendanceListRoutes {
   GET_ATTENDANCES = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { searchTerm } = req.query
-    const { selectedInstanceIds } = req.session.recordAttendanceRequests
+    const { selectedInstanceIds } = req.session.recordAttendanceJourney
 
-    const instances = await Promise.all(
-      selectedInstanceIds.map(async instanceId => this.activitiesService.getScheduledActivity(+instanceId, user)),
+    const instances = await this.activitiesService.getScheduledActivities(
+      convertToNumberArray(selectedInstanceIds),
+      user,
     )
 
     const prisonerNumbers = _.uniq(instances.flatMap(instance => instance.attendances.map(att => att.prisonerNumber)))
@@ -179,7 +181,7 @@ export default class AttendanceListRoutes {
       attendanceSummary: getAttendanceSummary(attendanceRows.flatMap(row => row.attendance)),
       selectedDate: instances[0].date,
       selectedSessions: Object.values(TimeSlot).filter(t =>
-        req.session.recordAttendanceRequests.sessionFilters.includes(t),
+        req.session.recordAttendanceJourney.sessionFilters.includes(t),
       ),
     })
   }
@@ -216,11 +218,9 @@ export default class AttendanceListRoutes {
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
     const { user } = res.locals
 
-    const instances = await Promise.all(
-      _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0])).map(async instanceId =>
-        this.activitiesService.getScheduledActivity(instanceId, user),
-      ),
-    )
+    const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
+
+    const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
 
     const attendances: AttendanceUpdateRequest[] = selectedAttendances.flatMap(selectedAttendance => {
       const [instanceId, attendanceId] = selectedAttendance.split('-')
@@ -248,6 +248,7 @@ export default class AttendanceListRoutes {
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
+    const { recordAttendanceJourney } = req.session
 
     const ids = selectedAttendances
       .map(id => id.split('-'))
@@ -276,7 +277,7 @@ export default class AttendanceListRoutes {
 
     const allPrisoners = await this.prisonService.searchInmatesByPrisonerNumbers(allPrisonerNumbers, user)
 
-    req.session.notAttendedJourney = {
+    recordAttendanceJourney.notAttended = {
       selectedPrisoners: [],
     }
 
@@ -290,7 +291,7 @@ export default class AttendanceListRoutes {
         .filter(event => event.scheduledInstanceId !== id.instanceId)
         .filter(event => eventClashes(event, instance))
 
-      req.session.notAttendedJourney.selectedPrisoners.push({
+      recordAttendanceJourney.notAttended.selectedPrisoners.push({
         instanceId: instance.id,
         attendanceId: this.getAttendanceId(id.prisonerNumber, instance.attendances),
         prisonerNumber: id.prisonerNumber,
@@ -299,7 +300,10 @@ export default class AttendanceListRoutes {
       })
     })
 
-    res.redirect(`/activities/attendance/activities/not-attended-reason`)
+    if (req.session.recordAttendanceJourney.singleInstanceSelected) {
+      return res.redirect('../not-attended-reason')
+    }
+    return res.redirect('not-attended-reason')
   }
 
   private getAttendanceId = (prisonerNumber: string, attendances: Attendance[]) => {

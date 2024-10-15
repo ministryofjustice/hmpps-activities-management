@@ -22,20 +22,21 @@ import { formatDate } from '../../../../server/utils/utils'
 context('Record attendance', () => {
   const today = startOfToday()
   const todayStr = format(today, 'yyyy-MM-dd')
+  let getScheduledInstances
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.signIn()
 
-    getScheduledInstanceEnglishLevel1.date = todayStr
-    getScheduledInstanceEnglishLevel2.date = todayStr
-
     cy.stubEndpoint(
       'GET',
       `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${todayStr}`,
       getAttendanceSummary,
     )
+
+    getScheduledInstanceEnglishLevel1.date = todayStr
+    getScheduledInstanceEnglishLevel2.date = todayStr
 
     getScheduledInstanceEnglishLevel1.attendances[2].status = 'WAITING'
     getScheduledInstanceEnglishLevel1.attendances[2].attendanceReason = null
@@ -45,6 +46,11 @@ context('Record attendance', () => {
 
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstanceEnglishLevel1)
     cy.stubEndpoint('GET', '/scheduled-instances/11', getScheduledInstanceEnglishLevel2)
+
+    getScheduledInstances = [getScheduledInstanceEnglishLevel1, getScheduledInstanceEnglishLevel2]
+
+    cy.stubEndpoint('POST', '/scheduled-instances', getScheduledInstances)
+
     cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendeesForScheduledInstance)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${todayStr}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
@@ -83,6 +89,7 @@ context('Record attendance', () => {
       '3-3-017',
       'English level 1',
       '14:00 to 15:00',
+      ['Did not attend', 'Paid'],
       'Attended Pay',
       'View or Edit',
     )
@@ -93,6 +100,7 @@ context('Record attendance', () => {
       '4-3-016',
       'English level 1',
       '14:00 to 15:00',
+      ['Attended', 'Paid'],
       'Not recorded',
     )
     attendanceListPage.assertRow(
@@ -102,6 +110,7 @@ context('Record attendance', () => {
       '3-3-017',
       'English level 2',
       '14:15 to 15:15',
+      ['Attended', 'Unpaid', 'Did not attend', 'Paid'],
       'Attended No pay',
       'View or Edit',
     )
@@ -112,18 +121,19 @@ context('Record attendance', () => {
       '4-3-016',
       'English level 2',
       '14:15 to 15:15',
+      [],
       'Not recorded',
     )
+
     attendanceListPage.clickRows(3, 7)
 
-    getScheduledInstanceEnglishLevel1.attendances[2].status = 'COMPLETED'
-    getScheduledInstanceEnglishLevel1.attendances[2].attendanceReason = { code: 'ATTENDED', description: 'Attended' }
+    getScheduledInstances[0].attendances[2].status = 'COMPLETED'
+    getScheduledInstances[0].attendances[2].attendanceReason = { code: 'ATTENDED', description: 'Attended' }
 
-    getScheduledInstanceEnglishLevel2.attendances[2].status = 'COMPLETED'
-    getScheduledInstanceEnglishLevel2.attendances[2].attendanceReason = { code: 'ATTENDED', description: 'Attended' }
+    getScheduledInstances[1].attendances[2].status = 'COMPLETED'
+    getScheduledInstances[1].attendances[2].attendanceReason = { code: 'ATTENDED', description: 'Attended' }
 
-    cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstanceEnglishLevel1)
-    cy.stubEndpoint('GET', '/scheduled-instances/11', getScheduledInstanceEnglishLevel2)
+    cy.stubEndpoint('POST', '/scheduled-instances', getScheduledInstances)
 
     cy.log('Mark attendance...')
 
@@ -138,6 +148,7 @@ context('Record attendance', () => {
       '4-3-016',
       'English level 1',
       '14:00 to 15:00',
+      [],
       'Attended Pay',
       'View or Edit',
     )
@@ -148,6 +159,7 @@ context('Record attendance', () => {
       '4-3-016',
       'English level 2',
       '14:15 to 15:15',
+      [],
       'Attended No pay',
       'View or Edit',
     )
@@ -186,6 +198,7 @@ context('Record attendance', () => {
       '1-3-024',
       'English level 1',
       '14:00 to 15:00',
+      [],
       'Not recorded',
     )
     attendanceListPage.assertRow(
@@ -195,9 +208,10 @@ context('Record attendance', () => {
       '1-3-024',
       'English level 2',
       '14:15 to 15:15',
+      [],
       'Not recorded',
     )
-    attendanceListPage.clickRows(3, 7)
+    attendanceListPage.clickRows(4, 8)
 
     cy.log('Marking non-attendance...')
 
@@ -209,14 +223,13 @@ context('Record attendance', () => {
     notAttendedReasonPage.selectRadio('notAttendedData[1][notAttendedReason]')
     notAttendedReasonPage.selectRadio('notAttendedData[1][sickPay]')
 
-    getScheduledInstanceEnglishLevel1.attendances[3].status = 'COMPLETED'
-    getScheduledInstanceEnglishLevel1.attendances[3].attendanceReason = { code: 'SICK', description: 'Sick' }
+    getScheduledInstances[0].attendances[3].status = 'COMPLETED'
+    getScheduledInstances[0].attendances[3].attendanceReason = { code: 'SICK', description: 'Sick' }
 
-    getScheduledInstanceEnglishLevel2.attendances[3].status = 'COMPLETED'
-    getScheduledInstanceEnglishLevel2.attendances[3].attendanceReason = { code: 'SICK', description: 'Sick' }
+    getScheduledInstances[1].attendances[3].status = 'COMPLETED'
+    getScheduledInstances[1].attendances[3].attendanceReason = { code: 'SICK', description: 'Sick' }
 
-    cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstanceEnglishLevel1)
-    cy.stubEndpoint('GET', '/scheduled-instances/11', getScheduledInstanceEnglishLevel2)
+    cy.stubEndpoint('POST', '/scheduled-instances', getScheduledInstances)
 
     notAttendedReasonPage.submit()
 
@@ -229,6 +242,7 @@ context('Record attendance', () => {
       '1-3-024',
       'English level 1',
       '14:00 to 15:00',
+      [],
       'Sick Pay',
       'View or Edit',
     )
@@ -239,12 +253,13 @@ context('Record attendance', () => {
       '1-3-024',
       'English level 2',
       '14:15 to 15:15',
+      [],
       'Sick No pay',
       'View or Edit',
     )
   })
 
-  it('Mark attendances for single activity when not in standalone mode', () => {
+  it('Mark attendances for single activity', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -265,42 +280,12 @@ context('Record attendance', () => {
     activitiesPage.getButton('Record or edit attendance').click()
 
     const attendanceListPage = Page.verifyOnPage(SingleAttendanceListPage)
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Attended')
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Pay')
+    attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Attended', 'Pay')
     attendanceListPage
       .backLink()
       .contains(`Go back to activities for ${formatDate(today, 'EEEE, d MMMM yyyy')} - AM`)
       .click()
 
     Page.verifyOnPage(ActivitiesPage)
-  })
-
-  it('Mark attendances for single activity in standalone mode', () => {
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.recordAttendanceCard().click()
-
-    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
-    recordAttendancePage.recordAttendanceCard().click()
-
-    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
-    selectPeriodPage.enterDate(new Date(todayStr))
-    selectPeriodPage.selectAM()
-    selectPeriodPage.continue()
-
-    const activitiesPage = Page.verifyOnPage(ActivitiesPage)
-    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1')
-    activitiesPage.selectActivitiesWithNames('English level 1')
-    activitiesPage.getButton('Record or edit attendance').click()
-
-    Page.verifyOnPage(SingleAttendanceListPage)
-
-    cy.visit('activities/attendance/activities/93/attendance-list?mode=standalone')
-
-    const attendanceListPage = Page.verifyOnPage(SingleAttendanceListPage)
-
-    attendanceListPage.backLink().should('not.exist')
   })
 })

@@ -38,9 +38,6 @@ describe('Route Handlers - Remove Pay', () => {
 
     req = {
       params: { id: 1, attendanceId: 1 },
-      session: {
-        notAttendedJourney: {},
-      },
     } as unknown as Request
   })
 
@@ -157,7 +154,7 @@ describe('Route Handlers - Remove Pay', () => {
         ],
         { activeCaseLoadId: 'MDI', username: 'joebloggs' },
       )
-      expect(res.redirect).toHaveBeenCalledWith(`/activities/attendance/activities/1/attendance-details/1`)
+      expect(res.redirect).toHaveBeenCalledWith('../../attendance-details/1')
     })
 
     it('redirect as expected when the remove pay option is confirmed', async () => {
@@ -165,7 +162,7 @@ describe('Route Handlers - Remove Pay', () => {
         removePayOption: 'yes',
       }
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`/activities/attendance/activities/1/attendance-details/1`)
+      expect(res.redirect).toHaveBeenCalledWith('../../attendance-details/1')
     })
   })
 

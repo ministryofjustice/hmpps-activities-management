@@ -1,5 +1,5 @@
 # Stage: base image
-FROM node:20.17-bookworm-slim as base
+FROM node:20.18-bookworm-slim as base
 
 ARG BUILD_NUMBER=1_0_0
 ARG GIT_REF=not-available
@@ -10,7 +10,7 @@ ENV TZ=Europe/London
 RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
 
 RUN addgroup --gid 2000 --system appgroup && \
-        adduser --uid 2000 --system appuser --gid 2000
+    adduser --uid 2000 --system appuser --gid 2000
 
 WORKDIR /app
 
@@ -18,9 +18,9 @@ WORKDIR /app
 ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 
 RUN apt-get update && \
-        apt-get upgrade -y && \
-        apt-get autoremove -y && \
-        rm -rf /var/lib/apt/lists/*
+    apt-get upgrade -y && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
 
 # Stage: build assets
 FROM base as build
@@ -35,8 +35,8 @@ COPY . .
 RUN npm run build
 
 RUN export BUILD_NUMBER=${BUILD_NUMBER} && \
-        export GIT_REF=${GIT_REF} && \
-        npm run record-build-info
+    export GIT_REF=${GIT_REF} && \
+    npm run record-build-info
 
 RUN npm prune --no-audit --production
 

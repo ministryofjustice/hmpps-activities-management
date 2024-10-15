@@ -14,11 +14,14 @@ import EditAttendanceRoutes, { EditAttendance } from './handlers/editAttendance'
 import RemovePayRoutes, { RemovePay } from './handlers/removePay'
 import HomeRoutes from './handlers/home'
 import ResetAttendanceRoutes, { ResetAttendance } from './handlers/resetAttendance'
+import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
+import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 
 export default function Index({ activitiesService, prisonService, userService }: Services): Router {
   const router = Router()
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
+    router.get(path, emptyJourneyHandler('recordAttendanceJourney', stepRequiresSession), asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
@@ -36,38 +39,50 @@ export default function Index({ activitiesService, prisonService, userService }:
   const resetAttendanceRoutes = new ResetAttendanceRoutes(activitiesService, prisonService)
 
   get('/', homeHandler.GET)
-  get('/select-period', selectPeriodHandler.GET)
-  post('/select-period', selectPeriodHandler.POST, TimePeriod)
-  get('/activities', activitiesHandler.GET)
-  post('/activities', activitiesHandler.POST)
 
-  post('/activities/attendance-list', activitiesHandler.POST_ATTENDANCES)
-  get('/activities/:id/attendance-list', attendanceListHandler.GET)
-  get('/activities/attendance-list', attendanceListHandler.GET_ATTENDANCES)
+  router.use(insertJourneyIdentifier())
 
-  post('/activities/attended', attendanceListHandler.ATTENDED_MULTIPLE, AttendanceList)
-  post('/activities/:id/attended', attendanceListHandler.ATTENDED, AttendanceList)
+  get('/:journeyId/select-period', selectPeriodHandler.GET)
+  post('/:journeyId/select-period', selectPeriodHandler.POST, TimePeriod)
 
-  post('/activities/:id/not-attended', attendanceListHandler.NOT_ATTENDED, AttendanceList)
-  post('/activities/not-attended', attendanceListHandler.NOT_ATTENDED, AttendanceList)
+  get('/:journeyId/activities', activitiesHandler.GET)
+  post('/:journeyId/activities', activitiesHandler.POST)
 
-  get('/activities/not-attended-reason', notAttendedReasonHandler.GET)
-  post('/activities/not-attended-reason', notAttendedReasonHandler.POST, NotAttendedForm)
+  post('/:journeyId/activities/attendance-list', activitiesHandler.POST_ATTENDANCES)
+  get('/:journeyId/activities/:id/attendance-list', attendanceListHandler.GET)
+  get('/:journeyId/activities/attendance-list', attendanceListHandler.GET_ATTENDANCES, true)
 
-  get('/activities/:id/cancel', cancelSessionReasonRoutes.GET)
-  post('/activities/:id/cancel', cancelSessionReasonRoutes.POST, CancelReasonForm)
-  get('/activities/:id/cancel/confirm', cancelSessionConfirmationRoutes.GET)
-  post('/activities/:id/cancel/confirm', cancelSessionConfirmationRoutes.POST, CancelConfirmForm)
-  get('/activities/:id/uncancel', uncancelSessionConfirmationRoutes.GET)
-  post('/activities/:id/uncancel', uncancelSessionConfirmationRoutes.POST, UncancelConfirmForm)
-  get('/activities/:id/attendance-details/:attendanceId', attendanceDetailsHandler.GET)
-  post('/activities/:id/attendance-details/:attendanceId', attendanceDetailsHandler.POST)
-  get('/activities/:id/attendance-details/:attendanceId/edit-attendance', editAttendanceHandler.GET)
-  post('/activities/:id/attendance-details/:attendanceId/edit-attendance', editAttendanceHandler.POST, EditAttendance)
-  get('/activities/:id/attendance-details/:attendanceId/remove-pay', removePayHandler.GET)
-  post('/activities/:id/attendance-details/:attendanceId/remove-pay', removePayHandler.POST, RemovePay)
-  get('/activities/:id/attendance-details/:attendanceId/reset-attendance', resetAttendanceRoutes.GET)
-  post('/activities/:id/attendance-details/:attendanceId/reset-attendance', resetAttendanceRoutes.POST, ResetAttendance)
+  post('/:journeyId/activities/attended', attendanceListHandler.ATTENDED_MULTIPLE, AttendanceList)
+  post('/:journeyId/activities/:id/attended', attendanceListHandler.ATTENDED, AttendanceList)
+
+  post('/:journeyId/activities/:id/not-attended', attendanceListHandler.NOT_ATTENDED, AttendanceList)
+  post('/:journeyId/activities/not-attended', attendanceListHandler.NOT_ATTENDED, AttendanceList)
+
+  get('/:journeyId/activities/not-attended-reason', notAttendedReasonHandler.GET, true)
+  post('/:journeyId/activities/not-attended-reason', notAttendedReasonHandler.POST, NotAttendedForm)
+
+  get('/:journeyId/activities/:id/cancel', cancelSessionReasonRoutes.GET, true)
+  post('/:journeyId/activities/:id/cancel', cancelSessionReasonRoutes.POST, CancelReasonForm)
+  get('/:journeyId/activities/:id/cancel/confirm', cancelSessionConfirmationRoutes.GET, true)
+  post('/:journeyId/activities/:id/cancel/confirm', cancelSessionConfirmationRoutes.POST, CancelConfirmForm)
+  get('/:journeyId/activities/:id/uncancel', uncancelSessionConfirmationRoutes.GET, true)
+  post('/:journeyId/activities/:id/uncancel', uncancelSessionConfirmationRoutes.POST, UncancelConfirmForm)
+  get('/:journeyId/activities/:id/attendance-details/:attendanceId', attendanceDetailsHandler.GET, true)
+  post('/:journeyId/activities/:id/attendance-details/:attendanceId', attendanceDetailsHandler.POST)
+  get('/:journeyId/activities/:id/attendance-details/:attendanceId/edit-attendance', editAttendanceHandler.GET, true)
+  post(
+    '/:journeyId/activities/:id/attendance-details/:attendanceId/edit-attendance',
+    editAttendanceHandler.POST,
+    EditAttendance,
+  )
+  get('/:journeyId/activities/:id/attendance-details/:attendanceId/remove-pay', removePayHandler.GET, true)
+  post('/:journeyId/activities/:id/attendance-details/:attendanceId/remove-pay', removePayHandler.POST, RemovePay)
+  get('/:journeyId/activities/:id/attendance-details/:attendanceId/reset-attendance', resetAttendanceRoutes.GET, true)
+  post(
+    '/:journeyId/activities/:id/attendance-details/:attendanceId/reset-attendance',
+    resetAttendanceRoutes.POST,
+    ResetAttendance,
+  )
 
   return router
 }

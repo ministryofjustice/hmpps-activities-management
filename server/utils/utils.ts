@@ -3,9 +3,6 @@ import {
   areIntervalsOverlapping,
   endOfDay,
   format,
-  formatISO,
-  isAfter,
-  isBefore,
   isSameDay,
   isToday,
   isTomorrow,
@@ -105,93 +102,12 @@ export const parseISODate = (date: string) => {
   return parseISO(date)
 }
 
-export const switchDateFormat = (displayDate: string, fromFormat = 'dd/MM/yyyy') => {
-  if (displayDate) {
-    return formatISO(parse(displayDate, fromFormat, new Date(), { locale: enGB }), { representation: 'date' })
-  }
-  return displayDate
-}
-
-export const getCurrentPeriod = (hour: number): string => {
-  const afternoonSplit = 12
-  const eveningSplit = 17
-  if (hour < afternoonSplit) return 'AM'
-  if (hour < eveningSplit) return 'PM'
-  return 'ED'
-}
-
 export const simplifyTime = (time: string): string => {
   const splitTime = time.split(':')
   return `${splitTime[0]}:${splitTime[1]}`
 }
 
-export const startsWithAny = (string: string, list: string[]): boolean => {
-  return list.find(s => string.startsWith(s)) !== undefined
-}
-
-// Assumes date is iso format yyyy-MM-dd
-// Note we use local date times for comparison here - fine as long as both are
-export const isAfterToday = (date: string): boolean => {
-  const dateMidnight = parse(date, 'yyyy-MM-dd', new Date())
-  const endOfToday = endOfDay(new Date())
-  return isAfter(dateMidnight, endOfToday)
-}
-
-// Assumes date is iso format yyyy-MM-dd (no time element)
-export const isTodayOrBefore = (date: string): boolean => {
-  const dateMidnight = parseDate(date)
-  const endOfToday = endOfDay(new Date())
-  return isBefore(dateMidnight, endOfToday)
-}
-
-export const sortByDateTime = (t1: string, t2: string): number => {
-  if (t1 && t2) return parseISO(t1).getTime() - parseISO(t2).getTime()
-  if (t1) return -1
-  if (t2) return 1
-  return 0
-}
-
-export const compare = (field: string, reverse: boolean, primer: (x: any) => any) => {
-  const key = primer ? (x: { [x: string]: any }) => primer(x[field]) : (x: { [x: string]: any }) => x[field]
-  const r = !reverse ? 1 : -1
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  return (left, right) => {
-    const a = key(left)
-    const b = key(right)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return r * ((a > b) - (b > a))
-  }
-}
-
 export const compareStrings = (l: string, r: string): number => l.localeCompare(r, 'en', { ignorePunctuation: true })
-
-export const removeBlanks = (array: unknown[]) => array.filter((item: unknown) => !!item)
-
-export const setSelected = (items: any, selected: any) =>
-  items &&
-  items.map((entry: { value: string }) => ({
-    ...entry,
-    selected: entry && entry.value === selected,
-  }))
-
-export const addDefaultSelectedValue = (items: any, text: any, show: any) => {
-  if (!items) return null
-  const attributes: { hidden?: string } = {}
-  if (!show) attributes.hidden = ''
-
-  return [
-    {
-      text,
-      value: '',
-      selected: true,
-      attributes,
-    },
-    ...items,
-  ]
-}
 
 export const toTimeItems = (array: string[], selected: number) => {
   if (!array) return null
@@ -278,10 +194,6 @@ export const toDateString = (date: Date) => format(date, 'yyyy-MM-dd')
 export const toDate = (date: string) => parse(date, 'yyyy-MM-dd', new Date())
 
 export const sliceArray = (arr: Array<unknown>, start: number, end: number) => arr?.slice(start, end)
-
-export const existsInStringArray = (key: string, arr: string[]): boolean => {
-  return arr?.find(item => item === key) !== undefined
-}
 
 export const getAttendanceSummary = (attendance: Attendance[]) => {
   const attendanceCount = attendance.length
@@ -403,8 +315,6 @@ export const removeUndefined = (arr: object[]) => arr.filter(Boolean)
 
 export const getScheduleIdFromActivity = (activity: Activity) => activity.schedules[0].id
 
-export const getScheduleStartDateFromActivity = (activity: Activity) => activity.schedules[0].startDate
-
 export const getAllocationStartDateFromActivity = (activity: Activity, id: number) =>
   activity.schedules[0].allocations.filter(allocation => allocation.id === id)[0].startDate
 
@@ -418,9 +328,6 @@ export const scheduledEventSort = (data: ScheduledEvent[]): ScheduledEvent[] => 
     return 0
   })
 }
-
-export const filterObjects = (objects: object[], iteratee: string, eq: unknown): object[] =>
-  objects.filter(o => o[iteratee as keyof any] === eq)
 
 export const filterNot = (objects: object[], iteratee: string, notEq: unknown): object[] =>
   objects.filter(o => o[iteratee as keyof any] !== notEq)

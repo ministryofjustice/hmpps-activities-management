@@ -20,10 +20,10 @@ export default class CancelSessionRoutes {
     const { confirm }: CancelConfirmForm = req.body
 
     if (confirm === 'yes') {
-      const sessionCancellationRequest = req.session.recordAttendanceRequests.sessionCancellation
+      const sessionCancellationRequest = req.session.recordAttendanceJourney.sessionCancellation
       await this.activitiesService.cancelScheduledActivity(instanceId, sessionCancellationRequest, user)
     }
 
-    res.redirect(`/activities/attendance/activities/${instanceId}/attendance-list`)
+    res.redirect(`../../${instanceId}/attendance-list`)
   }
 }

@@ -159,6 +159,15 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  getScheduledActivities(ids: number[], user: ServiceUser): Promise<ScheduledActivity[]> {
+    return this.post({
+      path: `/scheduled-instances`,
+      data: ids,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
   postActivityCreation(createBody: ActivityCreateRequest, user: ServiceUser): Promise<Activity> {
     return this.post({
       path: `/activities`,

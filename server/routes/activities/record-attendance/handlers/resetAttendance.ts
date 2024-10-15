@@ -6,7 +6,6 @@ import PrisonService from '../../../../services/prisonService'
 import { YesNo } from '../../../../@types/activities'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { convertToTitleCase } from '../../../../utils/utils'
-import { AttendActivityMode } from '../recordAttendanceRequests'
 
 export class ResetAttendance {
   @Expose()
@@ -36,10 +35,9 @@ export default class ResetAttendanceRoutes {
     const { attendanceId } = req.params
     const { confirm } = req.body
 
-    const returnUrl =
-      req.session.recordAttendanceRequests.mode === AttendActivityMode.MULTIPLE
-        ? '/activities/attendance/activities/attendance-list'
-        : `/activities/attendance/activities/${id}/attendance-list`
+    const returnUrl = req.session.recordAttendanceJourney.singleInstanceSelected
+      ? `../../../${id}/attendance-list`
+      : '../../../attendance-list'
 
     if (confirm === YesNo.YES) {
       const attendances = [

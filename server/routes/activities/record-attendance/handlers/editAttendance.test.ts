@@ -9,7 +9,6 @@ import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import EditAttendanceRoutes, { EditAttendance } from './editAttendance'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import { AttendActivityMode } from '../recordAttendanceRequests'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -35,10 +34,8 @@ describe('Route Handlers - Edit Attendance', () => {
     } as unknown as Response
 
     req = {
+      session: {},
       params: { id: 1, attendanceId: 1 },
-      session: {
-        notAttendedJourney: {},
-      },
     } as unknown as Request
   })
 
@@ -119,8 +116,8 @@ describe('Route Handlers - Edit Attendance', () => {
 
   describe('POST', () => {
     beforeEach(() => {
-      req.session.recordAttendanceRequests = {
-        mode: AttendActivityMode.SINGLE,
+      req.session.recordAttendanceJourney = {
+        singleInstanceSelected: true,
       }
     })
 
@@ -131,20 +128,18 @@ describe('Route Handlers - Edit Attendance', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/activities/attendance/activities/1/attendance-list`)
+      expect(res.redirect).toHaveBeenCalledWith('../../attendance-list')
     })
 
-    it('redirect as expected when mode is MULTIPLE', async () => {
+    it('redirect as expected when mode is on one session instance is selected', async () => {
       req.body = {
         attendanceOption: 'yes',
       }
-      req.session.recordAttendanceRequests = {
-        mode: AttendActivityMode.MULTIPLE,
-      }
+      req.session.recordAttendanceJourney.singleInstanceSelected = false
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/activities/attendance/activities/attendance-list`)
+      expect(res.redirect).toHaveBeenCalledWith('../../../attendance-list')
     })
 
     it('redirect as expected when the no attendance option is selected', async () => {
@@ -252,11 +247,9 @@ describe('Route Handlers - Edit Attendance', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(
-        `/activities/attendance/activities/not-attended-reason?preserveHistory=true`,
-      )
+      expect(res.redirect).toHaveBeenCalledWith('../../../not-attended-reason?preserveHistory=true')
 
-      expect(req.session.notAttendedJourney.selectedPrisoners).toEqual([
+      expect(req.session.recordAttendanceJourney.notAttended.selectedPrisoners).toEqual([
         {
           instanceId: 1,
           attendanceId: 1,
@@ -292,9 +285,7 @@ describe('Route Handlers - Edit Attendance', () => {
       }
 
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(
-        `/activities/attendance/activities/1/attendance-details/1/reset-attendance`,
-      )
+      expect(res.redirect).toHaveBeenCalledWith('../../../1/attendance-details/1/reset-attendance')
     })
   })
 

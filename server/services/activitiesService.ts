@@ -51,7 +51,7 @@ import {
   PrisonRegime,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
-import { SessionCancellationRequest } from '../routes/activities/record-attendance/recordAttendanceRequests'
+import { SessionCancellationRequest } from '../routes/activities/record-attendance/journey'
 import { AttendanceStatus } from '../@types/appointments'
 import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
@@ -107,6 +107,10 @@ export default class ActivitiesService {
 
   getScheduledActivity(id: number, user: ServiceUser): Promise<ScheduledActivity> {
     return this.activitiesApiClient.getScheduledActivity(id, user)
+  }
+
+  getScheduledActivities(ids: number[], user: ServiceUser): Promise<ScheduledActivity[]> {
+    return this.activitiesApiClient.getScheduledActivities(ids, user)
   }
 
   getPrisonRegime(prisonCode: string, user: ServiceUser): Promise<PrisonRegime[]> {

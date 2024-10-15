@@ -1,15 +1,9 @@
-import { addDays, format, formatISO, parseISO, subDays } from 'date-fns'
-import { enGB } from 'date-fns/locale/en-GB'
+import { addDays, subDays } from 'date-fns'
 import {
-  compare,
   compareStrings,
   convertToTitleCase,
-  existsInStringArray,
   getAttendanceSummary,
-  getCurrentPeriod,
   initialiseName,
-  isAfterToday,
-  isTodayOrBefore,
   fullName,
   prisonerName,
   toDate,
@@ -24,7 +18,6 @@ import {
   asString,
   getSplitTime,
 } from './utils'
-import prisoners from './fixtures/prisoners-1.json'
 import { Attendance } from '../@types/activitiesAPI/types'
 
 describe('utils', () => {
@@ -98,37 +91,6 @@ describe('utils', () => {
     })
   })
 
-  describe('getCurrentPeriod', () => {
-    it('returns AM if time is post midnight', () => {
-      expect(getCurrentPeriod(+format(parseISO('2019-08-11T00:00:01.000'), 'H', { locale: enGB }))).toEqual('AM')
-    })
-
-    it('returns AM if time is pre 12 noon', () => {
-      expect(getCurrentPeriod(+format(parseISO('2019-08-11T11:59:59.000'), 'H', { locale: enGB }))).toEqual('AM')
-    })
-
-    it('returns PM if time is post 12 noon and before 5PM', () => {
-      expect(getCurrentPeriod(+format(parseISO('2019-08-11T16:59:59.000'), 'H', { locale: enGB }))).toEqual('PM')
-    })
-
-    it('returns ED if time is post 5pm and before midnight', () => {
-      expect(getCurrentPeriod(+format(parseISO('2019-08-11T23:59:59.000'), 'H', { locale: enGB }))).toEqual('ED')
-    })
-  })
-
-  describe('compare', () => {
-    it('sort by name asc', () => {
-      const results = prisoners.sort(compare('lastName', false, undefined))
-      expect(results[0].lastName).toEqual('CHOLAK')
-    })
-    it('sort by name desc', () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const results = prisoners.sort(compare('lastName', true, undefined))
-      expect(results[0].lastName).toEqual('SMITH')
-    })
-  })
-
   describe('compareStrings', () => {
     it('sort by name asc', () => {
       const results = ['shaz', 'Baz'].sort(compareStrings)
@@ -171,41 +133,6 @@ describe('utils', () => {
   describe('toDate', () => {
     it('converts a string to a date', () => {
       expect(toDate('2022-12-02')).toEqual(new Date(2022, 11, 2))
-    })
-  })
-
-  describe('existsInStringArray', () => {
-    it.each([
-      ['Exists', 'a', ['a', 'b', 'c'], true],
-      ['Does not exist', 'd', ['a', 'b', 'c'], false],
-      ['Exists several times', 'a', ['a', 'a', 'a'], true],
-      ['Empty list', 'a', [], false],
-    ])('%s existsInStringArray(%s, %s) == %s', (desc: string, key: string, list: string[], expected: boolean) => {
-      expect(existsInStringArray(key, list)).toEqual(expected)
-    })
-  })
-
-  describe('isAfterToday', () => {
-    it.each([
-      ['Is tomorrow', formatISO(addDays(new Date(), 1), { representation: 'date' }), true],
-      ['Is today', formatISO(new Date(), { representation: 'date' }), false],
-      ['Is yesterday', formatISO(addDays(new Date(), -1), { representation: 'date' }), false],
-      ['Is a week ago', formatISO(addDays(new Date(), -7), { representation: 'date' }), false],
-      ['Is next week', formatISO(addDays(new Date(), 7), { representation: 'date' }), true],
-    ])('%s isAfterToday(%s) == %s', (desc: string, dateString: string, expected: boolean) => {
-      expect(isAfterToday(dateString)).toEqual(expected)
-    })
-  })
-
-  describe('isTodayOrBefore', () => {
-    it.each([
-      ['Is yesterday', formatISO(addDays(new Date(), -1), { representation: 'date' }), true],
-      ['Is today', formatISO(new Date(), { representation: 'date' }), true],
-      ['Is a week ago', formatISO(addDays(new Date(), -7), { representation: 'date' }), true],
-      ['Is tomorrow', formatISO(addDays(new Date(), 1), { representation: 'date' }), false],
-      ['Is next week', formatISO(addDays(new Date(), 7), { representation: 'date' }), false],
-    ])('%s isTodayOrBefore(%s) == %s', (desc: string, dateString: string, expected: boolean) => {
-      expect(isTodayOrBefore(dateString)).toEqual(expected)
     })
   })
 

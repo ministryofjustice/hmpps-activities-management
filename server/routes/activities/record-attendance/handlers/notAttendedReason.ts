@@ -16,7 +16,6 @@ import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { YesNo } from '../../../../@types/activities'
-import { AttendActivityMode } from '../recordAttendanceRequests'
 
 const getPrisonerName = (args: ValidationArguments) => (args.object as NotAttendedData)?.prisonerName
 
@@ -100,7 +99,7 @@ export default class NotAttendedReasonRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { selectedPrisoners } = req.session.notAttendedJourney
+    const { selectedPrisoners } = req.session.recordAttendanceJourney.notAttended
 
     const notAttendedReasons = (await this.activitiesService.getAttendanceReasons(user))
       .filter(r => r.displayInAbsence)
@@ -133,7 +132,7 @@ export default class NotAttendedReasonRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
-    const { selectedPrisoners } = req.session.notAttendedJourney
+    const { selectedPrisoners } = req.session.recordAttendanceJourney.notAttended
 
     const instances = await Promise.all(
       _.uniq(selectedPrisoners.map(prisoner => prisoner.instanceId)).map(async instanceId =>
@@ -173,10 +172,9 @@ export default class NotAttendedReasonRoutes {
         : `${selectedPrisoners.length} people`
     }`
 
-    const returnUrl =
-      req.session.recordAttendanceRequests.mode === AttendActivityMode.MULTIPLE
-        ? '/activities/attendance/activities/attendance-list'
-        : `/activities/attendance/activities/${selectedPrisoners[0].instanceId}/attendance-list`
+    const returnUrl = req.session.recordAttendanceJourney.singleInstanceSelected
+      ? `${selectedPrisoners[0].instanceId}/attendance-list`
+      : 'attendance-list'
 
     res.redirectWithSuccess(returnUrl, 'Attendance recorded', successMessage)
   }

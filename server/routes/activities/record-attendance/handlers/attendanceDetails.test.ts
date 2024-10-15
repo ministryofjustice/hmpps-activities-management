@@ -147,7 +147,7 @@ describe('Route Handlers - View and Edit Attendance', () => {
     it('should redirect to remove pay page', async () => {
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/1/attendance-details/1/remove-pay')
+      expect(res.redirect).toHaveBeenCalledWith('1/remove-pay')
     })
   })
 })

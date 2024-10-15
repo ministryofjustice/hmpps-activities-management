@@ -53,7 +53,7 @@ describe('Route Handlers - Cancel Session Confirmation', () => {
           confirm: 'yes',
         },
         session: {
-          recordAttendanceRequests: {
+          recordAttendanceJourney: {
             sessionCancellation: {
               reason: 'Staff unavailable',
               comment: 'Resume tomorrow',
@@ -76,7 +76,7 @@ describe('Route Handlers - Cancel Session Confirmation', () => {
           username: 'joebloggs',
         },
       )
-      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/1/attendance-list')
+      expect(res.redirect).toHaveBeenCalledWith('../../1/attendance-list')
     })
 
     it('should redirect back to attendance list if not confirmed', async () => {
@@ -84,7 +84,7 @@ describe('Route Handlers - Cancel Session Confirmation', () => {
       await handler.POST(confirmRequest, res)
 
       expect(activitiesService.cancelScheduledActivity).toHaveBeenCalledTimes(0)
-      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance/activities/1/attendance-list')
+      expect(res.redirect).toHaveBeenCalledWith('../../1/attendance-list')
     })
   })
 

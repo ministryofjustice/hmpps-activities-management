@@ -65,8 +65,9 @@ context('Attendance not required', () => {
     activitiesPage.selectActivityWithName('Football')
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Not required')
-    attendanceListPage.checkAttendanceStatus('Aborah, Cudmastarie', 'Not required')
+    attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Not required')
+    attendanceListPage.checkClashingEventsStatuses('Andy, Booking', 'Attended', 'Unpaid')
+    attendanceListPage.checkAttendanceStatuses('Aborah, Cudmastarie', 'Not required')
 
     attendanceListPage.cancelSessionButton().click()
     cy.stubEndpoint('GET', '/scheduled-instances/94', getCancelledScheduledInstance)
@@ -82,8 +83,8 @@ context('Attendance not required', () => {
     cancelSessionConfirmPage.confirm()
 
     Page.verifyOnPage(AttendanceListPage)
-    attendanceListPage.checkAttendanceStatus('Andy, Booking', 'Not required')
-    attendanceListPage.checkAttendanceStatus('Aisho, Egurztof', 'Not required')
+    attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Not required')
+    attendanceListPage.checkAttendanceStatuses('Aisho, Egurztof', 'Not required')
     attendanceListPage.assertNotificationContents(
       'Session cancelled',
       'This activity session has been cancelled by USER1 - J. Smith on Thursday, 2 February 2023 for the following reason:',

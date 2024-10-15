@@ -5,7 +5,6 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { asString, convertToArray, formatDate, toDate } from '../../../../utils/utils'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
-import { AttendActivityMode } from '../recordAttendanceRequests'
 import PrisonService from '../../../../services/prisonService'
 import { LocationType } from '../../create-an-activity/handlers/location'
 
@@ -74,7 +73,7 @@ export default class ActivitiesRoutes {
         return a.endTime.localeCompare(b.endTime)
       })
 
-    req.session.recordAttendanceRequests = {}
+    req.session.recordAttendanceJourney = {}
 
     const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'locationId')
@@ -108,16 +107,15 @@ export default class ActivitiesRoutes {
   POST_ATTENDANCES = async (req: Request, res: Response): Promise<void> => {
     const { selectedInstanceIds, activityDate, sessionFilters } = req.body
     const selectedInstanceIdsArr = selectedInstanceIds ? convertToArray(selectedInstanceIds) : []
-    req.session.recordAttendanceRequests = {
-      mode: AttendActivityMode.MULTIPLE,
+    req.session.recordAttendanceJourney = {
       selectedInstanceIds: selectedInstanceIdsArr,
       activityDate,
       sessionFilters,
     }
     if (selectedInstanceIdsArr.length === 1) {
-      return res.redirect(`/activities/attendance/activities/${selectedInstanceIdsArr[0]}/attendance-list`)
+      return res.redirect(`${selectedInstanceIdsArr[0]}/attendance-list`)
     }
-    return res.redirect('/activities/attendance/activities/attendance-list')
+    return res.redirect('attendance-list')
   }
 }
 
