@@ -188,6 +188,7 @@
     "typescript": "^5.4.5"
   },
   "overrides": {
-    "rollup": "~4.22.4"
+    "rollup": "~4.22.4",
+    "cookie": "~0.7.2"
   }
 }
