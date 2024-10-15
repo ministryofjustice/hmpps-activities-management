@@ -1,10 +1,9 @@
 import { RequestHandler } from 'express'
 import { Services } from '../services'
 import ServiceName from '../enum/serviceName'
-import asyncMiddleware from './asyncMiddleware'
 
 function rolloutMiddleware(serviceName: ServiceName, { activitiesService }: Services): RequestHandler {
-  return asyncMiddleware(async (req, res, next) => {
+  return async (req, res, next) => {
     const { user } = res.locals
     if (
       (serviceName === ServiceName.ACTIVITIES && !user.isActivitiesRolledOut) ||
@@ -20,7 +19,7 @@ function rolloutMiddleware(serviceName: ServiceName, { activitiesService }: Serv
       })
     }
     return next()
-  })
+  }
 }
 
 export default rolloutMiddleware
