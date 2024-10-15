@@ -21,7 +21,6 @@ generic-service:
     MANAGE_USERS_API_URL: "https://manage-users-api.hmpps.service.justice.gov.uk"
     BOOK_A_VIDEO_LINK_API_URL: "https://book-a-video-link-api.prison.service.justice.gov.uk"
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-prod.hmpps-digital-prison-reporting-mi-prod.svc.cluster.local"
-    BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED: "false"
     FUTURE_PAY_RATES_TOGGLE_ENABLED: "true"
     DEALLOCATE_TODAY_SESSION_TOGGLE_ENABLED: "true"
 
