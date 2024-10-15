@@ -53,5 +53,16 @@
                 "data-qa": "view-waitlists"
             }) }}
         </div>
+        {% if 'ROLE_MIGRATE_ACTIVITIES' in user.roles %}
+        <div class="govuk-grid-column-one-third card-group__item">
+            {{ card({
+                "href": "/activities/admin",
+                "clickable": "true",
+                "heading": "Admin",
+                "description": "Administer activities and appointments.",
+                "data-qa": "admin"
+            }) }}
+        {% endif %}
+        </div>
     </div>
 {% endblock %}
