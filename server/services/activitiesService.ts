@@ -49,6 +49,7 @@ import {
   SuspendedPrisonerAttendance,
   AppointmentAttendeeByStatus,
   PrisonRegime,
+  NonAssociationDetails,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/journey'
@@ -481,7 +482,11 @@ export default class ActivitiesService {
     return r.filter(item => item.activitiesRolledOut || item.appointmentsRolledOut).map(item => item.prisonCode)
   }
 
-  async getNonAssociations(scheduleId: number, prisonerNumber: string, user: ServiceUser) {
+  async getNonAssociations(
+    scheduleId: number,
+    prisonerNumber: string,
+    user: ServiceUser,
+  ): Promise<NonAssociationDetails[]> {
     return this.activitiesApiClient.getNonAssociationsForPrisonerWithinSchedule(scheduleId, prisonerNumber, user)
   }
 

@@ -33,7 +33,7 @@
         {% if unallocatedNonAssociations | length %}
             {{ nonAssociationsTable(unallocatedNonAssociations, prisonerName) }}
         {% else %}
-            <p class="govuk-body govuk-!-margin-top-5">{{ prisonerName }} has no open non-associations with anyone else in {{ prisoner.prisonName }}</p>
+            <p class="govuk-body govuk-!-margin-top-5 govuk-!-margin-bottom-9">{{ prisonerName }} has no open non-associations with anyone else in {{ prisoner.prisonName }}</p>
         {% endif %}
         </div>
     </div>

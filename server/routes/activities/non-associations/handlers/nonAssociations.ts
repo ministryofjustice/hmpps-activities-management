@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
-import { Activity } from '../../../../@types/activitiesAPI/types'
+import { Activity, NonAssociationDetails, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/activities'
 import PrisonService from '../../../../services/prisonService'
+import { getScheduleIdFromActivity } from '../../../../utils/utils'
 
 export default class NonAssociationsRoutes {
   constructor(
@@ -19,16 +20,34 @@ export default class NonAssociationsRoutes {
       this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user),
     ])
 
-    // const scheduleId = getScheduleIdFromActivity(activity)
-    // const nonAssociations = await this.activitiesService.getNonAssociations(scheduleId, prisonerNumber, user)
-    // const allocatedNonAssociations = nonAssociations.filter(na => na.allocated === true)
-    // const unallocatedNonAssociations = nonAssociations.filter(na => na.allocated === false)
+    const scheduleId = getScheduleIdFromActivity(activity)
+    const nonAssociations = await this.activitiesService.getNonAssociations(scheduleId, prisonerNumber, user)
+    const nonAssociationPrns = nonAssociations.map(na => na.otherPrisonerDetails.prisonerNumber)
+    const prisonerAllocations = await this.activitiesService.getActivePrisonPrisonerAllocations(
+      nonAssociationPrns,
+      user,
+    )
+    const enhancedNonAssociations = await this.enhanceNonAssociations(nonAssociations, prisonerAllocations)
 
     res.render('pages/activities/non-associations/nonAssociations', {
       activity,
       prisoner,
-      // allocatedNonAssociations,
-      // unallocatedNonAssociations,
+      allocatedNonAssociations: enhancedNonAssociations.filter(na => na.allocated === true),
+      unallocatedNonAssociations: enhancedNonAssociations.filter(na => na.allocated === false),
+    })
+  }
+
+  private enhanceNonAssociations = (
+    nonAssociations: NonAssociationDetails[],
+    prisonerAllocations: PrisonerAllocations[],
+  ) => {
+    const naAllocations = new Map(prisonerAllocations.map(naAll => [naAll.prisonerNumber, naAll.allocations]))
+
+    return nonAssociations.map(na => {
+      return {
+        ...na,
+        allocations: naAllocations.get(na.otherPrisonerDetails.prisonerNumber),
+      }
     })
   }
 }

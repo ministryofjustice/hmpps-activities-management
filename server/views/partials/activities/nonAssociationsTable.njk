@@ -15,6 +15,13 @@
                 <hr class="mid-grey-tint-20-hr dash-border">
                 <p class="govuk-body">{{ prisonerName | possessive }} role: {{ row.roleDescription }}</p>
             {% endset %}
+            {% set allocationsHtml %}
+                {% for allocation in row.allocations %}
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href="/activities/allocation-dashboard/{{ allocation.activityId }}">{{ allocation.activitySummary }}</a></p>
+                <p class="govuk-body">{{ allocation.scheduleDescription }}</p>
+                {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
+                {% endfor %}
+            {% endset %}
 
         {% set rows = (rows.push(
                 [{
@@ -33,7 +40,7 @@
                     }
                 },
                 {
-                    html: nonAssociationAllocationsHtml                
+                    html: allocationsHtml                
                 },
                 {
                     html: nonAssociationsHtml,
