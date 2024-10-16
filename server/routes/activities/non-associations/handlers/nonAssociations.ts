@@ -19,9 +19,16 @@ export default class NonAssociationsRoutes {
       this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user),
     ])
 
+    // const scheduleId = getScheduleIdFromActivity(activity)
+    // const nonAssociations = await this.activitiesService.getNonAssociations(scheduleId, prisonerNumber, user)
+    // const allocatedNonAssociations = nonAssociations.filter(na => na.allocated === true)
+    // const unallocatedNonAssociations = nonAssociations.filter(na => na.allocated === false)
+
     res.render('pages/activities/non-associations/nonAssociations', {
       activity,
       prisoner,
+      // allocatedNonAssociations,
+      // unallocatedNonAssociations,
     })
   }
 }

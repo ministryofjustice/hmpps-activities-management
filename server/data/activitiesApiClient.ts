@@ -755,6 +755,15 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  async getNonAssociationsForPrisonerWithinSchedule(scheduleId: number, prisonerNumber: string, user: ServiceUser) {
+    return this.get({
+      path: `/schedules/${scheduleId}/non-associations`,
+      query: { prisonerNumber },
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
   async AppointmentAttendeeByStatus(
     prisonCode: string,
     status: AttendanceStatus,

@@ -481,6 +481,10 @@ export default class ActivitiesService {
     return r.filter(item => item.activitiesRolledOut || item.appointmentsRolledOut).map(item => item.prisonCode)
   }
 
+  async getNonAssociations(scheduleId: number, prisonerNumber: string, user: ServiceUser) {
+    return this.activitiesApiClient.getNonAssociationsForPrisonerWithinSchedule(scheduleId, prisonerNumber, user)
+  }
+
   async getAppointmentsByStatusAndDate(
     prisonCode: string,
     status: AttendanceStatus,
