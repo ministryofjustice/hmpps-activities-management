@@ -49,6 +49,8 @@ generic-service:
     elasticache-redis:
       REDIS_HOST: "primary_endpoint_address"
       REDIS_AUTH_TOKEN: "auth_token"
+    feature-toggles:
+      BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED: "BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED"
 
   allowlist:
     ark-nps-hmcts-ttp2: 194.33.192.0/25
