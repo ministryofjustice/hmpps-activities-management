@@ -17,7 +17,7 @@
             {% endset %}
             {% set allocationsHtml %}
                 {% for allocation in row.allocations %}
-                <p class="govuk-body govuk-!-margin-bottom-0"><a href="/activities/allocation-dashboard/{{ allocation.activityId }}">{{ allocation.activitySummary }}</a></p>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href="/activities/allocation-dashboard/{{ allocation.activityId }}" data-qa="allocation-{{allocation.activityId}}">{{ allocation.activitySummary }}</a></p>
                 <p class="govuk-body">{{ allocation.scheduleDescription }}</p>
                 {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
                 {% endfor %}
@@ -59,6 +59,7 @@
     caption: caption,
     captionClasses: "govuk-visually-hidden",
     name: 'nonAssociations',
+    attributes: { "data-qa": "na-table" },
     head: [{
             text: "Name"
         },
