@@ -46,7 +46,7 @@ export default class NonAssociationsRoutes {
     return nonAssociations.map(na => {
       return {
         ...na,
-        allocations: naAllocations.get(na.otherPrisonerDetails.prisonerNumber),
+        allocations: naAllocations.get(na.otherPrisonerDetails.prisonerNumber) || [],
       }
     })
   }
