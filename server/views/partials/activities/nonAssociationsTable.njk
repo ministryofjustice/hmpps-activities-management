@@ -49,7 +49,7 @@
                 {
                     text: row.whenUpdated | parseISODate | formatDate('d MMMM yyyy'),
                     attributes: {
-                        "data-sort-value": row.whenUpdated
+                        "data-sort-value": row.whenUpdated | getUnixTime
                     }
                 }]
         ), rows) %}
@@ -59,12 +59,18 @@
     caption: caption,
     captionClasses: "govuk-visually-hidden",
     name: 'nonAssociations',
-    attributes: { "data-qa": "na-table" },
+    attributes: { "data-qa": "na-table", 'data-module': 'moj-sortable-table' },
     head: [{
-            text: "Name"
+            text: "Name",
+            attributes: {
+                "aria-sort": "none"
+            }
         },
         {
-            text: "Cell location"
+            text: "Cell location",
+            attributes: {
+                "aria-sort": "none"
+            }
         },
         {
             text: "Allocations"
@@ -73,7 +79,10 @@
             text: "Non-associations"
         },
         {
-            text: "Last updated"
+            text: "Last updated",
+            attributes: {
+                "aria-sort": "descending"
+            }
         }],
     rows: rows,
     classes: 'govuk-!-margin-bottom-9'
