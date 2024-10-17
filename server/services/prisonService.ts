@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { Readable } from 'stream'
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ReferenceCode, AgencyPrisonerPayProfile, Alert } from '../@types/prisonApiImport/types'
@@ -67,5 +68,9 @@ export default class PrisonService {
 
   async getPrisonerAlerts(offenderNumbers: string[], prisonCode: string, user: ServiceUser): Promise<Alert[]> {
     return this.prisonApiClient.getPrisonersAlerts(offenderNumbers, prisonCode, user)
+  }
+
+  async getPrisonerImage(prisonerNumber: string, user: ServiceUser): Promise<Readable> {
+    return this.prisonApiClient.getPrisonerImage(prisonerNumber, user)
   }
 }
