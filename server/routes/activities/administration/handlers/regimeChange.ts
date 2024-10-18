@@ -89,7 +89,6 @@ export default class RegimeChangeRoutes {
 
   // the activity slots need updating to represent the new prison regimes and correct future sessions
   private updateActivities = async (user: ServiceUser): Promise<void> => {
-    // update activities to recreate the scheduled instances with the new session times
     const activities = await this.activitiesService.getActivities(false, user)
 
     const filteredActivities = activities.filter(act => act.activityState === 'LIVE')
@@ -100,6 +99,7 @@ export default class RegimeChangeRoutes {
       const activity: Activity = await this.activitiesService.getActivity(act.id, user)
       if (activity.schedules[0].usePrisonRegimeTime === true) {
         const slots: Slot[] = mapActivityScheduleSlotsToSlots(activity.schedules[0].slots)
+        // update the activity to recreate the scheduled instances with the new session times
         // eslint-disable-next-line no-await-in-loop
         await this.activitiesService.updateActivity(
           act.id,
