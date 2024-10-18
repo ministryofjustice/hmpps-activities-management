@@ -1,0 +1,21 @@
+{% macro prisonerInfoBanner(name, prn, location) %}
+    <div class="prisonerInfoBanner govuk-!-width-full">
+        <div class="prisonerInfoBanner__item">
+            <img
+                src="/profileImage/{{ prn }}/image"
+                alt="Photograph of {{ name }}"
+                aria-label="Photograph of {{ name }}"
+                data-qa="offender-image"
+				class="prisonerInfoBanner__prisoner-image"
+            />
+        </div>
+        <div class="prisonerInfoBanner__item">
+            <p class="govuk-!-margin-bottom-1 govuk-label--s"><a href="{{ dpsUrl }}/prisoner/{{ prn }}">{{ name }}</a></p>
+            <p class="govuk-!-margin-bottom-1 govuk-label--xs">{{ prn }}</p>              
+        </div>
+        <div class="prisonerInfoBanner__item">
+            <p class="govuk-!-margin-bottom-1 govuk-label--s">Location</p>
+	        <p class="govuk-!-margin-bottom-1 govuk-label--xs">{{ location }}</p>
+        </div>
+    </div>
+{% endmacro %}

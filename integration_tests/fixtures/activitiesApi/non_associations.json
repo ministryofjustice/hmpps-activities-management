@@ -1,0 +1,36 @@
+[
+  {
+    "allocated": true,
+    "reasonCode": "BULLYING",
+    "reasonDescription": "Bullying",
+    "roleCode": "PERPETRATOR",
+    "roleDescription": "Perpetrator",
+    "restrictionType": "LANDING",
+    "restrictionTypeDescription": "Cell and landing",
+    "otherPrisonerDetails": {
+      "prisonerNumber": "G6512VC",
+      "firstName": "IZRMONNTAS",
+      "lastName": "ADALIE",
+      "cellLocation": "A-N-2-24S"
+    },
+    "whenUpdated": "2024-10-15T14:26:58",
+    "comments": "Keep apart"
+  },
+  {
+    "allocated": false,
+    "reasonCode": "GANG_RELATED",
+    "reasonDescription": "Gang related",
+    "roleCode": "PERPETRATOR",
+    "roleDescription": "Perpetrator",
+    "restrictionType": "WING",
+    "restrictionTypeDescription": "Cell, landing and wing",
+    "otherPrisonerDetails": {
+      "prisonerNumber": "G6815UH",
+      "firstName": "UZFANAYE",
+      "lastName": "ALANOINE",
+      "cellLocation": "E-1-14S"
+    },
+    "whenUpdated": "2024-08-08T12:37:16",
+    "comments": "Explain why these prisoners should be kept apart. Include any relevant IR numbers, if you have them.By saving these details, you confirm that, to the best of your knowledge, the information you have provided is correct. Plus 17 characters.!"
+  }
+]

@@ -13,6 +13,7 @@ import waitlistApplicationRoutes from './waitlist-application'
 import waitlistDashboardRoutes from './waitlist-dashboard'
 import exclusionsRoutes from './exclusions'
 import suspensionsRoutes from './suspensions'
+import nonAssociationsRoutes from './non-associations'
 import { Services } from '../../services'
 import rolloutMiddleware from '../../middleware/rolloutMiddleware'
 import ServiceName from '../../enum/serviceName'
@@ -42,6 +43,7 @@ export default function Index(services: Services): Router {
   router.use('/waitlist-dashboard', waitlistDashboardRoutes(services))
   router.use('/exclusions', exclusionsRoutes(services))
   router.use('/suspensions', suspensionsRoutes(services))
+  router.use('/non-associations', nonAssociationsRoutes(services))
 
   return router
 }

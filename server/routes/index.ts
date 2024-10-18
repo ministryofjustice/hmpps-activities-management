@@ -9,6 +9,7 @@ import timeNowMiddleware from '../middleware/timeNowMiddleware'
 import routeAuthMiddleware from '../middleware/routeAuthMiddleware'
 import appointmentRoutes from './appointments'
 import reportingRoutes from './reporting'
+import profileImage from './profileImage'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -20,6 +21,7 @@ export default function routes(services: Services): Router {
   router.use(timeNowMiddleware())
 
   router.use('/', homeRoutes())
+  router.use('/profileImage', profileImage(services))
   router.use('/activities', activityRoutes(services))
   router.use('/appointments', appointmentRoutes(services))
   router.use('/dpr-reporting', reportingRoutes())
