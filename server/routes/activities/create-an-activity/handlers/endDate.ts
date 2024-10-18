@@ -42,13 +42,16 @@ export class EndDate {
       )}`
     },
   })
-  @Validator((date, { createJourney }) => isEndDateValid(createJourney, date), {
-    message: ({ object }) => {
-      const { createJourney } = object as { createJourney: CreateAnActivityJourney }
-      const nearestDate = getNearestInvalidEndDate(createJourney)
-      return `Enter a date after ${formatDate(nearestDate)}, so the days this activity runs are all before it’s scheduled to end`
+  @Validator(
+    (date, { createJourney, pathParams }) => pathParams.mode === 'edit' || isEndDateValid(createJourney, date),
+    {
+      message: ({ object }) => {
+        const { createJourney } = object as { createJourney: CreateAnActivityJourney }
+        const nearestDate = getNearestInvalidEndDate(createJourney)
+        return `Enter a date after ${formatDate(nearestDate)}, so the days this activity runs are all before it’s scheduled to end`
+      },
     },
-  })
+  )
   @IsValidDate({ message: 'Enter a valid end date' })
   endDate: Date
 }
