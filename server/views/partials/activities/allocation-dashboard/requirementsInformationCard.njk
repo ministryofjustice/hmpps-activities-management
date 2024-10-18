@@ -1,0 +1,55 @@
+    <div class="govuk-grid-column-two-thirds">
+        <div class="information-card">
+            {% set requiredEducationHtml %}
+                <div>
+                    {% for education in schedule.activity.minimumEducationLevel %}
+                        <div>{{ education.studyAreaDescription }}: {{ education.educationLevelDescription }}</div>
+                    {% else %}
+                        None required
+                    {% endfor %}
+                </div>
+            {% endset %}
+
+            {% set suitableForIepHtml %}
+                <div>{{ suitableForIep }}</div>
+                {% if schedule.activity.paid %}
+                    <div class="govuk-!-margin-top-2">
+                        <p class='govuk-hint'>You can control which incentive levels are suitable by <a class='govuk-link govuk-link--no-visited-state' href='/activities/view/{{ activity.id }}' target='_blank'>adding or removing corresponding pay rates.</a></p>
+                    </div>
+                {% endif %}
+            {% endset %}
+
+            {{ govukTable({
+                caption: "Requirements",
+                captionClasses: "govuk-table__caption--m",
+                firstCellIsHeader: true,
+                rows: [
+                    [
+                        {
+                            text: "Suitable for workplace risk assessment:"
+                        },
+                        {
+                            text: suitableForWra
+                        }
+                    ],
+                    [
+                        {
+                            text: "Suitable for incentive level:"
+                        },
+                        {
+                            html: suitableForIepHtml
+                        }
+                    ],
+                    [
+                        {
+                            text: "Education level:"
+                        },
+                        {
+                            html: requiredEducationHtml
+                        }
+                    ]
+                ]
+            }) }}
+        </div>
+    </div>
+</div>

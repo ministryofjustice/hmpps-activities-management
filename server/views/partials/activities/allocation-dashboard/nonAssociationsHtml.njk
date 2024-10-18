@@ -1,0 +1,7 @@
+{% macro nonAssociationsHtml(row) %}
+        {% if row.nonAssociations %}
+            <p class="govuk-body"><a href='/activities/non-associations/{{ row.activityId }}/{{ row.prisonerNumber }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>View non-associations</a>.</p>
+        {% else %}
+            <p class="govuk-body">None</p>
+        {% endif %}
+{% endmacro %}
