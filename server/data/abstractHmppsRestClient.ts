@@ -1,6 +1,7 @@
 import superagent, { SuperAgentRequest } from 'superagent'
 import Agent, { HttpsAgent } from 'agentkeepalive'
 
+import { Readable } from 'stream'
 import logger from '../../logger'
 import sanitiseError from '../sanitisedError'
 import config, { ApiConfig } from '../config'
@@ -100,6 +101,44 @@ export default abstract class AbstractHmppsRestClient {
       }) as T
   }
 
+  private async makeStreamRequest(
+    request: SuperAgentRequest,
+    { path = null, query = {}, headers = {}, responseType = '', authToken = null }: Request,
+    user: Express.User,
+  ): Promise<unknown> {
+    logger.info(
+      `${request.method.toUpperCase()} using ${authToken ? 'service' : 'admin'} client credentials: calling ${
+        this.name
+      }: ${path}?${new URLSearchParams(query as Record<string, string>).toString()}`,
+    )
+
+    const token = authToken || (await this.getSystemToken(user?.username))
+
+    return new Promise((resolve, reject) => {
+      request
+        .query(query)
+        .agent(this.agent)
+        .set('Content-Type', 'application/json')
+        .auth(token, { type: 'bearer' })
+        .set(headers)
+        .responseType(responseType)
+        .timeout(this.apiConfig.timeout)
+        .end((error, response) => {
+          if (error) {
+            logger.warn(sanitiseError(error), `Error calling ${this.name}`)
+            reject(error)
+          } else if (response) {
+            const s = new Readable()
+            // eslint-disable-next-line no-underscore-dangle, @typescript-eslint/no-empty-function, no-empty-function
+            s._read = () => {}
+            s.push(response.body)
+            s.push(null)
+            resolve(s)
+          }
+        })
+    })
+  }
+
   protected async get<T>(request: Request, user?: ServiceUser): Promise<T> {
     return this.makeRequest(superagent.get(`${this.apiConfig.url}${request.path}`), request, user)
   }
@@ -118,5 +157,9 @@ export default abstract class AbstractHmppsRestClient {
 
   protected async delete<T>(request: Request, user?: ServiceUser): Promise<T> {
     return this.makeRequest(superagent.delete(`${this.apiConfig.url}${request.path}`), request, user)
+  }
+
+  protected async stream(request: Request, user?: ServiceUser): Promise<unknown> {
+    return this.makeStreamRequest(superagent.get(`${this.apiConfig.url}${request.path}`), request, user)
   }
 }

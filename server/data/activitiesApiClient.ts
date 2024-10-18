@@ -63,6 +63,7 @@ import {
   SuspendedPrisonerAttendance,
   AppointmentAttendeeByStatus,
   PrisonRegime,
+  NonAssociationDetails,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -752,6 +753,19 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: searchRequest,
       query: pageOptions,
+    })
+  }
+
+  async getNonAssociationsForPrisonerWithinSchedule(
+    scheduleId: number,
+    prisonerNumber: string,
+    user: ServiceUser,
+  ): Promise<NonAssociationDetails[]> {
+    return this.get({
+      path: `/schedules/${scheduleId}/non-associations`,
+      query: { prisonerNumber },
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 
