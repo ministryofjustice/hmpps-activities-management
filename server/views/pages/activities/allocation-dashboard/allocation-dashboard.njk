@@ -35,20 +35,20 @@
         </div>
     </div>
 
-    {% include '../../../partials/activities/allocation-dashboard/currentAllocationInformationCard.njk' %}
-    {% include '../../../partials/activities/allocation-dashboard/requirementsInformationCard.njk' %}
+    {% include 'partials/activities/allocation-dashboard/currentAllocationInformationCard.njk' %}
+    {% include 'partials/activities/allocation-dashboard/requirementsInformationCard.njk' %}
 
     {% set currentlyAllocatedHtml %}
-        {% include '../../../partials/activities/allocation-dashboard/currentlyAllocatedHtml.njk' %}
+        {% include 'partials/activities/allocation-dashboard/currentlyAllocatedHtml.njk' %}
     {% endset %}
     {% set waitlistHtml %}
-        {% include '../../../partials/activities/allocation-dashboard/waitlistHtml.njk' %}
+        {% include 'partials/activities/allocation-dashboard/waitlistHtml.njk' %}
     {% endset %}
     {% set candidatesHtml %}
-        {% include '../../../partials/activities/allocation-dashboard/candidatesHtml.njk' %}
+        {% include 'partials/activities/allocation-dashboard/candidatesHtml.njk' %}
     {% endset %}
     {% set scheduleHtml %}
-        {% include '../../../partials/activities/allocation-dashboard/scheduleHtml.njk' %}
+        {% include 'partials/activities/allocation-dashboard/scheduleHtml.njk' %}
     {% endset %}
 
     {{ govukTabs({
