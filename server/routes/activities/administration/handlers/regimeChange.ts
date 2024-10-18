@@ -2,10 +2,11 @@ import { Request, Response } from 'express'
 import { plainToInstance, Transform } from 'class-transformer'
 import { ValidateNested } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import { createSessionSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
+import { createSessionSlots, mapActivityScheduleSlotsToSlots } from '../../../../utils/helpers/activityTimeSlotMappers'
 import { DaysAndSlotsInRegime } from '../../../../utils/helpers/applicableRegimeTimeUtil'
-import { PrisonRegime } from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivityUpdateRequest, PrisonRegime, Slot } from '../../../../@types/activitiesAPI/types'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
+import { ServiceUser } from '../../../../@types/express'
 
 export class RegimeTimes {
   @Transform(({ value }) =>
@@ -79,8 +80,36 @@ export default class RegimeChangeRoutes {
     }
 
     await this.activitiesService.updatePrisonRegime(updatedRegimeTimes, user.activeCaseLoadId, user)
+
+    await this.updateActivities(user)
+
     const successMessage = `You've updated the regime schedule`
     return res.redirectWithSuccess(`/activities/admin`, 'Regime updated', successMessage)
+  }
+
+  // the activity slots need updating to represent the new prison regimes and correct future sessions
+  private updateActivities = async (user: ServiceUser): Promise<void> => {
+    const activities = await this.activitiesService.getActivities(false, user)
+
+    const filteredActivities = activities.filter(act => act.activityState === 'LIVE')
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const act of filteredActivities) {
+      // eslint-disable-next-line no-await-in-loop
+      const activity: Activity = await this.activitiesService.getActivity(act.id, user)
+      if (activity.schedules[0].usePrisonRegimeTime === true) {
+        const slots: Slot[] = mapActivityScheduleSlotsToSlots(activity.schedules[0].slots)
+        // update the activity to recreate the scheduled instances with the new session times
+        // eslint-disable-next-line no-await-in-loop
+        await this.activitiesService.updateActivity(
+          act.id,
+          {
+            slots,
+          } as ActivityUpdateRequest,
+          user,
+        )
+      }
+    }
   }
 
   private validateSlots(updatedRegimeTimes: PrisonRegime[], res: Response): boolean {
