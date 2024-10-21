@@ -10,6 +10,7 @@ import getDeallocationReasons from '../../../fixtures/activitiesApi/getDeallocat
 import getMdiPrisonPayBands from '../../../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 import getCandidates from '../../../fixtures/activitiesApi/getCandidates.json'
 import getCandidateSuitability from '../../../fixtures/activitiesApi/getCandidateSuitability.json'
+import getNonAssociations from '../../../fixtures/activitiesApi/non_associations.json'
 
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
@@ -46,6 +47,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
     cy.stubEndpoint('POST', '/schedules/2/allocations')
+    cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
 
     resetActivityAndScheduleStubs(subWeeks(new Date(), 2))
 
