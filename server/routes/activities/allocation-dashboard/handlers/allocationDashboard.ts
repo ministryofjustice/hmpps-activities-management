@@ -238,6 +238,8 @@ export default class AllocationDashboardRoutes {
           activityId: a.activityId,
           scheduleName: a.scheduleDescription,
         })),
+        nonAssociations: allocation.nonAssociations,
+        activityId: allocation.activityId,
       }
     })
   }

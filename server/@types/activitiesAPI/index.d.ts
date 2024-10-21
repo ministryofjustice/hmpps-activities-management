@@ -4116,6 +4116,8 @@ export interface components {
       /** @description The cell location of the prisoner. Included only if includePrisonerSummary = true */
       cellLocation?: string
       earliestReleaseDate?: components['schemas']['EarliestReleaseDate']
+      /** @description Does the prisoner have non-associations?. Included only if includePrisonerSummary = true */
+      nonAssociations?: boolean
     }
     /**
      * @description The code and descriptive reason why this prisoner was deallocated from the activity
