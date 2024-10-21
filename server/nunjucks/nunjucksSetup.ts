@@ -13,6 +13,7 @@ import {
   dateInList,
   excludeArrayObject,
   filterNot,
+  filterObjects,
   findError,
   firstNameLastName,
   formatDate,
@@ -140,6 +141,10 @@ export function registerNunjucks(app?: express.Express): Environment {
     const name = njkEnv.getFilter('prisonerName')(str, false)
     return name.val || null
   })
+  njkEnv.addFilter('possessive', str => {
+    if (!str) return ''
+    return `${str}${str.toLowerCase().endsWith('s') ? '’' : '’s'}`
+  })
 
   njkEnv.addFilter('getSplitTime', getSplitTime)
   njkEnv.addFilter('toTimeItems', toTimeItems)
@@ -173,6 +178,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addFilter('removeUndefined', removeUndefined)
   njkEnv.addFilter('startOfDay', startOfDay)
   njkEnv.addFilter('find', (l: any[], iteratee: string, eq: unknown) => l.find(o => o[iteratee] === eq))
+  njkEnv.addFilter('filter', filterObjects)
   njkEnv.addFilter('filterNot', filterNot)
   njkEnv.addFilter('flatMap', flatMap)
   njkEnv.addFilter('flatten', flatten)

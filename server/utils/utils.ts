@@ -329,6 +329,9 @@ export const scheduledEventSort = (data: ScheduledEvent[]): ScheduledEvent[] => 
   })
 }
 
+export const filterObjects = (objects: object[], iteratee: string, eq: unknown): object[] =>
+  objects.filter(o => o[iteratee as keyof any] === eq)
+
 export const filterNot = (objects: object[], iteratee: string, notEq: unknown): object[] =>
   objects.filter(o => o[iteratee as keyof any] !== notEq)
 

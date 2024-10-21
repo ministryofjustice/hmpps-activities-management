@@ -1,3 +1,4 @@
+import { Readable } from 'stream'
 import config, { ApiConfig } from '../config'
 
 import AbstractHmppsRestClient from './abstractHmppsRestClient'
@@ -41,5 +42,12 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
 
   async getInternalLocationByKey(key: string, user: ServiceUser): Promise<LocationLenient> {
     return this.get({ path: `/api/locations/code/${key}`, authToken: user.token })
+  }
+
+  getPrisonerImage(prisonerNumber: string, user: ServiceUser): Promise<Readable> {
+    return this.stream({
+      path: `/api/bookings/offenderNo/${prisonerNumber}/image/data`,
+      authToken: user.token,
+    }) as Promise<Readable>
   }
 }
