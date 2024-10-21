@@ -149,10 +149,10 @@
 
             <h2 class="govuk-heading-m">Non-associations</h2>
             {% if nonAssociations | length %}
-                <p class="govuk-body">Review {{ prisonerName | possessive }} {{ nonAssociations | length }} open non-associations in {{ caseload }} to check that they can be safely allocated.</p>
-                <p class="govuk-body"><a href="/activities/non-associations/{{ session.allocateJourney.activity.activityId }}/{{session.allocateJourney.inmate.prisonerNumber}}">View {{ prisonerName | possessive }} non-associations</a></p>
+                <p class="govuk-body" data-qa="non-association-count-para">Review {{ prisonerName | possessive }} {{ nonAssociations | length }} open non-associations in {{ caseload }} to check that they can be safely allocated.</p>
+                <p class="govuk-body"><a data-qa="non-association-link" href="/activities/non-associations/{{ session.allocateJourney.activity.activityId }}/{{session.allocateJourney.inmate.prisonerNumber}}">View {{ prisonerName | possessive }} non-associations</a></p>
             {% else %}
-                <p class="govuk-body">{{ prisonerName }} has no open non-associations with anyone in {{ caseload }}</p>
+                <p class="govuk-body" data-qa="no-non-associations-para">{{ prisonerName }} has no open non-associations with anyone in {{ caseload }}</p>
             {% endif %}
 
             {% if allocationSuitability.allocations | length %}
