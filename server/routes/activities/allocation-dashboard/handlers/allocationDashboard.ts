@@ -281,6 +281,8 @@ export default class AllocationDashboardRoutes {
           })),
           alerts: inmate.alerts.filter(a => a.alertType === 'R' && ['RLO', 'RME', 'RHI'].includes(a.alertCode)),
           currentIncentive: inmate.currentIncentive?.level?.description,
+          nonAssociations: w.nonAssociations,
+          activityId: w.activityId,
         }))
       })
       .filter(

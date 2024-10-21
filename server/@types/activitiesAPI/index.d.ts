@@ -2881,14 +2881,14 @@ export interface components {
       totalElements?: number
       /** Format: int32 */
       totalPages?: number
-      first?: boolean
-      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['WaitingListApplication'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject'][]
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
@@ -2996,6 +2996,8 @@ export interface components {
        */
       updatedBy?: string
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
+      /** @description Does the prisoner have non-associations? */
+      nonAssociations?: boolean
     }
     /** @description Describes an event to be published to the domain events SNS topic */
     PublishEventUtilityModel: {
@@ -6791,14 +6793,14 @@ export interface components {
       totalElements?: number
       /** Format: int32 */
       totalPages?: number
-      first?: boolean
-      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject'][]
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']

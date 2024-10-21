@@ -152,8 +152,7 @@
     {% endset %}
 
     {% set nonAssociationsLinkHtml %}
-        {# TODO this is where link will be but data needs adding to endpoint #}
-        {# {{ nonAssociationsHtml(row) }} #}
+        {{ nonAssociationsHtml(row) }}
     {% endset %}
 
     {% set rows = (rows.push({
