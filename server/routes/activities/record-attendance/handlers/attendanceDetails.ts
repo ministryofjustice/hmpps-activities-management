@@ -32,6 +32,13 @@ export default class AttendanceDetailsRoutes {
       user,
     )
 
+    // If the user has come from attendance summary then reset the journey
+    if (!req.session.recordAttendanceJourney) {
+      req.session.recordAttendanceJourney = {
+        singleInstanceSelected: true,
+      }
+    }
+
     res.render('pages/activities/record-attendance/attendance-details', {
       instance,
       attendance,
