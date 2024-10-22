@@ -69,6 +69,8 @@ context('Allocate to activity', () => {
 
     const allocatePage = Page.verifyOnPage(AllocationDashboard)
     allocatePage.allocatedPeopleRows().should('have.length', 2)
+    allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
+    allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')
     allocatePage.tabWithTitle('Entry level English 1 schedule').click()
     allocatePage.activeTimeSlots().should('have.length', 1)
 
@@ -76,6 +78,7 @@ context('Allocate to activity', () => {
     allocatePage.selectRiskLevelOption('Any Workplace Risk Assessment')
     allocatePage.applyFilters()
     allocatePage.candidateRows().should('have.length', 10)
+    allocatePage.nonAssociationsLink('A5015DY').contains('View non-associations')
     allocatePage.selectCandidateWithName('Alfonso Cholak')
 
     const beforeYouAllocatePage = Page.verifyOnPage(BeforeYouAllocate)
