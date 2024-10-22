@@ -73,10 +73,9 @@
                                     href: "../pay-cancel/single?iep=" + pay.incentiveLevel + "&bandId=" + pay.prisonPayBand.id + "&paymentStartDate=" + pay.futurePaymentStart + "&preserveHistory=true",
                                     text: "Cancel",
                                     classes: "govuk-link--no-visited-state",
-                                    attributes: { 'data-qa': 'cancel-pay',
+                                    attributes: { 'data-qa': 'cancel-pay'},
                                     visuallyHiddenText: "Cancel pay change"
-                                    }
-                                    ]}
+                                    }]
                             } if pay.description
                         }
                     ), rows) %}
