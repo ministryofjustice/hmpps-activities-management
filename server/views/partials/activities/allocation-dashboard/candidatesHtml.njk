@@ -144,8 +144,7 @@
         </ul>
     {% endset %}
     {% set nonAssociationsLinkHtml %}
-        {# TODO this is where link will be but data needs adding to endpoint #}
-        {# {{ nonAssociationsHtml(row) }} #}
+        {{ nonAssociationsHtml(row, activity.id) }}
     {% endset %}
     {% set rows = (rows.push({
         visuallyHiddenText: 'Select ' + row.name | toTitleCase,

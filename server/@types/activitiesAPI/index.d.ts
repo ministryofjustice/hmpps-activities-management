@@ -2881,14 +2881,14 @@ export interface components {
       totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['WaitingListApplication'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject'][]
-      first?: boolean
-      last?: boolean
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
@@ -6787,20 +6787,22 @@ export interface components {
       /** @description Any activities the candidate is currently allocated to (excluding ended) */
       otherAllocations: components['schemas']['Allocation'][]
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
+      /** @description Does the prisoner have non-associations? */
+      nonAssociations?: boolean
     }
     PageActivityCandidate: {
       /** Format: int64 */
       totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject'][]
-      first?: boolean
-      last?: boolean
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
