@@ -67,7 +67,7 @@ export default function Index({ activitiesService, prisonService, userService }:
   post('/:journeyId/activities/:id/cancel/confirm', cancelSessionConfirmationRoutes.POST, CancelConfirmForm)
   get('/:journeyId/activities/:id/uncancel', uncancelSessionConfirmationRoutes.GET, true)
   post('/:journeyId/activities/:id/uncancel', uncancelSessionConfirmationRoutes.POST, UncancelConfirmForm)
-  get('/:journeyId/activities/:id/attendance-details/:attendanceId', attendanceDetailsHandler.GET, true)
+  get('/:journeyId/activities/:id/attendance-details/:attendanceId', attendanceDetailsHandler.GET)
   post('/:journeyId/activities/:id/attendance-details/:attendanceId', attendanceDetailsHandler.POST)
   get('/:journeyId/activities/:id/attendance-details/:attendanceId/edit-attendance', editAttendanceHandler.GET, true)
   post(
