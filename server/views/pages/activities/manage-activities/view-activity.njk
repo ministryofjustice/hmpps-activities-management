@@ -197,7 +197,7 @@
                             text: "Pay rates"
                         },
                         value: {
-                            html: paySummary(schedule.activity.paid, incentiveLevelPays, payEditable) if not futurePayRatesFlag else displayPaySummary(schedule.activity.paid, displayPays, payEditable)
+                            html: displayPaySummary(schedule.activity.paid, displayPays, payEditable)
                     },
                         actions: {
                             items: [
