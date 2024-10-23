@@ -18,12 +18,15 @@ export default class BeforeYouAllocateRoutes {
     const { prisonerNumber } = req.session.allocateJourney.inmate
     const { scheduleId } = req.session.allocateJourney.activity
 
-    const allocationSuitability = await this.activitiesService.allocationSuitability(scheduleId, prisonerNumber, user)
+    const [allocationSuitability, nonAssociations] = await Promise.all([
+      this.activitiesService.allocationSuitability(scheduleId, prisonerNumber, user),
+      this.activitiesService.getNonAssociations(scheduleId, prisonerNumber, user),
+    ])
 
     res.render('pages/activities/manage-allocations/before-you-allocate', {
       allocationSuitability,
       caseload: user.activeCaseLoadDescription,
-      nonAssociations: allocationSuitability.nonAssociation?.nonAssociations || [],
+      nonAssociations,
     })
   }
 
