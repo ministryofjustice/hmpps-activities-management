@@ -10,6 +10,7 @@ import getDeallocationReasons from '../../../fixtures/activitiesApi/getDeallocat
 import getMdiPrisonPayBands from '../../../fixtures/activitiesApi/getMdiPrisonPayBands.json'
 import getCandidates from '../../../fixtures/activitiesApi/getCandidates.json'
 import getCandidateSuitability from '../../../fixtures/activitiesApi/getCandidateSuitability.json'
+import getNonAssociations from '../../../fixtures/activitiesApi/non_associations.json'
 
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
@@ -46,6 +47,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
     cy.stubEndpoint('POST', '/schedules/2/allocations')
+    cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
 
     resetActivityAndScheduleStubs(subWeeks(new Date(), 2))
 
@@ -83,6 +85,12 @@ context('Allocate to activity', () => {
 
     const beforeYouAllocatePage = Page.verifyOnPage(BeforeYouAllocate)
     beforeYouAllocatePage.selectConfirmationRadio('yes')
+    beforeYouAllocatePage
+      .nonAssociationsCountPara()
+      .contains(
+        'Review Alfonso Cholak’s 2 open non-associations in Moorland to check that they can be safely allocated.',
+      )
+    beforeYouAllocatePage.nonAssociationsLink().contains('View Alfonso Cholak’s non-associations')
     beforeYouAllocatePage.getButton('Continue').click()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)
@@ -121,6 +129,7 @@ context('Allocate to activity', () => {
   })
 
   it('should be able to allocate when selecting a specific start date', () => {
+    cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', [])
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -148,6 +157,11 @@ context('Allocate to activity', () => {
 
     const beforeYouAllocatePage = Page.verifyOnPage(BeforeYouAllocate)
     beforeYouAllocatePage.selectConfirmationRadio('yes')
+    beforeYouAllocatePage.nonAssociationsCountPara().should('not.exist')
+    beforeYouAllocatePage.nonAssociationsLink().should('not.exist')
+    beforeYouAllocatePage
+      .noNonAssociationsPara()
+      .contains('Alfonso Cholak has no open non-associations with anyone in Moorland')
     beforeYouAllocatePage.getButton('Continue').click()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)
