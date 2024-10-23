@@ -238,6 +238,8 @@ export default class AllocationDashboardRoutes {
           activityId: a.activityId,
           scheduleName: a.scheduleDescription,
         })),
+        nonAssociations: allocation.nonAssociations,
+        activityId: allocation.activityId,
       }
     })
   }
@@ -279,6 +281,8 @@ export default class AllocationDashboardRoutes {
           })),
           alerts: inmate.alerts.filter(a => a.alertType === 'R' && ['RLO', 'RME', 'RHI'].includes(a.alertCode)),
           currentIncentive: inmate.currentIncentive?.level?.description,
+          nonAssociations: w.nonAssociations,
+          activityId: w.activityId,
         }))
       })
       .filter(

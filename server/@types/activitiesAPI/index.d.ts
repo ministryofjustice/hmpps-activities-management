@@ -2996,6 +2996,8 @@ export interface components {
        */
       updatedBy?: string
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
+      /** @description Does the prisoner have non-associations? */
+      nonAssociations?: boolean
     }
     /** @description Describes an event to be published to the domain events SNS topic */
     PublishEventUtilityModel: {
@@ -4116,6 +4118,8 @@ export interface components {
       /** @description The cell location of the prisoner. Included only if includePrisonerSummary = true */
       cellLocation?: string
       earliestReleaseDate?: components['schemas']['EarliestReleaseDate']
+      /** @description Does the prisoner have non-associations?. Included only if includePrisonerSummary = true */
+      nonAssociations?: boolean
     }
     /**
      * @description The code and descriptive reason why this prisoner was deallocated from the activity
@@ -6783,6 +6787,8 @@ export interface components {
       /** @description Any activities the candidate is currently allocated to (excluding ended) */
       otherAllocations: components['schemas']['Allocation'][]
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
+      /** @description Does the prisoner have non-associations? */
+      nonAssociations?: boolean
     }
     PageActivityCandidate: {
       /** Format: int64 */
