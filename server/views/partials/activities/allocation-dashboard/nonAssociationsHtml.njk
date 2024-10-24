@@ -1,7 +1,7 @@
-{% macro nonAssociationsHtml(row, activityId) %}
+{% macro nonAssociationsHtml(row, prisonerName, activityId) %}
     {% set activityIdentifier = row.activityId or activityId %}
     {% if row.nonAssociations %}
-        <p class="govuk-body" data-qa="non-associations-link-{{ row.prisonerNumber }}"><a href='/activities/non-associations/{{ activityIdentifier }}/{{ row.prisonerNumber }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>View non-associations</a></p>
+        <p class="govuk-body" data-qa="non-associations-link-{{ row.prisonerNumber }}"><a href='/activities/non-associations/{{ activityIdentifier }}/{{ row.prisonerNumber }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>View non-associations<span class="govuk-visually-hidden">for {{ prisonerName }}</span></a></p>
     {% else %}
         <p class="govuk-body">None</p>
     {% endif %}

@@ -152,7 +152,7 @@
     {% endset %}
 
     {% set nonAssociationsLinkHtml %}
-        {{ nonAssociationsHtml(row) }}
+        {{ nonAssociationsHtml(row, row.name | toTitleCase) }}
     {% endset %}
 
     {% set rows = (rows.push({
