@@ -8,13 +8,13 @@
             {% set nonAssociation = row.otherPrisonerDetails %}
             {% set nonAssociationPrisonerName = nonAssociation | firstNameLastName | toTitleCase %}
             {% set nonAssociationsHtml %}
-                <p class="govuk-body">Where to keep apart: {{ row.restrictionTypeDescription }}</p>
+                <p class="govuk-body govuk-!-margin-bottom-0">Where to keep apart: {{ row.restrictionTypeDescription }}</p>
                 <hr class="mid-grey-tint-20-hr dash-border">
-                <p class="govuk-body">Reason: {{row.reasonDescription }}</p>
+                <p class="govuk-body govuk-!-margin-bottom-0">Reason: {{row.reasonDescription }}</p>
                 <hr class="mid-grey-tint-20-hr dash-border">
-                <p class="govuk-body">Comments: {{ row.comments | safe }}</p>
+                <p class="govuk-body govuk-!-margin-bottom-0">Comments: {{ row.comments | safe }}</p>
                 <hr class="mid-grey-tint-20-hr dash-border">
-                <p class="govuk-body">{{ prisonerName | possessive }} role: {{ row.roleDescription }}</p>
+                <p class="govuk-body govuk-!-margin-bottom-0">{{ prisonerName | possessive }} role: {{ row.roleDescription }}</p>
             {% endset %}
             {% set allocationsHtml %}
                 {% for allocation in row.allocations %}
@@ -77,7 +77,7 @@
             text: "Allocations"
         },
         {
-            text: "Non-associations"
+            text: "Non-association details"
         },
         {
             text: "Last updated",

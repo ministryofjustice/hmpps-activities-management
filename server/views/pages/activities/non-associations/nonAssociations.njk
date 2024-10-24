@@ -10,31 +10,27 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-grid-column-full-width">
             <span class="govuk-caption-xl" data-qa="caption">{{ activity.description }}</span>
             <h1 class="govuk-heading-l"  data-qa="title">{{ prisonerName | possessive }} non-associations</h1>
-        </div>
-        {{ prisonerInfoBanner(prisonerName, prisoner.prisonerNumber, prisoner.cellLocation) }}
-    </div>
+            {{ prisonerInfoBanner(prisonerName, prisoner.prisonerNumber, prisoner.cellLocation) }}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full-width">
-        <p class="govuk-body govuk-!-margin-top-5"  data-qa="para1">Check if attending this activity could mean {{ prisonerName }} coming into contact with someone they must be kept apart from.</p>
+            <p class="govuk-body govuk-!-margin-top-5"  data-qa="para1">Check if attending this activity could mean {{ prisonerName }} coming into contact with someone they must be kept apart from.</p>
 
-        <h2 class="govuk-heading-m">People allocated to {{activity.description}}</h2>
+            <h2 class="govuk-heading-m">People allocated to {{activity.description}}</h2>
 
-        {% if allocatedNonAssociations | length %}
-            {{ nonAssociationsTable(allocatedNonAssociations, prisonerName) }}
-        {% else %}
-            <p class="govuk-body govuk-!-margin-top-5"  data-qa="noNA-activity">{{ prisonerName }} has no open non-associations with anyone who is allocated to {{ activity.description }}</p>
-        {% endif %}
+            {% if allocatedNonAssociations | length %}
+                {{ nonAssociationsTable(allocatedNonAssociations, prisonerName) }}
+            {% else %}
+                <p class="govuk-body govuk-!-margin-top-5"  data-qa="noNA-activity">{{ prisonerName }} has no open non-associations with anyone who is allocated to {{ activity.description }}.</p>
+            {% endif %}
 
-        <h2 class="govuk-heading-m">Other people in {{prisoner.prisonName}}</h2>
-        {% if unallocatedNonAssociations | length %}
-            {{ nonAssociationsTable(unallocatedNonAssociations, prisonerName) }}
-        {% else %}
-            <p class="govuk-body govuk-!-margin-top-5 govuk-!-margin-bottom-9"  data-qa="noNA-prison">{{ prisonerName }} has no open non-associations with anyone else in {{ prisoner.prisonName }}</p>
-        {% endif %}
+            <h2 class="govuk-heading-m">Other people in {{prisoner.prisonName}}</h2>
+            {% if unallocatedNonAssociations | length %}
+                {{ nonAssociationsTable(unallocatedNonAssociations, prisonerName) }}
+            {% else %}
+                <p class="govuk-body govuk-!-margin-top-5 govuk-!-margin-bottom-9"  data-qa="noNA-prison">{{ prisonerName }} has no open non-associations with anyone else in {{ prisoner.prisonName }}.</p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

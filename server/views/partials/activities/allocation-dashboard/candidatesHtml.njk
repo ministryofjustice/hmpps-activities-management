@@ -144,7 +144,7 @@
         </ul>
     {% endset %}
     {% set nonAssociationsLinkHtml %}
-        {{ nonAssociationsHtml(row, activity.id) }}
+        {{ nonAssociationsHtml(row, row.name | toTitleCase, activity.id) }}
     {% endset %}
     {% set rows = (rows.push({
         visuallyHiddenText: 'Select ' + row.name | toTitleCase,
