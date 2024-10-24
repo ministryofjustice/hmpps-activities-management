@@ -4,6 +4,7 @@ import { Activity, NonAssociationDetails, PrisonerAllocations } from '../../../.
 import { Prisoner } from '../../../../@types/activities'
 import PrisonService from '../../../../services/prisonService'
 import { getScheduleIdFromActivity } from '../../../../utils/utils'
+import { ServiceUser } from '../../../../@types/express'
 
 export default class NonAssociationsRoutes {
   constructor(
@@ -27,7 +28,7 @@ export default class NonAssociationsRoutes {
       nonAssociationPrns,
       user,
     )
-    const enhancedNonAssociations = await this.enhanceNonAssociations(nonAssociations, prisonerAllocations)
+    const enhancedNonAssociations = await this.enhanceNonAssociations(nonAssociations, prisonerAllocations, user)
 
     res.render('pages/activities/non-associations/nonAssociations', {
       activity,
@@ -37,12 +38,31 @@ export default class NonAssociationsRoutes {
     })
   }
 
-  private enhanceNonAssociations = (
+  private enhanceNonAssociations = async (
     nonAssociations: NonAssociationDetails[],
     prisonerAllocations: PrisonerAllocations[],
+    user: ServiceUser,
   ) => {
-    const naAllocations = new Map(prisonerAllocations.map(naAll => [naAll.prisonerNumber, naAll.allocations]))
+    const updatedPrisonerAllocations = await Promise.all(
+      prisonerAllocations.map(async prisoner => {
+        const updatedAllocations = await Promise.all(
+          prisoner.allocations.map(async allocation => {
+            const activity = await this.activitiesService.getActivity(allocation.activityId, user)
 
+            return {
+              ...allocation,
+              schedule: activity.schedules[0],
+            }
+          }),
+        )
+
+        return {
+          ...prisoner,
+          allocations: updatedAllocations,
+        }
+      }),
+    )
+    const naAllocations = new Map(updatedPrisonerAllocations.map(naAll => [naAll.prisonerNumber, naAll.allocations]))
     return nonAssociations.map(na => {
       return {
         ...na,
