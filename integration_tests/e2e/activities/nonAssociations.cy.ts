@@ -52,8 +52,8 @@ const activitySchedule2 = {
   description: '',
   internalLocation: {
     id: 1,
-    code: 'EDU-ROOM-1',
-    description: 'Education - R1',
+    code: 'EDU-ROOM-2',
+    description: 'Education - R2',
   },
   capacity: 10,
   activity: {
@@ -103,7 +103,7 @@ context('Non-associations', () => {
       .then($data => {
         expect($data.get(0).innerText).to.contain('Adalie, Izrmonntas\nG6512VC')
         expect($data.get(1).innerText).to.contain('A-N-2-24S')
-        expect($data.get(2).innerText).to.contain('Barbering A')
+        expect($data.get(2).innerText).to.contain('Barbering A\n\nEducation - R1')
         expect($data.get(3).innerText).to.contain(
           'Where to keep apart: Cell and landing\n\nReason: Bullying\n\nComments: Keep apart\n\nAlfonso Cholak’s role: Perpetrator',
         )
@@ -116,7 +116,7 @@ context('Non-associations', () => {
       .then($data => {
         expect($data.get(0).innerText).to.contain('Alanoine, Uzfanaye\nG6815UH')
         expect($data.get(1).innerText).to.contain('E-1-14S')
-        expect($data.get(2).innerText).to.contain('Box making')
+        expect($data.get(2).innerText).to.contain('Box making\n\nEducation - R2')
         expect($data.get(3).innerText).to.contain(
           'Where to keep apart: Cell, landing and wing\n\nReason: Gang related\n\nComments: Explain why these prisoners should be kept apart. Include any relevant IR numbers, if you have them.By saving these details, you confirm that, to the best of your knowledge, the information you have provided is correct. Plus 17 characters.!\n\nAlfonso Cholak’s role: Perpetrator',
         )
