@@ -43,18 +43,6 @@ export default class NonAssociationsRoutes {
     prisonerAllocations: PrisonerAllocations[],
     user: ServiceUser,
   ) => {
-    // const allocations = await Promise.all(
-    //   prisonerAllocations.map(async prisoner =>
-    //     prisoner.allocations.map(async allocation => {
-    //       const activity = await this.activitiesService.getActivity(allocation.activityId, user)
-    //       return {
-    //         ...allocation,
-    //         schedule: activity.schedules[0],
-    //       }
-    //     }),
-    //   ),
-    // )
-
     const updatedPrisonerAllocations = await Promise.all(
       prisonerAllocations.map(async prisoner => {
         const updatedAllocations = await Promise.all(
