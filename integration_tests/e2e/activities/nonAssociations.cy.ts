@@ -3,6 +3,7 @@ import getInmateDetails from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A
 import getNonAssociations from '../../fixtures/activitiesApi/non_associations.json'
 import NonAssociationsPage from '../../pages/activities/nonAssociations'
 import Page from '../../pages/page'
+import { ActivitySchedule } from '../../../server/@types/activitiesAPI/types'
 
 const getPrisonerAllocations = [
   {
@@ -28,12 +29,53 @@ const getPrisonerAllocations = [
     ],
   },
 ]
+const activitySchedule1 = {
+  id: 1,
+  description: '',
+  internalLocation: {
+    id: 1,
+    code: 'EDU-ROOM-1',
+    description: 'Education - R1',
+  },
+  capacity: 10,
+  activity: {
+    id: 858,
+    prisonCode: 'MDI',
+    attendanceRequired: true,
+    inCell: false,
+    onWing: false,
+    offWing: false,
+  },
+} as unknown as ActivitySchedule
+const activitySchedule2 = {
+  id: 1,
+  description: '',
+  internalLocation: {
+    id: 1,
+    code: 'EDU-ROOM-1',
+    description: 'Education - R1',
+  },
+  capacity: 10,
+  activity: {
+    id: 58,
+    prisonCode: 'MDI',
+    attendanceRequired: true,
+    inCell: false,
+    onWing: false,
+    offWing: false,
+  },
+} as unknown as ActivitySchedule
+
+const activity58 = { schedules: [activitySchedule2], id: 58 } as unknown as JSON
+const activity858 = { schedules: [activitySchedule1], id: 858 } as unknown as JSON
 
 context('Non-associations', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.stubEndpoint('GET', '/activities/2/filtered', getActivity)
+    cy.stubEndpoint('GET', '/activities/58/filtered', activity58)
+    cy.stubEndpoint('GET', '/activities/858/filtered', activity858)
     cy.stubEndpoint('GET', '/prisoner/A5015DY', getInmateDetails)
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', getPrisonerAllocations)
