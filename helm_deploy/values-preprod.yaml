@@ -22,6 +22,7 @@ generic-service:
     PRISON_REGISTER_API_URL: "https://prison-register-preprod.hmpps.service.justice.gov.uk"
     MANAGE_USERS_API_URL: "https://manage-users-api-preprod.hmpps.service.justice.gov.uk"
     BOOK_A_VIDEO_LINK_API_URL: "https://book-a-video-link-api-preprod.prison.service.justice.gov.uk"
+    NON_ASSOCIATIONS_API_URL: "https://non-associations-api-preprod.hmpps.service.justice.gov.uk"
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-preprod.hmpps-digital-prison-reporting-mi-preprod.svc.cluster.local"
     DEALLOCATE_TODAY_SESSION_TOGGLE_ENABLED: "true"
 

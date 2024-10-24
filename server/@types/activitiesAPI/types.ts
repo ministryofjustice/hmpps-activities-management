@@ -23,6 +23,7 @@ export type ActivityCreateRequest = components['schemas']['ActivityCreateRequest
 export type ActivityUpdateRequest = components['schemas']['ActivityUpdateRequest']
 export type AllocationUpdateRequest = components['schemas']['AllocationUpdateRequest']
 export type SuspendPrisonerRequest = components['schemas']['SuspendPrisonerRequest']
+
 export type UnsuspendPrisonerRequest = components['schemas']['UnsuspendPrisonerRequest']
 export type Slot = components['schemas']['Slot']
 export type ActivityScheduleSlot = components['schemas']['ActivityScheduleSlot']

@@ -17,6 +17,7 @@ import IncentivesApiClient from './incentivesApiClient'
 import FrontendComponentApiClient from './frontendComponentApiClient'
 import CaseNotesApiClient from './caseNotesApiClient'
 import BookAVideoLinkApiClient from './bookAVideoLinkApiClient'
+import NonAssociationsApiClient from './nonAssociationsApiClient'
 
 export default function dataAccess() {
   return {
@@ -30,6 +31,7 @@ export default function dataAccess() {
     frontendComponentApiClient: new FrontendComponentApiClient(),
     bookAVideoLinkApiClient: new BookAVideoLinkApiClient(),
     applicationInsightsClient: appInsightsClient,
+    nonAssociationsApiClient: new NonAssociationsApiClient(),
   }
 }
 
