@@ -62,7 +62,7 @@ context('Deallocation from activity', () => {
       activitiesPage.selectActivityWithName('English level 1')
 
       const allocationDashboardPage = Page.verifyOnPage(AllocationDashboard)
-      allocationDashboardPage.allocatedPeopleRows().should('have.length', 2)
+      allocationDashboardPage.allocatedPeopleRows().should('have.length', 3)
       allocationDashboardPage.selectAllocatedPrisonerByName('Bloggs, Jo')
       allocationDashboardPage.selectAllocatedPrisonerByName('Body, No')
       allocationDashboardPage.deallocateSelectedPrisoners()
@@ -107,7 +107,7 @@ context('Deallocation from activity', () => {
       )
 
       const allocationDashboardPage = Page.verifyOnPage(AllocationDashboard)
-      allocationDashboardPage.allocatedPeopleRows().should('have.length', 2)
+      allocationDashboardPage.allocatedPeopleRows().should('have.length', 3)
       allocationDashboardPage.selectAllocatedPrisonerByName('Bloggs, Jo')
       allocationDashboardPage.deallocateSelectedPrisoners()
 
@@ -152,7 +152,7 @@ context('Deallocation from activity', () => {
       )
 
       const allocationDashboardPage = Page.verifyOnPage(AllocationDashboard)
-      allocationDashboardPage.allocatedPeopleRows().should('have.length', 2)
+      allocationDashboardPage.allocatedPeopleRows().should('have.length', 3)
       allocationDashboardPage.selectAllocatedPrisonerByName('Bloggs, Jo')
       allocationDashboardPage.deallocateSelectedPrisoners()
 
