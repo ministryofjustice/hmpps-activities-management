@@ -3,8 +3,7 @@ import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
-import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
-import { toDateString } from '../../../../utils/utils'
+import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
 export class ConfirmRemoveOptions {
   @Expose()
@@ -38,8 +37,9 @@ export default class RemovePayRoutes {
     const { preserveHistory } = req.query
     const preserveHistoryString = preserveHistory ? '?preserveHistory=true' : ''
 
+    // index of default pay rate i.e. no start date
     const payIndex = req.session.createJourney.pay.findIndex(
-      p => p.prisonPayBand.id === bandId && p.incentiveLevel === iep,
+      p => p.prisonPayBand.id === bandId && p.incentiveLevel === iep && p.startDate == null,
     )
 
     if (choice !== 'yes' || payIndex < 0) {
@@ -48,15 +48,22 @@ export default class RemovePayRoutes {
     const payInfo = req.session.createJourney.pay[payIndex]
     req.session.createJourney.pay.splice(payIndex, 1)
 
-    const futurePay = req.session.createJourney.pay.findIndex(
+    const otherPays: ActivityPay[] = req.session.createJourney.pay.filter(
       pay =>
         pay.prisonPayBand.id === payInfo.prisonPayBand.id &&
         pay.incentiveLevel === payInfo.incentiveLevel &&
-        pay.incentiveNomisCode === payInfo.incentiveNomisCode &&
-        pay.startDate > toDateString(new Date()),
+        pay.startDate != null,
     )
-    if (futurePay !== -1) {
-      req.session.createJourney.pay.splice(futurePay, 1)
+    if (otherPays.length > 0) {
+      otherPays.forEach(otherPay => {
+        const otherPayIndex = req.session.createJourney.pay.findIndex(
+          p =>
+            p.prisonPayBand.id === otherPay.prisonPayBand.id &&
+            p.incentiveLevel === otherPay.incentiveLevel &&
+            otherPay.startDate === p.startDate,
+        )
+        req.session.createJourney.pay.splice(otherPayIndex, 1)
+      })
     }
 
     if (req.params.mode === 'edit') {
