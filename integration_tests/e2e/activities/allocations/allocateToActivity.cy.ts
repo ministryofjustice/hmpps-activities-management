@@ -70,9 +70,10 @@ context('Allocate to activity', () => {
     activitiesPage.selectActivityWithName('English level 1')
 
     const allocatePage = Page.verifyOnPage(AllocationDashboard)
-    allocatePage.allocatedPeopleRows().should('have.length', 2)
+    allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
     allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')
+    allocatePage.nonAssociationsLink('B1351RE').contains('View non-associations')
     allocatePage.tabWithTitle('Entry level English 1 schedule').click()
     allocatePage.activeTimeSlots().should('have.length', 1)
 
@@ -145,7 +146,7 @@ context('Allocate to activity', () => {
     activitiesPage.selectActivityWithName('English level 1')
 
     const allocatePage = Page.verifyOnPage(AllocationDashboard)
-    allocatePage.allocatedPeopleRows().should('have.length', 2)
+    allocatePage.allocatedPeopleRows().should('have.length', 3)
     allocatePage.tabWithTitle('Entry level English 1 schedule').click()
     allocatePage.activeTimeSlots().should('have.length', 1)
 
