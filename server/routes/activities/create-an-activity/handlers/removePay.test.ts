@@ -1,12 +1,13 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { addDays } from 'date-fns'
 import RemovePayRoutes, { ConfirmRemoveOptions } from './removePay'
-import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { associateErrorsWithProperty, toDateString } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { CreateAnActivityJourney } from '../journey'
-import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -79,6 +80,31 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
   describe('POST', () => {
     it('should remove specified pay rate', async () => {
       req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
+      await handler.POST(req, res)
+      expect(req.session.createJourney.pay).toEqual([
+        { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+        { incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
+        { incentiveLevel: 'Basic', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
+      ])
+    })
+
+    it('should remove specified pay rate and future pay rate change', async () => {
+      const pay = [
+        { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+        { incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
+        { incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+        {
+          incentiveLevel: 'Basic',
+          prisonPayBand: { id: 1, alias: 'Low' },
+          rate: 125,
+          startDate: toDateString(addDays(new Date(), 2)),
+        },
+        { incentiveLevel: 'Basic', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
+      ] as ActivityPay[]
+
+      req.session.createJourney.pay = pay
+      req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
+
       await handler.POST(req, res)
       expect(req.session.createJourney.pay).toEqual([
         { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
