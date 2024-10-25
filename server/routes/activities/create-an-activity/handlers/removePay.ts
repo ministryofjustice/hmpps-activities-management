@@ -4,6 +4,7 @@ import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import { toDateString } from '../../../../utils/utils'
 
 export class ConfirmRemoveOptions {
   @Expose()
@@ -46,6 +47,17 @@ export default class RemovePayRoutes {
     }
     const payInfo = req.session.createJourney.pay[payIndex]
     req.session.createJourney.pay.splice(payIndex, 1)
+
+    const futurePay = req.session.createJourney.pay.findIndex(
+      pay =>
+        pay.prisonPayBand.id === payInfo.prisonPayBand.id &&
+        pay.incentiveLevel === payInfo.incentiveLevel &&
+        pay.incentiveNomisCode === payInfo.incentiveNomisCode &&
+        pay.startDate > toDateString(new Date()),
+    )
+    if (futurePay !== -1) {
+      req.session.createJourney.pay.splice(futurePay, 1)
+    }
 
     if (req.params.mode === 'edit') {
       return this.updateActivity(req, res)
