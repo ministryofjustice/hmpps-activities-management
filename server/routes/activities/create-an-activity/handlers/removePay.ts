@@ -84,6 +84,7 @@ export default class RemovePayRoutes {
       incentiveLevel: p.incentiveLevel,
       payBandId: p.prisonPayBand.id,
       rate: p.rate,
+      startDate: p.startDate,
     }))
 
     const updatedActivity = {
