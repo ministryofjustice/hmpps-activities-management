@@ -34,11 +34,17 @@ import HostRoutes, { HostForm } from './handlers/host'
 import CopySeries, { HowToCopySeriesForm } from './handlers/copySeries'
 import NoAttendees from './handlers/noAttendees'
 import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
+import ReviewNonAssociationsRoutes from './handlers/reviewNonAssociations'
 import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
 import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
 
-export default function Create({ prisonService, activitiesService, metricsService }: Services): Router {
+export default function Create({
+  prisonService,
+  activitiesService,
+  metricsService,
+  nonAssociationsService,
+}: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
@@ -71,6 +77,7 @@ export default function Create({ prisonService, activitiesService, metricsServic
   const appointmentSetTimesRoutes = new AppointmentSetTimesRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
   const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
+  const reviewNonAssociations = new ReviewNonAssociationsRoutes(nonAssociationsService)
   const copySeriesRoutes = new CopySeries()
   const noAttendeesRoutes = new NoAttendees()
 
@@ -138,6 +145,7 @@ export default function Create({ prisonService, activitiesService, metricsServic
   post('/review-prisoners-alerts', reviewPrisonerAlerts.POST)
   get('/review-prisoners-alerts', reviewPrisonerAlerts.GET, true)
   get('/review-prisoners-alerts/:prisonNumber/remove', reviewPrisonerAlerts.REMOVE, true)
+  get('/review-non-associations', reviewNonAssociations.GET, true)
   get('/appointment-set-date', appointmentSetDateRoutes.GET, true)
   post('/appointment-set-date', appointmentSetDateRoutes.POST, AppointmentSetDate)
   get('/appointment-set-times', appointmentSetTimesRoutes.GET, true)
