@@ -221,6 +221,135 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
         `You've updated the pay for ${req.session.createJourney.name}`,
       )
     })
+
+    it('should remove specified pay rate where other pay rates have multiple pay rates in the edit journey', async () => {
+      const pay: ActivityPay[] = [
+        {
+          id: 4875,
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          prisonPayBand: {
+            id: 61,
+            displaySequence: 1,
+            alias: 'Pay band 1 (Lowest)',
+            description: 'Pay band 1 (Lowest)',
+            nomisPayBand: 1,
+            prisonCode: 'IWI',
+          },
+          rate: 50,
+          pieceRate: null,
+          pieceRateItems: null,
+          startDate: null,
+        },
+        {
+          id: 4878,
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          prisonPayBand: {
+            id: 61,
+            displaySequence: 1,
+            alias: 'Pay band 1 (Lowest)',
+            description: 'Pay band 1 (Lowest)',
+            nomisPayBand: 1,
+            prisonCode: 'IWI',
+          },
+          rate: 78,
+          pieceRate: null,
+          pieceRateItems: null,
+          startDate: toDateString(new Date()),
+        },
+        {
+          id: 4876,
+          incentiveNomisCode: 'BAN',
+          incentiveLevel: 'Gold',
+          prisonPayBand: {
+            id: 62,
+            displaySequence: 2,
+            alias: 'Pay band 2',
+            description: 'Pay band 2',
+            nomisPayBand: 2,
+            prisonCode: 'IWI',
+          },
+          rate: 75,
+          pieceRate: null,
+          pieceRateItems: null,
+          startDate: null,
+        },
+        {
+          id: 4877,
+          incentiveNomisCode: 'BAN',
+          incentiveLevel: 'Gold',
+          prisonPayBand: {
+            id: 62,
+            displaySequence: 2,
+            alias: 'Pay band 2',
+            description: 'Pay band 2',
+            nomisPayBand: 2,
+            prisonCode: 'IWI',
+          },
+          rate: 65,
+          pieceRate: null,
+          pieceRateItems: null,
+          startDate: toDateString(new Date()),
+        },
+      ]
+
+      req.session.createJourney.pay = pay
+      req.body = { iep: 'Basic', bandId: '61', choice: 'yes' }
+      req.params = { mode: 'edit' }
+
+      await handler.POST(req, res)
+      expect(req.session.createJourney.pay).toEqual([
+        {
+          id: 4876,
+          incentiveNomisCode: 'BAN',
+          incentiveLevel: 'Gold',
+          prisonPayBand: {
+            id: 62,
+            displaySequence: 2,
+            alias: 'Pay band 2',
+            description: 'Pay band 2',
+            nomisPayBand: 2,
+            prisonCode: 'IWI',
+          },
+          rate: 75,
+          pieceRate: null,
+          pieceRateItems: null,
+          startDate: null,
+        },
+        {
+          id: 4877,
+          incentiveNomisCode: 'BAN',
+          incentiveLevel: 'Gold',
+          prisonPayBand: {
+            id: 62,
+            displaySequence: 2,
+            alias: 'Pay band 2',
+            description: 'Pay band 2',
+            nomisPayBand: 2,
+            prisonCode: 'IWI',
+          },
+          rate: 65,
+          pieceRate: null,
+          pieceRateItems: null,
+          startDate: toDateString(new Date()),
+        },
+      ])
+
+      const updatedActivity = {
+        pay: [
+          { incentiveNomisCode: 'BAN', incentiveLevel: 'Gold', payBandId: 62, rate: 75, startDate: null },
+          { incentiveNomisCode: 'BAN', incentiveLevel: 'Gold', payBandId: 62, rate: 65, startDate: '2024-10-28' },
+        ],
+      } as ActivityUpdateRequest
+
+      expect(activitiesService.updateActivity).toHaveBeenCalledWith(1, updatedActivity, res.locals.user)
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        'check-pay?preserveHistory=true',
+        'Activity updated',
+        `You've updated the pay for ${req.session.createJourney.name}`,
+      )
+    })
   })
 
   describe('Validation', () => {
