@@ -1,8 +1,10 @@
 {% macro nonAssociationsHtml(row, prisonerName, activityId) %}
     {% set activityIdentifier = row.activityId or activityId %}
-    {% if row.nonAssociations %}
+    {% if row.nonAssociations or row.nonAssociations == null %}
+        {# if the response is null or an array of non-associations, send them to the non-associations page #}
         <p class="govuk-body" data-qa="non-associations-link-{{ row.prisonerNumber }}"><a href='/activities/non-associations/{{ activityIdentifier }}/{{ row.prisonerNumber }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>View non-associations<span class="govuk-visually-hidden">for {{ prisonerName }}</span></a></p>
     {% else %}
+        {# if the response is false, we know that there are no non-associations for the prisoner #}
         <p class="govuk-body">None</p>
     {% endif %}
 {% endmacro %}
