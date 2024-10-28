@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 import RemovePayRoutes, { ConfirmRemoveOptions } from './removePay'
 import { associateErrorsWithProperty, toDateString } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -90,16 +90,17 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
 
     it('should remove specified pay rate and future pay rate change', async () => {
       const pay = [
-        { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
-        { incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
-        { incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+        { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+        { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
+        { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
         {
+          incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
           prisonPayBand: { id: 1, alias: 'Low' },
           rate: 125,
           startDate: toDateString(addDays(new Date(), 2)),
         },
-        { incentiveLevel: 'Basic', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
+        { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
       ] as ActivityPay[]
 
       req.session.createJourney.pay = pay
@@ -107,9 +108,9 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
 
       await handler.POST(req, res)
       expect(req.session.createJourney.pay).toEqual([
-        { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
-        { incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
-        { incentiveLevel: 'Basic', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
+        { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+        { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
+        { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
       ])
     })
 
@@ -155,6 +156,62 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
 
       const updatedActivity = {
         pay: [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 2, rate: 150 }],
+      } as ActivityUpdateRequest
+
+      expect(activitiesService.updateActivity).toHaveBeenCalledWith(1, updatedActivity, res.locals.user)
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        'check-pay?preserveHistory=true',
+        'Activity updated',
+        `You've updated the pay for ${req.session.createJourney.name}`,
+      )
+    })
+
+    it('should remove specified pay rate with a future and multiple historic pay rate change in the edit journey', async () => {
+      const pay = [
+        { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+        { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
+        { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+        {
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          prisonPayBand: { id: 2, alias: 'Low' },
+          rate: 115,
+          startDate: toDateString(subDays(new Date(), 22)),
+        },
+        {
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          prisonPayBand: { id: 2, alias: 'Low' },
+          rate: 125,
+          startDate: toDateString(subDays(new Date(), 2)),
+        },
+        {
+          incentiveNomisCode: 'BAS',
+          incentiveLevel: 'Basic',
+          prisonPayBand: { id: 2, alias: 'Low' },
+          rate: 125,
+          startDate: toDateString(addDays(new Date(), 2)),
+        },
+        { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
+      ] as ActivityPay[]
+
+      req.session.createJourney.pay = pay
+      req.body = { iep: 'Basic', bandId: '2', choice: 'yes' }
+      req.params = { mode: 'edit' }
+
+      await handler.POST(req, res)
+      expect(req.session.createJourney.pay).toEqual([
+        { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+        { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
+        { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+      ])
+
+      const updatedActivity = {
+        pay: [
+          { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 1, rate: 100 },
+          { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 2, rate: 100 },
+          { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', payBandId: 1, rate: 100 },
+        ],
       } as ActivityUpdateRequest
 
       expect(activitiesService.updateActivity).toHaveBeenCalledWith(1, updatedActivity, res.locals.user)
