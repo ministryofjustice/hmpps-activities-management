@@ -1,43 +1,30 @@
-{% macro summaryCardWithTable(prisoner) %}
-    {% set rows = [] %}
-    {% for na in prisoner.nonAssociations %}
-        {% set rows = rows.push([
-            [
-                {
-                    text: na.name
-                },
-                {
-                    text: na.prisonerNumber
-                },
-                {
-                    text: na.cellLocation
-                }
-            ]
-        ])%}
-    {% endfor %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
 
+{% macro summaryCardWithTable(attendee) %}
     <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper">
             <h2 class="govuk-summary-card__title">
-                <a href="{{ dpsUrl }}/prisoner/{{ prisoner.number }}"
+                <a href="{{ dpsUrl }}/prisoner/{{ attendee.firstPrisonerNumber }}"
                 target="_blank"
                 class="govuk-link govuk-link--no-visited-state">
-                {{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }}
+                {{ attendee.firstPrisonerName | toTitleCase if attendee.firstPrisonerName else 'No matching name' }}, {{ attendee.firstPrisonerNumber }}
                 </a>
             </h2>
             <ul class="govuk-summary-card__actions">
                 <li class="govuk-summary-card__action">
                     <a class="govuk-link" href="#">Remove attendee
                         <span class="govuk-visually-hidden">
-                            {{ prisoner.name }}</span></a>
+                            {{ attendee.firstPrisonerName }}</span></a>
                 </li>
             </ul>
         </div>
         <div class="govuk-summary-card__content">
             {{ govukTable({
-            caption: Attendee,
+            caption: 'Attendee',
             captionClasses: "govuk-visually-hidden",
             firstCellIsHeader: true,
+            classes: "govuk-!-margin-bottom-1",
             head: [
                 {
                 text: "Name"
@@ -49,9 +36,24 @@
                 text: "Cell location"
                 }
             ],
-            rows: rows
+            rows: [[
+            {
+                html: showProfileLink({
+                    name: attendee.secondPrisonerName | toTitleCase,
+                    prisonerNumber: attendee.secondPrisonerNumber
+                })
+            },
+            {
+                text: attendee.secondPrisonerNumber
+            },
+            {
+                text: attendee.secondPrisonerCellLocation
+            }
+    ]]
             }) }}
         </div>
     </div>
 
 {% endmacro %}
+
+ {# text: attendee.secondPrisonerName | toTitleCase #}
