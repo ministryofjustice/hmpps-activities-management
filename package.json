@@ -80,7 +80,7 @@
     "@ministryofjustice/frontend": "^2.2.3",
     "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "3.9.4",
     "@types/express-serve-static-core": "^4.19.6",
-    "@types/lodash": "^4.17.5",
+    "@types/lodash": "^4.17.12",
     "accessible-autocomplete": "^3.0.0",
     "agentkeepalive": "^4.5.0",
     "applicationinsights": "^2.9.5",
