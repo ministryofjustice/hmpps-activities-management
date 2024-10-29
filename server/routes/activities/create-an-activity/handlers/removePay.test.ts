@@ -339,7 +339,13 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       const updatedActivity = {
         pay: [
           { incentiveNomisCode: 'BAN', incentiveLevel: 'Gold', payBandId: 62, rate: 75, startDate: null },
-          { incentiveNomisCode: 'BAN', incentiveLevel: 'Gold', payBandId: 62, rate: 65, startDate: '2024-10-28' },
+          {
+            incentiveNomisCode: 'BAN',
+            incentiveLevel: 'Gold',
+            payBandId: 62,
+            rate: 65,
+            startDate: toDateString(new Date()),
+          },
         ],
       } as ActivityUpdateRequest
 
