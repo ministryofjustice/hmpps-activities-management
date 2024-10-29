@@ -104,7 +104,8 @@ describe('VideoLinkDetailsRoutes', () => {
         ]) as Map<string, UserDetails>,
       )
       bookAVideoLinkService.bookingIsAmendable.mockReturnValue(true)
-      activitiesService.searchAppointments.mockResolvedValue([
+      activitiesService.searchAppointments.mockResolvedValueOnce([])
+      activitiesService.searchAppointments.mockResolvedValueOnce([
         {
           appointmentId: 1,
           internalLocation: { id: 10001 },
@@ -138,6 +139,8 @@ describe('VideoLinkDetailsRoutes', () => {
           isAmendable: true,
         }),
       )
+
+      expect(activitiesService.searchAppointments).toHaveBeenCalledTimes(2)
     })
   })
 })

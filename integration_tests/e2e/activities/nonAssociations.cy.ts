@@ -3,6 +3,7 @@ import getInmateDetails from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A
 import getNonAssociations from '../../fixtures/activitiesApi/non_associations.json'
 import NonAssociationsPage from '../../pages/activities/nonAssociations'
 import Page from '../../pages/page'
+import { ActivitySchedule } from '../../../server/@types/activitiesAPI/types'
 
 const getPrisonerAllocations = [
   {
@@ -28,12 +29,53 @@ const getPrisonerAllocations = [
     ],
   },
 ]
+const activitySchedule1 = {
+  id: 1,
+  description: '',
+  internalLocation: {
+    id: 1,
+    code: 'EDU-ROOM-1',
+    description: 'Education - R1',
+  },
+  capacity: 10,
+  activity: {
+    id: 858,
+    prisonCode: 'MDI',
+    attendanceRequired: true,
+    inCell: false,
+    onWing: false,
+    offWing: false,
+  },
+} as unknown as ActivitySchedule
+const activitySchedule2 = {
+  id: 1,
+  description: '',
+  internalLocation: {
+    id: 1,
+    code: 'EDU-ROOM-2',
+    description: 'Education - R2',
+  },
+  capacity: 10,
+  activity: {
+    id: 58,
+    prisonCode: 'MDI',
+    attendanceRequired: true,
+    inCell: false,
+    onWing: false,
+    offWing: false,
+  },
+} as unknown as ActivitySchedule
+
+const activity58 = { schedules: [activitySchedule2], id: 58 } as unknown as JSON
+const activity858 = { schedules: [activitySchedule1], id: 858 } as unknown as JSON
 
 context('Non-associations', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.stubEndpoint('GET', '/activities/2/filtered', getActivity)
+    cy.stubEndpoint('GET', '/activities/58/filtered', activity58)
+    cy.stubEndpoint('GET', '/activities/858/filtered', activity858)
     cy.stubEndpoint('GET', '/prisoner/A5015DY', getInmateDetails)
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', getPrisonerAllocations)
@@ -61,7 +103,7 @@ context('Non-associations', () => {
       .then($data => {
         expect($data.get(0).innerText).to.contain('Adalie, Izrmonntas\nG6512VC')
         expect($data.get(1).innerText).to.contain('A-N-2-24S')
-        expect($data.get(2).innerText).to.contain('Barbering A')
+        expect($data.get(2).innerText).to.contain('Barbering A\n\nEducation - R1')
         expect($data.get(3).innerText).to.contain(
           'Where to keep apart: Cell and landing\n\nReason: Bullying\n\nComments: Keep apart\n\nAlfonso Cholak’s role: Perpetrator',
         )
@@ -74,7 +116,7 @@ context('Non-associations', () => {
       .then($data => {
         expect($data.get(0).innerText).to.contain('Alanoine, Uzfanaye\nG6815UH')
         expect($data.get(1).innerText).to.contain('E-1-14S')
-        expect($data.get(2).innerText).to.contain('Box making')
+        expect($data.get(2).innerText).to.contain('Box making\n\nEducation - R2')
         expect($data.get(3).innerText).to.contain(
           'Where to keep apart: Cell, landing and wing\n\nReason: Gang related\n\nComments: Explain why these prisoners should be kept apart. Include any relevant IR numbers, if you have them.By saving these details, you confirm that, to the best of your knowledge, the information you have provided is correct. Plus 17 characters.!\n\nAlfonso Cholak’s role: Perpetrator',
         )

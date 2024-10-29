@@ -143,15 +143,16 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
     it('validation fails if end date is not in the future', async () => {
       const endDate = formatDatePickerDate(startOfToday())
-
       const body = { endDate }
-
       const requestObject = plainToInstance(EndDate, {
         ...body,
         createJourney: {
           activity: {
             latestAllocationStartDate: '2022-04-04',
           },
+        },
+        pathParams: {
+          mode: 'create',
         },
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -171,6 +172,9 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
           startDate: formatIsoDate(tomorrow),
           latestAllocationStartDate: formatIsoDate(tomorrow),
         },
+        pathParams: {
+          mode: 'create',
+        },
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
@@ -188,6 +192,9 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         ...body,
         createJourney: {
           startDate: formatIsoDate(nextWeek),
+        },
+        pathParams: {
+          mode: 'create',
         },
       })
 
@@ -212,6 +219,9 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         ...body,
         createJourney: {
           latestAllocationStartDate: formatIsoDate(latestAllocationStartDate),
+        },
+        pathParams: {
+          mode: 'create',
         },
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -240,13 +250,16 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
           startDate: formatDate(today, 'yyyy-MM-dd'),
           latestAllocationStartDate: '2022-04-04',
         },
+        pathParams: {
+          mode: 'create',
+        },
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
     })
 
-    it('validation fails if end date makes date range invalid', async () => {
+    it('validation fails if end date makes date range invalid in create journey', async () => {
       const endDate = addWeeks(new Date(), 1)
       const nearestInvalidDate = addDays(endDate, 1)
 
@@ -257,6 +270,9 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         createJourney: {
           startDate: formatDate(addDays(new Date(), 1), 'yyyy-MM-dd'),
           endDate: formatDatePickerDate(endDate),
+        },
+        pathParams: {
+          mode: 'create',
         },
       })
 
@@ -271,6 +287,31 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
           error: `Enter a date after ${formatDate(nearestInvalidDate)}, so the days this activity runs are all before it’s scheduled to end`,
         },
       ])
+    })
+
+    it('validation passes if end date makes date range invalid in edit journey', async () => {
+      const endDate = addWeeks(new Date(), 1)
+      const nearestInvalidDate = addDays(endDate, 1)
+
+      const body = { endDate: formatDatePickerDate(endDate) }
+
+      const requestObject = plainToInstance(EndDate, {
+        ...body,
+        createJourney: {
+          startDate: formatDate(addDays(new Date(), 1), 'yyyy-MM-dd'),
+          endDate: formatDatePickerDate(endDate),
+        },
+        pathParams: {
+          mode: 'edit',
+        },
+      })
+
+      isEndDateValidMock.mockReturnValue(false)
+      nearestInvalidEndDateMock.mockReturnValue(nearestInvalidDate)
+
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
     })
   })
 })

@@ -157,6 +157,14 @@ export default {
       },
       agent: new AgentConfig(Number(get('BOOK_A_VIDEO_LINK_API_TIMEOUT_RESPONSE', 30000))),
     },
+    nonAssociationsApi: {
+      url: get('NON_ASSOCIATIONS_API_URL', 'http://localhost:8096', requiredInProduction),
+      timeout: {
+        response: Number(get('NON_ASSOCIATIONS_API_TIMEOUT_RESPONSE', 30000)),
+        deadline: Number(get('NON_ASSOCIATIONS_API_TIMEOUT_DEADLINE', 30000)),
+      },
+      agent: new AgentConfig(Number(get('NON_ASSOCIATIONS_API_TIMEOUT_RESPONSE', 30000))),
+    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
@@ -195,7 +203,6 @@ export default {
   bookAVideoLinkToggleEnabled: toBoolean(
     get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
   ),
-  futurePayRatesToggleEnabled: toBoolean(get('FUTURE_PAY_RATES_TOGGLE_ENABLED', 'false')),
   deallocateTodaySessionEnabled: toBoolean(get('DEALLOCATE_TODAY_SESSION_TOGGLE_ENABLED', 'false')),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),

@@ -1,0 +1,112 @@
+{% set rows = [] %}
+{% for row in currentlyAllocated %}
+    {% set otherAllocationsHtml %}
+        <ul class='govuk-list'>
+            {% for allocation in row.otherAllocations %}
+                <li><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName | escape }}</a></li>
+            {% else %}
+                <li>None</li>
+            {% endfor %}
+        </ul>
+    {% endset %}
+
+    {% set allocatedDatesHtml %}
+        <div>{{ row.startDate | formatDate('d MMMM yyyy')}}</div>
+        {% if row.endDate %}
+            <div>to {{ row.endDate | formatDate('d MMMM yyyy') }}</div>
+        {% endif %}
+        {{ suspensionBadge(row.status, row.plannedSuspension, now) }}
+    {% endset %}
+
+    {% set nonAssociationsLinkHtml %}
+        {{ nonAssociationsHtml(row, row.name | toTitleCase) }}
+    {% endset %}
+
+    {% set rows = (rows.push({
+        visuallyHiddenText: 'Select ' + row.name | toTitleCase | prisonerName,
+        value: row.allocationId,
+        selectable: true,
+        items: [
+            {
+                html: showProfileLink({
+                    name: row.name,
+                    prisonerNumber: row.prisonerNumber,
+                    inCaseLoad: row.prisonerPrisonCode == user.activeCaseLoadId
+                }),
+                attributes: {
+                    "data-sort-value": row.name | prisonerNameForSorting
+                }
+            },
+            {
+                text: statusBasedCellLocation(row.cellLocation, row.prisonerStatus, row.prisonerPrisonCode == user.activeCaseLoadId)
+            },
+            {
+                html: allocatedDatesHtml,
+                attributes: {
+                    "data-sort-value": row.startDate | getUnixTime 
+                }
+            },
+            {
+                html: nonAssociationsLinkHtml
+            },
+            {
+                html: otherAllocationsHtml
+            },
+            {
+                html: earliestReleaseDate(row.earliestReleaseDate),
+                attributes: {
+                    "data-sort-value": row.earliestReleaseDate.releaseDate | getUnixTime 
+                }
+            }
+        ]
+    }), rows) %}
+{% endfor %}
+
+<form method='POST'>
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    {{ stickySelect({
+        idPrefix: 'allocated',
+        type: 'check',
+        caption: "Currently allocated",
+        captionClasses: "govuk-visually-hidden",
+        name: 'selectedAllocations',
+        head: [
+            {
+                text: "Prisoner details",
+                attributes: { "aria-sort": "ascending" }
+            },
+            {
+                text: "Cell location",
+                attributes: { "aria-sort": "none" }
+            },
+            {
+                text: "Allocation start and end",
+                attributes: { "aria-sort": "none" }
+            },
+            {
+                text: 'Non-associations'
+            },
+            {
+                text: "Other allocations"
+            },
+            {
+                text: "Earliest release date",
+                attributes: { "aria-sort": "none" }
+            }
+        ],
+        rows: rows,
+        actions: [
+            {
+                text: 'End allocation',
+                formAction: activity.id + '/deallocate'
+            },
+            {
+                text: 'Manage allocation',
+                formAction: activity.id + '/check-allocation',
+                maxItems: 1
+            }
+        ],
+        itemsDescription: 'person',
+        itemsDescriptionPlural: 'people'
+    }) }}
+</form>

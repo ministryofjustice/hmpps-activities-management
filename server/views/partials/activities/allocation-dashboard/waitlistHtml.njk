@@ -1,0 +1,250 @@
+<div class='filter'>
+    <form method='GET'>
+        <div class="filter__items filter__items--quarters" id='waitlist-filter'>
+            {% set employmentOptions = [
+                {
+                    value: 'Not in work',
+                    text: 'Not in work',
+                    selected: filters.employmentFilter == 'Not in work'
+                },
+                {
+                    value: 'In work',
+                    text: 'In work',
+                    selected: filters.employmentFilter == 'In work'
+                },
+                {
+                    value: 'Everyone',
+                    text: 'Everyone',
+                    selected: filters.employmentFilter == 'Everyone'
+                }
+            ] %}
+            {{ govukSelect({
+                id: "employmentFilter",
+                name: "employmentFilter",
+                classes: "govuk-!-width-full",
+                label: {
+                    text: "Showing people who are:"
+                },
+                items: employmentOptions
+            }) }}
+
+            {% set riskLevelOptions = [
+                {
+                    value: 'Any Workplace Risk Assessment',
+                    text: 'Any workplace risk assessment',
+                    selected: filters.riskLevelFilter == 'Any Workplace Risk Assessment'
+                },
+                {
+                    value: 'Low',
+                    text: 'Low',
+                    selected: filters.riskLevelFilter == 'Low'
+                },
+                {
+                    value: 'Low or Medium',
+                    text: 'Low or Medium',
+                    selected: filters.riskLevelFilter == 'Low or Medium'
+                },
+                {
+                    value: 'Low or Medium or High',
+                    text: 'Low or Medium or High',
+                    selected: filters.riskLevelFilter == 'Low or Medium or High'
+                },
+                {
+                    value: 'No Workplace Risk Assessment',
+                    text: 'No workplace risk assessment',
+                    selected: filters.riskLevelFilter == 'No Workplace Risk Assessment'
+                }
+            ] %}
+            {{ govukSelect({
+                id: "riskLevelFilter",
+                name: "riskLevelFilter",
+                classes: "govuk-!-width-full",
+                label: {
+                    text: "Showing people whose workplace risk assessment is:"
+                },
+                items: riskLevelOptions
+            }) }}
+
+            {% set incentiveLevelOptions = [
+                {
+                    value: suitableForIep,
+                    text: 'Any suitable incentive level',
+                    selected: filters.incentiveLevelFilter == suitableForIep
+                }
+            ] %}
+            {% for incentiveLevel in incentiveLevels %}
+                {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                    {
+                        value: incentiveLevel.levelName,
+                        text: incentiveLevel.levelName,
+                        selected: filters.incentiveLevelFilter == incentiveLevel.levelName and incentiveLevel.levelName != suitableForIep
+                    }
+                ), incentiveLevelOptions) %}
+            {% endfor %}
+            {% set incentiveLevelOptions = (incentiveLevelOptions.push(
+                {
+                    value: 'All Incentive Levels',
+                    text: 'All incentive levels',
+                    selected: filters.incentiveLevelFilter == 'All Incentive Levels'
+                }
+            ), incentiveLevelOptions) %}
+            {{ govukSelect({
+                id: "incentiveLevelFilter",
+                name: "incentiveLevelFilter",
+                classes: "govuk-!-width-full",
+                label: {
+                    text: "Showing people who have the following incentive level:"
+                },
+                items: incentiveLevelOptions
+            }) }}
+
+            {% set waitlistStatusOptions = [
+                {
+                    value: 'Any',
+                    text: 'Any',
+                    selected: filters.waitlistStatusFilter == 'Any'
+                },
+                {
+                    value: 'APPROVED',
+                    text: 'Approved',
+                    selected: filters.waitlistStatusFilter == 'APPROVED'
+                },
+                {
+                    value: 'DECLINED',
+                    text: 'Declined',
+                    selected: filters.waitlistStatusFilter == 'DECLINED'
+                },
+                {
+                    value: 'PENDING',
+                    text: 'Pending',
+                    selected: filters.waitlistStatusFilter == 'PENDING'
+                }
+            ] %}
+            {{ govukSelect({
+                id: "waitlistStatusFilter",
+                name: "waitlistStatusFilter",
+                classes: "govuk-!-width-full",
+                label: {
+                    text: "Showing people whose application is:"
+                },
+                items: waitlistStatusOptions
+            }) }}
+        </div>
+
+        {{ govukButton({
+            text: "Apply filters",
+            name: 'filtersApplied',
+            value: 'true'
+        }) }}
+    </form>
+</div>
+
+{% set rows = [] %}
+{% for row in waitlistedPrisoners %}
+    {% set currentAllocationsHtml %}
+        <ul class='govuk-list'>
+            {% for allocation in row.otherAllocations %}
+                <li><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.scheduleName | escape }}</a></li>
+            {% else %}
+                <li>None</li>
+            {% endfor %}
+        </ul>
+    {% endset %}
+
+    {% set nonAssociationsLinkHtml %}
+        {{ nonAssociationsHtml(row, row.name | toTitleCase) }}
+    {% endset %}
+
+    {% set rows = (rows.push({
+        visuallyHiddenText: 'Select ' + row.name | toTitleCase | prisonerName,
+        value: row.waitlistApplicationId,
+        selectable: true,
+        forbiddenActionId: 'waitlist-action-1' if row.status != 'APPROVED',
+        items: [
+            {
+                html: showProfileLink({
+                    name: row.name,
+                    prisonerNumber: row.prisonerNumber,
+                    cellLocation: statusBasedCellLocation(row.cellLocation, row.prisonerStatus, row.prisonerPrisonCode == user.activeCaseLoadId),
+                    inCaseLoad: row.prisonerPrisonCode == user.activeCaseLoadId
+                }),
+                attributes: {
+                    "data-sort-value": row.name | prisonerNameForSorting
+                }
+            },
+            {
+                html: splitLine(row.requestDate, row.requestedBy),
+                attributes: {
+                    "data-sort-value": row.requestDate | getUnixTime 
+                }
+            },
+            {
+                html: nonAssociationsLinkHtml
+            },
+            {
+                html: earliestReleaseDate(row.earliestReleaseDate),
+                attributes: {
+                    "data-sort-value": row.earliestReleaseDate.releaseDate | getUnixTime 
+                }
+            },
+            {
+                html: currentAllocationsHtml
+            },
+            {
+                text: waitlistStatusBadge(row.status),
+                attributes: {
+                    "data-sort-value": row.status
+                }
+            }
+        ]
+    }), rows) %}
+{% endfor %}
+
+<form method='POST'>
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    {{ stickySelect({
+        idPrefix: 'waitlist',
+        type: 'radio',
+        caption: "Waitlist applications",
+        captionClasses: "govuk-visually-hidden",
+        name: 'selectedWaitlistApplication',
+        head: [
+            {
+                text: "Name",
+                attributes: { "aria-sort": "none" }
+            },
+            {
+                text: "Request date and requester",
+                attributes: { "aria-sort": "ascending" }
+            },
+            {
+                text: 'Non-associations'
+            },
+            {
+                text: "Release date",
+                attributes: { "aria-sort": "none" }
+            },
+            {
+                text: "Current allocations"
+            },
+            {
+                text: "Status",
+                classes: 'min-width--110',
+                attributes: { "aria-sort": "none" }
+            }
+        ],
+        rows: rows,
+        actions: [
+            {
+                text: 'View or edit application',
+                formAction: activity.id + '/view-waitlist-application'
+            },
+            {
+                text: 'Allocate',
+                formAction: activity.id + '/allocate?source=Waitlist' + (' - filters' if session.req.query.filtersApplied)
+            }
+        ],
+        itemsDescription: 'person',
+        itemsDescriptionPlural: 'people'
+    }) }}
+</form>

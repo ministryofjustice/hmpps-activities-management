@@ -1,0 +1,47 @@
+<p>This activity {{ "runs" if schedule.runsOnBankHoliday else "does not run" }} on bank holidays.</p>
+{% for week, slots in dailySlots %}
+    {% set rows = [] %}
+    {% if scheduleWeeks > 1 %}
+        <h2 class="govuk-heading-m">Week {{ week }}</h2>
+    {% endif %}
+    {{ govukTag({
+        text: "Current week", classes: 'govuk-tag--small govuk-tag--green'
+    }) if scheduleWeeks > 1 and currentWeek == week }}
+    {% for day in slots %}
+        {% set columns = [
+            {
+                text: day.day,
+                classes: 'govuk-!-width-one-quarter'
+            }
+        ] %}
+        {% for timeSlot in ['AM', 'PM', 'ED'] %}
+            {% set slotMatches = false %}
+            {% set times = '' %}
+
+            {% for slot in day.slots %}
+                {% if (slot.timeSlot == timeSlot) and not slotMatches %}
+                    {% set slotMatches = true %}
+                    {% set times = (slot.startTime + ' to ' + slot.endTime) %}
+                {% endif %}
+            {% endfor %}
+
+            {% set columns = (columns.push(
+                {
+                    html: govukTag({
+                        text: "Yes" if slotMatches else "No",
+                        classes: "govuk-tag--grey" if not slotMatches
+                    }) + (times if slotMatches),
+                    classes: 'govuk-!-width-one-quarter'
+                }
+            ), columns) %}
+        {% endfor %}
+        {% set rows = (rows.push(columns), rows) %}
+    {% endfor %}
+    {{ govukTable({
+        caption: "Schedule",
+        captionClasses: "govuk-visually-hidden",
+        head: [ { text: "Days" }, { text: "AM" }, { text: "PM" }, { text: "ED" } ],
+        rows: rows,
+        classes: "govuk-!-margin-bottom-6"
+    }) }}
+{% endfor %}
