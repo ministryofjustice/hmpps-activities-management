@@ -1,18 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>ministryofjustice/hmpps-renovate-config:node"],
-  "reviewers": ["timoj58", "natclamp-moj", "Kristian-Gregory", "davidthomas22", "dafhoustonmoj", "munslowl", "angela-pan-moj"],
+  "reviewers": ["natclamp-moj", "Kristian-Gregory", "davidthomas22", "dafhoustonmoj", "munslowl", "angela-pan-moj"],
   "packageRules": [
     {
       "matchManagers": ["npm"],
       "rangeStrategy": "bump"
-    },
-    {
-      "matchManagers": ["npm"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "all non major NPM dependencies",
-      "groupSlug": "all-npm-minor-patch",
-      "stabilityDays": 3
     },
     {
       "matchPackageNames": ["typescript", "govuk-frontend"],
