@@ -34,26 +34,41 @@ export default class ReviewNonAssociationRoutes {
     })
   }
 
-  private prisonerMap = async (nonAssociations: NonAssociation[], user: ServiceUser) => {
-    const firstPrisonerNumbers = nonAssociations.map(na => na.firstPrisonerNumber)
-    const secondPrisonerNumber = nonAssociations.map(na => na.secondPrisonerNumber)
-    const prisonerNumbers = new Set(firstPrisonerNumbers.concat(secondPrisonerNumber))
-    const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(Array.from(prisonerNumbers), user)
-    return new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
-  }
-
   private enhanceNonAssociations = async (nonAssociations: NonAssociation[], user: ServiceUser) => {
-    const prisoners = await this.prisonerMap(nonAssociations, user)
-    return nonAssociations.map(na => {
-      const firstPrisoner = prisoners.get(na.firstPrisonerNumber)
-      const secondPrisoner = prisoners.get(na.secondPrisonerNumber)
-      return {
-        ...na,
-        firstPrisonerName: `${firstPrisoner.firstName} ${firstPrisoner.lastName}`,
-        firstPrisonerCellLocation: firstPrisoner.cellLocation,
-        secondPrisonerName: `${secondPrisoner.firstName} ${secondPrisoner.lastName}`,
-        secondPrisonerCellLocation: secondPrisoner.cellLocation,
+    const prisonerNumbers = new Set(
+      nonAssociations.flatMap(({ firstPrisonerNumber, secondPrisonerNumber }) => [
+        firstPrisonerNumber,
+        secondPrisonerNumber,
+      ]),
+    )
+    const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(Array.from(prisonerNumbers), user)
+    const prisonerMap = new Map(
+      prisoners.map(({ prisonerNumber, firstName, lastName, cellLocation }) => [
+        prisonerNumber,
+        { prisonerNumber, name: `${firstName} ${lastName}`, cellLocation },
+      ]),
+    )
+
+    const nonAssociationCardData = prisoners.map(prisoner => {
+      const primaryPrisoner = {
+        name: `${prisoner.firstName} ${prisoner.lastName}`,
+        prisonerNumber: prisoner.prisonerNumber,
       }
+
+      const nonAssociationsList = nonAssociations
+        .filter(
+          ({ firstPrisonerNumber, secondPrisonerNumber }) =>
+            firstPrisonerNumber === prisoner.prisonerNumber || secondPrisonerNumber === prisoner.prisonerNumber,
+        )
+        .map(({ firstPrisonerNumber, secondPrisonerNumber, whenUpdated }) => {
+          const otherPrisonerNumber =
+            firstPrisonerNumber === prisoner.prisonerNumber ? secondPrisonerNumber : firstPrisonerNumber
+          const { prisonerNumber, name, cellLocation } = prisonerMap.get(otherPrisonerNumber)
+          return { prisonerNumber, name, cellLocation, lastUpdated: whenUpdated }
+        })
+      return { nonAssociations: nonAssociationsList, primaryPrisoner }
     })
+
+    return nonAssociationCardData
   }
 }
