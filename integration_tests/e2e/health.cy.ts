@@ -36,6 +36,7 @@ context('Healthcheck', () => {
         expect(response.body.checks.prisonRegisterApi).to.equal('OK')
         expect(response.body.checks.manageUsersApi).to.equal('OK')
         expect(response.body.checks.bookAVideoLinkApi).to.equal('OK')
+        expect(response.body.checks.nonAssociationsApi).to.equal('OK')
         expect(response.body.checks.tokenVerification).to.contain({ status: 500, retries: 2 })
       })
     })

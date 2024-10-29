@@ -25,6 +25,7 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
       locals: {
         user: {
           username: 'USER1',
+          activeCaseLoadDescription: 'Moorland (HMP & YOI)',
         },
       },
       render: jest.fn(),
@@ -104,14 +105,55 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
         ],
       } as AllocationSuitability
 
+      const nonAssociations = [
+        {
+          allocated: false,
+          reasonCode: 'BULLYING',
+          reasonDescription: 'Bullying',
+          roleCode: 'VICTIM',
+          roleDescription: 'Victim',
+          restrictionType: 'WING',
+          restrictionTypeDescription: 'Cell, landing and wing',
+          otherPrisonerDetails: {
+            prisonerNumber: 'G0995GW',
+            firstName: 'AETICAKE',
+            lastName: 'POTTA',
+            cellLocation: 'A-N-3-30N',
+          },
+          whenUpdated: '2024-10-16T15:38:03',
+          comments: 'some comments about the NA',
+        },
+        {
+          allocated: false,
+          reasonCode: 'BULLYING',
+          reasonDescription: 'Bullying',
+          roleCode: 'VICTIM',
+          roleDescription: 'Victim',
+          restrictionType: 'LANDING',
+          restrictionTypeDescription: 'Cell and landing',
+          otherPrisonerDetails: {
+            prisonerNumber: 'G9353UC',
+            firstName: 'BARPRENAV',
+            lastName: 'TONONNE',
+            cellLocation: 'F-2-009',
+          },
+          whenUpdated: '2024-10-15T14:26:58',
+          comments: 'Keep apart',
+        },
+      ]
+
       when(activitiesService.allocationSuitability)
         .calledWith(atLeast(1, 'ABC123'))
         .mockResolvedValue(allocationSuitability)
+
+      when(activitiesService.getNonAssociations).calledWith(atLeast(1, 'ABC123')).mockResolvedValue(nonAssociations)
 
       await handler.GET(req, res)
 
       expect(res.render).toBeCalledWith('pages/activities/manage-allocations/before-you-allocate', {
         allocationSuitability,
+        caseload: 'Moorland (HMP & YOI)',
+        nonAssociations,
       })
     })
   })

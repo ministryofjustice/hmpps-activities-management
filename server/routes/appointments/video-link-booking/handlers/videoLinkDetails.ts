@@ -6,6 +6,7 @@ import UserService from '../../../../services/userService'
 import { PrisonAppointment, VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
+import { AppointmentSearchResult } from '../../../../@types/activitiesAPI/types'
 
 export default class VideoLinkDetailsRoutes {
   constructor(
@@ -62,9 +63,15 @@ export default class VideoLinkDetailsRoutes {
     }
   }
 
-  private fetchMainAppointmentFromActivitiesAPI = async (mainAppointment: PrisonAppointment, user: ServiceUser) => {
+  private fetchMainAppointmentFromActivitiesAPI = async (
+    mainAppointment: PrisonAppointment,
+    user: ServiceUser,
+    retries = 3,
+    delay = 1000,
+  ): Promise<AppointmentSearchResult> => {
     const location = await this.prisonService.getInternalLocationByKey(mainAppointment.prisonLocKey, user)
-    return this.activitiesService
+
+    const appointment = await this.activitiesService
       .searchAppointments(
         user.activeCaseLoadId,
         {
@@ -83,5 +90,22 @@ export default class VideoLinkDetailsRoutes {
             mainAppointment.endTime === app.endTime,
         ),
       )
+
+    if (appointment) {
+      return appointment
+    }
+
+    // Due to a race condition when amending a video link booking, which is written to BVLS API, and then propagated to Activities API via SNS events,
+    // a retry mechanism is implemented here to poll for the appointment to be propagated to activities API.
+
+    if (retries > 0) {
+      await new Promise(resolve => {
+        setTimeout(resolve, delay)
+      })
+
+      return this.fetchMainAppointmentFromActivitiesAPI(mainAppointment, user, retries - 1, delay)
+    }
+
+    return undefined
   }
 }

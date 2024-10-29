@@ -37,6 +37,9 @@ describe('Route Handlers - View and Edit Attendance', () => {
 
     req = {
       params: { id: 1, attendanceId: 1 },
+      session: {
+        recordAttendanceJourney: {},
+      },
     } as unknown as Request
   })
 
@@ -45,102 +48,112 @@ describe('Route Handlers - View and Edit Attendance', () => {
   })
 
   describe('GET', () => {
-    it('should render with the expected view', async () => {
-      when(userService.getUserMap)
-        .calledWith(atLeast(['joebloggs', 'jsmith']))
-        .mockResolvedValue(
-          new Map([
+    it.each([
+      ['available', true],
+      ['not available', false],
+    ])(
+      'should render with the expected view when journey session is %s',
+      async (_: string, sessionIsAvailable: boolean) => {
+        if (sessionIsAvailable) {
+          req.session.recordAttendanceJourney.singleInstanceSelected = true
+        }
+
+        when(userService.getUserMap)
+          .calledWith(atLeast(['joebloggs', 'jsmith']))
+          .mockResolvedValue(
+            new Map([
+              ['joebloggs', { name: 'Joe Bloggs' }],
+              ['jsmith', { name: 'John Smith' }],
+            ]) as Map<string, UserDetails>,
+          )
+
+        when(activitiesService.getScheduledActivity)
+          .calledWith(1, res.locals.user)
+          .mockResolvedValue({
+            id: 1,
+            date: format(new Date(), 'yyyy-MM-dd'),
+            startTime: '10:00',
+            endTime: '11:00',
+            activitySchedule: {
+              activity: { summary: 'Maths level 1' },
+              internalLocation: { description: 'Houseblock 1' },
+            },
+            attendances: [
+              { prisonerNumber: 'ABC123', status: 'WAITING' },
+              { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+              { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+            ],
+          } as ScheduledActivity)
+
+        when(activitiesService.getAttendanceDetails)
+          .calledWith(1)
+          .mockResolvedValue({
+            id: 1,
+            prisonerNumber: 'ABC321',
+            status: 'COMPLETED',
+            attendanceReason: { code: 'ATTENDED' },
+            recordedBy: 'joebloggs',
+            attendanceHistory: [
+              {
+                attendanceReason: { code: 'REST' },
+                recordedBy: 'jsmith',
+              },
+            ],
+          } as Attendance)
+
+        when(prisonService.getInmateByPrisonerNumber)
+          .calledWith('ABC321', res.locals.user)
+          .mockResolvedValue({
+            prisonerNumber: 'ABC321',
+            firstName: 'Alan',
+            lastName: 'Key',
+            cellLocation: 'MDI-1-002',
+            alerts: [],
+            category: 'A',
+          } as Prisoner)
+
+        await handler.GET(req, res)
+
+        expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-details', {
+          instance: {
+            id: 1,
+            date: format(new Date(), 'yyyy-MM-dd'),
+            startTime: '10:00',
+            endTime: '11:00',
+            activitySchedule: {
+              activity: { summary: 'Maths level 1' },
+              internalLocation: { description: 'Houseblock 1' },
+            },
+            attendances: [
+              { prisonerNumber: 'ABC123', status: 'WAITING' },
+              { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+              { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+            ],
+          },
+          attendance: {
+            attendanceReason: { code: 'ATTENDED' },
+            id: 1,
+            prisonerNumber: 'ABC321',
+            status: 'COMPLETED',
+            recordedBy: 'joebloggs',
+            attendanceHistory: [
+              {
+                attendanceReason: { code: 'REST' },
+                recordedBy: 'jsmith',
+              },
+            ],
+          },
+          attendee: {
+            name: 'Alan Key',
+          },
+          activity: { summary: 'Maths level 1' },
+          userMap: new Map([
             ['joebloggs', { name: 'Joe Bloggs' }],
             ['jsmith', { name: 'John Smith' }],
           ]) as Map<string, UserDetails>,
-        )
-
-      when(activitiesService.getScheduledActivity)
-        .calledWith(1, res.locals.user)
-        .mockResolvedValue({
-          id: 1,
-          date: format(new Date(), 'yyyy-MM-dd'),
-          startTime: '10:00',
-          endTime: '11:00',
-          activitySchedule: {
-            activity: { summary: 'Maths level 1' },
-            internalLocation: { description: 'Houseblock 1' },
-          },
-          attendances: [
-            { prisonerNumber: 'ABC123', status: 'WAITING' },
-            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
-            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
-          ],
-        } as ScheduledActivity)
-
-      when(activitiesService.getAttendanceDetails)
-        .calledWith(1)
-        .mockResolvedValue({
-          id: 1,
-          prisonerNumber: 'ABC321',
-          status: 'COMPLETED',
-          attendanceReason: { code: 'ATTENDED' },
-          recordedBy: 'joebloggs',
-          attendanceHistory: [
-            {
-              attendanceReason: { code: 'REST' },
-              recordedBy: 'jsmith',
-            },
-          ],
-        } as Attendance)
-
-      when(prisonService.getInmateByPrisonerNumber)
-        .calledWith('ABC321', res.locals.user)
-        .mockResolvedValue({
-          prisonerNumber: 'ABC321',
-          firstName: 'Alan',
-          lastName: 'Key',
-          cellLocation: 'MDI-1-002',
-          alerts: [],
-          category: 'A',
-        } as Prisoner)
-
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-details', {
-        instance: {
-          id: 1,
-          date: format(new Date(), 'yyyy-MM-dd'),
-          startTime: '10:00',
-          endTime: '11:00',
-          activitySchedule: {
-            activity: { summary: 'Maths level 1' },
-            internalLocation: { description: 'Houseblock 1' },
-          },
-          attendances: [
-            { prisonerNumber: 'ABC123', status: 'WAITING' },
-            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
-            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
-          ],
-        },
-        attendance: {
-          attendanceReason: { code: 'ATTENDED' },
-          id: 1,
-          prisonerNumber: 'ABC321',
-          status: 'COMPLETED',
-          recordedBy: 'joebloggs',
-          attendanceHistory: [
-            {
-              attendanceReason: { code: 'REST' },
-              recordedBy: 'jsmith',
-            },
-          ],
-        },
-        attendee: {
-          name: 'Alan Key',
-        },
-        activity: { summary: 'Maths level 1' },
-        userMap: new Map([
-          ['joebloggs', { name: 'Joe Bloggs' }],
-          ['jsmith', { name: 'John Smith' }],
-        ]) as Map<string, UserDetails>,
-      })
-    })
+        })
+      },
+    )
   })
 
   describe('POST', () => {

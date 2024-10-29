@@ -44,4 +44,6 @@ export default class AllocationDashboard extends Page {
     cy.get('#candidates-filter > .govuk-form-group > #riskLevelFilter').select(option)
 
   applyFilters = () => cy.get('#apply-filters').click()
+
+  nonAssociationsLink = (prn: string) => cy.get(`[data-qa=non-associations-link-${prn}]`)
 }

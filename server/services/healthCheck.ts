@@ -58,6 +58,11 @@ const apiChecks = [
   service('frontendComponents', `${config.apis.frontendComponents.url}/health`, config.apis.frontendComponents.agent),
   service('prisonRegisterApi', `${config.apis.prisonRegisterApi.url}/health/ping`, config.apis.prisonRegisterApi.agent),
   service('manageUsersApi', `${config.apis.manageUsersApi.url}/health/ping`, config.apis.manageUsersApi.agent),
+  service(
+    'nonAssociationsApi',
+    `${config.apis.nonAssociationsApi.url}/health/ping`,
+    config.apis.nonAssociationsApi.agent,
+  ),
   ...(config.apis.tokenVerification.enabled
     ? [
         service(
