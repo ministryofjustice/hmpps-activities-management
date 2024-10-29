@@ -27,7 +27,12 @@ import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
 import UncancelRoutes from './handlers/uncancel'
 
-export default function Edit({ prisonService, activitiesService, metricsService }: Services): Router {
+export default function Edit({
+  prisonService,
+  activitiesService,
+  metricsService,
+  nonAssociationsService,
+}: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
@@ -118,7 +123,7 @@ export default function Edit({ prisonService, activitiesService, metricsService 
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const reviewPrisoners = new ReviewPrisoners(metricsService, prisonerAlertsService)
-  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
+  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService, nonAssociationsService)
 
   router.get(
     '/start/prisoners/add',

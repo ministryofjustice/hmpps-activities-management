@@ -44,6 +44,14 @@ export default class ReviewNonAssociationRoutes {
     res.redirect(`../../review-non-associations${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 
+  POST = async (req: Request, res: Response): Promise<void> => {
+    if (req.query.preserveHistory) {
+      req.session.returnTo = 'schedule?preserveHistory=true'
+    }
+
+    return res.redirectOrReturn('name')
+  }
+
   private enhanceNonAssociations = async (nonAssociations: NonAssociation[], user: ServiceUser) => {
     const prisonerNumbers = new Set(
       nonAssociations.flatMap(({ firstPrisonerNumber, secondPrisonerNumber }) => [

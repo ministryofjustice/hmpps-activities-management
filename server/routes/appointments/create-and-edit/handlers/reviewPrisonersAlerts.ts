@@ -2,9 +2,13 @@ import { Request, Response } from 'express'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import config from '../../../../config'
 import PrisonerAlertsService from '../../../../services/prisonerAlertsService'
+import NonAssociationsService from '../../../../services/nonAssociationsService'
 
 export default class ReviewPrisonersAlertsRoutes {
-  constructor(private readonly prisonerAlertsService: PrisonerAlertsService) {}
+  constructor(
+    private readonly prisonerAlertsService: PrisonerAlertsService,
+    private readonly nonAssociationsService: NonAssociationsService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId } = req.params
@@ -42,6 +46,8 @@ export default class ReviewPrisonersAlertsRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
+
     if (req.query.preserveHistory) {
       req.session.returnTo = 'schedule?preserveHistory=true'
     }
@@ -50,6 +56,11 @@ export default class ReviewPrisonersAlertsRoutes {
       return res.redirectOrReturn('date-and-time')
     }
 
+    const { prisoners } = req.session.appointmentJourney
+    const prisonerNumbers = prisoners.map(prisoner => prisoner.number)
+    const nonAssociations = await this.nonAssociationsService.getNonAssociationsBetween(prisonerNumbers, user)
+
+    if (nonAssociations.length) return res.redirect('review-non-associations')
     return res.redirectOrReturn('name')
   }
 
