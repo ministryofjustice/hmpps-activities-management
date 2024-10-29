@@ -34,6 +34,16 @@ export default class ReviewNonAssociationRoutes {
     })
   }
 
+  REMOVE = async (req: Request, res: Response): Promise<void> => {
+    const { prisonNumber } = req.params
+
+    req.session.appointmentJourney.prisoners = req.session.appointmentJourney.prisoners.filter(
+      prisoner => prisoner.number !== prisonNumber,
+    )
+
+    res.redirect(`../../review-non-associations${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
+  }
+
   private enhanceNonAssociations = async (nonAssociations: NonAssociation[], user: ServiceUser) => {
     const prisonerNumbers = new Set(
       nonAssociations.flatMap(({ firstPrisonerNumber, secondPrisonerNumber }) => [

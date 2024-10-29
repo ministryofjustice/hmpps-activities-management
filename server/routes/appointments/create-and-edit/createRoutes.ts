@@ -146,6 +146,7 @@ export default function Create({
   get('/review-prisoners-alerts', reviewPrisonerAlerts.GET, true)
   get('/review-prisoners-alerts/:prisonNumber/remove', reviewPrisonerAlerts.REMOVE, true)
   get('/review-non-associations', reviewNonAssociations.GET, true)
+  get('/review-non-associations/:prisonNumber/remove', reviewNonAssociations.REMOVE, true)
   get('/appointment-set-date', appointmentSetDateRoutes.GET, true)
   post('/appointment-set-date', appointmentSetDateRoutes.POST, AppointmentSetDate)
   get('/appointment-set-times', appointmentSetTimesRoutes.GET, true)
