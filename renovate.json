@@ -1,15 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>ministryofjustice/hmpps-renovate-config:node"],
-  "reviewers": [
-    "timoj58",
-    "natclamp-moj",
-    "Kristian-Gregory",
-    "davidthomas22",
-    "dafhoustonmoj",
-    "munslowl",
-    "angela-pan-moj"
-  ],
+  "reviewers": ["natclamp-moj", "Kristian-Gregory", "davidthomas22", "dafhoustonmoj", "munslowl", "angela-pan-moj"],
   "packageRules": [
     {
       "matchManagers": ["npm"],
