@@ -28,6 +28,7 @@ describe('Movement list routes - location events', () => {
   let res: Response
 
   const prisonCode = 'MDI'
+  const today = new Date()
 
   const internalLocation = {
     id: 1,
@@ -643,8 +644,8 @@ describe('Movement list routes - location events', () => {
 
   it('clashing events excludes events at location', async () => {
     const dateOption = DateOption.TODAY
-    const dateQueryParam = format(new Date(), 'yyyy-MM-dd')
-    const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
+    const dateQueryParam = format(today, 'yyyy-MM-dd')
+    const date = parse(dateQueryParam, 'yyyy-MM-dd', today)
     const timeSlot = TimeSlot.AM
     req.query = {
       locationIds: `${internalLocation.id}`,
@@ -671,6 +672,7 @@ describe('Movement list routes - location events', () => {
             internalLocationId: internalLocation.id,
             summary: 'Appointment at location',
             prisonerNumber: 'A1234BC',
+            date: format(today, 'yyyy-MM-dd'),
             startTime: '10:00',
             endTime: '11:30',
           },
@@ -686,6 +688,7 @@ describe('Movement list routes - location events', () => {
         ],
       },
     ] as InternalLocationEvents[]
+
     when(activitiesService.getInternalLocationEvents)
       .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
       .mockResolvedValue(internalLocationEvents)
@@ -930,10 +933,97 @@ describe('Movement list routes - location events', () => {
     })
   })
 
+  it('filters out expired cancelled appointments', async () => {
+    const dateOption = DateOption.TODAY
+    const dateQueryParam = format(today, 'yyyy-MM-dd')
+    const date = parse(dateQueryParam, 'yyyy-MM-dd', today)
+    const timeSlot = TimeSlot.AM
+    req.query = {
+      locationIds: `${internalLocation.id}`,
+      dateOption,
+      timeSlot,
+    }
+
+    const internalLocationEvents = [
+      {
+        ...internalLocation,
+        events: [
+          {
+            scheduledInstanceId: 1,
+            eventType: EventType.APPOINTMENT,
+            prisonerNumber: 'A1234BC',
+            date: format(today, 'yyyy-MM-dd'),
+            startTime: '09:10',
+            endTime: '10:30',
+            cancelled: true,
+            appointmentSeriesFrequency: AppointmentFrequency.DAILY,
+            appointmentSeriesCancellationStartDate: format(subDays(today, 4), 'yyyy-MM-dd'),
+          },
+          {
+            scheduledInstanceId: 2,
+            eventType: EventType.ACTIVITY,
+            prisonerNumber: 'A1234BC',
+            date: format(today, 'yyyy-MM-dd'),
+            startTime: '09:00',
+            endTime: '12:30',
+            appointmentSeriesCancellationStartDate: null,
+          },
+          {
+            scheduledInstanceId: 3,
+            eventType: EventType.APPOINTMENT,
+            prisonerNumber: 'A1234BC',
+            date: format(today, 'yyyy-MM-dd'),
+            startTime: '09:15',
+            endTime: '11:30',
+            cancelled: true,
+            appointmentSeriesFrequency: AppointmentFrequency.DAILY,
+            appointmentSeriesCancellationStartDate: format(subDays(today, 2), 'yyyy-MM-dd'),
+          },
+        ],
+      },
+    ] as InternalLocationEvents[]
+
+    when(activitiesService.getInternalLocationEvents)
+      .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+      .mockResolvedValue(internalLocationEvents)
+
+    when(activitiesService.getScheduledEventsForPrisoners)
+      .calledWith(date, [prisoner.prisonerNumber], res.locals.user)
+      .mockResolvedValue({
+        activities: [],
+        appointments: [],
+        visits: [],
+        adjudications: [],
+        courtHearings: [],
+        externalTransfers: [],
+      } as PrisonerScheduledEvents)
+
+    await handler.GET(req, res)
+
+    expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
+      dateOption,
+      date: dateQueryParam,
+      timeSlot,
+      locations: [
+        {
+          ...internalLocationEvents[0],
+          prisonerEvents: [
+            {
+              ...prisoner,
+              events: [internalLocationEvents[0].events[1]],
+              clashingEvents: [] as ScheduledEvent[],
+            },
+          ],
+        },
+      ] as MovementListLocation[],
+      alertOptions: alertFilterOptions,
+    })
+  })
+
   it('orders events', async () => {
     const dateOption = DateOption.TODAY
-    const dateQueryParam = format(new Date(), 'yyyy-MM-dd')
-    const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
+    const dateQueryParam = format(today, 'yyyy-MM-dd')
+    const date = parse(dateQueryParam, 'yyyy-MM-dd', today)
     const timeSlot = TimeSlot.AM
     req.query = {
       locationIds: `${internalLocation.id}`,
@@ -951,6 +1041,7 @@ describe('Movement list routes - location events', () => {
             internalLocationId: internalLocation.id,
             summary: 'Appointment 2 at location',
             prisonerNumber: 'A1234BC',
+            date: format(today, 'yyyy-MM-dd'),
             startTime: '10:00',
             endTime: '11:30',
           },
@@ -960,6 +1051,7 @@ describe('Movement list routes - location events', () => {
             internalLocationId: internalLocation.id,
             summary: 'Appointment 1 at location',
             prisonerNumber: 'A1234BC',
+            date: format(today, 'yyyy-MM-dd'),
             startTime: '10:00',
             endTime: '11:30',
           },
@@ -969,6 +1061,7 @@ describe('Movement list routes - location events', () => {
             internalLocationId: internalLocation.id,
             summary: 'Appointment 3 at location',
             prisonerNumber: 'A1234BC',
+            date: format(today, 'yyyy-MM-dd'),
             startTime: '09:00',
             endTime: '11:30',
           },
@@ -1063,6 +1156,7 @@ describe('Movement list routes - location events', () => {
                   internalLocationId: internalLocation.id,
                   summary: 'Appointment 3 at location',
                   prisonerNumber: 'A1234BC',
+                  date: format(today, 'yyyy-MM-dd'),
                   startTime: '09:00',
                   endTime: '11:30',
                 },
@@ -1072,6 +1166,7 @@ describe('Movement list routes - location events', () => {
                   internalLocationId: internalLocation.id,
                   summary: 'Appointment 1 at location',
                   prisonerNumber: 'A1234BC',
+                  date: format(today, 'yyyy-MM-dd'),
                   startTime: '10:00',
                   endTime: '11:30',
                 },
@@ -1081,6 +1176,7 @@ describe('Movement list routes - location events', () => {
                   internalLocationId: internalLocation.id,
                   summary: 'Appointment 2 at location',
                   prisonerNumber: 'A1234BC',
+                  date: format(today, 'yyyy-MM-dd'),
                   startTime: '10:00',
                   endTime: '11:30',
                 },
