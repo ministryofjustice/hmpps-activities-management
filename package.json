@@ -41,6 +41,14 @@
       "<rootDir>jest.setup.ts"
     ],
     "testEnvironment": "node",
+    "transform": {
+      "^.+\\.[tj]sx?$": [
+        "ts-jest",
+        {
+          "isolatedModules": true
+        }
+      ]
+    },
     "reporters": [
       "default",
       [
