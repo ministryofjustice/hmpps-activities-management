@@ -1,18 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const { nodeResolve } = require('@rollup/plugin-node-resolve')
 const commonjs = require('@rollup/plugin-commonjs')
-const jitGrunt = require('jit-grunt')
 
 module.exports = grunt => {
-  jitGrunt(grunt, {
-    sass: 'grunt-contrib-sass',
-    uglify: 'grunt-contrib-uglify',
-    copy: 'grunt-contrib-copy',
-    watch: 'grunt-contrib-watch',
-    clean: 'grunt-contrib-clean',
-    rollup: 'grunt-rollup',
-  })
-
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     sass: {
@@ -116,6 +106,13 @@ module.exports = grunt => {
       },
     },
   })
+
+  grunt.loadNpmTasks('grunt-contrib-sass')
+  grunt.loadNpmTasks('grunt-contrib-uglify')
+  grunt.loadNpmTasks('grunt-contrib-copy')
+  grunt.loadNpmTasks('grunt-contrib-watch')
+  grunt.loadNpmTasks('grunt-contrib-clean')
+  grunt.loadNpmTasks('grunt-rollup')
 
   grunt.registerTask('default', ['clean', 'sass', 'rollup', 'uglify', 'copy'])
   grunt.registerTask('dev-build', ['sass', 'rollup', 'copy'])
