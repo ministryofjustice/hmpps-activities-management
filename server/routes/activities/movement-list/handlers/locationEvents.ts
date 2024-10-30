@@ -117,11 +117,15 @@ export default class LocationEventsRoutes {
                   .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e)),
               )
 
+              const filteredEvents = events.filter(
+                e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e),
+              )
+
               return {
                 ...p,
                 alerts: this.alertsFilterService.getFilteredAlerts(alertFilters, p?.alerts),
                 category: this.alertsFilterService.getFilteredCategory(alertFilters, p?.category),
-                events,
+                events: filteredEvents,
                 clashingEvents,
               } as MovementListPrisonerEvents
             })
