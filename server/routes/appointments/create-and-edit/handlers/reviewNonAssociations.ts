@@ -45,20 +45,19 @@ export default class ReviewNonAssociationRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    if (req.query.preserveHistory) {
-      req.session.returnTo = 'schedule?preserveHistory=true'
-    }
-
     return res.redirectOrReturn('name')
   }
 
   private enhanceNonAssociations = async (nonAssociations: NonAssociation[], user: ServiceUser) => {
+    if (!nonAssociations.length) return []
+
     const prisonerNumbers = new Set(
       nonAssociations.flatMap(({ firstPrisonerNumber, secondPrisonerNumber }) => [
         firstPrisonerNumber,
         secondPrisonerNumber,
       ]),
     )
+
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(Array.from(prisonerNumbers), user)
     const prisonerMap = new Map(
       prisoners.map(({ prisonerNumber, firstName, lastName, cellLocation }) => [
