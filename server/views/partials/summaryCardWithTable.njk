@@ -26,7 +26,7 @@
     ]), rows) %}
 {% endfor %}
 
-    <div class="govuk-summary-card">
+    <div class="govuk-summary-card" data-qa="card-{{primaryPrisoner.prisonerNumber}}">
         <div class="govuk-summary-card__title-wrapper">
             <h2 class="govuk-summary-card__title">
                 <a href="{{ dpsUrl }}/prisoner/{{ primaryPrisoner.prisonerNumer }}"
@@ -37,7 +37,7 @@
             </h2>
             <ul class="govuk-summary-card__actions">
                 <li class="govuk-summary-card__action">
-                    <a class="govuk-link" href="review-non-associations/{{ primaryPrisoner.prisonerNumber }}/remove{{ '?preserveHistory=true' if preserveHistory else '' }}">Remove attendee
+                    <a class="govuk-link" href="review-non-associations/{{ primaryPrisoner.prisonerNumber }}/remove{{ '?preserveHistory=true' if preserveHistory else '' }}" data-qa="remove-attendee-link-{{primaryPrisoner.prisonerNumber}}">Remove attendee
                         <span class="govuk-visually-hidden">
                             {{ primaryPrisoner.prisonerNumber }}</span></a>
                 </li>
@@ -47,7 +47,7 @@
             {{ govukTable({
             caption: 'Attendee',
             captionClasses: "govuk-visually-hidden",
-            firstCellIsHeader: true,
+            firstCellIsHeader: false,
             classes: "govuk-!-margin-bottom-1",
             head: [
                 {

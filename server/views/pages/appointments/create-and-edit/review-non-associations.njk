@@ -25,7 +25,7 @@
                     text: "Check an attendee’s prisoner profile for full details of their non-associations.",
                     iconFallbackText: "Warning"
                 }) }}
-                <p class="govuk-body">You’re reviewing {{ nonAssociations | length }} people with non-associations out of a total of {{ attendesTotalCount }} attendees.</p>
+                <p class="govuk-body" data-qa="attendee-numbers">You’re reviewing {{ nonAssociations | length }} people with non-associations out of a total of {{ attendesTotalCount }} attendees.</p>
                 {% for attendee in nonAssociations %}
                     {{ summaryCardWithTable(attendee) }}
                 {% endfor %}
