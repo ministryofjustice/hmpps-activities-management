@@ -85,7 +85,7 @@
   "dependencies": {
     "@hmcts/uk-bank-holidays": "^1.0.2",
     "@microsoft/applicationinsights-web": "^3.2.2",
-    "@ministryofjustice/frontend": "^2.2.3",
+    "@ministryofjustice/frontend": "^2.2.5",
     "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "3.9.4",
     "@types/express-serve-static-core": "^4.19.6",
     "@types/lodash": "^4.17.5",
@@ -107,7 +107,7 @@
     "express": "^4.21.1",
     "express-prom-bundle": "^7.0.0",
     "express-session": "^1.18.1",
-    "govuk-frontend": "^5.4.0",
+    "govuk-frontend": "^5.7.1",
     "helmet": "^8.0.0",
     "http-errors": "^2.0.0",
     "isbinaryfile": "^5.0.2",
