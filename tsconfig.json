@@ -6,7 +6,6 @@
     "moduleResolution": "node",
     "outDir": "./dist",
     "sourceMap": true,
-    "suppressImplicitAnyIndexErrors": true,
     "skipLibCheck": true,
     "noEmit": false,
     "allowJs": true,
@@ -14,7 +13,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "experimentalDecorators": true,
     "typeRoots": ["./server/@types", "./node_modules/@types"],
     "ignoreDeprecations": "5.0"
