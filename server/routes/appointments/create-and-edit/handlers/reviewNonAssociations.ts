@@ -24,7 +24,7 @@ export default class ReviewNonAssociationRoutes {
     const nonAssociations = await this.nonAssociationsService.getNonAssociationsBetween(prisonerNumbers, user)
 
     const enhancedNonAssociations = await this.enhanceNonAssociations(nonAssociations, user)
-
+    enhancedNonAssociations.forEach(a => console.log(a))
     res.render('pages/appointments/create-and-edit/review-non-associations', {
       appointmentId,
       backLinkHref,
@@ -84,6 +84,7 @@ export default class ReviewNonAssociationRoutes {
           const { prisonerNumber, name, cellLocation } = prisonerMap.get(otherPrisonerNumber)
           return { prisonerNumber, name, cellLocation, lastUpdated: whenUpdated }
         })
+        .sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime())
       return { nonAssociations: nonAssociationsList, primaryPrisoner }
     })
 

@@ -87,6 +87,7 @@ context('Create group appointment', () => {
       JSON.parse('{"name": "John Smith", "username": "jsmith", "authSource": "nomis"}'),
     )
     cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts?', getOffenderAlerts)
+    cy.stubEndpoint('POST', '/non-associations/between', [])
   })
 
   it('Should complete create group appointment journey', () => {

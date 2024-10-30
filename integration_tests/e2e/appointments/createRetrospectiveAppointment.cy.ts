@@ -74,6 +74,7 @@ context('Create a retrospective appointment', () => {
       JSON.parse('{"name": "John Smith", "username": "jsmith", "authSource": "nomis"}'),
     )
     cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlerts)
+    cy.stubEndpoint('POST', '/non-associations/between', [])
   })
 
   it('Should complete create group appointment journey for a retrospective appointment', () => {
