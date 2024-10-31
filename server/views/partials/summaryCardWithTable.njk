@@ -8,11 +8,11 @@
 {% for otherPrisoner in attendee.nonAssociations %}
     {% set rows = (rows.push([
             {
-                html: showProfileLink({
-                    name: otherPrisoner.name | toTitleCase,
-                    prisonerNumber: otherPrisoner.prisonerNumber,
-                    showPrisonerNumber: false
-                })
+                html: '<a href="'+ nonAssociationsUrl +'/prisoner/'+ otherPrisoner.prisonerNumber +'/non-associations"
+                target="_blank"
+                class="govuk-link govuk-link--no-visited-state">'+
+                otherPrisoner.name | toTitleCase if otherPrisoner.name
+                +'</a>'
             },
             {
                 text: otherPrisoner.prisonerNumber
@@ -29,7 +29,7 @@
     <div class="govuk-summary-card" data-qa="card-{{primaryPrisoner.prisonerNumber}}">
         <div class="govuk-summary-card__title-wrapper">
             <h2 class="govuk-summary-card__title">
-                <a href="{{ dpsUrl }}/prisoner/{{ primaryPrisoner.prisonerNumer }}"
+                <a href="{{ nonAssociationsUrl }}/prisoner/{{ primaryPrisoner.prisonerNumber }}/non-associations"
                 target="_blank"
                 class="govuk-link govuk-link--no-visited-state">
                 {{ primaryPrisoner.name | toTitleCase if primaryPrisoner.name else 'No matching name' }}, {{ primaryPrisoner.prisonerNumber }}

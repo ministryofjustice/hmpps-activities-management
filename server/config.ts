@@ -168,6 +168,11 @@ export default {
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
+  nonAssociationsUrl: get(
+    'NON_ASSOCIATIONS_URL',
+    'https://non-associations-dev.hmpps.service.justice.gov.uk/',
+    requiredInProduction,
+  ),
   reportAFaultUrl: get('REPORT_A_FAULT_URL', '#', requiredInProduction),
   feedbackUrl: get('FEEDBACK_URL', '#', requiredInProduction),
   routeAuth: [
