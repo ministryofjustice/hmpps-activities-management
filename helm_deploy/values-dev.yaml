@@ -25,6 +25,7 @@ generic-service:
     NON_ASSOCIATIONS_API_URL: "https://non-associations-api-dev.hmpps.service.justice.gov.uk"
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-dev.hmpps-digital-prison-reporting-mi-dev.svc.cluster.local"
     DEALLOCATE_TODAY_SESSION_TOGGLE_ENABLED: "true"
+    NON_ASSOCIATIONS_APPOINTMENT_REVIEW_ENABLED: "true"
 
   allowlist: null
 

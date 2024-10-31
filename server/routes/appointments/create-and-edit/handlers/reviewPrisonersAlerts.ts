@@ -56,11 +56,13 @@ export default class ReviewPrisonersAlertsRoutes {
       return res.redirectOrReturn('date-and-time')
     }
 
-    const { prisoners } = req.session.appointmentJourney
-    const prisonerNumbers = prisoners.map(prisoner => prisoner.number)
-    const nonAssociations = await this.nonAssociationsService.getNonAssociationsBetween(prisonerNumbers, user)
+    if (config.nonAssociationsAppointmentReviewEnabled) {
+      const { prisoners } = req.session.appointmentJourney
+      const prisonerNumbers = prisoners.map(prisoner => prisoner.number)
+      const nonAssociations = await this.nonAssociationsService.getNonAssociationsBetween(prisonerNumbers, user)
 
-    if (nonAssociations.length) return res.redirect('review-non-associations')
+      if (nonAssociations.length) return res.redirect('review-non-associations')
+    }
     return res.redirectOrReturn('name')
   }
 
