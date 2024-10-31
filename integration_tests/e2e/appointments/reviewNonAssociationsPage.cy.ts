@@ -117,19 +117,28 @@ context('Create group appointment', () => {
 
     reviewNonAssociationsPage.cards(2)
     reviewNonAssociationsPage.getCard('A1350DZ').then($data => {
-      expect($data.get(0).innerText).to.contain('Gregs, Stephen')
+      expect($data.get(0).innerText).to.contain('Stephen Gregs')
       expect($data.get(1).innerText).to.contain('A8644DY')
       expect($data.get(2).innerText).to.contain('1-3')
       expect($data.get(3).innerText).to.contain('30 October 2024')
     })
     reviewNonAssociationsPage.getCard('A8644DY').then($data => {
-      expect($data.get(0).innerText).to.contain('Winchurch, David')
+      expect($data.get(0).innerText).to.contain('David Winchurch')
       expect($data.get(1).innerText).to.contain('A1350DZ')
       expect($data.get(2).innerText).to.contain('2-2-024')
       expect($data.get(3).innerText).to.contain('30 October 2024')
     })
 
+    cy.stubEndpoint('POST', '/non-associations/between', [])
     reviewNonAssociationsPage.removeAttendeeLink('A8644DY').click()
+
+    reviewNonAssociationsPage
+      .header()
+      .should('contain.text', 'You’ve dealt with all the non-associations between this appointment’s attendees')
+
+    reviewNonAssociationsPage
+      .remainingAttendees()
+      .should('contain.text', 'There are 2 attendees remaining on the appointment list.')
 
     reviewNonAssociationsPage.continue()
 
@@ -179,6 +188,33 @@ context('Create group appointment', () => {
     )}.`
     confirmationPage.assertMessageEquals(successMessage)
     confirmationPage.viewAppointmentLink().click()
+  })
+  it('should skip the review non-associations page if there are fewer than 2 attendees', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.createGroupAppointmentCard().click()
+
+    const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
+    howToAddPrisonersPage.selectOneByOne()
+    howToAddPrisonersPage.continue()
+
+    let selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
+    selectPrisonerPage.enterPrisonerNumber('lee')
+    selectPrisonerPage.searchButton().click()
+
+    selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
+    selectPrisonerPage.continueButton().click()
+
+    let reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    reviewPrisonersPage.continue()
+
+    const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+    reviewPrisonerAlertsPage.continue()
+
+    Page.verifyOnPage(NamePage)
   })
   it("Should skip the review non-associations page if there aren't any", () => {
     cy.stubEndpoint('POST', '/non-associations/between', [])

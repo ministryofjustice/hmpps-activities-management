@@ -76,7 +76,7 @@ export default function Create({
   const appointmentSetDateRoutes = new AppointmentSetDateRoutes()
   const appointmentSetTimesRoutes = new AppointmentSetTimesRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
-  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService, nonAssociationsService)
+  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
   const reviewNonAssociations = new ReviewNonAssociationsRoutes(nonAssociationsService, prisonService)
   const copySeriesRoutes = new CopySeries()
   const noAttendeesRoutes = new NoAttendees()

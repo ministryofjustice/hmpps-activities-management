@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-{% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/summaryCardWithTable.njk" import summaryCardWithTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
@@ -25,12 +24,12 @@
                     text: "Check an attendee’s prisoner profile for full details of their non-associations.",
                     iconFallbackText: "Warning"
                 }) }}
-                <p class="govuk-body" data-qa="attendee-numbers">You’re reviewing {{ nonAssociations | length }} people with non-associations out of a total of {{ attendesTotalCount }} attendees.</p>
+                <p class="govuk-body" data-qa="attendee-numbers">You’re reviewing {{ nonAssociations | length }} people with non-associations out of a total of {{ attendeesTotalCount }} attendees.</p>
                 {% for attendee in nonAssociations %}
                     {{ summaryCardWithTable(attendee) }}
                 {% endfor %}
             {% else %}
-                <p class="govuk-body">There are {{ attendesTotalCount }} attendees remaining on the appointment list.</p>
+                <p class="govuk-body" data-qa="remaining-attendees">There are {{ attendeesTotalCount }} attendees remaining on the appointment list.</p>
             {% endif %}
 
             <form method="POST">

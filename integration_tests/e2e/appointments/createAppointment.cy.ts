@@ -135,13 +135,13 @@ context('Create group appointment', () => {
 
     reviewNonAssociationsPage.cards(2)
     reviewNonAssociationsPage.getCard('A1350DZ').then($data => {
-      expect($data.get(0).innerText).to.contain('Gregs, Stephen')
+      expect($data.get(0).innerText).to.contain('Stephen Gregs')
       expect($data.get(1).innerText).to.contain('A8644DY')
       expect($data.get(2).innerText).to.contain('1-3')
       expect($data.get(3).innerText).to.contain('30 October 2024')
     })
     reviewNonAssociationsPage.getCard('A8644DY').then($data => {
-      expect($data.get(0).innerText).to.contain('Winchurch, David')
+      expect($data.get(0).innerText).to.contain('David Winchurch')
       expect($data.get(1).innerText).to.contain('A1350DZ')
       expect($data.get(2).innerText).to.contain('2-2-024')
       expect($data.get(3).innerText).to.contain('30 October 2024')

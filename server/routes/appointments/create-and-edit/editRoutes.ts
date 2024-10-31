@@ -123,7 +123,7 @@ export default function Edit({
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const reviewPrisoners = new ReviewPrisoners(metricsService, prisonerAlertsService)
-  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService, nonAssociationsService)
+  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
 
   router.get(
     '/start/prisoners/add',

@@ -3,16 +3,14 @@ import { when } from 'jest-when'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import ReviewPrisonersAlertsRoutes from './reviewPrisonersAlerts'
 import PrisonerAlertsService, { PrisonerAlertResults } from '../../../../services/prisonerAlertsService'
-import NonAssociationsService from '../../../../services/nonAssociationsService'
+import config from '../../../../config'
 
 jest.mock('../../../../services/prisonerAlertsService')
-jest.mock('../../../../services/nonAssociationsService')
 
 const prisonerAlertsService = new PrisonerAlertsService(null) as jest.Mocked<PrisonerAlertsService>
-const nonAssociationsService = new NonAssociationsService(null) as jest.Mocked<NonAssociationsService>
 
 describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => {
-  const handler = new ReviewPrisonersAlertsRoutes(prisonerAlertsService, nonAssociationsService)
+  const handler = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
 
   let req: Request
   let res: Response
@@ -127,18 +125,23 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
   })
 
   describe('POST', () => {
-    beforeEach(() => {
-      when(nonAssociationsService.getNonAssociationsBetween)
-        .calledWith(req.session.appointmentJourney.prisoners as unknown as string[], res.locals.user)
-        .mockReturnValue(Promise.resolve([]))
-    })
     it('should redirect or return to name page during create', async () => {
+      config.nonAssociationsAppointmentReviewEnabled = false
       req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
       req.body = {
         howToAdd: 'SEARCH',
       }
       await handler.POST(req, res)
       expect(res.redirectOrReturn).toBeCalledWith('name')
+    })
+    it('should redirect or return to non-associations page during create', async () => {
+      config.nonAssociationsAppointmentReviewEnabled = true
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+      req.body = {
+        howToAdd: 'SEARCH',
+      }
+      await handler.POST(req, res)
+      expect(res.redirectOrReturn).toBeCalledWith('review-non-associations')
     })
 
     it('should redirect or return to name page during copy', async () => {

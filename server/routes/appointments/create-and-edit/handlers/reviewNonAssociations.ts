@@ -14,23 +14,27 @@ export default class ReviewNonAssociationRoutes {
     const { user } = res.locals
     const { appointmentId } = req.params
     const { appointmentJourney } = req.session
-    const { preserveHistory } = req.query
-
+    const { preserveHistory, prisonerRemoved } = req.query
     const backLinkHref = 'review-prisoners-alerts'
-
     const { prisoners } = appointmentJourney
-    const prisonerNumbers = prisoners.map(prisoner => prisoner.number)
 
+    // If there is only one prisoner added to the appointment, non-associations are impossible
+    if (prisoners.length < 2) return res.redirect('name')
+
+    const prisonerNumbers = prisoners.map(prisoner => prisoner.number)
     const nonAssociations = await this.nonAssociationsService.getNonAssociationsBetween(prisonerNumbers, user)
 
+    // If there are no non-associations, and it isn't because a user has removed them via this page, redirect
+    if (!nonAssociations.length && !prisonerRemoved) return res.redirect('name')
     const enhancedNonAssociations = await this.enhanceNonAssociations(nonAssociations, user)
 
-    res.render('pages/appointments/create-and-edit/review-non-associations', {
+    return res.render('pages/appointments/create-and-edit/review-non-associations', {
       appointmentId,
       backLinkHref,
       preserveHistory,
       nonAssociations: enhancedNonAssociations,
-      attendesTotalCount: prisonerNumbers.length,
+      attendeesTotalCount: prisonerNumbers.length,
+      displayNonAssocDealtWithMessage: !enhancedNonAssociations.length && prisonerRemoved === 'true',
     })
   }
 
@@ -41,7 +45,9 @@ export default class ReviewNonAssociationRoutes {
       prisoner => prisoner.number !== prisonNumber,
     )
 
-    res.redirect(`../../review-non-associations${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
+    res.redirect(
+      `../../review-non-associations?prisonerRemoved=true${req.query.preserveHistory ? '&preserveHistory=true' : ''}`,
+    )
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
