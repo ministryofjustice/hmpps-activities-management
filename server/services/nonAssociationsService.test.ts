@@ -4,12 +4,15 @@ import NonAssociationsApiClient from '../data/nonAssociationsApiClient'
 import { ServiceUser } from '../@types/express'
 import { NonAssociation } from '../@types/nonAssociationsApi/types'
 import NonAssociationsService from './nonAssociationsService'
+import PrisonService from './prisonService'
 
 jest.mock('../data/nonAssociationsApiClient')
+jest.mock('../services/prisonService')
 
 describe('NonAssociationsService', () => {
+  const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
   const nonAssociationsApiClient = new NonAssociationsApiClient()
-  const nonAssociationsService = new NonAssociationsService(nonAssociationsApiClient)
+  const nonAssociationsService = new NonAssociationsService(nonAssociationsApiClient, prisonService)
 
   const user = {
     activeCaseLoadId: 'MDI',

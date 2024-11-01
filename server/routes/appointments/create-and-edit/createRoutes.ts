@@ -38,6 +38,7 @@ import ReviewNonAssociationsRoutes from './handlers/reviewNonAssociations'
 import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
 import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
+import ConfirmNonAssociationRoutes from './handlers/confirm-non-associations'
 
 export default function Create({
   prisonService,
@@ -78,6 +79,7 @@ export default function Create({
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
   const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
   const reviewNonAssociations = new ReviewNonAssociationsRoutes(nonAssociationsService, prisonService)
+  const confirmNonAssociations = new ConfirmNonAssociationRoutes(nonAssociationsService)
   const copySeriesRoutes = new CopySeries()
   const noAttendeesRoutes = new NoAttendees()
 
@@ -148,6 +150,8 @@ export default function Create({
   get('/review-non-associations', reviewNonAssociations.GET, true)
   post('/review-non-associations', reviewNonAssociations.POST)
   get('/review-non-associations/:prisonNumber/remove', reviewNonAssociations.REMOVE, true)
+  get('/confirm-non-associations', confirmNonAssociations.GET, true)
+  post('/confirm-non-associations', confirmNonAssociations.POST)
   get('/appointment-set-date', appointmentSetDateRoutes.GET, true)
   post('/appointment-set-date', appointmentSetDateRoutes.POST, AppointmentSetDate)
   get('/appointment-set-times', appointmentSetTimesRoutes.GET, true)
