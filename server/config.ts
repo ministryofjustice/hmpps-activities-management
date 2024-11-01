@@ -168,6 +168,11 @@ export default {
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
+  nonAssociationsUrl: get(
+    'NON_ASSOCIATIONS_URL',
+    'https://non-associations-dev.hmpps.service.justice.gov.uk',
+    requiredInProduction,
+  ),
   reportAFaultUrl: get('REPORT_A_FAULT_URL', '#', requiredInProduction),
   feedbackUrl: get('FEEDBACK_URL', '#', requiredInProduction),
   routeAuth: [
@@ -202,6 +207,9 @@ export default {
   ),
   bookAVideoLinkToggleEnabled: toBoolean(
     get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
+  ),
+  nonAssociationsAppointmentReviewEnabled: toBoolean(
+    get('NON_ASSOCIATIONS_APPOINTMENT_REVIEW_ENABLED', 'false', requiredInProduction),
   ),
   deallocateTodaySessionEnabled: toBoolean(get('DEALLOCATE_TODAY_SESSION_TOGGLE_ENABLED', 'false')),
   appointmentsConfig: {
