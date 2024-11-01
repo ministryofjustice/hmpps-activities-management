@@ -27,12 +27,7 @@ import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
 import UncancelRoutes from './handlers/uncancel'
 
-export default function Edit({
-  prisonService,
-  activitiesService,
-  metricsService,
-  nonAssociationsService,
-}: Services): Router {
+export default function Edit({ prisonService, activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
