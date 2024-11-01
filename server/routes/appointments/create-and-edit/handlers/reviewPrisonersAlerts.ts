@@ -50,6 +50,7 @@ export default class ReviewPrisonersAlertsRoutes {
       return res.redirectOrReturn('date-and-time')
     }
 
+    if (config.nonAssociationsAppointmentReviewEnabled) return res.redirectOrReturn('review-non-associations')
     return res.redirectOrReturn('name')
   }
 

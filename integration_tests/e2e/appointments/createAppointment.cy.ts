@@ -15,6 +15,7 @@ import getAppointmentSeries from '../../fixtures/activitiesApi/getAppointmentSer
 import getGroupAppointmentSeriesDetails from '../../fixtures/activitiesApi/getGroupAppointmentSeriesDetails.json'
 import getGroupAppointmentDetails from '../../fixtures/activitiesApi/getGroupAppointmentDetails.json'
 import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlerts.json'
+import getNonAssociationsBetweenA8644DYA1350DZ from '../../fixtures/nonAssociationsApi/getNonAssociationsBetweenA8644DYA1350DZ.json'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
 import ReviewPrisonerAlertsPage, {
@@ -35,6 +36,7 @@ import ExtraInformationPage from '../../pages/appointments/create-and-edit/extra
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
+import ReviewNonAssociationsPage from '../../pages/appointments/create-and-edit/reviewNonAssociationsPage'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -78,6 +80,7 @@ context('Create group appointment', () => {
       JSON.parse('{"name": "John Smith", "username": "jsmith", "authSource": "nomis"}'),
     )
     cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlerts)
+    cy.stubEndpoint('POST', '/non-associations/between', getNonAssociationsBetweenA8644DYA1350DZ)
   })
 
   it('Should complete create group appointment journey', () => {
@@ -124,6 +127,30 @@ context('Create group appointment', () => {
       'Terrorism Act or Related Offence',
     )
     reviewPrisonerAlertsPage.continue()
+
+    const reviewNonAssociationsPage = Page.verifyOnPage(ReviewNonAssociationsPage)
+    reviewNonAssociationsPage
+      .attendeeParagraph()
+      .should('contain.text', 'You’re reviewing 2 people with non-associations out of a total of 3 attendees.')
+
+    reviewNonAssociationsPage.cards(2)
+    reviewNonAssociationsPage.getCard('A1350DZ').then($data => {
+      expect($data.get(0).innerText).to.contain('Stephen Gregs')
+      expect($data.get(1).innerText).to.contain('A8644DY')
+      expect($data.get(2).innerText).to.contain('1-3')
+      expect($data.get(3).innerText).to.contain('30 October 2024')
+    })
+    reviewNonAssociationsPage.getCard('A8644DY').then($data => {
+      expect($data.get(0).innerText).to.contain('David Winchurch')
+      expect($data.get(1).innerText).to.contain('A1350DZ')
+      expect($data.get(2).innerText).to.contain('2-2-024')
+      expect($data.get(3).innerText).to.contain('30 October 2024')
+    })
+
+    reviewNonAssociationsPage.removeAttendeeLink('A8644DY').should('exist')
+    reviewNonAssociationsPage.removeAttendeeLink('A1350DZ').should('exist')
+
+    reviewNonAssociationsPage.continue()
 
     const namePage = Page.verifyOnPage(NamePage)
     namePage.selectCategory('Chaplaincy')
