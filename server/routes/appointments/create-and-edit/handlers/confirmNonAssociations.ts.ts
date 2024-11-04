@@ -18,7 +18,7 @@ export default class ConfirmNonAssociationRoutes {
 
     return res.render('pages/appointments/create-and-edit/confirm-non-associations', {
       backLinkHref: 'review-non-associations',
-      nonAssociationsCount: nonAssociationsRemainingCount || enhancedNonAssociations.length,
+      nonAssociationsCount: Number(nonAssociationsRemainingCount) || enhancedNonAssociations.length,
     })
   }
 

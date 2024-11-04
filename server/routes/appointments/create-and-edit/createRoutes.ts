@@ -38,7 +38,7 @@ import ReviewNonAssociationsRoutes from './handlers/reviewNonAssociations'
 import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
 import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
-import ConfirmNonAssociationRoutes from './handlers/confirm-non-associations'
+import ConfirmNonAssociationRoutes from './handlers/confirmNonAssociations.ts'
 
 export default function Create({
   prisonService,

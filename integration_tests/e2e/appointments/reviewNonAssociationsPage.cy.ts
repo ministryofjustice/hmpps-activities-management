@@ -30,6 +30,7 @@ import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 import ReviewNonAssociationsPage from '../../pages/appointments/create-and-edit/reviewNonAssociationsPage'
 import ReviewPrisonerAlertsPage from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
+import ConfirmNonAssociationsPage from '../../pages/appointments/create-and-edit/confirmNonAssociationsPage'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -188,6 +189,81 @@ context('Create group appointment', () => {
     )}.`
     confirmationPage.assertMessageEquals(successMessage)
     confirmationPage.viewAppointmentLink().click()
+  })
+  it('Should complete create group appointment journey - continue to create despite non-associations remaining', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.appointmentsManagementCard().click()
+
+    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
+    appointmentsManagementPage.createGroupAppointmentCard().click()
+
+    const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
+    howToAddPrisonersPage.selectGroup()
+    howToAddPrisonersPage.continue()
+
+    const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
+    uploadPrisonerListPage.howToUseCSVSection()
+    uploadPrisonerListPage.getLinkByText('prison number list template').click()
+    uploadPrisonerListPage.assertFileDownload('prisoner-list.csv')
+    uploadPrisonerListPage.attatchFile('upload-prisoner-list.csv')
+    uploadPrisonerListPage.uploadFile()
+
+    let reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    reviewPrisonersPage.addAnotherPrisoner()
+
+    let selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
+    selectPrisonerPage.enterPrisonerNumber('lee')
+    selectPrisonerPage.searchButton().click()
+
+    selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
+    selectPrisonerPage.continueButton().click()
+
+    reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    reviewPrisonersPage.continue()
+
+    const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
+    reviewPrisonerAlertsPage.continue()
+
+    const reviewNonAssociationsPage = Page.verifyOnPage(ReviewNonAssociationsPage)
+    reviewNonAssociationsPage
+      .attendeeParagraph()
+      .should('contain.text', 'You’re reviewing 2 people with non-associations out of a total of 3 attendees.')
+
+    reviewNonAssociationsPage.cards(2)
+    reviewNonAssociationsPage.getCard('A1350DZ').then($data => {
+      expect($data.get(0).innerText).to.contain('Stephen Gregs')
+      expect($data.get(1).innerText).to.contain('A8644DY')
+      expect($data.get(2).innerText).to.contain('1-3')
+      expect($data.get(3).innerText).to.contain('30 October 2024')
+    })
+    reviewNonAssociationsPage.getCard('A8644DY').then($data => {
+      expect($data.get(0).innerText).to.contain('David Winchurch')
+      expect($data.get(1).innerText).to.contain('A1350DZ')
+      expect($data.get(2).innerText).to.contain('2-2-024')
+      expect($data.get(3).innerText).to.contain('30 October 2024')
+    })
+
+    reviewNonAssociationsPage.continue()
+    const confirmNonAssociationsPage = Page.verifyOnPage(ConfirmNonAssociationsPage)
+    confirmNonAssociationsPage
+      .header()
+      .should('contain.text', 'Confirm that 2 people with non-assocations can attend this appointment')
+
+    confirmNonAssociationsPage
+      .bodyText()
+      .should(
+        'contain.text',
+        'If you continue with the current attendee list, there will be 2 attendees who have a non-association with someone else on the appointment.',
+      )
+
+    confirmNonAssociationsPage.review()
+    cy.location().should(loc => {
+      expect(loc.pathname).to.include('review-non-associations')
+    })
+
+    reviewNonAssociationsPage.continue()
+    confirmNonAssociationsPage.confirm()
+    Page.verifyOnPage(NamePage)
   })
   it('should skip the review non-associations page if there are fewer than 2 attendees', () => {
     const indexPage = Page.verifyOnPage(IndexPage)

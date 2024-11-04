@@ -50,10 +50,11 @@ export default class ReviewNonAssociationRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { nonAssociationsRemainingCount } = req.body
-    if (nonAssociationsRemainingCount)
+    if (nonAssociationsRemainingCount > 0) {
       return res.redirectOrReturn(
         `confirm-non-associations?nonAssociationsRemainingCount=${nonAssociationsRemainingCount}`,
       )
+    }
     return res.redirectOrReturn('name')
   }
 }
