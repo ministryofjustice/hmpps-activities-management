@@ -37,6 +37,7 @@ import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 import ReviewNonAssociationsPage from '../../pages/appointments/create-and-edit/reviewNonAssociationsPage'
+import ConfirmNonAssociationsPage from '../../pages/appointments/create-and-edit/confirmNonAssociationsPage'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -151,6 +152,17 @@ context('Create group appointment', () => {
     reviewNonAssociationsPage.removeAttendeeLink('A1350DZ').should('exist')
 
     reviewNonAssociationsPage.continue()
+    const confirmNonAssociationsPage = Page.verifyOnPage(ConfirmNonAssociationsPage)
+    confirmNonAssociationsPage
+      .header()
+      .should('contain.text', 'Confirm that 2 people with non-assocations can attend this appointment')
+    confirmNonAssociationsPage
+      .bodyText()
+      .should(
+        'contain.text',
+        'If you continue with the current attendee list, there will be 2 attendees who have a non-association with someone else on the appointment.',
+      )
+    confirmNonAssociationsPage.confirm()
 
     const namePage = Page.verifyOnPage(NamePage)
     namePage.selectCategory('Chaplaincy')

@@ -12,7 +12,7 @@ import { AppointmentPrisonerDetails } from '../appointmentPrisonerDetails'
 jest.mock('../../../../services/nonAssociationsService')
 jest.mock('../../../../services/prisonService')
 
-const nonAssociationsService = new NonAssociationsService(null) as jest.Mocked<NonAssociationsService>
+const nonAssociationsService = new NonAssociationsService(null, null) as jest.Mocked<NonAssociationsService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create Appointment - Review non-associations', () => {
@@ -81,6 +81,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       when(nonAssociationsService.getNonAssociationsBetween)
         .calledWith(['G6123VU', 'AB123IT', 'PW987BB'], res.locals.user)
         .mockReturnValue(Promise.resolve([]))
+      when(nonAssociationsService.enhanceNonAssociations).mockReturnValue(Promise.resolve([]))
       expect(prisonService.searchInmatesByPrisonerNumbers).not.toHaveBeenCalled()
       req.query.prisonerRemoved = 'true'
       await handler.GET(req, res)
@@ -91,7 +92,6 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
         preserveHistory: false,
         nonAssociations: [],
         attendeesTotalCount: 3,
-        displayNonAssocDealtWithMessage: true,
       })
     })
     it('should render the view for create appointment - non-associations present', async () => {
@@ -135,6 +135,8 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
         .calledWith(atLeast(['G6123VU', 'AB123IT']))
         .mockResolvedValue(prisoners)
 
+      when(nonAssociationsService.enhanceNonAssociations).mockReturnValue(Promise.resolve(expectedResult))
+
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-non-associations', {
@@ -143,7 +145,6 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
         preserveHistory: false,
         nonAssociations: expectedResult,
         attendeesTotalCount: 3,
-        displayNonAssocDealtWithMessage: false,
       })
     })
     it('if there is only one prisoner in the session, redirect to the next page', async () => {
@@ -151,6 +152,19 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
 
       await handler.GET(req, res)
       expect(res.redirect).toHaveBeenCalledWith('name')
+    })
+    it('if there is only one prisoner in the session because a prisoner was just removed, display the alternative message', async () => {
+      req.session.appointmentJourney.prisoners = [{ number: 'G6123VU' } as AppointmentPrisonerDetails]
+      req.query.prisonerRemoved = 'true'
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-non-associations', {
+        appointmentId,
+        backLinkHref: 'review-prisoners-alerts',
+        preserveHistory: false,
+        nonAssociations: [],
+        attendeesTotalCount: 1,
+      })
     })
   })
 
@@ -160,11 +174,25 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
         .calledWith(['G6123VU', 'AB123IT', 'PW987BB'], res.locals.user)
         .mockReturnValue(Promise.resolve([]))
     })
-    it('should redirect or return to name page during create', async () => {
+    it('should redirect or return to name page during create journey - if user has resolved any non-associations', async () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+
+      req.body = {
+        nonAssociationsRemainingCount: 0,
+      }
 
       await handler.POST(req, res)
       expect(res.redirectOrReturn).toBeCalledWith('name')
+    })
+    it('should redirect or return to the confirm non-associations page during create journey - if user has not resolved any non-associations', async () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+
+      req.body = {
+        nonAssociationsRemainingCount: 2,
+      }
+
+      await handler.POST(req, res)
+      expect(res.redirectOrReturn).toBeCalledWith('confirm-non-associations?nonAssociationsRemainingCount=2')
     })
   })
 
