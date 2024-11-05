@@ -16,8 +16,21 @@ export default class ReviewNonAssociationRoutes {
     const backLinkHref = 'review-prisoners-alerts'
     const { prisoners } = appointmentJourney
 
-    // If there is only one prisoner added to the appointment, non-associations are impossible
-    if (prisoners.length < 2) return res.redirect('name')
+    // If there is only one prisoner added to the appointment, non-associations are impossible so there is no point calling the endpoint
+    // But if the user has just removed a non-association and now there's only one person left,
+    // we don't want to redirect straight away - but istead display the alternative message
+    if (prisoners.length < 2) {
+      if (prisonerRemoved) {
+        return res.render('pages/appointments/create-and-edit/review-non-associations', {
+          appointmentId,
+          backLinkHref,
+          preserveHistory,
+          nonAssociations: [],
+          attendeesTotalCount: prisoners.length,
+        })
+      }
+      return res.redirect('name')
+    }
 
     const prisonerNumbers = prisoners.map(prisoner => prisoner.number)
     const nonAssociations = await this.nonAssociationsService.getNonAssociationsBetween(prisonerNumbers, user)
@@ -32,7 +45,6 @@ export default class ReviewNonAssociationRoutes {
       preserveHistory,
       nonAssociations: enhancedNonAssociations,
       attendeesTotalCount: prisonerNumbers.length,
-      displayNonAssocDealtWithMessage: !enhancedNonAssociations.length && prisonerRemoved === 'true',
     })
   }
 

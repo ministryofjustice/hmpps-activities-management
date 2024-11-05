@@ -92,7 +92,6 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
         preserveHistory: false,
         nonAssociations: [],
         attendeesTotalCount: 3,
-        displayNonAssocDealtWithMessage: true,
       })
     })
     it('should render the view for create appointment - non-associations present', async () => {
@@ -146,7 +145,6 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
         preserveHistory: false,
         nonAssociations: expectedResult,
         attendeesTotalCount: 3,
-        displayNonAssocDealtWithMessage: false,
       })
     })
     it('if there is only one prisoner in the session, redirect to the next page', async () => {
@@ -154,6 +152,19 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
 
       await handler.GET(req, res)
       expect(res.redirect).toHaveBeenCalledWith('name')
+    })
+    it('if there is only one prisoner in the session because a prisoner was just removed, display the alternative message', async () => {
+      req.session.appointmentJourney.prisoners = [{ number: 'G6123VU' } as AppointmentPrisonerDetails]
+      req.query.prisonerRemoved = 'true'
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-non-associations', {
+        appointmentId,
+        backLinkHref: 'review-prisoners-alerts',
+        preserveHistory: false,
+        nonAssociations: [],
+        attendeesTotalCount: 1,
+      })
     })
   })
 
