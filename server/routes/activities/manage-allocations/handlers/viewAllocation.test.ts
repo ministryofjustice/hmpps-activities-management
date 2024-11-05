@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 
 import { when } from 'jest-when'
+import { format, subDays } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import atLeast from '../../../../../jest.setup'
@@ -83,7 +84,15 @@ describe('Route Handlers - Allocation dashboard', () => {
           endDate: '2022-12-31',
           inCell: false,
           outsideWork: false,
-          pay: [{ incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 }],
+          pay: [
+            { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+            {
+              incentiveLevel: 'Standard',
+              prisonPayBand: { id: 1, alias: 'Low' },
+              rate: 97,
+              startDate: format(subDays(new Date(), 2), 'yyyy-MM-dd'),
+            },
+          ],
           payPerSession: 'H',
           pieceWork: false,
           prisonCode: '',
@@ -148,7 +157,12 @@ describe('Route Handlers - Allocation dashboard', () => {
         },
         isOnlyPay: true,
         isStarted: true,
-        pay: { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+        pay: {
+          incentiveLevel: 'Standard',
+          prisonPayBand: { id: 1, alias: 'Low' },
+          rate: 97,
+          startDate: format(subDays(new Date(), 2), 'yyyy-MM-dd'),
+        },
         prisonerName: 'John Smith',
         currentWeek: 1,
         dailySlots: {
@@ -272,7 +286,12 @@ describe('Route Handlers - Allocation dashboard', () => {
         },
         isOnlyPay: true,
         isStarted: true,
-        pay: { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+        pay: {
+          incentiveLevel: 'Standard',
+          prisonPayBand: { id: 1, alias: 'Low' },
+          rate: 97,
+          startDate: format(subDays(new Date(), 2), 'yyyy-MM-dd'),
+        },
         prisonerName: 'John Smith',
         currentWeek: 1,
         dailySlots: {
