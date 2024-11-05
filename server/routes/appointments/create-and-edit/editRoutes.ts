@@ -26,8 +26,14 @@ import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
 import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
 import UncancelRoutes from './handlers/uncancel'
+import ReviewNonAssociationRoutes from './handlers/reviewNonAssociations'
 
-export default function Edit({ prisonService, activitiesService, metricsService }: Services): Router {
+export default function Edit({
+  prisonService,
+  activitiesService,
+  metricsService,
+  nonAssociationsService,
+}: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
@@ -47,6 +53,7 @@ export default function Edit({ prisonService, activitiesService, metricsService 
   const extraInformationRoutes = new ExtraInformationRoutes(editAppointmentService)
   const confirmEditRoutes = new ConfirmEditRoutes(editAppointmentService)
   const applyToRoutes = new ApplyToRoutes(editAppointmentService)
+  const reviewNonAssociationsRoutes = new ReviewNonAssociationRoutes(nonAssociationsService, prisonService)
 
   // Cancel routes
   const cancellationReasonRoutes = new CancellationReasonRoutes()
@@ -144,6 +151,9 @@ export default function Edit({ prisonService, activitiesService, metricsService 
   get('/prisoners/add/review-prisoners-alerts', reviewPrisonerAlerts.GET, true)
   post('/prisoners/add/review-prisoners-alerts', reviewPrisonerAlerts.EDIT)
   get('/prisoners/add/review-prisoners-alerts/:prisonNumber/remove', reviewPrisonerAlerts.EDIT_REMOVE, true)
+  get('/prisoners/add/review-non-associations', reviewNonAssociationsRoutes.EDIT_GET, true)
+  post('/prisoners/add/review-non-associations', reviewNonAssociationsRoutes.EDIT)
+  get('/prisoners/add/review-non-associations/:prisonNumber/remove', reviewNonAssociationsRoutes.EDIT_REMOVE, true)
   get('/prisoners/add/confirm', confirmEditRoutes.GET, true)
   post('/prisoners/add/confirm', confirmEditRoutes.POST, ConfirmEdit)
   get('/prisoners/add/apply-to', applyToRoutes.GET, true)

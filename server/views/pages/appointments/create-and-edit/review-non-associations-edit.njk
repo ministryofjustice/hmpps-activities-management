@@ -1,0 +1,69 @@
+{% extends "layout.njk" %}
+{% from "partials/summaryCardWithTable.njk" import summaryCardWithTable %}
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% set pageId = 'appointment-review-non-associations-edit-page' %}
+{% set jsBackLink = true %}
+{% set pageHeading %}
+{% if additionalAttendeesCount === 1 and nonAssociations | length %}
+        Review non-associations for {{ nonAssociations[0].primaryPrisoner.name | toTitleCase }}
+{% else %}
+        Review non-associations for {{ additionalAttendeesCount }} people you’re adding
+    {% endif %}
+{% endset %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session) }}
+
+            {% if additionalAttendeesCount === 0 %}
+                <h1 class="govuk-heading-l">There are no attendees to add</h1>
+                <p class="govuk-body">You’ve removed the last new attendee.</p>
+                <p class="govuk-body">You can <a href="/appointments/{{ appointmentId }}" class="govuk-link govuk-link--no-visited-state">return to the appointment details</a> or add someone else to continue updating.</p>
+                {{ govukButton({
+                        text: "Add someone to the list",
+                        href: "how-to-add-prisoners",
+                        attributes: { 'data-qa': 'add-prisoner-primary' }
+                    }) }}
+            {% elif nonAssociations | length === 0 %}
+                <h1 class="govuk-heading-l">You’ve dealt with all non-associations for the people you’re adding</h1>
+                <p class="govuk-body govuk-!-margin-bottom-0">People you’re adding: {{ additionalAttendeesCount }}</p>
+                <p class="govuk-body">People already attending: {{ existingAttendeesCount }}</p>
+                <form method="POST">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                    <div class="govuk-button-group">
+                        {{ govukButton({
+                            text: "Continue"
+                        }) }}
+                    </div>
+                </form>
+            {% else %}
+                <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+                {{ govukWarningText({
+                    text: "Check an attendee’s prisoner profile for full details of their non-associations.",
+                    iconFallbackText: "Warning"
+                }) }}
+                <p class="govuk-body govuk-!-margin-bottom-0">People with non-associations: {{ nonAssociations | length }}</p>
+                <p class="govuk-body govuk-!-margin-bottom-0">People you’re adding: {{ additionalAttendeesCount }}</p>
+                <p class="govuk-body">People already attending: {{ existingAttendeesCount }}</p>
+                <p class="govuk-body">You can only remove people you’re adding. You can remove people who already attending once you’ve finished adding people.</p>
+                {% for attendee in nonAssociations %}
+                    {{ summaryCardWithTable(attendee, existingPrisonerNumbers) }}
+                {% endfor %}
+
+                <form method="POST">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                    <input type="hidden" name="nonAssociationsRemainingCount" value="{{  nonAssociations | length }}"/>
+                    <div class="govuk-button-group">
+                        {{ govukButton({
+                            text: "Continue"
+                        }) }}
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

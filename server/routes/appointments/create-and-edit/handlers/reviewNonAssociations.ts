@@ -69,4 +69,64 @@ export default class ReviewNonAssociationRoutes {
     }
     return res.redirectOrReturn('name')
   }
+
+  EDIT_GET = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
+    const { appointmentId } = req.params
+    const { appointmentJourney, editAppointmentJourney } = req.session
+    const { preserveHistory, prisonerRemoved } = req.query
+    const backLinkHref = 'review-prisoners-alerts'
+    const { prisoners } = appointmentJourney
+    const { addPrisoners } = editAppointmentJourney
+
+    if (!addPrisoners.length) {
+      return res.render('pages/appointments/create-and-edit/review-non-associations-edit', {
+        appointmentId,
+        backLinkHref,
+        preserveHistory,
+        nonAssociations: [],
+        additionalAttendeesCount: 0,
+      })
+    }
+    const allAttendees = [...prisoners, ...addPrisoners]
+    const allAttendeesPrisonerNumbers = allAttendees.map(prisoner => prisoner.number)
+    const nonAssociations = await this.nonAssociationsService.getNonAssociationsBetween(
+      allAttendeesPrisonerNumbers,
+      user,
+    )
+
+    // If there are no non-associations, and it isn't because a user has removed them via this page, redirect
+    if (!nonAssociations.length && !prisonerRemoved) return res.redirect('../../schedule')
+    const enhancedNonAssociations = await this.nonAssociationsService.enhanceNonAssociations(nonAssociations, user)
+
+    const additionalPrisonersNumbers = addPrisoners.map(prisoner => prisoner.number)
+
+    const enhancedNonAssociationsOfAddedPrisoners = enhancedNonAssociations.filter(nonAssoc =>
+      additionalPrisonersNumbers.includes(nonAssoc.primaryPrisoner.prisonerNumber),
+    )
+
+    return res.render('pages/appointments/create-and-edit/review-non-associations-edit', {
+      appointmentId,
+      backLinkHref,
+      preserveHistory,
+      nonAssociations: enhancedNonAssociationsOfAddedPrisoners,
+      existingAttendeesCount: prisoners.length,
+      additionalAttendeesCount: addPrisoners.length,
+      existingPrisonerNumbers: prisoners.map(prisoner => prisoner.number),
+    })
+  }
+
+  EDIT = async (req: Request, res: Response): Promise<void> => {
+    return res.redirectOrReturn('../../schedule')
+  }
+
+  EDIT_REMOVE = async (req: Request, res: Response): Promise<void> => {
+    const { prisonNumber } = req.params
+
+    req.session.editAppointmentJourney.addPrisoners = req.session.editAppointmentJourney.addPrisoners.filter(
+      prisoner => prisoner.number !== prisonNumber,
+    )
+
+    res.redirect(`../../review-non-associations?prisonerRemoved=true`)
+  }
 }

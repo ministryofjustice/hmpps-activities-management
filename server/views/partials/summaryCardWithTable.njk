@@ -1,29 +1,39 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 
-{% macro summaryCardWithTable(attendee) %}
-{% set primaryPrisoner = attendee.primaryPrisoner %}
+{% macro summaryCardWithTable(attendee, existingPrisonerNumbers = null) %}
+    {% set primaryPrisoner = attendee.primaryPrisoner %}
 
-{% set rows = [] %}
-{% for otherPrisoner in attendee.nonAssociations %}
-    {% set rows = (rows.push([
-            {
-                html: '<a href="'+ nonAssociationsUrl +'/prisoner/'+ otherPrisoner.prisonerNumber +'/non-associations"
+    {% set rows = [] %}
+    {% for otherPrisoner in attendee.nonAssociations %}
+
+        {% set alreadyAttendingTag %}
+        {% if existingPrisonerNumbers %}
+            {% if otherPrisoner.prisonerNumber in existingPrisonerNumbers %}
+                <br>
+                <strong class="govuk-tag govuk-!-margin-top-2">Already attending</strong>
+            {% endif %}
+        {% endif %}
+        {% endset %}
+
+        {% set nameHtml = '<a href="'+ nonAssociationsUrl +'/prisoner/'+ otherPrisoner.prisonerNumber +'/non-associations"
                 target="_blank"
                 class="govuk-link govuk-link--no-visited-state">'+
                 otherPrisoner.name | toTitleCase if otherPrisoner.name
-                +'</a>'
-            },
+                +'</a>' %}
+
+        {% set rows = (rows.push([
             {
+                html: nameHtml + alreadyAttendingTag if alreadyAttendingTag
+            }, {
                 text: otherPrisoner.prisonerNumber
-            },
-            {
+            }, {
                 text: otherPrisoner.cellLocation
-            },
-            {
+            }, {
                 text: otherPrisoner.lastUpdated | parseISODate | formatDate('d MMMM yyyy')
             }
-    ]), rows) %}
-{% endfor %}
+        ]), rows) %}
+    {% endfor %}
 
     <div class="govuk-summary-card" data-qa="card-{{primaryPrisoner.prisonerNumber}}">
         <div class="govuk-summary-card__title-wrapper">
@@ -31,7 +41,7 @@
                 <a href="{{ nonAssociationsUrl }}/prisoner/{{ primaryPrisoner.prisonerNumber }}/non-associations"
                 target="_blank"
                 class="govuk-link govuk-link--no-visited-state">
-                {{ primaryPrisoner.name | toTitleCase if primaryPrisoner.name else 'No matching name' }}, {{ primaryPrisoner.prisonerNumber }}
+                    {{ primaryPrisoner.name | toTitleCase if primaryPrisoner.name else 'No matching name' }}, {{ primaryPrisoner.prisonerNumber }}
                 </a>
             </h2>
             <ul class="govuk-summary-card__actions">
