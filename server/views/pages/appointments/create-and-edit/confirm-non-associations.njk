@@ -1,0 +1,33 @@
+{% extends "layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageId = 'appointment-confirm-non-associations-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l">Schedule an appointment</span>
+            <h1 class="govuk-heading-l">Confirm that {{ nonAssociationsCount }} people with non-assocations can attend this appointment</h1>
+
+            <p class="govuk-body">If you continue with the current attendee list, there will be {{ nonAssociationsCount }} attendees who have a non-association with someone else on the appointment.</p>
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Confirm",
+                        type: "submit"
+                    }) }}
+                    {{ govukButton({
+                        text: "Review non-associations",
+                        href: "review-non-associations",
+                        element: "a",
+                        classes: "govuk-button--secondary"
+                    }) }}
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

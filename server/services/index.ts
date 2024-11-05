@@ -25,10 +25,11 @@ export default function services() {
   } = dataAccess()
 
   const alertsFilterService = new AlertsFilterService()
+  const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient)
 
   return {
     userService: new UserService(manageUsersApiClient, prisonRegisterApiClient, activitiesApiClient),
-    prisonService: new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient),
+    prisonService,
     activitiesService: new ActivitiesService(activitiesApiClient),
     bookAVideoLinkService: new BookAVideoLinkService(bookAVideoLinkApiClient),
     caseNotesService: new CaseNotesService(caseNotesApiClient),
@@ -36,7 +37,7 @@ export default function services() {
     alertsFilterService,
     unlockListService: new UnlockListService(prisonerSearchApiClient, activitiesApiClient, alertsFilterService),
     metricsService: new MetricsService(applicationInsightsClient),
-    nonAssociationsService: new NonAssociationsService(nonAssociationsApiClient),
+    nonAssociationsService: new NonAssociationsService(nonAssociationsApiClient, prisonService),
   }
 }
 
