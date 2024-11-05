@@ -371,5 +371,178 @@ describe('Route Handlers - Allocation dashboard', () => {
         },
       })
     })
+
+    it('should render the correct view with multiple pay bands', async () => {
+      when(userService.getUserMap)
+        .calledWith(atLeast(['joebloggs']))
+        .mockResolvedValue(
+          new Map([['joebloggs', { username: 'joebloggs', name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        )
+
+      when(userService.getUserMap)
+        .calledWith(atLeast(['GEOFFT']))
+        .mockResolvedValue(
+          new Map([['GEOFFT', { username: 'GEOFFT', name: 'Geoff Toms' }]]) as Map<string, UserDetails>,
+        )
+
+      when(activitiesService.getAllocation)
+        .calledWith(2, res.locals.user)
+        .mockResolvedValue({
+          id: 2,
+          activityId: 2,
+          prisonerNumber: 'G4793VF',
+          startDate: '2022-05-19',
+          prisonPayBand: { id: 1 },
+          exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
+          plannedSuspension: { plannedBy: 'joebloggs', caseNoteId: 10001 },
+          allocatedBy: 'GEOFFT',
+          allocatedTime: '2024-05-03T13:22:00',
+        } as Allocation)
+
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(2))
+        .mockResolvedValue({
+          attendanceRequired: false,
+          category: { code: 'EDUCATION', id: 1, name: 'Education' },
+          createdBy: '',
+          createdTime: '',
+          description: '',
+          eligibilityRules: [],
+          endDate: '2022-12-31',
+          inCell: false,
+          outsideWork: false,
+          pay: [
+            { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
+            { incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 150 },
+            {
+              incentiveLevel: 'Standard',
+              prisonPayBand: { id: 1, alias: 'Low' },
+              rate: 97,
+              startDate: format(subDays(new Date(), 2), 'yyyy-MM-dd'),
+            },
+          ],
+          payPerSession: 'H',
+          pieceWork: false,
+          prisonCode: '',
+          riskLevel: '',
+          schedules: [activitySchedule],
+          startDate: '2022-01-01',
+          summary: 'Maths Level 1',
+          tier: { code: '', description: '', id: 0 },
+          waitingList: [],
+          id: 1,
+          minimumEducationLevel: [],
+        } as unknown as Activity)
+
+      req = {
+        params: {
+          allocationId: 2,
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/view-allocation', {
+        allocation: {
+          id: 2,
+          activityId: 2,
+          prisonerNumber: 'G4793VF',
+          startDate: '2022-05-19',
+          prisonPayBand: { id: 1 },
+          exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
+          plannedSuspension: {
+            plannedBy: 'joebloggs',
+            caseNoteId: 10001,
+          },
+          allocatedBy: 'GEOFFT',
+          allocatedTime: '2024-05-03T13:22:00',
+        },
+        isOnlyPay: false,
+        isStarted: true,
+        pay: {
+          incentiveLevel: 'Standard',
+          prisonPayBand: { id: 1, alias: 'Low' },
+          rate: 97,
+          startDate: format(subDays(new Date(), 2), 'yyyy-MM-dd'),
+        },
+        prisonerName: 'John Smith',
+        currentWeek: 1,
+        dailySlots: {
+          '1': [
+            {
+              day: 'Monday',
+              slots: [],
+            },
+            {
+              day: 'Tuesday',
+              slots: [
+                {
+                  timeSlot: 'AM',
+                  startTime: '10:00',
+                  endTime: '11:00',
+                },
+              ],
+            },
+            {
+              day: 'Wednesday',
+              slots: [
+                {
+                  timeSlot: 'AM',
+                  startTime: '10:00',
+                  endTime: '11:00',
+                },
+              ],
+            },
+            {
+              day: 'Thursday',
+              slots: [
+                {
+                  timeSlot: 'AM',
+                  startTime: '11:00',
+                  endTime: '12:00',
+                },
+              ],
+            },
+            {
+              day: 'Friday',
+              slots: [
+                {
+                  timeSlot: 'AM',
+                  startTime: '11:00',
+                  endTime: '12:00',
+                },
+              ],
+            },
+            {
+              day: 'Saturday',
+              slots: [
+                {
+                  timeSlot: 'AM',
+                  startTime: '11:00',
+                  endTime: '12:00',
+                },
+              ],
+            },
+            {
+              day: 'Sunday',
+              slots: [
+                {
+                  timeSlot: 'AM',
+                  startTime: '11:00',
+                  endTime: '12:00',
+                },
+              ],
+            },
+          ],
+        },
+        userMap: new Map([
+          ['joebloggs', { username: 'joebloggs', name: 'Joe Bloggs' }],
+          ['GEOFFT', { username: 'GEOFFT', name: 'Geoff Toms' }],
+        ]),
+        suspensionCaseNote: {
+          text: 'test case note',
+        },
+      })
+    })
   })
 })
