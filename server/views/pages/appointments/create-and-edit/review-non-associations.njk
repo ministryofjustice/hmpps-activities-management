@@ -1,0 +1,46 @@
+{% extends "layout.njk" %}
+{% from "partials/summaryCardWithTable.njk" import summaryCardWithTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% set pageId = 'appointment-review-non-associations-page' %}
+{% set jsBackLink = true %}
+{% set pageHeading %}
+    {% if nonAssociations | length %}
+        Review {{ nonAssociations | length }} people with non-associations
+    {% else %}
+        You’ve dealt with all the non-associations between this appointment’s attendees
+    {% endif %}
+{% endset %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l">Schedule an appointment</span>
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+            {% if nonAssociations | length %}
+                {{ govukWarningText({
+                    text: "Check an attendee’s prisoner profile for full details of their non-associations.",
+                    iconFallbackText: "Warning"
+                }) }}
+                <p class="govuk-body" data-qa="attendee-numbers">You’re reviewing {{ nonAssociations | length }} people with non-associations out of a total of {{ attendeesTotalCount }} attendees.</p>
+                {% for attendee in nonAssociations %}
+                    {{ summaryCardWithTable(attendee) }}
+                {% endfor %}
+            {% else %}
+                <p class="govuk-body" data-qa="remaining-attendees">There are {{ attendeesTotalCount }} attendees remaining on the appointment list.</p>
+            {% endif %}
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <input type="hidden" name="nonAssociationsRemainingCount" value="{{  nonAssociations | length }}"/>
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                            text: "Continue"
+                        }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

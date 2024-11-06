@@ -80,6 +80,7 @@ export default function nunjucksSetup(app: express.Express, { ukBankHolidayServi
   app.locals.applicationName = 'Activities and Appointments'
   app.locals.hmppsAuthUrl = config.apis.hmppsAuth.url
   app.locals.dpsUrl = config.dpsUrl
+  app.locals.nonAssociationsUrl = config.nonAssociationsUrl
   app.locals.reportAFaultUrl = config.reportAFaultUrl
   app.locals.feedbackUrl = config.feedbackUrl
 
@@ -214,6 +215,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)
   njkEnv.addGlobal('concatArrays', concatArrays)
   njkEnv.addGlobal('dpsUrl', config.dpsUrl)
+  njkEnv.addGlobal('nonAssociationsUrl', config.nonAssociationsUrl)
   njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)

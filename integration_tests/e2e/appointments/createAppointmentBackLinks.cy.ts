@@ -53,6 +53,7 @@ context('Create group appointment - back links', () => {
     cy.stubEndpoint('GET', '/appointment-series/10/details', getAppointmentSeriesDetails)
     cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
     cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlerts)
+    cy.stubEndpoint('POST', '/non-associations/between', [])
   })
 
   it('Create group appointment - back links', () => {

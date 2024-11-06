@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
+import { startOfToday } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
-import { convertToTitleCase, parseDate } from '../../../../utils/utils'
+import { convertToTitleCase, parseDate, parseISODate } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -32,12 +33,23 @@ export default class ViewAllocationRoutes {
     const prisonerName = convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)
 
     const isOnlyPay =
-      activity.pay.filter(p => p.incentiveLevel === prisoner.currentIncentive?.level?.description).length === 1
-    const pay = activity.pay.find(
-      a =>
-        a.prisonPayBand.id === allocation.prisonPayBand.id &&
-        a.incentiveLevel === prisoner.currentIncentive?.level?.description,
-    )
+      activity.pay.filter(
+        p => p.incentiveLevel === prisoner.currentIncentive?.level?.description && p.startDate == null,
+      ).length === 1
+
+    const currentPay = activity.pay
+      .filter(
+        a =>
+          a.prisonPayBand.id === allocation.prisonPayBand.id &&
+          a.incentiveLevel === prisoner.currentIncentive?.level?.description &&
+          (a.startDate == null || parseISODate(a.startDate) <= startOfToday()),
+      )
+      .sort(
+        (a, b) =>
+          (parseISODate(a.startDate) == null ? 0 : parseISODate(a.startDate).valueOf()) -
+          (parseISODate(b.startDate) == null ? 0 : parseISODate(b.startDate).valueOf()),
+      )
+      .pop()
 
     const schedule = activity.schedules[0]
     const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
@@ -67,7 +79,7 @@ export default class ViewAllocationRoutes {
     res.render('pages/activities/manage-allocations/view-allocation', {
       allocation,
       prisonerName,
-      pay,
+      pay: currentPay,
       isStarted,
       isOnlyPay,
       dailySlots,

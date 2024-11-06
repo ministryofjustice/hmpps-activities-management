@@ -9,6 +9,7 @@ generic-service:
   env:
     INGRESS_URL: "https://activities.prison.service.justice.gov.uk"
     DPS_URL: "https://digital.prison.service.justice.gov.uk"
+    NON_ASSOCIATIONS_URL: "https://non-associations.hmpps.service.justice.gov.uk"
     HMPPS_AUTH_URL: "https://sign-in.hmpps.service.justice.gov.uk/auth"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api.prison.service.justice.gov.uk"
     ACTIVITIES_API_URL: "https://activities-api.prison.service.justice.gov.uk"
@@ -23,6 +24,7 @@ generic-service:
     NON_ASSOCIATIONS_API_URL: "https://non-associations-api.hmpps.service.justice.gov.uk"
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-prod.hmpps-digital-prison-reporting-mi-prod.svc.cluster.local"
     DEALLOCATE_TODAY_SESSION_TOGGLE_ENABLED: "true"
+    NON_ASSOCIATIONS_APPOINTMENT_REVIEW_ENABLED: "false"
 
   allowlist:
     groups:
