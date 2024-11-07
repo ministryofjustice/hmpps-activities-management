@@ -252,7 +252,7 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
           prisoners: [{ number: 'AB123IT' }, { number: 'PW987BB' }],
         },
         editAppointmentJourney: {
-          addPrisoners: [{ number: 'G6123VU' }],
+          addPrisoners: [{ number: 'G6123VU', name: 'SAMUEL RAMROOP' }],
         },
       },
       params: {
@@ -371,6 +371,24 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
         additionalAttendeesCount: 1,
         existingPrisonerNumbers: ['AB123IT', 'PW987BB'],
       })
+    })
+  })
+  describe('EDIT', () => {
+    it('should redirect to the schedule page to continue the edit journey', async () => {
+      await handler.EDIT(req, res)
+      expect(res.redirectOrReturn).toBeCalledWith('../../schedule')
+    })
+  })
+  describe('EDIT_REMOVE', () => {
+    it('should redirect back after filtering out the removed prisoner', async () => {
+      req.session.editAppointmentJourney.addPrisoners = [
+        { number: 'G6123VU', name: 'SAMUEL RAMROOP' } as AppointmentPrisonerDetails,
+      ]
+      req.params.prisonNumber = 'G6123VU'
+
+      await handler.EDIT_REMOVE(req, res)
+      expect(req.session.editAppointmentJourney.addPrisoners).toEqual([])
+      expect(res.redirect).toBeCalledWith('../../review-non-associations?prisonerRemoved=true')
     })
   })
 })
