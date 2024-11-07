@@ -61,7 +61,7 @@
             {% if not appointment.isCancelled and not appointment.isDeleted %}
                 <ul class="govuk-summary-card__actions">
                     <li class="govuk-summary-card__action">
-                        <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/attendance" }}" data-qa="add-prisoners">Record attendance</a>
+                        <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/attendance" }}">Record attendance</a>
                     </li>
                     {% if appointment.appointmentType == AppointmentType.GROUP and appointment.isExpired == false %}
                         <li class="govuk-summary-card__action">
