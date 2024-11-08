@@ -89,11 +89,11 @@ export default class ReviewNonAssociationRoutes {
       })
     }
     const allAttendees = [...prisoners, ...addPrisoners]
-    const allAttendeesPrisonerNumbers = allAttendees.map(prisoner => prisoner.number)
-    const nonAssociations = await this.nonAssociationsService.getNonAssociationsBetween(
-      allAttendeesPrisonerNumbers,
-      user,
-    )
+    const allAttendeesPrisonerNumbers = Array.from(new Set(allAttendees.map(prisoner => prisoner.number)))
+    let nonAssociations = []
+    if (allAttendeesPrisonerNumbers.length > 1) {
+      nonAssociations = await this.nonAssociationsService.getNonAssociationsBetween(allAttendeesPrisonerNumbers, user)
+    }
 
     // If there are no non-associations, and it isn't because a user has removed them via this page, redirect
     if (!nonAssociations.length && !prisonerRemoved) return res.redirect('../../schedule')
