@@ -162,8 +162,16 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
 
   describe('EDIT', () => {
     it('should redirect to the schedule page', async () => {
+      config.nonAssociationsAppointmentReviewEnabled = false
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       await handler.EDIT(req, res)
-      expect(res.redirect).toBeCalledWith('review-non-associations')
+      expect(res.redirectOrReturn).toBeCalledWith('../../schedule')
+    })
+    it('should redirect to the schedule page', async () => {
+      config.nonAssociationsAppointmentReviewEnabled = true
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      await handler.EDIT(req, res)
+      expect(res.redirectOrReturn).toBeCalledWith('review-non-associations')
     })
   })
 

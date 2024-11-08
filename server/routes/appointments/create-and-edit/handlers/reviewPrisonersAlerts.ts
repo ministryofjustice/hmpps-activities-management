@@ -55,7 +55,8 @@ export default class ReviewPrisonersAlertsRoutes {
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    return res.redirect('review-non-associations')
+    if (config.nonAssociationsAppointmentReviewEnabled) return res.redirectOrReturn('review-non-associations')
+    return res.redirectOrReturn('../../schedule')
   }
 
   REMOVE = async (req: Request, res: Response): Promise<void> => {
