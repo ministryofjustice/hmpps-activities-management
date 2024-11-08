@@ -1,0 +1,38 @@
+{
+  "prisonerNumber": "G6123VU",
+  "bookingId": "1205035",
+  "bookNumber": "42038A",
+  "firstName": "JOHN",
+  "middleNames": "",
+  "lastName": "SAUNDERS",
+  "dateOfBirth": "1990-03-15",
+  "gender": "Male",
+  "ethnicity": "White: Eng./Welsh/Scot./N.Irish/British",
+  "youthOffender": false,
+  "status": "ACTIVE IN",
+  "lastMovementTypeCode": "ADM",
+  "lastMovementReasonCode": "27",
+  "inOutStatus": "IN",
+  "prisonId": "MDI",
+  "prisonName": "Moorland (HMP & YOI)",
+  "cellLocation": "1-3-004",
+  "category": "A",
+  "aliases": [],
+  "alerts": [],
+  "legalStatus": "SENTENCED",
+  "imprisonmentStatus": "RECEP_DET",
+  "imprisonmentStatusDescription": "Determinate sentence (reception)",
+  "recall": false,
+  "indeterminateSentence": false,
+  "receptionDate": "2023-02-16",
+  "locationDescription": "Moorland (HMP & YOI)",
+  "restrictedPatient": false,
+  "currentIncentive": {
+    "level": {
+      "code": "ENH",
+      "description": "Enhanced"
+    },
+    "dateTime": "2023-02-16T19:38:00",
+    "nextReviewDate": "2023-05-16"
+  }
+}

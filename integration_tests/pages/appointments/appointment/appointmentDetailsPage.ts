@@ -8,6 +8,8 @@ export default class AppointmentDetailsPage extends Page {
 
   printMovementSlipLink = () => cy.get('[data-qa=print-movement-slips]')
 
+  addPrisonersLink = () => cy.get('[data-qa=add-prisoners]')
+
   assertSeriesDetail = (header: string, value: string) =>
     this.assertSummaryListValue('appointment-series-details', header, value)
 

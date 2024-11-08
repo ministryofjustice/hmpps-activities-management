@@ -1,0 +1,24 @@
+[
+  {
+    "id": 83518,
+    "firstPrisonerNumber": "G0995GW",
+    "firstPrisonerRole": "UNKNOWN",
+    "firstPrisonerRoleDescription": "Unknown",
+    "secondPrisonerNumber": "A1350DZ",
+    "secondPrisonerRole": "PERPETRATOR",
+    "secondPrisonerRoleDescription": "Perpetrator",
+    "reason": "GANG_RELATED",
+    "reasonDescription": "Gang related",
+    "restrictionType": "LANDING",
+    "restrictionTypeDescription": "Cell and landing",
+    "comment": "Some comments here",
+    "whenCreated": "2024-10-16T15:38:03",
+    "whenUpdated": "2024-10-30T10:26:05",
+    "updatedBy": "TESTER",
+    "isClosed": false,
+    "closedBy": null,
+    "closedReason": null,
+    "closedAt": null,
+    "isOpen": true
+  }
+]
