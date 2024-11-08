@@ -4,10 +4,14 @@ import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import IsNotAnExistingAttendee from '../../../../validators/IsNotAnExistingAttendee'
 
 export class SelectPrisoner {
   @Expose()
   @IsNotEmpty({ message: 'You must select one option' })
+  @IsNotAnExistingAttendee({
+    message: 'The prisoner you have selected is already attending this appointment',
+  })
   selectedPrisoner: string
 }
 
