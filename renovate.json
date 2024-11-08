@@ -8,6 +8,13 @@
       "rangeStrategy": "bump"
     },
     {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non major NPM dependencies",
+      "groupSlug": "all-npm-minor-patch",
+      "stabilityDays": 3
+    },
+    {
       "matchPackageNames": ["typescript", "govuk-frontend"],
       "rangeStrategy": "bump",
       "stabilityDays": 0
