@@ -97,7 +97,7 @@
     "bunyan-format": "^0.2.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
-    "compression": "^1.7.4",
+    "compression": "^1.7.5",
     "connect-flash": "^0.1.1",
     "connect-redis": "^7.1.1",
     "csurf": "^1.11.0",
@@ -148,8 +148,8 @@
     "@types/superagent": "^8.1.9",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.12.2",
-    "@typescript-eslint/parser": "^8.12.2",
+    "@typescript-eslint/eslint-plugin": "^8.13.0",
+    "@typescript-eslint/parser": "^8.13.0",
     "axe-core": "^4.10.2",
     "better-npm-audit": "^3.11.0",
     "cheerio": "^1.0.0",
@@ -187,8 +187,8 @@
     "nodemon": "^3.1.7",
     "prettier": "^3.3.3",
     "prettier-plugin-jinja-template": "^2.0.0",
-    "rollup": "~4.24.2",
-    "sass": "^1.80.5",
+    "rollup": "~4.24.4",
+    "sass": "^1.80.6",
     "sinon": "^19.0.2",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
@@ -196,7 +196,7 @@
     "typescript": "^5.6.3"
   },
   "overrides": {
-    "rollup": "~4.24.2",
+    "rollup": "~4.24.4",
     "cookie": "~1.0.1"
   }
 }
