@@ -2,6 +2,7 @@ import { Expose, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../utils/utils'
 import IsNotAnExistingAttendee from './IsNotAnExistingAttendee'
+import { AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 
 describe('IsNotAnExistingAttendee', () => {
   class DummyForm {
@@ -17,6 +18,7 @@ describe('IsNotAnExistingAttendee', () => {
 
     const session = {
       appointmentJourney: {
+        mode: AppointmentJourneyMode.EDIT,
         prisoners: [
           {
             number: 'G6123VU',
@@ -38,6 +40,7 @@ describe('IsNotAnExistingAttendee', () => {
 
     const session = {
       appointmentJourney: {
+        mode: AppointmentJourneyMode.EDIT,
         prisoners: [
           {
             number: 'QW123TP',
