@@ -287,7 +287,12 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
   describe('Validation', () => {
     describe('SelectPrisoner', () => {
       it('validation fails when prisoner is not selected', async () => {
-        const body = {}
+        const body = {
+          appointmentJourney: {
+            mode: AppointmentJourneyMode.EDIT,
+            prisoners: [],
+          },
+        }
 
         const requestObject = plainToInstance(SelectPrisoner, body)
         const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -300,6 +305,10 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       it('validation fails when selected prisoner is an empty string', async () => {
         const body = {
           selectedPrisoner: '',
+          appointmentJourney: {
+            mode: AppointmentJourneyMode.EDIT,
+            prisoners: [],
+          },
         }
 
         const requestObject = plainToInstance(SelectPrisoner, body)
@@ -313,12 +322,38 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       it('passes validation when selected prisoner is not empty', async () => {
         const body = {
           selectedPrisoner: 'A1234BC',
+          appointmentJourney: {
+            mode: AppointmentJourneyMode.EDIT,
+            prisoners: [],
+          },
         }
 
         const requestObject = plainToInstance(SelectPrisoner, body)
         const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
         expect(errors).toHaveLength(0)
+      })
+
+      it('fails validation when selected prisoner is already attending', async () => {
+        const body = {
+          selectedPrisoner: 'A1234BC',
+          appointmentJourney: {
+            mode: AppointmentJourneyMode.EDIT,
+            prisoners: [{ number: 'A1234BC' }],
+          },
+        }
+
+        const requestObject = plainToInstance(SelectPrisoner, body)
+        const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+        expect(errors).toEqual(
+          expect.arrayContaining([
+            {
+              property: 'selectedPrisoner',
+              error: 'The prisoner you have selected is already attending this appointment',
+            },
+          ]),
+        )
       })
     })
   })
