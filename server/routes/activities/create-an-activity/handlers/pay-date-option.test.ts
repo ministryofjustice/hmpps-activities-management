@@ -65,44 +65,6 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
     allocations: [],
   } as ActivitySchedule
 
-  const activity = {
-    id: 33,
-    category: {
-      id: 1,
-      code: 'LEISURE_SOCIAL',
-    },
-    tier: {
-      id: 1,
-    },
-    organiser: {
-      id: 1,
-    },
-    inCell: false,
-    onWing: false,
-    offWing: false,
-    riskLevel: 'high',
-    summary: 'activity summary',
-    startDate: '2022-01-01',
-    endDate: '2023-12-01',
-    pay: [
-      {
-        id: 17,
-        incentiveNomisCode: 'BAS',
-        incentiveLevel: 'Basic',
-        rate: 150,
-      },
-    ],
-    attendanceRequired: false,
-    minimumEducationLevel: [
-      {
-        id: 123456,
-        educationLevelCode: 'Basic',
-        studyAreaCode: 'ENGLA',
-      },
-    ],
-    schedules: [schedule],
-  } as unknown as Activity
-
   const yesterday = subDays(new Date(), 1)
   const yesterdayStr = formatIsoDate(yesterday)
   const yesterdayDatePicker = isoDateToDatePickerDate(yesterdayStr)
@@ -132,6 +94,44 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
   const inThirtyDaysStr = formatIsoDate(inThirtyDays)
   const inThirtyDaysDatePicker = isoDateToDatePickerDate(inThirtyDaysStr)
   const inThirtyDaysMessageDate = formatDate(inThirtyDays)
+
+  const activity = {
+    id: 33,
+    category: {
+      id: 1,
+      code: 'LEISURE_SOCIAL',
+    },
+    tier: {
+      id: 1,
+    },
+    organiser: {
+      id: 1,
+    },
+    inCell: false,
+    onWing: false,
+    offWing: false,
+    riskLevel: 'high',
+    summary: 'activity summary',
+    startDate: yesterdayStr,
+    endDate: undefined,
+    pay: [
+      {
+        id: 17,
+        incentiveNomisCode: 'BAS',
+        incentiveLevel: 'Basic',
+        rate: 150,
+      },
+    ],
+    attendanceRequired: false,
+    minimumEducationLevel: [
+      {
+        id: 123456,
+        educationLevelCode: 'Basic',
+        studyAreaCode: 'ENGLA',
+      },
+    ],
+    schedules: [schedule],
+  } as unknown as Activity
 
   let req: Request
   let res: Response
@@ -175,7 +175,6 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               rate: 50,
               pieceRate: null,
               pieceRateItems: null,
-              startDate: inThreeDaysStr,
             },
             {
               id: 353,
@@ -192,7 +191,22 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               rate: 65,
               pieceRate: null,
               pieceRateItems: null,
-              startDate: undefined,
+            },
+            {
+              id: 354,
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              prisonPayBand: {
+                id: 3,
+                displaySequence: 3,
+                alias: 'High 2',
+                description: 'High 2',
+                nomisPayBand: 3,
+                prisonCode: 'RSI',
+              },
+              rate: 65,
+              pieceRate: null,
+              pieceRateItems: null,
             },
           ],
           flat: [],
@@ -319,58 +333,6 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
   })
 
   describe('POST', () => {
-    it('should save a payment change for tomorrow where there is an existing future payment change', async () => {
-      req.body = {
-        rate: 72,
-        bandId: 3,
-        incentiveLevel: 'Basic',
-        startDate: tomorrowStr,
-        dateOption: DateOption.TOMORROW,
-      }
-      req.query = {
-        preserveHistory: 'true',
-        originalBandId: '17',
-        originalIncentiveLevel: 'Basic',
-        originalPaymentStartDate: inThreeDaysStr,
-      }
-
-      when(activitiesService.getActivity).calledWith(atLeast(33, user)).defaultResolvedValue(activity)
-
-      await handler.POST(req, res)
-
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '../check-pay?preserveHistory=true',
-        'Activity updated',
-        `You've changed Basic incentive level: High 2. Your change will take effect from ${tomorrowMessageDate}`,
-      )
-    })
-
-    it('should save a future payment change where there is an existing future payment change', async () => {
-      req.body = {
-        rate: 72,
-        bandId: 3,
-        incentiveLevel: 'Basic',
-        startDate: inFiveDaysDatePicker,
-        dateOption: DateOption.OTHER,
-      }
-      req.query = {
-        preserveHistory: 'true',
-        originalBandId: '17',
-        originalIncentiveLevel: 'Basic',
-        originalPaymentStartDate: inThreeDaysStr,
-      }
-
-      when(activitiesService.getActivity).calledWith(atLeast(33, user)).defaultResolvedValue(activity)
-
-      await handler.POST(req, res)
-
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '../check-pay?preserveHistory=true',
-        'Activity updated',
-        `You've changed Basic incentive level: High 2. Your change will take effect from ${inFiveDaysMessageDate}`,
-      )
-    })
-
     it('should save a payment change for tomorrow where there is no existing future payment change', async () => {
       req.body = {
         rate: 72,
@@ -381,7 +343,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
       }
       req.query = {
         preserveHistory: 'true',
-        originalBandId: '17',
+        originalBandId: '3',
         originalIncentiveLevel: 'Basic',
         originalPaymentStartDate: 'undefined',
       }
@@ -420,6 +382,506 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         '../check-pay?preserveHistory=true',
         'Activity updated',
         `You've changed Basic incentive level: High 2. Your change will take effect from ${inFiveDaysMessageDate}`,
+      )
+
+      expect(activitiesService.updateActivity).lastCalledWith(
+        33,
+        {
+          paid: true,
+          attendanceRequired: true,
+          pay: [
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 17,
+              rate: 50,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 18,
+              rate: 65,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 3,
+              rate: 65,
+              startDate: undefined,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 3,
+              rate: 72,
+              startDate: '2024-11-16',
+            },
+          ],
+        },
+        {
+          activeCaseLoadId: 'MDI',
+          username: 'joebloggs',
+        },
+      )
+    })
+
+    it('should save a payment change for tomorrow where there is an existing future payment change', async () => {
+      req.body = {
+        rate: 72,
+        bandId: 3,
+        incentiveLevel: 'Basic',
+        startDate: tomorrowStr,
+        dateOption: DateOption.TOMORROW,
+      }
+      req.query = {
+        preserveHistory: 'true',
+        originalBandId: '17',
+        originalIncentiveLevel: 'Basic',
+        originalPaymentStartDate: inThreeDaysStr,
+      }
+
+      when(activitiesService.getActivity).calledWith(atLeast(33, user)).defaultResolvedValue(activity)
+
+      await handler.POST(req, res)
+
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '../check-pay?preserveHistory=true',
+        'Activity updated',
+        `You've changed Basic incentive level: High 2. Your change will take effect from ${tomorrowMessageDate}`,
+      )
+
+      expect(activitiesService.updateActivity).lastCalledWith(
+        33,
+        {
+          paid: true,
+          attendanceRequired: true,
+          pay: [
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 17,
+              rate: 50,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 18,
+              rate: 65,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 3,
+              rate: 65,
+              startDate: undefined,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 3,
+              rate: 72,
+              startDate: '2024-11-12',
+            },
+          ],
+        },
+        {
+          activeCaseLoadId: 'MDI',
+          username: 'joebloggs',
+        },
+      )
+    })
+
+    it('should save a future payment change where there is an existing future payment change', async () => {
+      req.body = {
+        rate: 72,
+        bandId: 3,
+        incentiveLevel: 'Basic',
+        startDate: inFiveDaysDatePicker,
+        dateOption: DateOption.OTHER,
+      }
+      req.query = {
+        preserveHistory: 'true',
+        originalBandId: '17',
+        originalIncentiveLevel: 'Basic',
+        originalPaymentStartDate: inThreeDaysStr,
+      }
+
+      when(activitiesService.getActivity).calledWith(atLeast(33, user)).defaultResolvedValue(activity)
+
+      await handler.POST(req, res)
+
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '../check-pay?preserveHistory=true',
+        'Activity updated',
+        `You've changed Basic incentive level: High 2. Your change will take effect from ${inFiveDaysMessageDate}`,
+      )
+
+      expect(activitiesService.updateActivity).lastCalledWith(
+        33,
+        {
+          paid: true,
+          attendanceRequired: true,
+          pay: [
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 17,
+              rate: 50,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 18,
+              rate: 65,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 3,
+              rate: 65,
+              startDate: undefined,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 3,
+              rate: 72,
+              startDate: '2024-11-16',
+            },
+          ],
+        },
+        {
+          activeCaseLoadId: 'MDI',
+          username: 'joebloggs',
+        },
+      )
+    })
+
+    it('should update existing pay rate where there is no existing future payment change and the activity is due to start tomorrow', async () => {
+      const req2 = {
+        params: { payRateType: 'single', mode: 'edit' },
+        session: {
+          createJourney: {
+            activityId: 44,
+            name: 'Maths level 1',
+            category: {
+              id: 1,
+            },
+            paid: true,
+            pay: [
+              {
+                id: 349,
+                incentiveNomisCode: 'BAS',
+                incentiveLevel: 'Basic',
+                prisonPayBand: {
+                  id: 17,
+                  displaySequence: 1,
+                  alias: 'Pay band 1 (Lowest)',
+                  description: 'Pay band 1 (Lowest)',
+                  nomisPayBand: 1,
+                  prisonCode: 'RSI',
+                },
+                rate: 50,
+                pieceRate: null,
+                pieceRateItems: null,
+              },
+              {
+                id: 353,
+                incentiveNomisCode: 'BAS',
+                incentiveLevel: 'Basic',
+                prisonPayBand: {
+                  id: 18,
+                  displaySequence: 2,
+                  alias: 'Pay band 2',
+                  description: 'Pay band 2',
+                  nomisPayBand: 2,
+                  prisonCode: 'RSI',
+                },
+                rate: 65,
+                pieceRate: null,
+                pieceRateItems: null,
+              },
+              {
+                id: 354,
+                incentiveNomisCode: 'BAS',
+                incentiveLevel: 'Basic',
+                prisonPayBand: {
+                  id: 3,
+                  displaySequence: 3,
+                  alias: 'High 2',
+                  description: 'High 2',
+                  nomisPayBand: 3,
+                  prisonCode: 'RSI',
+                },
+                rate: 65,
+                pieceRate: null,
+                pieceRateItems: null,
+              },
+            ],
+            flat: [],
+            allocations: [],
+            minimumPayRate: 50,
+            maximumPayRate: 250,
+          },
+        },
+      } as unknown as Request
+
+      const activity2 = {
+        id: 44,
+        category: {
+          id: 1,
+          code: 'LEISURE_SOCIAL',
+        },
+        tier: {
+          id: 1,
+        },
+        organiser: {
+          id: 1,
+        },
+        inCell: false,
+        onWing: false,
+        offWing: false,
+        riskLevel: 'high',
+        summary: 'activity summary',
+        startDate: tomorrowStr,
+        endDate: undefined,
+        pay: [
+          {
+            id: 17,
+            incentiveNomisCode: 'BAS',
+            incentiveLevel: 'Basic',
+            rate: 150,
+          },
+        ],
+        attendanceRequired: false,
+        minimumEducationLevel: [
+          {
+            id: 123456,
+            educationLevelCode: 'Basic',
+            studyAreaCode: 'ENGLA',
+          },
+        ],
+        schedules: [schedule],
+      } as unknown as Activity
+
+      req2.body = {
+        rate: 72,
+        bandId: 17,
+        incentiveLevel: 'Basic',
+        startDate: tomorrowDatePicker,
+        dateOption: DateOption.TOMORROW,
+      }
+      req2.query = {
+        preserveHistory: 'true',
+        originalBandId: '17',
+        originalIncentiveLevel: 'Basic',
+        originalPaymentStartDate: 'undefined',
+      }
+
+      when(activitiesService.getActivity).calledWith(atLeast(44, user)).defaultResolvedValue(activity2)
+
+      await handler.POST(req2, res)
+
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '../check-pay?preserveHistory=true',
+        'Activity updated',
+        `You've changed Basic incentive level: Pay band 1 (Lowest). Your change will take effect from ${tomorrowMessageDate}`,
+      )
+
+      expect(activitiesService.updateActivity).lastCalledWith(
+        44,
+        {
+          paid: true,
+          attendanceRequired: true,
+          pay: [
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 17,
+              rate: 72,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 18,
+              rate: 65,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 3,
+              rate: 65,
+            },
+          ],
+        },
+        {
+          activeCaseLoadId: 'MDI',
+          username: 'joebloggs',
+        },
+      )
+    })
+
+    it('should update existing pay rate where there is no existing future payment change and the activity is due to start after tomorrow', async () => {
+      const req2 = {
+        params: { payRateType: 'single', mode: 'edit' },
+        session: {
+          createJourney: {
+            activityId: 44,
+            name: 'Maths level 1',
+            category: {
+              id: 1,
+            },
+            paid: true,
+            pay: [
+              {
+                id: 349,
+                incentiveNomisCode: 'BAS',
+                incentiveLevel: 'Basic',
+                prisonPayBand: {
+                  id: 17,
+                  displaySequence: 1,
+                  alias: 'Pay band 1 (Lowest)',
+                  description: 'Pay band 1 (Lowest)',
+                  nomisPayBand: 1,
+                  prisonCode: 'RSI',
+                },
+                rate: 50,
+                pieceRate: null,
+                pieceRateItems: null,
+              },
+              {
+                id: 353,
+                incentiveNomisCode: 'BAS',
+                incentiveLevel: 'Basic',
+                prisonPayBand: {
+                  id: 18,
+                  displaySequence: 2,
+                  alias: 'Pay band 2',
+                  description: 'Pay band 2',
+                  nomisPayBand: 2,
+                  prisonCode: 'RSI',
+                },
+                rate: 65,
+                pieceRate: null,
+                pieceRateItems: null,
+              },
+              {
+                id: 354,
+                incentiveNomisCode: 'BAS',
+                incentiveLevel: 'Basic',
+                prisonPayBand: {
+                  id: 3,
+                  displaySequence: 3,
+                  alias: 'High 2',
+                  description: 'High 2',
+                  nomisPayBand: 3,
+                  prisonCode: 'RSI',
+                },
+                rate: 65,
+                pieceRate: null,
+                pieceRateItems: null,
+              },
+            ],
+            flat: [],
+            allocations: [],
+            minimumPayRate: 50,
+            maximumPayRate: 250,
+          },
+        },
+      } as unknown as Request
+
+      const activity2 = {
+        id: 44,
+        category: {
+          id: 1,
+          code: 'LEISURE_SOCIAL',
+        },
+        tier: {
+          id: 1,
+        },
+        organiser: {
+          id: 1,
+        },
+        inCell: false,
+        onWing: false,
+        offWing: false,
+        riskLevel: 'high',
+        summary: 'activity summary',
+        startDate: inFiveDaysStr,
+        endDate: undefined,
+        pay: [
+          {
+            id: 17,
+            incentiveNomisCode: 'BAS',
+            incentiveLevel: 'Basic',
+            rate: 150,
+          },
+        ],
+        attendanceRequired: false,
+        minimumEducationLevel: [
+          {
+            id: 123456,
+            educationLevelCode: 'Basic',
+            studyAreaCode: 'ENGLA',
+          },
+        ],
+        schedules: [schedule],
+      } as unknown as Activity
+
+      req2.body = {
+        rate: 72,
+        bandId: 17,
+        incentiveLevel: 'Basic',
+        startDate: tomorrowDatePicker,
+        dateOption: DateOption.TOMORROW,
+      }
+      req2.query = {
+        preserveHistory: 'true',
+        originalBandId: '17',
+        originalIncentiveLevel: 'Basic',
+        originalPaymentStartDate: 'undefined',
+      }
+
+      when(activitiesService.getActivity).calledWith(atLeast(44, user)).defaultResolvedValue(activity2)
+
+      await handler.POST(req2, res)
+
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '../check-pay?preserveHistory=true',
+        'Activity updated',
+        `You've changed Basic incentive level: Pay band 1 (Lowest). Your change will take effect from ${tomorrowMessageDate}`,
+      )
+
+      expect(activitiesService.updateActivity).lastCalledWith(
+        44,
+        {
+          paid: true,
+          attendanceRequired: true,
+          pay: [
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 17,
+              rate: 72,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 18,
+              rate: 65,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 3,
+              rate: 65,
+            },
+          ],
+        },
+        {
+          activeCaseLoadId: 'MDI',
+          username: 'joebloggs',
+        },
       )
     })
 
@@ -528,6 +990,48 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         '../check-pay?preserveHistory=true',
         'Activity updated',
         `You've changed Basic incentive level: Pay band 1 (Lowest). There are 2 people assigned to this pay rate. Your change will take effect from ${inFiveDaysMessageDate}`,
+      )
+
+      expect(activitiesService.updateActivity).lastCalledWith(
+        33,
+        {
+          paid: true,
+          attendanceRequired: true,
+          pay: [
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 17,
+              rate: 50,
+              startDate: undefined,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 18,
+              rate: 65,
+              startDate: undefined,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 3,
+              rate: 65,
+              startDate: undefined,
+            },
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 17,
+              rate: 72,
+              startDate: '2024-11-16',
+            },
+          ],
+        },
+        {
+          activeCaseLoadId: 'MDI',
+          username: 'joebloggs',
+        },
       )
     })
   })
