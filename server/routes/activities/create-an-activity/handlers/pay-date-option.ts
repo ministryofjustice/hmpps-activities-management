@@ -4,7 +4,7 @@ import { Expose } from 'class-transformer'
 import { IsIn, IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
-import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 import {
@@ -88,6 +88,9 @@ export default class PayDateOptionRoutes {
       dateOption === DateOption.TOMORROW ? formatIsoDate(addDays(new Date(), 1)) : datePickerDateToIsoDate(startDate)
 
     const bandId = Number(req.body.bandId)
+
+    const activity = await this.activitiesService.getActivity(req.session.createJourney.activityId, res.locals.user)
+
     let singlePayIndex = -1
     if (
       (originalPaymentStartDate === undefined && startDate === undefined) ||
@@ -113,24 +116,40 @@ export default class PayDateOptionRoutes {
 
     const [bandAlias, displaySequence] = band
 
-    const newRate = {
-      rate: +rate,
-      prisonPayBand: { id: bandId, alias: String(bandAlias), displaySequence: +displaySequence },
-      incentiveNomisCode: allIncentiveLevels.find(s2 => s2.levelName === incentiveLevel)?.levelCode,
-      incentiveLevel,
-      startDate: changeDate,
-    } as ActivityPay
+    // if the activity is started then add a future pay rate, else update the default pay rate.
+    if (changeDate > activity.startDate) {
+      const newRate = {
+        rate: +rate,
+        prisonPayBand: { id: bandId, alias: String(bandAlias), displaySequence: +displaySequence },
+        incentiveNomisCode: allIncentiveLevels.find(s2 => s2.levelName === incentiveLevel)?.levelCode,
+        incentiveLevel,
+        startDate: changeDate,
+      } as ActivityPay
+      req.session.createJourney.pay.push(newRate)
+    } else {
+      const updatedActivityPay = req.session.createJourney.pay.map(pay => {
+        if (pay.prisonPayBand.id === bandId && pay.incentiveLevel === incentiveLevel) {
+          return {
+            ...pay,
+            rate: +rate,
+          }
+        }
+        return pay
+      })
+      req.session.createJourney.pay = updatedActivityPay
+    }
 
-    req.session.createJourney.pay.push(newRate)
     req.session.createJourney.attendanceRequired = true
 
-    if (req.params.mode === 'edit') await this.updatePay(req, res)
-    else res.redirect(`../check-pay${preserveHistory ? '?preserveHistory=true' : ''}`)
+    if (req.params.mode === 'edit') {
+      await this.updatePay(req, res, activity)
+    } else {
+      res.redirect(`../check-pay${preserveHistory ? '?preserveHistory=true' : ''}`)
+    }
   }
 
-  updatePay = async (req: Request, res: Response) => {
+  updatePay = async (req: Request, res: Response, activity: Activity) => {
     const { user } = res.locals
-    const { activityId } = req.session.createJourney
     const { startDate, dateOption } = req.body
     const bandId = Number(req.body.bandId)
 
@@ -153,9 +172,8 @@ export default class PayDateOptionRoutes {
       attendanceRequired: true,
       pay: updatedPayRates,
     } as ActivityUpdateRequest
-    await this.activitiesService.updateActivity(activityId, updatedActivity, user)
+    await this.activitiesService.updateActivity(activity.id, updatedActivity, user)
 
-    const activity = await this.activitiesService.getActivity(+activityId, res.locals.user)
     req.session.createJourney.allocations = activity.schedules.flatMap(s =>
       s.allocations.filter(a => a.status !== 'ENDED'),
     )
