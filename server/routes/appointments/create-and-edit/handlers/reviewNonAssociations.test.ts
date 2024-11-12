@@ -6,7 +6,7 @@ import PrisonService from '../../../../services/prisonService'
 import { NonAssociation } from '../../../../@types/nonAssociationsApi/types'
 import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { AppointmentJourneyMode } from '../appointmentJourney'
+import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { AppointmentPrisonerDetails } from '../appointmentPrisonerDetails'
 
 jest.mock('../../../../services/nonAssociationsService')
@@ -40,6 +40,13 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       session: {
         appointmentJourney: {
           prisoners: [{ number: 'G6123VU' }, { number: 'AB123IT' }, { number: 'PW987BB' }],
+        },
+        appointmentSetJourney: {
+          appointments: [
+            { prisoner: { number: 'A1234BC' } },
+            { prisoner: { number: 'B2345CD' } },
+            { prisoner: { number: 'G6123VU' } },
+          ],
         },
       },
       params: {
@@ -166,6 +173,60 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
         attendeesTotalCount: 1,
       })
     })
+    it('should render the view for create appointment set', async () => {
+      req.session.appointmentJourney.type = AppointmentType.SET
+      const expectedResult = [
+        {
+          primaryPrisoner: { name: 'SAMUEL RAMROOP', prisonerNumber: 'G6123VU' },
+          nonAssociations: [
+            {
+              prisonerNumber: 'AB123IT',
+              name: 'JOSHUA SMITH',
+              cellLocation: 'A-N-2-24S',
+              lastUpdated: '2024-10-16T15:38:03',
+            },
+          ],
+        },
+        {
+          primaryPrisoner: { name: 'JOSHUA SMITH', prisonerNumber: 'AB123IT' },
+          nonAssociations: [
+            {
+              prisonerNumber: 'G6123VU',
+              name: 'SAMUEL RAMROOP',
+              cellLocation: 'A-N-2-55S',
+              lastUpdated: '2024-10-16T15:38:03',
+            },
+          ],
+        },
+      ]
+      when(nonAssociationsService.getNonAssociationsBetween)
+        .calledWith(['A1234BC', 'B2345CD', 'G6123VU'], res.locals.user)
+        .mockReturnValue(
+          Promise.resolve([
+            {
+              id: 1,
+              firstPrisonerNumber: 'G6123VU',
+              secondPrisonerNumber: 'AB123IT',
+              whenUpdated: '2024-10-16T15:38:03',
+            },
+          ] as NonAssociation[]),
+        )
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(atLeast(['G6123VU', 'AB123IT']))
+        .mockResolvedValue(prisoners)
+
+      when(nonAssociationsService.enhanceNonAssociations).mockReturnValue(Promise.resolve(expectedResult))
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-non-associations', {
+        appointmentId,
+        backLinkHref: 'review-prisoners-alerts',
+        preserveHistory: false,
+        nonAssociations: expectedResult,
+        attendeesTotalCount: 3,
+      })
+    })
   })
 
   describe('POST', () => {
@@ -221,6 +282,21 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       }
       await handler.REMOVE(req, res)
       expect(res.redirect).toBeCalledWith('../../review-non-associations?prisonerRemoved=true&preserveHistory=true')
+    })
+    it('should remove appointment and redirect back to GET - set', async () => {
+      req.session.appointmentJourney.type = AppointmentType.SET
+
+      req.params = {
+        prisonNumber: 'G6123VU',
+      }
+
+      await handler.REMOVE(req, res)
+
+      expect(req.session.appointmentSetJourney.appointments).toEqual([
+        { prisoner: { number: 'A1234BC' } },
+        { prisoner: { number: 'B2345CD' } },
+      ])
+      expect(res.redirect).toBeCalledWith('../../review-non-associations?prisonerRemoved=true')
     })
   })
 })
