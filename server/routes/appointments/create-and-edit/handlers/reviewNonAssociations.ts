@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import NonAssociationsService from '../../../../services/nonAssociationsService'
 import PrisonService from '../../../../services/prisonService'
+import { AppointmentType } from '../appointmentJourney'
 
 export default class ReviewNonAssociationRoutes {
   constructor(
@@ -11,10 +12,16 @@ export default class ReviewNonAssociationRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { appointmentId } = req.params
-    const { appointmentJourney } = req.session
+    const { appointmentJourney, appointmentSetJourney } = req.session
     const { preserveHistory, prisonerRemoved } = req.query
     const backLinkHref = 'review-prisoners-alerts'
-    const { prisoners } = appointmentJourney
+
+    let prisoners
+    if (appointmentJourney.type === AppointmentType.SET) {
+      prisoners = appointmentSetJourney.appointments.map(appointment => appointment.prisoner)
+    } else {
+      prisoners = appointmentJourney.prisoners
+    }
 
     // If there is only one prisoner added to the appointment, non-associations are impossible so there is no point calling the endpoint
     // But if the user has just removed a non-association and now there's only one person left,
@@ -51,9 +58,15 @@ export default class ReviewNonAssociationRoutes {
   REMOVE = async (req: Request, res: Response): Promise<void> => {
     const { prisonNumber } = req.params
 
-    req.session.appointmentJourney.prisoners = req.session.appointmentJourney.prisoners.filter(
-      prisoner => prisoner.number !== prisonNumber,
-    )
+    if (req.session.appointmentJourney.type === AppointmentType.SET) {
+      req.session.appointmentSetJourney.appointments = req.session.appointmentSetJourney.appointments.filter(
+        appointment => appointment.prisoner.number !== prisonNumber,
+      )
+    } else {
+      req.session.appointmentJourney.prisoners = req.session.appointmentJourney.prisoners.filter(
+        prisoner => prisoner.number !== prisonNumber,
+      )
+    }
 
     res.redirect(
       `../../review-non-associations?prisonerRemoved=true${req.query.preserveHistory ? '&preserveHistory=true' : ''}`,
