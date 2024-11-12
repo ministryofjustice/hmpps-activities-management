@@ -10,7 +10,7 @@
 {% if additionalAttendeesCount === 1 and nonAssociations | length %}
         Review non-associations for {{ nonAssociations[0].primaryPrisoner.name | toTitleCase }}
 {% else %}
-        Review non-associations for {{ additionalAttendeesCount }} people you’re adding
+        Review non-associations for {{ nonAssociations | length }} people you’re adding
     {% endif %}
 {% endset %}
 
@@ -49,7 +49,7 @@
                 <p class="govuk-body govuk-!-margin-bottom-0">People with non-associations: {{ nonAssociations | length }}</p>
                 <p class="govuk-body govuk-!-margin-bottom-0">People you’re adding: {{ additionalAttendeesCount }}</p>
                 <p class="govuk-body">People already attending: {{ existingAttendeesCount }}</p>
-                <p class="govuk-body">You can only remove people you’re adding. You can remove people who already attending once you’ve finished adding people.</p>
+                <p class="govuk-body">You can only remove people you’re adding. You can remove people who are already attending once you’ve finished adding people.</p>
                 {% for attendee in nonAssociations %}
                     {{ summaryCardWithTable(attendee, existingPrisonerNumbers) }}
                 {% endfor %}
