@@ -29,7 +29,7 @@
                     {{ summaryCardWithTable(attendee) }}
                 {% endfor %}
             {% else %}
-                <p class="govuk-body" data-qa="remaining-attendees">There are {{ attendeesTotalCount }} attendees remaining on the appointment list.</p>
+                <p class="govuk-body" data-qa="remaining-attendees">There {% if attendeesTotalCount === 1 %}is one attendee {% else %}are {{ attendeesTotalCount }} attendees{% endif %} remaining on the appointment list.</p>
             {% endif %}
 
             <form method="POST">
