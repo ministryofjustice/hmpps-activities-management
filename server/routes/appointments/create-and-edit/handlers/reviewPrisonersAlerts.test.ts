@@ -3,7 +3,6 @@ import { when } from 'jest-when'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import ReviewPrisonersAlertsRoutes from './reviewPrisonersAlerts'
 import PrisonerAlertsService, { PrisonerAlertResults } from '../../../../services/prisonerAlertsService'
-import config from '../../../../config'
 
 jest.mock('../../../../services/prisonerAlertsService')
 
@@ -125,17 +124,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
   })
 
   describe('POST', () => {
-    it('should redirect or return to name page during create', async () => {
-      config.nonAssociationsAppointmentReviewEnabled = false
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
-      req.body = {
-        howToAdd: 'SEARCH',
-      }
-      await handler.POST(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('name')
-    })
     it('should redirect or return to non-associations page during create', async () => {
-      config.nonAssociationsAppointmentReviewEnabled = true
       req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
       req.body = {
         howToAdd: 'SEARCH',
@@ -161,14 +150,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
   })
 
   describe('EDIT', () => {
-    it('should redirect to the schedule page', async () => {
-      config.nonAssociationsAppointmentReviewEnabled = false
-      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-      await handler.EDIT(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('../../schedule')
-    })
-    it('should redirect to the schedule page', async () => {
-      config.nonAssociationsAppointmentReviewEnabled = true
+    it('should redirect to the non-assocaitions page', async () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       await handler.EDIT(req, res)
       expect(res.redirectOrReturn).toBeCalledWith('review-non-associations')

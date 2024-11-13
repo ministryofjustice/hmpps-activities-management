@@ -208,9 +208,6 @@ export default {
   bookAVideoLinkToggleEnabled: toBoolean(
     get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
   ),
-  nonAssociationsAppointmentReviewEnabled: toBoolean(
-    get('NON_ASSOCIATIONS_APPOINTMENT_REVIEW_ENABLED', 'false', requiredInProduction),
-  ),
   deallocateTodaySessionEnabled: toBoolean(get('DEALLOCATE_TODAY_SESSION_TOGGLE_ENABLED', 'false')),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),

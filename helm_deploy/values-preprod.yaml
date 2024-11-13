@@ -26,7 +26,6 @@ generic-service:
     NON_ASSOCIATIONS_API_URL: "https://non-associations-api-preprod.hmpps.service.justice.gov.uk"
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-preprod.hmpps-digital-prison-reporting-mi-preprod.svc.cluster.local"
     DEALLOCATE_TODAY_SESSION_TOGGLE_ENABLED: "true"
-    NON_ASSOCIATIONS_APPOINTMENT_REVIEW_ENABLED: "false"
 
   allowlist:
     moj-official-tgw-prod: 51.149.250.0/24
