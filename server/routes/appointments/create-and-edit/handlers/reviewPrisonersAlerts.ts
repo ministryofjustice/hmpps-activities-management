@@ -50,13 +50,11 @@ export default class ReviewPrisonersAlertsRoutes {
       return res.redirectOrReturn('date-and-time')
     }
 
-    if (config.nonAssociationsAppointmentReviewEnabled) return res.redirectOrReturn('review-non-associations')
-    return res.redirectOrReturn('name')
+    return res.redirectOrReturn('review-non-associations')
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    if (config.nonAssociationsAppointmentReviewEnabled) return res.redirectOrReturn('review-non-associations')
-    return res.redirectOrReturn('../../schedule')
+    return res.redirectOrReturn('review-non-associations')
   }
 
   REMOVE = async (req: Request, res: Response): Promise<void> => {
