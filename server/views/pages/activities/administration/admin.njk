@@ -13,15 +13,26 @@
 {% block content %}
     <div class="card-group govuk-grid-row">
         {% if 'ROLE_MIGRATE_ACTIVITIES' in user.roles %}
-        <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "href": "/activities/admin/regime",
-                "clickable": "true",
-                "heading": "Manage Regime Times",
-                "description": "Create or amend site regime times.",
-                "data-qa": "adminRegime"
-            }) }}
+            <div class="govuk-grid-column-one-third card-group__item">
+                {{ card({
+                    "href": "/activities/admin/regime",
+                    "clickable": "true",
+                    "heading": "Manage Regime Times",
+                    "description": "Create or amend site regime times.",
+                    "data-qa": "adminRegime"
+                }) }}
+            </div>
         {% endif %}
-        </div>
+        {% if 'ROLE_MIGRATE_APPOINTMENTS' in user.roles %}
+            <div class="govuk-grid-column-one-third card-group__item">
+                {{ card({
+                    "href": "/activities/admin/appointment-summary",
+                    "clickable": "true",
+                    "heading": "Delete Future Appointments",
+                    "description": "Deletion of future appointments.",
+                    "data-qa": "deleteAppointments"
+                }) }}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

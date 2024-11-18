@@ -64,6 +64,7 @@ import {
   AppointmentAttendeeByStatus,
   PrisonRegime,
   NonAssociationDetails,
+  AppointmentCountSummary,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -791,6 +792,34 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.get({
       path: `/appointments/${prisonCode}/${status}/attendance`,
       query,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async getAppointmentMigrationSummary(
+    prisonCode: string,
+    startDate: string,
+    categoryCodes: string,
+    user: ServiceUser,
+  ): Promise<AppointmentCountSummary[]> {
+    return this.get({
+      path: `/migrate-appointment/${prisonCode}/summary`,
+      query: { startDate, categoryCodes },
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async deleteMigratedAppointments(
+    prisonCode: string,
+    startDate: string,
+    categoryCode: string,
+    user: ServiceUser,
+  ): Promise<void> {
+    return this.delete({
+      path: `/migrate-appointment/${prisonCode}`,
+      query: { startDate, categoryCode },
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })

@@ -1,0 +1,99 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
+
+{% set pageTitle = applicationName + " - Administration - Appointment Summary" %}
+{% set pageId = 'regime-times-page' %}
+{% set pageHeading = "Set up migrated appointments to be deleted" %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-l">Set up appointments to be deleted</h2>
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {% set otherDateHintHtml %}
+                    <div>Enter the date, for example {{ exampleDatePickerDate() }}, or click on the calendar to select.</div>
+                    <br>
+                    <div>You can set the change to take effect up to 30 days from today.</div>
+                {% endset %}
+
+                {{ govukRadios({
+                    name: "dateOption",
+                    fieldset: {
+                        legend: {
+                            text: "Enter the first day of migrated appointments to be deleted",
+                            classes: "govuk-fieldset__legend--m",
+                            isPageHeading: true
+                        }
+                    },
+                    items: [
+                        {
+                            value: DateOption.TOMORROW,
+                            text: "Tomorrow - " + now | addDays(1) | formatDate,
+                            checked: formResponses.dateOption == DateOption.TOMORROW
+                        },
+                        {
+                            value: DateOption.OTHER,
+                            text: "A different date",
+                            label: { text: "Pay start date "},
+                            checked: formResponses.dateOption == DateOption.OTHER,
+                            conditional: {
+                            html: mojDatePicker({
+                                id: 'startDate',
+                                name: 'startDate',
+                                leadingZeros: 'true',
+                                classes: 'moj-datepicker--fixed-width',
+                                label: {
+                                    text: 'startDate',
+                                    classes: 'govuk-visually-hidden'
+                                },
+                                hint: { html: otherDateHintHtml },
+                                errorMessage: validationErrors | findError('startDate'),
+                                value: formResponses.startDate
+                            })
+                        }
+                        }
+                    ]
+                }) }}
+
+                {% set categories = [] %}
+                {% for appointmentCategorySummary in appointmentCategorySummaries %}
+                    {% set categories = (categories.push({
+                        value: appointmentCategorySummary.code,
+                        text: appointmentCategorySummary.description,
+                        checked: true
+                    }), categories) %}
+                {% endfor %}
+
+                {{ govukCheckboxes({
+                    idPrefix: 'appointmentCategorySummaries',
+                    name: 'appointmentCategorySummaries',
+                    classes: "govuk-checkboxes--small",
+                    fieldset: {
+                        legend: {
+                            text: 'Categories',
+                            classes: 'govuk-fieldset__legend--m'
+                        }
+                    },
+                    items: categories
+                }) }}
+
+                <div class="govuk-!-margin-bottom-4">
+                    <a href="#" class="govuk-link govuk-link--no-visited-state"
+                       data-module="select-all-link" data-checkbox-name="appointmentCategorySummaries"></a>
+                </div>
+
+                {{ govukButton({
+                    text: "Preview appointments to be deleted"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
