@@ -501,6 +501,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     suitableIncentiveLevel?: string[],
     suitableRiskLevel?: string[],
     suitableForEmployed?: boolean,
+    noAllocations?: boolean,
     search?: string,
     page?: number,
   ): Promise<PageActivityCandidate> {
@@ -510,6 +511,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
         suitableIncentiveLevel,
         suitableRiskLevel,
         suitableForEmployed,
+        noAllocations,
         search,
         page,
         size: 5,

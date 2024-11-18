@@ -300,6 +300,7 @@ export default class ActivitiesService {
     suitableIeps?: string[],
     suitableRiskLevels?: string[],
     suitableForEmployed?: boolean,
+    noAllocations?: boolean,
     searchQuery?: string,
     page?: number,
   ): Promise<PageActivityCandidate> {
@@ -309,6 +310,7 @@ export default class ActivitiesService {
       suitableIeps,
       suitableRiskLevels,
       suitableForEmployed,
+      noAllocations,
       searchQuery,
       page,
     )

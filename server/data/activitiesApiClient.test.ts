@@ -705,6 +705,7 @@ describe('activitiesApiClient', () => {
           suitableIncentiveLevel: 'Basic',
           suitableRiskLevel: 'RHI',
           suitableForEmployed: true,
+          noAllocations: true,
           search: 'test',
           page: 2,
           size: 5,
@@ -713,7 +714,7 @@ describe('activitiesApiClient', () => {
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200, response)
 
-      const output = await activitiesApiClient.getActivityCandidates(1, user, ['Basic'], ['RHI'], true, 'test', 2)
+      const output = await activitiesApiClient.getActivityCandidates(1, user, ['Basic'], ['RHI'], true, true, 'test', 2)
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
