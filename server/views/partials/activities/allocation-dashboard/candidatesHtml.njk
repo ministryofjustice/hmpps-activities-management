@@ -26,6 +26,11 @@
         <div class="filter__items" id='candidates-filter'>
             {% set employmentOptions = [
                 {
+                    value: 'Not allocated to any activity',
+                    text: 'Not allocated to any activity',
+                    selected: filters.employmentFilter == 'Not allocated to any activity'
+                },
+                {
                     value: 'Not in work',
                     text: 'Not in work',
                     selected: filters.employmentFilter == 'Not in work'
