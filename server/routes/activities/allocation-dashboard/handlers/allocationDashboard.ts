@@ -295,6 +295,7 @@ export default class AllocationDashboardRoutes {
         inmate =>
           !filters.employmentFilter ||
           filters.employmentFilter === 'Everyone' ||
+          (inmate.otherAllocations.length === 0 && filters.employmentFilter === 'Not allocated to any activity') ||
           (inmate.otherAllocations.filter(a => !a.isUnemployment).length > 0 &&
             filters.employmentFilter === 'In work') ||
           (inmate.otherAllocations.filter(a => !a.isUnemployment).length === 0 &&
@@ -334,6 +335,7 @@ export default class AllocationDashboardRoutes {
       suitableIeps,
       suitableWpas,
       suitableForEmployed,
+      filters.employmentFilter === 'Not allocated to any activity',
       candidateQueryLower,
       pageNumber,
     )

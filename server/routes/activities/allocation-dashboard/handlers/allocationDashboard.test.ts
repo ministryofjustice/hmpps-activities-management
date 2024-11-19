@@ -98,6 +98,7 @@ describe('Route Handlers - Allocation dashboard', () => {
   describe('GET', () => {
     beforeEach(() => {
       activitiesService.getActivity = jest.fn()
+
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))
         .mockResolvedValue({
@@ -105,6 +106,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           pay: [{ incentiveNomisCode: 'BAS' }, { incentiveNomisCode: 'STD' }, { incentiveNomisCode: 'ENH' }],
           schedules: [activitySchedule],
         } as unknown as Activity)
+
       when(prisonService.getIncentiveLevels)
         .calledWith(atLeast('MDI'))
         .mockResolvedValue([
@@ -112,6 +114,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           { levelCode: 'STD', levelName: 'Standard' },
           { levelCode: 'ENH', levelName: 'Enhanced' },
         ] as IncentiveLevel[])
+
       when(activitiesService.getAllocationsWithParams)
         .calledWith(atLeast(1))
         .mockResolvedValue([
@@ -137,8 +140,9 @@ describe('Route Handlers - Allocation dashboard', () => {
             isUnemployment: false,
           },
         ] as Allocation[])
+
       when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(atLeast(['A0013DZ', 'B2222CD']))
+        .calledWith(atLeast(['A0013DZ', 'B2222CD', 'F4444FF']))
         .mockResolvedValue([
           {
             prisonerNumber: 'A0013DZ',
@@ -169,7 +173,20 @@ describe('Route Handlers - Allocation dashboard', () => {
               },
             },
           },
+          {
+            prisonerNumber: 'F4444FF',
+            firstName: 'ALAN',
+            lastName: 'SMITH',
+            cellLocation: 'MDI-4-2-011',
+            alerts: [],
+            currentIncentive: {
+              level: {
+                description: 'Standard',
+              },
+            },
+          },
         ] as Prisoner[])
+
       when(activitiesService.getActivePrisonPrisonerAllocations)
         .calledWith(atLeast(['ABC123', '321CBA']))
         .mockResolvedValue([
@@ -188,8 +205,9 @@ describe('Route Handlers - Allocation dashboard', () => {
             ],
           },
         ] as PrisonerAllocations[])
+
       when(activitiesService.getActivePrisonPrisonerAllocations)
-        .calledWith(atLeast(['A0013DZ', 'B2222CD']))
+        .calledWith(atLeast(['A0013DZ', 'B2222CD', 'F4444FF']))
         .mockResolvedValue([
           {
             prisonerNumber: 'A0013DZ',
@@ -202,7 +220,12 @@ describe('Route Handlers - Allocation dashboard', () => {
             prisonerNumber: 'B2222CD',
             allocations: [{ activityId: 3, scheduleId: 3, scheduleDescription: 'unemployed', isUnemployment: true }],
           },
+          {
+            prisonerNumber: 'F4444FF',
+            allocations: [],
+          },
         ] as PrisonerAllocations[])
+
       when(activitiesService.getActivityCandidates)
         .calledWith(atLeast(1))
         .mockResolvedValue({
@@ -218,6 +241,7 @@ describe('Route Handlers - Allocation dashboard', () => {
             } as ActivityCandidate,
           ],
         })
+
       when(activitiesService.fetchActivityWaitlist)
         .calledWith(atLeast(1))
         .mockResolvedValue([
@@ -241,6 +265,22 @@ describe('Route Handlers - Allocation dashboard', () => {
             id: 2,
             scheduleId: 1,
             prisonerNumber: 'B2222CD',
+            status: 'PENDING',
+            requestedDate: '2023-08-07',
+            requestedBy: 'PRISONER',
+            earliestReleaseDate: {
+              releaseDate: '2025-11-29',
+              isIndeterminateSentence: false,
+              isRemand: true,
+              isTariffDate: false,
+              isImmigrationDetainee: false,
+              isConvictedUnsentenced: false,
+            },
+          },
+          {
+            id: 3,
+            scheduleId: 1,
+            prisonerNumber: 'F4444FF',
             status: 'PENDING',
             requestedDate: '2023-08-07',
             requestedBy: 'PRISONER',
@@ -375,7 +415,7 @@ describe('Route Handlers - Allocation dashboard', () => {
               earliestReleaseDate: { releaseDate: '2023-12-26' },
             },
           ],
-          waitlistSize: 2,
+          waitlistSize: 3,
           waitlistedPrisoners: [
             {
               cellLocation: 'MDI-4-2-009',
@@ -423,6 +463,26 @@ describe('Route Handlers - Allocation dashboard', () => {
               requestedBy: 'Self-requested',
               status: 'PENDING',
               waitlistApplicationId: 2,
+              currentIncentive: 'Standard',
+              earliestReleaseDate: {
+                releaseDate: '2025-11-29',
+                isIndeterminateSentence: false,
+                isRemand: true,
+                isTariffDate: false,
+                isImmigrationDetainee: false,
+                isConvictedUnsentenced: false,
+              },
+              alerts: [],
+            },
+            {
+              cellLocation: 'MDI-4-2-011',
+              name: 'ALAN SMITH',
+              otherAllocations: [],
+              prisonerNumber: 'F4444FF',
+              requestDate: new Date(2023, 7, 7),
+              requestedBy: 'Self-requested',
+              status: 'PENDING',
+              waitlistApplicationId: 3,
               currentIncentive: 'Standard',
               earliestReleaseDate: {
                 releaseDate: '2025-11-29',
@@ -489,6 +549,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         ['Standard', 'Enhanced'],
         undefined,
         undefined,
+        false,
         undefined,
         0,
       )
@@ -561,6 +622,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         undefined,
         undefined,
         undefined,
+        false,
         undefined,
         0,
       )
@@ -586,6 +648,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         undefined,
         ['NONE'],
         undefined,
+        false,
         undefined,
         0,
       )
@@ -603,7 +666,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           filters: expect.objectContaining({
             employmentFilter: 'In work',
           }),
-          waitlistSize: 2,
+          waitlistSize: 3,
           waitlistedPrisoners: [
             expect.objectContaining({
               prisonerNumber: 'A0013DZ',
@@ -617,6 +680,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         undefined,
         undefined,
         true,
+        false,
         undefined,
         0,
       )
@@ -634,13 +698,16 @@ describe('Route Handlers - Allocation dashboard', () => {
           filters: expect.objectContaining({
             employmentFilter: 'Everyone',
           }),
-          waitlistSize: 2,
+          waitlistSize: 3,
           waitlistedPrisoners: expect.arrayContaining([
             expect.objectContaining({
               prisonerNumber: 'A0013DZ',
             }),
             expect.objectContaining({
               prisonerNumber: 'B2222CD',
+            }),
+            expect.objectContaining({
+              prisonerNumber: 'F4444FF',
             }),
           ]),
         }),
@@ -651,6 +718,40 @@ describe('Route Handlers - Allocation dashboard', () => {
         undefined,
         undefined,
         undefined,
+        false,
+        undefined,
+        0,
+      )
+    })
+
+    it('should return correct candidates with employment filter set to Not allocated to any activity', async () => {
+      req.params = { activityId: '1' }
+      req.query.employmentFilter = 'Not allocated to any activity'
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/allocation-dashboard/allocation-dashboard',
+        expect.objectContaining({
+          filters: expect.objectContaining({
+            employmentFilter: 'Not allocated to any activity',
+          }),
+          waitlistSize: 3,
+          waitlistedPrisoners: expect.arrayContaining([
+            expect.objectContaining({
+              prisonerNumber: 'F4444FF',
+            }),
+          ]),
+        }),
+      )
+
+      expect(activitiesService.getActivityCandidates).toHaveBeenCalledWith(
+        1,
+        user,
+        undefined,
+        undefined,
+        undefined,
+        true,
         undefined,
         0,
       )
@@ -668,10 +769,13 @@ describe('Route Handlers - Allocation dashboard', () => {
           filters: expect.objectContaining({
             employmentFilter: 'Not in work',
           }),
-          waitlistSize: 2,
+          waitlistSize: 3,
           waitlistedPrisoners: [
             expect.objectContaining({
               prisonerNumber: 'B2222CD',
+            }),
+            expect.objectContaining({
+              prisonerNumber: 'F4444FF',
             }),
           ],
         }),
@@ -681,6 +785,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         user,
         undefined,
         undefined,
+        false,
         false,
         undefined,
         0,
@@ -699,6 +804,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         undefined,
         undefined,
         undefined,
+        false,
         'joe',
         0,
       )
