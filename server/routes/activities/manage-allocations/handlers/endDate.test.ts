@@ -7,7 +7,6 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import EndDateRoutes, { EndDate } from './endDate'
 import { formatDatePickerDate, formatIsoDate, isoDateToDatePickerDate } from '../../../../utils/datePickerUtils'
 import { DeallocateTodayOption } from '../journey'
-import config from '../../../../config'
 
 describe('Route Handlers - Edit allocation - End date', () => {
   const handler = new EndDateRoutes()
@@ -46,8 +45,6 @@ describe('Route Handlers - Edit allocation - End date', () => {
     const now = new Date()
 
     beforeEach(() => {
-      config.deallocateTodaySessionEnabled = true
-
       const inmate = {
         prisonerNumber: 'ABC123',
         prisonerName: '',
@@ -84,14 +81,6 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
 
     describe('should render end date view', () => {
-      it('when feature toggle is false', async () => {
-        config.deallocateTodaySessionEnabled = false
-
-        await handler.GET(req, res)
-
-        expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/end-date')
-      })
-
       it('when mode is not remove', async () => {
         req.params.mode = 'create'
 

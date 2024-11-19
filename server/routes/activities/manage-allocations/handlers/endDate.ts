@@ -11,7 +11,6 @@ import {
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
 import { parseDate } from '../../../../utils/utils'
-import config from '../../../../config'
 
 export class EndDate {
   @Expose()
@@ -62,7 +61,6 @@ export default class EndDateRoutes {
     )
 
     if (
-      config.deallocateTodaySessionEnabled &&
       req.params.mode === 'remove' &&
       allocateJourney.inmates.length === 1 &&
       isToday(nextSessionDateAndTime) &&

@@ -23,7 +23,6 @@ generic-service:
     BOOK_A_VIDEO_LINK_API_URL: "https://book-a-video-link-api.prison.service.justice.gov.uk"
     NON_ASSOCIATIONS_API_URL: "https://non-associations-api.hmpps.service.justice.gov.uk"
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-prod.hmpps-digital-prison-reporting-mi-prod.svc.cluster.local"
-    DEALLOCATE_TODAY_SESSION_TOGGLE_ENABLED: "true"
 
   allowlist:
     groups:
