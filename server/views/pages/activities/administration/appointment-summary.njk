@@ -6,7 +6,7 @@
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 
 {% set pageTitle = applicationName + " - Administration - Appointment Summary" %}
-{% set pageId = 'regime-times-page' %}
+{% set pageId = 'appointment-summary-page' %}
 {% set pageHeading = "Set up migrated appointments to be deleted" %}
 {% set jsBackLink = true %}
 
@@ -42,7 +42,7 @@
                         {
                             value: DateOption.OTHER,
                             text: "A different date",
-                            label: { text: "Pay start date "},
+                            label: { text: "Appointment deletion start date "},
                             checked: formResponses.dateOption == DateOption.OTHER,
                             conditional: {
                             html: mojDatePicker({
