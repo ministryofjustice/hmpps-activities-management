@@ -25,9 +25,6 @@ export default function Index(services: Services): Router {
   get('/admin/regime', regimeChangeRouteHandler.GET)
   post('/admin/regime', regimeChangeRouteHandler.POST, RegimeTimes)
 
-  get('/admin/regime', regimeChangeRouteHandler.GET)
-  post('/admin/regime', regimeChangeRouteHandler.POST, RegimeTimes)
-
   get('/admin/appointment-summary', appointmentSummaryRouteHandler.GET)
   post('/admin/appointment-summary', appointmentSummaryRouteHandler.POST, AppointmentSummary)
 
