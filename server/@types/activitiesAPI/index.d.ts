@@ -76,62 +76,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/queue-admin/retry-dlq/{dlqName}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    /** @description
-     *
-     *     Requires one of the following roles:
-     *     * ACTIVITY_QUEUE_ADMIN */
-    put: operations['retryDlq']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/queue-admin/retry-all-dlqs': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put: operations['retryAllDlqs']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/queue-admin/purge-queue/{queueName}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    /** @description
-     *
-     *     Requires one of the following roles:
-     *     * ACTIVITY_QUEUE_ADMIN */
-    put: operations['purgeQueue']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/attendances': {
     parameters: {
       query?: never
@@ -935,15 +879,7 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /**
-     * Get an appointment by its id
-     * @description Returns an appointment with its properties and references to NOMIS by its unique identifier.
-     *
-     *     Requires one of the following roles:
-     *     * PRISON
-     *     * ACTIVITY_ADMIN
-     */
-    get: operations['getAppointmentById']
+    get?: never
     put?: never
     post?: never
     delete?: never
@@ -1273,30 +1209,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/scheduled-instances/{instanceId}/attendances': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /**
-     * Get a list of attendances for a scheduled instance
-     * @description Returns one or more attendance records for a particular scheduled activity for a given scheduled instance.
-     *
-     *     Requires one of the following roles:
-     *     * PRISON
-     *     * ACTIVITY_ADMIN
-     */
-    get: operations['getAttendancesByScheduledInstance']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/scheduled-instances/attendance-summary': {
     parameters: {
       query?: never
@@ -1367,26 +1279,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/queue-admin/get-dlq-messages/{dlqName}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** @description
-     *
-     *     Requires one of the following roles:
-     *     * ACTIVITY_QUEUE_ADMIN */
-    get: operations['getDlqMessages']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/prisons/{prisonCode}/scheduled-instances': {
     parameters: {
       query?: never
@@ -1427,30 +1319,6 @@ export interface paths {
      *     * ACTIVITY_ADMIN
      */
     get: operations['getPrisonPayBands']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/prison/{prisonCode}/activity-categories/{categoryId}/activities': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /**
-     * Get list of activities within a category at a specified prison
-     * @description
-     *
-     *     Requires one of the following roles:
-     *     * PRISON
-     *     * ACTIVITY_ADMIN
-     */
-    get: operations['getActivitiesInCategory']
     put?: never
     post?: never
     delete?: never
@@ -1500,6 +1368,30 @@ export interface paths {
      *     * ACTIVITY_ADMIN
      */
     get: operations['getPrisonRegimeByPrisonCode']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/migrate-appointment/{prisonCode}/summary': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get the list of appointment categories
+     * @description
+     *
+     *     Requires one of the following roles:
+     *     * NOMIS_APPOINTMENTS
+     *     * MIGRATE_APPOINTMENTS
+     */
+    get: operations['migratedAppointmentsSummary']
     put?: never
     post?: never
     delete?: never
@@ -1814,30 +1706,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/appointment-set/{appointmentSetId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /**
-     * Get an appointment set by its id
-     * @description Returns an appointment set with its properties and references to NOMIS by its unique identifier.
-     *
-     *     Requires one of the following roles:
-     *     * PRISON
-     *     * ACTIVITY_ADMIN
-     */
-    get: operations['getAppointmentSetById']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/appointment-set/{appointmentSetId}/details': {
     parameters: {
       query?: never
@@ -2106,31 +1974,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/activities/{activityId}/basic': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /**
-     * Returns the basic activity ids and descriptions without its child collections
-     * @description Returns basic activity IDs and attributes without its child collections.
-     *
-     *     Requires one of the following roles:
-     *     * PRISON
-     *     * ACTIVITY_ADMIN
-     *     * ACTIVITIES_MANAGEMENT__RO
-     */
-    get: operations['getActivityKeyIds']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/migrate/delete-activity/prison/{prisonCode}/id/{activityId}': {
     parameters: {
       query?: never
@@ -2180,6 +2023,8 @@ export interface paths {
      *
      *     Requires one of the following roles:
      *     * NOMIS_APPOINTMENTS
+     *     * ACTIVITY_ADMIN
+     *     * MIGRATE_APPOINTMENTS
      */
     delete: operations['deleteMigratedAppointments']
     options?: never
@@ -2272,14 +2117,6 @@ export interface components {
        * @example Resume tomorrow
        */
       comment?: string
-    }
-    RetryDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-    }
-    PurgeQueueResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
     }
     /** @description Request object for updating an attendance record */
     AttendanceUpdateRequest: {
@@ -2869,11 +2706,11 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject'][]
-      /** Format: int32 */
-      pageSize?: number
       paged?: boolean
       /** Format: int32 */
       pageNumber?: number
+      /** Format: int32 */
+      pageSize?: number
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
@@ -2996,7 +2833,7 @@ export interface components {
        */
       updatedBy?: string
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
-      /** @description Does the prisoner have non-associations? */
+      /** @description Does the prisoner have non-associations? Null implies that non-associations could not be retrieved */
       nonAssociations?: boolean
     }
     /** @description Describes an event to be published to the domain events SNS topic */
@@ -4118,7 +3955,7 @@ export interface components {
       /** @description The cell location of the prisoner. Included only if includePrisonerSummary = true */
       cellLocation?: string
       earliestReleaseDate?: components['schemas']['EarliestReleaseDate']
-      /** @description Does the prisoner have non-associations?. Included only if includePrisonerSummary = true */
+      /** @description Does the prisoner have non-associations?. Included only if includePrisonerSummary = true. Null implies that non-associations could not be retrieved */
       nonAssociations?: boolean
     }
     /**
@@ -4460,6 +4297,11 @@ export interface components {
        * @example true
        */
       sunday: boolean
+      /**
+       * @description Time slot
+       * @enum {string}
+       */
+      timeSlot?: 'AM' | 'PM' | 'ED'
     }
     ActivityMigrateResponse: {
       prisonCode: string
@@ -6583,7 +6425,6 @@ export interface components {
       incentiveLevel?: components['schemas']['IncentiveLevelSuitability']
       education?: components['schemas']['EducationSuitability']
       releaseDate?: components['schemas']['ReleaseDateSuitability']
-      nonAssociation?: components['schemas']['NonAssociationSuitability']
       /** @description The prisoner's currently active allocations with pay rates */
       allocations: components['schemas']['AllocationPayRate'][]
       /** @description The prisoner's previous allocations to this activity where they have been deallocated by a member of staff, with an optional case note */
@@ -6636,88 +6477,6 @@ export interface components {
        */
       incentiveLevel?: string
     }
-    /** @description Prisoner non-association details */
-    NonAssociationDetails: {
-      /**
-       * @description Is allocated to this activity?
-       * @example true
-       */
-      allocated: boolean
-      /**
-       * @description The reason code
-       * @example GANG_RELATED
-       */
-      reasonCode: string
-      /**
-       * @description The reason description
-       * @example Gang related
-       */
-      reasonDescription: string
-      /**
-       * @description The role code
-       * @example VICTIM
-       */
-      roleCode: string
-      /**
-       * @description The role description
-       * @example VICTIM
-       */
-      roleDescription: string
-      /**
-       * @description The restriction type
-       * @example WING
-       */
-      restrictionType: string
-      /**
-       * @description The restriction type description
-       * @example Cell, landing and wing
-       */
-      restrictionTypeDescription: string
-      otherPrisonerDetails: components['schemas']['OtherPrisonerDetails']
-      /**
-       * Format: date-time
-       * @description Date and time the non-association was updated. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
-       */
-      whenUpdated: string
-      /**
-       * @description Additional free text comments related to the non-association.
-       * @example Violent acts
-       */
-      comments?: string
-    }
-    /** @description Prisoner workplace risk assessment suitability */
-    NonAssociationSuitability: {
-      /**
-       * @description The prisoner's suitability
-       * @example true
-       */
-      suitable: boolean
-      /** @description The prisoner's non-associations */
-      nonAssociations: components['schemas']['NonAssociationDetails'][]
-    }
-    /** @description Non-association prisoner details */
-    OtherPrisonerDetails: {
-      /**
-       * @description The prisoners number
-       * @example G0135GA
-       */
-      prisonerNumber: string
-      /**
-       * @description The prisoners first name
-       * @example Joseph
-       */
-      firstName: string
-      /**
-       * @description The prisoners last name
-       * @example Bloggs
-       */
-      lastName: string
-      /**
-       * @description Description of living unit (e.g. cell) the offender is assigned to.
-       * @example PVI-1-2-4
-       */
-      cellLocation: string
-    }
     /** @description Prisoner release date suitability */
     ReleaseDateSuitability: {
       /**
@@ -6767,6 +6526,78 @@ export interface components {
        */
       riskLevel: string
     }
+    /** @description Prisoner non-association details */
+    NonAssociationDetails: {
+      /**
+       * @description Is allocated to this activity?
+       * @example true
+       */
+      allocated: boolean
+      /**
+       * @description The reason code
+       * @example GANG_RELATED
+       */
+      reasonCode: string
+      /**
+       * @description The reason description
+       * @example Gang related
+       */
+      reasonDescription: string
+      /**
+       * @description The role code
+       * @example VICTIM
+       */
+      roleCode: string
+      /**
+       * @description The role description
+       * @example VICTIM
+       */
+      roleDescription: string
+      /**
+       * @description The restriction type
+       * @example WING
+       */
+      restrictionType: string
+      /**
+       * @description The restriction type description
+       * @example Cell, landing and wing
+       */
+      restrictionTypeDescription: string
+      otherPrisonerDetails: components['schemas']['OtherPrisonerDetails']
+      /**
+       * Format: date-time
+       * @description Date and time the non-association was updated. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
+       */
+      whenUpdated: string
+      /**
+       * @description Additional free text comments related to the non-association.
+       * @example Violent acts
+       */
+      comments?: string
+    }
+    /** @description Non-association prisoner details */
+    OtherPrisonerDetails: {
+      /**
+       * @description The prisoners number
+       * @example G0135GA
+       */
+      prisonerNumber: string
+      /**
+       * @description The prisoners first name
+       * @example Joseph
+       */
+      firstName: string
+      /**
+       * @description The prisoners last name
+       * @example Bloggs
+       */
+      lastName: string
+      /**
+       * @description Description of living unit (e.g. cell) the offender is assigned to.
+       * @example PVI-1-2-4
+       */
+      cellLocation: string
+    }
     /** @description Describes a candidate for allocation to an activity */
     ActivityCandidate: {
       /**
@@ -6787,7 +6618,7 @@ export interface components {
       /** @description Any activities the candidate is currently allocated to (excluding ended) */
       otherAllocations: components['schemas']['Allocation'][]
       earliestReleaseDate: components['schemas']['EarliestReleaseDate']
-      /** @description Does the prisoner have non-associations? */
+      /** @description Does the prisoner have non-associations? Null implies that non-associations could not be retrieved */
       nonAssociations?: boolean
     }
     PageActivityCandidate: {
@@ -7000,19 +6831,6 @@ export interface components {
        */
       maxDaysToExpiry: number
     }
-    DlqMessage: {
-      body: {
-        [key: string]: Record<string, never> | undefined
-      }
-      messageId: string
-    }
-    GetDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-      /** Format: int32 */
-      messagesReturnedCount: number
-      messages: components['schemas']['DlqMessage'][]
-    }
     /** @description Summarises an activity */
     ActivitySummary: {
       /**
@@ -7053,6 +6871,18 @@ export interface components {
        * @enum {string}
        */
       activityState: 'ARCHIVED' | 'LIVE'
+    }
+    /** @description
+     *       A count summary of appointments based on a category
+     *        */
+    AppointmentCountSummary: {
+      appointmentCategorySummary: components['schemas']['AppointmentCategorySummary']
+      /**
+       * Format: int64
+       * @description The number of appointments
+       * @example 25
+       */
+      count: number
     }
     Location: {
       /**
@@ -8053,59 +7883,6 @@ export interface components {
        */
       isDeleted: boolean
     }
-    /** @description A basic activity, schedule and category for use where limited IDs only are required */
-    ActivityBasic: {
-      /**
-       * @description The prison code where this activity takes place
-       * @example PVI
-       */
-      prisonCode: string
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity
-       * @example 123456
-       */
-      activityId: number
-      /**
-       * Format: int64
-       * @description The internally-generated ID for this activity schedule (assumes 1-2-1 with activity)
-       * @example 7654321
-       */
-      activityScheduleId: number
-      /**
-       * @description A brief summary description of this activity for use in forms and lists
-       * @example Maths level 1
-       */
-      summary?: string
-      /**
-       * Format: date
-       * @description The start date for this activity
-       * @example 2023-10-11
-       */
-      startDate: string
-      /**
-       * Format: date
-       * @description The end date for this activity (can be null)
-       * @example 2024-12-01
-       */
-      endDate?: string
-      /**
-       * Format: int64
-       * @description The internally generated category ID associated with this activity
-       * @example 1
-       */
-      categoryId: number
-      /**
-       * @description The category code that matches NOMIS program service code for this activity category
-       * @example SAA-EDUCATION
-       */
-      categoryCode: string
-      /**
-       * @description The category name
-       * @example Education
-       */
-      categoryName: string
-    }
   }
   responses: never
   parameters: never
@@ -8295,70 +8072,6 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  retryDlq: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        dlqName: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['RetryDlqResult']
-        }
-      }
-    }
-  }
-  retryAllDlqs: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['RetryDlqResult'][]
-        }
-      }
-    }
-  }
-  purgeQueue: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        queueName: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['PurgeQueueResult']
         }
       }
     }
@@ -10001,48 +9714,6 @@ export interface operations {
       }
     }
   }
-  getAppointmentById: {
-    parameters: {
-      query?: never
-      header?: {
-        'Caseload-Id'?: string
-      }
-      path: {
-        appointmentId: number
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Appointment found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Appointment']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description The appointment for this id was not found. */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
   updateAppointment: {
     parameters: {
       query?: never
@@ -10846,55 +10517,6 @@ export interface operations {
       }
     }
   }
-  getAttendancesByScheduledInstance: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        instanceId: number
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Attendance records found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Attendance'][]
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description The scheduled instance was not found. */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
   attendanceSummary: {
     parameters: {
       query: {
@@ -11042,30 +10664,6 @@ export interface operations {
       }
     }
   }
-  getDlqMessages: {
-    parameters: {
-      query?: {
-        maxMessages?: number
-      }
-      header?: never
-      path: {
-        dlqName: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['GetDlqResult']
-        }
-      }
-    }
-  }
   getActivityScheduleInstancesByDateRange: {
     parameters: {
       query: {
@@ -11156,56 +10754,6 @@ export interface operations {
       }
     }
   }
-  getActivitiesInCategory: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        prisonCode: string
-        categoryId: number
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Activities within the category */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ActivityLite'][]
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Category ID not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
   getActivities: {
     parameters: {
       query?: {
@@ -11279,6 +10827,43 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  migratedAppointmentsSummary: {
+    parameters: {
+      query: {
+        /** @description Inclusive start date of migrated appointments. Must be today or in the future */
+        startDate: string
+        /** @description A list of category codes to retrieve summaries appointments */
+        categoryCodes: string[]
+      }
+      header?: never
+      path: {
+        /** @description The 3-digit prison code */
+        prisonCode: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Appointment summary details */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppointmentCountSummary'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
         headers: {
           [name: string]: unknown
         }
@@ -11944,48 +11529,6 @@ export interface operations {
       }
     }
   }
-  getAppointmentSetById: {
-    parameters: {
-      query?: never
-      header?: {
-        'Caseload-Id'?: string
-      }
-      path: {
-        appointmentSetId: number
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Appointment set found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppointmentSet']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description The appointment set for this id was not found. */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
   getAppointmentSetDetailsById: {
     parameters: {
       query?: never
@@ -12411,55 +11954,6 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['Activity']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden, requires an appropriate role */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description The activity for this ID was not found. */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getActivityKeyIds: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        activityId: number
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Activity found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ActivityBasic']
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */

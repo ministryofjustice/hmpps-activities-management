@@ -681,10 +681,6 @@ describe('Activities Service', () => {
           suitable: false,
           earliestReleaseDate: null,
         },
-        nonAssociation: {
-          suitable: true,
-          nonAssociations: [],
-        },
       } as AllocationSuitability
 
       when(activitiesApiClient.allocationSuitability).mockResolvedValue(expectedResult)

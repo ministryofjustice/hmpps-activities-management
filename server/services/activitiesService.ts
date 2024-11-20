@@ -50,6 +50,7 @@ import {
   AppointmentAttendeeByStatus,
   PrisonRegime,
   NonAssociationDetails,
+  AppointmentCountSummary,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/journey'
@@ -514,5 +515,23 @@ export default class ActivitiesService {
       eventTier ?? null,
       organiserCode ?? null,
     )
+  }
+
+  async getAppointmentMigrationSummary(
+    prisonCode: string,
+    startDate: string,
+    categoryCodes: string,
+    user: ServiceUser,
+  ): Promise<AppointmentCountSummary[]> {
+    return this.activitiesApiClient.getAppointmentMigrationSummary(prisonCode, startDate, categoryCodes, user)
+  }
+
+  async deleteMigratedAppointments(
+    prisonCode: string,
+    startDate: string,
+    categoryCode: string,
+    user: ServiceUser,
+  ): Promise<void> {
+    return this.activitiesApiClient.deleteMigratedAppointments(prisonCode, startDate, categoryCode, user)
   }
 }
