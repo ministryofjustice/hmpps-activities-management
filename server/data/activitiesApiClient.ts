@@ -65,6 +65,8 @@ import {
   PrisonRegime,
   NonAssociationDetails,
   AppointmentCountSummary,
+  PrisonPayBandCreateRequest,
+  PrisonPayBandUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -822,6 +824,33 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     return this.delete({
       path: `/migrate-appointment/${prisonCode}`,
       query: { startDate, categoryCode },
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async postPrisonPayBand(
+    prisonCode: string,
+    request: PrisonPayBandCreateRequest,
+    user: ServiceUser,
+  ): Promise<PrisonPayBand> {
+    return this.post({
+      path: `/prison/${prisonCode}/prison-pay-band`,
+      data: request,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async patchPrisonPayBand(
+    prisonCode: string,
+    prisonPayBandId: number,
+    request: PrisonPayBandUpdateRequest,
+    user: ServiceUser,
+  ): Promise<PrisonPayBand> {
+    return this.patch({
+      path: `/prison/${prisonCode}/prison-pay-band/${prisonPayBandId}`,
+      data: request,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })

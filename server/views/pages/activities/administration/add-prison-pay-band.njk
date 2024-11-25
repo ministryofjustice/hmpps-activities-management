@@ -1,0 +1,73 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Administration - Create a prison pay band" %}
+{% set pageId = 'add-prison-pay-band-page' %}
+{% set pageHeading = "Create a prison pay band" %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-l">Create a prison pay band</h2>
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {% set rows = [] %}
+                {{ govukInput({
+                    id: "description",
+                    name: "description",
+                    label: {
+                        text: "Description",
+                        classes: "govuk-label--s"
+                    },
+                    classes: "govuk-input--width-20",
+                    errorMessage: validationErrors | findError('description'),
+                    value: formResponses.description or prisonPayBand.description
+                }) }}
+                {{ govukInput({
+                    id: "nomisPayBand",
+                    name: "nomisPayBand",
+                    label: {
+                        text: "Nomis Pay Band",
+                        classes: "govuk-label--s"
+                    },
+                    classes: "govuk-input--width-2",
+                    errorMessage: validationErrors | findError('nomisPayBand'),
+                    value: formResponses.nomisPayBand or prisonPayBand.nomisPayBand
+                }) }}
+
+                {{ govukInput({
+                    id: "displaySequence",
+                    name: "displaySequence",
+                    label: {
+                        text: "Display Sequence",
+                        classes: "govuk-label--s"
+                    },
+                    classes: "govuk-input--width-2",
+                    errorMessage: validationErrors | findError('displaySequence'),
+                    value: formResponses.displaySequence or prisonPayBand.displaySequence
+                }) }}
+
+                {{ govukInput({
+                    id: "alias",
+                    name: "alias",
+                    label: {
+                        text: "Alias",
+                        classes: "govuk-label--s"
+                    },
+                    classes: "govuk-input--width-20",
+                    errorMessage: validationErrors | findError('alias'),
+                    value: formResponses.alias or prisonPayBand.alias
+                }) }}
+                {{ govukButton({
+                    text: "Create",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

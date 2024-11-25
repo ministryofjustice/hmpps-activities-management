@@ -400,6 +400,30 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/prison/{prisonCode}/prison-pay-band': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Create a pay band for a given prison
+     * @description Returns the newly created pay band.
+     *
+     *     Requires one of the following roles:
+     *     * MIGRATE_ACTIVITIES
+     *     * ACTIVITY_ADMIN
+     */
+    post: operations['createPayBand']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/migrate/allocation': {
     parameters: {
       query?: never
@@ -870,6 +894,30 @@ export interface paths {
      *     * ACTIVITY_HUB
      *     * ACTIVITY_ADMIN */
     patch: operations['updateWaitingList']
+    trace?: never
+  }
+  '/prison/{prisonCode}/prison-pay-band/{prisonPayBandId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /**
+     * Update a pay band for a given prison
+     * @description Returns the updated pay band.
+     *
+     *     Requires one of the following roles:
+     *     * MIGRATE_ACTIVITIES
+     *     * ACTIVITY_ADMIN
+     */
+    patch: operations['updatePayBand']
     trace?: never
   }
   '/appointments/{appointmentId}': {
@@ -4066,6 +4114,20 @@ export interface components {
        * @example MDI
        */
       prisonCode: string
+      /**
+       * Format: date-time
+       * @description The date and time this pay band was created
+       */
+      createdTime?: string
+      /** @description The username of the user authenticated via HMPPS auth that created the pay band */
+      createdBy?: string
+      /**
+       * Format: date-time
+       * @description The date and time one or more appointments in this series was last changed
+       */
+      updatedTime?: string
+      /** @description The username of the user authenticated via HMPPS auth that last edited one or more appointments in this series */
+      updatedBy?: string
     }
     /** @description Describes a prisoners allocations */
     PrisonerAllocations: {
@@ -4076,6 +4138,31 @@ export interface components {
       prisonerNumber: string
       /** @description The list of allocations for the prisoner */
       allocations: components['schemas']['Allocation'][]
+    }
+    /** @description The create request with the new pay band details */
+    PrisonPayBandCreateRequest: {
+      /**
+       * Format: int32
+       * @description The order in which the pay band should be presented within a list e.g. dropdown
+       * @example 1
+       */
+      displaySequence: number
+      /**
+       * @description The alternative text to use in place of the description e.g. Low, Medium, High
+       * @example Low
+       */
+      alias: string
+      /**
+       * @description The description of pay band in this prison
+       * @example Pay band 1
+       */
+      description: string
+      /**
+       * Format: int32
+       * @description The pay band number this is associated with in NOMIS (1-10)
+       * @example 1
+       */
+      nomisPayBand: number
     }
     /** @description Allocation migration request */
     AllocationMigrateRequest: {
@@ -5878,6 +5965,31 @@ export interface components {
        * @enum {string}
        */
       status?: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
+    }
+    /** @description The prison pay band to update */
+    PrisonPayBandUpdateRequest: {
+      /**
+       * Format: int32
+       * @description The order in which the pay band should be presented within a list e.g. dropdown
+       * @example 1
+       */
+      displaySequence?: number
+      /**
+       * @description The alternative text to use in place of the description e.g. Low, Medium, High
+       * @example Low
+       */
+      alias?: string
+      /**
+       * @description The description of pay band in this prison
+       * @example Pay band 1
+       */
+      description?: string
+      /**
+       * Format: int32
+       * @description The pay band number this is associated with in NOMIS (1-10)
+       * @example 1
+       */
+      nomisPayBand?: number
     }
     /** @description The update request with the new appointment details and how to apply the update */
     AppointmentUpdateRequest: {
@@ -8817,6 +8929,52 @@ export interface operations {
       }
     }
   }
+  createPayBand: {
+    parameters: {
+      query?: never
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        prisonCode: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PrisonPayBandCreateRequest']
+      }
+    }
+    responses: {
+      /** @description Prison pay band created */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PrisonPayBand'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   migrateAllocation: {
     parameters: {
       query?: never
@@ -9714,6 +9872,53 @@ export interface operations {
       }
     }
   }
+  updatePayBand: {
+    parameters: {
+      query?: never
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        prisonCode: string
+        prisonPayBandId: number
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PrisonPayBandUpdateRequest']
+      }
+    }
+    responses: {
+      /** @description Prison pay band updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PrisonPayBand'][]
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   updateAppointment: {
     parameters: {
       query?: never
@@ -10350,6 +10555,7 @@ export interface operations {
         suitableIncentiveLevel?: string[]
         suitableRiskLevel?: string[]
         suitableForEmployed?: boolean
+        noAllocations?: boolean
         search?: string
         /** @description Zero-based page index (0..N) */
         page?: number
