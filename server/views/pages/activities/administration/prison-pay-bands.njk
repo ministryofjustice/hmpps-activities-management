@@ -53,7 +53,7 @@
                 {{ govukButton({
                     text: "Add a pay rate",
                     href: 'add-prison-pay-band'
-                }) if prisonPayBands | length <= 10 }}
+                }) if prisonPayBands | length < 10 }}
             </form>
         </div>
     </div>
