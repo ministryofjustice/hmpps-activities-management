@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import ApplyFiltersRoutes from './applyFilters'
 import AttendanceReason from '../../../../enum/attendanceReason'
+import { PayNoPay } from '../../../../@types/activities'
 
 describe('Route Handlers - applyFilters', () => {
   const handler = new ApplyFiltersRoutes()
@@ -27,41 +28,99 @@ describe('Route Handlers - applyFilters', () => {
   })
 
   describe('APPLY', () => {
-    it('should apply populated list of filter', async () => {
-      req.body = {
-        categoryFilters: ['Prison Jobs'],
-        reasonFilter: 'SUSPENDED',
-        searchTerm: 'search',
-        absenceReasonFilters: [AttendanceReason.SICK],
-        payFilters: ['true'],
+    beforeEach(() => {
+      req.session.attendanceSummaryJourney = {
+        categoryFilters: ['Education'],
+        reasonFilter: 'BOTH',
+        searchTerm: undefined,
+        absenceReasonFilters: [AttendanceReason.CLASH],
+        payFilters: [PayNoPay.PAID],
       }
-      await handler.APPLY(req, res)
+    })
 
-      expect(req.session.attendanceSummaryJourney).toStrictEqual({
-        categoryFilters: ['Prison Jobs'],
-        reasonFilter: 'SUSPENDED',
-        searchTerm: 'search',
-        absenceReasonFilters: [AttendanceReason.SICK],
-        payFilters: ['true'],
+    describe('when view is not absences', () => {
+      it('should apply populated list of filter', async () => {
+        req.body = {
+          categoryFilters: ['Prison Jobs'],
+          reasonFilter: 'SUSPENDED',
+          searchTerm: 'search',
+          absenceReasonFilters: [AttendanceReason.SICK],
+          payFilters: ['true'],
+          isAbsencesFilter: undefined,
+        }
+
+        await handler.APPLY(req, res)
+
+        expect(req.session.attendanceSummaryJourney).toStrictEqual({
+          categoryFilters: ['Prison Jobs'],
+          reasonFilter: 'SUSPENDED',
+          searchTerm: 'search',
+          absenceReasonFilters: undefined,
+          payFilters: undefined,
+        })
+      })
+
+      it('should apply empty filters', async () => {
+        req.body = {
+          categoryFilters: [],
+          reasonFilter: '',
+          searchTerm: '',
+          absenceReasonFilters: [],
+          payFilters: [],
+          isAbsencesFilter: undefined,
+        }
+        await handler.APPLY(req, res)
+
+        expect(req.session.attendanceSummaryJourney).toStrictEqual({
+          categoryFilters: [],
+          reasonFilter: '',
+          searchTerm: '',
+          absenceReasonFilters: undefined,
+          payFilters: undefined,
+        })
       })
     })
 
-    it('should apply empty filters', async () => {
-      req.body = {
-        categoryFilters: [],
-        reasonFilter: '',
-        searchTerm: '',
-        absenceReasonFilters: [],
-        payFilters: [],
-      }
-      await handler.APPLY(req, res)
+    describe('when view is absences', () => {
+      it('should apply populated list of filter', async () => {
+        req.body = {
+          categoryFilters: ['Prison Jobs'],
+          reasonFilter: 'SUSPENDED',
+          searchTerm: 'search',
+          absenceReasonFilters: [AttendanceReason.SICK],
+          payFilters: ['true'],
+          isAbsencesFilter: true,
+        }
 
-      expect(req.session.attendanceSummaryJourney).toStrictEqual({
-        categoryFilters: [],
-        reasonFilter: '',
-        searchTerm: '',
-        absenceReasonFilters: [],
-        payFilters: [],
+        await handler.APPLY(req, res)
+
+        expect(req.session.attendanceSummaryJourney).toStrictEqual({
+          categoryFilters: ['Prison Jobs'],
+          reasonFilter: 'SUSPENDED',
+          searchTerm: 'search',
+          absenceReasonFilters: [AttendanceReason.SICK],
+          payFilters: ['true'],
+        })
+      })
+
+      it('should apply empty filters', async () => {
+        req.body = {
+          categoryFilters: [],
+          reasonFilter: '',
+          searchTerm: '',
+          absenceReasonFilters: [],
+          payFilters: [],
+          isAbsencesFilter: true,
+        }
+        await handler.APPLY(req, res)
+
+        expect(req.session.attendanceSummaryJourney).toStrictEqual({
+          categoryFilters: [],
+          reasonFilter: '',
+          searchTerm: '',
+          absenceReasonFilters: [],
+          payFilters: [],
+        })
       })
     })
   })
