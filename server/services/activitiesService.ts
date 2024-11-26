@@ -51,6 +51,8 @@ import {
   PrisonRegime,
   NonAssociationDetails,
   AppointmentCountSummary,
+  PrisonPayBandCreateRequest,
+  PrisonPayBandUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/journey'
@@ -533,5 +535,22 @@ export default class ActivitiesService {
     user: ServiceUser,
   ): Promise<void> {
     return this.activitiesApiClient.deleteMigratedAppointments(prisonCode, startDate, categoryCode, user)
+  }
+
+  async postPrisonPayBand(
+    prisonCode: string,
+    request: PrisonPayBandCreateRequest,
+    user: ServiceUser,
+  ): Promise<PrisonPayBand> {
+    return this.activitiesApiClient.postPrisonPayBand(prisonCode, request, user)
+  }
+
+  async patchPrisonPayBand(
+    prisonCode: string,
+    request: PrisonPayBandUpdateRequest,
+    prisonPayBandId: number,
+    user: ServiceUser,
+  ): Promise<PrisonPayBand> {
+    return this.activitiesApiClient.patchPrisonPayBand(prisonCode, prisonPayBandId, request, user)
   }
 }

@@ -34,5 +34,16 @@
                 }) }}
             </div>
         {% endif %}
+        {% if 'ROLE_MIGRATE_ACTIVITIES' in user.roles %}
+            <div class="govuk-grid-column-one-third card-group__item">
+                {{ card({
+                    "href": "/activities/admin/prison-pay-bands",
+                    "clickable": "true",
+                    "heading": "Manage Prison Pay Bands",
+                    "description": "Create or amend prison pay bands.",
+                    "data-qa": "adminPrisonPayBands"
+                }) }}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
