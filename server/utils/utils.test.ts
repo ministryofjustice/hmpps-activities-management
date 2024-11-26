@@ -17,6 +17,7 @@ import {
   toFixed,
   asString,
   getSplitTime,
+  formatName,
 } from './utils'
 import { Attendance } from '../@types/activitiesAPI/types'
 
@@ -82,6 +83,20 @@ describe('utils', () => {
     })
   })
 
+  describe('formatName', () => {
+    it.each([
+      ['All names (LastCommaFirst)', 'John', 'Smith', false, 'Smith, John'],
+      ['Double barrelled last name (LastCommaFirst)', 'Jane', 'Smith-Doe', true, '<strong>Smith-Doe</strong>, Jane'],
+      ['Multiple last names without hyphen (LastCommaFirst)', 'Jane', 'Van Der Ploeg', false, 'Van Der Ploeg, Jane'],
+      ['Multiple first names without hyphen (LastCommaFirst)', 'Jane Sarah', 'Smith', false, 'Smith, Jane Sarah'],
+      ['Multiple first names with hyphen (LastCommaFirst)', 'Sarah-Jane', 'Smith', false, 'Smith, Sarah-Jane'],
+    ])(
+      '%s: formatName(%s, %s, %s, %s, %s)',
+      (_: string, firstName: string, lastName: string, boldLastName: boolean, expected: string) => {
+        expect(formatName(firstName, lastName, boldLastName)).toEqual(expected)
+      },
+    )
+  })
   describe('parseDate', () => {
     it.each([
       ['2022-02-17', undefined, new Date(2022, 1, 17)],

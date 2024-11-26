@@ -89,6 +89,32 @@ export const prisonerName = (name: string, boldLastName = true) => {
   return formattedName.trim()
 }
 
+/**
+ * Format a person's name with proper capitalisation
+ *
+ * Correctly handles names with apostrophes, hyphens and spaces
+ *
+ * @param firstName - first name
+ * @param lastName - last name
+ * @returns formatted name string
+ */
+export const formatName = (firstName: string, lastName: string, boldLastName: boolean = true): string => {
+  const names = [firstName, lastName]
+  names.unshift(`${names.pop()},`)
+  const namesOrdered = names
+    .filter(s => s)
+    .map(s => s.toLowerCase())
+    .join(' ')
+    .replace(/(^\w)|([\s'-]+\w)/g, letter => letter.toUpperCase())
+
+  if (boldLastName) {
+    const [surname, ...rest] = namesOrdered.split(', ')
+    return `<strong>${surname}</strong>, ${rest.join(' ')}`
+  }
+
+  return namesOrdered
+}
+
 export const parseDate = (date: string, fromFormat = 'yyyy-MM-dd') => {
   if (!date) return null
   return parse(date, fromFormat, new Date())

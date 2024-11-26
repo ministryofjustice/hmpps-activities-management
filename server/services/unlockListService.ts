@@ -56,7 +56,9 @@ export default class UnlockListService {
       return {
         prisonerNumber: prisoner.prisonerNumber,
         bookingId: prisoner?.bookingId,
-        prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+        // prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+        prisonerFirstName: prisoner.firstName,
+        prisonerLastName: prisoner.lastName,
         cellLocation: prisoner?.cellLocation,
         category: this.alertsFilterService.getFilteredCategory(alertFilters, prisoner?.category),
         incentiveLevel: prisoner?.currentIncentive,

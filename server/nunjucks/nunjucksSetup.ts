@@ -17,6 +17,7 @@ import {
   findError,
   firstNameLastName,
   formatDate,
+  formatName,
   fullName,
   getSplitTime,
   initialiseName,
@@ -132,6 +133,10 @@ export function registerNunjucks(app?: express.Express): Environment {
   setUpDprNunjucksFilters(njkEnv)
 
   // Only register nunjucks helpers/filters here - they should be implemented and unit tested elsewhere
+  njkEnv.addFilter('formatName', (firstName, lastName, bold) => {
+    const name = formatName(firstName, lastName, bold)
+    return name ? njkEnv.getFilter('safe')(name) : null
+  })
   njkEnv.addFilter('fullName', fullName)
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('prisonerName', (str, bold) => {

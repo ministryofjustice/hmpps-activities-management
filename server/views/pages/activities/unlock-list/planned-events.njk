@@ -196,15 +196,17 @@
                             {% if unlockListItems | length > 0 %}
                                 {% set rows = [] %}
                                 {% for item in unlockListItems %}
+                                    {% set nameForSorting = item.prisonerFirstName + ' ' + item.prisonerlastName %}
                                     {% set row = [] %}
                                     {% set row = (row.push(
                                     {
                                         attributes: { 
                                             id: 'activity-' + loop.index, 
-                                            "data-sort-value": item.prisonerName | prisonerNameForSorting
+                                            "data-sort-value": nameForSorting | prisonerNameForSorting
                                         },
                                         html: showProfileLink({
-                                            name: item.prisonerName,
+                                            firstName: item.prisonerFirstName,
+                                            lastName: item.prisonerLastName,
                                             prisonerNumber: item.prisonerNumber
                                         }),
                                         classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'

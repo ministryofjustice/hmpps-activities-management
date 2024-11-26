@@ -29,7 +29,8 @@
                 items: [
                     {
                         html: showProfileLink({
-                            name: event.name,
+                            firstName: event.firstName,
+                            lastName: event.lastName,
                             prisonerNumber: event.prisonerNumber,
                             inCaseLoad: event.prisonerPrisonCode == user.activeCaseLoadId
                         }),

@@ -146,7 +146,8 @@
                             items: [
                                 {
                                     html: showProfileLink({
-                                        name: application.prisoner | fullName,
+                                        firstName: application.prisoner.firstName,
+                                        lastName: application.prisoner.lastName,
                                         prisonerNumber: application.prisoner.prisonerNumber,
                                         cellLocation: statusBasedCellLocation(application.prisoner.cellLocation, application.prisoner.status, application.prisoner.prisonId == user.activeCaseLoadId),
                                         inCaseLoad: application.prisoner.prisonId == user.activeCaseLoadId

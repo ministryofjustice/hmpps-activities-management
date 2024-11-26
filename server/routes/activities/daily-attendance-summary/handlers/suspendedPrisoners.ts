@@ -55,6 +55,8 @@ export default class SuspendedPrisonersRoutes {
         return {
           prisonerNumber: prisoner.prisonerNumber,
           prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
+          firstName: prisoner.firstName,
+          lastName: prisoner.lastName,
           status: prisoner.status,
           prisonCode: prisoner.prisonId,
           cellLocation: prisoner.cellLocation,

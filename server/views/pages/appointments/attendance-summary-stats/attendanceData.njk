@@ -18,12 +18,14 @@
 
 {% set rows = [] %}
 {% for appointment in appointments %}
+{% set nameForSorting = appointment.firstName + " " +appointment.lastName %}
   {% set rows = (rows.push([
       {html: showProfileLink({
-            name: appointment | fullName,
+            firstName: appointment.firstName,
+            lastName: appointment.lastName,
             prisonerNumber: appointment.prisonerNumber
         }), attributes: {
-          "data-sort-value": appointment | firstNameLastName | toTitleCase | prisonerNameForSorting
+          "data-sort-value": nameForSorting | prisonerNameForSorting
         } },
         { text: appointment.cellLocation or '-',attributes: {
           "data-sort-value": appointment.cellLocation

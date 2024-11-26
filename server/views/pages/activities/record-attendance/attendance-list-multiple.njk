@@ -100,7 +100,8 @@
             items: [
                 {
                     html: showProfileLink({
-                        name: attendee.prisoner | firstNameLastName,
+                        firstName: attendee.prisoner.firstName,
+                        lastName: attendee.prisoner.lastName,
                         prisonerNumber: attendee.prisoner.prisonerNumber,
                         inCaseLoad: attendee.prisoner.prisonId == user.activeCaseLoadId
                     }),

@@ -117,7 +117,8 @@
                                 classes: 'print-only'
                             }, {
                                 html: showProfileLink({
-                                    name: prisonerEvents.firstName + " " + prisonerEvents.lastName,
+                                    firstName: prisonerEvents.firstName,
+                                    lastName: prisonerEvents.lastName,
                                     prisonerNumber: prisonerEvents.prisonerNumber,
                                     inCaseLoad: prisonerEvents.prisonId == user.activeCaseLoadId
                                 }),
