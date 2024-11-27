@@ -266,6 +266,8 @@ export default class AllocationDashboardRoutes {
         return thisWaitlist.map(w => ({
           waitlistApplicationId: w.id,
           name: `${inmate.firstName} ${inmate.lastName}`,
+          firstName: inmate.firstName,
+          lastName: inmate.lastName,
           prisonerNumber: inmate.prisonerNumber,
           prisonerPrisonCode: inmate.prisonId,
           prisonerStatus: inmate.status,

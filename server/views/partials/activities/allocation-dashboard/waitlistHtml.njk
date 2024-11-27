@@ -161,14 +161,15 @@
     {% endset %}
 
     {% set rows = (rows.push({
-        visuallyHiddenText: 'Select ' + row.name | toTitleCase | prisonerName,
+        visuallyHiddenText: 'Select ' + row.firstName | formatName(row.lastName, false),
         value: row.waitlistApplicationId,
         selectable: true,
         forbiddenActionId: 'waitlist-action-1' if row.status != 'APPROVED',
         items: [
             {
                 html: showProfileLink({
-                    name: row.name,
+                    firstName: row.firstName,
+                    lastName: row.lastName,
                     prisonerNumber: row.prisonerNumber,
                     cellLocation: statusBasedCellLocation(row.cellLocation, row.prisonerStatus, row.prisonerPrisonCode == user.activeCaseLoadId),
                     inCaseLoad: row.prisonerPrisonCode == user.activeCaseLoadId

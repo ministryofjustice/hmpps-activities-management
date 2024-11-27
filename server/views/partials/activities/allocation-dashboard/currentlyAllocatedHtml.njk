@@ -23,13 +23,14 @@
     {% endset %}
 
     {% set rows = (rows.push({
-        visuallyHiddenText: 'Select ' + row.name | toTitleCase | prisonerName,
+        visuallyHiddenText: 'Select ' + row.firstName | formatName(row.lastName, false),
         value: row.allocationId,
         selectable: true,
         items: [
             {
                 html: showProfileLink({
-                    name: row.name,
+                    firstName: row.firstName,
+                    lastName: row.lastName,
                     prisonerNumber: row.prisonerNumber,
                     inCaseLoad: row.prisonerPrisonCode == user.activeCaseLoadId
                 }),

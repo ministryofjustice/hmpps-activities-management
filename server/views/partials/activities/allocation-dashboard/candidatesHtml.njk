@@ -152,13 +152,14 @@
         {{ nonAssociationsHtml(row, row.name | toTitleCase, activity.id) }}
     {% endset %}
     {% set rows = (rows.push({
-        visuallyHiddenText: 'Select ' + row.name | toTitleCase,
+        visuallyHiddenText: 'Select ' + row.firstName | formatName(row.lastName, false),
         value: row.prisonerNumber,
         selectable: true,
         items: [
             {
                 html: showProfileLink({
-                    name: row.name,
+                    firstName: row.firstName,
+                    lastName: row.lastName,
                     prisonerNumber: row.prisonerNumber,
                     cellLocation: row.cellLocation
                 }),
