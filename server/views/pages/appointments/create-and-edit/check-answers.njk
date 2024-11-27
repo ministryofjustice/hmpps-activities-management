@@ -320,7 +320,8 @@
             },
             value: {
                 html: showProfileLink({
-                    name: prisoner.name,
+                    firstName: prisoner.firstName,
+                    lastName: prisoner.lastName,
                     prisonerNumber: prisoner.number,
                     cellLocation: prisoner.cellLocation
                 })
@@ -358,7 +359,8 @@
                 },
                 value: {
                     html: showProfileLink({
-                        name: appointment.prisoner.name,
+                        firstName: appointment.prisoner.firstName,
+                        lastName: appointment.prisoner.lastName,
                         prisonerNumber: appointment.prisoner.number,
                         cellLocation: appointment.prisoner.cellLocation
                     })

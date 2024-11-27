@@ -6,7 +6,6 @@
     {% set rows = [] %}
         {% for row in nonAssociations %}
             {% set nonAssociation = row.otherPrisonerDetails %}
-            {% set nonAssociationPrisonerName = nonAssociation | firstNameLastName | toTitleCase %}
             {% set nonAssociationsHtml %}
                 <p class="govuk-body govuk-!-margin-bottom-0">Where to keep apart: {{ row.restrictionTypeDescription }}</p>
                 <hr class="mid-grey-tint-20-hr dash-border">
@@ -24,10 +23,12 @@
                 {% endfor %}
             {% endset %}
 
+        {% set nonAssociationPrisonerName = nonAssociation | firstNameLastName | toTitleCase %}
         {% set rows = (rows.push(
                 [{
                     html: showProfileLink({
-                        name: nonAssociationPrisonerName,
+                        firstName: nonAssociation.firstName,
+                        lastName: nonAssociation.lastName,
                         prisonerNumber: nonAssociation.prisonerNumber
                     }),
                     attributes: {

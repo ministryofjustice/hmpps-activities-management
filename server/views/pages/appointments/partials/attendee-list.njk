@@ -23,6 +23,8 @@
             {
                 html: showProfileLink({
                     name: prisoner | fullName,
+                    firstName: prisoner.firstName,
+                    lastName: prisoner.lastName,
                     prisonerNumber: prisoner.prisonerNumber,
                     inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId
                 }),

@@ -76,6 +76,8 @@ export default class SelectPrisonerRoutes {
     const prisonerData = {
       number: prisoner.prisonerNumber,
       name: `${prisoner.firstName} ${prisoner.lastName}`,
+      firstName: prisoner.firstName,
+      lastName: prisoner.lastName,
       prisonCode: prisoner.prisonId,
       cellLocation: prisoner.cellLocation,
       status: prisoner.status,

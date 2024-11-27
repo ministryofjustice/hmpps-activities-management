@@ -10,7 +10,8 @@
             {% set prisonersList = (prisonersList.push([
                 {
                     html: showProfileLink({
-                        name: prisoner.name,
+                        firstName: prisoner.firstName,
+                        lastName: prisoner.lastName,
                         prisonerNumber: prisoner.number,
                         inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId,
                         showPrisonerNumber: false
