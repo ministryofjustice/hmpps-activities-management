@@ -69,6 +69,7 @@
                         value: {
                             html: showProfileLink({
                                 firstName: prisoner.firstName,
+                                middleNames: prisoner.middleNames,
                                 lastname: prisoner.lastName,
                                 prisonerNumber: prisoner.prisonerNumber,
                                 cellLocation: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonId == user.activeCaseLoadId),

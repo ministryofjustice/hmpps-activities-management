@@ -77,6 +77,7 @@ export default class SelectPrisonerRoutes {
       number: prisoner.prisonerNumber,
       name: `${prisoner.firstName} ${prisoner.lastName}`,
       firstName: prisoner.firstName,
+      middleNames: prisoner.middleNames,
       lastName: prisoner.lastName,
       prisonCode: prisoner.prisonId,
       cellLocation: prisoner.cellLocation,

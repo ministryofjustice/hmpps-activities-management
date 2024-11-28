@@ -124,6 +124,8 @@ describe('Route Handlers - Allocation dashboard', () => {
             allocatedTime: '2023-02-17T15:22:00',
             startDate: '2023-02-17',
             prisonerName: 'Joe Bloggs',
+            prisonerFirstName: 'Joe',
+            prisonerLastName: 'Bloggs',
             cellLocation: 'MDI-1-1-101',
             earliestReleaseDate: { releaseDate: '2023-12-25' },
             isUnemployment: false,
@@ -135,6 +137,8 @@ describe('Route Handlers - Allocation dashboard', () => {
             allocatedTime: '2023-02-16T12:43:00',
             startDate: '2023-02-16',
             prisonerName: 'John Smith',
+            prisonerFirstName: 'John',
+            prisonerLastName: 'Smith',
             cellLocation: 'MDI-1-1-103',
             earliestReleaseDate: { releaseDate: '2023-12-26' },
             isUnemployment: false,
@@ -232,6 +236,8 @@ describe('Route Handlers - Allocation dashboard', () => {
           content: [
             {
               name: 'RODNEY REINDEER',
+              firstName: 'RODNEY',
+              lastName: 'REINDEER',
               prisonerNumber: 'A0013DZ',
               cellLocation: '4-2-009',
               otherAllocations: [],
@@ -385,10 +391,16 @@ describe('Route Handlers - Allocation dashboard', () => {
           currentlyAllocated: [
             {
               allocationId: 1,
+              firstName: 'Joe',
+              lastName: 'Bloggs',
+              prisonerNumber: 'ABC123',
+              prisonerPrisonCode: undefined,
+              prisonerStatus: undefined,
               cellLocation: 'MDI-1-1-101',
+              earliestReleaseDate: { releaseDate: '2023-12-25' },
               startDate: new Date(2023, 1, 17),
               endDate: null,
-              name: 'Joe Bloggs',
+              status: undefined,
               plannedSuspension: { plannedStartDate: '2025-04-20' },
               otherAllocations: [
                 {
@@ -396,30 +408,38 @@ describe('Route Handlers - Allocation dashboard', () => {
                   scheduleName: 'other schedule',
                 },
               ],
-              prisonerNumber: 'ABC123',
-              earliestReleaseDate: { releaseDate: '2023-12-25' },
+              nonAssociations: undefined,
+              activityId: undefined,
             },
             {
               allocationId: 2,
+              firstName: 'John',
+              lastName: 'Smith',
+              prisonerNumber: '321CBA',
+              prisonerPrisonCode: undefined,
+              prisonerStatus: undefined,
               cellLocation: 'MDI-1-1-103',
+              earliestReleaseDate: { releaseDate: '2023-12-26' },
               startDate: new Date(2023, 1, 16),
               endDate: null,
-              name: 'John Smith',
+              status: undefined,
+              plannedSuspension: undefined,
               otherAllocations: [
                 {
                   activityId: 2,
                   scheduleName: 'other schedule',
                 },
               ],
-              prisonerNumber: '321CBA',
-              earliestReleaseDate: { releaseDate: '2023-12-26' },
+              nonAssociations: undefined,
+              activityId: undefined,
             },
           ],
           waitlistSize: 3,
           waitlistedPrisoners: [
             {
               cellLocation: 'MDI-4-2-009',
-              name: 'RODNEY REINDEER',
+              firstName: 'RODNEY',
+              lastName: 'REINDEER',
               otherAllocations: [
                 {
                   activityId: 2,
@@ -450,7 +470,8 @@ describe('Route Handlers - Allocation dashboard', () => {
             },
             {
               cellLocation: 'MDI-4-2-010',
-              name: 'JOE BLOGGS',
+              firstName: 'JOE',
+              lastName: 'BLOGGS',
               otherAllocations: [
                 {
                   activityId: 3,
@@ -476,7 +497,8 @@ describe('Route Handlers - Allocation dashboard', () => {
             },
             {
               cellLocation: 'MDI-4-2-011',
-              name: 'ALAN SMITH',
+              firstName: 'ALAN',
+              lastName: 'SMITH',
               otherAllocations: [],
               prisonerNumber: 'F4444FF',
               requestDate: new Date(2023, 7, 7),
@@ -500,6 +522,8 @@ describe('Route Handlers - Allocation dashboard', () => {
               {
                 cellLocation: '4-2-009',
                 name: 'RODNEY REINDEER',
+                firstName: 'RODNEY',
+                lastName: 'REINDEER',
                 otherAllocations: [],
                 prisonerNumber: 'A0013DZ',
                 earliestReleaseDate: { releaseDate: null },

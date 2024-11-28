@@ -19,23 +19,24 @@
     {% endset %}
 
     {% set nonAssociationsLinkHtml %}
-        {{ nonAssociationsHtml(row, row.name | toTitleCase) }}
+        {{ nonAssociationsHtml(row, row | formatName(NameFormatStyle.firstLast, false)) }}
     {% endset %}
 
     {% set rows = (rows.push({
-        visuallyHiddenText: 'Select ' + row.firstName | formatName(row.lastName, false),
+        visuallyHiddenText: 'Select ' + row | formatName(NameFormatStyle.firstLast, false),
         value: row.allocationId,
         selectable: true,
         items: [
             {
                 html: showProfileLink({
                     firstName: row.firstName,
+                    middleNames: row.middleNames,
                     lastName: row.lastName,
                     prisonerNumber: row.prisonerNumber,
                     inCaseLoad: row.prisonerPrisonCode == user.activeCaseLoadId
                 }),
                 attributes: {
-                    "data-sort-value": row.name | prisonerNameForSorting
+                    "data-sort-value": row | formatName(NameFormatStyle.firstLast, false) | prisonerNameForSorting
                 }
             },
             {

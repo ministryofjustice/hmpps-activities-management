@@ -157,11 +157,11 @@
     {% endset %}
 
     {% set nonAssociationsLinkHtml %}
-        {{ nonAssociationsHtml(row, row.name | toTitleCase) }}
+        {{ nonAssociationsHtml(row, row | formatName(NameFormatStyle.firstLast, false)) }}
     {% endset %}
 
     {% set rows = (rows.push({
-        visuallyHiddenText: 'Select ' + row.firstName | formatName(row.lastName, false),
+        visuallyHiddenText: 'Select ' + row | formatName(NameFormatStyle.firstLast, false),
         value: row.waitlistApplicationId,
         selectable: true,
         forbiddenActionId: 'waitlist-action-1' if row.status != 'APPROVED',
@@ -169,13 +169,14 @@
             {
                 html: showProfileLink({
                     firstName: row.firstName,
+                    middleNames: row.middleNames,
                     lastName: row.lastName,
                     prisonerNumber: row.prisonerNumber,
                     cellLocation: statusBasedCellLocation(row.cellLocation, row.prisonerStatus, row.prisonerPrisonCode == user.activeCaseLoadId),
                     inCaseLoad: row.prisonerPrisonCode == user.activeCaseLoadId
                 }),
                 attributes: {
-                    "data-sort-value": row.name | prisonerNameForSorting
+                    "data-sort-value": row | formatName(NameFormatStyle.firstLast, false) | prisonerNameForSorting
                 }
             },
             {

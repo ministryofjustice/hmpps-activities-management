@@ -16,6 +16,7 @@
         {% set prisonerDetails = prisonersDetails[attendees[0].prisonerNumber] %}
         {{ showProfileLink({
             firstName: prisonerDetails.firstName,
+            middleNames: prisonerDetails.middleNames,
             lastName: prisonerDetails.lastName,
             prisonerNumber: prisonerDetails.prisonerNumber or attendees[0].prisonerNumber,
             cellLocation: statusBasedCellLocation(prisonerDetails.cellLocation, prisonerDetails.status, prisonerDetails.prisonId == user.activeCaseLoadId),

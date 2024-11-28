@@ -102,7 +102,6 @@ export default class AllocationDashboardRoutes {
     const activeAllocations = activity.schedules[0].allocations.filter(a => a.status === 'ACTIVE').length
 
     const currentWeek = calcCurrentWeek(richStartDate, activity.schedules[0].scheduleWeeks)
-
     res.render('pages/activities/allocation-dashboard/allocation-dashboard', {
       activity,
       schedule: activity.schedules[0],
@@ -224,7 +223,8 @@ export default class AllocationDashboardRoutes {
       }
       return {
         allocationId: allocation.id,
-        name: allocation.prisonerName,
+        firstName: allocation.prisonerFirstName,
+        lastName: allocation.prisonerLastName,
         prisonerNumber: allocation.prisonerNumber,
         prisonerPrisonCode: allocation.prisonerPrisonCode,
         prisonerStatus: allocation.prisonerStatus,
@@ -265,7 +265,6 @@ export default class AllocationDashboardRoutes {
 
         return thisWaitlist.map(w => ({
           waitlistApplicationId: w.id,
-          name: `${inmate.firstName} ${inmate.lastName}`,
           firstName: inmate.firstName,
           lastName: inmate.lastName,
           prisonerNumber: inmate.prisonerNumber,

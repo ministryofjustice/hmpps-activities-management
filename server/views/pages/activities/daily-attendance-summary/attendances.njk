@@ -201,6 +201,7 @@
                     attributes: { id: 'activity-' + loop.index, "data-sort-value": nameForSorting | prisonerNameForSorting },
                     html: showProfileLink({
                         firstName: attendee.firstName,
+                        middleNames: attendee.middleNames,
                         lastName: attendee.lastName,
                         prisonerNumber: attendee.prisonerNumber,
                         inCaseLoad: attendee.prisonCode == user.activeCaseLoadId,

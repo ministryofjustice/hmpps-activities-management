@@ -18,6 +18,7 @@ import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Activity, ActivitySchedule, Attendance, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
 // eslint-disable-next-line import/no-cycle
 import { CreateAnActivityJourney, Slots } from '../routes/activities/create-an-activity/journey'
+import { NameFormatStyle } from './helpers/nameFormatStyle'
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
@@ -98,16 +99,32 @@ export const prisonerName = (name: string, boldLastName = true) => {
  * @param lastName - last name
  * @returns formatted name string
  */
-export const formatName = (firstName: string, lastName: string, boldLastName: boolean = true): string => {
-  const names = [firstName, lastName]
-  names.unshift(`${names.pop()},`)
+export const formatName = (
+  firstName: string,
+  middleNames: string,
+  lastName: string,
+  nameFormatStyle: NameFormatStyle,
+  boldLastName: boolean = true,
+): string => {
+  const names = [firstName, middleNames, lastName]
+  if (nameFormatStyle === NameFormatStyle.lastCommaFirstMiddle) {
+    names.unshift(`${names.pop()},`)
+  } else if (nameFormatStyle === NameFormatStyle.lastCommaFirst) {
+    names.unshift(`${names.pop()},`)
+    names.pop() // Remove middleNames
+  } else if (nameFormatStyle === NameFormatStyle.firstLast) {
+    names.splice(1, 1)
+  }
   const namesOrdered = names
     .filter(s => s)
     .map(s => s.toLowerCase())
     .join(' ')
     .replace(/(^\w)|([\s'-]+\w)/g, letter => letter.toUpperCase())
 
-  if (boldLastName) {
+  if (
+    boldLastName &&
+    (nameFormatStyle === NameFormatStyle.lastCommaFirstMiddle || nameFormatStyle === NameFormatStyle.lastCommaFirst)
+  ) {
     const [surname, ...rest] = namesOrdered.split(', ')
     return `<strong>${surname}</strong>, ${rest.join(' ')}`
   }

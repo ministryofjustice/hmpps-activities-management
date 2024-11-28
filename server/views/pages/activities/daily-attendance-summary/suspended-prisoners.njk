@@ -195,6 +195,7 @@
                     attributes: { id: 'prisoner-' + loop.index, "data-sort-value": nameForSorting | prisonerNameForSorting },
                     html: showProfileLink({
                         firstName: suspendedPrisoner.firstName,
+                        middleNames: suspendedPrisoner.middleNames,
                         lastName: suspendedPrisoner.lastName,
                         prisonerNumber: suspendedPrisoner.prisonerNumber,
                         inCaseLoad: suspendedPrisoner.prisonCode == user.activeCaseLoadId,

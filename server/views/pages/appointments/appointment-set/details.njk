@@ -21,6 +21,7 @@
         {
             html: showProfileLink({
                 firstName: prisoner.firstName,
+                middleNames: prisoner.middleNames,
                 lastName: prisoner.lastName,
                 prisonerNumber: prisoner.prisonerNumber,
                 cellLocation: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
@@ -32,7 +33,7 @@
                     html: '<span class="print-checkbox"></span>',
                     classes: "print-only"
         }, {
-            text: prisoner.firstName | formatName(prisoner.lastName, false),
+            text: prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
             classes: "print-only"
         }, {
             text: prisoner.prisonerNumber,

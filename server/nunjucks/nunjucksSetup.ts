@@ -69,6 +69,7 @@ import AttendanceReason from '../enum/attendanceReason'
 import { absenceReasonCheckboxMatch, absenceReasonDisplayConverter } from '../utils/helpers/absenceReasonConverter'
 import { ScheduleChangeOption } from '../routes/activities/create-an-activity/handlers/customTimesChangeOption'
 import { DefaultOrCustomTimes } from '../routes/activities/create-an-activity/handlers/customTimesChangeDefaultOrCustom'
+import { NameFormatStyle } from '../utils/helpers/nameFormatStyle'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -133,9 +134,9 @@ export function registerNunjucks(app?: express.Express): Environment {
   setUpDprNunjucksFilters(njkEnv)
 
   // Only register nunjucks helpers/filters here - they should be implemented and unit tested elsewhere
-  njkEnv.addFilter('formatName', (firstName, lastName, bold) => {
-    const name = formatName(firstName, lastName, bold)
-    return name ? njkEnv.getFilter('safe')(name) : null
+  njkEnv.addFilter('formatName', (name, nameStyle, bold) => {
+    const inputName = formatName(name.firstName, name.middleNames, name.lastName, nameStyle, bold)
+    return inputName ? njkEnv.getFilter('safe')(inputName) : null
   })
   njkEnv.addFilter('fullName', fullName)
   njkEnv.addFilter('initialiseName', initialiseName)
@@ -228,6 +229,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('bookAVideoLinkToggleEnabled', config.bookAVideoLinkToggleEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
   njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
+  njkEnv.addGlobal('NameFormatStyle', NameFormatStyle)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

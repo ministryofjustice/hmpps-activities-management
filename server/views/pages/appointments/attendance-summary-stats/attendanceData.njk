@@ -22,6 +22,7 @@
   {% set rows = (rows.push([
       {html: showProfileLink({
             firstName: appointment.firstName,
+            middleNames: appointment.middleNames,
             lastName: appointment.lastName,
             prisonerNumber: appointment.prisonerNumber
         }), attributes: {
