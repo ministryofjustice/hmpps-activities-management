@@ -6,15 +6,10 @@
     role: "complementary"
   },
   tag: {
-    text: "BETA"
+    text: "Beta"
   },
   classes: 'govuk-!-display-none-print',
-  html: '
-         <a href="' + feedbackUrl + '" class="govuk-link govuk-link--no-visited-state" rel="noopener noreferrer" target="_blank">Provide feedback</a>
-         or
-         <a href="' + reportAFaultUrl + '" class="govuk-link govuk-link--no-visited-state" rel="noopener noreferrer" target="_blank">report a fault</a>
-         to help us improve this service.
-        '
+  html: 'This is a new service. <a href="' + feedbackUrl + '" class="govuk-link govuk-link--no-visited-state" rel="noopener noreferrer" target="_blank">Give feedback</a> to help us improve it.'
 }) }}
 
 {% if jsBackLink or (hardBackLinkHref and hardBackLinkText) or (serviceReturnLinkHref and serviceReturnLinkText) %}
