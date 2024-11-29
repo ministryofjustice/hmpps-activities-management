@@ -195,10 +195,10 @@
                 {% if (status == 'Attended' and (tier == EventTier.TIER_1 or tier == EventTier.TIER_2)) or status == 'NotAttended' %}
                     {% set sessionNameHtml = attendee.attendance.timeSlot + '<br>' + (attendee.attendance.startTime) + ' to ' + (attendee.attendance.endTime)  %}
                 {% endif %}
-                {% set nameForSorting = attendee.firstName + ' ' + attendee.lastName %}
+
                 {% set attendanceRows = (attendanceRows.push([
                 {
-                    attributes: { id: 'activity-' + loop.index, "data-sort-value": nameForSorting | prisonerNameForSorting },
+                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee | formatName(NameFormatStyle.lastCommaFirstMiddle, false) },
                     html: showProfileLink({
                         firstName: attendee.firstName,
                         middleNames: attendee.middleNames,

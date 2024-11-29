@@ -94,7 +94,7 @@
     {% set rows = [] %}
     {% for attendee in attendanceRows | sort(false, false, 'location') %}
         {% set rows = (rows.push({
-            visuallyHiddenText: 'Select ' + attendee.prisoner | firstNameLastName | toTitleCase | prisonerName,
+            visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
             value: attendee.instance.id + '-' + attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
             selectable: attendee.attendance.status === "WAITING" and attendee.attendance.editable and attendee.instance.activitySchedule.activity.attendanceRequired,
             items: [
@@ -108,7 +108,7 @@
                     }),
                     attributes: {
                         "data-qa": "prisoner-details",
-                        "data-sort-value": attendee.prisoner | firstNameLastName | prisonerNameForSorting
+                        "data-sort-value": attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false)
                     }
                 },
                 {

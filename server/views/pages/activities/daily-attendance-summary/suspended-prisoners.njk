@@ -192,7 +192,7 @@
             {% set nameForSorting = suspendedPrisoner.firstName + ' ' + suspendedPrisoner.lastName %}
             {% set suspendedPrisonersRows = (suspendedPrisonersRows.push([
                 {
-                    attributes: { id: 'prisoner-' + loop.index, "data-sort-value": nameForSorting | prisonerNameForSorting },
+                    attributes: { id: 'prisoner-' + loop.index, "data-sort-value": suspendedPrisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false) },
                     html: showProfileLink({
                         firstName: suspendedPrisoner.firstName,
                         middleNames: suspendedPrisoner.middleNames,

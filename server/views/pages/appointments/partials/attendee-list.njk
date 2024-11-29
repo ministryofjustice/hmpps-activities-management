@@ -29,7 +29,7 @@
                     inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId
                 }),
                 classes: 'govuk-!-display-none-print',
-                attributes: { 'data-qa': 'prisoner-' + loop.index + '-name-and-number-and-cell-location', "data-sort-value": prisoner | fullName | prisonerNameForSorting }
+                attributes: { 'data-qa': 'prisoner-' + loop.index + '-name-and-number-and-cell-location', "data-sort-value": prisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false) }
             },
             {
                 text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
@@ -37,7 +37,7 @@
                 attributes: { id: 'prisoner-cell-location', "data-qa": "prisoner-cell-location" }
             },
             {
-              text: prisoner | fullName | toTitleCase | prisonerName(false),
+              text: prisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false),
               classes: 'print-only'
             },
             {

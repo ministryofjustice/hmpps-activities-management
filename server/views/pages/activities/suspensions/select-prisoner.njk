@@ -77,19 +77,19 @@
                                 {% set prisonerName = '<div class="govuk-radios govuk-radios--small" data-module="govuk-radios">' +
                                     '<div class="govuk-radios__item">' +
                                     '<input type="radio" id="selected-prisoner-' + prisoner.prisonerNumber + '" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '" class="govuk-radios__input"/>' +
-                                    '<label for="selected-prisoner-' + prisoner.prisonerNumber + '" class="govuk-label govuk-radios__label">' + prisoner | firstNameLastName | toTitleCase | prisonerName + '<label>' +
+                                    '<label for="selected-prisoner-' + prisoner.prisonerNumber + '" class="govuk-label govuk-radios__label">' + prisoner | formatName(NameFormatStyle.lastCommaFirst, false) + '<label>' +
                                     '</div>' +
                                     '</div>'
                                 %}
                             {% else %}
-                                {% set prisonerName = '<input type="hidden" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '"> ' + prisoner | firstNameLastName | toTitleCase | prisonerName %}
+                                {% set prisonerName = '<input type="hidden" name="selectedPrisoner" value="' + prisoner.prisonerNumber + '"> ' + prisoner | formatName(NameFormatStyle.lastCommaFirst, false) %}
                             {% endif %}
 
                             {% set prisonerRows = (prisonerRows.push([
                                 {
                                     attributes: {
                                         id: 'prisoner-name',
-                                        "data-sort-value": prisoner | firstNameLastName | toTitleCase | prisonerNameForSorting
+                                        "data-sort-value": prisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
                                     },
                                     html: prisonerName
                                 },

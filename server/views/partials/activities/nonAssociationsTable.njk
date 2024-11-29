@@ -23,7 +23,6 @@
                 {% endfor %}
             {% endset %}
 
-        {% set nonAssociationPrisonerName = nonAssociation | firstNameLastName | toTitleCase %}
         {% set rows = (rows.push(
                 [{
                     html: showProfileLink({
@@ -33,7 +32,7 @@
                         prisonerNumber: nonAssociation.prisonerNumber
                     }),
                     attributes: {
-                        "data-sort-value": nonAssociationPrisonerName | prisonerNameForSorting
+                        "data-sort-value": nonAssociation | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
                     }
                 },
                 {

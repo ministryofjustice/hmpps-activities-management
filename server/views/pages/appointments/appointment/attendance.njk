@@ -79,7 +79,7 @@
                     }),
                     attributes: {
                         'data-qa': 'prisoner-' + loop.index + '-name-and-number',
-                        "data-sort-value": prisoner | fullName | prisonerNameForSorting
+                        "data-sort-value": prisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
                     }
                 },
                 {

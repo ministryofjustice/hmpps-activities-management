@@ -24,7 +24,6 @@ import {
   padNumber,
   parseDate,
   parseISODate,
-  prisonerName,
   removeUndefined,
   setAttribute,
   sliceArray,
@@ -140,14 +139,6 @@ export function registerNunjucks(app?: express.Express): Environment {
   })
   njkEnv.addFilter('fullName', fullName)
   njkEnv.addFilter('initialiseName', initialiseName)
-  njkEnv.addFilter('prisonerName', (str, bold) => {
-    const name = prisonerName(str, bold)
-    return name ? njkEnv.getFilter('safe')(name) : null
-  })
-  njkEnv.addFilter('prisonerNameForSorting', str => {
-    const name = njkEnv.getFilter('prisonerName')(str, false)
-    return name.val || null
-  })
   njkEnv.addFilter('possessive', str => {
     if (!str) return ''
     return `${str}${str.toLowerCase().endsWith('s') ? '’' : '’s'}`

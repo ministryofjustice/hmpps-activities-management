@@ -196,18 +196,17 @@
                             {% if unlockListItems | length > 0 %}
                                 {% set rows = [] %}
                                 {% for item in unlockListItems %}
-                                    {% set nameForSorting = item.prisonerFirstName + ' ' + item.prisonerlastName %}
                                     {% set row = [] %}
                                     {% set row = (row.push(
                                     {
                                         attributes: { 
                                             id: 'activity-' + loop.index, 
-                                            "data-sort-value": nameForSorting | prisonerNameForSorting
+                                            "data-sort-value": item | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
                                         },
                                         html: showProfileLink({
-                                            firstName: item.prisonerFirstName,
-                                            middleNames: item.prisonerMiddleNames,
-                                            lastName: item.prisonerLastName,
+                                            firstName: item.firstName,
+                                            middleNames: item.middleNames,
+                                            lastName: item.lastName,
                                             prisonerNumber: item.prisonerNumber
                                         }),
                                         classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'

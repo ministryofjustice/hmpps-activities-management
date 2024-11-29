@@ -75,20 +75,20 @@ export const firstNameLastName = (user?: { firstName: string; lastName: string }
   return `${user.firstName} ${user.lastName}`
 }
 
-/**
- * Converts a prisoner name from 'firstName lastName' format to
- * "lastName, firstName" and bolds prisoner lastName
- */
-export const prisonerName = (name: string, boldLastName = true) => {
-  if (!name) return null
-  const nameParts = name.trim().split(' ')
-  const firstNames = nameParts.slice(0, nameParts.length - 1)
+// /**
+//  * Converts a prisoner name from 'firstName lastName' format to
+//  * "lastName, firstName" and bolds prisoner lastName
+//  */
+// export const prisonerName = (name: string, boldLastName = true) => {
+//   if (!name) return null
+//   const nameParts = name.trim().split(' ')
+//   const firstNames = nameParts.slice(0, nameParts.length - 1)
 
-  let formattedName = nameParts[nameParts.length - 1]
-  if (boldLastName) formattedName = `<strong>${formattedName}</strong>`
-  formattedName += `, ${firstNames.join(' ')}`
-  return formattedName.trim()
-}
+//   let formattedName = nameParts[nameParts.length - 1]
+//   if (boldLastName) formattedName = `<strong>${formattedName}</strong>`
+//   formattedName += `, ${firstNames.join(' ')}`
+//   return formattedName.trim()
+// }
 
 /**
  * Format a person's name with proper capitalisation

@@ -861,6 +861,8 @@ describe('Route Handlers - Attendance List', () => {
             attendanceId: 1001,
             prisonerNumber: 'ABC123',
             prisonerName: 'Joe Bloggs',
+            firstName: 'Joe',
+            lastName: 'Bloggs',
             otherEvents: [
               {
                 prisonerNumber: 'ABC123',
@@ -876,6 +878,8 @@ describe('Route Handlers - Attendance List', () => {
             attendanceId: 2002,
             prisonerNumber: 'XYZ345',
             prisonerName: 'Mary Smith',
+            firstName: 'Mary',
+            lastName: 'Smith',
             otherEvents: [
               {
                 prisonerNumber: 'XYZ345',

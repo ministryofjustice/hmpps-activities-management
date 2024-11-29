@@ -176,7 +176,7 @@
                     inCaseLoad: row.prisonerPrisonCode == user.activeCaseLoadId
                 }),
                 attributes: {
-                    "data-sort-value": row | formatName(NameFormatStyle.firstLast, false) | prisonerNameForSorting
+                    "data-sort-value": row | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
                 }
             },
             {

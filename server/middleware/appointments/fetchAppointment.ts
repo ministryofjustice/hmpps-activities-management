@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express'
 import logger from '../../../logger'
 import ActivitiesService from '../../services/activitiesService'
-import { compareStrings, convertToTitleCase, fullName, prisonerName } from '../../utils/utils'
+import { compareStrings, formatName } from '../../utils/utils'
+import { NameFormatStyle } from '../../utils/helpers/nameFormatStyle'
 
 export default (activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
@@ -13,8 +14,8 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
         req.appointment = await activitiesService.getAppointmentDetails(appointmentId, user)
         req.appointment.attendees = req.appointment.attendees.sort((a, b) =>
           compareStrings(
-            prisonerName(convertToTitleCase(fullName(a.prisoner)), false),
-            prisonerName(convertToTitleCase(fullName(b.prisoner)), false),
+            formatName(a.prisoner.firstName, undefined, a.prisoner.lastName, NameFormatStyle.lastCommaFirst, false),
+            formatName(b.prisoner.firstName, undefined, b.prisoner.lastName, NameFormatStyle.lastCommaFirst, false),
           ),
         )
       }
