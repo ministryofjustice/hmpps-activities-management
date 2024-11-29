@@ -7,8 +7,6 @@ import { validate } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import { ReferenceCode } from '../../../../@types/prisonApiImport/types'
 import EducationLevelRoutes, { EducationLevel } from './educationLevel'
-import educationLevels from '../../../../services/fixtures/education_levels_1.json'
-import studyAreas from '../../../../services/fixtures/study_area_ENGLA.json'
 import atLeast from '../../../../../jest.setup'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 
@@ -16,6 +14,48 @@ jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
+
+const studyAreas: ReferenceCode[] = [
+  {
+    domain: 'STUDY_AREA',
+    code: 'ENGLA',
+    description: 'English Language',
+    activeFlag: 'Y',
+    listSeq: 99,
+    systemDataFlag: 'N',
+  },
+  {
+    domain: 'STUDY_AREA',
+    code: 'ENGI',
+    description: 'Engineering',
+    activeFlag: 'Y',
+    listSeq: 99,
+    systemDataFlag: 'N',
+  },
+]
+
+const educationLevels: ReferenceCode[] = [
+  {
+    domain: 'EDU_LEVEL',
+    code: '1',
+    description: 'Reading Measure 1.0',
+    parentCode: 'STL',
+    activeFlag: 'Y',
+    listSeq: 6,
+    systemDataFlag: 'N',
+    subCodes: [],
+  },
+  {
+    domain: 'EDU_LEVEL',
+    code: '1.1',
+    description: 'Reading Measure 1.1',
+    parentCode: 'STL',
+    activeFlag: 'Y',
+    listSeq: 6,
+    systemDataFlag: 'N',
+    subCodes: [],
+  },
+]
 
 describe('Route Handlers - Create an activity - Education Level', () => {
   const handler = new EducationLevelRoutes(prisonService)
