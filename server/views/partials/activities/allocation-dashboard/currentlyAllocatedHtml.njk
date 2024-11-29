@@ -23,7 +23,7 @@
     {% endset %}
 
     {% set rows = (rows.push({
-        visuallyHiddenText: 'Select ' + row | formatName(NameFormatStyle.firstLast, false),
+        visuallyHiddenText: 'Select ' + row | formatName(NameFormatStyle.lastCommaFirst, false),
         value: row.allocationId,
         selectable: true,
         items: [

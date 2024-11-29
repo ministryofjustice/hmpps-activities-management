@@ -96,7 +96,10 @@ export const prisonerName = (name: string, boldLastName = true) => {
  * Correctly handles names with apostrophes, hyphens and spaces
  *
  * @param firstName - first name
+ * @param middleNames - middle names
  * @param lastName - last name
+ * @param nameFormatStyle: how the name is to be formatted,
+ * @param boldLastName: whether the last name is bold
  * @returns formatted name string
  */
 export const formatName = (
