@@ -48,7 +48,7 @@
             value: formResponses.notAttendedData[index].moreDetail
         }) }}
     {% elseif reason.captureCaseNote %}
-        {% set warningText = (row.prisonerName | toTitleCase + (" won't be paid because this is" if row.isPayable else "'s attendance will be recorded as") + " an unacceptable absence.") %}
+        {% set warningText = (row | formatName(NameFormatStyle.firstLast, false) + (" won't be paid because this is" if row.isPayable else "'s attendance will be recorded as") + " an unacceptable absence.") %}
         {{ govukCharacterCount({
             label: {
                 text: "Add a case note"
@@ -91,7 +91,7 @@
         }) }}
     {% elseif reason.code === 'NOT_REQUIRED' %}
         <span class="govuk-label">
-            {{ row.prisonerName | toTitleCase + ("will be paid and their" if row.isPayable else "'s") + ' attendance will be recorded as an acceptable absence.' }}
+            {{ row | formatName(NameFormatStyle.firstLast, false) + ("will be paid and their" if row.isPayable else "'s") + ' attendance will be recorded as an acceptable absence.' }}
         </span>
     {% elseif reason.code === "REST" %}
        {{ govukRadios({
@@ -117,7 +117,7 @@
         }) if row.isPayable }}
     {% elseif reason.code === 'CLASH' %}
         <div class="govuk-!-margin-bottom-4">{{ renderOtherEvents(row.otherEvents) }}</div>
-        <p class="govuk-body">{{ row.prisonerName | toTitleCase + (" will be paid and their" if row.isPayable else "'s") }} attendance will be recorded as an acceptable absence.</p>
+        <p class="govuk-body">{{ row | formatName(NameFormatStyle.firstLast, false) + (" will be paid and their" if row.isPayable else "'s") }} attendance will be recorded as an acceptable absence.</p>
     {% elseif reason.captureOtherText %}
         {{ govukCharacterCount({
             label: {
@@ -187,7 +187,7 @@
                     {% set prisonerIndex = loop.index0 %}
 
                     <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerNumber]" }}" value="{{ row.prisonerNumber }}" />
-                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerName]" }}" value="{{ row.prisonerName | toTitleCase }}" />
+                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerName]" }}" value="{{ row | formatName(NameFormatStyle.firstLast, false) }}" />
                     <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][instanceId]" }}" value="{{ row.instanceId }}" />
                     <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][isPayable]" }}" value="{{ row.isPayable }}" />
 
@@ -210,13 +210,13 @@
                     {% endfor %}
                         {% if rows.length > 1 %}
                         {% if not loop.first %}<hr class="govuk-!-margin-bottom-6" />{% endif %}
-                        <h2 class="govuk-heading-m govuk-!-margin-bottom-0">{{ row.prisonerName | toTitleCase | prisonerName }}</h2>
+                        <h2 class="govuk-heading-m govuk-!-margin-bottom-0">{{ row | formatName(NameFormatStyle.lastCommaFirst, false) }}</h2>
                         <div class="govuk-hint">{{ row.prisonerNumber }}</div>
                         {% endif %}
                     {{ govukRadios({
                         fieldset: {
                             legend: {
-                                text: "Why did " + row.prisonerName | toTitleCase + " not attend " + row.activityName + " - " + row.session + "?",
+                                text: "Why did " + row | formatName(NameFormatStyle.firstLast, false) + " not attend " + row.activityName + " - " + row.session + "?",
                                 classes: "govuk-label"
                             }
                         },

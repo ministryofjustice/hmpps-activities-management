@@ -140,6 +140,8 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
           {
             number: 'X9876YZ',
             name: 'James Johnson',
+            firstName: 'James',
+            lastName: 'Johnson',
             cellLocation: '2-2-2',
             status: 'ACTIVE IN',
             prisonCode: 'MDI',
@@ -167,6 +169,8 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         {
           number: 'X9876YZ',
           name: 'James Johnson',
+          firstName: 'James',
+          lastName: 'Johnson',
           cellLocation: '2-2-2',
           prisonCode: 'MDI',
           status: 'ACTIVE IN',
@@ -175,6 +179,8 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         {
           number: 'A1234BC',
           name: 'John Smith',
+          firstName: 'John',
+          lastName: 'Smith',
           cellLocation: '1-1-1',
           prisonCode: 'MDI',
           status: 'ACTIVE IN',
@@ -234,11 +240,13 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
           {
             number: 'X9876YZ',
             name: 'James Johnson',
+            firstName: 'James',
+            lastName: 'Johnson',
             cellLocation: '2-2-2',
             category: 'F',
           },
         ],
-      } as EditAppointmentJourney
+      } as unknown as EditAppointmentJourney
 
       const prisonerInfo = {
         prisonerNumber: 'A1234BC',
@@ -258,12 +266,16 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         {
           number: 'X9876YZ',
           name: 'James Johnson',
+          firstName: 'James',
+          lastName: 'Johnson',
           cellLocation: '2-2-2',
           category: 'F',
         },
         {
           number: 'A1234BC',
           name: 'John Smith',
+          firstName: 'John',
+          lastName: 'Smith',
           cellLocation: '1-1-1',
           category: 'G',
         },

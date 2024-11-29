@@ -62,7 +62,9 @@
                                 },
                                 value: {
                                     html: showProfileLink({
-                                        name: session.appointmentJourney.prisoners[0].name,
+                                        firstName: session.appointmentJourney.prisoners[0].firstName,
+                                        middleNames: session.appointmentJourney.prisoners[0].middleNames,
+                                        lastName: session.appointmentJourney.prisoners[0].lastName,
                                         prisonerNumber: session.appointmentJourney.prisoners[0].number,
                                         cellLocation: session.appointmentJourney.prisoners[0].cellLocation
                                     })
@@ -192,7 +194,7 @@
                     {% for prisonerSchedule in prisonerSchedules %}
                         {% set prisoner = prisonerSchedule.prisoner %}
                         {% if session.appointmentJourney.type == AppointmentType.INDIVIDUAL %}
-                            <h2 class="govuk-heading-m" data-qa="schedule-heading">Events for {{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }} on {{ session.appointmentJourney.startDate | parseIsoDate | formatDate }}</h2>
+                            <h2 class="govuk-heading-m" data-qa="schedule-heading">Events for {{ prisoner | formatName(NameFormatStyle.firstLast, false) if prisoner.lastName else "No matching name" }}, {{ prisoner.number }} on {{ session.appointmentJourney.startDate | parseIsoDate | formatDate }}</h2>
                             {{ prisonerScheduledEvents(prisoner, prisonerSchedule.scheduledEvents) }}
                         {% else %}
                             <div class="govuk-summary-card appointment-schedule">
@@ -201,9 +203,9 @@
                                         <ul class='govuk-list'>
                                             {% if session.appointmentJourney.type == AppointmentType.SET %}
                                                 <li><strong>Proposed time: {{ prisonerSchedule.startTime.hour | padNumber + ":" + prisonerSchedule.startTime.minute | padNumber }} to {{ prisonerSchedule.endTime.hour | padNumber + ":" + prisonerSchedule.endTime.minute | padNumber }}</strong></li>
-                                                <li>{{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }}</li>
+                                                <li>{{ prisoner | formatName(NameFormatStyle.firstLast, false) if prisoner.lastName else "No matching name" }}, {{ prisoner.number }}</li>
                                             {% else %}
-                                                <li><strong>{{ prisoner.name | toTitleCase if prisoner.name else "No matching name" }}, {{ prisoner.number }}</strong></li>
+                                                <li><strong>{{ prisoner | formatName(NameFormatStyle.firstLast, false) if prisoner.lastName else "No matching name" }}, {{ prisoner.number }}</strong></li>
                                             {% endif %}
                                         </ul>
                                     </h3>

@@ -65,7 +65,8 @@ export default class DailyAttendanceRoutes {
         attendance: a,
       }))
       .map(a => ({
-        name: `${a.inmate.firstName} ${a.inmate.lastName}`,
+        firstName: a.inmate.firstName,
+        lastName: a.inmate.lastName,
         prisonerNumber: a.prisonerNumber,
         location: a.inmate.cellLocation,
         attendance: a.attendance,

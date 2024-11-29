@@ -76,6 +76,62 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/queue-admin/retry-dlq/{dlqName}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** @description
+     *
+     *     Requires one of the following roles:
+     *     * ACTIVITY_QUEUE_ADMIN */
+    put: operations['retryDlq']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/queue-admin/retry-all-dlqs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put: operations['retryAllDlqs']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/queue-admin/purge-queue/{queueName}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** @description
+     *
+     *     Requires one of the following roles:
+     *     * ACTIVITY_QUEUE_ADMIN */
+    put: operations['purgeQueue']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/attendances': {
     parameters: {
       query?: never
@@ -1327,6 +1383,26 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/queue-admin/get-dlq-messages/{dlqName}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** @description
+     *
+     *     Requires one of the following roles:
+     *     * ACTIVITY_QUEUE_ADMIN */
+    get: operations['getDlqMessages']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/prisons/{prisonCode}/scheduled-instances': {
     parameters: {
       query?: never
@@ -2166,6 +2242,14 @@ export interface components {
        */
       comment?: string
     }
+    RetryDlqResult: {
+      /** Format: int32 */
+      messagesFoundCount: number
+    }
+    PurgeQueueResult: {
+      /** Format: int32 */
+      messagesFoundCount: number
+    }
     /** @description Request object for updating an attendance record */
     AttendanceUpdateRequest: {
       /**
@@ -2753,19 +2837,19 @@ export interface components {
     PageableObject: {
       /** Format: int64 */
       offset?: number
-      sort?: components['schemas']['SortObject'][]
+      sort?: components['schemas']['SortObject']
+      /** Format: int32 */
+      pageSize?: number
       paged?: boolean
       /** Format: int32 */
       pageNumber?: number
-      /** Format: int32 */
-      pageSize?: number
       unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -2773,18 +2857,16 @@ export interface components {
       content?: components['schemas']['WaitingListApplication'][]
       /** Format: int32 */
       number?: number
-      sort?: components['schemas']['SortObject'][]
+      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
-      direction?: string
-      nullHandling?: string
-      ascending?: boolean
-      property?: string
-      ignoreCase?: boolean
+      empty?: boolean
+      sorted?: boolean
+      unsorted?: boolean
     }
     /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
     WaitingListApplication: {
@@ -3991,6 +4073,16 @@ export interface components {
       /** @description The name of the prisoner. Included only if includePrisonerSummary = true */
       prisonerName?: string
       /**
+       * @description The prisoner's first name. Included only if includePrisonerSummary = true
+       * @example Joe
+       */
+      prisonerFirstName?: string
+      /**
+       * @description The prisoner's last name. Included only if includePrisonerSummary = true
+       * @example Bloggs
+       */
+      prisonerLastName?: string
+      /**
        * @description The status of the prisoner. Included only if includePrisonerSummary = true
        * @example ACTIVE IN
        */
@@ -4123,10 +4215,10 @@ export interface components {
       createdBy?: string
       /**
        * Format: date-time
-       * @description The date and time one or more appointments in this series was last changed
+       * @description The date and time the pay band was last changed
        */
       updatedTime?: string
-      /** @description The username of the user authenticated via HMPPS auth that last edited one or more appointments in this series */
+      /** @description The username of the user authenticated via HMPPS auth that last edited the pay band */
       updatedBy?: string
     }
     /** @description Describes a prisoners allocations */
@@ -5978,12 +6070,12 @@ export interface components {
        * @description The alternative text to use in place of the description e.g. Low, Medium, High
        * @example Low
        */
-      alias?: string
+      alias: string
       /**
        * @description The description of pay band in this prison
        * @example Pay band 1
        */
-      description?: string
+      description: string
       /**
        * Format: int32
        * @description The pay band number this is associated with in NOMIS (1-10)
@@ -6718,6 +6810,16 @@ export interface components {
        */
       name: string
       /**
+       * @description The candidate's first name
+       * @example Joe
+       */
+      firstName: string
+      /**
+       * @description The candidate's last name
+       * @example Bloggs
+       */
+      lastName: string
+      /**
        * @description The candidate's prisoner number
        * @example GF10101
        */
@@ -6734,10 +6836,10 @@ export interface components {
       nonAssociations?: boolean
     }
     PageActivityCandidate: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -6745,7 +6847,7 @@ export interface components {
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
-      sort?: components['schemas']['SortObject'][]
+      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
@@ -6942,6 +7044,19 @@ export interface components {
        * @description max days to expire events based on prisoner movement, default is 21
        */
       maxDaysToExpiry: number
+    }
+    DlqMessage: {
+      body: {
+        [key: string]: Record<string, never> | undefined
+      }
+      messageId: string
+    }
+    GetDlqResult: {
+      /** Format: int32 */
+      messagesFoundCount: number
+      /** Format: int32 */
+      messagesReturnedCount: number
+      messages: components['schemas']['DlqMessage'][]
     }
     /** @description Summarises an activity */
     ActivitySummary: {
@@ -8184,6 +8299,70 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  retryDlq: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        dlqName: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['RetryDlqResult']
+        }
+      }
+    }
+  }
+  retryAllDlqs: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['RetryDlqResult'][]
+        }
+      }
+    }
+  }
+  purgeQueue: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        queueName: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['PurgeQueueResult']
         }
       }
     }
@@ -10211,7 +10390,7 @@ export interface operations {
       header?: never
       path: {
         /** @description Attendance id */
-        attendanceId: string
+        attendanceId: number
       }
       cookie?: never
     }
@@ -10866,6 +11045,30 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getDlqMessages: {
+    parameters: {
+      query?: {
+        maxMessages?: number
+      }
+      header?: never
+      path: {
+        dlqName: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['GetDlqResult']
         }
       }
     }

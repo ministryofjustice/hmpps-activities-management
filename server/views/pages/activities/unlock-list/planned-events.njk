@@ -201,10 +201,12 @@
                                     {
                                         attributes: { 
                                             id: 'activity-' + loop.index, 
-                                            "data-sort-value": item.prisonerName | prisonerNameForSorting
+                                            "data-sort-value": item | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
                                         },
                                         html: showProfileLink({
-                                            name: item.prisonerName,
+                                            firstName: item.firstName,
+                                            middleNames: item.middleNames,
+                                            lastName: item.lastName,
                                             prisonerNumber: item.prisonerNumber
                                         }),
                                         classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'

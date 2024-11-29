@@ -333,6 +333,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
+          firstName: 'TEST01',
+          lastName: 'PRISONER01',
           cellLocation: '1-1-1',
           status: 'ACTIVE IN',
           prisonCode: 'MDI',
@@ -340,6 +342,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
         {
           number: 'B2345CD',
           name: 'TEST02 PRISONER02',
+          firstName: 'TEST02',
+          lastName: 'PRISONER02',
           cellLocation: '2-2-2',
           status: 'ACTIVE IN',
           prisonCode: 'MDI',
