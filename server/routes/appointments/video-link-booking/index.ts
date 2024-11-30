@@ -20,6 +20,7 @@ export default function Index(services: Services): Router {
     services.activitiesService,
     services.prisonService,
     services.userService,
+    services.locationMappingService,
   )
 
   // Video link routes are only accessible when running locally or when feature toggle is provided

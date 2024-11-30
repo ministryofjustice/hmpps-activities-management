@@ -4,12 +4,14 @@ import { isUncancellable } from '../../../../utils/editAppointmentUtils'
 import config from '../../../../config'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import PrisonService from '../../../../services/prisonService'
+import LocationMappingService from '../../../../services/locationMappingService'
 
 export default class AppointmentDetailsRoutes {
   constructor(
     private readonly userService: UserService,
     private readonly prisonService: PrisonService,
     private readonly bookAVideoLinkService: BookAVideoLinkService,
+    private readonly locationMappingService: LocationMappingService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -17,14 +19,15 @@ export default class AppointmentDetailsRoutes {
     const { user } = res.locals
 
     if (appointment.category.code === 'VLB' && config.bookAVideoLinkToggleEnabled) {
-      const location = await this.prisonService
+      const locationKey = await this.prisonService
         .getEventLocations(appointment.prisonCode, user)
         .then(r => r.find(l => l.locationId === appointment.internalLocation.id))
+        .then(l => this.locationMappingService.mapNomisLocationIdToDpsKey(l.locationId, user))
 
       const videoLinkBooking = await this.bookAVideoLinkService
         .matchAppointmentToVideoLinkBooking(
           appointment.attendees[0].prisoner.prisonerNumber,
-          location.locationPrefix,
+          locationKey,
           appointment.startDate,
           appointment.startTime,
           appointment.endTime,

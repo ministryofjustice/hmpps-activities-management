@@ -4,7 +4,12 @@ import _ from 'lodash'
 import { Services } from '../../../../services'
 import asyncMiddleware from '../../../../middleware/asyncMiddleware'
 
-export default ({ activitiesService, bookAVideoLinkService, prisonService }: Services): RequestHandler => {
+export default ({
+  activitiesService,
+  bookAVideoLinkService,
+  prisonService,
+  locationMappingService,
+}: Services): RequestHandler => {
   return asyncMiddleware(async (req, res, next) => {
     const { bookingId } = req.params
     const { user } = res.locals
@@ -27,8 +32,8 @@ export default ({ activitiesService, bookAVideoLinkService, prisonService }: Ser
     const locationIds = await Promise.all(
       _.uniq([mainAppointment.prisonLocKey, preAppointment?.prisonLocKey, postAppointment?.prisonLocKey])
         .filter(Boolean)
-        .map(code => prisonService.getInternalLocationByKey(code, user)),
-    ).then(locations => locations.map(l => l.locationId))
+        .map(key => locationMappingService.mapDpsLocationKeyToNomisId(key, user)),
+    )
 
     const existingVlbAppointments = await activitiesService
       .searchAppointments(
