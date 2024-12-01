@@ -28,7 +28,7 @@ export default class VideoLinkDetailsRoutes {
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(mainAppointment.prisonerNumber, user)
 
     const [rooms, userMap, mainAppointmentId] = await Promise.all([
-      this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonId, user),
+      this.bookAVideoLinkService.getAppointmentLocations(mainAppointment.prisonCode, user),
       this.userService.getUserMap([videoBooking.createdBy, videoBooking.amendedBy], user),
       this.fetchMainAppointmentFromActivitiesAPI(mainAppointment, user).then(a => a.appointmentId),
     ])
