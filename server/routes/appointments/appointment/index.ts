@@ -11,7 +11,6 @@ export default function Index({
   activitiesService,
   userService,
   metricsService,
-  prisonService,
   bookAVideoLinkService,
   locationMappingService,
 }: Services): Router {
@@ -24,7 +23,6 @@ export default function Index({
 
   const appointmentDetailsRoutes = new AppointmentDetailsRoutes(
     userService,
-    prisonService,
     bookAVideoLinkService,
     locationMappingService,
   )

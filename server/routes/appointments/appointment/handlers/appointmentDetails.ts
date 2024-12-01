@@ -3,13 +3,11 @@ import UserService from '../../../../services/userService'
 import { isUncancellable } from '../../../../utils/editAppointmentUtils'
 import config from '../../../../config'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
-import PrisonService from '../../../../services/prisonService'
 import LocationMappingService from '../../../../services/locationMappingService'
 
 export default class AppointmentDetailsRoutes {
   constructor(
     private readonly userService: UserService,
-    private readonly prisonService: PrisonService,
     private readonly bookAVideoLinkService: BookAVideoLinkService,
     private readonly locationMappingService: LocationMappingService,
   ) {}
@@ -19,10 +17,10 @@ export default class AppointmentDetailsRoutes {
     const { user } = res.locals
 
     if (appointment.category.code === 'VLB' && config.bookAVideoLinkToggleEnabled) {
-      const locationKey = await this.prisonService
-        .getEventLocations(appointment.prisonCode, user)
-        .then(r => r.find(l => l.locationId === appointment.internalLocation.id))
-        .then(l => this.locationMappingService.mapNomisLocationIdToDpsKey(l.locationId, user))
+      const locationKey = await this.locationMappingService.mapNomisLocationIdToDpsKey(
+        appointment.internalLocation.id,
+        user,
+      )
 
       const videoLinkBooking = await this.bookAVideoLinkService
         .matchAppointmentToVideoLinkBooking(
