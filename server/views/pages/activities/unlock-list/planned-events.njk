@@ -10,6 +10,7 @@
 {% from "partials/showUnlockEvents.njk" import showUnlockEvents %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/accordion/macro.njk" import govukAccordion %}
 
 {% set pageTitle = applicationName + " - Planned events" %}
 {% set pageId = "planned-events-page" %}
@@ -60,126 +61,86 @@
         <div class="govuk-table__body">
             <div class="govuk-table__row">
                 <div>
-                    {% set filterOptionsHtml %}
-                    {% if location.children | length %}
-                        {% set locationFilters = [] %}
-                        {% for subLocation in location.children %}
-                            {% set locationFilters = (locationFilters.push({
-                                value: subLocation.key, 
-                                text: subLocation.name, 
-                                checked: subLocation.key in session.unlockListJourney.subLocationFilters
-                                }), locationFilters) %}
-                        {% endfor %}
+                    {% set accordionFilterItems = [] %}
 
-                        {{ govukCheckboxes({
-                        idPrefix: 'locationFilters',
-                        name: 'locationFilters',
-                        classes: "govuk-checkboxes--small",
-                        fieldset: {
-                            legend: {
-                                text: 'Residential location',
-                                classes: 'govuk-fieldset__legend--m'
-                            }
-                        },
-                        items: locationFilters
-                    }) }}
-                        <div class="govuk-!-margin-bottom-4">
-                            <a href="#" class="govuk-link govuk-link--no-visited-state"
-                        data-module="select-all-link" data-checkbox-name="locationFilters"></a>
-                        </div>
+                    {% set residentialLocation %}
+                    {% include 'partials/activities/unlock-list/filterSections/residentalLocationHtml.njk' %}
+                    {% endset %}
+
+                    {% if location.children | length %}
+                        {% set accordionFilterItems = (accordionFilterItems.push({
+                            heading: {
+                                text: "Residential location"
+                            },
+                            content: {
+                                html: residentialLocation
+                            },
+                            expanded: true
+                        }), accordionFilterItems) %}
                     {% endif %}
 
-                    {{ govukRadios({
-                    idPrefix: 'activityFilter',
-                    name: 'activityFilter',
-                    classes: "govuk-radios--small",
-                    fieldset: {
-                        legend: {
-                            text: 'Show people who have:',
-                            classes: 'govuk-fieldset__legend--m'
-                        }
-                    },
-                    items:[
-                        {
-                            value: 'With',
-                            text: 'Scheduled events',
-                            checked: 'With' == session.unlockListJourney.activityFilter
-                        },
-                        {
-                            value: 'Without',
-                            text: 'No events',
-                            checked: 'Without' == session.unlockListJourney.activityFilter
-                        },
-                        {
-                            value: 'Both',
-                            text: 'Either',
-                            checked: 'Both' == session.unlockListJourney.activityFilter
-                        }
-                    ]
-                }) }}
+                    {% set stayingOrLeavingWing %}
+                    {% include 'partials/activities/unlock-list/filterSections/stayingOrLeavingWingHtml.njk' %}
+                    {% endset %}
 
-                    {{ govukRadios({
-                    idPrefix: 'stayingOrLeavingFilter',
-                    name: 'stayingOrLeavingFilter',
-                    classes: "govuk-radios--small",
-                    fieldset: {
-                        legend: {
-                            text: 'Staying or leaving wing',
-                            classes: 'govuk-fieldset__legend--m'
-                        }
-                    },
-                    items:[
-                        {
-                            value: 'Staying',
-                            text: 'Staying',
-                            checked: 'Staying' == session.unlockListJourney.stayingOrLeavingFilter
+                    {% set accordionFilterItems = (accordionFilterItems.push({
+                        heading: {
+                            text: "Staying or leaving wing"
                         },
-                        {
-                            value: 'Leaving',
-                            text: 'Leaving',
-                            checked: 'Leaving' == session.unlockListJourney.stayingOrLeavingFilter
+                        content: {
+                            html: stayingOrLeavingWing
                         },
-                        {
-                            value: 'Both',
-                            text: 'Both',
-                            checked: 'Both' == session.unlockListJourney.stayingOrLeavingFilter
-                        }
-                    ]
-                }) }}
+                        expanded: true
+                    }), accordionFilterItems) %}
 
-                {% if activityCategories %}
-                    {% set activityCategoriesFilters = [] %}
-                    {% for category in activityCategories %}
-                        {% set activityCategoriesFilters = (activityCategoriesFilters.push({
-                            value: category.code,
-                            text: category.name,
-                            checked: category.code in session.unlockListJourney.activityCategoriesFilters
-                        }), activityCategoriesFilters) %}
-                    {% endfor %}
+                    {% set activityCategoryFiltersHtml %}
+                    {% include 'partials/activities/unlock-list/filterSections/activityCategoryFiltersHtml.njk' %}
+                    {% endset %}
 
-                    {{ govukCheckboxes({
-                        idPrefix: 'activityCategoriesFilters',
-                        name: 'activityCategoriesFilters',
-                        classes: "govuk-checkboxes--small",
-                        fieldset: {
-                            legend: {
-                                text: 'Activity Categories',
-                                classes: 'govuk-fieldset__legend--m'
-                            }
+                    {% if activityCategories %}
+                        {% set accordionFilterItems = (accordionFilterItems.push({
+                            heading: {
+                                text: "Activity category"
+                            },
+                            content: {
+                                html: activityCategoryFiltersHtml
+                            },
+                            expanded: true
+                        }), accordionFilterItems) %}
+                    {% endif %}
+
+                    {% set peopleWithOrWithoutEvents %}
+                    {% include 'partials/activities/unlock-list/filterSections/peopleWithOrWithoutEventsHtml.njk' %}
+                    {% endset %}
+
+                    {% set alertsAccordionHtml %}
+                    {{ alertFilters(alertOptions, session.unlockListJourney.alertFilters, true) }}
+                    {% endset %}
+
+                    {% set accordionFilterItems = (accordionFilterItems.push({
+                        heading: {
+                            text: "Alerts"
                         },
-                        items: activityCategoriesFilters
-                    }) }}
-                    <div class="govuk-!-margin-bottom-4">
-                        <a href="#" class="govuk-link govuk-link--no-visited-state"
-                           data-module="select-all-link" data-checkbox-name="activityCategoriesFilters"></a>
-                    </div>
-                {% endif %}
+                        content: {
+                            html: alertsAccordionHtml
+                        },
+                        expanded: true
+                    }, {
+                        heading: {
+                            text: "People with or without events"
+                        },
+                        content: {
+                            html: peopleWithOrWithoutEvents
+                        },
+                        expanded: true
+                    }), accordionFilterItems) %}
 
-                    {{ alertFilters(alertOptions, session.unlockListJourney.alertFilters) }}
-
-                    <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
-                    Apply filters
-                </button>
+                    {% set filterOptionsHtml %}
+                    {{ govukAccordion({
+                            id: "filter-accordion",
+                            items: accordionFilterItems
+                        }) }}
+                    <button class="govuk-button govuk-!-margin-top-3 govuk-!-margin-bottom-3" data-module="govuk-button">Apply filters</button>
                     {% endset %}
 
                     <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter" data-filter-start-shown="true">
@@ -188,11 +149,11 @@
                             <form id="filter-form" method="POST" action="update-filters" novalidate>
                                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                                 {{ mojFilter({
-                            heading: {
+                                heading: {
                                 text: 'Filters'
-                            },
-                            optionsHtml: filterOptionsHtml
-                        }) }}
+                                },
+                                optionsHtml: filterOptionsHtml
+                                }) }}
                             </form>
                         </div>
                         <div class="moj-filter-layout__content">

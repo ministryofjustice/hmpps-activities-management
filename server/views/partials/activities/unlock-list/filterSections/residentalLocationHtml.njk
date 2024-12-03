@@ -1,0 +1,25 @@
+{% if location.children | length %}
+    {% set locationFilters = [] %}
+    {% for subLocation in location.children %}
+        {% set locationFilters = (locationFilters.push({value: subLocation.key, text: subLocation.name, checked: subLocation.key in session.unlockListJourney.subLocationFilters}), locationFilters) %}
+    {% endfor %}
+
+    {{ govukCheckboxes({
+        formGroup: {
+            classes: "govuk-!-margin-bottom-2"
+        },
+        idPrefix: 'locationFilters',
+        name: 'locationFilters',
+        classes: "govuk-checkboxes--small",
+        fieldset: {
+            legend: {
+                text: 'Residential location',
+                classes: 'govuk-visually-hidden'
+            }
+        },
+        items: locationFilters
+        }) }}
+    <div>
+        <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="locationFilters"></a>
+    </div>
+{% endif %}
