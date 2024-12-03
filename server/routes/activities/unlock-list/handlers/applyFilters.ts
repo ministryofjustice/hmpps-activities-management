@@ -11,6 +11,10 @@ export class Filters {
   activityFilter?: string
 
   @Expose()
+  @Transform(({ value }) => (value ? [value].flat() : undefined)) // Transform to an array if only one value is provided
+  activityCategoriesFilters?: string[]
+
+  @Expose()
   stayingOrLeavingFilter?: string
 
   @Expose()
@@ -20,10 +24,21 @@ export class Filters {
 
 export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
-    const { locationFilters, activityFilter, stayingOrLeavingFilter, alertFilters, searchTerm } = req.body
+    const {
+      locationFilters,
+      activityFilter,
+      activityCategoriesFilters,
+      stayingOrLeavingFilter,
+      alertFilters,
+      searchTerm,
+    } = req.body
 
     if (locationFilters) {
       req.session.unlockListJourney.subLocationFilters = locationFilters
+    }
+
+    if (activityCategoriesFilters) {
+      req.session.unlockListJourney.activityCategoriesFilters = activityCategoriesFilters
     }
 
     if (activityFilter) {

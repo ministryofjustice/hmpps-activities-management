@@ -4,10 +4,11 @@ import { UnlockListItem } from '../../../../@types/activities'
 import PlannedEventRoutes from './plannedEvents'
 import ActivitiesService from '../../../../services/activitiesService'
 import UnlockListService from '../../../../services/unlockListService'
-import { LocationGroup } from '../../../../@types/activitiesAPI/types'
+import { ActivityCategory, LocationGroup } from '../../../../@types/activitiesAPI/types'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import AlertsFilterService from '../../../../services/alertsFilterService'
+import activityCategories from '../../../../services/fixtures/activity_categories.json'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/unlockListService')
@@ -95,6 +96,7 @@ describe('Unlock list routes - planned events', () => {
       when(activitiesService.getLocationGroups).mockResolvedValue(locationsAtPrison)
       when(unlockListService.getFilteredUnlockList).mockResolvedValue(unlockListItems)
       when(alertsFilterService.getAllAlertFilterOptions).mockReturnValue(alertFilterOptions)
+      when(activitiesService.getActivityCategories).mockResolvedValue(activityCategories as ActivityCategory[])
 
       await handler.GET(req, res)
 
@@ -104,6 +106,17 @@ describe('Unlock list routes - planned events', () => {
         'A',
         ['A', 'B', 'C'],
         'With',
+        [
+          'SAA_EDUCATION',
+          'SAA_INDUSTRIES',
+          'SAA_PRISON_JOBS',
+          'SAA_GYM_SPORTS_FITNESS',
+          'SAA_INDUCTION',
+          'SAA_INTERVENTIONS',
+          'SAA_FAITH_SPIRITUALITY',
+          'SAA_NOT_IN_WORK',
+          'SAA_OTHER',
+        ],
         'Both',
         ['ALERT_HA'],
         '',
@@ -121,6 +134,7 @@ describe('Unlock list routes - planned events', () => {
             { name: 'C-Wing', key: 'C', children: [] },
           ],
         },
+        activityCategories,
         timeSlot: 'AM',
         unlockListItems,
         movementCounts: {
@@ -165,6 +179,7 @@ describe('Unlock list routes - planned events', () => {
       when(activitiesService.getLocationGroups).mockResolvedValue(locationsAtPrison)
       when(unlockListService.getFilteredUnlockList).mockResolvedValue(unlockListItems)
       when(alertsFilterService.getAllAlertFilterOptions).mockReturnValue(alertFilterOptions)
+      when(activitiesService.getActivityCategories).mockResolvedValue(activityCategories as ActivityCategory[])
 
       await handler.GET(req, res)
 
@@ -174,6 +189,17 @@ describe('Unlock list routes - planned events', () => {
         'A',
         ['A'],
         'With',
+        [
+          'SAA_EDUCATION',
+          'SAA_INDUSTRIES',
+          'SAA_PRISON_JOBS',
+          'SAA_GYM_SPORTS_FITNESS',
+          'SAA_INDUCTION',
+          'SAA_INTERVENTIONS',
+          'SAA_FAITH_SPIRITUALITY',
+          'SAA_NOT_IN_WORK',
+          'SAA_OTHER',
+        ],
         'Leaving',
         ['CAT_A'],
         'search term',
@@ -195,6 +221,7 @@ describe('Unlock list routes - planned events', () => {
             { name: 'C-Wing', key: 'C', children: [] },
           ],
         },
+        activityCategories,
         timeSlot: 'AM',
         unlockListItems,
         movementCounts: {

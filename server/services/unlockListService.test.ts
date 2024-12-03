@@ -1,16 +1,17 @@
 import { when } from 'jest-when'
-import _ from 'lodash'
+import _, { cloneDeep } from 'lodash'
 import { subDays } from 'date-fns'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
 import UnlockListService from './unlockListService'
 import { PagePrisoner, PrisonerAlert } from '../@types/prisonerOffenderSearchImport/types'
-import { PrisonerScheduledEvents, ScheduledEvent } from '../@types/activitiesAPI/types'
+import { ActivityCategory, PrisonerScheduledEvents, ScheduledEvent } from '../@types/activitiesAPI/types'
 import atLeast from '../../jest.setup'
 import AlertsFilterService from './alertsFilterService'
 import { AppointmentFrequency } from '../@types/appointments'
 import { toDateString } from '../utils/utils'
+import activityCategories from './fixtures/activity_categories.json'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -138,7 +139,7 @@ const scheduledEvents = {
       internalLocationDescription: 'WORKSHOP 1 WORKERS',
       onWing: false,
       scheduledInstanceId: 1001,
-      categoryCode: 'SAA-PRISON_INDUSTRIES',
+      categoryCode: 'SAA_INDUSTRIES',
       categoryDescription: 'Prison industries',
       summary: 'Textiles',
       prisonerNumber: 'A2222AA',
@@ -157,7 +158,7 @@ const scheduledEvents = {
       internalLocationDescription: null,
       onWing: true,
       scheduledInstanceId: 1002,
-      categoryCode: 'SAA-PRISON_INDUSTRIES',
+      categoryCode: 'SAA_INDUSTRIES',
       categoryDescription: 'Prison industries',
       summary: 'Textiles',
       prisonerNumber: 'A3333AA',
@@ -188,6 +189,8 @@ const scheduledEvents = {
   ],
 } as PrisonerScheduledEvents
 
+const allActivityCategoriesFilter = activityCategories.map(c => c.code)
+
 const unlockListService = new UnlockListService(prisonerSearchApiClient, activitiesApiClient, alertsFilterService)
 
 describe('Unlock list service', () => {
@@ -207,6 +210,10 @@ describe('Unlock list service', () => {
     when(activitiesApiClient.getPrisonLocationPrefixByGroup)
       .calledWith(atLeast('MDI', 'HB1_C-Wing'))
       .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
+
+    when(activitiesApiClient.getActivityCategories)
+      .calledWith(atLeast('MDI'))
+      .mockResolvedValueOnce(activityCategories as ActivityCategory[])
   })
 
   afterEach(() => {
@@ -224,6 +231,7 @@ describe('Unlock list service', () => {
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
+        allActivityCategoriesFilter,
         'Both',
         [],
         null,
@@ -266,6 +274,7 @@ describe('Unlock list service', () => {
         'HB1',
         ['C-Wing'],
         'Both',
+        allActivityCategoriesFilter,
         'Both',
         [],
         null,
@@ -297,6 +306,7 @@ describe('Unlock list service', () => {
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'With',
+        allActivityCategoriesFilter,
         'Both',
         [],
         null,
@@ -317,6 +327,7 @@ describe('Unlock list service', () => {
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
+        allActivityCategoriesFilter,
         'Both',
         [],
         null,
@@ -338,6 +349,7 @@ describe('Unlock list service', () => {
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
+        allActivityCategoriesFilter,
         'Leaving',
         [],
         null,
@@ -358,6 +370,7 @@ describe('Unlock list service', () => {
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'Both',
+        allActivityCategoriesFilter,
         'Staying',
         [],
         null,
@@ -378,6 +391,7 @@ describe('Unlock list service', () => {
         'HB1',
         ['A-Wing'],
         'Both',
+        allActivityCategoriesFilter,
         'Leaving',
         [],
         null,
@@ -398,6 +412,7 @@ describe('Unlock list service', () => {
         'HB1',
         [],
         'Both',
+        allActivityCategoriesFilter,
         'Both',
         [],
         null,
@@ -424,6 +439,7 @@ describe('Unlock list service', () => {
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'With',
+        allActivityCategoriesFilter,
         'Both',
         ['CAT_A'],
         null,
@@ -433,6 +449,162 @@ describe('Unlock list service', () => {
       expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'])
       expect(unlockListItems.map(i => i.category)).toEqual(['A', 'E', undefined, undefined])
       expect(unlockListItems.map(i => i.alerts)).toEqual([undefined, undefined, undefined, undefined])
+    })
+
+    it('should filter activity category', async () => {
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(scheduledEvents)
+
+      const selectedActivityCategories = allActivityCategoriesFilter.filter(cat => cat !== 'SAA_GYM_SPORTS_FITNESS')
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'AM',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'With',
+        selectedActivityCategories,
+        'Both',
+        ['CAT_A'],
+        null,
+        user,
+      )
+
+      expect(unlockListItems).toHaveLength(3)
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA'])
+    })
+
+    it('should filter activity category and include when event category not selected, but the prisoner has another event which is selected', async () => {
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+
+      const unselectedEventForPrisoner = cloneDeep(scheduledEvents)
+      unselectedEventForPrisoner.activities.push({
+        prisonCode: 'MDI',
+        eventSource: 'SAA',
+        eventType: 'ACTIVITY',
+        bookingId: 10002,
+        internalLocationId: null,
+        internalLocationCode: null,
+        internalLocationDescription: null,
+        onWing: true,
+        scheduledInstanceId: 1002,
+        categoryCode: 'SAA_INDUSTRIES',
+        categoryDescription: 'Prison industries',
+        summary: 'Textiles',
+        prisonerNumber: 'A4444AA',
+        date: '2022-01-01',
+        startTime: '9:00',
+        endTime: '11:30',
+        priority: 5,
+      } as ScheduledEvent)
+
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(unselectedEventForPrisoner)
+
+      const selectedActivityCategories = allActivityCategoriesFilter.filter(cat => cat !== 'SAA_GYM_SPORTS_FITNESS')
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'AM',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'With',
+        selectedActivityCategories,
+        'Both',
+        ['CAT_A'],
+        null,
+        user,
+      )
+
+      expect(unlockListItems).toHaveLength(4)
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'])
+      const multiplePrisonerEvents = unlockListItems.find(item => item.prisonerNumber === 'A4444AA').events
+      expect(multiplePrisonerEvents).toEqual([
+        {
+          bookingId: 10003,
+          categoryCode: 'SAA_GYM_SPORTS_FITNESS',
+          categoryDescription: 'Gym, sport, fitness',
+          date: '2022-01-01',
+          endTime: '11:30',
+          eventSource: 'SAA',
+          eventType: 'ACTIVITY',
+          internalLocationCode: 'GYM',
+          internalLocationDescription: 'GYM',
+          internalLocationId: 10003,
+          onWing: false,
+          priority: 4,
+          prisonCode: 'MDI',
+          prisonerNumber: 'A4444AA',
+          scheduledInstanceId: 1003,
+          startTime: '9:00',
+          summary: 'Gym - Weights',
+        },
+        {
+          bookingId: 10002,
+          categoryCode: 'SAA_INDUSTRIES',
+          categoryDescription: 'Prison industries',
+          date: '2022-01-01',
+          endTime: '11:30',
+          eventSource: 'SAA',
+          eventType: 'ACTIVITY',
+          internalLocationCode: null,
+          internalLocationDescription: null,
+          internalLocationId: null,
+          onWing: true,
+          priority: 5,
+          prisonCode: 'MDI',
+          prisonerNumber: 'A4444AA',
+          scheduledInstanceId: 1002,
+          startTime: '9:00',
+          summary: 'Textiles',
+        },
+      ])
+    })
+
+    it('should filter activity category and not include when event category not selected and the prisoner does not have another event which is selected', async () => {
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+
+      const unselectedEventForPrisoner2 = cloneDeep(scheduledEvents)
+      unselectedEventForPrisoner2.activities.push({
+        prisonCode: 'MDI',
+        eventSource: 'SAA',
+        eventType: 'ACTIVITY',
+        bookingId: 10002,
+        internalLocationId: null,
+        internalLocationCode: null,
+        internalLocationDescription: null,
+        onWing: true,
+        scheduledInstanceId: 1002,
+        categoryCode: 'SAA_PRISON_JOBS',
+        categoryDescription: 'Prison industries',
+        summary: 'Textiles',
+        prisonerNumber: 'A4444AA',
+        date: '2022-01-01',
+        startTime: '9:00',
+        endTime: '11:30',
+        priority: 5,
+      } as ScheduledEvent)
+
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(unselectedEventForPrisoner2)
+
+      const selectedActivityCategories = allActivityCategoriesFilter.filter(
+        cat => cat !== 'SAA_GYM_SPORTS_FITNESS' && cat !== 'SAA_PRISON_JOBS',
+      )
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'AM',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'With',
+        selectedActivityCategories,
+        'Both',
+        ['CAT_A'],
+        null,
+        user,
+      )
+
+      expect(unlockListItems).toHaveLength(3)
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA'])
     })
 
     it('should filter alerts', async () => {
@@ -455,6 +627,7 @@ describe('Unlock list service', () => {
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'With',
+        allActivityCategoriesFilter,
         'Both',
         alertFilters,
         null,
@@ -526,6 +699,7 @@ describe('Unlock list service', () => {
         'HB1',
         ['A-Wing', 'B-Wing', 'C-Wing'],
         'With',
+        allActivityCategoriesFilter,
         'Both',
         [],
         null,
