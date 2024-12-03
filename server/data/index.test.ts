@@ -9,11 +9,13 @@ import FrontendComponentApiClient from './frontendComponentApiClient'
 import CaseNotesApiClient from './caseNotesApiClient'
 import BookAVideoLinkApiClient from './bookAVideoLinkApiClient'
 import NonAssociationsApiClient from './nonAssociationsApiClient'
+import LocationsInsidePrisonApiClient from './locationsInsidePrisonApiClient'
+import NomisMappingClient from './nomisMappingClient'
 
 describe('DataAccess', () => {
   test('The correct rest clients are instantiated', () => {
     const clients = dataAccess()
-    expect(Object.values(clients).length).toBe(11)
+    expect(Object.values(clients).length).toBe(13)
     expect(clients.manageUsersApiClient).toBeInstanceOf(ManageUsersApiClient)
     expect(clients.caseNotesApiClient).toBeInstanceOf(CaseNotesApiClient)
     expect(clients.prisonApiClient).toBeInstanceOf(PrisonApiClient)
@@ -24,5 +26,7 @@ describe('DataAccess', () => {
     expect(clients.bookAVideoLinkApiClient).toBeInstanceOf(BookAVideoLinkApiClient)
     expect(clients.frontendComponentApiClient).toBeInstanceOf(FrontendComponentApiClient)
     expect(clients.nonAssociationsApiClient).toBeInstanceOf(NonAssociationsApiClient)
+    expect(clients.locationsInsidePrisonApiClient).toBeInstanceOf(LocationsInsidePrisonApiClient)
+    expect(clients.nomisMappingClient).toBeInstanceOf(NomisMappingClient)
   })
 })

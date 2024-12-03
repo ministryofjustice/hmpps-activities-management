@@ -7,13 +7,14 @@ import { VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 import ActivitiesService from '../../../../services/activitiesService'
-import { LocationLenient } from '../../../../@types/prisonApiImportCustom'
 import { AppointmentSearchResult } from '../../../../@types/activitiesAPI/types'
+import LocationMappingService from '../../../../services/locationMappingService'
 
 jest.mock('../../../../services/bookAVideoLinkService')
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/userService')
+jest.mock('../../../../services/locationMappingService')
 
 describe('VideoLinkDetailsRoutes', () => {
   let req: Partial<Request>
@@ -22,6 +23,7 @@ describe('VideoLinkDetailsRoutes', () => {
   let activitiesService: jest.Mocked<ActivitiesService>
   let prisonService: jest.Mocked<PrisonService>
   let userService: jest.Mocked<UserService>
+  let locationMappingService: jest.Mocked<LocationMappingService>
   let videoLinkDetailsRoutes: VideoLinkDetailsRoutes
 
   beforeEach(() => {
@@ -36,11 +38,14 @@ describe('VideoLinkDetailsRoutes', () => {
     activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
     prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
     userService = new UserService(null, null, null) as jest.Mocked<UserService>
+    locationMappingService = new LocationMappingService(null, null) as jest.Mocked<LocationMappingService>
+
     videoLinkDetailsRoutes = new VideoLinkDetailsRoutes(
       bookAVideoLinkService,
       activitiesService,
       prisonService,
       userService,
+      locationMappingService,
     )
   })
 
@@ -93,7 +98,7 @@ describe('VideoLinkDetailsRoutes', () => {
         dateOfBirth: '1980-01-01',
         prisonId: 'PRISON1',
       } as Prisoner)
-      prisonService.getInternalLocationByKey.mockResolvedValue({ locationId: 10001 } as LocationLenient)
+      locationMappingService.mapDpsLocationKeyToNomisId.mockResolvedValue(10001)
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue([
         { key: 'Room1', description: 'Room 1', enabled: true },
       ])
