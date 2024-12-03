@@ -19,6 +19,7 @@ export default class UnlockListService {
     location: string,
     subLocationFilters: string[],
     activityFilter: string,
+    activityCategoriesFilters: string[],
     stayingOrLeavingFilter: string,
     alertFilters: string[],
     searchTerm: string,
@@ -82,6 +83,18 @@ export default class UnlockListService {
       timeSlot,
     )
 
+    // popualte an array of prisoners with events in any searched activity
+    // if a prisoner has any category in the list the event should be added to the unlock items
+    const prisonersInAnyActivityCategory: string[] = []
+    filteredPrisoners.forEach(prisoner => {
+      const activities = scheduledEvents?.activities.filter(act => act.prisonerNumber === prisoner.prisonerNumber)
+      activities.forEach(act => {
+        if (activityCategoriesFilters.includes(act.categoryCode)) {
+          prisonersInAnyActivityCategory.push(act.prisonerNumber)
+        }
+      })
+    })
+
     // Match the prisoners with their events by prisonerNumber
     const unlockListItems = filteredPrisoners.map(prisoner => {
       const appointments = scheduledEvents?.appointments
@@ -91,7 +104,9 @@ export default class UnlockListService {
       const visits = scheduledEvents?.visits.filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
       const adjudications = scheduledEvents?.adjudications.filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
       const transfers = scheduledEvents?.externalTransfers.filter(tra => tra.prisonerNumber === prisoner.prisonerNumber)
-      const activities = scheduledEvents?.activities.filter(act => act.prisonerNumber === prisoner.prisonerNumber)
+      const activities = scheduledEvents?.activities
+        .filter(act => act.prisonerNumber === prisoner.prisonerNumber)
+        .filter(act => prisonersInAnyActivityCategory.includes(act.prisonerNumber))
       const allEventsForPrisoner = [
         ...appointments,
         ...courtHearings,

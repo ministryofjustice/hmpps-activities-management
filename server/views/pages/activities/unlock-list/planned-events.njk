@@ -147,6 +147,34 @@
                     ]
                 }) }}
 
+                {% if activityCategories %}
+                    {% set activityCategoriesFilters = [] %}
+                    {% for category in activityCategories %}
+                        {% set activityCategoriesFilters = (activityCategoriesFilters.push({
+                            value: category.code,
+                            text: category.name,
+                            checked: category.code in session.unlockListJourney.activityCategoriesFilters
+                        }), activityCategoriesFilters) %}
+                    {% endfor %}
+
+                    {{ govukCheckboxes({
+                        idPrefix: 'activityCategoriesFilters',
+                        name: 'activityCategoriesFilters',
+                        classes: "govuk-checkboxes--small",
+                        fieldset: {
+                            legend: {
+                                text: 'Activity Categories',
+                                classes: 'govuk-fieldset__legend--m'
+                            }
+                        },
+                        items: activityCategoriesFilters
+                    }) }}
+                    <div class="govuk-!-margin-bottom-4">
+                        <a href="#" class="govuk-link govuk-link--no-visited-state"
+                           data-module="select-all-link" data-checkbox-name="activityCategoriesFilters"></a>
+                    </div>
+                {% endif %}
+
                     {{ alertFilters(alertOptions, session.unlockListJourney.alertFilters) }}
 
                     <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
