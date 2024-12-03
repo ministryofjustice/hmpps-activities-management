@@ -65,19 +65,21 @@
     {% for attendee in appointment.attendees %}
         {% set prisoner = attendee.prisoner %}
         {% set attendeeListRows = (attendeeListRows.push({
-            visuallyHiddenText: 'Select ' + prisoner | fullName | toTitleCase | prisonerName(false),
+            visuallyHiddenText: 'Select ' + prisoner | fullName | toTitleCase,
             value: prisoner.prisonerNumber,
             selectable: true,
             items: [
                 {
                     html: showProfileLink({
-                        name: prisoner | fullName,
+                        firstName: prisoner.firstName,
+                        middleNames: prisoner.middleNames,
+                        lastName: prisoner.lastName,
                         prisonerNumber: prisoner.prisonerNumber,
                         inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId
                     }),
                     attributes: {
                         'data-qa': 'prisoner-' + loop.index + '-name-and-number',
-                        "data-sort-value": prisoner | fullName | prisonerNameForSorting
+                        "data-sort-value": prisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
                     }
                 },
                 {

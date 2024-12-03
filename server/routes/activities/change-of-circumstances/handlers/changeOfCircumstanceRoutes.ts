@@ -36,7 +36,8 @@ export default class ChangeOfCircumstanceRoutes {
       const prisoner = prisoners.find(p => p.prisonerNumber === item.prisonerNumber)
       return {
         ...item,
-        name: `${prisoner?.firstName} ${prisoner?.lastName}` || '',
+        firstName: prisoner?.firstName || '',
+        lastName: prisoner?.lastName || '',
         prisonerStatus: prisoner?.status,
         prisonerPrisonCode: prisoner?.prisonId,
         cellLocation: prisoner?.cellLocation || '',

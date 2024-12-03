@@ -189,11 +189,14 @@
                 {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
             {% endfor %}
             {% endset %}
+            {% set nameForSorting = suspendedPrisoner.firstName + ' ' + suspendedPrisoner.lastName %}
             {% set suspendedPrisonersRows = (suspendedPrisonersRows.push([
                 {
-                    attributes: { id: 'prisoner-' + loop.index, "data-sort-value": suspendedPrisoner.prisonerName },
+                    attributes: { id: 'prisoner-' + loop.index, "data-sort-value": suspendedPrisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false) },
                     html: showProfileLink({
-                        name: suspendedPrisoner.prisonerName,
+                        firstName: suspendedPrisoner.firstName,
+                        middleNames: suspendedPrisoner.middleNames,
+                        lastName: suspendedPrisoner.lastName,
                         prisonerNumber: suspendedPrisoner.prisonerNumber,
                         inCaseLoad: suspendedPrisoner.prisonCode == user.activeCaseLoadId,
                         classes: 'hmpps-inline-block'

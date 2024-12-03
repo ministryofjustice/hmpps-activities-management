@@ -20,7 +20,9 @@
     {% set appointmentTableRows = (appointmentTableRows.push([
         {
             html: showProfileLink({
-                name: prisoner | fullName,
+                firstName: prisoner.firstName,
+                middleNames: prisoner.middleNames,
+                lastName: prisoner.lastName,
                 prisonerNumber: prisoner.prisonerNumber,
                 cellLocation: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
                 inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId
@@ -31,7 +33,7 @@
                     html: '<span class="print-checkbox"></span>',
                     classes: "print-only"
         }, {
-            text: prisoner | fullName | toTitleCase | prisonerName(false),
+            text: prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
             classes: "print-only"
         }, {
             text: prisoner.prisonerNumber,

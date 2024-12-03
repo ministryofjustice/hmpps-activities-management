@@ -21,7 +21,9 @@
     {% if attendees | length == 1 %}
         {% set prisonerDetails = prisonersDetails[attendees[0].prisonerNumber] %}
         {{ showProfileLink({
-            name: prisonerDetails | firstNameLastName,
+            firstName: prisonerDetails.firstName,
+            middleNames: prisonerDetails.middleNames,
+            lastName: prisonerDetails.lastName,
             prisonerNumber: prisonerDetails.prisonerNumber or attendees[0].prisonerNumber,
             cellLocation: prisonerDetails.cellLocation,
             link: true,

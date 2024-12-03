@@ -296,6 +296,8 @@ export default class AttendanceListRoutes {
         attendanceId: this.getAttendanceId(id.prisonerNumber, instance.attendances),
         prisonerNumber: id.prisonerNumber,
         prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+        firstName: prisoner.firstName,
+        lastName: prisoner.lastName,
         otherEvents,
       })
     })

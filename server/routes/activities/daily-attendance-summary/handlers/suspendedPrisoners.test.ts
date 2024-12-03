@@ -107,6 +107,8 @@ describe('Route Handlers - Suspended prisoners list', () => {
           {
             cellLocation: 'MDI-1-001',
             prisonerName: 'Joe Bloggs',
+            firstName: 'Joe',
+            lastName: 'Bloggs',
             prisonerNumber: 'ABC123',
             prisonCode: undefined,
             status: undefined,

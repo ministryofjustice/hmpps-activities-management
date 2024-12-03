@@ -100,6 +100,8 @@ describe('Views - Appointments Management - Apply to', () => {
       {
         number: 'A1234BC',
         name: 'TEST PRISONER',
+        firstName: 'TEST',
+        lastName: 'PRISONER',
         cellLocation: '1-1-1',
         status: 'ACTIVE IN',
         prisonCode: 'MDI',
@@ -116,6 +118,8 @@ describe('Views - Appointments Management - Apply to', () => {
       {
         number: 'A1234BC',
         name: 'TEST PRISONER1',
+        firstName: 'TEST',
+        lastName: 'PRISONER1',
         cellLocation: '1-1-1',
         status: 'ACTIVE IN',
         prisonCode: 'MDI',
@@ -123,6 +127,8 @@ describe('Views - Appointments Management - Apply to', () => {
       {
         number: 'B2345CD',
         name: 'TEST PRISONER2',
+        firstName: 'TEST',
+        lastName: 'PRISONER2',
         cellLocation: '2-2-2',
         status: 'ACTIVE IN',
         prisonCode: 'MDI',

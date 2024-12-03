@@ -20,10 +20,12 @@
 {% for appointment in appointments %}
   {% set rows = (rows.push([
       {html: showProfileLink({
-            name: appointment | fullName,
+            firstName: appointment.firstName,
+            middleNames: appointment.middleNames,
+            lastName: appointment.lastName,
             prisonerNumber: appointment.prisonerNumber
         }), attributes: {
-          "data-sort-value": appointment | firstNameLastName | toTitleCase | prisonerNameForSorting
+          "data-sort-value": appointment | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
         } },
         { text: appointment.cellLocation or '-',attributes: {
           "data-sort-value": appointment.cellLocation

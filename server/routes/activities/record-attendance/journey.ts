@@ -13,6 +13,8 @@ type NotAttendedJourney = {
     attendanceId?: number
     prisonerNumber?: string
     prisonerName?: string
+    firstName: string
+    lastName: string
     otherEvents: {
       internalLocationDescription?: string
       summary?: string

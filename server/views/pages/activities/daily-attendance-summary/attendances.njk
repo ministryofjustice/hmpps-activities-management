@@ -198,9 +198,11 @@
 
                 {% set attendanceRows = (attendanceRows.push([
                 {
-                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee.name | prisonerNameForSorting },
+                    attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee | formatName(NameFormatStyle.lastCommaFirstMiddle, false) },
                     html: showProfileLink({
-                        name: attendee.name,
+                        firstName: attendee.firstName,
+                        middleNames: attendee.middleNames,
+                        lastName: attendee.lastName,
                         prisonerNumber: attendee.prisonerNumber,
                         inCaseLoad: attendee.prisonCode == user.activeCaseLoadId,
                         classes: 'hmpps-inline-block'

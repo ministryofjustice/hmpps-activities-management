@@ -149,21 +149,23 @@
         </ul>
     {% endset %}
     {% set nonAssociationsLinkHtml %}
-        {{ nonAssociationsHtml(row, row.name | toTitleCase, activity.id) }}
+        {{ nonAssociationsHtml(row, row | formatName(NameFormatStyle.firstLast, false), activity.id) }}
     {% endset %}
     {% set rows = (rows.push({
-        visuallyHiddenText: 'Select ' + row.name | toTitleCase,
+        visuallyHiddenText: 'Select ' + row | formatName(NameFormatStyle.firstLast, false),
         value: row.prisonerNumber,
         selectable: true,
         items: [
             {
                 html: showProfileLink({
-                    name: row.name,
+                    firstName: row.firstName,
+                    middleNames: row.middleNames,
+                    lastName: row.lastName,
                     prisonerNumber: row.prisonerNumber,
                     cellLocation: row.cellLocation
                 }),
                 attributes: {
-                    "data-sort-value": row.name | prisonerNameForSorting
+                    "data-sort-value": row | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
                 }
             },
             {

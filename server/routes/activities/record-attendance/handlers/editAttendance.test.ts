@@ -255,6 +255,8 @@ describe('Route Handlers - Edit Attendance', () => {
           attendanceId: 1,
           prisonerNumber: 'ABC321',
           prisonerName: 'Alan Key',
+          firstName: 'Alan',
+          lastName: 'Key',
           otherEvents: [
             {
               eventId: 4,
