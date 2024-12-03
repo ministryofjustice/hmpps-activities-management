@@ -8,22 +8,21 @@ import { formatDate, toDateString } from '../../../../utils/utils'
 import UserService from '../../../../services/userService'
 import atLeast from '../../../../../jest.setup'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
-import PrisonService from '../../../../services/prisonService'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import config from '../../../../config'
-import { LocationLenient } from '../../../../@types/prisonApiImportCustom'
 import { VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
+import LocationMappingService from '../../../../services/locationMappingService'
 
 jest.mock('../../../../services/userService')
-jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/bookAVideoLinkService')
+jest.mock('../../../../services/locationMappingService')
 
 const userService = new UserService(null, null, null) as jest.Mocked<UserService>
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
+const locationMappingService = new LocationMappingService(null, null) as jest.Mocked<LocationMappingService>
 
 describe('Route Handlers - Appointment Details', () => {
-  const handler = new AppointmentDetailsRoutes(userService, prisonService, bookAVideoLinkService)
+  const handler = new AppointmentDetailsRoutes(userService, bookAVideoLinkService, locationMappingService)
   const tomorrow = addDays(new Date(), 1)
 
   let req: Request
@@ -99,9 +98,7 @@ describe('Route Handlers - Appointment Details', () => {
         appointment: vlbAppointment,
       } as unknown as Request
 
-      when(prisonService.getEventLocations)
-        .calledWith(atLeast('MDI'))
-        .mockResolvedValue([{ locationId: 1, locationPrefix: 'locationKey' } as LocationLenient])
+      when(locationMappingService.mapNomisLocationIdToDpsKey).calledWith(atLeast(1)).mockResolvedValue('locationKey')
 
       when(bookAVideoLinkService.matchAppointmentToVideoLinkBooking)
         .calledWith(atLeast('ABC123', 'locationKey'))
@@ -131,9 +128,7 @@ describe('Route Handlers - Appointment Details', () => {
         appointment: vlbAppointment,
       } as unknown as Request
 
-      prisonService.getEventLocations.mockResolvedValue([
-        { locationId: 1, locationPrefix: 'locationKey' } as LocationLenient,
-      ])
+      locationMappingService.mapNomisLocationIdToDpsKey.mockResolvedValue('locationKey')
       bookAVideoLinkService.matchAppointmentToVideoLinkBooking.mockRejectedValue(createHttpError.NotFound())
 
       await handler.GET(req, res)

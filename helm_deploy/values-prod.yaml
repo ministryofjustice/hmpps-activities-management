@@ -23,6 +23,8 @@ generic-service:
     BOOK_A_VIDEO_LINK_API_URL: "https://book-a-video-link-api.prison.service.justice.gov.uk"
     NON_ASSOCIATIONS_API_URL: "https://non-associations-api.hmpps.service.justice.gov.uk"
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-prod.hmpps-digital-prison-reporting-mi-prod.svc.cluster.local"
+    LOCATIONS_INSIDE_PRISON_API_URL: "https://locations-inside-prison-api.hmpps.service.justice.gov.uk"
+    NOMIS_MAPPING_API_URL: "https://nomis-sync-prisoner-mapping.hmpps.service.justice.gov.uk"
 
   allowlist:
     groups:
