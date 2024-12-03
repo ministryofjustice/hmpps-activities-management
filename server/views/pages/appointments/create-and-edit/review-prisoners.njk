@@ -59,10 +59,12 @@
                 {% set prisonersList = (prisonersList.push([
                     {
                         attributes: {
-                            "data-sort-value": prisoner.name | toTitleCase | prisonerNameForSorting
+                            "data-sort-value": prisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
                         },
                         html: showProfileLink({
-                            name: prisoner.name,
+                            firstName: prisoner.firstName,
+                            middleNames: prisoner.middleNames,
+                            lastName: prisoner.lastName,
                             prisonerNumber: prisoner.number,
                             inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId
                         })

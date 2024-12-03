@@ -189,6 +189,8 @@ export default class StartJourneyRoutes {
           attendee.prisoner.lastName !== 'UNKNOWN'
             ? `${attendee.prisoner.firstName} ${attendee.prisoner.lastName}`
             : null,
+        firstName: attendee.prisoner.firstName,
+        lastName: attendee.prisoner.lastName,
         prisonCode: attendee.prisoner.prisonCode,
         status: attendee.prisoner.status,
         cellLocation: attendee.prisoner.cellLocation,

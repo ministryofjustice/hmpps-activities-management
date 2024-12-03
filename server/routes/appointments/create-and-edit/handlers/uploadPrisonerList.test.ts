@@ -237,6 +237,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
+          firstName: 'TEST01',
+          lastName: 'PRISONER01',
           cellLocation: '1-1-1',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
@@ -245,6 +247,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         {
           number: 'B2345CD',
           name: 'TEST02 PRISONER02',
+          firstName: 'TEST02',
+          lastName: 'PRISONER02',
           cellLocation: '2-2-2',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
@@ -292,6 +296,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
+          firstName: 'TEST01',
+          lastName: 'PRISONER01',
           cellLocation: '1-1-1',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
@@ -300,6 +306,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         {
           number: 'B2345CD',
           name: 'TEST02 PRISONER02',
+          firstName: 'TEST02',
+          lastName: 'PRISONER02',
           cellLocation: '2-2-2',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
@@ -318,6 +326,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
+          firstName: 'TEST01',
+          lastName: 'PRISONER01',
           cellLocation: '1-1-1',
           status: 'ACTIVE IN',
           prisonCode: 'TPR',
@@ -348,6 +358,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
+          firstName: 'TEST01',
+          lastName: 'PRISONER01',
           cellLocation: '1-1-1',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
@@ -356,6 +368,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         {
           number: 'B2345CD',
           name: 'TEST02 PRISONER02',
+          firstName: 'TEST02',
+          lastName: 'PRISONER02',
           cellLocation: '2-2-2',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
@@ -374,6 +388,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
+          firstName: 'TEST01',
+          lastName: 'PRISONER01',
           cellLocation: '1-1-1',
           status: 'ACTIVE IN',
           prisonCode: 'TPR',
@@ -411,6 +427,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
+          firstName: 'TEST01',
+          lastName: 'PRISONER01',
           cellLocation: '1-1-1',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
@@ -419,6 +437,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         {
           number: 'B2345CD',
           name: 'TEST02 PRISONER02',
+          firstName: 'TEST02',
+          lastName: 'PRISONER02',
           cellLocation: '2-2-2',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
@@ -463,6 +483,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
+          lastName: 'PRISONER01',
+          firstName: 'TEST01',
           cellLocation: '1-1-1',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
@@ -471,6 +493,8 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
         {
           number: 'B2345CD',
           name: 'TEST02 PRISONER02',
+          firstName: 'TEST02',
+          lastName: 'PRISONER02',
           cellLocation: '2-2-2',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',

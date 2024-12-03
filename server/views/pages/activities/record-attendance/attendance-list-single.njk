@@ -127,7 +127,7 @@
     {% set rows = [] %}
     {% for attendee in attendance | sort(false, false, 'location') %}
         {% set rows = (rows.push({
-            visuallyHiddenText: 'Select ' + attendee.prisoner | firstNameLastName | toTitleCase | prisonerName,
+            visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
             value: instance.id + '-' + attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
             selectable: attendee.attendance.status === "WAITING" and attendee.attendance.editable and instance.activitySchedule.activity.attendanceRequired === true,
             items: [
@@ -141,13 +141,15 @@
                 },
                 {
                     html: showProfileLink({
-                        name: attendee.prisoner | firstNameLastName,
+                        firstName: attendee.prisoner.firstName,
+                        middleNames: attendee.prisoner.middleNames,
+                        lastName: attendee.prisoner.lastName,
                         prisonerNumber: attendee.prisoner.prisonerNumber,
                         inCaseLoad: attendee.prisoner.prisonId == user.activeCaseLoadId
                     }),
                     attributes: {
                         "data-qa": "prisoner-details",
-                        "data-sort-value": attendee.prisoner | firstNameLastName | prisonerNameForSorting
+                        "data-sort-value": attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false)
                     }
                 },
                 {

@@ -18,6 +18,7 @@ import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Activity, ActivitySchedule, Attendance, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
 // eslint-disable-next-line import/no-cycle
 import { CreateAnActivityJourney, Slots } from '../routes/activities/create-an-activity/journey'
+import { NameFormatStyle } from './helpers/nameFormatStyle'
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
@@ -75,18 +76,48 @@ export const firstNameLastName = (user?: { firstName: string; lastName: string }
 }
 
 /**
- * Converts a prisoner name from 'firstName lastName' format to
- * "lastName, firstName" and bolds prisoner lastName
+ * Format a person's name with proper capitalisation
+ *
+ * Correctly handles names with apostrophes, hyphens and spaces
+ *
+ * @param firstName - first name
+ * @param middleNames - middle names
+ * @param lastName - last name
+ * @param nameFormatStyle: how the name is to be formatted,
+ * @param boldLastName: whether the last name is bold
+ * @returns formatted name string
  */
-export const prisonerName = (name: string, boldLastName = true) => {
-  if (!name) return null
-  const nameParts = name.trim().split(' ')
-  const firstNames = nameParts.slice(0, nameParts.length - 1)
+export const formatName = (
+  firstName: string,
+  middleNames: string,
+  lastName: string,
+  nameFormatStyle: NameFormatStyle,
+  boldLastName: boolean = true,
+): string => {
+  const names = [firstName, middleNames, lastName]
+  if (nameFormatStyle === NameFormatStyle.lastCommaFirstMiddle) {
+    names.unshift(`${names.pop()},`)
+  } else if (nameFormatStyle === NameFormatStyle.lastCommaFirst) {
+    names.unshift(`${names.pop()},`)
+    names.pop() // Remove middleNames
+  } else if (nameFormatStyle === NameFormatStyle.firstLast) {
+    names.splice(1, 1)
+  }
+  const namesOrdered = names
+    .filter(s => s)
+    .map(s => s.toLowerCase())
+    .join(' ')
+    .replace(/(^\w)|([\s'-]+\w)/g, letter => letter.toUpperCase())
 
-  let formattedName = nameParts[nameParts.length - 1]
-  if (boldLastName) formattedName = `<strong>${formattedName}</strong>`
-  formattedName += `, ${firstNames.join(' ')}`
-  return formattedName.trim()
+  if (
+    boldLastName &&
+    (nameFormatStyle === NameFormatStyle.lastCommaFirstMiddle || nameFormatStyle === NameFormatStyle.lastCommaFirst)
+  ) {
+    const [surname, ...rest] = namesOrdered.split(', ')
+    return `<strong>${surname}</strong>, ${rest.join(' ')}`
+  }
+
+  return namesOrdered
 }
 
 export const parseDate = (date: string, fromFormat = 'yyyy-MM-dd') => {

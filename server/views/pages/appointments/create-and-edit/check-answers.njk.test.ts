@@ -58,6 +58,8 @@ describe('Views - Create Appointment - Check Answers', () => {
           prisoners: [
             {
               name: 'Lee Jacobson',
+              firstName: 'Lee',
+              lastName: 'Jacobson',
               number: 'A1351DZ',
               cellLocation: '1-3-004',
             },
@@ -167,11 +169,15 @@ describe('Views - Create Appointment - Check Answers', () => {
       viewContext.session.appointmentJourney.prisoners = [
         {
           name: 'Lee Jacobson',
+          firstName: 'Lee',
+          lastName: 'Jacobson',
           number: 'A1351DZ',
           cellLocation: '1-3-004',
         },
         {
           name: 'David Winchurch',
+          firstName: 'David',
+          lastName: 'Winchurch',
           number: 'A1350DZ',
           cellLocation: '2-2-024',
         },

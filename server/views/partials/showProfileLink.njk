@@ -1,8 +1,8 @@
 {% macro showProfileLink(options = {}) %}
     <div {{ "class=" + options.classes if options.classes }} data-qa="prisoner-summary">
       <div data-qa="prisoner-name">
-        {% set name = options.name | toTitleCase | prisonerName(options.link) or 'No matching name' %}
-        {% if options.name and (true if options.inCaseLoad == undefined else options.inCaseLoad) %}
+        {% set name = options | formatName(NameFormatStyle.lastCommaFirstMiddle, options.link) or 'No matching name' %}
+        {% if options.lastName and (true if options.inCaseLoad == undefined else options.inCaseLoad) %}
           <a href="{{ dpsUrl }}/prisoner/{{ options.prisonerNumber }}"
             target="_blank"
             class="govuk-link govuk-link--no-visited-state">

@@ -167,7 +167,8 @@ describe('Route Handlers - Daily Attendance List', () => {
         absenceReasons,
         attendees: [
           {
-            name: 'Joe Bloggs',
+            firstName: 'Joe',
+            lastName: 'Bloggs',
             prisonerNumber: 'ABC123',
             location: 'MDI-1-001',
             attendance: {
@@ -189,7 +190,8 @@ describe('Route Handlers - Daily Attendance List', () => {
             },
           },
           {
-            name: 'Alan Key',
+            firstName: 'Alan',
+            lastName: 'Key',
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
             attendance: {
@@ -246,7 +248,8 @@ describe('Route Handlers - Daily Attendance List', () => {
         absenceReasons,
         attendees: [
           {
-            name: 'Joe Bloggs',
+            firstName: 'Joe',
+            lastName: 'Bloggs',
             prisonerNumber: 'ABC123',
             location: 'MDI-1-001',
             attendance: {
@@ -308,7 +311,8 @@ describe('Route Handlers - Daily Attendance List', () => {
         absenceReasons,
         attendees: [
           {
-            name: 'Joe Bloggs',
+            firstName: 'Joe',
+            lastName: 'Bloggs',
             prisonerNumber: 'ZXY123',
             location: 'MDI-1-001',
             attendance: {
@@ -366,7 +370,8 @@ describe('Route Handlers - Daily Attendance List', () => {
         absenceReasons,
         attendees: [
           {
-            name: 'Alan Key',
+            firstName: 'Alan',
+            lastName: 'Key',
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
             attendance: {
@@ -478,7 +483,8 @@ describe('Route Handlers - Daily Attendance List', () => {
         absenceReasons,
         attendees: [
           {
-            name: 'Alan Key',
+            firstName: 'Alan',
+            lastName: 'Key',
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
             attendance: {
@@ -572,7 +578,8 @@ describe('Route Handlers - Daily Attendance List', () => {
         absenceReasons,
         attendees: [
           {
-            name: 'Alan Key',
+            firstName: 'Alan',
+            lastName: 'Key',
             prisonerNumber: 'ABC321',
             location: 'MDI-1-002',
             attendance: {

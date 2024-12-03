@@ -87,6 +87,8 @@ export default class EditAttendanceRoutes {
 
       const attendee = await this.prisonService.getInmateByPrisonerNumber(attendance.prisonerNumber, user).then(i => ({
         name: `${i.firstName} ${i.lastName}`,
+        firstName: i.firstName,
+        lastName: i.lastName,
         otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
       }))
       req.session.recordAttendanceJourney.notAttended = {
@@ -96,6 +98,8 @@ export default class EditAttendanceRoutes {
             attendanceId: +attendanceId,
             prisonerNumber: attendance.prisonerNumber,
             prisonerName: attendee.name,
+            firstName: attendee.firstName,
+            lastName: attendee.lastName,
             otherEvents: attendee.otherEvents,
           },
         ],

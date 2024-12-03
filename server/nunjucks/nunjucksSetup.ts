@@ -17,13 +17,13 @@ import {
   findError,
   firstNameLastName,
   formatDate,
+  formatName,
   fullName,
   getSplitTime,
   initialiseName,
   padNumber,
   parseDate,
   parseISODate,
-  prisonerName,
   removeUndefined,
   setAttribute,
   sliceArray,
@@ -68,6 +68,7 @@ import AttendanceReason from '../enum/attendanceReason'
 import { absenceReasonCheckboxMatch, absenceReasonDisplayConverter } from '../utils/helpers/absenceReasonConverter'
 import { ScheduleChangeOption } from '../routes/activities/create-an-activity/handlers/customTimesChangeOption'
 import { DefaultOrCustomTimes } from '../routes/activities/create-an-activity/handlers/customTimesChangeDefaultOrCustom'
+import { NameFormatStyle } from '../utils/helpers/nameFormatStyle'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -132,16 +133,12 @@ export function registerNunjucks(app?: express.Express): Environment {
   setUpDprNunjucksFilters(njkEnv)
 
   // Only register nunjucks helpers/filters here - they should be implemented and unit tested elsewhere
+  njkEnv.addFilter('formatName', (name, nameStyle, bold) => {
+    const inputName = formatName(name.firstName, name.middleNames, name.lastName, nameStyle, bold)
+    return inputName ? njkEnv.getFilter('safe')(inputName) : null
+  })
   njkEnv.addFilter('fullName', fullName)
   njkEnv.addFilter('initialiseName', initialiseName)
-  njkEnv.addFilter('prisonerName', (str, bold) => {
-    const name = prisonerName(str, bold)
-    return name ? njkEnv.getFilter('safe')(name) : null
-  })
-  njkEnv.addFilter('prisonerNameForSorting', str => {
-    const name = njkEnv.getFilter('prisonerName')(str, false)
-    return name.val || null
-  })
   njkEnv.addFilter('possessive', str => {
     if (!str) return ''
     return `${str}${str.toLowerCase().endsWith('s') ? '’' : '’s'}`
@@ -223,6 +220,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('bookAVideoLinkToggleEnabled', config.bookAVideoLinkToggleEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
   njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
+  njkEnv.addGlobal('NameFormatStyle', NameFormatStyle)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)
