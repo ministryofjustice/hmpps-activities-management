@@ -4,17 +4,20 @@
         {% set activityCategoriesFilters = (activityCategoriesFilters.push({value: category.code, text: category.name, checked: category.code in session.unlockListJourney.activityCategoriesFilters}), activityCategoriesFilters) %}
     {% endfor %}
     {{ govukCheckboxes({
-    idPrefix: 'activityCategoriesFilters',
-    name: 'activityCategoriesFilters',
-    classes: "govuk-checkboxes--small",
-    fieldset: {
-        legend: {
-            text: 'Activity category',
-            classes: 'govuk-visually-hidden'
-        }
-    },
-    items: activityCategoriesFilters
-}) }}
+        formGroup: {
+            classes: "govuk-!-margin-bottom-2"
+        },
+        idPrefix: 'activityCategoriesFilters',
+        name: 'activityCategoriesFilters',
+        classes: "govuk-checkboxes--small",
+        fieldset: {
+            legend: {
+                text: 'Activity category',
+                classes: 'govuk-visually-hidden'
+            }
+        },
+        items: activityCategoriesFilters
+    }) }}
 
     <div>
         <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="activityCategoriesFilters"></a>
