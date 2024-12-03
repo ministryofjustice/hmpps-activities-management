@@ -7,6 +7,7 @@ import UnlockAndMovementIndexPage from '../../pages/unlockAndMovements/unlockAnd
 import ChooseDateAndLocationPage from '../../pages/unlockAndMovements/unlock/chooseDateAndLocation'
 import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ-A8644DY.json'
 import getScheduledEvents from '../../fixtures/activitiesApi/getScheduleEvents-MDI-A1350DZ-A8644DY.json'
+import getCategories from '../../fixtures/activitiesApi/getCategories.json'
 import PlannedEventsPage from '../../pages/unlockAndMovements/unlock/plannedEventsPage'
 import { CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE } from '../../pages/unlockAndMovements/abstractEventsPage'
 
@@ -51,6 +52,7 @@ context('Create activity', () => {
       getPrisonPrisoners,
     )
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}&timeSlot=AM`, getScheduledEvents)
+    cy.stubEndpoint('GET', '/activity-categories', getCategories)
   })
 
   it('should show correct alerts', () => {
