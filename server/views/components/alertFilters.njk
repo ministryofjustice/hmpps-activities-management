@@ -1,6 +1,8 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
-{% macro alertFilters(allAlerts, selectedAlerts) %}
+{% macro alertFilters(allAlerts, selectedAlerts, hiddenLegend = false) %}
+
+    {% set legendClasses = 'govuk-visually-hidden' if hiddenLegend else 'govuk-fieldset__legend--m' %}
 
     {% set alertFilters = [] %}
     {% for alert in allAlerts %}
@@ -12,19 +14,22 @@
     {% endfor %}
 
     {{ govukCheckboxes({
+        formGroup: {
+            classes: "govuk-!-margin-bottom-2"
+        },
         idPrefix: 'alertFilters',
         name: 'alertFilters',
         classes: "govuk-checkboxes--small",
         fieldset: {
                 legend: {
                         text: 'Alerts',
-                        classes: 'govuk-fieldset__legend--m'
+                        classes: legendClasses
                 }
         },
         items: alertFilters
     }) }}
 
-    <div class="govuk-!-margin-bottom-4">
+    <div class={% if not hiddenLegend %}"govuk-!-margin-bottom-4"{% endif %}>
         <a href="#" class="govuk-link govuk-link--no-visited-state"
            data-module="select-all-link" data-checkbox-name="alertFilters"></a>
     </div>
