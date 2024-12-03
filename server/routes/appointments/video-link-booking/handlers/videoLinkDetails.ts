@@ -7,6 +7,7 @@ import { PrisonAppointment, VideoLinkBooking } from '../../../../@types/bookAVid
 import ActivitiesService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
 import { AppointmentSearchResult } from '../../../../@types/activitiesAPI/types'
+import LocationMappingService from '../../../../services/locationMappingService'
 
 export default class VideoLinkDetailsRoutes {
   constructor(
@@ -14,6 +15,7 @@ export default class VideoLinkDetailsRoutes {
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
     private readonly userService: UserService,
+    private readonly locationMappingService: LocationMappingService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -26,7 +28,7 @@ export default class VideoLinkDetailsRoutes {
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(mainAppointment.prisonerNumber, user)
 
     const [rooms, userMap, mainAppointmentId] = await Promise.all([
-      this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonId, user),
+      this.bookAVideoLinkService.getAppointmentLocations(mainAppointment.prisonCode, user),
       this.userService.getUserMap([videoBooking.createdBy, videoBooking.amendedBy], user),
       this.fetchMainAppointmentFromActivitiesAPI(mainAppointment, user).then(a => a.appointmentId),
     ])
@@ -69,7 +71,7 @@ export default class VideoLinkDetailsRoutes {
     retries = 3,
     delay = 1000,
   ): Promise<AppointmentSearchResult> => {
-    const location = await this.prisonService.getInternalLocationByKey(mainAppointment.prisonLocKey, user)
+    const locationId = await this.locationMappingService.mapDpsLocationKeyToNomisId(mainAppointment.prisonLocKey, user)
 
     const appointment = await this.activitiesService
       .searchAppointments(
@@ -85,7 +87,7 @@ export default class VideoLinkDetailsRoutes {
       .then(apps =>
         apps.find(
           app =>
-            location.locationId === app.internalLocation.id &&
+            locationId === app.internalLocation.id &&
             mainAppointment.startTime === app.startTime &&
             mainAppointment.endTime === app.endTime,
         ),

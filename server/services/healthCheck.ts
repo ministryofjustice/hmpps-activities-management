@@ -79,6 +79,12 @@ const apiChecks = [
           `${config.apis.bookAVideoLinkApi.url}/health/ping`,
           config.apis.bookAVideoLinkApi.agent,
         ),
+        service(
+          'locationsInsidePrisonApi',
+          `${config.apis.locationsInsidePrisonApi.url}/health/ping`,
+          config.apis.locationsInsidePrisonApi.agent,
+        ),
+        service('nomisMapping', `${config.apis.nomisMapping.url}/health/ping`, config.apis.nomisMapping.agent),
       ]
     : []),
 ]
