@@ -1,4 +1,4 @@
-import { SubLocationCellPattern, UnlockListItem } from '../@types/activities'
+import { SubLocationCellPattern, UnlockListItem, YesNo } from '../@types/activities'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
@@ -23,6 +23,7 @@ export default class UnlockListService {
     stayingOrLeavingFilter: string,
     alertFilters: string[],
     searchTerm: string,
+    cancelledEventsFilter: YesNo,
     user: ServiceUser,
   ): Promise<UnlockListItem[]> {
     const prison = user.activeCaseLoadId
@@ -83,7 +84,7 @@ export default class UnlockListService {
       timeSlot,
     )
 
-    // popualte an array of prisoners with events in any searched activity
+    // populate an array of prisoners with events in any searched activity
     // if a prisoner has any category in the list the event should be added to the unlock items
     const prisonersInAnyActivityCategory: string[] = []
     filteredPrisoners.forEach(prisoner => {
@@ -107,6 +108,7 @@ export default class UnlockListService {
       const activities = scheduledEvents?.activities
         .filter(act => act.prisonerNumber === prisoner.prisonerNumber)
         .filter(act => prisonersInAnyActivityCategory.includes(act.prisonerNumber))
+        .filter(act => (cancelledEventsFilter ? act : !act.cancelled))
       const allEventsForPrisoner = [
         ...appointments,
         ...courtHearings,

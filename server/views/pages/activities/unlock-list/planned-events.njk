@@ -117,6 +117,10 @@
                     {{ alertFilters(alertOptions, session.unlockListJourney.alertFilters, true) }}
                     {% endset %}
 
+                    {% set cancelledEventsHtml %}
+                    {% include 'partials/activities/unlock-list/filterSections/cancelledEvents.njk' %}
+                    {% endset %}
+
                     {% set accordionFilterItems = (accordionFilterItems.push({
                         heading: {
                             text: "Alerts"
@@ -125,7 +129,17 @@
                             html: alertsAccordionHtml
                         },
                         expanded: true
-                    }, {
+                    }, 
+                    {
+                        heading: {
+                            text: "Show cancelled events"
+                        },
+                        content: {
+                            html: cancelledEventsHtml
+                        },
+                        expanded: true
+                    },
+                    {
                         heading: {
                             text: "People with or without events"
                         },

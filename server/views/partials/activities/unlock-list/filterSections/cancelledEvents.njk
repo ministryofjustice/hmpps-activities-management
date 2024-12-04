@@ -1,0 +1,23 @@
+{{ govukRadios({
+    idPrefix: 'cancelledEventsFilter',
+    name: 'cancelledEventsFilter',
+    classes: "govuk-radios--small",
+    fieldset: {
+        legend: {
+            text: 'Show cancelled events',
+            classes: 'govuk-visually-hidden'
+        }
+    },
+    items:[
+        {
+            value: YesNo.YES,
+            text: 'Yes',
+            checked: session.unlockListJourney.cancelledEventsFilter == YesNo.YES
+        },
+        {
+            value: YesNo.NO,
+            text: 'No',
+            checked: session.unlockListJourney.cancelledEventsFilter == YesNo.NO
+        }
+    ]
+}) }}
