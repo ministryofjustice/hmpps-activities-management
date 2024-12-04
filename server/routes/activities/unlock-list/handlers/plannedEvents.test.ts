@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import { UnlockListItem } from '../../../../@types/activities'
+import { UnlockListItem, YesNo } from '../../../../@types/activities'
 import PlannedEventRoutes from './plannedEvents'
 import ActivitiesService from '../../../../services/activitiesService'
 import UnlockListService from '../../../../services/unlockListService'
@@ -120,6 +120,7 @@ describe('Unlock list routes - planned events', () => {
         'Both',
         ['ALERT_HA'],
         '',
+        YesNo.YES,
         res.locals.user,
       )
 
@@ -161,6 +162,7 @@ describe('Unlock list routes - planned events', () => {
             subLocationFilters: ['A'],
             searchTerm: 'search term',
             alertFilters: ['CAT_A'],
+            cancelledEventsFilter: YesNo.YES,
           },
         },
       } as unknown as Request
@@ -203,6 +205,7 @@ describe('Unlock list routes - planned events', () => {
         'Leaving',
         ['CAT_A'],
         'search term',
+        YesNo.YES,
         res.locals.user,
       )
 

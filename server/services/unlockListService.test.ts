@@ -12,6 +12,7 @@ import AlertsFilterService from './alertsFilterService'
 import { AppointmentFrequency } from '../@types/appointments'
 import { toDateString } from '../utils/utils'
 import activityCategories from './fixtures/activity_categories.json'
+import { EventType, YesNo } from '../@types/activities'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -235,6 +236,7 @@ describe('Unlock list service', () => {
         'Both',
         [],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -278,6 +280,7 @@ describe('Unlock list service', () => {
         'Both',
         [],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -310,6 +313,7 @@ describe('Unlock list service', () => {
         'Both',
         [],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -331,6 +335,7 @@ describe('Unlock list service', () => {
         'Both',
         [],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -353,6 +358,7 @@ describe('Unlock list service', () => {
         'Leaving',
         [],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -374,6 +380,7 @@ describe('Unlock list service', () => {
         'Staying',
         [],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -395,6 +402,7 @@ describe('Unlock list service', () => {
         'Leaving',
         [],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -416,6 +424,7 @@ describe('Unlock list service', () => {
         'Both',
         [],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -443,6 +452,7 @@ describe('Unlock list service', () => {
         'Both',
         ['CAT_A'],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -467,6 +477,7 @@ describe('Unlock list service', () => {
         'Both',
         ['CAT_A'],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -512,6 +523,7 @@ describe('Unlock list service', () => {
         'Both',
         ['CAT_A'],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -600,6 +612,7 @@ describe('Unlock list service', () => {
         'Both',
         ['CAT_A'],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -631,6 +644,7 @@ describe('Unlock list service', () => {
         'Both',
         alertFilters,
         null,
+        YesNo.YES,
         user,
       )
 
@@ -703,6 +717,7 @@ describe('Unlock list service', () => {
         'Both',
         [],
         null,
+        YesNo.YES,
         user,
       )
 
@@ -717,6 +732,203 @@ describe('Unlock list service', () => {
       })
 
       expect(appointments).toHaveLength(1)
+    })
+
+    it('filter out cancelled events', async () => {
+      const appointmentScheduledEvents = {
+        prisonCode: 'MDI',
+        startDate: '',
+        endDate: '',
+        appointments: [
+          {
+            appointmentId: 1,
+            prisonerNumber: 'A1111AA',
+            eventType: EventType.APPOINTMENT,
+            cancelled: true,
+            date: toDateString(subDays(new Date(), 2)),
+            startTime: '',
+            summary: '',
+          },
+          {
+            appointmentId: 2,
+            prisonerNumber: 'A2222AA',
+            date: toDateString(subDays(new Date(), 2)),
+            startTime: '',
+            summary: '',
+            eventType: EventType.APPOINTMENT,
+            cancelled: false,
+          },
+        ],
+        visits: [
+          {
+            appointmentId: 3,
+            prisonerNumber: 'A1111AA',
+            eventType: EventType.VISIT,
+            cancelled: true,
+          },
+          {
+            appointmentId: 4,
+            prisonerNumber: 'A2222AA',
+            date: toDateString(subDays(new Date(), 2)),
+            startTime: '',
+            summary: '',
+            eventType: EventType.VISIT,
+            cancelled: false,
+          },
+        ],
+        adjudications: [
+          {
+            appointmentId: 5,
+            prisonerNumber: 'A1111AA',
+            eventType: EventType.ADJUDICATION_HEARING,
+            cancelled: true,
+          },
+          {
+            appointmentId: 6,
+            prisonerNumber: 'A2222AA',
+            date: toDateString(subDays(new Date(), 2)),
+            startTime: '',
+            summary: '',
+            eventType: EventType.ADJUDICATION_HEARING,
+            cancelled: false,
+          },
+        ],
+        externalTransfers: [
+          {
+            appointmentId: 7,
+            prisonerNumber: 'A1111AA',
+            eventType: EventType.EXTERNAL_TRANSFER,
+            cancelled: true,
+          },
+          {
+            appointmentId: 8,
+            prisonerNumber: 'A2222AA',
+            date: toDateString(subDays(new Date(), 2)),
+            startTime: '',
+            summary: '',
+            eventType: EventType.EXTERNAL_TRANSFER,
+            cancelled: false,
+          },
+        ],
+        courtHearings: [
+          {
+            appointmentId: 9,
+            prisonerNumber: 'A1111AA',
+            eventType: EventType.COURT_HEARING,
+            cancelled: true,
+          },
+          {
+            appointmentId: 10,
+            prisonerNumber: 'A2222AA',
+            date: toDateString(subDays(new Date(), 2)),
+            startTime: '',
+            summary: '',
+            eventType: EventType.COURT_HEARING,
+            cancelled: false,
+          },
+        ],
+        activities: [
+          {
+            appointmentId: 11,
+            prisonerNumber: 'A1111AA',
+            eventType: EventType.ACTIVITY,
+            startTime: '',
+            summary: '',
+            cancelled: true,
+          },
+          {
+            appointmentId: 12,
+            prisonerNumber: 'A2222AA',
+            date: toDateString(subDays(new Date(), 2)),
+            startTime: '',
+            summary: '',
+            eventType: EventType.ACTIVITY,
+            cancelled: false,
+          },
+        ],
+      } as PrisonerScheduledEvents
+
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(appointmentScheduledEvents)
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'AM',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'With',
+        allActivityCategoriesFilter,
+        'Both',
+        [],
+        null,
+        YesNo.NO,
+        user,
+      )
+      expect(unlockListItems).toEqual([
+        {
+          alerts: undefined,
+          bookingId: '222222',
+          category: undefined,
+          cellLocation: '1-2-002',
+          events: [
+            {
+              appointmentId: 2,
+              cancelled: false,
+              date: '2024-12-02',
+              eventType: 'APPOINTMENT',
+              prisonerNumber: 'A2222AA',
+              startTime: '',
+              summary: '',
+            },
+            {
+              appointmentId: 10,
+              cancelled: false,
+              date: '2024-12-02',
+              eventType: 'COURT_HEARING',
+              prisonerNumber: 'A2222AA',
+              startTime: '',
+              summary: '',
+            },
+            {
+              appointmentId: 4,
+              cancelled: false,
+              date: '2024-12-02',
+              eventType: 'VISIT',
+              prisonerNumber: 'A2222AA',
+              startTime: '',
+              summary: '',
+            },
+            {
+              appointmentId: 6,
+              cancelled: false,
+              date: '2024-12-02',
+              eventType: 'ADJUDICATION_HEARING',
+              prisonerNumber: 'A2222AA',
+              startTime: '',
+              summary: '',
+            },
+            {
+              appointmentId: 8,
+              cancelled: false,
+              date: '2024-12-02',
+              eventType: 'EXTERNAL_TRANSFER',
+              prisonerNumber: 'A2222AA',
+              startTime: '',
+              summary: '',
+            },
+          ],
+          firstName: 'Two',
+          incentiveLevel: undefined,
+          isLeavingWing: true,
+          lastName: 'Twoster',
+          locationGroup: 'HB1',
+          locationSubGroup: 'B-Wing',
+          middleNames: undefined,
+          prisonCode: 'MDI',
+          prisonerNumber: 'A2222AA',
+          status: 'IN',
+        },
+      ])
     })
   })
 })

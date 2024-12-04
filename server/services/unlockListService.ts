@@ -101,14 +101,23 @@ export default class UnlockListService {
       const appointments = scheduledEvents?.appointments
         .filter(app => app.prisonerNumber === prisoner.prisonerNumber)
         .filter(app => applyCancellationDisplayRule(app))
-      const courtHearings = scheduledEvents?.courtHearings.filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
-      const visits = scheduledEvents?.visits.filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
-      const adjudications = scheduledEvents?.adjudications.filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
-      const transfers = scheduledEvents?.externalTransfers.filter(tra => tra.prisonerNumber === prisoner.prisonerNumber)
+        .filter(app => (cancelledEventsFilter === YesNo.YES ? app : !app.cancelled))
+      const courtHearings = scheduledEvents?.courtHearings
+        .filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
+        .filter(crt => (cancelledEventsFilter === YesNo.YES ? crt : !crt.cancelled))
+      const visits = scheduledEvents?.visits
+        .filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
+        .filter(vis => (cancelledEventsFilter === YesNo.YES ? vis : !vis.cancelled))
+      const adjudications = scheduledEvents?.adjudications
+        .filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
+        .filter(adj => (cancelledEventsFilter === YesNo.YES ? adj : !adj.cancelled))
+      const transfers = scheduledEvents?.externalTransfers
+        .filter(tra => tra.prisonerNumber === prisoner.prisonerNumber)
+        .filter(tra => (cancelledEventsFilter === YesNo.YES ? tra : !tra.cancelled))
       const activities = scheduledEvents?.activities
         .filter(act => act.prisonerNumber === prisoner.prisonerNumber)
         .filter(act => prisonersInAnyActivityCategory.includes(act.prisonerNumber))
-        .filter(act => (cancelledEventsFilter ? act : !act.cancelled))
+        .filter(act => (cancelledEventsFilter === YesNo.YES ? act : !act.cancelled))
       const allEventsForPrisoner = [
         ...appointments,
         ...courtHearings,
