@@ -302,6 +302,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
           {
             cellLocation: '1-1-1',
             name: 'John Smith',
+            firstName: 'John',
+            lastName: 'Smith',
             number: 'A1234BC',
           },
         ],

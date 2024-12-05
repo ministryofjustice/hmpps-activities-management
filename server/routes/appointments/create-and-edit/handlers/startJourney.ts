@@ -98,6 +98,8 @@ export default class StartJourneyRoutes {
       {
         number: prisoner.prisonerNumber,
         name: `${prisoner.firstName} ${prisoner.lastName}`,
+        firstName: prisoner.firstName,
+        lastName: prisoner.lastName,
         prisonCode: prisoner.prisonId,
         status: prisoner.status,
         cellLocation: prisoner.cellLocation,

@@ -65,6 +65,8 @@ export default ({
       type: booking.bookingType,
       prisoner: {
         name: `${prisoner.firstName} ${prisoner.lastName}`,
+        firstName: prisoner.firstName,
+        lastName: prisoner.lastName,
         number: prisoner.prisonerNumber,
         prisonCode: prisoner.prisonId,
         cellLocation: prisoner.cellLocation,
