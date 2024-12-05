@@ -1,0 +1,58 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Suspensions - Pay" %}
+{% set pageId = 'suspension-pay-page' %}
+{% set jsBackLink = true %}
+
+{% set heading %}
+    {% if session.suspendJourney.allocations | length == 1 %}
+        Should {{ session.suspendJourney.inmate.prisonerName | safe }} be paid for {{ session.suspendJourney.allocations[0].activityName | safe }} while they’re suspended?
+    {% else %}
+        Should {{ session.suspendJourney.inmate.prisonerName | safe }} be paid for activities while they’re suspended?
+    {% endif %}
+{% endset %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">Manage suspensions from activities</span>
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+                {{ govukRadios({
+                    classes: "govuk-radios--inline",
+                    name: "pay",
+                    fieldset: {
+                        legend: {
+                            text: heading,
+                            isPageHeading: true,
+                            classes: "govuk-heading-l"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('pay'),
+                    items: [
+                        {
+                            value: YesNo.YES,
+                            text: "Yes",
+                            checked: true if session.suspendJourney.pay else false,
+                            hint: {
+                                text: "They’ll be paid for each session they’re suspended from."
+                            }
+                        },
+                        {
+                            value: YesNo.NO,
+                            text: "No",
+                            checked: true if not session.suspendJourney.pay else false
+                        }
+                    ]
+                }) }}
+
+                {{ govukButton({ text: "Continue"}) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
