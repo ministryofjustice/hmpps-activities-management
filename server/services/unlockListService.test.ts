@@ -874,7 +874,7 @@ describe('Unlock list service', () => {
             {
               appointmentId: 2,
               cancelled: false,
-              date: '2024-12-02',
+              date: toDateString(subDays(new Date(), 2)),
               eventType: 'APPOINTMENT',
               prisonerNumber: 'A2222AA',
               startTime: '',
@@ -883,7 +883,7 @@ describe('Unlock list service', () => {
             {
               appointmentId: 10,
               cancelled: false,
-              date: '2024-12-02',
+              date: toDateString(subDays(new Date(), 2)),
               eventType: 'COURT_HEARING',
               prisonerNumber: 'A2222AA',
               startTime: '',
@@ -892,7 +892,7 @@ describe('Unlock list service', () => {
             {
               appointmentId: 4,
               cancelled: false,
-              date: '2024-12-02',
+              date: toDateString(subDays(new Date(), 2)),
               eventType: 'VISIT',
               prisonerNumber: 'A2222AA',
               startTime: '',
@@ -901,7 +901,7 @@ describe('Unlock list service', () => {
             {
               appointmentId: 6,
               cancelled: false,
-              date: '2024-12-02',
+              date: toDateString(subDays(new Date(), 2)),
               eventType: 'ADJUDICATION_HEARING',
               prisonerNumber: 'A2222AA',
               startTime: '',
@@ -910,7 +910,7 @@ describe('Unlock list service', () => {
             {
               appointmentId: 8,
               cancelled: false,
-              date: '2024-12-02',
+              date: toDateString(subDays(new Date(), 2)),
               eventType: 'EXTERNAL_TRANSFER',
               prisonerNumber: 'A2222AA',
               startTime: '',

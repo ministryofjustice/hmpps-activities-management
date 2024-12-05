@@ -101,23 +101,23 @@ export default class UnlockListService {
       const appointments = scheduledEvents?.appointments
         .filter(app => app.prisonerNumber === prisoner.prisonerNumber)
         .filter(app => applyCancellationDisplayRule(app))
-        .filter(app => (cancelledEventsFilter === YesNo.YES ? app : !app.cancelled))
+        .filter(app => !app.cancelled || cancelledEventsFilter === YesNo.YES)
       const courtHearings = scheduledEvents?.courtHearings
         .filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
-        .filter(crt => (cancelledEventsFilter === YesNo.YES ? crt : !crt.cancelled))
+        .filter(crt => !crt.cancelled || cancelledEventsFilter === YesNo.YES)
       const visits = scheduledEvents?.visits
         .filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
-        .filter(vis => (cancelledEventsFilter === YesNo.YES ? vis : !vis.cancelled))
+        .filter(vis => !vis.cancelled || cancelledEventsFilter === YesNo.YES)
       const adjudications = scheduledEvents?.adjudications
         .filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
-        .filter(adj => (cancelledEventsFilter === YesNo.YES ? adj : !adj.cancelled))
+        .filter(adj => !adj.cancelled || cancelledEventsFilter === YesNo.YES)
       const transfers = scheduledEvents?.externalTransfers
         .filter(tra => tra.prisonerNumber === prisoner.prisonerNumber)
-        .filter(tra => (cancelledEventsFilter === YesNo.YES ? tra : !tra.cancelled))
+        .filter(tra => !tra.cancelled || cancelledEventsFilter === YesNo.YES)
       const activities = scheduledEvents?.activities
         .filter(act => act.prisonerNumber === prisoner.prisonerNumber)
         .filter(act => prisonersInAnyActivityCategory.includes(act.prisonerNumber))
-        .filter(act => (cancelledEventsFilter === YesNo.YES ? act : !act.cancelled))
+        .filter(act => !act.cancelled || cancelledEventsFilter === YesNo.YES)
       const allEventsForPrisoner = [
         ...appointments,
         ...courtHearings,
