@@ -5,6 +5,7 @@ import { asString, toDate } from '../../../../utils/utils'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import AlertsFilterService from '../../../../services/alertsFilterService'
+import { YesNo } from '../../../../@types/activities'
 
 export default class PlannedEventsRoutes {
   constructor(
@@ -34,6 +35,7 @@ export default class PlannedEventsRoutes {
     req.session.unlockListJourney.subLocationFilters ??= location.children.map(c => c.key)
     req.session.unlockListJourney.alertFilters ??= alertOptions.map(a => a.key)
     req.session.unlockListJourney.searchTerm ??= ''
+    req.session.unlockListJourney.cancelledEventsFilter ??= YesNo.YES
 
     const unlockDate = date ? toDate(asString(date)) : new Date()
 
@@ -44,6 +46,7 @@ export default class PlannedEventsRoutes {
       stayingOrLeavingFilter,
       alertFilters,
       searchTerm,
+      cancelledEventsFilter,
     } = req.session.unlockListJourney
 
     const unlockListItems = await this.unlockListService.getFilteredUnlockList(
@@ -56,6 +59,7 @@ export default class PlannedEventsRoutes {
       stayingOrLeavingFilter,
       alertFilters,
       searchTerm,
+      cancelledEventsFilter,
       user,
     )
 

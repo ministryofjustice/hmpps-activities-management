@@ -1,4 +1,4 @@
-import { SubLocationCellPattern, UnlockListItem } from '../@types/activities'
+import { SubLocationCellPattern, UnlockListItem, YesNo } from '../@types/activities'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
@@ -23,6 +23,7 @@ export default class UnlockListService {
     stayingOrLeavingFilter: string,
     alertFilters: string[],
     searchTerm: string,
+    cancelledEventsFilter: YesNo,
     user: ServiceUser,
   ): Promise<UnlockListItem[]> {
     const prison = user.activeCaseLoadId
@@ -83,7 +84,7 @@ export default class UnlockListService {
       timeSlot,
     )
 
-    // popualte an array of prisoners with events in any searched activity
+    // populate an array of prisoners with events in any searched activity
     // if a prisoner has any category in the list the event should be added to the unlock items
     const prisonersInAnyActivityCategory: string[] = []
     filteredPrisoners.forEach(prisoner => {
@@ -100,13 +101,23 @@ export default class UnlockListService {
       const appointments = scheduledEvents?.appointments
         .filter(app => app.prisonerNumber === prisoner.prisonerNumber)
         .filter(app => applyCancellationDisplayRule(app))
-      const courtHearings = scheduledEvents?.courtHearings.filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
-      const visits = scheduledEvents?.visits.filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
-      const adjudications = scheduledEvents?.adjudications.filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
-      const transfers = scheduledEvents?.externalTransfers.filter(tra => tra.prisonerNumber === prisoner.prisonerNumber)
+        .filter(app => !app.cancelled || cancelledEventsFilter === YesNo.YES)
+      const courtHearings = scheduledEvents?.courtHearings
+        .filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
+        .filter(crt => !crt.cancelled || cancelledEventsFilter === YesNo.YES)
+      const visits = scheduledEvents?.visits
+        .filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
+        .filter(vis => !vis.cancelled || cancelledEventsFilter === YesNo.YES)
+      const adjudications = scheduledEvents?.adjudications
+        .filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
+        .filter(adj => !adj.cancelled || cancelledEventsFilter === YesNo.YES)
+      const transfers = scheduledEvents?.externalTransfers
+        .filter(tra => tra.prisonerNumber === prisoner.prisonerNumber)
+        .filter(tra => !tra.cancelled || cancelledEventsFilter === YesNo.YES)
       const activities = scheduledEvents?.activities
         .filter(act => act.prisonerNumber === prisoner.prisonerNumber)
         .filter(act => prisonersInAnyActivityCategory.includes(act.prisonerNumber))
+        .filter(act => !act.cancelled || cancelledEventsFilter === YesNo.YES)
       const allEventsForPrisoner = [
         ...appointments,
         ...courtHearings,

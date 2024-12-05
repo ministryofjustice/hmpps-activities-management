@@ -18,6 +18,9 @@ export class Filters {
   stayingOrLeavingFilter?: string
 
   @Expose()
+  cancelledEventsFilter?: string
+
+  @Expose()
   @Transform(({ value }) => (value ? [value].flat() : undefined)) // Transform to an array if only one value is provided
   alertFilters?: string[]
 }
@@ -31,6 +34,7 @@ export default class ApplyFiltersRoutes {
       stayingOrLeavingFilter,
       alertFilters,
       searchTerm,
+      cancelledEventsFilter,
     } = req.body
 
     if (locationFilters) {
@@ -47,6 +51,10 @@ export default class ApplyFiltersRoutes {
 
     if (stayingOrLeavingFilter) {
       req.session.unlockListJourney.stayingOrLeavingFilter = stayingOrLeavingFilter
+    }
+
+    if (cancelledEventsFilter) {
+      req.session.unlockListJourney.cancelledEventsFilter = cancelledEventsFilter
     }
 
     req.session.unlockListJourney.alertFilters = alertFilters ?? []
