@@ -3,6 +3,7 @@ import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import SuspendFromRoutes, { SuspendFrom } from './handlers/suspendFrom'
+import SuspensionPayRoutes, { SuspensionPay } from './handlers/pay'
 import CaseNoteQuestionRoutes, { CaseNoteQuestion } from './handlers/caseNoteQuestion'
 import CaseNoteRoutes, { CaseNote } from './handlers/caseNote'
 import CheckAnswersRoutes from './handlers/checkAnswers'
@@ -17,6 +18,7 @@ export default function Index({ activitiesService, metricsService }: Services): 
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const suspendFromHandler = new SuspendFromRoutes()
+  const payHandler = new SuspensionPayRoutes()
   const caseNoteQuestionHandler = new CaseNoteQuestionRoutes()
   const caseNoteHandler = new CaseNoteRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
@@ -24,6 +26,8 @@ export default function Index({ activitiesService, metricsService }: Services): 
 
   get('/suspend-from', suspendFromHandler.GET, true)
   post('/suspend-from', suspendFromHandler.POST, SuspendFrom)
+  get('/pay', payHandler.GET, true)
+  post('/pay', payHandler.POST, SuspensionPay)
   get('/case-note-question', caseNoteQuestionHandler.GET, true)
   post('/case-note-question', caseNoteQuestionHandler.POST, CaseNoteQuestion)
   get('/case-note', caseNoteHandler.GET, true)

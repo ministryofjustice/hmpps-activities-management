@@ -1,3 +1,5 @@
+import { PrisonPayBand } from '../../../@types/activitiesAPI/types'
+
 type Inmate = {
   prisonerName: string
   prisonerNumber: string
@@ -9,6 +11,7 @@ export type SuspendJourney = {
     activityId: number
     allocationId: number
     activityName: string
+    payBand: PrisonPayBand
   }[]
   earliestAllocationEndDate?: string
   suspendFrom?: string
@@ -17,4 +20,5 @@ export type SuspendJourney = {
     type: string
     text: string
   }
+  toBePaid?: boolean
 }
