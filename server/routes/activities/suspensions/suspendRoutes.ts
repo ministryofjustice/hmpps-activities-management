@@ -26,8 +26,8 @@ export default function Index({ activitiesService, metricsService }: Services): 
 
   get('/suspend-from', suspendFromHandler.GET, true)
   post('/suspend-from', suspendFromHandler.POST, SuspendFrom)
-  get('/suspension-pay', payHandler.GET, true)
-  post('/suspension-pay', payHandler.POST, SuspensionPay)
+  get('/pay', payHandler.GET, true)
+  post('/pay', payHandler.POST, SuspensionPay)
   get('/case-note-question', caseNoteQuestionHandler.GET, true)
   post('/case-note-question', caseNoteQuestionHandler.POST, CaseNoteQuestion)
   get('/case-note', caseNoteHandler.GET, true)

@@ -9,8 +9,9 @@ export class CaseNoteQuestion {
 }
 
 export default class CaseNoteQuestionRoutes {
-  GET = async (req: Request, res: Response): Promise<void> =>
+  GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/activities/suspensions/case-note-question')
+  }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { choice } = req.body

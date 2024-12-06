@@ -36,6 +36,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
           allocationId: a.id,
           activityId: a.activityId,
           activityName: a.activitySummary,
+          payBand: a.prisonPayBand,
         })),
       inmate: {
         prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),

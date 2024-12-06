@@ -8,6 +8,7 @@ import { SuspendJourney } from '../journey'
 import { toDateString } from '../../../../utils/utils'
 import Validator from '../../../../validators/validator'
 import config from '../../../../config'
+import { PrisonPayBand } from '../../../../@types/activitiesAPI/types'
 
 enum PresetDateOptions {
   IMMEDIATELY = 'immediately',
@@ -58,8 +59,9 @@ export default class SuspendFromRoutes {
     const { datePresetOption, date } = req.body
     req.session.suspendJourney.suspendFrom = toDateString(this.dateFromOptions(datePresetOption, date))
 
-    // TODO: ALSO NEEDS TO CHECK: if the prisoner is only being suspended from an activity without a pay rate
-    if (config.suspendPrisonerWithPayToggleEnabled) return res.redirectOrReturn('pay')
+    const allocationHasPayRate = this.activityHasPayBand(req.session.suspendJourney.allocations)
+    if (config.suspendPrisonerWithPayToggleEnabled && allocationHasPayRate) return res.redirectOrReturn('pay')
+    req.session.suspendJourney.toBePaid = null
     return res.redirectOrReturn('case-note-question')
   }
 
@@ -75,5 +77,19 @@ export default class SuspendFromRoutes {
       default:
         throw new Error('No suitable date found')
     }
+  }
+
+  private activityHasPayBand = (
+    allocations: {
+      activityId: number
+      allocationId: number
+      activityName: string
+      payBand: PrisonPayBand
+    }[],
+  ): boolean => {
+    if (allocations?.length > 1) {
+      return !!allocations.filter(al => al.payBand).length
+    }
+    return !!allocations[0].payBand
   }
 }

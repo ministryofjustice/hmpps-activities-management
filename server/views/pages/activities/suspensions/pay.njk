@@ -24,13 +24,13 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
                 {{ govukRadios({
-                    classes: "govuk-radios--inline",
+                    classes: "govuk-radios",
                     name: "pay",
                     fieldset: {
                         legend: {
                             text: heading,
                             isPageHeading: true,
-                            classes: "govuk-heading-l"
+                            classes: "govuk-fieldset__legend--l"
                         }
                     },
                     errorMessage: validationErrors | findError('pay'),
@@ -38,7 +38,7 @@
                         {
                             value: YesNo.YES,
                             text: "Yes",
-                            checked: true if session.suspendJourney.pay else false,
+                            checked:session.suspendJourney.pay === YesNo.YES,
                             hint: {
                                 text: "They’ll be paid for each session they’re suspended from."
                             }
@@ -46,7 +46,7 @@
                         {
                             value: YesNo.NO,
                             text: "No",
-                            checked: true if not session.suspendJourney.pay else false
+                            checked: session.suspendJourney.pay === YesNo.NO
                         }
                     ]
                 }) }}
