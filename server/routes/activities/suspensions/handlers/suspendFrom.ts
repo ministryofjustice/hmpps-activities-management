@@ -59,9 +59,11 @@ export default class SuspendFromRoutes {
     const { datePresetOption, date } = req.body
     req.session.suspendJourney.suspendFrom = toDateString(this.dateFromOptions(datePresetOption, date))
 
-    const allocationHasPayRate = this.activityHasPayBand(req.session.suspendJourney.allocations)
-    if (config.suspendPrisonerWithPayToggleEnabled && allocationHasPayRate) return res.redirectOrReturn('pay')
-    req.session.suspendJourney.toBePaid = null
+    if (config.suspendPrisonerWithPayToggleEnabled) {
+      const allocationHasPayRate = this.activityHasPayBand(req.session.suspendJourney.allocations)
+      if (allocationHasPayRate) return res.redirectOrReturn('pay')
+      req.session.suspendJourney.toBePaid = null
+    }
     return res.redirectOrReturn('case-note-question')
   }
 
