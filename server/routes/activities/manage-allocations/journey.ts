@@ -59,3 +59,8 @@ export enum DeallocateTodayOption {
   TODAY = 'TODAY',
   FUTURE_DATE = 'FUTURE_DATE',
 }
+
+export enum PrisonerSuspensionStatus {
+  SUSPENDED = 'SUSPENDED',
+  SUSPENDED_WITH_PAY = 'SUSPENDED_WITH_PAY',
+}
