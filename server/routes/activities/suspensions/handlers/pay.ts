@@ -13,7 +13,7 @@ export class SuspensionPay {
       return `Select yes if ${suspendJourney.inmate.prisonerName} should be paid while they’re suspended`
     },
   })
-  pay: YesNo
+  toBePaid: YesNo
 }
 
 export default class SuspensionPayRoutes {
@@ -24,8 +24,8 @@ export default class SuspensionPayRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { pay } = req.body
-    req.session.suspendJourney.toBePaid = pay
+    const { toBePaid } = req.body
+    req.session.suspendJourney.toBePaid = toBePaid
 
     return res.redirectOrReturn('case-note-question')
   }
