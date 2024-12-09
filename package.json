@@ -198,7 +198,7 @@
   "overrides": {
     "rollup": "~4.28.1",
     "cookie": "~1.0.2",
-    "path-to-regexp": "=0.1.12",
+    "path-to-regexp": "~0.1.12",
     "cross-spawn": "~7.0.6"
   }
 }
