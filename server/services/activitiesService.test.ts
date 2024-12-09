@@ -122,7 +122,7 @@ describe('Activities Service', () => {
           prisonerNumber: 'ABC123',
           allocationIds: [1],
           suspendFrom: '2023-01-01',
-          prisonerStatus: PrisonerSuspensionStatus.SUSPENDED,
+          status: PrisonerSuspensionStatus.SUSPENDED,
           suspensionCaseNote: { text: 'test case note', type: 'GEN' },
         },
         user,

@@ -8,18 +8,30 @@
 {% set jsBackLink = true %}
 
 {% set heading %}
-    {% if session.suspendJourney.allocations | length == 1 %}
+{% if session.suspendJourney.allocations | length == 1 %}
         Should {{ session.suspendJourney.inmate.prisonerName | safe }} be paid for {{ session.suspendJourney.allocations[0].activityName | safe }} while they’re suspended?
     {% else %}
         Should {{ session.suspendJourney.inmate.prisonerName | safe }} be paid for activities while they’re suspended?
     {% endif %}
 {% endset %}
 
+{% set hintHTML %}
+{% if extraContent %}
+    <div class="govuk-inset-text"><p class="govuk-body">{{session.suspendJourney.inmate.prisonerName | safe}} is currently paid for {{ extraContent.numberPaid }} of {{extraContent.totalAllocations }} you’re suspending them from:</p>
+    <ul class="govuk-list govuk-list--bullet">
+            {% for allocation in extraContent.paidAllocations | sortBy('activityName') %}
+                <li>{{allocation.activityName}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endif %}
+{% endset %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">Manage suspensions from activities</span>
-
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
@@ -32,6 +44,9 @@
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }
+                    },
+                    hint: {
+                        html: hintHTML
                     },
                     errorMessage: validationErrors | findError('pay'),
                     items: [

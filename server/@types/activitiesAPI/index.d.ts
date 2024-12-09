@@ -4061,11 +4061,11 @@ export interface components {
        */
       suspendedReason?: string
       /**
-       * @description The status of the allocation
+       * @description The status of the allocation. Note that SUSPENDED is suspended without pay.
        * @example ACTIVE
        * @enum {string}
        */
-      status: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED'
+      status: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED' | 'SUSPENDED_WITH_PAY'
       plannedDeallocation?: components['schemas']['PlannedDeallocation']
       plannedSuspension?: components['schemas']['PlannedSuspension']
       /** @description The days and times that the prisoner is excluded from this activity's schedule. All values must match a slot where the activity is scheduled to run, and due to sync to nomis, there can not not be exclusions defined on the same day and time slot over multiple weeks. */
@@ -5506,6 +5506,20 @@ export interface components {
        */
       suspendFrom: string
       suspensionCaseNote?: components['schemas']['AddCaseNoteRequest']
+      /**
+       * @description The type of suspension. Only SUSPENDED or SUSPENDED_WITH_PAY are allowed when suspending
+       * @example SUSPENDED_WITH_PAY
+       * @enum {string}
+       */
+      status?:
+        | 'ACTIVE'
+        | 'PENDING'
+        | 'SUSPENDED'
+        | 'AUTO_SUSPENDED'
+        | 'ENDED'
+        | 'SUSPENDED_WITH_PAY'
+        | 'SUSPENDED'
+        | 'SUSPENDED_WITH_PAY'
     }
     /** @description The create request with the new activity details */
     ActivityCreateRequest: {
@@ -7047,7 +7061,7 @@ export interface components {
     }
     DlqMessage: {
       body: {
-        [key: string]: Record<string, never> | undefined
+        [key: string]: Record<string, never>
       }
       messageId: string
     }

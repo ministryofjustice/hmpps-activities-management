@@ -51,7 +51,7 @@ describe('Route Handlers - Suspensions - Pay', () => {
   describe('GET', () => {
     it('should render the view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/pay')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/pay', { extraContent: false })
     })
   })
   describe('POST', () => {
