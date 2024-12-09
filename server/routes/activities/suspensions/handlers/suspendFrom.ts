@@ -7,6 +7,8 @@ import IsValidDate from '../../../../validators/isValidDate'
 import { SuspendJourney } from '../journey'
 import { toDateString } from '../../../../utils/utils'
 import Validator from '../../../../validators/validator'
+import config from '../../../../config'
+import { activityHasPayBand } from '../utils/suspendUtils'
 
 enum PresetDateOptions {
   IMMEDIATELY = 'immediately',
@@ -56,6 +58,12 @@ export default class SuspendFromRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { datePresetOption, date } = req.body
     req.session.suspendJourney.suspendFrom = toDateString(this.dateFromOptions(datePresetOption, date))
+
+    if (config.suspendPrisonerWithPayToggleEnabled) {
+      const allocationHasPayRate = activityHasPayBand(req.session.suspendJourney.allocations)
+      if (allocationHasPayRate) return res.redirectOrReturn('pay')
+      req.session.suspendJourney.toBePaid = null
+    }
     return res.redirectOrReturn('case-note-question')
   }
 

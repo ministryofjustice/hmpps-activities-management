@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import CheckAnswersRoutes from './checkAnswers'
 import ActivitiesService from '../../../../services/activitiesService'
+import { PrisonerSuspensionStatus } from '../../manage-allocations/journey'
+import { YesNo } from '../../../../@types/activities'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -48,6 +50,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
           },
           suspendFrom: '2024-05-23',
           suspendUntil: '2024-05-25',
+          toBePaid: YesNo.YES,
           caseNote: {
             type: 'GEN',
             text: 'case note text',
@@ -69,7 +72,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
   })
 
   describe('POST', () => {
-    it('suspend mode should post the allocation amendments and redirect', async () => {
+    it('suspend mode should post the allocation amendments (SUSPENDED_WITH_PAY) and redirect', async () => {
       req.params.mode = 'suspend'
 
       await handler.POST(req, res)
@@ -84,6 +87,30 @@ describe('Route Handlers - Suspensions - Check answers', () => {
         'ABC123',
         [1, 2],
         '2024-05-23',
+        PrisonerSuspensionStatus.SUSPENDED_WITH_PAY,
+        expectedCaseNote,
+        user,
+      )
+      expect(res.redirect).toHaveBeenCalledWith('confirmation')
+    })
+    it('suspend mode should post the allocation amendments (SUSPENDED and redirect', async () => {
+      req.params.mode = 'suspend'
+
+      req.session.suspendJourney.toBePaid = YesNo.NO
+
+      await handler.POST(req, res)
+
+      const expectedCaseNote = {
+        type: 'GEN',
+        text: 'case note text',
+      }
+
+      expect(activitiesService.suspendAllocations).toHaveBeenCalled()
+      expect(activitiesService.suspendAllocations).toHaveBeenCalledWith(
+        'ABC123',
+        [1, 2],
+        '2024-05-23',
+        PrisonerSuspensionStatus.SUSPENDED,
         expectedCaseNote,
         user,
       )
