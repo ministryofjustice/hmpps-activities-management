@@ -86,7 +86,7 @@
     "@hmcts/uk-bank-holidays": "^1.0.2",
     "@microsoft/applicationinsights-web": "^3.3.4",
     "@ministryofjustice/frontend": "^2.2.5",
-    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "3.9.4",
+    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "3.32.14",
     "@types/express-serve-static-core": "^4.19.6",
     "@types/lodash": "^4.17.13",
     "accessible-autocomplete": "^3.0.1",
@@ -187,7 +187,7 @@
     "nodemon": "^3.1.7",
     "prettier": "^3.4.2",
     "prettier-plugin-jinja-template": "^2.0.0",
-    "rollup": "~4.28.0",
+    "rollup": "~4.28.1",
     "sass": "^1.82.0",
     "sinon": "^19.0.2",
     "supertest": "^7.0.0",
@@ -196,9 +196,9 @@
     "typescript": "^5.7.2"
   },
   "overrides": {
-    "rollup": "~4.28.0",
+    "rollup": "~4.28.1",
     "cookie": "~1.0.2",
-    "path-to-regexp": "~0.1.12",
-    "cross-spawn": "~7.0.5"
+    "path-to-regexp": "~0.2.5",
+    "cross-spawn": "~7.0.6"
   }
 }
