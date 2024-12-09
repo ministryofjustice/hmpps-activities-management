@@ -155,20 +155,6 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
     })
     it('should redirect to the case note question page if the flag is off', async () => {
       config.suspendPrisonerWithPayToggleEnabled = false
-      // req.session.suspendJourney = {
-      //   inmate: {
-      //     prisonerName: '',
-      //     prisonerNumber: '',
-      //   },
-      //   allocations: [
-      //     {
-      //       activityId: 2,
-      //       allocationId: 3,
-      //       activityName: 'Activity A2',
-      //       payBand: null,
-      //     },
-      //   ],
-      // }
 
       req.body = {
         datePresetOption: 'immediately',
