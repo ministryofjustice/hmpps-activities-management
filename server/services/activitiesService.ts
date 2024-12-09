@@ -53,6 +53,7 @@ import {
   AppointmentCountSummary,
   PrisonPayBandCreateRequest,
   PrisonPayBandUpdateRequest,
+  SuspendPrisonerRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/journey'
@@ -142,9 +143,10 @@ export default class ActivitiesService {
     allocationIds: number[],
     suspendFrom: string,
     suspensionCaseNote: AddCaseNoteRequest,
+    status: 'SUSPENDED' | 'SUSPENDED_WITH_PAY',
     user: ServiceUser,
   ) {
-    const request = { prisonerNumber, allocationIds, suspendFrom, suspensionCaseNote }
+    const request: SuspendPrisonerRequest = { prisonerNumber, allocationIds, suspendFrom, suspensionCaseNote, status }
     return this.activitiesApiClient.suspendAllocations(request, user)
   }
 

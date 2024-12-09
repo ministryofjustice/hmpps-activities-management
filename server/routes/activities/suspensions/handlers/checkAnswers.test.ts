@@ -85,6 +85,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
         [1, 2],
         '2024-05-23',
         expectedCaseNote,
+        'SUSPENDED',
         user,
       )
       expect(res.redirect).toHaveBeenCalledWith('confirmation')

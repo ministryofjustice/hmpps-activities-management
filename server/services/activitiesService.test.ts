@@ -113,6 +113,7 @@ describe('Activities Service', () => {
         [1],
         '2023-01-01',
         { text: 'test case note', type: 'GEN' } as AddCaseNoteRequest,
+        'SUSPENDED',
         user,
       )
       expect(activitiesApiClient.suspendAllocations).toHaveBeenCalledWith(
@@ -121,6 +122,7 @@ describe('Activities Service', () => {
           allocationIds: [1],
           suspendFrom: '2023-01-01',
           suspensionCaseNote: { text: 'test case note', type: 'GEN' },
+          status: 'SUSPENDED',
         },
         user,
       )

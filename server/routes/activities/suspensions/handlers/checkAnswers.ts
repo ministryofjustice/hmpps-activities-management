@@ -20,6 +20,7 @@ export default class CheckAnswersRoutes {
         allocationIds,
         suspendFrom,
         caseNote as AddCaseNoteRequest,
+        'SUSPENDED',
         user,
       )
     }
