@@ -59,6 +59,7 @@ import { SessionCancellationRequest } from '../routes/activities/record-attendan
 import { AttendanceStatus } from '../@types/appointments'
 import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
+import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocations/journey'
 
 export default class ActivitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
@@ -141,10 +142,11 @@ export default class ActivitiesService {
     prisonerNumber: string,
     allocationIds: number[],
     suspendFrom: string,
+    prisonerStatus: PrisonerSuspensionStatus,
     suspensionCaseNote: AddCaseNoteRequest,
     user: ServiceUser,
   ) {
-    const request = { prisonerNumber, allocationIds, suspendFrom, suspensionCaseNote }
+    const request = { prisonerNumber, allocationIds, suspendFrom, prisonerStatus, suspensionCaseNote }
     return this.activitiesApiClient.suspendAllocations(request, user)
   }
 

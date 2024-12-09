@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import CheckAnswersRoutes from './checkAnswers'
 import ActivitiesService from '../../../../services/activitiesService'
+import { PrisonerSuspensionStatus } from '../../manage-allocations/journey'
+import { YesNo } from '../../../../@types/activities'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -48,6 +50,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
           },
           suspendFrom: '2024-05-23',
           suspendUntil: '2024-05-25',
+          toBePaid: YesNo.YES,
           caseNote: {
             type: 'GEN',
             text: 'case note text',
@@ -84,6 +87,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
         'ABC123',
         [1, 2],
         '2024-05-23',
+        PrisonerSuspensionStatus.SUSPENDED_WITH_PAY,
         expectedCaseNote,
         user,
       )

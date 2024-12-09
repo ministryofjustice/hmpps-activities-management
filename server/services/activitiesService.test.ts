@@ -48,6 +48,7 @@ import { AppointmentApplyTo, AttendanceStatus } from '../@types/appointments'
 import calcCurrentWeek from '../utils/helpers/currentWeekCalculator'
 import { formatIsoDate } from '../utils/datePickerUtils'
 import EventTier from '../enum/eventTiers'
+import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocations/journey'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -112,6 +113,7 @@ describe('Activities Service', () => {
         'ABC123',
         [1],
         '2023-01-01',
+        PrisonerSuspensionStatus.SUSPENDED,
         { text: 'test case note', type: 'GEN' } as AddCaseNoteRequest,
         user,
       )
@@ -120,6 +122,7 @@ describe('Activities Service', () => {
           prisonerNumber: 'ABC123',
           allocationIds: [1],
           suspendFrom: '2023-01-01',
+          prisonerStatus: PrisonerSuspensionStatus.SUSPENDED,
           suspensionCaseNote: { text: 'test case note', type: 'GEN' },
         },
         user,
