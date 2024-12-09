@@ -69,6 +69,7 @@ import { absenceReasonCheckboxMatch, absenceReasonDisplayConverter } from '../ut
 import { ScheduleChangeOption } from '../routes/activities/create-an-activity/handlers/customTimesChangeOption'
 import { DefaultOrCustomTimes } from '../routes/activities/create-an-activity/handlers/customTimesChangeDefaultOrCustom'
 import { NameFormatStyle } from '../utils/helpers/nameFormatStyle'
+import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocations/journey'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -222,6 +223,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
   njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
   njkEnv.addGlobal('NameFormatStyle', NameFormatStyle)
+  njkEnv.addGlobal('PrisonerSuspensionStatus', PrisonerSuspensionStatus)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

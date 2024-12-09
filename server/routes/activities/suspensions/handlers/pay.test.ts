@@ -57,7 +57,7 @@ describe('Route Handlers - Suspensions - Pay', () => {
   describe('POST', () => {
     it('should add YES to the session', async () => {
       req.body = {
-        pay: YesNo.YES,
+        toBePaid: YesNo.YES,
       }
 
       await handler.POST(req, res)
@@ -66,7 +66,7 @@ describe('Route Handlers - Suspensions - Pay', () => {
     })
     it('should add NO to the session', async () => {
       req.body = {
-        pay: YesNo.NO,
+        toBePaid: YesNo.NO,
       }
 
       await handler.POST(req, res)
@@ -93,7 +93,7 @@ describe('Route Handlers - Suspensions - Pay', () => {
       expect(errors).toEqual(
         expect.arrayContaining([
           {
-            property: 'pay',
+            property: 'toBePaid',
             error: `Select yes if Fred Smith should be paid while they’re suspended`,
           },
         ]),
@@ -102,7 +102,7 @@ describe('Route Handlers - Suspensions - Pay', () => {
 
     it('choice cannot be an unknown value', async () => {
       const body = {
-        pay: 'unknown',
+        toBePaid: 'unknown',
       }
 
       const session = {
@@ -120,7 +120,7 @@ describe('Route Handlers - Suspensions - Pay', () => {
       expect(errors).toEqual(
         expect.arrayContaining([
           {
-            property: 'pay',
+            property: 'toBePaid',
             error: `Select yes if Fred Smith should be paid while they’re suspended`,
           },
         ]),
@@ -129,7 +129,7 @@ describe('Route Handlers - Suspensions - Pay', () => {
 
     it('passes', async () => {
       const body = {
-        pay: YesNo.YES,
+        toBePaid: YesNo.YES,
       }
 
       const session = {

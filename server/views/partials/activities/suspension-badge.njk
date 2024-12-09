@@ -1,7 +1,7 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% macro suspensionBadge(allocationStatus, plannedSuspension, now) %}
-    {% if allocationStatus == 'SUSPENDED' %}
+    {% if allocationStatus == PrisonerSuspensionStatus.SUSPENDED or allocationStatus == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY %}
         <hr class="mid-grey-tint-20-hr dash-border">
         {{ govukTag({
             text: "Prisoner suspended",
