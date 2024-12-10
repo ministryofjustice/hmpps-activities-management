@@ -20,5 +20,5 @@ export type SuspendJourney = {
     type: string
     text: string
   }
-  toBePaid?: string
+  paid?: string
 }

@@ -50,7 +50,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
           },
           suspendFrom: '2024-05-23',
           suspendUntil: '2024-05-25',
-          toBePaid: YesNo.YES,
+          paid: YesNo.YES,
           caseNote: {
             type: 'GEN',
             text: 'case note text',
@@ -96,7 +96,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
     it('suspend mode should post the allocation amendments (SUSPENDED and redirect', async () => {
       req.params.mode = 'suspend'
 
-      req.session.suspendJourney.toBePaid = YesNo.NO
+      req.session.suspendJourney.paid = YesNo.NO
 
       await handler.POST(req, res)
 

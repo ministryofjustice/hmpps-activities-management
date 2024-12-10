@@ -37,7 +37,7 @@
 
                 {{ govukRadios({
                     classes: "govuk-radios",
-                    name: "toBePaid",
+                    name: "paid",
                     fieldset: {
                         legend: {
                             text: heading,
@@ -48,12 +48,12 @@
                     hint: {
                         html: hintHTML
                     },
-                    errorMessage: validationErrors | findError('toBePaid'),
+                    errorMessage: validationErrors | findError('paid'),
                     items: [
                         {
                             value: YesNo.YES,
                             text: "Yes",
-                            checked: session.suspendJourney.toBePaid === YesNo.YES,
+                            checked: session.suspendJourney.paid === YesNo.YES,
                             hint: {
                                 text: "They’ll be paid for each session they’re suspended from."
                             }
@@ -61,7 +61,7 @@
                         {
                             value: YesNo.NO,
                             text: "No",
-                            checked: session.suspendJourney.toBePaid === YesNo.NO
+                            checked: session.suspendJourney.paid === YesNo.NO
                         }
                     ]
                 }) }}

@@ -68,7 +68,7 @@
                             text: "Paid while suspended?"
                         },
                         value: {
-                            text: session.suspendJourney.toBePaid | toTitleCase
+                            text: session.suspendJourney.paid | toTitleCase
                         },
                         actions: {
                             items: [
@@ -80,7 +80,7 @@
                                 }
                             ]
                         }
-                    } if suspendPrisonerWithPayToggleEnabled and session.suspendJourney.toBePaid != null,
+                    } if suspendPrisonerWithPayToggleEnabled and session.suspendJourney.paid != null,
                     {
                         key: { text: "End of suspension" },
                         value: {
