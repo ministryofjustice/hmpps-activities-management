@@ -102,7 +102,7 @@
     "connect-redis": "^8.0.1",
     "csurf": "^1.11.0",
     "csv-parse": "^5.6.0",
-    "date-fns": "^3.6.0",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-prom-bundle": "^7.0.2",
@@ -198,7 +198,7 @@
   "overrides": {
     "rollup": "~4.28.1",
     "cookie": "~1.0.2",
-    "path-to-regexp": "=0.1.12",
+    "path-to-regexp": "~0.1.12",
     "cross-spawn": "~7.0.6"
   }
 }
