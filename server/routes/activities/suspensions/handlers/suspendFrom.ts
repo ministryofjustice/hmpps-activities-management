@@ -62,7 +62,7 @@ export default class SuspendFromRoutes {
     if (config.suspendPrisonerWithPayToggleEnabled) {
       const allocationHasPayRate = activityHasPayBand(req.session.suspendJourney.allocations)
       if (allocationHasPayRate) return res.redirectOrReturn('pay')
-      req.session.suspendJourney.toBePaid = null
+      req.session.suspendJourney.paid = null
     }
     return res.redirectOrReturn('case-note-question')
   }

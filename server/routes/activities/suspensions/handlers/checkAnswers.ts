@@ -10,13 +10,13 @@ export default class CheckAnswersRoutes {
   GET = async (req: Request, res: Response) => res.render('pages/activities/suspensions/check-answers')
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { allocations, suspendFrom, suspendUntil, caseNote, toBePaid } = req.session.suspendJourney
+    const { allocations, suspendFrom, suspendUntil, caseNote, paid } = req.session.suspendJourney
     const { user } = res.locals
     const { mode, prisonerNumber } = req.params
 
     const allocationIds = allocations.map(a => a.allocationId)
     const prisonerSuspensionStatus =
-      toBePaid === YesNo.YES ? PrisonerSuspensionStatus.SUSPENDED_WITH_PAY : PrisonerSuspensionStatus.SUSPENDED
+      paid === YesNo.YES ? PrisonerSuspensionStatus.SUSPENDED_WITH_PAY : PrisonerSuspensionStatus.SUSPENDED
 
     if (mode === 'suspend') {
       await this.activitiesService.suspendAllocations(

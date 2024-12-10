@@ -64,6 +64,24 @@
                         }
                     } if session.req.params.mode == 'suspend',
                     {
+                        key: {
+                            text: "Paid while suspended?"
+                        },
+                        value: {
+                            text: session.suspendJourney.paid | toTitleCase
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "pay?preserveHistory=true",
+                                    classes: 'govuk-link--no-visited-state',
+                                    html: "Change",
+                                    visuallyHiddenText: "if they should be paid while suspended"
+                                }
+                            ]
+                        }
+                    } if suspendPrisonerWithPayToggleEnabled and session.suspendJourney.paid != null,
+                    {
                         key: { text: "End of suspension" },
                         value: {
                             text: (
