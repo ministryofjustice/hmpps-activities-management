@@ -1,9 +1,8 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
-import { convertToTitleCase, parseDate } from '../../../../utils/utils'
-import { activitySlotsMinusExclusions, sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
-import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
+import { convertToTitleCase } from '../../../../utils/utils'
+import { PrisonerSuspensionStatus } from '../../manage-allocations/journey'
 
 export default class ViewAllocationsRoutes {
   constructor(
@@ -21,26 +20,34 @@ export default class ViewAllocationsRoutes {
       .getActivePrisonPrisonerAllocations([prisonerNumber], user)
       .then(r => r.flatMap(a => a.allocations))
 
-    const schedules = await Promise.all(
-      allocations.map(a => this.activitiesService.getActivitySchedule(a.scheduleId, user)),
-    )
+    // const schedules = await Promise.all(
+    //   allocations.map(a => this.activitiesService.getActivitySchedule(a.scheduleId, user)),
+    // )
 
-    const activities = allocations.map(allocation => {
-      const schedule = schedules.find(s => s.id === allocation.scheduleId)
+    // const activities = allocations.map(allocation => {
+    //   const schedule = schedules.find(s => s.id === allocation.scheduleId)
 
-      const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
-      const slots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
+    //   const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
+    //   const slots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
 
-      return {
-        allocation,
-        currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
-        slots,
-      }
-    })
+    //   return {
+    //     allocation,
+    //     currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
+    //     slots,
+    //   }
+    // })
 
+    const suspendedStatuses = [
+      PrisonerSuspensionStatus.SUSPENDED as string,
+      PrisonerSuspensionStatus.SUSPENDED_WITH_PAY as string,
+    ]
+    const sus = allocations.filter(all => suspendedStatuses.includes(all.status))
+    console.log(sus)
     res.render('pages/activities/suspensions/view-allocations', {
       prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
-      activities,
+      allocationCount: allocations.length,
+      suspendedAllocations: allocations.filter(all => suspendedStatuses.includes(all.status)),
+      activeAllocations: allocations.filter(all => !suspendedStatuses.includes(all.status)),
     })
   }
 }
