@@ -4,8 +4,6 @@ import { Activity, Allocation } from '../../@types/activitiesAPI/types'
 import { Prisoner } from '../../@types/prisonerOffenderSearchImport/types'
 
 export default function getCurrentPay(activity: Activity, allocation: Allocation, prisoner: Prisoner) {
-  const x = activity.pay.map(pay => pay.prisonPayBand)
-  console.log(x)
   return activity.pay
     .filter(
       a =>

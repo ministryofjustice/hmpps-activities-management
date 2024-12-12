@@ -24,23 +24,6 @@ export default class ViewAllocationsRoutes {
       .getActivePrisonPrisonerAllocations([prisonerNumber], user)
       .then(r => r.flatMap(a => a.allocations))
 
-    // const schedules = await Promise.all(
-    //   allocations.map(a => this.activitiesService.getActivitySchedule(a.scheduleId, user)),
-    // )
-
-    // const activities = allocations.map(allocation => {
-    //   const schedule = schedules.find(s => s.id === allocation.scheduleId)
-
-    //   const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
-    //   const slots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
-
-    //   return {
-    //     allocation,
-    //     currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
-    //     slots,
-    //   }
-    // })
-
     const suspendedStatuses = [
       PrisonerSuspensionStatus.SUSPENDED as string,
       PrisonerSuspensionStatus.SUSPENDED_WITH_PAY as string,
@@ -52,8 +35,11 @@ export default class ViewAllocationsRoutes {
     res.render('pages/activities/suspensions/view-allocations', {
       prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
       allocationCount: allocations.length,
-      suspendedAllocations: allocations.filter(all => suspendedStatuses.includes(all.status)),
-      activeAllocations: enhancedActiveAllocations,
+      suspendedAllocations: allocations
+        .filter(all => suspendedStatuses.includes(all.status))
+        .sort((a, b) => (a.plannedSuspension.plannedStartDate < b.plannedSuspension.plannedStartDate ? -1 : 1)),
+      activeAllocations: enhancedActiveAllocations.sort((a, b) => (a.activitySummary < b.activitySummary ? -1 : 1)),
+      activeAllocationIdsForSuspending: activeAllocations.map(allocation => allocation.id),
     })
   }
 
@@ -61,11 +47,13 @@ export default class ViewAllocationsRoutes {
     return Promise.all(
       activeAllocations.map(async allocation => {
         const activity = await this.activitiesService.getActivity(allocation.activityId, user)
-        const currentPay = getCurrentPay(activity, allocation, prisoner)
 
+        if (!activity.paid) return allocation
+
+        const currentPay = getCurrentPay(activity, allocation, prisoner)
         return {
           ...allocation,
-          payRate: currentPay.rate,
+          payRate: currentPay?.rate,
         }
       }),
     )
