@@ -3,6 +3,10 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { PrisonerSuspensionStatus } from '../../manage-allocations/journey'
+import { Allocation } from '../../../../@types/activitiesAPI/types'
+import { ServiceUser } from '../../../../@types/express'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import getCurrentPay from '../../../../utils/helpers/getCurrentPay'
 
 export default class ViewAllocationsRoutes {
   constructor(
@@ -41,13 +45,29 @@ export default class ViewAllocationsRoutes {
       PrisonerSuspensionStatus.SUSPENDED as string,
       PrisonerSuspensionStatus.SUSPENDED_WITH_PAY as string,
     ]
-    const sus = allocations.filter(all => suspendedStatuses.includes(all.status))
-    console.log(sus)
+
+    const activeAllocations = allocations.filter(all => !suspendedStatuses.includes(all.status))
+    const enhancedActiveAllocations = await this.enhanceActiveAllocations(activeAllocations, prisoner, res.locals.user)
+
     res.render('pages/activities/suspensions/view-allocations', {
       prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
       allocationCount: allocations.length,
       suspendedAllocations: allocations.filter(all => suspendedStatuses.includes(all.status)),
-      activeAllocations: allocations.filter(all => !suspendedStatuses.includes(all.status)),
+      activeAllocations: enhancedActiveAllocations,
     })
+  }
+
+  private enhanceActiveAllocations = async (activeAllocations: Allocation[], prisoner: Prisoner, user: ServiceUser) => {
+    return Promise.all(
+      activeAllocations.map(async allocation => {
+        const activity = await this.activitiesService.getActivity(allocation.activityId, user)
+        const currentPay = getCurrentPay(activity, allocation, prisoner)
+
+        return {
+          ...allocation,
+          payRate: currentPay.rate,
+        }
+      }),
+    )
   }
 }

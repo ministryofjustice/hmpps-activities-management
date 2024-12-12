@@ -20,7 +20,7 @@
         text:  allocation.endDate | formatDate('d MMMM yyyy') or 'No end date set'
     },
     {
-        text: allocation.prisonPayBand?.description or 'Unknown'
+        text: allocation.payRate | toMoney or 'Unknown'
     },
     {
         html: '<a href=../suspend/' + session.req.params.prisonerNumber + '/suspend-from?allocationIds=' + allocation.id +'>Suspend from activity</a>'
