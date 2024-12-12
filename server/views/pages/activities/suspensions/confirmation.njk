@@ -15,8 +15,22 @@
                         {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) is now suspended from
                         {% if session.suspendJourney.allocations | length == 1 %}
                             {{ session.suspendJourney.allocations[0].activityName | safe }}
+                            {% if suspendPrisonerWithPayToggleEnabled %} 
+                                {% if session.suspendJourney.paid == 'YES' %} 
+                                    with pay
+                                {% else %} 
+                                    without pay
+                                {% endif %}
+                            {% endif %}
                         {% else %}
                             {{ session.suspendJourney.allocations | length }} activities
+                            {% if suspendPrisonerWithPayToggleEnabled %} 
+                                {% if session.suspendJourney.paid == 'YES' %} 
+                                    with pay
+                                {% else %} 
+                                    without pay
+                                {% endif %}
+                            {% endif %}
                         {% endif %}
                     {% endset %}
 
@@ -36,8 +50,22 @@
                         {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) will be suspended from
                         {% if session.suspendJourney.allocations | length == 1 %}
                             {{ session.suspendJourney.allocations[0].activityName | safe }}
+                            {% if suspendPrisonerWithPayToggleEnabled %} 
+                                {% if session.suspendJourney.paid == 'YES' %} 
+                                    with pay
+                                {% else %} 
+                                    without pay
+                                {% endif %}
+                            {% endif %}
                         {% else %}
                             {{ session.suspendJourney.allocations | length }} activities
+                            {% if suspendPrisonerWithPayToggleEnabled %} 
+                                {% if session.suspendJourney.paid == 'YES' %} 
+                                    with pay
+                                {% else %} 
+                                    without pay
+                                {% endif %}
+                            {% endif %}
                         {% endif %}
                         from {{ session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') }}
                     {% endset %}
