@@ -22,7 +22,9 @@ const activity = {
       id: 5579,
       incentiveNomisCode: 'ENH',
       incentiveLevel: 'Enhanced',
-      prisonPayBand: [Object],
+      prisonPayBand: {
+        id: 312,
+      },
       rate: 150,
       pieceRate: null,
       pieceRateItems: null,
@@ -32,7 +34,9 @@ const activity = {
       id: 5587,
       incentiveNomisCode: 'STD',
       incentiveLevel: 'Standard',
-      prisonPayBand: [Object],
+      prisonPayBand: {
+        id: 312,
+      },
       rate: 125,
       pieceRate: null,
       pieceRateItems: null,
@@ -42,7 +46,9 @@ const activity = {
       id: 5586,
       incentiveNomisCode: 'BAS',
       incentiveLevel: 'Basic',
-      prisonPayBand: [Object],
+      prisonPayBand: {
+        id: 312,
+      },
       rate: 125,
       pieceRate: null,
       pieceRateItems: null,
@@ -52,7 +58,9 @@ const activity = {
       id: 5581,
       incentiveNomisCode: 'STD',
       incentiveLevel: 'Standard',
-      prisonPayBand: [Object],
+      prisonPayBand: {
+        id: 312,
+      },
       rate: 100,
       pieceRate: null,
       pieceRateItems: null,
