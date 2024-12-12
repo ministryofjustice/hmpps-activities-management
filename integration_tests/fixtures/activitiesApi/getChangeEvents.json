@@ -15,24 +15,24 @@
     {
       "eventReviewId": 2,
       "serviceIdentifier": null,
-      "eventType": "prison-offender-events.prisoner.non-association-detail.changed",
+      "eventType": "prison-offender-events.prisoner.cell.move",
       "eventTime": "2023-05-16T14:00:00",
       "prisonCode": "MDI",
       "bookingId": 1,
       "prisonerNumber": "A1234AB",
-      "eventData": "Some data",
+      "eventData": "Cell move",
       "acknowledgedTime": null,
       "acknowledgedBy": null
     },
     {
       "eventReviewId": 3,
       "serviceIdentifier": null,
-      "eventType": "prison-offender-events.prisoner.non-association-detail.changed",
+      "eventType": "prisoner-offender-search.prisoner.updated",
       "eventTime": "2023-05-16T15:20:00",
       "prisonCode": "MDI",
       "bookingId": 1,
       "prisonerNumber": "A1234AC",
-      "eventData": "Some data",
+      "eventData": "Cell move",
       "acknowledgedTime": null,
       "acknowledgedBy": null
     }

@@ -125,6 +125,7 @@
         ({ text: "Release", classes: "govuk-tag--green" } if 'prisoner.released' in event.eventType) or
         ({ text: "Appointments cancelled", classes: "govuk-tag--green" } if 'appointments-changed' in event.eventType) or
         ({ text: "Cell-move", classes: "govuk-tag--blue" } if 'cell.move' in event.eventType) or
+        ({ text: "Cell-move", classes: "govuk-tag--blue" } if 'prisoner.updated' in event.eventType and 'Cell move' in event.eventData) or
         { text: "Unknown-event", classes: "govuk-tag--yellow"} %}
 
     {% set options = options | setAttribute('classes', options.classes + " govuk-!-font-size-16") %}
