@@ -5511,7 +5511,7 @@ export interface components {
        * @example SUSPENDED_WITH_PAY
        * @enum {string}
        */
-      status?: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED' | 'SUSPENDED_WITH_PAY'
+      status: 'ACTIVE' | 'PENDING' | 'SUSPENDED' | 'AUTO_SUSPENDED' | 'ENDED' | 'SUSPENDED_WITH_PAY'
     }
     /** @description The create request with the new activity details */
     ActivityCreateRequest: {
