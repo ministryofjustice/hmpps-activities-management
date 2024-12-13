@@ -30,7 +30,7 @@
 
                 {% if suspendPrisonerWithPayToggleEnabled %}
                     {% set paid %} 
-                        {% if group[0].status == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY %} 
+                        {% if group[0].status == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY or group[0].plannedSuspension.paid %} 
                             Yes
                         {% elif group[0].prisonPayBand == null %} 
                             No - activity is unpaid

@@ -34,19 +34,22 @@ export default class ViewAllocationsRoutes {
     }
 
     // THESE LINES BELOW CAN BE REMOVED ONCE THE SUSPENSION PAY FLAG IS TRUE
-    const schedules = await Promise.all(
-      allocations.map(a => this.activitiesService.getActivitySchedule(a.scheduleId, user)),
-    )
-    const activities = allocations.map(allocation => {
-      const schedule = schedules.find(s => s.id === allocation.scheduleId)
-      const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
-      const slots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
-      return {
-        allocation,
-        currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
-        slots,
-      }
-    })
+    let activities = []
+    if (!config.suspendPrisonerWithPayToggleEnabled) {
+      const schedules = await Promise.all(
+        allocations.map(a => this.activitiesService.getActivitySchedule(a.scheduleId, user)),
+      )
+      activities = allocations.map(allocation => {
+        const schedule = schedules.find(s => s.id === allocation.scheduleId)
+        const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
+        const slots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
+        return {
+          allocation,
+          currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
+          slots,
+        }
+      })
+    }
     // LINES ABOVE CAN BE REMOVED
 
     const suspendedAllocations = allocations
