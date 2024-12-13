@@ -16,7 +16,7 @@
                         {% if session.suspendJourney.allocations | length == 1 %}
                             {{ session.suspendJourney.allocations[0].activityName | safe }}
                             {% if suspendPrisonerWithPayToggleEnabled %} 
-                                {% if session.suspendJourney.paid == 'YES' %} 
+                                {% if session.suspendJourney.paid == YesNo.YES %} 
                                     with pay
                                 {% else %} 
                                     without pay
@@ -25,7 +25,7 @@
                         {% else %}
                             {{ session.suspendJourney.allocations | length }} activities
                             {% if suspendPrisonerWithPayToggleEnabled %} 
-                                {% if session.suspendJourney.paid == 'YES' %} 
+                                {% if session.suspendJourney.paid == YesNo.YES %} 
                                     with pay
                                 {% else %} 
                                     without pay
@@ -51,7 +51,7 @@
                         {% if session.suspendJourney.allocations | length == 1 %}
                             {{ session.suspendJourney.allocations[0].activityName | safe }}
                             {% if suspendPrisonerWithPayToggleEnabled %} 
-                                {% if session.suspendJourney.paid == 'YES' %} 
+                                {% if session.suspendJourney.paid == YesNo.YES %} 
                                     with pay
                                 {% else %} 
                                     without pay
@@ -60,7 +60,7 @@
                         {% else %}
                             {{ session.suspendJourney.allocations | length }} activities
                             {% if suspendPrisonerWithPayToggleEnabled %} 
-                                {% if session.suspendJourney.paid == 'YES' %} 
+                                {% if session.suspendJourney.paid == YesNo.YES %} 
                                     with pay
                                 {% else %} 
                                     without pay
