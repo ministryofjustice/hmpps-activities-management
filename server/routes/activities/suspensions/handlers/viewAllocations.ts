@@ -1,12 +1,14 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
-import { convertToTitleCase } from '../../../../utils/utils'
-import { PrisonerSuspensionStatus } from '../../manage-allocations/journey'
+import { convertToTitleCase, parseDate } from '../../../../utils/utils'
 import { Allocation } from '../../../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../../../@types/express'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import getCurrentPay from '../../../../utils/helpers/getCurrentPay'
+import config from '../../../../config'
+import { activitySlotsMinusExclusions, sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
+import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 
 export default class ViewAllocationsRoutes {
   constructor(
@@ -24,22 +26,46 @@ export default class ViewAllocationsRoutes {
       .getActivePrisonPrisonerAllocations([prisonerNumber], user)
       .then(r => r.flatMap(a => a.allocations))
 
-    const suspendedStatuses = [
-      PrisonerSuspensionStatus.SUSPENDED as string,
-      PrisonerSuspensionStatus.SUSPENDED_WITH_PAY as string,
-    ]
+    let enhancedActiveAllocations = []
+    const activeAllocations = allocations.filter(all => !all.plannedSuspension)
 
-    const activeAllocations = allocations.filter(all => !suspendedStatuses.includes(all.status))
-    const enhancedActiveAllocations = await this.enhanceActiveAllocations(activeAllocations, prisoner, res.locals.user)
+    if (config.suspendPrisonerWithPayToggleEnabled) {
+      enhancedActiveAllocations = await this.enhanceActiveAllocations(activeAllocations, prisoner, res.locals.user)
+    }
+
+    // THESE LINES BELOW CAN BE REMOVED ONCE THE SUSPENSION PAY FLAG IS TRUE
+    const schedules = await Promise.all(
+      allocations.map(a => this.activitiesService.getActivitySchedule(a.scheduleId, user)),
+    )
+    const activities = allocations.map(allocation => {
+      const schedule = schedules.find(s => s.id === allocation.scheduleId)
+      const allocationSlots = activitySlotsMinusExclusions(allocation.exclusions, schedule.slots)
+      const slots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
+      return {
+        allocation,
+        currentWeek: calcCurrentWeek(parseDate(schedule.startDate), schedule.scheduleWeeks),
+        slots,
+      }
+    })
+    // LINES ABOVE CAN BE REMOVED
+
+    const suspendedAllocations = allocations
+      .filter(all => all.plannedSuspension)
+      .sort((a, b) => (a.plannedSuspension.plannedStartDate < b.plannedSuspension.plannedStartDate ? -1 : 1))
+
+    const sortedActiveAllocations = enhancedActiveAllocations.sort((a, b) =>
+      a.activitySummary < b.activitySummary ? -1 : 1,
+    )
 
     res.render('pages/activities/suspensions/view-allocations', {
       prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
       allocationCount: allocations.length,
-      suspendedAllocations: allocations
-        .filter(all => suspendedStatuses.includes(all.status))
-        .sort((a, b) => (a.plannedSuspension.plannedStartDate < b.plannedSuspension.plannedStartDate ? -1 : 1)),
-      activeAllocations: enhancedActiveAllocations.sort((a, b) => (a.activitySummary < b.activitySummary ? -1 : 1)),
-      activeAllocationIdsForSuspending: activeAllocations.map(allocation => allocation.id),
+      suspendedAllocations: config.suspendPrisonerWithPayToggleEnabled ? suspendedAllocations : [],
+      activeAllocations: config.suspendPrisonerWithPayToggleEnabled ? sortedActiveAllocations : [],
+      activeAllocationIdsForSuspending: config.suspendPrisonerWithPayToggleEnabled
+        ? activeAllocations.map(allocation => allocation.id)
+        : null,
+      activities: config.suspendPrisonerWithPayToggleEnabled ? [] : activities, // this will be removed once suspension pay flag is set to true
     })
   }
 
@@ -47,7 +73,6 @@ export default class ViewAllocationsRoutes {
     return Promise.all(
       activeAllocations.map(async allocation => {
         const activity = await this.activitiesService.getActivity(allocation.activityId, user)
-
         if (!activity.paid) return allocation
 
         const currentPay = getCurrentPay(activity, allocation, prisoner)
