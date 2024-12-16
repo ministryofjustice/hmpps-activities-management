@@ -35,6 +35,9 @@
             {% endset %}
 
             {{ govukSummaryList({
+                attributes: {
+                    "data-qa": "suspension-summary"
+                },
                 rows: [
                     {
                         key: { text: "Prisoner" },

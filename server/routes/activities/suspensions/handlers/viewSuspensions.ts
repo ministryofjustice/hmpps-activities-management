@@ -36,7 +36,6 @@ export default class ViewSuspensionsRoutes {
     const groupedAllocations = Object.values(
       _.chain(allocations).sortBy('plannedSuspension.plannedAt').groupBy('plannedSuspension.plannedAt').value(),
     )
-
     return res.render('pages/activities/suspensions/view-suspensions', { groupedAllocations, caseNotesMap, userMap })
   }
 }

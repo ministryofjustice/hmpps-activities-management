@@ -59,7 +59,6 @@ export default class ViewAllocationsRoutes {
     const sortedActiveAllocations = enhancedActiveAllocations.sort((a, b) =>
       a.activitySummary < b.activitySummary ? -1 : 1,
     )
-
     res.render('pages/activities/suspensions/view-allocations', {
       prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
       allocationCount: allocations.length,

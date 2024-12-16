@@ -29,7 +29,9 @@
                 {% set endDate = group[0].plannedSuspension.plannedEndDate %}
 
                 {% if suspendPrisonerWithPayToggleEnabled %}
-                    {% set paid %} 
+                    {% set paid %}
+                        {# If the allocation is already suspended (i.e. start date is today or in the past), the status can be used, 
+                        otherwise we need to look on the planned suspension to see if it was a paid suspension #}
                         {% if group[0].status == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY or group[0].plannedSuspension.paid %} 
                             Yes
                         {% elif group[0].prisonPayBand == null %} 
@@ -44,7 +46,7 @@
                 {% set suspensionCaseNote = caseNotesMap.get(group[0].plannedSuspension.caseNoteId) %}
 
                 <h2 class='govuk-heading-m'>Suspension added on {{ plannedAt | parseISODate | formatDate("EEEE, d MMMM yyyy 'at' HH:mm") }}</h2>
-                <dl class="govuk-summary-list {{ 'govuk-!-margin-bottom-0' if suspensionCaseNote }}">
+                <dl data-qa="suspension-summary" class="govuk-summary-list {{ 'govuk-!-margin-bottom-0' if suspensionCaseNote }}">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Activity</dt>
                         <dd class="govuk-summary-list__value">

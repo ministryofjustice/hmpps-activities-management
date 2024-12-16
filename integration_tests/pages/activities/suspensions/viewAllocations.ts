@@ -13,11 +13,15 @@ export default class ViewAllocationsPage extends Page {
 
   activeAllocationsTable = (): Cypress.Chainable => cy.get('[data-qa=active-allocations]')
 
+  suspendLink = (allocationId: number): Cypress.Chainable => cy.get(`[data-qa=suspend-${allocationId}]`)
+
   suspendedAllocationsTable = (): Cypress.Chainable => cy.get('[data-qa=suspended-allocations]')
 
   suspendedTableH2 = (): Cypress.Chainable => cy.get('h2')
 
-  endAllButton = (): Cypress.Chainable => cy.get('[data-qa=end-all-suspensions-button]')
+  endSuspensionLink = (allocationId: number): Cypress.Chainable => cy.get(`[data-qa=end-suspension-${allocationId}]`)
 
-  suspendAllButton = (): Cypress.Chainable => cy.get('[data-qa=suspend-all-button]')
+  endAllButton = (): Cypress.Chainable => cy.get('a').contains('End all suspensions')
+
+  suspendAllButton = (): Cypress.Chainable => cy.get('a').contains('Suspend from all activities')
 }

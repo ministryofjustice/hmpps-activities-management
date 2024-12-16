@@ -24,7 +24,7 @@
             text: allocation.payRate | toMoney if allocation.payRate else 'Unpaid'
         },
         {
-            html: '<a href=../suspend/' + session.req.params.prisonerNumber + '/suspend-from?allocationIds=' + allocation.id +'>Suspend from activity <span class="govuk-visually-hidden">{{ allocation.activitySummary }}</span></a>'
+            html: '<a href=../suspend/' + session.req.params.prisonerNumber + '/suspend-from?allocationIds=' + allocation.id +' data-qa="suspend-'+allocation.id+'">Suspend from activity <span class="govuk-visually-hidden">{{ allocation.activitySummary }}</span></a>'
         }
         ]), activeAllocationRows) %}
     {% endfor %}
@@ -55,7 +55,7 @@
             text: paid or 'Unknown'
         },
         {
-            html: '<a href=./' + session.req.params.prisonerNumber + '/view-suspensions?allocationId=' + allocation.id +'>View or end suspension</a>'
+            html: '<a href=./' + session.req.params.prisonerNumber + '/view-suspensions?allocationId=' + allocation.id +' data-qa="end-suspension-'+allocation.id+'">View or end suspension</a>'
         }
         ]), suspendedAllocationRows) %}
     {% endfor %}
