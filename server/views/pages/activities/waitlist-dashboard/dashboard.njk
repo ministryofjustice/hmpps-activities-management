@@ -1,5 +1,6 @@
 {% extends "layout.njk" %}
 
+{% from "components/searchBar.njk" import searchBar %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
@@ -10,6 +11,7 @@
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/waitingListStatusDescription.njk" import waitingListStatusDescription %}
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
 {% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
 {% from "partials/splitLine.njk" import splitLine %}
@@ -23,27 +25,66 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Waitlist dashboard</h1>
-                {% if editable %}
-                    <p class="govuk-body">Select an application to view or edit it, and to change the status.</p>
-                    <p class="govuk-body">Where an application is ‘Approved’, select it to allocate the prisoner to the activity.</p>
-                {% else %}
-                    <p class="govuk-body">Select an application to view it.</p>
-                {% endif %}
-            </p>
+            {% if editable %}
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Manage activity applications and waitlists</h1>
+                <p class="govuk-body">Review applications to be allocated to activities. If someone is suitable, you can approve the application to add them to the waitlist.</p>
+                <p class="govuk-body">Once someone’s application is approved, you can allocate them.</p>
+                <p class="govuk-body">Search for someone to view their applications, or for an activity to view all applications for that activity and who is on the waitlist.</p>
+            {% else %}
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">View activity applications and waitlists</h1>
+                <p class="govuk-body">Search for someone to view their applications, or for an activity to view all applications for that activity and who is on the waitlist.</p>
+            {% endif %}
         </div>
     </div>
     <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type="hidden" name="dateFrom" value="{{ filters.applicationDateFrom | isoDateToDatePickerDate }}" />
+                <input type="hidden" name="dateTo" value="{{ filters.applicationDateTo | isoDateToDatePickerDate }}" />
+                <input type="hidden" name="activity" value="{{ filters.activityId }}" />
+                <input type="hidden" name="status" value="{{ filters.status }}" />
+                {{ searchBar({
+                    inputParams: {
+                        id: 'query',
+                        name: 'query',
+                        label: {
+                            text: 'Search for someone by name or prison number, or for an activity',
+                            classes: 'govuk-label--s'
+                        },
+                        type: 'search',
+                        value: query
+                    },
+                    buttonParams: {
+                        text: 'Search'
+                    }
+                }) }}
+            </form>
+        </div>
         <div class="govuk-grid-column-full">
             {% set filterOptionsHtml %}
-                {{ govukInput({
-                    id: 'query',
-                    name: 'query',
-                    value: query,
-                    label: {
-                        text: "Search by name or prison number",
-                        classes: "govuk-label--s"
-                    }
+
+                {% set statusFilters = [] %}
+                {% for name, status in WaitingListStatus %}
+                    {% set statusFilters = (statusFilters.push({
+                        value: status,
+                        text: waitingListStatusDescription(status),
+                        checked: status in filters.status
+                    }), statusFilters) %}
+                {% endfor %}
+
+                {{ govukCheckboxes({
+                    idPrefix: 'status',
+                    name: 'status',
+                    classes: "govuk-checkboxes--small",
+                    fieldset: {
+                        legend: {
+                            text: 'Decision',
+                            classes: 'govuk-fieldset__legend--s'
+                        }
+                    },
+                    errorMessage: validationErrors | findError('status'),
+                    items: statusFilters
                 }) }}
 
                 {{ mojDatePicker({
@@ -51,7 +92,7 @@
                     name: 'dateFrom',
                     leadingZeros: 'true',
                     label: {
-                        text: "Application date from",
+                        text: "Request date from",
                         classes: "govuk-label--s"
                     },
                     errorMessage: validationErrors | findError('dateFrom'),
@@ -63,7 +104,7 @@
                     name: 'dateTo',
                     leadingZeros: 'true',
                     label: {
-                        text: "Application date to",
+                        text: "Request date to",
                         classes: "govuk-label--s"
                     },
                     errorMessage: validationErrors | findError('dateTo'),
@@ -89,28 +130,6 @@
                     value: filters.activityId
                 }) }}
 
-                {% set statusFilters = [] %}
-                {% for name, status in WaitingListStatus %}
-                    {% set statusFilters = (statusFilters.push({
-                        value: status,
-                        text: status | toTitleCase,
-                        checked: status in filters.status
-                    }), statusFilters) %}
-                {% endfor %}
-                {{ govukCheckboxes({
-                    idPrefix: 'status',
-                    name: 'status',
-                    classes: "govuk-checkboxes--small",
-                    fieldset: {
-                        legend: {
-                            text: 'Status',
-                            classes: 'govuk-fieldset__legend--s'
-                        }
-                    },
-                    errorMessage: validationErrors | findError('status'),
-                    items: statusFilters
-                }) }}
-
                 <button class="govuk-button govuk-!-margin-top-7 govuk-!-margin-bottom-0" data-module="govuk-button">
                     Apply filters
                 </button>
@@ -120,6 +139,7 @@
                 <div class="moj-filter-layout__filter moj-filter-layout__flex moj-filter-layout__filter--small govuk-!-display-none-print">
                     <form method="POST">
                         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                        <input type="hidden" name="query" value="{{ query }}" />
                         {{ mojFilter({
                             heading: {
                                 text: 'Filter'
@@ -169,57 +189,63 @@
                             ]
                         }), rows) %}
                     {% endfor %}
-
-                    {{ stickySelect({
-                        idPrefix: 'waitlist',
-                        caption: "Waitlist applications",
-                        captionClasses: "govuk-visually-hidden",
-                        type: 'radio',
-                        fixed: true,
-                        name: 'selectedWaitlistApplication',
-                        head: [
-                            {
-                                text: "Name"
-                            },
-                            {
-                                text: "Activity"
-                            },
-                            {
-                                text: "Request date and requester"
-                            },
-                            {
-                                text: "Release date"
-                            },
-                            {
-                                text: "Status"
+                    {% if rows | length > 0 %}
+                        {{ stickySelect({
+                            idPrefix: 'waitlist',
+                            caption: "Waitlist applications",
+                            captionClasses: "govuk-visually-hidden",
+                            type: 'radio',
+                            fixed: true,
+                            name: 'selectedWaitlistApplication',
+                            head: [
+                                {
+                                    text: "Prisoner details"
+                                },
+                                {
+                                    text: "Activity"
+                                },
+                                {
+                                    text: "Request date and who made it"
+                                },
+                                {
+                                    text: "Earliest release date"
+                                },
+                                {
+                                    text: "Decision"
+                                }
+                            ],
+                            rows: rows,
+                            actions: [
+                                {
+                                    text: 'View' + (' or edit' if editable) + ' application',
+                                    formAction: 'waitlist-dashboard/view-application'
+                                },
+                                {
+                                    text: 'Allocate',
+                                    formAction: 'waitlist-dashboard/allocate'
+                                } if editable
+                            ],
+                            itemsDescription: 'application',
+                            itemsDescriptionPlural: 'applications',
+                            pagination: {
+                                previous: {
+                                    title: 'Previous page',
+                                    label: pageInfo.pageNumber + ' of ' + pageInfo.totalPages,
+                                    href: '/page/' + (pageInfo.pageNumber - 1) + '?id=candidates-tab'
+                                } if not pageInfo.first,
+                                next: {
+                                    title: 'Next page',
+                                    label: (pageInfo.pageNumber + 2) + ' of ' + pageInfo.totalPages,
+                                    href: '/page/' + (pageInfo.pageNumber + 1) + '?id=candidates-tab'
+                                } if not pageInfo.last
                             }
-                        ],
-                        rows: rows,
-                        actions: [
-                            {
-                                text: 'View' + (' or edit' if editable) + ' application',
-                                formAction: 'waitlist-dashboard/view-application'
-                            },
-                            {
-                                text: 'Allocate',
-                                formAction: 'waitlist-dashboard/allocate'
-                            } if editable
-                        ],
-                        itemsDescription: 'application',
-                        itemsDescriptionPlural: 'applications',
-                        pagination: {
-                            previous: {
-                                title: 'Previous page',
-                                label: pageInfo.pageNumber + ' of ' + pageInfo.totalPages,
-                                href: '/page/' + (pageInfo.pageNumber - 1) + '?id=candidates-tab'
-                            } if not pageInfo.first,
-                            next: {
-                                title: 'Next page',
-                                label: (pageInfo.pageNumber + 2) + ' of ' + pageInfo.totalPages,
-                                href: '/page/' + (pageInfo.pageNumber + 1) + '?id=candidates-tab'
-                            } if not pageInfo.last
-                        }
-                    }) }}
+                        }) }}
+                    {% else %}
+                        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+                            <li>There are no matching applications.</li>
+                            <li>Try a different search, or change the filters.</li>
+                        </ul>
+                    {% endif %}
                     <input type="hidden" name="dashboardUrl" value="{{ session.req.originalUrl }}" />
                     </form>
                 </div>

@@ -1,22 +1,21 @@
 import { Request, Response } from 'express'
-import { startOfToday } from 'date-fns'
 import { Transform } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { asString } from '../../../../utils/utils'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import { WaitingListStatus } from '../../../../enum/waitingListStatus'
-import IsValidDate from '../../../../validators/isValidDate'
 import WaitlistRequester from '../../../../enum/waitlistRequester'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
+import IsBlankOrValidDate from '../../../../validators/isBlankOrValidDate'
 
 export class DashboardFrom {
   @Transform(({ value }) => parseDatePickerDate(value))
-  @IsValidDate({ message: 'Enter a valid date from' })
+  @IsBlankOrValidDate({ message: 'Enter a valid date from' })
   dateFrom: Date
 
   @Transform(({ value }) => parseDatePickerDate(value))
-  @IsValidDate({ message: 'Enter a valid date to' })
+  @IsBlankOrValidDate({ message: 'Enter a valid date to' })
   dateTo: Date
 }
 
@@ -30,8 +29,8 @@ export default class DashboardRoutes {
     const { user } = res.locals
     const { dateFrom, dateTo, activity, status, query, page } = req.query
 
-    const startDateFilter = dateFrom ? asString(dateFrom) : '2023-09-30'
-    const endDateFilter = dateTo ? asString(dateTo) : formatIsoDate(startOfToday())
+    const startDateFilter = dateFrom ? asString(dateFrom) : undefined
+    const endDateFilter = dateTo ? asString(dateTo) : undefined
     const activityFilter = activity ? +activity : null
     let statusFilter = [WaitingListStatus.PENDING, WaitingListStatus.APPROVED]
     if (status) {
