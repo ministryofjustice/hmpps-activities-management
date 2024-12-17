@@ -10,6 +10,7 @@ import { PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 import { CaseNote } from '../../../../@types/caseNotesApi/types'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 import { PrisonerSuspensionStatus } from '../../manage-allocations/journey'
+import config from '../../../../config'
 
 jest.mock('../../../../services/userService')
 jest.mock('../../../../services/caseNotesService')
@@ -43,6 +44,8 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
       },
       query: {},
     } as unknown as Request
+
+    config.suspendPrisonerWithPayToggleEnabled = true
 
     next = jest.fn()
 
