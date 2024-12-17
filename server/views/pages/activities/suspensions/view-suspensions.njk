@@ -30,11 +30,9 @@
 
                 {% if suspendPrisonerWithPayToggleEnabled %}
                     {% set paid %}
-                        {# If the allocation is already suspended (i.e. start date is today or in the past), the status can be used, 
-                        otherwise we need to look on the planned suspension to see if it was a paid suspension #}
-                        {% if group[0].status == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY or group[0].plannedSuspension.paid %} 
+                        {% if group[0].paidWhileSuspended == PaidType.YES %} 
                             Yes
-                        {% elif group[0].prisonPayBand == null %} 
+                        {% elif group[0].paidWhileSuspended == PaidType.NO_UNPAID %} 
                             No - activity is unpaid
                         {% else %} 
                             No

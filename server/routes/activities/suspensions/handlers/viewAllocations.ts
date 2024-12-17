@@ -33,7 +33,7 @@ export default class ViewAllocationsRoutes {
       enhancedActiveAllocations = await this.enhanceActiveAllocations(activeAllocations, prisoner, res.locals.user)
     }
 
-    // THESE LINES BELOW CAN BE REMOVED ONCE THE SUSPENSION PAY FLAG IS TRUE
+    // TODO: THESE LINES BELOW CAN BE REMOVED ONCE THE SUSPENSION PAY FLAG IS TRUE
     let activities = []
     if (!config.suspendPrisonerWithPayToggleEnabled) {
       const schedules = await Promise.all(
