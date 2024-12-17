@@ -221,9 +221,6 @@ export default {
   frontendComponentsApiToggleEnabled: toBoolean(
     get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', 'true', requiredInProduction),
   ),
-  bookAVideoLinkToggleEnabled: toBoolean(
-    get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
-  ),
   suspendPrisonerWithPayToggleEnabled: toBoolean(get('SUSPEND_PRISONERS_WITH_PAY_FEATURE_TOGGLE_ENABLED', 'false')),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),

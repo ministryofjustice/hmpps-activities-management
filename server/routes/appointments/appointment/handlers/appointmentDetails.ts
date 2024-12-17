@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import UserService from '../../../../services/userService'
 import { isUncancellable } from '../../../../utils/editAppointmentUtils'
-import config from '../../../../config'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import LocationMappingService from '../../../../services/locationMappingService'
 
@@ -16,7 +15,7 @@ export default class AppointmentDetailsRoutes {
     const { appointment } = req
     const { user } = res.locals
 
-    if (appointment.category.code === 'VLB' && config.bookAVideoLinkToggleEnabled) {
+    if (appointment.category.code === 'VLB') {
       const locationKey = await this.locationMappingService.mapNomisLocationIdToDpsKey(
         appointment.internalLocation.id,
         user,
