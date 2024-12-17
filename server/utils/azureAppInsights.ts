@@ -46,7 +46,7 @@ export function buildAppInsightsClient(name = defaultName()): TelemetryClient {
 export function addUserDataToRequests(envelope: EnvelopeTelemetry, contextObjects: ContextObject) {
   const isRequest = envelope.data.baseType === Contracts.TelemetryTypeString.Request
   if (isRequest) {
-    const { caseLoadId } = contextObjects?.['http.ServerRequest']?.res?.locals?.user?.activeCaseLoad || {}
+    const { caseLoadId } = contextObjects?.['http.ServerRequest']?.res?.locals?.user?.activeCaseLoadId || {}
     const { username } = contextObjects?.['http.ServerRequest']?.res?.locals?.user || {}
     if (username) {
       const { properties } = envelope.data.baseData
