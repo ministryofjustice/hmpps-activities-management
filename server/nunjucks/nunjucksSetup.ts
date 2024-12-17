@@ -71,6 +71,7 @@ import { DefaultOrCustomTimes } from '../routes/activities/create-an-activity/ha
 import { NameFormatStyle } from '../utils/helpers/nameFormatStyle'
 import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocations/journey'
 import { PaidType } from '../routes/activities/suspensions/handlers/viewSuspensions'
+import { WaitingListStatus } from '../enum/waitingListStatus'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -226,6 +227,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('NameFormatStyle', NameFormatStyle)
   njkEnv.addGlobal('PrisonerSuspensionStatus', PrisonerSuspensionStatus)
   njkEnv.addGlobal('PaidType', PaidType)
+  njkEnv.addGlobal('WaitingListStatus', WaitingListStatus)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

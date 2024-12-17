@@ -1,11 +1,11 @@
 {% macro waitingListStatusDescription(status) -%}
   {% if status == WaitingListStatus.PENDING %}
     Pending
-  {% elseif status == 'APPROVED' %}
+  {% elseif status == WaitingListStatus.APPROVED %}
     Approved and on the waitlist
-  {% elseif status == 'DECLINED' %}
+  {% elseif status == WaitingListStatus.DECLINED %}
     Rejected
-  {% elseif status == 'ALLOCATED' %}
+  {% elseif status == WaitingListStatus.ALLOCATED %}
     Allocated
   {% else %}
     unknown ({{ status }})

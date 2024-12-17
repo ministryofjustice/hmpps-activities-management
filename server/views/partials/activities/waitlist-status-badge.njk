@@ -3,9 +3,9 @@
 
 {% macro waitlistStatusBadge(status) %}
     {% set class =
-        ('govuk-tag--green' if status == 'APPROVED') or
-        ('govuk-tag--red' if status == 'DECLINED') or
-        ('govuk-tag--yellow' if status == 'PENDING')
+        ('govuk-tag--green' if status == WaitingListStatus.APPROVED) or
+        ('govuk-tag--red' if status == WaitingListStatus.DECLINED) or
+        ('govuk-tag--yellow' if status == WaitingListStatus.PENDING)
     %}
 
     {{govukTag({
