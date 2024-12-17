@@ -183,6 +183,10 @@ export default {
     },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
+  analytics: {
+    tagManagerContainerId: get('TAG_MANAGER_CONTAINER_ID', ''),
+    tagManagerEnvironment: get('TAG_MANAGER_ENVIRONMENT', ''),
+  },
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
   nonAssociationsUrl: get(
     'NON_ASSOCIATIONS_URL',
