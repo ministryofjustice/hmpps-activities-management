@@ -32,7 +32,7 @@ export default class DashboardRoutes {
     const startDateFilter = dateFrom ? asString(dateFrom) : undefined
     const endDateFilter = dateTo ? asString(dateTo) : undefined
     const activityFilter = activity ? +activity : null
-    let statusFilter = [WaitingListStatus.PENDING, WaitingListStatus.APPROVED]
+    let statusFilter: WaitingListStatus[] = [WaitingListStatus.PENDING, WaitingListStatus.APPROVED]
     if (status) {
       statusFilter = asString(status)
         .split(',')
