@@ -5,10 +5,12 @@ import createHttpError from 'http-errors'
 import ActivitiesService from '../../../../services/activitiesService'
 import CaseNotesService from '../../../../services/caseNotesService'
 import UserService from '../../../../services/userService'
-import ViewSuspensionsRoutes from './viewSuspensions'
+import ViewSuspensionsRoutes, { PaidType } from './viewSuspensions'
 import { PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 import { CaseNote } from '../../../../@types/caseNotesApi/types'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
+import { PrisonerSuspensionStatus } from '../../manage-allocations/journey'
+import config from '../../../../config'
 
 jest.mock('../../../../services/userService')
 jest.mock('../../../../services/caseNotesService')
@@ -43,6 +45,8 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
       query: {},
     } as unknown as Request
 
+    config.suspendPrisonerWithPayToggleEnabled = true
+
     next = jest.fn()
 
     when(activitiesService.getActivePrisonPrisonerAllocations)
@@ -56,26 +60,35 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
             },
             {
               id: 2,
+              status: PrisonerSuspensionStatus.SUSPENDED,
+              prisonPayBand: {},
               plannedSuspension: {
                 caseNoteId: 1,
                 plannedBy: 'joebloggs',
                 plannedAt: '2024-03-20T17:02:03.652743',
+                paid: false,
               },
             },
             {
               id: 3,
+              status: PrisonerSuspensionStatus.SUSPENDED,
+              prisonPayBand: null,
               plannedSuspension: {
                 caseNote: 1,
                 plannedBy: 'joebloggs',
                 plannedAt: '2024-03-20T17:02:03.652743',
+                paid: false,
               },
             },
             {
               id: 4,
+              status: PrisonerSuspensionStatus.SUSPENDED_WITH_PAY,
+              prisonPayBand: {},
               plannedSuspension: {
                 caseNote: 2,
                 plannedBy: 'johnsmith',
                 plannedAt: '2024-03-19T15:35:17.362243',
+                paid: true,
               },
             },
           ],
@@ -104,11 +117,15 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
           [
             {
               id: 2,
+              status: PrisonerSuspensionStatus.SUSPENDED,
+              prisonPayBand: {},
               plannedSuspension: {
                 caseNoteId: 1,
-                plannedAt: '2024-03-20T17:02:03.652743',
                 plannedBy: 'joebloggs',
+                plannedAt: '2024-03-20T17:02:03.652743',
+                paid: false,
               },
+              paidWhileSuspended: PaidType.NO,
             },
           ],
         ],
@@ -161,29 +178,41 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
           [
             {
               id: 4,
+              status: PrisonerSuspensionStatus.SUSPENDED_WITH_PAY,
+              prisonPayBand: {},
               plannedSuspension: {
                 caseNote: 2,
-                plannedAt: '2024-03-19T15:35:17.362243',
                 plannedBy: 'johnsmith',
+                plannedAt: '2024-03-19T15:35:17.362243',
+                paid: true,
               },
+              paidWhileSuspended: PaidType.YES,
             },
           ],
           [
             {
               id: 2,
+              status: PrisonerSuspensionStatus.SUSPENDED,
+              prisonPayBand: {},
               plannedSuspension: {
                 caseNoteId: 1,
-                plannedAt: '2024-03-20T17:02:03.652743',
                 plannedBy: 'joebloggs',
+                plannedAt: '2024-03-20T17:02:03.652743',
+                paid: false,
               },
+              paidWhileSuspended: PaidType.NO,
             },
             {
               id: 3,
+              status: PrisonerSuspensionStatus.SUSPENDED,
+              prisonPayBand: null,
               plannedSuspension: {
                 caseNote: 1,
-                plannedAt: '2024-03-20T17:02:03.652743',
                 plannedBy: 'joebloggs',
+                plannedAt: '2024-03-20T17:02:03.652743',
+                paid: false,
               },
+              paidWhileSuspended: PaidType.NO_UNPAID,
             },
           ],
         ],
