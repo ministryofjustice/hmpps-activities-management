@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import { startOfToday } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -15,7 +14,6 @@ import {
   WaitingListSearchRequest,
 } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import { WaitingListStatus } from '../../../../enum/waitingListStatus'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 
@@ -91,8 +89,8 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
       req.query = {}
 
       const filters = {
-        applicationDateFrom: '2023-09-30',
-        applicationDateTo: formatIsoDate(startOfToday()),
+        applicationDateFrom: undefined,
+        applicationDateTo: undefined,
         activityId: null,
         status: [WaitingListStatus.PENDING, WaitingListStatus.APPROVED],
         prisonerNumbers: undefined,
@@ -267,6 +265,18 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
       const body = {
         dateFrom: '01/01/2023',
         dateTo: '01/02/2023',
+      }
+
+      const requestObject = plainToInstance(DashboardFrom, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toHaveLength(0)
+    })
+
+    it('should pass validation if dateFrom and dateTo are blank', async () => {
+      const body = {
+        dateFrom: undefined,
+        dateTo: undefined,
       }
 
       const requestObject = plainToInstance(DashboardFrom, body)
