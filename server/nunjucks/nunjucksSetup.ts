@@ -222,6 +222,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('bookAVideoLinkToggleEnabled', config.bookAVideoLinkToggleEnabled)
   njkEnv.addGlobal('suspendPrisonerWithPayToggleEnabled', config.suspendPrisonerWithPayToggleEnabled)
+  njkEnv.addGlobal('appointmentMultipleAttendanceToggleEnabled', config.appointmentMultipleAttendanceToggleEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
   njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
   njkEnv.addGlobal('NameFormatStyle', NameFormatStyle)

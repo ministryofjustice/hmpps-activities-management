@@ -225,6 +225,9 @@ export default {
     get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
   ),
   suspendPrisonerWithPayToggleEnabled: toBoolean(get('SUSPEND_PRISONERS_WITH_PAY_FEATURE_TOGGLE_ENABLED', 'false')),
+  appointmentMultipleAttendanceToggleEnabled: toBoolean(
+    get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),
+  ),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
   },
