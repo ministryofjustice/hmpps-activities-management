@@ -59,9 +59,9 @@ module.exports = grunt => {
           },
           {
             expand: true,
-            cwd: 'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/assets/images/',
+            cwd: 'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/assets/',
             src: ['./**/*'],
-            dest: 'assets/dpr/images/',
+            dest: 'assets/dpr/',
           },
           {
             expand: true,
