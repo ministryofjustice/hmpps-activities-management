@@ -1,14 +1,15 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "partials/activities/waitingListStatusDescription.njk" import waitingListStatusDescription %}
 
 {% macro waitlistStatusBadge(status) %}
     {% set class =
-        ('govuk-tag--green' if status == 'APPROVED') or
-        ('govuk-tag--red' if status == 'DECLINED') or
-        ('govuk-tag--yellow' if status == 'PENDING')
+        ('govuk-tag--green' if status == WaitingListStatus.APPROVED) or
+        ('govuk-tag--red' if status == WaitingListStatus.DECLINED) or
+        ('govuk-tag--yellow' if status == WaitingListStatus.PENDING)
     %}
 
     {{govukTag({
-        text: status,
+        text: waitingListStatusDescription(status),
         classes: class
     })}}
 {% endmacro %}
