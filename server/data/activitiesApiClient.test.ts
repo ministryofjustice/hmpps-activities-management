@@ -36,6 +36,7 @@ import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentApplyTo } from '../@types/appointments'
 import { formatIsoDate } from '../utils/datePickerUtils'
+import AttendanceAction from '../enum/attendanceAction'
 
 const user = { token: 'token', activeCaseLoadId: 'MDI' } as ServiceUser
 
@@ -517,6 +518,27 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getAppointments', () => {
+    it('should return appointment from api when valid appointment ids are used', async () => {
+      const response = [
+        {
+          id: 123456,
+        },
+      ] as AppointmentDetails[]
+
+      fakeActivitiesApi
+        .post('/appointments/details')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getAppointments([123], user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getAppointmentCategories', () => {
     it('should return all categories from api', async () => {
       const response = [
@@ -941,6 +963,20 @@ describe('activitiesApiClient', () => {
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200)
       await activitiesApiClient.putAppointmentAttendance(1, request, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('putAppointmentAttendances', () => {
+    it('should call endpoint to put multiple appointment attendances', async () => {
+      const action = AttendanceAction.ATTENDED
+      const requests = [{ appointmentId: 123, prisonerNumbers: ['A1234BC'] }]
+      fakeActivitiesApi
+        .put(`/appointments/updateAttendances?action=${action}`)
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(204)
+      await activitiesApiClient.putAppointmentAttendances(action, requests, user)
       expect(nock.isDone()).toBe(true)
     })
   })

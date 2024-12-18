@@ -1,0 +1,88 @@
+[
+  {
+    "id": 12,
+    "appointmentSeries": {
+      "id": 10,
+      "appointmentCount": 3,
+      "scheduledAppointmentCount": 2
+    },
+    "sequenceNumber": 2,
+    "category": {
+      "code": "CHAP",
+      "description": "Chaplaincy"
+    },
+    "prisonCode": "MDI",
+    "internalLocation": {
+      "id": 26152,
+      "prisonCode": "MDI",
+      "description": "Chapel"
+    },
+    "inCell": false,
+    "startDate": "2023-02-29",
+    "startTime": "14:00",
+    "endTime": "15:30",
+    "extraInformation": "",
+    "isEdited": false,
+    "isCancelled": false,
+    "createdTime": "2023-02-20T10:00:00",
+    "createdBy": "TEST USER",
+    "updatedTime": null,
+    "updatedBy": null,
+    "attendees": [
+      {
+        "id": 13,
+        "prisoner": {
+          "prisonerNumber": "G4793VF",
+          "bookingId": 456,
+          "firstName": "TEST",
+          "lastName": "PRISONER",
+          "prisonCode": "MDI",
+          "cellLocation": "1-2-3"
+        }
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "appointmentSeries": {
+      "id": 11,
+      "appointmentCount": 2,
+      "scheduledAppointmentCount": 2
+    },
+    "sequenceNumber": 1,
+    "category": {
+      "code": "CANT",
+      "description": "Canteen"
+    },
+    "prisonCode": "MDI",
+    "internalLocation": {
+      "id": 33333,
+      "prisonCode": "MDI",
+      "description": "Kitchen"
+    },
+    "inCell": false,
+    "startDate": "2023-04-29",
+    "startTime": "12:00",
+    "endTime": "13:00",
+    "extraInformation": "",
+    "isEdited": false,
+    "isCancelled": false,
+    "createdTime": "2023-05-20T10:00:00",
+    "createdBy": "TEST USER",
+    "updatedTime": null,
+    "updatedBy": null,
+    "attendees": [
+      {
+        "id": 14,
+        "prisoner": {
+          "prisonerNumber": "A11111AA",
+          "bookingId": 123,
+          "firstName": "TEST",
+          "lastName": "PRISONER",
+          "prisonCode": "MDI",
+          "cellLocation": "1-2-4"
+        }
+      }
+    ]
+  }
+]
