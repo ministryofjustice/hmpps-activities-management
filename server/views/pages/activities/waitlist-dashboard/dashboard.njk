@@ -29,10 +29,8 @@
                 <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Manage activity applications and waitlists</h1>
                 <p class="govuk-body">Review applications to be allocated to activities. If someone is suitable, you can approve the application to add them to the waitlist.</p>
                 <p class="govuk-body">Once someone’s application is approved, you can allocate them.</p>
-                <p class="govuk-body">Search for someone to view their applications, or for an activity to view all applications for that activity and who is on the waitlist.</p>
             {% else %}
                 <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">View activity applications and waitlists</h1>
-                <p class="govuk-body">Search for someone to view their applications, or for an activity to view all applications for that activity and who is on the waitlist.</p>
             {% endif %}
         </div>
     </div>
@@ -49,7 +47,7 @@
                         id: 'query',
                         name: 'query',
                         label: {
-                            text: 'Search for someone by name or prison number, or for an activity',
+                            text: 'Search for someone by name or prison number',
                             classes: 'govuk-label--s'
                         },
                         type: 'search',
