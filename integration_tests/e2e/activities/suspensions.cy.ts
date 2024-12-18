@@ -732,7 +732,7 @@ context('Bulk suspend/unsuspend', () => {
     const payPage = Page.verifyOnPage(SuspensionPayPage)
     payPage
       .hintText()
-      .should('include.text', 'Alfonso Cholak is currently paid for 1 of 2 you’re suspending them from:')
+      .should('include.text', 'Alfonso Cholak is currently paid for 1 of 2 activities you’re suspending them from:')
       .should('include.text', 'Activity 1')
     payPage.selectRadio('YES')
     payPage.continue()
