@@ -54,6 +54,7 @@ import {
   PrisonPayBandCreateRequest,
   PrisonPayBandUpdateRequest,
   SuspendPrisonerRequest,
+  MultipleAppointmentAttendanceRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/journey'
@@ -61,6 +62,7 @@ import { AttendanceStatus } from '../@types/appointments'
 import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
 import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocations/journey'
+import AttendanceAction from '../enum/attendanceAction'
 
 export default class ActivitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
@@ -258,6 +260,10 @@ export default class ActivitiesService {
 
   async getAppointmentDetails(appointmentId: number, user: ServiceUser): Promise<AppointmentDetails> {
     return this.activitiesApiClient.getAppointmentDetails(appointmentId, user)
+  }
+
+  async getAppointments(appointmentIds: number[], user: ServiceUser): Promise<AppointmentDetails[]> {
+    return this.activitiesApiClient.getAppointments(appointmentIds, user)
   }
 
   async getAppointmentCategories(user: ServiceUser): Promise<AppointmentCategorySummary[]> {
@@ -474,6 +480,14 @@ export default class ActivitiesService {
       { attendedPrisonNumbers, nonAttendedPrisonNumbers },
       user,
     )
+  }
+
+  async updateMultipleAppointmentAttendances(
+    action: AttendanceAction,
+    requests: MultipleAppointmentAttendanceRequest[],
+    user: ServiceUser,
+  ) {
+    return this.activitiesApiClient.putAppointmentAttendances(action, requests, user)
   }
 
   async searchWaitingListApplications(
