@@ -32,7 +32,7 @@
     {% set suspendedAllocationRows = [] %}
     {% for allocation in suspendedAllocations %}
         {% set paid %}
-        {% if allocation.status == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY and allocation.prisonPayBand or allocation.plannedSuspension.paid %} 
+        {% if allocation.prisonPayBand and (allocation.status == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY or allocation.plannedSuspension.paid) %} 
                 Yes
             {% elif allocation.prisonPayBand == null %} 
                 No - activity is unpaid

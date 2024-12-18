@@ -184,6 +184,65 @@ const getPrisonerAllocations = [
   },
 ]
 
+const activitiesAllSuspendedTogether = [
+  {
+    prisonerNumber: '',
+    allocations: [
+      {
+        id: 7509,
+        prisonerNumber: 'G0995GW',
+        bookingId: 1068066,
+        activitySummary: "Dave's Cake Making",
+        activityId: 778,
+        scheduleId: 757,
+        prisonPayBand: {
+          id: 312,
+          displaySequence: 1,
+          alias: 'Pay band 1 (Lowest)',
+          description: 'Pay band 1 (Lowest)',
+          nomisPayBand: 1,
+          prisonCode: 'RSI',
+          createdTime: null,
+          createdBy: null,
+          updatedTime: null,
+          updatedBy: null,
+        },
+        startDate: '2024-11-14',
+        endDate: null,
+        status: 'SUSPENDED_WITH_PAY',
+        plannedSuspension: {
+          plannedStartDate: '2024-12-13',
+          plannedEndDate: null,
+          caseNoteId: null,
+          plannedBy: 'NCLAMP_GEN',
+          plannedAt: '2024-12-13T14:40:02.594376',
+          paid: true,
+        },
+      },
+      {
+        id: 7509,
+        prisonerNumber: 'G0995GW',
+        bookingId: 1068066,
+        activitySummary: 'Unpaid activity',
+        activityId: 778,
+        scheduleId: 757,
+        prisonPayBand: null,
+        startDate: '2024-11-14',
+        endDate: null,
+        status: 'SUSPENDED_WITH_PAY',
+        plannedSuspension: {
+          plannedStartDate: '2024-12-13',
+          plannedEndDate: null,
+          caseNoteId: null,
+          plannedBy: 'NCLAMP_GEN',
+          plannedAt: '2024-12-13T14:40:02.594376',
+          paid: true,
+        },
+      },
+    ],
+  },
+]
+
 const getActivePrisonerAllocations = [
   {
     prisonerNumber: 'G0995GW',
@@ -820,5 +879,19 @@ context('Bulk suspend/unsuspend', () => {
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.title().should('contain.text', 'Suspension ended')
+  })
+  it('should display unpaid activities as unpaid even if it has the paid tag (occurs if all activities are suspended together)', () => {
+    cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', activitiesAllSuspendedTogether)
+    cy.visit('/activities/suspensions/prisoner/G0995GW')
+    const page = Page.verifyOnPage(ViewAllocationsPage)
+    page
+      .suspendedAllocationsTable()
+      .find('td')
+      .then($data => {
+        expect($data.get(0).innerText).to.contain("Dave's Cake Making")
+        expect($data.get(3).innerText).to.contain('Yes')
+        expect($data.get(5).innerText).to.contain('Unpaid activity')
+        expect($data.get(8).innerText).to.contain('No - activity is unpaid')
+      })
   })
 })
