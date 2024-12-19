@@ -16,6 +16,7 @@ import { SuspendJourney } from '../../routes/activities/suspensions/journey'
 import { UserDetails } from '../manageUsersApiImport/types'
 import { MovementListJourney } from '../../routes/activities/movement-list/journey'
 import { BookAVideoLinkJourney } from '../../routes/appointments/video-link-booking/journey'
+import { RecordAppointmentAttendanceJourney } from '../../routes/appointments/attendanceJourney'
 
 export default {}
 
@@ -42,6 +43,7 @@ declare module 'express-session' {
     movementListJourney: MovementListJourney
     waitListApplicationJourney: WaitListApplicationJourney
     recordAttendanceJourney: RecordAttendanceJourney
+    recordAppointmentAttendanceJourney: RecordAppointmentAttendanceJourney
     journeyMetrics: JourneyMetrics
     // Map containing per journey session data. See comment above, the startNewJourney and populateJourney
     // middlewares and the appointment routes in index.ts
