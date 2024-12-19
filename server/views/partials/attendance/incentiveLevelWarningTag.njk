@@ -1,0 +1,9 @@
+{%- from "govuk/components/tag/macro.njk" import govukTag -%}
+{% macro incentiveLevelWarningTag(attendance) %}
+    {% if attendance.incentiveLevelWarningIssued %}
+        {{ govukTag({
+            text: "Incentive level warning",
+            classes: "govuk-tag--grey"
+        }) }}
+    {% endif %}
+{% endmacro %}
