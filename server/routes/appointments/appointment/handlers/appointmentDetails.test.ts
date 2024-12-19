@@ -9,7 +9,6 @@ import UserService from '../../../../services/userService'
 import atLeast from '../../../../../jest.setup'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
-import config from '../../../../config'
 import { VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
 import LocationMappingService from '../../../../services/locationMappingService'
 
@@ -80,7 +79,6 @@ describe('Route Handlers - Appointment Details', () => {
     })
 
     it('should redirect to view a video link booking', async () => {
-      config.bookAVideoLinkToggleEnabled = true
       const vlbAppointment = {
         ...appointment,
         attendees: [{ prisoner: { prisonerNumber: 'ABC123' } }],
@@ -110,7 +108,6 @@ describe('Route Handlers - Appointment Details', () => {
     })
 
     it('should render the VLB as an appointment if not found in BVLS API', async () => {
-      config.bookAVideoLinkToggleEnabled = true
       const vlbAppointment = {
         ...appointment,
         attendees: [{ prisoner: { prisonerNumber: 'ABC123' } }],

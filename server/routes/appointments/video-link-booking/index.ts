@@ -1,9 +1,7 @@
 import { RequestHandler, Router } from 'express'
-import createHttpError from 'http-errors'
 import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import { Services } from '../../../services'
 import VideoLinkDetailsRoutes from './handlers/videoLinkDetails'
-import config from '../../../config'
 import createRoutes from './createRoutes'
 import amendRoutes from './amendRoutes'
 import cancelRoutes from './cancelRoutes'
@@ -22,9 +20,6 @@ export default function Index(services: Services): Router {
     services.userService,
     services.locationMappingService,
   )
-
-  // Video link routes are only accessible when running locally or when feature toggle is provided
-  router.use((req, res, next) => (!config.bookAVideoLinkToggleEnabled ? next(createHttpError.NotFound()) : next()))
 
   get('/:vlbId(\\d+)', videoLinkDetailsRoutes.GET)
   router.use('/:mode(create)/:journeyId', createRoutes(services))
