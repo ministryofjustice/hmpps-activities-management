@@ -130,7 +130,7 @@
     "uuid": "^11.0.3"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@types/bunyan": "^1.8.11",
     "@types/bunyan-format": "^0.2.9",
