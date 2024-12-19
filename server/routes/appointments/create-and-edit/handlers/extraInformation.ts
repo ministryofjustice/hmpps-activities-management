@@ -4,12 +4,10 @@ import { MaxLength } from 'class-validator'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
-import ExtraInformationValidator from '../../../../validators/extraInformation'
 
 export class ExtraInformation {
   @Expose()
   @MaxLength(4000, { message: 'You must enter extra information which has no more than 4,000 characters' })
-  @ExtraInformationValidator({ message: 'Enter the court name and any extra information' })
   extraInformation: string
 }
 
