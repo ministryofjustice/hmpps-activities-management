@@ -271,17 +271,17 @@
         {% if attendance.issuePayment %}
             {{ govukTag({
                 text: "Pay",
-                classes: "govuk-tag--green"
+                classes: "govuk-tag--green govuk-!-margin-bottom-1"
             }) }}
         {% elseif payable %}
             {{ govukTag({
                 text: "No pay",
-                classes: "govuk-tag--red"
+                classes: "govuk-tag--red govuk-!-margin-bottom-1"
             }) }}
         {% else %}
             {{ govukTag({
                 text: "Unpaid",
-                classes: "govuk-tag--green"
+                classes: "govuk-tag--green govuk-!-margin-bottom-1"
             }) }}
         {% endif %}
     {% endif %}
