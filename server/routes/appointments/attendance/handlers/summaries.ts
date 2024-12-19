@@ -5,7 +5,9 @@ import DateOption from '../../../../enum/dateOption'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { dateFromDateOption } from '../../../../utils/datePickerUtils'
-import { getAttendanceSummary } from '../../utils/attendanceUtils'
+import { getAttendanceSummaryFromAttendanceSummaries } from '../../utils/attendanceUtils'
+import config from '../../../../config'
+import { convertToNumberArray, toDateString } from '../../../../utils/utils'
 
 export default class SummariesRoutes {
   constructor(
@@ -39,12 +41,30 @@ export default class SummariesRoutes {
       )
     }
 
+    const attendanceSummary = getAttendanceSummaryFromAttendanceSummaries(summaries)
+
+    if (config.appointmentMultipleAttendanceToggleEnabled) {
+      req.session.recordAppointmentAttendanceJourney.date = toDateString(dateOptionDate)
+
+      return res.render('pages/appointments/attendance/summaries-multi-select', {
+        date: dateOptionDate,
+        summaries,
+        attendanceSummary,
+        prisonersDetails,
+      })
+    }
+
     return res.render('pages/appointments/attendance/summaries', {
       dateOption,
       date: dateOptionDate,
       summaries,
-      attendanceSummary: getAttendanceSummary(summaries),
+      attendanceSummary,
       prisonersDetails,
     })
+  }
+
+  POST = async (req: Request, res: Response): Promise<void> => {
+    req.session.recordAppointmentAttendanceJourney.appointmentIds = convertToNumberArray(req.body.appointmentIds)
+    return res.redirect('attendees')
   }
 }

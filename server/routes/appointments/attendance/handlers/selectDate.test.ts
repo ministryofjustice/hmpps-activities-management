@@ -24,7 +24,9 @@ describe('Appointment attendance routes - select date', () => {
       redirect: jest.fn(),
     } as unknown as Response
 
-    req = {} as unknown as Request
+    req = {
+      session: {},
+    } as unknown as Request
   })
 
   afterEach(() => {
@@ -40,6 +42,10 @@ describe('Appointment attendance routes - select date', () => {
   })
 
   describe('POST', () => {
+    afterEach(() => {
+      expect(req.session.recordAppointmentAttendanceJourney).toEqual({})
+    })
+
     it('redirects with today date option', async () => {
       req.body = {
         dateOption: DateOption.TODAY,

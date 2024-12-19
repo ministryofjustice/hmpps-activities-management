@@ -1,35 +1,95 @@
 import { Prisoner } from '../../../@types/activities'
-import { AppointmentAttendanceSummary, AppointmentAttendeeByStatus } from '../../../@types/activitiesAPI/types'
+import {
+  AppointmentAttendanceSummary,
+  AppointmentAttendeeByStatus,
+  AppointmentDetails,
+} from '../../../@types/activitiesAPI/types'
 import { AttendanceStatus } from '../../../@types/appointments'
 import EventTier from '../../../enum/eventTiers'
 import { formatDate, simplifyTime } from '../../../utils/utils'
 
-export const getAttendanceSummary = (summaries: AppointmentAttendanceSummary[]) => {
+export type AppointmentSummaryStats = {
+  attendeeCount: number
+  attended: number
+  notAttended: number
+  notRecorded: number
+  attendedPercentage: number
+  notAttendedPercentage: number
+  notRecordedPercentage: number
+  tier1Count?: number
+  tier2Count?: number
+  foundationCount?: number
+}
+
+export const getAttendanceSummaryFromAttendanceSummaries = (summaries: AppointmentAttendanceSummary[]) => {
   const tierCounts = getEventTierCounts(summaries)
+
   const attendanceSummary = {
     attendeeCount: summaries.map(s => s.attendeeCount).reduce((sum, count) => sum + count, 0),
     attended: summaries.map(s => s.attendedCount).reduce((sum, count) => sum + count, 0),
     notAttended: summaries.map(s => s.nonAttendedCount).reduce((sum, count) => sum + count, 0),
     notRecorded: summaries.map(s => s.notRecordedCount).reduce((sum, count) => sum + count, 0),
-    attendedPercentage: 0,
-    notAttendedPercentage: 0,
-    notRecordedPercentage: 0,
     ...tierCounts,
   }
 
-  if (attendanceSummary.attendeeCount > 0) {
-    attendanceSummary.attendedPercentage = Math.round(
-      (attendanceSummary.attended / attendanceSummary.attendeeCount) * 100,
-    )
-    attendanceSummary.notAttendedPercentage = Math.round(
-      (attendanceSummary.notAttended / attendanceSummary.attendeeCount) * 100,
-    )
-    attendanceSummary.notRecordedPercentage = Math.round(
-      (attendanceSummary.notRecorded / attendanceSummary.attendeeCount) * 100,
-    )
+  const percentages = getPercentages(attendanceSummary)
+
+  return {
+    ...attendanceSummary,
+    ...percentages,
+  }
+}
+
+export const getAttendanceSummaryFromAppointmentDetails = (appointments: AppointmentDetails[]) => {
+  let attendeeCount = 0
+  let attended = 0
+  let notAttended = 0
+  let notRecorded = 0
+
+  appointments.forEach(appointment => {
+    attendeeCount += appointment.attendees.length
+    appointment.attendees.forEach(attendee => {
+      if (attendee.attended === true) {
+        attended += 1
+      } else if (attendee.attended === false) {
+        notAttended += 1
+      } else {
+        notRecorded += 1
+      }
+    })
+  })
+
+  const attendanceSummary = {
+    attendeeCount,
+    attended,
+    notAttended,
+    notRecorded,
   }
 
-  return attendanceSummary
+  const percentages = getPercentages(attendanceSummary)
+
+  return {
+    ...attendanceSummary,
+    ...percentages,
+  }
+}
+
+export const getPercentages = attendanceSummary => {
+  let attendedPercentage = 0
+  let notAttendedPercentage = 0
+  let notRecordedPercentage = 0
+
+  if (attendanceSummary.attendeeCount > 0) {
+    attendedPercentage = Math.round((attendanceSummary.attended / attendanceSummary.attendeeCount) * 100)
+    notAttendedPercentage = Math.round((attendanceSummary.notAttended / attendanceSummary.attendeeCount) * 100)
+    notRecordedPercentage = Math.round((attendanceSummary.notRecorded / attendanceSummary.attendeeCount) * 100)
+  }
+
+  return {
+    attendedPercentage,
+    notAttendedPercentage,
+    notRecordedPercentage,
+  }
 }
 
 export const getEventTierCounts = (summaries: AppointmentAttendanceSummary[]) => {
