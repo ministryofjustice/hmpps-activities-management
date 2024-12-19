@@ -147,6 +147,13 @@ export function registerNunjucks(app?: express.Express): Environment {
     return `${str}${str.toLowerCase().endsWith('s') ? '’' : '’s'}`
   })
 
+  const {
+    analytics: { tagManagerContainerId, tagManagerEnvironment },
+  } = config
+
+  njkEnv.addGlobal('tagManagerContainerId', tagManagerContainerId)
+  njkEnv.addGlobal('tagManagerEnvironment', tagManagerEnvironment)
+
   njkEnv.addFilter('getSplitTime', getSplitTime)
   njkEnv.addFilter('toTimeItems', toTimeItems)
   njkEnv.addFilter('findError', findError)
