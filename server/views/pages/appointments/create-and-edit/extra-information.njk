@@ -14,73 +14,46 @@
 {% set pageId = 'appointment-extra-information-page' %}
 {% set jsBackLink = true %}
 
-{% set vlbSpecialCase = session.appointmentJourney.category.code == 'VLB' and not bookAVideoLinkToggleEnabled %}
-
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      {{ appointmentTypeCaption(session) }}
-      {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-        <h1 class="govuk-heading-l">
-            {% if vlbSpecialCase %}
-                         <label class="govuk-label govuk-label--l" for="extraInformation">Enter the court name and any extra information</label>
-                {% else %}
-                        <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information (optional)</label>
-             {% endif %}
-        </h1>
-        <p class="govuk-body" data-qa="first-paragraph">
-            {% if vlbSpecialCase %}
-                 Enter the court the booking is for, plus:
-                 <ul>
-                     <li class='govuk-list govuk-list--bullet'> details of any briefings before or after the hearing </li>
-                     <li class='govuk-list govuk-list--bullet'> other important information for who's attending about how to prepare for their appointment </li>
-                 </ul>
-               <p> This will be printed on the prisioner's movement slip. </p>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session) }}
+            {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+                <h1 class="govuk-heading-l">
+                    <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information (optional)</label>
+                </h1>
+                <p class="govuk-body" data-qa="first-paragraph">
+                    Add or edit any important information for who’s attending about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.
+                </p>
             {% else %}
-                   Add or edit any important information for who’s attending about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.
+                <h1 class="govuk-heading-l">
+                    <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information (optional)</label>
+                </h1>
+                <p class="govuk-body" data-qa="first-paragraph">
+                    Add any important information for who’s attending about how to prepare for their appointment. It will be printed on their movement slip.
+                </p>
             {% endif %}
-      {% else %}
-        <h1 class="govuk-heading-l">
-            {% if vlbSpecialCase %}
-                 <label class="govuk-label govuk-label--l" for="extraInformation">Enter the court name and any extra information</label>
-            {% else %}
-                <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information (optional)</label>
-            {% endif %}
-        </h1>
-            <p class="govuk-body" data-qa="first-paragraph">
-                {% if vlbSpecialCase %}
-                         Enter the court the booking is for, plus:
-                         <ul>
-                             <li class='govuk-list govuk-list--bullet'> details of any briefings before or after the hearing </li>
-                             <li class='govuk-list govuk-list--bullet'> other important information for who's attending about how to prepare for their appointment </li>
-                         </ul>
-                      <p> This will be printed on the prisoner's movement slip. </p>
-                    {% else %}
-                          Add any important information for who’s attending about how to prepare for their appointment. It will be printed on their movement slip.
-                {% endif %}
+            <p class="govuk-body">
+                For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.
             </p>
-      {% endif %}
-      <p class="govuk-body">
-          For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.
-      </p>
-      <form method="POST">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-        <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="4000">
-          <div class="govuk-form-group">
-            {{ govukCharacterCount({
-                id: "extraInformation",
-                name: "extraInformation",
-                errorMessage: validationErrors | findError("extraInformation"),
-                value: formResponses.extraInformation or session.appointmentJourney.extraInformation,
-                maxlength: "4000"
-            }) }}
-          </div>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="4000">
+                    <div class="govuk-form-group">
+                    {{ govukCharacterCount({
+                        id: "extraInformation",
+                        name: "extraInformation",
+                        errorMessage: validationErrors | findError("extraInformation"),
+                        value: formResponses.extraInformation or session.appointmentJourney.extraInformation,
+                        maxlength: "4000"
+                    }) }}
+                    </div>
+                </div>
+                {{ govukButton({
+                    text: "Update extra information" if isCtaAcceptAndSave else "Continue",
+                    preventDoubleClick: true
+                }) }}
+            </form>
         </div>
-        {{ govukButton({
-          text: "Update extra information" if isCtaAcceptAndSave else "Continue",
-          preventDoubleClick: true
-        }) }}
-      </form>
     </div>
-  </div>
 {% endblock %}
