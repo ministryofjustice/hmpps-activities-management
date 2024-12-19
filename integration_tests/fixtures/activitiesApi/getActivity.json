@@ -7,6 +7,7 @@
   "outsideWork": false,
   "payPerSession": "H",
   "summary": "English level 1",
+  "paid": true,
   "description": "A basic english course suitable for introduction to the subject",
   "category": {
     "id": 1,

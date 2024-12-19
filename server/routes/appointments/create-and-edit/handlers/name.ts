@@ -3,7 +3,6 @@ import { Expose } from 'class-transformer'
 import { IsNotEmpty, MaxLength } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentType } from '../appointmentJourney'
-import config from '../../../../config'
 
 export class Name {
   @Expose()
@@ -22,7 +21,7 @@ export default class NameRoutes {
     const { type } = req.session.appointmentJourney
 
     const categories = await this.activitiesService.getAppointmentCategories(user).then(cat => {
-      if (type === AppointmentType.SET && config.bookAVideoLinkToggleEnabled) {
+      if (type === AppointmentType.SET) {
         return cat.filter(c => c.code !== 'VLB')
       }
       return cat
@@ -57,7 +56,7 @@ export default class NameRoutes {
       req.session.appointmentJourney.appointmentName = category.description
     }
 
-    if (config.bookAVideoLinkToggleEnabled && category.code === 'VLB') {
+    if (category.code === 'VLB') {
       req.session.bookAVideoLinkJourney = {
         type: 'COURT',
         prisoners: req.session.appointmentJourney.prisoners,
