@@ -2,7 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>ministryofjustice/hmpps-renovate-config:node"],
   "reviewers": ["natclamp-moj", "Kristian-Gregory", "davidthomas22", "dafhoustonmoj", "munslowl", "angela-pan-moj"],
-  "ignoreDeps": ["@ministryofjustice/hmpps-digital-prison-reporting-frontend", "path-to-regexp", "cross-spawn"],
+  "ignoreDeps": ["path-to-regexp", "cross-spawn"],
   "packageRules": [
     {
       "matchManagers": ["npm"],

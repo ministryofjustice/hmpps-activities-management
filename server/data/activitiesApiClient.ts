@@ -67,6 +67,7 @@ import {
   AppointmentCountSummary,
   PrisonPayBandCreateRequest,
   PrisonPayBandUpdateRequest,
+  MultipleAppointmentAttendanceRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -74,6 +75,7 @@ import TimeSlot from '../enum/timeSlot'
 import { AttendanceStatus } from '../@types/appointments'
 import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
+import AttendanceAction from '../enum/attendanceAction'
 
 const CASELOAD_HEADER = (caseloadId: string) => ({ 'Caseload-Id': caseloadId })
 
@@ -405,6 +407,15 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/appointments/${appointmentId}/details`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async getAppointments(appointmentIds: number[], user: ServiceUser): Promise<AppointmentDetails[]> {
+    return this.post({
+      path: '/appointments/details',
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: appointmentIds,
     })
   }
 
@@ -743,6 +754,20 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: request,
+    })
+  }
+
+  async putAppointmentAttendances(
+    action: AttendanceAction,
+    requests: MultipleAppointmentAttendanceRequest[],
+    user: ServiceUser,
+  ): Promise<Appointment> {
+    return this.put({
+      path: `/appointments/updateAttendances`,
+      query: { action },
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: requests,
     })
   }
 

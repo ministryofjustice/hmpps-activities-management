@@ -39,16 +39,19 @@ import {
   AppointmentAttendanceRequest,
   AddCaseNoteRequest,
   AppointmentCancelRequest,
+  MultipleAppointmentAttendanceRequest,
 } from '../@types/activitiesAPI/types'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
 import appointmentSeriesDetails from './fixtures/appointment_series_details_1.json'
 import appointmentDetails from './fixtures/appointment_details_1.json'
+import multipleAppointmentDetails from './fixtures/appointment_details_multiple.json'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentApplyTo, AttendanceStatus } from '../@types/appointments'
 import calcCurrentWeek from '../utils/helpers/currentWeekCalculator'
 import { formatIsoDate } from '../utils/datePickerUtils'
 import EventTier from '../enum/eventTiers'
 import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocations/journey'
+import AttendanceAction from '../enum/attendanceAction'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -299,6 +302,18 @@ describe('Activities Service', () => {
       const actualResult = await activitiesService.getAppointmentDetails(12, user)
 
       expect(actualResult).toEqual(appointmentDetails)
+    })
+  })
+
+  describe('getAppointments', () => {
+    it('should return multiple appointment details from api when valid appointment ids are used', async () => {
+      when(activitiesApiClient.getAppointments)
+        .calledWith([12, 13], user)
+        .mockResolvedValue(multipleAppointmentDetails as AppointmentDetails[])
+
+      const actualResult = await activitiesService.getAppointments([12, 13], user)
+
+      expect(actualResult).toEqual(multipleAppointmentDetails)
     })
   })
 
@@ -872,6 +887,25 @@ describe('Activities Service', () => {
       )
 
       expect(activitiesApiClient.putAppointmentAttendance).toHaveBeenCalledWith(appointmentId, request, user)
+    })
+  })
+
+  describe('updateMultipleAppointmentAttendances', () => {
+    it('should call the api client to update multiple appointment attendances', async () => {
+      const requests = [
+        {
+          appointmentId: 123,
+          prisonerNumbers: ['B2345CD'],
+        },
+      ] as MultipleAppointmentAttendanceRequest[]
+
+      await activitiesService.updateMultipleAppointmentAttendances(AttendanceAction.ATTENDED, requests, user)
+
+      expect(activitiesApiClient.putAppointmentAttendances).toHaveBeenCalledWith(
+        AttendanceAction.ATTENDED,
+        requests,
+        user,
+      )
     })
   })
 

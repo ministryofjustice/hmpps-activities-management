@@ -9,6 +9,7 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
 import ViewAllocationsRoutes from './viewAllocations'
 import config from '../../../../config'
+import { PrisonerSuspensionStatus } from '../../manage-allocations/journey'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')
@@ -336,6 +337,97 @@ describe('Route Handlers - Suspensions - View allocations', () => {
             startDate: '2022-05-19',
           },
         ],
+        prisonerName: 'John Smith',
+      })
+    })
+    it('should render the correct view - suspendPrisonerWithPayToggleEnabled ON - all suspended together', async () => {
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith(['ABC123'], res.locals.user)
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'ABC123',
+            allocations: [
+              {
+                id: 1,
+                scheduleId: 1,
+                activityId: 1,
+                prisonerNumber: 'ABC123',
+                startDate: '2022-05-19',
+                prisonPayBand: { id: 1 },
+                exclusions: [],
+                status: PrisonerSuspensionStatus.SUSPENDED_WITH_PAY,
+                plannedSuspension: { plannedStartDate: '2024-12-25', paid: true },
+              },
+              {
+                id: 2,
+                scheduleId: 1,
+                activityId: 2,
+                prisonerNumber: 'ABC123',
+                startDate: '2024-05-19',
+                prisonPayBand: { id: 1 },
+                exclusions: [],
+                status: PrisonerSuspensionStatus.SUSPENDED_WITH_PAY,
+                plannedSuspension: { plannedStartDate: '2024-12-25', paid: true },
+              },
+              {
+                id: 3,
+                scheduleId: 1,
+                activityId: 3,
+                prisonerNumber: 'ABC123',
+                startDate: '2024-05-19',
+                prisonPayBand: null,
+                exclusions: [],
+                status: PrisonerSuspensionStatus.SUSPENDED_WITH_PAY,
+                plannedSuspension: { plannedStartDate: '2024-12-25', paid: true },
+              },
+            ],
+          },
+        ] as unknown as PrisonerAllocations[])
+
+      config.suspendPrisonerWithPayToggleEnabled = true
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/view-allocations', {
+        activeAllocationIdsForSuspending: [],
+        allocationCount: 3,
+        activities: [],
+        suspendedAllocations: [
+          {
+            id: 1,
+            scheduleId: 1,
+            activityId: 1,
+            prisonerNumber: 'ABC123',
+            startDate: '2022-05-19',
+            prisonPayBand: { id: 1 },
+            exclusions: [],
+            status: PrisonerSuspensionStatus.SUSPENDED_WITH_PAY,
+            plannedSuspension: { plannedStartDate: '2024-12-25', paid: true },
+          },
+          {
+            id: 2,
+            scheduleId: 1,
+            activityId: 2,
+            prisonerNumber: 'ABC123',
+            startDate: '2024-05-19',
+            prisonPayBand: { id: 1 },
+            exclusions: [],
+            status: PrisonerSuspensionStatus.SUSPENDED_WITH_PAY,
+            plannedSuspension: { plannedStartDate: '2024-12-25', paid: true },
+          },
+          // This bottom one mocks an unpaid activity which has been suspended alongside the others, so it is recorded as being paid
+          {
+            id: 3,
+            scheduleId: 1,
+            activityId: 3,
+            prisonerNumber: 'ABC123',
+            startDate: '2024-05-19',
+            prisonPayBand: null,
+            exclusions: [],
+            status: PrisonerSuspensionStatus.SUSPENDED_WITH_PAY,
+            plannedSuspension: { plannedStartDate: '2024-12-25', paid: true },
+          },
+        ],
+        activeAllocations: [],
         prisonerName: 'John Smith',
       })
     })

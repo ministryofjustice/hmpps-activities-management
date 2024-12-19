@@ -71,6 +71,7 @@ import { DefaultOrCustomTimes } from '../routes/activities/create-an-activity/ha
 import { NameFormatStyle } from '../utils/helpers/nameFormatStyle'
 import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocations/journey'
 import { PaidType } from '../routes/activities/suspensions/handlers/viewSuspensions'
+import { WaitingListStatus } from '../enum/waitingListStatus'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -226,13 +227,14 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
-  njkEnv.addGlobal('bookAVideoLinkToggleEnabled', config.bookAVideoLinkToggleEnabled)
   njkEnv.addGlobal('suspendPrisonerWithPayToggleEnabled', config.suspendPrisonerWithPayToggleEnabled)
+  njkEnv.addGlobal('appointmentMultipleAttendanceToggleEnabled', config.appointmentMultipleAttendanceToggleEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
   njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
   njkEnv.addGlobal('NameFormatStyle', NameFormatStyle)
   njkEnv.addGlobal('PrisonerSuspensionStatus', PrisonerSuspensionStatus)
   njkEnv.addGlobal('PaidType', PaidType)
+  njkEnv.addGlobal('WaitingListStatus', WaitingListStatus)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)
