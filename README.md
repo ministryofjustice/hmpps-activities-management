@@ -102,6 +102,7 @@ BOOK_A_VIDEO_LINK_API_URL=https://book-a-video-link-api-dev.prison.service.justi
 NON_ASSOCIATIONS_API_URL=https://non-associations-api-dev.hmpps.service.justice.gov.uk
 LOCATIONS_INSIDE_PRISON_API_URL=https://locations-inside-prison-api-dev.hmpps.service.justice.gov.uk
 NOMIS_MAPPING_API_URL=https://nomis-sync-prisoner-mapping-dev.hmpps.service.justice.gov.uk
+VIDEO_CONFERENCE_SCHEDULE_URL=https://video-conference-schedule-dev.prison.service.justice.gov.uk
 API_CLIENT_ID=<ask the team>
 API_CLIENT_SECRET=<ask the team>
 SYSTEM_CLIENT_ID=<ask the team>

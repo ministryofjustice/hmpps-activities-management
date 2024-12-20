@@ -1,0 +1,154 @@
+{% extends "layout.njk" %}
+
+{% from "components/sticky-select.njk" import stickySelect %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "partials/showLocation.njk" import showLocation %}
+
+{% set pageTitle = "Appointment attendance summaries" %}
+{% set pageId = 'appointment-attendance-summaries-page' %}
+{% set hardBackLinkText = "Choose a different date" %}
+{% set hardBackLinkHref = "select-date" %}
+
+{% macro attendees(attendees, prisonerDetails, user) %}
+    {% if attendees | length == 1 %}
+        {% set prisonerDetails = prisonersDetails[attendees[0].prisonerNumber] %}
+        {{ showProfileLink({
+            firstName: prisonerDetails.firstName,
+            middleNames: prisonerDetails.middleNames,
+            lastName: prisonerDetails.lastName,
+            prisonerNumber: prisonerDetails.prisonerNumber or attendees[0].prisonerNumber,
+            cellLocation: statusBasedCellLocation(prisonerDetails.cellLocation, prisonerDetails.status, prisonerDetails.prisonId == user.activeCaseLoadId),
+            link: true,
+            classes: 'hmpps-inline-block'
+        }) }}
+    {% else %}
+        {{ attendees.length }}
+    {% endif %}
+{% endmacro %}
+
+{% macro summaryLink(summary) %}
+    <a href="/appointments/attendance/{{ summary.id }}/attendees" class="govuk-link--no-visited-state" target="_blank">
+        {{ summary.appointmentName }}<span class="govuk-visually-hidden"> (opens in new tab)</span>
+    </a>
+{% endmacro %}
+
+{% set summariesTableRows = [] %}
+{% for summary in summaries %}
+    {% set summariesTableRows = (summariesTableRows.push({
+        visuallyHiddenText: 'Select ' + summary.appointmentName,
+        value: summary.id,
+        selectable: true,
+        items: [
+            {
+                html: summaryLink(summary),
+                attributes: {
+                    'data-qa': 'appointment-attendance-summary-' + loop.index + '-name',
+                    "data-sort-value": summary.appointmentName + " " + summary.startTime + (" to " + summary.endTime if summary.endTime)
+                }
+            }, {
+                text: showLocation(summary, summary.internalLocation.description),
+                attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-location' }
+            }, {
+                text: summary.startTime + (" to " + summary.endTime if summary.endTime),
+                attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-time' }
+            }, {
+                text: attendees(summary.attendees, prisonersDetails, user),
+                attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-attendee-count',
+                    "data-sort-value": summary.attendees
+                }
+            },
+             {
+                text: summary.attendedCount,
+                attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-attended-count' }
+            }, {
+                text: summary.nonAttendedCount,
+                attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-non-attended-count' }
+            }, {
+                text: summary.notRecordedCount,
+                attributes: { 'data-qa': 'appointment-attendance-summary-' + loop.index + '-not-recorded-count' }
+            }
+        ]
+    }), summariesTableRows) %}
+{% endfor %}
+
+{% block content %}
+    <form id="filter-form" method="POST" novalidate>
+
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <span class="govuk-caption-l">Record appointment attendance</span>
+                <h1 class="govuk-heading-l govuk-!-margin-0">Find an appointment to record or edit attendance</h1>
+                <span class="govuk-caption-l govuk-!-margin-bottom-6" data-qa="date-caption">{{ date | formatDate }}</span>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h2 class="govuk-heading-s">Showing {{ summaries | length }} appointment{{ "s" if summaries | length != 1 }}</h2>
+
+                {% if attendanceSummary.attendeeCount > 1 %}
+                    <ul class="govuk-list">
+                        <li>
+                            <span>Attended:</span>
+                            <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
+                        </li>
+                        <li>
+                            <span>Absent:</span>
+                            <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
+                        </li>
+                        <li>
+                            <span>Not recorded yet:</span>
+                            <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
+                        </li>
+                    </ul>
+
+                {% endif %}
+
+                {{ stickySelect({
+                    idPrefix: 'appointments',
+                    type: 'check',
+                    caption: "(" + summaries.length + ") appointments",
+                    captionClasses: "govuk-visually-hidden",
+                    name: 'appointmentIds',
+                    head: [
+                        {
+                            text: "Appointment",
+                            attributes: { "aria-sort": "none" }
+                        }, {
+                            text: "Location",
+                            attributes: { "aria-sort": "none" }
+                        }, {
+                            text: "Time",
+                            attributes: { "aria-sort": "ascending" }
+                        }, {
+                            text: "Attendees",
+                            attributes: { "aria-sort": "none" }
+                        }, {
+                            text: "Attended",
+                            attributes: { "aria-sort": "none" }
+                        }, {
+                            text: "Did not attend",
+                            attributes: { "aria-sort": "none" }
+                        }, {
+                            text: "Not recorded yet",
+                            attributes: { "aria-sort": "none" }
+                        }
+                    ],
+                    rows: summariesTableRows,
+                    actions: [
+                        {
+                            text: 'Record or edit attendance',
+                            formAction: 'summaries'
+                        }
+                    ],
+                    itemsDescription: 'appointment',
+                    itemsDescriptionPlural: 'appointments'
+                }) }}
+            </div>
+        </div>
+    </form>
+{% endblock %}

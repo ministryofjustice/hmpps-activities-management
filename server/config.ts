@@ -183,7 +183,16 @@ export default {
     },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
+  analytics: {
+    tagManagerContainerId: get('TAG_MANAGER_CONTAINER_ID', ''),
+    tagManagerEnvironment: get('TAG_MANAGER_ENVIRONMENT', ''),
+  },
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
+  videoConferenceScheduleUrl: get(
+    'VIDEO_CONFERENCE_SCHEDULE_URL',
+    'https://video-conference-schedule-dev.prison.service.justice.gov.uk',
+    requiredInProduction,
+  ),
   nonAssociationsUrl: get(
     'NON_ASSOCIATIONS_URL',
     'https://non-associations-dev.hmpps.service.justice.gov.uk',
@@ -221,8 +230,8 @@ export default {
   frontendComponentsApiToggleEnabled: toBoolean(
     get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', 'true', requiredInProduction),
   ),
-  bookAVideoLinkToggleEnabled: toBoolean(
-    get('BOOK_A_VIDEO_LINK_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
+  videoConferenceScheduleFeatureToggleEnabled: toBoolean(
+    get('VIDEO_CONFERENCE_SCHEDULE_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
   ),
   suspendPrisonerWithPayToggleEnabled: toBoolean(get('SUSPEND_PRISONERS_WITH_PAY_FEATURE_TOGGLE_ENABLED', 'false')),
   appointmentMultipleAttendanceToggleEnabled: toBoolean(

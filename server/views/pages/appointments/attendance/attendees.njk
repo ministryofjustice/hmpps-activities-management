@@ -1,0 +1,179 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "components/sticky-select.njk" import stickySelect %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "partials/showLocation.njk" import showLocation %}
+
+{% set isSingleAppoinment = appointments | length == 1 %}
+
+{% if isSingleAppoinment %}
+    {% set pageTitle = applicationName + " - Record attendance for " + appointments[0].appointmentName + " - " + appointments[0].startDate | toDate | formatDate + " " +  appointments[0].startTime + (" to " + appointments[0].endTime if appointments[0].endTime) %}
+{% else %}
+    {% set pageTitle = applicationName + " - Record attendance for " + appointments | length + " appointments" %}
+{% endif %}
+{% set pageId = 'appointment-attendance-page' %}
+
+{% if session.recordAppointmentAttendanceJourney.date %}
+    {% set hardBackLinkText = 'Go back to appointments on ' + session.recordAppointmentAttendanceJourney.date | toDate | formatDate  %}
+    {% set hardBackLinkHref = 'summaries?date=' + session.recordAppointmentAttendanceJourney.date %}
+{% endif %}
+
+{% macro attendanceTag(attendance, userMap) %}
+    {% if attendance.attended === null %}
+        Not recorded
+    {% else %}
+        {% if attendance.attended === true %}
+            {{ govukTag({ text: 'Attended', classes: 'govuk-tag--green' }) }}
+        {% elseif attendance.attended === false %}
+            {{ govukTag({ text: 'Did not attend', classes: 'govuk-tag--red' }) }}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro renderAppointment(appointment) %}
+    {{ appointment.appointmentName }}
+    <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ appointment.startTime }}{{ " to " + appointment.endTime if appointment.endTime }}</div>
+    <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ showLocation(appointment) }}</div>
+{% endmacro %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l" data-qa="caption">Record appointment attendance</span>
+            {% if isSingleAppoinment %}
+                {% set appointment = appointments[0] %}
+                <h1 class="govuk-heading-l govuk-!-margin-0" data-qa='heading'>{{ appointment.appointmentName }}</h1>
+                <span class="govuk-caption-l" data-qa="date-caption">{{ appointment.startTime + (" to " + appointment.endTime if appointment.endTime) }}</span>
+                <span class="govuk-caption-l" data-qa="date-caption">{{ appointment.startDate | toDate | formatDate }}</span>
+                <span class="govuk-caption-l govuk-!-margin-bottom-4">{{ showLocation(appointment) }}</span>
+            {% else %}
+                <h1 class="govuk-heading-l govuk-!-margin-0" data-qa='heading'>Record attendance at {{ appointments | length }} appointments</h1>
+                <span class="govuk-caption-l" data-qa="date-caption">{{ appointments[0].startDate | toDate | formatDate }}</span>
+            {% endif %}
+
+            <h2 class="govuk-heading-m">{{ attendanceSummary.attendeeCount }} attendee{{ "s" if attendanceSummary.attendeeCount != 1 }}</h2>
+
+            {% if attendanceSummary.attendeeCount > 1 %}
+                <ul class="govuk-list">
+                    <li>
+                        <span>Attended:</span>
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
+                    </li>
+                    <li>
+                        <span>Did not attend:</span>
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
+                    </li>
+                    <li>
+                        <span>Not recorded yet:</span>
+                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
+                    </li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+
+    {% set attendeeListRows = [] %}
+    {% for appointment in appointments %}
+        {% for attendee in appointment.attendees %}
+            {% set prisoner = attendee.prisoner %}
+            {% set items = [
+                    {
+                        html: showProfileLink({
+                            firstName: prisoner.firstName,
+                            middleNames: prisoner.middleNames,
+                            lastName: prisoner.lastName,
+                            prisonerNumber: prisoner.prisonerNumber,
+                            inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId
+                        }),
+                        attributes: {
+                            'data-qa': 'prisoner-' + loop.index + '-name-and-number',
+                            "data-sort-value": prisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+                        }
+                    },
+                    {
+                        text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
+                        attributes: { 'data-qa': 'prisoner-' + loop.index + '-location' }
+                    }
+                ]
+            %}
+            {% if not isSingleAppoinment %}
+                {% set items = items.concat(
+                    {
+                        html: renderAppointment(appointment),
+                        attributes: {
+                            'data-qa': 'prisoner-' + loop.index + '-location',
+                            "data-sort-value": appointment.appointmentName + appointment.startTime + appointment.endTime
+                        }
+                    }
+                ) %}
+            {% endif %}
+            {% set items = items.concat(
+                {
+                    html: attendanceTag(attendee, userMap),
+                    attributes: { 'data-qa': 'prisoner-' + loop.index + '-attendance' }
+                }
+            ) %}
+
+            {% set attendeeListRows = attendeeListRows.concat({
+                visuallyHiddenText: 'Select ' + prisoner | fullName | toTitleCase,
+                value: appointment.id + '-' + prisoner.prisonerNumber,
+                selectable: true,
+                items: items
+            }) %}
+        {% endfor %}
+    {% endfor %}
+
+    <form method='POST'>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+        {% set head = [
+            {
+                text: "Name",
+                attributes: { "aria-sort": "ascending" }
+            },
+            {
+                text: "Cell location",
+                attributes: { "aria-sort": "none" }
+            }
+        ] %}
+
+        {% if not isSingleAppoinment %}
+            {% set head = head.concat(
+                {
+                    text: "Appointment name",
+                    attributes: { "aria-sort": "none" }
+                }
+            ) %}
+        {% endif %}
+        {% set head = head.concat(
+            {
+                text: "Attendance",
+                attributes: { "aria-sort": "none" }
+            }
+        ) %}
+
+        {{ stickySelect({
+            type: 'check',
+            id: "attendanceIds",
+            caption: "Attendance list",
+            captionClasses: "govuk-visually-hidden",
+            name: 'attendanceIds',
+            head: head,
+            rows: attendeeListRows,
+            actions: [
+                {
+                    text: 'Mark as attended',
+                    formAction: 'attend'
+                },
+                {
+                    text: 'Mark as not attended',
+                    formAction: 'non-attend'
+                }
+            ],
+            itemsDescription: 'person',
+            itemsDescriptionPlural: 'people'
+        }) }}
+    </form>
+{% endblock %}
