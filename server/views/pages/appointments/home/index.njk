@@ -64,6 +64,18 @@
                         "data-qa": "view-appointments-attendance-summary-card"
                     }) }}
                 </div>
+                {% if videoConferenceScheduleFeatureToggleEnabled %}
+                    <div class="govuk-grid-column-one-third card-group__item">
+                        {{ card({
+                            "id": "videoDailySchedule",
+                            "href": videoConferenceScheduleUrl,
+                            "clickable": "true",
+                            "heading": "Video daily schedule",
+                            "description": "View video bookings and print off today's schedule.",
+                            "data-qa": "video-daily-schedule-card"
+                        }) }}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
