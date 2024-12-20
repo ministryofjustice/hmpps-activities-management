@@ -86,6 +86,10 @@
             </div>
         </div>
 
+        <p class="govuk-body">
+            <a href="/appointments/attendance-summary/dashboard?date={{ date | toDateString }}" data-qa="summary-link" target='_blank'>Go to daily attendance summary</a>
+        </p>
+
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h2 class="govuk-heading-s">Showing {{ summaries | length }} appointment{{ "s" if summaries | length != 1 }}</h2>
