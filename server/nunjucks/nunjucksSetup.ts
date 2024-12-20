@@ -84,6 +84,7 @@ export default function nunjucksSetup(app: express.Express, { ukBankHolidayServi
   app.locals.applicationName = 'Activities and Appointments'
   app.locals.hmppsAuthUrl = config.apis.hmppsAuth.url
   app.locals.dpsUrl = config.dpsUrl
+  app.locals.videoConferenceScheduleUrl = config.videoConferenceScheduleUrl
   app.locals.nonAssociationsUrl = config.nonAssociationsUrl
   app.locals.reportAFaultUrl = config.reportAFaultUrl
   app.locals.feedbackUrl = config.feedbackUrl
@@ -227,6 +228,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
   njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
+  njkEnv.addGlobal('videoConferenceScheduleFeatureToggleEnabled', config.videoConferenceScheduleFeatureToggleEnabled)
   njkEnv.addGlobal('suspendPrisonerWithPayToggleEnabled', config.suspendPrisonerWithPayToggleEnabled)
   njkEnv.addGlobal('appointmentMultipleAttendanceToggleEnabled', config.appointmentMultipleAttendanceToggleEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
