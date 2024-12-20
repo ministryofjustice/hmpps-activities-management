@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { datePickerDateToIsoDate, formatIsoDate, isValidIsoDate } from '../../../../utils/datePickerUtils'
 import ActivitiesService from '../../../../services/activitiesService'
-import { getAttendanceSummary } from '../../utils/attendanceUtils'
+import { getAttendanceSummaryFromAttendanceSummaries } from '../../utils/attendanceUtils'
 
 export default class DashboardRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -26,7 +26,7 @@ export default class DashboardRoutes {
     ])
 
     const summariesNotCancelled = summaries.filter(s => !s.isCancelled)
-    const attendanceSummary = getAttendanceSummary(summariesNotCancelled)
+    const attendanceSummary = getAttendanceSummaryFromAttendanceSummaries(summariesNotCancelled)
 
     return res.render('pages/appointments/attendance-summary-stats/dashboard', {
       date,

@@ -12,6 +12,8 @@ export class AppointmentAttendance {
   prisonNumbers: string[]
 }
 
+// TODO: SAA-2197 Deprecated - remove view and test also
+
 export default class AppointmentAttendanceRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
