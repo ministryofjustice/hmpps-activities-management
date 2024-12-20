@@ -1,6 +1,6 @@
 import $ from 'jquery'
-import * as GOVUKFrontend from 'govuk-frontend'
-import * as MOJFrontend from '@ministryofjustice/frontend'
+import * as govukFrontend from 'govuk-frontend'
+import * as mojFrontend from '@ministryofjustice/frontend'
 import * as ActivitiesFrontend from './all'
 import './components/table-sort-fixed-rows/fixed-rows'
 import './application-insights-setup'
@@ -11,11 +11,11 @@ import '@ministryofjustice/hmpps-digital-prison-reporting-frontend'
 window.$ = $
 
 // Make GOVUKFrontend And MOJFrontend globally accessible
-window.GOVUKFrontend = GOVUKFrontend
-window.MOJFrontend = MOJFrontend
+window.GOVUKFrontend = govukFrontend
+window.MOJFrontend = mojFrontend
 
-GOVUKFrontend.initAll()
-MOJFrontend.initAll()
+govukFrontend.initAll()
+mojFrontend.initAll()
 ActivitiesFrontend.initAll()
 
 export default {

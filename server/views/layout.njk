@@ -20,14 +20,7 @@
       </script>
   <!-- End Google Tag Manager -->
 
-  <!--[if !IE 8]><!-->
-  <link href="/assets/stylesheets/application.css?{{ version }}" rel="stylesheet"/>
-  <!--<![endif]-->
-
-  <!--[if lt IE 9]>
-  <script src="/assets/vendor/html5shiv-3.7.3.min.js"></script>
-  <link href="/assets/stylesheets/application-ie8.css?{{ version }}" rel="stylesheet"/>
-  <![endif]-->
+  <link href="{{ '/assets/css/app.css' | assetMap }}" rel="stylesheet"/>
 
   {% for css in feComponents.cssIncludes %}
     <link href="{{ css }}" nonce="{{ cspNonce }}" rel="stylesheet" />
@@ -66,7 +59,6 @@
     window.applicationInsightsRoleName = '{{ applicationInsightsRoleName }}'
     window.authenticatedUser = '{{ user.username }}'
   </script>
-  <script type="module" src="/assets/javascript/activities.min.js"></script>
   {% for js in feComponents.jsIncludes %}
     <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
   {% endfor %}
@@ -82,4 +74,5 @@
 
     initAll();
   </script>
+  <script type="module" src="{{ '/assets/js/app.js' | assetMap }}"></script>
 {% endblock %}
