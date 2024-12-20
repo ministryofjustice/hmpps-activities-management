@@ -1,19 +1,24 @@
 import { Request, Response } from 'express'
 import { subDays } from 'date-fns'
+import { when } from 'jest-when'
 import AppointmentAttendanceRoutes from './appointmentAttendance'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentDetails, AppointmentAttendeeSummary } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 import UserService from '../../../../services/userService'
+import PrisonService from '../../../../services/prisonService'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/userService')
+jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const userService = new UserService(null, null, null) as jest.Mocked<UserService>
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Record Appointment Attendance', () => {
-  const handler = new AppointmentAttendanceRoutes(activitiesService, userService)
+  const handler = new AppointmentAttendanceRoutes(activitiesService, userService, prisonService)
   let req: Request
   let res: Response
 
@@ -47,6 +52,20 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       },
       appointment,
     } as unknown as Request
+
+    const prisonerInfo = {
+      prisonerNumber: 'G4793VF',
+      firstName: 'JO',
+      lastName: 'BLOGGS',
+      cellLocation: '1-1-1',
+      currentIncentive: {
+        level: {
+          description: 'Standard',
+        },
+      },
+    } as Prisoner
+
+    when(prisonService.getInmateByPrisonerNumber).calledWith('A1234BC', res.locals.user).mockResolvedValue(prisonerInfo)
   })
 
   afterEach(() => {
@@ -124,7 +143,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance',
         'Attendance recorded',
-        "You've saved attendance details for 1 person",
+        'You’ve recorded that Jo Bloggs attended this appointment',
       )
     })
 
@@ -143,7 +162,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance',
         'Attendance recorded',
-        "You've saved attendance details for 2 people",
+        'You’ve recorded that 2 people attended this appointment',
       )
     })
   })
@@ -164,7 +183,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance',
         'Non-attendance recorded',
-        "You've saved attendance details for 1 person",
+        'You’ve recorded that Jo Bloggs did not attend this appointment',
       )
     })
 
@@ -183,7 +202,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance',
         'Non-attendance recorded',
-        "You've saved attendance details for 2 people",
+        'You’ve recorded that 2 people did not attend this appointment',
       )
     })
   })

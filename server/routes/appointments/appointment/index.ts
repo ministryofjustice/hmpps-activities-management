@@ -10,6 +10,7 @@ import validationMiddleware from '../../../middleware/validationMiddleware'
 export default function Index({
   activitiesService,
   userService,
+  prisonService,
   metricsService,
   bookAVideoLinkService,
   locationMappingService,
@@ -27,7 +28,7 @@ export default function Index({
     locationMappingService,
   )
   const appointmentMovementSlipRoutes = new AppointmentMovementSlipRoutes(metricsService)
-  const appointmentAttendanceRoutes = new AppointmentAttendanceRoutes(activitiesService, userService)
+  const appointmentAttendanceRoutes = new AppointmentAttendanceRoutes(activitiesService, userService, prisonService)
 
   get('/', appointmentDetailsRoutes.GET)
   get('/movement-slip', appointmentMovementSlipRoutes.GET)
