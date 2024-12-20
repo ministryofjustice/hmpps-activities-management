@@ -10,6 +10,7 @@
 {% from "partials/searchInput.njk" import searchInput %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/attendance/incentiveLevelWarningTag.njk" import incentiveLevelWarningTag %}
 
 {% set pageTitle = applicationName + " - Daily attendance list" %}
 {% set pageId = 'daily-attendance-detail-page' %}
@@ -196,6 +197,12 @@
                     {% set sessionNameHtml = attendee.attendance.timeSlot + '<br>' + (attendee.attendance.startTime) + ' to ' + (attendee.attendance.endTime)  %}
                 {% endif %}
 
+                {% set attendanceDetailsHtml = attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + renderPayStatus(attendee.attendance) %}
+                {% if status == 'Absences' %}
+                    {% set attendanceDetailsHtml = attendanceDetailsHtml + ' ' + incentiveLevelWarningTag(attendee.attendance)  %}
+                {% endif %}
+
+
                 {% set attendanceRows = (attendanceRows.push([
                 {
                     attributes: { id: 'activity-' + loop.index, "data-sort-value": attendee | formatName(NameFormatStyle.lastCommaFirstMiddle, false) },
@@ -230,7 +237,7 @@
                     classes: 'govuk-table_cell'
                 } if status != "NotAttended",
                 {
-                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + renderPayStatus(attendee.attendance),
+                    html: attendanceDetailsHtml,
                     attributes: {
                         "data-qa": "attendance"
                     }
@@ -300,13 +307,12 @@
         {% if attendance.issuePayment %}
             {{ govukTag({
             text: "Pay",
-            classes: "govuk-tag--green"
+            classes: "govuk-tag--green govuk-!-margin-bottom-1"
         }) }}
         {% elseif attendance.status !=  'WAITING' %}
             {{ govukTag({
             text: "No pay",
-            classes: "govuk-tag--red"
+            classes: "govuk-tag--red govuk-!-margin-bottom-1"
         }) }}
         {% endif %}
-    {% endmacro %}
-    
+    {% endmacro %}   

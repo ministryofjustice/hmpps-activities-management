@@ -156,7 +156,7 @@ context('Daily Attendance', () => {
 
     const attendancePage = Page.verifyOnPage(AttendancePage)
     attendancePage.title().contains('All absences')
-    attendancePage.count().contains('3 absences')
+    attendancePage.count().contains('4 absences')
 
     attendancePage.getButton('Show filter').click()
     attendancePage.absenceRadios().should('exist')
@@ -170,6 +170,15 @@ context('Daily Attendance', () => {
     attendancePage.count().contains('1 absence')
     cy.get('[data-qa="attendance"]').contains('Rest day')
     attendancePage.checkTableCell(2, '09:00 to 11:45')
+
+    attendancePage.getButton('Show filter').click()
+    attendancePage.absenceRadios().find('input[value="REST"]').uncheck()
+    attendancePage.absenceRadios().find('input[value="REFUSED"]').check()
+    attendancePage.getButton('Apply filters').first().click()
+
+    attendancePage.count().contains('1 absence')
+    cy.get('[data-qa="attendance"]').contains('Refused')
+    cy.get('[data-qa="attendance"]').contains('Incentive level warning')
   })
   it('Absences page - filter on pay', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
@@ -190,7 +199,7 @@ context('Daily Attendance', () => {
 
     const attendancePage = Page.verifyOnPage(AttendancePage)
     attendancePage.title().contains('All absences')
-    attendancePage.count().contains('3 absences')
+    attendancePage.count().contains('4 absences')
 
     attendancePage.getButton('Show filter').click()
     attendancePage.payRadios().find('input[value="PAID"]').should('be.checked')
