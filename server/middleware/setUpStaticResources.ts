@@ -13,12 +13,28 @@ export default function setUpStaticResources(): Router {
   //  Static Resources Configuration
   const cacheControl = { maxAge: config.staticResourceCacheDuration }
 
-  router.use('/assets', express.static(path.join(process.cwd(), '/assets'), cacheControl))
+  // TODO: JQuery is a peer dependency of moj-frontend, consider helping to remove this from there and therefore as a dependency of this project
+  Array.of(
+    '/dist/assets',
+    '/node_modules/govuk-frontend/dist/govuk/assets',
+    '/node_modules/govuk-frontend/dist',
+    '/node_modules/@ministryofjustice/frontend/moj/assets',
+    '/node_modules/@ministryofjustice/frontend',
+    '/node_modules/jquery/dist',
+  ).forEach(dir => {
+    router.use('/assets', express.static(path.join(process.cwd(), dir), cacheControl))
+  })
 
-  // TODO: Peer dependency of moj-frontend, consider helping to remove this from there and therefore as a dependency of this project
-  router.use('/assets', express.static(path.join(process.cwd(), '/node_modules/jquery/dist'), cacheControl))
+  // DPR assets
+  router.use(
+    '/assets/dpr',
+    express.static(
+      path.join(process.cwd(), '/node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/assets'),
+      cacheControl,
+    ),
+  )
 
-  // moj assets
+  // moj assets for DPR
   router.use(
     '/moj/assets',
     express.static(path.join(process.cwd(), '/node_modules/@ministryofjustice/frontend/moj/assets'), cacheControl),
