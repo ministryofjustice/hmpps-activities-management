@@ -56,7 +56,7 @@ export default function setUpWebSecurity(): Router {
           formAction,
         },
       },
-      referrerPolicy: { policy: 'same-origin' },
+      referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
       crossOriginEmbedderPolicy: true,
     }),
   )
