@@ -14,10 +14,6 @@ generic-service:
     v0_47_enabled: false
     host: app-hostname.local # override per environment
     tlsSecretName: activities-cert
-    annotations:
-      nginx.ingress.kubernetes.io/proxy-body-size: 10m
-      nginx.ingress.kubernetes.io/server-snippet: |
-        client_max_body_size 10m;
 
   livenessProbe:
     httpGet:
