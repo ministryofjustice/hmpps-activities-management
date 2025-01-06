@@ -21,10 +21,20 @@ export default function setUpWebSecurity(): Router {
   // This ensures only scripts we trust are loaded, and not anything injected into the
   // page by an attacker.
 
-  const scriptSrc = ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`]
-  const connectSrc = ["'self' *.applicationinsights.azure.com"]
+  const scriptSrc = [
+    "'self'",
+    'https://*.googletagmanager.com',
+    (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`,
+  ]
+  const connectSrc = [
+    "'self'",
+    'https://*.google-analytics.com',
+    'https://*.analytics.google.com',
+    'https://*.googletagmanager.com',
+    '*.applicationinsights.azure.com',
+  ]
   const styleSrc = ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`]
-  const imgSrc = ["'self'", 'data:']
+  const imgSrc = ["'self'", 'https://*.google-analytics.com', 'https://*.googletagmanager.com', 'data:']
   const fontSrc = ["'self'"]
   const formAction = [`'self' ${config.dpsUrl}`]
 
@@ -46,7 +56,7 @@ export default function setUpWebSecurity(): Router {
           formAction,
         },
       },
-      referrerPolicy: { policy: 'same-origin' },
+      referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
       crossOriginEmbedderPolicy: true,
     }),
   )

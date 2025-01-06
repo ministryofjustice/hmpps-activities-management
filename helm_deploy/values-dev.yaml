@@ -27,6 +27,7 @@ generic-service:
     REPORTING_API_URL: "http://hmpps-digital-prison-reporting-mi-dev.hmpps-digital-prison-reporting-mi-dev.svc.cluster.local"
     LOCATIONS_INSIDE_PRISON_API_URL: "https://locations-inside-prison-api-dev.hmpps.service.justice.gov.uk"
     NOMIS_MAPPING_API_URL: "https://nomis-sync-prisoner-mapping-dev.hmpps.service.justice.gov.uk"
+    VIDEO_CONFERENCE_SCHEDULE_URL: "https://video-conference-schedule-dev.prison.service.justice.gov.uk"
     SUSPEND_PRISONERS_WITH_PAY_FEATURE_TOGGLE_ENABLED: "true"
     APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED: "false"
 

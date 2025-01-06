@@ -4,6 +4,8 @@ import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import UserService from '../../../../services/userService'
+import PrisonService from '../../../../services/prisonService'
+import { convertToTitleCase } from '../../../../utils/utils'
 
 export class AppointmentAttendance {
   @Expose()
@@ -12,10 +14,13 @@ export class AppointmentAttendance {
   prisonNumbers: string[]
 }
 
+// TODO: SAA-2197 Deprecated - remove view and test also
+
 export default class AppointmentAttendanceRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly userService: UserService,
+    private readonly prisonService: PrisonService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -39,9 +44,14 @@ export default class AppointmentAttendanceRoutes {
 
     await this.activitiesService.markAppointmentAttendance(+appointmentId, prisonNumbers, [], user)
 
-    const successMessage = `You've saved attendance details for ${prisonNumbers.length} ${
-      prisonNumbers.length === 1 ? 'person' : 'people'
-    }`
+    let successMessage = 'You’ve recorded that'
+    if (prisonNumbers.length === 1) {
+      const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonNumbers[0], user)
+      const formattedName = convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)
+      successMessage = `${successMessage} ${formattedName} attended this appointment`
+    } else {
+      successMessage = `${successMessage} ${prisonNumbers.length} people attended this appointment`
+    }
 
     return res.redirectWithSuccess('attendance', 'Attendance recorded', successMessage)
   }
@@ -53,9 +63,14 @@ export default class AppointmentAttendanceRoutes {
 
     await this.activitiesService.markAppointmentAttendance(+appointmentId, [], prisonNumbers, user)
 
-    const successMessage = `You've saved attendance details for ${prisonNumbers.length} ${
-      prisonNumbers.length === 1 ? 'person' : 'people'
-    }`
+    let successMessage = 'You’ve recorded that'
+    if (prisonNumbers.length === 1) {
+      const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonNumbers[0], user)
+      const formattedName = convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)
+      successMessage = `${successMessage} ${formattedName} did not attend this appointment`
+    } else {
+      successMessage = `${successMessage} ${prisonNumbers.length} people did not attend this appointment`
+    }
 
     return res.redirectWithSuccess('attendance', 'Non-attendance recorded', successMessage)
   }
