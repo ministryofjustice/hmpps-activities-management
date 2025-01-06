@@ -3,7 +3,7 @@ import { Expose, Transform } from 'class-transformer'
 import { IsIn, IsNotEmpty, ValidateIf } from 'class-validator'
 import { addDays, startOfToday } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
-import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import { formatDatePickerDate, formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
 
@@ -47,10 +47,17 @@ export default class SelectDateAndLocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { date, locationKey, activitySlot } = req.query
 
     const locationGroups = await this.activitiesService.getLocationGroups(user)
 
-    res.render('pages/activities/unlock-list/select-date-and-location', { locationGroups })
+    res.render('pages/activities/unlock-list/select-date-and-location', {
+      locationGroups,
+      datePresetOption: this.getDatePresetOption(date as string),
+      date: date ? formatDatePickerDate(new Date(date as string)) : null,
+      locationKey: locationKey || null,
+      activitySlot: activitySlot || null,
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -69,5 +76,16 @@ export default class SelectDateAndLocationRoutes {
     if (datePresetOption === PresetDateOptions.TODAY) return new Date()
     if (datePresetOption === PresetDateOptions.TOMORROW) return addDays(new Date(), 1)
     return date
+  }
+
+  private getDatePresetOption = (date: string): PresetDateOptions => {
+    if (date === undefined) return null
+    if (date === this.getDate(new Date())) return PresetDateOptions.TODAY
+    if (date === this.getDate(addDays(new Date(), 1))) return PresetDateOptions.TOMORROW
+    return PresetDateOptions.OTHER
+  }
+
+  private getDate = (date: Date): string => {
+    return date.toISOString().split('T')[0]
   }
 }

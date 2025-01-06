@@ -6,7 +6,8 @@
 
 {% set pageTitle = "Choose movement list details" %}
 {% set pageId = 'movement-list-choose-details-page' %}
-{% set jsBackLink = true %}
+{% set hardBackLinkText = 'Back' %}
+{% set hardBackLinkHref = "unlock-list" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -36,18 +37,18 @@
                         {
                             value: DateOption.TODAY,
                             text: "Today - " + now | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.dateOption == DateOption.TODAY
+                            checked: formResponses.dateOption == DateOption.TODAY or dateOption == DateOption.TODAY
                         },
                         {
                             value: DateOption.TOMORROW,
                             text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.dateOption == DateOption.TOMORROW
+                            checked: formResponses.dateOption == DateOption.TOMORROW or dateOption == DateOption.TOMORROW
                         },
                         {
                             value: DateOption.OTHER,
                             text: "A different date",
                             label: { text: "Movement date "},
-                            checked: formResponses.dateOption == DateOption.OTHER,
+                            checked: formResponses.dateOption == DateOption.OTHER or dateOption == DateOption.OTHER,
                             conditional: { 
                                 html: mojDatePicker({
                                 id: 'date',
@@ -60,7 +61,7 @@
                                 },
                                 hint: { html: otherDateHintHtml },
                                 errorMessage: validationErrors | findError('date'),
-                                value: formResponses.date
+                                value: formResponses.date or date
                               })
                            }
                         }
@@ -80,17 +81,17 @@
                         {
                             value: TimeSlot.AM,
                             text: "AM (morning)",
-                            checked: formResponses.timeSlot == TimeSlot.AM
+                            checked: formResponses.timeSlot == TimeSlot.AM or timeSlot == TimeSlot.AM
                         },
                         {
                             value: TimeSlot.PM,
                             text: "PM (afternoon)",
-                            checked: formResponses.timeSlot == TimeSlot.PM
+                            checked: formResponses.timeSlot == TimeSlot.PM or timeSlot == TimeSlot.PM
                         },
                         {
                             value: TimeSlot.ED,
                             text: "ED (evening duty)",
-                            checked: formResponses.timeSlot == TimeSlot.ED
+                            checked: formResponses.timeSlot == TimeSlot.ED or timeSlot == TimeSlot.ED
                         }
                     ]
                 }) }}
