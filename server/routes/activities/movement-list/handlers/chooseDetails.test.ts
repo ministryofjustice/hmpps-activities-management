@@ -28,6 +28,7 @@ describe('Movement list routes - choose details', () => {
 
     req = {
       session: {},
+      query: {},
     } as unknown as Request
   })
 
@@ -39,7 +40,26 @@ describe('Movement list routes - choose details', () => {
     it('renders the expected view', async () => {
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/choose-details')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/choose-details', {
+        dateOption: null,
+        timeSlot: null,
+        date: null,
+      })
+    })
+    it('renders the expected view - back link used', async () => {
+      req.query = {
+        date: '2025-01-01',
+        dateOption: 'tomorrow',
+        timeSlot: 'AM',
+      }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/choose-details', {
+        date: '01/01/2025',
+        dateOption: 'tomorrow',
+        timeSlot: 'AM',
+      })
     })
   })
 

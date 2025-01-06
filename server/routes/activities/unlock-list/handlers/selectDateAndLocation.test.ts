@@ -38,6 +38,7 @@ describe('Unlock list routes - select date and location', () => {
 
     req = {
       session: {},
+      query: {},
     } as unknown as Request
     jest.resetAllMocks()
   })
@@ -52,6 +53,34 @@ describe('Unlock list routes - select date and location', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/select-date-and-location', {
         locationGroups: mockedLocationGroups,
+        activitySlot: null,
+        date: null,
+        datePresetOption: null,
+        locationKey: null,
+      })
+      expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(1)
+      expect(activitiesService.getLocationGroups).toHaveBeenCalledWith(res.locals.user)
+      expect(req.session.unlockListJourney).not.toBeNull()
+    })
+    it('should render the expected view - coming back on back link', async () => {
+      when(activitiesService.getLocationGroups)
+        .calledWith(atLeast(res.locals.user))
+        .mockResolvedValue(mockedLocationGroups)
+
+      req.query = {
+        date: '2025-01-01',
+        activitySlot: 'AM',
+        locationKey: 'A-wing',
+      }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/unlock-list/select-date-and-location', {
+        locationGroups: mockedLocationGroups,
+        activitySlot: 'AM',
+        date: '01/01/2025',
+        datePresetOption: 'other',
+        locationKey: 'A-wing',
       })
       expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(1)
       expect(activitiesService.getLocationGroups).toHaveBeenCalledWith(res.locals.user)
