@@ -34,17 +34,17 @@
         {% if event.issuePayment %}
             {{ govukTag({
                 text: "Paid",
-                classes: "govuk-tag--small govuk-tag--green"
+                classes: "govuk-tag--small govuk-tag--green govuk-!-margin-bottom-1"
             }) }}
         {% elseif event.paid %}
             {{ govukTag({
                 text: "No pay",
-                classes: "govuk-tag--small govuk-tag--red"
+                classes: "govuk-tag--small govuk-tag--red govuk-!-margin-bottom-1"
             }) }}
         {% else %}
             {{ govukTag({
                 text: "Unpaid",
-                classes: "govuk-tag--small govuk-tag--green"
+                classes: "govuk-tag--small govuk-tag--green govuk-!-margin-bottom-1"
             }) }}
         {% endif %}
     {% endif %}
