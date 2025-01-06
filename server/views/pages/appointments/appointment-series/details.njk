@@ -8,8 +8,7 @@
 
 {% set pageTitle = appointmentSeries.appointmentName + ' series overview' %}
 {% set pageId = 'appointment-series-details-page' %}
-{% set hardBackLinkText = 'Go to Appointments Dashboard' %}
-{% set hardBackLinkHref = '/appointments/search?startDate=' + appointmentSeries.appointments[0].startDate %}
+{% set jsBackLink = true %}
 
 {% set appointmentTableRows = [] %}
 {% for appointment in appointmentSeries.appointments %}
