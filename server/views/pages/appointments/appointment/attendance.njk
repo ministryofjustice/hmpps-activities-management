@@ -10,7 +10,7 @@
 
 {% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
 {% set pageId = 'appointment-attendance-page' %}
-{% set jsBackLink = true %}
+{% set jsBackLink = false %}
 
 {% macro attendanceTag(attendance, userMap) %}
     {% if attendance.attended === null %}
