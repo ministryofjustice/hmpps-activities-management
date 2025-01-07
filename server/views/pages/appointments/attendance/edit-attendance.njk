@@ -1,0 +1,53 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = applicationName + " - Record Appointment Attendance" %}
+{% set pageId = 'edit-attendance-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <span class="govuk-caption-l" data-qa="caption">{{ attendanceDetails.appointmentName }}</span>
+
+                <h1 class="govuk-heading-l">Change attendance details for {{ attendanceDetails.prisonerName | toTitleCase }}</h1>
+
+                <div class="govuk-inset-text">{{ attendanceDetails.appointmentName }} on {{ attendanceDetails.appointmentDate | toDate | formatDate }}</div>
+
+                <h2 class="govuk-heading-m">Did {{ attendanceDetails.prisonerName | toTitleCase }} attend {{ attendanceDetails.appointmentName }} on {{ attendanceDetails.appointmentDate | toDate | formatDate }}?</h2>
+
+                {{ govukRadios({
+                  name: "attendanceOption",
+                  errorMessage: validationErrors | findError('attendanceOption'),
+                  items: [
+                    {
+                      value: "yes",
+                      text: "Yes"
+                    },
+                    {
+                      value: "no",
+                      text: "No"
+                    },
+                    {
+                      divider: "or"
+                    },
+                    {
+                      value: "reset",
+                      text: "Reset attendance record"
+                    }
+                  ]
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
