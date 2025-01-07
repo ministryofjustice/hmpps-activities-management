@@ -34,7 +34,7 @@ export default class ChooseDetailsRoutes {
     res.render('pages/activities/movement-list/choose-details', {
       dateOption: dateOption || null,
       timeSlot: timeSlot || null,
-      date: date ? formatDatePickerDate(new Date(date as string)) : null,
+      date: date && dateOption === DateOption.OTHER ? formatDatePickerDate(new Date(date as string)) : null,
     })
   }
 

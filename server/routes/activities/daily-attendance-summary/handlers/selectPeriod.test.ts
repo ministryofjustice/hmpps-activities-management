@@ -20,7 +20,7 @@ describe('Route Handlers - Select period', () => {
       redirect: jest.fn(),
     } as unknown as Response
 
-    req = { session: {} } as unknown as Request
+    req = { session: {}, query: {} } as unknown as Request
   })
 
   describe('GET', () => {
@@ -28,6 +28,19 @@ describe('Route Handlers - Select period', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/select-period', {
         title: 'What date do you want to see the daily attendance summary for?',
+        date: null,
+        datePresetOption: null,
+      })
+    })
+    it('should render the expected view - back link used', async () => {
+      req.query = {
+        date: '2025-01-03',
+      }
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/select-period', {
+        title: 'What date do you want to see the daily attendance summary for?',
+        date: '03/01/2025',
+        datePresetOption: 'other',
       })
     })
   })

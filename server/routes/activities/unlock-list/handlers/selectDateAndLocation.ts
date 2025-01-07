@@ -49,12 +49,14 @@ export default class SelectDateAndLocationRoutes {
     const { user } = res.locals
     const { date, locationKey, activitySlot } = req.query
 
+    const datePresetOption = this.getDatePresetOption(date as string)
     const locationGroups = await this.activitiesService.getLocationGroups(user)
 
     res.render('pages/activities/unlock-list/select-date-and-location', {
       locationGroups,
-      datePresetOption: this.getDatePresetOption(date as string),
-      date: date ? formatDatePickerDate(new Date(date as string)) : null,
+      datePresetOption,
+      date:
+        date && datePresetOption === PresetDateOptions.OTHER ? formatDatePickerDate(new Date(date as string)) : null,
       locationKey: locationKey || null,
       activitySlot: activitySlot || null,
     })

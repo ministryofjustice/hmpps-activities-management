@@ -9,8 +9,7 @@
 
 {% set pageTitle = applicationName + " - Activities Dashboard - View activity" %}
 {% set pageId = 'view-activity-page' %}
-{% set hardBackLinkText = 'Back to activities dashboard' %}
-{% set hardBackLinkHref = '/activities/dashboard' %}
+{% set jsBackLink = true %}
 
 {% set activityEnded = schedule.endDate and schedule.endDate < now | toDateString %}
 

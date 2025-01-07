@@ -61,6 +61,7 @@ export default class ViewAllocationsRoutes {
     )
 
     res.render('pages/activities/suspensions/view-allocations', {
+      prisonerNumber,
       prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
       allocationCount: allocations.length,
       suspendedAllocations: config.suspendPrisonerWithPayToggleEnabled ? suspendedAllocations : [],
