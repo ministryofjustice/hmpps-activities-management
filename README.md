@@ -15,7 +15,7 @@ This service requires the following dependent services:
 
 ## Alerts
 
-- Details of relevant alerts can be obtained from the `hmpps-prodiner-profile` repository [here](https://github.com/ministryofjustice/hmpps-prisoner-profile/blob/main/server/data/alertFlags/alertFlags.ts).
+- Details of relevant alerts can be obtained from the `hmpps-prisoner-profile` repository [here](https://github.com/ministryofjustice/hmpps-prisoner-profile/blob/main/server/data/alertFlags/alertFlags.ts).
 - The icons for badges can be obtained from the `digital-prison-services` repository [here](https://github.com/ministryofjustice/digital-prison-services/tree/main/static/images).
 
 ## Running the application
@@ -100,6 +100,7 @@ FRONTEND_COMPONENT_API_URL=https://frontend-components-dev.hmpps.service.justice
 MANAGE_USERS_API_URL=https://manage-users-api-dev.hmpps.service.justice.gov.uk
 BOOK_A_VIDEO_LINK_API_URL=https://book-a-video-link-api-dev.prison.service.justice.gov.uk
 NON_ASSOCIATIONS_API_URL=https://non-associations-api-dev.hmpps.service.justice.gov.uk
+ALERTS_API_URL=https://alerts-api-dev.hmpps.service.justice.gov.uk
 LOCATIONS_INSIDE_PRISON_API_URL=https://locations-inside-prison-api-dev.hmpps.service.justice.gov.uk
 NOMIS_MAPPING_API_URL=https://nomis-sync-prisoner-mapping-dev.hmpps.service.justice.gov.uk
 VIDEO_CONFERENCE_SCHEDULE_URL=https://video-conference-schedule-dev.prison.service.justice.gov.uk

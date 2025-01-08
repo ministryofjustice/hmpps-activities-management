@@ -10,6 +10,7 @@ import AlertsFilterService from './alertsFilterService'
 import BookAVideoLinkService from './bookAVideoLinkService'
 import NonAssociationsService from './nonAssociationsService'
 import LocationMappingService from './locationMappingService'
+import AlertsService from './alertsService'
 
 jest.mock('applicationinsights')
 
@@ -17,7 +18,7 @@ describe('Services', () => {
   test('The correct services are instantiated', () => {
     const servicesList = services()
 
-    expect(Object.values(servicesList).length).toBe(11)
+    expect(Object.values(servicesList).length).toBe(12)
     expect(servicesList.userService).toBeInstanceOf(UserService)
     expect(servicesList.prisonService).toBeInstanceOf(PrisonService)
     expect(servicesList.ukBankHolidayService).toBeInstanceOf(BankHolidayService)
@@ -28,6 +29,7 @@ describe('Services', () => {
     expect(servicesList.metricsService).toBeInstanceOf(MetricsService)
     expect(servicesList.bookAVideoLinkService).toBeInstanceOf(BookAVideoLinkService)
     expect(servicesList.nonAssociationsService).toBeInstanceOf(NonAssociationsService)
+    expect(servicesList.alertsService).toBeInstanceOf(AlertsService)
     expect(servicesList.locationMappingService).toBeInstanceOf(LocationMappingService)
   })
 })
