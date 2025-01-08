@@ -56,7 +56,7 @@ describe('Movement list routes - choose details', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/choose-details', {
-        date: '01/01/2025',
+        date: null,
         dateOption: 'tomorrow',
         timeSlot: 'AM',
       })

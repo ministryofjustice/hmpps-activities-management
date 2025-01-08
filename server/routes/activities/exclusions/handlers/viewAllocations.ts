@@ -41,6 +41,7 @@ export default class ViewAllocationsRoutes {
 
     res.render('pages/activities/exclusions/view-allocations', {
       prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
+      prisonerNumber,
       activities,
     })
   }

@@ -11,6 +11,8 @@
 
 {% set pageTitle = applicationName + " - Suspensions - View allocations" %}
 {% set pageId = 'view-allocations-page' %}
+{% set hardBackLinkHref = "/activities/suspensions/select-prisoner?query="+prisonerNumber %}
+{% set hardBackLinkText = "Back" %}
 
 {% if suspendPrisonerWithPayToggleEnabled %}
     {% set activeAllocationRows = [] %}

@@ -294,6 +294,7 @@ describe('Route Handlers - Suspensions - View allocations', () => {
         ],
         allocationCount: 2,
         prisonerName: 'John Smith',
+        prisonerNumber: 'ABC123',
         suspendedAllocations: [],
       })
     })
@@ -338,6 +339,7 @@ describe('Route Handlers - Suspensions - View allocations', () => {
           },
         ],
         prisonerName: 'John Smith',
+        prisonerNumber: 'ABC123',
       })
     })
     it('should render the correct view - suspendPrisonerWithPayToggleEnabled ON - all suspended together', async () => {
@@ -429,6 +431,7 @@ describe('Route Handlers - Suspensions - View allocations', () => {
         ],
         activeAllocations: [],
         prisonerName: 'John Smith',
+        prisonerNumber: 'ABC123',
       })
     })
   })

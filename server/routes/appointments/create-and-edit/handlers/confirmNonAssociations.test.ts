@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import NonAssociationsService from '../../../../services/nonAssociationsService'
-import ConfirmNonAssociationRoutes from './confirmNonAssociations.ts'
+import ConfirmNonAssociationRoutes from './confirmNonAssociations'
 import { NonAssociation } from '../../../../@types/nonAssociationsApi/types'
 
 jest.mock('../../../../services/nonAssociationsService')

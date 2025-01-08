@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsIn, ValidateIf } from 'class-validator'
 import { addDays, startOfToday, subDays } from 'date-fns'
-import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import { formatDatePickerDate, formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
 
@@ -31,10 +31,17 @@ export class TimePeriod {
 }
 
 export default class SelectPeriodRoutes {
-  GET = async (req: Request, res: Response): Promise<void> =>
+  GET = async (req: Request, res: Response): Promise<void> => {
+    const { date } = req.query
+    const datePresetOption = this.getDatePresetOption(date as string)
+
     res.render('pages/activities/daily-attendance-summary/select-period', {
       title: 'What date do you want to see the daily attendance summary for?',
+      datePresetOption,
+      date:
+        date && datePresetOption === PresetDateOptions.OTHER ? formatDatePickerDate(new Date(date as string)) : null,
     })
+  }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.attendanceSummaryJourney = null
@@ -47,5 +54,16 @@ export default class SelectPeriodRoutes {
     if (form.datePresetOption === PresetDateOptions.TODAY) return new Date()
     if (form.datePresetOption === PresetDateOptions.YESTERDAY) return subDays(new Date(), 1)
     return form.date
+  }
+
+  private getDatePresetOption = (date: string): PresetDateOptions => {
+    if (date === undefined) return null
+    if (date === this.getDate(new Date())) return PresetDateOptions.TODAY
+    if (date === this.getDate(subDays(new Date(), 1))) return PresetDateOptions.YESTERDAY
+    return PresetDateOptions.OTHER
+  }
+
+  private getDate = (date: Date): string => {
+    return date.toISOString().split('T')[0]
   }
 }
