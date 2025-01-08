@@ -2,8 +2,8 @@
 
 @import './variables/variables';
 
-@import 'govuk/all';
-@import 'moj/all';
-@import 'dpr/all';
+@import "govuk-frontend/dist/govuk/all";
+@import "@ministryofjustice/frontend/moj/all";
+@import "@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/all";
 
 @import './all';

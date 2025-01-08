@@ -176,6 +176,7 @@ describe('Route Handlers - Exclusions - View allocations', () => {
           },
         ],
         prisonerName: 'John Smith',
+        prisonerNumber: 'ABC123',
       })
     })
   })

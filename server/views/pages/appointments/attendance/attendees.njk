@@ -20,7 +20,7 @@
     {% set hardBackLinkHref = 'summaries?date=' + session.recordAppointmentAttendanceJourney.date %}
 {% endif %}
 
-{% macro attendanceTag(attendance, userMap) %}
+{% macro attendanceTag(attendance) %}
     {% if attendance.attended === null %}
         Not recorded
     {% else %}
@@ -36,6 +36,14 @@
     {{ appointment.appointmentName }}
     <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ appointment.startTime }}{{ " to " + appointment.endTime if appointment.endTime }}</div>
     <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ showLocation(appointment) }}</div>
+{% endmacro %}
+
+{% macro renderViewLink(appointment, attendee) %}
+    {% if attendee.attended !== null %}
+        <a href="attendees/{{ appointment.id }}/{{ attendee.prisoner.prisonerNumber }}" class="govuk-link govuk-link--no-visited-state">
+            View or Edit
+        </a>
+    {% endif %}
 {% endmacro %}
 
 {% block content %}
@@ -111,15 +119,18 @@
             {% endif %}
             {% set items = items.concat(
                 {
-                    html: attendanceTag(attendee, userMap),
+                    html: attendanceTag(attendee),
                     attributes: { 'data-qa': 'prisoner-' + loop.index + '-attendance' }
+                },
+                {
+                    html: renderViewLink(appointment, attendee)
                 }
             ) %}
 
             {% set attendeeListRows = attendeeListRows.concat({
                 visuallyHiddenText: 'Select ' + prisoner | fullName | toTitleCase,
                 value: appointment.id + '-' + prisoner.prisonerNumber,
-                selectable: true,
+                selectable: attendee.attended === null,
                 items: items
             }) %}
         {% endfor %}
@@ -150,6 +161,7 @@
         {% set head = head.concat(
             {
                 text: "Attendance",
+                colspan: 2,
                 attributes: { "aria-sort": "none" }
             }
         ) %}

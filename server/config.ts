@@ -46,8 +46,12 @@ interface RouteAuth {
 }
 
 export default {
-  https: production,
-  staticResourceCacheDuration: production ? '1h' : 0,
+  buildNumber: get('BUILD_NUMBER', '1_0_0', requiredInProduction),
+  gitRef: get('GIT_REF', 'xxxxxxxxxxxxxxxxxxx', requiredInProduction),
+  branchName: get('GIT_BRANCH', 'xxxxxxxxxxxxxxxxxxx', requiredInProduction),
+  production,
+  https: process.env.NO_HTTPS === 'true' ? false : production,
+  staticResourceCacheDuration: '1h',
   redis: {
     host: get('REDIS_HOST', 'localhost', requiredInProduction),
     port: parseInt(process.env.REDIS_PORT, 10) || 6379,

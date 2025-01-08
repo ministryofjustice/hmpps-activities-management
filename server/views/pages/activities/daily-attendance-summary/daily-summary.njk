@@ -8,7 +8,8 @@
 
 {% set pageTitle = applicationName + " - Daily attendance summary" %}
 {% set pageId = 'daily-attendance-summary-page' %}
-{% set jsBackLink = true %}
+{% set hardBackLinkHref = "/activities/attendance-summary/select-period?date="+activityDate | toDateString %}
+{% set hardBackLinkText = "Back" %}
 
 {% block content %}
     {% set filterOptionsHtml %}

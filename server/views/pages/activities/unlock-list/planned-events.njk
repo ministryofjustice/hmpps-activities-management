@@ -15,7 +15,7 @@
 {% set pageTitle = applicationName + " - Planned events" %}
 {% set pageId = "planned-events-page" %}
 {% set hardBackLinkText = 'Back' %}
-{% set hardBackLinkHref = "select-date-and-location" %}
+{% set hardBackLinkHref = 'select-date-and-location?date='+date+'&locationKey='+location.key+'&activitySlot='+timeSlot %}
 
 {% block content %}
     <div class="govuk-table govuk-!-margin-0 unlock-list">

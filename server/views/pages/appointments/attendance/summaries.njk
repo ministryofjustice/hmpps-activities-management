@@ -8,8 +8,7 @@
 
 {% set pageTitle = "Appointment attendance summaries" %}
 {% set pageId = 'appointment-attendance-summaries-page' %}
-{% set hardBackLinkText = "Choose a different date" %}
-{% set hardBackLinkHref = "select-date" %}
+{% set jsBackLink = true %}
 
 {% macro attendees(attendees, prisonerDetails, user) %}
     {% if attendees | length == 1 %}

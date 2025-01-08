@@ -4,7 +4,7 @@ import { IsIn, ValidateIf } from 'class-validator'
 import { addDays, startOfToday } from 'date-fns'
 import DateOption from '../../../../enum/dateOption'
 import TimeSlot from '../../../../enum/timeSlot'
-import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import { formatDatePickerDate, formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
 
@@ -29,7 +29,13 @@ export class DateAndTimeSlot {
 
 export default class ChooseDetailsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/activities/movement-list/choose-details')
+    const { dateOption, timeSlot, date } = req.query
+
+    res.render('pages/activities/movement-list/choose-details', {
+      dateOption: dateOption || null,
+      timeSlot: timeSlot || null,
+      date: date && dateOption === DateOption.OTHER ? formatDatePickerDate(new Date(date as string)) : null,
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

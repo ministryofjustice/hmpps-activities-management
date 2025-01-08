@@ -38,18 +38,18 @@
                         {
                             value: "today",
                             text: "Today - " + now | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.datePresetOption == 'today'
+                            checked: formResponses.datePresetOption == 'today' or datePresetOption == 'today'
                         },
                         {
                             value: "tomorrow",
                             text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.datePresetOption == 'tomorrow'
+                            checked: formResponses.datePresetOption == 'tomorrow' or datePresetOption == 'tomorrow'
                         },
                         {
                             value: "other",
                             text: "A different date",
                             label: { text: "Unlock date "},
-                            checked: formResponses.datePresetOption == 'other',
+                            checked: formResponses.datePresetOption == 'other' or datePresetOption == 'other',
                             conditional: { html:
                               mojDatePicker({
                                 id: 'date',
@@ -82,17 +82,17 @@
                         {
                             value: "AM",
                             text: "AM (morning)",
-                            checked: formResponses.activitySlot == 'AM'
+                            checked: formResponses.activitySlot == 'AM' or activitySlot == 'AM'
                         },
                         {
                             value: "PM",
                             text: "PM (afternoon)",
-                            checked: formResponses.activitySlot == 'PM'
+                            checked: formResponses.activitySlot == 'PM' or activitySlot == 'PM'
                         },
                         {
                             value: "ED",
                             text: "ED (evening)",
-                            checked: formResponses.activitySlot == 'ED'
+                            checked: formResponses.activitySlot == 'ED' or activitySlot == 'ED'
                         }
                     ]
                 }) }}
@@ -102,7 +102,7 @@
                     {% set items = (items.push({
                         value: location.key,
                         text: location.name,
-                        checked: formResponses.location == location.key
+                        checked: formResponses.location == location.key or locationKey == location.key
                     }), items) %}
                 {% endfor %}
 

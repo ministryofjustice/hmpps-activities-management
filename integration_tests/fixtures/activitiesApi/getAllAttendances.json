@@ -16,7 +16,8 @@
     "attendanceRequired": true,
     "eventTier": "TIER_2",
     "startTime": "09:00",
-    "endTime": "11:45"
+    "endTime": "11:45",
+    "incentiveLevelWarningIssued": null
   },
   {
     "attendanceId": 2,
@@ -35,7 +36,8 @@
     "attendanceRequired": true,
     "eventTier": "FOUNDATION",
     "startTime": "13:00",
-    "endTime": "16:45"
+    "endTime": "16:45",
+    "incentiveLevelWarningIssued": null
   },
   {
     "attendanceId": 3,
@@ -54,7 +56,8 @@
     "attendanceRequired": false,
     "eventTier": "TIER_2",
     "startTime": "13:00",
-    "endTime": "16:45"
+    "endTime": "16:45",
+    "incentiveLevelWarningIssued": null
   },
   {
     "attendanceId": 2,
@@ -73,7 +76,8 @@
     "attendanceRequired": true,
     "eventTier": "TIER_2",
     "startTime": "13:00",
-    "endTime": "16:45"
+    "endTime": "16:45",
+    "incentiveLevelWarningIssued": null
   },
   {
     "attendanceId": 4,
@@ -92,7 +96,8 @@
     "attendanceRequired": true,
     "eventTier": "TIER_2",
     "startTime": "13:00",
-    "endTime": "16:45"
+    "endTime": "16:45",
+    "incentiveLevelWarningIssued": null
   },
   {
     "attendanceId": 5,
@@ -111,7 +116,8 @@
     "attendanceRequired": true,
     "eventTier": "TIER_2",
     "startTime": "13:00",
-    "endTime": "16:45"
+    "endTime": "16:45",
+    "incentiveLevelWarningIssued": null
   },
   {
     "attendanceId": 6,
@@ -130,7 +136,8 @@
     "attendanceRequired": true,
     "eventTier": "TIER_2",
     "startTime": "09:00",
-    "endTime": "11:45"
+    "endTime": "11:45",
+    "incentiveLevelWarningIssued": null
   },
   {
     "attendanceId": 7,
@@ -149,6 +156,27 @@
     "attendanceRequired": true,
     "eventTier": null,
     "startTime": "09:00",
-    "endTime": "11:45"
+    "endTime": "11:45",
+    "incentiveLevelWarningIssued": null
+  },
+  {
+    "attendanceId": 8,
+    "prisonCode": "RSI",
+    "sessionDate": "2023-04-19",
+    "timeSlot": "AM",
+    "status": "COMPLETED",
+    "attendanceReasonCode": "REFUSED",
+    "issuePayment": false,
+    "prisonerNumber": "G4479GQ",
+    "scheduledInstanceId": 91409,
+    "activityId": 794,
+    "activitySummary": "English Level 4",
+    "categoryName": "Education",
+    "recordedTime": null,
+    "attendanceRequired": true,
+    "eventTier": "TIER_2",
+    "startTime": "09:00",
+    "endTime": "11:45",
+    "incentiveLevelWarningIssued": true
   }
 ]

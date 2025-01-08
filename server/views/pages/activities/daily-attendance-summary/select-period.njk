@@ -31,17 +31,17 @@
                         {
                             value: "today",
                             text: "Today - " + now | formatDate('d MMMM yyyy'),
-                            checked: formResponses.datePresetOption == 'today'
+                            checked: formResponses.datePresetOption == 'today' or datePresetOption == 'today'
                         },
                         {
                             value: "yesterday",
                             text: "Yesterday - " + (now - 86400000) | formatDate('d MMMM yyyy'),
-                            checked: formResponses.datePresetOption == 'yesterday'
+                            checked: formResponses.datePresetOption == 'yesterday' or datePresetOption == 'yesterday'
                         },
                         {
                             value: "other",
                             text: "A different date",
-                            checked: formResponses.datePresetOption == 'other',
+                            checked: formResponses.datePresetOption == 'other' or datePresetOption == 'other',
                             conditional: { 
                                 html: mojDatePicker({
                                     id: 'date',

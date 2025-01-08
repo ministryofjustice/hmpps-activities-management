@@ -8,6 +8,8 @@ import AttendeesRoutes from './handlers/attendees'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import config from '../../../config'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
+import AttendanceDetailsRoutes from './handlers/attendanceDetails'
+import EditAttendanceRoutes, { EditAttendance } from './handlers/editAttendance'
 
 export default function Index({ activitiesService, prisonService, userService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -24,7 +26,9 @@ export default function Index({ activitiesService, prisonService, userService }:
 
   const selectDateRoutes = new SelectDateRoutes()
   const summariesRoutes = new SummariesRoutes(activitiesService, prisonService)
-  const attendanceRoutes = new AttendeesRoutes(activitiesService, userService)
+  const attendeesRoutes = new AttendeesRoutes(activitiesService, userService)
+  const attendanceDetailsRoutes = new AttendanceDetailsRoutes(activitiesService, userService)
+  const editAttendanceRoutes = new EditAttendanceRoutes(activitiesService)
 
   if (config.appointmentMultipleAttendanceToggleEnabled) {
     router.use(insertJourneyIdentifier())
@@ -33,10 +37,21 @@ export default function Index({ activitiesService, prisonService, userService }:
     post('/:journeyId/select-date', selectDateRoutes.POST, SelectDate)
     getForJourney('/:journeyId/summaries', summariesRoutes.GET, true)
     post('/:journeyId/summaries', summariesRoutes.POST)
-    getForJourney('/:journeyId/attendees', attendanceRoutes.GET_MULTIPLE, true)
-    get('/:journeyId/:appointmentId/attendees', attendanceRoutes.GET_SINGLE)
-    post('/:journeyId/attend', attendanceRoutes.ATTEND)
-    post('/:journeyId/non-attend', attendanceRoutes.NON_ATTEND)
+    getForJourney('/:journeyId/attendees', attendeesRoutes.GET_MULTIPLE, true)
+    get('/:journeyId/:appointmentId/attendees', attendeesRoutes.GET_SINGLE)
+    post('/:journeyId/attend', attendeesRoutes.ATTEND)
+    post('/:journeyId/non-attend', attendeesRoutes.NON_ATTEND)
+    getForJourney('/:journeyId/attendees/:appointmentId/:prisonerNumber', attendanceDetailsRoutes.GET, true)
+    getForJourney(
+      '/:journeyId/attendees/:appointmentId/:prisonerNumber/edit-attendance',
+      editAttendanceRoutes.GET,
+      true,
+    )
+    post(
+      '/:journeyId/attendees/:appointmentId/:prisonerNumber/edit-attendance',
+      editAttendanceRoutes.POST,
+      EditAttendance,
+    )
   } else {
     get('/select-date', selectDateRoutes.GET)
     post('/select-date', selectDateRoutes.POST, SelectDate)
