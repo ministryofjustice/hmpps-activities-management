@@ -15,7 +15,6 @@ This service requires the following dependent services:
 
 ## Alerts
 
-- Details of relevant alerts can be obtained from the `hmpps-prisoner-profile` repository [here](https://github.com/ministryofjustice/hmpps-prisoner-profile/blob/main/server/data/alertFlags/alertFlags.ts).
 - The icons for badges can be obtained from the `digital-prison-services` repository [here](https://github.com/ministryofjustice/digital-prison-services/tree/main/static/images).
 
 ## Running the application
