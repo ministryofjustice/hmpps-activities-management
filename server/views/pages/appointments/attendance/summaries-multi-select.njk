@@ -1,5 +1,6 @@
 {% extends "layout.njk" %}
 
+{% from "components/searchBar.njk" import searchBar %}
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
@@ -94,7 +95,7 @@
                 <h2 class="govuk-heading-s">Showing {{ summaries | length }} appointment{{ "s" if summaries | length != 1 }}</h2>
 
                 {% if attendanceSummary.attendeeCount > 1 %}
-                    <ul class="govuk-list">
+                    <ul class="govuk-list govuk-!-margin-bottom-4">
                         <li>
                             <span>Attended:</span>
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
@@ -108,8 +109,23 @@
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
                         </li>
                     </ul>
-
                 {% endif %}
+
+                {{ searchBar({
+                    inputParams: {
+                        id: 'searchTerm',
+                        name: 'searchTerm',
+                        label: {
+                            text: 'Search by appointment name',
+                            classes: 'govuk-label--s'
+                        },
+                        type: 'search',
+                        value: session.req.query.searchTerm
+                    },
+                    buttonParams: {
+                        text: 'Search'
+                    }
+                }) }}
 
                 {{ stickySelect({
                     idPrefix: 'appointments',
@@ -145,7 +161,7 @@
                     actions: [
                         {
                             text: 'Record or edit attendance',
-                            formAction: 'summaries'
+                            formAction: 'summaries/select-appointments'
                         }
                     ],
                     itemsDescription: 'appointment',
