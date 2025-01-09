@@ -40,10 +40,12 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
     } as unknown as Response
 
     req = {
-      session: {
-        recordAppointmentAttendanceJourney: {},
-      },
+      session: {},
     } as unknown as Request
+
+    req.query = {}
+
+    config.appointmentMultipleAttendanceToggleEnabled = true
   })
 
   afterEach(() => {
@@ -345,10 +347,6 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
       })
     })
 
-    beforeEach(() => {
-      config.appointmentMultipleAttendanceToggleEnabled = true
-    })
-
     it('redirects to select date when date is invalid', async () => {
       req.query = {
         dateOption: DateOption.OTHER,
@@ -630,11 +628,74 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
         prisonersDetails: expectedPrisonersDetails,
       })
     })
+
+    it('should filter appointments by search term', async () => {
+      const dateOption = DateOption.YESTERDAY
+      req.query = {
+        dateOption,
+        searchTerm: 'ChAp',
+      }
+      const prisonersDetails = {} as Prisoner
+
+      const summaries = [
+        {
+          appointmentName: 'Gym',
+          attendeeCount: 1,
+          attendedCount: 0,
+          nonAttendedCount: 0,
+          notRecordedCount: 1,
+          attendees: [],
+          eventTierType: 'TIER_1',
+        },
+        {
+          appointmentName: 'Chaplaincy',
+          attendeeCount: 3,
+          attendedCount: 2,
+          nonAttendedCount: 1,
+          notRecordedCount: 0,
+          attendees: [],
+          eventTierType: 'TIER_1',
+        },
+        {
+          appointmentName: 'ChaPLaincy 2',
+          attendeeCount: 6,
+          attendedCount: 3,
+          nonAttendedCount: 2,
+          notRecordedCount: 1,
+          attendees: [],
+          eventTierType: 'TIER_2',
+        },
+      ] as AppointmentAttendanceSummary[]
+
+      when(activitiesService.getAppointmentAttendanceSummaries)
+        .calledWith(prisonCode, yesterday, res.locals.user)
+        .mockResolvedValue(summaries)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries-multi-select', {
+        date: yesterday,
+        summaries: [summaries[1], summaries[2]],
+        attendanceSummary: {
+          attendeeCount: 9,
+          attended: 5,
+          notAttended: 3,
+          notRecorded: 1,
+          attendedPercentage: 56,
+          notAttendedPercentage: 33,
+          notRecordedPercentage: 11,
+          foundationCount: 0,
+          tier1Count: 2,
+          tier2Count: 3,
+        },
+        prisonersDetails,
+      })
+    })
   })
 
-  describe('POST', () => {
+  describe('SELECT_APPOINTMENTS', () => {
     beforeEach(() => {
-      config.appointmentMultipleAttendanceToggleEnabled = true
+      req.session.recordAppointmentAttendanceJourney = {}
     })
 
     it('redirects to select date when date is invalid', async () => {
@@ -642,10 +703,31 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
         appointmentIds: ['1', '2'],
       }
 
+      await handler.SELECT_APPOINTMENTS(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('../attendees')
+      expect(req.session.recordAppointmentAttendanceJourney.appointmentIds).toEqual([1, 2])
+    })
+  })
+
+  describe('POST', () => {
+    beforeEach(() => {
+      req.session.recordAppointmentAttendanceJourney = {}
+    })
+
+    it('redirects to GET', async () => {
+      req.query = {
+        dateOption: DateOption.OTHER,
+        date: '2024-11-23',
+      }
+
+      req.body = {
+        searchTerm: 'CHap',
+      }
+
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('attendees')
-      expect(req.session.recordAppointmentAttendanceJourney.appointmentIds).toEqual([1, 2])
+      expect(res.redirect).toHaveBeenCalledWith('summaries?dateOption=other&date=2024-11-23&searchTerm=CHap')
     })
   })
 })
