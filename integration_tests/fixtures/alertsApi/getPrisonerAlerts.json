@@ -1,0 +1,124 @@
+{
+  "content": [
+    {
+      "alertUuid": "6cd3d3cb-fe76-4746-b2ea-a6968a63c2aa",
+      "prisonNumber": "A1351DZ",
+      "alertCode": {
+        "alertTypeCode": "X",
+        "alertTypeDescription": "Security",
+        "code": "XNR",
+        "description": "Not For Release"
+      },
+      "description": "Not For Release",
+      "authorisedBy": null,
+      "activeFrom": "2023-03-20",
+      "activeTo": null,
+      "isActive": false,
+      "createdAt": "2023-03-20T14:14:27",
+      "createdBy": "SCH_ACTIVITY",
+      "createdByDisplayName": "Schedule Activity",
+      "lastModifiedAt": null,
+      "lastModifiedBy": null,
+      "lastModifiedByDisplayName": null,
+      "activeToLastSetAt": null,
+      "activeToLastSetBy": null,
+      "activeToLastSetByDisplayName": null
+    },
+    {
+      "alertUuid": "527b44f6-182e-4f5b-94c7-8f974bc77c64",
+      "prisonNumber": "A1351DZ",
+      "alertCode": {
+        "alertTypeCode": "X",
+        "alertTypeDescription": "Security",
+        "code": "XTACT",
+        "description": "Terrorism Act or Related Offence"
+      },
+      "description": "Terrorism Act or Related Offence",
+      "authorisedBy": null,
+      "activeFrom": "2023-03-20",
+      "activeTo": null,
+      "isActive": true,
+      "createdAt": "2023-03-20T14:13:55",
+      "createdBy": "SCH_ACTIVITY",
+      "createdByDisplayName": "Schedule Activity",
+      "lastModifiedAt": null,
+      "lastModifiedBy": null,
+      "lastModifiedByDisplayName": null,
+      "activeToLastSetAt": null,
+      "activeToLastSetBy": null,
+      "activeToLastSetByDisplayName": null
+    },
+    {
+      "alertUuid": "f32a8c22-4ed5-4039-a497-4db0dd1f2406",
+      "prisonNumber": "A1351DZ",
+      "alertCode": {
+        "alertTypeCode": "X",
+        "alertTypeDescription": "Security",
+        "code": "XA",
+        "description": "Arsonist"
+      },
+      "description": "Arsonist",
+      "authorisedBy": null,
+      "activeFrom": "2023-03-20",
+      "activeTo": null,
+      "isActive": true,
+      "createdAt": "2023-03-20T14:13:26",
+      "createdBy": "SCH_ACTIVITY",
+      "createdByDisplayName": "Schedule Activity",
+      "lastModifiedAt": null,
+      "lastModifiedBy": null,
+      "lastModifiedByDisplayName": null,
+      "activeToLastSetAt": null,
+      "activeToLastSetBy": null,
+      "activeToLastSetByDisplayName": null
+    },
+    {
+      "alertUuid": "b1e255ec-a39a-4ed6-aa81-3d6d9e99fa9e",
+      "prisonNumber": "A1351DZ",
+      "alertCode": {
+        "alertTypeCode": "R",
+        "alertTypeDescription": "Risk",
+        "code": "RNO121",
+        "description": "No 1 to 1 with this prisoner"
+      },
+      "description": "1-1",
+      "authorisedBy": null,
+      "activeFrom": "2023-03-20",
+      "activeTo": null,
+      "isActive": true,
+      "createdAt": "2023-03-20T14:12:47",
+      "createdBy": "SCH_ACTIVITY",
+      "createdByDisplayName": "Schedule Activity",
+      "lastModifiedAt": null,
+      "lastModifiedBy": null,
+      "lastModifiedByDisplayName": null,
+      "activeToLastSetAt": null,
+      "activeToLastSetBy": null,
+      "activeToLastSetByDisplayName": null
+    },
+    {
+      "alertUuid": "b6f8c9eb-2adf-41e5-9427-e9b5af237bfe",
+      "prisonNumber": "A1351DZ",
+      "alertCode": {
+        "alertTypeCode": "R",
+        "alertTypeDescription": "Risk",
+        "code": "XCO",
+        "description": "Corruptor"
+      },
+      "description": "Corruptor",
+      "authorisedBy": null,
+      "activeFrom": "2023-03-20",
+      "activeTo": null,
+      "isActive": true,
+      "createdAt": "2023-03-20T14:11:30",
+      "createdBy": "SCH_ACTIVITY",
+      "createdByDisplayName": "Schedule Activity",
+      "lastModifiedAt": null,
+      "lastModifiedBy": null,
+      "lastModifiedByDisplayName": null,
+      "activeToLastSetAt": null,
+      "activeToLastSetBy": null,
+      "activeToLastSetByDisplayName": null
+    }
+  ]
+}

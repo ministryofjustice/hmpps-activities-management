@@ -12,8 +12,8 @@
 {% from "moj/components/badge/macro.njk" import mojBadge -%}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 
-{% set prisoners = prisonerAlertsDetails.prisoners %}
-{% set numPrisonersWithAlerts = prisonerAlertsDetails.numPrisonersWithAlerts %}
+{% set prisoners = alertsDetails.prisoners %}
+{% set numPrisonersWithAlerts = alertsDetails.numPrisonersWithAlerts %}
 
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
     {% set pageTitle = appointmentJourneyTitle("no attendees added" if prisoners.length == 0 else "Review additional attendee" + ("s" if prisoners.length > 1), session.appointmentJourney) %}

@@ -4,17 +4,17 @@ import ReviewPrisoners from './reviewPrisoners'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
-import PrisonerAlertsService, { PrisonerAlertResults } from '../../../../services/prisonerAlertsService'
 import { AppointmentPrisonerDetails } from '../appointmentPrisonerDetails'
+import AlertsService, { PrisonerAlertResults } from '../../../../services/alertsService'
 
 jest.mock('../../../../services/metricsService')
-jest.mock('../../../../services/prisonerAlertsService')
+jest.mock('../../../../services/alertsService')
 
 const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
-const prisonerAlertsService = new PrisonerAlertsService(null) as jest.Mocked<PrisonerAlertsService>
+const alertsService = new AlertsService(null) as jest.Mocked<AlertsService>
 
 describe('Route Handlers - Create Appointment - Review Prisoners', () => {
-  const handler = new ReviewPrisoners(metricsService, prisonerAlertsService)
+  const handler = new ReviewPrisoners(metricsService, alertsService)
   let req: Request
   let res: Response
   const appointmentId = '2'
@@ -185,8 +185,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       async ({ mode }) => {
         req.session.appointmentJourney.mode = mode
 
-        when(prisonerAlertsService.getAlertDetails)
-          .calledWith(req.session.appointmentJourney.prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
+        when(alertsService.getAlertDetails)
+          .calledWith(req.session.appointmentJourney.prisoners, res.locals.user)
           .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 1 } as PrisonerAlertResults))
 
         await handler.POST(req, res)
@@ -195,8 +195,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     )
 
     it('should redirect or return to review alerts page there are no alerts when mode is CREATE', async () => {
-      when(prisonerAlertsService.getAlertDetails)
-        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
+      when(alertsService.getAlertDetails)
+        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user)
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
 
       await handler.POST(req, res)
@@ -206,8 +206,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     it('should redirect or return to name page when there are no alerts when mode is COPY', async () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.COPY
 
-      when(prisonerAlertsService.getAlertDetails)
-        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
+      when(alertsService.getAlertDetails)
+        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user)
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
 
       await handler.POST(req, res)
@@ -245,8 +245,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should redirect or return to review alerts page if there are any alerts', async () => {
-      when(prisonerAlertsService.getAlertDetails)
-        .calledWith(prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
+      when(alertsService.getAlertDetails)
+        .calledWith(prisoners, res.locals.user)
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 1 } as PrisonerAlertResults))
 
       await handler.EDIT(req, res)
@@ -255,8 +255,8 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     })
 
     it('should redirect to the alerts page if there are no alerts', async () => {
-      when(prisonerAlertsService.getAlertDetails)
-        .calledWith(prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
+      when(alertsService.getAlertDetails)
+        .calledWith(prisoners, res.locals.user)
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
 
       await handler.EDIT(req, res)

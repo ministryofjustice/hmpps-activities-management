@@ -27,7 +27,7 @@ import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
-import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlertsA8644DY.json'
+import getPrisonerAlertsA8644DY from '../../fixtures/alertsApi/getPrisonerAlertsA8644DY.json'
 import ReviewPrisonerAlertsPage from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
 
 context('Create group appointment - check answers change links', () => {
@@ -66,7 +66,7 @@ context('Create group appointment - check answers change links', () => {
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
     cy.stubEndpoint('GET', '/appointment-series/10/details', getAppointmentSeriesDetails)
     cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
-    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts?', getOffenderAlerts)
+    cy.stubEndpoint('POST', '/search/alerts/prison-numbers', getPrisonerAlertsA8644DY)
     cy.stubEndpoint('POST', '/non-associations/between', [])
   })
 

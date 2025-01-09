@@ -26,7 +26,7 @@ import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI
 import getAppointmentSeriesDetails from '../../fixtures/activitiesApi/getAppointmentSeriesDetails.json'
 import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
 import ReviewPrisonerAlertsPage from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
-import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlertsA8644DY.json'
+import getPrisonerAlerts from '../../fixtures/alertsApi/getPrisonerAlertsA8644DY.json'
 
 context('Create group appointment', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -58,7 +58,7 @@ context('Create group appointment', () => {
       '/users/jsmith',
       JSON.parse('{"name": "John Smith", "username": "jsmith", "authSource": "nomis"}'),
     )
-    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlerts)
+    cy.stubEndpoint('POST', '/search/alerts/prison-numbers', getPrisonerAlerts)
     cy.stubEndpoint('POST', '/non-associations/between', [])
   })
 

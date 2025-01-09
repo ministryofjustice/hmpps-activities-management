@@ -15,7 +15,7 @@ import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/review
 import DateAndTimePage from '../../pages/appointments/create-and-edit/dateAndTimePage'
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 import getGroupAppointmentSeriesDetails from '../../fixtures/activitiesApi/getGroupAppointmentSeriesDetails.json'
-import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlerts.json'
+import getPrisonerAlerts from '../../fixtures/alertsApi/getPrisonerAlerts.json'
 import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import { formatDate } from '../../../server/utils/utils'
 import CheckAnswersPage from '../../pages/appointments/create-and-edit/checkAnswersPage'
@@ -56,7 +56,7 @@ context('Duplicate appointment', () => {
       JSON.parse('{"name": "John Smith", "username": "jsmith", "authSource": "nomis"}'),
     )
     cy.stubEndpoint('GET', '/appointment-series/10/details', getGroupAppointmentSeriesDetails)
-    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlerts)
+    cy.stubEndpoint('POST', '/search/alerts/prison-numbers', getPrisonerAlerts)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
   })

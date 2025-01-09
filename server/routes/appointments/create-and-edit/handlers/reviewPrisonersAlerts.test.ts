@@ -2,14 +2,14 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import ReviewPrisonersAlertsRoutes from './reviewPrisonersAlerts'
-import PrisonerAlertsService, { PrisonerAlertResults } from '../../../../services/prisonerAlertsService'
+import AlertsService, { PrisonerAlertResults } from '../../../../services/alertsService'
 
-jest.mock('../../../../services/prisonerAlertsService')
+jest.mock('../../../../services/alertsService')
 
-const prisonerAlertsService = new PrisonerAlertsService(null) as jest.Mocked<PrisonerAlertsService>
+const alertsService = new AlertsService(null) as jest.Mocked<AlertsService>
 
 describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => {
-  const handler = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
+  const handler = new ReviewPrisonersAlertsRoutes(alertsService)
 
   let req: Request
   let res: Response
@@ -51,12 +51,12 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
   })
 
   describe('GET', () => {
-    const prisonerAlertsDetails = {} as PrisonerAlertResults
+    const alertsDetails = {} as PrisonerAlertResults
 
     beforeEach(() => {
-      when(prisonerAlertsService.getAlertDetails)
-        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user.activeCaseLoadId, res.locals.user)
-        .mockReturnValue(Promise.resolve(prisonerAlertsDetails))
+      when(alertsService.getAlertDetails)
+        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user)
+        .mockReturnValue(Promise.resolve(alertsDetails))
     })
 
     it('should render the view for create appointment', async () => {
@@ -66,7 +66,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
         appointmentId,
         backLinkHref: 'how-to-add-prisoners',
         preserveHistory,
-        prisonerAlertsDetails,
+        alertsDetails,
       })
     })
 
@@ -79,7 +79,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
         appointmentId,
         backLinkHref: 'upload-appointment-set',
         preserveHistory,
-        prisonerAlertsDetails,
+        alertsDetails,
       })
     })
 
@@ -92,7 +92,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
         appointmentId,
         backLinkHref: 'how-to-add-prisoners',
         preserveHistory,
-        prisonerAlertsDetails,
+        alertsDetails,
       })
     })
 
@@ -105,7 +105,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
         appointmentId,
         backLinkHref: 'https://digital-dev.prison.service.justice.gov.uk/prisoner/A1234BC',
         preserveHistory,
-        prisonerAlertsDetails,
+        alertsDetails,
       })
     })
 
@@ -118,7 +118,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
         appointmentId,
         backLinkHref: 'how-to-add-prisoners',
         preserveHistory: 'true',
-        prisonerAlertsDetails,
+        alertsDetails,
       })
     })
   })

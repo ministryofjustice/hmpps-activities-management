@@ -3,13 +3,13 @@ import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import config from '../../../../config'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
-import PrisonerAlertsService from '../../../../services/prisonerAlertsService'
 import { AppointmentPrisonerDetails } from '../appointmentPrisonerDetails'
+import AlertsService from '../../../../services/alertsService'
 
 export default class ReviewPrisonerRoutes {
   constructor(
     private readonly metricsService: MetricsService,
-    private readonly prisonerAlertsService: PrisonerAlertsService,
+    private readonly alertsService: AlertsService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -60,15 +60,10 @@ export default class ReviewPrisonerRoutes {
   }
 
   private async getNextPageInJourney(req: Request, res: Response): Promise<string> {
-    const prisonCode = res.locals.user.activeCaseLoadId
     const prisoners = ReviewPrisonerRoutes.getPrisoners(req)
-    const prisonerAlertsDetails = await this.prisonerAlertsService.getAlertDetails(
-      prisoners,
-      prisonCode,
-      res.locals.user,
-    )
+    const alertsDetails = await this.alertsService.getAlertDetails(prisoners, res.locals.user)
 
-    if (prisonerAlertsDetails.numPrisonersWithAlerts === 0) {
+    if (alertsDetails.numPrisonersWithAlerts === 0) {
       if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
         return '../../schedule'
       }

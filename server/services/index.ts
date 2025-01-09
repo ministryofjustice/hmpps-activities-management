@@ -31,6 +31,7 @@ export default function services() {
 
   const alertsFilterService = new AlertsFilterService()
   const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient)
+  const alertsService = new AlertsService(alertsApiClient)
 
   return {
     userService: new UserService(manageUsersApiClient, prisonRegisterApiClient, activitiesApiClient),
@@ -43,7 +44,7 @@ export default function services() {
     unlockListService: new UnlockListService(prisonerSearchApiClient, activitiesApiClient, alertsFilterService),
     metricsService: new MetricsService(applicationInsightsClient),
     nonAssociationsService: new NonAssociationsService(nonAssociationsApiClient, prisonService),
-    alertsService: new AlertsService(alertsApiClient),
+    alertsService,
     locationMappingService: new LocationMappingService(locationsInsidePrisonApiClient, nomisMappingClient),
   }
 }

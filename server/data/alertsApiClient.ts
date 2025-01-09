@@ -8,7 +8,7 @@ export default class AlertsApiClient extends AbstractHmppsRestClient {
     super('Alerts API', config.apis.alertsApi as ApiConfig)
   }
 
-  async getAlertsForPrisoners(prisonerNumbers: string[], user: ServiceUser): Promise<Alert[]> {
+  async getAlertsForPrisoners(prisonerNumbers: string[], user: ServiceUser): Promise<{ content: Alert[] }> {
     return this.post(
       {
         path: `/search/alerts/prison-numbers`,

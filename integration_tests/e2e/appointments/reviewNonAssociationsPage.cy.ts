@@ -14,7 +14,7 @@ import getScheduledEvents from '../../fixtures/activitiesApi/getScheduledEventsM
 import getAppointmentSeries from '../../fixtures/activitiesApi/getAppointmentSeries.json'
 import getGroupAppointmentSeriesDetails from '../../fixtures/activitiesApi/getGroupAppointmentSeriesDetails.json'
 import getGroupAppointmentDetails from '../../fixtures/activitiesApi/getGroupAppointmentDetails.json'
-import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlerts.json'
+import getPrisonerAlerts from '../../fixtures/alertsApi/getPrisonerAlerts.json'
 import getNonAssociationsBetweenA8644DYA1350DZ from '../../fixtures/nonAssociationsApi/getNonAssociationsBetweenA8644DYA1350DZ.json'
 import HowToAddPrisonersPage from '../../pages/appointments/create-and-edit/howToAddPrisonersPage'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
@@ -73,7 +73,7 @@ context('Create group appointment', () => {
       '/users/jsmith',
       JSON.parse('{"name": "John Smith", "username": "jsmith", "authSource": "nomis"}'),
     )
-    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlerts)
+    cy.stubEndpoint('POST', '/search/alerts/prison-numbers', getPrisonerAlerts)
     cy.stubEndpoint('POST', '/non-associations/between', getNonAssociationsBetweenA8644DYA1350DZ)
   })
 

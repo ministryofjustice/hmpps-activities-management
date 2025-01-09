@@ -29,7 +29,7 @@ import ExtraInformationPage from '../../pages/appointments/create-and-edit/extra
 import SchedulePage from '../../pages/appointments/create-and-edit/schedulePage'
 import TierPage from '../../pages/appointments/create-and-edit/tierPage'
 import HostPage from '../../pages/appointments/create-and-edit/hostPage'
-import getOffenderAlerts from '../../fixtures/activitiesApi/getOffenderAlerts.json'
+import getPrisonerAlerts from '../../fixtures/alertsApi/getPrisonerAlerts.json'
 import ReviewPrisonerAlertsPage, {
   arsonistBadge,
   catABadge,
@@ -86,7 +86,7 @@ context('Create group appointment', () => {
       '/users/jsmith',
       JSON.parse('{"name": "John Smith", "username": "jsmith", "authSource": "nomis"}'),
     )
-    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts?', getOffenderAlerts)
+    cy.stubEndpoint('POST', '/search/alerts/prison-numbers', getPrisonerAlerts)
     cy.stubEndpoint('POST', '/non-associations/between', [])
   })
 

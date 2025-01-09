@@ -7,8 +7,8 @@ import getPrisonPrisonersG0995GW from '../../fixtures/prisonerSearchApi/getPriso
 import getPrisonPrisonersG6123VU from '../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-G6123VU.json'
 import getPrisonerG0995GW from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-G0995GW.json'
 import getPrisonerG6123VU from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-G6123VU.json'
-import getOffenderAlertsG0995GW from '../../fixtures/activitiesApi/getOffenderAlertsG0995GW.json'
-import getOffenderAlertsG0995GWG6123VU from '../../fixtures/activitiesApi/getOffenderAlertsG0995GWG6123VU.json'
+import getPrisonerAlertsG0995GW from '../../fixtures/alertsApi/getPrisonerAlertsG0995GW.json'
+import getPrisonerAlertsG0995GWG6123VU from '../../fixtures/alertsApi/getPrisonerAlertsG0995GWG6123VU.json'
 import getNonAssociationsBetweenG0995GWA1350DZ from '../../fixtures/nonAssociationsApi/getNonAssociationsBetweenG0995GWA1350DZ.json'
 import getNonAssociationsBetweenG0995GWG6123VU from '../../fixtures/nonAssociationsApi/getNonAssociationsBetweenG0995GWG6123VU.json'
 import getPrisonPrisonersG0995GWA1351DZ from '../../fixtures/prisonerSearchApi/postPrisonerNumbers-A1350DZ-G0995GW.json'
@@ -61,8 +61,8 @@ context('Edit appointment', () => {
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=saunders&size=50', getPrisonPrisonersG6123VU)
     cy.stubEndpoint('GET', '/prisoner/G0995GW', getPrisonerG0995GW)
     cy.stubEndpoint('GET', '/prisoner/G6123VU', getPrisonerG6123VU)
-    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlertsG0995GW)
-    cy.stubEndpoint('POST', '/api/bookings/offenderNo/MDI/alerts', getOffenderAlertsG0995GWG6123VU)
+    cy.stubEndpoint('POST', '/search/alerts/prison-numbers', getPrisonerAlertsG0995GW)
+    cy.stubEndpoint('POST', '/search/alerts/prison-numbers', getPrisonerAlertsG0995GWG6123VU)
     cy.stubEndpoint('POST', '/non-associations/between', getNonAssociationsBetweenG0995GWA1350DZ)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getPrisonPrisonersG0995GWA1351DZ)
 
