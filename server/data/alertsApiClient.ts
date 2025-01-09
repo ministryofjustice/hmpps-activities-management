@@ -12,6 +12,7 @@ export default class AlertsApiClient extends AbstractHmppsRestClient {
     return this.post(
       {
         path: `/search/alerts/prison-numbers`,
+        query: { includeInactive: false },
         data: prisonerNumbers,
       },
       user,

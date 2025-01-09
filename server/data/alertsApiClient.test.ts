@@ -29,7 +29,7 @@ describe('alertsApiClient', () => {
       const response = { data: 'some data' }
 
       fakeAlertsApi
-        .post('/search/alerts/prison-numbers')
+        .post('/search/alerts/prison-numbers?includeInactive=false')
         .matchHeader('authorization', `Bearer accessToken`)
         .reply(200, response)
 

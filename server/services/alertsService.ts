@@ -46,9 +46,7 @@ export default class AlertsService {
   readonly categoriesWithBadges: Set<string> = new Set<string>(['A', 'E', 'H', 'P'])
 
   async getAlertsUsingPrisonerNumbers(prisonerNumbers: string[], user: ServiceUser): Promise<Alert[]> {
-    return this.alertsApiClient
-      .getAlertsForPrisoners(prisonerNumbers, user)
-      .then(a => a.content.filter(alert => alert.isActive))
+    return this.alertsApiClient.getAlertsForPrisoners(prisonerNumbers, user).then(alerts => alerts?.content)
   }
 
   async getAlertDetails(prisoners: PrisonerDetails[], user: ServiceUser): Promise<PrisonerAlertResults> {
