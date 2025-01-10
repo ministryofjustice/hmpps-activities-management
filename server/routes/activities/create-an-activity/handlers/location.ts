@@ -5,13 +5,7 @@ import { IsEnum, IsNotEmpty, IsNumber, ValidateIf } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
-
-export enum LocationType {
-  IN_CELL = 'IN_CELL',
-  OUT_OF_CELL = 'OUT_OF_CELL',
-  ON_WING = 'ON_WING',
-  OFF_WING = 'OFF_WING',
-}
+import LocationType from '../../../../enum/locationType'
 
 export class Location {
   @Expose()

@@ -36,7 +36,7 @@
                     name: "locationType",
                     items: [
                         {
-                            value: "OUT_OF_CELL",
+                            value: LocationType.OUT_OF_CELL,
                             text: "Search for a location",
                             checked: formResponses.locationType == 'OFF_WING' or session.createJourney.location.id,
                             conditional: {
@@ -53,17 +53,17 @@
                             }
                         },
                         {
-                            value: "IN_CELL",
+                            value: LocationType.IN_CELL,
                             text: "In cell",
                             checked: session.createJourney.inCell == true
                         },
                         {
-                            value: "OFF_WING",
+                            value: LocationType.OFF_WING,
                             text: "Off wing - not listed",
                             checked: session.createJourney.offWing == true
                         },
                         {
-                            value: "ON_WING",
+                            value: LocationType.ON_WING,
                             text: "On wing - not listed",
                             checked: session.createJourney.onWing == true
                         }

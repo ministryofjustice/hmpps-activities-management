@@ -74,6 +74,7 @@ import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocation
 import { PaidType } from '../routes/activities/suspensions/handlers/viewSuspensions'
 import { WaitingListStatus } from '../enum/waitingListStatus'
 import logger from '../../logger'
+import LocationType from '../enum/locationType'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -249,6 +250,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('PrisonerSuspensionStatus', PrisonerSuspensionStatus)
   njkEnv.addGlobal('PaidType', PaidType)
   njkEnv.addGlobal('WaitingListStatus', WaitingListStatus)
+  njkEnv.addGlobal('LocationType', LocationType)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

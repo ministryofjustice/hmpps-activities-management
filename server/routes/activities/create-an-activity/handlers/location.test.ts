@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import LocationRoutes, { LocationType, Location } from './location'
+import LocationRoutes, { Location } from './location'
 import PrisonService from '../../../../services/prisonService'
 import eventLocations from '../../../../services/fixtures/event_locations_2.json'
 import eventLocationsFiltered from '../../../../services/fixtures/event_locations_filtered_2.json'
@@ -11,6 +11,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
+import LocationType from '../../../../enum/locationType'
 
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/activitiesService')

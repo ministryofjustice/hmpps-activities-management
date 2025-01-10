@@ -90,9 +90,9 @@
                     checked: filterItems.locationType == 'ALL'
                 },
                 {
-                    value: "OUT_OF_CELL",
+                    value: LocationType.OUT_OF_CELL,
                     text: "Search for a location",
-                    checked: filterItems.locationType == 'OUT_OF_CELL',
+                    checked: filterItems.locationType == LocationType.OUT_OF_CELL,
                     conditional: {
                         html: govukSelect({
                             id: "locationId",
@@ -107,19 +107,19 @@
                     }
                 },
                 {
-                    value: "IN_CELL",
+                    value: LocationType.IN_CELL,
                     text: "In cell",
-                    checked: filterItems.locationType == 'IN_CELL'
+                    checked: filterItems.locationType == LocationType.IN_CELL
                 },
                 {
-                    value: "OFF_WING",
+                    value: LocationType.OFF_WING,
                     text: "Off wing - not listed",
-                    checked: filterItems.locationType == 'OFF_WING'
+                    checked: filterItems.locationType == LocationType.OFF_WING
                 },
                 {
-                    value: "ON_WING",
+                    value: LocationType.ON_WING,
                     text: "On wing - not listed",
-                    checked: filterItems.locationType == 'ON_WING'
+                    checked: filterItems.locationType == LocationType.ON_WING
                 }
             ]
         }) }}
