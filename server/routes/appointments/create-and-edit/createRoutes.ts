@@ -35,7 +35,6 @@ import CopySeries, { HowToCopySeriesForm } from './handlers/copySeries'
 import NoAttendees from './handlers/noAttendees'
 import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
 import ReviewNonAssociationsRoutes from './handlers/reviewNonAssociations'
-import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
 import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
 import ConfirmNonAssociationRoutes from './handlers/confirmNonAssociations'
@@ -45,6 +44,7 @@ export default function Create({
   activitiesService,
   metricsService,
   nonAssociationsService,
+  alertsService,
 }: Services): Router {
   const router = Router({ mergeParams: true })
 
@@ -54,7 +54,6 @@ export default function Create({
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
-  const prisonerAlertsService = new PrisonerAlertsService(prisonService)
   const appointeeAttendeeService = new AppointeeAttendeeService(prisonService)
   const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService, appointeeAttendeeService)
   const selectPrisonerRoutes = new SelectPrisonerRoutes(prisonService)
@@ -72,12 +71,12 @@ export default function Create({
   const checkAnswersRoutes = new CheckAnswersRoutes(activitiesService)
   const confirmationRoutes = new ConfirmationRoutes(metricsService)
   const howToAddPrisonerRoutes = new HowToAddPrisonerRoutes()
-  const reviewPrisonerRoutes = new ReviewPrisonerRoutes(metricsService, prisonerAlertsService)
+  const reviewPrisonerRoutes = new ReviewPrisonerRoutes(metricsService, alertsService)
   const appointmentSetUploadRoutes = new AppointmentSetUploadRoutes(new PrisonerListCsvParser(), prisonService)
   const appointmentSetDateRoutes = new AppointmentSetDateRoutes()
   const appointmentSetTimesRoutes = new AppointmentSetTimesRoutes()
   const scheduleRoutes = new ScheduleRoutes(activitiesService, editAppointmentService, metricsService)
-  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
+  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(alertsService)
   const reviewNonAssociations = new ReviewNonAssociationsRoutes(nonAssociationsService, prisonService)
   const confirmNonAssociations = new ConfirmNonAssociationRoutes(nonAssociationsService)
   const copySeriesRoutes = new CopySeries()

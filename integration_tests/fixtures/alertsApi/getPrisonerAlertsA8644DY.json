@@ -1,0 +1,28 @@
+{
+  "content": [
+    {
+      "alertUuid": "6cd3d3cb-fe76-4746-b2ea-a6968a63c2aa",
+      "prisonNumber": "A8644DY",
+      "alertCode": {
+        "alertTypeCode": "X",
+        "alertTypeDescription": "Security",
+        "code": "XNR",
+        "description": "Not For Release"
+      },
+      "description": "Not For Release",
+      "authorisedBy": null,
+      "activeFrom": "2023-03-20",
+      "activeTo": null,
+      "isActive": true,
+      "createdAt": "2023-03-20T14:14:27",
+      "createdBy": "SCH_ACTIVITY",
+      "createdByDisplayName": "Schedule Activity",
+      "lastModifiedAt": null,
+      "lastModifiedBy": null,
+      "lastModifiedByDisplayName": null,
+      "activeToLastSetAt": null,
+      "activeToLastSetBy": null,
+      "activeToLastSetByDisplayName": null
+    }
+  ]
+}
