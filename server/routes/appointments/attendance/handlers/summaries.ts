@@ -7,7 +7,7 @@ import PrisonService from '../../../../services/prisonService'
 import { dateFromDateOption } from '../../../../utils/datePickerUtils'
 import { getAttendanceSummaryFromAttendanceSummaries } from '../../utils/attendanceUtils'
 import config from '../../../../config'
-import { convertToNumberArray, toDateString } from '../../../../utils/utils'
+import { asString, convertToNumberArray, toDateString } from '../../../../utils/utils'
 
 export default class SummariesRoutes {
   constructor(
@@ -17,7 +17,7 @@ export default class SummariesRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { dateOption, date } = req.query
+    const { dateOption, date, searchTerm } = req.query
 
     const dateOptionDate = dateFromDateOption(dateOption as DateOption, date as string)
     if (!isValid(dateOptionDate)) {
@@ -26,7 +26,9 @@ export default class SummariesRoutes {
 
     const summaries = (
       await this.activitiesService.getAppointmentAttendanceSummaries(user.activeCaseLoadId, dateOptionDate, user)
-    ).filter(s => !s.isCancelled)
+    )
+      .filter(s => !s.isCancelled)
+      .filter(s => (searchTerm ? s.appointmentName.toLowerCase().includes(asString(searchTerm).toLowerCase()) : true))
 
     // Get prisoner details for appointments with a single attendee
     const prisonerNumber = summaries.flatMap(r => (r.attendees.length === 1 ? r.attendees[0].prisonerNumber : []))
@@ -44,7 +46,9 @@ export default class SummariesRoutes {
     const attendanceSummary = getAttendanceSummaryFromAttendanceSummaries(summaries)
 
     if (config.appointmentMultipleAttendanceToggleEnabled) {
-      req.session.recordAppointmentAttendanceJourney.date = toDateString(dateOptionDate)
+      req.session.recordAppointmentAttendanceJourney = {
+        date: toDateString(dateOptionDate),
+      }
 
       return res.render('pages/appointments/attendance/summaries-multi-select', {
         date: dateOptionDate,
@@ -63,8 +67,17 @@ export default class SummariesRoutes {
     })
   }
 
-  POST = async (req: Request, res: Response): Promise<void> => {
+  SELECT_APPOINTMENTS = async (req: Request, res: Response): Promise<void> => {
     req.session.recordAppointmentAttendanceJourney.appointmentIds = convertToNumberArray(req.body.appointmentIds)
-    return res.redirect('attendees')
+    return res.redirect('../attendees')
+  }
+
+  POST = async (req: Request, res: Response): Promise<void> => {
+    const { dateOption, date } = req.query
+    const { searchTerm } = req.body
+
+    const redirectUrl = `summaries?dateOption=${dateOption ?? ''}&date=${date ?? ''}&searchTerm=${searchTerm ?? ''}`
+
+    res.redirect(redirectUrl)
   }
 }

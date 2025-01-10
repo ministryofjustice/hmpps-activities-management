@@ -55,6 +55,7 @@ const apiChecks = [
     `${config.apis.nonAssociationsApi.url}/health/ping`,
     config.apis.nonAssociationsApi.agent,
   ),
+  service('alertsApi', `${config.apis.alertsApi.url}/health/ping`, config.apis.alertsApi.agent),
   service('bookAVideoLinkApi', `${config.apis.bookAVideoLinkApi.url}/health/ping`, config.apis.bookAVideoLinkApi.agent),
   service(
     'locationsInsidePrisonApi',

@@ -23,7 +23,6 @@ import CancellationReasonRoutes, { CancellationReason } from './handlers/cancell
 import TierRoutes, { TierForm } from './handlers/tier'
 import HostRoutes, { HostForm } from './handlers/host'
 import ReviewPrisonersAlertsRoutes from './handlers/reviewPrisonersAlerts'
-import PrisonerAlertsService from '../../../services/prisonerAlertsService'
 import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
 import UncancelRoutes from './handlers/uncancel'
 import ReviewNonAssociationRoutes from './handlers/reviewNonAssociations'
@@ -33,6 +32,7 @@ export default function Edit({
   activitiesService,
   metricsService,
   nonAssociationsService,
+  alertsService,
 }: Services): Router {
   const router = Router({ mergeParams: true })
 
@@ -44,7 +44,6 @@ export default function Edit({
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const appointeeAttendeeService = new AppointeeAttendeeService(prisonService)
   const startJourneyRoutes = new StartJourneyRoutes(prisonService, metricsService, appointeeAttendeeService)
-  const prisonerAlertsService = new PrisonerAlertsService(prisonService)
   const tierRoutes = new TierRoutes(editAppointmentService)
   const hostRoutes = new HostRoutes(editAppointmentService)
   const locationRoutes = new LocationRoutes(activitiesService, editAppointmentService)
@@ -124,8 +123,8 @@ export default function Edit({
   const howToAddPrisoners = new HowToAddPrisoners()
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
   const uploadPrisonerListRoutes = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
-  const reviewPrisoners = new ReviewPrisoners(metricsService, prisonerAlertsService)
-  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(prisonerAlertsService)
+  const reviewPrisoners = new ReviewPrisoners(metricsService, alertsService)
+  const reviewPrisonerAlerts = new ReviewPrisonersAlertsRoutes(alertsService)
 
   router.get(
     '/start/prisoners/add',

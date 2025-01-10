@@ -35,7 +35,8 @@ export default function Index({ activitiesService, prisonService, userService }:
 
     get('/:journeyId/select-date', selectDateRoutes.GET)
     post('/:journeyId/select-date', selectDateRoutes.POST, SelectDate)
-    getForJourney('/:journeyId/summaries', summariesRoutes.GET, true)
+    get('/:journeyId/summaries', summariesRoutes.GET)
+    post('/:journeyId/summaries/select-appointments', summariesRoutes.SELECT_APPOINTMENTS)
     post('/:journeyId/summaries', summariesRoutes.POST)
     getForJourney('/:journeyId/attendees', attendeesRoutes.GET_MULTIPLE, true)
     get('/:journeyId/:appointmentId/attendees', attendeesRoutes.GET_SINGLE)

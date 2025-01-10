@@ -1,9 +1,9 @@
-import { Alert } from '../@types/prisonApiImport/types'
+import { Alert } from '../@types/alertsAPI/types'
 import { ServiceUser } from '../@types/express'
-import PrisonService from './prisonService'
+import AlertsApiClient from '../data/alertsApiClient'
 
-export default class PrisonerAlertsService {
-  constructor(private readonly prisonService: PrisonService) {}
+export default class AlertsService {
+  constructor(private readonly alertsApiClient: AlertsApiClient) {}
 
   /*
   We need to know which prisoner has badged alerts to determine how to display this text list
@@ -45,35 +45,25 @@ export default class PrisonerAlertsService {
 
   readonly categoriesWithBadges: Set<string> = new Set<string>(['A', 'E', 'H', 'P'])
 
-  private fetchRelevantPrisonerAlerts(
-    offenderNumbers: string[],
-    prisonCode: string,
-    user: ServiceUser,
-  ): Promise<Alert[]> {
-    return this.prisonService
-      .getPrisonerAlerts(offenderNumbers, prisonCode, user)
-      .then(a => a.filter(alert => !alert.expired && alert.active))
+  async getAlertsUsingPrisonerNumbers(prisonerNumbers: string[], user: ServiceUser): Promise<Alert[]> {
+    return this.alertsApiClient.getAlertsForPrisoners(prisonerNumbers, user).then(alerts => alerts?.content)
   }
 
-  async getAlertDetails(
-    prisoners: PrisonerDetails[],
-    prisonCode: string,
-    user: ServiceUser,
-  ): Promise<PrisonerAlertResults> {
-    const offenderNumbers: string[] = prisoners.map(prisoner => prisoner.number)
+  async getAlertDetails(prisoners: PrisonerDetails[], user: ServiceUser): Promise<PrisonerAlertResults> {
+    const prisonerNumbers: string[] = prisoners.map(prisoner => prisoner.number)
 
-    const allAlertsForAllPrisoners: Alert[] = await this.fetchRelevantPrisonerAlerts(offenderNumbers, prisonCode, user)
+    const allAlertsForAllPrisoners: Alert[] = await this.getAlertsUsingPrisonerNumbers(prisonerNumbers, user)
 
     const prisonersWithAlerts: PrisonerAlertDetails[] = []
     let numPrisonersWithAlerts = 0
 
     prisoners.forEach(prisoner => {
-      const relevantAlerts = allAlertsForAllPrisoners.filter(alert => alert.offenderNo === prisoner.number)
+      const relevantAlerts = allAlertsForAllPrisoners.filter(alert => alert.prisonNumber === prisoner.number)
 
-      const prisonerAlerts = relevantAlerts.map(a => ({ alertCode: a.alertCode }))
+      const prisonerAlerts = relevantAlerts.map(a => ({ alertCode: a.alertCode.code }))
 
       const prisonerAlertDescriptions = relevantAlerts
-        .map(alert => alert.alertCodeDescription)
+        .map(alert => alert.alertCode.description)
         .sort((a, b) => a.localeCompare(b))
 
       const isCategoryRelevant = this.categoriesWithBadges.has(prisoner.category)
@@ -87,7 +77,8 @@ export default class PrisonerAlertsService {
         alerts: prisonerAlerts,
         alertDescriptions: prisonerAlertDescriptions,
         hasRelevantCategories: isCategoryRelevant,
-        hasBadgeAlerts: isCategoryRelevant || relevantAlerts.some(alert => this.alertsWithBadges.has(alert.alertCode)),
+        hasBadgeAlerts:
+          isCategoryRelevant || relevantAlerts.some(alert => this.alertsWithBadges.has(alert.alertCode.code)),
       })
     })
 

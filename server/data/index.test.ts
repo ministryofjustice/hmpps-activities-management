@@ -9,6 +9,7 @@ import FrontendComponentApiClient from './frontendComponentApiClient'
 import CaseNotesApiClient from './caseNotesApiClient'
 import BookAVideoLinkApiClient from './bookAVideoLinkApiClient'
 import NonAssociationsApiClient from './nonAssociationsApiClient'
+import AlertsApiClient from './alertsApiClient'
 import LocationsInsidePrisonApiClient from './locationsInsidePrisonApiClient'
 import NomisMappingClient from './nomisMappingClient'
 
@@ -26,6 +27,7 @@ describe('DataAccess', () => {
     expect(clients.bookAVideoLinkApiClient).toBeInstanceOf(BookAVideoLinkApiClient)
     expect(clients.frontendComponentApiClient).toBeInstanceOf(FrontendComponentApiClient)
     expect(clients.nonAssociationsApiClient).toBeInstanceOf(NonAssociationsApiClient)
+    expect(clients.alertsApiClient).toBeInstanceOf(AlertsApiClient)
     expect(clients.locationsInsidePrisonApiClient).toBeInstanceOf(LocationsInsidePrisonApiClient)
     expect(clients.nomisMappingClient).toBeInstanceOf(NomisMappingClient)
     expect(clients.applicationInfo.applicationName).toBe('hmpps-activities-management')

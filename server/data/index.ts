@@ -20,6 +20,7 @@ import FrontendComponentApiClient from './frontendComponentApiClient'
 import CaseNotesApiClient from './caseNotesApiClient'
 import BookAVideoLinkApiClient from './bookAVideoLinkApiClient'
 import NonAssociationsApiClient from './nonAssociationsApiClient'
+import AlertsApiClient from './alertsApiClient'
 import LocationsInsidePrisonApiClient from './locationsInsidePrisonApiClient'
 import NomisMappingClient from './nomisMappingClient'
 
@@ -37,6 +38,7 @@ export default function dataAccess() {
     bookAVideoLinkApiClient: new BookAVideoLinkApiClient(),
     applicationInsightsClient: appInsightsClient,
     nonAssociationsApiClient: new NonAssociationsApiClient(),
+    alertsApiClient: new AlertsApiClient(),
     locationsInsidePrisonApiClient: new LocationsInsidePrisonApiClient(),
     nomisMappingClient: new NomisMappingClient(),
   }
