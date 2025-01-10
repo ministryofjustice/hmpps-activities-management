@@ -163,9 +163,9 @@
                                 checked: filterItems.locationType == 'ALL'
                             },
                             {
-                                value: "OUT_OF_CELL",
+                                value: LocationType.OUT_OF_CELL,
                                 text: "Search for a location",
-                                checked: filterItems.locationType == 'OUT_OF_CELL',
+                                checked: filterItems.locationType == LocationType.OUT_OF_CELL,
                                 conditional: {
                                     html: govukSelect({
                                         id: "locationId",
@@ -180,9 +180,9 @@
                                 }
                             },
                             {
-                                value: "IN_CELL",
+                                value: LocationType.IN_CELL,
                                 text: "In cell",
-                                checked: filterItems.locationType == 'IN_CELL'
+                                checked: filterItems.locationType == LocationType.OUT_OF_CELL
                             }
                         ]
                     }) }}
