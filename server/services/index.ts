@@ -13,6 +13,7 @@ import LocationMappingService from './locationMappingService'
 
 export default function services() {
   const {
+    applicationInfo,
     manageUsersApiClient,
     prisonApiClient,
     prisonRegisterApiClient,
@@ -31,6 +32,7 @@ export default function services() {
   const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient)
 
   return {
+    applicationInfo,
     userService: new UserService(manageUsersApiClient, prisonRegisterApiClient, activitiesApiClient),
     prisonService,
     activitiesService: new ActivitiesService(activitiesApiClient),
