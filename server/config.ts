@@ -169,6 +169,14 @@ export default {
       },
       agent: new AgentConfig(Number(get('NON_ASSOCIATIONS_API_TIMEOUT_RESPONSE', 30000))),
     },
+    alertsApi: {
+      url: get('ALERTS_API_URL', 'http://localhost:8097', requiredInProduction),
+      timeout: {
+        response: Number(get('ALERTS_API_TIMEOUT_RESPONSE', 30000)),
+        deadline: Number(get('ALERTS_API_TIMEOUT_DEADLINE', 30000)),
+      },
+      agent: new AgentConfig(Number(get('ALERTS_API_TIMEOUT_RESPONSE', 30000))),
+    },
     locationsInsidePrisonApi: {
       url: get('LOCATIONS_INSIDE_PRISON_API_URL', 'http://localhost:8082', requiredInProduction),
       timeout: {

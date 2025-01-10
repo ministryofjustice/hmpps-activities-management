@@ -10,6 +10,7 @@ import AlertsFilterService from './alertsFilterService'
 import BookAVideoLinkService from './bookAVideoLinkService'
 import NonAssociationsService from './nonAssociationsService'
 import LocationMappingService from './locationMappingService'
+import AlertsService from './alertsService'
 
 export default function services() {
   const {
@@ -23,12 +24,14 @@ export default function services() {
     applicationInsightsClient,
     caseNotesApiClient,
     nonAssociationsApiClient,
+    alertsApiClient,
     locationsInsidePrisonApiClient,
     nomisMappingClient,
   } = dataAccess()
 
   const alertsFilterService = new AlertsFilterService()
   const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient)
+  const alertsService = new AlertsService(alertsApiClient)
 
   return {
     userService: new UserService(manageUsersApiClient, prisonRegisterApiClient, activitiesApiClient),
@@ -41,6 +44,7 @@ export default function services() {
     unlockListService: new UnlockListService(prisonerSearchApiClient, activitiesApiClient, alertsFilterService),
     metricsService: new MetricsService(applicationInsightsClient),
     nonAssociationsService: new NonAssociationsService(nonAssociationsApiClient, prisonService),
+    alertsService,
     locationMappingService: new LocationMappingService(locationsInsidePrisonApiClient, nomisMappingClient),
   }
 }
