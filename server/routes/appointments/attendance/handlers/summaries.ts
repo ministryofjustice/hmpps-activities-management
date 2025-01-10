@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import _, { uniq } from 'lodash'
+import { uniq } from 'lodash'
 import { isValid } from 'date-fns'
 import DateOption from '../../../../enum/dateOption'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -65,15 +65,14 @@ export default class SummariesRoutes {
         date: toDateString(dateOptionDate),
       }
 
-      const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
-      const uniqueLocations = _.uniqBy(locations, 'locationId')
+      const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
       return res.render('pages/appointments/attendance/summaries-multi-select', {
         date: dateOptionDate,
         summaries,
         attendanceSummary,
         prisonersDetails,
-        locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
+        locations,
         filterItems: filterItems(asString(locationId), locationTypeFilter),
       })
     }

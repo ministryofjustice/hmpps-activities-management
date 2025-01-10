@@ -29,14 +29,9 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
   const locations = [
     {
-      locationId: 27187,
-      locationType: 'ADJU',
+      id: 27187,
+      prisonCode: 'RSI',
       description: 'RES-MCASU-MCASU',
-      agencyId: 'MDI',
-      parentLocationId: 27186,
-      currentOccupancy: 0,
-      locationPrefix: 'MDI-RES-MCASU-MCASU',
-      userDescription: 'Adj',
     },
   ]
 
@@ -60,7 +55,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
     config.appointmentMultipleAttendanceToggleEnabled = true
 
-    when(prisonService.getEventLocations).mockResolvedValue(locations)
+    when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
   })
 
   afterEach(() => {
