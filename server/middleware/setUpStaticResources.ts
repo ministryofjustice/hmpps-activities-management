@@ -25,6 +25,15 @@ export default function setUpStaticResources(): Router {
     router.use('/assets', express.static(path.join(process.cwd(), dir), cacheControl))
   })
 
+  // set favicon redirect
+  router.use(
+    '/favicon.ico',
+    express.static(
+      path.join(process.cwd(), '/node_modules/govuk-frontend/dist/govuk/assets/favicon.ico'),
+      cacheControl,
+    ),
+  )
+
   // DPR assets
   router.use(
     '/assets/dpr',

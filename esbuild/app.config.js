@@ -15,6 +15,7 @@ const buildApp = buildConfig => {
     sourcemap: true,
     platform: 'node',
     format: 'cjs',
+    logLevel: 'error',
     plugins: [
       typecheckPlugin(),
       copy({
