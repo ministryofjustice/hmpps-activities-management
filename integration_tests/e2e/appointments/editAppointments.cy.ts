@@ -61,8 +61,8 @@ context('Edit appointment', () => {
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=saunders&size=50', getPrisonPrisonersG6123VU)
     cy.stubEndpoint('GET', '/prisoner/G0995GW', getPrisonerG0995GW)
     cy.stubEndpoint('GET', '/prisoner/G6123VU', getPrisonerG6123VU)
-    cy.stubEndpoint('POST', '/search/alerts/prison-numbers', getPrisonerAlertsG0995GW)
-    cy.stubEndpoint('POST', '/search/alerts/prison-numbers', getPrisonerAlertsG0995GWG6123VU)
+    cy.stubEndpoint('POST', '/search/alerts/prison-numbers\\?includeInactive=false', getPrisonerAlertsG0995GW)
+    cy.stubEndpoint('POST', '/search/alerts/prison-numbers\\?includeInactive=false', getPrisonerAlertsG0995GWG6123VU)
     cy.stubEndpoint('POST', '/non-associations/between', getNonAssociationsBetweenG0995GWA1350DZ)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getPrisonPrisonersG0995GWA1351DZ)
 

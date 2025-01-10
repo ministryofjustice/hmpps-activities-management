@@ -56,7 +56,7 @@ context('Duplicate appointment', () => {
       JSON.parse('{"name": "John Smith", "username": "jsmith", "authSource": "nomis"}'),
     )
     cy.stubEndpoint('GET', '/appointment-series/10/details', getGroupAppointmentSeriesDetails)
-    cy.stubEndpoint('POST', '/search/alerts/prison-numbers', getPrisonerAlerts)
+    cy.stubEndpoint('POST', '/search/alerts/prison-numbers\\?includeInactive=false', getPrisonerAlerts)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
   })
