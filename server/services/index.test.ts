@@ -10,7 +10,6 @@ import AlertsFilterService from './alertsFilterService'
 import BookAVideoLinkService from './bookAVideoLinkService'
 import NonAssociationsService from './nonAssociationsService'
 import LocationMappingService from './locationMappingService'
-import applicationInfoSupplier from '../applicationInfo'
 
 jest.mock('applicationinsights')
 
@@ -30,6 +29,6 @@ describe('Services', () => {
     expect(servicesList.bookAVideoLinkService).toBeInstanceOf(BookAVideoLinkService)
     expect(servicesList.nonAssociationsService).toBeInstanceOf(NonAssociationsService)
     expect(servicesList.locationMappingService).toBeInstanceOf(LocationMappingService)
-    expect(servicesList.applicationInfo).toBeInstanceOf(applicationInfoSupplier)
+    expect(servicesList.applicationInfo.applicationName).toBe('hmpps-activities-management')
   })
 })
