@@ -7,6 +7,7 @@
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/formatSessions.njk" import formatSessions %}
+{% from "partials/renderPayStatus.njk" import renderPayStatus %}
 {% from "components/searchBar.njk" import searchBar %}
 
 {% set pageTitle = applicationName %}
@@ -137,14 +138,20 @@
                     }
                 },
                 {
-                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' + renderPayStatus(attendee),
+                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' + 
+                    renderPayStatus({ 
+                        dataPresentCheck: attendee.attendance,
+                        status: attendee.attendance.status,
+                        issuePayment: attendee.attendance.issuePayment,
+                        isPaid: attendee.instance.activitySchedule.activity.paid
+                    }),
                     attributes: {
                         "data-qa": "attendance"
                     }
                 },
                 {
                     html: renderViewLink(attendee)
-                }
+                }              
             ]
         }), rows) %}
     {% endfor %}
@@ -209,7 +216,7 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro renderPayStatus(attendee) %}
+{# {% macro renderPayStatus(attendee) %}
     {% if attendee.attendance and attendee.attendance.status != 'WAITING' %}
         {% if attendee.attendance.issuePayment %}
             {{ govukTag({
@@ -228,7 +235,7 @@
             }) }}
         {% endif %}
     {% endif %}
-{% endmacro %}
+{% endmacro %} #}
 
 {% macro renderViewLink(attendee) %}
     {% if attendee.attendance.status === 'COMPLETED' or attendee.attendance.attendanceHistory | length %}

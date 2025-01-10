@@ -15,6 +15,7 @@
 {% from "partials/formatSessions.njk" import formatSessions %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
 {% from "partials/showLocation.njk" import showLocation %}
+{% from "partials/renderPayStatus.njk" import renderPayStatus %}
 
 {% set pageTitle = applicationName %}
 {% set pageId = 'attendance-list-page' %}
@@ -126,6 +127,7 @@
 
     {% set rows = [] %}
     {% for attendee in attendance | sort(false, false, 'location') %}
+
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
             value: instance.id + '-' + attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
@@ -172,7 +174,14 @@
                     }
                 },
                 {
-                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' + renderPayStatus(attendee.attendance, isPayable),
+                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' + 
+                    renderPayStatus( 
+                    { 
+                        dataPresentCheck: attendance,
+                        status: attendance.status,
+                        isPaid: payable,
+                        issuePayment: attendance.issuePayment 
+                    }),
                     classes: 'govuk-!-display-none-print',
                     attributes: {
                         "data-qa": "attendance"
@@ -266,7 +275,7 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro renderPayStatus(attendance, payable) %}
+{# {% macro renderPayStatus(attendance, payable) %}
     {% if attendance and attendance.status != 'WAITING' %}
         {% if attendance.issuePayment %}
             {{ govukTag({
@@ -285,7 +294,7 @@
             }) }}
         {% endif %}
     {% endif %}
-{% endmacro %}
+{% endmacro %} #}
 
 {% macro renderViewLink(attendance) %}
     {% if attendance.status === 'COMPLETED' or attendance.attendanceHistory|length %}

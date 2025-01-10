@@ -1,0 +1,29 @@
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% macro renderPayStatus(options = {}) %}  
+    {% set dataPresentCheck = options.dataPresentCheck or false %}
+    {% set status = options.status or false %}
+    {% set issuePayment = options.issuePayment or false %}
+    {% set isPaid = options.isPaid or false %}
+    {% set tagClass = options.tagClass or 'govuk-tag--green govuk-!-margin-bottom-1' %}
+    {% set payText = options.payText or 'Pay' %}
+
+    {% if dataPresentCheck and status != 'WAITING' %}
+        {% if issuePayment %}
+            {{ govukTag({
+                text: payText,
+                classes: tagClass
+            }) }}
+        {% elseif isPaid %}
+            {{ govukTag({
+                text: "No pay",
+                classes: "govuk-tag--red govuk-!-margin-bottom-1"
+            }) }}
+        {% else %}
+            {{ govukTag({
+                text: "Unpaid",
+                classes: tagClass
+            }) }}
+        {% endif %}
+    {% endif %}
+{% endmacro %}

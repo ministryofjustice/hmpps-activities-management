@@ -1,5 +1,6 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/showLocation.njk" import showLocation %}
+{% from "partials/renderPayStatus.njk" import renderPayStatus %}
 
 {% macro otherEvent(event) %}
   <div class="govuk-body govuk-!-margin-0">
@@ -25,11 +26,19 @@
         <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ showLocation(event) }}</div>
       {% endif %}
       {{ renderAttendance(event) }}
-      {{ renderPayStatus(event) }}
+        {{ renderPayStatus({
+            dataPresentCheck: event.attendanceStatus,
+            status: event.attendanceStatus,
+            issuePayment: event.issuePayment,
+            isPaid: event.paid,
+            tagClass: 'govuk-tag--small govuk-tag--green govuk-!-margin-bottom-1',
+            payText: 'Paid'
+        }) }}
+
   </div>
 {% endmacro %}
 
-{% macro renderPayStatus(event) %}
+{# {% macro renderPayStatus(event) %}
     {% if event.attendanceStatus and event.attendanceStatus != 'WAITING' %}
         {% if event.issuePayment %}
             {{ govukTag({
@@ -48,7 +57,7 @@
             }) }}
         {% endif %}
     {% endif %}
-{% endmacro %}
+{% endmacro %} #}
 
 {% macro renderAttendance(event) %}
     {% if event.attendanceStatus == 'COMPLETED' %}
