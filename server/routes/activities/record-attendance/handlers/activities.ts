@@ -6,7 +6,7 @@ import { asString, convertToArray, formatDate, toDate } from '../../../../utils/
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import PrisonService from '../../../../services/prisonService'
-import { LocationType } from '../../create-an-activity/handlers/location'
+import LocationType from '../../../../enum/locationType'
 
 export default class ActivitiesRoutes {
   constructor(

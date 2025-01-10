@@ -27,6 +27,19 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
   const yesterday = subDays(today, 1)
   const prisonCode = 'RSI'
 
+  const locations = [
+    {
+      locationId: 27187,
+      locationType: 'ADJU',
+      description: 'RES-MCASU-MCASU',
+      agencyId: 'MDI',
+      parentLocationId: 27186,
+      currentOccupancy: 0,
+      locationPrefix: 'MDI-RES-MCASU-MCASU',
+      userDescription: 'Adj',
+    },
+  ]
+
   beforeEach(() => {
     res = {
       locals: {
@@ -46,6 +59,8 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
     req.query = {}
 
     config.appointmentMultipleAttendanceToggleEnabled = true
+
+    when(prisonService.getEventLocations).mockResolvedValue(locations)
   })
 
   afterEach(() => {
@@ -389,6 +404,11 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           tier2Count: 0,
         },
         prisonersDetails,
+        filterItems: {
+          locationType: 'ALL',
+          locationId: null,
+        },
+        locations,
       })
     })
 
@@ -448,6 +468,11 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           tier2Count: 3,
         },
         prisonersDetails,
+        filterItems: {
+          locationType: 'ALL',
+          locationId: null,
+        },
+        locations,
       })
     })
 
@@ -526,6 +551,11 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           tier2Count: 3,
         },
         prisonersDetails,
+        filterItems: {
+          locationType: 'ALL',
+          locationId: null,
+        },
+        locations,
       })
     })
 
@@ -626,6 +656,11 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           tier2Count: 0,
         },
         prisonersDetails: expectedPrisonersDetails,
+        filterItems: {
+          locationType: 'ALL',
+          locationId: null,
+        },
+        locations,
       })
     })
 
@@ -689,6 +724,166 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           tier2Count: 3,
         },
         prisonersDetails,
+        filterItems: {
+          locationType: 'ALL',
+          locationId: null,
+        },
+        locations,
+      })
+    })
+
+    it('should filter appointments for in cell', async () => {
+      const dateOption = DateOption.YESTERDAY
+      req.query = {
+        dateOption,
+        locationType: 'IN_CELL',
+        locationId: '123',
+      }
+      const prisonersDetails = {} as Prisoner
+
+      const summaries = [
+        {
+          appointmentName: 'Gym',
+          attendeeCount: 1,
+          attendedCount: 0,
+          nonAttendedCount: 0,
+          notRecordedCount: 1,
+          attendees: [],
+          eventTierType: 'TIER_1',
+          inCell: false,
+          internalLocation: {
+            id: 123,
+          },
+        },
+        {
+          appointmentName: 'Chaplaincy',
+          attendeeCount: 3,
+          attendedCount: 2,
+          nonAttendedCount: 1,
+          notRecordedCount: 0,
+          attendees: [],
+          eventTierType: 'TIER_1',
+          inCell: true,
+        },
+        {
+          appointmentName: 'ChaPLaincy 2',
+          attendeeCount: 6,
+          attendedCount: 3,
+          nonAttendedCount: 2,
+          notRecordedCount: 1,
+          attendees: [],
+          eventTierType: 'TIER_2',
+          inCell: true,
+        },
+      ] as AppointmentAttendanceSummary[]
+
+      when(activitiesService.getAppointmentAttendanceSummaries)
+        .calledWith(prisonCode, yesterday, res.locals.user)
+        .mockResolvedValue(summaries)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries-multi-select', {
+        date: yesterday,
+        summaries: [summaries[1], summaries[2]],
+        attendanceSummary: {
+          attendeeCount: 9,
+          attended: 5,
+          notAttended: 3,
+          notRecorded: 1,
+          attendedPercentage: 56,
+          notAttendedPercentage: 33,
+          notRecordedPercentage: 11,
+          foundationCount: 0,
+          tier1Count: 2,
+          tier2Count: 3,
+        },
+        prisonersDetails,
+        filterItems: {
+          locationType: 'IN_CELL',
+          locationId: null,
+        },
+        locations,
+      })
+    })
+
+    it('should filter appointments for location', async () => {
+      const dateOption = DateOption.YESTERDAY
+      req.query = {
+        dateOption,
+        locationType: 'OUT_OF_CELL',
+        locationId: '123',
+      }
+      const prisonersDetails = {} as Prisoner
+
+      const summaries = [
+        {
+          appointmentName: 'Gym',
+          attendeeCount: 1,
+          attendedCount: 0,
+          nonAttendedCount: 0,
+          notRecordedCount: 1,
+          attendees: [],
+          eventTierType: 'TIER_1',
+          inCell: false,
+          internalLocation: {
+            id: 456,
+          },
+        },
+        {
+          appointmentName: 'Chaplaincy',
+          attendeeCount: 3,
+          attendedCount: 2,
+          nonAttendedCount: 1,
+          notRecordedCount: 0,
+          attendees: [],
+          eventTierType: 'TIER_1',
+          inCell: false,
+          internalLocation: {
+            id: 123,
+          },
+        },
+        {
+          appointmentName: 'ChaPLaincy 2',
+          attendeeCount: 6,
+          attendedCount: 3,
+          nonAttendedCount: 2,
+          notRecordedCount: 1,
+          attendees: [],
+          eventTierType: 'TIER_2',
+          internalLocation: {
+            id: 123,
+          },
+        },
+      ] as AppointmentAttendanceSummary[]
+
+      when(activitiesService.getAppointmentAttendanceSummaries)
+        .calledWith(prisonCode, yesterday, res.locals.user)
+        .mockResolvedValue(summaries)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries-multi-select', {
+        date: yesterday,
+        summaries: [summaries[1], summaries[2]],
+        attendanceSummary: {
+          attendeeCount: 9,
+          attended: 5,
+          notAttended: 3,
+          notRecorded: 1,
+          attendedPercentage: 56,
+          notAttendedPercentage: 33,
+          notRecordedPercentage: 11,
+          foundationCount: 0,
+          tier1Count: 2,
+          tier2Count: 3,
+        },
+        prisonersDetails,
+        filterItems: {
+          locationType: 'OUT_OF_CELL',
+          locationId: '123',
+        },
+        locations,
       })
     })
   })
@@ -723,11 +918,15 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
       req.body = {
         searchTerm: 'CHap',
+        locationId: '123',
+        locationType: 'IN_CELL',
       }
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('summaries?dateOption=other&date=2024-11-23&searchTerm=CHap')
+      expect(res.redirect).toHaveBeenCalledWith(
+        'summaries?dateOption=other&date=2024-11-23&searchTerm=CHap&locationId=123&locationType=IN_CELL',
+      )
     })
   })
 })

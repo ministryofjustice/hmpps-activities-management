@@ -9,7 +9,7 @@ import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../
 import { EditAppointmentJourney } from '../editAppointmentJourney'
 import { AppointmentLocationSummary } from '../../../../@types/activitiesAPI/types'
 import EditAppointmentService from '../../../../services/editAppointmentService'
-import { LocationType } from '../../../activities/create-an-activity/handlers/location'
+import LocationType from '../../../../enum/locationType'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/editAppointmentService')
