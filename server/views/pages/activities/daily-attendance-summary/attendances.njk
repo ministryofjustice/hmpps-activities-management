@@ -11,6 +11,7 @@
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/attendance/incentiveLevelWarningTag.njk" import incentiveLevelWarningTag %}
+{% from "partials/renderPayStatus.njk" import renderPayStatus %}
 
 {% set pageTitle = applicationName + " - Daily attendance list" %}
 {% set pageId = 'daily-attendance-detail-page' %}
@@ -197,7 +198,13 @@
                     {% set sessionNameHtml = attendee.attendance.timeSlot + '<br>' + (attendee.attendance.startTime) + ' to ' + (attendee.attendance.endTime)  %}
                 {% endif %}
 
-                {% set attendanceDetailsHtml = attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + renderPayStatus(attendee.attendance) %}
+                {% set attendanceDetailsHtml = attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + renderPayStatus({
+                    dataPresentCheck: attendee.attendance,
+                    status: attendee.attendance.status,
+                    issuePayment: attendee.attendance.issuePayment,
+                    payable: true,
+                    marginTagClass: true
+                }) %}
                 {% if status == 'Absences' %}
                     {% set attendanceDetailsHtml = attendanceDetailsHtml + ' ' + incentiveLevelWarningTag(attendee.attendance)  %}
                 {% endif %}
@@ -302,17 +309,3 @@
         rows: attendanceRows
     }) }}
     {% endmacro %}
-
-    {% macro renderPayStatus(attendance) %}
-        {% if attendance.issuePayment %}
-            {{ govukTag({
-            text: "Pay",
-            classes: "govuk-tag--green govuk-!-margin-bottom-1"
-        }) }}
-        {% elseif attendance.status !=  'WAITING' %}
-            {{ govukTag({
-            text: "No pay",
-            classes: "govuk-tag--red govuk-!-margin-bottom-1"
-        }) }}
-        {% endif %}
-    {% endmacro %}   
