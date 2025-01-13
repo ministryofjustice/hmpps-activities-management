@@ -3,61 +3,42 @@
 {% from "partials/renderPayStatus.njk" import renderPayStatus %}
 
 {% macro otherEvent(event) %}
-  <div class="govuk-body govuk-!-margin-0">
-      <div>
-        {% if event.eventType == 'ACTIVITY' and event.eventSource =='SAA' %}
-            <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list" 
+    <div class="govuk-body govuk-!-margin-0">
+        <div>
+            {% if event.eventType == 'ACTIVITY' and event.eventSource == 'SAA' %}
+                <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list" 
               class="govuk-link govuk-link--no-visited-state"
-              target="_blank">{{ event.summary }}<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
-        {% elseif event.eventType == 'APPOINTMENT' and event.eventSource =='SAA' %}
-            <a href="/appointments/{{ event.appointmentId }}"
+              target="_blank">{{ event.summary }}
+                    <span class="govuk-visually-hidden"> (opens in new tab)</span></a>
+            {% elseif event.eventType == 'APPOINTMENT' and event.eventSource =='SAA' %}
+                <a href="/appointments/{{ event.appointmentId }}"
               class="govuk-link"
-              target="_blank">{{ event.summary }}<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
-            <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
-        {% else %}
-            <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ event.summary | trim }}</div>
+              target="_blank">{{ event.summary }}
+                    <span class="govuk-visually-hidden"> (opens in new tab)</span></a>
+                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+            {% else %}
+                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ event.summary | trim }}</div>
+            {% endif %}
+            {% if event.cancelled %}
+                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
+            {% endif %}
+        </div>
+        {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
+            <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.startTime }}{{ " to " + event.endTime if event.endTime }}</div>
+            <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ showLocation(event) }}</div>
         {% endif %}
-        {% if event.cancelled %}
-            <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
-        {% endif %}
-      </div>
-      {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
-        <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.startTime }}{{ " to " + event.endTime if event.endTime }}</div>
-        <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ showLocation(event) }}</div>
-      {% endif %}
-      {{ renderAttendance(event) }}
+        {{ renderAttendance(event) }}
         {{ renderPayStatus({
             dataPresentCheck: event.attendanceStatus,
             status: event.attendanceStatus,
             issuePayment: event.issuePayment,
-            isPaid: event.paid,
-            tagClass: 'govuk-tag--small govuk-tag--green govuk-!-margin-bottom-1',
+            payable: event.paid,
+            smallTagClass: true,
             payText: 'Paid'
         }) }}
 
-  </div>
+    </div>
 {% endmacro %}
-
-{# {% macro renderPayStatus(event) %}
-    {% if event.attendanceStatus and event.attendanceStatus != 'WAITING' %}
-        {% if event.issuePayment %}
-            {{ govukTag({
-                text: "Paid",
-                classes: "govuk-tag--small govuk-tag--green govuk-!-margin-bottom-1"
-            }) }}
-        {% elseif event.paid %}
-            {{ govukTag({
-                text: "No pay",
-                classes: "govuk-tag--small govuk-tag--red govuk-!-margin-bottom-1"
-            }) }}
-        {% else %}
-            {{ govukTag({
-                text: "Unpaid",
-                classes: "govuk-tag--small govuk-tag--green govuk-!-margin-bottom-1"
-            }) }}
-        {% endif %}
-    {% endif %}
-{% endmacro %} #}
 
 {% macro renderAttendance(event) %}
     {% if event.attendanceStatus == 'COMPLETED' %}
@@ -72,5 +53,5 @@
                 classes: "govuk-tag--small govuk-tag--red"
             })  }}
         {% endif %}
-    {%  endif %}
+    {% endif %}
 {% endmacro %}

@@ -4,25 +4,26 @@
     {% set dataPresentCheck = options.dataPresentCheck or false %}
     {% set status = options.status or false %}
     {% set issuePayment = options.issuePayment or false %}
-    {% set isPaid = options.isPaid or false %}
-    {% set tagClass = options.tagClass or 'govuk-tag--green govuk-!-margin-bottom-1' %}
+    {% set payable = options.payable or false %}
     {% set payText = options.payText or 'Pay' %}
+    {% set smallTagClass = 'govuk-tag--small' if options.smallTagClass else '' %}
+    {% set marginTagClass = 'govuk-!-margin-bottom-1' if options.marginTagClass else '' %}
 
     {% if dataPresentCheck and status != 'WAITING' %}
         {% if issuePayment %}
             {{ govukTag({
                 text: payText,
-                classes: tagClass
+                classes: smallTagClass + ' govuk-tag--green ' + marginTagClass
             }) }}
-        {% elseif isPaid %}
+        {% elseif payable %}
             {{ govukTag({
                 text: "No pay",
-                classes: "govuk-tag--red govuk-!-margin-bottom-1"
+                classes: smallTagClass + ' govuk-tag--red ' + marginTagClass
             }) }}
         {% else %}
             {{ govukTag({
                 text: "Unpaid",
-                classes: tagClass
+                classes: smallTagClass + ' govuk-tag--red ' + marginTagClass
             }) }}
         {% endif %}
     {% endif %}

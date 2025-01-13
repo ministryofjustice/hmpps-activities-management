@@ -143,7 +143,8 @@
                         dataPresentCheck: attendee.attendance,
                         status: attendee.attendance.status,
                         issuePayment: attendee.attendance.issuePayment,
-                        isPaid: attendee.instance.activitySchedule.activity.paid
+                        payable: attendee.instance.activitySchedule.activity.paid,
+                        marginTagClass: 'govuk-!-margin-bottom-1'
                     }),
                     attributes: {
                         "data-qa": "attendance"
@@ -215,27 +216,6 @@
         {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
     {% endfor %}
 {% endmacro %}
-
-{# {% macro renderPayStatus(attendee) %}
-    {% if attendee.attendance and attendee.attendance.status != 'WAITING' %}
-        {% if attendee.attendance.issuePayment %}
-            {{ govukTag({
-                text: "Pay",
-                classes: "govuk-tag--green govuk-!-margin-bottom-1"
-            }) }}
-        {% elseif attendee.instance.activitySchedule.activity.paid %}
-            {{ govukTag({
-                text: "No pay",
-                classes: "govuk-tag--red govuk-!-margin-bottom-1"
-            }) }}
-        {% else %}
-            {{ govukTag({
-                text: "Unpaid",
-                classes: "govuk-tag--green govuk-!-margin-bottom-1"
-            }) }}
-        {% endif %}
-    {% endif %}
-{% endmacro %} #}
 
 {% macro renderViewLink(attendee) %}
     {% if attendee.attendance.status === 'COMPLETED' or attendee.attendance.attendanceHistory | length %}
