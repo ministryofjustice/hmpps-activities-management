@@ -1,6 +1,6 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/showLocation.njk" import showLocation %}
-{% from "partials/renderPayStatus.njk" import renderPayStatus %}
+{% from "partials/payStatus.njk" import payStatus %}
 
 {% macro otherEvent(event) %}
     <div class="govuk-body govuk-!-margin-0">
@@ -28,7 +28,7 @@
             <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ showLocation(event) }}</div>
         {% endif %}
         {{ renderAttendance(event) }}
-        {{ renderPayStatus({
+        {{ payStatus({
             dataPresentCheck: event.attendanceStatus,
             status: event.attendanceStatus,
             issuePayment: event.issuePayment,

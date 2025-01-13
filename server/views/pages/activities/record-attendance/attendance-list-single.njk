@@ -15,7 +15,7 @@
 {% from "partials/formatSessions.njk" import formatSessions %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
 {% from "partials/showLocation.njk" import showLocation %}
-{% from "partials/renderPayStatus.njk" import renderPayStatus %}
+{% from "partials/payStatus.njk" import payStatus %}
 
 {% set pageTitle = applicationName %}
 {% set pageId = 'attendance-list-page' %}
@@ -175,7 +175,7 @@
                 },
                 {
                     html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' + 
-                    renderPayStatus( 
+                    payStatus( 
                     { 
                         dataPresentCheck: attendee.attendance,
                         status: attendee.attendance.status,

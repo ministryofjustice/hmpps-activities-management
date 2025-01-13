@@ -7,7 +7,7 @@
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/formatSessions.njk" import formatSessions %}
-{% from "partials/renderPayStatus.njk" import renderPayStatus %}
+{% from "partials/payStatus.njk" import payStatus %}
 {% from "components/searchBar.njk" import searchBar %}
 
 {% set pageTitle = applicationName %}
@@ -139,7 +139,7 @@
                 },
                 {
                     html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' + 
-                    renderPayStatus({ 
+                    payStatus({ 
                         dataPresentCheck: attendee.attendance,
                         status: attendee.attendance.status,
                         issuePayment: attendee.attendance.issuePayment,

@@ -5,15 +5,15 @@ import { registerNunjucks } from '../../nunjucks/nunjucksSetup'
 
 let $: CheerioAPI
 
-describe('show renderPayStatus macro', () => {
+describe('show payStatus macro', () => {
   let compiledTemplate: Template
 
   const njkEnv = registerNunjucks()
 
   beforeEach(() => {
     const view = `
-      {% from "partials/renderPayStatus.njk" import renderPayStatus %}
-      {{ renderPayStatus(options) }}`
+      {% from "partials/payStatus.njk" import payStatus %}
+      {{ payStatus(options) }}`
     compiledTemplate = nunjucks.compile(view, njkEnv)
   })
 

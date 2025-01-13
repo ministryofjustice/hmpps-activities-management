@@ -11,7 +11,7 @@
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/attendance/incentiveLevelWarningTag.njk" import incentiveLevelWarningTag %}
-{% from "partials/renderPayStatus.njk" import renderPayStatus %}
+{% from "partials/payStatus.njk" import payStatus %}
 
 {% set pageTitle = applicationName + " - Daily attendance list" %}
 {% set pageId = 'daily-attendance-detail-page' %}
@@ -198,7 +198,7 @@
                     {% set sessionNameHtml = attendee.attendance.timeSlot + '<br>' + (attendee.attendance.startTime) + ' to ' + (attendee.attendance.endTime)  %}
                 {% endif %}
 
-                {% set attendanceDetailsHtml = attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + renderPayStatus({
+                {% set attendanceDetailsHtml = attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReasonCode) + ' ' + payStatus({
                     dataPresentCheck: attendee.attendance,
                     status: attendee.attendance.status,
                     issuePayment: attendee.attendance.issuePayment,
