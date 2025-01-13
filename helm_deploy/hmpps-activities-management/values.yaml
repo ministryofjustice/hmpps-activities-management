@@ -1,5 +1,6 @@
 generic-service:
   nameOverride: hmpps-activities-management
+  productId: 'DPS028' # fetched from dev portal
 
   replicaCount: 4
 

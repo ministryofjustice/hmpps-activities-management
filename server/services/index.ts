@@ -14,6 +14,7 @@ import AlertsService from './alertsService'
 
 export default function services() {
   const {
+    applicationInfo,
     manageUsersApiClient,
     prisonApiClient,
     prisonRegisterApiClient,
@@ -34,6 +35,7 @@ export default function services() {
   const alertsService = new AlertsService(alertsApiClient)
 
   return {
+    applicationInfo,
     userService: new UserService(manageUsersApiClient, prisonRegisterApiClient, activitiesApiClient),
     prisonService,
     activitiesService: new ActivitiesService(activitiesApiClient),
