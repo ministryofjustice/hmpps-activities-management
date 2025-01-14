@@ -332,10 +332,6 @@ export default class ActivitiesService {
     return this.activitiesApiClient.patchUpdateAppointment(appointmentId, request, user)
   }
 
-  getPrisonRolloutPlan(prisonCode: string) {
-    return this.activitiesApiClient.getPrisonRolloutPlan(prisonCode)
-  }
-
   getRolledOutPrisons() {
     return this.activitiesApiClient.getRolledOutPrisons()
   }

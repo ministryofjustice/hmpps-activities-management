@@ -1,8 +1,5 @@
 import { Request, Response } from 'express'
-import { when } from 'jest-when'
-import ActivitiesService from '../services/activitiesService'
 import rolloutMiddleware from './rolloutMiddleware'
-import { RolloutPrisonPlan } from '../@types/activitiesAPI/types'
 import ServiceName from '../enum/serviceName'
 
 jest.mock('../services/activitiesService')
@@ -11,20 +8,8 @@ const res = { locals: { user: { activeCaseLoadId: 'MDI' } }, render: jest.fn() }
 const req = {} as Request
 const next = jest.fn()
 
-const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-
 beforeEach(() => {
   jest.resetAllMocks()
-
-  const rolloutPrisonPlan: RolloutPrisonPlan = {
-    activitiesRolledOut: true,
-    appointmentsRolledOut: true,
-    maxDaysToExpiry: 0,
-    prisonCode: 'MDI',
-    prisonLive: true,
-  }
-
-  when(activitiesService.getPrisonRolloutPlan).calledWith('MDI').mockResolvedValue(rolloutPrisonPlan)
 })
 
 describe('rolloutMiddleware', () => {
