@@ -1,17 +1,15 @@
 import { Request, Response } from 'express'
-import { uniq } from 'lodash'
+import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import { MultipleAppointmentAttendanceRequest } from '../../../../@types/activitiesAPI/types'
-import UserService from '../../../../services/userService'
-import { convertToArray } from '../../../../utils/utils'
+import { convertToArray, eventClashes, toDate } from '../../../../utils/utils'
 import AttendanceAction from '../../../../enum/attendanceAction'
 import { getAttendanceSummaryFromAppointmentDetails } from '../../utils/attendanceUtils'
+import { EventType } from '../../../../@types/activities'
+import applyCancellationDisplayRule from '../../../../utils/applyCancellationDisplayRule'
 
 export default class AttendeesRoutes {
-  constructor(
-    private readonly activitiesService: ActivitiesService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET_MULTIPLE = async (req: Request, res: Response): Promise<void> => {
     const { appointmentIds } = req.session.recordAppointmentAttendanceJourney
@@ -19,17 +17,45 @@ export default class AttendeesRoutes {
 
     const appointments = await this.activitiesService.getAppointments(appointmentIds, user)
 
-    const recordedBy = uniq(
-      appointments.flatMap(appointment =>
-        appointment.attendees.map(attendee => attendee.attendanceRecordedBy).filter(Boolean),
-      ),
+    const prisonerNumbers = _.uniq(
+      appointments.flatMap(appointment => appointment.attendees.map(att => att.prisoner.prisonerNumber)),
     )
 
-    const userMap = await this.userService.getUserMap(recordedBy, user)
+    const events = await this.activitiesService.getScheduledEventsForPrisoners(
+      toDate(appointments[0].startDate),
+      prisonerNumbers,
+      user,
+    )
+
+    const allEvents = [
+      ...events.activities,
+      ...events.appointments,
+      ...events.courtHearings,
+      ...events.visits,
+      ...events.adjudications,
+    ]
+
+    const attendeeRows = []
+
+    appointments.forEach(appointment => {
+      appointment.attendees.forEach(attendee => {
+        const otherEvents = allEvents
+          .filter(e => e.prisonerNumber === attendee.prisoner.prisonerNumber)
+          .filter(e => e.appointmentId !== appointment.id)
+          .filter(e => eventClashes(e, appointment))
+          .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e))
+
+        attendeeRows.push({
+          ...attendee,
+          appointment,
+          otherEvents,
+        })
+      })
+    })
 
     return res.render('pages/appointments/attendance/attendees', {
-      appointments,
-      userMap,
+      attendeeRows,
+      numAppointments: appointments.length,
       attendanceSummary: getAttendanceSummaryFromAppointmentDetails(appointments),
     })
   }
