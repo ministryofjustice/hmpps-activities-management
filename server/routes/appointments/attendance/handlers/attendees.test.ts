@@ -1,19 +1,19 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
-import UserService from '../../../../services/userService'
+import { AppointmentDetails, PrisonerScheduledEvents } from '../../../../@types/activitiesAPI/types'
 import AttendeesRoutes from './attendees'
 import AttendanceAction from '../../../../enum/attendanceAction'
+import { toDate } from '../../../../utils/utils'
+import { AppointmentFrequency } from '../../../../@types/appointments'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/userService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-const userService = new UserService(null, null, null) as jest.Mocked<UserService>
 
 describe('Route Handlers - Record Appointment Attendance', () => {
-  const handler = new AttendeesRoutes(activitiesService, userService)
+  const handler = new AttendeesRoutes(activitiesService)
 
   let req: Request
   let res: Response
@@ -43,30 +43,74 @@ describe('Route Handlers - Record Appointment Attendance', () => {
   })
 
   describe('GET_MULTIPLE', () => {
+    beforeEach(() => {
+      const scheduledEvents = {
+        activities: [],
+        appointments: [],
+        courtHearings: [],
+        visits: [],
+        adjudications: [],
+      } as PrisonerScheduledEvents
+
+      activitiesService.getScheduledEventsForPrisoners.mockImplementation(() => {
+        return Promise.resolve(scheduledEvents)
+      })
+    })
+
     it('should render the attendance page with appointments', async () => {
       req.session.recordAppointmentAttendanceJourney = {
         appointmentIds: [1, 2],
       }
 
       const appointments = [
-        { id: 1, attendees: [] },
-        { id: 2, attendees: [] },
+        {
+          id: 1,
+          appointmentName: 'Chaplaincy',
+          startDate: '2024-02-25',
+          startTime: '15:00',
+          attendees: [{ prisoner: { prisonerNumber: 'A1234BC' } }, { prisoner: { prisonerNumber: 'D4444DD' } }],
+        },
+        {
+          id: 2,
+          appointmentName: 'Gym',
+          startDate: '2024-02-25',
+          attendees: [{ prisoner: { prisonerNumber: 'A1234BC' } }],
+        },
       ] as AppointmentDetails[]
 
       when(activitiesService.getAppointments).calledWith([1, 2], res.locals.user).mockResolvedValue(appointments)
 
       await handler.GET_MULTIPLE(req, res)
 
+      const attendeeRows = [
+        {
+          prisoner: { prisonerNumber: 'A1234BC' },
+          appointment: appointments[0],
+          otherEvents: [],
+        },
+        {
+          prisoner: { prisonerNumber: 'D4444DD' },
+          appointment: appointments[0],
+          otherEvents: [],
+        },
+        {
+          prisoner: { prisonerNumber: 'A1234BC' },
+          appointment: appointments[1],
+          otherEvents: [],
+        },
+      ]
+
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
-        appointments,
+        attendeeRows,
+        numAppointments: 2,
         attendanceSummary: {
-          attendeeCount: 0,
+          attendeeCount: 3,
           attended: 0,
           notAttended: 0,
-          notRecorded: 0,
+          notRecorded: 3,
           attendedPercentage: 0,
           notAttendedPercentage: 0,
-          notRecordedPercentage: 0,
+          notRecordedPercentage: 100,
         },
       })
     })
@@ -77,8 +121,29 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       }
 
       const appointments = [
-        { id: 1, attendees: [{ attended: true }, { attended: false }, { attended: null }, { attended: true }] },
-        { id: 2, attendees: [{ attended: null }, { attended: null }] },
+        {
+          id: 1,
+          appointmentName: 'Chaplaincy',
+          startDate: '2024-02-25',
+          startTime: '15:00',
+          endTime: '16:00',
+          attendees: [
+            { prisoner: { prisonerNumber: 'A1234BC' }, attended: true },
+            { prisoner: { prisonerNumber: 'D4444DD' }, attended: false },
+            { prisoner: { prisonerNumber: 'E5555EE' }, attended: false },
+            { prisoner: { prisonerNumber: 'F6666FF' }, attended: null },
+            { prisoner: { prisonerNumber: 'G7777GG' }, attended: true },
+          ],
+        },
+        {
+          id: 2,
+          appointmentName: 'Gym',
+          startDate: '2024-02-25',
+          attendees: [
+            { prisoner: { prisonerNumber: 'A1234BC' }, attended: null },
+            { prisoner: { prisonerNumber: 'G7777GG' }, attended: null },
+          ],
+        },
       ] as AppointmentDetails[]
 
       when(activitiesService.getAppointments)
@@ -86,16 +151,237 @@ describe('Route Handlers - Record Appointment Attendance', () => {
         .mockResolvedValue(appointments)
 
       await handler.GET_MULTIPLE(req, res)
+
+      const attendeeRows = [
+        {
+          prisoner: { prisonerNumber: 'A1234BC' },
+          appointment: appointments[0],
+          attended: true,
+          otherEvents: [],
+        },
+        {
+          prisoner: { prisonerNumber: 'D4444DD' },
+          appointment: appointments[0],
+          attended: false,
+          otherEvents: [],
+        },
+        {
+          prisoner: { prisonerNumber: 'E5555EE' },
+          appointment: appointments[0],
+          attended: false,
+          otherEvents: [],
+        },
+        {
+          prisoner: { prisonerNumber: 'F6666FF' },
+          appointment: appointments[0],
+          attended: null,
+          otherEvents: [],
+        },
+        {
+          prisoner: { prisonerNumber: 'G7777GG' },
+          appointment: appointments[0],
+          attended: true,
+          otherEvents: [],
+        },
+        {
+          prisoner: { prisonerNumber: 'A1234BC' },
+          appointment: appointments[1],
+          attended: null,
+          otherEvents: [],
+        },
+        {
+          prisoner: { prisonerNumber: 'G7777GG' },
+          appointment: appointments[1],
+          attended: null,
+          otherEvents: [],
+        },
+      ]
+
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
-        appointments,
+        attendeeRows,
+        numAppointments: 2,
         attendanceSummary: {
-          attendeeCount: 6,
+          attendeeCount: 7,
           attended: 2,
-          notAttended: 1,
+          notAttended: 2,
           notRecorded: 3,
-          attendedPercentage: 33,
-          notAttendedPercentage: 17,
-          notRecordedPercentage: 50,
+          attendedPercentage: 29,
+          notAttendedPercentage: 29,
+          notRecordedPercentage: 43,
+        },
+      })
+    })
+
+    it('should render the attendance page with appointmentsss', async () => {
+      req.session.recordAppointmentAttendanceJourney = {
+        appointmentIds: [1, 2],
+      }
+
+      const appointments = [
+        {
+          id: 1,
+          appointmentName: 'Chaplaincy',
+          startDate: '2024-02-25',
+          startTime: '15:00',
+          endTime: '16:00',
+          attendees: [{ prisoner: { prisonerNumber: 'A1234BC' } }],
+        },
+      ] as AppointmentDetails[]
+
+      const clashingAppointment = {
+        appointmentId: 2,
+        prisonerNumber: 'A1234BC',
+        eventType: 'APPOINTMENT',
+        date: '2024-02-25',
+        startTime: '15:00',
+        endTime: '16:00',
+      }
+
+      const nonClashingAppointment = {
+        appointmentId: 3,
+        eventType: 'APPOINTMENT',
+        prisonerNumber: 'A1234DD',
+        date: '2024-02-25',
+        startTime: '15:00',
+        endTime: '16:00',
+      }
+
+      const cancelledClashingAppointment = {
+        appointmentId: 4,
+        prisonerNumber: 'A1234BC',
+        eventType: 'APPOINTMENT',
+        date: '2024-02-25',
+        startTime: '15:00',
+        endTime: '16:00',
+        cancelled: true,
+        appointmentSeriesCancellationStartDate: '2024-02-24',
+        appointmentSeriesFrequency: AppointmentFrequency.DAILY,
+      }
+
+      const cancelledNonClashingAppointment = {
+        appointmentId: 5,
+        prisonerNumber: 'A1234BC',
+        eventType: 'APPOINTMENT',
+        date: '2024-02-25',
+        startTime: '15:00',
+        endTime: '16:00',
+        cancelled: true,
+        appointmentSeriesCancellationStartDate: '2024-02-20',
+        appointmentSeriesFrequency: AppointmentFrequency.DAILY,
+      }
+
+      const clashingActivity = {
+        scheduledInstanceId: 1,
+        prisonerNumber: 'A1234BC',
+        eventType: 'ACTIVITY',
+        date: '2024-02-25',
+        startTime: '14:30',
+        endTime: '15:10',
+      }
+
+      const nonClashingActivity = {
+        scheduledInstanceId: 2,
+        prisonerNumber: 'D4444DD',
+        eventType: 'ACTIVITY',
+        date: '2024-02-25',
+        startTime: '15:30',
+        endTime: '16:10',
+      }
+
+      const clashingCourtHearing = {
+        prisonerNumber: 'A1234BC',
+        eventType: 'COURT_HEARING',
+        date: '2024-02-25',
+        startTime: '15:10',
+        endTime: '15:40',
+      }
+
+      const nonClashingCourtHearing = {
+        prisonerNumber: 'D4444DD',
+        eventType: 'COURT_HEARING',
+        date: '2024-02-25',
+        startTime: '15:10',
+        endTime: '15:40',
+      }
+
+      const clashingVisit = {
+        eventType: 'VISIT',
+        prisonerNumber: 'A1234BC',
+        date: '2024-02-25',
+        startTime: '15:59',
+        endTime: '16:40',
+      }
+
+      const nonClashingVisit = {
+        eventType: 'VISIT',
+        prisonerNumber: 'A1234BC',
+        date: '2024-02-25',
+        startTime: '13:00',
+        endTime: '15:00',
+      }
+
+      const clashingAdjudication = {
+        eventType: 'ADJUDICATION_HEARING',
+        prisonerNumber: 'A1234BC',
+        date: '2024-02-25',
+        startTime: '13:00',
+        endTime: '17:00',
+      }
+
+      const nonClashingAdjudication = {
+        eventType: 'ADJUDICATION_HEARING',
+        prisonerNumber: 'A1234BC',
+        date: '2024-02-25',
+        startTime: '16:01',
+        endTime: '18:00',
+      }
+
+      const scheduledEvents = {
+        activities: [clashingActivity, nonClashingActivity],
+        appointments: [
+          clashingAppointment,
+          nonClashingAppointment,
+          cancelledClashingAppointment,
+          cancelledNonClashingAppointment,
+        ],
+        courtHearings: [clashingCourtHearing, nonClashingCourtHearing],
+        visits: [clashingVisit, nonClashingVisit],
+        adjudications: [clashingAdjudication, nonClashingAdjudication],
+      } as PrisonerScheduledEvents
+
+      when(activitiesService.getAppointments).calledWith([1, 2], res.locals.user).mockResolvedValue(appointments)
+      when(activitiesService.getScheduledEventsForPrisoners)
+        .calledWith(toDate('2024-02-25'), ['A1234BC'], res.locals.user)
+        .mockResolvedValue(scheduledEvents)
+
+      await handler.GET_MULTIPLE(req, res)
+
+      const attendeeRows = [
+        {
+          prisoner: { prisonerNumber: 'A1234BC' },
+          appointment: appointments[0],
+          otherEvents: [
+            clashingActivity,
+            clashingAppointment,
+            cancelledClashingAppointment,
+            clashingCourtHearing,
+            clashingVisit,
+            clashingAdjudication,
+          ],
+        },
+      ]
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
+        attendeeRows,
+        numAppointments: 1,
+        attendanceSummary: {
+          attendeeCount: 1,
+          attended: 0,
+          notAttended: 0,
+          notRecorded: 1,
+          attendedPercentage: 0,
+          notAttendedPercentage: 0,
+          notRecordedPercentage: 100,
         },
       })
     })
