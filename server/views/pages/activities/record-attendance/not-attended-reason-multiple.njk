@@ -117,7 +117,7 @@
         }) if row.isPayable }}
     {% elseif reason.code === 'CLASH' %}
         <div class="govuk-!-margin-bottom-4">
-            {% for event in prisoner.otherEvents %}
+            {% for event in row.otherEvents %}
                 {{ otherEvent(event, false) }}
             {% endfor %}
         </div>
