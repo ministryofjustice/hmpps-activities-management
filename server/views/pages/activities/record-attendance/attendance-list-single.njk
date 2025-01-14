@@ -1,21 +1,22 @@
 {% extends "layout.njk" %}
 
-{% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
 {% from "components/alertsList.njk" import alertsList %}
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
-{% from "govuk/components/tag/macro.njk" import govukTag %}
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
+{% from "partials/attendance/incentiveLevelWarningTag.njk" import incentiveLevelWarningTag %}
 {% from "partials/attendance/otherEvent.njk" import otherEvent %}
-{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
-{% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/formatSessions.njk" import formatSessions %}
+{% from "partials/payStatus.njk" import payStatus %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
 {% from "partials/showLocation.njk" import showLocation %}
-{% from "partials/payStatus.njk" import payStatus %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = applicationName %}
 {% set pageId = 'attendance-list-page' %}
@@ -182,7 +183,8 @@
                         payable: isPayable,
                         issuePayment: attendee.attendance.issuePayment,
                         marginTagClass: true
-                    }),
+                    }) + ' ' +
+                    incentiveLevelWarningTag(attendee.attendance),
                     classes: 'govuk-!-display-none-print',
                     attributes: {
                         "data-qa": "attendance"
