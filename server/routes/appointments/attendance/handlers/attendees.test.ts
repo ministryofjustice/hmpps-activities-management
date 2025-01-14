@@ -212,7 +212,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       })
     })
 
-    it('should render the attendance page with appointmentsss', async () => {
+    it('should render the attendance page with appointments', async () => {
       req.session.recordAppointmentAttendanceJourney = {
         appointmentIds: [1, 2],
       }
