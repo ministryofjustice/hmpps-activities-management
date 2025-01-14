@@ -501,7 +501,7 @@ export default class ActivitiesService {
 
   async activeRolledPrisons(): Promise<string[]> {
     const r = await this.getRolledOutPrisons()
-    return r.filter(item => item.activitiesRolledOut || item.appointmentsRolledOut).map(item => item.prisonCode)
+    return r.filter(item => item.prisonLive).map(item => item.prisonCode)
   }
 
   async getNonAssociations(

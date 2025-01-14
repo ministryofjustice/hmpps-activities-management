@@ -20,7 +20,7 @@ export default function routes(services: Services): Router {
 
   const serviceName = ServiceName.APPOINTMENTS
 
-  router.use(rolloutMiddleware(serviceName, services))
+  router.use(rolloutMiddleware(serviceName))
   router.use(/\/.+/, addServiceReturnLink('Go to all appointments tasks', '/appointments'))
 
   // Appointments tiles route
