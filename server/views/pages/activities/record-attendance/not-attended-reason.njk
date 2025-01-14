@@ -5,9 +5,9 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
-{% from "partials/attendance/otherEvent.njk" import otherEvent %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "partials/attendance/otherEventDisplay.njk" import otherEventDisplay %}
 
 {% set pageTitle = applicationName + " - Record attendance - Not Attended Reason" %}
 {% set pageId = 'not-attended-reason-page' %}
@@ -116,7 +116,11 @@
             ]
         }) if isPayable }}
     {% elseif reason.code === 'CLASH' %}
-        <div class="govuk-!-margin-bottom-4">{{ renderOtherEvents(prisoner.otherEvents) }}</div>
+        <div class="govuk-!-margin-bottom-4">
+            {% for event in prisoner.otherEvents %}
+                {{ otherEventDisplay(event, false) }}
+            {% endfor %}
+        </div>
         <p class="govuk-body">{{ prisoner | formatName(NameFormatStyle.firstLast, false) + (" will be paid and their" if isPayable else "'s") }} attendance will be recorded as an acceptable absence.</p>
     {% elseif reason.captureOtherText %}
         {{ govukCharacterCount({
@@ -237,26 +241,3 @@
         </div>
     </div>
 {% endblock %}
-
-{% macro renderOtherEvents(otherEvents) %}
-    {% for event in otherEvents %}
-        <div class="govuk-body govuk-!-margin-0">
-            {{ event.startTime }}{{ " to " + event.endTime if event.endTime }}:
-            {% if event.eventType == 'ACTIVITY' and event.eventSource =='SAA' %}
-                <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list">{{ event.summary }}</a>
-            {% elseif event.eventType == 'APPOINTMENT' and event.eventSource =='SAA' %}
-                <a href="/appointments/{{ event.appointmentId }}">{{ event.summary }}</a>
-                {% if event.cancelled %}
-                    <div>{{ govukTag({ text: 'Cancelled Appointment', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
-                {% else %}
-                    <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
-                {% endif %}
-            {% else %}
-                {{ event.summary }}
-            {% endif %}
-            {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
-                <div class="govuk-hint govuk-!-margin-0">{{ (event.internalLocationUserDescription or event.internalLocationDescription) | capitalize }}</div>
-            {% endif %}
-        </div>
-    {% endfor %}
-{% endmacro %}
