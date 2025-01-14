@@ -2,7 +2,7 @@
 {% from "partials/showLocation.njk" import showLocation %}
 {% from "partials/payStatus.njk" import payStatus %}
 
-{% macro otherEventDisplay(event, attendanceListPage) %}
+{% macro otherEvent(event, attendanceListPage) %}
     <div class="govuk-body govuk-!-margin-0">
         {% if not attendanceListPage %}
             {{ event.startTime }}{{ " to " + event.endTime if event.endTime }}:

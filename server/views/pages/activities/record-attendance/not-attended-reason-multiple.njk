@@ -7,7 +7,7 @@
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
-{% from "partials/attendance/otherEventDisplay.njk" import otherEventDisplay %}
+{% from "partials/attendance/otherEvent.njk" import otherEvent %}
 
 {% set pageTitle = applicationName + " - Record attendance - Not Attended Reason" %}
 {% set pageId = 'not-attended-reason-page' %}
@@ -118,7 +118,7 @@
     {% elseif reason.code === 'CLASH' %}
         <div class="govuk-!-margin-bottom-4">
             {% for event in prisoner.otherEvents %}
-                {{ otherEventDisplay(event, false) }}
+                {{ otherEvent(event, false) }}
             {% endfor %}
         </div>
         <p class="govuk-body">{{ row | formatName(NameFormatStyle.firstLast, false) + (" will be paid and their" if row.isPayable else "'s") }} attendance will be recorded as an acceptable absence.</p>

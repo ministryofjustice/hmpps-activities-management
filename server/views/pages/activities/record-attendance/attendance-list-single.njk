@@ -10,7 +10,7 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
 {% from "partials/attendance/incentiveLevelWarningTag.njk" import incentiveLevelWarningTag %}
-{% from "partials/attendance/otherEventDisplay.njk" import otherEventDisplay %}
+{% from "partials/attendance/otherEvent.njk" import otherEvent %}
 {% from "partials/formatSessions.njk" import formatSessions %}
 {% from "partials/payStatus.njk" import payStatus %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
@@ -273,7 +273,7 @@
 
 {% macro renderOtherEvents(otherEvents) %}
     {% for event in otherEvents %}
-        {{ otherEventDisplay(event, true) }}
+        {{ otherEvent(event, true) }}
         {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
     {% endfor %}
 {% endmacro %}
