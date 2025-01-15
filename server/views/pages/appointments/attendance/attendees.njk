@@ -51,7 +51,7 @@
 
 {% macro renderOtherEvents(otherEvents) %}
     {% for event in otherEvents %}
-        {{ otherEvent(event) }}
+        {{ otherEvent(event, true) }}
         {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
     {% endfor %}
 {% endmacro %}
