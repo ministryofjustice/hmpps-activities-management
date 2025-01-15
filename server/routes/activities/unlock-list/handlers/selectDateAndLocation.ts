@@ -6,26 +6,16 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { formatDatePickerDate, formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
-
-enum PresetDateOptions {
-  TODAY = 'today',
-  TOMORROW = 'tomorrow',
-  OTHER = 'other',
-}
-
-enum ActivitySlotOptions {
-  AM = 'AM',
-  PM = 'PM',
-  ED = 'ED',
-}
+import { getDatePresetOptionWithTomorrow, PresetDateOptionsWithTomorrow } from '../../../../utils/utils'
+import TimeSlot from '../../../../enum/timeSlot'
 
 export class DateAndLocation {
   @Expose()
-  @IsIn(Object.values(PresetDateOptions), { message: 'Select a date' })
+  @IsIn(Object.values(PresetDateOptionsWithTomorrow), { message: 'Select a date' })
   datePresetOption: string
 
   @Expose()
-  @ValidateIf(o => o.datePresetOption === PresetDateOptions.OTHER)
+  @ValidateIf(o => o.datePresetOption === PresetDateOptionsWithTomorrow.OTHER)
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(thisDate => thisDate <= addDays(startOfToday(), 60), {
     message: 'Enter a date up to 60 days in the future',
@@ -34,7 +24,7 @@ export class DateAndLocation {
   date: Date
 
   @Expose()
-  @IsIn(Object.values(ActivitySlotOptions), { message: 'Select a time' })
+  @IsIn(Object.values(TimeSlot), { message: 'Select a time' })
   activitySlot: string
 
   @Expose()
@@ -49,14 +39,16 @@ export default class SelectDateAndLocationRoutes {
     const { user } = res.locals
     const { date, locationKey, activitySlot } = req.query
 
-    const datePresetOption = this.getDatePresetOption(date as string)
+    const datePresetOption = getDatePresetOptionWithTomorrow(date as string)
     const locationGroups = await this.activitiesService.getLocationGroups(user)
 
     res.render('pages/activities/unlock-list/select-date-and-location', {
       locationGroups,
       datePresetOption,
       date:
-        date && datePresetOption === PresetDateOptions.OTHER ? formatDatePickerDate(new Date(date as string)) : null,
+        date && datePresetOption === PresetDateOptionsWithTomorrow.OTHER
+          ? formatDatePickerDate(new Date(date as string))
+          : null,
       locationKey: locationKey || null,
       activitySlot: activitySlot || null,
     })
@@ -75,19 +67,8 @@ export default class SelectDateAndLocationRoutes {
   }
 
   private getDateValue = (datePresetOption: string, date: Date): Date => {
-    if (datePresetOption === PresetDateOptions.TODAY) return new Date()
-    if (datePresetOption === PresetDateOptions.TOMORROW) return addDays(new Date(), 1)
+    if (datePresetOption === PresetDateOptionsWithTomorrow.TODAY) return new Date()
+    if (datePresetOption === PresetDateOptionsWithTomorrow.TOMORROW) return addDays(new Date(), 1)
     return date
-  }
-
-  private getDatePresetOption = (date: string): PresetDateOptions => {
-    if (date === undefined) return null
-    if (date === this.getDate(new Date())) return PresetDateOptions.TODAY
-    if (date === this.getDate(addDays(new Date(), 1))) return PresetDateOptions.TOMORROW
-    return PresetDateOptions.OTHER
-  }
-
-  private getDate = (date: Date): string => {
-    return date.toISOString().split('T')[0]
   }
 }
