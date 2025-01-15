@@ -2,33 +2,38 @@
 {% from "partials/showLocation.njk" import showLocation %}
 {% from "partials/payStatus.njk" import payStatus %}
 
-{% macro otherEvent(event) %}
+{% macro otherEvent(event, attendanceListDesign) %}
     <div class="govuk-body govuk-!-margin-0">
-        <div>
-            {% if event.eventType == 'ACTIVITY' and event.eventSource == 'SAA' %}
-                <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list" 
-              class="govuk-link govuk-link--no-visited-state"
-              target="_blank">{{ event.summary }}
-                    <span class="govuk-visually-hidden"> (opens in new tab)</span></a>
-            {% elseif event.eventType == 'APPOINTMENT' and event.eventSource =='SAA' %}
-                <a href="/appointments/{{ event.appointmentId }}"
-              class="govuk-link"
-              target="_blank">{{ event.summary }}
-                    <span class="govuk-visually-hidden"> (opens in new tab)</span></a>
-                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
-            {% else %}
-                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ event.summary | trim }}</div>
-            {% endif %}
-            {% if event.cancelled %}
-                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
-            {% endif %}
-        </div>
-        {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
-            <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.startTime }}{{ " to " + event.endTime if event.endTime }}</div>
-            <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ showLocation(event) }}</div>
+        {% if not attendanceListDesign %}
+            {{ event.startTime }}{{ " to " + event.endTime if event.endTime }}:
         {% endif %}
-        {{ renderAttendance(event) }}
-        {{ payStatus({
+
+        {% if event.eventType == 'ACTIVITY' and event.eventSource == 'SAA' %}
+            <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">{{ event.summary }}
+                <span class="govuk-visually-hidden"> (opens in new tab)</span></a>
+        {% elseif event.eventType == 'APPOINTMENT' and event.eventSource =='SAA' %}
+            <a href="/appointments/{{ event.appointmentId }}" class="govuk-link"
+              target="_blank">{{ event.summary }}
+                <span class="govuk-visually-hidden"> (opens in new tab)</span></a>
+            <div>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+        {% else %}
+            <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ event.summary | trim }}</div>
+        {% endif %}
+
+        {% if event.cancelled %}
+            <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
+        {% endif %}
+
+        {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
+            {% if attendanceListDesign %}
+                <div class="govuk-hint govuk-!-font-size-16 govuk-!-margin-0">{{ event.startTime }}{{ " to " + event.endTime if event.endTime }}</div>
+            {% endif %}
+            <div class= {% if attendanceListDesign %}"govuk-hint govuk-!-font-size-16 govuk-!-margin-0"{% else %}"govuk-hint govuk-!-margin-0"{% endif %}>{{ showLocation(event, null, true) }}</div>
+        {% endif %}
+
+        {% if attendanceListDesign %}
+            {{ renderAttendance(event) }}
+            {{ payStatus({
             dataPresentCheck: event.attendanceStatus,
             status: event.attendanceStatus,
             issuePayment: event.issuePayment,
@@ -36,7 +41,7 @@
             smallTagClass: true,
             payText: 'Paid'
         }) }}
-
+        {% endif %}
     </div>
 {% endmacro %}
 
