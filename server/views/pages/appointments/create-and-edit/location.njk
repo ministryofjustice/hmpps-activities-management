@@ -39,7 +39,7 @@
                     name: "locationType",
                     items: [
                         {
-                            value: "OUT_OF_CELL",
+                            value: LocationType.OUT_OF_CELL,
                             text: "Search for a location",
                             checked: session.appointmentJourney.location.id,
                             conditional: {
@@ -56,7 +56,7 @@
                             }
                         },
                         {
-                            value: "IN_CELL",
+                            value: LocationType.IN_CELL,
                             text: "In cell",
                             checked: session.appointmentJourney.inCell
                         }

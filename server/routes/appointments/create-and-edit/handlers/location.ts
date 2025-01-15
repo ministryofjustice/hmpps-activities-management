@@ -5,7 +5,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
-import { LocationType } from '../../../activities/create-an-activity/handlers/location'
+import LocationType from '../../../../enum/locationType'
 
 export class Location {
   @Expose()
