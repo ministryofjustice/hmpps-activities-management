@@ -34,7 +34,7 @@ describe('Route Handlers - Edit Appointment Attendance', () => {
       {
         prisoner: {
           prisonerNumber: 'ZB1123S',
-          firstName: 'Joe',
+          firstName: 'JOE',
           lastName: 'Bloggs',
         },
       },
@@ -75,7 +75,7 @@ describe('Route Handlers - Edit Appointment Attendance', () => {
           appointmentId: 123,
           appointmentName: 'Chaplaincy',
           appointmentDate: '2024-12-01',
-          prisonerName: 'Joe Bloggs',
+          prisonerName: 'JOE Bloggs',
         },
       })
     })

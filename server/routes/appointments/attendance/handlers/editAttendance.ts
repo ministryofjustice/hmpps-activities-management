@@ -3,6 +3,7 @@ import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import AttendanceAction from '../../../../enum/attendanceAction'
+import { convertToTitleCase } from '../../../../utils/utils'
 
 enum EditAttendanceOptions {
   YES = 'yes',
@@ -47,8 +48,10 @@ export default class EditAttendanceRoutes {
 
     const attendee = appointment.attendees.find(a => a.prisoner.prisonerNumber === prisonerNumber)
 
+    const prisonerName = convertToTitleCase(`${attendee.prisoner.firstName} ${attendee.prisoner.lastName}`)
+
     let successHeader = 'Attendance recorded'
-    let successMessage = `You've saved details for ${attendee.prisoner.firstName} ${attendee.prisoner.lastName}`
+    let successMessage = `You've saved details for ${prisonerName}`
     let action = AttendanceAction.ATTENDED
 
     if (req.body.attendanceOption === EditAttendanceOptions.NO) {
@@ -56,7 +59,7 @@ export default class EditAttendanceRoutes {
       action = AttendanceAction.NOT_ATTENDED
     } else if (req.body.attendanceOption === EditAttendanceOptions.RESET) {
       successHeader = 'Attendance reset'
-      successMessage = `Attendance for ${attendee.prisoner.firstName} ${attendee.prisoner.lastName} has been reset`
+      successMessage = `Attendance for ${prisonerName} has been reset`
       action = AttendanceAction.RESET
     }
 

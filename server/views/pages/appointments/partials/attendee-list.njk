@@ -11,7 +11,6 @@
 {% endmacro %}
 
 {% macro attendeeList(appointment, user) %}
-    {% set appointmentLink = '/appointments/' + appointment.id  %}
     {% set attendeeListRows = [] %}
     {% for attendee in appointment.attendees %}
         {% set prisoner = attendee.prisoner %}
@@ -62,11 +61,18 @@
             {% if not appointment.isCancelled and not appointment.isDeleted %}
                 <ul class="govuk-summary-card__actions">
                     <li class="govuk-summary-card__action">
-                        <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/attendance" }}">Record attendance</a>
+
+                        {% if appointmentMultipleAttendanceToggleEnabled %}
+                            {% set markAttendanceLink = '/appointments/attendance/' + appointment.id + "/attendees" %}
+                        {% else %}
+                            {% set markAttendanceLink = '/appointments/' + appointment.id + "/attendance"  %}
+                        {% endif %}
+
+                        <a class="govuk-link govuk-link--no-visited-state" href="{{ markAttendanceLink }}">Record attendance</a>
                     </li>
                     {% if appointment.appointmentType == AppointmentType.GROUP and appointment.isExpired == false %}
                         <li class="govuk-summary-card__action">
-                            <a class="govuk-link govuk-link--no-visited-state" href="{{ appointmentLink + "/edit/start/prisoners/add" }}" data-qa="add-prisoners">Add attendees</a>
+                            <a class="govuk-link govuk-link--no-visited-state" href="/appointments/{{ appointment.id }}/edit/start/prisoners/add" data-qa="add-prisoners">Add attendees</a>
                         </li>
                     {% endif %}
                 </ul>
