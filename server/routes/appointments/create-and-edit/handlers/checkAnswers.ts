@@ -53,7 +53,7 @@ export default class CheckAnswersRoutes {
       categoryCode: appointmentJourney.category.code,
       tierCode: appointmentJourney.tierCode,
       organiserCode: appointmentJourney.organiserCode,
-      customName: appointmentJourney.customName,
+      customName: appointmentJourney.customName || this.removeFinalBracketedString(appointmentJourney.appointmentName),
       internalLocationId: appointmentJourney.location?.id,
       inCell: appointmentJourney.inCell,
       startDate: appointmentJourney.startDate,
@@ -82,7 +82,7 @@ export default class CheckAnswersRoutes {
       categoryCode: appointmentJourney.category.code,
       tierCode: appointmentJourney.tierCode,
       organiserCode: appointmentJourney.organiserCode,
-      customName: appointmentJourney.customName,
+      customName: appointmentJourney.customName || this.removeFinalBracketedString(appointmentJourney.appointmentName),
       internalLocationId: appointmentJourney.location?.id,
       inCell: appointmentJourney.inCell,
       startDate: appointmentJourney.startDate,
@@ -93,5 +93,9 @@ export default class CheckAnswersRoutes {
         extraInformation: appointment.extraInformation,
       })),
     } as AppointmentSetCreateRequest
+  }
+
+  private removeFinalBracketedString = (appointmentName: string): string => {
+    return appointmentName.replace(/\s*\([^()]*\)$/, '')
   }
 }
