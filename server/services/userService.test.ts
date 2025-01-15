@@ -39,6 +39,7 @@ describe('User service', () => {
       activitiesRolledOut: true,
       appointmentsRolledOut: true,
       maxDaysToExpiry: 21,
+      prisonLive: true,
     })
   })
 
