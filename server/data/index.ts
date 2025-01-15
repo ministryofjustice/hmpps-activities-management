@@ -4,9 +4,11 @@
  * In particular, applicationinsights automatically collects bunyan logs
  */
 import { initialiseAppInsights, buildAppInsightsClient } from '../utils/azureAppInsights'
+import applicationInfoSupplier from '../applicationInfo'
 
+const applicationInfo = applicationInfoSupplier()
 initialiseAppInsights()
-const appInsightsClient = buildAppInsightsClient()
+const appInsightsClient = buildAppInsightsClient(applicationInfo)
 
 import ManageUsersApiClient from './manageUsersApiClient'
 import PrisonApiClient from './prisonApiClient'
@@ -24,6 +26,7 @@ import NomisMappingClient from './nomisMappingClient'
 
 export default function dataAccess() {
   return {
+    applicationInfo,
     manageUsersApiClient: new ManageUsersApiClient(),
     caseNotesApiClient: new CaseNotesApiClient(),
     prisonApiClient: new PrisonApiClient(),

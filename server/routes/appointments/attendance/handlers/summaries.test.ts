@@ -10,6 +10,7 @@ import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import atLeast from '../../../../../jest.setup'
 import config from '../../../../config'
+import { toDateString } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -373,6 +374,8 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
       await handler.GET(req, res)
 
+      expect(req.session.recordAppointmentAttendanceJourney).toEqual({ date: toDateString(new Date()) })
+
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries-multi-select', {
         date: today,
         summaries,
@@ -431,6 +434,8 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
         .mockResolvedValue(summaries)
 
       await handler.GET(req, res)
+
+      expect(req.session.recordAppointmentAttendanceJourney).toEqual({ date: toDateString(subDays(new Date(), 1)) })
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries-multi-select', {
         date: yesterday,
@@ -492,6 +497,8 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
         .mockResolvedValue(summaries)
 
       await handler.GET(req, res)
+
+      expect(req.session.recordAppointmentAttendanceJourney).toEqual({ date: '2023-10-16' })
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries-multi-select', {
         date: parseIsoDate('2023-10-16'),
@@ -576,6 +583,8 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
       // Call the GET method
       await handler.GET(req, res)
+
+      expect(req.session.recordAppointmentAttendanceJourney).toEqual({ date: '2023-10-17' })
 
       // Define the expected summaries without cancelled appointments
       const expectedSummaries = [
@@ -673,6 +682,8 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
       await handler.GET(req, res)
 
+      expect(req.session.recordAppointmentAttendanceJourney).toEqual({ date: toDateString(subDays(new Date(), 1)) })
+
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries-multi-select', {
         date: yesterday,
         summaries: [summaries[1], summaries[2]],
@@ -687,6 +698,48 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           foundationCount: 0,
           tier1Count: 2,
           tier2Count: 3,
+        },
+        prisonersDetails,
+      })
+    })
+
+    it('should preserve appointments ids in the session', async () => {
+      const dateOption = DateOption.TODAY
+      req.query = {
+        dateOption,
+      }
+      req.session.recordAppointmentAttendanceJourney = {
+        appointmentIds: [4, 5],
+      }
+
+      const summaries = [] as AppointmentAttendanceSummary[]
+      const prisonersDetails = {} as Prisoner
+
+      when(activitiesService.getAppointmentAttendanceSummaries)
+        .calledWith(prisonCode, today, res.locals.user)
+        .mockResolvedValue(summaries)
+
+      await handler.GET(req, res)
+
+      expect(req.session.recordAppointmentAttendanceJourney).toEqual({
+        date: toDateString(new Date()),
+        appointmentIds: [4, 5],
+      })
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries-multi-select', {
+        date: today,
+        summaries,
+        attendanceSummary: {
+          attendeeCount: 0,
+          attended: 0,
+          notAttended: 0,
+          notRecorded: 0,
+          attendedPercentage: 0,
+          notAttendedPercentage: 0,
+          notRecordedPercentage: 0,
+          foundationCount: 0,
+          tier1Count: 0,
+          tier2Count: 0,
         },
         prisonersDetails,
       })
