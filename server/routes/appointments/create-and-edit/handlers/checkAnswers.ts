@@ -82,7 +82,7 @@ export default class CheckAnswersRoutes {
       categoryCode: appointmentJourney.category.code,
       tierCode: appointmentJourney.tierCode,
       organiserCode: appointmentJourney.organiserCode,
-      customName: appointmentJourney.customName || this.removeFinalBracketedString(appointmentJourney.appointmentName),
+      customName: appointmentJourney.customName || this.removeFinalBracketedString(appointmentJourney.appointmentName), // custom name only populated in the copy appointment journey if the user changes the name of the appointment on the check answers page, so we need a backup.
       internalLocationId: appointmentJourney.location?.id,
       inCell: appointmentJourney.inCell,
       startDate: appointmentJourney.startDate,
@@ -96,6 +96,9 @@ export default class CheckAnswersRoutes {
   }
 
   private removeFinalBracketedString = (appointmentName: string): string => {
+    // The API adds the appointment type at the end of this name when it saves the appointment,
+    // so to avoid having e.g. 'custom name (Library) (Library)', we need to remove the existing
+    // appointment type from the end of the name.
     return appointmentName.replace(/\s*\([^()]*\)$/, '')
   }
 }
