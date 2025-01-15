@@ -5,18 +5,13 @@ import { addDays, startOfToday, subDays } from 'date-fns'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
-
-export enum DateOptions {
-  TODAY = 'today',
-  YESTERDAY = 'yesterday',
-  OTHER = 'other',
-}
+import { getSelectedDate, PresetDateOptionsWithYesterday } from '../../../../utils/utils'
 
 export class NotAttendedDate {
-  @IsEnum(DateOptions, { message: 'Select a date' })
-  datePresetOption: DateOptions
+  @IsEnum(PresetDateOptionsWithYesterday, { message: 'Select a date' })
+  datePresetOption: PresetDateOptionsWithYesterday
 
-  @ValidateIf(o => o.datePresetOption === DateOptions.OTHER)
+  @ValidateIf(o => o.datePresetOption === PresetDateOptionsWithYesterday.OTHER)
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(thisDate => thisDate >= subDays(startOfToday(), 14), {
     message: 'Enter a date within the last 14 days',
@@ -37,13 +32,7 @@ export default class SelectDateRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.attendanceSummaryJourney = null
-    const selectedDate = this.selectedDate(req.body)
+    const selectedDate = getSelectedDate(req.body)
     res.redirect(`attendance?date=${formatIsoDate(selectedDate)}&status=NotAttended&preserveHistory=true`)
-  }
-
-  private selectedDate(form: NotAttendedDate) {
-    if (form.datePresetOption === DateOptions.TODAY) return new Date()
-    if (form.datePresetOption === DateOptions.YESTERDAY) return subDays(new Date(), 1)
-    return form.date
   }
 }
