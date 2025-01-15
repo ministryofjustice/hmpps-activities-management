@@ -26,7 +26,7 @@ export default function Index({ activitiesService, prisonService, userService }:
 
   const selectDateRoutes = new SelectDateRoutes()
   const summariesRoutes = new SummariesRoutes(activitiesService, prisonService)
-  const attendeesRoutes = new AttendeesRoutes(activitiesService, userService)
+  const attendeesRoutes = new AttendeesRoutes(activitiesService)
   const attendanceDetailsRoutes = new AttendanceDetailsRoutes(activitiesService, userService)
   const editAttendanceRoutes = new EditAttendanceRoutes(activitiesService)
 

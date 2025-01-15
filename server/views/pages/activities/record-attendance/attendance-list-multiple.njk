@@ -1,13 +1,15 @@
 {% extends "layout.njk" %}
 
-{% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
+{% from "components/searchBar.njk" import searchBar %}
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
+{% from "partials/attendance/incentiveLevelWarningTag.njk" import incentiveLevelWarningTag %}
 {% from "partials/attendance/otherEvent.njk" import otherEvent %}
-{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
-{% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/formatSessions.njk" import formatSessions %}
-{% from "components/searchBar.njk" import searchBar %}
+{% from "partials/payStatus.njk" import payStatus %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = applicationName %}
 {% set pageId = 'attendance-list-page' %}
@@ -137,14 +139,22 @@
                     }
                 },
                 {
-                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' + renderPayStatus(attendee),
+                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' + 
+                    payStatus({ 
+                        dataPresentCheck: attendee.attendance,
+                        status: attendee.attendance.status,
+                        issuePayment: attendee.attendance.issuePayment,
+                        payable: attendee.instance.activitySchedule.activity.paid,
+                        marginTagClass: true
+                    }) + ' ' +
+                    incentiveLevelWarningTag(attendee.attendance),
                     attributes: {
                         "data-qa": "attendance"
                     }
                 },
                 {
                     html: renderViewLink(attendee)
-                }
+                }              
             ]
         }), rows) %}
     {% endfor %}
@@ -207,27 +217,6 @@
         {{ otherEvent(event) }}
         {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
     {% endfor %}
-{% endmacro %}
-
-{% macro renderPayStatus(attendee) %}
-    {% if attendee.attendance and attendee.attendance.status != 'WAITING' %}
-        {% if attendee.attendance.issuePayment %}
-            {{ govukTag({
-                text: "Pay",
-                classes: "govuk-tag--green govuk-!-margin-bottom-1"
-            }) }}
-        {% elseif attendee.instance.activitySchedule.activity.paid %}
-            {{ govukTag({
-                text: "No pay",
-                classes: "govuk-tag--red govuk-!-margin-bottom-1"
-            }) }}
-        {% else %}
-            {{ govukTag({
-                text: "Unpaid",
-                classes: "govuk-tag--green govuk-!-margin-bottom-1"
-            }) }}
-        {% endif %}
-    {% endif %}
 {% endmacro %}
 
 {% macro renderViewLink(attendee) %}

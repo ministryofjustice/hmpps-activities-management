@@ -5,6 +5,8 @@ const { glob } = require('glob')
 const chokidar = require('chokidar')
 const buildAssets = require('./assets.config')
 const buildApp = require('./app.config')
+const copyViews = require('./views.config')
+const updateEnv = require('./env.config')
 
 const cwd = process.cwd()
 
@@ -87,8 +89,18 @@ const main = () => {
 
     // App
     chokidar
-      .watch(['server/**/*'], { ...chokidarOptions, ignored: ['**/*.test.ts'] })
+      .watch(['server/**/*.ts'], { ...chokidarOptions, ignored: ['**/*.test.ts'] })
       .on('all', () => buildApp(buildConfig).catch(e => process.stderr.write(`${e}\n`)))
+
+    // Views
+    chokidar
+      .watch(['server/**/*'], { ...chokidarOptions, ignored: ['**/*.ts', '**/fixtures/**/*'] })
+      .on('all', () => copyViews(buildConfig).catch(e => process.stderr.write(`${e}\n`)))
+
+    // Env
+    chokidar
+      .watch(['.env'], chokidarOptions)
+      .on('all', () => updateEnv(buildConfig).catch(e => process.stderr.write(`${e}\n`)))
   }
 }
 
