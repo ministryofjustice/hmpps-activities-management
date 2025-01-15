@@ -5,8 +5,8 @@ import ActivitiesRoutes from './activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
-import { LocationType } from '../../create-an-activity/handlers/location'
 import TimeSlot from '../../../../enum/timeSlot'
+import LocationType from '../../../../enum/locationType'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')

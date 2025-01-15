@@ -1,6 +1,10 @@
 {% extends "layout.njk" %}
 
 {% from "components/searchBar.njk" import searchBar %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
@@ -10,6 +14,14 @@
 {% set pageTitle = "Appointment attendance summaries" %}
 {% set pageId = 'appointment-attendance-summaries-page' %}
 {% set jsBackLink = true %}
+
+{% set filterParams = (('&searchTerm=' + session.req.query.searchTerm) if session.req.query.searchTerm else '') +
+    (('&locationId=' + session.req.query.locationId) if session.req.query.locationId else '') +
+    (('&locationType=' + session.req.query.locationType) if session.req.query.locationType else '') %}
+
+{% block meta %}
+    <meta name="autocompleteElements" content="locationId"/>
+{% endblock %}
 
 {% macro attendees(attendees, prisonerDetails, user) %}
     {% if attendees | length == 1 %}
@@ -98,7 +110,7 @@
         </p>
 
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
+            <div class="govuk-grid-column-two-thirds">
                 <h2 class="govuk-heading-s">Showing {{ summaries | length }} appointment{{ "s" if summaries | length != 1 }}</h2>
 
                 {% if attendanceSummary.attendeeCount > 1 %}
@@ -134,46 +146,119 @@
                     }
                 }) }}
 
-                {{ stickySelect({
-                    idPrefix: 'appointments',
-                    type: 'check',
-                    caption: "(" + summaries.length + ") appointments",
-                    captionClasses: "govuk-visually-hidden",
-                    name: 'appointmentIds',
-                    head: [
-                        {
-                            text: "Appointment",
-                            attributes: { "aria-sort": "none" }
-                        }, {
-                            text: "Location",
-                            attributes: { "aria-sort": "none" }
-                        }, {
-                            text: "Time",
-                            attributes: { "aria-sort": "ascending" }
-                        }, {
-                            text: "Attendees",
-                            attributes: { "aria-sort": "none" }
-                        }, {
-                            text: "Attended",
-                            attributes: { "aria-sort": "none" }
-                        }, {
-                            text: "Did not attend",
-                            attributes: { "aria-sort": "none" }
-                        }, {
-                            text: "Not recorded yet",
-                            attributes: { "aria-sort": "none" }
-                        }
-                    ],
-                    rows: summariesTableRows,
-                    actions: [
-                        {
-                            text: 'Record or edit attendance',
-                            formAction: 'summaries/select-appointments'
-                        }
-                    ],
-                    itemsDescription: 'appointment',
-                    itemsDescriptionPlural: 'appointments'
-                }) }}
+                {% set filterOptionsHtml %}
+
+                    {% set locationOptions = [{ value: '-', text: '' }] %}
+                    {% for location in locations %}
+                        {% set options = (locationOptions.push( { value: location.id, text: location.description }), locationOptions) %}
+                    {% endfor %}
+
+                    {{ govukRadios({
+                        id: "location-type",
+                        name: "locationType",
+                        classes: "govuk-radios--small govuk-!-margin-bottom-4",
+                        fieldset: {
+                            legend: {
+                                text: 'Location',
+                                classes: 'govuk-fieldset__legend--m'
+                            }
+                        },
+                        items: [
+                            {
+                                value: "ALL",
+                                text: "All locations",
+                                checked: filterItems.locationType == 'ALL'
+                            },
+                            {
+                                value: LocationType.OUT_OF_CELL,
+                                text: "Search for a location",
+                                checked: filterItems.locationType == LocationType.OUT_OF_CELL,
+                                conditional: {
+                                    html: govukSelect({
+                                        id: "locationId",
+                                        name: "locationId",
+                                        label: {
+                                            text: "Start typing a location and select from the list."
+                                        },
+                                        errorMessage: validationErrors | findError('locationId'),
+                                        value: filterItems.locationId,
+                                        items: locationOptions
+                                    })
+                                }
+                            },
+                            {
+                                value: LocationType.IN_CELL,
+                                text: "In cell",
+                                checked: filterItems.locationType == LocationType.IN_CELL
+                            }
+                        ]
+                    }) }}
+
+                    {{ govukButton({
+                        text: 'Apply filters'
+                    }) }}
+
+                {% endset %}
+
+                <div class="attendance-activities">
+                    <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter" data-filter-start-shown="true">
+                        <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
+                            {{ mojFilter({
+                                heading: {
+                                    text: 'Filters'
+                                },
+                                optionsHtml: filterOptionsHtml
+                            }) }}
+                        </div>
+                        <hr class="print-only"/>
+                        <div class="moj-filter-layout__content">
+                            <div class="moj-action-bar govuk-!-display-none-print">
+                                <div class="moj-action-bar__filter"></div>
+                            </div>
+
+                            {{ stickySelect({
+                                idPrefix: 'appointments',
+                                type: 'check',
+                                caption: "(" + summaries.length + ") appointments",
+                                captionClasses: "govuk-visually-hidden",
+                                name: 'appointmentIds',
+                                head: [
+                                    {
+                                        text: "Appointment",
+                                        attributes: { "aria-sort": "none" }
+                                    }, {
+                                        text: "Location",
+                                        attributes: { "aria-sort": "none" }
+                                    }, {
+                                        text: "Time",
+                                        attributes: { "aria-sort": "ascending" }
+                                    }, {
+                                        text: "Attendees",
+                                        attributes: { "aria-sort": "none" }
+                                    }, {
+                                        text: "Attended",
+                                        attributes: { "aria-sort": "none" }
+                                    }, {
+                                        text: "Did not attend",
+                                        attributes: { "aria-sort": "none" }
+                                    }, {
+                                        text: "Not recorded yet",
+                                        attributes: { "aria-sort": "none" }
+                                    }
+                                ],
+                                rows: summariesTableRows,
+                                actions: [
+                                    {
+                                        text: 'Record or edit attendance',
+                                        formAction: 'summaries/select-appointments'
+                                    }
+                                ],
+                                itemsDescription: 'appointment',
+                                itemsDescriptionPlural: 'appointments'
+                            }) }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
