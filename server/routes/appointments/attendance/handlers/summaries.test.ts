@@ -932,6 +932,11 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
           tier2Count: 0,
         },
         prisonersDetails,
+        filterItems: {
+          locationType: 'ALL',
+          locationId: null,
+        },
+        locations,
       })
     })
   })

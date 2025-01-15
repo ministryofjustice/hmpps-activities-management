@@ -68,7 +68,7 @@ export default class SummariesRoutes {
       req.session.recordAppointmentAttendanceJourney.date = toDateString(dateOptionDate)
 
       const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
-     
+
       return res.render('pages/appointments/attendance/summaries-multi-select', {
         date: dateOptionDate,
         summaries,
