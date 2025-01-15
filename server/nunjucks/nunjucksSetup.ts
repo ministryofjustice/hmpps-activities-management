@@ -35,7 +35,7 @@ import {
   toTimeItems,
 } from '../utils/utils'
 import config from '../config'
-import applicationVersion from '../applicationVersion'
+import { ApplicationInfo } from '../applicationInfo'
 import {
   filterActivitiesForDay,
   getCalendarConfig,
@@ -76,9 +76,10 @@ import { WaitingListStatus } from '../enum/waitingListStatus'
 import logger from '../../logger'
 import LocationType from '../enum/locationType'
 
-const production = process.env.NODE_ENV === 'production'
-
-export default function nunjucksSetup(app: express.Express, { ukBankHolidayService }: Services): Router {
+export default function nunjucksSetup(
+  app: express.Express,
+  { ukBankHolidayService, applicationInfo }: Services,
+): Router {
   const router = express.Router()
 
   app.set('view engine', 'njk')
@@ -102,24 +103,12 @@ export default function nunjucksSetup(app: express.Express, { ukBankHolidayServi
     next()
   })
 
-  // Cachebusting version string
-  if (production) {
-    // Version only changes on reboot
-    app.locals.version = Date.now().toString()
-  } else {
-    // Version changes every request
-    router.use((req, res, next) => {
-      res.locals.version = Date.now().toString()
-      return next()
-    })
-  }
-
-  registerNunjucks(app)
+  registerNunjucks(applicationInfo, app)
 
   return router
 }
 
-export function registerNunjucks(app?: express.Express): Environment {
+export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: express.Express): Environment {
   let assetManifest: Record<string, string> = {}
 
   try {
@@ -239,7 +228,7 @@ export function registerNunjucks(app?: express.Express): Environment {
   njkEnv.addGlobal('nonAssociationsUrl', config.nonAssociationsUrl)
   njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
-  njkEnv.addGlobal('applicationInsightsRoleName', applicationVersion.packageData.name)
+  njkEnv.addGlobal('applicationInsightsRoleName', applicationInfo?.applicationName)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('videoConferenceScheduleFeatureToggleEnabled', config.videoConferenceScheduleFeatureToggleEnabled)
   njkEnv.addGlobal('suspendPrisonerWithPayToggleEnabled', config.suspendPrisonerWithPayToggleEnabled)

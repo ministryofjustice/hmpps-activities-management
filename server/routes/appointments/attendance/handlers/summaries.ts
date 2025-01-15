@@ -61,12 +61,14 @@ export default class SummariesRoutes {
     const attendanceSummary = getAttendanceSummaryFromAttendanceSummaries(summaries)
 
     if (config.appointmentMultipleAttendanceToggleEnabled) {
-      req.session.recordAppointmentAttendanceJourney = {
-        date: toDateString(dateOptionDate),
+      if (!req.session.recordAppointmentAttendanceJourney) {
+        req.session.recordAppointmentAttendanceJourney = {}
       }
 
-      const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
+      req.session.recordAppointmentAttendanceJourney.date = toDateString(dateOptionDate)
 
+      const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
+     
       return res.render('pages/appointments/attendance/summaries-multi-select', {
         date: dateOptionDate,
         summaries,

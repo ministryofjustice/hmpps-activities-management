@@ -25,7 +25,7 @@ export default function Index(services: Services): Router {
 
   const serviceName = ServiceName.ACTIVITIES
 
-  router.use(rolloutMiddleware(serviceName, services))
+  router.use(rolloutMiddleware(serviceName))
   router.use(/\/.+/, addServiceReturnLink('Go to all activities tasks', '/activities'))
 
   router.use(homeRoutes())

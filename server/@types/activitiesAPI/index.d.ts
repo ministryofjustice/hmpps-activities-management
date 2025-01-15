@@ -76,62 +76,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/queue-admin/retry-dlq/{dlqName}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    /** @description
-     *
-     *     Requires one of the following roles:
-     *     * ACTIVITY_QUEUE_ADMIN */
-    put: operations['retryDlq']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/queue-admin/retry-all-dlqs': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put: operations['retryAllDlqs']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/queue-admin/purge-queue/{queueName}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    /** @description
-     *
-     *     Requires one of the following roles:
-     *     * ACTIVITY_QUEUE_ADMIN */
-    put: operations['purgeQueue']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/attendances': {
     parameters: {
       query?: never
@@ -575,6 +519,35 @@ export interface paths {
      *     * NOMIS_APPOINTMENTS
      */
     post: operations['migrateAppointment']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/job/purposeful-activity-reports': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Trigger the job to generate purposeful activity reports and upload to s3
+     * @description
+     *           Generates 3 csv reports which are uploaded to an s3 bucket for prison performance reporting team to process for
+     *           purposeful activity generation purposes and to display on the prison regime dashboard in the performance hub.
+     *
+     *           Report 1) Details of attended purposeful-activity activities
+     *           Report 2) Details of attended purposeful-activity appointments
+     *           Report 3) Prison rollout table
+     *
+     *           Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     *
+     */
+    post: operations['triggerPurposefulActivityReportsJob']
     delete?: never
     options?: never
     head?: never
@@ -1437,26 +1410,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/queue-admin/get-dlq-messages/{dlqName}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** @description
-     *
-     *     Requires one of the following roles:
-     *     * ACTIVITY_QUEUE_ADMIN */
-    get: operations['getDlqMessages']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/prisons/{prisonCode}/scheduled-instances': {
     parameters: {
       query?: never
@@ -2297,14 +2250,6 @@ export interface components {
        */
       comment?: string
     }
-    RetryDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-    }
-    PurgeQueueResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-    }
     /** @description Request object for updating an attendance record */
     AttendanceUpdateRequest: {
       /**
@@ -2906,26 +2851,26 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      /** Format: int32 */
-      pageSize?: number
+      unpaged?: boolean
       paged?: boolean
       /** Format: int32 */
       pageNumber?: number
-      unpaged?: boolean
+      /** Format: int32 */
+      pageSize?: number
     }
     PagedWaitingListApplication: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['WaitingListApplication'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      first?: boolean
-      last?: boolean
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
@@ -2933,8 +2878,8 @@ export interface components {
     }
     SortObject: {
       empty?: boolean
-      sorted?: boolean
       unsorted?: boolean
+      sorted?: boolean
     }
     /** @description Describes a single waiting list application for a prisoner who is waiting to be allocated to an activity. */
     WaitingListApplication: {
@@ -7216,18 +7161,18 @@ export interface components {
       nonAssociations?: boolean
     }
     PageActivityCandidate: {
-      /** Format: int32 */
-      totalPages?: number
       /** Format: int64 */
       totalElements?: number
+      /** Format: int32 */
+      totalPages?: number
+      first?: boolean
+      last?: boolean
       /** Format: int32 */
       size?: number
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
-      first?: boolean
-      last?: boolean
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
@@ -7398,7 +7343,7 @@ export interface components {
        */
       prisonCode: string
       /**
-       * @description Flag to indicate if this prison is presently rolled out for activities
+       * @description Flag to indicate if activities are enabled
        * @example true
        */
       activitiesRolledOut: boolean
@@ -7409,7 +7354,7 @@ export interface components {
        */
       activitiesRolloutDate?: string
       /**
-       * @description Flag to indicate if this prison is presently rolled out for appointments
+       * @description Flag to indicate if this appointments are enabled
        * @example true
        */
       appointmentsRolledOut: boolean
@@ -7424,19 +7369,11 @@ export interface components {
        * @description max days to expire events based on prisoner movement, default is 21
        */
       maxDaysToExpiry: number
-    }
-    DlqMessage: {
-      body: {
-        [key: string]: Record<string, never>
-      }
-      messageId: string
-    }
-    GetDlqResult: {
-      /** Format: int32 */
-      messagesFoundCount: number
-      /** Format: int32 */
-      messagesReturnedCount: number
-      messages: components['schemas']['DlqMessage'][]
+      /**
+       * @description Flag to indicate if this prison is presently rolled out and live to the prison
+       * @example true
+       */
+      prisonLive: boolean
     }
     /** @description Summarises an activity */
     ActivitySummary: {
@@ -7784,6 +7721,11 @@ export interface components {
        * @enum {string}
        */
       eventTier?: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
+      /**
+       * @description Was an incentive level warning issued for REFUSED
+       * @example true
+       */
+      incentiveLevelWarningIssued?: boolean
     }
     /** @description suspended prisoner activity attendance */
     SuspendedPrisonerActivityAttendance: {
@@ -8375,70 +8317,6 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  retryDlq: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        dlqName: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['RetryDlqResult']
-        }
-      }
-    }
-  }
-  retryAllDlqs: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['RetryDlqResult'][]
-        }
-      }
-    }
-  }
-  purgeQueue: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        queueName: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['PurgeQueueResult']
         }
       }
     }
@@ -9417,6 +9295,29 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  triggerPurposefulActivityReportsJob: {
+    parameters: {
+      query?: {
+        /** @description Report is calculated for the week up to the prior saturday. increase offset to generate reports for weeks prior to that */
+        weekOffset?: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Accepted */
+      202: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'text/plain': string
         }
       }
     }
@@ -11203,30 +11104,6 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getDlqMessages: {
-    parameters: {
-      query?: {
-        maxMessages?: number
-      }
-      header?: never
-      path: {
-        dlqName: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['GetDlqResult']
         }
       }
     }

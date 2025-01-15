@@ -8,19 +8,6 @@ import { AttendanceStatus } from '../../../@types/appointments'
 import EventTier from '../../../enum/eventTiers'
 import { formatDate, simplifyTime } from '../../../utils/utils'
 
-export type AppointmentSummaryStats = {
-  attendeeCount: number
-  attended: number
-  notAttended: number
-  notRecorded: number
-  attendedPercentage: number
-  notAttendedPercentage: number
-  notRecordedPercentage: number
-  tier1Count?: number
-  tier2Count?: number
-  foundationCount?: number
-}
-
 export const getAttendanceSummaryFromAttendanceSummaries = (summaries: AppointmentAttendanceSummary[]) => {
   const tierCounts = getEventTierCounts(summaries)
 

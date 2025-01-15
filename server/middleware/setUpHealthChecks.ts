@@ -3,7 +3,7 @@ import express, { Router } from 'express'
 import healthcheck from '../services/healthCheck'
 import { Services } from '../services'
 
-export default function setUpHealthChecks({ activitiesService }: Services): Router {
+export default function setUpHealthChecks({ activitiesService, applicationInfo }: Services): Router {
   const router = express.Router()
 
   router.get('/health', (req, res) => {
@@ -12,7 +12,7 @@ export default function setUpHealthChecks({ activitiesService }: Services): Rout
         res.status(503)
       }
       res.json(result)
-    })
+    }, applicationInfo)
   })
 
   router.get('/info', (req, res) => {
