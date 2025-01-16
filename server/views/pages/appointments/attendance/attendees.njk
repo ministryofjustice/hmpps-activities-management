@@ -1,11 +1,14 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% from "components/searchBar.njk" import searchBar %}
 {% from "components/sticky-select.njk" import stickySelect %}
+
+{% from "partials/attendance/otherEvent.njk" import otherEvent %}
+{% from "partials/showLocation.njk" import showLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
-{% from "partials/showLocation.njk" import showLocation %}
-{% from "partials/attendance/otherEvent.njk" import otherEvent %}
 
 {% if numAppointments == 1 %}
     {% set singleAppointment = attendeeRows[0].appointment %}
@@ -57,7 +60,9 @@
 {% endmacro %}
 
 {% block content %}
-    <div class="govuk-grid-row">
+    <form method='POST'>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l" data-qa="caption">Record appointment attendance</span>
             {% if singleAppointment %}
@@ -67,13 +72,13 @@
                 <span class="govuk-caption-l govuk-!-margin-bottom-4">{{ showLocation(singleAppointment) }}</span>
             {% else %}
                 <h1 class="govuk-heading-l govuk-!-margin-0" data-qa='heading'>Record attendance at {{ numAppointments }} appointments</h1>
-                <span class="govuk-caption-l" data-qa="date-caption">{{ attendeeRows[0].appointment.startDate | toDate | formatDate }}</span>
+                <span class="govuk-caption-l" data-qa="date-caption">{{ session.recordAppointmentAttendanceJourney.date | toDate | formatDate }}</span>
             {% endif %}
 
             <h2 class="govuk-heading-m">{{ attendanceSummary.attendeeCount }} attendee{{ "s" if attendanceSummary.attendeeCount != 1 }}</h2>
 
             {% if attendanceSummary.attendeeCount > 1 %}
-                <ul class="govuk-list">
+                <ul class="govuk-list govuk-!-margin-bottom-4">
                     <li>
                         <span>Attended:</span>
                         <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
@@ -88,69 +93,81 @@
                     </li>
                 </ul>
             {% endif %}
-        </div>
-    </div>
 
-    {% set attendeeListRows = [] %}
-    {% for attendee in attendeeRows %}
-        {% set prisoner = attendee.prisoner %}
-        {% set items = [
+            {{ searchBar({
+                inputParams: {
+                    id: 'searchTerm',
+                    name: 'searchTerm',
+                    label: {
+                        text: 'Search by prisoner name or prison number',
+                        classes: 'govuk-label--s'
+                    },
+                    type: 'search',
+                    value: session.req.query.searchTerm
+                },
+                buttonParams: {
+                    text: 'Search'
+                }
+            }) }}
+        </div>
+
+        {% set attendeeListRows = [] %}
+        {% for attendee in attendeeRows %}
+            {% set prisoner = attendee.prisoner %}
+            {% set items = [
+                    {
+                        html: showProfileLink({
+                            firstName: prisoner.firstName,
+                            middleNames: prisoner.middleNames,
+                            lastName: prisoner.lastName,
+                            prisonerNumber: prisoner.prisonerNumber,
+                            inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId
+                        }),
+                        attributes: {
+                            'data-qa': 'prisoner-' + loop.index + '-name-and-number',
+                            "data-sort-value": prisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+                        }
+                    },
+                    {
+                        text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
+                        attributes: { 'data-qa': 'prisoner-' + loop.index + '-location' }
+                    }
+                ]
+            %}
+            {% if numAppointments !== 1 %}
+                {% set items = items.concat(
+                    {
+                        html: renderAppointment(attendee.appointment),
+                        attributes: {
+                            'data-qa': 'prisoner-' + loop.index + '-location',
+                            "data-sort-value": attendee.appointment.appointmentName + attendee.appointment.startTime + attendee.appointment.endTime
+                        }
+                    }
+                ) %}
+            {% endif %}
+            {% set items = items.concat(
                 {
-                    html: showProfileLink({
-                        firstName: prisoner.firstName,
-                        middleNames: prisoner.middleNames,
-                        lastName: prisoner.lastName,
-                        prisonerNumber: prisoner.prisonerNumber,
-                        inCaseLoad: prisoner.prisonCode == user.activeCaseLoadId
-                    }),
+                    html: renderOtherEvents(attendee.otherEvents),
                     attributes: {
-                        'data-qa': 'prisoner-' + loop.index + '-name-and-number',
-                        "data-sort-value": prisoner | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+                        "data-qa": "other-events"
                     }
                 },
                 {
-                    text: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonCode == user.activeCaseLoadId),
-                    attributes: { 'data-qa': 'prisoner-' + loop.index + '-location' }
-                }
-            ]
-        %}
-        {% if not singleAppoinment %}
-            {% set items = items.concat(
+                    html: attendanceTag(attendee),
+                    attributes: { 'data-qa': 'prisoner-' + loop.index + '-attendance' }
+                },
                 {
-                    html: renderAppointment(attendee.appointment),
-                    attributes: {
-                        'data-qa': 'prisoner-' + loop.index + '-location',
-                        "data-sort-value": attendee.appointment.appointmentName + attendee.appointment.startTime + attendee.appointment.endTime
-                    }
+                    html: renderViewLink(attendee)
                 }
             ) %}
-        {% endif %}
-        {% set items = items.concat(
-            {
-                html: renderOtherEvents(attendee.otherEvents),
-                attributes: {
-                    "data-qa": "other-events"
-                }
-            },
-            {
-                html: attendanceTag(attendee),
-                attributes: { 'data-qa': 'prisoner-' + loop.index + '-attendance' }
-            },
-            {
-                html: renderViewLink(attendee)
-            }
-        ) %}
 
-        {% set attendeeListRows = attendeeListRows.concat({
-            visuallyHiddenText: 'Select ' + prisoner | fullName | toTitleCase,
-            value: attendee.appointment.id + '-' + prisoner.prisonerNumber,
-            selectable: attendee.attended === null,
-            items: items
-        }) %}
-    {% endfor %}
-
-    <form method='POST'>
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            {% set attendeeListRows = attendeeListRows.concat({
+                visuallyHiddenText: 'Select ' + prisoner | fullName | toTitleCase,
+                value: attendee.appointment.id + '-' + prisoner.prisonerNumber,
+                selectable: attendee.attended === null,
+                items: items
+            }) %}
+        {% endfor %}
 
         {% set head = [
             {
@@ -162,8 +179,7 @@
                 attributes: { "aria-sort": "none" }
             }
         ] %}
-
-        {% if not isSingleAppoinment %}
+        {% if numAppointments !== 1 %}
             {% set head = head.concat(
                 {
                     text: "Appointment name",
@@ -193,11 +209,11 @@
             actions: [
                 {
                     text: 'Mark as attended',
-                    formAction: 'attend'
+                    formAction: 'attendees/attend'
                 },
                 {
                     text: 'Mark as not attended',
-                    formAction: 'non-attend'
+                    formAction: 'attendees/non-attend'
                 }
             ],
             itemsDescription: 'person',

@@ -40,8 +40,9 @@ export default function Index({ activitiesService, prisonService, userService }:
     post('/:journeyId/summaries', summariesRoutes.POST)
     getForJourney('/:journeyId/attendees', attendeesRoutes.GET_MULTIPLE, true)
     get('/:journeyId/:appointmentId/attendees', attendeesRoutes.GET_SINGLE)
-    post('/:journeyId/attend', attendeesRoutes.ATTEND)
-    post('/:journeyId/non-attend', attendeesRoutes.NON_ATTEND)
+    post('/:journeyId/attendees', attendeesRoutes.POST)
+    post('/:journeyId/attendees/attend', attendeesRoutes.ATTEND)
+    post('/:journeyId/attendees/non-attend', attendeesRoutes.NON_ATTEND)
     getForJourney('/:journeyId/attendees/:appointmentId/:prisonerNumber', attendanceDetailsRoutes.GET, true)
     getForJourney(
       '/:journeyId/attendees/:appointmentId/:prisonerNumber/edit-attendance',
