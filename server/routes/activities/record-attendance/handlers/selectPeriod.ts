@@ -37,7 +37,7 @@ export default class SelectPeriodRoutes {
     const { date, sessions } = req.query
     const datePresetOption = getDatePresetOptionWithYesterday(date as string)
     return res.render('pages/activities/record-attendance/select-period', {
-      sessions,
+      sessions: sessions || null,
       datePresetOption,
       date:
         date && datePresetOption === PresetDateOptionsWithYesterday.OTHER
