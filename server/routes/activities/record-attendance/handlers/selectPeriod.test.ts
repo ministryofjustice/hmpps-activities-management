@@ -20,13 +20,19 @@ describe('Route Handlers - Select period', () => {
       redirect: jest.fn(),
     } as unknown as Response
 
-    req = {} as unknown as Request
+    req = {
+      query: {},
+    } as unknown as Request
   })
 
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/select-period')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/select-period', {
+        date: null,
+        datePresetOption: null,
+        sessions: null,
+      })
     })
   })
 
