@@ -6,16 +6,17 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { formatDatePickerDate, formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
-import { getDatePresetOptionWithTomorrow, PresetDateOptionsWithTomorrow } from '../../../../utils/utils'
+import { getDatePresetOptionWithTomorrow } from '../../../../utils/utils'
 import TimeSlot from '../../../../enum/timeSlot'
+import DateOption from '../../../../enum/dateOption'
 
 export class DateAndLocation {
   @Expose()
-  @IsIn(Object.values(PresetDateOptionsWithTomorrow), { message: 'Select a date' })
+  @IsIn(Object.values(DateOption), { message: 'Select a date' })
   datePresetOption: string
 
   @Expose()
-  @ValidateIf(o => o.datePresetOption === PresetDateOptionsWithTomorrow.OTHER)
+  @ValidateIf(o => o.datePresetOption === DateOption.OTHER)
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(thisDate => thisDate <= addDays(startOfToday(), 60), {
     message: 'Enter a date up to 60 days in the future',
@@ -45,10 +46,7 @@ export default class SelectDateAndLocationRoutes {
     res.render('pages/activities/unlock-list/select-date-and-location', {
       locationGroups,
       datePresetOption,
-      date:
-        date && datePresetOption === PresetDateOptionsWithTomorrow.OTHER
-          ? formatDatePickerDate(new Date(date as string))
-          : null,
+      date: date && datePresetOption === DateOption.OTHER ? formatDatePickerDate(new Date(date as string)) : null,
       locationKey: locationKey || null,
       activitySlot: activitySlot || null,
     })
@@ -67,8 +65,8 @@ export default class SelectDateAndLocationRoutes {
   }
 
   private getDateValue = (datePresetOption: string, date: Date): Date => {
-    if (datePresetOption === PresetDateOptionsWithTomorrow.TODAY) return new Date()
-    if (datePresetOption === PresetDateOptionsWithTomorrow.TOMORROW) return addDays(new Date(), 1)
+    if (datePresetOption === DateOption.TODAY) return new Date()
+    if (datePresetOption === DateOption.TOMORROW) return addDays(new Date(), 1)
     return date
   }
 }

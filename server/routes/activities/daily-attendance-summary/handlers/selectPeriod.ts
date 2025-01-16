@@ -2,22 +2,19 @@ import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsIn, ValidateIf } from 'class-validator'
 import { addDays, startOfToday, subDays } from 'date-fns'
-import {
-  getDatePresetOptionWithYesterday,
-  getSelectedDate,
-  PresetDateOptionsWithYesterday,
-} from '../../../../utils/utils'
+import { getDatePresetOptionWithYesterday, getSelectedDate } from '../../../../utils/utils'
 import { formatDatePickerDate, formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
+import DateOption from '../../../../enum/dateOption'
 
 export class TimePeriod {
   @Expose()
-  @IsIn(Object.values(PresetDateOptionsWithYesterday), { message: 'Select a date' })
+  @IsIn(Object.values(DateOption), { message: 'Select a date' })
   datePresetOption: string
 
   @Expose()
-  @ValidateIf(o => o.datePresetOption === PresetDateOptionsWithYesterday.OTHER)
+  @ValidateIf(o => o.datePresetOption === DateOption.OTHER)
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(thisDate => thisDate >= subDays(startOfToday(), 14), {
     message: 'Enter a date within the last 14 days',
@@ -37,10 +34,7 @@ export default class SelectPeriodRoutes {
     res.render('pages/activities/daily-attendance-summary/select-period', {
       title: 'What date do you want to see the daily attendance summary for?',
       datePresetOption,
-      date:
-        date && datePresetOption === PresetDateOptionsWithYesterday.OTHER
-          ? formatDatePickerDate(new Date(date as string))
-          : null,
+      date: date && datePresetOption === DateOption.OTHER ? formatDatePickerDate(new Date(date as string)) : null,
     })
   }
 

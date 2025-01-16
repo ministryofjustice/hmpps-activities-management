@@ -3,8 +3,9 @@ import { addDays } from 'date-fns'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import SelectDateRoutes, { NotAttendedDate } from './notAttendedSelectDate'
-import { associateErrorsWithProperty, PresetDateOptionsWithYesterday } from '../../../../utils/utils'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
+import DateOption from '../../../../enum/dateOption'
 
 describe('Not attended routes - select date', () => {
   const handler = new SelectDateRoutes()
@@ -52,7 +53,7 @@ describe('Not attended routes - select date', () => {
       const today = new Date()
 
       req.body = {
-        datePresetOption: PresetDateOptionsWithYesterday.TODAY,
+        datePresetOption: DateOption.TODAY,
       }
 
       await handler.POST(req, res)
@@ -66,7 +67,7 @@ describe('Not attended routes - select date', () => {
       const yesterday = addDays(new Date(), -1)
 
       req.body = {
-        datePresetOption: PresetDateOptionsWithYesterday.YESTERDAY,
+        datePresetOption: DateOption.YESTERDAY,
       }
 
       await handler.POST(req, res)
@@ -80,7 +81,7 @@ describe('Not attended routes - select date', () => {
       const selectedDate = addDays(new Date(), 2)
 
       req.body = {
-        datePresetOption: PresetDateOptionsWithYesterday.OTHER,
+        datePresetOption: DateOption.OTHER,
         date: selectedDate,
       }
 
@@ -115,7 +116,7 @@ describe('Not attended routes - select date', () => {
 
     it('validation fails if date option is other and a date is not provided', async () => {
       const body = {
-        datePresetOption: PresetDateOptionsWithYesterday.OTHER,
+        datePresetOption: DateOption.OTHER,
         date: '',
       }
 
@@ -127,7 +128,7 @@ describe('Not attended routes - select date', () => {
 
     it('validation fails if preset option is other and a bad date is provided', async () => {
       const body = {
-        datePresetOption: PresetDateOptionsWithYesterday.OTHER,
+        datePresetOption: DateOption.OTHER,
         date: '',
       }
 
@@ -141,7 +142,7 @@ describe('Not attended routes - select date', () => {
 
     it('validation fails if date is more than 60 days into the future', async () => {
       const body = {
-        datePresetOption: PresetDateOptionsWithYesterday.OTHER,
+        datePresetOption: DateOption.OTHER,
         date: formatDatePickerDate(addDays(new Date(), 61)),
       }
 
@@ -153,7 +154,7 @@ describe('Not attended routes - select date', () => {
 
     it('validation fails if date is more than 14 days into the past', async () => {
       const body = {
-        datePresetOption: PresetDateOptionsWithYesterday.OTHER,
+        datePresetOption: DateOption.OTHER,
         date: formatDatePickerDate(addDays(new Date(), -15)),
       }
 
@@ -165,7 +166,7 @@ describe('Not attended routes - select date', () => {
 
     it('validation passes if validate date option selected', async () => {
       const body = {
-        datePresetOption: PresetDateOptionsWithYesterday.TODAY,
+        datePresetOption: DateOption.TODAY,
       }
 
       const requestObject = plainToInstance(NotAttendedDate, body)
@@ -176,7 +177,7 @@ describe('Not attended routes - select date', () => {
 
     it('validation passes if validate date option is other and valid date entered', async () => {
       const body = {
-        datePresetOption: PresetDateOptionsWithYesterday.OTHER,
+        datePresetOption: DateOption.OTHER,
         date: formatDatePickerDate(addDays(new Date(), -14)),
       }
 

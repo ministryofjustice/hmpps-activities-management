@@ -5,13 +5,14 @@ import { addDays, startOfToday, subDays } from 'date-fns'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
-import { getSelectedDate, PresetDateOptionsWithYesterday } from '../../../../utils/utils'
+import { getSelectedDate } from '../../../../utils/utils'
+import DateOption from '../../../../enum/dateOption'
 
 export class NotAttendedDate {
-  @IsEnum(PresetDateOptionsWithYesterday, { message: 'Select a date' })
-  datePresetOption: PresetDateOptionsWithYesterday
+  @IsEnum(DateOption, { message: 'Select a date' })
+  datePresetOption: DateOption
 
-  @ValidateIf(o => o.datePresetOption === PresetDateOptionsWithYesterday.OTHER)
+  @ValidateIf(o => o.datePresetOption === DateOption.OTHER)
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(thisDate => thisDate >= subDays(startOfToday(), 14), {
     message: 'Enter a date within the last 14 days',

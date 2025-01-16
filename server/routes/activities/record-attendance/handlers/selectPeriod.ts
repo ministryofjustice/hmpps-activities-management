@@ -6,20 +6,16 @@ import { formatDatePickerDate, formatIsoDate, parseDatePickerDate } from '../../
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
 import TimeSlot from '../../../../enum/timeSlot'
-import {
-  convertToArray,
-  getDatePresetOptionWithYesterday,
-  getSelectedDate,
-  PresetDateOptionsWithYesterday,
-} from '../../../../utils/utils'
+import { convertToArray, getDatePresetOptionWithYesterday, getSelectedDate } from '../../../../utils/utils'
+import DateOption from '../../../../enum/dateOption'
 
 export class TimePeriod {
   @Expose()
-  @IsIn(Object.values(PresetDateOptionsWithYesterday), { message: 'Select a date' })
+  @IsIn(Object.values(DateOption), { message: 'Select a date' })
   datePresetOption: string
 
   @Expose()
-  @ValidateIf(o => o.datePresetOption === PresetDateOptionsWithYesterday.OTHER)
+  @ValidateIf(o => o.datePresetOption === DateOption.OTHER)
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(thisDate => thisDate <= addDays(startOfToday(), 60), {
     message: 'Enter a date up to 60 days in the future',
@@ -39,10 +35,7 @@ export default class SelectPeriodRoutes {
     return res.render('pages/activities/record-attendance/select-period', {
       sessions: sessions || null,
       datePresetOption,
-      date:
-        date && datePresetOption === PresetDateOptionsWithYesterday.OTHER
-          ? formatDatePickerDate(new Date(date as string))
-          : null,
+      date: date && datePresetOption === DateOption.OTHER ? formatDatePickerDate(new Date(date as string)) : null,
     })
   }
 
