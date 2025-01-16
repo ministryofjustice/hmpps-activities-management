@@ -30,12 +30,7 @@
 {% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}
 
 {% block header %}
-  {% if feComponents.header %}
-    {{ feComponents.header | safe }}
-  {% else %}
-    {% include "partials/header.njk" %}
-  {% endif %}
-  {% block meta %}{% endblock %}
+  {{ feComponents.header | safe }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -43,13 +38,7 @@
 {% endblock %}
 
 {% block footer %}
-  {% if feComponents.footer %}
-    {{ feComponents.footer | safe }}
-  {% else %}
-    {{ govukFooter({
-      classes: 'govuk-!-display-none-print'
-    }) }}
-  {% endif %}
+  {{ feComponents.footer | safe }}
 {% endblock %}
 
 {% block bodyEnd %}

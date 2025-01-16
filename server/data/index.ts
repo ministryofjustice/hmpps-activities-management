@@ -16,7 +16,6 @@ import PrisonerSearchApiClient from './prisonerSearchApiClient'
 import PrisonRegisterApiClient from './prisonRegisterApiClient'
 import ActivitiesApiClient from './activitiesApiClient'
 import IncentivesApiClient from './incentivesApiClient'
-import FrontendComponentApiClient from './frontendComponentApiClient'
 import CaseNotesApiClient from './caseNotesApiClient'
 import BookAVideoLinkApiClient from './bookAVideoLinkApiClient'
 import NonAssociationsApiClient from './nonAssociationsApiClient'
@@ -34,7 +33,6 @@ export default function dataAccess() {
     prisonRegisterApiClient: new PrisonRegisterApiClient(),
     incentivesApiClient: new IncentivesApiClient(),
     activitiesApiClient: new ActivitiesApiClient(),
-    frontendComponentApiClient: new FrontendComponentApiClient(),
     bookAVideoLinkApiClient: new BookAVideoLinkApiClient(),
     applicationInsightsClient: appInsightsClient,
     nonAssociationsApiClient: new NonAssociationsApiClient(),

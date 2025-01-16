@@ -1,7 +1,6 @@
 import createApp from './app'
 import services from './services'
-import dataAccess from './data'
 
-const app = createApp(services(), dataAccess())
+const app = createApp(services())
 
 export default app

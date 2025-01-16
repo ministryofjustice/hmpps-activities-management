@@ -37,8 +37,6 @@ export default abstract class Page {
 
   signOut = (): Cypress.Chainable => cy.get('[data-qa=signOut]')
 
-  manageDetails = (): Cypress.Chainable => cy.get('[data-qa=manageDetails]')
-
   headerUserName = (): Cypress.Chainable => cy.get('[data-qa=header-user-name]')
 
   headerActiveCaseload = (): Cypress.Chainable => cy.get('[data-qa=header-active-caseload]')

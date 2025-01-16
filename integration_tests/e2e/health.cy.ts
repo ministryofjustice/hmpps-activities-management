@@ -32,7 +32,6 @@ context('Healthcheck', () => {
         expect(response.body.checks.prisonApi).to.equal('OK')
         expect(response.body.checks.prisonerSearchApi).to.equal('OK')
         expect(response.body.checks.incentivesApi).to.equal('OK')
-        expect(response.body.checks.frontendComponents).to.equal('OK')
         expect(response.body.checks.prisonRegisterApi).to.equal('OK')
         expect(response.body.checks.manageUsersApi).to.equal('OK')
         expect(response.body.checks.bookAVideoLinkApi).to.equal('OK')
