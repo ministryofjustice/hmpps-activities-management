@@ -959,10 +959,6 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
   })
 
   describe('POST', () => {
-    beforeEach(() => {
-      req.session.recordAppointmentAttendanceJourney = {}
-    })
-
     it('redirects to GET', async () => {
       req.query = {
         dateOption: DateOption.OTHER,

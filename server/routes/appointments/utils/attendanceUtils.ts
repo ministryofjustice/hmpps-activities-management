@@ -1,9 +1,5 @@
 import { Prisoner } from '../../../@types/activities'
-import {
-  AppointmentAttendanceSummary,
-  AppointmentAttendeeByStatus,
-  AppointmentDetails,
-} from '../../../@types/activitiesAPI/types'
+import { AppointmentAttendanceSummary, AppointmentAttendeeByStatus } from '../../../@types/activitiesAPI/types'
 import { AttendanceStatus } from '../../../@types/appointments'
 import EventTier from '../../../enum/eventTiers'
 import { formatDate, simplifyTime } from '../../../utils/utils'
@@ -27,23 +23,21 @@ export const getAttendanceSummaryFromAttendanceSummaries = (summaries: Appointme
   }
 }
 
-export const getAttendanceSummaryFromAppointmentDetails = (appointments: AppointmentDetails[]) => {
+export const getAttendanceSummaryFromAppointmentDetails = (attendees: { attended: boolean }[]) => {
   let attendeeCount = 0
   let attended = 0
   let notAttended = 0
   let notRecorded = 0
 
-  appointments.forEach(appointment => {
-    attendeeCount += appointment.attendees.length
-    appointment.attendees.forEach(attendee => {
-      if (attendee.attended === true) {
-        attended += 1
-      } else if (attendee.attended === false) {
-        notAttended += 1
-      } else {
-        notRecorded += 1
-      }
-    })
+  attendees.forEach(attendee => {
+    attendeeCount += 1
+    if (attendee.attended === true) {
+      attended += 1
+    } else if (attendee.attended === false) {
+      notAttended += 1
+    } else {
+      notRecorded += 1
+    }
   })
 
   const attendanceSummary = {
