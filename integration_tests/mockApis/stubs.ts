@@ -176,11 +176,11 @@ const frontendComponents = () =>
   stubFor({
     request: {
       method: 'GET',
-      urlPattern: '/frontend-components/components\\?component=header&component=footer',
+      urlPattern: '/components\\?component=header&component=footer',
     },
     response: {
-      headers: { 'Content-Type': 'application/json' },
       status: 200,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       jsonBody: frontendComponentJson,
     },
   })
