@@ -34,6 +34,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
     } as unknown as Response
 
     req = {
+      query: {},
       session: {},
     } as unknown as Request
   })
@@ -84,17 +85,17 @@ describe('Route Handlers - Record Appointment Attendance', () => {
 
       const attendeeRows = [
         {
-          prisoner: { prisonerNumber: 'A1234BC' },
+          ...appointments[0].attendees[0],
           appointment: appointments[0],
           otherEvents: [],
         },
         {
-          prisoner: { prisonerNumber: 'D4444DD' },
+          ...appointments[0].attendees[1],
           appointment: appointments[0],
           otherEvents: [],
         },
         {
-          prisoner: { prisonerNumber: 'A1234BC' },
+          ...appointments[1].attendees[0],
           appointment: appointments[1],
           otherEvents: [],
         },
@@ -154,45 +155,38 @@ describe('Route Handlers - Record Appointment Attendance', () => {
 
       const attendeeRows = [
         {
-          prisoner: { prisonerNumber: 'A1234BC' },
+          ...appointments[0].attendees[0],
           appointment: appointments[0],
-          attended: true,
           otherEvents: [],
         },
         {
-          prisoner: { prisonerNumber: 'D4444DD' },
+          ...appointments[0].attendees[1],
           appointment: appointments[0],
-          attended: false,
           otherEvents: [],
         },
         {
-          prisoner: { prisonerNumber: 'E5555EE' },
+          ...appointments[0].attendees[2],
           appointment: appointments[0],
-          attended: false,
           otherEvents: [],
         },
         {
-          prisoner: { prisonerNumber: 'F6666FF' },
+          ...appointments[0].attendees[3],
           appointment: appointments[0],
-          attended: null,
           otherEvents: [],
         },
         {
-          prisoner: { prisonerNumber: 'G7777GG' },
+          ...appointments[0].attendees[4],
           appointment: appointments[0],
-          attended: true,
           otherEvents: [],
         },
         {
-          prisoner: { prisonerNumber: 'A1234BC' },
+          ...appointments[1].attendees[0],
           appointment: appointments[1],
-          attended: null,
           otherEvents: [],
         },
         {
-          prisoner: { prisonerNumber: 'G7777GG' },
+          ...appointments[1].attendees[1],
           appointment: appointments[1],
-          attended: null,
           otherEvents: [],
         },
       ]
@@ -385,6 +379,102 @@ describe('Route Handlers - Record Appointment Attendance', () => {
         },
       })
     })
+
+    it('should filter attendees by search term', async () => {
+      req.query = {
+        searchTerm: 'jO',
+      }
+
+      req.session.recordAppointmentAttendanceJourney = {
+        appointmentIds: [1, 2],
+      }
+
+      const appointments = [
+        {
+          id: 1,
+          appointmentName: 'Chaplaincy',
+          startDate: '2024-02-25',
+          startTime: '15:00',
+          attendees: [
+            {
+              attended: true,
+              prisoner: {
+                prisonerNumber: 'A1234BC',
+                firstName: 'JOe',
+                lastName: 'Smith',
+              },
+            },
+            {
+              attended: false,
+              prisoner: {
+                prisonerNumber: 'D4444DD',
+                firstName: 'Jim',
+                lastName: 'DeJOHanson',
+              },
+            },
+          ],
+        },
+        {
+          id: 2,
+          appointmentName: 'Gym',
+          startDate: '2024-02-25',
+          attendees: [
+            {
+              attended: null,
+              prisoner: {
+                prisonerNumber: 'J3333Jo',
+                firstName: 'Jim',
+                lastName: 'Smith',
+              },
+            },
+            {
+              attended: null,
+              prisoner: {
+                prisonerNumber: 'J3333Jj',
+                firstName: 'Jim',
+                lastName: 'Smith',
+              },
+            },
+          ],
+        },
+      ] as AppointmentDetails[]
+
+      when(activitiesService.getAppointments).calledWith([1, 2], res.locals.user).mockResolvedValue(appointments)
+
+      await handler.GET_MULTIPLE(req, res)
+
+      const attendeeRows = [
+        {
+          ...appointments[0].attendees[0],
+          appointment: appointments[0],
+          otherEvents: [],
+        },
+        {
+          ...appointments[0].attendees[1],
+          appointment: appointments[0],
+          otherEvents: [],
+        },
+        {
+          ...appointments[1].attendees[0],
+          appointment: appointments[1],
+          otherEvents: [],
+        },
+      ]
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
+        attendeeRows,
+        numAppointments: 2,
+        attendanceSummary: {
+          attendeeCount: 3,
+          attended: 1,
+          notAttended: 1,
+          notRecorded: 1,
+          attendedPercentage: 33,
+          notAttendedPercentage: 33,
+          notRecordedPercentage: 33,
+        },
+      })
+    })
   })
 
   describe('GET_SINGLE', () => {
@@ -420,7 +510,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       )
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        'attendees',
+        '../attendees',
         'Attendance recorded',
         "You've saved attendance details for 1 attendee",
       )
@@ -453,7 +543,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       )
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        'attendees',
+        '../attendees',
         'Attendance recorded',
         "You've saved attendance details for 4 attendees",
       )
@@ -480,7 +570,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       )
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        'attendees',
+        '../attendees',
         'Attendance recorded',
         "You've saved attendance details for 1 attendee",
       )
@@ -513,10 +603,22 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       )
 
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        'attendees',
+        '../attendees',
         'Attendance recorded',
         "You've saved attendance details for 4 attendees",
       )
+    })
+  })
+
+  describe('POST', () => {
+    it('redirects to GET', async () => {
+      req.body = {
+        searchTerm: 'bLoggs',
+      }
+
+      await handler.POST(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('attendees?searchTerm=bLoggs')
     })
   })
 })

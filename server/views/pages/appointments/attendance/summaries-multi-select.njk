@@ -15,10 +15,6 @@
 {% set pageId = 'appointment-attendance-summaries-page' %}
 {% set jsBackLink = true %}
 
-{% set filterParams = (('&searchTerm=' + session.req.query.searchTerm) if session.req.query.searchTerm else '') +
-    (('&locationId=' + session.req.query.locationId) if session.req.query.locationId else '') +
-    (('&locationType=' + session.req.query.locationType) if session.req.query.locationType else '') %}
-
 {% block meta %}
     <meta name="autocompleteElements" content="locationId"/>
 {% endblock %}
