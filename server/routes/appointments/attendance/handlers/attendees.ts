@@ -126,10 +126,11 @@ export default class AttendeesRoutes {
 
     await this.activitiesService.updateMultipleAppointmentAttendances(action, requests, user)
 
+    const successHeader = action === AttendanceAction.ATTENDED ? 'Attendance recorded' : 'Non-attendance recorded'
     const successMessage = `You've saved attendance details for ${attendanceIds.length} ${
-      attendanceIds.length === 1 ? 'attendee' : 'attendees'
+      attendanceIds.length === 1 ? 'attendee.' : 'attendees.'
     }`
 
-    return res.redirectWithSuccess('../attendees', 'Attendance recorded', successMessage)
+    return res.redirectWithSuccess('../attendees', successHeader, successMessage)
   }
 }

@@ -28,7 +28,7 @@
 
 {% macro attendanceTag(attendee) %}
     {% if attendee.attended === null %}
-        Not recorded
+        Not recorded yet
     {% else %}
         {% if attendee.attended === true %}
             {{ govukTag({ text: 'Attended', classes: 'govuk-tag--green' }) }}
@@ -47,7 +47,7 @@
 {% macro renderViewLink(attendee) %}
     {% if attendee.attended !== null %}
         <a href="attendees/{{ attendee.appointment.id }}/{{ attendee.prisoner.prisonerNumber }}" class="govuk-link govuk-link--no-visited-state">
-            View or Edit
+            View or edit
         </a>
     {% endif %}
 {% endmacro %}
@@ -60,55 +60,65 @@
 {% endmacro %}
 
 {% block content %}
-    <form method='POST'>
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+<form method='POST'>
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l" data-qa="caption">Record appointment attendance</span>
-            {% if singleAppointment %}
-                <h1 class="govuk-heading-l govuk-!-margin-0" data-qa='heading'>{{ singleAppointment.appointmentName }}</h1>
-                <span class="govuk-caption-l" data-qa="date-caption">{{ singleAppointment.startTime + (" to " + singleAppointment.endTime if singleAppointment.endTime) }}</span>
-                <span class="govuk-caption-l" data-qa="date-caption">{{ singleAppointment.startDate | toDate | formatDate }}</span>
-                <span class="govuk-caption-l govuk-!-margin-bottom-4">{{ showLocation(singleAppointment) }}</span>
-            {% else %}
-                <h1 class="govuk-heading-l govuk-!-margin-0" data-qa='heading'>Record attendance at {{ numAppointments }} appointments</h1>
-                <span class="govuk-caption-l" data-qa="date-caption">{{ session.recordAppointmentAttendanceJourney.date | toDate | formatDate }}</span>
-            {% endif %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <span class="govuk-caption-l" data-qa="caption">Record appointment attendance</span>
+                {% if singleAppointment %}
+                    <h1 class="govuk-heading-l govuk-!-margin-0">{{ singleAppointment.appointmentName }}</h1>
+                    <span class="govuk-caption-l" data-qa="date-caption">{{ singleAppointment.startTime + (" to " + singleAppointment.endTime if singleAppointment.endTime) }}</span>
+                    <span class="govuk-caption-l" data-qa="date-caption">{{ singleAppointment.startDate | toDate | formatDate }}</span>
+                    <span class="govuk-caption-l govuk-!-margin-bottom-4">{{ showLocation(singleAppointment) }}</span>
+                {% else %}
+                    <h1 class="govuk-heading-l govuk-!-margin-0">Record attendance at {{ numAppointments }} appointments</h1>
+                    <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="date-caption">{{ session.recordAppointmentAttendanceJourney.date | toDate | formatDate }}</span>
+                {% endif %}
 
-            <h2 class="govuk-heading-m">{{ attendanceSummary.attendeeCount }} attendee{{ "s" if attendanceSummary.attendeeCount != 1 }}</h2>
+                <h2 class="govuk-heading-m">{{ attendanceSummary.attendeeCount }} attendee{{ "s" if attendanceSummary.attendeeCount != 1 }}</h2>
+            </div>
+        </div>
 
-            {% if attendanceSummary.attendeeCount > 1 %}
-                <ul class="govuk-list govuk-!-margin-bottom-4">
-                    <li>
-                        <span>Attended:</span>
-                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
-                    </li>
-                    <li>
-                        <span>Did not attend:</span>
-                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
-                    </li>
-                    <li>
-                        <span>Not recorded yet:</span>
-                        <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
-                    </li>
-                </ul>
-            {% endif %}
+        <div class="govuk-grid-row govuk-!-margin-bottom-4">
+            <div class="govuk-grid-column-two-thirds">
+                {% if attendanceSummary.attendeeCount > 1 %}
+                    <ul class="govuk-list">
+                        <li>
+                            <span>Attended:</span>
+                            <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
+                        </li>
+                        <li>
+                            <span>Did not attend:</span>
+                            <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
+                        </li>
+                        <li>
+                            <span>Not recorded yet:</span>
+                            <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
+                        </li>
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
 
-            {{ searchBar({
-                inputParams: {
-                    id: 'searchTerm',
-                    name: 'searchTerm',
-                    label: {
-                        text: 'Search by prisoner name or prison number',
-                        classes: 'govuk-label--s'
+        <div class="govuk-grid-row govuk-!-margin-bottom-4">
+            <div class="govuk-grid-column-two-thirds">
+                {{ searchBar({
+                    inputParams: {
+                        id: 'searchTerm',
+                        name: 'searchTerm',
+                        label: {
+                            text: 'Search by prisoner name or prison number',
+                            classes: 'govuk-label--s'
+                        },
+                        type: 'search',
+                        value: session.req.query.searchTerm
                     },
-                    type: 'search',
-                    value: session.req.query.searchTerm
-                },
-                buttonParams: {
-                    text: 'Search'
-                }
-            }) }}
+                    buttonParams: {
+                        text: 'Search'
+                    }
+                }) }}
+            </div>
         </div>
 
         {% set attendeeListRows = [] %}
@@ -216,8 +226,8 @@
                     formAction: 'attendees/non-attend'
                 }
             ],
-            itemsDescription: 'person',
-            itemsDescriptionPlural: 'people'
+            itemsDescription: 'attendee',
+            itemsDescriptionPlural: 'attendees'
         }) }}
     </form>
 {% endblock %}

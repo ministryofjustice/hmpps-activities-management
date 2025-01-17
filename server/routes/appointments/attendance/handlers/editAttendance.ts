@@ -51,7 +51,7 @@ export default class EditAttendanceRoutes {
     const prisonerName = convertToTitleCase(`${attendee.prisoner.firstName} ${attendee.prisoner.lastName}`)
 
     let successHeader = 'Attendance recorded'
-    let successMessage = `You've saved details for ${prisonerName}`
+    let successMessage = `You've saved details for ${prisonerName}.`
     let action = AttendanceAction.ATTENDED
 
     if (req.body.attendanceOption === EditAttendanceOptions.NO) {
@@ -59,7 +59,7 @@ export default class EditAttendanceRoutes {
       action = AttendanceAction.NOT_ATTENDED
     } else if (req.body.attendanceOption === EditAttendanceOptions.RESET) {
       successHeader = 'Attendance reset'
-      successMessage = `Attendance for ${prisonerName} has been reset`
+      successMessage = `Attendance for ${prisonerName} has been reset.`
       action = AttendanceAction.RESET
     }
 
