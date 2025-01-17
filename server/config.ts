@@ -235,7 +235,6 @@ export default {
   videoConferenceScheduleFeatureToggleEnabled: toBoolean(
     get('VIDEO_CONFERENCE_SCHEDULE_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
   ),
-  suspendPrisonerWithPayToggleEnabled: toBoolean(get('SUSPEND_PRISONERS_WITH_PAY_FEATURE_TOGGLE_ENABLED', 'false')),
   appointmentMultipleAttendanceToggleEnabled: toBoolean(
     get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),
   ),

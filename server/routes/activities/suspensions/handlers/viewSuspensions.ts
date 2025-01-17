@@ -4,7 +4,6 @@ import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import CaseNotesService from '../../../../services/caseNotesService'
 import UserService from '../../../../services/userService'
-import config from '../../../../config'
 import { PrisonerSuspensionStatus } from '../../manage-allocations/journey'
 
 export enum PaidType {
@@ -58,14 +57,11 @@ export default class ViewSuspensionsRoutes {
   }
 
   private getPayTypeForAllocations = allocations => {
-    if (config.suspendPrisonerWithPayToggleEnabled) {
-      return allocations.map(allocation => {
-        if (allocation.status === PrisonerSuspensionStatus.SUSPENDED_WITH_PAY || allocation.plannedSuspension.paid)
-          return { ...allocation, paidWhileSuspended: PaidType.YES }
-        if (allocation.prisonPayBand == null) return { ...allocation, paidWhileSuspended: PaidType.NO_UNPAID }
-        return { ...allocation, paidWhileSuspended: PaidType.NO }
-      })
-    }
-    return allocations
+    return allocations.map(allocation => {
+      if (allocation.status === PrisonerSuspensionStatus.SUSPENDED_WITH_PAY || allocation.plannedSuspension.paid)
+        return { ...allocation, paidWhileSuspended: PaidType.YES }
+      if (allocation.prisonPayBand == null) return { ...allocation, paidWhileSuspended: PaidType.NO_UNPAID }
+      return { ...allocation, paidWhileSuspended: PaidType.NO }
+    })
   }
 }
