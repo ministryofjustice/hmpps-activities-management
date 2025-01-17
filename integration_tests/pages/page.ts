@@ -35,14 +35,6 @@ export default abstract class Page {
     cy.get(`#${this.pageId}`).should('exist')
   }
 
-  signOut = (): Cypress.Chainable => cy.get('[data-qa=signOut]')
-
-  headerUserName = (): Cypress.Chainable => cy.get('[data-qa=header-user-name]')
-
-  headerActiveCaseload = (): Cypress.Chainable => cy.get('[data-qa=header-active-caseload]')
-
-  headerChangeLocation = (): Cypress.Chainable => cy.get('[data-qa=header-change-location]')
-
   getInputByLabel = (label: string): Cypress.Chainable =>
     cy
       .contains('label', label)

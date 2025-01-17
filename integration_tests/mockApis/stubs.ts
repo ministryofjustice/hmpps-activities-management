@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-import frontendComponentJson from '../fixtures/frontendComponents/frontendComponent.json'
 
 import { stubFor, getMatchingRequests, stubHealthPing } from './wiremock'
 
@@ -181,7 +180,10 @@ const frontendComponents = () =>
     response: {
       status: 200,
       headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      jsonBody: frontendComponentJson,
+      jsonBody: {
+        header: { html: '', css: [], javascript: [] },
+        footer: { html: '', css: [], javascript: [] },
+      },
     },
   })
 

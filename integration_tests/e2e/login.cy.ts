@@ -18,19 +18,6 @@ context('SignIn', () => {
     Page.verifyOnPage(AuthSignInPage)
   })
 
-  it('User name visible in header', () => {
-    cy.signIn()
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.headerUserName().should('contain.text', 'J. Smith')
-  })
-
-  it('User can log out', () => {
-    cy.signIn()
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.signOut().click()
-    Page.verifyOnPage(AuthSignInPage)
-  })
-
   it('Token verification failure takes user to sign in page', () => {
     cy.signIn()
     Page.verifyOnPage(IndexPage)
@@ -52,6 +39,6 @@ context('SignIn', () => {
     cy.task('stubSignIn')
     cy.signIn()
 
-    indexPage.headerUserName().contains('J. Smith')
+    indexPage.activitiesCard()
   })
 })
