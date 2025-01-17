@@ -180,10 +180,9 @@ export default class UnlockListService {
     cellPatterns: SubLocationCellPattern[],
     cellLocation: string,
   ): string => {
-    // eslint-disable-next-line no-restricted-syntax
     for (const cellPattern of cellPatterns) {
       const splitPatterns = cellPattern.locationPrefix.split(',')
-      // eslint-disable-next-line no-restricted-syntax
+
       for (const pattern of splitPatterns) {
         const regex = new RegExp(pattern)
         if (regex.test(`${prison}-${cellLocation}`)) {

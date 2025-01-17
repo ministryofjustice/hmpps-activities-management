@@ -52,6 +52,7 @@ export default class ViewAllocationRoutes {
     try {
       const allocatedByUser = await this.userService.getUserMap([allocation.allocatedBy], user)
       allocatedByUser.forEach((value, key) => userMap.set(key, value))
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       logger.info(`Handled allocatedBy user ${allocation.allocatedBy} not found.`)
     }
