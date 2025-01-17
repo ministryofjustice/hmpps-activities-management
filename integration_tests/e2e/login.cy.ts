@@ -1,7 +1,6 @@
 import IndexPage from '../pages/index'
 import AuthSignInPage from '../pages/authSignIn'
 import Page from '../pages/page'
-import AuthManageDetailsPage from '../pages/authManageDetails'
 
 context('SignIn', () => {
   beforeEach(() => {
@@ -17,28 +16,6 @@ context('SignIn', () => {
   it('Unauthenticated user navigating to sign in page directed to auth', () => {
     cy.visit('/sign-in')
     Page.verifyOnPage(AuthSignInPage)
-  })
-
-  it('User name visible in header', () => {
-    cy.signIn()
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.headerUserName().should('contain.text', 'J. Smith')
-  })
-
-  it('User can log out', () => {
-    cy.signIn()
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.signOut().click()
-    Page.verifyOnPage(AuthSignInPage)
-  })
-
-  it('User can manage their details', () => {
-    cy.signIn()
-    const indexPage = Page.verifyOnPage(IndexPage)
-
-    indexPage.manageDetails().get('a').invoke('removeAttr', 'target')
-    indexPage.manageDetails().click()
-    Page.verifyOnPage(AuthManageDetailsPage)
   })
 
   it('Token verification failure takes user to sign in page', () => {
@@ -62,6 +39,6 @@ context('SignIn', () => {
     cy.task('stubSignIn')
     cy.signIn()
 
-    indexPage.headerUserName().contains('J. Smith')
+    indexPage.activitiesCard()
   })
 })

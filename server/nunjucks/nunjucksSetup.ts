@@ -127,6 +127,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
       'node_modules/@ministryofjustice/frontend/',
       'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/',
       'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/components/',
+      'node_modules/@ministryofjustice/hmpps-connect-dps-components/dist/assets/',
     ],
     {
       autoescape: true,

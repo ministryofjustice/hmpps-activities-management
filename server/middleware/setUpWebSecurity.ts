@@ -38,11 +38,6 @@ export default function setUpWebSecurity(): Router {
   const fontSrc = ["'self'"]
   const formAction = [`'self' ${config.dpsUrl}`]
 
-  scriptSrc.push(config.apis.frontendComponents.url)
-  styleSrc.push(config.apis.frontendComponents.url)
-  imgSrc.push(config.apis.frontendComponents.url)
-  fontSrc.push(config.apis.frontendComponents.url)
-
   router.use(
     helmet({
       contentSecurityPolicy: {

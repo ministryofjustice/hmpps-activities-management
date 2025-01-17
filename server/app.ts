@@ -3,6 +3,7 @@ import express from 'express'
 
 import flash from 'connect-flash'
 import createHttpError from 'http-errors'
+import dpsComponents from '@ministryofjustice/hmpps-connect-dps-components'
 import nunjucksSetup from './nunjucks/nunjucksSetup'
 import errorHandler from './errorHandler'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
@@ -16,8 +17,8 @@ import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 
+import config from './config'
 import routes from './routes'
-import { DataAccess } from './data'
 import type { Services } from './services'
 import setUpSuccessMessages from './middleware/setUpSuccessMessages'
 import setUpChangeLinks from './middleware/setUpChangeLinks'
@@ -25,9 +26,9 @@ import trimRequestBody from './middleware/trimBodyMiddleware'
 import setUpValidationExtensions from './middleware/setUpValidationExtensions'
 import formValidationErrorHandler from './middleware/formValidationErrorHandler'
 import populateJourney from './middleware/populateJourney'
-import setUpFrontendComponents from './middleware/fetchFrontendComponentMiddleware'
+import logger from '../logger'
 
-export default function createApp(services: Services, dataAccess: DataAccess): express.Application {
+export default function createApp(services: Services): express.Application {
   const app = express()
 
   app.set('json spaces', 2)
@@ -49,7 +50,8 @@ export default function createApp(services: Services, dataAccess: DataAccess): e
   app.use(setUpCurrentUser(services))
   app.use(trimRequestBody())
   app.use(setUpValidationExtensions())
-  app.use(setUpFrontendComponents(dataAccess))
+  app.get('*', dpsComponents.getPageComponents({ includeSharedData: true, dpsUrl: config.dpsUrl, logger }))
+  app.use(dpsComponents.retrieveCaseLoadData({ logger }))
   app.use(populateJourney())
   app.use(routes(services))
   app.use(formValidationErrorHandler)
