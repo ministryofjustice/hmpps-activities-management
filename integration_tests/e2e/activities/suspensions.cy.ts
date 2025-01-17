@@ -1,6 +1,5 @@
 import { addDays, formatDate } from 'date-fns'
 import getInmateDetails from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A5015DY.json'
-import config from '../../../server/config'
 import { Activity } from '../../../server/@types/activitiesAPI/types'
 import ViewAllocationsPage from '../../pages/activities/suspensions/viewAllocations'
 import Page from '../../pages/page'
@@ -312,7 +311,6 @@ context('Suspensions', () => {
       suspendFrom: toDateString(new Date()),
     } as unknown as JSON)
     cy.signIn()
-    config.suspendPrisonerWithPayToggleEnabled = true
   })
   it('should render the page, all suspended', () => {
     cy.visit('/activities/suspensions/prisoner/G0995GW')
@@ -777,7 +775,6 @@ context('Bulk suspend/unsuspend', () => {
       suspendFrom: toDateString(new Date()),
     } as unknown as JSON)
     cy.signIn()
-    config.suspendPrisonerWithPayToggleEnabled = true
   })
   it('should be able to suspend all active allocations at once', () => {
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', getActivePrisonerAllocations)

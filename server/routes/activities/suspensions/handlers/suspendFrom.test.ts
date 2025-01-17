@@ -5,7 +5,6 @@ import { addDays, format } from 'date-fns'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
 import SuspendFromRoutes, { SuspendFrom } from './suspendFrom'
 import { PrisonPayBand } from '../../../../@types/activitiesAPI/types'
-import config from '../../../../config'
 
 describe('Route Handlers - Suspensions - Suspend From', () => {
   const handler = new SuspendFromRoutes()
@@ -86,7 +85,6 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
     })
 
     it('should redirect to the pay question page if the single allocation has a pay rate', async () => {
-      config.suspendPrisonerWithPayToggleEnabled = true
       req.body = {
         datePresetOption: 'immediately',
       }
@@ -97,7 +95,6 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
     })
 
     it('should redirect to the pay question page if there is an allocation with a pay rate being suspended', async () => {
-      config.suspendPrisonerWithPayToggleEnabled = true
       req.session.suspendJourney = {
         inmate: {
           prisonerName: '',
@@ -129,7 +126,6 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
     })
 
     it('should redirect to the case note question page if none of the allocations have paybands', async () => {
-      config.suspendPrisonerWithPayToggleEnabled = true
       req.session.suspendJourney = {
         inmate: {
           prisonerName: '',
@@ -144,17 +140,6 @@ describe('Route Handlers - Suspensions - Suspend From', () => {
           },
         ],
       }
-
-      req.body = {
-        datePresetOption: 'immediately',
-      }
-
-      await handler.POST(req, res)
-
-      expect(res.redirectOrReturn).toHaveBeenCalledWith('case-note-question')
-    })
-    it('should redirect to the case note question page if the flag is off', async () => {
-      config.suspendPrisonerWithPayToggleEnabled = false
 
       req.body = {
         datePresetOption: 'immediately',

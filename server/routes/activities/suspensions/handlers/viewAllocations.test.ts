@@ -8,7 +8,6 @@ import { Activity, ActivitySchedule, PrisonerAllocations } from '../../../../@ty
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import activitySchedule from '../../../../services/fixtures/activity_schedule_1.json'
 import ViewAllocationsRoutes from './viewAllocations'
-import config from '../../../../config'
 import { PrisonerSuspensionStatus } from '../../manage-allocations/journey'
 
 jest.mock('../../../../services/prisonService')
@@ -103,209 +102,12 @@ describe('Route Handlers - Suspensions - View allocations', () => {
         .mockResolvedValue(activitySchedule as unknown as ActivitySchedule)
     })
 
-    it('should render the correct view - suspendPrisonerWithPayToggleEnabled OFF', async () => {
-      config.suspendPrisonerWithPayToggleEnabled = false
-      await handler.GET(req, res)
-
-      expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/view-allocations', {
-        activeAllocationIdsForSuspending: null,
-        activeAllocations: [],
-        activities: [
-          {
-            allocation: {
-              activityId: 1,
-              exclusions: [
-                {
-                  daysOfWeek: ['MONDAY'],
-                  monday: true,
-                  timeSlot: 'AM',
-                  weekNumber: 1,
-                },
-              ],
-              id: 1,
-              prisonPayBand: {
-                id: 1,
-              },
-              prisonerNumber: 'ABC123',
-              scheduleId: 1,
-              startDate: '2022-05-19',
-            },
-            currentWeek: 1,
-            slots: {
-              '1': [
-                {
-                  day: 'Monday',
-                  slots: [],
-                },
-                {
-                  day: 'Tuesday',
-                  slots: [
-                    {
-                      endTime: '11:00',
-                      startTime: '10:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-                {
-                  day: 'Wednesday',
-                  slots: [
-                    {
-                      endTime: '11:00',
-                      startTime: '10:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-                {
-                  day: 'Thursday',
-                  slots: [
-                    {
-                      endTime: '12:00',
-                      startTime: '11:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-                {
-                  day: 'Friday',
-                  slots: [
-                    {
-                      endTime: '12:00',
-                      startTime: '11:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-                {
-                  day: 'Saturday',
-                  slots: [
-                    {
-                      endTime: '12:00',
-                      startTime: '11:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-                {
-                  day: 'Sunday',
-                  slots: [
-                    {
-                      endTime: '12:00',
-                      startTime: '11:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-              ],
-            },
-          },
-          {
-            allocation: {
-              activityId: 2,
-              exclusions: [],
-              id: 2,
-              plannedSuspension: {
-                plannedStartDate: '2024-12-25',
-              },
-              prisonPayBand: {
-                id: 1,
-              },
-              prisonerNumber: 'ABC123',
-              scheduleId: 1,
-              startDate: '2024-05-19',
-            },
-            currentWeek: 1,
-            slots: {
-              '1': [
-                {
-                  day: 'Monday',
-                  slots: [
-                    {
-                      endTime: '11:00',
-                      startTime: '10:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-                {
-                  day: 'Tuesday',
-                  slots: [
-                    {
-                      endTime: '11:00',
-                      startTime: '10:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-                {
-                  day: 'Wednesday',
-                  slots: [
-                    {
-                      endTime: '11:00',
-                      startTime: '10:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-                {
-                  day: 'Thursday',
-                  slots: [
-                    {
-                      endTime: '12:00',
-                      startTime: '11:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-                {
-                  day: 'Friday',
-                  slots: [
-                    {
-                      endTime: '12:00',
-                      startTime: '11:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-                {
-                  day: 'Saturday',
-                  slots: [
-                    {
-                      endTime: '12:00',
-                      startTime: '11:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-                {
-                  day: 'Sunday',
-                  slots: [
-                    {
-                      endTime: '12:00',
-                      startTime: '11:00',
-                      timeSlot: 'AM',
-                    },
-                  ],
-                },
-              ],
-            },
-          },
-        ],
-        allocationCount: 2,
-        prisonerName: 'John Smith',
-        prisonerNumber: 'ABC123',
-        suspendedAllocations: [],
-      })
-    })
-    it('should render the correct view - suspendPrisonerWithPayToggleEnabled ON', async () => {
-      config.suspendPrisonerWithPayToggleEnabled = true
+    it('should render the correct view', async () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/view-allocations', {
         activeAllocationIdsForSuspending: [1],
         allocationCount: 2,
-        activities: [],
         suspendedAllocations: [
           {
             id: 2,
@@ -342,7 +144,7 @@ describe('Route Handlers - Suspensions - View allocations', () => {
         prisonerNumber: 'ABC123',
       })
     })
-    it('should render the correct view - suspendPrisonerWithPayToggleEnabled ON - all suspended together', async () => {
+    it('should render the correct view - all suspended together', async () => {
       when(activitiesService.getActivePrisonPrisonerAllocations)
         .calledWith(['ABC123'], res.locals.user)
         .mockResolvedValue([
@@ -386,13 +188,11 @@ describe('Route Handlers - Suspensions - View allocations', () => {
           },
         ] as unknown as PrisonerAllocations[])
 
-      config.suspendPrisonerWithPayToggleEnabled = true
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/view-allocations', {
         activeAllocationIdsForSuspending: [],
         allocationCount: 3,
-        activities: [],
         suspendedAllocations: [
           {
             id: 1,
