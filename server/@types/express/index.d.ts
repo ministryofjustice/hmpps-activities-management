@@ -6,7 +6,6 @@ import { CalendarSpikeJourney } from '../../routes/spikes/handlers/journey'
 import { RecordAttendanceJourney } from '../../routes/activities/record-attendance/journey'
 import { JourneyMetrics } from '../../routes/journeyMetrics'
 
-// eslint-disable-next-line import/no-cycle
 import { AppointmentSeriesDetails, AppointmentDetails, AppointmentSetDetails } from '../activitiesAPI/types'
 import { AppointmentSetJourney } from '../../routes/appointments/create-and-edit/appointmentSetJourney'
 import { AttendanceSummaryJourney } from '../../routes/activities/daily-attendance-summary/journey'

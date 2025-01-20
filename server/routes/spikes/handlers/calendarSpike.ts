@@ -35,6 +35,7 @@ export default class CalendarSpikeRoutes {
         )
 
       res.render('pages/spikes/calendarSpike', { referenceDate, activities })
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       res.validationFailed('string', `Calendar for prisoner with number ${prisonerNumber} was not found`)
     }

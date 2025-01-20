@@ -93,7 +93,6 @@ export default class RegimeChangeRoutes {
 
     const filteredActivities = activities.filter(act => act.activityState === 'LIVE')
 
-    // eslint-disable-next-line no-restricted-syntax
     for (const act of filteredActivities) {
       // eslint-disable-next-line no-await-in-loop
       const activity: Activity = await this.activitiesService.getActivity(act.id, user)

@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator'
 import { ActivityPay } from '../@types/activitiesAPI/types'
 import { parseIsoDate } from '../utils/datePickerUtils'

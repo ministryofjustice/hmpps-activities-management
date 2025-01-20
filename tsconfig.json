@@ -26,7 +26,8 @@
     "dist",
     "cypress.config.ts",
     "coverage",
-    "esbuild"
+    "esbuild",
+    "eslint.config.mjs"
   ],
   "include": ["**/*.js", "**/*.ts"]
 }
