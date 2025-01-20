@@ -94,14 +94,6 @@ export default {
       },
       agent: new AgentConfig(Number(get('MANAGE_USERS_API_TIMEOUT_RESPONSE', 5000))),
     },
-    frontendComponents: {
-      url: get('FRONTEND_COMPONENT_API_URL', 'http://localhost:8082', requiredInProduction),
-      timeout: {
-        response: Number(get('FRONTEND_COMPONENT_API_TIMEOUT_RESPONSE', 5000)),
-        deadline: Number(get('FRONTEND_COMPONENT_API_TIMEOUT_DEADLINE', 5000)),
-      },
-      agent: new AgentConfig(Number(get('FRONTEND_COMPONENT_API_TIMEOUT_RESPONSE', 5000))),
-    },
     activitiesApi: {
       url: get('ACTIVITIES_API_URL', 'http://localhost:8089', requiredInProduction),
       timeout: {
@@ -240,13 +232,9 @@ export default {
     },
   ] as RouteAuth[],
   spikesFeatureToggleEnabled: toBoolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', 'false')),
-  frontendComponentsApiToggleEnabled: toBoolean(
-    get('FRONTEND_COMPONENTS_API_FEATURE_TOGGLE_ENABLED', 'true', requiredInProduction),
-  ),
   videoConferenceScheduleFeatureToggleEnabled: toBoolean(
     get('VIDEO_CONFERENCE_SCHEDULE_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
   ),
-  suspendPrisonerWithPayToggleEnabled: toBoolean(get('SUSPEND_PRISONERS_WITH_PAY_FEATURE_TOGGLE_ENABLED', 'false')),
   appointmentMultipleAttendanceToggleEnabled: toBoolean(
     get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),
   ),

@@ -107,7 +107,7 @@ describe('Route Handlers - Edit Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../../../attendees',
         'Attendance recorded',
-        "You've saved details for Joe Bloggs",
+        "You've saved details for Joe Bloggs.",
       )
     })
 
@@ -125,7 +125,7 @@ describe('Route Handlers - Edit Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../../../attendees',
         'Non-attendance recorded',
-        "You've saved details for Joe Bloggs",
+        "You've saved details for Joe Bloggs.",
       )
     })
 
@@ -143,7 +143,7 @@ describe('Route Handlers - Edit Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../../../attendees',
         'Attendance reset',
-        'Attendance for Joe Bloggs has been reset',
+        'Attendance for Joe Bloggs has been reset.',
       )
     })
   })

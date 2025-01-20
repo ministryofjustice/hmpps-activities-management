@@ -1,4 +1,3 @@
-/* eslint-disable dot-notation */
 import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator'
 import { AppointmentJourney, AppointmentJourneyMode } from '../routes/appointments/create-and-edit/appointmentJourney'
 

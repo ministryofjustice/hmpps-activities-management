@@ -2,8 +2,8 @@ import { addWeeks, format } from 'date-fns'
 import getActivity from '../../../fixtures/activitiesApi/getActivity.json'
 import getSchedule from '../../../fixtures/activitiesApi/getSchedule.json'
 
-/* eslint no-return-assign: "error" */
-/* eslint no-param-reassign: "error" */
+/* eslint no-return-assign: "off" */
+/* eslint no-param-reassign: "off" */
 
 export function resetActivitiesStub(activityStartDate: Date, startTime: string = '10:00') {
   let currentDate = activityStartDate

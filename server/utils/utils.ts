@@ -1,5 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,dot-notation */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  addDays,
   areIntervalsOverlapping,
   endOfDay,
   format,
@@ -10,15 +11,16 @@ import {
   parse,
   parseISO,
   set,
+  subDays,
 } from 'date-fns'
 import { enGB } from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
 import _ from 'lodash'
 import { FieldValidationError } from '../middleware/validationMiddleware'
 import { Activity, ActivitySchedule, Attendance, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
-// eslint-disable-next-line import/no-cycle
 import { CreateAnActivityJourney, Slots } from '../routes/activities/create-an-activity/journey'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
+import DateOption from '../enum/dateOption'
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
@@ -390,4 +392,28 @@ export const getSplitTime = (time: string) => {
     hour: splitTime[0][0] === '0' ? splitTime[0][1] : splitTime[0],
     minute: splitTime[1][0] === '0' ? splitTime[1][1] : splitTime[1],
   }
+}
+
+export const getSelectedDate = form => {
+  if (form.datePresetOption === DateOption.TODAY) return new Date()
+  if (form.datePresetOption === DateOption.YESTERDAY) return subDays(new Date(), 1)
+  return form.date
+}
+
+export const getDateFromDateAndTimeFormat = (date: Date): string => {
+  return date.toISOString().split('T')[0]
+}
+
+export const getDatePresetOptionWithYesterday = (date: string): DateOption => {
+  if (date === undefined) return null
+  if (date === getDateFromDateAndTimeFormat(new Date())) return DateOption.TODAY
+  if (date === getDateFromDateAndTimeFormat(subDays(new Date(), 1))) return DateOption.YESTERDAY
+  return DateOption.OTHER
+}
+
+export const getDatePresetOptionWithTomorrow = (date: string): DateOption => {
+  if (date === undefined) return null
+  if (date === getDateFromDateAndTimeFormat(new Date())) return DateOption.TODAY
+  if (date === getDateFromDateAndTimeFormat(addDays(new Date(), 1))) return DateOption.TOMORROW
+  return DateOption.OTHER
 }

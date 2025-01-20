@@ -15,10 +15,6 @@
 {% set pageId = 'appointment-attendance-summaries-page' %}
 {% set jsBackLink = true %}
 
-{% set filterParams = (('&searchTerm=' + session.req.query.searchTerm) if session.req.query.searchTerm else '') +
-    (('&locationId=' + session.req.query.locationId) if session.req.query.locationId else '') +
-    (('&locationType=' + session.req.query.locationType) if session.req.query.locationType else '') %}
-
 {% block meta %}
     <meta name="autocompleteElements" content="locationId"/>
 {% endblock %}
@@ -101,7 +97,7 @@
             <div class="govuk-grid-column-full">
                 <span class="govuk-caption-l">Record appointment attendance</span>
                 <h1 class="govuk-heading-l govuk-!-margin-0">Find an appointment to record or edit attendance</h1>
-                <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ date | formatDate }}</span>
+                <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="date-caption">{{ date | formatDate }}</span>
             </div>
         </div>
 
@@ -145,6 +141,11 @@
                         text: 'Search'
                     }
                 }) }}
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
 
                 {% set filterOptionsHtml %}
 

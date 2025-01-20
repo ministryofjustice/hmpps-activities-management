@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-cycle
 import { ActivityPay, Allocation, Slot } from '../../../@types/activitiesAPI/types'
 
 export enum ScheduleFrequency {

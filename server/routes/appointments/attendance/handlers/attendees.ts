@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import { MultipleAppointmentAttendanceRequest } from '../../../../@types/activitiesAPI/types'
-import { convertToArray, eventClashes, toDate } from '../../../../utils/utils'
+import { asString, convertToArray, eventClashes, toDate } from '../../../../utils/utils'
 import AttendanceAction from '../../../../enum/attendanceAction'
 import { getAttendanceSummaryFromAppointmentDetails } from '../../utils/attendanceUtils'
 import { EventType } from '../../../../@types/activities'
@@ -14,6 +14,7 @@ export default class AttendeesRoutes {
   GET_MULTIPLE = async (req: Request, res: Response): Promise<void> => {
     const { appointmentIds } = req.session.recordAppointmentAttendanceJourney
     const { user } = res.locals
+    const { searchTerm } = req.query
 
     const appointments = await this.activitiesService.getAppointments(appointmentIds, user)
 
@@ -38,25 +39,41 @@ export default class AttendeesRoutes {
     const attendeeRows = []
 
     appointments.forEach(appointment => {
-      appointment.attendees.forEach(attendee => {
-        const otherEvents = allEvents
-          .filter(e => e.prisonerNumber === attendee.prisoner.prisonerNumber)
-          .filter(e => e.appointmentId !== appointment.id)
-          .filter(e => eventClashes(e, appointment))
-          .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e))
+      appointment.attendees
+        .filter(attendee => {
+          if (!searchTerm) {
+            return true
+          }
 
-        attendeeRows.push({
-          ...attendee,
-          appointment,
-          otherEvents,
+          const { prisoner } = attendee
+
+          const term = asString(searchTerm).toLowerCase()
+
+          return (
+            prisoner.firstName.toLowerCase().includes(term) ||
+            prisoner.lastName.toLowerCase().includes(term) ||
+            prisoner.prisonerNumber.toLowerCase().includes(term)
+          )
         })
-      })
+        .forEach(attendee => {
+          const otherEvents = allEvents
+            .filter(e => e.prisonerNumber === attendee.prisoner.prisonerNumber)
+            .filter(e => e.appointmentId !== appointment.id)
+            .filter(e => eventClashes(e, appointment))
+            .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e))
+
+          attendeeRows.push({
+            ...attendee,
+            appointment,
+            otherEvents,
+          })
+        })
     })
 
     return res.render('pages/appointments/attendance/attendees', {
       attendeeRows,
       numAppointments: appointments.length,
-      attendanceSummary: getAttendanceSummaryFromAppointmentDetails(appointments),
+      attendanceSummary: getAttendanceSummaryFromAppointmentDetails(attendeeRows),
     })
   }
 
@@ -73,6 +90,14 @@ export default class AttendeesRoutes {
 
   NON_ATTEND = async (req: Request, res: Response): Promise<void> => {
     return this.updateAttendances(req, res, AttendanceAction.NOT_ATTENDED)
+  }
+
+  POST = async (req: Request, res: Response): Promise<void> => {
+    const { searchTerm } = req.body
+
+    const redirectUrl = `attendees?searchTerm=${searchTerm ?? ''}`
+
+    res.redirect(redirectUrl)
   }
 
   private updateAttendances = async (req: Request, res: Response, action: AttendanceAction): Promise<void> => {
@@ -101,10 +126,11 @@ export default class AttendeesRoutes {
 
     await this.activitiesService.updateMultipleAppointmentAttendances(action, requests, user)
 
+    const successHeader = action === AttendanceAction.ATTENDED ? 'Attendance recorded' : 'Non-attendance recorded'
     const successMessage = `You've saved attendance details for ${attendanceIds.length} ${
-      attendanceIds.length === 1 ? 'attendee' : 'attendees'
+      attendanceIds.length === 1 ? 'attendee.' : 'attendees.'
     }`
 
-    return res.redirectWithSuccess('attendees', 'Attendance recorded', successMessage)
+    return res.redirectWithSuccess('../attendees', successHeader, successMessage)
   }
 }
