@@ -2851,18 +2851,18 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      unpaged?: boolean
       paged?: boolean
       /** Format: int32 */
       pageNumber?: number
       /** Format: int32 */
       pageSize?: number
+      unpaged?: boolean
     }
     PagedWaitingListApplication: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -2871,9 +2871,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
@@ -3510,7 +3510,7 @@ export interface components {
        */
       caseNoteText?: string
       /** @description The attendance history records for this attendance */
-      attendanceHistory: components['schemas']['AttendanceHistory'][]
+      attendanceHistory?: components['schemas']['AttendanceHistory'][]
       /**
        * @description Flag to show whether this attendance is editable
        * @example true
@@ -7161,10 +7161,10 @@ export interface components {
       nonAssociations?: boolean
     }
     PageActivityCandidate: {
-      /** Format: int64 */
-      totalElements?: number
       /** Format: int32 */
       totalPages?: number
+      /** Format: int64 */
+      totalElements?: number
       first?: boolean
       last?: boolean
       /** Format: int32 */
@@ -7173,9 +7173,9 @@ export interface components {
       /** Format: int32 */
       number?: number
       sort?: components['schemas']['SortObject']
+      pageable?: components['schemas']['PageableObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Describes a prisoner scheduled to attend to an activity */
@@ -7354,7 +7354,7 @@ export interface components {
        */
       activitiesRolloutDate?: string
       /**
-       * @description Flag to indicate if this appointments are enabled
+       * @description Flag to indicate if appointments are enabled
        * @example true
        */
       appointmentsRolledOut: boolean

@@ -28,7 +28,7 @@ export default class AttendanceDetailsRoutes {
     const activity = { ...instance.activitySchedule.activity }
 
     const userMap = await this.userService.getUserMap(
-      [attendance.recordedBy, attendance.attendanceHistory.map(a => a.recordedBy)].flat(),
+      [attendance.recordedBy, attendance.attendanceHistory?.map(a => a.recordedBy)].flat(),
       user,
     )
 
