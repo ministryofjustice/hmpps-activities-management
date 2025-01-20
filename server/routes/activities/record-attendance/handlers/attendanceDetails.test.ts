@@ -154,6 +154,83 @@ describe('Route Handlers - View and Edit Attendance', () => {
         })
       },
     )
+
+    it('Attendance without history', async () => {
+      when(userService.getUserMap)
+        .calledWith(atLeast(['joebloggs']))
+        .mockResolvedValue(new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>)
+
+      when(activitiesService.getScheduledActivity)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue({
+          id: 1,
+          date: format(new Date(), 'yyyy-MM-dd'),
+          startTime: '10:00',
+          endTime: '11:00',
+          activitySchedule: {
+            activity: { summary: 'Maths level 1' },
+            internalLocation: { description: 'Houseblock 1' },
+          },
+          attendances: [
+            { prisonerNumber: 'ABC123', status: 'WAITING' },
+            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+          ],
+        } as ScheduledActivity)
+
+      when(activitiesService.getAttendanceDetails)
+        .calledWith(1)
+        .mockResolvedValue({
+          id: 1,
+          prisonerNumber: 'ABC321',
+          status: 'COMPLETED',
+          attendanceReason: { code: 'ATTENDED' },
+          recordedBy: 'joebloggs',
+        } as Attendance)
+
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith('ABC321', res.locals.user)
+        .mockResolvedValue({
+          prisonerNumber: 'ABC321',
+          firstName: 'Alan',
+          lastName: 'Key',
+          cellLocation: 'MDI-1-002',
+          alerts: [],
+          category: 'A',
+        } as Prisoner)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-details', {
+        instance: {
+          id: 1,
+          date: format(new Date(), 'yyyy-MM-dd'),
+          startTime: '10:00',
+          endTime: '11:00',
+          activitySchedule: {
+            activity: { summary: 'Maths level 1' },
+            internalLocation: { description: 'Houseblock 1' },
+          },
+          attendances: [
+            { prisonerNumber: 'ABC123', status: 'WAITING' },
+            { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+            { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+          ],
+        },
+        attendance: {
+          attendanceReason: { code: 'ATTENDED' },
+          id: 1,
+          prisonerNumber: 'ABC321',
+          status: 'COMPLETED',
+          recordedBy: 'joebloggs',
+        },
+        attendee: {
+          name: 'Alan Key',
+        },
+        activity: { summary: 'Maths level 1' },
+        userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+      })
+    })
   })
 
   describe('POST', () => {
