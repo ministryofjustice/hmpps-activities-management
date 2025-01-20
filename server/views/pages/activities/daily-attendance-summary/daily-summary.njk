@@ -263,7 +263,12 @@
         {{ stat({
             heading: 'Refused',
             number: totalRefused[timeSlot],
-            visuallyHiddenText: 'prisoners'
+            visuallyHiddenText: 'prisoners',
+            link: {
+                href: 'refusals?date=' + activityDate | formatDate('yyyy-MM-dd') + '#' + timeSlot | lower + '-tab',
+                text: 'All refused',
+                dataQa: 'refused-link'
+            }
         }) }}
 
         {{ stat({

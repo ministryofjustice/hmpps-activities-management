@@ -23,7 +23,7 @@ export default class AttendanceDetailsRoutes {
 
     const attendee = await this.prisonService
       .getInmateByPrisonerNumber(attendance.prisonerNumber, user)
-      .then(i => ({ name: `${i.firstName} ${i.lastName}` }))
+      .then(i => ({ name: `${i.firstName} ${i.lastName}`, prisonerNumber: i.prisonerNumber }))
 
     const activity = { ...instance.activitySchedule.activity }
 

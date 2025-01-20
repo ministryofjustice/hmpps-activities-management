@@ -80,6 +80,8 @@ export default class DailyAttendanceRoutes {
           this.includesSearchTerm(a.prisonerNumber, searchTerm),
       )
 
+    const showRefusalsLink = status === 'Absences' && attendees.filter(attendee => attendee.attendance.attendanceReasonCode === AttendanceReason.REFUSED).length > 0
+
     return res.render('pages/activities/daily-attendance-summary/attendances', {
       activityDate,
       uniqueCategories,
@@ -87,6 +89,7 @@ export default class DailyAttendanceRoutes {
       status,
       attendees,
       tier,
+      showRefusalsLink
     })
   }
 

@@ -8,6 +8,14 @@
 {% set pageId = 'attendance-view-details-page' %}
 {% set jsBackLink = true %}
 
+{% set caseNoteHref %} 
+    <p>
+        <a href='{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}/case-notes' class='govuk-link govuk-link--no-visited-state' target='_blank' rel='noopener noreferrer'>
+            Go to {{ attendee.name | toTitleCase | possessive }} case notes to add more details (opens in new tab)
+        </a>
+    </p>
+{% endset %}
+
 {% macro renderPay(attendance, payable) %}
     {% if attendance.issuePayment %}
         {{ '£' + (attendance.payAmount / 100) | toFixed }}
@@ -89,7 +97,7 @@
                 text: "Case Note"
             },
             value: {
-                text: attendance.caseNoteText
+                html: attendance.caseNoteText + caseNoteHref
             }
         }
     ), summaryListRows) %}
