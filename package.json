@@ -156,7 +156,7 @@
     "cheerio": "^1.0.0",
     "chokidar": "^3.6.0",
     "concurrently": "^9.1.2",
-    "cypress": "^13.17.0",
+    "cypress": "^14.0.0",
     "cypress-axe": "^1.5.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-multi-reporters": "^2.0.4",
