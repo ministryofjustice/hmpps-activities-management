@@ -1,12 +1,15 @@
 import { Request, Response } from 'express'
+import { format, startOfToday, subDays } from 'date-fns'
 import { toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import PrisonService from '../../../../services/prisonService'
-import { format, startOfToday, subDays } from 'date-fns'
 
 export default class RefusedSessionsRoutes {
-  constructor(private readonly activitiesService: ActivitiesService, private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
@@ -19,8 +22,9 @@ export default class RefusedSessionsRoutes {
     const attendances = await this.activitiesService.getAllAttendance(activityDate, user)
     const mandatoryAttendances = attendances.filter(a => a.attendanceRequired)
 
-    const refusedAttendances = mandatoryAttendances.filter(attendance => attendance.attendanceReasonCode === AttendanceReason.REFUSED)
-
+    const refusedAttendances = mandatoryAttendances.filter(
+      attendance => attendance.attendanceReasonCode === AttendanceReason.REFUSED,
+    )
     const prisonerNumbers = refusedAttendances.map(a => a.prisonerNumber)
     const inmates = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 
@@ -38,7 +42,7 @@ export default class RefusedSessionsRoutes {
         attendance: a.attendance,
         status: a.inmate.status,
         prisonCode: a.inmate.prisonId,
-        editable: (a.attendance.sessionDate >= format(subDays(startOfToday(), 7), 'yyyy-MM-dd'))
+        editable: a.attendance.sessionDate >= format(subDays(startOfToday(), 7), 'yyyy-MM-dd'),
       }))
 
     return res.render('pages/activities/daily-attendance-summary/refusals', {
@@ -46,5 +50,4 @@ export default class RefusedSessionsRoutes {
       refusedSessions,
     })
   }
-
 }
