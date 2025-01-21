@@ -72,7 +72,7 @@ jobs:
           path: test_results/unit-test-reports.html
 
   integration_test:
-    parallelism: 4
+    parallelism: 6
     executor:
       name: hmpps/node_redis
       node_tag: << pipeline.parameters.node-version >>

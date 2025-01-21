@@ -113,6 +113,16 @@ export default abstract class Page {
     cy.checkA11y(null, null, this.terminalLog)
   }
 
+  selectToday = () => cy.get('[value=today]').click()
+
+  selectYesterday = () => cy.get('[value=yesterday]').click()
+
+  selectAM = () => cy.get('[value=AM]').click()
+
+  selectPM = () => cy.get('[value=PM]').click()
+
+  selectED = () => cy.get('[value=ED]').click()
+
   selectDatePickerDate = (date: Date) => {
     this.openDatePicker()
 
