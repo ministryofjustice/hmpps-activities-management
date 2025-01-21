@@ -11,6 +11,7 @@ import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceD
 import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
 import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
+import RefusalsPage from '../../../pages/activities/attendanceSummary/refusals'
 
 const today = format(startOfToday(), 'yyyy-MM-dd')
 
@@ -24,6 +25,7 @@ const inmateDetails = [
     prisonerNumber: 'G4479GQ',
     firstName: 'EGURZTOF',
     lastName: 'AISHO',
+    cellLocation: 'Cell422',
   },
 ]
 
@@ -69,6 +71,7 @@ context('Daily Attendance', () => {
     dailySummaryPage.tier1AttendanceStat().contains(0)
     dailySummaryPage.tier2AttendanceStat().contains(2)
     dailySummaryPage.routineAttendanceStat().contains(1)
+    dailySummaryPage.refusedStat().contains(1)
   })
 
   it('should click through create activity journey', () => {
@@ -200,6 +203,7 @@ context('Daily Attendance', () => {
     const attendancePage = Page.verifyOnPage(AttendancePage)
     attendancePage.title().contains('All absences')
     attendancePage.count().contains('4 absences')
+    attendancePage.refusalsLink().should('exist')
 
     attendancePage.getButton('Show filter').click()
     attendancePage.payRadios().find('input[value="PAID"]').should('be.checked')
@@ -209,6 +213,7 @@ context('Daily Attendance', () => {
     attendancePage.getButton('Apply filters').first().click()
 
     attendancePage.count().contains('2 absences')
+    attendancePage.refusalsLink().should('not.exist')
     attendancePage.payRadios().find('input[value="PAID"]').should('be.checked')
     attendancePage.payRadios().find('input[value="NO_PAY"]').should('not.be.checked')
     cy.get('[data-qa="attendance"]').should('not.contain.text', 'No pay')
@@ -231,5 +236,34 @@ context('Daily Attendance', () => {
     dailySummaryPage.notAttendedLink()
     const attendancePage = Page.verifyOnPage(AttendancePage)
     attendancePage.checkTableCell(3, '09:00 to 11:45')
+  })
+  it('should link through to the refusals page', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.attendanceSummaryCard().click()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.selectToday()
+    selectPeriodPage.continue()
+
+    const dailySummaryPage = Page.verifyOnPage(DailySummaryPage)
+    dailySummaryPage.refusedLink().click()
+
+    const refusalsPage = Page.verifyOnPage(RefusalsPage)
+    refusalsPage.title().contains('All refusals to attend')
+    refusalsPage.numberOfRefusals().contains('1')
+    refusalsPage.assertRow(
+      0,
+      'Aisho, Egurztof',
+      'Cell422',
+      'English Level 4',
+      'Incentive level warning',
+      'View attendance record',
+    )
   })
 })

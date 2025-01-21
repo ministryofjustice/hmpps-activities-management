@@ -91,7 +91,7 @@
                 <span class="govuk-caption-l">{{ activityDate | formatDate }}</span>
             </h1>
             {% if showRefusalsLink %}
-                <p class="govuk-body"><a href="refusals?date={{ activityDate | formatDate('yyyy-MM-dd') }}">View all refusals and where incentive level warnings were given</a></p>
+                <p class="govuk-body" data-qa="refusals-link"><a href="refusals?date={{ activityDate | formatDate('yyyy-MM-dd') }}">View all refusals and where incentive level warnings were given</a></p>
             {% endif %}
             {{ searchInput({
                     classes: "search-input--inline-search",
