@@ -145,6 +145,7 @@ describe('Route Handlers - View and Edit Attendance', () => {
           },
           attendee: {
             name: 'Alan Key',
+            prisonerNumber: 'ABC321',
           },
           activity: { summary: 'Maths level 1' },
           userMap: new Map([
@@ -226,6 +227,7 @@ describe('Route Handlers - View and Edit Attendance', () => {
         },
         attendee: {
           name: 'Alan Key',
+          prisonerNumber: 'ABC321',
         },
         activity: { summary: 'Maths level 1' },
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
