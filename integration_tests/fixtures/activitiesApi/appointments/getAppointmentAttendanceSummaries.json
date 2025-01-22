@@ -1,0 +1,84 @@
+[
+  {
+    "id": 1,
+    "prisonCode": "MDI",
+    "appointmentName": "Gym",
+    "internalLocation": { "id": 26149, "prisonCode": "MDI", "description": "Gym" },
+    "startDate": "2024-06-24",
+    "startTime": "11:00",
+    "endTime": "13:30",
+    "isCancelled": false,
+    "attendeeCount": 3,
+    "attendedCount": 1,
+    "nonAttendedCount": 0,
+    "notRecordedCount": 2,
+    "attendees": [
+      {
+        "appointmentAttendeeId": 223716,
+        "prisonerNumber": "G8438VW",
+        "bookingId": 1131145
+      },
+      {
+        "appointmentAttendeeId": 223717,
+        "prisonerNumber": "G5852GQ",
+        "bookingId": 550291
+      },
+      {
+        "appointmentAttendeeId": 223718,
+        "prisonerNumber": "G0256VF",
+        "bookingId": 1099208
+      }
+    ],
+    "eventTierType": "TIER_2"
+  },
+  {
+    "id": 2,
+    "prisonCode": "MDI",
+    "appointmentName": "Chaplaincy",
+    "internalLocation": { "id": 26152, "prisonCode": "MDI", "description": "Chapel" },
+    "startDate": "2024-06-24",
+    "startTime": "15:00",
+    "endTime": "16:00",
+    "isCancelled": false,
+    "attendeeCount": 2,
+    "attendedCount": 0,
+    "nonAttendedCount": 0,
+    "notRecordedCount": 2,
+    "attendees": [
+      {
+        "appointmentAttendeeId": 220736,
+        "prisonerNumber": "G0234GE",
+        "bookingId": 95379
+      },
+      {
+        "appointmentAttendeeId": 220737,
+        "prisonerNumber": "G4085VK",
+        "bookingId": 1088365
+      }
+    ],
+    "eventTierType": "TIER_2"
+  },
+  {
+    "id": 3,
+    "prisonCode": "MDI",
+    "appointmentName": "Prayer",
+    "internalLocation": null,
+    "inCell": true,
+    "startDate": "2024-06-24",
+    "startTime": "12:30",
+    "endTime": "13:00",
+    "isCancelled": false,
+    "attendeeCount": 1,
+    "attendedCount": 0,
+    "nonAttendedCount": 0,
+    "notRecordedCount": 1,
+    "attendees": [
+      {
+        "appointmentAttendeeId": 220737,
+        "prisonerNumber": "G4085VK",
+        "bookingId": 1088365
+      }
+    ],
+    "eventTierType": "TIER_1"
+  }
+]
