@@ -10,6 +10,7 @@ import EventTier from '../../../../enum/eventTiers'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { PayNoPay } from '../../../../@types/activities'
+import TimeSlot from '../../../../enum/timeSlot'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -165,6 +166,7 @@ describe('Route Handlers - Daily Attendance List', () => {
         status: 'NotAttended',
         uniqueCategories: ['Education', 'Prison Jobs'],
         absenceReasons,
+        showRefusalsLink: false,
         attendees: [
           {
             firstName: 'Joe',
@@ -246,6 +248,7 @@ describe('Route Handlers - Daily Attendance List', () => {
         status: 'NotAttended',
         uniqueCategories: ['Education'],
         absenceReasons,
+        showRefusalsLink: false,
         attendees: [
           {
             firstName: 'Joe',
@@ -309,6 +312,7 @@ describe('Route Handlers - Daily Attendance List', () => {
         activityDate: date,
         status: 'Attended',
         absenceReasons,
+        showRefusalsLink: false,
         attendees: [
           {
             firstName: 'Joe',
@@ -368,6 +372,7 @@ describe('Route Handlers - Daily Attendance List', () => {
         activityDate: date,
         status: 'NotAttended',
         absenceReasons,
+        showRefusalsLink: false,
         attendees: [
           {
             firstName: 'Alan',
@@ -453,6 +458,23 @@ describe('Route Handlers - Daily Attendance List', () => {
           startTime: '09:00',
           endTime: '12:30',
         },
+        {
+          attendanceId: 4,
+          prisonCode: 'MDI',
+          sessionDate: '2022-10-10',
+          timeSlot: 'AM',
+          status: AttendanceStatus.COMPLETED,
+          attendanceReasonCode: AttendanceReason.REFUSED,
+          issuePayment: false,
+          prisonerNumber: 'ABC123',
+          activityId: 2,
+          activitySummary: 'Woodworking',
+          categoryName: 'Prison Jobs',
+          attendanceRequired: true,
+          eventTier: EventTier.TIER_1,
+          startTime: '09:00',
+          endTime: '12:30',
+        },
       ] as AllAttendance[]
 
       when(activitiesService.getAllAttendance)
@@ -460,7 +482,7 @@ describe('Route Handlers - Daily Attendance List', () => {
         .mockResolvedValue(mockApiResponse2)
 
       when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['ABC321'], res.locals.user)
+        .calledWith(['ABC321', 'ABC123'], res.locals.user)
         .mockResolvedValue(mockPrisonApiResponse)
 
       req = {
@@ -470,7 +492,7 @@ describe('Route Handlers - Daily Attendance List', () => {
         },
         session: {
           attendanceSummaryJourney: {
-            absenceReasonFilters: [AttendanceReason.CANCELLED],
+            absenceReasonFilters: [AttendanceReason.CANCELLED, AttendanceReason.REFUSED],
           },
         },
       } as unknown as Request
@@ -481,6 +503,7 @@ describe('Route Handlers - Daily Attendance List', () => {
         activityDate: date,
         status: 'Absences',
         absenceReasons,
+        showRefusalsLink: true, // There is a refusal present, so we should show the link to the refusals page
         attendees: [
           {
             firstName: 'Alan',
@@ -498,11 +521,34 @@ describe('Route Handlers - Daily Attendance List', () => {
               prisonerNumber: 'ABC321',
               sessionDate: '2022-10-10',
               status: AttendanceStatus.COMPLETED,
-              timeSlot: 'AM',
+              timeSlot: TimeSlot.AM,
               attendanceRequired: true,
               eventTier: EventTier.FOUNDATION,
               startTime: '09:00',
               endTime: '12:30',
+            },
+          },
+          {
+            firstName: 'Joe',
+            lastName: 'Bloggs',
+            location: 'MDI-1-001',
+            prisonerNumber: 'ABC123',
+            attendance: {
+              activityId: 2,
+              activitySummary: 'Woodworking',
+              attendanceId: 4,
+              attendanceReasonCode: AttendanceReason.REFUSED,
+              attendanceRequired: true,
+              categoryName: 'Prison Jobs',
+              endTime: '12:30',
+              eventTier: EventTier.TIER_1,
+              issuePayment: false,
+              prisonCode: 'MDI',
+              prisonerNumber: 'ABC123',
+              sessionDate: '2022-10-10',
+              startTime: '09:00',
+              status: AttendanceStatus.COMPLETED,
+              timeSlot: TimeSlot.AM,
             },
           },
         ],
@@ -576,6 +622,7 @@ describe('Route Handlers - Daily Attendance List', () => {
         activityDate: date,
         status: 'Absences',
         absenceReasons,
+        showRefusalsLink: false,
         attendees: [
           {
             firstName: 'Alan',
