@@ -15,6 +15,10 @@ export default class DailySummaryPage extends Page {
 
   tier2AttendanceStat = () => cy.get('[data-qa=tier2]').children('span')
 
+  refusedStat = () => cy.get('[data-qa=refused]').children('span')
+
+  refusedLink = () => cy.get('[data-qa=refused-link]').first()
+
   selectTier1AttendanceLink = () => cy.get('[data-qa=tier1-link]').first().click()
 
   selectTier2AttendanceLink = () => cy.get('[data-qa=tier2-link]').first().click()

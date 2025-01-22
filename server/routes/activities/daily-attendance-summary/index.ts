@@ -11,6 +11,7 @@ import ApplyFiltersRoutes, { Filters } from './handlers/applyFilters'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import SuspendedPrisonersRoutes from './handlers/suspendedPrisoners'
+import RefusedSessionsRoutes from './handlers/refusals'
 
 export default function Index({ activitiesService, prisonService }: Services): Router {
   const router = Router()
@@ -27,6 +28,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const cancelledSessionsHandler = new CancelledSessionsRoutes(activitiesService)
   const suspendedPrisonersHandler = new SuspendedPrisonersRoutes(activitiesService, prisonService)
   const notAttendedSelectDateHandler = new NotAttendedSelectDateRoutes()
+  const refusalsHandler = new RefusedSessionsRoutes(activitiesService, prisonService)
 
   router.use(insertJourneyIdentifier())
   get('/:journeyId/select-period', selectPeriodHandler.GET)
@@ -35,6 +37,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/:journeyId/attendance', dailyAttendanceHandler.GET)
   get('/:journeyId/cancelled-sessions', cancelledSessionsHandler.GET, true)
   get('/:journeyId/suspended-prisoners', suspendedPrisonersHandler.GET, true)
+  get('/:journeyId/refusals', refusalsHandler.GET, true)
   get('/:journeyId/not-attended-select-date', notAttendedSelectDateHandler.GET)
   post('/:journeyId/not-attended-select-date', notAttendedSelectDateHandler.POST, NotAttendedDate)
   post('/:journeyId/update-filters', applyFiltersHandler.APPLY, Filters)
