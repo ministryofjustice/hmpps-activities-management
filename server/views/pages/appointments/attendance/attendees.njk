@@ -19,7 +19,7 @@
 {% else %}
     {% set pageTitle = applicationName + " - Record attendance for " + numAppointments + " appointments" %}
 {% endif %}
-{% set pageId = 'appointment-attendance-page' %}
+{% set pageId = 'appointment-attendees-page' %}
 
 {% if session.recordAppointmentAttendanceJourney.date %}
     {% set hardBackLinkText = 'Go back to appointments on ' + session.recordAppointmentAttendanceJourney.date | toDate | formatDate  %}
@@ -46,7 +46,7 @@
 
 {% macro renderViewLink(attendee) %}
     {% if attendee.attended !== null %}
-        <a href="attendees/{{ attendee.appointment.id }}/{{ attendee.prisoner.prisonerNumber }}" class="govuk-link govuk-link--no-visited-state">
+        <a href="attendees/{{ attendee.appointment.id }}/{{ attendee.prisoner.prisonerNumber }}" class="govuk-link govuk-link--no-visited-state" data-qa="view-or-edit-{{ attendee.appointment.id }}-{{ attendee.prisoner.prisonerNumber }}">
             View or edit
         </a>
     {% endif %}
@@ -66,11 +66,12 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <span class="govuk-caption-l" data-qa="caption">Record appointment attendance</span>
+
                 {% if singleAppointment %}
                     <h1 class="govuk-heading-l govuk-!-margin-0">{{ singleAppointment.appointmentName }}</h1>
-                    <span class="govuk-caption-l" data-qa="date-caption">{{ singleAppointment.startTime + (" to " + singleAppointment.endTime if singleAppointment.endTime) }}</span>
+                    <span class="govuk-caption-l" data-qa="time-range-caption">{{ singleAppointment.startTime + (" to " + singleAppointment.endTime if singleAppointment.endTime) }}</span>
                     <span class="govuk-caption-l" data-qa="date-caption">{{ singleAppointment.startDate | toDate | formatDate }}</span>
-                    <span class="govuk-caption-l govuk-!-margin-bottom-4">{{ showLocation(singleAppointment) }}</span>
+                    <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="location">{{ showLocation(singleAppointment) }}</span>
                 {% else %}
                     <h1 class="govuk-heading-l govuk-!-margin-0">Record attendance at {{ numAppointments }} appointments</h1>
                     <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="date-caption">{{ session.recordAppointmentAttendanceJourney.date | toDate | formatDate }}</span>
@@ -80,26 +81,26 @@
             </div>
         </div>
 
-        <div class="govuk-grid-row govuk-!-margin-bottom-4">
-            <div class="govuk-grid-column-two-thirds">
-                {% if attendanceSummary.attendeeCount > 1 %}
+        {% if attendanceSummary.attendeeCount > 1 %}
+            <div class="govuk-grid-row govuk-!-margin-bottom-4">
+                <div class="govuk-grid-column-two-thirds">
                     <ul class="govuk-list">
-                        <li>
+                        <li data-qa="summary-attended">
                             <span>Attended:</span>
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
                         </li>
-                        <li>
+                        <li data-qa="summary-not-attended">
                             <span>Did not attend:</span>
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
                         </li>
-                        <li>
+                        <li data-qa="summary-not-recorded">
                             <span>Not recorded yet:</span>
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
                         </li>
                     </ul>
-                {% endif %}
+                </div>
             </div>
-        </div>
+        {% endif %}
 
         <div class="govuk-grid-row govuk-!-margin-bottom-4">
             <div class="govuk-grid-column-two-thirds">

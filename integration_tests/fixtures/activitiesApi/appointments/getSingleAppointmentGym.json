@@ -1,0 +1,98 @@
+{
+  "id": 1,
+  "appointmentSeries": {
+    "id": 1,
+    "schedule": {
+      "frequency": "DAILY",
+      "numberOfAppointments": 100
+    },
+    "appointmentCount": 5,
+    "scheduledAppointmentCount": 0
+  },
+  "appointmentSet": null,
+  "appointmentType": "GROUP",
+  "sequenceNumber": 1,
+  "prisonCode": "MDI",
+  "appointmentName": "Gym",
+  "attendees": [
+    {
+      "id": 1,
+      "prisoner": {
+        "prisonerNumber": "G8438VW",
+        "bookingId": 1131145,
+        "firstName": "BUMAHWAJU",
+        "lastName": "ALFRES",
+        "status": "ACTIVE IN",
+        "prisonCode": "RSI",
+        "cellLocation": "A-N-2-37N",
+        "category": "C"
+      },
+      "attended": true,
+      "attendanceRecordedTime": "2024-11-06T12:02:23",
+      "attendanceRecordedBy": "jsmith"
+    },
+    {
+      "id": 2,
+      "prisoner": {
+        "prisonerNumber": "G4931VH",
+        "bookingId": 550291,
+        "firstName": "UHOHEW",
+        "lastName": "AUGEVIEVE",
+        "status": "INACTIVE MDI",
+        "prisonCode": "MDI",
+        "cellLocation": "A-N-2-37N",
+        "category": "C"
+      },
+      "attended": null,
+      "attendanceRecordedTime": null,
+      "attendanceRecordedBy": null
+    },
+    {
+      "id": 3,
+      "prisoner": {
+        "prisonerNumber": "G0256VF",
+        "bookingId": 1099208,
+        "firstName": "IZRMONNTAS",
+        "lastName": "ADALIE",
+        "status": "INACTIVE MDI",
+        "prisonCode": "MDI",
+        "cellLocation": "A-N-3-43S",
+        "category": null
+      },
+      "attended": null,
+      "attendanceRecordedTime": null,
+      "attendanceRecordedBy": null
+    }
+  ],
+  "category": {
+    "code": "GYMW",
+    "description": "Gym"
+  },
+  "tier": {
+    "id": 3,
+    "code": "FOUNDATION",
+    "description": "Routine activities also called \"Foundation\""
+  },
+  "organiser": null,
+  "customName": null,
+  "internalLocation": {
+    "id": 26149,
+    "prisonCode": "MDI",
+    "description": "Gym"
+  },
+  "inCell": false,
+  "startDate": "2024-11-05",
+  "startTime": "02:20",
+  "endTime": "06:30",
+  "isExpired": true,
+  "extraInformation": null,
+  "createdTime": "2024-11-01T11:55:24",
+  "createdBy": "SCH_ACTIVITY",
+  "isEdited": false,
+  "updatedTime": null,
+  "updatedBy": null,
+  "isCancelled": false,
+  "isDeleted": false,
+  "cancelledTime": null,
+  "cancelledBy": null
+}
