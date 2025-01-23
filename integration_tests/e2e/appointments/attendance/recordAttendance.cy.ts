@@ -16,7 +16,7 @@ import { formatDate } from '../../../../server/utils/utils'
 import EditAttendancePage from '../../../pages/appointments/attendance/editAttendance'
 import AttendanceDetailsPage from '../../../pages/appointments/attendance/attendanceDetails'
 
-context('Create group appointment', () => {
+context('Record appointment attendance', () => {
   const today = new Date()
   const todayFormatted = format(today, 'yyyy-MM-dd')
   const yesterday = subDays(today, 1)
