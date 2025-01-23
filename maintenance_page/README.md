@@ -13,7 +13,7 @@ Based on:
 
 From **this directory** run the command to apply the configuration for the maintenance service and deployment:
 
-must be in **./maintenance/page**
+must be in **./maintenance_page** directory
 ### Example for dev namespace (will need to replace with 'prod')
 ```
 kubectl apply -f kubectl_deploy/ -n hmpps-activities-management-dev
