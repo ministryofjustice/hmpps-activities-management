@@ -238,6 +238,9 @@ export default {
   appointmentMultipleAttendanceToggleEnabled: toBoolean(
     get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),
   ),
+  deallocationAfterAllocationToggleEnabled: toBoolean(
+    get('DEALLOCATION_AFTER_ALLOCATION_FEATURE_TOGGLE_ENABLED', 'false'),
+  ),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
   },
