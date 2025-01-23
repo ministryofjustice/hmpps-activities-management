@@ -527,7 +527,9 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
       when(fsMock.existsSync).calledWith('uploads/empty.csv').mockReturnValue(true)
       when(fsMock.lstatSync)
         .calledWith('uploads/empty.csv')
-        .mockReturnValue(plainToInstance(Stats, { size: 0 }))
+        .mockReturnValue({
+          size: 0,
+        } as Stats)
 
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
@@ -547,7 +549,9 @@ describe('Route Handlers - Create Appointment - Upload Prisoner List', () => {
       when(fsMock.existsSync).calledWith('uploads/valid.csv').mockReturnValue(true)
       when(fsMock.lstatSync)
         .calledWith('uploads/valid.csv')
-        .mockReturnValue(plainToInstance(Stats, { size: 1 }))
+        .mockReturnValue({
+          size: 1,
+        } as Stats)
 
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
