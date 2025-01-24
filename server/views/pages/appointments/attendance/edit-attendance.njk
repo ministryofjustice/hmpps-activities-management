@@ -4,7 +4,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {% set pageTitle = applicationName + " - Record Appointment Attendance" %}
-{% set pageId = 'edit-attendance-page' %}
+{% set pageId = 'appointment-edit-attendance-page' %}
 {% set jsBackLink = true %}
 
 {% block content %}
@@ -17,7 +17,7 @@
 
                 <h1 class="govuk-heading-l">Change attendance details for {{ attendanceDetails.prisonerName | toTitleCase }}</h1>
 
-                <div class="govuk-inset-text">{{ attendanceDetails.appointmentName }} on {{ attendanceDetails.appointmentDate | toDate | formatDate }}</div>
+                <div class="govuk-inset-text" data-qa="summary">{{ attendanceDetails.appointmentName }} on {{ attendanceDetails.appointmentDate | toDate | formatDate }}</div>
 
                 <h2 class="govuk-heading-m">Did {{ attendanceDetails.prisonerName | toTitleCase }} attend {{ attendanceDetails.appointmentName }} on {{ attendanceDetails.appointmentDate | toDate | formatDate }}?</h2>
 

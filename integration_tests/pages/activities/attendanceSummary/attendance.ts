@@ -9,6 +9,8 @@ export default class AttendancePage extends Page {
 
   count = () => cy.get('h2')
 
+  refusalsLink = () => cy.get('[data-qa="refusals-link"]')
+
   clearAbsenceReasons = () => cy.get('[data-qa="absenceReasonClear"]').click()
 
   absenceRadios = () => cy.get('[data-qa="absence-reasons-radio-buttons"]')

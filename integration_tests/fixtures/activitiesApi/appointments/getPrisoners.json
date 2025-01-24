@@ -1,0 +1,183 @@
+[
+  {
+    "prisonerNumber": "G4085VK",
+    "pncNumber": "92/209509B",
+    "pncNumberCanonicalShort": "92/209509B",
+    "pncNumberCanonicalLong": "1992/209509B",
+    "croNumber": "75700/92G",
+    "bookingId": "954303",
+    "bookNumber": "P74988",
+    "firstName": "YTIALEL",
+    "lastName": "JARULLAH",
+    "dateOfBirth": "1974-04-04",
+    "gender": "Male",
+    "ethnicity": "White: Eng./Welsh/Scot./N.Irish/British",
+    "raceCode": "W1",
+    "youthOffender": false,
+    "maritalStatus": "Single-not married/in civil partnership",
+    "religion": "No Religion",
+    "nationality": "British",
+    "status": "ACTIVE IN",
+    "lastMovementTypeCode": "ADM",
+    "lastMovementReasonCode": "INT",
+    "inOutStatus": "IN",
+    "prisonId": "RSI",
+    "lastPrisonId": "MDI",
+    "prisonName": "Moorland (HMP)",
+    "cellLocation": "A-N-2-29N",
+    "aliases": [],
+    "alerts": [
+      {
+        "alertType": "X",
+        "alertCode": "XVL",
+        "active": true,
+        "expired": false
+      },
+      {
+        "alertType": "P",
+        "alertCode": "P0",
+        "active": true,
+        "expired": false
+      },
+      {
+        "alertType": "R",
+        "alertCode": "ROH",
+        "active": true,
+        "expired": false
+      }
+    ],
+    "csra": "Standard",
+    "category": "C",
+    "legalStatus": "SENTENCED",
+    "imprisonmentStatus": "LASPO_DR",
+    "imprisonmentStatusDescription": "EDS LASPO Discretionary Release",
+    "mostSeriousOffence": "Arson - recklessly endangering life",
+    "recall": false,
+    "indeterminateSentence": false,
+    "sentenceStartDate": "2015-09-09",
+    "releaseDate": "2021-10-06",
+    "confirmedReleaseDate": "2021-10-06",
+    "sentenceExpiryDate": "2026-10-21",
+    "licenceExpiryDate": "2026-11-16",
+    "nonDtoReleaseDate": "2021-11-21",
+    "nonDtoReleaseDateType": "CRD",
+    "receptionDate": "2015-02-06",
+    "paroleEligibilityDate": "2019-08-22",
+    "conditionalReleaseDate": "2021-11-21",
+    "locationDescription": "Risley (HMP)",
+    "restrictedPatient": false,
+    "currentIncentive": {
+      "level": {
+        "code": "ENH",
+        "description": "Enhanced"
+      },
+      "dateTime": "2017-03-07T09:21:28",
+      "nextReviewDate": "2018-03-07"
+    },
+    "heightCentimetres": 173,
+    "weightKilograms": 76,
+    "hairColour": "Brown",
+    "rightEyeColour": "Blue",
+    "leftEyeColour": "Blue",
+    "facialHair": "Clean Shaven",
+    "shapeOfFace": "Oval",
+    "build": "Medium",
+    "addresses": [
+      {
+        "fullAddress": "No fixed address",
+        "startDate": "2015-02-01",
+        "primaryAddress": true,
+        "noFixedAddress": true
+      }
+    ],
+    "emailAddresses": [],
+    "phoneNumbers": [],
+    "identifiers": [
+      {
+        "type": "CRO",
+        "value": "75700/92G",
+        "issuedDate": "2015-02-09",
+        "createdDateTime": "2015-02-09T11:23:13"
+      },
+      {
+        "type": "PNC",
+        "value": "92/209509B",
+        "issuedDate": "2015-02-09",
+        "createdDateTime": "2015-02-09T11:23:13"
+      }
+    ],
+    "allConvictedOffences": [
+      {
+        "statuteCode": "CD71",
+        "offenceCode": "CD71017",
+        "offenceDescription": "Arson - recklessly endangering life",
+        "offenceDate": "2015-03-04",
+        "latestBooking": true,
+        "sentenceStartDate": "2015-09-03",
+        "primarySentence": true
+      },
+      {
+        "statuteCode": "CD71",
+        "offenceCode": "CD71017",
+        "offenceDescription": "Arson - recklessly endangering life",
+        "offenceDate": "2015-03-05",
+        "latestBooking": true,
+        "sentenceStartDate": "2015-09-03",
+        "primarySentence": true
+      },
+      {
+        "statuteCode": "CD71",
+        "offenceCode": "CD71017",
+        "offenceDescription": "Arson - recklessly endangering life",
+        "offenceDate": "2015-03-23",
+        "latestBooking": true,
+        "sentenceStartDate": "2015-09-03",
+        "primarySentence": true
+      },
+      {
+        "statuteCode": "CD71",
+        "offenceCode": "CD71017",
+        "offenceDescription": "Arson - recklessly endangering life",
+        "offenceDate": "2015-03-24",
+        "latestBooking": true
+      },
+      {
+        "statuteCode": "CD71",
+        "offenceCode": "CD71017",
+        "offenceDescription": "Arson - recklessly endangering life",
+        "offenceDate": "2015-03-16",
+        "latestBooking": true
+      },
+      {
+        "statuteCode": "CD71",
+        "offenceCode": "CD71016C",
+        "offenceDescription": "Conspire to commit arson with intent to endanger life",
+        "offenceDate": "2015-02-23",
+        "latestBooking": true
+      },
+      {
+        "statuteCode": "CD71",
+        "offenceCode": "CD71016C",
+        "offenceDescription": "Conspire to commit arson with intent to endanger life",
+        "offenceDate": "2015-02-15",
+        "latestBooking": true
+      },
+      {
+        "statuteCode": "CD71",
+        "offenceCode": "CD71016C",
+        "offenceDescription": "Conspire to commit arson with intent to endanger life",
+        "offenceDate": "2015-03-18",
+        "latestBooking": true
+      },
+      {
+        "statuteCode": "ZZ01",
+        "offenceCode": "ZZ01008",
+        "offenceDescription": "CIVIL : Other Non-Payment",
+        "offenceDate": "2014-05-12",
+        "latestBooking": true,
+        "sentenceStartDate": "2015-11-10",
+        "primarySentence": true
+      }
+    ]
+  }
+]

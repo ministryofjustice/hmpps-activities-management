@@ -95,7 +95,7 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <span class="govuk-caption-l">Record appointment attendance</span>
+                <span class="govuk-caption-l" data-qa="caption">Record appointment attendance</span>
                 <h1 class="govuk-heading-l govuk-!-margin-0">Find an appointment to record or edit attendance</h1>
                 <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="date-caption">{{ date | formatDate }}</span>
             </div>
@@ -111,15 +111,15 @@
 
                 {% if attendanceSummary.attendeeCount > 1 %}
                     <ul class="govuk-list govuk-!-margin-bottom-4">
-                        <li>
+                        <li data-qa="summary-attended">
                             <span>Attended:</span>
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
                         </li>
-                        <li>
+                        <li data-qa="summary-absent">
                             <span>Absent:</span>
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
                         </li>
-                        <li>
+                        <li data-qa="summary-not-recorded">
                             <span>Not recorded yet:</span>
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
                         </li>
@@ -158,6 +158,7 @@
                         id: "location-type",
                         name: "locationType",
                         classes: "govuk-radios--small govuk-!-margin-bottom-4",
+                        attributes: { "data-qa": "location-radio-buttons" },
                         fieldset: {
                             legend: {
                                 text: 'Location',

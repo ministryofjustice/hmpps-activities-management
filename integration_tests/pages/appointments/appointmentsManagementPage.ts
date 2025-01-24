@@ -25,4 +25,11 @@ export default class AppointmentsManagementPage extends Page {
       'View appointments attendance summary',
       'See attendance figures, including details of who did not attend, where attendance has not been recorded yet, tiers, and cancellations.',
     )
+
+  recordAppointmentsAttendanceCard = (): Cypress.Chainable =>
+    cy.cardIsDisplayed(
+      '[data-qa=record-appointment-attendance-card]',
+      'Record appointment attendance',
+      'Record, view and change appointment attendance.',
+    )
 }
