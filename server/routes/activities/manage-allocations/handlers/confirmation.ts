@@ -3,7 +3,7 @@ import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import ActivitiesService from '../../../../services/activitiesService'
 import { Allocation } from '../../../../@types/activitiesAPI/types'
-import { getScheduleIdFromActivity } from '../../../../utils/utils'
+import config from '../../../../config'
 
 export default class ConfirmationRoutes {
   constructor(
@@ -22,22 +22,19 @@ export default class ConfirmationRoutes {
       this.metricsService.trackEvent(allocationEvent)
     }
 
-    const [prisonerAllocationsList] = await this.activitiesService.getActivePrisonPrisonerAllocations(
-      [inmate.prisonerNumber],
-      res.locals.user,
-    )
-    const { allocations } = prisonerAllocationsList
+    const deallocateFlagEnabled = config.deallocationAfterAllocationToggleEnabled
 
     let otherAllocations: Allocation[] = []
-    if (allocations.length > 0) {
-      otherAllocations = allocations.filter(a => a.scheduleId !== req.session.allocateJourney.activity.scheduleId)
-    }
-    const allocationToEndId = otherAllocations.map(a => a.activityId)
-    const allocationToEndScheduleId = otherAllocations.map(a => a.scheduleId)
+    if (deallocateFlagEnabled) {
+      const [prisonerAllocationsList] = await this.activitiesService.getActivePrisonPrisonerAllocations(
+        [inmate.prisonerNumber],
+        res.locals.user,
+      )
+      const { allocations } = prisonerAllocationsList
 
-    const deallocationInfo = {
-      linkText: this.getDeallocationText(otherAllocations),
-      linkHref: `/activities/allocations/remove/deallocate-after-allocation-date?allocationIds=${allocationToEndId}&scheduleId=${allocationToEndScheduleId}`,
+      if (allocations.length) {
+        otherAllocations = allocations.filter(a => a.scheduleId !== req.session.allocateJourney.activity.scheduleId)
+      }
     }
 
     res.render('pages/activities/manage-allocations/confirmation', {
@@ -45,7 +42,8 @@ export default class ConfirmationRoutes {
       prisonerName: inmate.prisonerName,
       prisonerNumber: inmate.prisonerNumber,
       activityName: activity.name,
-      deallocationInfo,
+      deallocationEnabled: deallocateFlagEnabled ? otherAllocations.length > 0 : null,
+      otherAllocations: deallocateFlagEnabled ? otherAllocations : null,
     })
   }
 
