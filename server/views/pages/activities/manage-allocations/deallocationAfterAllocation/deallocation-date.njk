@@ -1,0 +1,60 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Deallocate someone" %}
+{% set pageId = 'deallocate-after-allocation-date-page' %}
+{% set jsBackLink = true %}
+
+{% set dateOptions = 
+[
+    {
+        value: DeallocateAfterAllocationDateOption.TODAY_END,
+        text: "At the end of today"
+    },
+    {
+        value: DeallocateAfterAllocationDateOption.FUTURE_DATE_END,
+        text: "At the end of a different day - they'll attend sessions that day, then be removed",
+        hint: {
+            text: "Enter the date, for example 29/9/2025, or click on the calendar to select."
+        }
+    }
+] %}
+
+{% if showImmediateDeallocationOption %}
+    {% set dateOptions = (dateOptions.unshift(
+        {
+            value: DeallocateAfterAllocationDateOption.NOW,
+            text: "Now - they'll be removed from any sessions later today"
+        }
+    ), dateOptions) %}
+{% endif %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <span class="govuk-caption-xl">Take {{ session.allocateJourney.inmate.prisonerName }} off {{ session.allocateJourney.activity.name }}</span>
+            <h1 class="govuk-heading-l">When do you want them to be taken off?</h1>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{ govukRadios({
+                    name: "deallocationAfterAllocationDate",
+                    fieldset: {
+                        legend: {
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    items: dateOptions
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                    <a class="govuk-link" href="/activities/allocation-dashboard/{{ session.allocateJourney.activity.activityId }}">Cancel</a> 
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

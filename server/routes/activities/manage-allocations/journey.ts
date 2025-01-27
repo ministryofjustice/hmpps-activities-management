@@ -1,4 +1,4 @@
-import { ScheduledInstance, Slot } from '../../../@types/activitiesAPI/types'
+import { Allocation, ScheduledInstance, Slot } from '../../../@types/activitiesAPI/types'
 
 type Inmate = {
   prisonerName: string
@@ -43,6 +43,10 @@ export type AllocateToActivityJourney = {
     text: string
   }
   scheduledInstance?: ScheduledInstance
+  otherAllocations?: Array<Allocation>
+  deallocationAfterAllocation?: {
+    deallocationDate?: string
+  }
 }
 
 export enum EndDecision {
@@ -58,6 +62,12 @@ export enum StartDateOption {
 export enum DeallocateTodayOption {
   TODAY = 'TODAY',
   FUTURE_DATE = 'FUTURE_DATE',
+}
+
+export enum DeallocateAfterAllocationDateOption {
+  NOW = 'NOW',
+  TODAY_END = 'TODAY_END',
+  FUTURE_DATE_END = 'FUTURE_DATE_END',
 }
 
 export enum PrisonerSuspensionStatus {

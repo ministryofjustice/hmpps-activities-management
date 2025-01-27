@@ -3,13 +3,16 @@ import ConfirmationRoutes from './confirmation'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import { AllocateToActivityJourney } from '../journey'
+import ActivitiesService from '../../../../services/activitiesService'
 
 jest.mock('../../../../services/metricsService')
+jest.mock('../../../../services/activitiesService')
 
 const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Allocate - Confirmation', () => {
-  const handler = new ConfirmationRoutes(metricsService)
+  const handler = new ConfirmationRoutes(metricsService, activitiesService)
   let req: Request
   let res: Response
 
