@@ -144,8 +144,7 @@ describe('abstractHmppsRestClient', () => {
     })
 
     it('should sanitise error on failure', async () => {
-      fakeApi.get('/route').replyWithError({
-        status: 400,
+      fakeApi.get('/route').reply(400, {
         response: { data: { detail: { error_reason: 'unsanitised message' } } },
       })
 
