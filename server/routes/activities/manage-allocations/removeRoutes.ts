@@ -15,6 +15,7 @@ import DeallocationCaseNoteQuestionRoutes, {
 import EndDecisionRoutes from './handlers/endDecisionReason'
 import DeallocateTodayOptionRoutes, { DeallocateToday } from './handlers/deallocateTodayOptions'
 import DeallocationDateRoutes, { DeallocateDate } from './handlers/deallocationAfterAllocation/deallocationDate'
+import CheckAndConfirmRoutes from './handlers/deallocationAfterAllocation/deallocationCheckAndConfirm'
 
 export default function Index({ activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -53,9 +54,12 @@ export default function Index({ activitiesService, metricsService }: Services): 
 
   // deallocation after an allocation
   const deallocationAfterAllocationDate = new DeallocationDateRoutes()
+  const deallocationCheckAndConfirm = new CheckAndConfirmRoutes()
 
   get('/deallocate-after-allocation-date', deallocationAfterAllocationDate.GET, true)
   post('/deallocate-after-allocation-date', deallocationAfterAllocationDate.POST, DeallocateDate)
+  get('/deallocation-check-and-confirm', deallocationCheckAndConfirm.GET, true)
+  post('/deallocation-check-and-confirm', deallocationCheckAndConfirm.POST)
 
   return router
 }

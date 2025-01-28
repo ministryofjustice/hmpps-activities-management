@@ -1,18 +1,28 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { IsEnum } from 'class-validator'
-import { isPast, isToday } from 'date-fns'
+import { IsEnum, IsNotEmpty, ValidateIf } from 'class-validator'
+import { isPast, isToday, startOfTomorrow } from 'date-fns'
 import { DeallocateAfterAllocationDateOption } from '../../journey'
-import { formatIsoDate } from '../../../../../utils/datePickerUtils'
+import { formatIsoDate, parseDatePickerDate } from '../../../../../utils/datePickerUtils'
 import { parseDate } from '../../../../../utils/utils'
+import IsValidDate from '../../../../../validators/isValidDate'
+import Validator from '../../../../../validators/validator'
 
 export class DeallocateDate {
   @Expose()
   @IsEnum(DeallocateAfterAllocationDateOption, {
-    message: 'Select whether the allocation should end immediately, at the end of today or on a different day',
+    message: 'Select when you want them to be taken off Unemployed',
   })
   @Transform(({ value }) => DeallocateAfterAllocationDateOption[value])
-  deallocateAfterAllocationDateOption: DeallocateAfterAllocationDateOption
+  deallocationAfterAllocationDate: DeallocateAfterAllocationDateOption
+
+  @Expose()
+  @ValidateIf(o => o.deallocationAfterAllocationDate === DeallocateAfterAllocationDateOption.FUTURE_DATE_END)
+  @Transform(({ value }) => parseDatePickerDate(value))
+  @Validator(date => date >= startOfTomorrow(), { message: 'Enter a date that’s in the future' })
+  @IsNotEmpty({ message: 'Enter a date' })
+  @IsValidDate({ message: 'Enter a valid date' })
+  date: Date
 }
 
 export default class DeallocationDateRoutes {
@@ -20,7 +30,6 @@ export default class DeallocationDateRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { allocateJourney } = req.session
-    console.log(allocateJourney)
     const nextAvailableInstance = allocateJourney.scheduledInstance
     const nextSessionDateAndTime = parseDate(
       `${nextAvailableInstance.date}T${nextAvailableInstance.startTime}`,
@@ -32,12 +41,13 @@ export default class DeallocationDateRoutes {
     }
 
     res.render('pages/activities/manage-allocations/deallocationAfterAllocation/deallocation-date', {
-      showImmediateDeallocationOption
+      showImmediateDeallocationOption,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { deallocationAfterAllocationDate, date } = req.body
+
     if (
       deallocationAfterAllocationDate === DeallocateAfterAllocationDateOption.TODAY_END ||
       deallocationAfterAllocationDate === DeallocateAfterAllocationDateOption.NOW

@@ -2,6 +2,7 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 
 {% set pageTitle = applicationName + " - Deallocate someone" %}
 {% set pageId = 'deallocate-after-allocation-date-page' %}
@@ -11,13 +12,29 @@
 [
     {
         value: DeallocateAfterAllocationDateOption.TODAY_END,
-        text: "At the end of today"
+        text: "At the end of today",
+        checked: formResponses.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.TODAY_END
     },
     {
         value: DeallocateAfterAllocationDateOption.FUTURE_DATE_END,
         text: "At the end of a different day - they'll attend sessions that day, then be removed",
-        hint: {
-            text: "Enter the date, for example 29/9/2025, or click on the calendar to select."
+        checked: formResponses.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.FUTURE_DATE_END,
+        conditional: {
+            html: mojDatePicker({
+                id: 'date',
+                name: 'date',
+                label: {
+                    text: 'Date',
+                    classes: "govuk-visually-hidden"
+                },
+                leadingZeros: 'true',
+                hint: {
+                    text: "Enter the date, for example" + exampleDatePickerDate() +", or click on the calendar to select."
+                },
+                classes: 'moj-datepicker--fixed-width',
+                errorMessage: validationErrors | findError('date'),
+                value: formResponses.date or session.allocateJourney.date | isoDateToDatePickerDate
+            })
         }
     }
 ] %}
@@ -26,7 +43,8 @@
     {% set dateOptions = (dateOptions.unshift(
         {
             value: DeallocateAfterAllocationDateOption.NOW,
-            text: "Now - they'll be removed from any sessions later today"
+            text: "Now - they'll be removed from any sessions later today",
+            checked: formResponses.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.NOW
         }
     ), dateOptions) %}
 {% endif %}
@@ -39,12 +57,15 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 {{ govukRadios({
+                    id: "deallocationAfterAllocationDate",
                     name: "deallocationAfterAllocationDate",
+                    attributes: { "data-qa": "deallocationAfterAllocationDate" },
                     fieldset: {
                         legend: {
                             classes: "govuk-fieldset__legend--m"
                         }
                     },
+                    errorMessage: validationErrors | findError('deallocationAfterAllocationDate'),
                     items: dateOptions
                 }) }}
 
@@ -52,7 +73,7 @@
                     {{ govukButton({
                         text: "Continue"
                     }) }}
-                    <a class="govuk-link" href="/activities/allocation-dashboard/{{ session.allocateJourney.activity.activityId }}">Cancel</a> 
+                    <a class="govuk-link" href="confirmation">Cancel</a> 
                 </div>
             </form>
         </div>
