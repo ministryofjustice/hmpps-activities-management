@@ -99,7 +99,37 @@ describe('Route Handlers - Appointment Details', () => {
       when(locationMappingService.mapNomisLocationIdToDpsKey).calledWith(atLeast(1)).mockResolvedValue('locationKey')
 
       when(bookAVideoLinkService.matchAppointmentToVideoLinkBooking)
-        .calledWith(atLeast('ABC123', 'locationKey'))
+        .calledWith(atLeast('ABC123', 'locationKey', 'ACTIVE'))
+        .mockResolvedValue({ videoLinkBookingId: 1 } as VideoLinkBooking)
+
+      await handler.GET(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('video-link-booking/1')
+    })
+
+    it('should redirect to view a CANCELLED video link booking', async () => {
+      const vlbAppointment = {
+        ...appointment,
+        attendees: [{ prisoner: { prisonerNumber: 'ABC123' } }],
+        category: {
+          code: 'VLB',
+        },
+        prisonCode: 'MDI',
+        internalLocation: { id: 1 },
+        isCancelled: true,
+      }
+
+      req = {
+        params: {
+          id: '10',
+        },
+        appointment: vlbAppointment,
+      } as unknown as Request
+
+      when(locationMappingService.mapNomisLocationIdToDpsKey).calledWith(atLeast(1)).mockResolvedValue('locationKey')
+
+      when(bookAVideoLinkService.matchAppointmentToVideoLinkBooking)
+        .calledWith(atLeast('ABC123', 'locationKey', 'CANCELLED'))
         .mockResolvedValue({ videoLinkBookingId: 1 } as VideoLinkBooking)
 
       await handler.GET(req, res)

@@ -23,6 +23,7 @@ export default class BookAVideoLinkService {
     date: string,
     startTime: string,
     endTime: string,
+    statusCode: 'ACTIVE' | 'CANCELLED',
     user: ServiceUser,
   ) {
     const requestBody = {
@@ -31,6 +32,7 @@ export default class BookAVideoLinkService {
       date,
       startTime,
       endTime,
+      statusCode,
     } as VideoBookingSearchRequest
     return this.bookAVideoLinkApiClient.matchAppointmentToVideoLinkBooking(requestBody, user)
   }
