@@ -32,6 +32,7 @@ export type AllocateToActivityJourney = {
   }
   startDateOption?: StartDateOption
   deallocateTodayOption?: DeallocateTodayOption
+  deallocateAfterAllocationDateOption?: DeallocateAfterAllocationDateOption
   startDate?: string
   endDate?: string
   deallocationReason?: string
@@ -44,9 +45,6 @@ export type AllocateToActivityJourney = {
   }
   scheduledInstance?: ScheduledInstance
   otherAllocations?: Array<Allocation>
-  deallocationAfterAllocation?: {
-    deallocationDate?: string
-  }
 }
 
 export enum EndDecision {
@@ -66,8 +64,8 @@ export enum DeallocateTodayOption {
 
 export enum DeallocateAfterAllocationDateOption {
   NOW = 'NOW',
-  TODAY_END = 'TODAY_END',
-  FUTURE_DATE_END = 'FUTURE_DATE_END',
+  TODAY = 'TODAY',
+  FUTURE_DATE = 'FUTURE_DATE',
 }
 
 export enum PrisonerSuspensionStatus {

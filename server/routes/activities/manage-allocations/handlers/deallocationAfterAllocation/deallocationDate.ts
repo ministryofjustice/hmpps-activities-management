@@ -17,7 +17,7 @@ export class DeallocateDate {
   deallocationAfterAllocationDate: DeallocateAfterAllocationDateOption
 
   @Expose()
-  @ValidateIf(o => o.deallocationAfterAllocationDate === DeallocateAfterAllocationDateOption.FUTURE_DATE_END)
+  @ValidateIf(o => o.deallocationAfterAllocationDate === DeallocateAfterAllocationDateOption.FUTURE_DATE)
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(date => date >= startOfTomorrow(), { message: 'Enter a date that’s in the future' })
   @IsNotEmpty({ message: 'Enter a date' })
@@ -49,13 +49,15 @@ export default class DeallocationDateRoutes {
     const { deallocationAfterAllocationDate, date } = req.body
 
     if (
-      deallocationAfterAllocationDate === DeallocateAfterAllocationDateOption.TODAY_END ||
+      deallocationAfterAllocationDate === DeallocateAfterAllocationDateOption.TODAY ||
       deallocationAfterAllocationDate === DeallocateAfterAllocationDateOption.NOW
     ) {
-      req.session.allocateJourney.deallocationAfterAllocation.deallocationDate = formatIsoDate(new Date())
+      req.session.allocateJourney.endDate = formatIsoDate(new Date())
     } else {
-      req.session.allocateJourney.deallocationAfterAllocation.deallocationDate = formatIsoDate(date)
+      req.session.allocateJourney.endDate = formatIsoDate(date)
     }
+
+    req.session.allocateJourney.deallocateAfterAllocationDateOption = deallocationAfterAllocationDate
     return res.redirect('check-and-confirm')
   }
 }

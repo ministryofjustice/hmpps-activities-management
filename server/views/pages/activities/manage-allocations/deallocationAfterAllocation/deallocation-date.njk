@@ -11,14 +11,14 @@
 {% set dateOptions = 
 [
     {
-        value: DeallocateAfterAllocationDateOption.TODAY_END,
+        value: DeallocateAfterAllocationDateOption.TODAY,
         text: "At the end of today",
-        checked: formResponses.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.TODAY_END
+        checked: formResponses.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.TODAY
     },
     {
-        value: DeallocateAfterAllocationDateOption.FUTURE_DATE_END,
+        value: DeallocateAfterAllocationDateOption.FUTURE_DATE,
         text: "At the end of a different day - they'll attend sessions that day, then be removed",
-        checked: formResponses.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.FUTURE_DATE_END,
+        checked: formResponses.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.FUTURE_DATE,
         conditional: {
             html: mojDatePicker({
                 id: 'date',

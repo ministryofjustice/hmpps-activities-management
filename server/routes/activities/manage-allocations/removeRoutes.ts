@@ -54,7 +54,7 @@ export default function Index({ activitiesService, metricsService }: Services): 
 
   // deallocation after an allocation
   const deallocationAfterAllocationDate = new DeallocationDateRoutes()
-  const deallocationCheckAndConfirm = new CheckAndConfirmRoutes()
+  const deallocationCheckAndConfirm = new CheckAndConfirmRoutes(activitiesService)
 
   get('/deallocate-after-allocation-date', deallocationAfterAllocationDate.GET, true)
   post('/deallocate-after-allocation-date', deallocationAfterAllocationDate.POST, DeallocateDate)

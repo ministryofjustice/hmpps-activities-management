@@ -25,7 +25,7 @@ export default class ConfirmationRoutes {
     const deallocateFlagEnabled = config.deallocationAfterAllocationToggleEnabled
 
     let otherAllocations: Allocation[] = []
-    if (deallocateFlagEnabled) {
+    if (deallocateFlagEnabled && req.params.mode === 'create') {
       const [prisonerAllocationsList] = await this.activitiesService.getActivePrisonPrisonerAllocations(
         [inmate.prisonerNumber],
         res.locals.user,

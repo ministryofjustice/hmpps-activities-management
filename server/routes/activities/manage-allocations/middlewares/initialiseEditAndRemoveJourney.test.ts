@@ -201,7 +201,6 @@ describe('initialiseEditAndRemoveJourney', () => {
         timeSlot: 'AM',
         attendances: [],
       },
-      deallocationAfterAllocation: {},
     })
 
     expect(next).toHaveBeenCalledTimes(1)

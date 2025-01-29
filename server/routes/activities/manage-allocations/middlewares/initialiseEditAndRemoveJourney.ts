@@ -71,7 +71,6 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
       exclusions: [],
       updatedExclusions: [],
       scheduledInstance: findNextSchedulesInstance(activity.schedules[0]),
-      deallocationAfterAllocation: {},
     }
 
     if (req.params.mode === 'edit' || req.params.mode === 'exclude') {
