@@ -3,7 +3,7 @@ import { addDays, subDays, addMinutes, subMinutes, startOfTomorrow, startOfToday
 import { formatDate } from 'date-fns/format'
 import { when } from 'jest-when'
 import DeallocationDateRoutes from './deallocationDate'
-import { formatDatePickerDate, formatIsoDate, isoDateToDatePickerDate } from '../../../../../utils/datePickerUtils'
+import { formatIsoDate } from '../../../../../utils/datePickerUtils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import atLeast from '../../../../../../jest.setup'
 import { Allocation } from '../../../../../@types/activitiesAPI/types'
@@ -132,48 +132,75 @@ describe('Route Handlers - Edit allocation - End date', () => {
   })
 
   describe('POST', () => {
-    it('should redirect to the deallocation-check-and-confirm if removing a "not in work" activity - user chooses end of today option', async () => {
-      req.params.mode = 'remove'
+    describe('Removing a "not in work" activity', () => {
+      it('should redirect to the deallocation-check-and-confirm - user chooses end of today option', async () => {
+        const deallocationAfterAllocationDate = DeallocateAfterAllocationDateOption.TODAY
+        req.body = { deallocationAfterAllocationDate }
 
-      const deallocationAfterAllocationDate = DeallocateAfterAllocationDateOption.TODAY
-      req.body = { deallocationAfterAllocationDate }
+        await handler.POST(req, res)
 
-      await handler.POST(req, res)
+        expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(startOfToday()))
+        expect(req.session.allocateJourney.activity.notInWork).toEqual(true)
+        expect(req.session.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
+          DeallocateAfterAllocationDateOption.TODAY,
+        )
+        expect(res.redirect).toHaveBeenCalledWith('deallocation-check-and-confirm')
+      })
+      it('should redirect to the deallocation-check-and-confirm - user chooses now option', async () => {
+        const deallocationAfterAllocationDate = DeallocateAfterAllocationDateOption.NOW
+        req.body = { deallocationAfterAllocationDate }
 
-      expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(startOfToday()))
-      expect(req.session.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
-        DeallocateAfterAllocationDateOption.TODAY,
-      )
-      expect(res.redirect).toHaveBeenCalledWith('deallocation-check-and-confirm?notInWorkActivity=true')
+        await handler.POST(req, res)
+
+        expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(startOfToday()))
+        expect(req.session.allocateJourney.activity.notInWork).toEqual(true)
+        expect(req.session.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
+          DeallocateAfterAllocationDateOption.NOW,
+        )
+        expect(res.redirect).toHaveBeenCalledWith('deallocation-check-and-confirm')
+      })
+      it('should redirect to the deallocation-check-and-confirm - user chooses other date', async () => {
+        const deallocationAfterAllocationDate = DeallocateAfterAllocationDateOption.FUTURE_DATE
+        const date = startOfTomorrow()
+        req.body = { deallocationAfterAllocationDate, date }
+
+        await handler.POST(req, res)
+
+        expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(date))
+        expect(req.session.allocateJourney.activity.notInWork).toEqual(true)
+        expect(req.session.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
+          DeallocateAfterAllocationDateOption.FUTURE_DATE,
+        )
+        expect(res.redirect).toHaveBeenCalledWith('deallocation-check-and-confirm')
+      })
     })
-    it('should redirect to the deallocation-check-and-confirm if removing a "not in work" activity - user chooses now option', async () => {
-      req.params.mode = 'remove'
+    describe('Removing an in-work activity', () => {
+      it('should redirect to the reason-for-deallocation page', async () => {
+        when(activitiesService.getAllocations)
+          .calledWith(atLeast('ABC123'))
+          .defaultResolvedValue([
+            {
+              id: 6543,
+              prisonerNumber: 'ABC1234',
+              startDate: '',
+              activityId: 1,
+              isUnemployment: false,
+            } as Allocation,
+          ])
 
-      const deallocationAfterAllocationDate = DeallocateAfterAllocationDateOption.NOW
-      req.body = { deallocationAfterAllocationDate }
+        const deallocationAfterAllocationDate = DeallocateAfterAllocationDateOption.FUTURE_DATE
+        const date = startOfTomorrow()
+        req.body = { deallocationAfterAllocationDate, date }
 
-      await handler.POST(req, res)
+        await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(startOfToday()))
-      expect(req.session.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
-        DeallocateAfterAllocationDateOption.NOW,
-      )
-      expect(res.redirect).toHaveBeenCalledWith('deallocation-check-and-confirm?notInWorkActivity=true')
-    })
-    it.skip('should redirect to the deallocation-check-and-confirm if removing a "not in work" activity - user chooses other date', async () => {
-      req.params.mode = 'remove'
-
-      const deallocationAfterAllocationDate = DeallocateAfterAllocationDateOption.FUTURE_DATE
-      const date = formatDatePickerDate(addDays(new Date(), 3))
-      req.body = { deallocationAfterAllocationDate, date }
-
-      await handler.POST(req, res)
-
-      expect(req.session.allocateJourney.endDate).toEqual(date)
-      expect(req.session.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
-        DeallocateAfterAllocationDateOption.FUTURE_DATE,
-      )
-      expect(res.redirect).toHaveBeenCalledWith('deallocation-check-and-confirm?notInWorkActivity=true')
+        expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(date))
+        expect(req.session.allocateJourney.activity.notInWork).toEqual(false)
+        expect(req.session.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
+          DeallocateAfterAllocationDateOption.FUTURE_DATE,
+        )
+        expect(res.redirect).toHaveBeenCalledWith('reason-for-deallocation')
+      })
     })
   })
 })

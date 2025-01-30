@@ -62,11 +62,12 @@ export default class DeallocationDateRoutes {
     } else {
       req.session.allocateJourney.endDate = formatIsoDate(date)
     }
-    console.log(req.session.allocateJourney)
+
     req.session.allocateJourney.deallocateAfterAllocationDateOption = deallocationAfterAllocationDate
+    req.session.allocateJourney.activity.notInWork = isUnemployment
 
     if (isUnemployment) {
-      return res.redirect('deallocation-check-and-confirm?notInWorkActivity=true')
+      return res.redirect('deallocation-check-and-confirm')
     }
     return res.redirect('reason-for-deallocation')
   }
