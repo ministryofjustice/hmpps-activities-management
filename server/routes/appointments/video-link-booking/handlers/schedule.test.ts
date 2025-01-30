@@ -5,6 +5,7 @@ import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { ScheduledEvent } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
+import { Location } from '../../../../@types/bookAVideoLinkApi/types'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -91,7 +92,7 @@ describe('ScheduleRoutes', () => {
           description: 'Room 1',
           enabled: true,
         },
-      ]
+      ] as Location[]
       activitiesService.getScheduledEventsForPrisoners.mockResolvedValue({
         activities: [scheduledEvents[0]],
         appointments: [scheduledEvents[1]],

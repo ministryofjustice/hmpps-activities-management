@@ -3,7 +3,7 @@ import VideoLinkDetailsRoutes from './videoLinkDetails'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import PrisonService from '../../../../services/prisonService'
 import UserService from '../../../../services/userService'
-import { VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
+import { Location, VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 import ActivitiesService from '../../../../services/activitiesService'
@@ -101,7 +101,7 @@ describe('VideoLinkDetailsRoutes', () => {
       locationMappingService.mapDpsLocationKeyToNomisId.mockResolvedValue(10001)
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue([
         { key: 'Room1', description: 'Room 1', enabled: true },
-      ])
+      ] as Location[])
       userService.getUserMap.mockResolvedValue(
         new Map([
           ['user1', { username: 'user1', active: true, name: 'User One', authSource: 'auth', userId: 'user1' }],

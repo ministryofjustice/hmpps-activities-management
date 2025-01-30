@@ -47,6 +47,7 @@ describe('Book A Video link service', () => {
       const date = '2024-02-20'
       const startTime = '14:00'
       const endTime = '15:00'
+      const statusCode = 'ACTIVE'
 
       const actualResult = await bookAVideoLinkService.matchAppointmentToVideoLinkBooking(
         prisonerNumber,
@@ -54,6 +55,7 @@ describe('Book A Video link service', () => {
         date,
         startTime,
         endTime,
+        statusCode,
         user,
       )
 
@@ -64,6 +66,7 @@ describe('Book A Video link service', () => {
           locationKey,
           date,
           startTime,
+          statusCode,
           endTime,
         },
         user,

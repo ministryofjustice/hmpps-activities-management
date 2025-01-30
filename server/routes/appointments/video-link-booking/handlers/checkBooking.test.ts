@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import BookAVideoLinkApiClient from '../../../../data/bookAVideoLinkApiClient'
 import CheckBookingRoutes from './checkBooking'
+import { Location, ReferenceCode } from '../../../../@types/bookAVideoLinkApi/types'
 
 jest.mock('../../../../services/bookAVideoLinkService')
 jest.mock('../../../../data/bookAVideoLinkApiClient')
@@ -40,7 +41,7 @@ describe('CheckBookingRoutes', () => {
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue([
         { key: 'Room1', description: 'Room 1', enabled: true },
         { key: 'Room2', description: 'Room 2', enabled: true },
-      ])
+      ] as Location[])
       bookAVideoLinkService.getAllCourts.mockResolvedValue([
         { courtId: 1, code: 'Court1', description: 'Court 1', enabled: true },
         { courtId: 2, code: 'Court2', description: 'Court 2', enabled: true },
@@ -48,7 +49,7 @@ describe('CheckBookingRoutes', () => {
       bookAVideoLinkService.getCourtHearingTypes.mockResolvedValue([
         { referenceCodeId: 1, groupCode: 'Group1', code: 'HearingType1', description: 'Hearing Type 1' },
         { referenceCodeId: 2, groupCode: 'Group2', code: 'HearingType2', description: 'Hearing Type 2' },
-      ])
+      ] as ReferenceCode[])
 
       await checkBookingRoutes.GET(req as Request, res as Response)
 
