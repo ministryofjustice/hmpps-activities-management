@@ -8,13 +8,13 @@ export default class DeallocationCheckAndConfirmRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { deallocationReason, activity } = req.session.allocateJourney
+    const { deallocationReason } = req.session.allocateJourney
+    const { notInWorkActivity } = req.query
 
     const deallocationReasons = await this.activitiesService.getDeallocationReasons(user)
-    const { isUnemployment } = await this.activitiesService.getAllocation(activity.activityId, user)
 
     res.render('pages/activities/manage-allocations/deallocationAfterAllocation/deallocation-check-and-confirm', {
-      activityIsUnemployment: isUnemployment,
+      activityIsUnemployment: !!notInWorkActivity,
       deallocationReason: deallocationReasons.find(r => r.code === deallocationReason),
     })
   }
@@ -28,17 +28,25 @@ export default class DeallocationCheckAndConfirmRoutes {
       deallocateAfterAllocationDateOption === DeallocateAfterAllocationDateOption.NOW ? scheduledInstance.id : null
 
     const { prisonerNumber } = inmates[0]
-
-    await this.activitiesService.deallocateFromActivity(
+    console.log(
       activity.scheduleId,
       [prisonerNumber],
-      deallocationReason as DeallocationReasonCode,
+      (deallocationReason || 'TRANSFERRED') as DeallocationReasonCode,
       null,
       endDate,
       user,
       scheduleInstanceId,
     )
+    // await this.activitiesService.deallocateFromActivity(
+    //   activity.scheduleId,
+    //   [prisonerNumber],
+    //   (deallocationReason || 'TRANSFERRED') as DeallocationReasonCode,
+    //   null,
+    //   endDate,
+    //   user,
+    //   scheduleInstanceId,
+    // )
 
-    return res.redirect('deallocation-confirmation')
+    // return res.redirect('deallocation-confirmation')
   }
 }

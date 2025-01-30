@@ -46,12 +46,4 @@ export default class ConfirmationRoutes {
       otherAllocations: deallocateFlagEnabled ? otherAllocations : null,
     })
   }
-
-  private getDeallocationText = (otherAllocations: Allocation[]) => {
-    if (!otherAllocations.length) return null
-    if (otherAllocations.length === 1) {
-      return otherAllocations[0].activitySummary
-    }
-    return `any other activities they’re allocated to`
-  }
 }

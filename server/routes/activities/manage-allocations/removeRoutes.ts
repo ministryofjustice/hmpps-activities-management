@@ -53,7 +53,7 @@ export default function Index({ activitiesService, metricsService }: Services): 
   get('/confirmation', confirmationHandler.GET, true)
 
   // deallocation after an allocation
-  const deallocationAfterAllocationDate = new DeallocationDateRoutes()
+  const deallocationAfterAllocationDate = new DeallocationDateRoutes(activitiesService)
   const deallocationCheckAndConfirm = new CheckAndConfirmRoutes(activitiesService)
 
   get('/deallocate-after-allocation-date', deallocationAfterAllocationDate.GET, true)

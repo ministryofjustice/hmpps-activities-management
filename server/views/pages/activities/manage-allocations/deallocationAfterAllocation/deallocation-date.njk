@@ -13,12 +13,12 @@
     {
         value: DeallocateAfterAllocationDateOption.TODAY,
         text: "At the end of today",
-        checked: formResponses.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.TODAY
+        checked: session.allocateJourney.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.TODAY
     },
     {
         value: DeallocateAfterAllocationDateOption.FUTURE_DATE,
         text: "At the end of a different day - they'll attend sessions that day, then be removed",
-        checked: formResponses.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.FUTURE_DATE,
+        checked: session.allocateJourney.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.FUTURE_DATE,
         conditional: {
             html: mojDatePicker({
                 id: 'date',
@@ -33,7 +33,7 @@
                 },
                 classes: 'moj-datepicker--fixed-width',
                 errorMessage: validationErrors | findError('date'),
-                value: formResponses.date or session.allocateJourney.date | isoDateToDatePickerDate
+                value: session.allocateJourney.endDate | isoDateToDatePickerDate
             })
         }
     }
@@ -44,7 +44,7 @@
         {
             value: DeallocateAfterAllocationDateOption.NOW,
             text: "Now - they'll be removed from any sessions later today",
-            checked: formResponses.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.NOW
+            checked: session.allocateJourney.deallocationAfterAllocationDate == DeallocateAfterAllocationDateOption.NOW
         }
     ), dateOptions) %}
 {% endif %}

@@ -7,6 +7,7 @@ import { formatIsoDate, parseDatePickerDate } from '../../../../../utils/datePic
 import { parseDate } from '../../../../../utils/utils'
 import IsValidDate from '../../../../../validators/isValidDate'
 import Validator from '../../../../../validators/validator'
+import ActivitiesService from '../../../../../services/activitiesService'
 
 export class DeallocateDate {
   @Expose()
@@ -26,7 +27,7 @@ export class DeallocateDate {
 }
 
 export default class DeallocationDateRoutes {
-  constructor() {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { allocateJourney } = req.session
@@ -46,7 +47,12 @@ export default class DeallocationDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
     const { deallocationAfterAllocationDate, date } = req.body
+    const { activity } = req.session.allocateJourney
+
+    const allocation = await this.activitiesService.getAllocations(activity.scheduleId, user)
+    const { isUnemployment } = allocation.filter(a => a.activityId === activity.activityId)[0]
 
     if (
       deallocationAfterAllocationDate === DeallocateAfterAllocationDateOption.TODAY ||
@@ -56,8 +62,12 @@ export default class DeallocationDateRoutes {
     } else {
       req.session.allocateJourney.endDate = formatIsoDate(date)
     }
-
+    console.log(req.session.allocateJourney)
     req.session.allocateJourney.deallocateAfterAllocationDateOption = deallocationAfterAllocationDate
-    return res.redirect('check-and-confirm')
+
+    if (isUnemployment) {
+      return res.redirect('deallocation-check-and-confirm?notInWorkActivity=true')
+    }
+    return res.redirect('reason-for-deallocation')
   }
 }

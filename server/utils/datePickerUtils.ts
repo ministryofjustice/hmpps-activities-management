@@ -32,8 +32,9 @@ export const parseIsoDate = (isoDate: string): Date => {
 export const isValidIsoDate = (isoDate: string) => isValid(parseIsoDate(isoDate))
 
 export const formatDatePickerDate = (date: Date): string => {
+  console.log(date)
   if (!isValid(date)) return null
-
+  console.log('hello')
   return formatDate(date, 'dd/MM/yyyy')
 }
 
