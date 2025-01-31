@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
+import config from '../../../../config'
 
 export class DeallocationReason {
   @Expose()
@@ -25,6 +26,8 @@ export default class DeallocationReasonRoutes {
     const caseNoteEligibleReasonCodes = ['WITHDRAWN_STAFF', 'DISMISSED', 'SECURITY', 'OTHER']
     const { deallocateAfterAllocationDateOption } = req.session.allocateJourney
 
+    req.session.allocateJourney.deallocationReason = deallocationReason
+
     if (
       req.session.allocateJourney.inmates.length === 1 &&
       caseNoteEligibleReasonCodes.includes(deallocationReason) &&
@@ -33,6 +36,10 @@ export default class DeallocationReasonRoutes {
       return res.redirectOrReturn('case-note-question')
     }
     req.session.allocateJourney.deallocationCaseNote = null
+
+    if (deallocateAfterAllocationDateOption !== undefined && config.deallocationAfterAllocationToggleEnabled) {
+      return res.redirect('deallocation-check-and-confirm')
+    }
     return res.redirect('check-answers')
   }
 }

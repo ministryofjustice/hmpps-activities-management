@@ -27,7 +27,8 @@
                 <h2 class="govuk-heading-m">What you can do next</h2>
                 <p class='govuk-body'>You can either:</p>
                 <ul class='govuk-list govuk-list--bullet'>
-                    {% if deallocationAfterAllocationToggleEnabled and deallocationEnabled %}
+                    {# TODO: Use otherAllocations | length when starting SAA-2260 #}
+                    {% if deallocationAfterAllocationToggleEnabled and otherAllocations | length == 1 %}
                         <li><a href={{ deallocationHref }} class='govuk-link'>take {{ prisonerName }} off {{ deallocationText }}</li>
                     {% endif %}
                     <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>

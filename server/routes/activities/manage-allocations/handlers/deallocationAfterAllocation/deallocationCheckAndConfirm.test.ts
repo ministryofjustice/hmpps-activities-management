@@ -52,7 +52,6 @@ describe('Route Handlers - Allocate - Check answers', () => {
           },
           deallocateAfterAllocationDateOption: DeallocateAfterAllocationDateOption.FUTURE_DATE,
           startDate: formatIsoDate(subDays(new Date(), 10)),
-          deallocationReason: ReasonForDeallocation.TRANSFERRED,
           endDate: formatIsoDate(addDays(new Date(), 1)),
           updatedExclusions: [],
           scheduledInstance: { id: 123 },
@@ -66,7 +65,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
   })
 
   describe('GET', () => {
-    it('should render page', async () => {
+    it('should render page - "not in work activity"', async () => {
       when(activitiesService.getDeallocationReasons).mockResolvedValue([
         { code: 'TRANSFERRED', description: 'Transferred to another activity' },
       ])
@@ -76,10 +75,77 @@ describe('Route Handlers - Allocate - Check answers', () => {
         'pages/activities/manage-allocations/deallocationAfterAllocation/deallocation-check-and-confirm',
         {
           activityIsUnemployment: true,
-          deallocationReason: { code: 'TRANSFERRED', description: 'Transferred to another activity' },
+          deallocationReason: null,
+        },
+      )
+    })
+    it('should render page - "in work" activity', async () => {
+      req.session.allocateJourney.activity.notInWork = false
+      req.session.allocateJourney.deallocationReason = ReasonForDeallocation.HEALTH
+
+      when(activitiesService.getDeallocationReasons).mockResolvedValue([
+        { code: 'HEALTH', description: 'Health reasons' },
+      ])
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/deallocationAfterAllocation/deallocation-check-and-confirm',
+        {
+          activityIsUnemployment: false,
+          deallocationReason: { code: 'HEALTH', description: 'Health reasons' },
         },
       )
     })
   })
-  describe('POST', () => {})
+  describe('POST', () => {
+    describe('Should call the remove allocation endpoint with the correct params and redirect', () => {
+      it('should include instanceId and provided reason', async () => {
+        req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.NOW
+        req.session.allocateJourney.deallocationReason = ReasonForDeallocation.SECURITY
+        await handler.POST(req, res)
+
+        expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(
+          1,
+          ['ABC123'],
+          ReasonForDeallocation.SECURITY,
+          null,
+          formatIsoDate(addDays(new Date(), 1)),
+          { username: 'joebloggs' },
+          123,
+        )
+        expect(res.redirect).toHaveBeenCalledWith('confirmation')
+      })
+    })
+    describe('reason should be TRANSFERRED as none is supplied', () => {
+      it('should not include instanceId', async () => {
+        await handler.POST(req, res)
+
+        expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(
+          1,
+          ['ABC123'],
+          ReasonForDeallocation.TRANSFERRED,
+          null,
+          formatIsoDate(addDays(new Date(), 1)),
+          { username: 'joebloggs' },
+          null,
+        )
+        expect(res.redirect).toHaveBeenCalledWith('confirmation')
+      })
+      it('should include instanceId', async () => {
+        req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.NOW
+        await handler.POST(req, res)
+
+        expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(
+          1,
+          ['ABC123'],
+          ReasonForDeallocation.TRANSFERRED,
+          null,
+          formatIsoDate(addDays(new Date(), 1)),
+          { username: 'joebloggs' },
+          123,
+        )
+        expect(res.redirect).toHaveBeenCalledWith('confirmation')
+      })
+    })
+  })
 })

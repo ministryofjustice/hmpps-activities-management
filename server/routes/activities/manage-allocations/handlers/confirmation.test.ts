@@ -95,7 +95,6 @@ describe('Route Handlers - Allocate - Confirmation', () => {
         prisonerName: 'Joe Bloggs',
         prisonerNumber: 'ABC123',
         activityName: 'Maths',
-        deallocationEnabled: null,
         otherAllocations: null,
       })
     })
@@ -113,7 +112,6 @@ describe('Route Handlers - Allocate - Confirmation', () => {
         prisonerName: 'Joe Bloggs',
         prisonerNumber: 'ABC123',
         activityName: 'Maths',
-        deallocationEnabled: true,
         otherAllocations: [{ activityId: 2, scheduleId: 2, scheduleDescription: 'Unemployment', isUnemployment: true }],
       })
     })

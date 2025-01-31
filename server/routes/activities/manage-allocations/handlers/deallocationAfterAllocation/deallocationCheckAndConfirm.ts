@@ -12,11 +12,10 @@ export default class DeallocationCheckAndConfirmRoutes {
     const { notInWork } = activity
 
     const deallocationReasons = await this.activitiesService.getDeallocationReasons(user)
-console.log(deallocationReasons)
-console.log(deallocationReasons.find(r => r.code === deallocationReason))
+
     res.render('pages/activities/manage-allocations/deallocationAfterAllocation/deallocation-check-and-confirm', {
       activityIsUnemployment: notInWork,
-      deallocationReason: deallocationReasons.find(r => r.code === deallocationReason),
+      deallocationReason: notInWork === false ? deallocationReasons.find(r => r.code === deallocationReason) : null,
     })
   }
 

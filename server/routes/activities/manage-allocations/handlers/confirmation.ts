@@ -42,7 +42,6 @@ export default class ConfirmationRoutes {
       prisonerName: inmate.prisonerName,
       prisonerNumber: inmate.prisonerNumber,
       activityName: activity.name,
-      deallocationEnabled: deallocateFlagEnabled ? otherAllocations.length > 0 : null,
       otherAllocations: deallocateFlagEnabled ? otherAllocations : null,
     })
   }

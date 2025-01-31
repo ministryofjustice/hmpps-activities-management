@@ -175,7 +175,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       })
     })
     describe('Removing an in-work activity', () => {
-      it('should redirect to the reason-for-deallocation page', async () => {
+      it('should redirect to the reason page', async () => {
         when(activitiesService.getAllocations)
           .calledWith(atLeast('ABC123'))
           .defaultResolvedValue([
@@ -199,7 +199,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
         expect(req.session.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
           DeallocateAfterAllocationDateOption.FUTURE_DATE,
         )
-        expect(res.redirect).toHaveBeenCalledWith('reason-for-deallocation')
+        expect(res.redirect).toHaveBeenCalledWith('reason')
       })
     })
   })
