@@ -40,7 +40,6 @@ export default class DeallocationDateRoutes {
     if (isToday(nextSessionDateAndTime) && !isPast(nextSessionDateAndTime)) {
       showImmediateDeallocationOption = true
     }
-
     res.render('pages/activities/manage-allocations/deallocationAfterAllocation/deallocation-date', {
       showImmediateDeallocationOption,
     })
@@ -69,6 +68,6 @@ export default class DeallocationDateRoutes {
     if (isUnemployment) {
       return res.redirect('deallocation-check-and-confirm')
     }
-    return res.redirect('reason-for-deallocation')
+    return res.redirect('reason')
   }
 }
