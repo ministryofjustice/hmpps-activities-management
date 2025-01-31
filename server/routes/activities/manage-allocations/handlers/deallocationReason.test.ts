@@ -8,6 +8,7 @@ import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { DeallocateAfterAllocationDateOption } from '../journey'
 import ReasonForDeallocation from '../../../../enum/reasonForDeallocation'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -90,6 +91,7 @@ describe('Route Handlers - Deallocation reason', () => {
     })
 
     it('redirects to deallocate-check-and-confirm page when the user is on the deallocate-after-allocation flow', async () => {
+      config.deallocationAfterAllocationToggleEnabled = true
       req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
       req.body = {
         deallocationReason: ReasonForDeallocation.OTHER,
