@@ -74,7 +74,6 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
           tierCode: 'TIER_2',
           organiserCode: 'PRISON_STAFF',
           repeat: YesNo.NO,
-          appointmentName: 'Medical examination',
         },
         appointmentSetJourney: {},
       },
@@ -128,7 +127,6 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         prisonerNumbers: ['A1234BC'],
         tierCode: 'TIER_2',
         organiserCode: 'PRISON_STAFF',
-        customName: 'Medical examination',
       } as AppointmentSeriesCreateRequest
 
       expectedResponse = {
@@ -143,7 +141,6 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         extraInformation: '',
         createdTime: '2023-02-07T15:37:59.266Z',
         createdBy: 'test.user',
-        customName: 'Medical examination',
         appointments: [
           {
             id: 16,
@@ -257,7 +254,6 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         internalLocationId: 32,
         inCell: false,
         startDate: '2023-04-23',
-        customName: 'Medical examination',
         appointments: [
           { prisonerNumber: 'A1234BC', startTime: '13:30', endTime: '14:00' } as AppointmentSetAppointment,
           {
@@ -279,7 +275,6 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
         startDate: '2023-04-23',
         createdTime: '2023-02-07T15:37:59.266Z',
         createdBy: 'test.user',
-        customName: 'Medical examination',
         appointments: [
           {
             id: 16,
