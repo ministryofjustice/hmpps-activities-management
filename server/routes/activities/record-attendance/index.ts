@@ -17,7 +17,7 @@ import ResetAttendanceRoutes, { ResetAttendance } from './handlers/resetAttendan
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 
-export default function Index({ activitiesService, prisonService, userService }: Services): Router {
+export default function Index({ activitiesService, prisonService, userService, metricsService }: Services): Router {
   const router = Router()
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
@@ -28,7 +28,7 @@ export default function Index({ activitiesService, prisonService, userService }:
   const homeHandler = new HomeRoutes()
   const selectPeriodHandler = new SelectPeriodRoutes()
   const activitiesHandler = new ActivitiesRoutes(activitiesService, prisonService)
-  const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService, userService)
+  const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService, userService, metricsService)
   const notAttendedReasonHandler = new NotAttendedReasonRoutes(activitiesService)
   const cancelSessionReasonRoutes = new CancelSessionReasonRoutes(activitiesService)
   const cancelSessionConfirmationRoutes = new CancelSessionConfirmationRoutes(activitiesService)

@@ -17,17 +17,21 @@ import UserService from '../../../../services/userService'
 import atLeast from '../../../../../jest.setup'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 import TimeSlot from '../../../../enum/timeSlot'
+import MetricsService from '../../../../services/metricsService'
+import MetricsEvent from '../../../../data/metricsEvent'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/userService')
+jest.mock('../../../../services/metricsService')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
 const userService = new UserService(null, null, null)
+const metricsService = new MetricsService(null)
 
 describe('Route Handlers - Attendance List', () => {
-  const handler = new AttendanceListRoutes(activitiesService, prisonService, userService)
+  const handler = new AttendanceListRoutes(activitiesService, prisonService, userService, metricsService)
   const today = format(new Date(), 'yyyy-MM-dd')
 
   let req: Request
@@ -743,6 +747,9 @@ describe('Route Handlers - Attendance List', () => {
         res.locals.user,
       )
 
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.ATTENDANCE_SELECTED_ATTENDANCES(res.locals.user).addMeasurement('attendanceSelectionCount', 2),
+      )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance-list',
         'Attendance recorded',

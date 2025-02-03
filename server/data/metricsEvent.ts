@@ -260,4 +260,8 @@ export default class MetricsEvent {
       property,
     })
   }
+
+  static ATTENDANCE_SELECTED_ATTENDANCES(user: ServiceUser) {
+    return new MetricsEvent(MetricsEventType.ATTENDANCE_SELECTED_ATTENDANCES, user)
+  }
 }

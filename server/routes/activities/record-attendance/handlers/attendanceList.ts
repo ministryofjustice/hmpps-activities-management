@@ -14,6 +14,8 @@ import { EventType, Prisoner } from '../../../../@types/activities'
 import applyCancellationDisplayRule from '../../../../utils/applyCancellationDisplayRule'
 import UserService from '../../../../services/userService'
 import TimeSlot from '../../../../enum/timeSlot'
+import MetricsEvent from '../../../../data/metricsEvent'
+import MetricsService from '../../../../services/metricsService'
 
 export class AttendanceList {
   @Expose()
@@ -33,6 +35,7 @@ export default class AttendanceListRoutes {
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
     private readonly userService: UserService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   private RELEVANT_ALERT_CODES = ['HA', 'XA', 'RCON', 'XEL', 'RNO121', 'PEEP', 'XRF', 'XSA', 'XTACT']
@@ -237,6 +240,13 @@ export default class AttendanceListRoutes {
     })
 
     await this.activitiesService.updateAttendances(attendances, user)
+
+    this.metricsService.trackEvent(
+      MetricsEvent.ATTENDANCE_SELECTED_ATTENDANCES(res.locals.user).addMeasurement(
+        'attendanceSelectionCount',
+        selectedAttendances.length,
+      ),
+    )
 
     const successMessage = `You've saved attendance details for ${selectedAttendances.length} ${
       selectedAttendances.length === 1 ? 'person' : 'people'

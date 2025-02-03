@@ -21,4 +21,5 @@ export enum MetricsEventType {
   APPOINTMENT_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Movement-Slips-Printed',
   APPOINTMENT_SET_MOVEMENT_SLIP_PRINTED = 'SAA-Appointment-Set-Movement-Slips-Printed',
   APPOINTMENT_CHANGE_FROM_SCHEDULE = 'SAA-Appointment-Change-From-Schedule',
+  ATTENDANCE_SELECTED_ATTENDANCES = 'SAA-Attendance-Selected-Attendances',
 }
