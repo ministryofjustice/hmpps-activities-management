@@ -1,0 +1,81 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
+
+{% set pageTitle = applicationName + " - Deallocate someone" %}
+{% set pageId = 'deallocate-after-allocation-date-page' %}
+{% set jsBackLink = true %}
+
+{% set dateOptions = 
+[
+    {
+        value: DeallocateAfterAllocationDateOption.TODAY,
+        text: "At the end of today",
+        checked: session.allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.TODAY
+    },
+    {
+        value: DeallocateAfterAllocationDateOption.FUTURE_DATE,
+        text: "At the end of a different day - they'll attend sessions that day, then be removed",
+        checked: session.allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.FUTURE_DATE,
+        conditional: {
+            html: mojDatePicker({
+                id: 'date',
+                name: 'date',
+                label: {
+                    text: 'Date',
+                    classes: "govuk-visually-hidden"
+                },
+                leadingZeros: 'true',
+                hint: {
+                    text: "Enter the date, for example" + exampleDatePickerDate() +", or click on the calendar to select."
+                },
+                classes: 'moj-datepicker--fixed-width',
+                errorMessage: validationErrors | findError('date'),
+                value: session.allocateJourney.endDate | isoDateToDatePickerDate
+            })
+        }
+    }
+] %}
+
+{% if showImmediateDeallocationOption %}
+    {% set dateOptions = (dateOptions.unshift(
+        {
+            value: DeallocateAfterAllocationDateOption.NOW,
+            text: "Now - they'll be removed from any sessions later today",
+            checked: session.allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.NOW
+        }
+    ), dateOptions) %}
+{% endif %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <span class="govuk-caption-xl">Take {{ session.allocateJourney.inmate.prisonerName }} off {{ session.allocateJourney.activity.name }}</span>
+            <h1 class="govuk-heading-l">When do you want them to be taken off?</h1>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{ govukRadios({
+                    id: "deallocationAfterAllocationDate",
+                    name: "deallocationAfterAllocationDate",
+                    attributes: { "data-qa": "deallocationAfterAllocationDate" },
+                    fieldset: {
+                        legend: {
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('deallocationAfterAllocationDate'),
+                    items: dateOptions
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                    <a class="govuk-link" href="confirmation">Cancel</a> 
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

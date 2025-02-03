@@ -14,6 +14,8 @@ import DeallocationCaseNoteQuestionRoutes, {
 } from './handlers/deallocationCaseNoteQuestion'
 import EndDecisionRoutes from './handlers/endDecisionReason'
 import DeallocateTodayOptionRoutes, { DeallocateToday } from './handlers/deallocateTodayOptions'
+import DeallocationDateRoutes, { DeallocateDate } from './handlers/deallocationAfterAllocation/deallocationDate'
+import CheckAndConfirmRoutes from './handlers/deallocationAfterAllocation/deallocationCheckAndConfirm'
 
 export default function Index({ activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -30,7 +32,7 @@ export default function Index({ activitiesService, metricsService }: Services): 
   const caseNoteHandler = new DeallocationCaseNoteRoutes()
   const caseNoteQuestionHandler = new DeallocationCaseNoteQuestionRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
-  const confirmationHandler = new ConfirmationRoutes(metricsService)
+  const confirmationHandler = new ConfirmationRoutes(metricsService, activitiesService)
 
   get('/cancel', cancelHandler.GET, true)
   post('/cancel', cancelHandler.POST, ConfirmCancelOptions)
@@ -49,6 +51,15 @@ export default function Index({ activitiesService, metricsService }: Services): 
   get('/check-answers', checkAnswersHandler.GET, true)
   post('/check-answers', checkAnswersHandler.POST)
   get('/confirmation', confirmationHandler.GET, true)
+
+  // deallocation after an allocation
+  const deallocationAfterAllocationDate = new DeallocationDateRoutes(activitiesService)
+  const deallocationCheckAndConfirm = new CheckAndConfirmRoutes(activitiesService)
+
+  get('/deallocate-after-allocation-date', deallocationAfterAllocationDate.GET, true)
+  post('/deallocate-after-allocation-date', deallocationAfterAllocationDate.POST, DeallocateDate)
+  get('/deallocation-check-and-confirm', deallocationCheckAndConfirm.GET, true)
+  post('/deallocation-check-and-confirm', deallocationCheckAndConfirm.POST)
 
   return router
 }

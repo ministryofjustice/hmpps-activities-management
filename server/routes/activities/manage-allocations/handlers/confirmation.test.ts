@@ -1,15 +1,22 @@
 import { Request, Response } from 'express'
+import { when } from 'jest-when'
 import ConfirmationRoutes from './confirmation'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import { AllocateToActivityJourney } from '../journey'
+import ActivitiesService from '../../../../services/activitiesService'
+import config from '../../../../config'
+import atLeast from '../../../../../jest.setup'
+import { PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/metricsService')
+jest.mock('../../../../services/activitiesService')
 
 const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Allocate - Confirmation', () => {
-  const handler = new ConfirmationRoutes(metricsService)
+  const handler = new ConfirmationRoutes(metricsService, activitiesService)
   let req: Request
   let res: Response
 
@@ -51,6 +58,20 @@ describe('Route Handlers - Allocate - Confirmation', () => {
         journeyMetrics: {},
       },
     } as unknown as Request
+
+    when(activitiesService.getActivePrisonPrisonerAllocations)
+      .calledWith(atLeast(['ABC123']))
+      .mockResolvedValue([
+        {
+          prisonerNumber: 'ABC123',
+          allocations: [
+            { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+            { activityId: 2, scheduleId: 2, scheduleDescription: 'Unemployment', isUnemployment: true },
+          ],
+        },
+      ] as PrisonerAllocations[])
+
+    config.deallocationAfterAllocationToggleEnabled = true
   })
 
   afterEach(() => {
@@ -58,24 +79,46 @@ describe('Route Handlers - Allocate - Confirmation', () => {
   })
 
   describe('GET', () => {
-    it('should render page with data from session', async () => {
+    it('should render page with data from session - flag off', async () => {
+      config.deallocationAfterAllocationToggleEnabled = false
+
       await handler.GET(req, res)
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(allocateJourney, res.locals.user).addJourneyCompletedMetrics(
           req,
         ),
       )
+      expect(activitiesService.getActivePrisonPrisonerAllocations).not.toHaveBeenCalled()
+
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/confirmation', {
         activityId: 1,
         prisonerName: 'Joe Bloggs',
         prisonerNumber: 'ABC123',
         activityName: 'Maths',
+        otherAllocations: null,
+      })
+    })
+    it('should render page with data from session - flag on', async () => {
+      await handler.GET(req, res)
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(allocateJourney, res.locals.user).addJourneyCompletedMetrics(
+          req,
+        ),
+      )
+      expect(activitiesService.getActivePrisonPrisonerAllocations).toHaveBeenCalledWith(['ABC123'], res.locals.user)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/confirmation', {
+        activityId: 1,
+        prisonerName: 'Joe Bloggs',
+        prisonerNumber: 'ABC123',
+        activityName: 'Maths',
+        otherAllocations: [{ activityId: 2, scheduleId: 2, scheduleDescription: 'Unemployment', isUnemployment: true }],
       })
     })
 
     it('should record create journey complete in metrics', async () => {
       await handler.GET(req, res)
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(allocateJourney, res.locals.user).addJourneyCompletedMetrics(
           req,
         ),
@@ -85,7 +128,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
     it('should not record create journey complete in metrics when in the remove journey', async () => {
       req.params.mode = 'remove'
       await handler.GET(req, res)
-      expect(metricsService.trackEvent).not.toBeCalled()
+      expect(metricsService.trackEvent).not.toHaveBeenCalled()
     })
   })
 })

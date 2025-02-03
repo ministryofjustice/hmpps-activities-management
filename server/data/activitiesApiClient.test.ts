@@ -37,6 +37,7 @@ import { AppointmentType } from '../routes/appointments/create-and-edit/appointm
 import { AppointmentApplyTo } from '../@types/appointments'
 import { formatIsoDate } from '../utils/datePickerUtils'
 import AttendanceAction from '../enum/attendanceAction'
+import ReasonForDeallocation from '../enum/reasonForDeallocation'
 
 const user = { token: 'token', activeCaseLoadId: 'MDI' } as ServiceUser
 
@@ -824,7 +825,7 @@ describe('activitiesApiClient', () => {
 
       const body: PrisonerDeallocationRequest = {
         prisonerNumbers: ['123456'],
-        reasonCode: 'PERSONAL',
+        reasonCode: ReasonForDeallocation.HEALTH,
         endDate: '2023-05-31',
       }
 

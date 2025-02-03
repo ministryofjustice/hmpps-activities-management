@@ -6,6 +6,9 @@ import DeallocationReasonRoutes, { DeallocationReason } from './deallocationReas
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { DeallocateAfterAllocationDateOption } from '../journey'
+import ReasonForDeallocation from '../../../../enum/reasonForDeallocation'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -18,7 +21,7 @@ describe('Route Handlers - Deallocation reason', () => {
   let res: Response
 
   const mockActivitiesData = () => {
-    when(activitiesService.getDeallocationReasons).mockResolvedValue([{ code: 'OTHER', description: 'OTHER' }])
+    when(activitiesService.getDeallocationReasons).mockResolvedValue([{ code: 'OTHER', description: 'Other reason' }])
   }
 
   beforeEach(() => {
@@ -59,8 +62,7 @@ describe('Route Handlers - Deallocation reason', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocation-reason', {
-        deallocationReasons: [{ code: 'OTHER', description: 'OTHER' }],
-        allocationId: 1,
+        deallocationReasons: [{ code: 'OTHER', description: 'Other reason' }],
       })
     })
   })
@@ -68,24 +70,37 @@ describe('Route Handlers - Deallocation reason', () => {
   describe('POST', () => {
     it('redirect to case note when reason for deallocation is eligible', async () => {
       req.body = {
-        deallocationReason: 'OTHER',
+        deallocationReason: ReasonForDeallocation.OTHER,
       }
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.deallocationReason).toEqual('OTHER')
+      expect(req.session.allocateJourney.deallocationReason).toEqual(ReasonForDeallocation.OTHER)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('case-note-question')
     })
 
-    it('redirect to check answers when reason for deallocation is ineligible', async () => {
+    it('redirect to check answers when reason for deallocation is ineligible for collecting a case note and the user is not on the deallocate-after-allocation flow', async () => {
       req.body = {
-        deallocationReason: 'HEALTH',
+        deallocationReason: ReasonForDeallocation.HEALTH,
       }
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.deallocationReason).toEqual('HEALTH')
+      expect(req.session.allocateJourney.deallocationReason).toEqual(ReasonForDeallocation.HEALTH)
       expect(req.session.allocateJourney.deallocationCaseNote).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
+    })
+
+    it('redirects to deallocate-check-and-confirm page when the user is on the deallocate-after-allocation flow', async () => {
+      config.deallocationAfterAllocationToggleEnabled = true
+      req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
+      req.body = {
+        deallocationReason: ReasonForDeallocation.OTHER,
+      }
+      await handler.POST(req, res)
+
+      expect(req.session.allocateJourney.deallocationReason).toEqual(ReasonForDeallocation.OTHER)
+      expect(req.session.allocateJourney.deallocationCaseNote).toBeNull()
+      expect(res.redirect).toHaveBeenCalledWith('deallocation-check-and-confirm')
     })
   })
 
