@@ -188,6 +188,7 @@
   },
   "overrides": {
     "cookie": "~1.0.2",
-    "path-to-regexp": "~0.1.12"
+    "path-to-regexp": "~0.1.12",
+    "undici": "~6.21.1"
   }
 }
