@@ -45,57 +45,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
     ],
   } as unknown as AppointmentSeriesDetails
 
-  const appointment = {
-    id: 12,
-    appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
-    appointmentType: 'GROUP',
-    sequenceNumber: 2,
-    appointmentName: 'Appointment name (Chaplaincy)',
-    category: {
-      code: 'CHAP',
-      description: 'Chaplaincy',
-    },
-    internalLocation: {
-      id: 26152,
-      prisonCode: 'CHAP',
-      description: 'Chapel',
-    },
-    tier: {
-      id: 1,
-      code: EventTier.TIER_2,
-      description: eventTierDescriptions[EventTier.TIER_2],
-    },
-    organiser: {
-      id: 1,
-      code: EventOrganiser.EXTERNAL_PROVIDER,
-      description: organiserDescriptions[EventOrganiser.EXTERNAL_PROVIDER],
-    },
-    startDate: '2023-04-13',
-    startTime: '09:00',
-    endTime: '10:00',
-    attendees: [
-      {
-        prisoner: {
-          prisonerNumber: 'A1234BC',
-          firstName: 'TEST01',
-          lastName: 'PRISONER01',
-          cellLocation: '1-1-1',
-          prisonCode: 'MDI',
-          status: 'ACTIVE IN',
-        },
-      },
-      {
-        prisoner: {
-          prisonerNumber: 'B2345CD',
-          firstName: 'TEST02',
-          lastName: 'PRISONER02',
-          cellLocation: '2-2-2',
-          prisonCode: 'MDI',
-          status: 'ACTIVE IN',
-        },
-      },
-    ],
-  } as AppointmentDetails
+  let appointment: AppointmentDetails
 
   beforeEach(() => {
     res = {
@@ -112,6 +62,58 @@ describe('Route Handlers - Create Appointment - Start', () => {
       session: {},
       params: { journeyId },
     } as unknown as Request
+
+    appointment = {
+      id: 12,
+      appointmentSeries: { id: 2, schedule: { frequency: 'WEEKLY', numberOfAppointments: 3 } },
+      appointmentType: 'GROUP',
+      sequenceNumber: 2,
+      appointmentName: 'Appointment name (Chaplaincy)',
+      category: {
+        code: 'CHAP',
+        description: 'Chaplaincy',
+      },
+      internalLocation: {
+        id: 26152,
+        prisonCode: 'CHAP',
+        description: 'Chapel',
+      },
+      tier: {
+        id: 1,
+        code: EventTier.TIER_2,
+        description: eventTierDescriptions[EventTier.TIER_2],
+      },
+      organiser: {
+        id: 1,
+        code: EventOrganiser.EXTERNAL_PROVIDER,
+        description: organiserDescriptions[EventOrganiser.EXTERNAL_PROVIDER],
+      },
+      startDate: '2023-04-13',
+      startTime: '09:00',
+      endTime: '10:00',
+      attendees: [
+        {
+          prisoner: {
+            prisonerNumber: 'A1234BC',
+            firstName: 'TEST01',
+            lastName: 'PRISONER01',
+            cellLocation: '1-1-1',
+            prisonCode: 'MDI',
+            status: 'ACTIVE IN',
+          },
+        },
+        {
+          prisoner: {
+            prisonerNumber: 'B2345CD',
+            firstName: 'TEST02',
+            lastName: 'PRISONER02',
+            cellLocation: '2-2-2',
+            prisonCode: 'MDI',
+            status: 'ACTIVE IN',
+          },
+        },
+      ],
+    } as AppointmentDetails
   })
 
   afterEach(() => {
@@ -182,7 +184,37 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
       await handler.COPY(req, res)
 
-      expect(req.session.appointmentJourney).toEqual(expectedJourney(AppointmentJourneyMode.COPY, appointment.id))
+      expect(req.session.appointmentJourney).toEqual(
+        expectedJourney(AppointmentJourneyMode.COPY, appointment.id, undefined),
+      )
+      expect(req.session.appointmentSetJourney).toBeUndefined()
+
+      expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
+      expect(req.session.journeyMetrics.source).toBeUndefined()
+
+      expect(metricsService.trackEvent).toBeCalledWith(
+        new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_STARTED, res.locals.user).addProperty(
+          'journeyId',
+          journeyId,
+        ),
+      )
+
+      expect(res.redirect).toHaveBeenCalledWith('../review-prisoners')
+    })
+
+    it('should copy the custom name from the original appointment', async () => {
+      req.appointment = appointment
+      req.appointment.customName = 'Custom name'
+
+      when(appointeeAttendeeService.findUnavailableAttendees)
+        .calledWith(atLeast(['A1234BC', 'B2345CD'], res.locals.user))
+        .mockResolvedValueOnce([])
+
+      await handler.COPY(req, res)
+
+      expect(req.session.appointmentJourney).toEqual(
+        expectedJourney(AppointmentJourneyMode.COPY, appointment.id, req.appointment.customName),
+      )
       expect(req.session.appointmentSetJourney).toBeUndefined()
 
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
@@ -325,12 +357,18 @@ describe('Route Handlers - Create Appointment - Start', () => {
     })
   })
 
-  const expectedJourney = (mode: AppointmentJourneyMode, originalAppointmentId?: number) => {
+  const expectedJourney = (
+    mode: AppointmentJourneyMode,
+    originalAppointmentId: number = undefined,
+    customName: string = undefined,
+  ) => {
+    const expectedCustomName = mode === AppointmentJourneyMode.COPY ? customName : null
     return {
       originalAppointmentId,
       mode,
       type: AppointmentType.GROUP,
       appointmentName: 'Appointment name (Chaplaincy)',
+      customName: expectedCustomName,
       prisoners: [
         {
           number: 'A1234BC',
@@ -340,6 +378,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
           cellLocation: '1-1-1',
           status: 'ACTIVE IN',
           prisonCode: 'MDI',
+          category: undefined,
         },
         {
           number: 'B2345CD',
@@ -349,12 +388,14 @@ describe('Route Handlers - Create Appointment - Start', () => {
           cellLocation: '2-2-2',
           status: 'ACTIVE IN',
           prisonCode: 'MDI',
+          category: undefined,
         },
       ],
       category: {
         code: 'CHAP',
         description: 'Chaplaincy',
       },
+      extraInformation: undefined,
       tierCode: EventTier.TIER_2,
       organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
       location: {
@@ -362,6 +403,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         prisonCode: 'CHAP',
         description: 'Chapel',
       },
+      inCell: undefined,
       startDate: '2023-04-13',
       startTime: {
         date: new Date('2023-04-13 09:00:00'),

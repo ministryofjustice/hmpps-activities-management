@@ -185,6 +185,7 @@ export default class StartJourneyRoutes {
       mode: journeyType,
       type: AppointmentType[appointment.appointmentType],
       appointmentName: appointment.appointmentName,
+      customName: journeyType === AppointmentJourneyMode.COPY ? appointment.customName : null,
       prisoners: appointment.attendees.map(attendee => ({
         number: attendee.prisoner.prisonerNumber,
         name:

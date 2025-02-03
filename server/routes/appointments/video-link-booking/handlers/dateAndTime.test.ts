@@ -6,6 +6,7 @@ import DateAndTimeRoutes, { DateAndTime } from './dateAndTime'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import { YesNo } from '../../../../@types/activities'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
+import { Location } from '../../../../@types/bookAVideoLinkApi/types'
 
 jest.mock('../../../../services/bookAVideoLinkService')
 
@@ -41,7 +42,7 @@ describe('DateAndTimeRoutes', () => {
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue([
         { key: 'Room1', description: 'Room 1', enabled: true },
         { key: 'Room2', description: 'Room 2', enabled: true },
-      ])
+      ] as Location[])
 
       await dateAndTimeRoutes.GET(req as Request, res as Response)
 

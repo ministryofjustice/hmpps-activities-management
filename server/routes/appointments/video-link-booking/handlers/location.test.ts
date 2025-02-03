@@ -3,6 +3,7 @@ import { Request, Response } from 'express'
 import LocationRoutes, { Location } from './location'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import { Location as BvlsLocation } from '../../../../@types/bookAVideoLinkApi/types'
 
 jest.mock('../../../../services/bookAVideoLinkService')
 
@@ -37,7 +38,7 @@ describe('LocationRoutes', () => {
       const rooms = [
         { key: 'Room 1', description: 'Room 1', enabled: true },
         { key: 'Room 2', description: 'Room 2', enabled: true },
-      ]
+      ] as BvlsLocation[]
       bookAVideoLinkService.getAppointmentLocations.mockResolvedValue(rooms)
 
       await locationRoutes.GET(req as Request, res as Response)

@@ -28,6 +28,7 @@ export default class AppointmentDetailsRoutes {
           appointment.startDate,
           appointment.startTime,
           appointment.endTime,
+          appointment.isCancelled ? 'CANCELLED' : 'ACTIVE',
           user,
         )
         .catch(e => {
