@@ -46,6 +46,20 @@ export type AllocateToActivityJourney = {
   }
   scheduledInstance?: ScheduledInstance
   otherAllocations?: Array<Allocation>
+  activitiesToDeallocate?: {
+    activityId?: number
+    scheduleId: number
+    name: string
+    location?: string
+    inCell?: boolean
+    onWing?: boolean
+    offWing?: boolean
+    startDate: string
+    endDate?: string
+    scheduleWeeks?: number
+    paid?: boolean
+    notInWork?: boolean
+  }[]
 }
 
 export enum EndDecision {
