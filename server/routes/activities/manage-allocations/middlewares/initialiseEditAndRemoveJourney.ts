@@ -27,13 +27,15 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         otherAllocationIdsList.map(id => activitiesService.getAllocation(+id, user)),
       )
       const inmate = await prisonService.getInmateByPrisonerNumber(otherAllocations[0].prisonerNumber, user)
+      const inmateDetails = {
+        prisonerNumber: inmate.prisonerNumber,
+        prisonerName: convertToTitleCase(`${inmate.firstName} ${inmate.lastName}`),
+        prisonCode: inmate.prisonId,
+        status: inmate.status,
+      }
       req.session.allocateJourney = {
-        inmate: {
-          prisonerNumber: inmate.prisonerNumber,
-          prisonerName: convertToTitleCase(`${inmate.firstName} ${inmate.lastName}`),
-          prisonCode: inmate.prisonId,
-          status: inmate.status,
-        },
+        inmate: inmateDetails,
+        inmates: [inmateDetails],
         otherAllocations,
       } as AllocateToActivityJourney
       return next()

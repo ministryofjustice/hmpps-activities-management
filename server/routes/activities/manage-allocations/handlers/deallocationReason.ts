@@ -15,10 +15,21 @@ export default class DeallocationReasonRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { allocateJourney } = req.session
 
     const deallocationReasons = await this.activitiesService.getDeallocationReasons(user)
 
-    res.render('pages/activities/manage-allocations/deallocation-reason', { deallocationReasons })
+    const multipleActivitiesToDeallocate = allocateJourney.activitiesToDeallocate?.length > 0
+
+    res.render('pages/activities/manage-allocations/deallocation-reason', {
+      deallocationReasons,
+      multipleActivitiesToRemove: config.deallocationAfterAllocationToggleEnabled
+        ? multipleActivitiesToDeallocate && !allocateJourney.activity
+        : null,
+      deallocateAfterAllocationPath: config.deallocationAfterAllocationToggleEnabled
+        ? allocateJourney.deallocateAfterAllocationDateOption !== undefined
+        : null,
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

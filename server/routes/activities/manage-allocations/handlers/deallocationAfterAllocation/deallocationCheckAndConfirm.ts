@@ -9,13 +9,14 @@ export default class DeallocationCheckAndConfirmRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { deallocationReason, activity } = req.session.allocateJourney
-    const { notInWork } = activity
+    const notInWorkActivity = activity?.notInWork || false
 
     const deallocationReasons = await this.activitiesService.getDeallocationReasons(user)
 
     res.render('pages/activities/manage-allocations/deallocationAfterAllocation/deallocation-check-and-confirm', {
-      activityIsUnemployment: notInWork,
-      deallocationReason: notInWork === false ? deallocationReasons.find(r => r.code === deallocationReason) : null,
+      activityIsUnemployment: notInWorkActivity,
+      deallocationReason:
+        notInWorkActivity === false ? deallocationReasons.find(r => r.code === deallocationReason) : null,
     })
   }
 

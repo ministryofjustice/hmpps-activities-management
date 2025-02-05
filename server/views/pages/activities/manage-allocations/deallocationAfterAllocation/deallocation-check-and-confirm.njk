@@ -26,6 +26,8 @@
 
 
             {% set endDateOption = ('remove-end-date-option' if session.allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
+            {% set activityNamesIfMultiple = session.allocateJourney.activitiesToDeallocate | flatMap('name') | join('<br>') %}
+            {% set activityValue = { text: session.allocateJourney.activity.name } if session.allocateJourney.activity else { html: activityNamesIfMultiple } %}
 
                 {{ govukSummaryList({
                     rows: [
@@ -35,7 +37,7 @@
                         },
                         {
                             key: { text: "Activity" },
-                            value: { text: session.allocateJourney.activity.name }
+                            value: activityValue
                         },
                         {
                             key: { text: "End of allocation" },

@@ -16,7 +16,9 @@ import EndDecisionRoutes from './handlers/endDecisionReason'
 import DeallocateTodayOptionRoutes, { DeallocateToday } from './handlers/deallocateTodayOptions'
 import DeallocationDateRoutes, { DeallocateDate } from './handlers/deallocationAfterAllocation/deallocationDate'
 import CheckAndConfirmRoutes from './handlers/deallocationAfterAllocation/deallocationCheckAndConfirm'
-import DeallocationSelectActivities from './handlers/deallocationAfterAllocation/deallocationSelectActivities'
+import DeallocationSelectActivities, {
+  DeallocationSelect,
+} from './handlers/deallocationAfterAllocation/deallocationSelectActivities'
 
 export default function Index({ activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -63,7 +65,7 @@ export default function Index({ activitiesService, metricsService }: Services): 
   get('/deallocation-check-and-confirm', deallocationCheckAndConfirm.GET, true)
   post('/deallocation-check-and-confirm', deallocationCheckAndConfirm.POST)
   get('/deallocation-select-activities', deallocationSelectActivities.GET, true)
-  post('/deallocation-select-activities', deallocationSelectActivities.POST)
+  post('/deallocation-select-activities', deallocationSelectActivities.POST, DeallocationSelect)
 
   return router
 }

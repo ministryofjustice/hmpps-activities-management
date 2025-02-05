@@ -63,6 +63,8 @@ describe('Route Handlers - Deallocation reason', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocation-reason', {
         deallocationReasons: [{ code: 'OTHER', description: 'Other reason' }],
+        deallocateAfterAllocationPath: false,
+        multipleActivitiesToRemove: false,
       })
     })
   })
