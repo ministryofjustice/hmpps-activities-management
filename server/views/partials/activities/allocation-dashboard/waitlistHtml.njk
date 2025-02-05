@@ -104,26 +104,26 @@
             }) }}
 
             {% set waitlistStatusOptions = [
-                {
-                    value: 'Any',
-                    text: 'Any',
-                    selected: filters.waitlistStatusFilter == 'Any'
-                },
-                {
-                    value: 'APPROVED',
-                    text: 'Approved',
-                    selected: filters.waitlistStatusFilter == 'APPROVED'
-                },
-                {
-                    value: 'DECLINED',
-                    text: 'Declined',
-                    selected: filters.waitlistStatusFilter == 'DECLINED'
-                },
-                {
-                    value: 'PENDING',
-                    text: 'Pending',
-                    selected: filters.waitlistStatusFilter == 'PENDING'
-                }
+              {
+                value: 'Any',
+                text: 'Any',
+                selected: filters.waitlistStatusFilter == 'Any'
+              },
+              {
+                value: WaitingListStatus.APPROVED,
+                text: 'Approved',
+                selected: filters.waitlistStatusFilter == WaitingListStatus.APPROVED
+              },
+              {
+                value: WaitingListStatus.DECLINED,
+                text: 'Rejected',
+                selected: filters.waitlistStatusFilter == WaitingListStatus.DECLINED
+              },
+              {
+                value: WaitingListStatus.PENDING,
+                text: 'Pending',
+                selected: filters.waitlistStatusFilter == WaitingListStatus.PENDING
+              }
             ] %}
             {{ govukSelect({
                 id: "waitlistStatusFilter",
@@ -182,7 +182,7 @@
             {
                 html: splitLine(row.requestDate, row.requestedBy),
                 attributes: {
-                    "data-sort-value": row.requestDate | getUnixTime 
+                    "data-sort-value": row.requestDate | getUnixTime
                 }
             },
             {
@@ -191,7 +191,7 @@
             {
                 html: earliestReleaseDate(row.earliestReleaseDate),
                 attributes: {
-                    "data-sort-value": row.earliestReleaseDate.releaseDate | getUnixTime 
+                    "data-sort-value": row.earliestReleaseDate.releaseDate | getUnixTime
                 }
             },
             {

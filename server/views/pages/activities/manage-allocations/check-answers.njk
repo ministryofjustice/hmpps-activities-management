@@ -140,7 +140,7 @@
 
             {% if session.req.params.mode == 'remove' %}
                 {% set eligibleForCaseNote = true if
-                    deallocationReason.code in ['WITHDRAWN_STAFF', 'DISMISSED', 'SECURITY', 'OTHER')
+                    deallocationReason.code in ['WITHDRAWN_STAFF', 'DISMISSED', 'SECURITY', 'OTHER']
                         and session.allocateJourney.inmates | length == 1
                 %}
 

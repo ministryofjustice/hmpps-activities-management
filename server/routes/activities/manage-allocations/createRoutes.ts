@@ -33,7 +33,7 @@ export default function Index({ activitiesService, prisonService, metricsService
   const exclusionsHandler = new ExclusionRoutes(activitiesService)
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const cancelHandler = new CancelRoutes()
-  const confirmationHandler = new ConfirmationRoutes(metricsService)
+  const confirmationHandler = new ConfirmationRoutes(metricsService, activitiesService)
   const errorHandler = new AllocationErrorRoutes()
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)

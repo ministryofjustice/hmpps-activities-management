@@ -53,6 +53,7 @@ import { formatIsoDate } from '../utils/datePickerUtils'
 import EventTier from '../enum/eventTiers'
 import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocations/journey'
 import AttendanceAction from '../enum/attendanceAction'
+import ReasonForDeallocation from '../enum/reasonForDeallocation'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -648,7 +649,7 @@ describe('Activities Service', () => {
     it('should deallocate prisoners', async () => {
       const body: PrisonerDeallocationRequest = {
         prisonerNumbers: ['123456'],
-        reasonCode: 'PERSONAL',
+        reasonCode: ReasonForDeallocation.HEALTH,
         endDate: '2023-05-31',
         caseNote: { type: 'GEN', text: 'test case note' },
         scheduleInstanceId: 765,
@@ -657,7 +658,7 @@ describe('Activities Service', () => {
       await activitiesService.deallocateFromActivity(
         1,
         ['123456'],
-        'PERSONAL',
+        ReasonForDeallocation.HEALTH,
         { type: 'GEN', text: 'test case note' },
         '2023-05-31',
         user,

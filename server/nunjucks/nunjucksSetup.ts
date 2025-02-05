@@ -70,7 +70,10 @@ import { absenceReasonCheckboxMatch, absenceReasonDisplayConverter } from '../ut
 import { ScheduleChangeOption } from '../routes/activities/create-an-activity/handlers/customTimesChangeOption'
 import { DefaultOrCustomTimes } from '../routes/activities/create-an-activity/handlers/customTimesChangeDefaultOrCustom'
 import { NameFormatStyle } from '../utils/helpers/nameFormatStyle'
-import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocations/journey'
+import {
+  DeallocateAfterAllocationDateOption,
+  PrisonerSuspensionStatus,
+} from '../routes/activities/manage-allocations/journey'
 import { PaidType } from '../routes/activities/suspensions/handlers/viewSuspensions'
 import { WaitingListStatus } from '../enum/waitingListStatus'
 import logger from '../../logger'
@@ -241,6 +244,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('PaidType', PaidType)
   njkEnv.addGlobal('WaitingListStatus', WaitingListStatus)
   njkEnv.addGlobal('LocationType', LocationType)
+  njkEnv.addGlobal('DeallocateAfterAllocationDateOption', DeallocateAfterAllocationDateOption)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

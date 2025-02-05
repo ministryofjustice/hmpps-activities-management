@@ -5,6 +5,17 @@
 {% set pageTitle = applicationName + " - Allocate to an activity - Confirmation" %}
 {% set pageId = 'confirmation-page' %}
 
+{% if deallocationAfterAllocationToggleEnabled %}
+    {% if otherAllocations | length > 1 %}
+        {% set deallocationText = 'any other activities they’re allocated to' %}
+        {# TODO fill in missing href when page is created #}
+        {% set deallocationHref = 'TODO' %}
+    {% elif otherAllocations | length == 1 %}
+        {% set deallocationText = otherAllocations[0].activitySummary %}
+        {% set deallocationHref = "/activities/allocations/remove/deallocate-after-allocation-date?allocationIds=" + otherAllocations[0].id + "&scheduleId=" + otherAllocations[0].scheduleId %}
+    {% endif %}
+{% endif %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -16,6 +27,10 @@
                 <h2 class="govuk-heading-m">What you can do next</h2>
                 <p class='govuk-body'>You can either:</p>
                 <ul class='govuk-list govuk-list--bullet'>
+                    {# TODO: Use otherAllocations | length when starting SAA-2260 #}
+                    {% if deallocationAfterAllocationToggleEnabled and otherAllocations | length == 1 %}
+                        <li><a href={{ deallocationHref }} class='govuk-link'>take {{ prisonerName }} off {{ deallocationText }}</li>
+                    {% endif %}
                     <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>
                     <li><a href="/activities/allocation-dashboard" class='govuk-link'>find other activities with vacancies</a></li>
                 </ul>

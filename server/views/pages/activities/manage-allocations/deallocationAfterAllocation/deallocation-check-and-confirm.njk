@@ -1,0 +1,87 @@
+{% extends "layout.njk" %}
+
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% set pageTitle = applicationName + " - Deallocate from an activity - Check and confirm" %}
+{% set pageId = 'deallocation-check-and-confirm-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">Take {{ session.allocateJourney.inmate.prisonerName }} off {{ session.allocateJourney.activity.name }}</span>
+            <h1 class="govuk-heading-l">Check and confirm taking {{ session.allocateJourney.inmate.prisonerName }} off {{ session.allocateJourney.activity.name }}</h1>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% set prisonerDetailsHtml %}
+                <ul class="govuk-list">
+                    <li>{{ session.allocateJourney.inmate.prisonerName }}</li>
+                    <li>{{ session.allocateJourney.inmate.prisonerNumber }}</li>
+                    <li>{{ statusBasedCellLocation(session.allocateJourney.inmate.cellLocation, session.allocateJourney.inmate.status, session.allocateJourney.inmate.prisonCode == user.activeCaseLoadId) }}</li>
+                </ul>
+            {% endset %}
+
+
+            {% set endDateOption = ('remove-end-date-option' if session.allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
+
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: { text: "People you're taking off" },
+                            value: { html: prisonerDetailsHtml }
+                        },
+                        {
+                            key: { text: "Activity" },
+                            value: { text: session.allocateJourney.activity.name }
+                        },
+                        {
+                            key: { text: "End of allocation" },
+                            value: {
+                                text: session.allocateJourney.endDate | formatDate if session.allocateJourney.endDate
+                            },
+                            actions: {
+                                items: [{
+                                    href: 'deallocate-after-allocation-date?preserveHistory=true',
+                                    classes: 'govuk-link--no-visited-state',
+                                    text: "Change",
+                                    visuallyHiddenText: "change end date"
+                                }]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Reason for allocation ending"
+                            },
+                            value: {
+                                text: deallocationReason.description
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "reason?preserveHistory=true",
+                                        classes: 'govuk-link--no-visited-state',
+                                        text: "Change",
+                                        visuallyHiddenText: "change deallocation reason"
+                                    }
+                                ]
+                            }
+                        } if not activityIsUnemployment
+                    ]
+                }) }}
+
+            <form method="POST" data-module="form-spinner" data-loading-text="Removing prisoner">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <div class="govuk-button-group">
+                    {{ govukButton({ 
+                        text: "Confirm and remove",
+                        preventDoubleClick: true
+                    }) }}
+                    <a href="confirmation" class="govuk-link govuk-link--no-visited-state">{{ 'Cancel' }}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

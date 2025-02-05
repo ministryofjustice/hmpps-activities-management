@@ -1,0 +1,12 @@
+enum ReasonForDeallocation {
+  COMPLETED = 'COMPLETED',
+  TRANSFERRED = 'TRANSFERRED',
+  WITHDRAWN_STAFF = 'WITHDRAWN_STAFF',
+  WITHDRAWN_OWN = 'WITHDRAWN_OWN',
+  DISMISSED = 'DISMISSED',
+  HEALTH = 'HEALTH',
+  OTHER = 'OTHER',
+  SECURITY = 'SECURITY',
+}
+
+export default ReasonForDeallocation
