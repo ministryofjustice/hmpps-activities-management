@@ -106,6 +106,7 @@ jobs:
           name: integration tests
           command:  |
             circleci tests glob "./integration_tests/e2e/**/*.cy.ts"
+            circleci tests split --split-by=timings --verbose
             TESTFILES=$(circleci tests glob "./integration_tests/e2e/**/*.cy.ts" | circleci tests split --split-by=timings --verbose | paste -sd ',')
             npm run int-test -- --spec ${TESTFILES}
       - store_test_results:
