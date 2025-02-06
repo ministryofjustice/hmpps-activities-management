@@ -109,6 +109,8 @@ jobs:
             TESTFILES=$(circleci tests glob "./integration_tests/e2e/**/*.cy.ts" | circleci tests split --split-by=timings --verbose | paste -sd ',')
             echo "HERE"
             npm run int-test -- --spec ${TESTFILES}
+          environment:
+            JEST_JUNIT_ADD_FILE_ATTRIBUTE: "true"
       - store_test_results:
           path: test_results
       - store_artifacts:
