@@ -40,7 +40,9 @@ export default class DeallocationSelectActivities {
       const [allocation] = req.session.allocateJourney.otherAllocations.filter(
         all => all.id === +selectedAllocationIds[0],
       )
+
       const activity = await this.activitiesService.getActivity(allocation.activityId, user)
+
       req.session.allocateJourney.activity = {
         activityId: activity.id,
         scheduleId: getScheduleIdFromActivity(activity),
