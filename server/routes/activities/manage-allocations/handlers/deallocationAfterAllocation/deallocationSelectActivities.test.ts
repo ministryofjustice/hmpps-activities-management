@@ -1,9 +1,12 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
 import ActivitiesService from '../../../../../services/activitiesService'
-import DeallocationSelectActivities from './deallocationSelectActivities'
+import DeallocationSelectActivities, { DeallocationSelect } from './deallocationSelectActivities'
 import atLeast from '../../../../../../jest.setup'
 import { Activity } from '../../../../../@types/activitiesAPI/types'
+import { associateErrorsWithProperty } from '../../../../../utils/utils'
 
 jest.mock('../../../../../services/activitiesService')
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
@@ -28,6 +31,9 @@ describe('Select activities page - deallocation after allocation', () => {
     req = {
       session: {
         allocateJourney: {
+          inmate: {
+            prisonerName: 'Rebecca Miller',
+          },
           otherAllocations: [
             {
               id: 6543,
@@ -176,6 +182,9 @@ describe('Select activities page - deallocation after allocation', () => {
         username: 'joebloggs',
       })
       expect(req.session.allocateJourney).toEqual({
+        inmate: {
+          prisonerName: 'Rebecca Miller',
+        },
         activity: {
           activityId: 1,
           scheduleId: 456,
@@ -228,6 +237,9 @@ describe('Select activities page - deallocation after allocation', () => {
         username: 'joebloggs',
       })
       expect(req.session.allocateJourney).toEqual({
+        inmate: {
+          prisonerName: 'Rebecca Miller',
+        },
         activitiesToDeallocate: [
           {
             activityId: 1,
@@ -345,6 +357,26 @@ describe('Select activities page - deallocation after allocation', () => {
           timeSlot: 'ED',
         },
       })
+    })
+  })
+  describe('Validation', () => {
+    it('validation fails if a value is not entered', async () => {
+      const body = {
+        selectedAllocations: '',
+      }
+
+      const requestObject = plainToInstance(DeallocationSelect, {
+        allocateJourney: req.session.allocateJourney,
+        ...body,
+      })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([
+        {
+          property: 'selectedAllocations',
+          error: 'Select the activities you want to take Rebecca Miller off',
+        },
+      ])
     })
   })
 })
