@@ -12,7 +12,7 @@ export default class ConfirmationRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { inmate, activity } = req.session.allocateJourney
+    const { inmate, activity, activitiesToDeallocate } = req.session.allocateJourney
 
     if (req.params.mode === 'create') {
       const allocationEvent = MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(
@@ -37,12 +37,15 @@ export default class ConfirmationRoutes {
       }
     }
 
+    const deallocateMultipleActivitiesMode = req.params.mode === 'remove' && activitiesToDeallocate?.length > 0
+
     res.render('pages/activities/manage-allocations/confirmation', {
-      activityId: activity.activityId,
+      activityId: activity?.activityId,
       prisonerName: inmate.prisonerName,
       prisonerNumber: inmate.prisonerNumber,
-      activityName: activity.name,
-      otherAllocations: deallocateFlagEnabled ? otherAllocations : null,
+      activityName: deallocateMultipleActivitiesMode ? `${activitiesToDeallocate.length} activities` : activity?.name,
+      otherAllocations: deallocateFlagEnabled && req.params.mode === 'create' ? otherAllocations : null,
+      deallocateMultipleActivitiesMode,
     })
   }
 }

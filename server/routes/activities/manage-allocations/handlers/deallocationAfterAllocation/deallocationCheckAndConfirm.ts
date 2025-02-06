@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { DeallocationReasonCode } from '../../../../../@types/activitiesAPI/types'
 import { DeallocateAfterAllocationDateOption } from '../../journey'
+import findNextSchedulesInstance from '../../../../../utils/helpers/nextScheduledInstanceCalculator'
 
 export default class DeallocationCheckAndConfirmRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -21,24 +22,51 @@ export default class DeallocationCheckAndConfirmRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { inmates, activity, endDate, deallocationReason, scheduledInstance, deallocateAfterAllocationDateOption } =
-      req.session.allocateJourney
+    const {
+      inmates,
+      activity,
+      endDate,
+      deallocationReason,
+      scheduledInstance,
+      deallocateAfterAllocationDateOption,
+      activitiesToDeallocate,
+    } = req.session.allocateJourney
     const { user } = res.locals
-
-    const scheduleInstanceId =
-      deallocateAfterAllocationDateOption === DeallocateAfterAllocationDateOption.NOW ? scheduledInstance.id : null
 
     const { prisonerNumber } = inmates[0]
 
-    await this.activitiesService.deallocateFromActivity(
-      activity.scheduleId,
-      [prisonerNumber],
-      (deallocationReason || 'TRANSFERRED') as DeallocationReasonCode,
-      null,
-      endDate,
-      user,
-      scheduleInstanceId,
-    )
+    if (activitiesToDeallocate) {
+      await Promise.all(
+        activitiesToDeallocate.map(async act => {
+          let scheduleInstanceId = null
+          if (deallocateAfterAllocationDateOption === DeallocateAfterAllocationDateOption.NOW) {
+            scheduleInstanceId = findNextSchedulesInstance(act.schedule).id
+          }
+          await this.activitiesService.deallocateFromActivity(
+            act.scheduleId,
+            [prisonerNumber],
+            (deallocationReason || 'TRANSFERRED') as DeallocationReasonCode,
+            null,
+            endDate,
+            user,
+            scheduleInstanceId,
+          )
+        }),
+      )
+    } else {
+      const scheduleInstanceId =
+        deallocateAfterAllocationDateOption === DeallocateAfterAllocationDateOption.NOW ? scheduledInstance.id : null
+
+      await this.activitiesService.deallocateFromActivity(
+        activity.scheduleId,
+        [prisonerNumber],
+        (deallocationReason || 'TRANSFERRED') as DeallocationReasonCode,
+        null,
+        endDate,
+        user,
+        scheduleInstanceId,
+      )
+    }
 
     return res.redirect('confirmation')
   }

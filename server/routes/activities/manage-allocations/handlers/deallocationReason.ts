@@ -24,7 +24,7 @@ export default class DeallocationReasonRoutes {
     res.render('pages/activities/manage-allocations/deallocation-reason', {
       deallocationReasons,
       multipleActivitiesToRemove: config.deallocationAfterAllocationToggleEnabled
-        ? multipleActivitiesToDeallocate && !allocateJourney.activity
+        ? multipleActivitiesToDeallocate
         : null,
       deallocateAfterAllocationPath: config.deallocationAfterAllocationToggleEnabled
         ? allocateJourney.deallocateAfterAllocationDateOption !== undefined

@@ -1,4 +1,4 @@
-import { Allocation, ScheduledInstance, Slot } from '../../../@types/activitiesAPI/types'
+import { ActivitySchedule, Allocation, ScheduledInstance, Slot } from '../../../@types/activitiesAPI/types'
 
 type Inmate = {
   prisonerName: string
@@ -59,6 +59,7 @@ export type AllocateToActivityJourney = {
     scheduleWeeks?: number
     paid?: boolean
     notInWork?: boolean
+    schedule?: ActivitySchedule
   }[]
 }
 

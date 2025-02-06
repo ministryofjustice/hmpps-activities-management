@@ -73,11 +73,13 @@ export default class DeallocationSelectActivities {
         inCell: act.inCell,
         onWing: act.onWing,
         offWing: act.offWing,
+        schedule: act.schedules[0],
       }))
       req.session.allocateJourney.scheduledInstance = findEarliestNextInstanceFromListOfActivities(
         activities.map(act => findNextSchedulesInstance(act.schedules[0])),
       )
     }
+
     return res.redirect('deallocate-after-allocation-date')
   }
 }

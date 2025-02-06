@@ -49,9 +49,9 @@
                 {% endif %}
 
                 <h2 class="govuk-heading-m">What you can do next</h2>
-                <p class='govuk-body'>You can either:</p>
+                <p class='govuk-body'>You can{% if not deallocateMultipleActivitiesMode %} either:{% else %}:{% endif %}</p>
                 <ul class='govuk-list govuk-list--bullet'>
-                    <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>
+                    {% if not deallocateMultipleActivitiesMode %}<li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>{% endif %}
                     <li><a href="/activities/allocation-dashboard" class='govuk-link'>find other activities with vacancies</a></li>
                 </ul>
             {% endif %}

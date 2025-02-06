@@ -32,6 +32,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         prisonerName: convertToTitleCase(`${inmate.firstName} ${inmate.lastName}`),
         prisonCode: inmate.prisonId,
         status: inmate.status,
+        cellLocation: inmate.cellLocation,
       }
       req.session.allocateJourney = {
         inmate: inmateDetails,
