@@ -7,10 +7,9 @@ export default defineConfig({
   fixturesFolder: 'integration_tests/fixtures',
   screenshotsFolder: 'integration_tests/screenshots',
   videosFolder: 'integration_tests/videos',
-  reporter: 'junit',
+  reporter: 'cypress-multi-reporters',
   reporterOptions: {
-    mochaFile: 'cypress/results/output-[hash].xml',
-    toConsole: true,
+    configFile: 'reporter-config.json',
   },
   taskTimeout: 60000,
   e2e: {
