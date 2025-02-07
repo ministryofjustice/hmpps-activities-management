@@ -117,6 +117,13 @@ jobs:
           path: integration_tests/videos
       - store_artifacts:
           path: integration_tests/screenshots
+    post-steps:
+      - run:
+          name: Fix junit file attributes
+          command: |
+            yarn node scripts/fix-junit-xml.js
+      - store_test_results:
+          path: cypress/results
 
 workflows:
   version: 2
