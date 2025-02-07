@@ -9,7 +9,7 @@ export default defineConfig({
   videosFolder: 'integration_tests/videos',
   reporter: 'junit',
   reporterOptions: {
-    mochaFile: 'results/my-test-output.xml',
+    mochaFile: 'cypress/results/output-[hash].xml',
     toConsole: true,
   },
   taskTimeout: 60000,
