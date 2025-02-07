@@ -111,8 +111,6 @@ jobs:
             npm run int-test -- --spec ${TESTFILES}
           environment:
             JEST_JUNIT_ADD_FILE_ATTRIBUTE: "true"
-      - store_test_results:
-          path: test_results
       - store_artifacts:
           path: integration_tests/videos
       - store_artifacts:
@@ -136,9 +134,9 @@ workflows:
             - run:
                 name: Fix junit file attributes
                 command: |
-                  yarn node scripts/fix-junit-xml.js
+                  node scripts/fix-junit-xml.js
             - store_test_results:
-                path: cypress/results
+                path: test_results/cypress
       - hmpps/helm_lint:
           name: helm_lint
       - hmpps/build_docker:
