@@ -132,13 +132,6 @@ workflows:
       - integration_test:
           requires:
             - build
-          post-steps:
-            - run:
-                name: Fix junit file attributes
-                command: |
-                  yarn node scripts/fix-junit-xml.js
-            - store_test_results:
-                path: cypress/results
       - hmpps/helm_lint:
           name: helm_lint
       - hmpps/build_docker:
