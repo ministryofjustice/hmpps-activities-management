@@ -1,4 +1,4 @@
-import { addHours, subWeeks } from 'date-fns'
+import { addDays, addHours, subWeeks } from 'date-fns'
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
 import ActivitiesIndexPage from '../../../pages/activities'
@@ -84,6 +84,7 @@ context('Deallocate from activities after an allocation', () => {
     resetActivityAndScheduleStubs(subWeeks(today, 2), 'english')
 
     resetActivityAndScheduleStubs(new Date(), 'maths', `${hours}:${mins}`)
+    resetActivityAndScheduleStubs(new Date(), 'science', `${hours}:${mins}`)
 
     cy.signIn()
   })
@@ -224,14 +225,15 @@ context('Deallocate from activities after an allocation', () => {
     confirmationPage2.panelHeader().should('contain.text', 'Removal complete')
     confirmationPage2.getLinkByText('deallocateLink').should('not.exist')
   })
-  it.only('Allocate prisoner to an activity, and directly lead into a deallocation flow - remove multiple activities', () => {
+  it('Allocate prisoner to an activity, and directly lead into a deallocation flow - remove multiple activities', () => {
     const multipleAllocations = [...prisonerAllocations]
     multipleAllocations[0].allocations.push({
       id: 3,
       prisonerNumber: 'A5015DY',
       activitySummary: 'Science Level 1',
       scheduleDescription: 'Entry level Science 1',
-      scheduleId: 1,
+      activityId: 3,
+      scheduleId: 3,
       payBand: 'A',
       isUnemployment: false,
       startDate: '2022-10-10',
@@ -244,6 +246,7 @@ context('Deallocate from activities after an allocation', () => {
     })
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', multipleAllocations)
     cy.stubEndpoint('GET', '/allocations/id/3', prisonerAllocations[0].allocations[2])
+    cy.stubEndpoint('PUT', '/schedules/3/deallocate')
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -292,22 +295,115 @@ context('Deallocate from activities after an allocation', () => {
     confirmationPage.deallocateLink()
 
     const selectActivitiesPage = Page.verifyOnPage(SelectActivitiesPage)
-    selectActivitiesPage.selectCheckbox('')
+    selectActivitiesPage.selectCheckbox('1')
+    selectActivitiesPage.selectCheckbox('3')
+    selectActivitiesPage.continue()
 
-    // const deallocationDatePage = Page.verifyOnPage(DeallocationDatePage)
-    // deallocationDatePage.selectNow()
-    // deallocationDatePage.continue()
+    const deallocationDatePage = Page.verifyOnPage(DeallocationDatePage)
+    deallocationDatePage.selectADifferentDate()
+    const date = addDays(new Date(), 4)
+    deallocationDatePage.selectDatePickerDate(date)
+    deallocationDatePage.continue()
 
-    // const deallocationCheckAndConfirmPage = Page.verifyOnPage(DeallocationCheckAndConfirmPage)
-    // deallocationCheckAndConfirmPage.assertSummaryDetail('Activity', 'Maths level 1')
-    // deallocationCheckAndConfirmPage.assertSummaryDetail(
-    //   'End of allocation',
-    //   formatDate(toDateString(new Date()), 'd MMMM yyyy'),
-    // )
-    // deallocationCheckAndConfirmPage.confirmDeallocation()
+    const deallocationReasonPage = Page.verifyOnPage(DeallocationReasonPage)
+    deallocationReasonPage.selectDeallocationReason('Withdrawn by staff')
+    deallocationReasonPage.continue()
 
-    // const confirmationPage2 = Page.verifyOnPage(ConfirmationPage)
-    // confirmationPage2.panelHeader().should('contain.text', 'Removal complete')
-    // confirmationPage2.getLinkByText('deallocateLink').should('not.exist')
+    const deallocationCheckAndConfirmPage = Page.verifyOnPage(DeallocationCheckAndConfirmPage)
+    deallocationCheckAndConfirmPage.assertSummaryDetail('Activity', 'Maths level 1')
+    deallocationCheckAndConfirmPage.assertSummaryDetail(
+      'End of allocation',
+      formatDate(toDateString(date), 'd MMMM yyyy'),
+    )
+    deallocationCheckAndConfirmPage.assertSummaryDetail('Reason for allocation ending', 'Withdrawn by staff')
+    deallocationCheckAndConfirmPage.confirmDeallocation()
+
+    const confirmationPage2 = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage2.panelHeader().should('contain.text', 'Removal complete')
+    confirmationPage2.panelText().should('include.text', 'scheduled to be removed from 2 activities')
+    confirmationPage2.getLinkByText('deallocateLink').should('not.exist')
+  })
+  it('Allocate prisoner to an activity, and directly lead into a deallocation flow - multiple activities, but one chosen', () => {
+    const multipleAllocations = [...prisonerAllocations]
+    const newMathsAllocations = [...getAllocationsMaths]
+    newMathsAllocations[0].isUnemployment = false
+    cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', multipleAllocations)
+    cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true', newMathsAllocations)
+    cy.stubEndpoint('GET', '/allocations/id/3', prisonerAllocations[0].allocations[2])
+    cy.stubEndpoint('PUT', '/schedules/3/deallocate')
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.allocateToActivitiesCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
+    manageActivitiesPage.allocateToActivityCard().click()
+
+    const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
+    activitiesPage.activityRows().should('have.length', 3)
+    activitiesPage.selectActivityWithName('English level 1')
+
+    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    allocatePage.allocatedPeopleRows().should('have.length', 3)
+    allocatePage.tabWithTitle('Entry level English 1 schedule').click()
+
+    allocatePage.tabWithTitle('Other people').click()
+    allocatePage.selectRiskLevelOption('Any Workplace Risk Assessment')
+    allocatePage.applyFilters()
+    allocatePage.selectCandidateWithName('Alfonso Cholak')
+
+    const beforeYouAllocatePage = Page.verifyOnPage(BeforeYouAllocate)
+    beforeYouAllocatePage.selectConfirmationRadio('yes')
+    beforeYouAllocatePage.getButton('Continue').click()
+
+    const startDatePage = Page.verifyOnPage(StartDatePage)
+    startDatePage.selectNextSession()
+    startDatePage.continue()
+
+    const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)
+    endDateOptionPage.addEndDate('No')
+    endDateOptionPage.continue()
+
+    const payBandPage = Page.verifyOnPage(PayBandPage)
+    payBandPage.selectPayBand('Medium - £1.75')
+    payBandPage.continue()
+
+    const exclusionsPage = Page.verifyOnPage(ExclusionsPage)
+    exclusionsPage.continue()
+
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.confirmAllocation()
+
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.deallocateLink()
+
+    const selectActivitiesPage = Page.verifyOnPage(SelectActivitiesPage)
+    selectActivitiesPage.selectCheckbox('1')
+    selectActivitiesPage.continue()
+
+    const deallocationDatePage = Page.verifyOnPage(DeallocationDatePage)
+    deallocationDatePage.selectADifferentDate()
+    const date = addDays(new Date(), 4)
+    deallocationDatePage.selectDatePickerDate(date)
+    deallocationDatePage.continue()
+
+    const deallocationReasonPage = Page.verifyOnPage(DeallocationReasonPage)
+    deallocationReasonPage.selectDeallocationReason('Withdrawn by staff')
+    deallocationReasonPage.continue()
+
+    const deallocationCheckAndConfirmPage = Page.verifyOnPage(DeallocationCheckAndConfirmPage)
+    deallocationCheckAndConfirmPage.assertSummaryDetail('Activity', 'Maths level 1')
+    deallocationCheckAndConfirmPage.assertSummaryDetail(
+      'End of allocation',
+      formatDate(toDateString(date), 'd MMMM yyyy'),
+    )
+    deallocationCheckAndConfirmPage.assertSummaryDetail('Reason for allocation ending', 'Withdrawn by staff')
+    deallocationCheckAndConfirmPage.confirmDeallocation()
+
+    const confirmationPage2 = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage2.panelHeader().should('contain.text', 'Removal complete')
+    confirmationPage2.panelText().should('include.text', 'removed from Maths level 1')
+    confirmationPage2.getLinkByText('deallocateLink').should('not.exist')
   })
 })

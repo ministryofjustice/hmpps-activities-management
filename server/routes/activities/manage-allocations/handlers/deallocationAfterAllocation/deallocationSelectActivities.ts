@@ -40,7 +40,6 @@ export default class DeallocationSelectActivities {
       const [allocation] = req.session.allocateJourney.otherAllocations.filter(
         all => all.id === +selectedAllocationIds[0],
       )
-
       const activity = await this.activitiesService.getActivity(allocation.activityId, user)
 
       req.session.allocateJourney.activity = {
@@ -63,7 +62,6 @@ export default class DeallocationSelectActivities {
       const activities = await Promise.all(
         selectedOtherAllocations.map(all => this.activitiesService.getActivity(all.activityId, user)),
       )
-
       req.session.allocateJourney.activitiesToDeallocate = activities.map(act => ({
         activityId: act.id,
         scheduleId: getScheduleIdFromActivity(act),

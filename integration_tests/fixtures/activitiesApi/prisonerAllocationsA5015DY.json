@@ -5,6 +5,7 @@
       {
         "id": 1,
         "prisonerNumber": "A5015DY",
+        "activityId": 1,
         "activitySummary": "Maths level 1",
         "scheduleDescription": "Entry level Maths 1",
         "scheduleId": 1,
@@ -24,6 +25,7 @@
         "activitySummary": "English level 1",
         "scheduleDescription": "Entry level English 1",
         "scheduleId": 2,
+        "activityId": 2,
         "payBand": "A",
         "isUnemployment": false,
         "startDate": "2022-10-10",

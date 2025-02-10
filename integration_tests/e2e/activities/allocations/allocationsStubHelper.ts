@@ -28,7 +28,7 @@ export function resetActivitiesStub(activityStartDate: Date, startTime: string =
   newActivity.schedules[0].instances[2].startTime = startTime
   newActivity.schedules[0].instances[0].startTime = startTime
 
-  const activityNumber = subject === 'maths' ? 1 : 2
+  const activityNumber = getActivityNumber(subject)
   cy.stubEndpoint('GET', `/activities/${activityNumber}/filtered`, newActivity)
 }
 
@@ -49,7 +49,7 @@ export function resetScheduleStub(activityStartDate: Date, startTime: string = '
   newSchedule.instances[2].startTime = startTime
   newSchedule.instances[0].startTime = startTime
 
-  const number = subject === 'maths' ? 1 : 2
+  const number = getActivityNumber(subject)
   cy.stubEndpoint('GET', `/schedules/${number}`, newSchedule)
 }
 
@@ -60,4 +60,15 @@ export default function resetActivityAndScheduleStubs(
 ) {
   resetActivitiesStub(activityStartDate, startTime, subject)
   resetScheduleStub(activityStartDate, startTime, subject)
+}
+
+const getActivityNumber = activitySubject => {
+  switch (activitySubject) {
+    case 'maths':
+      return 1
+    case 'science':
+      return 3
+    default:
+      return 2
+  }
 }

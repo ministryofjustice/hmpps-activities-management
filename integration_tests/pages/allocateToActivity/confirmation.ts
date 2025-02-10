@@ -7,5 +7,7 @@ export default class ConfirmationPage extends Page {
 
   panelHeader = () => cy.get('h1')
 
+  panelText = () => cy.get('.govuk-panel__body')
+
   deallocateLink = () => cy.get('li').contains('take Alfonso Cholak off').click()
 }

@@ -23,7 +23,7 @@
   },
   {
     "id": 3,
-    "activityId": 2,
+    "activityId": 5,
     "prisonerNumber": "A1351DZ",
     "activitySummary": "Maths level 1",
     "scheduleDescription": "Entry level Maths 1",
@@ -45,7 +45,7 @@
   },
   {
     "id": 4,
-    "activityId": 2,
+    "activityId": 6,
     "prisonerNumber": "B1351RE",
     "activitySummary": "Maths level 1",
     "scheduleDescription": "Entry level Maths 1",
