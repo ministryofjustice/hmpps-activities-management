@@ -30,6 +30,9 @@
             {% set activityValue = { text: session.allocateJourney.activity.name } if session.allocateJourney.activity else { html: activityNamesIfMultiple } %}
 
                 {{ govukSummaryList({
+                    attributes: {
+                        "data-qa":"confirm-deallocation"
+                    },
                     rows: [
                         {
                             key: { text: "People you're taking off" },

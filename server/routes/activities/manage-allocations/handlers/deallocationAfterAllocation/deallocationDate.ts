@@ -38,6 +38,7 @@ export default class DeallocationDateRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { allocateJourney } = req.session
     const nextAvailableInstance = allocateJourney.scheduledInstance
+
     const nextSessionDateAndTime = parseDate(
       `${nextAvailableInstance.date}T${nextAvailableInstance.startTime}`,
       "yyyy-MM-dd'T'HH:mm",

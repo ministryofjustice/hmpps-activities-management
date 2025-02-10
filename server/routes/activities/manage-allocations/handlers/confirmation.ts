@@ -31,12 +31,10 @@ export default class ConfirmationRoutes {
         res.locals.user,
       )
       const { allocations } = prisonerAllocationsList
-
       if (allocations.length) {
         otherAllocations = allocations.filter(a => a.scheduleId !== req.session.allocateJourney.activity.scheduleId)
       }
     }
-
     const deallocateMultipleActivitiesMode = req.params.mode === 'remove' && activitiesToDeallocate?.length > 0
 
     res.render('pages/activities/manage-allocations/confirmation', {
