@@ -7,9 +7,9 @@
 
 {% if deallocationAfterAllocationToggleEnabled %}
     {% if otherAllocations | length > 1 %}
+        {% set otherAllocationIds = otherAllocations | flatMap('id') %}
         {% set deallocationText = 'any other activities they’re allocated to' %}
-        {# TODO fill in missing href when page is created #}
-        {% set deallocationHref = 'TODO' %}
+        {% set deallocationHref = "/activities/allocations/remove/deallocation-select-activities?selectActivity=true&otherAllocationIds=" + otherAllocationIds %}
     {% elif otherAllocations | length == 1 %}
         {% set deallocationText = otherAllocations[0].activitySummary %}
         {% set deallocationHref = "/activities/allocations/remove/deallocate-after-allocation-date?allocationIds=" + otherAllocations[0].id + "&scheduleId=" + otherAllocations[0].scheduleId %}
@@ -24,11 +24,11 @@
                     titleText: "Allocation complete",
                     text: prisonerName + ' (' + prisonerNumber + ') is now allocated to ' + activityName
                 }) }}
+
                 <h2 class="govuk-heading-m">What you can do next</h2>
                 <p class='govuk-body'>You can either:</p>
                 <ul class='govuk-list govuk-list--bullet'>
-                    {# TODO: Use otherAllocations | length when starting SAA-2260 #}
-                    {% if deallocationAfterAllocationToggleEnabled and otherAllocations | length == 1 %}
+                    {% if deallocationAfterAllocationToggleEnabled and otherAllocations | length %}
                         <li><a href={{ deallocationHref }} class='govuk-link'>take {{ prisonerName }} off {{ deallocationText }}</li>
                     {% endif %}
                     <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>
@@ -50,9 +50,9 @@
                 {% endif %}
 
                 <h2 class="govuk-heading-m">What you can do next</h2>
-                <p class='govuk-body'>You can either:</p>
+                <p class='govuk-body'>You can{% if not deallocateMultipleActivitiesMode %} either:{% else %}:{% endif %}</p>
                 <ul class='govuk-list govuk-list--bullet'>
-                    <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>
+                    {% if not deallocateMultipleActivitiesMode %}<li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>{% endif %}
                     <li><a href="/activities/allocation-dashboard" class='govuk-link'>find other activities with vacancies</a></li>
                 </ul>
             {% endif %}
