@@ -59,10 +59,47 @@ describe('Route Handlers - Deallocation reason', () => {
   })
 
   describe('GET', () => {
-    it('should render the expected view', async () => {
+    it('should render the expected view - flag off', async () => {
+      config.deallocationAfterAllocationToggleEnabled = false
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocation-reason', {
         deallocationReasons: [{ code: 'OTHER', description: 'Other reason' }],
+        deallocateAfterAllocationPath: null,
+        multipleActivitiesToRemove: null,
+      })
+    })
+    it('should render the expected view - flag on - one activity to remove', async () => {
+      config.deallocationAfterAllocationToggleEnabled = true
+      req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocation-reason', {
+        deallocationReasons: [{ code: 'OTHER', description: 'Other reason' }],
+        deallocateAfterAllocationPath: true,
+        multipleActivitiesToRemove: false,
+      })
+    })
+    it('should render the expected view - flag on - multiple activities to remove', async () => {
+      config.deallocationAfterAllocationToggleEnabled = true
+      req.session.allocateJourney.deallocationCaseNote = null
+      req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
+      req.session.allocateJourney.activity = null
+      req.session.allocateJourney.activitiesToDeallocate = [
+        {
+          scheduleId: 1,
+          name: 'activity 1',
+          startDate: '2025-02-01',
+        },
+        {
+          scheduleId: 2,
+          name: 'activity 2',
+          startDate: '2025-02-01',
+        },
+      ]
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocation-reason', {
+        deallocationReasons: [{ code: 'OTHER', description: 'Other reason' }],
+        deallocateAfterAllocationPath: true,
+        multipleActivitiesToRemove: true,
       })
     })
   })

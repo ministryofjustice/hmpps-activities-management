@@ -5,23 +5,45 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% set pageTitle = applicationName + " - Deallocate from an activity - Deallocation reason" %}
 {% set pageId = 'deallocation-reason-page' %}
 {% set jsBackLink = true %}
 
+{% set activityName = session.allocateJourney.activity.name if not multipleActivitiesToRemove else " activities" %}
+{% set caption = session.allocateJourney.activity.name if not deallocateAfterAllocationPath else "Take " + session.allocateJourney.inmate.prisonerName + " off " + activityName %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
-            {% if session.allocateJourney.inmates | length == 1 %}
-                <h1 class="govuk-heading-l">Why are you taking {{ session.allocateJourney.inmate.prisonerName }} off this activity?</h1>
+            <span class="govuk-caption-xl">{{ caption }}</span>
+            {% if deallocateAfterAllocationPath %}
+                {% if multipleActivitiesToRemove %}
+                    <h1 class="govuk-heading-l">Why are you taking them off {{ session.allocateJourney.activitiesToDeallocate | length }} activities?</h1>
+                {% else %}
+                    <h1 class="govuk-heading-l">Why are you taking them off this activity?</h1>
+                {% endif %}
             {% else %}
-                <h1 class="govuk-heading-l">Why are you taking {{ session.allocateJourney.inmates | length }} people off this activity?</h1>
+                {% if session.allocateJourney.inmates | length == 1 %}
+                    <h1 class="govuk-heading-l">Why are you taking {{ session.allocateJourney.inmate.prisonerName }} off this activity?</h1>
+                {% else %}
+                    <h1 class="govuk-heading-l">Why are you taking {{ session.allocateJourney.inmates | length }} people off this activity?</h1>
+                {% endif %}
             {% endif %}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {% if deallocateAfterAllocationPath and multipleActivitiesToRemove %}
+                    {% set activityNamesIfMultiple = session.allocateJourney.activitiesToDeallocate | flatMap('name') %}
+                    {% set last_item = activityNamesIfMultiple | last %}
+                    {% set other_items = activityNamesIfMultiple | sliceArray(0, -1) %} 
+                    {% set list = other_items | join(', ') +" and "+ last_item %}
+                    {{ govukInsetText({
+                        text: "You’re removing " + session.allocateJourney.inmate.prisonerName +" from " + list
+                    }) }}
+                {% endif %}
 
                 {% set options = [] %}
                 {% for reason in deallocationReasons %}
