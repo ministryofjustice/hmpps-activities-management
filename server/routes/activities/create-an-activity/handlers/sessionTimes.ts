@@ -53,16 +53,7 @@ function startDateBeforeEarlierSession(customSlot: Slot, allSlots: Slot[]): bool
     return true
   }
 
-  const pmSlotStartTime: string = allSlots.find(
-    slot => slot.timeSlot === TimeSlot.PM && _.isEqual(slot.daysOfWeek, customSlot.daysOfWeek),
-  )?.customStartTime
-
-  // check an ED session is after any PM start time
-  return (
-    customSlot.timeSlot === TimeSlot.ED &&
-    pmSlotStartTime !== undefined &&
-    customSlot.customStartTime.localeCompare(pmSlotStartTime) <= 0
-  )
+  return false
 }
 
 export default class SessionTimesRoutes {
