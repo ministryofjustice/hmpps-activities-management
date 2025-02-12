@@ -6,6 +6,7 @@ services:
     networks:
       - hmpps
     container_name: redis
+    restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
@@ -45,7 +46,6 @@ services:
     networks:
       - hmpps
     container_name: wiremock
-    restart: always
     ports:
       - "9091:8080"
 
