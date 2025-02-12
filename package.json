@@ -100,7 +100,7 @@
     "compression": "^1.7.5",
     "connect-flash": "^0.1.1",
     "connect-redis": "^8.0.1",
-    "csurf": "^1.11.0",
+    "csrf-sync": "^4.0.3",
     "csv-parse": "^5.6.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
@@ -137,7 +137,6 @@
     "@types/bunyan-format": "^0.2.9",
     "@types/compression": "^1.7.5",
     "@types/connect-flash": "^0.0.40",
-    "@types/csurf": "^1.11.5",
     "@types/express-session": "^1.18.1",
     "@types/http-errors": "^2.0.4",
     "@types/jest": "^29.5.14",
@@ -187,7 +186,6 @@
     "typescript": "^5.7.3"
   },
   "overrides": {
-    "cookie": "~1.0.2",
     "path-to-regexp": "~0.1.12",
     "undici": "~6.21.1"
   }
