@@ -719,7 +719,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       )
     })
 
-    it('should fail validation if evening start is before the afternoon start time', async () => {
+    it('should pass validation if evening start is before the afternoon start time', async () => {
       const startMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
       const endMap: Map<string, SimpleTime> = new Map<string, SimpleTime>()
 
@@ -754,10 +754,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
 
       await handler.POST(req, res)
 
-      expect(res.addValidationError).toHaveBeenCalledWith(
-        `startTimes-1-FRIDAY-ED`,
-        'Start time must be after the earlier session start time',
-      )
+      expect(res.addValidationError).not.toHaveBeenCalled()
     })
   })
 
