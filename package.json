@@ -161,7 +161,7 @@
     "cypress-circleci-reporter": "^0.3.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-multi-reporters": "^2.0.5",
-    "esbuild": "^0.24.2",
+    "esbuild": "^0.25.0",
     "esbuild-plugin-clean": "^1.0.1",
     "esbuild-plugin-copy": "^2.1.1",
     "esbuild-plugin-manifest": "^1.0.5",
@@ -187,6 +187,9 @@
   },
   "overrides": {
     "path-to-regexp": "~0.1.12",
-    "undici": "~6.21.1"
+    "undici": "~6.21.1",
+    "@jgoz/esbuild-plugin-typecheck": {
+      "esbuild": "$esbuild"
+    }
   }
 }
