@@ -17,7 +17,7 @@ export class DeallocateDate {
       const removedFromText = allocateJourney.activitiesToDeallocate?.length
         ? `${allocateJourney.activitiesToDeallocate.length} activities`
         : allocateJourney.activity.name
-      return `Select when you want ${allocateJourney.inmate.prisonerName} to be taken off ${removedFromText}}`
+      return `Select when you want ${allocateJourney.inmate.prisonerName} to be taken off ${removedFromText}`
     },
   })
   @Transform(({ value }) => DeallocateAfterAllocationDateOption[value])
