@@ -71,6 +71,36 @@ describe('Views - Appointments Management - Extra Information', () => {
     )
   })
 
+  it('create content - VLB (video link court hearing)', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    viewContext.session.appointmentJourney.category = {
+      code: 'VLB',
+      description: 'Video Link - Court Hearing',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Add extra information')
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for Video Link - Court Hearing and Video Link - Probation Meeting appointments.',
+    )
+  })
+
+  it('create content - VLPM (video link probation meeting)', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    viewContext.session.appointmentJourney.category = {
+      code: 'VLPM',
+      description: 'Video Link - Probation Meeting',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Add extra information')
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for Video Link - Court Hearing and Video Link - Probation Meeting appointments.',
+    )
+  })
+
   it('edit content', () => {
     viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
@@ -79,6 +109,36 @@ describe('Views - Appointments Management - Extra Information', () => {
     expect($('h1').text()).toContain('Change the extra information')
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
       'Add or edit any important information for who’s attending about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.',
+    )
+  })
+
+  it('edit content - VLB (video link court hearing)', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+    viewContext.session.appointmentJourney.category = {
+      code: 'VLB',
+      description: 'Video Link - Court Hearing',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Change the extra information')
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for Video Link - Court Hearing and Video Link - Probation Meeting appointments.',
+    )
+  })
+
+  it('edit content - VLPM (video link probation meeting)', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+    viewContext.session.appointmentJourney.category = {
+      code: 'VLPM',
+      description: 'Video Link - Probation Meeting',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Change the extra information')
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for Video Link - Court Hearing and Video Link - Probation Meeting appointments.',
     )
   })
 
