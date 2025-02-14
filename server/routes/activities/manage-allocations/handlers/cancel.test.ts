@@ -23,6 +23,7 @@ describe('Route Handlers - Allocate - Cancel', () => {
 
     req = {
       get: jest.fn(),
+      query: {},
       session: {
         allocateJourney: {
           inmate: {
