@@ -26,8 +26,13 @@
 
 
             {% set endDateOption = ('remove-end-date-option' if session.allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
+            {% set activityNamesIfMultiple = session.allocateJourney.activitiesToDeallocate | flatMap('name') | join('<br>') %}
+            {% set activityValue = { text: session.allocateJourney.activity.name } if session.allocateJourney.activity else { html: activityNamesIfMultiple } %}
 
                 {{ govukSummaryList({
+                    attributes: {
+                        "data-qa":"confirm-deallocation"
+                    },
                     rows: [
                         {
                             key: { text: "People you're taking off" },
@@ -35,7 +40,7 @@
                         },
                         {
                             key: { text: "Activity" },
-                            value: { text: session.allocateJourney.activity.name }
+                            value: activityValue
                         },
                         {
                             key: { text: "End of allocation" },
@@ -79,7 +84,7 @@
                         text: "Confirm and remove",
                         preventDoubleClick: true
                     }) }}
-                    <a href="confirmation" class="govuk-link govuk-link--no-visited-state">{{ 'Cancel' }}</a>
+                    <a href="cancel?deallocationAfterAllocation=true" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 </div>
             </form>
         </div>

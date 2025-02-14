@@ -5,17 +5,43 @@ import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { asString, convertToTitleCase, getScheduleIdFromActivity } from '../../../../utils/utils'
 import findNextSchedulesInstance from '../../../../utils/helpers/nextScheduledInstanceCalculator'
+import config from '../../../../config'
+import { AllocateToActivityJourney } from '../journey'
 
 export default (prisonService: PrisonService, activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
     const { mode, allocationId } = req.params
     const allocationIds = req.query.allocationIds !== undefined ? asString(req.query.allocationIds).split(',') : []
-    const { scheduleId } = req.query
+    const { scheduleId, selectActivity, otherAllocationIds } = req.query
     const { user } = res.locals
 
     if ((mode !== 'remove' && mode !== 'edit' && mode !== 'exclude') || req.session.allocateJourney) return next()
 
-    if (!scheduleId && !allocationId) return res.redirect('back')
+    if (config.deallocationAfterAllocationToggleEnabled) {
+      if (!scheduleId && !allocationId && !selectActivity) return res.redirect('back')
+    } else if (!scheduleId && !allocationId) return res.redirect('back')
+
+    if (config.deallocationAfterAllocationToggleEnabled && selectActivity) {
+      const otherAllocationIdsList = otherAllocationIds.toString().split(',')
+      const otherAllocations = await Promise.all(
+        otherAllocationIdsList.map(id => activitiesService.getAllocation(+id, user)),
+      )
+      const inmate = await prisonService.getInmateByPrisonerNumber(otherAllocations[0].prisonerNumber, user)
+      const inmateDetails = {
+        prisonerNumber: inmate.prisonerNumber,
+        prisonerName: convertToTitleCase(`${inmate.firstName} ${inmate.lastName}`),
+        prisonCode: inmate.prisonId,
+        status: inmate.status,
+        cellLocation: inmate.cellLocation,
+      }
+      req.session.allocateJourney = {
+        inmate: inmateDetails,
+        inmates: [inmateDetails],
+        otherAllocations,
+      } as AllocateToActivityJourney
+      return next()
+    }
+
     const allocations = allocationId
       ? [await activitiesService.getAllocation(+allocationId, user)]
       : await activitiesService

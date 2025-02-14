@@ -3,6 +3,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% set pageTitle = applicationName + " - Deallocate someone" %}
 {% set pageId = 'deallocate-after-allocation-date-page' %}
@@ -29,7 +30,7 @@
                 },
                 leadingZeros: 'true',
                 hint: {
-                    text: "Enter the date, for example" + exampleDatePickerDate() +", or click on the calendar to select."
+                    text: "Enter the date, for example " + exampleDatePickerDate() +", or click on the calendar to select."
                 },
                 classes: 'moj-datepicker--fixed-width',
                 errorMessage: validationErrors | findError('date'),
@@ -49,13 +50,24 @@
     ), dateOptions) %}
 {% endif %}
 
+{% set activityName = session.allocateJourney.activity.name if not multipleActivitiesToRemove else " activities" %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-xl">Take {{ session.allocateJourney.inmate.prisonerName }} off {{ session.allocateJourney.activity.name }}</span>
-            <h1 class="govuk-heading-l">When do you want them to be taken off?</h1>
+            <span class="govuk-caption-xl">Take {{ session.allocateJourney.inmate.prisonerName }} off {{ activityName }}</span>
+            <h1 class="govuk-heading-l">When do you want them to be taken off {% if multipleActivitiesToRemove %} {{session.allocateJourney.activitiesToDeallocate | length }} activities {% endif %}?</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {% if multipleActivitiesToRemove %}
+                    {% set activityNamesIfMultiple = session.allocateJourney.activitiesToDeallocate | flatMap('name') %}
+                    {% set last_item = activityNamesIfMultiple | last %}
+                    {% set other_items = activityNamesIfMultiple | sliceArray(0, -1) %}
+                    {% set list = other_items | join(', ') +" and "+ last_item %}
+                    {{ govukInsetText({
+                        text: "You’re removing " + session.allocateJourney.inmate.prisonerName +" from " + list
+                    }) }}
+                {% endif %}
                 {{ govukRadios({
                     id: "deallocationAfterAllocationDate",
                     name: "deallocationAfterAllocationDate",
@@ -73,7 +85,7 @@
                     {{ govukButton({
                         text: "Continue"
                     }) }}
-                    <a class="govuk-link" href="confirmation">Cancel</a> 
+                    <a class="govuk-link" href="cancel?deallocationAfterAllocation=true">Cancel</a> 
                 </div>
             </form>
         </div>

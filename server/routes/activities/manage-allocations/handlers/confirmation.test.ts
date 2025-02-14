@@ -96,9 +96,20 @@ describe('Route Handlers - Allocate - Confirmation', () => {
         prisonerNumber: 'ABC123',
         activityName: 'Maths',
         otherAllocations: null,
+        deallocateMultipleActivitiesMode: false,
       })
     })
+    it('should record create journey complete in metrics', async () => {
+      await handler.GET(req, res)
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(allocateJourney, res.locals.user).addJourneyCompletedMetrics(
+          req,
+        ),
+      )
+    })
     it('should render page with data from session - flag on', async () => {
+      config.deallocationAfterAllocationToggleEnabled = true
+      req.params.mode = 'create'
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(allocateJourney, res.locals.user).addJourneyCompletedMetrics(
@@ -113,16 +124,59 @@ describe('Route Handlers - Allocate - Confirmation', () => {
         prisonerNumber: 'ABC123',
         activityName: 'Maths',
         otherAllocations: [{ activityId: 2, scheduleId: 2, scheduleDescription: 'Unemployment', isUnemployment: true }],
+        deallocateMultipleActivitiesMode: false,
       })
     })
-
-    it('should record create journey complete in metrics', async () => {
+    it('should render page with data from session - flag on - one activity removed', async () => {
+      config.deallocationAfterAllocationToggleEnabled = true
+      req.params.mode = 'remove'
       await handler.GET(req, res)
-      expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(allocateJourney, res.locals.user).addJourneyCompletedMetrics(
-          req,
-        ),
-      )
+
+      expect(metricsService.trackEvent).not.toHaveBeenCalled()
+      expect(activitiesService.getActivePrisonPrisonerAllocations).not.toHaveBeenCalled()
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/confirmation', {
+        activityId: 1,
+        prisonerName: 'Joe Bloggs',
+        prisonerNumber: 'ABC123',
+        activityName: 'Maths',
+        otherAllocations: null,
+        deallocateMultipleActivitiesMode: false,
+      })
+    })
+    it('should render page with data from session - flag on - multiple activities removed', async () => {
+      config.deallocationAfterAllocationToggleEnabled = true
+      req.params.mode = 'remove'
+      req.session.allocateJourney.activity = null
+      req.session.allocateJourney.activitiesToDeallocate = [
+        {
+          activityId: 1,
+          scheduleId: 1,
+          name: 'Maths',
+          location: 'Education room 1',
+          startDate: '',
+        },
+        {
+          activityId: 2,
+          scheduleId: 2,
+          name: 'English',
+          location: 'Education room 2',
+          startDate: '',
+        },
+      ]
+      await handler.GET(req, res)
+
+      expect(metricsService.trackEvent).not.toHaveBeenCalled()
+      expect(activitiesService.getActivePrisonPrisonerAllocations).not.toHaveBeenCalled()
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/confirmation', {
+        activityId: undefined,
+        prisonerName: 'Joe Bloggs',
+        prisonerNumber: 'ABC123',
+        activityName: '2 activities',
+        otherAllocations: null,
+        deallocateMultipleActivitiesMode: true,
+      })
     })
 
     it('should not record create journey complete in metrics when in the remove journey', async () => {

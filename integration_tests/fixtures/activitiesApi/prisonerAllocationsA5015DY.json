@@ -1,13 +1,14 @@
 [
   {
-    "prisonerNumber": "G4793VF",
+    "prisonerNumber": "A5015DY",
     "allocations": [
       {
         "id": 1,
-        "prisonerNumber": "G4793VF",
+        "prisonerNumber": "A5015DY",
+        "activityId": 1,
         "activitySummary": "Maths level 1",
         "scheduleDescription": "Entry level Maths 1",
-        "scheduleId": "6",
+        "scheduleId": 1,
         "payBand": "A",
         "isUnemployment": false,
         "startDate": "2022-10-10",
@@ -20,10 +21,11 @@
       },
       {
         "id": 2,
-        "prisonerNumber": "G4793VF",
+        "prisonerNumber": "A5015DY",
         "activitySummary": "English level 1",
         "scheduleDescription": "Entry level English 1",
-        "scheduleId": "7",
+        "scheduleId": 2,
+        "activityId": 2,
         "payBand": "A",
         "isUnemployment": false,
         "startDate": "2022-10-10",

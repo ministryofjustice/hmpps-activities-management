@@ -1,4 +1,4 @@
-import { Allocation, ScheduledInstance, Slot } from '../../../@types/activitiesAPI/types'
+import { ActivitySchedule, Allocation, ScheduledInstance, Slot } from '../../../@types/activitiesAPI/types'
 
 type Inmate = {
   prisonerName: string
@@ -46,6 +46,21 @@ export type AllocateToActivityJourney = {
   }
   scheduledInstance?: ScheduledInstance
   otherAllocations?: Array<Allocation>
+  activitiesToDeallocate?: {
+    activityId?: number
+    scheduleId: number
+    name: string
+    location?: string
+    inCell?: boolean
+    onWing?: boolean
+    offWing?: boolean
+    startDate: string
+    endDate?: string
+    scheduleWeeks?: number
+    paid?: boolean
+    notInWork?: boolean
+    schedule?: ActivitySchedule
+  }[]
 }
 
 export enum EndDecision {
