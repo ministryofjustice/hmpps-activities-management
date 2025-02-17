@@ -7,11 +7,11 @@ orbs:
 parameters:
   alerts-slack-channel:
     type: string
-    default: activities-and-appointments-alerts
+    default: activities-and-appointments-alerts-security
 
   releases-slack-channel:
     type: string
-    default: activities-and-appointments-alerts
+    default: activities-and-appointments-dev
 
   node-version:
     type: string
@@ -67,7 +67,7 @@ jobs:
           name: unit tests
           command: npm run test
       - store_test_results:
-          path: test_results
+          path: test_results/jest
       - store_artifacts:
           path: test_results/unit-test-reports.html
 
@@ -102,12 +102,12 @@ jobs:
           name: Wait for node app to start
           command: sleep 5
       - run:
-          name: integration tests
+          name: Integration tests
           command:  |
-            TESTFILES=$(circleci tests glob "integration_tests/e2e/**/*.cy.ts" | circleci tests split | paste -sd ',')
-            npm run int-test -- --spec ${TESTFILES}
+            TESTFILES=$(circleci tests glob "integration_tests/e2e/**/*.cy.ts" | circleci tests split --split-by=timings | paste -sd ',')
+            npm run int-test -- --spec ${TESTFILES} --reporter cypress-circleci-reporter
       - store_test_results:
-          path: test_results
+          path: test_results/cypress
       - store_artifacts:
           path: integration_tests/videos
       - store_artifacts:

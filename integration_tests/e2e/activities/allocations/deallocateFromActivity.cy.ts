@@ -84,7 +84,7 @@ context('Deallocation from activity', () => {
 
     it('should de-allocate from session today and remove any attendances later today', () => {
       // Set start date to 2 weeks ago so activity session is later today
-      resetActivityAndScheduleStubs(subWeeks(new Date(), 2), formatDate(addMinutes(new Date(), 2), 'HH:mm'))
+      resetActivityAndScheduleStubs(subWeeks(new Date(), 2), 'english', formatDate(addMinutes(new Date(), 2), 'HH:mm'))
 
       const indexPage = Page.verifyOnPage(IndexPage)
       indexPage.activitiesCard().click()
