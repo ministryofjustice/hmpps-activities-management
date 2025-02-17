@@ -97,7 +97,7 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
-    "compression": "^1.7.5",
+    "compression": "^1.8.0",
     "connect-flash": "^0.1.1",
     "connect-redis": "^8.0.1",
     "csrf-sync": "^4.0.3",
@@ -128,7 +128,7 @@
     "uuid": "^11.0.5"
   },
   "devDependencies": {
-    "@jgoz/esbuild-plugin-typecheck": "^4.0.2",
+    "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
     "@ministryofjustice/eslint-config-hmpps": "^0.0.1-beta.2",
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
@@ -143,7 +143,7 @@
     "@types/jest-when": "^3.5.5",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/multer": "^1.4.12",
-    "@types/node": "^22.13.1",
+    "@types/node": "^22.13.4",
     "@types/nunjucks": "^3.2.6",
     "@types/passport": "^1.0.17",
     "@types/passport-oauth2": "^1.4.17",
@@ -177,7 +177,7 @@
     "jsonwebtoken": "^9.0.2",
     "lint-staged": "^15.4.3",
     "nock": "^13.5.6",
-    "prettier": "^3.5.0",
+    "prettier": "^3.5.1",
     "prettier-plugin-jinja-template": "^2.0.0",
     "sinon": "^19.0.2",
     "supertest": "^7.0.0",
@@ -187,9 +187,6 @@
   },
   "overrides": {
     "path-to-regexp": "~0.1.12",
-    "undici": "~6.21.1",
-    "@jgoz/esbuild-plugin-typecheck": {
-      "esbuild": "$esbuild"
-    }
+    "undici": "~6.21.1"
   }
 }
