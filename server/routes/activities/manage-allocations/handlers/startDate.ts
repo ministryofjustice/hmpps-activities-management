@@ -63,10 +63,15 @@ export default class StartDateRoutes {
     const { allocationId } = req.params
     const { startDateOption } = req.body
 
-    const nextAvailableInstance = req.session.allocateJourney.scheduledInstance
+    const nextAvailableInstance = req.session.allocateJourney.scheduledInstance || null
 
-    const startDate =
-      startDateOption === StartDateOption.NEXT_SESSION ? nextAvailableInstance?.date : formatIsoDate(req.body.startDate)
+    let startDate = null
+    if (startDateOption === StartDateOption.NEXT_SESSION) {
+      // if there are no available instances yet, the activity is in the future, and so we can just use the start date
+      startDate = nextAvailableInstance?.date || req.session.allocateJourney.activity.startDate
+    } else {
+      startDate = formatIsoDate(req.body.startDate)
+    }
 
     req.session.allocateJourney.startDateOption = startDateOption
     req.session.allocateJourney.startDate = startDate

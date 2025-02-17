@@ -288,6 +288,23 @@ describe('Route Handlers - Allocate - Check answers', () => {
         expect(res.redirect).toHaveBeenCalledWith('confirmation')
       })
 
+      it('should pass correct details when there is no scheduled instance', async () => {
+        req.session.allocateJourney.scheduledInstance = null
+        req.params.mode = 'create'
+        await handler.POST(req, res)
+        expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
+          1,
+          'ABC123',
+          1,
+          { username: 'joebloggs' },
+          '2023-01-01',
+          '2023-02-01',
+          [],
+          null,
+        )
+        expect(res.redirect).toHaveBeenCalledWith('confirmation')
+      })
+
       it('should redirect to confirmation page when with custom scheduled slots and exclusions', async () => {
         req.params.mode = 'create'
         req.session.allocateJourney.activity = {

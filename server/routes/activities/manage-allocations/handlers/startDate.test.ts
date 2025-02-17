@@ -37,6 +37,9 @@ describe('Route Handlers - Edit allocation - Start date', () => {
           inmate: {
             prisonerName: 'John Smith',
           },
+          activity: {
+            startDate: '2024-04-25',
+          },
         },
       },
     } as unknown as Request
@@ -87,6 +90,18 @@ describe('Route Handlers - Edit allocation - Start date', () => {
         expect(req.session.allocateJourney.startDateOption).toEqual(StartDateOption.NEXT_SESSION)
         expect(req.session.allocateJourney.startDate).toEqual('2024-04-23')
         expect(req.session.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
+      })
+      it('should save the activity start date in session if there is no scheduled instance, and redirect if user selected the next session', async () => {
+        req.body = {
+          startDateOption: StartDateOption.NEXT_SESSION,
+        }
+
+        await handler.POST(req, res)
+
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date-option')
+        expect(req.session.allocateJourney.startDateOption).toEqual(StartDateOption.NEXT_SESSION)
+        expect(req.session.allocateJourney.startDate).toEqual('2024-04-25')
+        expect(req.session.allocateJourney.latestAllocationStartDate).toEqual('2024-04-25')
       })
     })
 

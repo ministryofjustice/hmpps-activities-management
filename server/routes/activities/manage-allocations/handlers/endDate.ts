@@ -54,20 +54,23 @@ export class EndDate {
 export default class EndDateRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { allocateJourney } = req.session
-    const nextAvailableInstance = allocateJourney.scheduledInstance
-    const nextSessionDateAndTime = parseDate(
-      `${nextAvailableInstance.date}T${nextAvailableInstance.startTime}`,
-      "yyyy-MM-dd'T'HH:mm",
-    )
+    const nextAvailableInstance = allocateJourney.scheduledInstance || null
 
-    if (
-      req.params.mode === 'remove' &&
-      allocateJourney.inmates.length === 1 &&
-      isToday(nextSessionDateAndTime) &&
-      !isPast(nextSessionDateAndTime) &&
-      !allocateJourney.deallocateTodayOption
-    ) {
-      return res.redirect('deallocate-today-option')
+    if (nextAvailableInstance) {
+      const nextSessionDateAndTime = parseDate(
+        `${nextAvailableInstance.date}T${nextAvailableInstance.startTime}`,
+        "yyyy-MM-dd'T'HH:mm",
+      )
+
+      if (
+        req.params.mode === 'remove' &&
+        allocateJourney.inmates.length === 1 &&
+        isToday(nextSessionDateAndTime) &&
+        !isPast(nextSessionDateAndTime) &&
+        !allocateJourney.deallocateTodayOption
+      ) {
+        return res.redirect('deallocate-today-option')
+      }
     }
 
     return res.render('pages/activities/manage-allocations/end-date')
