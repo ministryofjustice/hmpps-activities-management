@@ -187,9 +187,6 @@
   },
   "overrides": {
     "path-to-regexp": "~0.1.12",
-    "undici": "~6.21.1",
-    "@jgoz/esbuild-plugin-typecheck": {
-      "esbuild": "$esbuild"
-    }
+    "undici": "~6.21.1"
   }
 }
