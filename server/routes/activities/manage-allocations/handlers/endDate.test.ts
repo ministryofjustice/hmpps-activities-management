@@ -110,6 +110,14 @@ describe('Route Handlers - Edit allocation - End date', () => {
         expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/end-date')
       })
 
+      it('should operate normally when there is no scheduled instance available', async () => {
+        req.session.allocateJourney.scheduledInstance = null
+
+        await handler.GET(req, res)
+
+        expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/end-date')
+      })
+
       it('when next session is tomorrow', async () => {
         req.session.allocateJourney.scheduledInstance.date = formatIsoDate(addDays(now, 1))
 

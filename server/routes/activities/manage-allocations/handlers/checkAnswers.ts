@@ -68,7 +68,7 @@ export default class CheckAnswersRoutes {
         deallocationCaseNote as AddCaseNoteRequest,
         endDate,
         user,
-        deallocateTodayOption === DeallocateTodayOption.TODAY ? scheduledInstance.id : null,
+        deallocateTodayOption === DeallocateTodayOption.TODAY ? scheduledInstance?.id : null,
       )
     }
 
