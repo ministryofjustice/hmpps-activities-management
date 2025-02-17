@@ -237,6 +237,56 @@
                         {% endif %}
                     {% endfor %}
 
+                    {% if locationSchedule %}
+                        <h2 class="govuk-heading-m" data-qa="schedules-heading">Room schedule on {{ appointmentDate() }}</h2>
+                        <div class="govuk-summary-card appointment-schedule">
+                            <div class="govuk-summary-card__title-wrapper">
+                                <h3 class="govuk-summary-card__title">{{ locationSchedule.description }}</h3>
+                            </div>
+                            <div class="govuk-summary-card__content">
+                                {% set events = locationSchedule.events | filter('cancelled', false) | filterNot('appointmentId', appointmentId) %}
+
+                                {% if events.length > 0 %}
+                                    {% set scheduledEventRows = [] %}
+                                    {% for scheduledEvent in events %}
+                                        {% set scheduledEventRows = (scheduledEventRows.push([
+                                            {
+                                                text: timeText(scheduledEvent),
+                                                attributes: {
+                                                  'data-sort-value': scheduledEvent.startTime | parseDate('HH:mm') | formatDate("HHmm")
+                                                }
+                                            },
+                                            {
+                                                text: scheduledEvent.summary | trim
+                                            }
+                                        ]), scheduledEventRows) %}
+                                    {% endfor %}
+
+                                    {{ govukTable({
+                                        head: [
+                                            {
+                                              text: "Time",
+                                              classes: "govuk-!-border-bottom-2",
+                                              attributes: { "aria-sort": "ascending" }
+                                            },
+                                            {
+                                              text: "Scheduled appointment",
+                                              attributes: { "aria-sort": "none" }
+                                            }
+                                        ],
+                                        rows: scheduledEventRows,
+                                        classes: 'govuk-!-margin-bottom-2',
+                                        attributes: {
+                                          'data-module': 'moj-sortable-table'
+                                        }
+                                    }) }}
+                                {% else %}
+                                    <p class="govuk-body">No scheduled events.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+
                     {{ govukButton({
                         attributes: { 'data-qa': 'bottom-cta' },
                         preventDoubleClick: true,

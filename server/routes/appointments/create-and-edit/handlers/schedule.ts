@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { uniqWith } from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
@@ -31,6 +32,8 @@ export default class ScheduleRoutes {
     }
 
     const appointmentStartDate = editAppointmentJourney?.startDate ?? appointmentJourney.startDate
+    const appointmentCategoryCode = appointmentJourney.category?.code
+    const locationId = editAppointmentJourney?.location?.id ?? appointmentJourney.location?.id
 
     const scheduledEvents = await this.activitiesService
       .getScheduledEventsForPrisoners(parseIsoDate(appointmentStartDate), prisonNumbers, user)
@@ -64,9 +67,27 @@ export default class ScheduleRoutes {
       }))
     }
 
+    const locationSchedule =
+      locationId && appointmentCategoryCode.startsWith('VL') // Video conferencing appointment types
+        ? await this.activitiesService
+            .getInternalLocationEvents(user.activeCaseLoadId, parseIsoDate(appointmentStartDate), [locationId], user)
+            .then(
+              location =>
+                location.map(l => ({
+                  ...l,
+                  events: uniqWith(
+                    l.events,
+                    // Filtering unique appointments, to only contain an appointment once if there are many attendees
+                    (a, b) => a.scheduledInstanceId === b.scheduledInstanceId && a.appointmentId === b.appointmentId,
+                  ),
+                }))[0],
+            )
+        : undefined
+
     res.render('pages/appointments/create-and-edit/schedule', {
       preserveHistory,
       prisonerSchedules,
+      locationSchedule,
       appointmentId,
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&

@@ -5,7 +5,7 @@ import ScheduleRoutes from './schedule'
 import { YesNo } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import EditAppointmentService from '../../../../services/editAppointmentService'
-import { PrisonerScheduledEvents } from '../../../../@types/activitiesAPI/types'
+import { InternalLocationEvents, PrisonerScheduledEvents } from '../../../../@types/activitiesAPI/types'
 import { AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
@@ -303,6 +303,64 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           ],
         }),
       )
+    })
+
+    it('should query the room schedule for video link appointments', async () => {
+      req.params.appointmentId = '1'
+      req.session.appointmentJourney.repeat = YesNo.NO
+      req.session.appointmentJourney.category = { code: 'VLLA', description: 'Video Link - Legal Appointment' }
+      req.session.appointmentJourney.location = { id: 1, description: 'Video Room' }
+
+      activitiesService.getInternalLocationEvents.mockResolvedValue([
+        {
+          description: 'Video Room',
+          events: [
+            {
+              scheduledInstanceId: 1,
+              appointmentId: 1,
+              prisonerNumber: 'ABC123',
+              summary: 'Clashing appointment 1',
+            },
+            {
+              scheduledInstanceId: 1,
+              appointmentId: 1,
+              prisonerNumber: 'ZXY321',
+              summary: 'Clashing appointment 1',
+            },
+            {
+              scheduledInstanceId: 2,
+              appointmentId: 2,
+              prisonerNumber: 'ZXY321',
+              summary: 'Clashing appointment 2',
+            },
+          ],
+        },
+      ] as InternalLocationEvents[])
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/schedule', {
+        isCtaAcceptAndSave: false,
+        prisonerSchedules: [],
+        locationSchedule: {
+          description: 'Video Room',
+          events: [
+            {
+              scheduledInstanceId: 1,
+              appointmentId: 1,
+              prisonerNumber: 'ABC123',
+              summary: 'Clashing appointment 1',
+            },
+            {
+              scheduledInstanceId: 2,
+              appointmentId: 2,
+              prisonerNumber: 'ZXY321',
+              summary: 'Clashing appointment 2',
+            },
+          ],
+        },
+        appointmentId: '1',
+      })
     })
   })
 
