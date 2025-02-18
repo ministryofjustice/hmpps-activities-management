@@ -8,7 +8,6 @@ import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { DeallocateAfterAllocationDateOption } from '../journey'
 import ReasonForDeallocation from '../../../../enum/reasonForDeallocation'
-import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -59,17 +58,7 @@ describe('Route Handlers - Deallocation reason', () => {
   })
 
   describe('GET', () => {
-    it('should render the expected view - flag off', async () => {
-      config.deallocationAfterAllocationToggleEnabled = false
-      await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocation-reason', {
-        deallocationReasons: [{ code: 'OTHER', description: 'Other reason' }],
-        deallocateAfterAllocationPath: null,
-        multipleActivitiesToRemove: null,
-      })
-    })
-    it('should render the expected view - flag on - one activity to remove', async () => {
-      config.deallocationAfterAllocationToggleEnabled = true
+    it('should render the expected view - one activity to remove', async () => {
       req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocation-reason', {
@@ -78,8 +67,7 @@ describe('Route Handlers - Deallocation reason', () => {
         multipleActivitiesToRemove: false,
       })
     })
-    it('should render the expected view - flag on - multiple activities to remove', async () => {
-      config.deallocationAfterAllocationToggleEnabled = true
+    it('should render the expected view - multiple activities to remove', async () => {
       req.session.allocateJourney.deallocationCaseNote = null
       req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
       req.session.allocateJourney.activity = null
@@ -128,7 +116,6 @@ describe('Route Handlers - Deallocation reason', () => {
     })
 
     it('redirects to deallocate-check-and-confirm page when the user is on the deallocate-after-allocation flow', async () => {
-      config.deallocationAfterAllocationToggleEnabled = true
       req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
       req.body = {
         deallocationReason: ReasonForDeallocation.OTHER,
