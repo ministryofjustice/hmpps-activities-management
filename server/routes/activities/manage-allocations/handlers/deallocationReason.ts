@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import config from '../../../../config'
 
 export class DeallocationReason {
   @Expose()
@@ -23,12 +22,8 @@ export default class DeallocationReasonRoutes {
 
     res.render('pages/activities/manage-allocations/deallocation-reason', {
       deallocationReasons,
-      multipleActivitiesToRemove: config.deallocationAfterAllocationToggleEnabled
-        ? multipleActivitiesToDeallocate
-        : null,
-      deallocateAfterAllocationPath: config.deallocationAfterAllocationToggleEnabled
-        ? allocateJourney.deallocateAfterAllocationDateOption !== undefined
-        : null,
+      multipleActivitiesToRemove: multipleActivitiesToDeallocate,
+      deallocateAfterAllocationPath: allocateJourney.deallocateAfterAllocationDateOption !== undefined,
     })
   }
 
@@ -48,7 +43,7 @@ export default class DeallocationReasonRoutes {
     }
     req.session.allocateJourney.deallocationCaseNote = null
 
-    if (deallocateAfterAllocationDateOption !== undefined && config.deallocationAfterAllocationToggleEnabled) {
+    if (deallocateAfterAllocationDateOption !== undefined) {
       return res.redirect('deallocation-check-and-confirm')
     }
     return res.redirect('check-answers')

@@ -3,7 +3,6 @@ import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import ActivitiesService from '../../../../services/activitiesService'
 import { Allocation } from '../../../../@types/activitiesAPI/types'
-import config from '../../../../config'
 
 export default class ConfirmationRoutes {
   constructor(
@@ -22,10 +21,8 @@ export default class ConfirmationRoutes {
       this.metricsService.trackEvent(allocationEvent)
     }
 
-    const deallocateFlagEnabled = config.deallocationAfterAllocationToggleEnabled
-
     let otherAllocations: Allocation[] = []
-    if (deallocateFlagEnabled && req.params.mode === 'create') {
+    if (req.params.mode === 'create') {
       const [prisonerAllocationsList] = await this.activitiesService.getActivePrisonPrisonerAllocations(
         [inmate.prisonerNumber],
         res.locals.user,
@@ -42,7 +39,7 @@ export default class ConfirmationRoutes {
       prisonerName: inmate.prisonerName,
       prisonerNumber: inmate.prisonerNumber,
       activityName: deallocateMultipleActivitiesMode ? `${activitiesToDeallocate.length} activities` : activity?.name,
-      otherAllocations: deallocateFlagEnabled && req.params.mode === 'create' ? otherAllocations : null,
+      otherAllocations: req.params.mode === 'create' ? otherAllocations : null,
       deallocateMultipleActivitiesMode,
     })
   }

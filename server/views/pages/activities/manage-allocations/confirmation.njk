@@ -5,15 +5,13 @@
 {% set pageTitle = applicationName + " - Allocate to an activity - Confirmation" %}
 {% set pageId = 'confirmation-page' %}
 
-{% if deallocationAfterAllocationToggleEnabled %}
-    {% if otherAllocations | length > 1 %}
-        {% set otherAllocationIds = otherAllocations | flatMap('id') %}
-        {% set deallocationText = 'any other activities they’re allocated to' %}
-        {% set deallocationHref = "/activities/allocations/remove/deallocation-select-activities?selectActivity=true&otherAllocationIds=" + otherAllocationIds %}
-    {% elif otherAllocations | length == 1 %}
-        {% set deallocationText = otherAllocations[0].activitySummary %}
-        {% set deallocationHref = "/activities/allocations/remove/deallocate-after-allocation-date?allocationIds=" + otherAllocations[0].id + "&scheduleId=" + otherAllocations[0].scheduleId %}
-    {% endif %}
+{% if otherAllocations | length > 1 %}
+    {% set otherAllocationIds = otherAllocations | flatMap('id') %}
+    {% set deallocationText = 'any other activities they’re allocated to' %}
+    {% set deallocationHref = "/activities/allocations/remove/deallocation-select-activities?selectActivity=true&otherAllocationIds=" + otherAllocationIds %}
+{% elif otherAllocations | length == 1 %}
+    {% set deallocationText = otherAllocations[0].activitySummary %}
+    {% set deallocationHref = "/activities/allocations/remove/deallocate-after-allocation-date?allocationIds=" + otherAllocations[0].id + "&scheduleId=" + otherAllocations[0].scheduleId %}
 {% endif %}
 
 {% block content %}
@@ -30,7 +28,7 @@
                 <h2 class="govuk-heading-m">What you can do next</h2>
                 <p class='govuk-body'>You can{% if not activitiesPresentToDeallocate %} either{% endif %}:</p>
                 <ul class='govuk-list govuk-list--bullet'>
-                    {% if deallocationAfterAllocationToggleEnabled and activitiesPresentToDeallocate %}
+                    {% if activitiesPresentToDeallocate %}
                         <li><a href={{ deallocationHref }} class='govuk-link'>take {{ prisonerName }} off {{ deallocationText }}</li>
                     {% endif %}
                     <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>
