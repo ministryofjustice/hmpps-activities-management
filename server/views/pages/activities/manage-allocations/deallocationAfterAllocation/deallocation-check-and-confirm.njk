@@ -6,12 +6,15 @@
 
 {% set pageTitle = applicationName + " - Deallocate from an activity - Check and confirm" %}
 {% set pageId = 'deallocation-check-and-confirm-page' %}
+{% set activityNumber = session.allocateJourney.activitiesToDeallocate | length %}
+{% set deallocateActivityCaptionText = session.allocateJourney.activity.name if session.allocateJourney.activity else "activities" %}
+{% set deallocateActivityHeadingText = session.allocateJourney.activity.name if session.allocateJourney.activity else activityNumber + " activities" %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">Take {{ session.allocateJourney.inmate.prisonerName }} off {{ session.allocateJourney.activity.name }}</span>
-            <h1 class="govuk-heading-l">Check and confirm taking {{ session.allocateJourney.inmate.prisonerName }} off {{ session.allocateJourney.activity.name }}</h1>
+            <span class="govuk-caption-xl">Take {{ session.allocateJourney.inmate.prisonerName }} off {{ deallocateActivityCaptionText }}</span>
+            <h1 class="govuk-heading-l">Check and confirm taking {{ session.allocateJourney.inmate.prisonerName }} off {{ deallocateActivityHeadingText }}</h1>
         </div>
     </div>
     <div class="govuk-grid-row">

@@ -25,10 +25,12 @@
                     text: prisonerName + ' (' + prisonerNumber + ') is now allocated to ' + activityName
                 }) }}
 
+                {% set activitiesPresentToDeallocate = otherAllocations | length > 0 %}
+
                 <h2 class="govuk-heading-m">What you can do next</h2>
-                <p class='govuk-body'>You can either:</p>
+                <p class='govuk-body'>You can{% if not activitiesPresentToDeallocate %} either{% endif %}:</p>
                 <ul class='govuk-list govuk-list--bullet'>
-                    {% if deallocationAfterAllocationToggleEnabled and otherAllocations | length %}
+                    {% if deallocationAfterAllocationToggleEnabled and activitiesPresentToDeallocate %}
                         <li><a href={{ deallocationHref }} class='govuk-link'>take {{ prisonerName }} off {{ deallocationText }}</li>
                     {% endif %}
                     <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>
@@ -50,7 +52,7 @@
                 {% endif %}
 
                 <h2 class="govuk-heading-m">What you can do next</h2>
-                <p class='govuk-body'>You can{% if not deallocateMultipleActivitiesMode %} either:{% else %}:{% endif %}</p>
+                <p class='govuk-body'>You can{% if not deallocateMultipleActivitiesMode %} either{% endif %}:</p>
                 <ul class='govuk-list govuk-list--bullet'>
                     {% if not deallocateMultipleActivitiesMode %}<li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>{% endif %}
                     <li><a href="/activities/allocation-dashboard" class='govuk-link'>find other activities with vacancies</a></li>
