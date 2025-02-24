@@ -93,7 +93,7 @@
     "body-parser": "^1.20.3",
     "bunyan": "^1.8.15",
     "bunyan-format": "^0.2.1",
-    "chart.js": "^4.4.7",
+    "chart.js": "^4.4.8",
     "chartjs-plugin-datalabels": "^2.2.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
@@ -125,7 +125,7 @@
     "reflect-metadata": "^0.2.2",
     "superagent": "^10.1.1",
     "url-value-parser": "^2.2.0",
-    "uuid": "^11.0.5"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
