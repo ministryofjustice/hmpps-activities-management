@@ -29,10 +29,12 @@ function FormSpinner(container) {
 
     const stickyHeader = this.container.querySelector('.govuk-table__head')
     const stickyActionBar = this.container.querySelector('.sticky-select-action-bar')
-    stickyHeader.style.position = 'relative'
-    stickyHeader.style['z-index'] = 'auto'
-    stickyActionBar.style.position = 'relative'
-    stickyActionBar.style['z-index'] = 'auto'
+    if (stickyHeader && stickyActionBar) {
+      stickyHeader.style.position = 'relative'
+      stickyHeader.style['z-index'] = 'auto'
+      stickyActionBar.style.position = 'relative'
+      stickyActionBar.style['z-index'] = 'auto'
+    }
   })
 }
 
