@@ -31,6 +31,7 @@ generic-service:
     VIDEO_CONFERENCE_SCHEDULE_URL: "https://video-conference-schedule-preprod.prison.service.justice.gov.uk"
     APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED: "true"
     DEALLOCATION_AFTER_ALLOCATION_FEATURE_TOGGLE_ENABLED: "true"
+    IN_SERVICE_REPORTING_ENABLED: "false"
 
   allowlist:
     moj-official-tgw-prod: 51.149.250.0/24

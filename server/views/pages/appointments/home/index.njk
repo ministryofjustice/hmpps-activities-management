@@ -54,6 +54,7 @@
                         "data-qa": "record-appointment-attendance-card"
                     }) }}
                 </div>
+                {% if not inServiceReportingEnabled %}
                 <div class="govuk-grid-column-one-third card-group__item">
                     {{ card({
                         "id": "viewAppointmentsAttendanceSummary",
@@ -64,6 +65,19 @@
                         "data-qa": "view-appointments-attendance-summary-card"
                     }) }}
                 </div>
+                {% endif %}
+                {% if inServiceReportingEnabled %}
+                    <div class="govuk-grid-column-one-third card-group__item">
+                        {{ card({
+                            "id": "viewAppointmentsAttendanceInformation",
+                            "href": "",
+                            "clickable": "true",
+                            "heading": "View appointments attendance information",
+                            "description": "View attendance for a single day, between 2 dates, or the attendance history for a particular person or appointment.",
+                            "data-qa": "view-appointments-attendance-info-card"
+                        }) }}
+                    </div>
+                {% endif %}
                 {% if videoConferenceScheduleFeatureToggleEnabled %}
                     <div class="govuk-grid-column-one-third card-group__item">
                         {{ card({
