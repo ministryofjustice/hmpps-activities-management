@@ -159,7 +159,7 @@
         }), rows) %}
     {% endfor %}
 
-    <form method='POST'>
+    <form method='POST' data-module="form-spinner" data-loading-text="Marking attendance">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
         {{ stickySelect({
             type: 'check',

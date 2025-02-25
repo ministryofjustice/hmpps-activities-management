@@ -84,7 +84,7 @@
     "@microsoft/applicationinsights-web": "^3.3.5",
     "@ministryofjustice/frontend": "^3.3.1",
     "@ministryofjustice/hmpps-connect-dps-components": "^2.1.0",
-    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^3.37.7",
+    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^4.0.1",
     "@types/express-serve-static-core": "^4.19.6",
     "@types/lodash": "^4.17.15",
     "accessible-autocomplete": "^3.0.1",
@@ -93,7 +93,7 @@
     "body-parser": "^1.20.3",
     "bunyan": "^1.8.15",
     "bunyan-format": "^0.2.1",
-    "chart.js": "^4.4.7",
+    "chart.js": "^4.4.8",
     "chartjs-plugin-datalabels": "^2.2.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
@@ -125,7 +125,7 @@
     "reflect-metadata": "^0.2.2",
     "superagent": "^10.1.1",
     "url-value-parser": "^2.2.0",
-    "uuid": "^11.0.5"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
@@ -141,9 +141,9 @@
     "@types/http-errors": "^2.0.4",
     "@types/jest": "^29.5.14",
     "@types/jest-when": "^3.5.5",
-    "@types/jsonwebtoken": "^9.0.8",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/multer": "^1.4.12",
-    "@types/node": "^22.13.4",
+    "@types/node": "^22.13.5",
     "@types/nunjucks": "^3.2.6",
     "@types/passport": "^1.0.17",
     "@types/passport-oauth2": "^1.4.17",
@@ -177,7 +177,7 @@
     "jsonwebtoken": "^9.0.2",
     "lint-staged": "^15.4.3",
     "nock": "^13.5.6",
-    "prettier": "^3.5.1",
+    "prettier": "^3.5.2",
     "prettier-plugin-jinja-template": "^2.0.0",
     "sinon": "^19.0.2",
     "supertest": "^7.0.0",
@@ -187,6 +187,7 @@
   },
   "overrides": {
     "path-to-regexp": "~0.1.12",
-    "undici": "~6.21.1"
+    "undici": "~6.21.1",
+    "serialize-javascript": "~6.0.2"
   }
 }
