@@ -36,7 +36,6 @@ import {
   WaitingListApplicationUpdateRequest,
   AppointmentUpdateRequest,
   Allocation,
-  AppointmentAttendanceRequest,
   AddCaseNoteRequest,
   AppointmentCancelRequest,
   MultipleAppointmentAttendanceRequest,
