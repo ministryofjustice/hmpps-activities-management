@@ -235,7 +235,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('applicationInsightsRoleName', applicationInfo?.applicationName)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('videoConferenceScheduleFeatureToggleEnabled', config.videoConferenceScheduleFeatureToggleEnabled)
-  njkEnv.addGlobal('appointmentMultipleAttendanceToggleEnabled', config.appointmentMultipleAttendanceToggleEnabled)
   njkEnv.addGlobal('deallocationAfterAllocationToggleEnabled', config.deallocationAfterAllocationToggleEnabled)
   njkEnv.addGlobal('inServiceReportingEnabled', config.inServiceReportingEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)

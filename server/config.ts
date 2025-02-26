@@ -235,9 +235,6 @@ export default {
   videoConferenceScheduleFeatureToggleEnabled: toBoolean(
     get('VIDEO_CONFERENCE_SCHEDULE_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
   ),
-  appointmentMultipleAttendanceToggleEnabled: toBoolean(
-    get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),
-  ),
   deallocationAfterAllocationToggleEnabled: toBoolean(
     get('DEALLOCATION_AFTER_ALLOCATION_FEATURE_TOGGLE_ENABLED', 'false'),
   ),
