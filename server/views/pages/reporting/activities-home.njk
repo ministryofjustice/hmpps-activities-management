@@ -1,0 +1,26 @@
+{% extends "layout.njk" %}
+
+{% set pageTitle = "View reports about activities" %}
+{% set pageId = 'appointments-reporting-home-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <span class="govuk-caption-l">Reports</span>
+            <h1 class="govuk-heading-l">{{ pageTitle }}</h1>
+            {% if reports.waitlists.length %}
+            <section>
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-3">Waitlists</h2>
+                {% for report in reports.waitlists %}
+                    <p class="govuk-body govuk-!-margin-bottom-1">
+                        <a href="{{ report.href }}">{{ report.title }}</a>
+                    </p>
+                    <p class="govuk-body">{{ report.description }}</p>
+                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                {% endfor %}
+            </section>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
