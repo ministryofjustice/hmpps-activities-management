@@ -1,8 +1,11 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+
 
 {% set pageTitle = applicationName + " - Create an activity - Check education levels" %}
 {% set pageId = 'check-education-levels-page' %}
@@ -12,12 +15,12 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(session.createJourney) }}
-            <h1 class='govuk-heading-l'>Review education levels and qualifications</h2>
+            <h1 class='govuk-heading-l'>Education levels and qualifications</h2>
 
             {% if educationLevels | length %}
                 <h2 class='govuk-heading-m'>Level or qualification</h2>
             {% else %}
-                <p class="govuk-body">No levels or qualifications added</p>
+                <p class="govuk-body">This activity does not have any education or qualification requirements.</p>
             {% endif %}
 
             {% for educationLevel in educationLevels %}
@@ -46,18 +49,41 @@
                 }) }}
             {% endfor %}
 
-            <form method="POST">
+            {% if session.req.params.mode == 'edit' %}
+                {{ govukInsetText({
+                text: "If you change the education requirements, this may affect people who are currently allocated to this activity."
+                }) }}
+            {% endif %}
+
+                  <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <div>
-                    {{ govukButton({
-                        text: "Add another qualification",
-                        href: 'education-level' + ('?preserveHistory=true' if session.req.query.preserveHistory else ''),
-                        classes: "govuk-button--secondary govuk-!-margin-bottom-8"
-                    }) }}
-                </div>
+                {% set addEducation = formResponses.addEducation or session.createJourney.addEducation %}
+                {{ govukRadios({
+                    name: "addEducation",
+                    fieldset: {
+                        legend: {
+                            text: "Do you need to add another education or qualification requirement?",
+                            classes: "govuk-fieldset__legend--m",
+                            isPageHeading: true
+                        }
+                    },
+                    errorMessage: validationErrors | findError('addEducation'),
+                    items: [
+                        {
+                            value: YesNo.YES,
+                            text: "Yes",
+                            checked: addEducation == YesNo.YES
+                        },
+                        {
+                            value: YesNo.NO,
+                            text: "No, Im finished",
+                            checked: addEducation == YesNo.NO
+                        }
+                    ]
+                }) }}
+
                 {{ govukButton({
-                    text: "Update education levels" if session.req.params.mode == 'edit' else "Confirm",
-                    preventDoubleClick: true
+                    text: "Continue"
                 }) }}
             </form>
         </div>

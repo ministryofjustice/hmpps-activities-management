@@ -13,7 +13,7 @@ import RemoveFlatRateRoutes from './handlers/removeFlatRate'
 import QualificationRoutes, { Qualification } from './handlers/qualifications'
 import EducationLevelRoutes, { EducationLevel } from './handlers/educationLevel'
 import RemoveEducationLevelRoutes from './handlers/removeEducationLevel'
-import CheckEducationLevelRoutes from './handlers/checkEducationLevels'
+import CheckEducationLevelRoutes, { AddEducation } from './handlers/checkEducationLevels'
 import StartDateRoutes, { StartDate } from './handlers/startDate'
 import EndDateOptionRoutes, { EndDateOption } from './handlers/endDateOption'
 import EndDateRoutes, { EndDate } from './handlers/endDate'
@@ -114,7 +114,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   post('/education-level', educationLevelHandler.POST, EducationLevel)
   get('/remove-education-level', removeEducationLevelHandler.GET, true)
   get('/check-education-level', checkEducationLevelHandler.GET, true)
-  post('/check-education-level', checkEducationLevelHandler.POST)
+  post('/check-education-level', checkEducationLevelHandler.POST, AddEducation)
   get('/start-date', startDateHandler.GET, true)
   post('/start-date', startDateHandler.POST, StartDate)
   get('/end-date-option', endDateOptionHandler.GET, true)

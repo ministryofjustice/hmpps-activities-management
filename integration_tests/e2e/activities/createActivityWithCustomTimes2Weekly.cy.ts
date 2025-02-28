@@ -127,7 +127,8 @@ context('Create activity with custom times for a 2 weekly schedule', () => {
 
     const checkEducationLevelPage = Page.verifyOnPage(CheckEducationLevelsPage)
     checkEducationLevelPage.educationLevelRows().should('have.length', 1)
-    checkEducationLevelPage.getButton('Confirm').click()
+    checkEducationLevelPage.addEducationLevel('No, Im finished')
+    checkEducationLevelPage.continue()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)
     const startDate = addMonths(new Date(), 1)

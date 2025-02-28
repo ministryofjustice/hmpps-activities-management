@@ -10,5 +10,5 @@ export default class CheckEducationLevelsPage extends Page {
       return Cypress.$.makeArray($el)
     })
 
-  addAnother = () => cy.get('a').contains('Add another education level').click()
+  addEducationLevel = (text: string) => this.getInputByLabel(text).click()
 }

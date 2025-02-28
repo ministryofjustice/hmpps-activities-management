@@ -6,6 +6,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
+import { YesNo } from '../../../../@types/activities'
 
 jest.mock('../../../../services/prisonService')
 
@@ -89,54 +90,111 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
   })
 
   describe('POST', () => {
-    it('should add the minimum education level to the session and redirect', async () => {
+    it('should add the minimum education level to the session and redirect to the start date page during the create journey', async () => {
+      req = {
+        params: {
+          mode: 'create',
+        },
+        body: {
+          addEducation: YesNo.NO,
+        },
+      } as unknown as Request
+
       await handler.POST(req, res)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('start-date')
     })
-  })
 
-  it('should save entered education levels in database', async () => {
-    const updatedActivity = {
-      minimumEducationLevel: [
-        {
-          educationLevelCode: '1',
-          educationLevelDescription: 'Reading Measure 1.0',
-          studyAreaCode: 'ENGLA',
-          studyAreaDescription: 'English Language',
+    it('should save entered education levels in database', async () => {
+      const updatedActivity = {
+        minimumEducationLevel: [
+          {
+            educationLevelCode: '1',
+            educationLevelDescription: 'Reading Measure 1.0',
+            studyAreaCode: 'ENGLA',
+            studyAreaDescription: 'English Language',
+          },
+        ],
+      }
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      req = {
+        session: {
+          createJourney: {
+            activityId: '1',
+            educationLevels: [
+              {
+                educationLevelCode: '1',
+                educationLevelDescription: 'Reading Measure 1.0',
+                studyAreaCode: 'ENGLA',
+                studyAreaDescription: 'English Language',
+              },
+            ],
+          },
         },
-      ],
-    }
-
-    when(activitiesService.updateActivity)
-      .calledWith(atLeast(updatedActivity))
-      .mockResolvedValueOnce(activity as unknown as Activity)
-
-    req = {
-      session: {
-        createJourney: {
-          activityId: '1',
-          educationLevels: [
-            {
-              educationLevelCode: '1',
-              educationLevelDescription: 'Reading Measure 1.0',
-              studyAreaCode: 'ENGLA',
-              studyAreaDescription: 'English Language',
-            },
-          ],
+        params: {
+          mode: 'edit',
         },
-      },
-      params: {
-        mode: 'edit',
-      },
-      body: {},
-    } as unknown as Request
+        body: {
+          addEducation: YesNo.NO,
+        },
+      } as unknown as Request
 
-    await handler.POST(req, res)
+      await handler.POST(req, res)
 
-    expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
-      '/activities/view/1',
-      'Activity updated',
-      "You've updated the education levels for undefined",
-    )
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '/activities/view/1',
+        'Activity updated',
+        "You've updated the education levels for undefined",
+      )
+    })
+
+    it('should add entered education level and stay on education level page', async () => {
+      const updatedActivity = {
+        minimumEducationLevel: [
+          {
+            educationLevelCode: '1',
+            educationLevelDescription: 'Reading Measure 1.0',
+            studyAreaCode: 'ENGLA',
+            studyAreaDescription: 'English Language',
+          },
+        ],
+      }
+
+      when(activitiesService.updateActivity)
+        .calledWith(atLeast(updatedActivity))
+        .mockResolvedValueOnce(activity as unknown as Activity)
+
+      req = {
+        session: {
+          createJourney: {
+            activityId: '1',
+            educationLevels: [
+              {
+                educationLevelCode: '1',
+                educationLevelDescription: 'Reading Measure 1.0',
+                studyAreaCode: 'ENGLA',
+                studyAreaDescription: 'English Language',
+              },
+            ],
+          },
+        },
+        query: { preserveHistory: true },
+        params: {
+          mode: 'edit',
+        },
+        body: {
+          addEducation: YesNo.YES,
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(
+        `education-level${req.query.preserveHistory ? '?preserveHistory=true' : ''}`,
+      )
+    })
   })
 })
