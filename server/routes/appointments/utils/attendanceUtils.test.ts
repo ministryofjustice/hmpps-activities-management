@@ -37,7 +37,7 @@ describe('enhanceAppointment', () => {
     } as AppointmentAttendeeByStatus
   })
 
-  it ('should enhance appointment when appointment has an end time', () => {
+  it('should enhance appointment when appointment has an end time', () => {
     appointment.endTime = '12:34'
 
     const result = enhanceAppointment(appointment, prisoner)
@@ -52,7 +52,7 @@ describe('enhanceAppointment', () => {
     })
   })
 
-  it ('should enhance appointment when appointment has no end time', () => {
+  it('should enhance appointment when appointment has no end time', () => {
     appointment.endTime = null
 
     const result = enhanceAppointment(appointment, prisoner)
