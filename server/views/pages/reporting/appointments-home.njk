@@ -11,12 +11,13 @@
             <h1 class="govuk-heading-l">{{ pageTitle }}</h1>
 
             {% for report in reports %}
-            {# use the roleRequired to check to see if the user has the role needed #}
-            <section>
-                <p class="govuk-body govuk-!-margin-bottom-1"><a href="{{ report.href }}">{{ report.title }}</a></p>
-                <p class="govuk-body">{{ report.description }}</p>
-                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-            </section>
+                {% if not report.roleRequired or 'ROLE_ACTIVITY_HUB' in user.roles %}
+                    <section>
+                        <p class="govuk-body govuk-!-margin-bottom-1"><a href="{{ report.href }}">{{ report.title }}</a></p>
+                        <p class="govuk-body">{{ report.description }}</p>
+                        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                    </section>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
