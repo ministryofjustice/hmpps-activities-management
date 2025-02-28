@@ -5,7 +5,6 @@ import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { asString, convertToTitleCase, getScheduleIdFromActivity } from '../../../../utils/utils'
 import findNextSchedulesInstance from '../../../../utils/helpers/nextScheduledInstanceCalculator'
-import config from '../../../../config'
 import { AllocateToActivityJourney } from '../journey'
 
 export default (prisonService: PrisonService, activitiesService: ActivitiesService): RequestHandler => {
@@ -17,11 +16,9 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
 
     if ((mode !== 'remove' && mode !== 'edit' && mode !== 'exclude') || req.session.allocateJourney) return next()
 
-    if (config.deallocationAfterAllocationToggleEnabled) {
-      if (!scheduleId && !allocationId && !selectActivity) return res.redirect('back')
-    } else if (!scheduleId && !allocationId) return res.redirect('back')
+    if (!scheduleId && !allocationId && !selectActivity) return res.redirect('back')
 
-    if (config.deallocationAfterAllocationToggleEnabled && selectActivity) {
+    if (selectActivity) {
       const otherAllocationIdsList = otherAllocationIds.toString().split(',')
       const otherAllocations = await Promise.all(
         otherAllocationIdsList.map(id => activitiesService.getAllocation(+id, user)),

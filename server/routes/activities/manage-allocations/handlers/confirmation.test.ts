@@ -5,7 +5,6 @@ import MetricsService from '../../../../services/metricsService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import { AllocateToActivityJourney } from '../journey'
 import ActivitiesService from '../../../../services/activitiesService'
-import config from '../../../../config'
 import atLeast from '../../../../../jest.setup'
 import { PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 
@@ -70,8 +69,6 @@ describe('Route Handlers - Allocate - Confirmation', () => {
           ],
         },
       ] as PrisonerAllocations[])
-
-    config.deallocationAfterAllocationToggleEnabled = true
   })
 
   afterEach(() => {
@@ -79,26 +76,6 @@ describe('Route Handlers - Allocate - Confirmation', () => {
   })
 
   describe('GET', () => {
-    it('should render page with data from session - flag off', async () => {
-      config.deallocationAfterAllocationToggleEnabled = false
-
-      await handler.GET(req, res)
-      expect(metricsService.trackEvent).toHaveBeenCalledWith(
-        MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(allocateJourney, res.locals.user).addJourneyCompletedMetrics(
-          req,
-        ),
-      )
-      expect(activitiesService.getActivePrisonPrisonerAllocations).not.toHaveBeenCalled()
-
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/confirmation', {
-        activityId: 1,
-        prisonerName: 'Joe Bloggs',
-        prisonerNumber: 'ABC123',
-        activityName: 'Maths',
-        otherAllocations: null,
-        deallocateMultipleActivitiesMode: false,
-      })
-    })
     it('should record create journey complete in metrics', async () => {
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
@@ -107,8 +84,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
         ),
       )
     })
-    it('should render page with data from session - flag on', async () => {
-      config.deallocationAfterAllocationToggleEnabled = true
+    it('should render page with data from session', async () => {
       req.params.mode = 'create'
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
@@ -127,8 +103,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
         deallocateMultipleActivitiesMode: false,
       })
     })
-    it('should render page with data from session - flag on - one activity removed', async () => {
-      config.deallocationAfterAllocationToggleEnabled = true
+    it('should render page with data from session - one activity removed', async () => {
       req.params.mode = 'remove'
       await handler.GET(req, res)
 
@@ -144,8 +119,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
         deallocateMultipleActivitiesMode: false,
       })
     })
-    it('should render page with data from session - flag on - multiple activities removed', async () => {
-      config.deallocationAfterAllocationToggleEnabled = true
+    it('should render page with data from session - multiple activities removed', async () => {
       req.params.mode = 'remove'
       req.session.allocateJourney.activity = null
       req.session.allocateJourney.activitiesToDeallocate = [
