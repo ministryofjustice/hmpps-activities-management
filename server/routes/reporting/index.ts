@@ -4,6 +4,7 @@ import config from '../../config'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import ActivitiesReportingHomeRoutes from './handlers/activitiesHome'
 import AppointmentsReportingHomeRoutes from './handlers/appointmentsHome'
+import reports from './reportLists/reports'
 
 export default function Index(): Router {
   const router = Router({ mergeParams: true })
@@ -15,18 +16,21 @@ export default function Index(): Router {
   get('/activities-list', reportingActivitiesHomeHandler.GET)
   get('/appointments-list', reportingAppointmentsHomeRoutes.GET)
 
-  get(
-    '/waitlist-agg',
-    ReportListUtils.createReportListRequestHandler({
-      title: 'Waitlist Aggregate Report',
-      definitionName: 'waitlist-list-001',
-      variantName: 'waitlist-aggregate-001',
-      apiUrl: config.apis.reporting.url,
-      apiTimeout: config.apis.reporting.timeout,
-      layoutTemplate: 'layout.njk',
-      tokenProvider: (req, res, next) => res.locals.user.token,
-      definitionsPath: 'definitions/prisons/dps/activities',
-    }),
+  const allReports = [...reports.activities, ...reports.appointments]
+  allReports.forEach(report =>
+    get(
+      report.path,
+      ReportListUtils.createReportListRequestHandler({
+        title: report.title,
+        definitionName: report.definitionName,
+        variantName: report.variantName,
+        apiUrl: config.apis.reporting.url,
+        apiTimeout: config.apis.reporting.timeout,
+        layoutTemplate: 'layout.njk',
+        tokenProvider: (req, res, next) => res.locals.user.token,
+        definitionsPath: 'definitions/prisons/dps/activities',
+      }),
+    ),
   )
 
   return router

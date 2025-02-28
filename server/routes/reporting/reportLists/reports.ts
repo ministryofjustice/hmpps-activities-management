@@ -1,0 +1,36 @@
+export default {
+  activities: [
+    {
+      path: '/waitlist-agg',
+      title: 'Waitlist Aggregate Report',
+      definitionName: 'waitlist-list-001',
+      variantName: 'waitlist-aggregate-001',
+      displayTitle: 'Waitlist aggregation with averages',
+      displayDescription: 'Some description of the report',
+      roleRequired: true,
+      category: 'waitlists',
+    },
+    {
+      path: '/purposeful-residential',
+      title: 'PA sessions residential',
+      definitionName: 'pa-residential-001',
+      variantName: 'pa-residential-week-001',
+      displayTitle: 'PA sessions week-to-date by residential',
+      displayDescription: 'Some description of the report',
+      roleRequired: true,
+      category: 'purposeful-activity',
+    },
+  ],
+  appointments: [
+    {
+      path: '/appointment-attendance-dates',
+      title: 'Attendance between 2 dates',
+      definitionName: 'test-list-001',
+      variantName: 'test-attendance-two-dates-001',
+      displayTitle: 'Attendance between 2 dates',
+      displayDescription:
+        'Get attendance information for all appointments that took place between 2 dates, to check attendance levels over time.',
+      roleRequired: true,
+    },
+  ],
+}

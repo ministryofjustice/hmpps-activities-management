@@ -4,20 +4,35 @@
 {% set pageId = 'appointments-reporting-home-page' %}
 {% set jsBackLink = true %}
 
+{% set waitlistReports = reports | filter('category', 'waitlists') %}
+{% set paReports = reports | filter('category', 'purposeful-activity') %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
             <span class="govuk-caption-l">Reports</span>
             <h1 class="govuk-heading-l">{{ pageTitle }}</h1>
-            {% if reports.waitlists.length %}
+            {% if waitlistReports.length %}
             <section>
-                <h2 class="govuk-heading-m govuk-!-margin-bottom-3">Waitlists</h2>
-                {% for report in reports.waitlists %}
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-3">Purposeful activity</h2>
+                {% for report in paReports %}
                     {% if not report.roleRequired or 'ROLE_ACTIVITY_HUB' in user.roles %}
                         <p class="govuk-body govuk-!-margin-bottom-1">
-                            <a href="{{ report.href }}">{{ report.title }}</a>
+                            <a href="/dpr-reporting{{ report.path }}">{{ report.displayTitle }}</a>
                         </p>
-                        <p class="govuk-body">{{ report.description }}</p>
+                        <p class="govuk-body">{{ report.displayDescription }}</p>
+                        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                    {% endif %}
+                {% endfor %}
+            </section>
+            <section>
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-3">Waitlists</h2>
+                {% for report in waitlistReports %}
+                    {% if not report.roleRequired or 'ROLE_ACTIVITY_HUB' in user.roles %}
+                        <p class="govuk-body govuk-!-margin-bottom-1">
+                            <a href="/dpr-reporting{{ report.path }}">{{ report.displayTitle }}</a>
+                        </p>
+                        <p class="govuk-body">{{ report.displayDescription }}</p>
                         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
                     {% endif %}
                 {% endfor %}

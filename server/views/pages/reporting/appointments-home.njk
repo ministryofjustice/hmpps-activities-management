@@ -10,11 +10,17 @@
             <span class="govuk-caption-l">View appointments attendance information</span>
             <h1 class="govuk-heading-l">{{ pageTitle }}</h1>
 
+            <section>
+                <p class="govuk-body govuk-!-margin-bottom-1"><a href="/appointments/attendance-summary/select-date">Daily attendance summary</a></p>
+                <p class="govuk-body">Get attendance information for a single day, including who did not attend and where attendance has not been recorded yet.</p>
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+            </section>
+
             {% for report in reports %}
                 {% if not report.roleRequired or 'ROLE_ACTIVITY_HUB' in user.roles %}
                     <section>
-                        <p class="govuk-body govuk-!-margin-bottom-1"><a href="{{ report.href }}">{{ report.title }}</a></p>
-                        <p class="govuk-body">{{ report.description }}</p>
+                        <p class="govuk-body govuk-!-margin-bottom-1"><a href="/dpr-reporting{{ report.path }}">{{ report.displayTitle }}</a></p>
+                        <p class="govuk-body">{{ report.displayDescription }}</p>
                         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
                     </section>
                 {% endif %}
