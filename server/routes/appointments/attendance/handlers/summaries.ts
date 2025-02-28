@@ -88,6 +88,14 @@ export default class SummariesRoutes {
     })
   }
 
+  SELECT_APPOINTMENT = async (req: Request, res: Response): Promise<void> => {
+    const { appointmentId } = req.params
+    req.session.recordAppointmentAttendanceJourney = {
+      appointmentIds: [+appointmentId],
+    }
+    return res.redirect('../attendees')
+  }
+
   SELECT_APPOINTMENTS = async (req: Request, res: Response): Promise<void> => {
     req.session.recordAppointmentAttendanceJourney.appointmentIds = convertToNumberArray(req.body.appointmentIds)
     return res.redirect('../attendees')

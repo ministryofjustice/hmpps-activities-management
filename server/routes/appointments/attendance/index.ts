@@ -54,6 +54,7 @@ export default function Index({ activitiesService, prisonService, userService }:
       editAttendanceRoutes.POST,
       EditAttendance,
     )
+    get('/:journeyId/:appointmentId/select-appointment', summariesRoutes.SELECT_APPOINTMENT)
   } else {
     get('/select-date', selectDateRoutes.GET)
     post('/select-date', selectDateRoutes.POST, SelectDate)

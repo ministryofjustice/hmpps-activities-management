@@ -942,11 +942,9 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
   })
 
   describe('SELECT_APPOINTMENTS', () => {
-    beforeEach(() => {
+    it('redirects to attendees', async () => {
       req.session.recordAppointmentAttendanceJourney = {}
-    })
 
-    it('redirects to select date when date is invalid', async () => {
       req.body = {
         appointmentIds: ['1', '2'],
       }
@@ -955,6 +953,21 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
       expect(res.redirect).toHaveBeenCalledWith('../attendees')
       expect(req.session.recordAppointmentAttendanceJourney.appointmentIds).toEqual([1, 2])
+    })
+  })
+
+  describe('SELECT_APPOINTMENT', () => {
+    it('redirects to attendees', async () => {
+      req.session.recordAppointmentAttendanceJourney = null
+
+      req.params = {
+        appointmentId: '33',
+      }
+
+      await handler.SELECT_APPOINTMENT(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('../attendees')
+      expect(req.session.recordAppointmentAttendanceJourney.appointmentIds).toEqual([33])
     })
   })
 
