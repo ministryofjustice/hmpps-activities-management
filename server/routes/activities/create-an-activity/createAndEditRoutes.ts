@@ -39,7 +39,7 @@ import CustomTimesChangeDefaultOrCustomRoutes, {
   DefaultOrCustomOption,
 } from './handlers/customTimesChangeDefaultOrCustom'
 
-export default function Index({ activitiesService, prisonService }: Services): Router {
+export default function Index({ activitiesService, prisonService, locationsService }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(path, emptyJourneyHandler('createJourney', stepRequiresSession), asyncMiddleware(handler))
@@ -76,7 +76,7 @@ export default function Index({ activitiesService, prisonService }: Services): R
   const sessionTimesHandler = new SessionTimesRoutes(activitiesService)
   const customTimesChangeOptionHandler = new CustomTimesChangeOptionRoutes(activitiesService)
   const CustomTimesChangeDefaultOrCustomHandler = new CustomTimesChangeDefaultOrCustomRoutes(activitiesService)
-  const locationHandler = new LocationRoutes(activitiesService, prisonService)
+  const locationHandler = new LocationRoutes(activitiesService, locationsService)
   const capacityHandler = new CapacityRoutes(activitiesService)
   const confirmCapacityRouteHandler = new ConfirmCapacityRoutes(activitiesService)
 
