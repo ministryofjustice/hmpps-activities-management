@@ -1,7 +1,7 @@
 export default {
   activities: [
     {
-      path: '/waitlist-agg',
+      path: 'waitlist-agg',
       title: 'Waitlist Aggregate Report',
       definitionName: 'waitlist-list-001',
       variantName: 'waitlist-aggregate-001',
@@ -11,7 +11,7 @@ export default {
       category: 'waitlists',
     },
     {
-      path: '/purposeful-residential',
+      path: 'purposeful-residential',
       title: 'PA sessions residential',
       definitionName: 'pa-residential-001',
       variantName: 'pa-residential-week-001',
@@ -21,7 +21,7 @@ export default {
       category: 'purposeful-activity',
     },
     {
-      path: '/attendance-time',
+      path: 'attendance-time',
       title: 'Attendance vs time',
       definitionName: 'attendance-vs-time-001',
       variantName: 'attendance-vs-time-001',
@@ -31,7 +31,7 @@ export default {
       category: 'attendance',
     },
     {
-      path: '/month-kpi',
+      path: 'month-kpi',
       title: 'Monthly KPI dash',
       definitionName: 'kpi-monthly-dash-001',
       variantName: 'kpi-monthly-dash-001',
@@ -43,7 +43,7 @@ export default {
   ],
   appointments: [
     {
-      path: '/appointment-attendance-dates',
+      path: 'appointment-attendance-dates',
       title: 'Attendance between 2 dates',
       definitionName: 'test-list-001',
       variantName: 'test-attendance-two-dates-001',
