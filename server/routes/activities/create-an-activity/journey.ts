@@ -53,7 +53,7 @@ export type CreateAnActivityJourney = {
   onWing?: boolean
   offWing?: boolean
   location?: {
-    id: number
+    id: string
     name: string
   }
   currentCapacity?: number

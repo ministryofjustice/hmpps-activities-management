@@ -71,6 +71,7 @@ describe('initialiseEditJourney', () => {
       id: 14438,
       code: 'AWING',
       description: 'A-Wing',
+      dpsLocationId: '99999999-0000-aaaa-bbbb-cccccccccccc',
     },
     allocations: [allocation1, allocation2],
   } as ActivitySchedule
@@ -145,7 +146,7 @@ describe('initialiseEditJourney', () => {
       attendanceRequired: activity.attendanceRequired,
       educationLevels: activity.minimumEducationLevel,
       location: {
-        id: schedule.internalLocation.id,
+        id: schedule.internalLocation.dpsLocationId,
         name: schedule.internalLocation.description,
       },
       latestAllocationStartDate: allocation2.startDate,

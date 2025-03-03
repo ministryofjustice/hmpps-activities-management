@@ -41,7 +41,7 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
 
     if (schedule.internalLocation) {
       req.session.createJourney.location = {
-        id: schedule.internalLocation.id,
+        id: schedule.internalLocation.dpsLocationId,
         name: schedule.internalLocation.description,
       }
     }

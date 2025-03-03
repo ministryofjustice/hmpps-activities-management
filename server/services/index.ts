@@ -11,6 +11,7 @@ import BookAVideoLinkService from './bookAVideoLinkService'
 import NonAssociationsService from './nonAssociationsService'
 import LocationMappingService from './locationMappingService'
 import AlertsService from './alertsService'
+import LocationsService from './locationsService'
 
 export default function services() {
   const {
@@ -48,6 +49,7 @@ export default function services() {
     nonAssociationsService: new NonAssociationsService(nonAssociationsApiClient, prisonService),
     alertsService,
     locationMappingService: new LocationMappingService(locationsInsidePrisonApiClient, nomisMappingClient),
+    locationsService: new LocationsService(locationsInsidePrisonApiClient),
   }
 }
 

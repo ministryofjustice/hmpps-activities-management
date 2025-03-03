@@ -4,24 +4,41 @@ import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import LocationRoutes, { Location } from './location'
-import PrisonService from '../../../../services/prisonService'
-import eventLocations from '../../../../services/fixtures/event_locations_2.json'
-import eventLocationsFiltered from '../../../../services/fixtures/event_locations_filtered_2.json'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import LocationType from '../../../../enum/locationType'
+import LocationsService, { LocationWithDescription } from '../../../../services/locationsService'
 
-jest.mock('../../../../services/prisonService')
+jest.mock('../../../../services/locationsService')
 jest.mock('../../../../services/activitiesService')
 
-const prisonService = new PrisonService(null, null, null)
+const locationsService = new LocationsService(null)
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 describe('Route Handlers - Create an activity schedule - location', () => {
-  const handler = new LocationRoutes(activitiesService, prisonService)
+  const handler = new LocationRoutes(activitiesService, locationsService)
   let req: Request
   let res: Response
+
+  const aWing = {
+    id: '11111111-1111-1111-1111-111111111111',
+    prisonId: 'RSI',
+    code: 'AWING',
+    locationType: 'RESIDENTIAL_UNIT',
+    localName: 'A Wing',
+    description: 'A Wing',
+  }
+
+  const bWing = {
+    id: '22222222-2222-2222-2222-222222222222',
+    prisonId: 'RSI',
+    code: 'BWING',
+    locationType: 'RESIDENTIAL_UNIT',
+    description: 'BWING',
+  }
+
+  const locations: LocationWithDescription[] = [aWing, bWing] as LocationWithDescription[]
 
   beforeEach(() => {
     res = {
@@ -47,11 +64,11 @@ describe('Route Handlers - Create an activity schedule - location', () => {
 
   describe('GET', () => {
     it('should render the expected view', async () => {
-      when(prisonService.getEventLocations).mockResolvedValue(eventLocations)
+      when(locationsService.fetchActivityLocations).mockResolvedValue(locations)
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/location', {
-        locations: eventLocationsFiltered,
+        locations: [aWing, bWing],
       })
     })
   })
@@ -60,16 +77,16 @@ describe('Route Handlers - Create an activity schedule - location', () => {
     it('should save selected out of cell location in session and redirect to capacity page', async () => {
       req.body = {
         locationType: LocationType.OUT_OF_CELL,
-        location: 27019,
+        location: '22222222-2222-2222-2222-222222222222',
       }
 
-      when(prisonService.getEventLocations).mockResolvedValue(eventLocations)
+      when(locationsService.fetchActivityLocations).mockResolvedValue(locations)
 
       await handler.POST(req, res)
 
       expect(req.session.createJourney.location).toEqual({
-        id: 27019,
-        name: 'Workshop 9',
+        id: '22222222-2222-2222-2222-222222222222',
+        name: 'BWING',
       })
       expect(req.session.createJourney.inCell).toEqual(false)
 
@@ -81,7 +98,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
         locationType: LocationType.IN_CELL,
       }
 
-      when(prisonService.getEventLocations).mockResolvedValue(eventLocations)
+      when(locationsService.fetchActivityLocations).mockResolvedValue(locations)
 
       await handler.POST(req, res)
 
@@ -98,7 +115,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
         locationType: LocationType.ON_WING,
       }
 
-      when(prisonService.getEventLocations).mockResolvedValue(eventLocations)
+      when(locationsService.fetchActivityLocations).mockResolvedValue(locations)
 
       await handler.POST(req, res)
 
@@ -115,7 +132,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
         locationType: LocationType.OFF_WING,
       }
 
-      when(prisonService.getEventLocations).mockResolvedValue(eventLocations)
+      when(locationsService.fetchActivityLocations).mockResolvedValue(locations)
 
       await handler.POST(req, res)
 
@@ -177,18 +194,6 @@ describe('Route Handlers - Create an activity schedule - location', () => {
     it('validation fails if a out of cell location is selected and no value entered', async () => {
       const body = {
         locationType: LocationType.OUT_OF_CELL,
-      }
-
-      const requestObject = plainToInstance(Location, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual(expect.arrayContaining([{ property: 'location', error: 'Select a location' }]))
-    })
-
-    it('validation fails if a bad location value is entered', async () => {
-      const body = {
-        locationType: LocationType.OUT_OF_CELL,
-        location: 'bad',
       }
 
       const requestObject = plainToInstance(Location, body)

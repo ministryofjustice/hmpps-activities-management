@@ -79,7 +79,7 @@ export default class CheckAnswersRoutes {
       inCell: createJourney.inCell,
       onWing: createJourney.onWing,
       offWing: createJourney.offWing,
-      locationId: createJourney.location?.id,
+      dpsLocationId: createJourney.location?.id,
       capacity: createJourney.capacity,
       scheduleWeeks: createJourney.scheduleWeeks,
       slots,
