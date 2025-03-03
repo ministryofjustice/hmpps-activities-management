@@ -1,10 +1,10 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import ReportListUtils from '@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/components/report-list/utils'
 import config from '../../../config'
 import reports from '../reportLists/reports'
 
 export default class ReportRoutes {
-  GET = async (req: Request, res: Response): Promise<void> => {
+  GET = (req: Request, res: Response, next: NextFunction) => {
     const { reportPath } = req.params
     const allReports = [...reports.activities, ...reports.appointments]
 
@@ -19,6 +19,6 @@ export default class ReportRoutes {
       layoutTemplate: 'layout.njk',
       tokenProvider: (request, response, next) => response.locals.user.token,
       definitionsPath: 'definitions/prisons/dps/activities',
-    })
+    })(req, res, next)
   }
 }
