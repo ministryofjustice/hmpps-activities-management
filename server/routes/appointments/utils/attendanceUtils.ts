@@ -141,7 +141,7 @@ export const getSpecificAppointmentCount = (appointments: AppointmentAttendeeByS
 export const enhanceAppointment = (appointment: AppointmentAttendeeByStatus, prisoner: Prisoner) => {
   return {
     ...appointment,
-    appointmentHref: `/appointments/${appointment.appointmentId}/attendance`,
+    appointmentHref: `/appointments/attendance/${appointment.appointmentId}/select-appointment`,
     time: appointment.endTime
       ? `${simplifyTime(appointment.startTime)} to ${simplifyTime(appointment.endTime)}`
       : simplifyTime(appointment.startTime),
