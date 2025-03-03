@@ -9,9 +9,11 @@ export default class LocationsService {
     return this.locationInsidePrisonApiClient
       .fetchLocationsByNonResidentialUsageType(prisonCode, 'PROGRAMMES_ACTIVITIES', user)
       .then(locations => {
-        return locations.map(location => {
-          return { ...location, description: location.localName || location.code }
-        })
+        return locations
+          .map(location => {
+            return { ...location, description: location.localName || location.code }
+          })
+          .sort((a, b) => a.description.localeCompare(b.description))
       })
   }
 }
