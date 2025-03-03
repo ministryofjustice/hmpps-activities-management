@@ -20,6 +20,26 @@ export default {
       roleRequired: true,
       category: 'purposeful-activity',
     },
+    {
+      path: '/attendance-time',
+      title: 'Attendance vs time',
+      definitionName: 'attendance-vs-time-001',
+      variantName: 'attendance-vs-time-001',
+      displayTitle: 'Activity attendance across time',
+      displayDescription: 'Some description of the report',
+      roleRequired: true,
+      category: 'attendance',
+    },
+    {
+      path: '/month-kpi',
+      title: 'Monthly KPI dash',
+      definitionName: 'kpi-monthly-dash-001',
+      variantName: 'kpi-monthly-dash-001',
+      displayTitle: 'Month vs Month KPI dashboard',
+      displayDescription: 'Some description of the report',
+      roleRequired: true,
+      category: 'kpi',
+    },
   ],
   appointments: [
     {

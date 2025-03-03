@@ -6,13 +6,31 @@
 
 {% set waitlistReports = reports | filter('category', 'waitlists') %}
 {% set paReports = reports | filter('category', 'purposeful-activity') %}
+{% set attendanceReports = reports | filter('category', 'attendance') %}
+{% set kpiReports = reports | filter('category', 'kpi') %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
             <span class="govuk-caption-l">Reports</span>
             <h1 class="govuk-heading-l">{{ pageTitle }}</h1>
-            {% if waitlistReports.length %}
+            
+            {% if attendanceReports.length %}
+            <section>
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-3">Attendance</h2>
+                {% for report in attendanceReports %}
+                    {% if not report.roleRequired or 'ROLE_ACTIVITY_HUB' in user.roles %}
+                        <p class="govuk-body govuk-!-margin-bottom-1">
+                            <a href="/dpr-reporting{{ report.path }}">{{ report.displayTitle }}</a>
+                        </p>
+                        <p class="govuk-body">{{ report.displayDescription }}</p>
+                        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                    {% endif %}
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            {% if paReports.length %}
             <section>
                 <h2 class="govuk-heading-m govuk-!-margin-bottom-3">Purposeful activity</h2>
                 {% for report in paReports %}
@@ -25,9 +43,27 @@
                     {% endif %}
                 {% endfor %}
             </section>
+            {% endif %}
+
+            {% if waitlistReports.length %}
             <section>
                 <h2 class="govuk-heading-m govuk-!-margin-bottom-3">Waitlists</h2>
                 {% for report in waitlistReports %}
+                    {% if not report.roleRequired or 'ROLE_ACTIVITY_HUB' in user.roles %}
+                        <p class="govuk-body govuk-!-margin-bottom-1">
+                            <a href="/dpr-reporting{{ report.path }}">{{ report.displayTitle }}</a>
+                        </p>
+                        <p class="govuk-body">{{ report.displayDescription }}</p>
+                        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                    {% endif %}
+                {% endfor %}
+            </section>
+            {% endif %}
+
+            {% if kpiReports.length %}
+            <section>
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-3">KPI dashboard</h2>
+                {% for report in kpiReports %}
                     {% if not report.roleRequired or 'ROLE_ACTIVITY_HUB' in user.roles %}
                         <p class="govuk-body govuk-!-margin-bottom-1">
                             <a href="/dpr-reporting{{ report.path }}">{{ report.displayTitle }}</a>
