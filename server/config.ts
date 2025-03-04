@@ -235,8 +235,8 @@ export default {
   videoConferenceScheduleFeatureToggleEnabled: toBoolean(
     get('VIDEO_CONFERENCE_SCHEDULE_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
   ),
-  deallocationAfterAllocationToggleEnabled: toBoolean(
-    get('DEALLOCATION_AFTER_ALLOCATION_FEATURE_TOGGLE_ENABLED', 'false'),
+  appointmentMultipleAttendanceToggleEnabled: toBoolean(
+    get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),
   ),
   inServiceReportingEnabled: toBoolean(get('IN_SERVICE_REPORTING_ENABLED', 'false')),
   appointmentsConfig: {

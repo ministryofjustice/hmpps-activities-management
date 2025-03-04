@@ -11,6 +11,7 @@ import BookAVideoLinkService from './bookAVideoLinkService'
 import NonAssociationsService from './nonAssociationsService'
 import LocationMappingService from './locationMappingService'
 import AlertsService from './alertsService'
+import LocationsService from './locationsService'
 
 jest.mock('applicationinsights')
 
@@ -18,7 +19,7 @@ describe('Services', () => {
   test('The correct services are instantiated', () => {
     const servicesList = services()
 
-    expect(Object.values(servicesList).length).toBe(13)
+    expect(Object.values(servicesList).length).toBe(14)
     expect(servicesList.userService).toBeInstanceOf(UserService)
     expect(servicesList.prisonService).toBeInstanceOf(PrisonService)
     expect(servicesList.ukBankHolidayService).toBeInstanceOf(BankHolidayService)
@@ -31,6 +32,7 @@ describe('Services', () => {
     expect(servicesList.nonAssociationsService).toBeInstanceOf(NonAssociationsService)
     expect(servicesList.alertsService).toBeInstanceOf(AlertsService)
     expect(servicesList.locationMappingService).toBeInstanceOf(LocationMappingService)
+    expect(servicesList.locationsService).toBeInstanceOf(LocationsService)
     expect(servicesList.applicationInfo.applicationName).toBe('hmpps-activities-management')
   })
 })

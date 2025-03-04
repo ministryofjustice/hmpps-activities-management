@@ -77,7 +77,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
             },
           },
           location: {
-            id: 26149,
+            id: '99999999-0000-aaaa-bbbb-cccccccccccc',
             name: 'Gym',
           },
           capacity: 12,
@@ -321,7 +321,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         description: 'Maths level 1',
         startDate: '2023-01-17',
         endDate: '2023-01-18',
-        locationId: 26149,
+        dpsLocationId: '99999999-0000-aaaa-bbbb-cccccccccccc',
         capacity: 12,
         scheduleWeeks: 1,
         slots: [
@@ -390,7 +390,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
               },
             ],
             location: {
-              id: 26149,
+              id: '99999999-0000-aaaa-bbbb-cccccccccccc',
               name: 'Gym',
             },
             capacity: 12,
@@ -411,7 +411,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         description: 'Maths level 1',
         startDate: '2023-01-17',
         endDate: '2023-01-18',
-        locationId: 26149,
+        dpsLocationId: '99999999-0000-aaaa-bbbb-cccccccccccc',
         capacity: 12,
         scheduleWeeks: 1,
         slots: [
@@ -468,7 +468,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         description: 'Maths level 1',
         startDate: '2023-01-17',
         endDate: '2023-01-18',
-        locationId: 26149,
+        dpsLocationId: '99999999-0000-aaaa-bbbb-cccccccccccc',
         capacity: 12,
         scheduleWeeks: 1,
         slots: [
@@ -506,7 +506,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         description: 'Maths level 1',
         startDate: '2023-01-17',
         endDate: '2023-01-18',
-        locationId: 26149,
+        dpsLocationId: '99999999-0000-aaaa-bbbb-cccccccccccc',
         capacity: 12,
         scheduleWeeks: 1,
         slots: [

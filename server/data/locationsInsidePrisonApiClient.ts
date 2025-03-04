@@ -15,4 +15,15 @@ export default class LocationsInsidePrisonApiClient extends AbstractHmppsRestCli
   public fetchLocationByKey(key: string, user: ServiceUser): Promise<Location> {
     return this.get({ path: `/locations/key/${key}` }, user)
   }
+
+  public fetchLocationsByNonResidentialUsageType(
+    prisonCode: string,
+    usageType: string,
+    user: ServiceUser,
+  ): Promise<Location[]> {
+    return this.get(
+      { path: `/locations/prison/${prisonCode}/non-residential-usage-type/${usageType}?formatLocalName=true` },
+      user,
+    )
+  }
 }

@@ -12,7 +12,7 @@ import moorlandIncentiveLevels from '../../fixtures/incentivesApi/getMdiPrisonIn
 import studyAreas from '../../fixtures/prisonApi/studyAreas.json'
 import CheckAnswersPage from '../../pages/createActivity/checkAnswers'
 import ConfirmationPage from '../../pages/createActivity/confirmation'
-import getEventLocations from '../../fixtures/prisonApi/getEventLocations.json'
+import getNonResidentialActivityLocations from '../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 import getPayProfile from '../../fixtures/prisonApi/getPayProfile.json'
 import getPrisonRegime from '../../fixtures/activitiesApi/getPrisonRegime.json'
 import StartDatePage from '../../pages/createSchedule/startDate'
@@ -41,7 +41,11 @@ context('Create activity', () => {
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/STUDY_AREA/codes', studyAreas)
-    cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/non-residential-usage-type/PROGRAMMES_ACTIVITIES\\?formatLocalName=true',
+      getNonResidentialActivityLocations,
+    )
     cy.stubEndpoint('GET', '/api/agencies/MDI/pay-profile', getPayProfile)
     cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
   })
