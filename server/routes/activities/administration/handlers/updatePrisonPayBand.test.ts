@@ -87,7 +87,7 @@ describe('Route Handlers - Update a prison pay band', () => {
   })
 
   describe('POST', () => {
-    it('should create a pay band successfully', async () => {
+    it('should update a pay band successfully', async () => {
       req.params.prisonPayBandId = '1'
 
       req.body = {
