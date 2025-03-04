@@ -13,13 +13,6 @@ export class UpdatePrisonPayBand {
   displaySequence: number
 
   @Expose()
-  @Type(() => Number)
-  @IsNumber({}, { message: 'Nomis pay band must be a number' })
-  @IsInt({ message: 'Nomis pay band must be a number' })
-  @Min(1, { message: 'Nomis pay band must be a positive number' })
-  nomisPayBand: number
-
-  @Expose()
   @IsNotEmpty({ message: 'Add a description' })
   description: string
 
@@ -46,11 +39,10 @@ export default class UpdatePrisonPayBandRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { prisonPayBandId } = req.params
-    const { description, alias, nomisPayBand, displaySequence } = req.body
+    const { description, alias, displaySequence } = req.body
 
     const request: PrisonPayBandUpdateRequest = {
       description,
-      nomisPayBand: +nomisPayBand,
       displaySequence: +displaySequence,
       alias,
     }

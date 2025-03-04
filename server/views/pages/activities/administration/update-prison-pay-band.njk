@@ -35,9 +35,9 @@
                         text: "Nomis Pay Band",
                         classes: "govuk-label--s"
                     },
+                    disabled: true,
                     classes: "govuk-input--width-2",
-                    errorMessage: validationErrors | findError('nomisPayBand'),
-                    value: formResponses.nomisPayBand or prisonPayBand.nomisPayBand
+                    value: prisonPayBand.nomisPayBand
                 }) }}
 
                 {{ govukInput({
