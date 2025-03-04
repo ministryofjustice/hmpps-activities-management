@@ -1,6 +1,4 @@
 import { RequestHandler, Router } from 'express'
-// import ReportListUtils from '@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/components/report-list/utils'
-// import config from '../../config'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import ActivitiesReportingHomeRoutes from './handlers/activitiesHome'
 import AppointmentsReportingHomeRoutes from './handlers/appointmentsHome'
