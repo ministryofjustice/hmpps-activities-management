@@ -569,6 +569,7 @@ export interface paths {
      * Migrate an appointment from NOMIS
      * @description
      *         Migrate an appointment creating an appointment series with one appointment that has the supplied prisoner allocated.
+     *         Will return null if appointment was dropped.
      *
      *
      *     Requires one of the following roles:
@@ -754,6 +755,26 @@ export interface paths {
      * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
      */
     post: operations['triggerActivityMetricsJob']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/job/activities-fix-locations': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Trigger the job fix zero pay activities
+     * @description Can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
+    post: operations['triggerActivitiesLocationsJob']
     delete?: never
     options?: never
     head?: never
@@ -2946,12 +2967,12 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
+      unpaged?: boolean
       /** Format: int32 */
       pageSize?: number
       paged?: boolean
       /** Format: int32 */
       pageNumber?: number
-      unpaged?: boolean
     }
     PagedWaitingListApplication: {
       /** Format: int32 */
@@ -3760,6 +3781,12 @@ export interface components {
        * @example Education - R1
        */
       description: string
+      /**
+       * Format: uuid
+       * @description The optional DPS location UUID for this schedule
+       * @example b7602cc8-e769-4cbb-8194-62d8e655992a
+       */
+      dpsLocationId?: string
     }
     /** @description Describes a prisons scheduled events */
     PrisonerScheduledEvents: {
@@ -4512,6 +4539,12 @@ export interface components {
        * @example PVI-1-2-A011
        */
       internalLocationDescription?: string
+      /**
+       * Format: uuid
+       * @description The optional DPS location UUID
+       * @example b7602cc8-e769-4cbb-8194-62d8e655992a
+       */
+      dpsLocationId?: string
       /**
        * Format: int32
        * @description The maximum number of prisoners who can attend. Not null.
@@ -6133,6 +6166,12 @@ export interface components {
        */
       locationId?: number
       /**
+       * Format: uuid
+       * @description The optional DPS location UUID for this schedule
+       * @example b7602cc8-e769-4cbb-8194-62d8e655992a
+       */
+      dpsLocationId?: string
+      /**
        * Format: int32
        * @description The maximum number of prisoners allowed for a scheduled instance of this schedule
        * @example 10
@@ -6807,6 +6846,12 @@ export interface components {
        * @example 98877667
        */
       locationId?: number
+      /**
+       * Format: uuid
+       * @description The optional DPS location UUID for this schedule
+       * @example b7602cc8-e769-4cbb-8194-62d8e655992a
+       */
+      dpsLocationId?: string
       /**
        * @description Flag to indicate if the location of the activity is in cell
        * @example false
@@ -7549,22 +7594,10 @@ export interface components {
        */
       activitiesRolledOut: boolean
       /**
-       * Format: date
-       * @description The date activities rolled out. Can be null if the prison is not yet scheduled for rollout.
-       * @example 2022-09-30
-       */
-      activitiesRolloutDate?: string
-      /**
        * @description Flag to indicate if appointments are enabled
        * @example true
        */
       appointmentsRolledOut: boolean
-      /**
-       * Format: date
-       * @description The date appointments rolled out. Can be null if the prison is not yet scheduled for rollout.
-       * @example 2022-09-30
-       */
-      appointmentsRolloutDate?: string
       /**
        * Format: int32
        * @description max days to expire events based on prisoner movement, default is 21
@@ -9799,6 +9832,26 @@ export interface operations {
       }
     }
   }
+  triggerActivitiesLocationsJob: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Accepted */
+      202: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'text/plain': string
+        }
+      }
+    }
+  }
   acknowledgeEvents: {
     parameters: {
       query?: never
@@ -11341,7 +11394,10 @@ export interface operations {
   }
   getRolledOutPrisons: {
     parameters: {
-      query?: never
+      query?: {
+        /** @description Restrict the list of rolled out prisons to prisons live to users */
+        prisonsLive?: boolean
+      }
       header?: never
       path?: never
       cookie?: never

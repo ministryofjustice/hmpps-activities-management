@@ -1,11 +1,10 @@
 import { Request, Response } from 'express'
-import _ from 'lodash'
-import { Expose, Transform, Type } from 'class-transformer'
-import { IsEnum, IsNotEmpty, IsNumber, ValidateIf } from 'class-validator'
-import PrisonService from '../../../../services/prisonService'
+import { Expose, Transform } from 'class-transformer'
+import { IsEnum, IsNotEmpty, ValidateIf } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import LocationType from '../../../../enum/locationType'
+import LocationsService from '../../../../services/locationsService'
 
 export class Location {
   @Expose()
@@ -15,25 +14,22 @@ export class Location {
 
   @Expose()
   @ValidateIf(l => l.locationType === LocationType.OUT_OF_CELL)
-  @Type(() => Number)
   @IsNotEmpty({ message: 'Select a location' })
-  @IsNumber({ allowNaN: false }, { message: 'Select a location' })
-  location: number
+  location: string
 }
 
 export default class LocationRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
-    private readonly prisonService: PrisonService,
+    private readonly locationsService: LocationsService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
-    const uniqueLocations = _.uniqBy(locations, 'locationId')
+    const locations = await this.locationsService.fetchActivityLocations(user.activeCaseLoadId, user)
 
     res.render('pages/activities/create-an-activity/location', {
-      locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
+      locations,
     })
   }
 
@@ -42,13 +38,13 @@ export default class LocationRoutes {
     const { location, locationType } = req.body
 
     if (locationType === LocationType.OUT_OF_CELL) {
-      const locationResult = await this.prisonService
-        .getEventLocations(user.activeCaseLoadId, user)
-        .then(locations => locations.find(l => l.locationId === location))
+      const locationResult = await this.locationsService
+        .fetchActivityLocations(user.activeCaseLoadId, user)
+        .then(locations => locations.find(l => l.id === location))
 
       req.session.createJourney.location = {
-        id: locationResult.locationId,
-        name: locationResult.userDescription,
+        id: locationResult.id,
+        name: locationResult.description,
       }
     } else {
       req.session.createJourney.location = null
@@ -63,7 +59,7 @@ export default class LocationRoutes {
         inCell: req.session.createJourney.inCell,
         onWing: req.session.createJourney.onWing,
         offWing: req.session.createJourney.offWing,
-        locationId: req.session.createJourney.location?.id,
+        dpsLocationId: req.session.createJourney.location?.id,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)
       const successMessage = `You've updated the location for ${req.session.createJourney.name}`

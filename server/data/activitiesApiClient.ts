@@ -708,6 +708,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  // TODO: 2388: Replace location IDs with DPS Locations UUIDs
   async getInternalLocationEvents(
     prisonCode: string,
     date: string,

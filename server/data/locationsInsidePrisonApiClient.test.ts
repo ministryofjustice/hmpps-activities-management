@@ -56,4 +56,24 @@ describe('locationsInsidePrisonApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('get location by non-residential usage type', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+
+      fakeLocationsInsidePrisonApi
+        .get('/locations/prison/RSI/non-residential-usage-type/PROGRAMMES_ACTIVITIES?formatLocalName=true')
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200, response)
+
+      const output = await locationsInsidePrisonApiClient.fetchLocationsByNonResidentialUsageType(
+        'RSI',
+        'PROGRAMMES_ACTIVITIES',
+        user,
+      )
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

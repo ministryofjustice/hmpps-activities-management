@@ -1,0 +1,4472 @@
+[
+  {
+    "id": "f38bf2f9-9608-4593-b446-001c4f46dfec",
+    "prisonId": "MDI",
+    "code": "HCARE",
+    "pathHierarchy": "HCARE-HCARE",
+    "locationType": "MEDICAL",
+    "localName": "HEALTH CARE",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "16773772-23b1-4624-8fbb-779cf0b965c2",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "16773772-23b1-4624-8fbb-779cf0b965c2",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:12:11",
+    "key": "MDI-HCARE-HCARE",
+    "isResidential": false
+  },
+  {
+    "id": "6ff02faa-6923-4013-8bc6-04e542d9557f",
+    "prisonId": "MDI",
+    "code": "MSTOR",
+    "pathHierarchy": "WORK_IND-MSTOR",
+    "locationType": "STORE",
+    "localName": "MAIN/STORES",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 2,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 2,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 2,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 2,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:23",
+    "key": "MDI-WORK_IND-MSTOR",
+    "isResidential": false
+  },
+  {
+    "id": "9f835354-77ba-4ddd-a213-6fdb61c07659",
+    "prisonId": "MDI",
+    "code": "WS7",
+    "pathHierarchy": "WORK_IND-WS7-WS7",
+    "locationType": "WORKSHOP",
+    "localName": "WORKSHOP 7",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "163d8c56-0362-4815-b640-dc857efaf35b",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:25",
+    "key": "MDI-WORK_IND-WS7-WS7",
+    "isResidential": false
+  },
+  {
+    "id": "9face50b-ffe7-4671-84ea-64dd9e2ac6ac",
+    "prisonId": "MDI",
+    "code": "SAFERCUST",
+    "pathHierarchy": "OTHER-SAFERCUST",
+    "locationType": "AREA",
+    "localName": "SAFER CUSTODY",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "d6b82e11-593a-4da7-be70-e0c348cf7fd0",
+    "level": 2,
+    "leafLevel": false,
+    "parentId": "d6b82e11-593a-4da7-be70-e0c348cf7fd0",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2019-07-12T22:09:57",
+    "key": "MDI-OTHER-SAFERCUST",
+    "isResidential": false
+  },
+  {
+    "id": "8f9597fb-cf29-4a4b-9605-fef9ef6411d7",
+    "prisonId": "MDI",
+    "code": "EDUC",
+    "pathHierarchy": "EDUC-EDUC",
+    "locationType": "AREA",
+    "localName": "RES 2 EDUCATION",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 122,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 122,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 122,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 122,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "d0b0f3c7-29fa-415a-b21a-b157913cb1b7",
+    "level": 2,
+    "leafLevel": false,
+    "parentId": "d0b0f3c7-29fa-415a-b21a-b157913cb1b7",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:12:10",
+    "key": "MDI-EDUC-EDUC",
+    "isResidential": false
+  },
+  {
+    "id": "3952c7a7-bcb2-463b-bc40-3f2506be9bbd",
+    "prisonId": "MDI",
+    "code": "EXER",
+    "pathHierarchy": "HCARE-EXER",
+    "locationType": "ROOM",
+    "localName": "HCC EXERCISE",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "16773772-23b1-4624-8fbb-779cf0b965c2",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "16773772-23b1-4624-8fbb-779cf0b965c2",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:12:11",
+    "key": "MDI-HCARE-EXER",
+    "isResidential": false
+  },
+  {
+    "id": "edccfcc5-c373-47e5-aa7e-51737ae0ffb0",
+    "prisonId": "MDI",
+    "code": "CARAT2",
+    "pathHierarchy": "PROG_ACT-CARAT2",
+    "locationType": "AREA",
+    "localName": "CARAT GROUP ROOM 2",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "d77440af-e499-40f4-ac3b-511df5e01e49",
+    "level": 2,
+    "leafLevel": false,
+    "parentId": "d77440af-e499-40f4-ac3b-511df5e01e49",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:12:12",
+    "key": "MDI-PROG_ACT-CARAT2",
+    "isResidential": false
+  },
+  {
+    "id": "68e8dbc9-71fc-44f5-9bd0-73f492634e93",
+    "prisonId": "MDI",
+    "code": "CHAP",
+    "pathHierarchy": "PROG_ACT-CHAP",
+    "locationType": "LOCATION",
+    "localName": "CHAPEL",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 80,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 80,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 80,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 80,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "d77440af-e499-40f4-ac3b-511df5e01e49",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "d77440af-e499-40f4-ac3b-511df5e01e49",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:12:12",
+    "key": "MDI-PROG_ACT-CHAP",
+    "isResidential": false
+  },
+  {
+    "id": "d1fd32ef-6b65-4d35-9f1f-601cae2102f1",
+    "prisonId": "MDI",
+    "code": "CARAT1",
+    "pathHierarchy": "PROG_ACT-CARAT1",
+    "locationType": "LOCATION",
+    "localName": "CARAT GROUP ROOM 1",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "d77440af-e499-40f4-ac3b-511df5e01e49",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "d77440af-e499-40f4-ac3b-511df5e01e49",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:12:12",
+    "key": "MDI-PROG_ACT-CARAT1",
+    "isResidential": false
+  },
+  {
+    "id": "6efc68aa-0f88-474d-b533-e7ce0339af30",
+    "prisonId": "MDI",
+    "code": "LIBR",
+    "pathHierarchy": "PROG_ACT-LIBR",
+    "locationType": "LOCATION",
+    "localName": "LIBRARY",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 17,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 17,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 17,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 17,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "d77440af-e499-40f4-ac3b-511df5e01e49",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "d77440af-e499-40f4-ac3b-511df5e01e49",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:12:12",
+    "key": "MDI-PROG_ACT-LIBR",
+    "isResidential": false
+  },
+  {
+    "id": "fc528303-44cc-4f01-a07b-63c97d54a5a6",
+    "prisonId": "MDI",
+    "code": "MAIN",
+    "pathHierarchy": "EDUC-MAIN",
+    "locationType": "AREA",
+    "localName": "RES 1 EDUCATION",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 165,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 165,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 165,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 165,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "d0b0f3c7-29fa-415a-b21a-b157913cb1b7",
+    "level": 2,
+    "leafLevel": false,
+    "parentId": "d0b0f3c7-29fa-415a-b21a-b157913cb1b7",
+    "lastModifiedBy": "DBULL_ADM",
+    "lastModifiedDate": "2009-07-10T13:12:10",
+    "key": "MDI-EDUC-MAIN",
+    "isResidential": false
+  },
+  {
+    "id": "845bb4b5-0dd9-40a4-bd0f-2e8d973522f4",
+    "prisonId": "MDI",
+    "code": "GYM",
+    "pathHierarchy": "PROG_ACT-GYM",
+    "locationType": "SPORTS",
+    "localName": "GYM",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 75,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 75,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 75,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 75,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "d77440af-e499-40f4-ac3b-511df5e01e49",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "d77440af-e499-40f4-ac3b-511df5e01e49",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:12:11",
+    "key": "MDI-PROG_ACT-GYM",
+    "isResidential": false
+  },
+  {
+    "id": "a9f6d9f2-5230-4054-b470-7ee871b76076",
+    "prisonId": "MDI",
+    "code": "KITCH",
+    "pathHierarchy": "WORK_IND-KITCH",
+    "locationType": "STORE",
+    "localName": "KITCHEN - CLOSED UNTIL 30.7.2019",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 30,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 30,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 30,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 30,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "DBULL_ADM",
+    "lastModifiedDate": "2009-07-10T13:14:23",
+    "key": "MDI-WORK_IND-KITCH",
+    "isResidential": false
+  },
+  {
+    "id": "2f5865fa-d761-46e1-b61f-101dedea7e95",
+    "prisonId": "MDI",
+    "code": "WS9",
+    "pathHierarchy": "WORK_IND-WS9",
+    "locationType": "TRAINING_AREA",
+    "localName": "WORKSHOP 9 - DOM TEST",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 33,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 33,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 33,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 33,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "DBULL_ADM",
+    "lastModifiedDate": "2009-07-10T13:14:25",
+    "key": "MDI-WORK_IND-WS9",
+    "isResidential": false
+  },
+  {
+    "id": "8a3e0c96-65db-4a61-87b7-1bc6c1bdb23b",
+    "prisonId": "MDI",
+    "code": "WS12",
+    "pathHierarchy": "WORK_IND-WS12",
+    "locationType": "TRAINING_AREA",
+    "localName": "WORKSHOP 12 - FURNITURE REPAIR",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 13,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:26",
+    "key": "MDI-WORK_IND-WS12",
+    "isResidential": false
+  },
+  {
+    "id": "7cc70710-838b-4375-bb61-a23f8a8d70d6",
+    "prisonId": "MDI",
+    "code": "WS3",
+    "pathHierarchy": "WORK_IND-WS3",
+    "locationType": "STORE",
+    "localName": "WORKSHOP 3 - PLASTICS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 5,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 5,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 5,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 5,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:24",
+    "key": "MDI-WORK_IND-WS3",
+    "isResidential": false
+  },
+  {
+    "id": "53681a45-a139-4a5b-8e5e-7a35ec1b04b5",
+    "prisonId": "MDI",
+    "code": "WS11",
+    "pathHierarchy": "WORK_IND-WS11",
+    "locationType": "TRAINING_AREA",
+    "localName": "WORKSHOP 11 -",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 20,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 20,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 20,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 20,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:26",
+    "key": "MDI-WORK_IND-WS11",
+    "isResidential": false
+  },
+  {
+    "id": "c1700ca5-c3ee-4ce5-8b11-cb2830a3dc97",
+    "prisonId": "MDI",
+    "code": "WS13",
+    "pathHierarchy": "WORK_IND-WS13",
+    "locationType": "WORKSHOP",
+    "localName": "WORKSHOP 13 - WASTE MANAGEMENT",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 13,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:26",
+    "key": "MDI-WORK_IND-WS13",
+    "isResidential": false
+  },
+  {
+    "id": "2bd2cddb-3337-496d-974c-347f9876599d",
+    "prisonId": "MDI",
+    "code": "WS16",
+    "pathHierarchy": "WORK_IND-WS16",
+    "locationType": "TRAINING_AREA",
+    "localName": "WORKSHOP 16 - JOINERY",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 13,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:26",
+    "key": "MDI-WORK_IND-WS16",
+    "isResidential": false
+  },
+  {
+    "id": "11d5c97c-7d26-4c3c-850f-be99e5b82465",
+    "prisonId": "MDI",
+    "code": "HB2",
+    "pathHierarchy": "RES-HB2-HB2",
+    "locationType": "WING",
+    "localName": "HOUSEBLOCK 2",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 170,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "a3ed80b5-ee63-4c48-af89-45527c72e9a3",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:18",
+    "key": "MDI-RES-HB2-HB2",
+    "isResidential": false
+  },
+  {
+    "id": "53dc2b4d-4832-4c4d-bba3-749b9e028f21",
+    "prisonId": "MDI",
+    "code": "BASKETBALL",
+    "pathHierarchy": "GYM-BASKETBALL",
+    "locationType": "SPORTS",
+    "localName": "BASKETBALLY",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "DBULL_ADM",
+    "lastModifiedDate": "2009-07-14T16:07:18",
+    "key": "MDI-GYM-BASKETBALL",
+    "isResidential": false
+  },
+  {
+    "id": "30dd1598-f5f1-4ef1-842b-5da9b3c8a397",
+    "prisonId": "MDI",
+    "code": "HB1EX",
+    "pathHierarchy": "RES-HB1-HB1EX",
+    "locationType": "ROOM",
+    "localName": "HB1 EXERCISE",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 170,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "73e3601c-3711-4728-8b6b-032f5ab61bb0",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:16",
+    "key": "MDI-RES-HB1-HB1EX",
+    "isResidential": false
+  },
+  {
+    "id": "44e1e722-e998-46fd-9bdb-ad5b13987095",
+    "prisonId": "MDI",
+    "code": "5-A-SIDE COM",
+    "pathHierarchy": "GYM-5-A-SIDE COM",
+    "locationType": "SPORTS",
+    "localName": "GYM ORDERLY",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-14T16:29:38",
+    "key": "MDI-GYM-5-A-SIDE COM",
+    "isResidential": false
+  },
+  {
+    "id": "f67e5a28-818a-4fdf-9a22-f557caf8390a",
+    "prisonId": "MDI",
+    "code": "HB1",
+    "pathHierarchy": "RES-HB1-HB1",
+    "locationType": "WING",
+    "localName": "HOUSEBLOCK 1",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 170,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "73e3601c-3711-4728-8b6b-032f5ab61bb0",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:17",
+    "key": "MDI-RES-HB1-HB1",
+    "isResidential": false
+  },
+  {
+    "id": "62179052-ef33-4d02-bae1-0fc04ad963dc",
+    "prisonId": "MDI",
+    "code": "FOOTBALL SQU",
+    "pathHierarchy": "GYM-FOOTBALL SQU",
+    "locationType": "SPORTS",
+    "localName": "FOOTBALL SQU",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:18",
+    "key": "MDI-GYM-FOOTBALL SQU",
+    "isResidential": false
+  },
+  {
+    "id": "df5e8e80-e765-4672-a6ce-43665a963356",
+    "prisonId": "MDI",
+    "code": "SOFT TENNIS",
+    "pathHierarchy": "GYM-SOFT TENNIS",
+    "locationType": "SPORTS",
+    "localName": "SOFT TENNIS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:17",
+    "key": "MDI-GYM-SOFT TENNIS",
+    "isResidential": false
+  },
+  {
+    "id": "ea209d3c-7509-40c9-bb5d-2b816a899434",
+    "prisonId": "MDI",
+    "code": "HB2EX",
+    "pathHierarchy": "RES-HB2-HB2EX",
+    "locationType": "ROOM",
+    "localName": "HB2 EXERCISE",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 170,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "a3ed80b5-ee63-4c48-af89-45527c72e9a3",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:17",
+    "key": "MDI-RES-HB2-HB2EX",
+    "isResidential": false
+  },
+  {
+    "id": "13ec1d86-a1ea-4cc9-afc1-d5175bebb61f",
+    "prisonId": "MDI",
+    "code": "OVER 35 CIR",
+    "pathHierarchy": "GYM-OVER 35 CIR",
+    "locationType": "SPORTS",
+    "localName": "OVER 35 CIRCUIT",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:29:38",
+    "key": "MDI-GYM-OVER 35 CIR",
+    "isResidential": false
+  },
+  {
+    "id": "6aef4138-98ef-42d9-9c5f-5cf14cba68b5",
+    "prisonId": "MDI",
+    "code": "HB1CL1",
+    "pathHierarchy": "RES-HB1-HB1CL1",
+    "locationType": "RESIDENTIAL_UNIT",
+    "localName": "HB1 CLASSROOM 1",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "73e3601c-3711-4728-8b6b-032f5ab61bb0",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:16",
+    "key": "MDI-RES-HB1-HB1CL1",
+    "isResidential": false
+  },
+  {
+    "id": "9d83d80e-8ecc-4ac2-9623-ed0ebae15d96",
+    "prisonId": "MDI",
+    "code": "FIT BALL",
+    "pathHierarchy": "GYM-FIT BALL",
+    "locationType": "SPORTS",
+    "localName": "FIT BALL",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:17",
+    "key": "MDI-GYM-FIT BALL",
+    "isResidential": false
+  },
+  {
+    "id": "fd716d56-a0eb-4fc1-9e88-fa31997216f9",
+    "prisonId": "MDI",
+    "code": "HB5BEX",
+    "pathHierarchy": "RES-HB5-HB5BEX",
+    "locationType": "RESIDENTIAL_UNIT",
+    "localName": "HB5B EXERCISE",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 60,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 60,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 60,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 60,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "6e921510-de07-4311-acca-098056334f96",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:20",
+    "key": "MDI-RES-HB5-HB5BEX",
+    "isResidential": false
+  },
+  {
+    "id": "244a17a1-6eb4-45b6-918a-4a35dbd09738",
+    "prisonId": "MDI",
+    "code": "TAG RUGBY",
+    "pathHierarchy": "GYM-TAG RUGBY",
+    "locationType": "SPORTS",
+    "localName": "TAG RUGBY",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:16",
+    "key": "MDI-GYM-TAG RUGBY",
+    "isResidential": false
+  },
+  {
+    "id": "7cbfb319-2405-4480-a66f-f5ab4012348d",
+    "prisonId": "MDI",
+    "code": "RUNNING",
+    "pathHierarchy": "GYM-RUNNING",
+    "locationType": "SPORTS",
+    "localName": "RUNNING",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:17",
+    "key": "MDI-GYM-RUNNING",
+    "isResidential": false
+  },
+  {
+    "id": "d03a6a37-7334-432a-abd3-9b16e8ee131a",
+    "prisonId": "MDI",
+    "code": "HB3CL1",
+    "pathHierarchy": "RES-HB3-HB3CL1",
+    "locationType": "RESIDENTIAL_UNIT",
+    "localName": "HB3 CLASSROOM 1",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "110cc0ab-b37d-41d5-a6c1-d378ccc531b0",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:18",
+    "key": "MDI-RES-HB3-HB3CL1",
+    "isResidential": false
+  },
+  {
+    "id": "cb099ecc-ce80-41f4-9754-ff000568b040",
+    "prisonId": "MDI",
+    "code": "WS10",
+    "pathHierarchy": "WORK_IND-WS10",
+    "locationType": "TRAINING_AREA",
+    "localName": "WORKSHOP 10 - BRICKS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 33,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 33,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 33,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 33,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:25",
+    "key": "MDI-WORK_IND-WS10",
+    "isResidential": false
+  },
+  {
+    "id": "7f5cb7ee-bfb5-4a5a-bcb4-00cb1abf4f45",
+    "prisonId": "MDI",
+    "code": "VOLLEYB SQ",
+    "pathHierarchy": "GYM-VOLLEYB SQ",
+    "locationType": "SPORTS",
+    "localName": "VOLLEYB SQ",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:29:37",
+    "key": "MDI-GYM-VOLLEYB SQ",
+    "isResidential": false
+  },
+  {
+    "id": "5bad6263-d7f0-4170-8012-279956bfc416",
+    "prisonId": "MDI",
+    "code": "HB3",
+    "pathHierarchy": "RES-HB3-HB3",
+    "locationType": "WING",
+    "localName": "HOUSEBLOCK 3",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 170,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "110cc0ab-b37d-41d5-a6c1-d378ccc531b0",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:19",
+    "key": "MDI-RES-HB3-HB3",
+    "isResidential": false
+  },
+  {
+    "id": "eeae0164-2e19-4a30-ac10-5a5d2b3c29b6",
+    "prisonId": "MDI",
+    "code": "HB2 WEIGHTS",
+    "pathHierarchy": "GYM-HB2 WEIGHTS",
+    "locationType": "SPORTS",
+    "localName": "HB2 WEIGHTS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:29:37",
+    "key": "MDI-GYM-HB2 WEIGHTS",
+    "isResidential": false
+  },
+  {
+    "id": "e5d44cb1-d59d-4520-8e06-b290c73178f0",
+    "prisonId": "MDI",
+    "code": "HB5CL2",
+    "pathHierarchy": "RES-HB5-HB5CL2",
+    "locationType": "RESIDENTIAL_UNIT",
+    "localName": "HB5B2 CLASSROOM",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "6e921510-de07-4311-acca-098056334f96",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:20",
+    "key": "MDI-RES-HB5-HB5CL2",
+    "isResidential": false
+  },
+  {
+    "id": "8ac39ebb-499d-4862-ae45-0b091253e89d",
+    "prisonId": "MDI",
+    "code": "MCASU",
+    "pathHierarchy": "RES-MCASU-MCASU",
+    "locationType": "ADJUDICATION_ROOM",
+    "localName": "ADJ",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "ADJUDICATION_HEARING",
+        "capacity": 2,
+        "sequence": 99
+      },
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 2,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 2,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 2,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 2,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "1f77c38f-f7cb-468d-b08b-50cf021da390",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-12T15:36:34",
+    "key": "MDI-RES-MCASU-MCASU",
+    "isResidential": false
+  },
+  {
+    "id": "d6177ab9-d807-443e-9345-b8bb42f3be7f",
+    "prisonId": "MDI",
+    "code": "HB5 WEIGHTS",
+    "pathHierarchy": "GYM-HB5 WEIGHTS",
+    "locationType": "SPORTS",
+    "localName": "HB5 WEIGHTS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:29:38",
+    "key": "MDI-GYM-HB5 WEIGHTS",
+    "isResidential": false
+  },
+  {
+    "id": "d7472a83-33bd-4008-999f-8566f52a1ba9",
+    "prisonId": "MDI",
+    "code": "MDT",
+    "pathHierarchy": "RECEP-RAREA-MDT",
+    "locationType": "ROOM",
+    "localName": "MDT",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 5,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 5,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 5,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 5,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "f29ea5a8-3b85-4590-9e9f-11a3d6486837",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "daaac0c5-78ad-46fb-9982-27ee7555c4a6",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:16",
+    "key": "MDI-RECEP-RAREA-MDT",
+    "isResidential": false
+  },
+  {
+    "id": "cdf5671c-d95a-497d-a3bb-8cf10d4316a3",
+    "prisonId": "MDI",
+    "code": "HB5AEX",
+    "pathHierarchy": "RES-HB5-HB5AEX",
+    "locationType": "ROOM",
+    "localName": "HB5A EXERCISE",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 60,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 60,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 60,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 60,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "6e921510-de07-4311-acca-098056334f96",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:20",
+    "key": "MDI-RES-HB5-HB5AEX",
+    "isResidential": false
+  },
+  {
+    "id": "4d99265e-a778-43b6-b20e-d98a045d9e77",
+    "prisonId": "MDI",
+    "code": "SPORTS HALL",
+    "pathHierarchy": "GYM-SPORTS HALL",
+    "locationType": "SPORTS",
+    "localName": "SPORTS HALL",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQG74P",
+    "lastModifiedDate": "2010-08-10T12:46:23",
+    "key": "MDI-GYM-SPORTS HALL",
+    "isResidential": false
+  },
+  {
+    "id": "3f6b23fa-a4c4-4c57-a01e-bb4238a86baf",
+    "prisonId": "MDI",
+    "code": "ALE",
+    "pathHierarchy": "RES-HB1-ALE",
+    "locationType": "ROOM",
+    "localName": "HOUSEBLOCK 1 WORKERS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 170,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "73e3601c-3711-4728-8b6b-032f5ab61bb0",
+    "lastModifiedBy": "JSAUNDERS",
+    "lastModifiedDate": "2018-11-01T13:58:11",
+    "key": "MDI-RES-HB1-ALE",
+    "isResidential": false
+  },
+  {
+    "id": "e919965e-c49b-462b-bd2a-7d387f03dae4",
+    "prisonId": "MDI",
+    "code": "WOW",
+    "pathHierarchy": "RES-MCASU-WOW",
+    "locationType": "AREA",
+    "localName": "SEG WORKERS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 4,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "1f77c38f-f7cb-468d-b08b-50cf021da390",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2019-07-12T21:42:08",
+    "key": "MDI-RES-MCASU-WOW",
+    "isResidential": false
+  },
+  {
+    "id": "d272bb3f-7e04-4d20-a5b5-b8897ac941cf",
+    "prisonId": "MDI",
+    "code": "WOW",
+    "pathHierarchy": "RES-HB1-WOW",
+    "locationType": "AREA",
+    "localName": "HOUSEBLOCK 1 WORKERS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 20,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "73e3601c-3711-4728-8b6b-032f5ab61bb0",
+    "lastModifiedBy": "DBULL_ADM",
+    "lastModifiedDate": "2019-07-12T21:41:00",
+    "key": "MDI-RES-HB1-WOW",
+    "isResidential": false
+  },
+  {
+    "id": "690a8ed3-ca97-4585-9e1e-fa55cf1daaf7",
+    "prisonId": "MDI",
+    "code": "TEST LOC",
+    "pathHierarchy": "TEST-TEST LOC",
+    "locationType": "CLASSROOM",
+    "localName": "TEST FOR WB",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 1
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "7ee09dfd-84fc-4c72-b7ef-b20112e9b712",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "7ee09dfd-84fc-4c72-b7ef-b20112e9b712",
+    "lastModifiedBy": "DBULL_GEN",
+    "lastModifiedDate": "2018-08-21T16:24:16",
+    "key": "MDI-TEST-TEST LOC",
+    "isResidential": false
+  },
+  {
+    "id": "781f270d-908f-45af-9836-732198c295d6",
+    "prisonId": "MDI",
+    "code": "TEST",
+    "pathHierarchy": "HCARE-TEST",
+    "locationType": "ROOM",
+    "localName": "TEST WB",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "16773772-23b1-4624-8fbb-779cf0b965c2",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "16773772-23b1-4624-8fbb-779cf0b965c2",
+    "lastModifiedBy": "DBULL_GEN",
+    "lastModifiedDate": "2018-08-21T16:26:56",
+    "key": "MDI-HCARE-TEST",
+    "isResidential": false
+  },
+  {
+    "id": "7192b281-1050-4ebd-8602-024a5e8ef96b",
+    "prisonId": "MDI",
+    "code": "ACTIVITYHUB",
+    "pathHierarchy": "PROG_ACT-ACTIVITYHUB",
+    "locationType": "AREA",
+    "localName": "ACTIVITY HUB LIST",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 350,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "d77440af-e499-40f4-ac3b-511df5e01e49",
+    "level": 2,
+    "leafLevel": false,
+    "parentId": "d77440af-e499-40f4-ac3b-511df5e01e49",
+    "lastModifiedBy": "DBULL_ADM",
+    "lastModifiedDate": "2019-07-12T21:42:52",
+    "key": "MDI-PROG_ACT-ACTIVITYHUB",
+    "isResidential": false
+  },
+  {
+    "id": "f1b42f30-f84c-474a-a589-c9cbd9663f84",
+    "prisonId": "MDI",
+    "code": "HB6CL",
+    "pathHierarchy": "RES-HB6-HB6CL",
+    "locationType": "ADJUDICATION_ROOM",
+    "localName": "CLASSROOM",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 180,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "449ba6e5-03d5-4b46-b076-528a36401bf0",
+    "lastModifiedBy": "MQG74P",
+    "lastModifiedDate": "2011-10-11T15:53:00",
+    "key": "MDI-RES-HB6-HB6CL",
+    "isResidential": false
+  },
+  {
+    "id": "76d1134b-e99b-4fc1-8433-9a2e03c864de",
+    "prisonId": "MDI",
+    "code": "HB6INTER",
+    "pathHierarchy": "RES-HB6-HB6INTER",
+    "locationType": "INTERVIEW",
+    "localName": "INTERVIEW ROOM",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 2,
+        "sequence": 1
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 180,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "449ba6e5-03d5-4b46-b076-528a36401bf0",
+    "lastModifiedBy": "MQG74P",
+    "lastModifiedDate": "2011-10-11T15:52:59",
+    "key": "MDI-RES-HB6-HB6INTER",
+    "isResidential": false
+  },
+  {
+    "id": "d0d159ad-9a0f-433a-b783-8417968f6fba",
+    "prisonId": "MDI",
+    "code": "RECP",
+    "pathHierarchy": "RECEP-RECP",
+    "locationType": "AREA",
+    "localName": "RECEPTION WORKERS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 5,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "f29ea5a8-3b85-4590-9e9f-11a3d6486837",
+    "level": 2,
+    "leafLevel": false,
+    "parentId": "f29ea5a8-3b85-4590-9e9f-11a3d6486837",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2019-07-12T21:44:01",
+    "key": "MDI-RECEP-RECP",
+    "isResidential": false
+  },
+  {
+    "id": "01393f2e-5d73-466d-ab59-3ca8115958f1",
+    "prisonId": "MDI",
+    "code": "ASSO",
+    "pathHierarchy": "RES-IND-ASSO",
+    "locationType": "ASSOCIATION",
+    "localName": "ASSOCIATION",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 42,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 42,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 42,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 42,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "46a4ef0e-45e0-4647-b771-0b075afeba1f",
+    "lastModifiedBy": "MQG74P",
+    "lastModifiedDate": "2010-06-29T11:06:49",
+    "key": "MDI-RES-IND-ASSO",
+    "isResidential": false
+  },
+  {
+    "id": "30657375-285b-4605-91a2-db397ba4799a",
+    "prisonId": "MDI",
+    "code": "WOW",
+    "pathHierarchy": "RES-IND-WOW",
+    "locationType": "AREA",
+    "localName": "HOUSEBLOCK 7 WORKERS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "46a4ef0e-45e0-4647-b771-0b075afeba1f",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2019-07-12T21:41:35",
+    "key": "MDI-RES-IND-WOW",
+    "isResidential": false
+  },
+  {
+    "id": "45e105b6-03c0-4052-878b-71cecbc34ff8",
+    "prisonId": "MDI",
+    "code": "WALKWAY",
+    "pathHierarchy": "WALKWAY-WALKWAY",
+    "locationType": "AREA",
+    "localName": "WALKWAY",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 700,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 700,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "304276e7-9802-4607-a869-977de6e92528",
+    "level": 2,
+    "leafLevel": false,
+    "parentId": "304276e7-9802-4607-a869-977de6e92528",
+    "lastModifiedBy": "MQG74P",
+    "lastModifiedDate": "2010-02-12T08:20:11",
+    "key": "MDI-WALKWAY-WALKWAY",
+    "isResidential": false
+  },
+  {
+    "id": "8c5cee12-14ed-43a4-a304-f9f4125ccfaf",
+    "prisonId": "MDI",
+    "code": "GARD",
+    "pathHierarchy": "WORK_IND-GARD",
+    "locationType": "INTERNAL_GROUNDS",
+    "localName": "FARMS/GARDENS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 20,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 20,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 20,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 20,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:22",
+    "key": "MDI-WORK_IND-GARD",
+    "isResidential": false
+  },
+  {
+    "id": "0d1dded9-3645-4d38-97c9-b5ff18ce85b4",
+    "prisonId": "MDI",
+    "code": "WS6",
+    "pathHierarchy": "WORK_IND-WS6",
+    "locationType": "TRAINING_AREA",
+    "localName": "WORKSHOP 6 - PAINTING & DECORATING",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 13,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:24",
+    "key": "MDI-WORK_IND-WS6",
+    "isResidential": false
+  },
+  {
+    "id": "8c1a4023-ba50-4c4e-949d-09a6e70a5ba5",
+    "prisonId": "MDI",
+    "code": "CES",
+    "pathHierarchy": "WORK_IND-CES",
+    "locationType": "STORE",
+    "localName": "CES",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 11,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 11,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 11,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 11,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:22",
+    "key": "MDI-WORK_IND-CES",
+    "isResidential": false
+  },
+  {
+    "id": "2c10e291-3e33-40c7-a834-68138b53d58d",
+    "prisonId": "MDI",
+    "code": "WS1",
+    "pathHierarchy": "WORK_IND-WS1",
+    "locationType": "WORKSHOP",
+    "localName": "WORKSHOP 1 - VT CATERING",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 13,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:23",
+    "key": "MDI-WORK_IND-WS1",
+    "isResidential": false
+  },
+  {
+    "id": "33daa593-abe7-43c0-9742-4953679f5e4d",
+    "prisonId": "MDI",
+    "code": "WS15",
+    "pathHierarchy": "WORK_IND-WS15",
+    "locationType": "TRAINING_AREA",
+    "localName": "WORKSHOP 15 - CLOTHING EXCHANGE STORE",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 13,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:26",
+    "key": "MDI-WORK_IND-WS15",
+    "isResidential": false
+  },
+  {
+    "id": "df5ce45f-6306-4a41-a898-49b09f4b35c6",
+    "prisonId": "MDI",
+    "code": "HB2CL1",
+    "pathHierarchy": "RES-HB2-HB2CL1",
+    "locationType": "RESIDENTIAL_UNIT",
+    "localName": "HB2 CLASSROOM 1",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "a3ed80b5-ee63-4c48-af89-45527c72e9a3",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:17",
+    "key": "MDI-RES-HB2-HB2CL1",
+    "isResidential": false
+  },
+  {
+    "id": "aa46f016-54da-4764-8d91-ddc55cd6d075",
+    "prisonId": "MDI",
+    "code": "WS5",
+    "pathHierarchy": "WORK_IND-WS5",
+    "locationType": "TRAINING_AREA",
+    "localName": "WORKSHOP 5 -",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:24",
+    "key": "MDI-WORK_IND-WS5",
+    "isResidential": false
+  },
+  {
+    "id": "e509d53f-d7a7-431b-a92f-3f46f217d0b6",
+    "prisonId": "MDI",
+    "code": "WS18",
+    "pathHierarchy": "WORK_IND-WS18",
+    "locationType": "WORKSHOP",
+    "localName": "WORKSHOP 18 - BREAKFAST PACKS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 20,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 20,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 20,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 20,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:27",
+    "key": "MDI-WORK_IND-WS18",
+    "isResidential": false
+  },
+  {
+    "id": "c7fa54ff-a2d8-4eb4-9ec5-ee15a17914ab",
+    "prisonId": "MDI",
+    "code": "RUGBY SQUAD",
+    "pathHierarchy": "GYM-RUGBY SQUAD",
+    "locationType": "SPORTS",
+    "localName": "RUGBY SQUAD",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:18",
+    "key": "MDI-GYM-RUGBY SQUAD",
+    "isResidential": false
+  },
+  {
+    "id": "67c8c490-af17-4e53-a96f-cc9d78156337",
+    "prisonId": "MDI",
+    "code": "HB4EX",
+    "pathHierarchy": "RES-HB4-HB4EX",
+    "locationType": "ROOM",
+    "localName": "HB4 EXERCISE",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 170,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "d0d1b1f7-ba67-4d1a-918a-47109cc7b279",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:19",
+    "key": "MDI-RES-HB4-HB4EX",
+    "isResidential": false
+  },
+  {
+    "id": "27ff1adb-639c-4198-8396-2da40e163d44",
+    "prisonId": "MDI",
+    "code": "WS8",
+    "pathHierarchy": "WORK_IND-WS8",
+    "locationType": "WORKSHOP",
+    "localName": "WORKSHOP 8 - TV REPAIR",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 26,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 26,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 26,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 26,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:25",
+    "key": "MDI-WORK_IND-WS8",
+    "isResidential": false
+  },
+  {
+    "id": "2d827772-7acb-4cf9-97a9-fd9d3f293832",
+    "prisonId": "MDI",
+    "code": "HB4CL1",
+    "pathHierarchy": "RES-HB4-HB4CL1",
+    "locationType": "RESIDENTIAL_UNIT",
+    "localName": "HB4 CLASSROOM 1",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "d0d1b1f7-ba67-4d1a-918a-47109cc7b279",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:19",
+    "key": "MDI-RES-HB4-HB4CL1",
+    "isResidential": false
+  },
+  {
+    "id": "9e2b51e8-d7df-445f-a36e-021bdfd9e806",
+    "prisonId": "MDI",
+    "code": "WEIGHTS",
+    "pathHierarchy": "GYM-WEIGHTS",
+    "locationType": "SPORTS",
+    "localName": "WEIGHTS-X",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "DBULL_ADM",
+    "lastModifiedDate": "2009-07-14T16:07:16",
+    "key": "MDI-GYM-WEIGHTS",
+    "isResidential": false
+  },
+  {
+    "id": "dfcfeed0-16df-4d32-91ec-fde7f3f5b176",
+    "prisonId": "MDI",
+    "code": "HB3 WEIGHTS",
+    "pathHierarchy": "GYM-HB3 WEIGHTS",
+    "locationType": "SPORTS",
+    "localName": "HB3 WEIGHTS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:29:38",
+    "key": "MDI-GYM-HB3 WEIGHTS",
+    "isResidential": false
+  },
+  {
+    "id": "a46653bf-ec72-47f7-bd5a-4574afedfb3d",
+    "prisonId": "MDI",
+    "code": "HB2CL2",
+    "pathHierarchy": "RES-HB2-HB2CL2",
+    "locationType": "RESIDENTIAL_UNIT",
+    "localName": "HB2 CLASSROOM 2",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "a3ed80b5-ee63-4c48-af89-45527c72e9a3",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:17",
+    "key": "MDI-RES-HB2-HB2CL2",
+    "isResidential": false
+  },
+  {
+    "id": "0e6cbb32-b95a-4d44-9f78-a6536734f249",
+    "prisonId": "MDI",
+    "code": "HB4 WEIGHTS",
+    "pathHierarchy": "GYM-HB4 WEIGHTS",
+    "locationType": "SPORTS",
+    "localName": "HB4 WEIGHTS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:19",
+    "key": "MDI-GYM-HB4 WEIGHTS",
+    "isResidential": false
+  },
+  {
+    "id": "9d4620bf-2fa0-4b9b-9203-8af56f853b2e",
+    "prisonId": "MDI",
+    "code": "CV",
+    "pathHierarchy": "GYM-CV",
+    "locationType": "SPORTS",
+    "localName": "CARDIO",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-14T16:07:18",
+    "key": "MDI-GYM-CV",
+    "isResidential": false
+  },
+  {
+    "id": "f1c0a23f-3ac8-4355-82eb-f26c4a7f471e",
+    "prisonId": "MDI",
+    "code": "STRONG MAN",
+    "pathHierarchy": "GYM-STRONG MAN",
+    "locationType": "SPORTS",
+    "localName": "STRONGMAN",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:18",
+    "key": "MDI-GYM-STRONG MAN",
+    "isResidential": false
+  },
+  {
+    "id": "4e442f1f-c2cd-48a8-997b-bf20493734b2",
+    "prisonId": "MDI",
+    "code": "WALKING",
+    "pathHierarchy": "GYM-WALKING",
+    "locationType": "SPORTS",
+    "localName": "WALKING",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:16",
+    "key": "MDI-GYM-WALKING",
+    "isResidential": false
+  },
+  {
+    "id": "40f22c7d-1d07-478e-b647-8fa1afd061d1",
+    "prisonId": "MDI",
+    "code": "LIFE",
+    "pathHierarchy": "RES-HB3-LIFE",
+    "locationType": "RESIDENTIAL_UNIT",
+    "localName": "LIFER ROOM",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "110cc0ab-b37d-41d5-a6c1-d378ccc531b0",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:18",
+    "key": "MDI-RES-HB3-LIFE",
+    "isResidential": false
+  },
+  {
+    "id": "e8dbc2da-d31c-453a-b9ae-0187f1572edd",
+    "prisonId": "MDI",
+    "code": "WS4",
+    "pathHierarchy": "WORK_IND-WS4",
+    "locationType": "WORKSHOP",
+    "localName": "WORKSHOP 4 - PICTA",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 13,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:24",
+    "key": "MDI-WORK_IND-WS4",
+    "isResidential": false
+  },
+  {
+    "id": "f5ba01be-856f-47a1-870a-c0b5c6a5adad",
+    "prisonId": "MDI",
+    "code": "FIT TEST",
+    "pathHierarchy": "GYM-FIT TEST",
+    "locationType": "SPORTS",
+    "localName": "FIT TEST",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:17",
+    "key": "MDI-GYM-FIT TEST",
+    "isResidential": false
+  },
+  {
+    "id": "3880d652-ee3b-432f-b993-fda88970f007",
+    "prisonId": "MDI",
+    "code": "INDOOR CRICK",
+    "pathHierarchy": "GYM-INDOOR CRICK",
+    "locationType": "SPORTS",
+    "localName": "INDOOR CRICKET",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:18",
+    "key": "MDI-GYM-INDOOR CRICK",
+    "isResidential": false
+  },
+  {
+    "id": "b13a6b6c-f8b9-43bf-abcc-d9b3f7e2a3a1",
+    "prisonId": "MDI",
+    "code": "HB3CL2",
+    "pathHierarchy": "RES-HB3-HB3CL2",
+    "locationType": "RESIDENTIAL_UNIT",
+    "localName": "HB3 CLASSROOM 2",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "110cc0ab-b37d-41d5-a6c1-d378ccc531b0",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:18",
+    "key": "MDI-RES-HB3-HB3CL2",
+    "isResidential": false
+  },
+  {
+    "id": "d4f1877d-c36a-4876-ab43-a0d4c8a81d64",
+    "prisonId": "MDI",
+    "code": "WAST",
+    "pathHierarchy": "WORK_IND-WAST",
+    "locationType": "WORKSHOP",
+    "localName": "WASTE MANAGEMENT",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 5,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 5,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 5,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 5,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:23",
+    "key": "MDI-WORK_IND-WAST",
+    "isResidential": false
+  },
+  {
+    "id": "0d1c0d8f-ed9d-4565-9d00-2a8ca173fe4a",
+    "prisonId": "MDI",
+    "code": "WS17",
+    "pathHierarchy": "WORK_IND-WS17",
+    "locationType": "WORKSHOP",
+    "localName": "WORKSHOP 17 - DHL",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 39,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 39,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 39,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 39,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:27",
+    "key": "MDI-WORK_IND-WS17",
+    "isResidential": false
+  },
+  {
+    "id": "fbc17436-ec4f-425a-9b34-4f42e65cc4de",
+    "prisonId": "MDI",
+    "code": "WS14",
+    "pathHierarchy": "WORK_IND-WS14",
+    "locationType": "TRAINING_AREA",
+    "localName": "WORKSHOP 14 - YARD PARTY",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 13,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 13,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:26",
+    "key": "MDI-WORK_IND-WS14",
+    "isResidential": false
+  },
+  {
+    "id": "95d297f2-a576-4f93-97e5-d94628bf954e",
+    "prisonId": "MDI",
+    "code": "INDCL",
+    "pathHierarchy": "RES-HB2-INDCL",
+    "locationType": "RESIDENTIAL_UNIT",
+    "localName": "INDUCTION CLASSROOM",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "a3ed80b5-ee63-4c48-af89-45527c72e9a3",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:18",
+    "key": "MDI-RES-HB2-INDCL",
+    "isResidential": false
+  },
+  {
+    "id": "62a26c82-b2c4-4b7c-8e8d-79b23cd2b048",
+    "prisonId": "MDI",
+    "code": "HB4",
+    "pathHierarchy": "RES-HB4-HB4",
+    "locationType": "WING",
+    "localName": "HOUSEBLOCK 4",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 170,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "d0d1b1f7-ba67-4d1a-918a-47109cc7b279",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:19",
+    "key": "MDI-RES-HB4-HB4",
+    "isResidential": false
+  },
+  {
+    "id": "9bed4122-c578-40a4-bf7c-a22ef0e83af9",
+    "prisonId": "MDI",
+    "code": "HB3EX",
+    "pathHierarchy": "RES-HB3-HB3EX",
+    "locationType": "ROOM",
+    "localName": "HB3 EXERCISE",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 170,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 170,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "110cc0ab-b37d-41d5-a6c1-d378ccc531b0",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:18",
+    "key": "MDI-RES-HB3-HB3EX",
+    "isResidential": false
+  },
+  {
+    "id": "dce8cf87-40cc-4f20-87dc-ba1a67dac3ce",
+    "prisonId": "MDI",
+    "code": "WS19",
+    "pathHierarchy": "WORK_IND-WS19",
+    "locationType": "WORKSHOP",
+    "localName": "WORKSHOP 19 - BRAILLE",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 20,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 20,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 20,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 20,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2009-07-10T13:14:27",
+    "key": "MDI-WORK_IND-WS19",
+    "isResidential": false
+  },
+  {
+    "id": "3969b15e-de74-4528-8dcf-2d693f71b5f1",
+    "prisonId": "MDI",
+    "code": "YOGA",
+    "pathHierarchy": "GYM-YOGA",
+    "locationType": "SPORTS",
+    "localName": "YOGA",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:17",
+    "key": "MDI-GYM-YOGA",
+    "isResidential": false
+  },
+  {
+    "id": "1ad2c5f6-69e7-44ce-a76b-fd9093f50b26",
+    "prisonId": "MDI",
+    "code": "BADMINTON",
+    "pathHierarchy": "GYM-BADMINTON",
+    "locationType": "SPORTS",
+    "localName": "BADMINTON",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:18",
+    "key": "MDI-GYM-BADMINTON",
+    "isResidential": false
+  },
+  {
+    "id": "c29a7deb-dcfd-496f-b736-56ab150ef815",
+    "prisonId": "MDI",
+    "code": "HB5",
+    "pathHierarchy": "RES-HB5-HB5",
+    "locationType": "WING",
+    "localName": "HOUSEBLOCK 5",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 120,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 120,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 120,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 120,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "6e921510-de07-4311-acca-098056334f96",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:20",
+    "key": "MDI-RES-HB5-HB5",
+    "isResidential": false
+  },
+  {
+    "id": "c7293e08-210d-4aad-b04c-aee847660170",
+    "prisonId": "MDI",
+    "code": "ADULT CIRCUI",
+    "pathHierarchy": "GYM-ADULT CIRCUI",
+    "locationType": "SPORTS",
+    "localName": "CIRCUIT",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:16",
+    "key": "MDI-GYM-ADULT CIRCUI",
+    "isResidential": false
+  },
+  {
+    "id": "027e45c8-03b2-4a0a-8a4a-9ee37f1881f0",
+    "prisonId": "MDI",
+    "code": "HB4CL2",
+    "pathHierarchy": "RES-HB4-HB4CL2",
+    "locationType": "RESIDENTIAL_UNIT",
+    "localName": "HB4 CLASSROOM 2",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "d0d1b1f7-ba67-4d1a-918a-47109cc7b279",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:19",
+    "key": "MDI-RES-HB4-HB4CL2",
+    "isResidential": false
+  },
+  {
+    "id": "81d172b1-0443-4a61-9eb4-1d3ab0973488",
+    "prisonId": "MDI",
+    "code": "HB1 WEIGHTS",
+    "pathHierarchy": "GYM-HB1 WEIGHTS",
+    "locationType": "SPORTS",
+    "localName": "HB1 WEIGHTS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:29:37",
+    "key": "MDI-GYM-HB1 WEIGHTS",
+    "isResidential": false
+  },
+  {
+    "id": "2b0f1d0b-6cba-4f6c-ae17-95afbe677b20",
+    "prisonId": "MDI",
+    "code": "PUMP FUSION",
+    "pathHierarchy": "GYM-PUMP FUSION",
+    "locationType": "SPORTS",
+    "localName": "PUMP FUSION",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:17",
+    "key": "MDI-GYM-PUMP FUSION",
+    "isResidential": false
+  },
+  {
+    "id": "e9c2dbf0-9149-4cec-afa0-91c8740901ef",
+    "prisonId": "MDI",
+    "code": "VOLLEYBALL",
+    "pathHierarchy": "GYM-VOLLEYBALL",
+    "locationType": "SPORTS",
+    "localName": "VOLLEYBALL",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:29:37",
+    "key": "MDI-GYM-VOLLEYBALL",
+    "isResidential": false
+  },
+  {
+    "id": "919155c6-20a2-4bfd-8c0f-8e96c1cd271c",
+    "prisonId": "MDI",
+    "code": "FOOTBALL",
+    "pathHierarchy": "GYM-FOOTBALL",
+    "locationType": "SPORTS",
+    "localName": "FOOTBALL",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:17",
+    "key": "MDI-GYM-FOOTBALL",
+    "isResidential": false
+  },
+  {
+    "id": "23d63b34-1436-4f94-bb79-f44020a89589",
+    "prisonId": "MDI",
+    "code": "CIRCUIT",
+    "pathHierarchy": "GYM-CIRCUIT",
+    "locationType": "SPORTS",
+    "localName": "CIRCUIT",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 50,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 50,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "a0aa1e68-69f7-4f6d-a2ab-eae93685fd43",
+    "lastModifiedBy": "MQZ51T",
+    "lastModifiedDate": "2009-07-14T16:07:16",
+    "key": "MDI-GYM-CIRCUIT",
+    "isResidential": false
+  },
+  {
+    "id": "f025e32e-e59b-4f3c-9af3-8d4eafacbc74",
+    "prisonId": "MDI",
+    "code": "HB5CL1",
+    "pathHierarchy": "RES-HB5-HB5CL1",
+    "locationType": "RESIDENTIAL_UNIT",
+    "localName": "HB5A2 CLASSROOM",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 10,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 10,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "6e921510-de07-4311-acca-098056334f96",
+    "lastModifiedBy": "OMS_OWNER",
+    "lastModifiedDate": "2009-07-10T13:14:20",
+    "key": "MDI-RES-HB5-HB5CL1",
+    "isResidential": false
+  },
+  {
+    "id": "a6f3768d-861e-4dd4-b372-014110f60a3f",
+    "prisonId": "MDI",
+    "code": "WS2",
+    "pathHierarchy": "WORK_IND-WS2-WS2",
+    "locationType": "WORKSHOP",
+    "localName": "WORKSHOP 2",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 0,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 0,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 0,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 0,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "dc0078d6-9577-4680-ac5a-4ac9a262e2a6",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "2d9cf6cf-64e4-4c10-a0a3-00d08a458714",
+    "lastModifiedBy": "DBULL_ADM",
+    "lastModifiedDate": "2009-07-10T13:14:24",
+    "key": "MDI-WORK_IND-WS2-WS2",
+    "isResidential": false
+  },
+  {
+    "id": "d985d868-3c5e-4bf1-b097-ca6a0c99f410",
+    "prisonId": "MDI",
+    "code": "WOW",
+    "pathHierarchy": "RES-HB5-WOW",
+    "locationType": "AREA",
+    "localName": "HOUSEBLOCK 5 WORKERS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 20,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "6e921510-de07-4311-acca-098056334f96",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2019-07-12T21:39:25",
+    "key": "MDI-RES-HB5-WOW",
+    "isResidential": false
+  },
+  {
+    "id": "63797775-bf3a-4e8b-9804-be5ecc6d8fc5",
+    "prisonId": "MDI",
+    "code": "WOW",
+    "pathHierarchy": "RES-HB6-WOW",
+    "locationType": "AREA",
+    "localName": "HOUSEBLOCK 6 WORKERS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 20,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "449ba6e5-03d5-4b46-b076-528a36401bf0",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2019-07-12T21:38:39",
+    "key": "MDI-RES-HB6-WOW",
+    "isResidential": false
+  },
+  {
+    "id": "d85bf871-c0fa-437f-a578-a9a2fdd74c2d",
+    "prisonId": "MDI",
+    "code": "WOW",
+    "pathHierarchy": "RES-HB3-WOW",
+    "locationType": "AREA",
+    "localName": "HOUSEBLOCK 3 WORKERS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 20,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "110cc0ab-b37d-41d5-a6c1-d378ccc531b0",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2019-07-12T21:40:12",
+    "key": "MDI-RES-HB3-WOW",
+    "isResidential": false
+  },
+  {
+    "id": "71f423c2-ed49-4f57-b988-953c71292b7c",
+    "prisonId": "MDI",
+    "code": "WOW",
+    "pathHierarchy": "RES-HB2-WOW",
+    "locationType": "AREA",
+    "localName": "HOUSEBLOCK 2 WORKERS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 20,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "a3ed80b5-ee63-4c48-af89-45527c72e9a3",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2019-07-12T21:40:35",
+    "key": "MDI-RES-HB2-WOW",
+    "isResidential": false
+  },
+  {
+    "id": "da7554a8-b95a-449f-91cc-8472c7c46fdb",
+    "prisonId": "MDI",
+    "code": "ALE",
+    "pathHierarchy": "ALE",
+    "locationType": "AREA",
+    "localName": "ACTIVITY LIST EXCLUSION",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 300,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "da7554a8-b95a-449f-91cc-8472c7c46fdb",
+    "level": 1,
+    "leafLevel": false,
+    "lastModifiedBy": "JSAUNDERS",
+    "lastModifiedDate": "2018-11-01T13:56:46",
+    "key": "MDI-ALE",
+    "isResidential": false
+  },
+  {
+    "id": "12485ab5-fbc4-4801-b8f1-e653f570bdf6",
+    "prisonId": "MDI",
+    "code": "WOW",
+    "pathHierarchy": "RES-HB4-WOW",
+    "locationType": "AREA",
+    "localName": "HOUSEBLOCK 4 WORKERS",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 20,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "d0d1b1f7-ba67-4d1a-918a-47109cc7b279",
+    "lastModifiedBy": "VQI95S",
+    "lastModifiedDate": "2019-07-12T21:39:50",
+    "key": "MDI-RES-HB4-WOW",
+    "isResidential": false
+  },
+  {
+    "id": "768db7f0-0774-4975-80a4-1796aabf3805",
+    "prisonId": "MDI",
+    "code": "HB6",
+    "pathHierarchy": "RES-HB6-HB6",
+    "locationType": "WING",
+    "localName": "HOUSEBLOCK 6",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 180,
+        "sequence": 1
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 180,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": false,
+    "parentId": "449ba6e5-03d5-4b46-b076-528a36401bf0",
+    "lastModifiedBy": "API_PROXY_USER",
+    "lastModifiedDate": "2018-08-20T16:19:46",
+    "key": "MDI-RES-HB6-HB6",
+    "isResidential": false
+  },
+  {
+    "id": "61e52f20-b421-4af8-906c-adcc03391bd9",
+    "prisonId": "MDI",
+    "code": "HB6EXER A",
+    "pathHierarchy": "RES-HB6-HB6EXER A",
+    "locationType": "EXERCISE_AREA",
+    "localName": "EXERCISE  A",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 180,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "449ba6e5-03d5-4b46-b076-528a36401bf0",
+    "lastModifiedBy": "MQG74P",
+    "lastModifiedDate": "2011-10-11T15:52:55",
+    "key": "MDI-RES-HB6-HB6EXER A",
+    "isResidential": false
+  },
+  {
+    "id": "cac85758-380b-49fc-997f-94147e2553ac",
+    "prisonId": "MDI",
+    "code": "HB6ASSO A",
+    "pathHierarchy": "RES-HB6-HB6ASSO A",
+    "locationType": "ASSOCIATION",
+    "localName": "ASSO A WING",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 180,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "449ba6e5-03d5-4b46-b076-528a36401bf0",
+    "lastModifiedBy": "MQG74P",
+    "lastModifiedDate": "2011-10-11T15:52:52",
+    "key": "MDI-RES-HB6-HB6ASSO A",
+    "isResidential": false
+  },
+  {
+    "id": "86994b05-b08c-4a5b-96a1-170ca0b26ba5",
+    "prisonId": "MDI",
+    "code": "HB6EXER B",
+    "pathHierarchy": "RES-HB6-HB6EXER B",
+    "locationType": "EXERCISE_AREA",
+    "localName": "EXERCISE B",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 180,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "449ba6e5-03d5-4b46-b076-528a36401bf0",
+    "lastModifiedBy": "MQG74P",
+    "lastModifiedDate": "2011-10-11T15:52:57",
+    "key": "MDI-RES-HB6-HB6EXER B",
+    "isResidential": false
+  },
+  {
+    "id": "d0763236-c073-4ef4-9592-419bf0cd72cb",
+    "prisonId": "MDI",
+    "code": "HB6ASSO B",
+    "pathHierarchy": "RES-HB6-HB6ASSO B",
+    "locationType": "ASSOCIATION",
+    "localName": "ASSO B WING",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 180,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 180,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "449ba6e5-03d5-4b46-b076-528a36401bf0",
+    "lastModifiedBy": "MQG74P",
+    "lastModifiedDate": "2011-10-11T15:52:54",
+    "key": "MDI-RES-HB6-HB6ASSO B",
+    "isResidential": false
+  },
+  {
+    "id": "f1307a65-b406-4eee-a786-dad146c4ff26",
+    "prisonId": "MDI",
+    "code": "CLAS",
+    "pathHierarchy": "RES-IND-CLAS",
+    "locationType": "CLASSROOM",
+    "localName": "CLASSROOM",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 15,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 42,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 42,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 42,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "46a4ef0e-45e0-4647-b771-0b075afeba1f",
+    "lastModifiedBy": "MQG74P",
+    "lastModifiedDate": "2010-06-29T11:00:42",
+    "key": "MDI-RES-IND-CLAS",
+    "isResidential": false
+  },
+  {
+    "id": "32f2ee49-7b04-4c41-87a9-551bf5557268",
+    "prisonId": "MDI",
+    "code": "EXER",
+    "pathHierarchy": "RES-IND-EXER",
+    "locationType": "EXERCISE_AREA",
+    "localName": "EXERCISE",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "APPOINTMENT",
+        "capacity": 42,
+        "sequence": 99
+      },
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 42,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 42,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 42,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "a2a58367-8092-4572-82a0-f9760bed9abe",
+    "level": 3,
+    "leafLevel": true,
+    "parentId": "46a4ef0e-45e0-4647-b771-0b075afeba1f",
+    "lastModifiedBy": "MQG74P",
+    "lastModifiedDate": "2010-06-29T11:06:47",
+    "key": "MDI-RES-IND-EXER",
+    "isResidential": false
+  },
+  {
+    "id": "8d4457ce-9b2a-46ed-9120-03f03c8eeeff",
+    "prisonId": "MDI",
+    "code": "INDUCTION",
+    "pathHierarchy": "INDUCTION-INDUCTION",
+    "locationType": "CLASSROOM",
+    "localName": "CLASSROOM",
+    "permanentlyInactive": false,
+    "usage": [
+      {
+        "usageType": "MOVEMENT",
+        "capacity": 44,
+        "sequence": 99
+      },
+      {
+        "usageType": "OCCURRENCE",
+        "capacity": 44,
+        "sequence": 99
+      },
+      {
+        "usageType": "PROGRAMMES_ACTIVITIES",
+        "capacity": 44,
+        "sequence": 99
+      }
+    ],
+    "status": "ACTIVE",
+    "active": true,
+    "deactivatedByParent": false,
+    "topLevelId": "526c58f5-6c4d-4f5c-88e6-6e0f7740a03d",
+    "level": 2,
+    "leafLevel": true,
+    "parentId": "526c58f5-6c4d-4f5c-88e6-6e0f7740a03d",
+    "lastModifiedBy": "MQG74P",
+    "lastModifiedDate": "2010-08-22T19:02:48",
+    "key": "MDI-INDUCTION-INDUCTION",
+    "isResidential": false
+  }
+]
