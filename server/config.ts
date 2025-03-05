@@ -144,7 +144,7 @@ export default {
     },
     reporting: {
       url: get('REPORTING_API_URL', 'http://localhost:3010', requiredInProduction),
-      timeout: Number(get('REPORTING_API_TIMEOUT_RESPONSE', 10000)),
+      timeout: Number(get('REPORTING_API_TIMEOUT_RESPONSE', 30000)),
     },
     bookAVideoLinkApi: {
       url: get('BOOK_A_VIDEO_LINK_API_URL', 'http://localhost:8095', requiredInProduction),
