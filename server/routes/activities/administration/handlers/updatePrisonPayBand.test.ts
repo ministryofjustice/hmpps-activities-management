@@ -87,12 +87,11 @@ describe('Route Handlers - Update a prison pay band', () => {
   })
 
   describe('POST', () => {
-    it('should create a pay band successfully', async () => {
+    it('should update a pay band successfully', async () => {
       req.params.prisonPayBandId = '1'
 
       req.body = {
         description: 'desc',
-        nomisPayBand: '1',
         displaySequence: '1',
         alias: 'alias',
       }
@@ -110,7 +109,6 @@ describe('Route Handlers - Update a prison pay band', () => {
 
       const request: PrisonPayBandUpdateRequest = {
         description: 'desc',
-        nomisPayBand: 1,
         displaySequence: 1,
         alias: 'alias',
       }
@@ -125,7 +123,6 @@ describe('Route Handlers - Update a prison pay band', () => {
         'RSI',
         {
           description: 'desc',
-          nomisPayBand: 1,
           displaySequence: 1,
           alias: 'alias',
         },
@@ -145,7 +142,6 @@ describe('Route Handlers - Update a prison pay band', () => {
     it('validation fails if the description is not supplied', async () => {
       const body = {
         description: undefined,
-        nomisPayBand: '1',
         displaySequence: '1',
         alias: 'alias',
       }
@@ -166,7 +162,6 @@ describe('Route Handlers - Update a prison pay band', () => {
     it('validation fails if the alias is not supplied', async () => {
       const body = {
         description: 'desc',
-        nomisPayBand: '1',
         displaySequence: '1',
         alias: undefined,
       }
@@ -187,7 +182,6 @@ describe('Route Handlers - Update a prison pay band', () => {
     it('validation fails if the display sequence is not supplied', async () => {
       const body = {
         description: 'desc',
-        nomisPayBand: '1',
         displaySequence: undefined,
         alias: 'alias',
       }
@@ -205,31 +199,9 @@ describe('Route Handlers - Update a prison pay band', () => {
       )
     })
 
-    it('validation fails if the nomis pay band is not supplied', async () => {
-      const body = {
-        description: 'desc',
-        nomisPayBand: undefined,
-        displaySequence: '1',
-        alias: 'alias',
-      }
-
-      const requestObject = plainToInstance(UpdatePrisonPayBand, { ...body })
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual(
-        expect.arrayContaining([
-          {
-            error: 'Nomis pay band must be a positive number',
-            property: 'nomisPayBand',
-          },
-        ]),
-      )
-    })
-
     it('validation fails if the display sequence is not numeric', async () => {
       const body = {
         description: 'desc',
-        nomisPayBand: '1',
         displaySequence: 'x',
         alias: 'alias',
       }
@@ -250,7 +222,6 @@ describe('Route Handlers - Update a prison pay band', () => {
     it('validation fails if the display sequence is not a positive number', async () => {
       const body = {
         description: 'desc',
-        nomisPayBand: '1',
         displaySequence: '0',
         alias: 'alias',
       }
@@ -268,52 +239,9 @@ describe('Route Handlers - Update a prison pay band', () => {
       )
     })
 
-    it('validation fails if the nomis pay band is not numeric', async () => {
+    it('passes validation if description, alias and display sequence are all supplied', async () => {
       const body = {
         description: 'desc',
-        nomisPayBand: 'x',
-        displaySequence: '1',
-        alias: 'alias',
-      }
-
-      const requestObject = plainToInstance(UpdatePrisonPayBand, { ...body })
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual(
-        expect.arrayContaining([
-          {
-            error: 'Nomis pay band must be a positive number',
-            property: 'nomisPayBand',
-          },
-        ]),
-      )
-    })
-
-    it('validation fails if the nomis pay band is not a positive number', async () => {
-      const body = {
-        description: 'desc',
-        nomisPayBand: '-1',
-        displaySequence: '1',
-        alias: 'alias',
-      }
-
-      const requestObject = plainToInstance(UpdatePrisonPayBand, { ...body })
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual(
-        expect.arrayContaining([
-          {
-            error: 'Nomis pay band must be a positive number',
-            property: 'nomisPayBand',
-          },
-        ]),
-      )
-    })
-
-    it('passes validation if description, alias, display sequece, nomis pay band are all supplied', async () => {
-      const body = {
-        description: 'desc',
-        nomisPayBand: '1',
         displaySequence: '1',
         alias: 'alias',
       }
