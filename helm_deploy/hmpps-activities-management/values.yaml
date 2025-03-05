@@ -31,7 +31,7 @@ generic-service:
     TOKEN_VERIFICATION_ENABLED: "true"
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY);IngestionEndpoint=https://northeurope-0.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/"
     REPORT_A_FAULT_URL: "https://report-problem-activities.form.service.justice.gov.uk"
-    FEEDBACK_URL: "https://eu.surveymonkey.com/r/G9RZNKY"
+    FEEDBACK_URL: "https://www.smartsurvey.co.uk/s/ActivitiesAndAppointments/"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:
