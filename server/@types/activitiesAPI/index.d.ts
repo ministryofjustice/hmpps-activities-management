@@ -2967,12 +2967,12 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      unpaged?: boolean
       /** Format: int32 */
       pageSize?: number
       paged?: boolean
       /** Format: int32 */
       pageNumber?: number
+      unpaged?: boolean
     }
     PagedWaitingListApplication: {
       /** Format: int32 */
@@ -6160,12 +6160,6 @@ export interface components {
       /** @description The list of minimum education levels that apply to this activity */
       minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevelCreateRequest'][]
       /**
-       * Format: int64
-       * @description The optional NOMIS internal location id for this schedule
-       * @example 98877667
-       */
-      locationId?: number
-      /**
        * Format: uuid
        * @description The optional DPS location UUID for this schedule
        * @example b7602cc8-e769-4cbb-8194-62d8e655992a
@@ -6641,12 +6635,6 @@ export interface components {
        * @example Pay band 1
        */
       description: string
-      /**
-       * Format: int32
-       * @description The pay band number this is associated with in NOMIS (1-10)
-       * @example 1
-       */
-      nomisPayBand?: number
     }
     /** @description The update request with the new appointment details and how to apply the update */
     AppointmentUpdateRequest: {
@@ -6840,12 +6828,6 @@ export interface components {
        * @example high
        */
       riskLevel?: string
-      /**
-       * Format: int64
-       * @description The optional NOMIS internal location id for this schedule
-       * @example 98877667
-       */
-      locationId?: number
       /**
        * Format: uuid
        * @description The optional DPS location UUID for this schedule
