@@ -78,6 +78,7 @@ import { PaidType } from '../routes/activities/suspensions/handlers/viewSuspensi
 import { WaitingListStatus } from '../enum/waitingListStatus'
 import logger from '../../logger'
 import LocationType from '../enum/locationType'
+import HowToAddOptions from '../enum/allocations'
 
 export default function nunjucksSetup(
   app: express.Express,
@@ -237,6 +238,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('videoConferenceScheduleFeatureToggleEnabled', config.videoConferenceScheduleFeatureToggleEnabled)
   njkEnv.addGlobal('appointmentMultipleAttendanceToggleEnabled', config.appointmentMultipleAttendanceToggleEnabled)
   njkEnv.addGlobal('inServiceReportingEnabled', config.inServiceReportingEnabled)
+  njkEnv.addGlobal('multiplePrisonerActivityAllocationEnabled', config.multiplePrisonerActivityAllocationEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
   njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
   njkEnv.addGlobal('NameFormatStyle', NameFormatStyle)
@@ -245,6 +247,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('WaitingListStatus', WaitingListStatus)
   njkEnv.addGlobal('LocationType', LocationType)
   njkEnv.addGlobal('DeallocateAfterAllocationDateOption', DeallocateAfterAllocationDateOption)
+  njkEnv.addGlobal('HowToAddOptions', HowToAddOptions)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

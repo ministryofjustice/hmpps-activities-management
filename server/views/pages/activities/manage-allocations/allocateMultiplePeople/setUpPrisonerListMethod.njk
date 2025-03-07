@@ -1,0 +1,50 @@
+{% extends "layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - set up a list" %}
+{% set pageId = 'activities-allocate-multiple-set-up-list-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+                {{ govukRadios({
+                    name: "howToAdd",
+                    fieldset: {
+                        legend: {
+                            text: 'How do you want to set up a list of people to allocate?',
+                            classes: "govuk-fieldset__legend--l",
+                            isPageHeading: true
+                        }
+                    },
+                    errorMessage: validationErrors | findError('howToAdd'),
+                    items: [
+                        {
+                            value: HowToAddOptions.SEARCH,
+                            text: "Search for them one by one",
+                            checked: formResponses.howToAdd == HowToAddOptions.SEARCH
+                        },
+                        {
+                            value: HowToAddOptions.CSV,
+                            text: "Add a group of people using a CSV file",
+                            checked: formResponses.howToAdd == HowToAddOptions.CSV
+                        },
+                        {
+                            value: HowToAddOptions.EXISTING_LIST,
+                            text: "Use a list of people who are currently allocated to another activity",
+                            checked: formResponses.howToAdd == HowToAddOptions.EXISTING_LIST
+                        }
+                    ]
+                }) }}
+
+                <div class='govuk-button-group'>
+                    {{ govukButton({ text: "Continue" }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

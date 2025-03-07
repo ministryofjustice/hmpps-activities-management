@@ -102,6 +102,7 @@ export default class AllocationDashboardRoutes {
     const activeAllocations = activity.schedules[0].allocations.filter(a => a.status === 'ACTIVE').length
 
     const currentWeek = calcCurrentWeek(richStartDate, activity.schedules[0].scheduleWeeks)
+
     res.render('pages/activities/allocation-dashboard/allocation-dashboard', {
       activity,
       schedule: activity.schedules[0],

@@ -15,6 +15,10 @@ import RemoveDateOptionRoutes, { RemoveDateOption } from './handlers/removeDateO
 import PayBandRoutes, { PayBand } from './handlers/payBand'
 import ExclusionRoutes, { Schedule } from './handlers/exclusions'
 import AllocationErrorRoutes from './handlers/allocationError'
+import SetUpPrisonerListMethodRoutes, {
+  SetUpPrisonerListForm,
+} from './handlers/allocateMultiplePeople/setUpPrisonerListMethod'
+import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/allocateMultiplePeople/selectPrisoner'
 
 export default function Index({ activitiesService, prisonService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -35,6 +39,8 @@ export default function Index({ activitiesService, prisonService, metricsService
   const cancelHandler = new CancelRoutes()
   const confirmationHandler = new ConfirmationRoutes(metricsService, activitiesService)
   const errorHandler = new AllocationErrorRoutes()
+  const setUpPrisonerListHandler = new SetUpPrisonerListMethodRoutes(activitiesService)
+  const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
   get('/before-you-allocate', beforeYouAllocateHandler.GET, true)
@@ -56,6 +62,11 @@ export default function Index({ activitiesService, prisonService, metricsService
   get('/cancel', cancelHandler.GET, true)
   post('/cancel', cancelHandler.POST, ConfirmCancelOptions)
   get('/confirmation', confirmationHandler.GET, true)
+
+  get('/multiple/set-up-method', setUpPrisonerListHandler.GET, false)
+  post('/multiple/set-up-method', setUpPrisonerListHandler.POST, SetUpPrisonerListForm)
+  get('/multiple/select-prisoner', selectPrisonerHandler.GET, true)
+  post('/multiple/search-prisoner', selectPrisonerHandler.SEARCH, PrisonerSearch)
 
   get('/error/:errorType(transferred)', errorHandler.GET, true)
 
