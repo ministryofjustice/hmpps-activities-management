@@ -8,29 +8,28 @@ import { ServiceUser } from '../@types/express'
 import {
   ActivityCreateRequest,
   Allocation,
-  LocationGroup,
-  LocationPrefix,
-  PrisonerAllocations,
-  PrisonerScheduledEvents,
-  AppointmentSeries,
-  AppointmentSeriesDetails,
-  AppointmentDetails,
   AppointmentCategorySummary,
+  AppointmentDetails,
   AppointmentLocationSummary,
+  AppointmentSeries,
   AppointmentSeriesCreateRequest,
-  PrisonerDeallocationRequest,
+  AppointmentSeriesDetails,
+  AppointmentSetAppointment,
+  AppointmentSetCreateRequest,
+  AppointmentSetDetails,
+  AppointmentUpdateRequest,
   EventAcknowledgeRequest,
   EventReview,
   EventReviewSearchResults,
-  AppointmentSetCreateRequest,
-  AppointmentSetAppointment,
-  AppointmentSetDetails,
-  WaitingListApplicationRequest,
-  WaitingListApplicationUpdateRequest,
-  AppointmentUpdateRequest,
-  AppointmentAttendanceRequest,
+  LocationGroup,
+  LocationPrefix,
+  PrisonerAllocations,
+  PrisonerDeallocationRequest,
+  PrisonerScheduledEvents,
   SuspendPrisonerRequest,
   UnsuspendPrisonerRequest,
+  WaitingListApplicationRequest,
+  WaitingListApplicationUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -947,23 +946,6 @@ describe('activitiesApiClient', () => {
         .matchHeader('Caseload-Id', prisonCode)
         .reply(200)
       await activitiesApiClient.getAppointmentAttendanceSummaries('MDI', date, user)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
-  describe('putAppointmentAttendance', () => {
-    it('should call endpoint to put the appointment attendance', async () => {
-      const appointmentId = 1
-      const request = {
-        attendedPrisonNumbers: ['A1234BC'],
-        nonAttendedPrisonNumbers: ['B2345CD'],
-      } as AppointmentAttendanceRequest
-      fakeActivitiesApi
-        .put(`/appointments/${appointmentId}/attendance`)
-        .matchHeader('authorization', `Bearer token`)
-        .matchHeader('Caseload-Id', 'MDI')
-        .reply(200)
-      await activitiesApiClient.putAppointmentAttendance(1, request, user)
       expect(nock.isDone()).toBe(true)
     })
   })
