@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 
-export default class CheckPayRoutes {
+export default class CheckEducationLevelHandler {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
