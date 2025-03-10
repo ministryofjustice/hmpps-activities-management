@@ -24,9 +24,10 @@
                         text: "Description",
                         classes: "govuk-label--s"
                     },
+                    disabled: true,
                     classes: "govuk-input--width-20",
                     errorMessage: validationErrors | findError('description'),
-                    value: formResponses.description or prisonPayBand.description
+                    value: prisonPayBand.description
                 }) }}
                 {{ govukInput({
                     id: "nomisPayBand",

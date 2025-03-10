@@ -6640,7 +6640,7 @@ export interface components {
        * @description The description of pay band in this prison
        * @example Pay band 1
        */
-      description: string
+      description?: string
       /**
        * Format: int32
        * @description The pay band number this is associated with in NOMIS (1-10)
