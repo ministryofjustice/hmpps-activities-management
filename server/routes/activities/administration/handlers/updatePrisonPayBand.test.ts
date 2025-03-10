@@ -91,7 +91,6 @@ describe('Route Handlers - Update a prison pay band', () => {
       req.params.prisonPayBandId = '1'
 
       req.body = {
-        description: 'desc',
         displaySequence: '1',
         alias: 'alias',
       }
@@ -108,7 +107,6 @@ describe('Route Handlers - Update a prison pay band', () => {
       }
 
       const request: PrisonPayBandUpdateRequest = {
-        description: 'desc',
         displaySequence: 1,
         alias: 'alias',
       }
@@ -122,7 +120,6 @@ describe('Route Handlers - Update a prison pay band', () => {
       expect(activitiesService.patchPrisonPayBand).toHaveBeenCalledWith(
         'RSI',
         {
-          description: 'desc',
           displaySequence: 1,
           alias: 'alias',
         },
@@ -139,26 +136,6 @@ describe('Route Handlers - Update a prison pay band', () => {
   })
 
   describe('Validation', () => {
-    it('validation fails if the description is not supplied', async () => {
-      const body = {
-        description: undefined,
-        displaySequence: '1',
-        alias: 'alias',
-      }
-
-      const requestObject = plainToInstance(UpdatePrisonPayBand, { ...body })
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual(
-        expect.arrayContaining([
-          {
-            error: 'Add a description',
-            property: 'description',
-          },
-        ]),
-      )
-    })
-
     it('validation fails if the alias is not supplied', async () => {
       const body = {
         description: 'desc',
