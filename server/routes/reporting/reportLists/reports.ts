@@ -5,8 +5,9 @@ export default {
       title: 'Waitlist Aggregate Report',
       definitionName: 'waitlist-applications-001',
       variantName: 'waitlist-applications-pending-approved-report',
-      displayTitle: 'Waitlist aggregation with averages',
-      displayDescription: 'Some description of the report',
+      displayTitle: 'Average number of days on waitlists',
+      displayDescription:
+        'Details of the average number of days from an application being logged to an allocation decision, by activity.',
       roleRequired: true,
       category: 'waitlists',
     },
