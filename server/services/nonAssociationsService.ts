@@ -13,6 +13,10 @@ export default class NonAssociationsService {
     return this.nonAssociationsApiClient.getNonAssociationsBetween(prisonerNumbers, user)
   }
 
+  async getNonAssociationsInvolving(prisonerNumbers: string[], user: ServiceUser): Promise<NonAssociation[]> {
+    return this.nonAssociationsApiClient.getNonAssociationsInvolving(prisonerNumbers, user)
+  }
+
   async enhanceNonAssociations(nonAssociations: NonAssociation[], user: ServiceUser) {
     if (!nonAssociations.length) return []
 
