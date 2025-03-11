@@ -16,7 +16,7 @@ export default class ReportRoutes {
       variantName: matchingReport.variantName,
       apiUrl: config.apis.reporting.url,
       apiTimeout: config.apis.reporting.timeout,
-      layoutTemplate: 'layout.njk',
+      layoutTemplate: 'reportsLayout.njk',
       tokenProvider: (request, response, nextFunction) => response.locals.user.token,
       definitionsPath: 'definitions/prisons/dps/activities',
     })(req, res, next)
