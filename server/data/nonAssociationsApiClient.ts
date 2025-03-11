@@ -23,6 +23,9 @@ export default class NonAssociationsApiClient extends AbstractHmppsRestClient {
       {
         path: `/non-associations/involving`,
         data: prisonerNumbers,
+        query: {
+          prisonId: user.activeCaseLoadId,
+        },
       },
       user,
     )

@@ -5,8 +5,8 @@ import IsNotAnExistingAttendee from '../../../../../validators/IsNotAnExistingAt
 import PrisonService from '../../../../../services/prisonService'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import ActivitiesService from '../../../../../services/activitiesService'
-import { ServiceUser } from '../../../../../@types/express'
 import NonAssociationsService from '../../../../../services/nonAssociationsService'
+import enhancePrisonersWithNonAssocationsAndAllocations from '../../../../../utils/extraPrisonerInformation'
 
 export class SelectPrisoner {
   @Expose()
@@ -42,7 +42,16 @@ export default class SelectPrisonerRoutes {
       let prisoners: Prisoner[] = []
       if (result && !result.empty) prisoners = result.content
 
-      const enhancedPrisoners = await this.enhancePrisonersWithNonAssocationsAndAllocations(prisoners, user)
+      const prisonerNumbers = prisoners.map(prisoner => prisoner.prisonerNumber)
+      const [prisonerAllocations, nonAssociations] = await Promise.all([
+        this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
+        this.nonAssociationsService.getListPrisonersWithNonAssociations(prisonerNumbers, user),
+      ])
+      const enhancedPrisoners = enhancePrisonersWithNonAssocationsAndAllocations(
+        prisoners,
+        prisonerAllocations,
+        nonAssociations,
+      )
 
       return res.render('pages/activities/manage-allocations/allocateMultiplePeople/selectPrisoner', {
         prisoners: enhancedPrisoners,
@@ -56,22 +65,5 @@ export default class SelectPrisonerRoutes {
   SEARCH = async (req: Request, res: Response): Promise<void> => {
     const { query } = req.body
     return res.redirect(`select-prisoner?query=${query}`)
-  }
-
-  private enhancePrisonersWithNonAssocationsAndAllocations = async (prisoners: Prisoner[], user: ServiceUser) => {
-    const prisonerNumbers = prisoners.map(prisoner => prisoner.prisonerNumber)
-    const prisonerAllocations = await this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user)
-
-    // TODO: get non-associations for each prisoner and map
-    // const nonAllocations = await this.nonAssociationsService.getNonAssociationsInvolving(prisonerNumbers, user)
-
-    return prisoners.map(prisoner => {
-      const [allocations] = prisonerAllocations.filter(person => prisoner.prisonerNumber === person.prisonerNumber)
-
-      return {
-        ...prisoner,
-        allocations: allocations?.allocations,
-      }
-    })
   }
 }

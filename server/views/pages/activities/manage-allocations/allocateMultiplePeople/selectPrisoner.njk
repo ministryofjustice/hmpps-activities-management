@@ -58,8 +58,17 @@
                         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                         {% set prisonerRows = [] %}
                         {% for prisoner in prisoners %}
-                            {% set allocations = prisoner.allocations %}
-                            {% set nonAssociationsData = allocations[0] if allocations | length else [] %}
+
+                            {% set otherAllocationsHtml %}
+                                <ul class='govuk-list'>
+                                    {% for allocation in prisoner.allocations %}
+                                        <li><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary | escape }}</a></li>
+                                    {% else %}
+                                        <li>None</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endset %}
+
                             {% if prisoners | length > 1 %}
                                 {% set prisonerName = '<div class="govuk-radios govuk-radios--small" data-module="govuk-radios">' +
                                                         '<div class="govuk-radios__item">' +
@@ -97,9 +106,9 @@
                                         'data-qa': 'non-associations-link-'+prisoner.prisonerNumber
                                     },
 
-                                    html: nonAssociationsHtml(nonAssociationsData, prisoner.prisonerNumber, session.allocateJourney.activity.activityId)
+                                    html: nonAssociationsHtml(prisoner, prisoner.prisonerNumber, session.allocateJourney.activity.activityId)
                                 }, {
-                                    text: "Maths level 1",
+                                    html: otherAllocationsHtml,
                                     attributes: {
                                         id: 'prisoner-allocations',
                                         "data-sort-value": prisoner.allocations
