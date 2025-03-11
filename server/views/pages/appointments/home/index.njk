@@ -78,18 +78,16 @@
                         }) }}
                     </div>
                 {% endif %}
-                {% if videoConferenceScheduleFeatureToggleEnabled %}
-                    <div class="govuk-grid-column-one-third card-group__item">
-                        {{ card({
-                            "id": "videoDailySchedule",
-                            "href": videoConferenceScheduleUrl,
-                            "clickable": "true",
-                            "heading": "Video link daily schedule",
-                            "description": "View official video link bookings for a VCC, PCVL, or legal visits area, and print off schedules.",
-                            "data-qa": "video-daily-schedule-card"
-                        }) }}
-                    </div>
-                {% endif %}
+                <div class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+                        "id": "videoDailySchedule",
+                        "href": videoConferenceScheduleUrl,
+                        "clickable": "true",
+                        "heading": "Video link daily schedule",
+                        "description": "View official video link bookings for a VCC, PCVL, or legal visits area, and print off schedules.",
+                        "data-qa": "video-daily-schedule-card"
+                    }) }}
+                </div>
             </div>
         </div>
     </div>
