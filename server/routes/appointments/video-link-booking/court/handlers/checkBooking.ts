@@ -1,8 +1,12 @@
 import { Request, Response } from 'express'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
+import CourtBookingService from '../../../../../services/courtBookingService'
 
 export default class CheckBookingRoutes {
-  constructor(private readonly bookAVideoLinkService: BookAVideoLinkService) {}
+  constructor(
+    private readonly bookAVideoLinkService: BookAVideoLinkService,
+    private readonly courtBookingService: CourtBookingService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
@@ -19,7 +23,7 @@ export default class CheckBookingRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const id = await this.bookAVideoLinkService.createVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+    const id = await this.courtBookingService.createVideoLinkBooking(req.session.bookACourtHearingJourney, user)
     return res.redirect(`confirmation/${id}`)
   }
 }

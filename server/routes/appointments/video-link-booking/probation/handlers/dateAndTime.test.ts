@@ -4,7 +4,6 @@ import { validate } from 'class-validator'
 import { startOfTomorrow, startOfYesterday } from 'date-fns'
 import DateAndTimeRoutes, { DateAndTime } from './dateAndTime'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
-import { YesNo } from '../../../../../@types/activities'
 import { associateErrorsWithProperty, formatDate } from '../../../../../utils/utils'
 import { Location } from '../../../../../@types/bookAVideoLinkApi/types'
 
@@ -19,7 +18,7 @@ describe('DateAndTimeRoutes', () => {
   beforeEach(() => {
     req = {
       session: {
-        bookACourtHearingJourney: {
+        bookAProbationMeetingJourney: {
           prisoner: { prisonCode: 'PRISON1' },
         },
       },
@@ -46,7 +45,7 @@ describe('DateAndTimeRoutes', () => {
 
       await dateAndTimeRoutes.GET(req as Request, res as Response)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/court/date-and-time', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/probation/date-and-time', {
         rooms: [
           { key: 'Room1', description: 'Room 1', enabled: true },
           { key: 'Room2', description: 'Room 2', enabled: true },
@@ -61,9 +60,6 @@ describe('DateAndTimeRoutes', () => {
         date: new Date(),
         startTime: new Date(),
         endTime: new Date(),
-        preRequired: YesNo.YES,
-        postRequired: YesNo.NO,
-        preLocation: 'Room1',
       }
       req.query = { preserveHistory: 'true' }
 
@@ -77,9 +73,6 @@ describe('DateAndTimeRoutes', () => {
         date: new Date(),
         startTime: new Date(),
         endTime: new Date(),
-        preRequired: YesNo.YES,
-        postRequired: YesNo.NO,
-        preLocation: 'Room1',
       }
 
       await dateAndTimeRoutes.POST(req as Request, res as Response)
@@ -90,16 +83,14 @@ describe('DateAndTimeRoutes', () => {
 })
 
 describe('DateAndTime', () => {
-  const bookACourtHearingJourney = {}
+  const bookAProbationMeetingJourney = {}
 
   it('should validate a valid DateAndTime instance', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
-      bookACourtHearingJourney,
+      bookAProbationMeetingJourney,
       date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 11, minute: 30 },
-      preRequired: YesNo.NO,
-      postRequired: YesNo.NO,
     })
 
     const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -108,12 +99,10 @@ describe('DateAndTime', () => {
 
   it('should invalidate an instance with a past date', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
-      bookACourtHearingJourney,
+      bookAProbationMeetingJourney,
       date: formatDate(startOfYesterday(), 'dd/MM/yyyy'),
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 11, minute: 30 },
-      preRequired: YesNo.NO,
-      postRequired: YesNo.NO,
     })
 
     const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -124,12 +113,10 @@ describe('DateAndTime', () => {
 
   it('should invalidate an instance with endTime before startTime', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
-      bookACourtHearingJourney,
+      bookAProbationMeetingJourney,
       date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 9, minute: 30 },
-      preRequired: YesNo.NO,
-      postRequired: YesNo.NO,
     })
 
     const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -140,11 +127,9 @@ describe('DateAndTime', () => {
 
   it('should invalidate an instance with missing required fields', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
-      bookACourtHearingJourney,
+      bookAProbationMeetingJourney,
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 11, minute: 30 },
-      preRequired: YesNo.NO,
-      postRequired: YesNo.NO,
     })
 
     const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -153,53 +138,13 @@ describe('DateAndTime', () => {
 
   it('should invalidate an instance with invalid date format', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
-      bookACourtHearingJourney,
+      bookAProbationMeetingJourney,
       date: 'invalid date',
       startTime: { hour: 10, minute: 30 },
       endTime: { hour: 11, minute: 30 },
-      preRequired: YesNo.NO,
-      postRequired: YesNo.NO,
     })
 
     const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
     expect(errors).toEqual(expect.arrayContaining([{ error: 'Enter a valid date', property: 'date' }]))
-  })
-
-  it('should invalidate an instance with invalid enum values', async () => {
-    const dateAndTime = plainToInstance(DateAndTime, {
-      bookACourtHearingJourney,
-      date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 11, minute: 30 },
-      preRequired: 'INVALID_ENUM',
-      postRequired: 'INVALID_ENUM',
-    })
-
-    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toEqual(
-      expect.arrayContaining([
-        { error: 'Select if a pre-court hearing should be added', property: 'preRequired' },
-        { error: 'Select if a post-court hearing should be added', property: 'postRequired' },
-      ]),
-    )
-  })
-
-  it('should invalidate where pre and post meetings are required but rooms are not provided', async () => {
-    const dateAndTime = plainToInstance(DateAndTime, {
-      bookACourtHearingJourney,
-      date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 11, minute: 30 },
-      preRequired: YesNo.YES,
-      postRequired: YesNo.YES,
-    })
-
-    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toEqual(
-      expect.arrayContaining([
-        { error: 'Select a room for the pre-court hearing', property: 'preLocation' },
-        { error: 'Select a room for the post-court hearing', property: 'postLocation' },
-      ]),
-    )
   })
 })

@@ -67,7 +67,6 @@ export default ({
       bookingId: Number(bookingId),
       appointmentIds: existingVlbAppointments.map(a => a.appointmentId),
       bookingStatus: booking.statusCode,
-      type: booking.bookingType,
       prisoner: {
         name: `${prisoner.firstName} ${prisoner.lastName}`,
         firstName: prisoner.firstName,

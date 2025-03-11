@@ -29,7 +29,7 @@
                             text: "Appointment name"
                         },
                         value: {
-                            text: "Video Link - Court Hearing"
+                            text: 'Video Link - Probation Meeting' if bvlsMasteredVlpmFeatureToggleEnabled else 'Video Link - Court Hearing'
                         }
                     },
                     {
@@ -38,11 +38,11 @@
                         },
                         value: {
                             html: showProfileLink({
-                                firstName: session.bookACourtHearingJourney.prisoner.firstName,
-                                middleNames: session.bookACourtHearingJourney.prisoner.middleNames,
-                                lastName: session.bookACourtHearingJourney.prisoner.lastName,
-                                prisonerNumber: session.bookACourtHearingJourney.prisoner.number,
-                                cellLocation: session.bookACourtHearingJourney.prisoner.cellLocation
+                                firstName: session.bookAProbationMeetingJourney.prisoner.firstName,
+                                middleNames: session.bookAProbationMeetingJourney.prisoner.middleNames,
+                                lastName: session.bookAProbationMeetingJourney.prisoner.lastName,
+                                prisonerNumber: session.bookAProbationMeetingJourney.prisoner.number,
+                                cellLocation: session.bookAProbationMeetingJourney.prisoner.cellLocation
                             })
                         }
                     },
@@ -51,7 +51,7 @@
                             text: "Date"
                         },
                         value: {
-                            text: session.bookACourtHearingJourney.date | parseISODate | formatDate
+                            text: session.bookAProbationMeetingJourney.date | parseISODate | formatDate
                         },
                         actions: {
                             items: [
@@ -66,43 +66,17 @@
                     },
                     {
                         key: {
-                            text: "Pre-court hearing time"
+                            text: "Meeting time"
                         },
                         value: {
-                            text: (session.bookACourtHearingJourney.preHearingStartTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.preHearingEndTime | parseISODate | formatDate('HH:mm'))
-                        }
-                    } if session.bookACourtHearingJourney.preLocationCode,
-                    {
-                        key: {
-                            text: "Pre-court hearing room"
-                        },
-                        value: {
-                            text: (rooms | find('key', session.bookACourtHearingJourney.preLocationCode)).description
+                            text: (session.bookAProbationMeetingJourney.startTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookAProbationMeetingJourney.endTime | parseISODate | formatDate('HH:mm'))
                         },
                         actions: {
                             items: [
                                 {
                                     href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
                                     text: "Change",
-                                    visuallyHiddenText: "pre-court hearing room",
-                                    classes: "govuk-link--no-visited-state"
-                                }
-                            ]
-                        }
-                    } if session.bookACourtHearingJourney.preLocationCode,
-                    {
-                        key: {
-                            text: "Main hearing time"
-                        },
-                        value: {
-                            text: (session.bookACourtHearingJourney.startTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.endTime | parseISODate | formatDate('HH:mm'))
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
-                                    text: "Change",
-                                    visuallyHiddenText: "main hearing time",
+                                    visuallyHiddenText: "main meeting time",
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
@@ -110,48 +84,22 @@
                     },
                     {
                         key: {
-                            text: "Main hearing room"
+                            text: "Meeting room"
                         },
                         value: {
-                            text: (rooms | find('key', session.bookACourtHearingJourney.locationCode)).description
+                            text: (rooms | find('key', session.bookAProbationMeetingJourney.locationCode)).description
                         },
                         actions: {
                             items: [
                                 {
                                     href: "location" + ("?preserveHistory=true" if session.req.query.preserveHistory),
                                     text: "Change",
-                                    visuallyHiddenText: "main hearing room",
+                                    visuallyHiddenText: "main meeting room",
                                     classes: "govuk-link--no-visited-state"
                                 }
                             ]
                         }
-                    },
-                    {
-                        key: {
-                            text: "Post-court hearing time"
-                        },
-                        value: {
-                            text: (session.bookACourtHearingJourney.postHearingStartTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.postHearingEndTime | parseISODate | formatDate('HH:mm'))
-                        }
-                    } if session.bookACourtHearingJourney.postLocationCode,
-                    {
-                        key: {
-                            text: "Post-court hearing room"
-                        },
-                        value: {
-                            text: (rooms | find('key', session.bookACourtHearingJourney.postLocationCode)).description
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "date-and-time" + ("?preserveHistory=true" if session.req.query.preserveHistory),
-                                    text: "Change",
-                                    visuallyHiddenText: "post-court hearing room",
-                                    classes: "govuk-link--no-visited-state"
-                                }
-                            ]
-                        }
-                    } if session.bookACourtHearingJourney.postLocationCode
+                    }
                 ]
             }) }}
         </div>
@@ -159,16 +107,13 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">Attendee events on {{ session.bookACourtHearingJourney.date | parseISODate | formatDate }}</h2>
+            <h2 class="govuk-heading-m">Attendee events on {{ session.bookAProbationMeetingJourney.date | parseISODate | formatDate }}</h2>
             <div class="govuk-summary-card appointment-schedule">
                 <div class="govuk-summary-card__title-wrapper">
-                    <h3 class="govuk-summary-card__title">{{ session.bookACourtHearingJourney.prisoner.name | toTitleCase}}, {{ session.bookACourtHearingJourney.prisoner.number }}</h3>
+                    <h3 class="govuk-summary-card__title">{{ session.bookAProbationMeetingJourney.prisoner.name | toTitleCase}}, {{ session.bookAProbationMeetingJourney.prisoner.number }}</h3>
                 </div>
                 <div class="govuk-summary-card__content">
-                    {% set events = prisonerScheduledEvents | filter('cancelled', false) %}
-                    {% for appointmentId in session.bookACourtHearingJourney.appointmentIds %}
-                        {% set events = events | filterNot('appointmentId', appointmentId) %}
-                    {% endfor %}
+                    {% set events = prisonerScheduledEvents | filter('cancelled', false) | filterNot('appointmentId', session.bookAProbationMeetingJourney.appointmentId)%}
                     {% if events.length > 0 %}
                         {% set scheduledEventRows = [] %}
                         {% for scheduledEvent in events %}
@@ -228,7 +173,7 @@
 
     <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">Room schedules on {{ session.bookACourtHearingJourney.date | parseISODate | formatDate }}</h2>
+                <h2 class="govuk-heading-m">Room schedules on {{ session.bookAProbationMeetingJourney.date | parseISODate | formatDate }}</h2>
 
                 {% for location in internalLocationEvents %}
                     <div class="govuk-summary-card appointment-schedule">
@@ -236,10 +181,7 @@
                             <h3 class="govuk-summary-card__title">{{ location.description }}</h3>
                         </div>
                         <div class="govuk-summary-card__content">
-                            {% set events = location.events | filter('cancelled', false) %}
-                            {% for appointmentId in session.bookACourtHearingJourney.appointmentIds %}
-                                {% set events = events | filterNot('appointmentId', appointmentId) %}
-                            {% endfor %}
+                            {% set events = location.events | filter('cancelled', false) | filterNot('appointmentId', session.bookAProbationMeetingJourney.appointmentId) %}
                             {% if events.length > 0 %}
                                 {% set scheduledEventRows = [] %}
                                 {% for scheduledEvent in events %}
@@ -285,7 +227,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="POST" {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing schedule" {% endif %}>
+            <form method="POST" data-module="form-spinner" data-loading-text="Changing schedule">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukButton({
                     text: "Continue"

@@ -17,7 +17,7 @@ export default function CancelRoutes({ bookAVideoLinkService, courtBookingServic
   const confirmCancel = new ConfirmCancelRoutes(courtBookingService)
   const cancelConfirmed = new CancelConfirmedRoutes(bookAVideoLinkService)
 
-  // Book a video link journey is required in session for the following routes
+  // Book a court hearing journey is required in session for the following routes
   router.use((req, res, next) => {
     if (!req.session.bookACourtHearingJourney) return res.redirect('/appointments')
     return next()

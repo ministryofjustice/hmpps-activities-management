@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsIn, IsNotEmpty, MaxLength, ValidateIf } from 'class-validator'
-import createHttpError from 'http-errors'
-import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
+import CourtBookingService from '../../../../../services/courtBookingService'
 
 export class CourtHearingLink {
   @Expose()
@@ -18,14 +17,10 @@ export class CourtHearingLink {
 }
 
 export default class CourtHearingLinkRoutes {
-  constructor(private readonly bookAVideoLinkService: BookAVideoLinkService) {}
+  constructor(private readonly courtBookingService: CourtBookingService) {}
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { type } = req.session.bookACourtHearingJourney
-    if (type === 'COURT') {
-      return res.render('pages/appointments/video-link-booking/court/court-hearing-link')
-    }
-    return next(createHttpError.NotFound())
+    return res.render('pages/appointments/video-link-booking/court/court-hearing-link')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -36,7 +31,7 @@ export default class CourtHearingLinkRoutes {
     req.session.bookACourtHearingJourney.videoLinkUrl = videoLinkUrl
 
     if (mode === 'amend') {
-      await this.bookAVideoLinkService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
 
       const successHeading = "You've changed the hearing link for this court hearing"
 

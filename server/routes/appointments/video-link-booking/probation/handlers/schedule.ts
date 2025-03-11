@@ -1,28 +1,24 @@
 import { Request, Response } from 'express'
-import _, { uniqWith } from 'lodash'
+import { uniqWith } from 'lodash'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { parseIsoDate } from '../../../../../utils/datePickerUtils'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import PrisonService from '../../../../../services/prisonService'
-import CourtBookingService from '../../../../../services/courtBookingService'
+import ProbationBookingService from '../../../../../services/probationBookingService'
 
 export default class ScheduleRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
     private readonly bookAVideoLinkService: BookAVideoLinkService,
-    private readonly courtBookingService: CourtBookingService,
+    private readonly probationBookingService: ProbationBookingService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { prisoner, date, locationCode, preLocationCode, postLocationCode } = req.session.bookACourtHearingJourney
+    const { prisoner, date, locationCode } = req.session.bookAProbationMeetingJourney
 
-    const locations = await Promise.all(
-      _.uniq([locationCode, preLocationCode, postLocationCode])
-        .filter(Boolean)
-        .map(code => this.prisonService.getInternalLocationByKey(code, user)),
-    )
+    const location = await this.prisonService.getInternalLocationByKey(locationCode, user)
 
     const [prisonerScheduledEvents, internalLocationEvents, rooms] = await Promise.all([
       this.activitiesService
@@ -36,17 +32,12 @@ export default class ScheduleRoutes {
           ...response.adjudications,
         ]),
       this.activitiesService
-        .getInternalLocationEvents(
-          user.activeCaseLoadId,
-          parseIsoDate(date),
-          locations.map(l => l.locationId),
-          user,
-        )
+        .getInternalLocationEvents(user.activeCaseLoadId, parseIsoDate(date), [location.locationId], user)
         .then(events =>
-          events.map(location => ({
-            ...location,
+          events.map(l => ({
+            ...l,
             events: uniqWith(
-              location.events,
+              l.events,
               (a, b) => a.scheduledInstanceId === b.scheduledInstanceId && a.appointmentId === b.appointmentId,
             ),
           })),
@@ -54,7 +45,7 @@ export default class ScheduleRoutes {
       this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonCode, user),
     ])
 
-    return res.render('pages/appointments/video-link-booking/court/schedule', {
+    return res.render('pages/appointments/video-link-booking/probation/schedule', {
       prisonerScheduledEvents,
       internalLocationEvents,
       rooms,
@@ -62,19 +53,14 @@ export default class ScheduleRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { mode } = req.params
     const { user } = res.locals
 
-    if (mode === 'amend') {
-      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+    await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
 
-      const successHeading = "You've changed the schedule for this court hearing"
-      return res.redirectWithSuccess(
-        `/appointments/video-link-booking/court/${req.session.bookACourtHearingJourney.bookingId}`,
-        successHeading,
-      )
-    }
-
-    return res.redirectOrReturn('court-hearing-link')
+    const successHeading = "You've changed the schedule for this probation meeting"
+    return res.redirectWithSuccess(
+      `/appointments/video-link-booking/probation/${req.session.bookAProbationMeetingJourney.bookingId}`,
+      successHeading,
+    )
   }
 }

@@ -15,7 +15,7 @@ export default ({
     const { bookingId } = req.params
     const { user } = res.locals
 
-    if (bookingId === req.session.bookACourtHearingJourney?.bookingId?.toString()) return next()
+    if (bookingId === req.session.bookAProbationMeetingJourney?.bookingId?.toString()) return next()
 
     const booking = await bookAVideoLinkService.getVideoLinkBookingById(Number(bookingId), user)
 
