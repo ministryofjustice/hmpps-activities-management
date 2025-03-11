@@ -13,10 +13,6 @@ export class UpdatePrisonPayBand {
   displaySequence: number
 
   @Expose()
-  @IsNotEmpty({ message: 'Add a description' })
-  description: string
-
-  @Expose()
   @IsNotEmpty({ message: 'Add an alias' })
   alias: string
 }
@@ -39,10 +35,9 @@ export default class UpdatePrisonPayBandRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { prisonPayBandId } = req.params
-    const { description, alias, displaySequence } = req.body
+    const { alias, displaySequence } = req.body
 
     const request: PrisonPayBandUpdateRequest = {
-      description,
       displaySequence: +displaySequence,
       alias,
     }
