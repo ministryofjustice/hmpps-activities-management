@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import CancelConfirmedRoutes from './cancelConfirmed'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
-import { Court } from '../../../../../@types/bookAVideoLinkApi/types'
+import { ProbationTeam } from '../../../../../@types/bookAVideoLinkApi/types'
 
 jest.mock('../../../../../services/bookAVideoLinkService')
 
@@ -14,8 +14,8 @@ describe('CancelConfirmedRoutes', () => {
   beforeEach(() => {
     req = {
       session: {
-        bookACourtHearingJourney: {
-          agencyCode: 'code',
+        bookAProbationMeetingJourney: {
+          probationTeamCode: 'code',
           prisoner: { prisonCode: 'PRISON1' },
           date: '2024-09-09',
         },
@@ -37,13 +37,18 @@ describe('CancelConfirmedRoutes', () => {
 
   describe('GET', () => {
     it('should render the confirmation page', async () => {
-      const court = { courtId: 1, code: 'code', description: 'Disabled Court', enabled: false } as Court
-      bookAVideoLinkService.getAllCourts.mockResolvedValue([court])
+      const probationTeam = {
+        probationTeamId: 1,
+        code: 'code',
+        description: 'Disabled team',
+        enabled: false,
+      } as ProbationTeam
+      bookAVideoLinkService.getAllProbationTeams.mockResolvedValue([probationTeam])
 
       await cancelConfirmedRoutes.GET(req as Request, res as Response)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/court/booking-cancelled', {
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/probation/booking-cancelled', {
         date: '2024-09-09',
-        court,
+        probationTeam,
       })
     })
   })

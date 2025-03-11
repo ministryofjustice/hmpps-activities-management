@@ -9,6 +9,7 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import { ServiceUser } from '../../../../../@types/express'
 import { AppointmentSearchResult } from '../../../../../@types/activitiesAPI/types'
 import LocationMappingService from '../../../../../services/locationMappingService'
+import config from '../../../../../config'
 
 export default class VideoLinkDetailsRoutes {
   constructor(
@@ -24,7 +25,7 @@ export default class VideoLinkDetailsRoutes {
     const { user } = res.locals
 
     const videoBooking = await this.bookAVideoLinkService.getVideoLinkBookingById(+vlbId, user)
-    const { preAppointment, mainAppointment, postAppointment } = this.fetchAppointments(videoBooking)
+    const mainAppointment = this.fetchMainAppointment(videoBooking)
 
     if (!mainAppointment) {
       return next(createHttpError.NotFound())
@@ -38,17 +39,14 @@ export default class VideoLinkDetailsRoutes {
       this.fetchMainAppointmentFromActivitiesAPI(mainAppointment, user).then(a => a.appointmentId),
     ])
 
-    const earliestAppointment = preAppointment || mainAppointment
-    const date = parseISO(earliestAppointment.appointmentDate)
-    const time = parse(earliestAppointment.startTime, 'HH:mm', new Date(0))
+    const date = parseISO(mainAppointment.appointmentDate)
+    const time = parse(mainAppointment.startTime, 'HH:mm', new Date(0))
     const isAmendable = this.bookAVideoLinkService.bookingIsAmendable(date, time, videoBooking.statusCode)
 
-    return res.render('pages/appointments/video-link-booking/court/details', {
+    return res.render('pages/appointments/video-link-booking/probation/details', {
       videoBooking,
       mainAppointmentId,
-      preAppointment,
       mainAppointment,
-      postAppointment,
       prisoner,
       rooms,
       userMap,
@@ -56,18 +54,8 @@ export default class VideoLinkDetailsRoutes {
     })
   }
 
-  private fetchAppointments = (videoLinkBooking: VideoLinkBooking) => {
-    const findAppointment = (type: string) => videoLinkBooking.prisonAppointments.find(a => a.appointmentType === type)
-
-    const preAppointment = findAppointment('VLB_COURT_PRE')
-    const mainAppointment = findAppointment('VLB_COURT_MAIN')
-    const postAppointment = findAppointment('VLB_COURT_POST')
-
-    return {
-      preAppointment,
-      mainAppointment,
-      postAppointment,
-    }
+  private fetchMainAppointment = (videoLinkBooking: VideoLinkBooking) => {
+    return videoLinkBooking.prisonAppointments.find(a => a.appointmentType === 'VLB_PROBATION')
   }
 
   private fetchMainAppointmentFromActivitiesAPI = async (
@@ -84,7 +72,6 @@ export default class VideoLinkDetailsRoutes {
         {
           appointmentType: 'INDIVIDUAL',
           startDate: mainAppointment.appointmentDate,
-          categoryCode: 'VLB',
           prisonerNumbers: [mainAppointment.prisonerNumber],
         },
         user,
@@ -92,6 +79,7 @@ export default class VideoLinkDetailsRoutes {
       .then(apps =>
         apps.find(
           app =>
+            ['VLB', config.bvlsMasteredVlpmFeatureToggleEnabled ? 'VLPM' : ''].includes(app.category.code) && // Handle legacy probation bookings which may have type VLB
             locationId === app.internalLocation.id &&
             mainAppointment.startTime === app.startTime &&
             mainAppointment.endTime === app.endTime,

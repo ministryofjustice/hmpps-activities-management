@@ -9,12 +9,10 @@ export default class CancelConfirmedRoutes {
     const { user } = res.locals
     req.session.bookACourtHearingJourney = null
 
-    const agency =
-      (await this.bookAVideoLinkService.getAllCourts(user).then(courts => courts.find(c => c.code === agencyCode))) ||
-      (await this.bookAVideoLinkService
-        .getAllProbationTeams(user)
-        .then(teams => teams.find(t => t.code === agencyCode)))
+    const court = await this.bookAVideoLinkService
+      .getAllCourts(user)
+      .then(courts => courts.find(c => c.code === agencyCode))
 
-    return res.render('pages/appointments/video-link-booking/court/booking-cancelled', { date, agency })
+    return res.render('pages/appointments/video-link-booking/court/booking-cancelled', { date, court })
   }
 }

@@ -1,19 +1,19 @@
 import { Request, Response } from 'express'
 import ConfirmCancelRoutes from './confirmCancel'
-import CourtBookingService from '../../../../../services/courtBookingService'
+import ProbationBookingService from '../../../../../services/probationBookingService'
 
-jest.mock('../../../../../services/courtBookingService')
+jest.mock('../../../../../services/probationBookingService')
 
 describe('ConfirmCancelRoutes', () => {
   let req: Partial<Request>
   let res: Partial<Response>
-  let courtBookingService: jest.Mocked<CourtBookingService>
+  let probationBookingService: jest.Mocked<ProbationBookingService>
   let confirmCancelRoutes: ConfirmCancelRoutes
 
   beforeEach(() => {
     req = {
       session: {
-        bookACourtHearingJourney: {
+        bookAProbationMeetingJourney: {
           prisoner: { prisonCode: 'PRISON1' },
           date: '2024-09-09',
         },
@@ -29,14 +29,14 @@ describe('ConfirmCancelRoutes', () => {
       redirectOrReturn: jest.fn(),
     }
 
-    courtBookingService = new CourtBookingService(null) as jest.Mocked<CourtBookingService>
-    confirmCancelRoutes = new ConfirmCancelRoutes(courtBookingService)
+    probationBookingService = new ProbationBookingService(null) as jest.Mocked<ProbationBookingService>
+    confirmCancelRoutes = new ConfirmCancelRoutes(probationBookingService)
   })
 
   describe('GET', () => {
     it('should render the correct view', async () => {
       await confirmCancelRoutes.GET(req as Request, res as Response)
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/court/confirm-cancel')
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/probation/confirm-cancel')
     })
   })
 
@@ -44,7 +44,7 @@ describe('ConfirmCancelRoutes', () => {
     it('should cancel the booking and redirect', async () => {
       await confirmCancelRoutes.POST(req as Request, res as Response)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('confirmation')
-      expect(courtBookingService.cancelVideoLinkBooking).toHaveBeenCalled()
+      expect(probationBookingService.cancelVideoLinkBooking).toHaveBeenCalled()
     })
   })
 })

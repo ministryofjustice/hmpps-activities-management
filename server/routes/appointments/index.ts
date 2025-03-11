@@ -6,6 +6,7 @@ import appointmentSeriesDetailsRoutes from './appointment-series'
 import appointmentSetDetailsRoutes from './appointment-set'
 import appointmentDetailsRoutes from './appointment'
 import courtBookingRoutes from './video-link-booking/court'
+import probationBookingRoutes from './video-link-booking/probation'
 import appointmentSearchRoutes from './search'
 import appointmentAttendanceRoutes from './attendance'
 import appointmentAttendanceSummaryStatistics from './attendance-summary-stats'
@@ -33,6 +34,7 @@ export default function routes(services: Services): Router {
   router.use('/set/:appointmentSetId(\\d+)', appointmentSetDetailsRoutes(services))
   router.use('/:appointmentId(\\d+)', appointmentDetailsRoutes(services))
   router.use('/video-link-booking/court', courtBookingRoutes(services))
+  router.use('/video-link-booking/probation', probationBookingRoutes(services))
 
   // Appointments attendance summary statistics routes
   router.use('/attendance-summary', appointmentAttendanceSummaryStatistics(services))

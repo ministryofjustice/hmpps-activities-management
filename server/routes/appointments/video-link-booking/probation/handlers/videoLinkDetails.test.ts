@@ -57,34 +57,16 @@ describe('VideoLinkDetailsRoutes', () => {
       const videoBooking = {
         videoLinkBookingId: 1,
         statusCode: 'ACTIVE',
-        bookingType: 'COURT',
+        bookingType: 'PROBATION',
         prisonAppointments: [
-          {
-            prisonAppointmentId: 1,
-            prisonCode: 'PRISON1',
-            prisonerNumber: 'A1234BC',
-            appointmentType: 'VLB_COURT_PRE',
-            appointmentDate: '2023-10-01',
-            startTime: '10:00',
-            endTime: '10:30',
-          },
           {
             prisonAppointmentId: 2,
             prisonCode: 'PRISON1',
             prisonerNumber: 'A1234BC',
-            appointmentType: 'VLB_COURT_MAIN',
+            appointmentType: 'VLB_PROBATION',
             appointmentDate: '2023-10-01',
             startTime: '10:30',
             endTime: '11:00',
-          },
-          {
-            prisonAppointmentId: 3,
-            prisonCode: 'PRISON1',
-            prisonerNumber: 'A1234BC',
-            appointmentType: 'VLB_COURT_POST',
-            appointmentDate: '2023-10-01',
-            startTime: '11:00',
-            endTime: '11:30',
           },
         ],
         createdBy: 'user1',
@@ -119,19 +101,18 @@ describe('VideoLinkDetailsRoutes', () => {
           internalLocation: { id: 10001 },
           startTime: '10:30',
           endTime: '11:00',
+          category: { code: 'VLB' },
         } as AppointmentSearchResult,
       ])
 
       await videoLinkDetailsRoutes.GET(req as Request, res as Response, next)
 
       expect(res.render).toHaveBeenCalledWith(
-        'pages/appointments/video-link-booking/court/details',
+        'pages/appointments/video-link-booking/probation/details',
         expect.objectContaining({
           videoBooking,
           mainAppointmentId: 1,
-          preAppointment: videoBooking.prisonAppointments[0],
-          mainAppointment: videoBooking.prisonAppointments[1],
-          postAppointment: videoBooking.prisonAppointments[2],
+          mainAppointment: videoBooking.prisonAppointments[0],
           prisoner: {
             prisonerNumber: 'A1234BC',
             firstName: 'John',
@@ -155,16 +136,34 @@ describe('VideoLinkDetailsRoutes', () => {
       const videoBooking = {
         videoLinkBookingId: 1,
         statusCode: 'ACTIVE',
-        bookingType: 'PROBATION',
+        bookingType: 'COURT',
         prisonAppointments: [
+          {
+            prisonAppointmentId: 1,
+            prisonCode: 'PRISON1',
+            prisonerNumber: 'A1234BC',
+            appointmentType: 'VLB_COURT_PRE',
+            appointmentDate: '2023-10-01',
+            startTime: '10:00',
+            endTime: '10:30',
+          },
           {
             prisonAppointmentId: 2,
             prisonCode: 'PRISON1',
             prisonerNumber: 'A1234BC',
-            appointmentType: 'VLB_PROBATION',
+            appointmentType: 'VLB_COURT_MAIN',
             appointmentDate: '2023-10-01',
             startTime: '10:30',
             endTime: '11:00',
+          },
+          {
+            prisonAppointmentId: 3,
+            prisonCode: 'PRISON1',
+            prisonerNumber: 'A1234BC',
+            appointmentType: 'VLB_COURT_POST',
+            appointmentDate: '2023-10-01',
+            startTime: '11:00',
+            endTime: '11:30',
           },
         ],
         createdBy: 'user1',

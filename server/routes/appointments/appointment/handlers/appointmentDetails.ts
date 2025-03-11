@@ -37,7 +37,9 @@ export default class AppointmentDetailsRoutes {
         })
 
       if (videoLinkBooking) {
-        return res.redirect(`video-link-booking/court/${videoLinkBooking.videoLinkBookingId}`)
+        return res.redirect(
+          `video-link-booking/${videoLinkBooking.bookingType.toLowerCase()}/${videoLinkBooking.videoLinkBookingId}`,
+        )
       }
     }
 

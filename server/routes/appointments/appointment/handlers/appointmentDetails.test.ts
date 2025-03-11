@@ -100,7 +100,7 @@ describe('Route Handlers - Appointment Details', () => {
 
       when(bookAVideoLinkService.matchAppointmentToVideoLinkBooking)
         .calledWith(atLeast('ABC123', 'locationKey', 'ACTIVE'))
-        .mockResolvedValue({ videoLinkBookingId: 1 } as VideoLinkBooking)
+        .mockResolvedValue({ videoLinkBookingId: 1, bookingType: 'COURT' } as VideoLinkBooking)
 
       await handler.GET(req, res)
 
@@ -130,7 +130,7 @@ describe('Route Handlers - Appointment Details', () => {
 
       when(bookAVideoLinkService.matchAppointmentToVideoLinkBooking)
         .calledWith(atLeast('ABC123', 'locationKey', 'CANCELLED'))
-        .mockResolvedValue({ videoLinkBookingId: 1 } as VideoLinkBooking)
+        .mockResolvedValue({ videoLinkBookingId: 1, bookingType: 'COURT' } as VideoLinkBooking)
 
       await handler.GET(req, res)
 
