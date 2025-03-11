@@ -2,6 +2,7 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% set pageTitle = applicationName + " - Create an activity - Check education levels" %}
@@ -17,7 +18,7 @@
             {% if educationLevels | length %}
                 <h2 class='govuk-heading-m'>Level or qualification</h2>
             {% else %}
-                <p class="govuk-body">No levels or qualifications added</p>
+                <p class="govuk-body">This activity does not have any education or qualification requirements.</p>
             {% endif %}
 
             {% for educationLevel in educationLevels %}
@@ -45,6 +46,12 @@
                     rows: rows
                 }) }}
             {% endfor %}
+
+            {% if session.req.params.mode == 'edit' %}
+                {{ govukInsetText({
+                text: "If you change the education requirements, this may affect people who are currently allocated to this activity."
+                }) }}
+            {% endif %}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
