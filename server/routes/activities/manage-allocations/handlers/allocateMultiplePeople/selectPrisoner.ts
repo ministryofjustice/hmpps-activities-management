@@ -63,7 +63,7 @@ export default class SelectPrisonerRoutes {
     const prisonerAllocations = await this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user)
 
     // TODO: get non-associations for each prisoner and map
-    const nonAllocations = await this.nonAssociationsService.getNonAssociationsInvolving(prisonerNumbers, user)
+    // const nonAllocations = await this.nonAssociationsService.getNonAssociationsInvolving(prisonerNumbers, user)
 
     return prisoners.map(prisoner => {
       const [allocations] = prisonerAllocations.filter(person => prisoner.prisonerNumber === person.prisonerNumber)
