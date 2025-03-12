@@ -2878,22 +2878,18 @@ export interface components {
        */
       applyTo: 'THIS_APPOINTMENT' | 'THIS_AND_ALL_FUTURE_APPOINTMENTS' | 'ALL_FUTURE_APPOINTMENTS'
     }
-    /** @description The lists of prison numbers to mark as attended and non-attended */
-    AppointmentAttendanceRequest: {
+    /** @description
+     *       Describes how to update attendances for multiple appointments.
+     *        */
+    MultipleAppointmentAttendanceRequest: {
       /**
-       * @description The prisoner or prisoners that attended the appointment
-       * @example [
-       *       "A1234BC"
-       *     ]
+       * Format: int64
+       * @description The appointment id of the appointment which is being marked
+       * @example 123
        */
-      attendedPrisonNumbers: string[]
-      /**
-       * @description The prisoner or prisoners that did not attended the appointment
-       * @example [
-       *       "A1234BC"
-       *     ]
-       */
-      nonAttendedPrisonNumbers: string[]
+      appointmentId: number
+      /** @description The list of prisoner numbers to update */
+      prisonerNumbers: string[]
     }
     /** @description Search filters */
     WaitingListSearchRequest: {
