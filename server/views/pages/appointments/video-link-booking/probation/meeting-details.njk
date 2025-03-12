@@ -9,6 +9,9 @@
 {% set pageHeading = "Enter the type of meeting" %}
 
 {% block meta %}
+  {% if session.req.params.mode == 'create' %}
+    <meta name="autocompleteElements" content="probationTeamCode"/>
+  {% endif %}
     <meta name="autocompleteElements" content="meetingTypeCode"/>
 {% endblock %}
 
@@ -24,6 +27,30 @@
         <div class="govuk-grid-column-two-thirds">
             <form method='POST' data-module="form-spinner" data-loading-text="Changing meeting type">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% set items = [{ text: "", value: "" }] %}
+                    {% for team in probationTeams %}
+                        {% set items = (items.push({
+                          value: team.code,
+                          text: team.description,
+                          selected: formResponses.probationTeamCode == team.code or session.bookAProbationMeetingJourney.probationTeamCode == team.code
+                        }), items) %}
+                {% endfor %}
+
+                {% if session.req.params.mode == 'create' %}
+                    {{ govukSelect({
+                        name: "probationTeamCode",
+                        id: "probationTeamCode",
+                        label: {
+                            text: "Select the probation team the booking is for",
+                            classes: 'govuk-label--s'
+                        },
+                        items: items,
+                        errorMessage: validationErrors | findError("probationTeamCode")
+                    }) }}
+                {% else %}
+                    <input type="hidden" name="probationTeamCode" value="{{ session.bookAProbationMeetingJourney.probationTeamCode }}">
+                {% endif %}
+
                 {% set items = [{ text: "", value: "" }] %}
                 {% for meetingType in meetingTypes %}
                     {% set items = (items.push({

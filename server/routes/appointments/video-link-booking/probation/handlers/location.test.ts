@@ -63,6 +63,14 @@ describe('LocationRoutes', () => {
 
       expect(res.redirect).toHaveBeenCalledWith('schedule')
     })
+
+    it('redirects to meeting details when mode is create', async () => {
+      req.params.mode = 'create'
+
+      await locationRoutes.POST(req as Request, res as Response)
+
+      expect(res.redirect).toHaveBeenCalledWith('meeting-details')
+    })
   })
 })
 

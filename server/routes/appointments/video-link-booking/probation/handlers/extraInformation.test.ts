@@ -53,5 +53,14 @@ describe('ExtraInformationRoutes', () => {
         "You've changed the extra information for this probation meeting",
       )
     })
+
+    it('redirects to check-answers when mode is create', async () => {
+      req.body.comments = 'Some comments'
+      req.params.mode = 'create'
+
+      await extraInformationRoutes.POST(req as Request, res as Response)
+
+      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+    })
   })
 })

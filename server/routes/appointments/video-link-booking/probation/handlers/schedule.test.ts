@@ -145,5 +145,13 @@ describe('ScheduleRoutes', () => {
         "You've changed the schedule for this probation meeting",
       )
     })
+
+    it('redirects to cvp link when mode is create', async () => {
+      req.params.mode = 'create'
+
+      await scheduleRoutes.POST(req as Request, res as Response)
+
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('extra-information')
+    })
   })
 })

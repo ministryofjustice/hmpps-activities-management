@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
-import { ReferenceCode } from '../../../../../@types/bookAVideoLinkApi/types'
+import { ProbationTeam, ReferenceCode } from '../../../../../@types/bookAVideoLinkApi/types'
 import ProbationBookingService from '../../../../../services/probationBookingService'
 import MeetingDetailsRoutes from './meetingDetails'
 
@@ -37,11 +37,15 @@ describe('MeetingDetailsRoutes', () => {
   describe('GET', () => {
     it('renders meeting details view with probation teams and hearing types', async () => {
       const meetingTypes = [{ code: 'TYPE1', description: 'Type 1' }] as ReferenceCode[]
+      const probationTeams = [{ code: 'TEAM1', description: 'Team 1' }] as ProbationTeam[]
+
+      bookAVideoLinkService.getAllProbationTeams.mockResolvedValue(probationTeams)
       bookAVideoLinkService.getProbationMeetingTypes.mockResolvedValue(meetingTypes)
 
       await meetingDetailsRoutes.GET(req as Request, res as Response)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/probation/meeting-details', {
+        probationTeams,
         meetingTypes,
       })
     })
@@ -49,6 +53,7 @@ describe('MeetingDetailsRoutes', () => {
 
   describe('POST', () => {
     it('redirects with success message when mode is amend', async () => {
+      req.body.probationTeamCode = 'TEAM1'
       req.body.meetingTypeCode = 'TYPE1'
       req.params.mode = 'amend'
       req.session.bookAProbationMeetingJourney.bookingId = 1
@@ -63,6 +68,15 @@ describe('MeetingDetailsRoutes', () => {
         '/appointments/video-link-booking/probation/1',
         "You've changed the meeting type for this probation meeting",
       )
+    })
+
+    it('redirects to date and time when mode is create', async () => {
+      req.body.meetingTypeCode = 'TYPE1'
+      req.params.mode = 'create'
+
+      await meetingDetailsRoutes.POST(req as Request, res as Response)
+
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('date-and-time')
     })
   })
 })
