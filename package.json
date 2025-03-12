@@ -82,7 +82,7 @@
   "dependencies": {
     "@hmcts/uk-bank-holidays": "^1.0.2",
     "@microsoft/applicationinsights-web": "^3.3.6",
-    "@ministryofjustice/frontend": "^3.7.0",
+    "@ministryofjustice/frontend": "^4.0.1",
     "@ministryofjustice/hmpps-connect-dps-components": "^2.1.0",
     "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^4.1.5",
     "@types/express-serve-static-core": "^4.19.6",
@@ -143,7 +143,7 @@
     "@types/jest-when": "^3.5.5",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/multer": "^1.4.12",
-    "@types/node": "^22.13.9",
+    "@types/node": "^22.13.10",
     "@types/nunjucks": "^3.2.6",
     "@types/passport": "^1.0.17",
     "@types/passport-oauth2": "^1.4.17",

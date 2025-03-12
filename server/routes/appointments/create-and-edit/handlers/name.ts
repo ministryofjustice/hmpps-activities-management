@@ -57,13 +57,13 @@ export default class NameRoutes {
     }
 
     if (category.code === 'VLB') {
-      req.session.bookAVideoLinkJourney = {
+      req.session.bookACourtHearingJourney = {
         type: 'COURT',
         prisoners: req.session.appointmentJourney.prisoners,
       }
       req.session.appointmentJourney = null
 
-      return res.redirect(`../../video-link-booking/create/${journeyId}/select-prisoner`)
+      return res.redirect(`../../video-link-booking/court/create/${journeyId}/select-prisoner`)
     }
 
     return res.redirectOrReturn('tier')
