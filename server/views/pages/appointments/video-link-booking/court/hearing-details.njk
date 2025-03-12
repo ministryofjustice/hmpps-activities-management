@@ -13,7 +13,7 @@
 {% endif %}
 {% block meta %}
     {% if session.req.params.mode == 'create' %}
-        <meta name="autocompleteElements" content="agencyCode"/>
+        <meta name="autocompleteElements" content="courtCode"/>
     {% endif %}
     <meta name="autocompleteElements" content="hearingTypeCode"/>
 {% endblock %}
@@ -36,23 +36,23 @@
                     {% set items = (items.push({
                         value: agency.code,
                         text: agency.description,
-                        selected: formResponses.agencyCode == agency.code or session.bookACourtHearingJourney.agencyCode == agency.code
+                        selected: formResponses.courtCode == agency.code or session.bookACourtHearingJourney.courtCode == agency.code
                     }), items) %}
                 {% endfor %}
 
                 {% if session.req.params.mode == 'create' %}
                     {{ govukSelect({
-                        name: "agencyCode",
-                        id: "agencyCode",
+                        name: "courtCode",
+                        id: "courtCode",
                         label: {
                             text: "Select the court the booking is for",
                             classes: 'govuk-label--s'
                         },
                         items: items,
-                        errorMessage: validationErrors | findError("agencyCode")
+                        errorMessage: validationErrors | findError("courtCode")
                     }) }}
                 {% else %}
-                    <input type="hidden" name="agencyCode" value="{{ session.bookACourtHearingJourney.agencyCode }}">
+                    <input type="hidden" name="courtCode" value="{{ session.bookACourtHearingJourney.courtCode }}">
                 {% endif %}
 
                 {% set items = [{ text: "", value: "" }] %}
