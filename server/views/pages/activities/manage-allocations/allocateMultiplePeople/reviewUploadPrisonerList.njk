@@ -1,0 +1,17 @@
+{% extends "layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - review upload prisoner list" %}
+{% set pageId = 'activities-allocate-multiple-review-upload-prisoner-list-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-7">Review who you're allocating</h1>
+      <p class="govuk-body-l">Remove anyone who should not be allocated, or continue with the current list of people to allocate.</p>
+    </div>
+  </div>
+{% endblock %}

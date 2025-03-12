@@ -44,6 +44,8 @@ export default class SetUpPrisonerListMethodRoutes {
     // TODO: add redirects for the other options in later tickets
     if (HowToAddOptions[howToAdd] === HowToAddOptions.SEARCH) {
       res.redirect('select-prisoner')
+    } else if (HowToAddOptions[howToAdd] === HowToAddOptions.CSV) {
+      res.redirect('upload-prisoner-list')
     }
   }
 }

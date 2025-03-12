@@ -1,6 +1,6 @@
 import { ActivitySchedule, Allocation, ScheduledInstance, Slot } from '../../../@types/activitiesAPI/types'
 
-type Inmate = {
+export type Inmate = {
   prisonerName: string
   prisonerNumber: string
   prisonCode: string
