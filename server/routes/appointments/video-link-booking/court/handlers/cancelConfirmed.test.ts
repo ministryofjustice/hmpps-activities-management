@@ -15,7 +15,7 @@ describe('CancelConfirmedRoutes', () => {
     req = {
       session: {
         bookACourtHearingJourney: {
-          agencyCode: 'code',
+          courtCode: 'code',
           prisoner: { prisonCode: 'PRISON1' },
           date: '2024-09-09',
         },

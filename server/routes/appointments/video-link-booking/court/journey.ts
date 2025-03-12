@@ -6,7 +6,7 @@ export type BookACourtHearingJourney = {
   bookingStatus?: string
   prisoners?: AppointmentPrisonerDetails[]
   prisoner?: AppointmentPrisonerDetails
-  agencyCode?: string
+  courtCode?: string
   hearingTypeCode?: string
   date?: string
   startTime?: string

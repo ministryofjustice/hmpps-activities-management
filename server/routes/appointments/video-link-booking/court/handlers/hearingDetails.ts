@@ -7,7 +7,7 @@ import CourtBookingService from '../../../../../services/courtBookingService'
 export class HearingDetails {
   @Expose()
   @IsNotEmpty({ message: 'Select the court the booking is for' })
-  agencyCode: string
+  courtCode: string
 
   @Expose()
   @IsNotEmpty({ message: 'Select the type of hearing' })
@@ -30,11 +30,11 @@ export default class HearingDetailsRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { agencyCode, hearingTypeCode } = req.body
+    const { courtCode, hearingTypeCode } = req.body
     const { mode } = req.params
     const { user } = res.locals
 
-    req.session.bookACourtHearingJourney.agencyCode = agencyCode
+    req.session.bookACourtHearingJourney.courtCode = courtCode
     req.session.bookACourtHearingJourney.hearingTypeCode = hearingTypeCode
 
     if (mode === 'amend') {

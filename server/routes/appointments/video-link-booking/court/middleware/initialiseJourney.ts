@@ -76,7 +76,7 @@ export default ({
         cellLocation: prisoner.cellLocation,
         status: prisoner.status,
       },
-      agencyCode: booking.courtCode,
+      courtCode: booking.courtCode,
       hearingTypeCode: booking.courtHearingType,
       date: parseDateToISOString(mainAppointment.appointmentDate),
       startTime: parseTimeToISOString(mainAppointment.startTime),

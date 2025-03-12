@@ -33,7 +33,7 @@ export default class CourtBookingService {
           appointments: this.mapSessionToAppointments(journey),
         },
       ],
-      courtCode: journey.agencyCode,
+      courtCode: journey.courtCode,
       courtHearingType: journey.hearingTypeCode,
       comments: journey.comments,
       videoLinkUrl: journey.videoLinkUrl,

@@ -52,7 +52,7 @@ describe('HearingDetailsRoutes', () => {
 
   describe('POST', () => {
     it('redirects with success message when mode is amend', async () => {
-      req.body.agencyCode = 'COURT1'
+      req.body.courtCode = 'COURT1'
       req.body.hearingTypeCode = 'TYPE1'
       req.params.mode = 'amend'
       req.session.bookACourtHearingJourney.bookingId = 1
@@ -70,7 +70,7 @@ describe('HearingDetailsRoutes', () => {
     })
 
     it('redirects to location when mode is not amend', async () => {
-      req.body.agencyCode = 'COURT1'
+      req.body.courtCode = 'COURT1'
       req.body.hearingTypeCode = 'TYPE1'
       req.params.mode = 'create'
 
