@@ -51,7 +51,6 @@ export type AppointmentUncancelRequest = components['schemas']['AppointmentUncan
 export type AppointmentSearchRequest = components['schemas']['AppointmentSearchRequest']
 export type AppointmentSearchResult = components['schemas']['AppointmentSearchResult']
 export type AppointmentAttendanceSummary = components['schemas']['AppointmentAttendanceSummary']
-export type AppointmentAttendanceRequest = components['schemas']['AppointmentAttendanceRequest']
 export type AppointmentAttendeeSummary = components['schemas']['AppointmentAttendeeSummary']
 export type UncancelScheduledInstanceRequest = components['schemas']['UncancelScheduledInstanceRequest']
 export type ScheduleInstanceCancelRequest = components['schemas']['ScheduleInstanceCancelRequest']

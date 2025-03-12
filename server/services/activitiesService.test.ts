@@ -36,7 +36,6 @@ import {
   WaitingListApplicationUpdateRequest,
   AppointmentUpdateRequest,
   Allocation,
-  AppointmentAttendanceRequest,
   AddCaseNoteRequest,
   AppointmentCancelRequest,
   MultipleAppointmentAttendanceRequest,
@@ -882,25 +881,6 @@ describe('Activities Service', () => {
         null,
         null,
       )
-    })
-  })
-
-  describe('markAppointmentAttendance', () => {
-    it('should call the api client to put the appointment attendance', async () => {
-      const appointmentId = 1
-      const request = {
-        attendedPrisonNumbers: ['A1234BC'],
-        nonAttendedPrisonNumbers: ['B2345CD'],
-      } as AppointmentAttendanceRequest
-
-      await activitiesService.markAppointmentAttendance(
-        appointmentId,
-        request.attendedPrisonNumbers,
-        request.nonAttendedPrisonNumbers,
-        user,
-      )
-
-      expect(activitiesApiClient.putAppointmentAttendance).toHaveBeenCalledWith(appointmentId, request, user)
     })
   })
 
