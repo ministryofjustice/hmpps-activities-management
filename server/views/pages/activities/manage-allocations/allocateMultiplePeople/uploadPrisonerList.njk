@@ -1,0 +1,44 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - upload prisoner list" %}
+{% set pageId = 'activities-allocate-multiple-upload-prisoner-list-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <form action="upload-prisoner-list?_csrf={{ csrfToken }}{{ '&preserveHistory=true' if preserveHistory else '' }}" method="POST" enctype="multipart/form-data">
+                {{ govukFileUpload({
+                    id: "file",
+                    name: "file",
+                    label: {
+                        text: "Upload your list of prison numbers",
+                        classes: "govuk-label--l",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        text: "Your list of prison numbers must be in a CSV file"
+                    },
+                    errorMessage: validationErrors | findError('file')
+                }) }}
+                 {{ govukDetails({
+                                  summaryText: "How to use a CSV file",
+                                  html: howToUseCSVFile()
+                                }) }}
+                {{ govukButton({
+                    text: "Upload file"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% macro howToUseCSVFile() %}
+   <p class="govuk-body">A CSV file is a type of spreadsheet. Download the template if you need one, then add the relevant prison numbers. When you upload it to this service a list of attendees will be created.</p>
+   <p class="govuk-body">Download the <a href="/assets/downloads/prisoner-list.csv" download>prison number list template</a> (CSV, 1kb)</p>
+{% endmacro %}

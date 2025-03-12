@@ -13,12 +13,16 @@ import StartDateRoutes, { StartDate } from './handlers/startDate'
 import EndDateRoutes, { EndDate } from './handlers/endDate'
 import RemoveDateOptionRoutes, { RemoveDateOption } from './handlers/removeDateOption'
 import PayBandRoutes, { PayBand } from './handlers/payBand'
+import PrisonerListCsvParser from '../../../utils/prisonerListCsvParser'
 import ExclusionRoutes, { Schedule } from './handlers/exclusions'
 import AllocationErrorRoutes from './handlers/allocationError'
 import SetUpPrisonerListMethodRoutes, {
   SetUpPrisonerListForm,
 } from './handlers/allocateMultiplePeople/setUpPrisonerListMethod'
 import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/allocateMultiplePeople/selectPrisoner'
+import UploadPrisonerListRoutes, { UploadPrisonerList } from './handlers/allocateMultiplePeople/uploadPrisonerList'
+import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
+import ReviewUploadPrisonerListRoutes from './handlers/allocateMultiplePeople/reviewUploadPrisonerList'
 
 export default function Index({ activitiesService, prisonService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -41,6 +45,8 @@ export default function Index({ activitiesService, prisonService, metricsService
   const errorHandler = new AllocationErrorRoutes()
   const setUpPrisonerListHandler = new SetUpPrisonerListMethodRoutes(activitiesService)
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
+  const uploadPrisonerListHandler = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
+  const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(prisonService)
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
   get('/before-you-allocate', beforeYouAllocateHandler.GET, true)
@@ -67,6 +73,14 @@ export default function Index({ activitiesService, prisonService, metricsService
   post('/multiple/set-up-method', setUpPrisonerListHandler.POST, SetUpPrisonerListForm)
   get('/multiple/select-prisoner', selectPrisonerHandler.GET, true)
   post('/multiple/search-prisoner', selectPrisonerHandler.SEARCH, PrisonerSearch)
+  get('/multiple/upload-prisoner-list', uploadPrisonerListHandler.GET, true)
+  router.post(
+    '/multiple/upload-prisoner-list',
+    setUpMultipartFormDataParsing(),
+    validationMiddleware(UploadPrisonerList),
+    asyncMiddleware(uploadPrisonerListHandler.POST),
+  )
+  get('/multiple/review-upload-prisoner-list', reviewUploadPrisonerListHandler.GET, true)
 
   get('/error/:errorType(transferred)', errorHandler.GET, true)
 
