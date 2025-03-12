@@ -6,6 +6,10 @@ import ProbationBookingService from '../../../../../services/probationBookingSer
 
 export class MeetingDetails {
   @Expose()
+  @IsNotEmpty({ message: 'Select the probation team the booking is for' })
+  probationTeamCode: string
+
+  @Expose()
   @IsNotEmpty({ message: 'Select the type of meeting' })
   meetingTypeCode: string
 }
@@ -19,23 +23,33 @@ export default class MeetingDetailsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
 
+    const probationTeams = await this.bookAVideoLinkService.getAllProbationTeams(user)
     const meetingTypes = await this.bookAVideoLinkService.getProbationMeetingTypes(user)
 
-    return res.render('pages/appointments/video-link-booking/probation/meeting-details', { meetingTypes })
+    return res.render('pages/appointments/video-link-booking/probation/meeting-details', {
+      probationTeams,
+      meetingTypes,
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { meetingTypeCode } = req.body
+    const { probationTeamCode, meetingTypeCode } = req.body
+    const { mode } = req.params
     const { user } = res.locals
 
+    req.session.bookAProbationMeetingJourney.probationTeamCode = probationTeamCode
     req.session.bookAProbationMeetingJourney.meetingTypeCode = meetingTypeCode
 
-    await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
+    if (mode === 'amend') {
+      await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
 
-    const successHeading = "You've changed the meeting type for this probation meeting"
-    return res.redirectWithSuccess(
-      `/appointments/video-link-booking/probation/${req.session.bookAProbationMeetingJourney.bookingId}`,
-      successHeading,
-    )
+      const successHeading = "You've changed the meeting type for this probation meeting"
+      return res.redirectWithSuccess(
+        `/appointments/video-link-booking/probation/${req.session.bookAProbationMeetingJourney.bookingId}`,
+        successHeading,
+      )
+    }
+
+    return res.redirectOrReturn('date-and-time')
   }
 }

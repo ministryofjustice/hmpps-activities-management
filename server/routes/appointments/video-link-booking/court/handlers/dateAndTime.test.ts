@@ -134,7 +134,7 @@ describe('DateAndTime', () => {
 
     const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
     expect(errors).toEqual(
-      expect.arrayContaining([{ error: 'Select a end time that is after the start time', property: 'endTime' }]),
+      expect.arrayContaining([{ error: 'Select an end time that is after the start time', property: 'endTime' }]),
     )
   })
 
