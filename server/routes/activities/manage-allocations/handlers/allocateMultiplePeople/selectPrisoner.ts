@@ -66,4 +66,51 @@ export default class SelectPrisonerRoutes {
     const { query } = req.body
     return res.redirect(`select-prisoner?query=${query}`)
   }
+
+  SELECT_PRISONER = async (req: Request, res: Response): Promise<void> => {
+    const { selectedPrisoner } = req.body
+    const { user } = res.locals
+
+    const prisoner = await this.prisonService.getInmateByPrisonerNumber(selectedPrisoner, user).catch(_ => null)
+    if (!prisoner) return res.validationFailed('selectedPrisoner', 'You must select one option')
+
+    const prisonerFreeToAllocate = await this.checkPrisonerIsntCurrentlyAllocated(req, res, prisoner)
+    const prisonerIncentiveLevelSuitable = await this.checkPrisonerHasSuitableIncentiveLevel(req, res, prisoner)
+
+    if (prisonerFreeToAllocate && prisonerIncentiveLevelSuitable) {
+      await this.addPrisonersToSession(req, prisoner)
+      return res.redirect(`review-prisoners`)
+    }
+    // TODO: validation message if the person isn't eligible?
+    return res.validationFailed('', '')
+  }
+
+  private checkPrisonerIsntCurrentlyAllocated = async (_req: Request, _res: Response, _prisoner: Prisoner) => {
+    // compare prisoner against list of currently allocated prisoners
+    // if (alreadyAllocated) {
+    //   return res.validationFailed(
+    //     'selectedPrisoner',
+    //     `This person is already allocated to ${req.session.allocateJourney.activity.name}`,
+    //   )
+    // }
+
+    return true
+  }
+
+  private checkPrisonerHasSuitableIncentiveLevel = async (_req: Request, _res: Response, _prisoner: Prisoner) => {
+    return true
+  }
+
+  private addPrisonersToSession = async (req: Request, prisoner: Prisoner) => {
+    const prisonerData = {
+      prisonerNumber: prisoner.prisonerNumber,
+      prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+      prisonCode: prisoner.prisonId,
+      cellLocation: prisoner.cellLocation,
+      status: prisoner.status,
+      incentiveLevel: prisoner.currentIncentive.level.description,
+    }
+
+    req.session.allocateJourney.inmates.push(prisonerData)
+  }
 }
