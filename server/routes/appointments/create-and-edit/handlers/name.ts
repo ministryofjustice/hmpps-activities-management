@@ -3,6 +3,7 @@ import { Expose } from 'class-transformer'
 import { IsNotEmpty, MaxLength } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentType } from '../appointmentJourney'
+import config from '../../../../config'
 
 export class Name {
   @Expose()
@@ -22,7 +23,7 @@ export default class NameRoutes {
 
     const categories = await this.activitiesService.getAppointmentCategories(user).then(cat => {
       if (type === AppointmentType.SET) {
-        return cat.filter(c => c.code !== 'VLB')
+        return cat.filter(c => c.code !== 'VLB' && (!config.bvlsMasteredVlpmFeatureToggleEnabled || c.code !== 'VLPM'))
       }
       return cat
     })
@@ -63,6 +64,15 @@ export default class NameRoutes {
       req.session.appointmentJourney = null
 
       return res.redirect(`../../video-link-booking/court/create/${journeyId}/select-prisoner`)
+    }
+
+    if (category.code === 'VLPM' && config.bvlsMasteredVlpmFeatureToggleEnabled) {
+      req.session.bookAProbationMeetingJourney = {
+        prisoners: req.session.appointmentJourney.prisoners,
+      }
+      req.session.appointmentJourney = null
+
+      return res.redirect(`../../video-link-booking/probation/create/${journeyId}/select-prisoner`)
     }
 
     return res.redirectOrReturn('tier')

@@ -6,6 +6,7 @@ import insertJourneyIdentifier from '../../../../middleware/insertJourneyIdentif
 import initialiseJourney from './middleware/initialiseJourney'
 import cancelRoutes from './cancelRoutes'
 import amendRoutes from './amendRoutes'
+import createRoutes from './createRoutes'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -21,6 +22,7 @@ export default function Index(services: Services): Router {
   )
 
   get('/:vlbId(\\d+)', videoLinkDetailsRoutes.GET)
+  router.use('/:mode(create)/:journeyId', createRoutes(services))
 
   router.use('/:mode(amend)/:bookingId', insertJourneyIdentifier())
   router.use('/:mode(amend)/:bookingId/:journeyId', initialiseJourney(services), amendRoutes(services))

@@ -54,13 +54,18 @@ export default class ScheduleRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+    const { mode } = req.params
 
-    await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
+    if (mode === 'amend') {
+      await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
 
-    const successHeading = "You've changed the schedule for this probation meeting"
-    return res.redirectWithSuccess(
-      `/appointments/video-link-booking/probation/${req.session.bookAProbationMeetingJourney.bookingId}`,
-      successHeading,
-    )
+      const successHeading = "You've changed the schedule for this probation meeting"
+      return res.redirectWithSuccess(
+        `/appointments/video-link-booking/probation/${req.session.bookAProbationMeetingJourney.bookingId}`,
+        successHeading,
+      )
+    }
+
+    return res.redirectOrReturn('extra-information')
   }
 }

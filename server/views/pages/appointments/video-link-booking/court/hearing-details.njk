@@ -32,11 +32,11 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {% set items = [{ text: "", value: "" }] %}
-                {% for agency in agencies %}
+                {% for court in courts %}
                     {% set items = (items.push({
-                        value: agency.code,
-                        text: agency.description,
-                        selected: formResponses.courtCode == agency.code or session.bookACourtHearingJourney.courtCode == agency.code
+                        value: court.code,
+                        text: court.description,
+                        selected: formResponses.courtCode == court.code or session.bookACourtHearingJourney.courtCode == court.code
                     }), items) %}
                 {% endfor %}
 

@@ -23,10 +23,10 @@ export default class HearingDetailsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
 
-    const agencies = await this.bookAVideoLinkService.getAllCourts(user)
+    const courts = await this.bookAVideoLinkService.getAllCourts(user)
     const hearingTypes = await this.bookAVideoLinkService.getCourtHearingTypes(user)
 
-    return res.render('pages/appointments/video-link-booking/court/hearing-details', { agencies, hearingTypes })
+    return res.render('pages/appointments/video-link-booking/court/hearing-details', { courts, hearingTypes })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

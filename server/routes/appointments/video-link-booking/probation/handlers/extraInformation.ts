@@ -19,6 +19,7 @@ export default class ExtraInformationRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { extraInformation } = req.body
+    const { mode } = req.params
     const { user } = res.locals
 
     req.session.bookAProbationMeetingJourney = {
@@ -26,12 +27,16 @@ export default class ExtraInformationRoutes {
       comments: extraInformation,
     }
 
-    await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
+    if (mode === 'amend') {
+      await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
 
-    const successHeading = "You've changed the extra information for this probation meeting"
-    return res.redirectWithSuccess(
-      `/appointments/video-link-booking/probation/${req.session.bookAProbationMeetingJourney.bookingId}`,
-      successHeading,
-    )
+      const successHeading = "You've changed the extra information for this probation meeting"
+      return res.redirectWithSuccess(
+        `/appointments/video-link-booking/probation/${req.session.bookAProbationMeetingJourney.bookingId}`,
+        successHeading,
+      )
+    }
+
+    return res.redirect('check-answers')
   }
 }
