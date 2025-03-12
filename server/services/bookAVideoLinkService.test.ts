@@ -4,7 +4,7 @@ import BookAVideoLinkApiClient from '../data/bookAVideoLinkApiClient'
 import BookAVideoLinkService from './bookAVideoLinkService'
 import { Location, ReferenceCode, VideoLinkBooking } from '../@types/bookAVideoLinkApi/types'
 import { ServiceUser } from '../@types/express'
-import { BookAVideoLinkJourney } from '../routes/appointments/video-link-booking/journey'
+import { BookACourtHearingJourney } from '../routes/appointments/video-link-booking/court/journey'
 
 jest.mock('../data/bookAVideoLinkApiClient')
 
@@ -191,7 +191,7 @@ describe('Book A Video link service', () => {
         hearingTypeCode: 'APPEAL',
         comments: 'comments',
         videoLinkUrl: 'videoLinkUrl',
-      } as BookAVideoLinkJourney
+      } as BookACourtHearingJourney
 
       const expectedBody = {
         bookingType: 'COURT',
@@ -243,7 +243,7 @@ describe('Book A Video link service', () => {
         hearingTypeCode: 'APPEAL',
         comments: 'comments',
         videoLinkUrl: 'videoLinkUrl',
-      } as BookAVideoLinkJourney
+      } as BookACourtHearingJourney
 
       const expectedBody = {
         bookingType: 'COURT',

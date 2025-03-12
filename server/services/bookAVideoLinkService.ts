@@ -6,7 +6,7 @@ import {
   CreateVideoBookingRequest,
   VideoBookingSearchRequest,
 } from '../@types/bookAVideoLinkApi/types'
-import { BookAVideoLinkJourney } from '../routes/appointments/video-link-booking/journey'
+import { BookACourtHearingJourney } from '../routes/appointments/video-link-booking/court/journey'
 
 type VideoBookingRequest = CreateVideoBookingRequest | AmendVideoBookingRequest
 
@@ -63,21 +63,21 @@ export default class BookAVideoLinkService {
     return this.bookAVideoLinkApiClient.getReferenceCodesForGroup('PROBATION_MEETING_TYPE', user)
   }
 
-  public createVideoLinkBooking(journey: BookAVideoLinkJourney, user: ServiceUser) {
+  public createVideoLinkBooking(journey: BookACourtHearingJourney, user: ServiceUser) {
     const request = this.buildBookingRequest<CreateVideoBookingRequest>(journey)
     return this.bookAVideoLinkApiClient.createVideoLinkBooking(request, user)
   }
 
-  public amendVideoLinkBooking(journey: BookAVideoLinkJourney, user: ServiceUser) {
+  public amendVideoLinkBooking(journey: BookACourtHearingJourney, user: ServiceUser) {
     const request = this.buildBookingRequest<AmendVideoBookingRequest>(journey)
     return this.bookAVideoLinkApiClient.amendVideoLinkBooking(journey.bookingId, request, user)
   }
 
-  public cancelVideoLinkBooking(journey: BookAVideoLinkJourney, user: ServiceUser) {
+  public cancelVideoLinkBooking(journey: BookACourtHearingJourney, user: ServiceUser) {
     return this.bookAVideoLinkApiClient.cancelVideoLinkBooking(journey.bookingId, user)
   }
 
-  private buildBookingRequest<T extends VideoBookingRequest>(journey: BookAVideoLinkJourney): T {
+  private buildBookingRequest<T extends VideoBookingRequest>(journey: BookACourtHearingJourney): T {
     return {
       bookingType: journey.type,
       prisoners: [
@@ -96,7 +96,7 @@ export default class BookAVideoLinkService {
     } as T
   }
 
-  private mapSessionToAppointments(journey: BookAVideoLinkJourney) {
+  private mapSessionToAppointments(journey: BookACourtHearingJourney) {
     const createAppointment = (type: string, locationCode: string, date: string, startTime: string, endTime: string) =>
       locationCode
         ? {
