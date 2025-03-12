@@ -232,8 +232,8 @@ export default {
     },
   ] as RouteAuth[],
   spikesFeatureToggleEnabled: toBoolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', 'false')),
-  videoConferenceScheduleFeatureToggleEnabled: toBoolean(
-    get('VIDEO_CONFERENCE_SCHEDULE_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
+  bvlsMasteredVlpmFeatureToggleEnabled: toBoolean(
+    get('BVLS_MASTERED_VLPM_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
   ),
   appointmentMultipleAttendanceToggleEnabled: toBoolean(
     get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),

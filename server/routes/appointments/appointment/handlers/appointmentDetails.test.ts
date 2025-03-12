@@ -104,7 +104,7 @@ describe('Route Handlers - Appointment Details', () => {
 
       await handler.GET(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('video-link-booking/1')
+      expect(res.redirect).toHaveBeenCalledWith('video-link-booking/court/1')
     })
 
     it('should redirect to view a CANCELLED video link booking', async () => {
@@ -134,7 +134,7 @@ describe('Route Handlers - Appointment Details', () => {
 
       await handler.GET(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('video-link-booking/1')
+      expect(res.redirect).toHaveBeenCalledWith('video-link-booking/court/1')
     })
 
     it('should render the VLB as an appointment if not found in BVLS API', async () => {

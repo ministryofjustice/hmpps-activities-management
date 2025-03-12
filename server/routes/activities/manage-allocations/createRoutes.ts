@@ -24,7 +24,12 @@ import UploadPrisonerListRoutes, { UploadPrisonerList } from './handlers/allocat
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 import ReviewUploadPrisonerListRoutes from './handlers/allocateMultiplePeople/reviewUploadPrisonerList'
 
-export default function Index({ activitiesService, prisonService, metricsService }: Services): Router {
+export default function Index({
+  activitiesService,
+  prisonService,
+  metricsService,
+  nonAssociationsService,
+}: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(path, emptyJourneyHandler('allocateJourney', stepRequiresSession), asyncMiddleware(handler))
@@ -44,7 +49,7 @@ export default function Index({ activitiesService, prisonService, metricsService
   const confirmationHandler = new ConfirmationRoutes(metricsService, activitiesService)
   const errorHandler = new AllocationErrorRoutes()
   const setUpPrisonerListHandler = new SetUpPrisonerListMethodRoutes(activitiesService)
-  const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService)
+  const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService, activitiesService, nonAssociationsService)
   const uploadPrisonerListHandler = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(prisonService)
 

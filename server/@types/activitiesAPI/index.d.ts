@@ -2967,9 +2967,9 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      unpaged?: boolean
       /** Format: int32 */
       pageSize?: number
+      unpaged?: boolean
       paged?: boolean
       /** Format: int32 */
       pageNumber?: number
@@ -4523,22 +4523,6 @@ export interface components {
        * @example 2022-12-23
        */
       endDate?: string
-      /**
-       * Format: int64
-       * @description Optional NOMIS internal location id
-       * @example 98877667
-       */
-      internalLocationId?: number
-      /**
-       * @description Optional NOMIS internal location code
-       * @example A011
-       */
-      internalLocationCode?: string
-      /**
-       * @description Optional NOMIS internal location description
-       * @example PVI-1-2-A011
-       */
-      internalLocationDescription?: string
       /**
        * Format: uuid
        * @description The optional DPS location UUID
@@ -6160,12 +6144,6 @@ export interface components {
       /** @description The list of minimum education levels that apply to this activity */
       minimumEducationLevel: components['schemas']['ActivityMinimumEducationLevelCreateRequest'][]
       /**
-       * Format: int64
-       * @description The optional NOMIS internal location id for this schedule
-       * @example 98877667
-       */
-      locationId?: number
-      /**
        * Format: uuid
        * @description The optional DPS location UUID for this schedule
        * @example b7602cc8-e769-4cbb-8194-62d8e655992a
@@ -6636,17 +6614,6 @@ export interface components {
        * @example Low
        */
       alias: string
-      /**
-       * @description The description of pay band in this prison
-       * @example Pay band 1
-       */
-      description: string
-      /**
-       * Format: int32
-       * @description The pay band number this is associated with in NOMIS (1-10)
-       * @example 1
-       */
-      nomisPayBand?: number
     }
     /** @description The update request with the new appointment details and how to apply the update */
     AppointmentUpdateRequest: {
@@ -6840,12 +6807,6 @@ export interface components {
        * @example high
        */
       riskLevel?: string
-      /**
-       * Format: int64
-       * @description The optional NOMIS internal location id for this schedule
-       * @example 98877667
-       */
-      locationId?: number
       /**
        * Format: uuid
        * @description The optional DPS location UUID for this schedule

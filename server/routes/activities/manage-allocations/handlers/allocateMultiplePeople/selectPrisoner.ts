@@ -4,6 +4,9 @@ import { IsNotEmpty } from 'class-validator'
 import IsNotAnExistingAttendee from '../../../../../validators/IsNotAnExistingAttendee'
 import PrisonService from '../../../../../services/prisonService'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
+import ActivitiesService from '../../../../../services/activitiesService'
+import NonAssociationsService from '../../../../../services/nonAssociationsService'
+import enhancePrisonersWithNonAssocationsAndAllocations from '../../../../../utils/extraPrisonerInformation'
 
 export class SelectPrisoner {
   @Expose()
@@ -21,7 +24,11 @@ export class PrisonerSearch {
 }
 
 export default class SelectPrisonerRoutes {
-  constructor(private readonly prisonService: PrisonService) {}
+  constructor(
+    private readonly prisonService: PrisonService,
+    private readonly activitiesService: ActivitiesService,
+    private readonly nonAssociationsService: NonAssociationsService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
@@ -34,8 +41,20 @@ export default class SelectPrisonerRoutes {
       const result = await this.prisonService.searchPrisonInmates(query, user)
       let prisoners: Prisoner[] = []
       if (result && !result.empty) prisoners = result.content
-      return res.render('pages/activities/manage-allocations/allocateMultiplePeople/selectPrisoner', {
+
+      const prisonerNumbers = prisoners.map(prisoner => prisoner.prisonerNumber)
+      const [prisonerAllocations, nonAssociations] = await Promise.all([
+        this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
+        this.nonAssociationsService.getListPrisonersWithNonAssociations(prisonerNumbers, user),
+      ])
+      const enhancedPrisoners = enhancePrisonersWithNonAssocationsAndAllocations(
         prisoners,
+        prisonerAllocations,
+        nonAssociations,
+      )
+
+      return res.render('pages/activities/manage-allocations/allocateMultiplePeople/selectPrisoner', {
+        prisoners: enhancedPrisoners,
         query,
       })
     }

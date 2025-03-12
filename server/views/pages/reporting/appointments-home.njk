@@ -19,7 +19,7 @@
             {% for report in reports %}
                 {% if not report.roleRequired or 'ROLE_ACTIVITY_HUB' in user.roles %}
                     <section>
-                        <p class="govuk-body govuk-!-margin-bottom-1"><a href="/dpr-reporting/{{ report.path }}">{{ report.displayTitle }}</a></p>
+                        <p class="govuk-body govuk-!-margin-bottom-1"><a href="/dpr-reporting/{{ report.path }}">{{ report.title }}</a></p>
                         <p class="govuk-body">{{ report.displayDescription }}</p>
                         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
                     </section>
