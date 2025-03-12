@@ -11,6 +11,7 @@ import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 import BookAVideoLinkService from '../../../../services/bookAVideoLinkService'
 import { VideoLinkBooking } from '../../../../@types/bookAVideoLinkApi/types'
 import LocationMappingService from '../../../../services/locationMappingService'
+import config from '../../../../config'
 
 jest.mock('../../../../services/userService')
 jest.mock('../../../../services/bookAVideoLinkService')
@@ -100,11 +101,50 @@ describe('Route Handlers - Appointment Details', () => {
 
       when(bookAVideoLinkService.matchAppointmentToVideoLinkBooking)
         .calledWith(atLeast('ABC123', 'locationKey', 'ACTIVE'))
-        .mockResolvedValue({ videoLinkBookingId: 1, bookingType: 'COURT' } as VideoLinkBooking)
+        .mockResolvedValueOnce({ videoLinkBookingId: 1, bookingType: 'COURT' } as VideoLinkBooking)
 
       await handler.GET(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('video-link-booking/court/1')
+    })
+
+    it.each([[true], [false]])('should redirect to view a probation video link booking - toggle %s', async toggle => {
+      config.bvlsMasteredVlpmFeatureToggleEnabled = toggle
+
+      const vlbAppointment = {
+        ...appointment,
+        attendees: [{ prisoner: { prisonerNumber: 'ABC123' } }],
+        category: {
+          code: 'VLPM',
+        },
+        prisonCode: 'MDI',
+        internalLocation: { id: 1 },
+      }
+
+      req = {
+        params: {
+          id: '10',
+        },
+        appointment: vlbAppointment,
+      } as unknown as Request
+
+      if (toggle) {
+        when(locationMappingService.mapNomisLocationIdToDpsKey).calledWith(atLeast(1)).mockResolvedValue('locationKey')
+        when(bookAVideoLinkService.matchAppointmentToVideoLinkBooking)
+          .calledWith(atLeast('ABC123', 'locationKey', 'ACTIVE'))
+          .mockResolvedValueOnce({ videoLinkBookingId: 1, bookingType: 'PROBATION' } as VideoLinkBooking)
+      }
+
+      await handler.GET(req, res)
+
+      if (toggle) {
+        expect(res.redirect).toHaveBeenCalledWith('video-link-booking/probation/1')
+      } else {
+        expect(res.render).toHaveBeenCalledWith('pages/appointments/appointment/details', {
+          appointment: vlbAppointment,
+          userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        })
+      }
     })
 
     it('should redirect to view a CANCELLED video link booking', async () => {
@@ -130,7 +170,7 @@ describe('Route Handlers - Appointment Details', () => {
 
       when(bookAVideoLinkService.matchAppointmentToVideoLinkBooking)
         .calledWith(atLeast('ABC123', 'locationKey', 'CANCELLED'))
-        .mockResolvedValue({ videoLinkBookingId: 1, bookingType: 'COURT' } as VideoLinkBooking)
+        .mockResolvedValueOnce({ videoLinkBookingId: 1, bookingType: 'COURT' } as VideoLinkBooking)
 
       await handler.GET(req, res)
 
