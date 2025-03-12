@@ -3,14 +3,17 @@ import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService
 import BookAVideoLinkApiClient from '../../../../../data/bookAVideoLinkApiClient'
 import CheckBookingRoutes from './checkBooking'
 import { Location, ReferenceCode } from '../../../../../@types/bookAVideoLinkApi/types'
+import CourtBookingService from '../../../../../services/courtBookingService'
 
 jest.mock('../../../../../services/bookAVideoLinkService')
+jest.mock('../../../../../services/courtBookingService')
 jest.mock('../../../../../data/bookAVideoLinkApiClient')
 
 describe('CheckBookingRoutes', () => {
   let req: Partial<Request>
   let res: Partial<Response>
   let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
+  let courtBookingService: jest.Mocked<CourtBookingService>
   let checkBookingRoutes: CheckBookingRoutes
   let bookAVideoLinkApiClient: jest.Mocked<BookAVideoLinkApiClient>
 
@@ -33,7 +36,8 @@ describe('CheckBookingRoutes', () => {
     }
     bookAVideoLinkApiClient = new BookAVideoLinkApiClient() as jest.Mocked<BookAVideoLinkApiClient>
     bookAVideoLinkService = new BookAVideoLinkService(bookAVideoLinkApiClient) as jest.Mocked<BookAVideoLinkService>
-    checkBookingRoutes = new CheckBookingRoutes(bookAVideoLinkService)
+    courtBookingService = new CourtBookingService(bookAVideoLinkApiClient) as jest.Mocked<CourtBookingService>
+    checkBookingRoutes = new CheckBookingRoutes(bookAVideoLinkService, courtBookingService)
   })
 
   describe('GET', () => {
@@ -72,11 +76,11 @@ describe('CheckBookingRoutes', () => {
 
   describe('POST', () => {
     it('should create a video link booking and redirect to confirmation page', async () => {
-      bookAVideoLinkService.createVideoLinkBooking.mockResolvedValue(123)
+      courtBookingService.createVideoLinkBooking.mockResolvedValue(123)
 
       await checkBookingRoutes.POST(req as Request, res as Response)
 
-      expect(bookAVideoLinkService.createVideoLinkBooking).toHaveBeenCalledWith(
+      expect(courtBookingService.createVideoLinkBooking).toHaveBeenCalledWith(
         req.session.bookACourtHearingJourney,
         res.locals.user,
       )

@@ -10,13 +10,13 @@
         <div class="govuk-grid-column-two-thirds">
             {{ govukPanel({ titleText: pageTitle, classes: 'govuk-!-margin-bottom-6' }) }}
 
-            {% if agency.enabled %}
-                <p class='govuk-body'>We have emailed you confirming the cancellation. An email has also been sent to {{ agency.description }}.</p>
+            {% if court.enabled %}
+                <p class='govuk-body'>We have emailed you confirming the cancellation. An email has also been sent to {{ court.description }}.</p>
             {% else %}
                 <p class='govuk-body'>We have emailed you confirming the cancellation.</p>
-                <h2 class="govuk-heading-m">Email {{ agency.description }} to confirm the cancellation</h2>
+                <h2 class="govuk-heading-m">Email {{ court.description }} to confirm the cancellation</h2>
                 <p class="govuk-body">
-                    You must email {{ agency.description }} to confirm the cancellation. This is because they do not yet have access to the Book a video link service.
+                    You must email {{ court.description }} to confirm the cancellation. This is because they do not yet have access to the Book a video link service.
                 </p>
             {% endif %}
 

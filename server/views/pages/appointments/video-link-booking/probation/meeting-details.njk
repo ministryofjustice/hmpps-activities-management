@@ -1,0 +1,53 @@
+{% extends "layout.njk" %}
+
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageId = 'meeting-details-page' %}
+{% set jsBackLink = true %}
+{% set pageHeading = "Enter the type of meeting" %}
+
+{% block meta %}
+    <meta name="autocompleteElements" content="meetingTypeCode"/>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session) }}
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method='POST' data-module="form-spinner" data-loading-text="Changing meeting type">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% set items = [{ text: "", value: "" }] %}
+                {% for meetingType in meetingTypes %}
+                    {% set items = (items.push({
+                        value: meetingType.code,
+                        text: meetingType.description,
+                        selected: formResponses.meetingTypeCode == meetingType.code or session.bookAProbationMeetingJourney.meetingTypeCode == meetingType.code
+                    }), items) %}
+                {% endfor %}
+
+                {{ govukSelect({
+                    name: "meetingTypeCode",
+                    id: "meetingTypeCode",
+                    label: {
+                        text: "Select the type of meeting",
+                        classes: 'govuk-label--s'
+                    },
+                    items: items,
+                    errorMessage: validationErrors | findError("meetingTypeCode")
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

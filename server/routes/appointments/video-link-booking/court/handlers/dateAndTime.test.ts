@@ -90,7 +90,7 @@ describe('DateAndTimeRoutes', () => {
 })
 
 describe('DateAndTime', () => {
-  const bookACourtHearingJourney = { type: 'COURT' }
+  const bookACourtHearingJourney = {}
 
   it('should validate a valid DateAndTime instance', async () => {
     const dateAndTime = plainToInstance(DateAndTime, {
@@ -201,17 +201,5 @@ describe('DateAndTime', () => {
         { error: 'Select a room for the post-court hearing', property: 'postLocation' },
       ]),
     )
-  })
-
-  it('should pass missing pre and post meetings for probation bookings', async () => {
-    const dateAndTime = plainToInstance(DateAndTime, {
-      bookACourtHearingJourney: { type: 'PROBATION' },
-      date: formatDate(startOfTomorrow(), 'dd/MM/yyyy'),
-      startTime: { hour: 10, minute: 30 },
-      endTime: { hour: 11, minute: 30 },
-    })
-
-    const errors = await validate(dateAndTime).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toEqual([])
   })
 })

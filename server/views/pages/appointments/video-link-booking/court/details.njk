@@ -79,18 +79,18 @@
                     },
                     {
                         key: {
-                            text: "Court" if videoBooking.bookingType == 'COURT' else "Probation team"
+                            text: "Court"
                         },
                         value: {
-                            text: videoBooking.courtDescription or videoBooking.probationTeamDescription
+                            text: videoBooking.courtDescription
                         }
                     },
                     {
                         key: {
-                            text: "Hearing type" if videoBooking.bookingType == 'COURT' else "Meeting type"
+                            text: "Hearing type"
                         },
                         value: {
-                            text: videoBooking.courtHearingTypeDescription or videoBooking.probationMeetingTypeDescription
+                            text: videoBooking.courtHearingTypeDescription
                         },
                         actions: {
                             items: [
@@ -121,7 +121,7 @@
                     },
                     {
                         key: {
-                            text: "Room for hearing" if videoBooking.bookingType == 'COURT' else "Room for meeting"
+                            text: "Room for hearing"
                         },
                         value: {
                             text: (rooms | find('key', mainAppointment.prisonLocKey)).description
@@ -138,7 +138,7 @@
                     },
                     {
                         key: {
-                            text: "Hearing start time" if videoBooking.bookingType == 'COURT' else "Meeting start time"
+                            text: "Hearing start time"
                         },
                         value: {
                             text: mainAppointment.startTime
@@ -155,7 +155,7 @@
                     },
                     {
                         key: {
-                            text: "Hearing end time" if videoBooking.bookingType == 'COURT' else "Meeting end time"
+                            text: "Hearing end time"
                         },
                         value: {
                             text: mainAppointment.endTime
@@ -186,7 +186,7 @@
                                 }
                             ]
                         } if isAmendable
-                    } if videoBooking.bookingType == 'COURT',
+                    },
                     {
                         key: {
                             text: "Extra information"
@@ -254,7 +254,7 @@
                         }
                     }
                 ] if preAppointment else [ { value: { text: 'Not scheduled' } } ]
-            }) if videoBooking.bookingType == 'COURT' }}
+            }) }}
 
             {{ govukSummaryList({
                 card: {
@@ -298,7 +298,7 @@
                         }
                     }
                 ] if postAppointment else [ { value: { text: 'Not scheduled' } } ]
-            }) if videoBooking.bookingType == 'COURT' }}
+            }) }}
         </div>
     </div>
 

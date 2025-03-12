@@ -7,19 +7,25 @@ import validationMiddleware from '../../../../middleware/validationMiddleware'
 import ConfirmCancelRoutes from './handlers/confirmCancel'
 import CancelConfirmedRoutes from './handlers/cancelConfirmed'
 
-export default function CancelRoutes({ bookAVideoLinkService }: Services): Router {
+export default function CancelRoutes({ bookAVideoLinkService, courtBookingService }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  // Book a video link journey is required in session for the following routes
+  const confirmCancel = new ConfirmCancelRoutes(courtBookingService)
+  const cancelConfirmed = new CancelConfirmedRoutes(bookAVideoLinkService)
+
+  // Book a court hearing journey is required in session for the following routes
   router.use((req, res, next) => {
     if (!req.session.bookACourtHearingJourney) return res.redirect('/appointments')
     return next()
   })
 
+  get('/confirmation', cancelConfirmed.GET)
+
+  // Booking needs to be amendable for the following routes
   router.use((req, res, next) => {
     const { date, preHearingStartTime, startTime, bookingStatus } = req.session.bookACourtHearingJourney
     if (
@@ -35,12 +41,8 @@ export default function CancelRoutes({ bookAVideoLinkService }: Services): Route
     return next()
   })
 
-  const confirmCancel = new ConfirmCancelRoutes(bookAVideoLinkService)
-  const cancelConfirmed = new CancelConfirmedRoutes(bookAVideoLinkService)
-
   get('/confirm', confirmCancel.GET)
   post('/confirm', confirmCancel.POST)
-  get('/confirmation', cancelConfirmed.GET)
 
   return router
 }
