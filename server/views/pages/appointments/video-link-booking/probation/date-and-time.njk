@@ -1,0 +1,73 @@
+{% extends "layout.njk" %}
+
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
+{% from "components/timePicker.njk" import timePicker %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageId = 'date-and-time-page' %}
+{% set jsBackLink = true %}
+{% set pageHeading = "Enter the date and time of the appointment" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session) }}
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method='POST'>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ mojDatePicker({
+                    id: "date",
+                    name: "date",
+                    leadingZeros: 'true',
+                    label: {
+                        text: "Date",
+                        classes: "govuk-label--m"
+                    },
+                    hint: {
+                        text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
+                    },
+                    errorMessage: validationErrors | findError('date'),
+                    classes: 'moj-datepicker--fixed-width',
+                    value: formResponses.date or (session.bookAProbationMeetingJourney.date | isoDateToDatePickerDate)
+                }) }}
+
+                {{ timePicker({
+                    id: 'startTime',
+                    name: 'startTime',
+                    label: {
+                        text: 'Start time',
+                        classes: "govuk-fieldset__legend--m"
+                    },
+                    renderedErrorMessage: validationErrors | findError('startTime'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.startTime or session.bookAProbationMeetingJourney.startTime | isoDateToTimePicker
+                }) }}
+
+                {{ timePicker({
+                    id: 'endTime',
+                    name: 'endTime',
+                    label: {
+                        text: 'End time',
+                        classes: "govuk-fieldset__legend--m"
+                    },
+                    renderedErrorMessage: validationErrors | findError('endTime'),
+                    validationErrors: validationErrors,
+                    formResponses: formResponses.endTime or session.bookAProbationMeetingJourney.endTime | isoDateToTimePicker
+                }) }}
+
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

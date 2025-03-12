@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsOptional, MaxLength } from 'class-validator'
-import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
+import CourtBookingService from '../../../../../services/courtBookingService'
 
 export class ExtraInformation {
   @Expose()
@@ -11,7 +11,7 @@ export class ExtraInformation {
 }
 
 export default class ExtraInformationRoutes {
-  constructor(private readonly bookAVideoLinkService: BookAVideoLinkService) {}
+  constructor(private readonly courtBookingService: CourtBookingService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     return res.render('pages/appointments/video-link-booking/court/extra-information')
@@ -21,7 +21,6 @@ export default class ExtraInformationRoutes {
     const { extraInformation } = req.body
     const { mode } = req.params
     const { user } = res.locals
-    const { type } = req.session.bookACourtHearingJourney
 
     req.session.bookACourtHearingJourney = {
       ...req.session.bookACourtHearingJourney,
@@ -29,13 +28,9 @@ export default class ExtraInformationRoutes {
     }
 
     if (mode === 'amend') {
-      await this.bookAVideoLinkService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
 
-      const successHeading =
-        type === 'COURT'
-          ? "You've changed the extra information for this court hearing"
-          : "You've changed the extra information for this probation meeting"
-
+      const successHeading = "You've changed the extra information for this court hearing"
       return res.redirectWithSuccess(
         `/appointments/video-link-booking/court/${req.session.bookACourtHearingJourney.bookingId}`,
         successHeading,

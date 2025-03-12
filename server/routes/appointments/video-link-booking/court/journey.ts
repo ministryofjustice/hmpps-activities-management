@@ -4,10 +4,9 @@ export type BookACourtHearingJourney = {
   bookingId?: number
   appointmentIds?: number[]
   bookingStatus?: string
-  type?: string // TODO: Remove this property when the feature toggle BVLS_MASTERED_VLPM_FEATURE_TOGGLE_ENABLED is removed
   prisoners?: AppointmentPrisonerDetails[]
   prisoner?: AppointmentPrisonerDetails
-  agencyCode?: string
+  courtCode?: string
   hearingTypeCode?: string
   date?: string
   startTime?: string

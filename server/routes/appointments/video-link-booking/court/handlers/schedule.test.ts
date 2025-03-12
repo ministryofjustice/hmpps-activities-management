@@ -6,10 +6,12 @@ import { parseIsoDate } from '../../../../../utils/datePickerUtils'
 import { ScheduledEvent } from '../../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../../services/prisonService'
 import { Location } from '../../../../../@types/bookAVideoLinkApi/types'
+import CourtBookingService from '../../../../../services/courtBookingService'
 
 jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../services/prisonService')
 jest.mock('../../../../../services/bookAVideoLinkService')
+jest.mock('../../../../../services/courtBookingService')
 jest.mock('../../../../../utils/datePickerUtils')
 
 describe('ScheduleRoutes', () => {
@@ -18,13 +20,13 @@ describe('ScheduleRoutes', () => {
   let activitiesService: jest.Mocked<ActivitiesService>
   let prisonService: jest.Mocked<PrisonService>
   let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
+  let courtBookingService: jest.Mocked<CourtBookingService>
   let scheduleRoutes: ScheduleRoutes
 
   beforeEach(() => {
     req = {
       session: {
         bookACourtHearingJourney: {
-          type: 'COURT',
           prisoner: { number: 'A1234BC' },
           date: '2023-10-01',
         },
@@ -41,7 +43,8 @@ describe('ScheduleRoutes', () => {
     activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
     prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
     bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
-    scheduleRoutes = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService)
+    courtBookingService = new CourtBookingService(null) as jest.Mocked<CourtBookingService>
+    scheduleRoutes = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService, courtBookingService)
   })
 
   describe('GET', () => {
@@ -125,7 +128,7 @@ describe('ScheduleRoutes', () => {
 
       await scheduleRoutes.POST(req as Request, res as Response)
 
-      expect(bookAVideoLinkService.amendVideoLinkBooking).toHaveBeenCalledWith(
+      expect(courtBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(
         req.session.bookACourtHearingJourney,
         res.locals.user,
       )
@@ -135,24 +138,7 @@ describe('ScheduleRoutes', () => {
       )
     })
 
-    it('redirects with success message when mode is amend and booking type PROBATION', async () => {
-      req.params.mode = 'amend'
-      req.session.bookACourtHearingJourney.type = 'PROBATION'
-      req.session.bookACourtHearingJourney.bookingId = 1
-
-      await scheduleRoutes.POST(req as Request, res as Response)
-
-      expect(bookAVideoLinkService.amendVideoLinkBooking).toHaveBeenCalledWith(
-        req.session.bookACourtHearingJourney,
-        res.locals.user,
-      )
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/appointments/video-link-booking/court/1',
-        "You've changed the schedule for this probation meeting",
-      )
-    })
-
-    it('redirects to extra-information when mode is not amend', async () => {
+    it('redirects to cvp link when mode is not amend', async () => {
       req.params.mode = 'create'
 
       await scheduleRoutes.POST(req as Request, res as Response)

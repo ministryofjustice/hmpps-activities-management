@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express'
 import { parse } from 'date-fns'
 import _ from 'lodash'
+import createHttpError from 'http-errors'
 import { Services } from '../../../../../services'
 import asyncMiddleware from '../../../../../middleware/asyncMiddleware'
 
@@ -24,8 +25,12 @@ export default ({
       date ? parse(date, 'yyyy-MM-dd', new Date()).toISOString() : undefined
 
     const preAppointment = getAppointment('VLB_COURT_PRE')
-    const mainAppointment = getAppointment('VLB_COURT_MAIN') || getAppointment('VLB_PROBATION')
+    const mainAppointment = getAppointment('VLB_COURT_MAIN')
     const postAppointment = getAppointment('VLB_COURT_POST')
+
+    if (!mainAppointment) {
+      return next(createHttpError.NotFound())
+    }
 
     const prisoner = await prisonService.getInmateByPrisonerNumber(mainAppointment.prisonerNumber, user)
 
@@ -62,7 +67,6 @@ export default ({
       bookingId: Number(bookingId),
       appointmentIds: existingVlbAppointments.map(a => a.appointmentId),
       bookingStatus: booking.statusCode,
-      type: booking.bookingType,
       prisoner: {
         name: `${prisoner.firstName} ${prisoner.lastName}`,
         firstName: prisoner.firstName,
@@ -72,8 +76,8 @@ export default ({
         cellLocation: prisoner.cellLocation,
         status: prisoner.status,
       },
-      agencyCode: booking.courtCode || booking.probationTeamCode,
-      hearingTypeCode: booking.courtHearingType || booking.probationMeetingType,
+      courtCode: booking.courtCode,
+      hearingTypeCode: booking.courtHearingType,
       date: parseDateToISOString(mainAppointment.appointmentDate),
       startTime: parseTimeToISOString(mainAppointment.startTime),
       endTime: parseTimeToISOString(mainAppointment.endTime),

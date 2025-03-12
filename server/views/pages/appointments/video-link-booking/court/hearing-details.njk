@@ -28,7 +28,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method='POST' {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="{{ 'Changing hearing type' if session.bookACourtHearingJourney.type == 'COURT' else 'Changing meeting type' }}" {% endif %}>
+            <form method='POST' {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing hearing type" {% endif %}>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {% set items = [{ text: "", value: "" }] %}
@@ -68,7 +68,7 @@
                     name: "hearingTypeCode",
                     id: "hearingTypeCode",
                     label: {
-                        text: "Select the type of hearing" if session.bookACourtHearingJourney.type == 'COURT' else "Select the type of meeting",
+                        text: "Select the type of hearing",
                         classes: 'govuk-label--s'
                     },
                     items: items,

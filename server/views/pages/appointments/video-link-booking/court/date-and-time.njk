@@ -115,7 +115,7 @@
                             checked: formResponses.preRequired == YesNo.NO or (session.bookACourtHearingJourney.date and not session.bookACourtHearingJourney.preLocationCode and not formResponses.preRequired)
                         }
                     ]
-                }) if session.bookACourtHearingJourney.type == 'COURT' }}
+                }) }}
 
                 {% set items = [{ text: "Select prison room", value: "" }] %}
                 {% for room in rooms %}
@@ -167,7 +167,7 @@
                             checked: formResponses.postRequired == YesNo.NO or (session.bookACourtHearingJourney.date and not session.bookACourtHearingJourney.postLocationCode and not formResponses.postRequired)
                         }
                     ]
-                }) if session.bookACourtHearingJourney.type == 'COURT' }}
+                }) }}
 
                 {{ govukButton({
                     text: "Continue"
