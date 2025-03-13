@@ -7,7 +7,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
-{% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 {% from "partials/showLocation.njk" import showLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
@@ -307,12 +307,10 @@
         <div class="moj-filter-layout__content">
             <div class="moj-action-bar govuk-!-display-none-print">
                 <div class="moj-action-bar__filter"></div>
-                {{ mojButtonMenu({
-                    items: [{
-                        text: "Print these appointments",
-                        classes: "govuk-button--blue js-print no-js-hidden",
-                        preventDoubleClick: true
-                    }]
+                {{ govukButton({
+                  text: "Print these appointments",
+                  classes: "govuk-button--blue js-print no-js-hidden",
+                  preventDoubleClick: true
                 }) }}
             </div>
 

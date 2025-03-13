@@ -5,7 +5,6 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
-{% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
 
 {% from "pages/appointments/partials/attendee-list.njk" import attendeeList %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
@@ -292,10 +291,10 @@
             <div class="govuk-grid-column-two-thirds appointment-details__attendee-list">
                 <div class="govuk-button-group govuk-!-margin-0 govuk-!-display-none-print">
                     {{ govukButton({
-                        attributes: { 
+                        attributes: {
                             id: 'print-movement-list',
                             'data-track-click-event': 'SAA-Appointment-Attendee-List-Printed',
-                            'data-track-event-properties': { 
+                            'data-track-event-properties': {
                                 user: user.username,
                                 prisonCode: user.activeCaseLoadId,
                                 appointmentSeriesId: appointment.appointmentSeries.id,
