@@ -299,10 +299,10 @@
                                 prisonCode: user.activeCaseLoadId,
                                 appointmentSeriesId: appointment.appointmentSeries.id,
                                 appointmentId: appointment.id
-                            },
+                            } | dump,
                             'data-track-event-measurements': {
                                 attendeeCount: appointment.attendees | length
-                            }
+                            } | dump
                         },
                         text: "Print attendance list",
                         classes: "govuk-button--blue govuk-!-margin-bottom-2 js-print no-js-hidden",
