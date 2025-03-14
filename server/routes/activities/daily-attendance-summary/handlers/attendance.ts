@@ -76,7 +76,7 @@ export default class DailyAttendanceRoutes {
       .filter(
         a =>
           !searchTerm ||
-          this.includesSearchTerm(a.name, searchTerm) ||
+          this.includesSearchTerm(`${a.firstName} ${a.lastName}`, searchTerm) ||
           this.includesSearchTerm(a.prisonerNumber, searchTerm),
       )
 
