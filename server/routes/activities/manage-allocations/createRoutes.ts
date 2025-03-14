@@ -52,7 +52,7 @@ export default function Index({
   const setUpPrisonerListHandler = new SetUpPrisonerListMethodRoutes(activitiesService)
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService, activitiesService, nonAssociationsService)
   const uploadPrisonerListHandler = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
-  const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(prisonService)
+  const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(prisonService, activitiesService)
   const activityRequirementsReview = new ActivityRequirementsReviewRoutes(activitiesService)
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)

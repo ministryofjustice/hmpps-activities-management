@@ -44,6 +44,9 @@ export default class UploadPrisonerListRoutes {
         prisoner =>
           ({
             prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+            firstName: prisoner.firstName,
+            middleNames: prisoner.middleNames,
+            lastName: prisoner.lastName,
             prisonerNumber: prisoner.prisonerNumber,
             prisonCode: prisoner.prisonId,
             status: prisoner.status,

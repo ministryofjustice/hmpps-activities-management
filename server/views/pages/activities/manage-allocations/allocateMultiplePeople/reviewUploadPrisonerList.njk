@@ -1,6 +1,9 @@
 {% extends "layout.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = applicationName + " - Allocate to an activity - review upload prisoner list" %}
 {% set pageId = 'activities-allocate-multiple-review-upload-prisoner-list-page' %}
@@ -13,5 +16,70 @@
       <h1 class="govuk-heading-xl govuk-!-margin-bottom-7">Review who you're allocating</h1>
       <p class="govuk-body-l">Remove anyone who should not be allocated, or continue with the current list of people to allocate.</p>
     </div>
+  </div>
+
+  {% set unallocatedInmatesRows = [] %}
+  {% for unallocatedInmate in unallocatedInmates %}
+    {% set unallocatedInmatesRows = (unallocatedInmatesRows.push([
+      {
+        html: '<span class="print-checkbox"></span>',
+        classes: "print-only"
+      },
+      {
+        html: showProfileLink({
+        firstName: unallocatedInmate.firstName,
+        middleNames: unallocatedInmate.middleNames,
+        lastName: unallocatedInmate.lastName,
+        prisonerNumber: unallocatedInmate.prisonerNumber,
+        cellLocation: unallocatedInmate.cellLocation
+        }),
+        attributes: {
+          "data-sort-value": unallocatedInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+        }
+      },
+      {
+        text: statusBasedCellLocation(unallocatedInmate.cellLocation, unallocatedInmate.status, unallocatedInmate.prisonCode == user.activeCaseLoadId),
+        classes: 'govuk-!-display-none-print',
+        attributes: { id: 'prisoner-cell-location', "data-qa": "prisoner-cell-location" }
+      },
+      {
+        text: unallocatedInmate.prisonerName,
+        classes: 'print-only'
+      },
+      {
+        text: unallocatedInmate.prisonerNumber,
+        classes: 'print-only'
+      }
+    ]), unallocatedInmatesRows) %}
+  {% endfor %}
+  <div class="govuk-summary-card__content">
+    {{ govukTable({
+      head: [
+        {
+          text: "Name",
+          classes: "govuk-!-display-none-print",
+          attributes: { "aria-sort": "ascending", "data-qa": "prisoner-summary" }
+        },
+        {
+          text: "Cell location",
+          classes: "govuk-!-display-none-print",
+          attributes: { "aria-sort": "none", "data-qa": "prisoner-cell-location"}
+        },
+        {
+          text: "Prison number",
+          classes: "print-only"
+        },
+        {
+          html: '<span class="govuk-visually-hidden">Actions</span>',
+          classes: "govuk-!-display-none-print"
+        }
+      ],
+      rows: unallocatedInmatesRows,
+      classes: 'govuk-!-margin-0',
+      attributes: {
+        'data-module': 'moj-sortable-table',
+        'data-qa': 'prisoner-list'
+      }
+    }) }}
   </div>
 {% endblock %}

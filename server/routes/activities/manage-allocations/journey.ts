@@ -2,6 +2,9 @@ import { ActivitySchedule, Allocation, ScheduledInstance, Slot } from '../../../
 
 export type Inmate = {
   prisonerName: string
+  firstName?: string
+  middleNames?: string
+  lastName?: string
   prisonerNumber: string
   prisonCode: string
   status: string
@@ -12,6 +15,7 @@ export type Inmate = {
     alias: string
     rate: number
   }
+  otherAllocations?: Allocation[]
 }
 
 export type AllocateToActivityJourney = {

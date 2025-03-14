@@ -29,7 +29,6 @@ export default class ActivityRequirementsReviewRoutes {
         inmate.education.suitable === false ||
         inmate.releaseDate.suitable === false,
     )
-    console.log(prisonersWithMismatchedRequirements[0].releaseDate)
     // skip loading this page if there are no failures to meet requirements
     if (prisonersWithMismatchedRequirements.length === 0) res.redirect('#')
 
