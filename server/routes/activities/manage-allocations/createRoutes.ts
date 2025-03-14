@@ -23,6 +23,7 @@ import SelectPrisonerRoutes, { PrisonerSearch } from './handlers/allocateMultipl
 import UploadPrisonerListRoutes, { UploadPrisonerList } from './handlers/allocateMultiplePeople/uploadPrisonerList'
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 import ReviewUploadPrisonerListRoutes from './handlers/allocateMultiplePeople/reviewUploadPrisonerList'
+import ActivityRequirementsReviewRoutes from './handlers/allocateMultiplePeople/activityRequirementsReview'
 
 export default function Index({
   activitiesService,
@@ -52,6 +53,7 @@ export default function Index({
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService, activitiesService, nonAssociationsService)
   const uploadPrisonerListHandler = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(prisonService, activitiesService)
+  const activityRequirementsReview = new ActivityRequirementsReviewRoutes()
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
   get('/before-you-allocate', beforeYouAllocateHandler.GET, true)
@@ -86,6 +88,8 @@ export default function Index({
     asyncMiddleware(uploadPrisonerListHandler.POST),
   )
   get('/multiple/review-upload-prisoner-list', reviewUploadPrisonerListHandler.GET, true)
+  get('/multiple/activity-requirements-review', activityRequirementsReview.GET, true)
+  get('/multiple/activity-requirements-review/:prisonNumber/remove', activityRequirementsReview.REMOVE, true)
 
   get('/error/:errorType(transferred)', errorHandler.GET, true)
 

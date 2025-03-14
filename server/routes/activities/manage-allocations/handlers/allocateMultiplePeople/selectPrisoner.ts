@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
-import IsNotAnExistingAttendee from '../../../../../validators/IsNotAnExistingAttendee'
 import PrisonService from '../../../../../services/prisonService'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import ActivitiesService from '../../../../../services/activitiesService'
@@ -11,9 +10,6 @@ import enhancePrisonersWithNonAssocationsAndAllocations from '../../../../../uti
 export class SelectPrisoner {
   @Expose()
   @IsNotEmpty({ message: 'You must select one option' })
-  @IsNotAnExistingAttendee({
-    message: 'The prisoner you have selected is already allocated to {{ session.activity.name }}',
-  })
   selectedPrisoner: string
 }
 
@@ -77,27 +73,37 @@ export default class SelectPrisonerRoutes {
     const prisonerFreeToAllocate = await this.checkPrisonerIsntCurrentlyAllocated(req, res, prisoner)
     const prisonerIncentiveLevelSuitable = await this.checkPrisonerHasSuitableIncentiveLevel(req, res, prisoner)
 
-    if (prisonerFreeToAllocate && prisonerIncentiveLevelSuitable) {
-      await this.addPrisonersToSession(req, prisoner)
-      return res.redirect(`review-prisoners`)
+    if (prisonerFreeToAllocate) {
+      if (prisonerIncentiveLevelSuitable) {
+        await this.addPrisonersToSession(req, prisoner)
+        return res.redirect(`review-prisoners`)
+      }
+      return res.validationFailed(
+        'selectedPrisoner',
+        'This person cannot be allocated as there is no pay rate for their incentive level',
+      )
     }
-    // TODO: validation message if the person isn't eligible?
-    return res.validationFailed('', '')
+    return res.validationFailed(
+      'selectedPrisoner',
+      `This person is already allocated to ${req.session.allocateJourney.activity.name}`,
+    )
   }
 
   private checkPrisonerIsntCurrentlyAllocated = async (_req: Request, _res: Response, _prisoner: Prisoner) => {
     // compare prisoner against list of currently allocated prisoners
+    // const alreadyAllocated = currentlyAllocated.includes(prisoner.prisonerNumber)
     // if (alreadyAllocated) {
-    //   return res.validationFailed(
-    //     'selectedPrisoner',
-    //     `This person is already allocated to ${req.session.allocateJourney.activity.name}`,
-    //   )
+    // return false
     // }
 
     return true
   }
 
   private checkPrisonerHasSuitableIncentiveLevel = async (_req: Request, _res: Response, _prisoner: Prisoner) => {
+    // check the paybands against the incentive level
+    // if (incentiveLevelInappropriate) {
+    //   return false
+    // }
     return true
   }
 

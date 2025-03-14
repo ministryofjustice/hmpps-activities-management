@@ -1,0 +1,53 @@
+{% extends "layout.njk" %}
+{% from "partials/summaryCardWithTwoAxes" import summaryCardWithTwoAxes %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - Review prisoners that do not meet activity requirements" %}
+{% set pageId = 'activity-requirements-review-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <span class="govuk-caption-l">{{ session.allocateJourney.activity.name }}</span>
+            <h1 class="govuk-heading-xl">Review {{ prisoners | length }} {% if prisoners | length == 1 %}person{% else %}people{% endif %} who does not meet activity requirements</h1>
+            <p class="govuk-body">Review people who do not meet the requirements for this activity. You can remove anyone who should not be allocated.</p>
+            <p class="govuk-body">Only people who do not meet a requirement are included on this page.</p>
+
+            {% for prisoner in prisonersWithMismatchedRequirements %}
+                {% set rows = (rows.push([
+                    [{
+                        text: 'Workplace risk assessment level'
+                    },{
+                        text: ''
+                    }
+                    ],[{
+                        text: 'Education level'
+                    },{
+                        text: ''
+                    }],[{
+                        text: 'Earliest release date'
+                    },{
+                        text: ''
+                    }]
+                ]), rows) %}
+                {% set head = [
+                        {
+                            text: "Type of requirement",
+                            classes: "govuk-!-padding-top-0"
+                        },
+                        {
+                            text: "{{ prisoner.prisonerName | possessive }} details",
+                            classes: "govuk-!-padding-top-0"
+                        },
+                        {
+                            text: "Meets requirement",
+                            classes: "govuk-!-padding-top-0"
+                        }
+                    ] %}
+                {{
+                    summaryCardWithTwoAxes(prisoner, rows, head, 'activity-requirements-review', true)
+                }}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
