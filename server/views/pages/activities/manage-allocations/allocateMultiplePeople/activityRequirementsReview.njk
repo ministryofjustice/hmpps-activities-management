@@ -1,5 +1,12 @@
 {% extends "layout.njk" %}
+
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "../../../../partials/summaryCardWithTwoAxes.njk" import summaryCardWithTwoAxes %}
+{% from "../../../../partials/activities/prisonerEducation.njk" import prisonerEducation %}
+{% from "../../../../partials/activities/suitabilityTag.njk" import suitablityTag %}
+{% from "../../../../partials/earliestReleaseDate.njk" import earliestReleaseDate %}
+
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Review prisoners that do not meet activity requirements" %}
 {% set pageId = 'activity-requirements-review-page' %}
@@ -14,26 +21,33 @@
             <p class="govuk-body">Only people who do not meet a requirement are included on this page.</p>
 
             {% for prisoner in prisoners %}
+                {% set removeLink = 'activity-requirements-review/'+prisoner.prisonerNumber+'/remove' %}
                 {% set rows = [
                     [{
                         text: 'Workplace risk assessment level'
                     },{
-                        text: prisoner.workplaceRiskAssessment.riskLevel
+                        text: prisoner.workplaceRiskAssessment.riskLevel | toTitleCase or "None assigned"
                     },{
-                        text: prisoner.workplaceRiskAssessment.suitable
+                        html: suitablityTag(prisoner.workplaceRiskAssessment.suitable)
                     }
                     ],[{
                         text: 'Education level'
                     },{
-                        text: prisoner.education.education
+                        html: prisonerEducation(prisoner.education.education)
                     },{
-                        text: prisoner.education.suitable
+                        html: suitablityTag(prisoner.education.suitable)
                     }],[{
                         text: 'Earliest release date'
                     }, 
-                    { text: prisoner.releaseDate.earliestReleaseDate.releaseDate },
-                    {
-                        text: prisoner.releaseDate.suitable
+                    { 
+                        html: earliestReleaseDate(prisoner.releaseDate.earliestReleaseDate) 
+                    }, {
+                        html: govukTag({
+                            text: 'Not applicable',
+                            classes: 'govuk-tag--grey'
+                        }) if prisoner.releaseDate.suitable else suitablityTag(
+                            prisoner.releaseDate.suitable
+                        )
                     }]
                 ] %}
                 {% set head = [
@@ -50,10 +64,17 @@
                             classes: "govuk-!-padding-top-0"
                         }
                     ] %}
+
                     {{
-                        summaryCardWithTwoAxes(prisoner, rows, head, 'activity-requirements-review', true)
+                        summaryCardWithTwoAxes(prisoner, rows, head, removeLink, true)
                     }}
             {% endfor %}
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
         </div>
     </div>
 {% endblock %}

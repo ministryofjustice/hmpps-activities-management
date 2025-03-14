@@ -37,13 +37,17 @@ export default class ActivityRequirementsReviewRoutes {
     })
   }
 
+  POST = async (_req: Request, res: Response): Promise<void> => {
+    res.redirect('start-date')
+  }
+
   REMOVE = async (req: Request, res: Response): Promise<void> => {
-    const { prisonNumber } = req.params
+    const { prisonerNumber } = req.params
 
     req.session.allocateJourney.inmates = req.session.allocateJourney.inmates.filter(
-      prisoner => prisoner.prisonerNumber !== prisonNumber,
+      prisoner => prisoner.prisonerNumber !== prisonerNumber,
     )
 
-    res.redirect('../../activityRequirementsReview')
+    res.redirect('../../activity-requirements-review')
   }
 }

@@ -90,7 +90,8 @@ export default function Index({
   )
   get('/multiple/review-upload-prisoner-list', reviewUploadPrisonerListHandler.GET, true)
   get('/multiple/activity-requirements-review', activityRequirementsReview.GET, true)
-  get('/multiple/activity-requirements-review/:prisonNumber/remove', activityRequirementsReview.REMOVE, true)
+  post('/multiple/activity-requirements-review', activityRequirementsReview.POST)
+  get('/multiple/activity-requirements-review/:prisonerNumber/remove', activityRequirementsReview.REMOVE, true)
 
   get('/error/:errorType(transferred)', errorHandler.GET, true)
 
