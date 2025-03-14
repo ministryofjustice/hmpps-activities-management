@@ -218,6 +218,66 @@ describe('Route Handlers - Daily Attendance List', () => {
       })
     })
 
+    it('should filter by name', async () => {
+      const dateString = '2022-10-10'
+      const date = parse(dateString, 'yyyy-MM-dd', new Date())
+
+      req = {
+        query: {
+          date: dateString,
+          status: 'NotAttended',
+        },
+        session: {
+          attendanceSummaryJourney: {
+            searchTerm: 'BloG',
+          },
+        },
+      } as unknown as Request
+
+      when(activitiesService.getAllAttendance)
+        .calledWith(date, res.locals.user, undefined)
+        .mockResolvedValue(mockApiResponse)
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC123', 'ABC321'], res.locals.user)
+        .mockResolvedValue(mockPrisonApiResponse)
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/attendances', {
+        activityDate: date,
+        status: 'NotAttended',
+        uniqueCategories: ['Education', 'Prison Jobs'],
+        absenceReasons,
+        showRefusalsLink: false,
+        attendees: [
+          {
+            firstName: 'Joe',
+            lastName: 'Bloggs',
+            prisonerNumber: 'ABC123',
+            location: 'MDI-1-001',
+            attendance: {
+              activityId: 1,
+              activitySummary: 'Maths Level 1',
+              attendanceId: 1,
+              attendanceReasonCode: null,
+              categoryName: 'Education',
+              issuePayment: null,
+              prisonCode: 'MDI',
+              prisonerNumber: 'ABC123',
+              sessionDate: '2022-10-10',
+              status: 'WAITING',
+              timeSlot: 'AM',
+              attendanceRequired: true,
+              eventTier: EventTier.FOUNDATION,
+              startTime: '09:15',
+              endTime: '11:30',
+            },
+          },
+        ],
+      })
+    })
+
     it('should not render where attendance is not required', async () => {
       const dateString = '2022-10-10'
       const date = parse(dateString, 'yyyy-MM-dd', new Date())
