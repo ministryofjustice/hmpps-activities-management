@@ -55,7 +55,6 @@ export default function Index({
   const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(prisonService, activitiesService)
   const activityRequirementsReview = new ActivityRequirementsReviewRoutes(activitiesService)
 
-
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
   get('/before-you-allocate', beforeYouAllocateHandler.GET, true)
   post('/before-you-allocate', beforeYouAllocateHandler.POST, ConfirmOptions)
