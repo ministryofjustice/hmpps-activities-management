@@ -172,7 +172,9 @@
                         </div>
                         <div class="moj-filter-layout__content">
                             <div class="moj-action-bar govuk-!-display-none-print">
-                                <div class="moj-action-bar__filter"></div>
+                              <div class="moj-action-bar__filter"></div>
+                              {# we're using '| dump' filter in the below component so that the values
+                              for the metrics attributes are recorded correctly, pls do not remove #}
                               {{ govukButton({
                                 attributes: {
                                   id: 'print-unlock',
