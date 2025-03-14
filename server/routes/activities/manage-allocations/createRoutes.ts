@@ -53,7 +53,7 @@ export default function Index({
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService, activitiesService, nonAssociationsService)
   const uploadPrisonerListHandler = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
   const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(prisonService)
-  const activityRequirementsReview = new ActivityRequirementsReviewRoutes()
+  const activityRequirementsReview = new ActivityRequirementsReviewRoutes(activitiesService)
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
   get('/before-you-allocate', beforeYouAllocateHandler.GET, true)
@@ -79,6 +79,7 @@ export default function Index({
   get('/multiple/set-up-method', setUpPrisonerListHandler.GET, false)
   post('/multiple/set-up-method', setUpPrisonerListHandler.POST, SetUpPrisonerListForm)
   get('/multiple/select-prisoner', selectPrisonerHandler.GET, true)
+  post('/multiple/select-prisoner', selectPrisonerHandler.SELECT_PRISONER)
   post('/multiple/search-prisoner', selectPrisonerHandler.SEARCH, PrisonerSearch)
   get('/multiple/upload-prisoner-list', uploadPrisonerListHandler.GET, true)
   router.post(

@@ -1,5 +1,5 @@
 {% extends "layout.njk" %}
-{% from "partials/summaryCardWithTwoAxes" import summaryCardWithTwoAxes %}
+{% from "../../../../partials/summaryCardWithTwoAxes.njk" import summaryCardWithTwoAxes %}
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Review prisoners that do not meet activity requirements" %}
 {% set pageId = 'activity-requirements-review-page' %}
@@ -13,30 +13,36 @@
             <p class="govuk-body">Review people who do not meet the requirements for this activity. You can remove anyone who should not be allocated.</p>
             <p class="govuk-body">Only people who do not meet a requirement are included on this page.</p>
 
-            {% for prisoner in prisonersWithMismatchedRequirements %}
-                {% set rows = (rows.push([
+            {% for prisoner in prisoners %}
+                {% set rows = [
                     [{
                         text: 'Workplace risk assessment level'
                     },{
-                        text: ''
+                        text: prisoner.workplaceRiskAssessment.riskLevel
+                    },{
+                        text: prisoner.workplaceRiskAssessment.suitable
                     }
                     ],[{
                         text: 'Education level'
                     },{
-                        text: ''
+                        text: prisoner.education.education
+                    },{
+                        text: prisoner.education.suitable
                     }],[{
                         text: 'Earliest release date'
-                    },{
-                        text: ''
+                    }, 
+                    { text: prisoner.releaseDate.earliestReleaseDate.releaseDate },
+                    {
+                        text: prisoner.releaseDate.suitable
                     }]
-                ]), rows) %}
+                ] %}
                 {% set head = [
                         {
                             text: "Type of requirement",
                             classes: "govuk-!-padding-top-0"
                         },
                         {
-                            text: "{{ prisoner.prisonerName | possessive }} details",
+                            text: prisoner.prisonerName | toTitleCase | possessive +" details",
                             classes: "govuk-!-padding-top-0"
                         },
                         {
@@ -44,9 +50,9 @@
                             classes: "govuk-!-padding-top-0"
                         }
                     ] %}
-                {{
-                    summaryCardWithTwoAxes(prisoner, rows, head, 'activity-requirements-review', true)
-                }}
+                    {{
+                        summaryCardWithTwoAxes(prisoner, rows, head, 'activity-requirements-review', true)
+                    }}
             {% endfor %}
         </div>
     </div>
