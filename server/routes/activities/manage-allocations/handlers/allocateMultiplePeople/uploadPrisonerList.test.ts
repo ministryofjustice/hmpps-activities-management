@@ -127,6 +127,8 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
       const expectedInmates: Inmate[] = [
         {
           prisonerName: 'TEST01 PRISONER01',
+          firstName: 'TEST01',
+          lastName: 'PRISONER01',
           prisonerNumber: 'A1234BC',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
@@ -136,6 +138,8 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
         },
         {
           prisonerName: 'TEST02 PRISONER02',
+          firstName: 'TEST02',
+          lastName: 'PRISONER02',
           prisonerNumber: 'B2345CD',
           prisonCode: 'TPR',
           status: 'ACTIVE IN',
