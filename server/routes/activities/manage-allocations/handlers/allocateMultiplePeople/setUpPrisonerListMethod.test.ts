@@ -66,6 +66,7 @@ describe('Allocate multiple people to an activity - method for adding list', () 
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
 
       expect(req.session.allocateJourney).toEqual({
+        inmates: [],
         activity: {
           activityId: 100,
           scheduleId: 100,

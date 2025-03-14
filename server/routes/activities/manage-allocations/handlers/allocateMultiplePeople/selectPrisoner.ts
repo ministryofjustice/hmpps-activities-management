@@ -6,6 +6,7 @@ import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/typ
 import ActivitiesService from '../../../../../services/activitiesService'
 import NonAssociationsService from '../../../../../services/nonAssociationsService'
 import enhancePrisonersWithNonAssocationsAndAllocations from '../../../../../utils/extraPrisonerInformation'
+import { Inmate } from '../../journey'
 
 export class SelectPrisoner {
   @Expose()
@@ -72,11 +73,11 @@ export default class SelectPrisonerRoutes {
 
     const prisonerFreeToAllocate = await this.checkPrisonerIsntCurrentlyAllocated(req, res, prisoner)
     const prisonerIncentiveLevelSuitable = await this.checkPrisonerHasSuitableIncentiveLevel(req, res, prisoner)
-
     if (prisonerFreeToAllocate) {
       if (prisonerIncentiveLevelSuitable) {
         await this.addPrisonersToSession(req, prisoner)
-        return res.redirect(`review-prisoners`)
+        // TODO this redirect needs to go to the new review page
+        return res.redirect(`activity-requirements-review`)
       }
       return res.validationFailed(
         'selectedPrisoner',
@@ -108,15 +109,22 @@ export default class SelectPrisonerRoutes {
   }
 
   private addPrisonersToSession = async (req: Request, prisoner: Prisoner) => {
-    const prisonerData = {
+    // check that the prisoner isn't already in there to stop duplication if the user goes back
+    const duplicate = req.session.allocateJourney.inmates.filter(
+      inmate => inmate.prisonerNumber === prisoner.prisonerNumber,
+    )
+    if (duplicate.length) return false
+
+    const inmate: Inmate = {
       prisonerNumber: prisoner.prisonerNumber,
       prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
       prisonCode: prisoner.prisonId,
       cellLocation: prisoner.cellLocation,
       status: prisoner.status,
       incentiveLevel: prisoner.currentIncentive.level.description,
-    }
+    } as Inmate
 
-    req.session.allocateJourney.inmates.push(prisonerData)
+    req.session.allocateJourney.inmates.push(inmate)
+    return true
   }
 }
