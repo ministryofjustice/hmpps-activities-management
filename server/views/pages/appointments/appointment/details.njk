@@ -290,6 +290,8 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds appointment-details__attendee-list">
                 <div class="govuk-button-group govuk-!-margin-0 govuk-!-display-none-print">
+                    {# we're using '| dump' filter in the below component so that the values
+                    for the metrics attributes are recorded correctly, pls do not remove #}
                     {{ govukButton({
                         attributes: {
                             id: 'print-movement-list',
