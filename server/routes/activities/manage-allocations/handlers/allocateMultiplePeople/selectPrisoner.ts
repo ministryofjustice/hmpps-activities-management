@@ -7,6 +7,8 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import NonAssociationsService from '../../../../../services/nonAssociationsService'
 import enhancePrisonersWithNonAssocationsAndAllocations from '../../../../../utils/extraPrisonerInformation'
 import { Inmate } from '../../journey'
+import { Activity, Allocation } from '../../../../../@types/activitiesAPI/types'
+import { inmatesAllocated, inmatesWithMatchingIncentiveLevel } from '../../../../../utils/helpers/allocationUtil'
 
 export class SelectPrisoner {
   @Expose()
@@ -67,12 +69,31 @@ export default class SelectPrisonerRoutes {
   SELECT_PRISONER = async (req: Request, res: Response): Promise<void> => {
     const { selectedPrisoner } = req.body
     const { user } = res.locals
+    const { activity } = req.session.allocateJourney
 
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(selectedPrisoner, user).catch(_ => null)
     if (!prisoner) return res.validationFailed('selectedPrisoner', 'You must select one option')
 
-    const prisonerFreeToAllocate = await this.checkPrisonerIsntCurrentlyAllocated(req, res, prisoner)
-    const prisonerIncentiveLevelSuitable = await this.checkPrisonerHasSuitableIncentiveLevel(req, res, prisoner)
+    const [currentlyAllocated, act] = await Promise.all([
+      this.activitiesService.getAllocationsWithParams(activity.scheduleId, { includePrisonerSummary: true }, user),
+      this.activitiesService.getActivity(activity.activityId, user),
+    ])
+
+    const inmate: Inmate = {
+      prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+      firstName: prisoner.firstName,
+      middleNames: prisoner.middleNames,
+      lastName: prisoner.lastName,
+      prisonerNumber: prisoner.prisonerNumber,
+      prisonCode: prisoner.prisonId,
+      status: prisoner.status,
+      cellLocation: prisoner.cellLocation,
+      incentiveLevel: prisoner.currentIncentive?.level.description,
+      payBand: undefined,
+    }
+
+    const prisonerFreeToAllocate = await this.checkPrisonerIsntCurrentlyAllocated([inmate], currentlyAllocated)
+    const prisonerIncentiveLevelSuitable = await this.checkPrisonerHasSuitableIncentiveLevel([inmate], act)
     if (prisonerFreeToAllocate) {
       if (prisonerIncentiveLevelSuitable) {
         await this.addPrisonersToSession(req, prisoner)
@@ -90,39 +111,30 @@ export default class SelectPrisonerRoutes {
     )
   }
 
-  private checkPrisonerIsntCurrentlyAllocated = async (_req: Request, _res: Response, _prisoner: Prisoner) => {
+  private checkPrisonerIsntCurrentlyAllocated = async (inmate: Inmate[], currentlyAllocated: Allocation[]) => {
     // compare prisoner against list of currently allocated prisoners
-    // const alreadyAllocated = currentlyAllocated.includes(prisoner.prisonerNumber)
-    // if (alreadyAllocated) {
-    // return false
-    // }
-
+    const allocatedInmate: Inmate[] = inmatesAllocated(inmate, currentlyAllocated, false)
+    if (allocatedInmate.length) {
+      return false
+    }
     return true
   }
 
-  private checkPrisonerHasSuitableIncentiveLevel = async (_req: Request, _res: Response, _prisoner: Prisoner) => {
+  private checkPrisonerHasSuitableIncentiveLevel = async (inmate: Inmate[], activity: Activity) => {
     // check the paybands against the incentive level
-    // if (incentiveLevelInappropriate) {
-    //   return false
-    // }
+    const matchingInmate: Inmate[] = inmatesWithMatchingIncentiveLevel(inmate, activity)
+    if (!matchingInmate.length) {
+      return false
+    }
     return true
   }
 
-  private addPrisonersToSession = async (req: Request, prisoner: Prisoner) => {
+  private addPrisonersToSession = async (req: Request, inmate: Inmate) => {
     // check that the prisoner isn't already in there to stop duplication if the user goes back
     const duplicate = req.session.allocateJourney.inmates.filter(
-      inmate => inmate.prisonerNumber === prisoner.prisonerNumber,
+      prisoner => inmate.prisonerNumber === prisoner.prisonerNumber,
     )
     if (duplicate.length) return false
-
-    const inmate: Inmate = {
-      prisonerNumber: prisoner.prisonerNumber,
-      prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
-      prisonCode: prisoner.prisonId,
-      cellLocation: prisoner.cellLocation,
-      status: prisoner.status,
-      incentiveLevel: prisoner.currentIncentive.level.description,
-    } as Inmate
 
     req.session.allocateJourney.inmates.push(inmate)
     return true
