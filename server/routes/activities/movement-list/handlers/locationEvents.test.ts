@@ -30,8 +30,11 @@ describe('Movement list routes - location events', () => {
   const prisonCode = 'MDI'
   const today = new Date()
 
+  const uuid1 = '11111111-1111-1111-1111-111111111111'
+
   const internalLocation = {
     id: 1,
+    dpsLocationId: uuid1,
     prisonCode,
     code: 'EDUC-ED1-ED1',
     description: 'Education 1',
@@ -132,13 +135,13 @@ describe('Movement list routes - location events', () => {
       const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
       const timeSlot = TimeSlot.AM
       req.query = {
-        locationIds: '123',
+        locationIds: uuid1,
         dateOption,
         timeSlot,
       }
 
-      when(activitiesService.getInternalLocationEvents)
-        .calledWith(prisonCode, date, [123], res.locals.user, timeSlot as string)
+      when(activitiesService.getInternalLocationEventsByDpsLocationIds)
+        .calledWith(prisonCode, date, [uuid1], res.locals.user, timeSlot as string)
         .mockResolvedValue([])
 
       await handler.GET(req, res)
@@ -152,14 +155,14 @@ describe('Movement list routes - location events', () => {
       const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
       const timeSlot = TimeSlot.AM
       req.query = {
-        locationIds: '123',
+        locationIds: uuid1,
         dateOption,
         date: dateQueryParam,
         timeSlot,
       }
 
-      when(activitiesService.getInternalLocationEvents)
-        .calledWith(prisonCode, date, [123], res.locals.user, timeSlot as string)
+      when(activitiesService.getInternalLocationEventsByDpsLocationIds)
+        .calledWith(prisonCode, date, [uuid1], res.locals.user, timeSlot as string)
         .mockResolvedValue([])
 
       await handler.GET(req, res)
@@ -175,7 +178,7 @@ describe('Movement list routes - location events', () => {
       const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
       const timeSlot = TimeSlot.AM
       req.query = {
-        locationIds: `${internalLocation.id}`,
+        locationIds: `${internalLocation.dpsLocationId}`,
         dateOption,
         timeSlot,
       }
@@ -190,8 +193,9 @@ describe('Movement list routes - location events', () => {
           ],
         },
       ] as InternalLocationEvents[]
-      when(activitiesService.getInternalLocationEvents)
-        .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+
+      when(activitiesService.getInternalLocationEventsByDpsLocationIds)
+        .calledWith(prisonCode, date, [internalLocation.dpsLocationId], res.locals.user, timeSlot as string)
         .mockResolvedValue(internalLocationEvents)
 
       when(activitiesService.getScheduledEventsForPrisoners)
@@ -233,7 +237,7 @@ describe('Movement list routes - location events', () => {
       const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
       const timeSlot = TimeSlot.AM
       req.query = {
-        locationIds: `${internalLocation.id}`,
+        locationIds: `${internalLocation.dpsLocationId}`,
         dateOption,
         timeSlot,
       }
@@ -259,8 +263,9 @@ describe('Movement list routes - location events', () => {
           ],
         },
       ] as InternalLocationEvents[]
-      when(activitiesService.getInternalLocationEvents)
-        .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+
+      when(activitiesService.getInternalLocationEventsByDpsLocationIds)
+        .calledWith(prisonCode, date, [internalLocation.dpsLocationId], res.locals.user, timeSlot as string)
         .mockResolvedValue(internalLocationEvents)
 
       when(activitiesService.getScheduledEventsForPrisoners)
@@ -410,7 +415,7 @@ describe('Movement list routes - location events', () => {
       const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
       const timeSlot = TimeSlot.AM
       req.query = {
-        locationIds: `${internalLocation.id}`,
+        locationIds: `${internalLocation.dpsLocationId}`,
         dateOption,
         timeSlot,
       }
@@ -428,8 +433,9 @@ describe('Movement list routes - location events', () => {
           ],
         },
       ] as InternalLocationEvents[]
-      when(activitiesService.getInternalLocationEvents)
-        .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+
+      when(activitiesService.getInternalLocationEventsByDpsLocationIds)
+        .calledWith(prisonCode, date, [internalLocation.dpsLocationId], res.locals.user, timeSlot as string)
         .mockResolvedValue(internalLocationEvents)
 
       when(activitiesService.getScheduledEventsForPrisoners)
@@ -522,7 +528,7 @@ describe('Movement list routes - location events', () => {
       const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
       const timeSlot = TimeSlot.AM
       req.query = {
-        locationIds: `${internalLocation.id}`,
+        locationIds: `${internalLocation.dpsLocationId}`,
         dateOption,
         timeSlot,
       }
@@ -537,8 +543,9 @@ describe('Movement list routes - location events', () => {
           ],
         },
       ] as InternalLocationEvents[]
-      when(activitiesService.getInternalLocationEvents)
-        .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+
+      when(activitiesService.getInternalLocationEventsByDpsLocationIds)
+        .calledWith(prisonCode, date, [internalLocation.dpsLocationId], res.locals.user, timeSlot as string)
         .mockResolvedValue(internalLocationEvents)
 
       when(activitiesService.getScheduledEventsForPrisoners)
@@ -587,7 +594,7 @@ describe('Movement list routes - location events', () => {
     const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
     const timeSlot = TimeSlot.AM
     req.query = {
-      locationIds: `${internalLocation.id}`,
+      locationIds: `${internalLocation.dpsLocationId}`,
       dateOption,
       timeSlot,
     }
@@ -602,8 +609,9 @@ describe('Movement list routes - location events', () => {
         ],
       },
     ] as InternalLocationEvents[]
-    when(activitiesService.getInternalLocationEvents)
-      .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+
+    when(activitiesService.getInternalLocationEventsByDpsLocationIds)
+      .calledWith(prisonCode, date, [internalLocation.dpsLocationId], res.locals.user, timeSlot as string)
       .mockResolvedValue(internalLocationEvents)
 
     when(activitiesService.getScheduledEventsForPrisoners)
@@ -648,7 +656,7 @@ describe('Movement list routes - location events', () => {
     const date = parse(dateQueryParam, 'yyyy-MM-dd', today)
     const timeSlot = TimeSlot.AM
     req.query = {
-      locationIds: `${internalLocation.id}`,
+      locationIds: `${internalLocation.dpsLocationId}`,
       dateOption,
       timeSlot,
     }
@@ -689,8 +697,8 @@ describe('Movement list routes - location events', () => {
       },
     ] as InternalLocationEvents[]
 
-    when(activitiesService.getInternalLocationEvents)
-      .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+    when(activitiesService.getInternalLocationEventsByDpsLocationIds)
+      .calledWith(prisonCode, date, [internalLocation.dpsLocationId], res.locals.user, timeSlot as string)
       .mockResolvedValue(internalLocationEvents)
 
     when(activitiesService.getScheduledEventsForPrisoners)
@@ -760,7 +768,7 @@ describe('Movement list routes - location events', () => {
     const date = parse(dateQueryParam, 'yyyy-MM-dd', new Date())
     const timeSlot = TimeSlot.AM
     req.query = {
-      locationIds: `${internalLocation.id}`,
+      locationIds: `${internalLocation.dpsLocationId}`,
       dateOption,
       timeSlot,
     }
@@ -778,8 +786,9 @@ describe('Movement list routes - location events', () => {
         ],
       },
     ] as InternalLocationEvents[]
-    when(activitiesService.getInternalLocationEvents)
-      .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+
+    when(activitiesService.getInternalLocationEventsByDpsLocationIds)
+      .calledWith(prisonCode, date, [internalLocation.dpsLocationId], res.locals.user, timeSlot as string)
       .mockResolvedValue(internalLocationEvents)
 
     when(activitiesService.getScheduledEventsForPrisoners)
@@ -939,7 +948,7 @@ describe('Movement list routes - location events', () => {
     const date = parse(dateQueryParam, 'yyyy-MM-dd', today)
     const timeSlot = TimeSlot.AM
     req.query = {
-      locationIds: `${internalLocation.id}`,
+      locationIds: `${internalLocation.dpsLocationId}`,
       dateOption,
       timeSlot,
     }
@@ -983,8 +992,8 @@ describe('Movement list routes - location events', () => {
       },
     ] as InternalLocationEvents[]
 
-    when(activitiesService.getInternalLocationEvents)
-      .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+    when(activitiesService.getInternalLocationEventsByDpsLocationIds)
+      .calledWith(prisonCode, date, [internalLocation.dpsLocationId], res.locals.user, timeSlot as string)
       .mockResolvedValue(internalLocationEvents)
 
     when(activitiesService.getScheduledEventsForPrisoners)
@@ -1026,7 +1035,7 @@ describe('Movement list routes - location events', () => {
     const date = parse(dateQueryParam, 'yyyy-MM-dd', today)
     const timeSlot = TimeSlot.AM
     req.query = {
-      locationIds: `${internalLocation.id}`,
+      locationIds: `${internalLocation.dpsLocationId}`,
       dateOption,
       timeSlot,
     }
@@ -1095,8 +1104,9 @@ describe('Movement list routes - location events', () => {
         ],
       },
     ] as InternalLocationEvents[]
-    when(activitiesService.getInternalLocationEvents)
-      .calledWith(prisonCode, date, [internalLocation.id], res.locals.user, timeSlot as string)
+
+    when(activitiesService.getInternalLocationEventsByDpsLocationIds)
+      .calledWith(prisonCode, date, [internalLocation.dpsLocationId], res.locals.user, timeSlot as string)
       .mockResolvedValue(internalLocationEvents)
 
     when(activitiesService.getScheduledEventsForPrisoners)
