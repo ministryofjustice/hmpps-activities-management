@@ -2,9 +2,9 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsNotEmpty } from 'class-validator'
 import PrisonService from '../../../../../services/prisonService'
-import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import ActivitiesService from '../../../../../services/activitiesService'
 import NonAssociationsService from '../../../../../services/nonAssociationsService'
+import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import enhancePrisonersWithNonAssocationsAndAllocations from '../../../../../utils/extraPrisonerInformation'
 import { Inmate } from '../../journey'
 import { Activity, Allocation } from '../../../../../@types/activitiesAPI/types'
@@ -46,6 +46,7 @@ export default class SelectPrisonerRoutes {
         this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
         this.nonAssociationsService.getListPrisonersWithNonAssociations(prisonerNumbers, user),
       ])
+
       const enhancedPrisoners = enhancePrisonersWithNonAssocationsAndAllocations(
         prisoners,
         prisonerAllocations,
@@ -96,10 +97,11 @@ export default class SelectPrisonerRoutes {
     const prisonerIncentiveLevelSuitable = await this.checkPrisonerHasSuitableIncentiveLevel([inmate], act)
     if (prisonerFreeToAllocate) {
       if (prisonerIncentiveLevelSuitable) {
-        await this.addPrisonersToSession(req, prisoner)
+        await this.addPrisonersToSession(req, inmate)
         // TODO this redirect needs to go to the new review page
         return res.redirect(`activity-requirements-review`)
       }
+
       return res.validationFailed(
         'selectedPrisoner',
         'This person cannot be allocated as there is no pay rate for their incentive level',
