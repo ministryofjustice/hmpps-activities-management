@@ -39,6 +39,7 @@ export default class SetUpPrisonerListMethodRoutes {
         scheduleWeeks: schedule.scheduleWeeks,
         paid: schedule.activity.paid,
       },
+      inmates: [],
     } as AllocateToActivityJourney
 
     // TODO: add redirects for the other options in later tickets

@@ -1,15 +1,15 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{%- from "govuk/components/tag/macro.njk" import govukTag -%}
 
-{% macro summaryCard(prisoner, rows, head, returnUrl, removeLinkPresent = true) %}
-{% set prisonerNumber = prisoner.number or prisoner.prisonNumber %}
-{% set removeLink = "{{ returnUrl }}/{{ prisonerNumber }}/remove" %}
+{% macro summaryCardWithTwoAxes(prisoner, rows, head, removeLink, removeLinkPresent = true) %}
+{% set prisonerNumber = prisoner.prisonerNumber %}
 
 
 <div class="govuk-summary-card appointment-schedule">
 <div class="govuk-summary-card__title-wrapper">
     <h2 class="govuk-summary-card__title"
         data-qa="schedule-card-title-prison-number-{{ prisonerNumber }}">
-        {{ prisonerNumber | toTitleCase if prisonerNumber else "No matching name" }} ({{ prisonerNumber }})
+        {{ prisoner.prisonerName | toTitleCase if prisoner.prisonerName else "No matching name" }} ({{ prisonerNumber }})
     </h2>
     <ul class="govuk-summary-card__actions"
         data-qa="schedule-card-actions-prison-number-{{ prisonerNumber }}">
