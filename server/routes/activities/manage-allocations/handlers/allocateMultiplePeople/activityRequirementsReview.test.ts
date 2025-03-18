@@ -4,6 +4,7 @@ import { addDays, formatISO } from 'date-fns'
 import ActivityRequirementsReviewRoutes from './activityRequirementsReview'
 import { AllocationSuitability } from '../../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../../services/activitiesService'
+import { Inmate } from '../../journey'
 
 jest.mock('../../../../../services/activitiesService')
 const activitiesService = new ActivitiesService(null)
@@ -26,6 +27,7 @@ describe('Activity requirements review page', () => {
     } as unknown as Response
 
     req = {
+      query: {},
       session: {
         allocateJourney: {
           inmates: [
@@ -87,10 +89,10 @@ describe('Activity requirements review page', () => {
 
       when(activitiesService.allocationSuitability)
         .calledWith(1, 'ABC123', res.locals.user)
-        .mockResolvedValue(allocationSuitability)
+        .mockResolvedValueOnce(allocationSuitability)
       when(activitiesService.allocationSuitability)
         .calledWith(1, 'ABC321', res.locals.user)
-        .mockResolvedValue(allocationSuitability2)
+        .mockResolvedValueOnce(allocationSuitability2)
 
       await handler.GET(req, res)
 
@@ -120,6 +122,49 @@ describe('Activity requirements review page', () => {
         },
       )
     })
+    it('Loads the page with no prisoners if the user has removed all of the prisoners who do not meet requirements (but still some inmates left to allocate)', async () => {
+      req.query.prisonerRemoved = 'true'
+      req.session.allocateJourney.inmates = [
+        {
+          prisonerName: 'Jane Blunt',
+          prisonerNumber: 'ABC321',
+        } as Inmate,
+      ]
+      const tomorrow = addDays(new Date(), 1)
+      const allocationSuitability = {
+        workplaceRiskAssessment: {
+          suitable: true,
+          riskLevel: 'medium',
+        },
+        education: {
+          suitable: true,
+          education: null,
+        },
+        releaseDate: {
+          suitable: true,
+          earliestReleaseDate: {
+            releaseDate: formatISO(tomorrow),
+          },
+        },
+      } as AllocationSuitability
+
+      when(activitiesService.allocationSuitability)
+        .calledWith(1, 'ABC321', res.locals.user)
+        .mockResolvedValue(allocationSuitability)
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/allocateMultiplePeople/activityRequirementsReview',
+        { prisoners: [] },
+      )
+    })
+    it('Loads the page with no prisoners if the inmates list is empty', async () => {
+      req.session.allocateJourney.inmates = []
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/allocateMultiplePeople/activityRequirementsReview',
+        { prisoners: [] },
+      )
+    })
     it('Prisoner is suitable and so the page is not rendered', async () => {
       const tomorrow = addDays(new Date(), 1)
       const allocationSuitability = {
@@ -145,7 +190,7 @@ describe('Activity requirements review page', () => {
 
       await handler.GET(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('#')
+      expect(res.redirect).toHaveBeenCalledWith('start-date')
     })
   })
   describe('POST', () => {
@@ -167,7 +212,7 @@ describe('Activity requirements review page', () => {
           prisonerNumber: 'ABC321',
         },
       ])
-      expect(res.redirect).toHaveBeenCalledWith('../../activity-requirements-review')
+      expect(res.redirect).toHaveBeenCalledWith('../../activity-requirements-review?prisonerRemoved=true')
     })
   })
 })

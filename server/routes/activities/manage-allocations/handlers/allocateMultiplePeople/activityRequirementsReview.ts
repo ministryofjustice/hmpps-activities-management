@@ -8,6 +8,11 @@ export default class ActivityRequirementsReviewRoutes {
     const { user } = res.locals
     const { inmates, activity } = req.session.allocateJourney
 
+    if (inmates.length < 1)
+      return res.render('pages/activities/manage-allocations/allocateMultiplePeople/activityRequirementsReview', {
+        prisoners: [],
+      })
+
     const inmatesSuitability = await Promise.all(
       inmates.map(async inmate => {
         const suitability = await this.activitiesService.allocationSuitability(
@@ -29,8 +34,15 @@ export default class ActivityRequirementsReviewRoutes {
         inmate.education.suitable === false ||
         inmate.releaseDate.suitable === false,
     )
-    // skip loading this page if there are no failures to meet requirements
-    if (prisonersWithMismatchedRequirements.length === 0) res.redirect('#')
+
+    if (!prisonersWithMismatchedRequirements.length) {
+      if (req.query?.prisonerRemoved)
+        return res.render('pages/activities/manage-allocations/allocateMultiplePeople/activityRequirementsReview', {
+          prisoners: [],
+        })
+      // skip loading this page if there are no failures to meet requirements
+      return res.redirect('start-date')
+    }
 
     return res.render('pages/activities/manage-allocations/allocateMultiplePeople/activityRequirementsReview', {
       prisoners: prisonersWithMismatchedRequirements,
@@ -48,6 +60,6 @@ export default class ActivityRequirementsReviewRoutes {
       prisoner => prisoner.prisonerNumber !== prisonerNumber,
     )
 
-    res.redirect('../../activity-requirements-review')
+    res.redirect('../../activity-requirements-review?prisonerRemoved=true')
   }
 }
