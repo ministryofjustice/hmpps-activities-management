@@ -223,8 +223,7 @@ describe('Select prisoner - alllocate multiple people to an activity', () => {
           payBand: undefined,
         },
       ])
-      //   TODO: This needs to be the review page
-      expect(res.redirect).toHaveBeenCalledWith('activity-requirements-review')
+      expect(res.redirect).toHaveBeenCalledWith('review-search-prisoner-list')
     })
     it('should throw error if the inmate is already allocated', async () => {
       req.body = {

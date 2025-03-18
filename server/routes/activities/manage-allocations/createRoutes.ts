@@ -24,6 +24,7 @@ import UploadPrisonerListRoutes, { UploadPrisonerList } from './handlers/allocat
 import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFormDataParsing'
 import ReviewUploadPrisonerListRoutes from './handlers/allocateMultiplePeople/reviewUploadPrisonerList'
 import ActivityRequirementsReviewRoutes from './handlers/allocateMultiplePeople/activityRequirementsReview'
+import ReviewSearchPrisonerListRoutes from './handlers/allocateMultiplePeople/reviewSearchPrisonerList'
 
 export default function Index({
   activitiesService,
@@ -57,7 +58,8 @@ export default function Index({
     activitiesService,
   )
   const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(activitiesService)
-  const activityRequirementsReview = new ActivityRequirementsReviewRoutes(activitiesService)
+  const activityRequirementsReviewHandler = new ActivityRequirementsReviewRoutes(activitiesService)
+  const reviewSearchPrisonerListHandler = new ReviewSearchPrisonerListRoutes(nonAssociationsService, activitiesService)
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
   get('/before-you-allocate', beforeYouAllocateHandler.GET, true)
@@ -85,6 +87,9 @@ export default function Index({
   get('/multiple/select-prisoner', selectPrisonerHandler.GET, true)
   post('/multiple/select-prisoner', selectPrisonerHandler.SELECT_PRISONER)
   post('/multiple/search-prisoner', selectPrisonerHandler.SEARCH, PrisonerSearch)
+  get('/multiple/review-search-prisoner-list', reviewSearchPrisonerListHandler.GET, true)
+  post('/multiple/review-search-prisoner-list', reviewSearchPrisonerListHandler.POST)
+  get('/multiple/review-search-prisoner-list/:prisonerNumber/remove', reviewSearchPrisonerListHandler.REMOVE, true)
   get('/multiple/upload-prisoner-list', uploadPrisonerListHandler.GET, true)
   router.post(
     '/multiple/upload-prisoner-list',
@@ -95,9 +100,9 @@ export default function Index({
   get('/multiple/review-upload-prisoner-list', reviewUploadPrisonerListHandler.GET, true)
   get('/multiple/review-upload-prisoner-list/:prisonNumber/remove', reviewUploadPrisonerListHandler.REMOVE, true)
   post('/multiple/review-upload-prisoner-list', reviewUploadPrisonerListHandler.POST)
-  get('/multiple/activity-requirements-review', activityRequirementsReview.GET, true)
-  post('/multiple/activity-requirements-review', activityRequirementsReview.POST)
-  get('/multiple/activity-requirements-review/:prisonerNumber/remove', activityRequirementsReview.REMOVE, true)
+  get('/multiple/activity-requirements-review', activityRequirementsReviewHandler.GET, true)
+  post('/multiple/activity-requirements-review', activityRequirementsReviewHandler.POST)
+  get('/multiple/activity-requirements-review/:prisonerNumber/remove', activityRequirementsReviewHandler.REMOVE, true)
 
   get('/error/:errorType(transferred)', errorHandler.GET, true)
 

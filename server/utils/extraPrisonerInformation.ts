@@ -1,8 +1,9 @@
 import { PrisonerAllocations } from '../@types/activitiesAPI/types'
 import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
+import { Inmate } from '../routes/activities/manage-allocations/journey'
 
 export default function enhancePrisonersWithNonAssocationsAndAllocations(
-  prisoners: Prisoner[],
+  prisoners: Prisoner[] | Inmate[],
   prisonerAllocations: PrisonerAllocations[],
   prisonersWithNonAssociations: string[],
 ) {

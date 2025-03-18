@@ -37,21 +37,24 @@ export default class SelectPrisonerRoutes {
     }
 
     if (query && typeof query === 'string') {
-      const result = await this.prisonService.searchPrisonInmates(query, user)
+      const result = await this.prisonService.searchPrisonInmates(query, user).catch(_ => null)
       let prisoners: Prisoner[] = []
       if (result && !result.empty) prisoners = result.content
 
-      const prisonerNumbers = prisoners.map(prisoner => prisoner.prisonerNumber)
-      const [prisonerAllocations, nonAssociations] = await Promise.all([
-        this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
-        this.nonAssociationsService.getListPrisonersWithNonAssociations(prisonerNumbers, user),
-      ])
+      let enhancedPrisoners = []
+      if (prisoners.length) {
+        const prisonerNumbers = prisoners.map(prisoner => prisoner.prisonerNumber)
+        const [prisonerAllocations, nonAssociations] = await Promise.all([
+          this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
+          this.nonAssociationsService.getListPrisonersWithNonAssociations(prisonerNumbers, user),
+        ])
 
-      const enhancedPrisoners = enhancePrisonersWithNonAssocationsAndAllocations(
-        prisoners,
-        prisonerAllocations,
-        nonAssociations,
-      )
+        enhancedPrisoners = enhancePrisonersWithNonAssocationsAndAllocations(
+          prisoners,
+          prisonerAllocations,
+          nonAssociations,
+        )
+      }
 
       return res.render('pages/activities/manage-allocations/allocateMultiplePeople/selectPrisoner', {
         prisoners: enhancedPrisoners,
@@ -98,8 +101,7 @@ export default class SelectPrisonerRoutes {
     if (prisonerFreeToAllocate) {
       if (prisonerIncentiveLevelSuitable) {
         await this.addPrisonersToSession(req, inmate)
-        // TODO this redirect needs to go to the new review page
-        return res.redirect(`activity-requirements-review`)
+        return res.redirect(`review-search-prisoner-list`)
       }
 
       return res.validationFailed(
