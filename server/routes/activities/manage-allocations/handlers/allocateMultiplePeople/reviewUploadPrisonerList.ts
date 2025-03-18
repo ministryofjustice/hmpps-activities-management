@@ -1,9 +1,7 @@
 import { Request, Response } from 'express'
-import PrisonService from '../../../../../services/prisonService'
 import ActivityService from '../../../../../services/activitiesService'
-import { Allocation, PrisonerAllocations } from '../../../../../@types/activitiesAPI/types'
+import { Allocation } from '../../../../../@types/activitiesAPI/types'
 import {
-  addOtherAllocations,
   inmatesAllocated,
   inmatesWithMatchingIncentiveLevel,
   inmatesWithoutMatchingIncentiveLevel,
@@ -11,50 +9,56 @@ import {
 import { Inmate } from '../../journey'
 
 export default class ReviewUploadPrisonerListRoutes {
-  constructor(
-    private readonly prisonService: PrisonService,
-    private readonly activitiesService: ActivityService,
-  ) {}
+  constructor(private readonly activitiesService: ActivityService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { inmates, activity } = req.session.allocateJourney
+    const { inmates, withoutMatchingIncentiveLevelInmates, allocatedInmates, activity } = req.session.allocateJourney
     const { scheduleId } = activity
 
-    // get current allocations
-    const currentlyAllocated: Allocation[] = await this.activitiesService.getAllocationsWithParams(
-      scheduleId,
-      { includePrisonerSummary: true },
-      user,
-    )
+    // prisoner without incentive levels and prisoners already allocated haven't been calculated
+    if (withoutMatchingIncentiveLevelInmates === undefined && allocatedInmates === undefined) {
+      // get current allocations
+      const currentlyAllocated: Allocation[] = await this.activitiesService.getAllocationsWithParams(
+        scheduleId,
+        { includePrisonerSummary: true },
+        user,
+      )
 
-    const allocatedInmates: Inmate[] = inmatesAllocated(inmates, currentlyAllocated, false)
-    let unallocatedInmates: Inmate[] = inmatesAllocated(inmates, currentlyAllocated, true)
+      const allocated: Inmate[] = inmatesAllocated(inmates, currentlyAllocated, false)
+      let unallocatedInmates: Inmate[] = inmatesAllocated(inmates, currentlyAllocated, true)
 
-    const unallocatedPrisonerNumbers: string[] = unallocatedInmates.map(inmate => inmate.prisonerNumber)
+      // get incentive level for the activity
+      const act = await this.activitiesService.getActivity(activity.activityId, user)
+      const withoutMatchingIncentiveLevel: Inmate[] = inmatesWithoutMatchingIncentiveLevel(unallocatedInmates, act)
 
-    // get other allocations for the unallocated prisoners
-    const prisonerAllocationsList: PrisonerAllocations[] =
-      await this.activitiesService.getActivePrisonPrisonerAllocations(unallocatedPrisonerNumbers, user)
-    addOtherAllocations(unallocatedInmates, prisonerAllocationsList, activity.scheduleId)
+      // update for matching incentive levels
+      unallocatedInmates = inmatesWithMatchingIncentiveLevel(unallocatedInmates, act)
 
-    // get incentive level for the activity
-    const act = await this.activitiesService.getActivity(activity.activityId, user)
-    const withoutMatchingIncentiveLevelInmates: Inmate[] = inmatesWithoutMatchingIncentiveLevel(unallocatedInmates, act)
-
-    // update for matching incentive levels
-    unallocatedInmates = inmatesWithMatchingIncentiveLevel(unallocatedInmates, act)
-
-    req.session.allocateJourney.inmates = unallocatedInmates
+      // req.session.allocateJourney.inmates = unallocatedInmates
+      req.session.allocateJourney.withoutMatchingIncentiveLevelInmates = withoutMatchingIncentiveLevel
+      req.session.allocateJourney.allocatedInmates = allocated
+      req.session.allocateJourney.inmates = unallocatedInmates
+    }
 
     return res.render('pages/activities/manage-allocations/allocateMultiplePeople/reviewUploadPrisonerList', {
-      unallocatedInmates,
-      withoutMatchingIncentiveLevelInmates,
-      allocatedInmates,
+      unallocatedInmates: req.session.allocateJourney.inmates,
+      withoutMatchingIncentiveLevelInmates: req.session.allocateJourney.withoutMatchingIncentiveLevelInmates,
+      allocatedInmates: req.session.allocateJourney.allocatedInmates,
     })
   }
 
-  // POST = async (req: Request, res: Response): Promise<void> => {
-  //   const { user } = res.locals
-  // }
+  REMOVE = async (req: Request, res: Response): Promise<void> => {
+    const { prisonNumber } = req.params
+    const unallocatedInmates = req.session.allocateJourney.inmates.filter(
+      prisoner => prisoner.prisonerNumber !== prisonNumber,
+    )
+    req.session.allocateJourney.inmates = unallocatedInmates
+
+    res.redirect('../../review-upload-prisoner-list')
+  }
+
+  POST = async (req: Request, res: Response): Promise<void> => {
+    res.redirect('activity-requirements-review')
+  }
 }

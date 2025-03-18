@@ -16,6 +16,7 @@ export type Inmate = {
     rate: number
   }
   otherAllocations?: Allocation[]
+  startDate?: string
 }
 
 export type AllocateToActivityJourney = {
@@ -65,6 +66,8 @@ export type AllocateToActivityJourney = {
     notInWork?: boolean
     schedule?: ActivitySchedule
   }[]
+  withoutMatchingIncentiveLevelInmates?: Array<Inmate>
+  allocatedInmates?: Array<Inmate>
 }
 
 export enum EndDecision {

@@ -26,7 +26,13 @@ export function inmatesAllocated(
   if (alreadyAllocated) {
     return inmates.filter(inmate => !allocationPrisonNumbers.includes(inmate.prisonerNumber))
   }
-  return inmates.filter(inmate => allocationPrisonNumbers.includes(inmate.prisonerNumber))
+  const allocated = inmates.filter(inmate => allocationPrisonNumbers.includes(inmate.prisonerNumber))
+  allocated.forEach(inmate => {
+    const i = inmate
+    const alloc = currentAllocations.find(cA => i.prisonerNumber === cA.prisonerNumber)
+    i.startDate = alloc.startDate
+  })
+  return allocated
 }
 
 export function inmatesWithMatchingIncentiveLevel(inmates: Inmate[], activity: Activity): Inmate[] {

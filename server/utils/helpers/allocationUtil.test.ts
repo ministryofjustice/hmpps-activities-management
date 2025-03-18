@@ -47,7 +47,7 @@ describe('Allocation helper function tests', () => {
     prisonerNumber: 'B11232B',
     scheduleDescription: '',
     scheduleId: 0,
-    startDate: '',
+    startDate: '2024-01-01',
     status: undefined,
   }
 
