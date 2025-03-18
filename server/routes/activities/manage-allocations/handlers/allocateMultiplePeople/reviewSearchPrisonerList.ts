@@ -13,6 +13,9 @@ export default class ReviewSearchPrisonerListRoutes {
     const { user } = res.locals
     const { inmates } = req.session.allocateJourney
 
+    if (!inmates.length) return res.redirect('select-prisoner')
+
+    // do we need to call these again - can we add to the session on an earlier page?
     const prisonerNumbers = inmates.map(prisoner => prisoner.prisonerNumber)
     const [prisonerAllocations, nonAssociations] = await Promise.all([
       this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
