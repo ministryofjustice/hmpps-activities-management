@@ -724,6 +724,22 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  async getInternalLocationEventsByDpsLocationIds(
+    prisonCode: string,
+    date: string,
+    dpsLocationIds: string[],
+    user: ServiceUser,
+    timeSlot?: string,
+  ): Promise<InternalLocationEvents[]> {
+    return this.post({
+      path: `/scheduled-events/prison/${prisonCode}/location-events`,
+      query: { date, timeSlot },
+      data: dpsLocationIds,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
   async getAppointmentAttendanceSummaries(
     prisonCode: string,
     date: string,

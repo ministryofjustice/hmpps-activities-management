@@ -8,7 +8,7 @@
 {% set hardBackLinkHref = "choose-details?dateOption=" + session.movementListJourney.dateOption + "&date=" + session.movementListJourney.date + "&timeSlot=" + session.movementListJourney.timeSlot %}
 
 {% macro locationActions(location) %}
-    <a href="location-events?locationIds={{ location.id }}&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}" class="govuk-link--no-visited-state">
+    <a href="location-events?locationIds={{ location.dpsLocationId }}&dateOption={{ dateOption }}{{ "&date=" + date if dateOption == DateOption.OTHER }}&timeSlot={{ timeSlot }}" class="govuk-link--no-visited-state">
         View movement list
     </a>
 {% endmacro %}

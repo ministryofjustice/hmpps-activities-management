@@ -4024,6 +4024,14 @@ export interface components {
        */
       id: number
       /**
+       * Format: uuid
+       * @description
+       *         The DPS location UUID for this schedule.
+       *
+       * @example b7602cc8-e769-4cbb-8194-62d8e655992a
+       */
+      dpsLocationId: string
+      /**
        * @description
        *         The prison code/agency id of the internal location. Mapped from AGENCY_LOCATIONS.AGY_LOC_ID in NOMIS.
        *
