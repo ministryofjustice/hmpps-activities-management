@@ -50,7 +50,7 @@
       {
         text: 'FIXME',
         classes: 'govuk-!-display-none-print',
-        attributes: { id: 'unallocated-inmate-non-assoications', "data-qa": "unallocated-inmate-non-assoications" }
+        attributes: { id: 'unallocated-inmate-non-associations', "data-qa": "unallocated-inmate-non-associations" }
       },
       {
         html: currentAllocationsHtml,
@@ -81,7 +81,7 @@
         {
           text: "Non-associations",
           classes: "govuk-!-display-none-print",
-          attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-non-assoications"}
+          attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-non-associations"}
         },
         {
           text: "Current allocations",
@@ -89,7 +89,7 @@
           attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-current-allocations"}
         },
         {
-          text: "",
+          html: '<span class="govuk-visually-hidden">Actions</span>',
           classes: "govuk-!-display-none-print"
         }
       ],
