@@ -231,7 +231,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
   describe('POST', () => {
     it('should redirect to FIXME view', async () => {
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith('somewhere')
+      expect(res.redirect).toHaveBeenCalledWith('activity-requirements-review')
     })
   })
 })

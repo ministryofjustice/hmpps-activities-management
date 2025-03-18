@@ -59,7 +59,6 @@ export default class ReviewUploadPrisonerListRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    // FIXME add url below
-    res.redirect('somewhere')
+    res.redirect('activity-requirements-review')
   }
 }
