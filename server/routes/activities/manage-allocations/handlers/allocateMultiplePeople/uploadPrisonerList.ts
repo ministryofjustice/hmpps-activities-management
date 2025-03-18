@@ -7,6 +7,9 @@ import IsNotEmptyFile from '../../../../../validators/isNotEmptyFile'
 import IsValidCsvFile from '../../../../../validators/isValidCsvFile'
 import { Inmate } from '../../journey'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
+import { PrisonerAllocations } from '../../../../../@types/activitiesAPI/types'
+import { addOtherAllocations } from '../../../../../utils/helpers/allocationUtil'
+import ActivityService from '../../../../../services/activitiesService'
 
 export class UploadPrisonerList {
   @Expose()
@@ -20,6 +23,7 @@ export default class UploadPrisonerListRoutes {
   constructor(
     private readonly prisonerListCsvParser: PrisonerListCsvParser,
     private readonly prisonService: PrisonService,
+    private readonly activitiesService: ActivityService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -29,6 +33,7 @@ export default class UploadPrisonerListRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const prisonerListCsvFile = req.file
     const { user } = res.locals
+    const { activity } = req.session.allocateJourney
 
     const prisonerNumbers: string[] = await this.prisonerListCsvParser.getPrisonNumbers(prisonerListCsvFile)
 
@@ -56,6 +61,12 @@ export default class UploadPrisonerListRoutes {
           }) as Inmate,
       )
 
+    // get other allocations for the unallocated prisoners
+    const unallocatedPrisonerNumbers: string[] = inmates.map(inmate => inmate.prisonerNumber)
+    const prisonerAllocationsList: PrisonerAllocations[] =
+      await this.activitiesService.getActivePrisonPrisonerAllocations(unallocatedPrisonerNumbers, user)
+    addOtherAllocations(inmates, prisonerAllocationsList, activity.scheduleId)
+
     const prisonerNumbersFound: string[] = prisoners.map(prisoner => prisoner.prisonerNumber)
     const prisonerNumbersNotFound: string[] = prisonerNumbers.filter(
       prisonerNumber => !prisonerNumbersFound.includes(prisonerNumber),
@@ -70,6 +81,8 @@ export default class UploadPrisonerListRoutes {
     }
 
     req.session.allocateJourney.inmates = inmates
+    req.session.allocateJourney.allocatedInmates = undefined
+    req.session.allocateJourney.withoutMatchingIncentiveLevelInmates = undefined
 
     return res.redirect('review-upload-prisoner-list')
   }

@@ -12,19 +12,24 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
-      <h1 class="govuk-heading-xl govuk-!-margin-bottom-7">Review who you're allocating</h1>
-      <p class="govuk-body-l">Remove anyone who should not be allocated, or continue with the current list of people to allocate.</p>
+      <span class="govuk-caption-l">{{ session.allocateJourney.activity.name }}</span>
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
+      <p class="govuk-body">Remove anyone who should not be allocated, or continue with the current list of people to allocate.</p>
     </div>
   </div>
 
   {% set unallocatedInmatesRows = [] %}
   {% for unallocatedInmate in unallocatedInmates %}
+    {% set currentAllocationsHtml %}
+      <ul class='govuk-list'>
+        {% for allocation in unallocatedInmate.otherAllocations %}
+          <li><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
+        {% else %}
+          <li>None</li>
+        {% endfor %}
+      </ul>
+    {% endset %}
     {% set unallocatedInmatesRows = (unallocatedInmatesRows.push([
-      {
-        html: '<span class="print-checkbox"></span>',
-        classes: "print-only"
-      },
       {
         html: showProfileLink({
         firstName: unallocatedInmate.firstName,
@@ -40,15 +45,23 @@
       {
         text: statusBasedCellLocation(unallocatedInmate.cellLocation, unallocatedInmate.status, unallocatedInmate.prisonCode == user.activeCaseLoadId),
         classes: 'govuk-!-display-none-print',
-        attributes: { id: 'prisoner-cell-location', "data-qa": "prisoner-cell-location" }
+        attributes: { id: 'unallocated-inmate-cell-location', "data-qa": "unallocated-inmate-cell-location" }
       },
       {
-        text: unallocatedInmate.prisonerName,
-        classes: 'print-only'
+        text: 'FIXME',
+        classes: 'govuk-!-display-none-print',
+        attributes: { id: 'unallocated-inmate-non-assoications', "data-qa": "unallocated-inmate-non-assoications" }
       },
       {
-        text: unallocatedInmate.prisonerNumber,
-        classes: 'print-only'
+        html: currentAllocationsHtml,
+        attributes: { id: 'unallocated-inmate-current-allocations', "data-qa": "unallocated-inmatee-current-allocations" }
+      },
+      {
+        html: '<a href="review-upload-prisoner-list/' + unallocatedInmate.prisonerNumber + '/remove' + ('?preserveHistory=true' if preserveHistory else '') + '"
+                            class="govuk-link--no-visited-state">
+                            Remove<span class="govuk-visually-hidden"> prison number ' + unallocatedInmate.prisonerNumber + '</span>
+                        </a>',
+        attributes: { 'data-qa': 'remove-uploaded-prison-number-' + unallocatedInmate.prisonerNumber }
       }
     ]), unallocatedInmatesRows) %}
   {% endfor %}
@@ -58,19 +71,25 @@
         {
           text: "Name",
           classes: "govuk-!-display-none-print",
-          attributes: { "aria-sort": "ascending", "data-qa": "prisoner-summary" }
+          attributes: { "aria-sort": "ascending", "data-qa": "unallocated-inmate-name" }
         },
         {
           text: "Cell location",
           classes: "govuk-!-display-none-print",
-          attributes: { "aria-sort": "none", "data-qa": "prisoner-cell-location"}
+          attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-cell-location"}
         },
         {
-          text: "Prison number",
-          classes: "print-only"
+          text: "Non-associations",
+          classes: "govuk-!-display-none-print",
+          attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-non-assoications"}
         },
         {
-          html: '<span class="govuk-visually-hidden">Actions</span>',
+          text: "Current allocations",
+          classes: "govuk-!-display-none-print",
+          attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-current-allocations"}
+        },
+        {
+          text: "",
           classes: "govuk-!-display-none-print"
         }
       ],
@@ -78,8 +97,128 @@
       classes: 'govuk-!-margin-0',
       attributes: {
         'data-module': 'moj-sortable-table',
-        'data-qa': 'prisoner-list'
+        'data-qa': 'inmate-list'
       }
     }) }}
   </div>
+  {% set totalCannotBeAllocated = withoutMatchingIncentiveLevelInmates.length + allocatedInmates.length %}
+  {% if totalCannotBeAllocated > 0 %}
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+      <p class="govuk-heading-m">{{ totalCannotBeAllocated }} people from your CSV file cannot be allocated</p>
+      </div>
+    </div>
+  {% endif %}
+  {% if withoutMatchingIncentiveLevelInmates.length > 0 %}
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <p class="govuk-body">There are {{ withoutMatchingIncentiveLevelInmates | length }} people with an incentive level that does not match a pay rate for this activity. <a href='/activities/view/{{ session.allocateJourney.activity.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>You can edit the activity to change pay rates</a></p>
+      </div>
+    </div>
+
+    {% set withoutMatchingIncentiveLevelInmatesRows = [] %}
+    {% for withoutMatchingIncentiveLevelInmate in withoutMatchingIncentiveLevelInmates %}
+      {% set withoutMatchingIncentiveLevelInmatesRows = (withoutMatchingIncentiveLevelInmatesRows.push([
+        {
+          html: showProfileLink({
+          firstName: withoutMatchingIncentiveLevelInmate.firstName,
+          middleNames: withoutMatchingIncentiveLevelInmate.middleNames,
+          lastName: withoutMatchingIncentiveLevelInmate.lastName,
+          prisonerNumber: withoutMatchingIncentiveLevelInmate.prisonerNumber,
+          cellLocation: withoutMatchingIncentiveLevelInmate.cellLocation
+        }),
+          attributes: {
+          "data-sort-value": withoutMatchingIncentiveLevelInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+        }
+        },
+        {
+          text: withoutMatchingIncentiveLevelInmate.incentiveLevel
+        }
+      ]), withoutMatchingIncentiveLevelInmatesRows) %}
+    {% endfor %}
+    <div class="govuk-summary-card__content">
+      {{ govukTable({
+        head: [
+          {
+            text: "Name",
+            classes: "govuk-!-display-none-print",
+            attributes: { "aria-sort": "ascending", "data-qa": "incentive-level-prisoner-name" }
+          },
+          {
+            text: "Incentive Level",
+            classes: "govuk-!-display-none-print",
+            attributes: { "aria-sort": "none", "data-qa": "incentive-level"}
+          }
+        ],
+        rows: withoutMatchingIncentiveLevelInmatesRows,
+        classes: 'govuk-!-margin-0',
+        attributes: {
+          'data-module': 'moj-sortable-table',
+          'data-qa': 'incentive-level-list'
+        }
+      }) }}
+    </div>
+  {% endif %}
+
+  {% if allocatedInmates.length > 0 %}
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <p class="govuk-body">There are {{ allocatedInmates | length }} people already allocated to {{ session.allocateJourney.activity.name }}</p>
+      </div>
+    </div>
+
+    {% set allocatedInmatesRows = [] %}
+    {% for allocatedInmate in allocatedInmates %}
+      {% set allocatedInmatesRows = (allocatedInmatesRows.push([
+        {
+          html: showProfileLink({
+          firstName: allocatedInmate.firstName,
+          middleNames: allocatedInmate.middleNames,
+          lastName: allocatedInmate.lastName,
+          prisonerNumber: allocatedInmate.prisonerNumber,
+          cellLocation: allocatedInmate.cellLocation
+        }),
+          attributes: {
+          "data-sort-value": allocatedInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+        }
+        },
+        {
+          text: allocatedInmate.startDate | toDate | formatDate('d MMMM yyyy', false),
+          classes: 'govuk-!-display-none-print',
+          attributes: { id: 'allocated-inmate-start-date', "data-qa": "allocated-inmate-start-date" }
+        }
+      ]), allocatedInmatesRows) %}
+    {% endfor %}
+    <div class="govuk-summary-card__content">
+      {{ govukTable({
+        head: [
+          {
+            text: "Name",
+            classes: "govuk-!-display-none-print",
+            attributes: { "aria-sort": "ascending", "data-qa": "allocated-inmate-name" }
+          },
+          {
+            text: "Start date on " + session.allocateJourney.activity.name,
+            classes: "govuk-!-display-none-print",
+            attributes: { "aria-sort": "none", "data-qa": "allocated-inmate-start-date"}
+          }
+        ],
+        rows: allocatedInmatesRows,
+        classes: 'govuk-!-margin-0',
+        attributes: {
+          'data-module': 'moj-sortable-table',
+          'data-qa': 'allocated-inmate-list'
+        }
+      }) }}
+    </div>
+  {% endif %}
+  <form method="POST">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <div class="govuk-button-group">
+      {{ govukButton({
+        text: "Continue",
+        preventDoubleClick: true
+      }) }}
+    </div>
+  </form>
 {% endblock %}

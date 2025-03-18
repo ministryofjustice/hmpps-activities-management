@@ -9,6 +9,8 @@ import PrisonerListCsvParser from '../../../../../utils/prisonerListCsvParser'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import { Inmate } from '../../journey'
+import ActivitiesService from '../../../../../services/activitiesService'
+import { Allocation, PrisonerAllocations } from '../../../../../@types/activitiesAPI/types'
 
 jest.mock('fs')
 jest.mock('isbinaryfile', () => ({
@@ -17,9 +19,11 @@ jest.mock('isbinaryfile', () => ({
 const fsMock: jest.Mocked<typeof fs> = <jest.Mocked<typeof fs>>fs
 jest.mock('../../../../../utils/prisonerListCsvParser')
 jest.mock('../../../../../services/prisonService')
+jest.mock('../../../../../services/activitiesService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const prisonerListCsvParser = new PrisonerListCsvParser() as jest.Mocked<PrisonerListCsvParser>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 const prisonerA: Prisoner = {
   dateOfBirth: '',
@@ -71,8 +75,32 @@ const prisonerB: Prisoner = {
   },
 }
 
+const allocation: Allocation = {
+  activityId: 22,
+  activitySummary: 'other',
+  bookingId: 0,
+  exclusions: [],
+  id: 0,
+  isUnemployment: false,
+  prisonerNumber: 'A1234BC',
+  scheduleDescription: '',
+  scheduleId: 22,
+  startDate: '2024-01-01',
+  status: undefined,
+}
+
+const prisonerAllocations1: PrisonerAllocations = {
+  allocations: [allocation],
+  prisonerNumber: 'A1234BC',
+}
+
+const prisonerAllocations2: PrisonerAllocations = {
+  allocations: [],
+  prisonerNumber: 'B2345CD',
+}
+
 describe('Allocate multiple people to an activity - upload a prisoner list', () => {
-  const handler = new UploadPrisonerListRoutes(prisonerListCsvParser, prisonService)
+  const handler = new UploadPrisonerListRoutes(prisonerListCsvParser, prisonService, activitiesService)
   let req: Request
   let res: Response
 
@@ -94,6 +122,9 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
       session: {
         allocateJourney: {
           inmates: [],
+          activity: {
+            scheduleId: 1,
+          },
         },
       },
       query: {},
@@ -122,6 +153,10 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
         .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
         .mockResolvedValue([prisonerA, prisonerB])
 
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
+        .mockResolvedValue([prisonerAllocations1, prisonerAllocations2])
+
       await handler.POST(req, res)
 
       const expectedInmates: Inmate[] = [
@@ -135,6 +170,21 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           cellLocation: '1-1-1',
           incentiveLevel: 'Standard',
           payBand: undefined,
+          otherAllocations: [
+            {
+              activityId: 22,
+              activitySummary: 'other',
+              bookingId: 0,
+              exclusions: [],
+              id: 0,
+              isUnemployment: false,
+              prisonerNumber: 'A1234BC',
+              scheduleDescription: '',
+              scheduleId: 22,
+              startDate: '2024-01-01',
+              status: undefined,
+            },
+          ],
         },
         {
           prisonerName: 'TEST02 PRISONER02',
@@ -146,6 +196,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           cellLocation: '2-2-2',
           incentiveLevel: 'Basic',
           payBand: undefined,
+          otherAllocations: [],
         },
       ]
 
@@ -166,6 +217,10 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
         .mockResolvedValue([prisonerA])
+
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith(['A1234BC'], res.locals.user)
+        .mockResolvedValue([prisonerAllocations1])
 
       await handler.POST(req, res)
 
@@ -188,6 +243,10 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
         .mockResolvedValue([])
+
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
+        .mockResolvedValue([prisonerAllocations1, prisonerAllocations2])
 
       await handler.POST(req, res)
 

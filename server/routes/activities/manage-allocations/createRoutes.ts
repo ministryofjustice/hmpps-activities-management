@@ -51,8 +51,12 @@ export default function Index({
   const errorHandler = new AllocationErrorRoutes()
   const setUpPrisonerListHandler = new SetUpPrisonerListMethodRoutes(activitiesService)
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService, activitiesService, nonAssociationsService)
-  const uploadPrisonerListHandler = new UploadPrisonerListRoutes(new PrisonerListCsvParser(), prisonService)
-  const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(prisonService, activitiesService)
+  const uploadPrisonerListHandler = new UploadPrisonerListRoutes(
+    new PrisonerListCsvParser(),
+    prisonService,
+    activitiesService,
+  )
+  const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(activitiesService)
   const activityRequirementsReview = new ActivityRequirementsReviewRoutes()
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
@@ -88,6 +92,8 @@ export default function Index({
     asyncMiddleware(uploadPrisonerListHandler.POST),
   )
   get('/multiple/review-upload-prisoner-list', reviewUploadPrisonerListHandler.GET, true)
+  get('/multiple/review-upload-prisoner-list/:prisonNumber/remove', reviewUploadPrisonerListHandler.REMOVE, true)
+  post('/multiple/review-upload-prisoner-list', reviewUploadPrisonerListHandler.POST)
   get('/multiple/activity-requirements-review', activityRequirementsReview.GET, true)
   get('/multiple/activity-requirements-review/:prisonNumber/remove', activityRequirementsReview.REMOVE, true)
 
