@@ -26,10 +26,10 @@ export default class LocationEventsRoutes {
       return res.redirect(`choose-details`)
     }
 
-    const internalLocationEvents = await this.activitiesService.getInternalLocationEvents(
+    const internalLocationEvents = await this.activitiesService.getInternalLocationEventsByDpsLocationIds(
       user.activeCaseLoadId,
       richDate,
-      (locationIds as string).split(',').map(id => +id),
+      (locationIds as string).split(',').map(id => id),
       user,
       timeSlot as string,
     )

@@ -79,6 +79,7 @@ describe('ScheduleRoutes', () => {
       const internalLocationEvents = [
         {
           id: 1,
+          dpsLocationId: '11111111-1111-1111-1111-111111111111',
           prisonCode: 'PRISON1',
           code: 'LOC1',
           description: 'Location 1',

@@ -935,6 +935,25 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getInternalLocationEventsByDpsLocationIds', () => {
+    it('should call endpoint to get internal locations events', async () => {
+      const prisonCode = 'MDI'
+      const date = formatIsoDate(new Date())
+      const dpsLocationIds = ['11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222']
+      const timeSlot = 'AM'
+      fakeActivitiesApi
+        .post(`/scheduled-events/prison/${prisonCode}/location-events`)
+        .query({ date, timeSlot })
+        .matchHeader('authorization', 'Bearer token')
+        .matchHeader('Caseload-Id', prisonCode)
+        .reply(200)
+
+      await activitiesApiClient.getInternalLocationEventsByDpsLocationIds('MDI', date, dpsLocationIds, user, timeSlot)
+
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getAppointmentAttendanceSummaries', () => {
     it('should call endpoint to get appointment attendance summaries', async () => {
       const prisonCode = 'MDI'

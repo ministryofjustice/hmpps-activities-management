@@ -869,6 +869,31 @@ describe('Activities Service', () => {
     })
   })
 
+  describe('getInternalLocationEventsByDpsLocationIds', () => {
+    it('should call the api client to get internal locations events', async () => {
+      const prisonCode = 'MDI'
+      const date = new Date()
+      const dpsLocationIds = ['11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222']
+      const timeSlot = 'AM'
+
+      await activitiesService.getInternalLocationEventsByDpsLocationIds(
+        prisonCode,
+        date,
+        dpsLocationIds,
+        user,
+        timeSlot,
+      )
+
+      expect(activitiesApiClient.getInternalLocationEventsByDpsLocationIds).toHaveBeenCalledWith(
+        prisonCode,
+        formatIsoDate(date),
+        dpsLocationIds,
+        user,
+        timeSlot,
+      )
+    })
+  })
+
   describe('getAppointmentAttendanceSummaries', () => {
     it('should call the api client to get appointment attendance summaries', async () => {
       const prisonCode = 'MDI'
