@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import { ProbationTeam, ReferenceCode } from '../../../../../@types/bookAVideoLinkApi/types'
 import ProbationBookingService from '../../../../../services/probationBookingService'
-import MeetingDetailsRoutes from './meetingDetails'
+import MeetingDetailsRoutesDeprecated from './meetingDetailsDeprecated'
 
 jest.mock('../../../../../services/bookAVideoLinkService')
 jest.mock('../../../../../services/probationBookingService')
@@ -12,7 +12,7 @@ describe('MeetingDetailsRoutes', () => {
   let res: Partial<Response>
   let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
   let probationBookingService: jest.Mocked<ProbationBookingService>
-  let meetingDetailsRoutes: MeetingDetailsRoutes
+  let meetingDetailsRoutes: MeetingDetailsRoutesDeprecated
 
   beforeEach(() => {
     req = {
@@ -31,7 +31,7 @@ describe('MeetingDetailsRoutes', () => {
     } as unknown as Response
     bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
     probationBookingService = new ProbationBookingService(null) as jest.Mocked<ProbationBookingService>
-    meetingDetailsRoutes = new MeetingDetailsRoutes(bookAVideoLinkService, probationBookingService)
+    meetingDetailsRoutes = new MeetingDetailsRoutesDeprecated(bookAVideoLinkService, probationBookingService)
   })
 
   describe('GET', () => {
@@ -44,10 +44,13 @@ describe('MeetingDetailsRoutes', () => {
 
       await meetingDetailsRoutes.GET(req as Request, res as Response)
 
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/probation/meeting-details', {
-        probationTeams,
-        meetingTypes,
-      })
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/appointments/video-link-booking/probation/meeting-details-deprecated',
+        {
+          probationTeams,
+          meetingTypes,
+        },
+      )
     })
   })
 

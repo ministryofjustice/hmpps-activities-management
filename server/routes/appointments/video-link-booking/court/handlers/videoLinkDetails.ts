@@ -35,7 +35,7 @@ export default class VideoLinkDetailsRoutes {
     const [rooms, userMap, mainAppointmentId] = await Promise.all([
       this.bookAVideoLinkService.getAppointmentLocations(mainAppointment.prisonCode, user),
       this.userService.getUserMap([videoBooking.createdBy, videoBooking.amendedBy], user),
-      this.fetchMainAppointmentFromActivitiesAPI(mainAppointment, user).then(a => a.appointmentId),
+      this.fetchMainAppointmentFromActivitiesAPI(mainAppointment, user).then(a => a?.appointmentId),
     ])
 
     const earliestAppointment = preAppointment || mainAppointment

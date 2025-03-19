@@ -35,6 +35,13 @@ export default class ProbationBookingService {
       ],
       probationTeamCode: journey.probationTeamCode,
       probationMeetingType: journey.meetingTypeCode,
+      additionalBookingDetails: journey.officer
+        ? {
+            contactName: journey.officer.fullName,
+            contactEmail: journey.officer.email,
+            contactNumber: journey.officer.telephone,
+          }
+        : undefined,
       comments: journey.comments,
     } as T
   }

@@ -4,11 +4,13 @@ import { parseISO } from 'date-fns'
 import asyncMiddleware from '../../../../middleware/asyncMiddleware'
 import type { Services } from '../../../../services'
 import validationMiddleware from '../../../../middleware/validationMiddleware'
-import MeetingDetailsRoutes, { MeetingDetails } from './handlers/meetingDetails'
+import MeetingDetailsRoutesDeprecated, { MeetingDetailsDeprecated } from './handlers/meetingDetailsDeprecated'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
 import ScheduleRoutes from './handlers/schedule'
+import config from '../../../../config'
+import MeetingDetailsRoutes, { MeetingDetails } from './handlers/meetingDetails'
 
 export default function AmendRoutes({
   bookAVideoLinkService,
@@ -22,6 +24,7 @@ export default function AmendRoutes({
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
+  const meetingDetailsDeprecated = new MeetingDetailsRoutesDeprecated(bookAVideoLinkService, probationBookingService)
   const meetingDetails = new MeetingDetailsRoutes(bookAVideoLinkService, probationBookingService)
   const location = new LocationRoutes(bookAVideoLinkService)
   const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
@@ -44,8 +47,13 @@ export default function AmendRoutes({
     return next()
   })
 
-  get('/meeting-details', meetingDetails.GET)
-  post('/meeting-details', meetingDetails.POST, MeetingDetails)
+  if (config.bvlsMasteredVlpmFeatureToggleEnabled) {
+    get('/meeting-details', meetingDetails.GET)
+    post('/meeting-details', meetingDetails.POST, MeetingDetails)
+  } else {
+    get('/meeting-details', meetingDetailsDeprecated.GET)
+    post('/meeting-details', meetingDetailsDeprecated.POST, MeetingDetailsDeprecated)
+  }
   get('/location', location.GET)
   post('/location', location.POST, Location)
   get('/date-and-time', dateAndTime.GET)
