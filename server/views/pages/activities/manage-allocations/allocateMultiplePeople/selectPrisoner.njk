@@ -61,7 +61,7 @@
 
                             {% set otherAllocationsHtml %}
                                 <ul class='govuk-list'>
-                                    {% for allocation in prisoner.allocations %}
+                                    {% for allocation in prisoner.otherAllocations %}
                                         <li><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary | escape }}</a></li>
                                     {% else %}
                                         <li>None</li>
@@ -111,7 +111,7 @@
                                     html: otherAllocationsHtml,
                                     attributes: {
                                         id: 'prisoner-allocations',
-                                        "data-sort-value": prisoner.allocations
+                                        "data-sort-value": prisoner.otherAllocations
                                     }
                                 }
                             ]), prisonerRows) %}

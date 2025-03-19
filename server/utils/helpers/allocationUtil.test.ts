@@ -234,6 +234,21 @@ describe('Allocation helper function tests', () => {
     expect(inmate1.otherAllocations).toHaveLength(1)
   })
 
+  it('should add add an empty array for allocations if none exist for the prisoner', () => {
+    const prisonerAllocations: PrisonerAllocations[] = [
+      {
+        prisonerNumber: 'Z11222A',
+        allocations: [
+          { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+          { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
+        ],
+      },
+    ] as PrisonerAllocations[]
+
+    addOtherAllocations([inmate1], prisonerAllocations, 2)
+    expect(inmate1.otherAllocations).toHaveLength(0)
+  })
+
   it('should set other non-associations to true for inmate when it has an inmate with a non-associations', () => {
     addNonAssociations([inmate1, inmate2], ['A11222A'])
     expect(inmate1.nonAssociations).toBe(true)

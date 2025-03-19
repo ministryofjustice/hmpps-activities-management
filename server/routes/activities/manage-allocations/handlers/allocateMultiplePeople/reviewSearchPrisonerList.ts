@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import NonAssociationsService from '../../../../../services/nonAssociationsService'
 import ActivitiesService from '../../../../../services/activitiesService'
-import enhancePrisonersWithNonAssocationsAndAllocations from '../../../../../utils/extraPrisonerInformation'
 
 export default class ReviewSearchPrisonerListRoutes {
   constructor(
@@ -10,26 +9,12 @@ export default class ReviewSearchPrisonerListRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
     const { inmates } = req.session.allocateJourney
 
     if (!inmates.length) return res.redirect('select-prisoner')
 
-    // do we need to call these again - can we add to the session on an earlier page?
-    const prisonerNumbers = inmates.map(prisoner => prisoner.prisonerNumber)
-    const [prisonerAllocations, nonAssociations] = await Promise.all([
-      this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
-      this.nonAssociationsService.getListPrisonersWithNonAssociations(prisonerNumbers, user),
-    ])
-
-    const enhancedPrisoners = enhancePrisonersWithNonAssocationsAndAllocations(
-      inmates,
-      prisonerAllocations,
-      nonAssociations,
-    )
-
     return res.render('pages/activities/manage-allocations/allocateMultiplePeople/reviewSearchPrisonerList', {
-      inmates: enhancedPrisoners,
+      inmates,
     })
   }
 
