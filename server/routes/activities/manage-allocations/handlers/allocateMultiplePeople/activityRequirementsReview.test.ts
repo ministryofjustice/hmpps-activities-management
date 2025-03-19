@@ -190,13 +190,13 @@ describe('Activity requirements review page', () => {
 
       await handler.GET(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('start-date')
+      expect(res.redirect).toHaveBeenCalledWith('../start-date')
     })
   })
   describe('POST', () => {
     it('redirects to the start-date page', async () => {
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith('start-date')
+      expect(res.redirect).toHaveBeenCalledWith('../start-date')
     })
   })
   describe('REMOVE', () => {
