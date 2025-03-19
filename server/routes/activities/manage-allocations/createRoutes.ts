@@ -55,6 +55,7 @@ export default function Index({
     new PrisonerListCsvParser(),
     prisonService,
     activitiesService,
+    nonAssociationsService,
   )
   const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(activitiesService)
   const activityRequirementsReview = new ActivityRequirementsReviewRoutes(activitiesService)

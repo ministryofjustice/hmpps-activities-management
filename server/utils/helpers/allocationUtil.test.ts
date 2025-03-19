@@ -5,6 +5,7 @@ import {
   inmatesWithMatchingIncentiveLevel,
   inmatesWithoutMatchingIncentiveLevel,
   addOtherAllocations,
+  addNonAssociations,
 } from './allocationUtil'
 import { Inmate } from '../../routes/activities/manage-allocations/journey'
 import { Activity, Allocation, PrisonerAllocations } from '../../@types/activitiesAPI/types'
@@ -231,5 +232,17 @@ describe('Allocation helper function tests', () => {
 
     addOtherAllocations([inmate1], prisonerAllocations, 2)
     expect(inmate1.otherAllocations).toHaveLength(1)
+  })
+
+  it('should set other non-associations to true for inmate when it has an inmate with a non-associations', () => {
+    addNonAssociations([inmate1, inmate2], ['A11222A'])
+    expect(inmate1.nonAssociations).toBe(true)
+    expect(inmate2.nonAssociations).toBe(false)
+  })
+
+  it('should set other non-associations to false for inmate when it has no inmates with non-associations', () => {
+    addNonAssociations([inmate1, inmate2], [])
+    expect(inmate1.nonAssociations).toBe(false)
+    expect(inmate2.nonAssociations).toBe(false)
   })
 })
