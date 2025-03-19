@@ -11,6 +11,7 @@ import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import { Inmate } from '../../journey'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { Allocation, PrisonerAllocations } from '../../../../../@types/activitiesAPI/types'
+import NonAssociationsService from '../../../../../services/nonAssociationsService'
 
 jest.mock('fs')
 jest.mock('isbinaryfile', () => ({
@@ -20,10 +21,12 @@ const fsMock: jest.Mocked<typeof fs> = <jest.Mocked<typeof fs>>fs
 jest.mock('../../../../../utils/prisonerListCsvParser')
 jest.mock('../../../../../services/prisonService')
 jest.mock('../../../../../services/activitiesService')
+jest.mock('../../../../../services/nonAssociationsService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const prisonerListCsvParser = new PrisonerListCsvParser() as jest.Mocked<PrisonerListCsvParser>
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const nonAssociationsService = new NonAssociationsService(null, null) as jest.Mocked<NonAssociationsService>
 
 const prisonerA: Prisoner = {
   dateOfBirth: '',
@@ -99,8 +102,18 @@ const prisonerAllocations2: PrisonerAllocations = {
   prisonerNumber: 'B2345CD',
 }
 
+const prisonersResult = [
+  { prisonerNumber: 'A1234BC', firstName: 'Daphne', lastName: 'Doe', cellLocation: '1-1-1' },
+  { prisonerNumber: 'B2345CD', firstName: 'Ted', lastName: 'Daphneson', cellLocation: '2-2-2' },
+] as Prisoner[]
+
 describe('Allocate multiple people to an activity - upload a prisoner list', () => {
-  const handler = new UploadPrisonerListRoutes(prisonerListCsvParser, prisonService, activitiesService)
+  const handler = new UploadPrisonerListRoutes(
+    prisonerListCsvParser,
+    prisonService,
+    activitiesService,
+    nonAssociationsService,
+  )
   let req: Request
   let res: Response
 
@@ -153,9 +166,17 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
         .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
         .mockResolvedValue([prisonerA, prisonerB])
 
+      when(prisonService.searchPrisonInmates)
+        .calledWith('', res.locals.user)
+        .mockResolvedValue({ content: prisonersResult })
+
       when(activitiesService.getActivePrisonPrisonerAllocations)
         .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
         .mockResolvedValue([prisonerAllocations1, prisonerAllocations2])
+
+      when(nonAssociationsService.getListPrisonersWithNonAssociations)
+        .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
+        .mockResolvedValue(['A1234BC'])
 
       await handler.POST(req, res)
 
@@ -185,6 +206,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
               status: undefined,
             },
           ],
+          nonAssociations: true,
         },
         {
           prisonerName: 'TEST02 PRISONER02',
@@ -197,6 +219,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           incentiveLevel: 'Basic',
           payBand: undefined,
           otherAllocations: [],
+          nonAssociations: false,
         },
       ]
 
@@ -218,9 +241,17 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
         .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
         .mockResolvedValue([prisonerA])
 
+      when(prisonService.searchPrisonInmates)
+        .calledWith('', res.locals.user)
+        .mockResolvedValue({ content: prisonersResult })
+
       when(activitiesService.getActivePrisonPrisonerAllocations)
         .calledWith(['A1234BC'], res.locals.user)
         .mockResolvedValue([prisonerAllocations1])
+
+      when(nonAssociationsService.getListPrisonersWithNonAssociations)
+        .calledWith(['A1234BC'], res.locals.user)
+        .mockResolvedValue(['A1234BC'])
 
       await handler.POST(req, res)
 
@@ -244,9 +275,17 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
         .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
         .mockResolvedValue([])
 
+      when(prisonService.searchPrisonInmates)
+        .calledWith('', res.locals.user)
+        .mockResolvedValue({ content: prisonersResult })
+
       when(activitiesService.getActivePrisonPrisonerAllocations)
         .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
         .mockResolvedValue([prisonerAllocations1, prisonerAllocations2])
+
+      when(nonAssociationsService.getListPrisonersWithNonAssociations)
+        .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
+        .mockResolvedValue(['A1234BC'])
 
       await handler.POST(req, res)
 

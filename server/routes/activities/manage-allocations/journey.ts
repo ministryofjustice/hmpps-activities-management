@@ -17,6 +17,7 @@ export type Inmate = {
   }
   otherAllocations?: Allocation[]
   startDate?: string
+  nonAssociations?: boolean
 }
 
 export type AllocateToActivityJourney = {

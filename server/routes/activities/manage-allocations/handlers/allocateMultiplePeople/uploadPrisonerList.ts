@@ -8,8 +8,9 @@ import IsValidCsvFile from '../../../../../validators/isValidCsvFile'
 import { Inmate } from '../../journey'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import { PrisonerAllocations } from '../../../../../@types/activitiesAPI/types'
-import { addOtherAllocations } from '../../../../../utils/helpers/allocationUtil'
+import { addNonAssociations, addOtherAllocations } from '../../../../../utils/helpers/allocationUtil'
 import ActivityService from '../../../../../services/activitiesService'
+import NonAssociationsService from '../../../../../services/nonAssociationsService'
 
 export class UploadPrisonerList {
   @Expose()
@@ -24,6 +25,7 @@ export default class UploadPrisonerListRoutes {
     private readonly prisonerListCsvParser: PrisonerListCsvParser,
     private readonly prisonService: PrisonService,
     private readonly activitiesService: ActivityService,
+    private readonly nonAssociationsService: NonAssociationsService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -66,6 +68,20 @@ export default class UploadPrisonerListRoutes {
     const prisonerAllocationsList: PrisonerAllocations[] =
       await this.activitiesService.getActivePrisonPrisonerAllocations(unallocatedPrisonerNumbers, user)
     addOtherAllocations(inmates, prisonerAllocationsList, activity.scheduleId)
+
+    // get non associations
+    const result = await this.prisonService.searchPrisonInmates('', user)
+    let allPrisoners: Prisoner[] = []
+    if (result && !result.empty) {
+      allPrisoners = result.content
+    }
+    const allPrisonerNumbers = allPrisoners.map(prisoner => prisoner.prisonerNumber)
+    const nonAssociations: string[] = await this.nonAssociationsService.getListPrisonersWithNonAssociations(
+      allPrisonerNumbers,
+      user,
+    )
+
+    addNonAssociations(inmates, nonAssociations)
 
     const prisonerNumbersFound: string[] = prisoners.map(prisoner => prisoner.prisonerNumber)
     const prisonerNumbersNotFound: string[] = prisonerNumbers.filter(

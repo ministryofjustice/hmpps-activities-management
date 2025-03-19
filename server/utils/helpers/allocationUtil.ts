@@ -61,3 +61,10 @@ export function addOtherAllocations(
       .allocations.filter(a => a.scheduleId !== scheduleId)
   })
 }
+
+export function addNonAssociations(inmates: Inmate[], prisonersWithNonAssociations: string[]) {
+  inmates.forEach(inmate => {
+    const i = inmate
+    i.nonAssociations = prisonersWithNonAssociations.includes(inmate.prisonerNumber)
+  })
+}
