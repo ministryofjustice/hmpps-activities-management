@@ -87,6 +87,57 @@
                     },
                     {
                         key: {
+                          text: "Probation officer's full name"
+                        },
+                        value: {
+                          text: videoBooking.additionalBookingDetails.contactName or "Not yet known"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/meeting-details',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                      } if isAmendable
+                    } if bvlsMasteredVlpmFeatureToggleEnabled,
+                    {
+                        key: {
+                            text: "Email address"
+                        },
+                        value: {
+                            text: videoBooking.additionalBookingDetails.contactEmail or "Not yet known"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                  href: 'amend/' + videoBooking.videoLinkBookingId + '/meeting-details',
+                                  text: "Change",
+                                  classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                      } if isAmendable
+                    } if bvlsMasteredVlpmFeatureToggleEnabled,
+                    {
+                        key: {
+                            text: "UK phone number"
+                        },
+                        value: {
+                            text: videoBooking.additionalBookingDetails.contactNumber or ("Not yet known" if not videoBooking.additionalBookingDetails.contactName else "None entered")
+                        },
+                        actions: {
+                            items: [
+                                {
+                                  href: 'amend/' + videoBooking.videoLinkBookingId + '/meeting-details',
+                                  text: "Change",
+                                  classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    } if bvlsMasteredVlpmFeatureToggleEnabled,
+                    {
+                        key: {
                             text: "Meeting type"
                         },
                         value: {
@@ -170,6 +221,14 @@
                             ]
                         } if isAmendable
                     },
+                    {
+                        key: {
+                            text: "Prison video link (PVL)"
+                        },
+                        value: {
+                            text: videoBooking.videoLinkUrl or "None entered"
+                        }
+                    } if bvlsMasteredVlpmFeatureToggleEnabled,
                     {
                         key: {
                             text: "Extra information"

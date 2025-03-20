@@ -1,8 +1,11 @@
 import { Request, Response } from 'express'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import { ProbationTeam, ReferenceCode } from '../../../../../@types/bookAVideoLinkApi/types'
 import ProbationBookingService from '../../../../../services/probationBookingService'
-import MeetingDetailsRoutes from './meetingDetails'
+import MeetingDetailsRoutes, { MeetingDetails } from './meetingDetails'
+import { associateErrorsWithProperty } from '../../../../../utils/utils'
 
 jest.mock('../../../../../services/bookAVideoLinkService')
 jest.mock('../../../../../services/probationBookingService')
@@ -66,7 +69,7 @@ describe('MeetingDetailsRoutes', () => {
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/video-link-booking/probation/1',
-        "You've changed the meeting type for this probation meeting",
+        "You've changed the details for this probation meeting",
       )
     })
 
@@ -77,6 +80,131 @@ describe('MeetingDetailsRoutes', () => {
       await meetingDetailsRoutes.POST(req as Request, res as Response)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('date-and-time')
+    })
+  })
+
+  describe('Class Validation', () => {
+    it('validation fails for an empty form', async () => {
+      const body = {
+        probationTeamCode: '',
+        meetingTypeCode: '',
+        officerDetailsNotKnown: '',
+        officerFullName: '',
+        officerEmail: '',
+        officerTelephone: '',
+      }
+
+      const requestObject = plainToInstance(MeetingDetails, body)
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
+
+      expect(errors).toEqual([
+        {
+          error: 'Select a probation team',
+          property: 'probationTeamCode',
+        },
+        {
+          error: 'Select a meeting type',
+          property: 'meetingTypeCode',
+        },
+        {
+          error: "Enter the probation officer's details",
+          property: 'officerDetailsOrUnknown',
+        },
+      ])
+    })
+
+    it('validation fails for an empty email', async () => {
+      const body = {
+        probationTeamCode: 'code',
+        meetingTypeCode: 'code',
+        officerDetailsNotKnown: '',
+        officerFullName: 'Joe Bloggs',
+        officerEmail: '',
+        officerTelephone: '',
+      }
+
+      const requestObject = plainToInstance(MeetingDetails, body)
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
+
+      expect(errors).toEqual([
+        {
+          error: "Enter the probation officer's email address",
+          property: 'officerEmail',
+        },
+      ])
+    })
+
+    it('validation fails for an invalid email', async () => {
+      const body = {
+        probationTeamCode: 'code',
+        meetingTypeCode: 'code',
+        officerDetailsNotKnown: '',
+        officerFullName: 'Joe Bloggs',
+        officerEmail: 'invalid',
+        officerTelephone: '',
+      }
+
+      const requestObject = plainToInstance(MeetingDetails, body)
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
+
+      expect(errors).toEqual([
+        {
+          error: 'Enter a valid email address',
+          property: 'officerEmail',
+        },
+      ])
+    })
+
+    it('validation fails for an invalid telephone', async () => {
+      const body = {
+        probationTeamCode: 'code',
+        meetingTypeCode: 'code',
+        officerDetailsNotKnown: '',
+        officerFullName: 'Joe Bloggs',
+        officerEmail: 'test@gmail.com',
+        officerTelephone: 'invalid',
+      }
+
+      const requestObject = plainToInstance(MeetingDetails, body)
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
+
+      expect(errors).toEqual([
+        {
+          error: 'Enter a valid UK phone number',
+          property: 'officerTelephone',
+        },
+      ])
+    })
+
+    it('validation fails for both details entered and not known selected', async () => {
+      const body = {
+        probationTeamCode: 'code',
+        meetingTypeCode: 'code',
+        officerDetailsNotKnown: 'true',
+        officerFullName: 'Joe Bloggs',
+        officerEmail: 'test@gmail.com',
+        officerTelephone: '',
+      }
+
+      const requestObject = plainToInstance(MeetingDetails, body)
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
+
+      expect(errors).toEqual([
+        {
+          error: "Enter either the probation officer's details, or select 'Not yet known'",
+          property: 'officerDetailsOrUnknown',
+        },
+      ])
     })
   })
 })

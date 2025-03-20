@@ -89,6 +89,60 @@
                     rows: [
                         {
                             key: {
+                                text: "Probation officer's full name"
+                            },
+                            value: {
+                                text: session.bookAProbationMeetingJourney.officer.fullName or "Not yet known"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                      href: "meeting-details?preserveHistory=true",
+                                      text: "Change",
+                                      classes: 'govuk-link--no-visited-state',
+                                      visuallyHiddenText: "probation officer's full name"
+                                    }
+                                ]
+                            }
+                        } if bvlsMasteredVlpmFeatureToggleEnabled,
+                        {
+                            key: {
+                                text: "Email address"
+                            },
+                            value: {
+                                text: session.bookAProbationMeetingJourney.officer.email or "Not yet known"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                      href: "meeting-details?preserveHistory=true",
+                                      text: "Change",
+                                      classes: 'govuk-link--no-visited-state',
+                                      visuallyHiddenText: "probation officer's email address"
+                                    }
+                                ]
+                            }
+                        } if bvlsMasteredVlpmFeatureToggleEnabled,
+                        {
+                            key: {
+                                text: "UK phone number"
+                            },
+                            value: {
+                                text: session.bookAProbationMeetingJourney.officer.telephone or ("Not yet known" if session.bookAProbationMeetingJourney.officerDetailsNotKnown else "None entered")
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                      href: "meeting-details?preserveHistory=true",
+                                      text: "Change",
+                                      classes: 'govuk-link--no-visited-state',
+                                      visuallyHiddenText: "probation officer's telephone"
+                                    }
+                                ]
+                            }
+                        } if bvlsMasteredVlpmFeatureToggleEnabled,
+                        {
+                            key: {
                                 text: "Location"
                             },
                             value: {
@@ -158,7 +212,15 @@
                                     }
                                 ]
                             }
-                        }
+                        },
+                        {
+                            key: {
+                                text: "Prison video link (PVL)"
+                            },
+                            value: {
+                                text: (rooms | find('key', session.bookAProbationMeetingJourney.locationCode)).extraAttributes.prisonVideoUrl or "None entered"
+                            }
+                        } if bvlsMasteredVlpmFeatureToggleEnabled
                     ]
                 }) }}
 
