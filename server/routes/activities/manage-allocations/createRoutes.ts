@@ -25,6 +25,8 @@ import setUpMultipartFormDataParsing from '../../../middleware/setUpMultipartFor
 import ReviewUploadPrisonerListRoutes from './handlers/allocateMultiplePeople/reviewUploadPrisonerList'
 import ActivityRequirementsReviewRoutes from './handlers/allocateMultiplePeople/activityRequirementsReview'
 import ReviewSearchPrisonerListRoutes from './handlers/allocateMultiplePeople/reviewSearchPrisonerList'
+import CheckAndConfirmMultipleRoutes from './handlers/allocateMultiplePeople/checkAndConfirmMultiple'
+import PayBandMultipleRoutes from './handlers/allocateMultiplePeople/payBandMultiple'
 
 export default function Index({
   activitiesService,
@@ -61,6 +63,8 @@ export default function Index({
   const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(activitiesService)
   const activityRequirementsReviewHandler = new ActivityRequirementsReviewRoutes(activitiesService)
   const reviewSearchPrisonerListHandler = new ReviewSearchPrisonerListRoutes(nonAssociationsService, activitiesService)
+  const PayBandMultipleHandler = new PayBandMultipleRoutes(activitiesService)
+  const checkAndConfirmMultipleHandler = new CheckAndConfirmMultipleRoutes(activitiesService)
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
   get('/before-you-allocate', beforeYouAllocateHandler.GET, true)
@@ -104,6 +108,10 @@ export default function Index({
   get('/multiple/activity-requirements-review', activityRequirementsReviewHandler.GET, true)
   post('/multiple/activity-requirements-review', activityRequirementsReviewHandler.POST)
   get('/multiple/activity-requirements-review/:prisonerNumber/remove', activityRequirementsReviewHandler.REMOVE, true)
+  get('/multiple/pay-band-multiple', PayBandMultipleHandler.GET, true)
+  post('/multiple/pay-band-multiple', PayBandMultipleHandler.POST)
+  get('/multiple/check-and-confirm', checkAndConfirmMultipleHandler.GET, true)
+  post('/multiple/check-and-confirm', checkAndConfirmMultipleHandler.POST)
 
   get('/error/:errorType(transferred)', errorHandler.GET, true)
 

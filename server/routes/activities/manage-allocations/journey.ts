@@ -69,6 +69,7 @@ export type AllocateToActivityJourney = {
   }[]
   withoutMatchingIncentiveLevelInmates?: Array<Inmate>
   allocatedInmates?: Array<Inmate>
+  allocateMultipleInmatesMode?: boolean
 }
 
 export enum EndDecision {

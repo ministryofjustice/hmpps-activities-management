@@ -41,7 +41,7 @@ export default class ActivityRequirementsReviewRoutes {
           prisoners: [],
         })
       // skip loading this page if there are no failures to meet requirements
-      return res.redirect('start-date')
+      return res.redirect('../start-date')
     }
 
     return res.render('pages/activities/manage-allocations/allocateMultiplePeople/activityRequirementsReview', {
@@ -49,8 +49,9 @@ export default class ActivityRequirementsReviewRoutes {
     })
   }
 
-  POST = async (_req: Request, res: Response): Promise<void> => {
-    res.redirect('start-date')
+  POST = async (req: Request, res: Response): Promise<void> => {
+    req.session.allocateJourney.allocateMultipleInmatesMode = true
+    return res.redirect('../start-date')
   }
 
   REMOVE = async (req: Request, res: Response): Promise<void> => {

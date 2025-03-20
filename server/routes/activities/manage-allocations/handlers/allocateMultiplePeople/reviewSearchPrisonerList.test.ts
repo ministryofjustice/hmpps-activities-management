@@ -1,9 +1,7 @@
 import { Request, Response } from 'express'
-import { when } from 'jest-when'
 import ActivitiesService from '../../../../../services/activitiesService'
 import NonAssociationsService from '../../../../../services/nonAssociationsService'
 import ReviewSearchPrisonerListRoutes from './reviewSearchPrisonerList'
-import { PrisonerAllocations } from '../../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../../services/nonAssociationsService')
 jest.mock('../../../../../services/activitiesService')
@@ -39,6 +37,11 @@ describe('Review the prisoners added individually', () => {
               cellLocation: '1-1-1',
               firstName: 'Joe',
               lastName: 'Bloggs',
+              nonAssociations: true,
+              otherAllocations: [
+                { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+                { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
+              ],
             },
             {
               prisonerName: 'Jane Blunt',
@@ -46,6 +49,8 @@ describe('Review the prisoners added individually', () => {
               cellLocation: '2-2-2',
               firstName: 'Jane',
               lastName: 'Blunt',
+              nonAssociations: false,
+              otherAllocations: [],
             },
           ],
           activity: {
@@ -66,29 +71,6 @@ describe('Review the prisoners added individually', () => {
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
     })
     it('renders the page with prisoners on the session', async () => {
-      const prisonerAllocations = [
-        {
-          prisonerNumber: 'G9566GQ',
-          allocations: [
-            { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
-            { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
-          ],
-        },
-        {
-          prisonerNumber: 'T4530VC',
-          allocations: [],
-        },
-      ] as PrisonerAllocations[]
-
-      when(activitiesService.getActivePrisonPrisonerAllocations)
-        .calledWith(['G9566GQ', 'T4530VC'], res.locals.user)
-        .mockResolvedValue(prisonerAllocations)
-
-      when(nonAssociationsService.getListPrisonersWithNonAssociations)
-        .calledWith(['G9566GQ', 'T4530VC'], res.locals.user)
-        .mockResolvedValue(['G9566GQ', 'H4623WP'])
-      await handler.GET(req, res)
-
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/manage-allocations/allocateMultiplePeople/reviewSearchPrisonerList',
@@ -100,7 +82,7 @@ describe('Review the prisoners added individually', () => {
               firstName: 'Joe',
               lastName: 'Bloggs',
               cellLocation: '1-1-1',
-              allocations: [
+              otherAllocations: [
                 { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
                 { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
               ],
@@ -112,7 +94,7 @@ describe('Review the prisoners added individually', () => {
               lastName: 'Blunt',
               prisonerName: 'Jane Blunt',
               cellLocation: '2-2-2',
-              allocations: [],
+              otherAllocations: [],
               nonAssociations: false,
             },
           ],
@@ -140,6 +122,8 @@ describe('Review the prisoners added individually', () => {
           cellLocation: '2-2-2',
           firstName: 'Jane',
           lastName: 'Blunt',
+          otherAllocations: [],
+          nonAssociations: false,
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('../../review-search-prisoner-list')

@@ -1,9 +1,18 @@
 import { Inmate } from '../../routes/activities/manage-allocations/journey'
 import { Activity, Allocation, PrisonerAllocations } from '../../@types/activitiesAPI/types'
+import { Prisoner } from '../../@types/prisonerOffenderSearchImport/types'
 
 export type PrisonerAllocated = {
   prisonerNumber: string
   allocated: boolean
+}
+
+export interface payBandDetail {
+  bandId: number
+  bandAlias: string
+  rate: number
+  startDate?: string
+  description?: string
 }
 
 export function mapPrisonersAllocated(prisonerNumbers: string[], allocated: string[]): PrisonerAllocated[] {
@@ -56,15 +65,31 @@ export function addOtherAllocations(
 ) {
   inmates.forEach(inmate => {
     const i = inmate
-    i.otherAllocations = prisonerAllocationsList
-      .find(p => p.prisonerNumber === inmate.prisonerNumber)
-      .allocations.filter(a => a.scheduleId !== scheduleId)
+    i.otherAllocations =
+      prisonerAllocationsList
+        .find(p => p.prisonerNumber === inmate.prisonerNumber)
+        ?.allocations.filter(a => a.scheduleId !== scheduleId) || []
   })
 }
 
 export function addNonAssociations(inmates: Inmate[], prisonersWithNonAssociations: string[]) {
   inmates.forEach(inmate => {
     const i = inmate
-    i.nonAssociations = prisonersWithNonAssociations.includes(inmate.prisonerNumber)
+    i.nonAssociations = prisonersWithNonAssociations?.includes(inmate.prisonerNumber)
   })
+}
+
+export function convertPrisonersToInmates(prisoners: Prisoner[]): Inmate[] {
+  return prisoners.map(prisoner => ({
+    prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+    firstName: prisoner.firstName,
+    middleNames: prisoner.middleNames,
+    lastName: prisoner.lastName,
+    prisonerNumber: prisoner.prisonerNumber,
+    prisonCode: prisoner.prisonId,
+    status: prisoner.status,
+    cellLocation: prisoner.cellLocation,
+    incentiveLevel: prisoner.currentIncentive?.level.description,
+    payBand: undefined,
+  }))
 }

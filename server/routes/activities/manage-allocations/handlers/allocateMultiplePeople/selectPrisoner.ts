@@ -5,10 +5,16 @@ import PrisonService from '../../../../../services/prisonService'
 import ActivitiesService from '../../../../../services/activitiesService'
 import NonAssociationsService from '../../../../../services/nonAssociationsService'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
-import enhancePrisonersWithNonAssocationsAndAllocations from '../../../../../utils/extraPrisonerInformation'
 import { Inmate } from '../../journey'
 import { Activity, Allocation } from '../../../../../@types/activitiesAPI/types'
-import { inmatesAllocated, inmatesWithMatchingIncentiveLevel } from '../../../../../utils/helpers/allocationUtil'
+import {
+  addNonAssociations,
+  addOtherAllocations,
+  convertPrisonersToInmates,
+  inmatesAllocated,
+  inmatesWithMatchingIncentiveLevel,
+} from '../../../../../utils/helpers/allocationUtil'
+import { ServiceUser } from '../../../../../@types/express'
 
 export class SelectPrisoner {
   @Expose()
@@ -32,6 +38,7 @@ export default class SelectPrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     let { query } = req.query
+    const { activity } = req.session.allocateJourney
     if (res.locals.formResponses?.query !== undefined) {
       query = res.locals.formResponses.query
     }
@@ -41,23 +48,25 @@ export default class SelectPrisonerRoutes {
       let prisoners: Prisoner[] = []
       if (result && !result.empty) prisoners = result.content
 
-      let enhancedPrisoners = []
-      if (prisoners.length) {
-        const prisonerNumbers = prisoners.map(prisoner => prisoner.prisonerNumber)
-        const [prisonerAllocations, nonAssociations] = await Promise.all([
-          this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
-          this.nonAssociationsService.getListPrisonersWithNonAssociations(prisonerNumbers, user),
-        ])
-
-        enhancedPrisoners = enhancePrisonersWithNonAssocationsAndAllocations(
-          prisoners,
-          prisonerAllocations,
-          nonAssociations,
-        )
+      if (!prisoners.length) {
+        return res.render('pages/activities/manage-allocations/allocateMultiplePeople/selectPrisoner', {
+          prisoners: [],
+          query,
+        })
       }
 
+      const inmates = convertPrisonersToInmates(prisoners)
+
+      const prisonerNumbers: string[] = inmates.map(inmate => inmate.prisonerNumber)
+      const [prisonerAllocationsList, nonAssociations] = await Promise.all([
+        this.activitiesService.getActivePrisonPrisonerAllocations(prisonerNumbers, user),
+        this.nonAssociationsService.getListPrisonersWithNonAssociations(prisonerNumbers, user),
+      ])
+      addOtherAllocations(inmates, prisonerAllocationsList, activity.scheduleId)
+      addNonAssociations(inmates, nonAssociations)
+
       return res.render('pages/activities/manage-allocations/allocateMultiplePeople/selectPrisoner', {
-        prisoners: enhancedPrisoners,
+        prisoners: inmates,
         query,
       })
     }
@@ -83,24 +92,13 @@ export default class SelectPrisonerRoutes {
       this.activitiesService.getActivity(activity.activityId, user),
     ])
 
-    const inmate: Inmate = {
-      prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
-      firstName: prisoner.firstName,
-      middleNames: prisoner.middleNames,
-      lastName: prisoner.lastName,
-      prisonerNumber: prisoner.prisonerNumber,
-      prisonCode: prisoner.prisonId,
-      status: prisoner.status,
-      cellLocation: prisoner.cellLocation,
-      incentiveLevel: prisoner.currentIncentive?.level.description,
-      payBand: undefined,
-    }
+    const [inmate] = convertPrisonersToInmates([prisoner])
 
     const prisonerFreeToAllocate = await this.checkPrisonerIsntCurrentlyAllocated([inmate], currentlyAllocated)
     const prisonerIncentiveLevelSuitable = await this.checkPrisonerHasSuitableIncentiveLevel([inmate], act)
     if (prisonerFreeToAllocate) {
       if (prisonerIncentiveLevelSuitable) {
-        await this.addPrisonersToSession(req, inmate)
+        await this.addPrisonersToSession(req, inmate, user)
         return res.redirect(`review-search-prisoner-list`)
       }
 
@@ -133,12 +131,21 @@ export default class SelectPrisonerRoutes {
     return true
   }
 
-  private addPrisonersToSession = async (req: Request, inmate: Inmate) => {
+  private addPrisonersToSession = async (req: Request, inmate: Inmate, user: ServiceUser) => {
+    const { scheduleId } = req.session.allocateJourney.activity
     // check that the prisoner isn't already in there to stop duplication if the user goes back
     const duplicate = req.session.allocateJourney.inmates.filter(
       prisoner => inmate.prisonerNumber === prisoner.prisonerNumber,
     )
     if (duplicate.length) return false
+
+    const [prisonerAllocationsList, nonAssociations] = await Promise.all([
+      this.activitiesService.getActivePrisonPrisonerAllocations([inmate.prisonerNumber], user),
+      this.nonAssociationsService.getListPrisonersWithNonAssociations([inmate.prisonerNumber], user),
+    ])
+
+    addOtherAllocations([inmate], prisonerAllocationsList, scheduleId)
+    addNonAssociations([inmate], nonAssociations)
 
     req.session.allocateJourney.inmates.push(inmate)
     return true
