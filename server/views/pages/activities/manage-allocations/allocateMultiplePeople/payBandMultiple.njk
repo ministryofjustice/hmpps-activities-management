@@ -1,0 +1,49 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - Pay band" %}
+{% set pageId = 'pay-band-multiple-page' %}
+{% set jsBackLink = true %}
+{% set inmateCount = session.allocateJourney.inmates | length %}
+
+{# {% set bandOptions = [] %}
+{% for pay in payBands %}
+    {% set bandOptions = (bandOptions.push(
+        {
+            value: pay.bandId,
+            text: pay.bandAlias + ' - ' + pay.rate | toMoney if pay.description === undefined else pay.bandAlias + ' - ' + pay.rate | toMoney + pay.description,
+            checked: formResponses.payBand == pay.bandId or session.allocateJourney.inmate.payBand.id == pay.bandId
+        }
+    ), bandOptions) %}
+{% endfor %} #}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <h1 class="govuk-heading-xl">Select the pay rate for {{ inmateCount }} {% if inmateCount > 1 %}people {% else %}person{% endif %}</h1>
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {# {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "Select " + ('an ' if incentiveLevel.slice(0, 8) == 'Enhanced' else 'a ') + incentiveLevel | lower + " incentive level pay rate",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    name: "payBand",
+                    errorMessage: validationErrors | findError('payBand'),
+                    items: bandOptions
+                }) }} #}
+
+                {{ govukButton({
+                    text: "Continue",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

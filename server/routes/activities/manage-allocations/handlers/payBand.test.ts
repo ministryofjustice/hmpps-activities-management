@@ -4,11 +4,12 @@ import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import { addDays, subDays } from 'date-fns'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
-import PayBandRoutes, { PayBand, payBandDetail, payBandWithDescription } from './payBand'
+import PayBandRoutes, { PayBand, payBandWithDescription } from './payBand'
 import atLeast from '../../../../../jest.setup'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
+import { payBandDetail } from '../../../../utils/helpers/allocationUtil'
 
 jest.mock('../../../../services/activitiesService')
 

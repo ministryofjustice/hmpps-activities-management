@@ -7,6 +7,14 @@ export type PrisonerAllocated = {
   allocated: boolean
 }
 
+export interface payBandDetail {
+  bandId: number
+  bandAlias: string
+  rate: number
+  startDate?: string
+  description?: string
+}
+
 export function mapPrisonersAllocated(prisonerNumbers: string[], allocated: string[]): PrisonerAllocated[] {
   return prisonerNumbers.map(prisonerNumber => {
     return {
