@@ -66,7 +66,6 @@
                         }
                     ]
                 }) }}
-            {% endif %}
 
             {% set buttonText = "Confirm allocation" if session.allocateJourney.inmates | length === 1 else "Confirm " + session.allocateJourney.inmates | length + " allocations" %}
             <form method="POST">

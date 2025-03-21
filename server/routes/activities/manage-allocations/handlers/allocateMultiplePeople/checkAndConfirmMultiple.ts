@@ -4,7 +4,7 @@ import ActivitiesService from '../../../../../services/activitiesService'
 export default class CheckAndConfirmMultipleRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (_req: Request, res: Response) => {
+  GET = async (req: Request, res: Response) => {
     res.render('pages/activities/manage-allocations/allocateMultiplePeople/checkAndConfirmMultiple')
   }
 

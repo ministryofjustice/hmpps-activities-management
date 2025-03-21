@@ -89,7 +89,7 @@ export function addPayBand(
     const paybandDetails = payBandsPerPrisoner.find(pb => pb.prisonerNumber === inmate.prisonerNumber)
     const payBand = paybandDetails?.payBandDetail
 
-    if (payBand !== undefined) {
+    if (payBand) {
       i.payBand = {
         id: payBand?.bandId,
         alias: payBand?.bandAlias,
