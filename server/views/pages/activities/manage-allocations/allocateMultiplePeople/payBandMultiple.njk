@@ -2,42 +2,58 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Pay band" %}
 {% set pageId = 'pay-band-multiple-page' %}
 {% set jsBackLink = true %}
 {% set inmateCount = session.allocateJourney.inmates | length %}
 
-{# {% set bandOptions = [] %}
-{% for pay in payBands %}
-    {% set bandOptions = (bandOptions.push(
-        {
-            value: pay.bandId,
-            text: pay.bandAlias + ' - ' + pay.rate | toMoney if pay.description === undefined else pay.bandAlias + ' - ' + pay.rate | toMoney + pay.description,
-            checked: formResponses.payBand == pay.bandId or session.allocateJourney.inmate.payBand.id == pay.bandId
-        }
-    ), bandOptions) %}
-{% endfor %} #}
-
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
             <h1 class="govuk-heading-xl">Select the pay rate for {{ inmateCount }} {% if inmateCount > 1 %}people {% else %}person{% endif %}</h1>
-
+            {% if payBandsRequiringManualAssign | length %}
+                <p class="govuk-body">You need to select a pay rate for {{ payBandsRequiringManualAssign | length }} of the {{ inmateCount }} people you're allocating. Where there was only one pay rate option for a person, they’ll be put on it automatically.</p>
+            {% endif %}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {# {{ govukRadios({
-                    fieldset: {
-                        legend: {
-                            text: "Select " + ('an ' if incentiveLevel.slice(0, 8) == 'Enhanced' else 'a ') + incentiveLevel | lower + " incentive level pay rate",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    name: "payBand",
-                    errorMessage: validationErrors | findError('payBand'),
-                    items: bandOptions
-                }) }} #}
+                {% for inmate in payBandsRequiringManualAssign %}
+                    {% set bandOptions = [] %}
+                    {% for pay in inmate.payBands %}
+                        {% set bandOptions = (bandOptions.push(
+                            {
+                                value: pay.bandId,
+                                text: pay.bandAlias + ' - ' + pay.rate | toMoney if pay.description === undefined else pay.bandAlias + ' - ' + pay.rate | toMoney + pay.description,
+                                checked: formResponses.payBand == pay.bandId
+                            }
+                        ), bandOptions) %}
+                    {% endfor %}
+
+                    <h2 class="govuk-heading-m">{{ inmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false) }}</h2>
+
+                    {% set legendText = "Select " + ('an ' if inmate.incentiveLevel.slice(0, 8) == 'Enhanced' else 'a ') + inmate.incentiveLevel | lower + " incentive level pay rate" %}
+                    {{ govukRadios({
+                        fieldset: {
+                            legend: {
+                                html: '<p class="govuk-body">' + legendText + '<span class="govuk-visually-hidden"> for ' + inmate | formatName(NameFormatStyle.FirstLast, false) + '</span></p>',
+                                classes: "govuk-body"
+                            }
+                        },
+                        name: "payBand",
+                        errorMessage: validationErrors | findError('payBand'),
+                        items: bandOptions
+                    }) }}
+                {% endfor %}
+
+                {% if payBandsToAutomaticallyAssign | length %}
+                {{ govukDetails({
+                    summaryText: "View people to be put on a pay rate automatically",
+                    html: automaticallyAssignedHtml
+                }) }}
+                {% endif %}
 
                 {{ govukButton({
                     text: "Continue",
@@ -47,3 +63,31 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro automaticallyAssignedHtml(payBandsToAutomaticallyAssign) %}
+{# showProfileLink({
+    firstName: prisoner.firstName,
+    middleNames: prisoner.middleNames,
+    lastName: prisoner.lastName,
+    prisonerNumber: prisoner.prisonerNumber,
+    inCaseLoad: prisoner.prisonId == user.activeCaseLoadId
+}) #}
+{% set rows = [] %}
+{% for inmate in payBandsToAutomaticallyAssign %}
+    {% set rows = (rows.push(), rows) %}
+{% endfor %}
+
+{{ govukTable({
+  captionClasses: "govuk-table__caption--m",
+  firstCellIsHeader: false,
+  head: [
+    {
+      text: "Person to be allocated"
+    },
+    {
+      text: "Pay rate"
+    }
+  ],
+  rows: rows
+}) }}
+{% endmacro %}

@@ -13,6 +13,7 @@ export interface payBandDetail {
   rate: number
   startDate?: string
   description?: string
+  incentiveLevel?: string
 }
 
 export function mapPrisonersAllocated(prisonerNumbers: string[], allocated: string[]): PrisonerAllocated[] {
@@ -76,6 +77,21 @@ export function addNonAssociations(inmates: Inmate[], prisonersWithNonAssociatio
   inmates.forEach(inmate => {
     const i = inmate
     i.nonAssociations = prisonersWithNonAssociations?.includes(inmate.prisonerNumber)
+  })
+}
+
+export function addPayBand(
+  inmates: Inmate[],
+  payBandsPerPrisoner: { prisonerNumber: string; payBands: payBandDetail[] }[],
+) {
+  inmates.forEach(inmate => {
+    const i = inmate
+    const paybandDetails = payBandsPerPrisoner.find(pb => pb.prisonerNumber === inmate.prisonerNumber)?.[0]
+    i.payBand = {
+      id: paybandDetails.payBands.bandId,
+      alias: paybandDetails.payBands.bandAlias,
+      rate: paybandDetails.payBands.rate,
+    }
   })
 }
 
