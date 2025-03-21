@@ -12,28 +12,33 @@ import ConfirmationRoutes from './handlers/confirmation'
 import ScheduleRoutes from './handlers/schedule'
 import CourtHearingLinkRoutes, { CourtHearingLink } from './handlers/courtHearingLink'
 
-export default function CreateRoutes({ bookAVideoLinkService, prisonService, activitiesService }: Services): Router {
+export default function CreateRoutes({
+  bookAVideoLinkService,
+  prisonService,
+  activitiesService,
+  courtBookingService,
+}: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
+  const selectPrisoner = new SelectPrisonerRoutes()
+  const hearingDetails = new HearingDetailsRoutes(bookAVideoLinkService, courtBookingService)
+  const location = new LocationRoutes(bookAVideoLinkService)
+  const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
+  const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService, courtBookingService)
+  const courtHearingLink = new CourtHearingLinkRoutes(courtBookingService)
+  const extraInformation = new ExtraInformationRoutes(courtBookingService)
+  const checkBooking = new CheckBookingRoutes(bookAVideoLinkService, courtBookingService)
+  const confirmation = new ConfirmationRoutes(bookAVideoLinkService)
+
   // Book a video link journey is required in session for the following routes
   router.use((req, res, next) => {
     if (!req.session.bookACourtHearingJourney) return res.redirect('/appointments')
     return next()
   })
-
-  const selectPrisoner = new SelectPrisonerRoutes()
-  const hearingDetails = new HearingDetailsRoutes(bookAVideoLinkService)
-  const location = new LocationRoutes(bookAVideoLinkService)
-  const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
-  const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService)
-  const courtHearingLink = new CourtHearingLinkRoutes(bookAVideoLinkService)
-  const extraInformation = new ExtraInformationRoutes(bookAVideoLinkService)
-  const checkBooking = new CheckBookingRoutes(bookAVideoLinkService)
-  const confirmation = new ConfirmationRoutes(bookAVideoLinkService)
 
   get('/select-prisoner', selectPrisoner.GET)
   post('/select-prisoner', selectPrisoner.POST, Prisoner)

@@ -12,6 +12,8 @@ import NonAssociationsService from './nonAssociationsService'
 import LocationMappingService from './locationMappingService'
 import AlertsService from './alertsService'
 import LocationsService from './locationsService'
+import CourtBookingService from './courtBookingService'
+import ProbationBookingService from './probationBookingService'
 
 export default function services() {
   const {
@@ -41,6 +43,8 @@ export default function services() {
     prisonService,
     activitiesService: new ActivitiesService(activitiesApiClient),
     bookAVideoLinkService: new BookAVideoLinkService(bookAVideoLinkApiClient),
+    courtBookingService: new CourtBookingService(bookAVideoLinkApiClient),
+    probationBookingService: new ProbationBookingService(bookAVideoLinkApiClient),
     caseNotesService: new CaseNotesService(caseNotesApiClient),
     ukBankHolidayService: new BankHolidayService(),
     alertsFilterService,

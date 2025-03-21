@@ -11,19 +11,32 @@ import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInform
 import ScheduleRoutes from './handlers/schedule'
 import CourtHearingLinkRoutes, { CourtHearingLink } from './handlers/courtHearingLink'
 
-export default function AmendRoutes({ bookAVideoLinkService, prisonService, activitiesService }: Services): Router {
+export default function AmendRoutes({
+  bookAVideoLinkService,
+  prisonService,
+  activitiesService,
+  courtBookingService,
+}: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  // Book a video link journey is required in session for the following routes
+  const hearingDetails = new HearingDetailsRoutes(bookAVideoLinkService, courtBookingService)
+  const location = new LocationRoutes(bookAVideoLinkService)
+  const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
+  const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService, courtBookingService)
+  const courtHearingLink = new CourtHearingLinkRoutes(courtBookingService)
+  const extraInformation = new ExtraInformationRoutes(courtBookingService)
+
+  // Book a court hearing journey is required in session for the following routes
   router.use((req, res, next) => {
     if (!req.session.bookACourtHearingJourney) return res.redirect('/appointments')
     return next()
   })
 
+  // Booking needs to be amendable for the following routes
   router.use((req, res, next) => {
     const { date, preHearingStartTime, startTime, bookingStatus } = req.session.bookACourtHearingJourney
     if (
@@ -38,13 +51,6 @@ export default function AmendRoutes({ bookAVideoLinkService, prisonService, acti
 
     return next()
   })
-
-  const hearingDetails = new HearingDetailsRoutes(bookAVideoLinkService)
-  const location = new LocationRoutes(bookAVideoLinkService)
-  const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
-  const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService)
-  const courtHearingLink = new CourtHearingLinkRoutes(bookAVideoLinkService)
-  const extraInformation = new ExtraInformationRoutes(bookAVideoLinkService)
 
   get('/hearing-details', hearingDetails.GET)
   post('/hearing-details', hearingDetails.POST, HearingDetails)

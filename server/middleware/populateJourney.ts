@@ -5,6 +5,7 @@ const journeys = [
   'appointmentJourney',
   'appointmentSetJourney',
   'bookACourtHearingJourney',
+  'bookAProbationMeetingJourney',
   'attendanceSummaryJourney',
   'createJourney',
   'allocateJourney',

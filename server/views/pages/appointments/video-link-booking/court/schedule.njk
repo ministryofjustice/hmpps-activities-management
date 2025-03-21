@@ -92,7 +92,7 @@
                     } if session.bookACourtHearingJourney.preLocationCode,
                     {
                         key: {
-                            text: "Main hearing time" if session.bookACourtHearingJourney.type == 'COURT' else "Meeting time"
+                            text: "Main hearing time"
                         },
                         value: {
                             text: (session.bookACourtHearingJourney.startTime | parseISODate | formatDate('HH:mm') + ' to ' + session.bookACourtHearingJourney.endTime | parseISODate | formatDate('HH:mm'))
@@ -110,7 +110,7 @@
                     },
                     {
                         key: {
-                            text: "Main hearing room" if session.bookACourtHearingJourney.type == 'COURT' else "Meeting room"
+                            text: "Main hearing room"
                         },
                         value: {
                             text: (rooms | find('key', session.bookACourtHearingJourney.locationCode)).description

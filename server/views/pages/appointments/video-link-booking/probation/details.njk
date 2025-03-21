@@ -1,0 +1,335 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "partials/service-user-name.njk" import serviceUserName %}
+
+{% set pageId = 'video-booking-details-page' %}
+{% set hardBackLinkText = 'Go to Appointments Dashboard' %}
+{% set hardBackLinkHref = '/appointments/search?startDate=' + mainAppointment.appointmentDate | formatDate('yyyy-MM-dd') %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% if videoBooking.statusCode == 'CANCELLED' %}
+                {% set cancelledAppointmentHeadingHtml %}
+                    <h3 class="govuk-notification-banner__heading">Video link booking cancelled</h3>
+                    <p class="govuk-body">This video link booking was cancelled by {{ serviceUserName(userMap.get(videoBooking.amendedBy)) }} on {{ videoBooking.amendedAt | parseISODate | formatDate }}</p>
+                {% endset %}
+                {{ govukNotificationBanner({
+                    type: 'important',
+                    html: cancelledAppointmentHeadingHtml
+                }) }}
+            {% endif %}
+
+            <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>{{ 'Video Link - Probation Meeting' if bvlsMasteredVlpmFeatureToggleEnabled else 'Video Link - Court Hearing' }}</h1>
+            <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ mainAppointment.appointmentDate | formatDate }}</span>
+
+            {% if videoBooking.statusCode != 'CANCELLED' and isAmendable %}
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <div class="govuk-button-group">
+                            {{ govukButton({
+                                attributes: { id: 'print-movement-slip', target: "_blank", 'data-qa': 'print-movement-slip' },
+                                text: "Print movement slip",
+                                classes: "govuk-button--blue govuk-link govuk-link--no-visited-state",
+                                preventDoubleClick: true,
+                                href: '/appointments/' + mainAppointmentId + '/movement-slip'
+                            }) }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Video link booking details"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: 'cancel/' + videoBooking.videoLinkBookingId + '/confirm',
+                                text: "Cancel video link booking",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    } if isAmendable
+                },
+                rows: [
+                    {
+                        key: {
+                            text: "Attendee"
+                        },
+                        value: {
+                            html: showProfileLink({
+                                firstName: prisoner.firstName,
+                                middleNames: prisoner.middleNames,
+                                lastName: prisoner.lastName,
+                                prisonerNumber: prisoner.prisonerNumber,
+                                cellLocation: statusBasedCellLocation(prisoner.cellLocation, prisoner.status, prisoner.prisonId == user.activeCaseLoadId),
+                                inCaseLoad: prisoner.prisonId == user.activeCaseLoadId
+                            })
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Probation team"
+                        },
+                        value: {
+                            text: videoBooking.probationTeamDescription
+                        }
+                    },
+                    {
+                        key: {
+                          text: "Probation officer's full name"
+                        },
+                        value: {
+                          text: videoBooking.additionalBookingDetails.contactName or "Not yet known"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/meeting-details',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                      } if isAmendable
+                    } if bvlsMasteredVlpmFeatureToggleEnabled,
+                    {
+                        key: {
+                            text: "Email address"
+                        },
+                        value: {
+                            text: videoBooking.additionalBookingDetails.contactEmail or "Not yet known"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                  href: 'amend/' + videoBooking.videoLinkBookingId + '/meeting-details',
+                                  text: "Change",
+                                  classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                      } if isAmendable
+                    } if bvlsMasteredVlpmFeatureToggleEnabled,
+                    {
+                        key: {
+                            text: "UK phone number"
+                        },
+                        value: {
+                            text: videoBooking.additionalBookingDetails.contactNumber or ("Not yet known" if not videoBooking.additionalBookingDetails.contactName else "None entered")
+                        },
+                        actions: {
+                            items: [
+                                {
+                                  href: 'amend/' + videoBooking.videoLinkBookingId + '/meeting-details',
+                                  text: "Change",
+                                  classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    } if bvlsMasteredVlpmFeatureToggleEnabled,
+                    {
+                        key: {
+                            text: "Meeting type"
+                        },
+                        value: {
+                            text: videoBooking.probationMeetingTypeDescription
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/meeting-details',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    },
+                    {
+                        key: {
+                            text: "Date"
+                        },
+                        value: {
+                            text: mainAppointment.appointmentDate | formatDate
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/date-and-time',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    },
+                    {
+                        key: {
+                            text: "Room for meeting"
+                        },
+                        value: {
+                            text: (rooms | find('key', mainAppointment.prisonLocKey)).description
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/location',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    },
+                    {
+                        key: {
+                            text: "Meeting start time"
+                        },
+                        value: {
+                            text: mainAppointment.startTime
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/date-and-time',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    },
+                    {
+                        key: {
+                            text: "Meeting end time"
+                        },
+                        value: {
+                            text: mainAppointment.endTime
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/date-and-time',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    },
+                    {
+                        key: {
+                            text: "Prison video link (PVL)"
+                        },
+                        value: {
+                            text: videoBooking.videoLinkUrl or "None entered"
+                        }
+                    } if bvlsMasteredVlpmFeatureToggleEnabled,
+                    {
+                        key: {
+                            text: "Extra information"
+                        },
+                        value: {
+                            text: videoBooking.comments or "None provided"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/extra-information',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    }
+                ]
+            }) }}
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Video link booking history"
+                    }
+                },
+                rows: [
+                    {
+                        key: {
+                            text: "Created by"
+                        },
+                        value: {
+                            text: serviceUserName(userMap.get(videoBooking.createdBy))
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Date created"
+                        },
+                        value: {
+                            text: videoBooking.createdAt | parseISODate | formatDate
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Last edited by"
+                        },
+                        value: {
+                            text: serviceUserName(userMap.get(videoBooking.amendedBy))
+                        }
+                    } if videoBooking.amendedBy,
+                    {
+                        key: {
+                            text: "Date last edited"
+                        },
+                        value: {
+                            text: videoBooking.amendedAt | parseISODate | formatDate
+                        }
+                    } if videoBooking.amendedAt
+                ]
+            }) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% macro appointmentDetails(appointment, rooms, user) %}
+    {{ govukSummaryList({
+        card: {
+            title: {
+                text: "Appointment details"
+            }
+        },
+        rows: [
+            {
+                key: {
+                    text: "Location"
+                },
+                value: {
+                    text: (rooms | find('key', appointment.prisonLocKey)).description
+                }
+            },
+            {
+                key: {
+                    text: "Start time"
+                },
+                value: {
+                    text: appointment.startTime
+                }
+            },
+            {
+                key: {
+                    text: "End time"
+                },
+                value: {
+                    text: appointment.endTime
+                }
+            }
+        ]
+    }) }}
+{% endmacro %}

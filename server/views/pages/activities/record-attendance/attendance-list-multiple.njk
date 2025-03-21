@@ -129,7 +129,7 @@
                     text: attendee.instance.startTime + ' to ' + attendee.instance.endTime,
                     attributes: {
                         "data-qa": "time",
-                        "data-sort-value": 'x' + attendee.instance.startTime + ' to ' + attendee.instance.endTime
+                        "data-sort-value": attendee.instance.startTime + ' to ' + attendee.instance.endTime
                     }
                 },
                 {
@@ -139,8 +139,8 @@
                     }
                 },
                 {
-                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' + 
-                    payStatus({ 
+                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' +
+                    payStatus({
                         dataPresentCheck: attendee.attendance,
                         status: attendee.attendance.status,
                         issuePayment: attendee.attendance.issuePayment,
@@ -154,7 +154,7 @@
                 },
                 {
                     html: renderViewLink(attendee)
-                }              
+                }
             ]
         }), rows) %}
     {% endfor %}

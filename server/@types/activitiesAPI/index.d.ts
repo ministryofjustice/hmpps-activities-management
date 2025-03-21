@@ -2878,23 +2878,6 @@ export interface components {
        */
       applyTo: 'THIS_APPOINTMENT' | 'THIS_AND_ALL_FUTURE_APPOINTMENTS' | 'ALL_FUTURE_APPOINTMENTS'
     }
-    /** @description The lists of prison numbers to mark as attended and non-attended */
-    AppointmentAttendanceRequest: {
-      /**
-       * @description The prisoner or prisoners that attended the appointment
-       * @example [
-       *       "A1234BC"
-       *     ]
-       */
-      attendedPrisonNumbers: string[]
-      /**
-       * @description The prisoner or prisoners that did not attended the appointment
-       * @example [
-       *       "A1234BC"
-       *     ]
-       */
-      nonAttendedPrisonNumbers: string[]
-    }
     /** @description
      *       Describes how to update attendances for multiple appointments.
      *        */
@@ -4040,6 +4023,14 @@ export interface components {
        * @example 27723
        */
       id: number
+      /**
+       * Format: uuid
+       * @description
+       *         The DPS location UUID for this schedule.
+       *
+       * @example b7602cc8-e769-4cbb-8194-62d8e655992a
+       */
+      dpsLocationId: string
       /**
        * @description
        *         The prison code/agency id of the internal location. Mapped from AGENCY_LOCATIONS.AGY_LOC_ID in NOMIS.
@@ -8739,61 +8730,6 @@ export interface operations {
     }
     responses: {
       /** @description The appointment or series of appointments was cancelled. */
-      202: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppointmentSeries']
-        }
-      }
-      /** @description Bad request */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Unauthorised, requires a valid Oauth2 token */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description The appointment for this id was not found. */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  markAttendance: {
-    parameters: {
-      query?: never
-      header?: {
-        'Caseload-Id'?: string
-      }
-      path: {
-        appointmentId: number
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['AppointmentAttendanceRequest']
-      }
-    }
-    responses: {
-      /** @description Attendance for the appointment was recorded. */
       202: {
         headers: {
           [name: string]: unknown

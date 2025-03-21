@@ -1,5 +1,6 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { parse, parseISO } from 'date-fns'
+import createHttpError from 'http-errors'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import PrisonService from '../../../../../services/prisonService'
 import UserService from '../../../../../services/userService'
@@ -18,19 +19,23 @@ export default class VideoLinkDetailsRoutes {
     private readonly locationMappingService: LocationMappingService,
   ) {}
 
-  GET = async (req: Request, res: Response): Promise<void> => {
+  GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { vlbId } = req.params
     const { user } = res.locals
 
     const videoBooking = await this.bookAVideoLinkService.getVideoLinkBookingById(+vlbId, user)
     const { preAppointment, mainAppointment, postAppointment } = this.fetchAppointments(videoBooking)
 
+    if (!mainAppointment) {
+      return next(createHttpError.NotFound())
+    }
+
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(mainAppointment.prisonerNumber, user)
 
     const [rooms, userMap, mainAppointmentId] = await Promise.all([
       this.bookAVideoLinkService.getAppointmentLocations(mainAppointment.prisonCode, user),
       this.userService.getUserMap([videoBooking.createdBy, videoBooking.amendedBy], user),
-      this.fetchMainAppointmentFromActivitiesAPI(mainAppointment, user).then(a => a.appointmentId),
+      this.fetchMainAppointmentFromActivitiesAPI(mainAppointment, user).then(a => a?.appointmentId),
     ])
 
     const earliestAppointment = preAppointment || mainAppointment
@@ -55,7 +60,7 @@ export default class VideoLinkDetailsRoutes {
     const findAppointment = (type: string) => videoLinkBooking.prisonAppointments.find(a => a.appointmentType === type)
 
     const preAppointment = findAppointment('VLB_COURT_PRE')
-    const mainAppointment = findAppointment('VLB_COURT_MAIN') || findAppointment('VLB_PROBATION')
+    const mainAppointment = findAppointment('VLB_COURT_MAIN')
     const postAppointment = findAppointment('VLB_COURT_POST')
 
     return {

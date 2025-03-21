@@ -1,13 +1,13 @@
 import { Request, Response } from 'express'
 import ConfirmCancelRoutes from './confirmCancel'
-import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
+import CourtBookingService from '../../../../../services/courtBookingService'
 
-jest.mock('../../../../../services/bookAVideoLinkService')
+jest.mock('../../../../../services/courtBookingService')
 
 describe('ConfirmCancelRoutes', () => {
   let req: Partial<Request>
   let res: Partial<Response>
-  let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
+  let courtBookingService: jest.Mocked<CourtBookingService>
   let confirmCancelRoutes: ConfirmCancelRoutes
 
   beforeEach(() => {
@@ -29,8 +29,8 @@ describe('ConfirmCancelRoutes', () => {
       redirectOrReturn: jest.fn(),
     }
 
-    bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
-    confirmCancelRoutes = new ConfirmCancelRoutes(bookAVideoLinkService)
+    courtBookingService = new CourtBookingService(null) as jest.Mocked<CourtBookingService>
+    confirmCancelRoutes = new ConfirmCancelRoutes(courtBookingService)
   })
 
   describe('GET', () => {
@@ -44,7 +44,7 @@ describe('ConfirmCancelRoutes', () => {
     it('should cancel the booking and redirect', async () => {
       await confirmCancelRoutes.POST(req as Request, res as Response)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('confirmation')
-      expect(bookAVideoLinkService.cancelVideoLinkBooking).toHaveBeenCalled()
+      expect(courtBookingService.cancelVideoLinkBooking).toHaveBeenCalled()
     })
   })
 })

@@ -15,7 +15,7 @@ describe('CancelConfirmedRoutes', () => {
     req = {
       session: {
         bookACourtHearingJourney: {
-          agencyCode: 'code',
+          courtCode: 'code',
           prisoner: { prisonCode: 'PRISON1' },
           date: '2024-09-09',
         },
@@ -43,7 +43,7 @@ describe('CancelConfirmedRoutes', () => {
       await cancelConfirmedRoutes.GET(req as Request, res as Response)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/court/booking-cancelled', {
         date: '2024-09-09',
-        agency: court,
+        court,
       })
     })
   })

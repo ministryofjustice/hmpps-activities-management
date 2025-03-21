@@ -16,6 +16,7 @@ import { UserDetails } from '../manageUsersApiImport/types'
 import { MovementListJourney } from '../../routes/activities/movement-list/journey'
 import { BookACourtHearingJourney } from '../../routes/appointments/video-link-booking/court/journey'
 import { RecordAppointmentAttendanceJourney } from '../../routes/appointments/attendanceJourney'
+import { BookAProbationMeetingJourney } from '../../routes/appointments/video-link-booking/probation/journey'
 
 export default {}
 
@@ -36,6 +37,7 @@ declare module 'express-session' {
     appointmentSetJourney: AppointmentSetJourney
     editAppointmentJourney: EditAppointmentJourney
     bookACourtHearingJourney: BookACourtHearingJourney
+    bookAProbationMeetingJourney: BookAProbationMeetingJourney
     calendarSpikeJourney: CalendarSpikeJourney
     attendanceSummaryJourney: AttendanceSummaryJourney
     unlockListJourney: UnlockListJourney

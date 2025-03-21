@@ -4,12 +4,14 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import { parseIsoDate } from '../../../../../utils/datePickerUtils'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import PrisonService from '../../../../../services/prisonService'
+import CourtBookingService from '../../../../../services/courtBookingService'
 
 export default class ScheduleRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
     private readonly bookAVideoLinkService: BookAVideoLinkService,
+    private readonly courtBookingService: CourtBookingService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -62,15 +64,11 @@ export default class ScheduleRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { mode } = req.params
     const { user } = res.locals
-    const { type } = req.session.bookACourtHearingJourney
 
     if (mode === 'amend') {
-      await this.bookAVideoLinkService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
 
-      const successHeading =
-        type === 'COURT'
-          ? "You've changed the schedule for this court hearing"
-          : "You've changed the schedule for this probation meeting"
+      const successHeading = "You've changed the schedule for this court hearing"
       return res.redirectWithSuccess(
         `/appointments/video-link-booking/court/${req.session.bookACourtHearingJourney.bookingId}`,
         successHeading,

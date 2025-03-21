@@ -1,0 +1,160 @@
+{% extends "layout.njk" %}
+
+{% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageId = 'meeting-details-page' %}
+{% set jsBackLink = true %}
+{% set pageHeading = "Enter appointment details" %}
+
+{% block meta %}
+  {% if session.req.params.mode == 'create' %}
+    <meta name="autocompleteElements" content="probationTeamCode"/>
+  {% endif %}
+  <meta name="autocompleteElements" content="meetingTypeCode"/>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ appointmentTypeCaption(session) }}
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method='POST' data-module="form-spinner" data-loading-text="Changing appointment details">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% set items = [{ text: "", value: "" }] %}
+                    {% for team in probationTeams %}
+                        {% set items = (items.push({
+                          value: team.code,
+                          text: team.description,
+                          selected: formResponses.probationTeamCode == team.code or session.bookAProbationMeetingJourney.probationTeamCode == team.code
+                        }), items) %}
+                {% endfor %}
+
+                {% if session.req.params.mode == 'create' %}
+                    {{ govukSelect({
+                        name: "probationTeamCode",
+                        id: "probationTeamCode",
+                        label: {
+                            text: "Select the probation team the booking is for",
+                            classes: 'govuk-label--s'
+                        },
+                        items: items,
+                        errorMessage: validationErrors | findError("probationTeamCode")
+                    }) }}
+                {% else %}
+                    <input type="hidden" name="probationTeamCode" value="{{ session.bookAProbationMeetingJourney.probationTeamCode }}">
+                {% endif %}
+
+                {% set items = [] %}
+                {% for meetingType in meetingTypes %}
+                    {% if meetingType.code != 'OTHER' %}
+                        {% set items = (items.push({
+                          value: meetingType.code,
+                          text: meetingType.description,
+                          checked: formResponses.meetingTypeCode == meetingType.code or session.bookAProbationMeetingJourney.meetingTypeCode == meetingType.code
+
+                        }), items) %}
+                    {% endif %}
+                {% endfor %}
+                {% set items = (items.push({
+                    value: 'OTHER',
+                    text: 'Other',
+                    checked: formResponses.meetingTypeCode == 'OTHER' or session.bookAProbationMeetingJourney.meetingTypeCode == 'OTHER'
+                }), items) %}
+
+                {{ govukRadios({
+                    idPrefix: "meetingTypeCode",
+                    name: "meetingTypeCode",
+                    fieldset: {
+                        legend: {
+                          text: "Select meeting type",
+                          classes: "govuk-fieldset__legend--s"
+                        }
+                    },
+                    items: items,
+                    errorMessage: validationErrors | findError("meetingTypeCode"),
+                    classes: "govuk-!-width-one-third"
+                }) }}
+
+                <div class="govuk-form-group {{ 'govuk-form-group--error' if validationErrors | findError("officerDetailsOrUnknown") }}">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Enter the probation officer's details</legend>
+                        <p id="officerDetailsOrUnknown" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span>{{ (validationErrors | findError("officerDetailsOrUnknown")).text }}</p>
+                        <p class="govuk-body">You can enter the details later if not yet known</p>
+                        {{ govukCheckboxes({
+                            idPrefix: "officerDetailsNotKnown",
+                            name: "officerDetailsNotKnown",
+                            items: [
+                                {
+                                  value: "true",
+                                  text: "Not yet known",
+                                  checked: formResponses.officerDetailsNotKnown or session.bookAProbationMeetingJourney.officerDetailsNotKnown
+                                },
+                                {
+                                  divider: "or"
+                                }
+                            ],
+                            errorMessage: validationErrors | findError("officerDetailsNotKnown"),
+                            formGroup: {
+                                classes: 'govuk-!-margin-bottom-3'
+                            },
+                            classes: "govuk-!-width-one-third"
+                        }) }}
+
+                        {{ govukInput({
+                            id: "officerFullName",
+                            name: "officerFullName",
+                            label: {
+                              text: "Full name"
+                            },
+                            errorMessage: validationErrors | findError('officerFullName'),
+                            formGroup: {
+                              classes: 'govuk-!-margin-bottom-3'
+                            },
+                            classes: "govuk-!-width-one-half",
+                            value: formResponses.officerFullName or session.bookAProbationMeetingJourney.officer.fullName
+                        }) }}
+
+                        {{ govukInput({
+                            id: "officerEmail",
+                            name: "officerEmail",
+                            label: {
+                              text: "Email address"
+                            },
+                            errorMessage: validationErrors | findError('officerEmail'),
+                            formGroup: {
+                              classes: 'govuk-!-margin-bottom-3'
+                            },
+                            classes: "govuk-!-width-one-half",
+                            value: formResponses.officerEmail or session.bookAProbationMeetingJourney.officer.email
+                        }) }}
+
+                        {{ govukInput({
+                            id: "officerTelephone",
+                            name: "officerTelephone",
+                            label: {
+                              text: "UK phone number (optional)"
+                            },
+                            errorMessage: validationErrors | findError('officerTelephone'),
+                            classes: "govuk-input--width-10",
+                            value: formResponses.officerTelephone or session.bookAProbationMeetingJourney.officer.telephone
+                        }) }}
+                  </fieldset>
+                </div>
+
+                {{ govukButton({
+                      text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,25 +1,23 @@
 import { NextFunction, Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import createHttpError from 'http-errors'
-import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import CourtHearingLinkRoutes, { CourtHearingLink } from './courtHearingLink'
+import CourtBookingService from '../../../../../services/courtBookingService'
 
-jest.mock('../../../../../services/bookAVideoLinkService')
+jest.mock('../../../../../services/courtBookingService')
 
 describe('CourtHearingLinkRoutes', () => {
   let req: Partial<Request>
   let res: Partial<Response>
   let next: NextFunction
-  let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
+  let courtBookingService: jest.Mocked<CourtBookingService>
   let courtHearingLinkRoutes: CourtHearingLinkRoutes
 
   beforeEach(() => {
     req = {
       session: {
         bookACourtHearingJourney: {
-          type: 'COURT',
           prisoner: { prisonCode: 'PRISON1' },
         },
       },
@@ -36,8 +34,8 @@ describe('CourtHearingLinkRoutes', () => {
       redirectWithSuccess: jest.fn(),
     }
     next = jest.fn()
-    bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
-    courtHearingLinkRoutes = new CourtHearingLinkRoutes(bookAVideoLinkService)
+    courtBookingService = new CourtBookingService(null) as jest.Mocked<CourtBookingService>
+    courtHearingLinkRoutes = new CourtHearingLinkRoutes(courtBookingService)
   })
 
   describe('GET', () => {
@@ -45,14 +43,6 @@ describe('CourtHearingLinkRoutes', () => {
       await courtHearingLinkRoutes.GET(req as Request, res as Response, next)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/court/court-hearing-link')
-    })
-
-    it('should respond with 404 when the booking is a probation booking', async () => {
-      req.session.bookACourtHearingJourney.type = 'PROBATION'
-
-      await courtHearingLinkRoutes.GET(req as Request, res as Response, next)
-
-      expect(next).toHaveBeenCalledWith(createHttpError.NotFound())
     })
   })
 
@@ -64,7 +54,7 @@ describe('CourtHearingLinkRoutes', () => {
 
       await courtHearingLinkRoutes.POST(req as Request, res as Response)
 
-      expect(bookAVideoLinkService.amendVideoLinkBooking).toHaveBeenCalledWith(
+      expect(courtBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(
         req.session.bookACourtHearingJourney,
         res.locals.user,
       )

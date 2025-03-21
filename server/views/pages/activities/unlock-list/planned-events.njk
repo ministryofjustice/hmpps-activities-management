@@ -4,7 +4,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
-{% from "moj/components/button-menu/macro.njk" import mojButtonMenu %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "components/alertsList.njk" import alertsList %}
 {% from "components/alertFilters.njk" import alertFilters %}
 {% from "partials/showUnlockEvents.njk" import showUnlockEvents %}
@@ -129,7 +129,7 @@
                             html: alertsAccordionHtml
                         },
                         expanded: true
-                    }, 
+                    },
                     {
                         heading: {
                             text: "Show cancelled events"
@@ -172,28 +172,28 @@
                         </div>
                         <div class="moj-filter-layout__content">
                             <div class="moj-action-bar govuk-!-display-none-print">
-                                <div class="moj-action-bar__filter"></div>
-                                {{ mojButtonMenu({
-                                items: [{
-                                    attributes: { 
-                                        id: 'print-unlock',
-                                        'data-track-click-event': 'SAA-Unlock-List-Printed',
-                                        'data-track-event-properties': {
-                                            user: user.username,
-                                            prisonCode: user.activeCaseLoadId,
-                                            unlockDate: date,
-                                            timePeriod: timeSlot,
-                                            location: location.name
-                                        } | dump,
-                                        'data-track-event-measurements': {
-                                            prisonerCount: unlockListItems | length
-                                        } | dump
-                                    },
-                                    text: "Print this unlock list",
-                                    classes: "govuk-button--blue js-print no-js-hidden",
-                                    preventDoubleClick: true
-                                }]
-                            }) }}
+                              <div class="moj-action-bar__filter"></div>
+                              {# we're using '| dump' filter in the below component so that the values
+                              for the metrics attributes are recorded correctly, pls do not remove #}
+                              {{ govukButton({
+                                attributes: {
+                                  id: 'print-unlock',
+                                  'data-track-click-event': 'SAA-Unlock-List-Printed',
+                                  'data-track-event-properties': {
+                                    user: user.username,
+                                    prisonCode: user.activeCaseLoadId,
+                                    unlockDate: date,
+                                    timePeriod: timeSlot,
+                                    location: location.name
+                                  } | dump,
+                                  'data-track-event-measurements': {
+                                    prisonerCount: unlockListItems | length
+                                  } | dump
+                                },
+                                text: "Print this unlock list",
+                                classes: "govuk-button--blue js-print no-js-hidden",
+                                preventDoubleClick: true
+                              }) }}
                             </div>
 
                             {% if unlockListItems | length > 0 %}
@@ -202,8 +202,8 @@
                                     {% set row = [] %}
                                     {% set row = (row.push(
                                     {
-                                        attributes: { 
-                                            id: 'activity-' + loop.index, 
+                                        attributes: {
+                                            id: 'activity-' + loop.index,
                                             "data-sort-value": item | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
                                         },
                                         html: showProfileLink({
@@ -230,7 +230,7 @@
 
                                     {% set row = (row.push(
                                     {
-                                        attributes: { 
+                                        attributes: {
                                             id: 'activity-' + loop.index,
                                             "data-sort-value": (item.events[0].summary) | lower,
                                             colspan: 4

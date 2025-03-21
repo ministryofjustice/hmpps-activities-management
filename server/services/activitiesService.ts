@@ -2,59 +2,59 @@ import { format } from 'date-fns'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
 import {
-  ActivityCategory,
-  ActivitySchedule,
-  Allocation,
-  AttendanceUpdateRequest,
-  LocationGroup,
-  ScheduledActivity,
-  ScheduledEvent,
   Activity,
+  ActivityCategory,
   ActivityCreateRequest,
-  PrisonPayBand,
-  PrisonerScheduledEvents,
-  AppointmentSeries,
+  ActivitySchedule,
+  ActivitySummary,
+  ActivityUpdateRequest,
+  AddCaseNoteRequest,
+  AllAttendance,
+  Allocation,
+  AllocationUpdateRequest,
+  AppointmentAttendeeByStatus,
+  AppointmentCancelRequest,
   AppointmentCategorySummary,
-  AppointmentSeriesCreateRequest,
-  AttendanceReason,
-  AppointmentSeriesDetails,
+  AppointmentCountSummary,
   AppointmentDetails,
-  ScheduleInstanceCancelRequest,
-  UncancelScheduledInstanceRequest,
-  Attendance,
-  AppointmentUpdateRequest,
-  PageActivityCandidate,
   AppointmentLocationSummary,
   AppointmentSearchRequest,
-  AllAttendance,
-  ActivityUpdateRequest,
-  AllocationUpdateRequest,
-  AppointmentCancelRequest,
-  AppointmentSetCreateRequest,
+  AppointmentSeries,
+  AppointmentSeriesCreateRequest,
+  AppointmentSeriesDetails,
   AppointmentSet,
+  AppointmentSetCreateRequest,
   AppointmentSetDetails,
-  EventReviewSearchResults,
-  PrisonerDeallocationRequest,
+  AppointmentUncancelRequest,
+  AppointmentUpdateRequest,
+  Attendance,
+  AttendanceReason,
+  AttendanceUpdateRequest,
   DeallocationReasonCode,
   EventAcknowledgeRequest,
-  WaitingListApplicationRequest,
-  WaitingListApplicationUpdateRequest,
-  ActivitySummary,
+  EventReviewSearchResults,
   GetAllocationsParams,
-  WaitingListSearchRequest,
-  WaitingListSearchParams,
-  Slot,
-  AddCaseNoteRequest,
-  AppointmentUncancelRequest,
-  SuspendedPrisonerAttendance,
-  AppointmentAttendeeByStatus,
-  PrisonRegime,
+  LocationGroup,
+  MultipleAppointmentAttendanceRequest,
   NonAssociationDetails,
-  AppointmentCountSummary,
+  PageActivityCandidate,
+  PrisonerDeallocationRequest,
+  PrisonerScheduledEvents,
+  PrisonPayBand,
   PrisonPayBandCreateRequest,
   PrisonPayBandUpdateRequest,
+  PrisonRegime,
+  ScheduledActivity,
+  ScheduledEvent,
+  ScheduleInstanceCancelRequest,
+  Slot,
+  SuspendedPrisonerAttendance,
   SuspendPrisonerRequest,
-  MultipleAppointmentAttendanceRequest,
+  UncancelScheduledInstanceRequest,
+  WaitingListApplicationRequest,
+  WaitingListApplicationUpdateRequest,
+  WaitingListSearchParams,
+  WaitingListSearchRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { SessionCancellationRequest } from '../routes/activities/record-attendance/journey'
@@ -449,6 +449,22 @@ export default class ActivitiesService {
     )
   }
 
+  async getInternalLocationEventsByDpsLocationIds(
+    prisonCode: string,
+    date: Date,
+    dpsLocationIds: string[],
+    user: ServiceUser,
+    timeSlot?: string,
+  ) {
+    return this.activitiesApiClient.getInternalLocationEventsByDpsLocationIds(
+      prisonCode,
+      format(date, 'yyyy-MM-dd'),
+      dpsLocationIds,
+      user,
+      timeSlot,
+    )
+  }
+
   async getAppointmentAttendanceSummaries(
     prisonCode: string,
     date: Date,
@@ -462,19 +478,6 @@ export default class ActivitiesService {
       user,
       categoryCode ?? null,
       customAppointmentName ?? null,
-    )
-  }
-
-  async markAppointmentAttendance(
-    appointmentId: number,
-    attendedPrisonNumbers: string[],
-    nonAttendedPrisonNumbers: string[],
-    user: ServiceUser,
-  ) {
-    return this.activitiesApiClient.putAppointmentAttendance(
-      appointmentId,
-      { attendedPrisonNumbers, nonAttendedPrisonNumbers },
-      user,
     )
   }
 

@@ -115,12 +115,14 @@
                 classes: 'govuk-!-display-none-print'
             }) }}
 
+            {# we're using '| dump' filter in the below component so that the values
+            for the metrics attributes are recorded correctly, pls do not remove #}
             {{ govukButton({
                 id: 'print-movement-list',
                 text: "Print attendance list",
                 attributes: {
                     'data-track-click-event': 'SAA-Appointment-Set-Attendee-List-Printed',
-                    'data-track-event-properties': { 
+                    'data-track-event-properties': {
                         user: user.username,
                         prisonCode: user.activeCaseLoadId,
                         appointmentSetId: appointmentSet.id

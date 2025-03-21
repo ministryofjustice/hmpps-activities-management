@@ -6,7 +6,6 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { dateFromDateOption } from '../../../../utils/datePickerUtils'
 import { getAttendanceSummaryFromAttendanceSummaries } from '../../utils/attendanceUtils'
-import config from '../../../../config'
 import { asString, convertToNumberArray, toDateString } from '../../../../utils/utils'
 import LocationType from '../../../../enum/locationType'
 
@@ -60,31 +59,21 @@ export default class SummariesRoutes {
 
     const attendanceSummary = getAttendanceSummaryFromAttendanceSummaries(summaries)
 
-    if (config.appointmentMultipleAttendanceToggleEnabled) {
-      if (!req.session.recordAppointmentAttendanceJourney) {
-        req.session.recordAppointmentAttendanceJourney = {}
-      }
-
-      req.session.recordAppointmentAttendanceJourney.date = toDateString(dateOptionDate)
-
-      const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
-
-      return res.render('pages/appointments/attendance/summaries-multi-select', {
-        date: dateOptionDate,
-        summaries,
-        attendanceSummary,
-        prisonersDetails,
-        locations,
-        filterItems: filterItems(asString(locationId), locationTypeFilter),
-      })
+    if (!req.session.recordAppointmentAttendanceJourney) {
+      req.session.recordAppointmentAttendanceJourney = {}
     }
 
+    req.session.recordAppointmentAttendanceJourney.date = toDateString(dateOptionDate)
+
+    const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
+
     return res.render('pages/appointments/attendance/summaries', {
-      dateOption,
       date: dateOptionDate,
       summaries,
       attendanceSummary,
       prisonersDetails,
+      locations,
+      filterItems: filterItems(asString(locationId), locationTypeFilter),
     })
   }
 

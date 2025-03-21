@@ -1,0 +1,263 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+
+{% set pageTitle = "Check and confirm appointment details" %}
+{% set pageId = 'appointment-check-answers-page' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">{{ pageTitle }}</h1>
+
+            <form method="POST" data-module="form-spinner" data-loading-text="Preparing your appointments">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                <h2 class="govuk-heading-m">Appointment details</h2>
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                                text: "Appointment name"
+                            },
+                            value: {
+                                text: "Video Link - Probation Meeting"
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Name of attendee"
+                            },
+                            value: {
+                                html: showProfileLink({
+                                    firstName: session.bookAProbationMeetingJourney.prisoner.firstName,
+                                    middleNames: session.bookAProbationMeetingJourney.prisoner.middleNames,
+                                    lastName: session.bookAProbationMeetingJourney.prisoner.lastName,
+                                    prisonerNumber: session.bookAProbationMeetingJourney.prisoner.number,
+                                    cellLocation: session.bookAProbationMeetingJourney.prisoner.cellLocation
+                                })
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Probation team"
+                            },
+                            value: {
+                                text: (probationTeams | find('code', session.bookAProbationMeetingJourney.probationTeamCode)).description
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "meeting-details?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "meeting details",
+                                        classes: "govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Meeting type"
+                            },
+                            value: {
+                                text: (meetingTypes | find('code', session.bookAProbationMeetingJourney.meetingTypeCode)).description
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "meeting-details?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "meeting details",
+                                        classes: "govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }) }}
+
+                <h2 class="govuk-heading-m">Scheduling information</h2>
+                {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Probation meeting"
+                        }
+                    },
+                    rows: [
+                        {
+                            key: {
+                                text: "Probation officer's full name"
+                            },
+                            value: {
+                                text: session.bookAProbationMeetingJourney.officer.fullName or "Not yet known"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                      href: "meeting-details?preserveHistory=true",
+                                      text: "Change",
+                                      classes: 'govuk-link--no-visited-state',
+                                      visuallyHiddenText: "probation officer's full name"
+                                    }
+                                ]
+                            }
+                        } if bvlsMasteredVlpmFeatureToggleEnabled,
+                        {
+                            key: {
+                                text: "Email address"
+                            },
+                            value: {
+                                text: session.bookAProbationMeetingJourney.officer.email or "Not yet known"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                      href: "meeting-details?preserveHistory=true",
+                                      text: "Change",
+                                      classes: 'govuk-link--no-visited-state',
+                                      visuallyHiddenText: "probation officer's email address"
+                                    }
+                                ]
+                            }
+                        } if bvlsMasteredVlpmFeatureToggleEnabled,
+                        {
+                            key: {
+                                text: "UK phone number"
+                            },
+                            value: {
+                                text: session.bookAProbationMeetingJourney.officer.telephone or ("Not yet known" if session.bookAProbationMeetingJourney.officerDetailsNotKnown else "None entered")
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                      href: "meeting-details?preserveHistory=true",
+                                      text: "Change",
+                                      classes: 'govuk-link--no-visited-state',
+                                      visuallyHiddenText: "probation officer's telephone"
+                                    }
+                                ]
+                            }
+                        } if bvlsMasteredVlpmFeatureToggleEnabled,
+                        {
+                            key: {
+                                text: "Location"
+                            },
+                            value: {
+                                text: (rooms | find('key', session.bookAProbationMeetingJourney.locationCode)).description
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "location?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "location",
+                                        classes: "govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Date"
+                            },
+                            value: {
+                                text: session.bookAProbationMeetingJourney.date | parseISODate | formatDate
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "date-and-time?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "date",
+                                        classes: "govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Start time"
+                            },
+                            value: {
+                                text: session.bookAProbationMeetingJourney.startTime | parseISODate | formatDate('HH:mm')
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "date-and-time?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "start time",
+                                        classes: "govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "End time"
+                            },
+                            value: {
+                                text: session.bookAProbationMeetingJourney.endTime | parseISODate | formatDate('HH:mm')
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "date-and-time?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "end time",
+                                        classes: "govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Prison video link (PVL)"
+                            },
+                            value: {
+                                text: (rooms | find('key', session.bookAProbationMeetingJourney.locationCode)).extraAttributes.prisonVideoUrl or "None entered"
+                            }
+                        } if bvlsMasteredVlpmFeatureToggleEnabled
+                    ]
+                }) }}
+
+                <h2 class="govuk-heading-m">Extra information</h2>
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                                text: "Extra information"
+                            },
+                            value: {
+                                html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.comments | escape) + '</span>'
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "extra-information?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "extra information",
+                                        classes: "govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Confirm",
+                        preventDoubleClick: true
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+
+

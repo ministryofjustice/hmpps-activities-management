@@ -1,4 +1,5 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
+import createHttpError from 'http-errors'
 import VideoLinkDetailsRoutes from './videoLinkDetails'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import PrisonService from '../../../../../services/prisonService'
@@ -19,6 +20,7 @@ jest.mock('../../../../../services/locationMappingService')
 describe('VideoLinkDetailsRoutes', () => {
   let req: Partial<Request>
   let res: Partial<Response>
+  let next: NextFunction
   let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
   let activitiesService: jest.Mocked<ActivitiesService>
   let prisonService: jest.Mocked<PrisonService>
@@ -34,6 +36,7 @@ describe('VideoLinkDetailsRoutes', () => {
       locals: { user: {} },
       render: jest.fn(),
     } as unknown as Response
+    next = jest.fn()
     bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
     activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
     prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
@@ -119,7 +122,7 @@ describe('VideoLinkDetailsRoutes', () => {
         } as AppointmentSearchResult,
       ])
 
-      await videoLinkDetailsRoutes.GET(req as Request, res as Response)
+      await videoLinkDetailsRoutes.GET(req as Request, res as Response, next)
 
       expect(res.render).toHaveBeenCalledWith(
         'pages/appointments/video-link-booking/court/details',
@@ -146,6 +149,35 @@ describe('VideoLinkDetailsRoutes', () => {
       )
 
       expect(activitiesService.searchAppointments).toHaveBeenCalledTimes(2)
+    })
+
+    it('should throw a 404 error if the main appointment is not found', async () => {
+      const videoBooking = {
+        videoLinkBookingId: 1,
+        statusCode: 'ACTIVE',
+        bookingType: 'PROBATION',
+        prisonAppointments: [
+          {
+            prisonAppointmentId: 2,
+            prisonCode: 'PRISON1',
+            prisonerNumber: 'A1234BC',
+            appointmentType: 'VLB_PROBATION',
+            appointmentDate: '2023-10-01',
+            startTime: '10:30',
+            endTime: '11:00',
+          },
+        ],
+        createdBy: 'user1',
+        amendedBy: 'user2',
+        createdAt: '2023-09-01T10:00:00Z',
+        amendedAt: '2023-09-02T10:00:00Z',
+      } as VideoLinkBooking
+
+      bookAVideoLinkService.getVideoLinkBookingById.mockResolvedValue(videoBooking)
+
+      await videoLinkDetailsRoutes.GET(req as Request, res as Response, next)
+
+      expect(next).toHaveBeenCalledWith(createHttpError.NotFound())
     })
   })
 })
