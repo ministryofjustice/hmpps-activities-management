@@ -6,6 +6,7 @@ import { startOfToday } from 'date-fns'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { addPayBand, payBandDetail } from '../../../../../utils/helpers/allocationUtil'
 import { formatDate, parseISODate, toMoney } from '../../../../../utils/utils'
+import { Inmate } from '../../journey'
 
 export class PayBand {
   @Expose()
@@ -20,6 +21,7 @@ type inmatePayBandDisplayDetails = {
   middleNames: string
   lastName: string
   incentiveLevel: string
+  prisonId: string
   payBands: payBandDetail[]
 }
 
@@ -31,30 +33,24 @@ export default class PayBandMultipleRoutes {
     const allPayBandsForActivity: payBandDetail[] = await this.getActivityPayRates(req, res)
 
     // Get the applicable paybands per prisoner needing to be allocated
-    const payBandsPerInmate: inmatePayBandDisplayDetails[] = []
-    inmates.forEach(inmate => {
-      const relevantPaybands = payBandWithDescription(allPayBandsForActivity, inmate.incentiveLevel)
-      payBandsPerInmate.push({
-        prisonerNumber: inmate.prisonerNumber,
-        firstName: inmate.firstName,
-        middleNames: inmate.middleNames,
-        lastName: inmate.lastName,
-        incentiveLevel: inmate.incentiveLevel,
-        payBands: relevantPaybands,
-      })
-    })
+    const payBandsPerInmate = getApplicablePayBandsForInmates(inmates, allPayBandsForActivity)
 
     const payBandsToAutomaticallyAssign = payBandsPerInmate.filter(inmate => inmate.payBands.length === 1)
     const payBandsRequiringManualAssign = payBandsPerInmate.filter(inmate => inmate.payBands.length > 1)
 
     // if all prisoners can have their payband set automatically, redirect the page without rendering
     if (!payBandsRequiringManualAssign.length) {
-      addPayBand(inmates, payBandsToAutomaticallyAssign)
+      const fullDataSet = payBandsToAutomaticallyAssign.map(pay => {
+        return {
+          prisonerNumber: pay.prisonerNumber,
+          payBandDetail: pay.payBands[0],
+        }
+      })
+      addPayBand(inmates, fullDataSet)
       req.session.allocateJourney.inmates = inmates
       return res.redirect('check-and-confirm-multiple')
     }
 
-    // if any paybands need manually picking, display them as radios
     return res.render('pages/activities/manage-allocations/allocateMultiplePeople/payBandMultiple', {
       payBandsToAutomaticallyAssign,
       payBandsRequiringManualAssign,
@@ -62,34 +58,43 @@ export default class PayBandMultipleRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    // const { payBand } = req.body
-    // const { user } = res.locals
-    // const { allocationId } = req.params
+    const { inmatePayData } = req.body
+    const { inmates } = req.session.allocateJourney
 
-    // if (req.params.mode === 'edit') {
-    //   const allocation = {
-    //     payBandId: +payBand,
-    //   } as AllocationUpdateRequest
+    const activityPayBands = await this.getActivityPayRates(req, res)
 
-    //   await this.activitiesService.updateAllocation(+allocationId, allocation, user)
+    // assign the manually chosen paybands
+    inmatePayData.forEach(async inmate => {
+      const i = inmate
+      const relevantPayBandsForInmate = activityPayBands.filter(
+        pay => !pay.incentiveLevel || pay.incentiveLevel === i.incentiveLevel,
+      )
+      const payBandDetails: payBandDetail = relevantPayBandsForInmate.find(b => b.bandId === +i.payBand)
+      i.payBandDetails = payBandDetails
+    })
 
-    //   const successMessage = `You've updated the pay rate for this allocation`
-    //   return res.redirectWithSuccess(
-    //     `/activities/allocations/view/${allocationId}`,
-    //     'Allocation updated',
-    //     successMessage,
-    //   )
-    // }
+    // assign the automatic paybands
+    const payBandsPerInmate = getApplicablePayBandsForInmates(inmates, activityPayBands)
+    const payBandsToAutomaticallyAssign = payBandsPerInmate.filter(inmate => inmate.payBands.length === 1)
 
-    // const payBandDetails: payBandDetail = (await this.getActivityPayRates(req, res)).find(b => b.bandId === payBand)
+    payBandsToAutomaticallyAssign.forEach(inmate => {
+      inmatePayData.push({
+        prisonerNumber: inmate.prisonerNumber,
+        incentiveLevel: inmate.incentiveLevel,
+        payBandDetails: inmate.payBands[0],
+      })
+    })
 
-    // req.session.allocateJourney.inmate.payBand = {
-    //   id: payBandDetails.bandId,
-    //   alias: payBandDetails.bandAlias,
-    //   rate: payBandDetails.rate,
-    // }
+    const fullDataSet = inmatePayData.map(pay => {
+      return {
+        prisonerNumber: pay.prisonerNumber,
+        payBandDetail: pay.payBandDetail,
+      }
+    })
 
-    return res.redirect('check-and-confirm-multiple')
+    addPayBand(inmates, fullDataSet)
+    req.session.allocateJourney.inmates = inmates
+    // return res.redirect('check-and-confirm-multiple')
   }
 
   private async getActivityPayRates(req: Request, res: Response): Promise<payBandDetail[]> {
@@ -105,6 +110,23 @@ export default class PayBandMultipleRoutes {
       incentiveLevel: pay.incentiveLevel,
     }))
   }
+}
+
+function getApplicablePayBandsForInmates(inmates: Inmate[], allPayBandsForActivity) {
+  const payBandsPerInmate: inmatePayBandDisplayDetails[] = []
+  inmates.forEach(inmate => {
+    const relevantPaybands = payBandWithDescription(allPayBandsForActivity, inmate.incentiveLevel)
+    payBandsPerInmate.push({
+      prisonerNumber: inmate.prisonerNumber,
+      firstName: inmate.firstName,
+      middleNames: inmate.middleNames,
+      lastName: inmate.lastName,
+      prisonId: inmate.prisonCode,
+      incentiveLevel: inmate.incentiveLevel,
+      payBands: relevantPaybands,
+    })
+  })
+  return payBandsPerInmate
 }
 
 export function payBandWithDescription(originalPayBands: payBandDetail[], incentiveLevel: string): payBandDetail[] {

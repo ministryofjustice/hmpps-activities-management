@@ -202,6 +202,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addFilter('excludeArray', excludeArrayObject)
   njkEnv.addFilter('absenceReasonDisplayConverter', absenceReasonDisplayConverter)
   njkEnv.addFilter('absenceReasonCheckboxMatch', absenceReasonCheckboxMatch)
+  njkEnv.addFilter('numberToWord', number => (number === 1 ? 'one' : number))
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)

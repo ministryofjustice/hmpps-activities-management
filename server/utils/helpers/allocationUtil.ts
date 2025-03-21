@@ -82,15 +82,19 @@ export function addNonAssociations(inmates: Inmate[], prisonersWithNonAssociatio
 
 export function addPayBand(
   inmates: Inmate[],
-  payBandsPerPrisoner: { prisonerNumber: string; payBands: payBandDetail[] }[],
+  payBandsPerPrisoner: { prisonerNumber: string; payBandDetail: payBandDetail }[],
 ) {
   inmates.forEach(inmate => {
     const i = inmate
-    const paybandDetails = payBandsPerPrisoner.find(pb => pb.prisonerNumber === inmate.prisonerNumber)?.[0]
-    i.payBand = {
-      id: paybandDetails.payBands.bandId,
-      alias: paybandDetails.payBands.bandAlias,
-      rate: paybandDetails.payBands.rate,
+    const paybandDetails = payBandsPerPrisoner.find(pb => pb.prisonerNumber === inmate.prisonerNumber)
+    const payBand = paybandDetails?.payBandDetail
+
+    if (payBand !== undefined) {
+      i.payBand = {
+        id: payBand?.bandId,
+        alias: payBand?.bandAlias,
+        rate: payBand?.rate,
+      }
     }
   })
 }
