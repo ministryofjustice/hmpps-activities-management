@@ -31,7 +31,7 @@ import ActivitiesIndexPage from '../../../pages/activities'
 import ExclusionsPage from '../../../pages/allocateToActivity/exclusions'
 import resetActivityAndScheduleStubs from './allocationsStubHelper'
 import HowToAddOptions from '../../../../server/enum/allocations'
-import getPrisonPrisoners_MDI_A1350DZ_A8644DY from '../../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ-A8644DY.json'
+import getPrisonPrisonersMdiA1350DZandA8644DY from '../../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ-A8644DY.json'
 
 context('Allocate multiple one by one to an activity', () => {
   beforeEach(() => {
