@@ -56,6 +56,7 @@ export default class PayBandMultipleRoutes {
         return {
           prisonerNumber: pay.prisonerNumber,
           payBandDetail: pay.payBands[0],
+          numberPayBandsAvailable: 1,
         }
       })
 
@@ -80,10 +81,10 @@ export default class PayBandMultipleRoutes {
     // assign the manually chosen paybands
     inmatePayData.forEach(async inmate => {
       const i = inmate
-      const payBandDetails: payBandDetail = paybandsAvailablePerInmate
-        .find(p => p.prisonerNumber === i.prisonerNumber)
-        .payBands.find(b => b.bandId === +i.payBand)
-      i.payBandDetails = payBandDetails
+      const payBandDetails = paybandsAvailablePerInmate.find(p => p.prisonerNumber === i.prisonerNumber).payBands
+      const matchingPayBand = payBandDetails.find(b => b.bandId === +i.payBand)
+      i.payBandDetails = matchingPayBand
+      i.numberPayBandsAvailable = payBandDetails.length
     })
 
     // assign the automatic paybands
@@ -94,6 +95,7 @@ export default class PayBandMultipleRoutes {
         prisonerNumber: inmate.prisonerNumber,
         incentiveLevel: inmate.incentiveLevel,
         payBandDetails: inmate.payBands[0],
+        numberPayBandsAvailable: 1,
       })
     })
 
@@ -101,6 +103,7 @@ export default class PayBandMultipleRoutes {
       return {
         prisonerNumber: pay.prisonerNumber,
         payBandDetail: pay.payBandDetails,
+        numberPayBandsAvailable: pay.numberPayBandsAvailable,
       }
     })
 

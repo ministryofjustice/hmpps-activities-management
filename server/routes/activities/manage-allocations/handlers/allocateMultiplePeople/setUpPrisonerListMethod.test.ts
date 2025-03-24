@@ -57,6 +57,30 @@ describe('Allocate multiple people to an activity - method for adding list', () 
           offWing: true,
           paid: true,
         },
+        instances: [
+          {
+            id: 153,
+            date: '2025-05-01',
+            startTime: '08:30',
+            endTime: '11:45',
+            timeSlot: 'AM',
+            cancelled: false,
+            cancelledTime: null,
+            cancelledBy: null,
+            attendances: [],
+          },
+          {
+            id: 154,
+            date: '2025-05-02',
+            startTime: '08:30',
+            endTime: '11:45',
+            timeSlot: 'AM',
+            cancelled: false,
+            cancelledTime: null,
+            cancelledBy: null,
+            attendances: [],
+          },
+        ],
       } as ActivitySchedule
       req.body = {
         howToAdd: HowToAddOptions.SEARCH,
@@ -79,6 +103,18 @@ describe('Allocate multiple people to an activity - method for adding list', () 
           endDate: null,
           scheduleWeeks: 1,
           paid: true,
+        },
+        scheduledInstance: {
+          id: 153,
+          date: '2025-05-01',
+          startTime: '08:30',
+          endTime: '11:45',
+          timeSlot: 'AM',
+          cancelled: false,
+          cancelledTime: null,
+          cancelledBy: null,
+          attendances: [],
+          startDateTime: '2025-05-01 08:30',
         },
       })
     })

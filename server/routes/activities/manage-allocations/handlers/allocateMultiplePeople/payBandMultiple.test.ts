@@ -99,6 +99,7 @@ describe('Pay band page', () => {
           prisonerNumber: 'G9566GQ',
           cellLocation: '1-2-001',
           incentiveLevel: 'Enhanced',
+          numberPayBandsAvailable: 1,
           payBand: {
             id: 1,
             alias: 'Enhanced rate 1',
@@ -113,6 +114,7 @@ describe('Pay band page', () => {
           prisonerNumber: 'G7174GE',
           cellLocation: '2-2-002',
           incentiveLevel: 'Standard',
+          numberPayBandsAvailable: 1,
           payBand: {
             id: 1,
             alias: 'Standard rate',
@@ -360,6 +362,7 @@ describe('Pay band page', () => {
           prisonerNumber: 'G9566GQ',
           cellLocation: '1-2-001',
           incentiveLevel: 'Enhanced',
+          numberPayBandsAvailable: 2,
           payBand: {
             id: 2,
             alias: 'Enhanced rate 2',
@@ -374,6 +377,7 @@ describe('Pay band page', () => {
           prisonerNumber: 'G7174GE',
           cellLocation: '2-2-002',
           incentiveLevel: 'Standard',
+          numberPayBandsAvailable: 2,
           payBand: {
             id: 1,
             alias: 'Standard rate',

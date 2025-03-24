@@ -59,7 +59,7 @@
                 {% if payBandsToAutomaticallyAssign | length %}
                     {{ govukDetails({
                         summaryText: "View people to be put on a pay rate automatically",
-                        html: automaticallyAssignedHtml(payBandsToAutomaticallyAssign)
+                        html: payBandHtml(payBandsToAutomaticallyAssign)
                     }) }}
                 {% endif %}
 
@@ -72,7 +72,7 @@
     </div>
 {% endblock %}
 
-{% macro automaticallyAssignedHtml(payBandsToAutomaticallyAssign) %}
+{% macro payBandHtml(payBandsToAutomaticallyAssign) %}
 
 {% set rows = [] %}
 {% for inmate in payBandsToAutomaticallyAssign %}

@@ -272,6 +272,7 @@ describe('Allocation helper function tests', () => {
     const payBands = [
       {
         prisonerNumber: 'A11222A',
+        numberPayBandsAvailable: 1,
         payBandDetail: {
           bandId: 122,
           bandAlias: 'Some name',
@@ -280,6 +281,7 @@ describe('Allocation helper function tests', () => {
       },
       {
         prisonerNumber: 'B11232B',
+        numberPayBandsAvailable: 2,
         payBandDetail: {
           bandId: 444,
           bandAlias: 'Some other name',
@@ -290,5 +292,9 @@ describe('Allocation helper function tests', () => {
 
     addPayBand([inmate1], payBands)
     expect(inmate1.payBand).toEqual({ id: 122, alias: 'Some name', rate: 100 })
+    expect(inmate1.numberPayBandsAvailable).toEqual(1)
+    addPayBand([inmate2], payBands)
+    expect(inmate2.payBand).toEqual({ id: 444, alias: 'Some other name', rate: 10 })
+    expect(inmate2.numberPayBandsAvailable).toEqual(2)
   })
 })

@@ -4,6 +4,7 @@ import { Request, Response } from 'express'
 import HowToAddOptions from '../../../../../enum/allocations'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { AllocateToActivityJourney } from '../../journey'
+import findNextSchedulesInstance from '../../../../../utils/helpers/nextScheduledInstanceCalculator'
 
 export class SetUpPrisonerListForm {
   @Expose()
@@ -40,6 +41,7 @@ export default class SetUpPrisonerListMethodRoutes {
         paid: schedule.activity.paid,
       },
       inmates: [],
+      scheduledInstance: findNextSchedulesInstance(schedule),
     } as AllocateToActivityJourney
 
     // TODO: add redirects for the other options in later tickets

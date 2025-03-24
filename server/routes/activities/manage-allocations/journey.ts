@@ -18,6 +18,7 @@ export type Inmate = {
   otherAllocations?: Allocation[]
   startDate?: string
   nonAssociations?: boolean
+  numberPayBandsAvailable?: number
 }
 
 export type AllocateToActivityJourney = {
