@@ -100,7 +100,7 @@ export default class PayBandMultipleRoutes {
     const allInmatesWithPayBands = inmatePayData.map(pay => {
       return {
         prisonerNumber: pay.prisonerNumber,
-        payBandDetail: pay.payBandDetail,
+        payBandDetail: pay.payBandDetails,
       }
     })
 

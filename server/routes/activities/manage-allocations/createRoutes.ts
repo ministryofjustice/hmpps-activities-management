@@ -26,7 +26,7 @@ import ReviewUploadPrisonerListRoutes from './handlers/allocateMultiplePeople/re
 import ActivityRequirementsReviewRoutes from './handlers/allocateMultiplePeople/activityRequirementsReview'
 import ReviewSearchPrisonerListRoutes from './handlers/allocateMultiplePeople/reviewSearchPrisonerList'
 import CheckAndConfirmMultipleRoutes from './handlers/allocateMultiplePeople/checkAndConfirmMultiple'
-import PayBandMultipleRoutes, { PayBandMultiple, PayBandMultipleForm } from './handlers/allocateMultiplePeople/payBandMultiple'
+import PayBandMultipleRoutes, { PayBandMultipleForm } from './handlers/allocateMultiplePeople/payBandMultiple'
 
 export default function Index({
   activitiesService,
