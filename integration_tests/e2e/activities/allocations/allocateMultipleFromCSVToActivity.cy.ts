@@ -13,30 +13,28 @@ import getMdiPrisonPayBands from '../../../fixtures/activitiesApi/getMdiPrisonPa
 import getCandidates from '../../../fixtures/activitiesApi/getCandidates.json'
 import getCandidateSuitability from '../../../fixtures/activitiesApi/getCandidateSuitability.json'
 import getNonAssociations from '../../../fixtures/activitiesApi/non_associations.json'
-
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
 import StartDatePage from '../../../pages/allocateToActivity/startDate'
 import EndDateOptionPage from '../../../pages/allocateToActivity/endDateOption'
 import EndDatePage from '../../../pages/allocateToActivity/endDate'
 import ActivitiesDashboardPage from '../../../pages/allocateToActivity/activitiesDashboard'
-import PayBandPage from '../../../pages/allocateToActivity/payBand'
-import CheckAnswersPage from '../../../pages/allocateToActivity/checkAnswers'
-import CancelPage from '../../../pages/allocateToActivity/cancel'
-import ConfirmationPage from '../../../pages/allocateToActivity/confirmation'
 import AllocationDashboard from '../../../pages/allocateToActivity/allocationDashboard'
 import SetUpPrisonerListMethodPage from '../../../pages/allocateToActivity/setUpPrisonerListMethod'
-import SelectPrisonerPage from '../../../pages/allocateToActivity/selectPrisoner'
 import ManageActivitiesDashboardPage from '../../../pages/activities/manageActivitiesDashboard'
-import BeforeYouAllocate from '../../../pages/allocateToActivity/beforeYouAllocate'
 import ActivitiesIndexPage from '../../../pages/activities'
-import ExclusionsPage from '../../../pages/allocateToActivity/exclusions'
 import resetActivityAndScheduleStubs from './allocationsStubHelper'
 import HowToAddOptions from '../../../../server/enum/allocations'
-import getPrisonPrisonersMdiA1350DZandA8644DY from '../../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ-A8644DY.json'
 import UploadPrisonerListPage from '../../../pages/allocateToActivity/uploadPrisonerList'
 import ActivityRequirementsReviewPage from '../../../pages/allocateToActivity/activityRequirementsReview'
 import ReviewUploadPrisonerListPage from '../../../pages/allocateToActivity/reviewUploadPrisoner'
+// import PayBandPage from '../../../pages/allocateToActivity/payBand'
+// import CheckAnswersPage from '../../../pages/allocateToActivity/checkAnswers'
+// import CancelPage from '../../../pages/allocateToActivity/cancel'
+// import ConfirmationPage from '../../../pages/allocateToActivity/confirmation'
+// import SelectPrisonerPage from '../../../pages/allocateToActivity/selectPrisoner'
+// import BeforeYouAllocate from '../../../pages/allocateToActivity/beforeYouAllocate'
+// import ExclusionsPage from '../../../pages/allocateToActivity/exclusions'
 
 context('Allocate multiple via CSV to an activity', () => {
   beforeEach(() => {
@@ -58,10 +56,9 @@ context('Allocate multiple via CSV to an activity', () => {
     cy.stubEndpoint('GET', '/incentive-reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
-    // cy.stubEndpoint('GET', '/schedules/2', getSchedulesInActivity)
     cy.stubEndpoint('POST', '/schedules/2/allocations')
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
-    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=&size=50', getPrisonPrisonersMdiA1350DZandA8644DY)
+    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=&size=50', getInmateDetails)
     cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociations)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails.content)
 
@@ -267,7 +264,7 @@ context('Allocate multiple via CSV to an activity', () => {
     reviewUploadPrisonerListPage.rows('incentive-level-list').should('have.length', 1)
     reviewUploadPrisonerListPage.hasText('1 people from your CSV file cannot be allocated')
     reviewUploadPrisonerListPage.hasText(
-      'There are 1 with an incentive level that does not match a pay rate for this activity.',
+      'There are 1 people with an incentive level that does not match a pay rate for this activity.',
     )
   })
 })

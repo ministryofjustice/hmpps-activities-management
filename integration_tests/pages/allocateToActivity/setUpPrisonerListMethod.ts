@@ -8,5 +8,4 @@ export default class SetUpPrisonerListMethodPage extends Page {
   caption = (): Cypress.Chainable => cy.get('.govuk-caption-xl')
 
   selectHowToAddDecisionRadio = (option: string) => this.getInputByName('howToAdd').check(option).click()
-
 }

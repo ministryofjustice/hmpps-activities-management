@@ -13,5 +13,4 @@ export default class UploadPrisonerListPage extends Page {
   howToUseCSVSection = () => cy.contains('How to use a CSV file').click()
 
   uploadFile = () => cy.get('button').contains('Upload file').click()
-
 }

@@ -9,7 +9,6 @@ export default class SelectPrisonerPage extends Page {
 
   enterQuery = (text: string) => this.getInputByName('query').type(text)
 
-  //selected-prisoner-
   selectRadio = (prisonerNumber: string) => this.getInputByName('selectedPrisoner').check(prisonerNumber)
 
   selectPrisonerAndContinue = () => cy.get('#continue-button')
