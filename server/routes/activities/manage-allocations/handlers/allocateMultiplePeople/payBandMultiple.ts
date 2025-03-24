@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
-import { Min } from 'class-validator'
+import { Min, ValidateNested, ValidationArguments } from 'class-validator'
 import _ from 'lodash'
 import { startOfToday } from 'date-fns'
 import ActivitiesService from '../../../../../services/activitiesService'
@@ -8,11 +8,23 @@ import { addPayBand, payBandDetail } from '../../../../../utils/helpers/allocati
 import { formatDate, parseISODate, toMoney } from '../../../../../utils/utils'
 import { Inmate } from '../../journey'
 
-export class PayBand {
+const getPrisonerName = (args: ValidationArguments) => (args.object as PayBandMultiple)?.prisonerName
+
+export class PayBandMultiple {
+  prisonerName: string
+
+  prisonerNumber: string
+
   @Expose()
   @Type(() => Number)
-  @Min(1, { message: 'Select a pay band' })
+  @Min(1, { message: args => `Select a pay band for ${getPrisonerName(args)}` })
   payBand: number
+}
+
+export class PayBandMultipleForm {
+  @Type(() => PayBandMultiple)
+  @ValidateNested({ each: true })
+  inmatePayData: PayBandMultiple[]
 }
 
 type inmatePayBandDisplayDetails = {

@@ -25,6 +25,7 @@
                 {% for inmate in payBandsRequiringManualAssign %}
                     {% set prisonerIndex = loop.index0 %}
                     <input type="hidden" name="{{ "inmatePayData[" + prisonerIndex + "][prisonerNumber]" }}" value="{{ inmate.prisonerNumber }}" />
+                    <input type="hidden" name="{{ "inmatePayData[" + prisonerIndex + "][prisonerName]" }}" value="{{ inmate | formatName(NameFormatStyle.firstLast, false) }}" />
                     <input type="hidden" name="{{ "inmatePayData[" + prisonerIndex + "][incentiveLevel]" }}" value="{{ inmate.incentiveLevel }}" />
                     {% set bandOptions = [] %}
                     {% for pay in inmate.payBands %}
@@ -32,7 +33,7 @@
                             {
                                 value: pay.bandId,
                                 text: pay.bandAlias + ' - ' + pay.rate | toMoney if pay.description === undefined else pay.bandAlias + ' - ' + pay.rate | toMoney + pay.description,
-                                checked: formResponses.payBand[prisonerIndex] == pay.bandId
+                                checked: formResponses.inmatePayData[prisonerIndex].payBand == pay.bandId
                             }
                         ), bandOptions) %}
                     {% endfor %}
