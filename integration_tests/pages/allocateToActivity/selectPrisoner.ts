@@ -11,7 +11,7 @@ export default class SelectPrisonerPage extends Page {
 
   selectRadio = (prisonerNumber: string) => this.getInputByName('selectedPrisoner').check(prisonerNumber)
 
-  selectPrisonerAndContinue = () => cy.get('#continue-button')
+  selectPrisonerAndContinue = () => cy.get('button:contains("Select and continue")').click()
 
   addAnotherPersonLink = () => cy.get('add-prisoner').contains('Add another person').click()
 }

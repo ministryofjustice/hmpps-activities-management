@@ -28,7 +28,8 @@ import HowToAddOptions from '../../../../server/enum/allocations'
 import UploadPrisonerListPage from '../../../pages/allocateToActivity/uploadPrisonerList'
 import ActivityRequirementsReviewPage from '../../../pages/allocateToActivity/activityRequirementsReview'
 import ReviewUploadPrisonerListPage from '../../../pages/allocateToActivity/reviewUploadPrisoner'
-// import PayBandPage from '../../../pages/allocateToActivity/payBand'
+import PayBandMultiplePage from '../../../pages/allocateToActivity/payBandMultiple'
+import CheckAndConfirmMultiplePage from '../../../pages/allocateToActivity/checkAndConfirmMultiple'
 // import CheckAnswersPage from '../../../pages/allocateToActivity/checkAnswers'
 // import CancelPage from '../../../pages/allocateToActivity/cancel'
 // import ConfirmationPage from '../../../pages/allocateToActivity/confirmation'
@@ -95,7 +96,6 @@ context('Allocate multiple via CSV to an activity', () => {
     allocatePage.allocateGroupLink()
 
     const setUpPrisonerListMethodPage = Page.verifyOnPage(SetUpPrisonerListMethodPage)
-    // FIXME session.allocateJourney.activity.name (activity is undefined)  setUpPrisonerListMethodPage.caption().should('contain.text', 'Entry level English 1')
     setUpPrisonerListMethodPage.selectHowToAddDecisionRadio(HowToAddOptions.CSV)
     setUpPrisonerListMethodPage.getButton('Continue').click()
 
@@ -126,10 +126,14 @@ context('Allocate multiple via CSV to an activity', () => {
     endDatePage.selectDatePickerDate(endDate)
     endDatePage.continue()
 
-    // FIXME finish the flow
-    // const payBandPage = Page.verifyOnPage(PayBandPage)
-    // payBandPage.selectPayBand('Medium - £1.75')
-    // payBandPage.continue()
+    const payBandMultiplePage = Page.verifyOnPage(PayBandMultiplePage)
+    payBandMultiplePage.selectPayBand('inmatePayData-0-payBand-2')
+    payBandMultiplePage.selectPayBand('inmatePayData-1-payBand-2')
+    payBandMultiplePage.continue()
+
+    const checkAndConfirmMultiple = Page.verifyOnPage(CheckAndConfirmMultiplePage)
+    checkAndConfirmMultiple.selectConfirm('Confirm 2 allocations')
+    // FIXME above is not clicked. Finish the flow
   })
 
   it('should be able to allocate when selecting multiple inmates and remove one prisoner', () => {

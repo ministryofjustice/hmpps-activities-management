@@ -87,7 +87,6 @@ context('Allocate multiple one by one to an activity', () => {
     allocatePage.allocateGroupLink()
 
     const setUpPrisonerListMethodPage = Page.verifyOnPage(SetUpPrisonerListMethodPage)
-    // FIXME session.allocateJourney.activity.name (activity is undefined)  setUpPrisonerListMethodPage.caption().should('contain.text', 'Entry level English 1')
     setUpPrisonerListMethodPage.selectHowToAddDecisionRadio(HowToAddOptions.SEARCH)
     setUpPrisonerListMethodPage.getButton('Continue').click()
 
@@ -96,12 +95,12 @@ context('Allocate multiple one by one to an activity', () => {
     selectPrisonerPage.enterQuery('s')
     selectPrisonerPage.getButton('Search').click()
     selectPrisonerPage.selectRadio('A1350DZ').click()
-    selectPrisonerPage.selectPrisonerAndContinue().click()
-
-    // FIXME click through and finish journey
+    // FIXME showing error 'you must select one option'
+    selectPrisonerPage.selectPrisonerAndContinue()
     // selectPrisonerPage.addAnotherPersonLink()
     // selectPrisonerPage.selectRadio('A8644DY')
     // selectPrisonerPage.continue()
+    // FIXME click through and finish journey
 
     // const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
   })
