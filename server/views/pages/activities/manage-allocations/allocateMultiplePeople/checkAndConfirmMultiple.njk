@@ -68,15 +68,7 @@
                         },
                         {
                             key: { text: "Number of people you’re allocating" },
-                            value: { text: session.allocateJourney.inmates | length },
-                            actions: {
-                                items: [{
-                                    href: 'review-search-prisoner-list?preserveHistory=true',
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change",
-                                    visuallyHiddenText: " number of people being allocated"
-                                }]
-                            }
+                            value: { text: session.allocateJourney.inmates | length }
                         }
                     ]
                 }) }}

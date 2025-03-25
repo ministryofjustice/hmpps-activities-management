@@ -4,13 +4,16 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import SetUpPrisonerListMethodRoutes from './setUpPrisonerListMethod'
 import HowToAddOptions from '../../../../../enum/allocations'
 import { ActivitySchedule } from '../../../../../@types/activitiesAPI/types'
+import MetricsService from '../../../../../services/metricsService'
 
 jest.mock('../../../../../services/activitiesService')
+jest.mock('../../../../../services/metricsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Allocate multiple people to an activity - method for adding list', () => {
-  const handler = new SetUpPrisonerListMethodRoutes(activitiesService)
+  const handler = new SetUpPrisonerListMethodRoutes(activitiesService, metricsService)
   let req: Request
   let res: Response
 
@@ -29,6 +32,7 @@ describe('Allocate multiple people to an activity - method for adding list', () 
     req = {
       session: {},
       query: {},
+      params: {},
     } as unknown as Request
   })
   describe('GET', () => {
