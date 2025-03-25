@@ -1,0 +1,23 @@
+[
+  {
+    "id": 2,
+    "activityId": 2,
+    "prisonerNumber": "A1350DZ",
+    "activitySummary": "English level 1",
+    "scheduleDescription": "Entry level English 1",
+    "payBand": "A",
+    "startDate": "2022-10-10",
+    "endDate": null,
+    "allocatedTime": "2022-10-10T09:30:00",
+    "allocatedBy": "MR BLOGS",
+    "deallocatedTime": null,
+    "deallocatedBy": null,
+    "deallocatedReason": null,
+    "prisonerName": "JO BLOGGS",
+    "prisonerFirstName": "JO",
+    "prisonerLastName": "BLOGGS",
+    "cellLocation": "2-1-007",
+    "releaseDate": "2040-06-23",
+    "nonAssociations": true
+  }
+]
