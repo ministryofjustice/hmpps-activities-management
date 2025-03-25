@@ -1,19 +1,19 @@
 import { Request, Response } from 'express'
-import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import ExtraInformationRoutes from './extraInformation'
+import CourtBookingService from '../../../../../services/courtBookingService'
 
-jest.mock('../../../../../services/bookAVideoLinkService')
+jest.mock('../../../../../services/courtBookingService')
 
 describe('ExtraInformationRoutes', () => {
   let req: Partial<Request>
   let res: Partial<Response>
-  let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
+  let courtBookingService: jest.Mocked<CourtBookingService>
   let extraInformationRoutes: ExtraInformationRoutes
 
   beforeEach(() => {
     req = {
       session: {
-        bookACourtHearingJourney: { type: 'COURT' },
+        bookACourtHearingJourney: {},
       },
       body: {},
       params: {},
@@ -24,8 +24,8 @@ describe('ExtraInformationRoutes', () => {
       redirect: jest.fn(),
       redirectWithSuccess: jest.fn(),
     } as unknown as Response
-    bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
-    extraInformationRoutes = new ExtraInformationRoutes(bookAVideoLinkService)
+    courtBookingService = new CourtBookingService(null) as jest.Mocked<CourtBookingService>
+    extraInformationRoutes = new ExtraInformationRoutes(courtBookingService)
   })
 
   describe('GET', () => {
@@ -44,31 +44,13 @@ describe('ExtraInformationRoutes', () => {
 
       await extraInformationRoutes.POST(req as Request, res as Response)
 
-      expect(bookAVideoLinkService.amendVideoLinkBooking).toHaveBeenCalledWith(
+      expect(courtBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(
         req.session.bookACourtHearingJourney,
         res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/video-link-booking/court/1',
         "You've changed the extra information for this court hearing",
-      )
-    })
-
-    it('redirects with success message when mode is amend for probation booking', async () => {
-      req.session.bookACourtHearingJourney.type = 'PROBATION'
-      req.body.comments = 'Some comments'
-      req.params.mode = 'amend'
-      req.session.bookACourtHearingJourney.bookingId = 1
-
-      await extraInformationRoutes.POST(req as Request, res as Response)
-
-      expect(bookAVideoLinkService.amendVideoLinkBooking).toHaveBeenCalledWith(
-        req.session.bookACourtHearingJourney,
-        res.locals.user,
-      )
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/appointments/video-link-booking/court/1',
-        "You've changed the extra information for this probation meeting",
       )
     })
 

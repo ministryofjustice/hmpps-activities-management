@@ -1,89 +1,158 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
-import { Min } from 'class-validator'
+import { Min, ValidateNested, ValidationArguments } from 'class-validator'
 import _ from 'lodash'
 import { startOfToday } from 'date-fns'
 import ActivitiesService from '../../../../../services/activitiesService'
-import { payBandDetail } from '../../../../../utils/helpers/allocationUtil'
+import { addPayBand, payBandDetail } from '../../../../../utils/helpers/allocationUtil'
 import { formatDate, parseISODate, toMoney } from '../../../../../utils/utils'
+import { Inmate } from '../../journey'
 
-export class PayBand {
+const getPrisonerName = (args: ValidationArguments) => (args.object as PayBandMultiple)?.prisonerName
+
+export class PayBandMultiple {
+  prisonerName: string
+
+  prisonerNumber: string
+
   @Expose()
   @Type(() => Number)
-  @Min(1, { message: 'Select a pay band' })
+  @Min(1, { message: args => `Select a pay band for ${getPrisonerName(args)}` })
   payBand: number
+}
+
+export class PayBandMultipleForm {
+  @Type(() => PayBandMultiple)
+  @ValidateNested({ each: true })
+  inmatePayData: PayBandMultiple[]
+}
+
+type inmatePayBandDisplayDetails = {
+  prisonerNumber: string
+  firstName: string
+  middleNames: string
+  lastName: string
+  incentiveLevel: string
+  prisonId: string
+  payBands: payBandDetail[]
 }
 
 export default class PayBandMultipleRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const allPayBands: payBandDetail[] = await this.getActivityPayRates(req, res)
-    const payBands: payBandDetail[] = payBandWithDescription(allPayBands)
+    const { inmates } = req.session.allocateJourney
+    const allPayBandsForActivity: payBandDetail[] = await this.getActivityPayRates(req, res)
 
-    // need to get the payBands available per prisoner
-    // if there is only one payband for that prisoner, set it for them
-    // if all prisoners have had their payband set automatically, redirect the page without rendering
-    // if any paybands need manually picking, display them as radios
+    // Get the applicable paybands per prisoner needing to be allocated
+    const payBandsPerInmate = getApplicablePayBandsForInmates(inmates, allPayBandsForActivity)
 
-    res.render('pages/activities/manage-allocations/allocateMultiplePeople/payBandMultiple', {
-      payBands,
+    const payBandsToAutomaticallyAssign = payBandsPerInmate.filter(inmate => inmate.payBands.length === 1)
+    const payBandsRequiringManualAssign = payBandsPerInmate.filter(inmate => inmate.payBands.length > 1)
+
+    // if all prisoners can have their payband set automatically, redirect the page without rendering
+    if (!payBandsRequiringManualAssign.length) {
+      const payBandsForInmates = payBandsToAutomaticallyAssign.map(pay => {
+        return {
+          prisonerNumber: pay.prisonerNumber,
+          payBandDetail: pay.payBands[0],
+          numberPayBandsAvailable: 1,
+        }
+      })
+
+      addPayBand(inmates, payBandsForInmates)
+      req.session.allocateJourney.inmates = inmates
+      return res.redirect('check-and-confirm')
+    }
+
+    return res.render('pages/activities/manage-allocations/allocateMultiplePeople/payBandMultiple', {
+      payBandsToAutomaticallyAssign,
+      payBandsRequiringManualAssign,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    // const { payBand } = req.body
-    // const { user } = res.locals
-    // const { allocationId } = req.params
+    const { inmatePayData } = req.body
+    const { inmates } = req.session.allocateJourney
 
-    // if (req.params.mode === 'edit') {
-    //   const allocation = {
-    //     payBandId: +payBand,
-    //   } as AllocationUpdateRequest
+    const activityPayBands = await this.getActivityPayRates(req, res)
+    const paybandsAvailablePerInmate = getApplicablePayBandsForInmates(inmates, activityPayBands)
 
-    //   await this.activitiesService.updateAllocation(+allocationId, allocation, user)
+    // assign the manually chosen paybands
+    inmatePayData.forEach(async inmate => {
+      const i = inmate
+      const payBandDetails = paybandsAvailablePerInmate.find(p => p.prisonerNumber === i.prisonerNumber).payBands
+      const matchingPayBand = payBandDetails.find(b => b.bandId === +i.payBand)
+      i.payBandDetails = matchingPayBand
+      i.numberPayBandsAvailable = payBandDetails.length
+    })
 
-    //   const successMessage = `You've updated the pay rate for this allocation`
-    //   return res.redirectWithSuccess(
-    //     `/activities/allocations/view/${allocationId}`,
-    //     'Allocation updated',
-    //     successMessage,
-    //   )
-    // }
+    // assign the automatic paybands
+    const inmatesWithOneAvailablePayband = paybandsAvailablePerInmate.filter(inmate => inmate.payBands.length === 1)
 
-    // const payBandDetails: payBandDetail = (await this.getActivityPayRates(req, res)).find(b => b.bandId === payBand)
+    inmatesWithOneAvailablePayband.forEach(inmate => {
+      inmatePayData.push({
+        prisonerNumber: inmate.prisonerNumber,
+        incentiveLevel: inmate.incentiveLevel,
+        payBandDetails: inmate.payBands[0],
+        numberPayBandsAvailable: 1,
+      })
+    })
 
-    // req.session.allocateJourney.inmate.payBand = {
-    //   id: payBandDetails.bandId,
-    //   alias: payBandDetails.bandAlias,
-    //   rate: payBandDetails.rate,
-    // }
+    const allInmatesWithPayBands = inmatePayData.map(pay => {
+      return {
+        prisonerNumber: pay.prisonerNumber,
+        payBandDetail: pay.payBandDetails,
+        numberPayBandsAvailable: pay.numberPayBandsAvailable,
+      }
+    })
 
-    return res.redirect('check-and-confirm-multiple')
+    addPayBand(inmates, allInmatesWithPayBands)
+    req.session.allocateJourney.inmates = inmates
+    return res.redirect('check-and-confirm')
   }
 
   private async getActivityPayRates(req: Request, res: Response): Promise<payBandDetail[]> {
-    const { inmates, activity } = req.session.allocateJourney
+    const { activity } = req.session.allocateJourney
 
-    const inmatesIncentiveLevels = Array.from(new Set(inmates.map(inmate => inmate.incentiveLevel)))
     const payRates = (await this.activitiesService.getActivity(activity.activityId, res.locals.user))?.pay
 
-    return _.sortBy(payRates, 'prisonPayBand.displaySequence')
-      .filter(pay => !pay.incentiveLevel || inmatesIncentiveLevels.includes(pay.incentiveLevel))
-      .map(pay => ({
-        bandId: pay.prisonPayBand.id,
-        bandAlias: pay.prisonPayBand.alias,
-        rate: pay.rate,
-        startDate: pay.startDate,
-      }))
+    return _.sortBy(payRates, 'prisonPayBand.displaySequence').map(pay => ({
+      bandId: pay.prisonPayBand.id,
+      bandAlias: pay.prisonPayBand.alias,
+      rate: pay.rate,
+      startDate: pay.startDate,
+      incentiveLevel: pay.incentiveLevel,
+    }))
   }
 }
 
-export function payBandWithDescription(originalPayBands: payBandDetail[]): payBandDetail[] {
+function getApplicablePayBandsForInmates(
+  inmates: Inmate[],
+  allPayBandsForActivity: payBandDetail[],
+): inmatePayBandDisplayDetails[] {
+  const payBandsPerInmate: inmatePayBandDisplayDetails[] = []
+  inmates.forEach(inmate => {
+    const relevantPaybands = payBandWithDescription(allPayBandsForActivity, inmate.incentiveLevel)
+    payBandsPerInmate.push({
+      prisonerNumber: inmate.prisonerNumber,
+      firstName: inmate.firstName,
+      middleNames: inmate.middleNames,
+      lastName: inmate.lastName,
+      prisonId: inmate.prisonCode,
+      incentiveLevel: inmate.incentiveLevel,
+      payBands: relevantPaybands,
+    })
+  })
+  return payBandsPerInmate
+}
+
+export function payBandWithDescription(originalPayBands: payBandDetail[], incentiveLevel: string): payBandDetail[] {
   const formattedPayBands: payBandDetail[] = []
-  const uniquePayBandIds = [...new Set(originalPayBands.map(pay => pay.bandId))]
+  const relevantOriginalPayBands = originalPayBands.filter(pb => pb.incentiveLevel === incentiveLevel)
+  const uniquePayBandIds = [...new Set(relevantOriginalPayBands.map(pay => pay.bandId))]
   uniquePayBandIds.forEach(i => {
-    const payBand = singlePayBandForPayBandId(originalPayBands, i)
+    const payBand = singlePayBandForPayBandId(relevantOriginalPayBands, i)
     formattedPayBands.push(payBand)
   })
   return formattedPayBands

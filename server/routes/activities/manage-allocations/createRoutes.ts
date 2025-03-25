@@ -26,7 +26,7 @@ import ReviewUploadPrisonerListRoutes from './handlers/allocateMultiplePeople/re
 import ActivityRequirementsReviewRoutes from './handlers/allocateMultiplePeople/activityRequirementsReview'
 import ReviewSearchPrisonerListRoutes from './handlers/allocateMultiplePeople/reviewSearchPrisonerList'
 import CheckAndConfirmMultipleRoutes from './handlers/allocateMultiplePeople/checkAndConfirmMultiple'
-import PayBandMultipleRoutes from './handlers/allocateMultiplePeople/payBandMultiple'
+import PayBandMultipleRoutes, { PayBandMultipleForm } from './handlers/allocateMultiplePeople/payBandMultiple'
 
 export default function Index({
   activitiesService,
@@ -109,7 +109,7 @@ export default function Index({
   post('/multiple/activity-requirements-review', activityRequirementsReviewHandler.POST)
   get('/multiple/activity-requirements-review/:prisonerNumber/remove', activityRequirementsReviewHandler.REMOVE, true)
   get('/multiple/pay-band-multiple', PayBandMultipleHandler.GET, true)
-  post('/multiple/pay-band-multiple', PayBandMultipleHandler.POST)
+  post('/multiple/pay-band-multiple', PayBandMultipleHandler.POST, PayBandMultipleForm)
   get('/multiple/check-and-confirm', checkAndConfirmMultipleHandler.GET, true)
   post('/multiple/check-and-confirm', checkAndConfirmMultipleHandler.POST)
 

@@ -8,12 +8,6 @@
 {% set pageId = 'court-hearing-link-page' %}
 {% set jsBackLink = true %}
 {% set pageHeading = "Do you know the link for this video link hearing?" %}
-{% block meta %}
-    {% if session.req.params.mode == 'create' %}
-        <meta name="autocompleteElements" content="agencyCode"/>
-    {% endif %}
-    <meta name="autocompleteElements" content="hearingTypeCode"/>
-{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">

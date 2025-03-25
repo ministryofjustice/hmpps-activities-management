@@ -2,19 +2,22 @@ import { Request, Response } from 'express'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import HearingDetailsRoutes from './hearingDetails'
 import { Court, ReferenceCode } from '../../../../../@types/bookAVideoLinkApi/types'
+import CourtBookingService from '../../../../../services/courtBookingService'
 
 jest.mock('../../../../../services/bookAVideoLinkService')
+jest.mock('../../../../../services/courtBookingService')
 
 describe('HearingDetailsRoutes', () => {
   let req: Partial<Request>
   let res: Partial<Response>
   let bookAVideoLinkService: jest.Mocked<BookAVideoLinkService>
+  let courtBookingService: jest.Mocked<CourtBookingService>
   let hearingDetailsRoutes: HearingDetailsRoutes
 
   beforeEach(() => {
     req = {
       session: {
-        bookACourtHearingJourney: { type: 'COURT' },
+        bookACourtHearingJourney: {},
       },
       body: {},
       params: {},
@@ -27,53 +30,36 @@ describe('HearingDetailsRoutes', () => {
       redirectOrReturn: jest.fn(),
     } as unknown as Response
     bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
-    hearingDetailsRoutes = new HearingDetailsRoutes(bookAVideoLinkService)
+    courtBookingService = new CourtBookingService(null) as jest.Mocked<CourtBookingService>
+    hearingDetailsRoutes = new HearingDetailsRoutes(bookAVideoLinkService, courtBookingService)
   })
 
   describe('GET', () => {
     it('renders hearing details view with agencies and hearing types', async () => {
-      const agencies = [{ code: 'COURT1', description: 'Court 1' }] as Court[]
+      const courts = [{ code: 'COURT1', description: 'Court 1' }] as Court[]
       const hearingTypes = [{ code: 'TYPE1', description: 'Type 1' }] as ReferenceCode[]
-      bookAVideoLinkService.getAllCourts.mockResolvedValue(agencies)
+      bookAVideoLinkService.getAllCourts.mockResolvedValue(courts)
       bookAVideoLinkService.getCourtHearingTypes.mockResolvedValue(hearingTypes)
 
       await hearingDetailsRoutes.GET(req as Request, res as Response)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/court/hearing-details', {
-        agencies,
+        courts,
         hearingTypes,
       })
-      expect(bookAVideoLinkService.getProbationMeetingTypes).not.toHaveBeenCalled()
-    })
-
-    it('renders hearing details view with agencies and meeting types when booking is PROBATION type', async () => {
-      req.session.bookACourtHearingJourney.type = 'PROBATION'
-
-      const agencies = [{ code: 'COURT1', description: 'Court 1' }] as Court[]
-      const hearingTypes = [{ code: 'TYPE1', description: 'Type 1' }] as ReferenceCode[]
-      bookAVideoLinkService.getAllCourts.mockResolvedValue(agencies)
-      bookAVideoLinkService.getProbationMeetingTypes.mockResolvedValue(hearingTypes)
-
-      await hearingDetailsRoutes.GET(req as Request, res as Response)
-
-      expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/court/hearing-details', {
-        agencies,
-        hearingTypes,
-      })
-      expect(bookAVideoLinkService.getCourtHearingTypes).not.toHaveBeenCalled()
     })
   })
 
   describe('POST', () => {
     it('redirects with success message when mode is amend', async () => {
-      req.body.agencyCode = 'COURT1'
+      req.body.courtCode = 'COURT1'
       req.body.hearingTypeCode = 'TYPE1'
       req.params.mode = 'amend'
       req.session.bookACourtHearingJourney.bookingId = 1
 
       await hearingDetailsRoutes.POST(req as Request, res as Response)
 
-      expect(bookAVideoLinkService.amendVideoLinkBooking).toHaveBeenCalledWith(
+      expect(courtBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(
         req.session.bookACourtHearingJourney,
         res.locals.user,
       )
@@ -83,27 +69,8 @@ describe('HearingDetailsRoutes', () => {
       )
     })
 
-    it('redirects with success message when mode is amend for probation bookings', async () => {
-      req.body.agencyCode = 'COURT1'
-      req.body.hearingTypeCode = 'TYPE1'
-      req.params.mode = 'amend'
-      req.session.bookACourtHearingJourney.type = 'PROBATION'
-      req.session.bookACourtHearingJourney.bookingId = 1
-
-      await hearingDetailsRoutes.POST(req as Request, res as Response)
-
-      expect(bookAVideoLinkService.amendVideoLinkBooking).toHaveBeenCalledWith(
-        req.session.bookACourtHearingJourney,
-        res.locals.user,
-      )
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/appointments/video-link-booking/court/1',
-        "You've changed the meeting type for this probation meeting",
-      )
-    })
-
     it('redirects to location when mode is not amend', async () => {
-      req.body.agencyCode = 'COURT1'
+      req.body.courtCode = 'COURT1'
       req.body.hearingTypeCode = 'TYPE1'
       req.params.mode = 'create'
 

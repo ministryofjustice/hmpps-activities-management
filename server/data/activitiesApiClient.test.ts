@@ -8,29 +8,28 @@ import { ServiceUser } from '../@types/express'
 import {
   ActivityCreateRequest,
   Allocation,
-  LocationGroup,
-  LocationPrefix,
-  PrisonerAllocations,
-  PrisonerScheduledEvents,
-  AppointmentSeries,
-  AppointmentSeriesDetails,
-  AppointmentDetails,
   AppointmentCategorySummary,
+  AppointmentDetails,
   AppointmentLocationSummary,
+  AppointmentSeries,
   AppointmentSeriesCreateRequest,
-  PrisonerDeallocationRequest,
+  AppointmentSeriesDetails,
+  AppointmentSetAppointment,
+  AppointmentSetCreateRequest,
+  AppointmentSetDetails,
+  AppointmentUpdateRequest,
   EventAcknowledgeRequest,
   EventReview,
   EventReviewSearchResults,
-  AppointmentSetCreateRequest,
-  AppointmentSetAppointment,
-  AppointmentSetDetails,
-  WaitingListApplicationRequest,
-  WaitingListApplicationUpdateRequest,
-  AppointmentUpdateRequest,
-  AppointmentAttendanceRequest,
+  LocationGroup,
+  LocationPrefix,
+  PrisonerAllocations,
+  PrisonerDeallocationRequest,
+  PrisonerScheduledEvents,
   SuspendPrisonerRequest,
   UnsuspendPrisonerRequest,
+  WaitingListApplicationRequest,
+  WaitingListApplicationUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import TimeSlot from '../enum/timeSlot'
 import { AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -936,6 +935,25 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getInternalLocationEventsByDpsLocationIds', () => {
+    it('should call endpoint to get internal locations events', async () => {
+      const prisonCode = 'MDI'
+      const date = formatIsoDate(new Date())
+      const dpsLocationIds = ['11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222']
+      const timeSlot = 'AM'
+      fakeActivitiesApi
+        .post(`/scheduled-events/prison/${prisonCode}/location-events`)
+        .query({ date, timeSlot })
+        .matchHeader('authorization', 'Bearer token')
+        .matchHeader('Caseload-Id', prisonCode)
+        .reply(200)
+
+      await activitiesApiClient.getInternalLocationEventsByDpsLocationIds('MDI', date, dpsLocationIds, user, timeSlot)
+
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getAppointmentAttendanceSummaries', () => {
     it('should call endpoint to get appointment attendance summaries', async () => {
       const prisonCode = 'MDI'
@@ -947,23 +965,6 @@ describe('activitiesApiClient', () => {
         .matchHeader('Caseload-Id', prisonCode)
         .reply(200)
       await activitiesApiClient.getAppointmentAttendanceSummaries('MDI', date, user)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
-  describe('putAppointmentAttendance', () => {
-    it('should call endpoint to put the appointment attendance', async () => {
-      const appointmentId = 1
-      const request = {
-        attendedPrisonNumbers: ['A1234BC'],
-        nonAttendedPrisonNumbers: ['B2345CD'],
-      } as AppointmentAttendanceRequest
-      fakeActivitiesApi
-        .put(`/appointments/${appointmentId}/attendance`)
-        .matchHeader('authorization', `Bearer token`)
-        .matchHeader('Caseload-Id', 'MDI')
-        .reply(200)
-      await activitiesApiClient.putAppointmentAttendance(1, request, user)
       expect(nock.isDone()).toBe(true)
     })
   })

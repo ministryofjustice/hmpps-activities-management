@@ -13,7 +13,7 @@
 {% endif %}
 {% block meta %}
     {% if session.req.params.mode == 'create' %}
-        <meta name="autocompleteElements" content="agencyCode"/>
+        <meta name="autocompleteElements" content="courtCode"/>
     {% endif %}
     <meta name="autocompleteElements" content="hearingTypeCode"/>
 {% endblock %}
@@ -28,31 +28,31 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method='POST' {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="{{ 'Changing hearing type' if session.bookACourtHearingJourney.type == 'COURT' else 'Changing meeting type' }}" {% endif %}>
+            <form method='POST' {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing hearing type" {% endif %}>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {% set items = [{ text: "", value: "" }] %}
-                {% for agency in agencies %}
+                {% for court in courts %}
                     {% set items = (items.push({
-                        value: agency.code,
-                        text: agency.description,
-                        selected: formResponses.agencyCode == agency.code or session.bookACourtHearingJourney.agencyCode == agency.code
+                        value: court.code,
+                        text: court.description,
+                        selected: formResponses.courtCode == court.code or session.bookACourtHearingJourney.courtCode == court.code
                     }), items) %}
                 {% endfor %}
 
                 {% if session.req.params.mode == 'create' %}
                     {{ govukSelect({
-                        name: "agencyCode",
-                        id: "agencyCode",
+                        name: "courtCode",
+                        id: "courtCode",
                         label: {
                             text: "Select the court the booking is for",
                             classes: 'govuk-label--s'
                         },
                         items: items,
-                        errorMessage: validationErrors | findError("agencyCode")
+                        errorMessage: validationErrors | findError("courtCode")
                     }) }}
                 {% else %}
-                    <input type="hidden" name="agencyCode" value="{{ session.bookACourtHearingJourney.agencyCode }}">
+                    <input type="hidden" name="courtCode" value="{{ session.bookACourtHearingJourney.courtCode }}">
                 {% endif %}
 
                 {% set items = [{ text: "", value: "" }] %}
@@ -68,7 +68,7 @@
                     name: "hearingTypeCode",
                     id: "hearingTypeCode",
                     label: {
-                        text: "Select the type of hearing" if session.bookACourtHearingJourney.type == 'COURT' else "Select the type of meeting",
+                        text: "Select the type of hearing",
                         classes: 'govuk-label--s'
                     },
                     items: items,

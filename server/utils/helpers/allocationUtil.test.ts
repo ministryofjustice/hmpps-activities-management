@@ -6,6 +6,7 @@ import {
   inmatesWithoutMatchingIncentiveLevel,
   addOtherAllocations,
   addNonAssociations,
+  addPayBand,
 } from './allocationUtil'
 import { Inmate } from '../../routes/activities/manage-allocations/journey'
 import { Activity, Allocation, PrisonerAllocations } from '../../@types/activitiesAPI/types'
@@ -259,5 +260,41 @@ describe('Allocation helper function tests', () => {
     addNonAssociations([inmate1, inmate2], [])
     expect(inmate1.nonAssociations).toBe(false)
     expect(inmate2.nonAssociations).toBe(false)
+  })
+  it('should set empty pay rate if no payrates are provided', () => {
+    const payBands = []
+
+    addPayBand([inmate1], payBands)
+    expect(inmate1.payBand).toEqual(undefined)
+  })
+
+  it('should set the appropriate pay band on the inmate', () => {
+    const payBands = [
+      {
+        prisonerNumber: 'A11222A',
+        numberPayBandsAvailable: 1,
+        payBandDetail: {
+          bandId: 122,
+          bandAlias: 'Some name',
+          rate: 100,
+        },
+      },
+      {
+        prisonerNumber: 'B11232B',
+        numberPayBandsAvailable: 2,
+        payBandDetail: {
+          bandId: 444,
+          bandAlias: 'Some other name',
+          rate: 10,
+        },
+      },
+    ]
+
+    addPayBand([inmate1], payBands)
+    expect(inmate1.payBand).toEqual({ id: 122, alias: 'Some name', rate: 100 })
+    expect(inmate1.numberPayBandsAvailable).toEqual(1)
+    addPayBand([inmate2], payBands)
+    expect(inmate2.payBand).toEqual({ id: 444, alias: 'Some other name', rate: 10 })
+    expect(inmate2.numberPayBandsAvailable).toEqual(2)
   })
 })

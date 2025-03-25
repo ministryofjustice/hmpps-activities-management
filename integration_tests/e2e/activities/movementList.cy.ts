@@ -26,7 +26,7 @@ context('Create activity', () => {
     )
     cy.stubEndpoint(
       'POST',
-      `/scheduled-events/prison/MDI/locations\\?date=${today}&timeSlot=AM`,
+      `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM`,
       getScheduledEventLocations,
     )
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)

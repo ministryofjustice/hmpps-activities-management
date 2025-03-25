@@ -1,0 +1,28 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "This video link booking has been cancelled" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukPanel({ titleText: pageTitle, classes: 'govuk-!-margin-bottom-6' }) }}
+
+            {% if probationTeam.enabled %}
+                <p class='govuk-body'>We have emailed you confirming the cancellation. An email has also been sent to {{ probationTeam.description }}.</p>
+            {% else %}
+                <p class='govuk-body'>We have emailed you confirming the cancellation.</p>
+                <h2 class="govuk-heading-m">Email the probation team to confirm the cancellation</h2>
+                <p class="govuk-body">
+                    The probation team will not automatically receive confirmation of this cancellation. You must email them to confirm the cancellation.
+                </p>
+            {% endif %}
+
+            <div class="govuk-button-group">
+                {{ govukButton({ text: "Return to appointments dashboard", href: '/appointments/search?startDate=' + date | parseIsoDate | formatDate('yyyy-MM-dd') }) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

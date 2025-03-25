@@ -33,14 +33,13 @@ export class DateAndTime {
   @Expose()
   @Transform(({ value }) => simpleTimeToDate(value))
   @Validator((endTime, { startTime }) => (isValid(startTime) ? endTime > startTime : true), {
-    message: 'Select a end time that is after the start time',
+    message: 'Select an end time that is after the start time',
   })
   @IsValidDate({ message: 'Enter a valid end time' })
   @IsNotEmpty({ message: 'Enter an end time' })
   endTime: Date
 
   @Expose()
-  @ValidateIf(o => o.bookACourtHearingJourney.type === 'COURT')
   @IsEnum(YesNo, { message: 'Select if a pre-court hearing should be added' })
   preRequired: YesNo
 
@@ -51,7 +50,6 @@ export class DateAndTime {
   preLocation: string
 
   @Expose()
-  @ValidateIf(o => o.bookACourtHearingJourney.type === 'COURT')
   @IsEnum(YesNo, { message: 'Select if a post-court hearing should be added' })
   postRequired: YesNo
 
