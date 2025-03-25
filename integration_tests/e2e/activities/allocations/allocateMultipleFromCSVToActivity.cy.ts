@@ -67,6 +67,7 @@ context('Allocate multiple via CSV to an activity', () => {
     cy.signIn()
   })
 
+  // FIXME page asserts required through the journey
   it('should be able to allocate when selecting multiple inmates', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()

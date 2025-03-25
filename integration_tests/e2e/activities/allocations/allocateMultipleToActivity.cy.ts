@@ -59,7 +59,7 @@ context('Allocate multiple one by one to an activity', () => {
 
     cy.signIn()
   })
-
+  // FIXME page asserts required through the journey
   it('should be able to allocate when selecting multiple inmates', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
@@ -97,6 +97,8 @@ context('Allocate multiple one by one to an activity', () => {
     selectPrisonerPage.getButton('Search').click()
     selectPrisonerPage.selectRadio('A1350DZ').click()
     selectPrisonerPage.selectPrisonerAndContinue().click()
+
+    // FIXME click through and finish journey
     // selectPrisonerPage.addAnotherPersonLink()
     // selectPrisonerPage.selectRadio('A8644DY')
     // selectPrisonerPage.continue()
