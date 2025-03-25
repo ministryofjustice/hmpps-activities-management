@@ -113,7 +113,13 @@
   {% if withoutMatchingIncentiveLevelInmates.length > 0 %}
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        <p class="govuk-body">There are {{ withoutMatchingIncentiveLevelInmates | length }} people with an incentive level that does not match a pay rate for this activity. <a href='/activities/view/{{ session.allocateJourney.activity.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>You can edit the activity to change pay rates</a></p>
+        <p class="govuk-body">
+          {% if withoutMatchingIncentiveLevelInmates.length == 1 %}
+            There is 1 person with an incentive level that does not match a pay rate for this activity.
+          {% else %}
+            There are {{ allocatedInmates | length }} people with an incentive level that does not match a pay rate for this activity.
+          {% endif %}
+          <a href='/activities/view/{{ session.allocateJourney.activity.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>You can edit the activity to change pay rates</a></p>
       </div>
     </div>
 
@@ -164,7 +170,13 @@
   {% if allocatedInmates.length > 0 %}
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        <p class="govuk-body">There are {{ allocatedInmates | length }} people already allocated to {{ session.allocateJourney.activity.name }}</p>
+        <p class="govuk-body">
+          {% if allocatedInmates.length == 1 %}
+            There is 1 person already allocated to {{ session.allocateJourney.activity.name }}
+          {% else %}
+            There are {{ allocatedInmates | length }} people already allocated to {{ session.allocateJourney.activity.name }}
+          {% endif %}
+        </p>
       </div>
     </div>
 

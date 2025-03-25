@@ -219,7 +219,7 @@ context('Allocate multiple via CSV to an activity', () => {
 
     reviewUploadPrisonerListPage.rows('allocated-inmate-list').should('have.length', 1)
     reviewUploadPrisonerListPage.hasText('1 people from your CSV file cannot be allocated')
-    reviewUploadPrisonerListPage.hasText('There are 1 people already allocated to Entry level English 1')
+    reviewUploadPrisonerListPage.hasText('There is 1 person already allocated to Entry level English 1')
   })
 
   it('should be able to allocate when selecting multiple inmates without matching incentive level list', () => {
@@ -265,7 +265,7 @@ context('Allocate multiple via CSV to an activity', () => {
     reviewUploadPrisonerListPage.rows('incentive-level-list').should('have.length', 1)
     reviewUploadPrisonerListPage.hasText('1 people from your CSV file cannot be allocated')
     reviewUploadPrisonerListPage.hasText(
-      'There are 1 people with an incentive level that does not match a pay rate for this activity.',
+      'There is 1 person with an incentive level that does not match a pay rate for this activity.',
     )
   })
 })
