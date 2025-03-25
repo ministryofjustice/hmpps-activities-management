@@ -30,7 +30,7 @@ import HowToAddOptions from '../../../../server/enum/allocations'
 // import EndDateOptionPage from '../../../pages/allocateToActivity/endDateOption'
 // import EndDatePage from '../../../pages/allocateToActivity/endDate'
 // import getPrisonPrisonersMdiA1350DZandA8644DY from '../../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ-A8644DY.json'
-// import getInmateDetails from '../../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ-A8644DY.json'
+import getInmateDetails from '../../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ-A8644DY.json'
 
 context('Allocate multiple one by one to an activity', () => {
   beforeEach(() => {
@@ -45,15 +45,15 @@ context('Allocate multiple one by one to an activity', () => {
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', JSON.parse('[]'))
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
-    // cy.stubEndpoint('GET', '/prisoner/A5015DY', getInmateDetails)
     cy.stubEndpoint('GET', '/incentive-reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
-    // cy.stubEndpoint('GET', '/schedules/2', getSchedulesInActivity)
     cy.stubEndpoint('POST', '/schedules/2/allocations')
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
-    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=s&size=50', getPrisonPrisoners_MDI_A1350DZ_A8644DY)
+    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=s&size=50', getInmateDetails)
     cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociations)
+    // cy.stubEndpoint('GET', '/schedules/2', getSchedulesInActivity)
+    // cy.stubEndpoint('GET', '/prisoner/A5015DY', getInmateDetails)
 
     resetActivityAndScheduleStubs(subWeeks(new Date(), 2))
 
