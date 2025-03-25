@@ -68,6 +68,7 @@ describe('Select prisoner - alllocate multiple people to an activity', () => {
 
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/manage-allocations/allocateMultiplePeople/selectPrisoner',
+        { preserveHistory: undefined },
       )
     })
     it('should render the view with search term', async () => {

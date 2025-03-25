@@ -122,7 +122,7 @@ describe('Pay band page', () => {
           },
         },
       ])
-      expect(res.redirect).toHaveBeenCalledWith('check-and-confirm')
+      expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
     it('renders the page with one prisoner automatically assigned and one to be manually assigned', async () => {
       when(activitiesService.getActivity)
@@ -385,7 +385,7 @@ describe('Pay band page', () => {
           },
         },
       ])
-      expect(res.redirect).toHaveBeenCalledWith('check-and-confirm')
+      expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })
   describe('payBandWithDescription', () => {

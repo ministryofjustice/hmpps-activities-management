@@ -110,8 +110,8 @@ export default function Index({
   get('/multiple/activity-requirements-review/:prisonerNumber/remove', activityRequirementsReviewHandler.REMOVE, true)
   get('/multiple/pay-band-multiple', PayBandMultipleHandler.GET, true)
   post('/multiple/pay-band-multiple', PayBandMultipleHandler.POST, PayBandMultipleForm)
-  get('/multiple/check-and-confirm', checkAndConfirmMultipleHandler.GET, true)
-  post('/multiple/check-and-confirm', checkAndConfirmMultipleHandler.POST)
+  get('/multiple/check-answers', checkAndConfirmMultipleHandler.GET, true)
+  post('/multiple/check-answers', checkAndConfirmMultipleHandler.POST)
 
   get('/error/:errorType(transferred)', errorHandler.GET, true)
 

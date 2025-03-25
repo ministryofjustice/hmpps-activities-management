@@ -94,6 +94,8 @@ export default class StartDateRoutes {
         successMessage,
       )
     }
+    if (req.session.allocateJourney.allocateMultipleInmatesMode && req.query.preserveHistory)
+      return res.redirect('multiple/check-answers')
     return res.redirectOrReturn(`end-date-option`)
   }
 }

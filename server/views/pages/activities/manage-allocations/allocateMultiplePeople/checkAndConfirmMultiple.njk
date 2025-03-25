@@ -24,7 +24,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            {% set endDateOption = ('remove-end-date-option' if session.allocateJourney.endDate else '../end-date') + '?preserveHistory=true' %}
+            {% set endDateOption = ('../remove-end-date-option' if session.allocateJourney.endDate else '../end-date') + '?preserveHistory=true' %}
 
             <h2 class="govuk-heading-m">Allocations details</h2>
 
