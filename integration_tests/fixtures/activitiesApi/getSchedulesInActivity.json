@@ -24,7 +24,22 @@
         "name": "Education",
         "description": "Such as classes in English, maths, construction and computer skills"
       },
-      "riskLevel": null
+      "riskLevel": null,
+      "pay": [
+        {
+          "id": 1,
+          "incentiveLevel": "Basic",
+          "incentiveNomisCode": "BAS",
+          "prisonPayBand": {
+            "alias": "",
+            "description": "",
+            "displaySequence": 0,
+            "id": 0,
+            "nomisPayBand": 0,
+            "prisonCode": ""
+          }
+        }
+      ]
     },
     "slots": [
       {
