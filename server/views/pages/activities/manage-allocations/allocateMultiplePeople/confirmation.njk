@@ -6,10 +6,10 @@
 {% set activityId = session.allocateJourney.activity.activityId %}
 {% set activityName = session.allocateJourney.activity.name %}
 
-{% if session.inmates | length > 1 %}
+{% if session.allocateJourney.inmates | length > 1 %}
     {% set panelText = session.allocateJourney.inmates | length + ' people are now allocated to ' + activityName %}
 {% else %}
-    {% set panelText = session.allocateJourney.inmates[0].prisonerName ' is now allocated to ' + activityName %}
+    {% set panelText = session.allocateJourney.inmates[0] | formatName(NameFormatStyle.firstLast, false) + ' is now allocated to ' + activityName %}
 {% endif %}
 
 {% block content %}
@@ -24,7 +24,8 @@
                 <ul class='govuk-list govuk-list--bullet'>
                     <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>
                     <li><a href="/activities/allocation-dashboard" class='govuk-link'>find other activities with vacancies</a></li>
-                    <li><a href="#" class='govuk-link'>find someone to manage their allocations</a></li>
+                    {# TODO: haven't been told where this link is meant to go yet #}
+                    {# <li><a href="#" class='govuk-link'>find someone to manage their allocations</a></li> #}
                 </ul>
         </div>
     </div>

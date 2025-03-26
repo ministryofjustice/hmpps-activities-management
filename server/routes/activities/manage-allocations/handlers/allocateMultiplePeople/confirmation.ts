@@ -12,6 +12,6 @@ export default class ConfirmMultipleAllocationsRoutes {
     ).addJourneyCompletedMetrics(req)
     this.metricsService.trackEvent(allocationEvent)
 
-    res.render('pages/activities/manage-allocations/allocateMultiplePeople/confirmation')
+    return res.render('pages/activities/manage-allocations/allocateMultiplePeople/confirmation')
   }
 }
