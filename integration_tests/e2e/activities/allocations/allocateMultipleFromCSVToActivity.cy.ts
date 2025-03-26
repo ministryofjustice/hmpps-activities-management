@@ -57,7 +57,7 @@ context('Allocate multiple via CSV to an activity', () => {
     cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociations)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails.content)
 
-    resetActivityAndScheduleStubs(subWeeks(new Date(), 2))
+    resetActivityAndScheduleStubs({ activityStartDate: subWeeks(new Date(), 2) })
 
     cy.signIn()
   })

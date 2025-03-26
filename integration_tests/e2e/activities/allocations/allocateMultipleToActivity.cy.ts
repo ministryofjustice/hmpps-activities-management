@@ -22,7 +22,8 @@ import resetActivityAndScheduleStubs from './allocationsStubHelper'
 import HowToAddOptions from '../../../../server/enum/allocations'
 import getPrisonerA1350DZ from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-A1350DZ.json'
 import getPrisonerA8644DY from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-A8644DY.json'
-import getInmateDetails from '../../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ-A8644DY.json'
+import getPrisonerA1351DZ from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-A1351DZ.json'
+import getInmateDetails from '../../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ-A8644DY-A1351DZ.json'
 import ActivityRequirementsReviewPage from '../../../pages/allocateToActivity/activityRequirementsReview'
 import StartDatePage from '../../../pages/allocateToActivity/startDate'
 import EndDateOptionPage from '../../../pages/allocateToActivity/endDateOption'
@@ -53,11 +54,13 @@ context('Allocate multiple one by one to an activity', () => {
     cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociations)
     cy.stubEndpoint('GET', '/prisoner/A1350DZ', getPrisonerA1350DZ)
     cy.stubEndpoint('GET', '/prisoner/A8644DY', getPrisonerA8644DY)
+    cy.stubEndpoint('GET', '/prisoner/A1351DZ', getPrisonerA1351DZ)
     cy.stubEndpoint('GET', '/schedules/2/allocations\\?includePrisonerSummary=true', [])
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A1350DZ', getCandidateSuitability)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A8644DY', getCandidateSuitability)
+    cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A1351DZ', getCandidateSuitability)
 
-    resetActivityAndScheduleStubs(subWeeks(new Date(), 2))
+    resetActivityAndScheduleStubs({ activityStartDate: subWeeks(new Date(), 2), reducedPayOptions: true })
 
     cy.signIn()
   })
@@ -105,7 +108,13 @@ context('Allocate multiple one by one to an activity', () => {
     selectPrisonerPage.selectRadio('A8644DY').click()
     selectPrisonerPage.selectPrisonerAndContinue()
 
-    selectPrisonerPage.inmateRows().should('have.length', 2)
+    selectPrisonerPage.addAnotherPersonLink()
+    selectPrisonerPage.enterQuery('s')
+    selectPrisonerPage.getButton('Search').click()
+    selectPrisonerPage.selectRadio('A1351DZ').click()
+    selectPrisonerPage.selectPrisonerAndContinue()
+
+    selectPrisonerPage.inmateRows().should('have.length', 3)
     selectPrisonerPage.continue()
 
     const activityRequirementsReviewPage = Page.verifyOnPage(ActivityRequirementsReviewPage)
@@ -127,18 +136,28 @@ context('Allocate multiple one by one to an activity', () => {
 
     const payBandMultiplePage = Page.verifyOnPage(PayBandMultiplePage)
     payBandMultiplePage.selectPayBand('inmatePayData-0-payBand-2')
-    payBandMultiplePage.selectPayBand('inmatePayData-1-payBand-2')
+    payBandMultiplePage.selectPayBand('inmatePayData-1-payBand')
+    payBandMultiplePage.clickDetails()
+    payBandMultiplePage.checkTableCell(0, 'Jacobson, Lee Bob')
+    payBandMultiplePage.checkTableCell(1, 'Standard incentive level:\nLow - £1.50')
     payBandMultiplePage.continue()
 
     const checkAndConfirmMultiple = Page.verifyOnPage(CheckAndConfirmMultiplePage)
-    checkAndConfirmMultiple.inmatePayRows().should('have.length', 2)
-    checkAndConfirmMultiple.selectConfirm('Confirm 2 allocations').click()
+    checkAndConfirmMultiple.inmatePayRows().should('have.length', 3)
+    checkAndConfirmMultiple.checkTableCell(0, 'Winchurch, David Bob')
+    checkAndConfirmMultiple.checkTableCell(1, 'Enhanced incentive level:\nMedium - £2.00')
+    checkAndConfirmMultiple.checkTableCell(2, 'Change')
+    checkAndConfirmMultiple.checkTableCell(4, 'Enhanced incentive level:\nLow - £1.75')
+    checkAndConfirmMultiple.checkTableCell(5, 'Change')
+    checkAndConfirmMultiple.checkTableCell(7, 'Standard incentive level:\nLow - £1.50')
+    checkAndConfirmMultiple.checkTableCell(8, '')
+    checkAndConfirmMultiple.selectConfirm('Confirm 3 allocations').click()
 
     const confirmMultipleAllocationsPage = Page.verifyOnPage(ConfirmMultipleAllocationsPage)
     confirmMultipleAllocationsPage.panelHeader().should('contain.text', 'Allocations complete')
     confirmMultipleAllocationsPage
       .panelText()
-      .should('contain.text', '2 people are now allocated to Entry level English 1')
+      .should('contain.text', '3 people are now allocated to Entry level English 1')
     confirmMultipleAllocationsPage.activityPageLink().click()
     cy.location().should(loc => {
       expect(loc.pathname).to.eq('/activities/allocation-dashboard/2')

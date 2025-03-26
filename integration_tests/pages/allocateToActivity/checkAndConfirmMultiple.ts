@@ -15,4 +15,10 @@ export default class CheckAndConfirmMultiplePage extends Page {
       .then($el => {
         return Cypress.$.makeArray($el)
       })
+
+  checkTableCell = (cellNumber, contents) => {
+    cy.get(`[data-qa="prisoner-pay-list"]`)
+      .find('td')
+      .then($data => expect($data.get(cellNumber).innerText).to.contain(contents))
+  }
 }

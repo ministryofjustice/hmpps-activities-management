@@ -45,7 +45,7 @@ context('Deallocation from activity', () => {
   describe('Activity has already started', () => {
     it('should de-allocate from sessions after today', () => {
       // Set start date to 15 days ago so no activity session today
-      resetActivityAndScheduleStubs(subDays(subWeeks(new Date(), 2), 1))
+      resetActivityAndScheduleStubs({ activityStartDate: subDays(subWeeks(new Date(), 2), 1) })
 
       const indexPage = Page.verifyOnPage(IndexPage)
       indexPage.activitiesCard().click()
