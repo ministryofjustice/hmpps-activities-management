@@ -27,6 +27,7 @@ import ActivityRequirementsReviewRoutes from './handlers/allocateMultiplePeople/
 import ReviewSearchPrisonerListRoutes from './handlers/allocateMultiplePeople/reviewSearchPrisonerList'
 import CheckAndConfirmMultipleRoutes from './handlers/allocateMultiplePeople/checkAndConfirmMultiple'
 import PayBandMultipleRoutes, { PayBandMultipleForm } from './handlers/allocateMultiplePeople/payBandMultiple'
+import ConfirmMultipleAllocationsRoutes from './handlers/allocateMultiplePeople/confirmation'
 
 export default function Index({
   activitiesService,
@@ -52,7 +53,7 @@ export default function Index({
   const cancelHandler = new CancelRoutes()
   const confirmationHandler = new ConfirmationRoutes(metricsService, activitiesService)
   const errorHandler = new AllocationErrorRoutes()
-  const setUpPrisonerListHandler = new SetUpPrisonerListMethodRoutes(activitiesService)
+  const setUpPrisonerListHandler = new SetUpPrisonerListMethodRoutes(activitiesService, metricsService)
   const selectPrisonerHandler = new SelectPrisonerRoutes(prisonService, activitiesService, nonAssociationsService)
   const uploadPrisonerListHandler = new UploadPrisonerListRoutes(
     new PrisonerListCsvParser(),
@@ -65,6 +66,7 @@ export default function Index({
   const reviewSearchPrisonerListHandler = new ReviewSearchPrisonerListRoutes(nonAssociationsService, activitiesService)
   const PayBandMultipleHandler = new PayBandMultipleRoutes(activitiesService)
   const checkAndConfirmMultipleHandler = new CheckAndConfirmMultipleRoutes(activitiesService)
+  const confirmMultipleAllocationsHandler = new ConfirmMultipleAllocationsRoutes(metricsService)
 
   get('/prisoner/:prisonerNumber', startJourneyHandler.GET)
   get('/before-you-allocate', beforeYouAllocateHandler.GET, true)
@@ -110,8 +112,9 @@ export default function Index({
   get('/multiple/activity-requirements-review/:prisonerNumber/remove', activityRequirementsReviewHandler.REMOVE, true)
   get('/multiple/pay-band-multiple', PayBandMultipleHandler.GET, true)
   post('/multiple/pay-band-multiple', PayBandMultipleHandler.POST, PayBandMultipleForm)
-  get('/multiple/check-and-confirm', checkAndConfirmMultipleHandler.GET, true)
-  post('/multiple/check-and-confirm', checkAndConfirmMultipleHandler.POST)
+  get('/multiple/check-answers', checkAndConfirmMultipleHandler.GET, true)
+  post('/multiple/check-answers', checkAndConfirmMultipleHandler.POST)
+  get('/multiple/confirmation', confirmMultipleAllocationsHandler.GET, true)
 
   get('/error/:errorType(transferred)', errorHandler.GET, true)
 

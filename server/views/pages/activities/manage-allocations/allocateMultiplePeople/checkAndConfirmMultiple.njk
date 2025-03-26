@@ -24,7 +24,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            {% set endDateOption = ('remove-end-date-option' if session.allocateJourney.endDate else '../end-date') + '?preserveHistory=true' %}
+            {% set endDateOption = ('../remove-end-date-option' if session.allocateJourney.endDate else '../end-date') + '?preserveHistory=true' %}
 
             <h2 class="govuk-heading-m">Allocations details</h2>
 
@@ -68,15 +68,7 @@
                         },
                         {
                             key: { text: "Number of people you’re allocating" },
-                            value: { text: session.allocateJourney.inmates | length },
-                            actions: {
-                                items: [{
-                                    href: 'review-search-prisoner-list?preserveHistory=true',
-                                    classes: 'govuk-link--no-visited-state',
-                                    text: "Change",
-                                    visuallyHiddenText: " number of people being allocated"
-                                }]
-                            }
+                            value: { text: session.allocateJourney.inmates | length }
                         }
                     ]
                 }) }}

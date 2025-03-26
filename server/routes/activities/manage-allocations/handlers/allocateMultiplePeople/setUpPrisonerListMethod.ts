@@ -5,6 +5,9 @@ import HowToAddOptions from '../../../../../enum/allocations'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { AllocateToActivityJourney } from '../../journey'
 import findNextSchedulesInstance from '../../../../../utils/helpers/nextScheduledInstanceCalculator'
+import MetricsService from '../../../../../services/metricsService'
+import { initJourneyMetrics } from '../../../../../utils/metricsUtils'
+import MetricsEvent from '../../../../../data/metricsEvent'
 
 export class SetUpPrisonerListForm {
   @Expose()
@@ -13,10 +16,18 @@ export class SetUpPrisonerListForm {
 }
 
 export default class SetUpPrisonerListMethodRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly metricsServices: MetricsService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/activities/manage-allocations/allocateMultiplePeople/setUpPrisonerListMethod')
+    initJourneyMetrics(req, 'Other people')
+    this.metricsServices.trackEvent(
+      MetricsEvent.CREATE_MULTIPLE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+    )
+
+    return res.render('pages/activities/manage-allocations/allocateMultiplePeople/setUpPrisonerListMethod')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

@@ -38,6 +38,7 @@ export default class SelectPrisonerRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     let { query } = req.query
+    const { preserveHistory } = req.query
     const { activity } = req.session.allocateJourney
     if (res.locals.formResponses?.query !== undefined) {
       query = res.locals.formResponses.query
@@ -52,6 +53,7 @@ export default class SelectPrisonerRoutes {
         return res.render('pages/activities/manage-allocations/allocateMultiplePeople/selectPrisoner', {
           prisoners: [],
           query,
+          preserveHistory,
         })
       }
 
@@ -68,15 +70,16 @@ export default class SelectPrisonerRoutes {
       return res.render('pages/activities/manage-allocations/allocateMultiplePeople/selectPrisoner', {
         prisoners: inmates,
         query,
+        preserveHistory,
       })
     }
 
-    return res.render('pages/activities/manage-allocations/allocateMultiplePeople/selectPrisoner')
+    return res.render('pages/activities/manage-allocations/allocateMultiplePeople/selectPrisoner', { preserveHistory })
   }
 
   SEARCH = async (req: Request, res: Response): Promise<void> => {
     const { query } = req.body
-    return res.redirect(`select-prisoner?query=${query}`)
+    return res.redirect(`select-prisoner?query=${query}${req.query.preserveHistory ? '&preserveHistory=true' : ''}`)
   }
 
   SELECT_PRISONER = async (req: Request, res: Response): Promise<void> => {
@@ -99,7 +102,7 @@ export default class SelectPrisonerRoutes {
     if (prisonerFreeToAllocate) {
       if (prisonerIncentiveLevelSuitable) {
         await this.addPrisonersToSession(req, inmate, user)
-        return res.redirect(`review-search-prisoner-list`)
+        return res.redirect(`review-search-prisoner-list${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
       }
 
       return res.validationFailed(

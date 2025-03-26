@@ -62,7 +62,7 @@ export default class PayBandMultipleRoutes {
 
       addPayBand(inmates, payBandsForInmates)
       req.session.allocateJourney.inmates = inmates
-      return res.redirect('check-and-confirm')
+      return res.redirect('check-answers')
     }
 
     return res.render('pages/activities/manage-allocations/allocateMultiplePeople/payBandMultiple', {
@@ -109,7 +109,7 @@ export default class PayBandMultipleRoutes {
 
     addPayBand(inmates, allInmatesWithPayBands)
     req.session.allocateJourney.inmates = inmates
-    return res.redirect('check-and-confirm')
+    return res.redirect('check-answers')
   }
 
   private async getActivityPayRates(req: Request, res: Response): Promise<payBandDetail[]> {
