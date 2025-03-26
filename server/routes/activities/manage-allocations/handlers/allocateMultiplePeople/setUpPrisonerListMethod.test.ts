@@ -5,6 +5,7 @@ import SetUpPrisonerListMethodRoutes from './setUpPrisonerListMethod'
 import HowToAddOptions from '../../../../../enum/allocations'
 import { ActivitySchedule } from '../../../../../@types/activitiesAPI/types'
 import MetricsService from '../../../../../services/metricsService'
+import MetricsEvent from '../../../../../data/metricsEvent'
 
 jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../services/metricsService')
@@ -38,6 +39,9 @@ describe('Allocate multiple people to an activity - method for adding list', () 
   describe('GET', () => {
     it('should render the how to add prisoners view', async () => {
       await handler.GET(req, res)
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        MetricsEvent.CREATE_MULTIPLE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
+      )
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/manage-allocations/allocateMultiplePeople/setUpPrisonerListMethod',
       )
