@@ -126,8 +126,8 @@ context('Allocate multiple via CSV to an activity', () => {
     payBandMultiplePage.continue()
 
     const checkAndConfirmMultiple = Page.verifyOnPage(CheckAndConfirmMultiplePage)
-    checkAndConfirmMultiple.selectConfirm('Confirm 2 allocations')
     checkAndConfirmMultiple.inmatePayRows().should('have.length', 2)
+    checkAndConfirmMultiple.selectConfirm('Confirm 2 allocations').click()
     // FIXME click through and finish journey
   })
 

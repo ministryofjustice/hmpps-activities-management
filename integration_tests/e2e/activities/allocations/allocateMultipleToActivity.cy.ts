@@ -130,8 +130,7 @@ context('Allocate multiple one by one to an activity', () => {
     payBandMultiplePage.continue()
 
     const checkAndConfirmMultiple = Page.verifyOnPage(CheckAndConfirmMultiplePage)
-    checkAndConfirmMultiple.selectConfirm('Confirm 2 allocations').click()
     checkAndConfirmMultiple.inmatePayRows().should('have.length', 2)
-    // FIXME click through and finish journey
+    checkAndConfirmMultiple.selectConfirm('Confirm 2 allocations').click()
   })
 })
