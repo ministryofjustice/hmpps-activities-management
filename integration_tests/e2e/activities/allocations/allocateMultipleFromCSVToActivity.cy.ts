@@ -30,12 +30,6 @@ import ActivityRequirementsReviewPage from '../../../pages/allocateToActivity/ac
 import ReviewUploadPrisonerListPage from '../../../pages/allocateToActivity/reviewUploadPrisoner'
 import PayBandMultiplePage from '../../../pages/allocateToActivity/payBandMultiple'
 import CheckAndConfirmMultiplePage from '../../../pages/allocateToActivity/checkAndConfirmMultiple'
-// import CheckAnswersPage from '../../../pages/allocateToActivity/checkAnswers'
-// import CancelPage from '../../../pages/allocateToActivity/cancel'
-// import ConfirmationPage from '../../../pages/allocateToActivity/confirmation'
-// import SelectPrisonerPage from '../../../pages/allocateToActivity/selectPrisoner'
-// import BeforeYouAllocate from '../../../pages/allocateToActivity/beforeYouAllocate'
-// import ExclusionsPage from '../../../pages/allocateToActivity/exclusions'
 
 context('Allocate multiple via CSV to an activity', () => {
   beforeEach(() => {
@@ -133,7 +127,8 @@ context('Allocate multiple via CSV to an activity', () => {
 
     const checkAndConfirmMultiple = Page.verifyOnPage(CheckAndConfirmMultiplePage)
     checkAndConfirmMultiple.selectConfirm('Confirm 2 allocations')
-    // FIXME above is not clicked. Finish the flow
+    checkAndConfirmMultiple.inmatePayRows().should('have.length', 2)
+    // FIXME click through and finish journey
   })
 
   it('should be able to allocate when selecting multiple inmates and remove one prisoner', () => {
@@ -163,7 +158,6 @@ context('Allocate multiple via CSV to an activity', () => {
     allocatePage.allocateGroupLink()
 
     const setUpPrisonerListMethodPage = Page.verifyOnPage(SetUpPrisonerListMethodPage)
-    // FIXME session.allocateJourney.activity.name (activity is undefined)  setUpPrisonerListMethodPage.caption().should('contain.text', 'Entry level English 1')
     setUpPrisonerListMethodPage.selectHowToAddDecisionRadio(HowToAddOptions.CSV)
     setUpPrisonerListMethodPage.getButton('Continue').click()
 

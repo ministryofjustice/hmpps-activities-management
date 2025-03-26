@@ -6,4 +6,13 @@ export default class CheckAndConfirmMultiplePage extends Page {
   }
 
   selectConfirm = (text: string) => cy.get('button').contains(text)
+
+  inmatePayRows = (): Cypress.Chainable =>
+    cy
+      .get(`[data-qa="prisoner-pay-list"]`)
+      .find('.govuk-table__body')
+      .find('tr')
+      .then($el => {
+        return Cypress.$.makeArray($el)
+      })
 }
