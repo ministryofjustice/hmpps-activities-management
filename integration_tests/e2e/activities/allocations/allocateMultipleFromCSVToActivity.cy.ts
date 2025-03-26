@@ -28,13 +28,8 @@ import HowToAddOptions from '../../../../server/enum/allocations'
 import UploadPrisonerListPage from '../../../pages/allocateToActivity/uploadPrisonerList'
 import ActivityRequirementsReviewPage from '../../../pages/allocateToActivity/activityRequirementsReview'
 import ReviewUploadPrisonerListPage from '../../../pages/allocateToActivity/reviewUploadPrisoner'
-// import PayBandPage from '../../../pages/allocateToActivity/payBand'
-// import CheckAnswersPage from '../../../pages/allocateToActivity/checkAnswers'
-// import CancelPage from '../../../pages/allocateToActivity/cancel'
-// import ConfirmationPage from '../../../pages/allocateToActivity/confirmation'
-// import SelectPrisonerPage from '../../../pages/allocateToActivity/selectPrisoner'
-// import BeforeYouAllocate from '../../../pages/allocateToActivity/beforeYouAllocate'
-// import ExclusionsPage from '../../../pages/allocateToActivity/exclusions'
+import PayBandMultiplePage from '../../../pages/allocateToActivity/payBandMultiple'
+import CheckAndConfirmMultiplePage from '../../../pages/allocateToActivity/checkAndConfirmMultiple'
 
 context('Allocate multiple via CSV to an activity', () => {
   beforeEach(() => {
@@ -95,7 +90,6 @@ context('Allocate multiple via CSV to an activity', () => {
     allocatePage.allocateGroupLink()
 
     const setUpPrisonerListMethodPage = Page.verifyOnPage(SetUpPrisonerListMethodPage)
-    // FIXME session.allocateJourney.activity.name (activity is undefined)  setUpPrisonerListMethodPage.caption().should('contain.text', 'Entry level English 1')
     setUpPrisonerListMethodPage.selectHowToAddDecisionRadio(HowToAddOptions.CSV)
     setUpPrisonerListMethodPage.getButton('Continue').click()
 
@@ -126,10 +120,15 @@ context('Allocate multiple via CSV to an activity', () => {
     endDatePage.selectDatePickerDate(endDate)
     endDatePage.continue()
 
-    // FIXME finish the flow
-    // const payBandPage = Page.verifyOnPage(PayBandPage)
-    // payBandPage.selectPayBand('Medium - £1.75')
-    // payBandPage.continue()
+    const payBandMultiplePage = Page.verifyOnPage(PayBandMultiplePage)
+    payBandMultiplePage.selectPayBand('inmatePayData-0-payBand-2')
+    payBandMultiplePage.selectPayBand('inmatePayData-1-payBand-2')
+    payBandMultiplePage.continue()
+
+    const checkAndConfirmMultiple = Page.verifyOnPage(CheckAndConfirmMultiplePage)
+    checkAndConfirmMultiple.inmatePayRows().should('have.length', 2)
+    checkAndConfirmMultiple.selectConfirm('Confirm 2 allocations').click()
+    // FIXME click through and finish journey
   })
 
   it('should be able to allocate when selecting multiple inmates and remove one prisoner', () => {
@@ -159,7 +158,6 @@ context('Allocate multiple via CSV to an activity', () => {
     allocatePage.allocateGroupLink()
 
     const setUpPrisonerListMethodPage = Page.verifyOnPage(SetUpPrisonerListMethodPage)
-    // FIXME session.allocateJourney.activity.name (activity is undefined)  setUpPrisonerListMethodPage.caption().should('contain.text', 'Entry level English 1')
     setUpPrisonerListMethodPage.selectHowToAddDecisionRadio(HowToAddOptions.CSV)
     setUpPrisonerListMethodPage.getButton('Continue').click()
 
@@ -219,7 +217,7 @@ context('Allocate multiple via CSV to an activity', () => {
 
     reviewUploadPrisonerListPage.rows('allocated-inmate-list').should('have.length', 1)
     reviewUploadPrisonerListPage.hasText('1 people from your CSV file cannot be allocated')
-    reviewUploadPrisonerListPage.hasText('There are 1 people already allocated to Entry level English 1')
+    reviewUploadPrisonerListPage.hasText('There is 1 person already allocated to Entry level English 1')
   })
 
   it('should be able to allocate when selecting multiple inmates without matching incentive level list', () => {
@@ -265,7 +263,7 @@ context('Allocate multiple via CSV to an activity', () => {
     reviewUploadPrisonerListPage.rows('incentive-level-list').should('have.length', 1)
     reviewUploadPrisonerListPage.hasText('1 people from your CSV file cannot be allocated')
     reviewUploadPrisonerListPage.hasText(
-      'There are 1 people with an incentive level that does not match a pay rate for this activity.',
+      'There is 1 person with an incentive level that does not match a pay rate for this activity.',
     )
   })
 })
