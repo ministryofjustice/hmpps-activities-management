@@ -57,7 +57,7 @@ export default class StartDateRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response) => {
-    res.render('pages/activities/manage-allocations/start-date')
+    return res.render('pages/activities/manage-allocations/start-date')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

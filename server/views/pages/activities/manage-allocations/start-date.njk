@@ -53,12 +53,12 @@
                         {
                             value: "NEXT_SESSION",
                             text: "The next session - " + nextSessionText,
-                            checked: formResponses.startDateOption == 'NEXT_SESSION'
+                            checked: formResponses.startDateOption == 'NEXT_SESSION' or session.allocateJourney.startDateOption == 'NEXT_SESSION'
                         },
                         {
                             value: "START_DATE",
                             text: "A different date",
-                            checked: formResponses.startDateOption == 'START_DATE',
+                            checked: formResponses.startDateOption == 'START_DATE' or session.allocateJourney.startDateOption == 'START_DATE',
                             conditional: {
                                 html: mojDatePicker({
                                     id: 'startDate',
