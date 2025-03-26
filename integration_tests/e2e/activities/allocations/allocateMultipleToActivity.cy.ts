@@ -29,6 +29,7 @@ import EndDateOptionPage from '../../../pages/allocateToActivity/endDateOption'
 import EndDatePage from '../../../pages/allocateToActivity/endDate'
 import PayBandMultiplePage from '../../../pages/allocateToActivity/payBandMultiple'
 import CheckAndConfirmMultiplePage from '../../../pages/allocateToActivity/checkAndConfirmMultiple'
+import ConfirmMultipleAllocationsPage from '../../../pages/allocateToActivity/confirmationMultiple'
 
 context('Allocate multiple one by one to an activity', () => {
   beforeEach(() => {
@@ -132,5 +133,20 @@ context('Allocate multiple one by one to an activity', () => {
     const checkAndConfirmMultiple = Page.verifyOnPage(CheckAndConfirmMultiplePage)
     checkAndConfirmMultiple.inmatePayRows().should('have.length', 2)
     checkAndConfirmMultiple.selectConfirm('Confirm 2 allocations').click()
+
+    const confirmMultipleAllocationsPage = Page.verifyOnPage(ConfirmMultipleAllocationsPage)
+    confirmMultipleAllocationsPage.panelHeader().should('contain.text', 'Allocations complete')
+    confirmMultipleAllocationsPage
+      .panelText()
+      .should('contain.text', '2 people are now allocated to Entry level English 1')
+    confirmMultipleAllocationsPage.activityPageLink().click()
+    cy.location().should(loc => {
+      expect(loc.pathname).to.eq('/activities/allocation-dashboard/2')
+    })
+    cy.go('back')
+    confirmMultipleAllocationsPage.allocationsDashLink().click()
+    cy.location().should(loc => {
+      expect(loc.pathname).to.eq('/activities/allocation-dashboard')
+    })
   })
 })
