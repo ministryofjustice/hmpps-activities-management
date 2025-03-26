@@ -14,6 +14,7 @@ import AlertsService from './alertsService'
 import LocationsService from './locationsService'
 import CourtBookingService from './courtBookingService'
 import ProbationBookingService from './probationBookingService'
+import RedisTokenStore from '../data/tokenStore/redisTokenStore'
 
 jest.mock('applicationinsights')
 
@@ -21,7 +22,7 @@ describe('Services', () => {
   test('The correct services are instantiated', () => {
     const servicesList = services()
 
-    expect(Object.values(servicesList).length).toBe(16)
+    expect(Object.values(servicesList).length).toBe(17)
     expect(servicesList.userService).toBeInstanceOf(UserService)
     expect(servicesList.prisonService).toBeInstanceOf(PrisonService)
     expect(servicesList.ukBankHolidayService).toBeInstanceOf(BankHolidayService)
@@ -37,6 +38,7 @@ describe('Services', () => {
     expect(servicesList.locationsService).toBeInstanceOf(LocationsService)
     expect(servicesList.courtBookingService).toBeInstanceOf(CourtBookingService)
     expect(servicesList.probationBookingService).toBeInstanceOf(ProbationBookingService)
+    expect(servicesList.tokenStore).toBeInstanceOf(RedisTokenStore)
     expect(servicesList.applicationInfo.applicationName).toBe('hmpps-activities-management')
   })
 })

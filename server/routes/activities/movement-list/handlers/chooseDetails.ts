@@ -43,7 +43,7 @@ export default class ChooseDetailsRoutes {
 
     const dateQuery = dateOption === DateOption.OTHER ? `&date=${formatIsoDate(date)}` : ''
 
-    req.session.movementListJourney = {}
+    req.journeyData.movementListJourney = {}
 
     return res.redirect(`locations?dateOption=${dateOption}${dateQuery}&timeSlot=${timeSlot}`)
   }

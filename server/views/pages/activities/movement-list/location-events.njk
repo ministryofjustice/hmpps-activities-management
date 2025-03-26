@@ -9,10 +9,10 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
-{% set pageTitle = (locations[0].description + " - movement list" if locations | length == 1 else "Movement lists for " + locations | length + " locations") + " - " + date | toDate | formatDate + " " + timeSlot + " session" %}
+{% set pageTitle = (locations[0].description + " - movement list" if locations | length == 1 else "Movement lists for " + locations | length + " locations") + " - " + date | formatDate + " " + timeSlot + " session" %}
 {% set pageId = 'movement-list-location-events-page' %}
 {% set hardBackLinkText = 'Back' %}
-{% set hardBackLinkHref = "locations?dateOption=" + session.movementListJourney.dateOption + "&date=" + session.movementListJourney.date + "&timeSlot=" + session.movementListJourney.timeSlot %}
+{% set hardBackLinkHref = "locations?dateOption=" + dateOption + "&date=" + date + "&timeSlot=" + timeSlot %}
 
 {% macro showEvents(events, location) %}
     {% if events | length == 0 %}
@@ -72,7 +72,7 @@
 
     {% set filterOptionsHtml %}
 
-        {{ alertFilters(alertOptions, session.movementListJourney.alertFilters) }}
+        {{ alertFilters(alertOptions, selectedAlerts) }}
 
         <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
             Apply filters
@@ -128,7 +128,7 @@
                             }
                         ) %}
 
-                        {% if session.movementListJourney.alertFilters|length %}
+                        {% if selectedAlerts | length %}
                             {% set row = row.concat(
                                 {
                                     html: alertsList({ alerts: prisonerEvents.alerts, category: prisonerEvents.category }),
@@ -161,7 +161,7 @@
                             <div class="govuk-grid-column-two-thirds">
                                 <h1 class="govuk-heading-l govuk-!-margin-0">{{ location.description }} - movement list</h1>
                                 <span class="govuk-caption-l" data-qa="time-slot-caption">{{ timeSlot }} session</span>
-                                <span class="govuk-caption-l" data-qa="date-caption">{{ date | toDate | formatDate }}</span>
+                                <span class="govuk-caption-l" data-qa="date-caption">{{ date | formatDate }}</span>
                             </div>
                         </div>
 
@@ -193,7 +193,7 @@
                                     }
                                 ] %}
 
-                                {% if session.movementListJourney.alertFilters|length %}
+                                {% if selectedAlerts | length %}
                                     {% set headRows = headRows.concat(
                                         {
                                             text: "Relevant alerts"
