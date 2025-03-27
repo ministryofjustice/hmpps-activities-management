@@ -5,7 +5,7 @@ export default class SelectPrisonerPage extends Page {
     super('activities-allocate-multiple-select-prisoner-page')
   }
 
-  caption = (): Cypress.Chainable => cy.get('.govuk-caption-xl')
+  caption = (): Cypress.Chainable => cy.get('.govuk-caption-l')
 
   enterQuery = (text: string) => this.getInputByName('query').type(text)
 
