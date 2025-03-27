@@ -213,7 +213,7 @@ describe('Movement list routes - location events', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
         dateOption,
-        date: new Date(dateQueryParam),
+        date: dateQueryParam,
         timeSlot,
         locations: [
           {
@@ -228,7 +228,7 @@ describe('Movement list routes - location events', () => {
           },
         ] as MovementListLocation[],
         alertOptions: alertFilterOptions,
-        selectedAlerts: alertFilters,
+        movementListJourney: req.journeyData.movementListJourney,
       })
     })
 
@@ -357,7 +357,7 @@ describe('Movement list routes - location events', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
         dateOption,
-        date: new Date(dateQueryParam),
+        date: dateQueryParam,
         timeSlot,
         locations: [
           {
@@ -407,7 +407,7 @@ describe('Movement list routes - location events', () => {
           },
         ] as MovementListLocation[],
         alertOptions: alertFilterOptions,
-        selectedAlerts: alertFilters,
+        movementListJourney: req.journeyData.movementListJourney,
       })
     })
 
@@ -482,7 +482,7 @@ describe('Movement list routes - location events', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
         dateOption,
-        date: new Date(dateQueryParam),
+        date: dateQueryParam,
         timeSlot,
         locations: [
           {
@@ -521,7 +521,7 @@ describe('Movement list routes - location events', () => {
           },
         ] as MovementListLocation[],
         alertOptions: alertFilterOptions,
-        selectedAlerts: alertFilters,
+        movementListJourney: req.journeyData.movementListJourney,
       })
     })
 
@@ -571,7 +571,7 @@ describe('Movement list routes - location events', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
         dateOption,
-        date: new Date(dateQueryParam),
+        date: dateQueryParam,
         timeSlot,
         locations: [
           {
@@ -587,7 +587,7 @@ describe('Movement list routes - location events', () => {
           },
         ] as MovementListLocation[],
         alertOptions: alertFilterOptions,
-        selectedAlerts: alertFilters,
+        movementListJourney: req.journeyData.movementListJourney,
       })
     })
   })
@@ -635,7 +635,7 @@ describe('Movement list routes - location events', () => {
 
     expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
       dateOption,
-      date: new Date(dateQueryParam),
+      date: dateQueryParam,
       timeSlot,
       locations: [
         {
@@ -651,7 +651,7 @@ describe('Movement list routes - location events', () => {
         },
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
-      selectedAlerts: alertFilters,
+      movementListJourney: req.journeyData.movementListJourney,
     })
   })
 
@@ -749,7 +749,7 @@ describe('Movement list routes - location events', () => {
 
     expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
       dateOption,
-      date: new Date(dateQueryParam),
+      date: dateQueryParam,
       timeSlot,
       locations: [
         {
@@ -764,7 +764,7 @@ describe('Movement list routes - location events', () => {
         },
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
-      selectedAlerts: alertFilters,
+      movementListJourney: req.journeyData.movementListJourney,
     })
   })
 
@@ -884,7 +884,7 @@ describe('Movement list routes - location events', () => {
 
     expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
       dateOption,
-      date: new Date(dateQueryParam),
+      date: dateQueryParam,
       timeSlot,
       locations: [
         {
@@ -945,7 +945,7 @@ describe('Movement list routes - location events', () => {
         },
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
-      selectedAlerts: alertFilters,
+      movementListJourney: req.journeyData.movementListJourney,
     })
   })
 
@@ -1018,7 +1018,7 @@ describe('Movement list routes - location events', () => {
 
     expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
       dateOption,
-      date: new Date(dateQueryParam),
+      date: dateQueryParam,
       timeSlot,
       locations: [
         {
@@ -1033,7 +1033,7 @@ describe('Movement list routes - location events', () => {
         },
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
-      selectedAlerts: alertFilters,
+      movementListJourney: req.journeyData.movementListJourney,
     })
   })
 
@@ -1132,7 +1132,7 @@ describe('Movement list routes - location events', () => {
 
     expect(res.render).toHaveBeenCalledWith('pages/activities/movement-list/location-events', {
       dateOption,
-      date: new Date(dateQueryParam),
+      date: dateQueryParam,
       timeSlot,
       locations: [
         {
@@ -1205,7 +1205,7 @@ describe('Movement list routes - location events', () => {
         },
       ] as MovementListLocation[],
       alertOptions: alertFilterOptions,
-      selectedAlerts: alertFilters,
+      movementListJourney: req.journeyData.movementListJourney,
     })
   })
 })

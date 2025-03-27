@@ -20,6 +20,7 @@ export default class LocationEventsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { locationIds, dateOption, date, timeSlot } = req.query
+    const { movementListJourney } = req.journeyData
 
     const richDate = dateFromDateOption(dateOption as DateOption, date as string)
     if (!richDate || !isValid(richDate) || !(locationIds as string)) {
@@ -61,9 +62,9 @@ export default class LocationEventsRoutes {
 
     const alertOptions = this.alertsFilterService.getAllAlertFilterOptions()
 
-    req.journeyData.movementListJourney.alertFilters ??= alertOptions.map(a => a.key)
+    movementListJourney.alertFilters ??= alertOptions.map(a => a.key)
 
-    const selectedAlerts = req.journeyData.movementListJourney.alertFilters
+    const selectedAlerts = movementListJourney.alertFilters
 
     const locations = internalLocationEvents.map(
       l =>
@@ -135,11 +136,11 @@ export default class LocationEventsRoutes {
 
     return res.render('pages/activities/movement-list/location-events', {
       dateOption,
-      date: richDate,
+      date: formatIsoDate(richDate),
       timeSlot,
       locations,
       alertOptions,
-      selectedAlerts,
+      movementListJourney,
     })
   }
 }

@@ -73,6 +73,7 @@ describe('Movement list routes - locations', () => {
         date,
         timeSlot,
         locations,
+        movementListJourney: req.journeyData.movementListJourney,
       })
       expect(req.journeyData.movementListJourney.dateOption).toEqual(dateOption)
       expect(req.journeyData.movementListJourney.date).toEqual(date)
@@ -113,6 +114,7 @@ describe('Movement list routes - locations', () => {
         date: expectedDate,
         timeSlot,
         locations,
+        movementListJourney: req.journeyData.movementListJourney,
       })
       expect(req.journeyData.movementListJourney.dateOption).toEqual(dateOption)
       expect(req.journeyData.movementListJourney.date).toEqual(expectedDate)
@@ -138,6 +140,7 @@ describe('Movement list routes - locations', () => {
         date: expectedDate,
         timeSlot,
         locations,
+        movementListJourney: req.journeyData.movementListJourney,
       })
       expect(req.journeyData.movementListJourney.dateOption).toEqual(dateOption)
       expect(req.journeyData.movementListJourney.date).toEqual(expectedDate)
@@ -161,6 +164,7 @@ describe('Movement list routes - locations', () => {
         date,
         timeSlot,
         locations,
+        movementListJourney: req.journeyData.movementListJourney,
       })
       expect(req.journeyData.movementListJourney.dateOption).toEqual(dateOption)
       expect(req.journeyData.movementListJourney.date).toEqual(date)
