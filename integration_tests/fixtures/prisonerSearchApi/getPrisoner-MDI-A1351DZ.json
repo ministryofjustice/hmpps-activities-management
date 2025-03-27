@@ -29,8 +29,8 @@
   "restrictedPatient": false,
   "currentIncentive": {
     "level": {
-      "code": "ENH",
-      "description": "Enhanced"
+      "code": "STD",
+      "description": "Standard"
     },
     "dateTime": "2023-02-16T19:38:00",
     "nextReviewDate": "2023-05-16"
