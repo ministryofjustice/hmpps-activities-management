@@ -2,14 +2,11 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
-import { addDays } from 'date-fns'
 import ActivitiesService from '../../../../../services/activitiesService'
-import PayBandMultipleRoutes, { PayBandMultipleForm, payBandWithDescription } from './payBandMultiple'
+import PayBandMultipleRoutes, { PayBandMultipleForm } from './payBandMultiple'
 import atLeast from '../../../../../../jest.setup'
 import { Activity } from '../../../../../@types/activitiesAPI/types'
-import { payBandDetail } from '../../../../../utils/helpers/allocationUtil'
-import { formatIsoDate } from '../../../../../utils/datePickerUtils'
-import { associateErrorsWithProperty, formatDate } from '../../../../../utils/utils'
+import { associateErrorsWithProperty } from '../../../../../utils/utils'
 
 jest.mock('../../../../../services/activitiesService')
 
@@ -386,48 +383,6 @@ describe('Pay band page', () => {
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
-    })
-  })
-  describe('payBandWithDescription', () => {
-    const inThreeDays = addDays(new Date(), 3)
-    const inThreeDaysStr = formatIsoDate(inThreeDays)
-    const inThreeDaysMsg = formatDate(inThreeDaysStr)
-    it('should create an array of pay bands with descriptions where there is a pay change in the future', async () => {
-      const originalPayBands: payBandDetail[] = [
-        {
-          bandId: 19,
-          bandAlias: 'Pay band 3',
-          rate: 75,
-          startDate: null,
-          incentiveLevel: 'Standard',
-        },
-        {
-          bandId: 19,
-          bandAlias: 'Pay band 3',
-          rate: 95,
-          startDate: inThreeDaysStr,
-          incentiveLevel: 'Standard',
-        },
-        {
-          bandId: 20,
-          bandAlias: 'Pay band 4',
-          rate: 100,
-          startDate: null,
-          incentiveLevel: 'Enhanced',
-        },
-      ]
-
-      const result = payBandWithDescription(originalPayBands, 'Standard')
-      expect(result).toEqual([
-        {
-          bandId: 19,
-          bandAlias: 'Pay band 3',
-          rate: 75,
-          startDate: null,
-          incentiveLevel: 'Standard',
-          description: `, set to change to £0.95 from ${inThreeDaysMsg}`,
-        },
-      ])
     })
   })
   describe('validation', () => {

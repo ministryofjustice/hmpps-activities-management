@@ -2,11 +2,8 @@ import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
 import { Min, ValidateNested, ValidationArguments } from 'class-validator'
 import _ from 'lodash'
-import { startOfToday } from 'date-fns'
 import ActivitiesService from '../../../../../services/activitiesService'
-import { addPayBand, payBandDetail } from '../../../../../utils/helpers/allocationUtil'
-import { formatDate, parseISODate, toMoney } from '../../../../../utils/utils'
-import { Inmate } from '../../journey'
+import { addPayBand, getApplicablePayBandsForInmates, PayBandDetail } from '../../../../../utils/helpers/allocationUtil'
 
 const getPrisonerName = (args: ValidationArguments) => (args.object as PayBandMultiple)?.prisonerName
 
@@ -27,22 +24,12 @@ export class PayBandMultipleForm {
   inmatePayData: PayBandMultiple[]
 }
 
-type inmatePayBandDisplayDetails = {
-  prisonerNumber: string
-  firstName: string
-  middleNames: string
-  lastName: string
-  incentiveLevel: string
-  prisonId: string
-  payBands: payBandDetail[]
-}
-
 export default class PayBandMultipleRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { inmates } = req.session.allocateJourney
-    const allPayBandsForActivity: payBandDetail[] = await this.getActivityPayRates(req, res)
+    const allPayBandsForActivity: PayBandDetail[] = await this.getActivityPayRates(req, res)
 
     // Get the applicable paybands per prisoner needing to be allocated
     const payBandsPerInmate = getApplicablePayBandsForInmates(inmates, allPayBandsForActivity)
@@ -112,7 +99,7 @@ export default class PayBandMultipleRoutes {
     return res.redirect('check-answers')
   }
 
-  private async getActivityPayRates(req: Request, res: Response): Promise<payBandDetail[]> {
+  private async getActivityPayRates(req: Request, res: Response): Promise<PayBandDetail[]> {
     const { activity } = req.session.allocateJourney
 
     const payRates = (await this.activitiesService.getActivity(activity.activityId, res.locals.user))?.pay
@@ -125,57 +112,4 @@ export default class PayBandMultipleRoutes {
       incentiveLevel: pay.incentiveLevel,
     }))
   }
-}
-
-function getApplicablePayBandsForInmates(
-  inmates: Inmate[],
-  allPayBandsForActivity: payBandDetail[],
-): inmatePayBandDisplayDetails[] {
-  const payBandsPerInmate: inmatePayBandDisplayDetails[] = []
-  inmates.forEach(inmate => {
-    const relevantPaybands = payBandWithDescription(allPayBandsForActivity, inmate.incentiveLevel)
-    payBandsPerInmate.push({
-      prisonerNumber: inmate.prisonerNumber,
-      firstName: inmate.firstName,
-      middleNames: inmate.middleNames,
-      lastName: inmate.lastName,
-      prisonId: inmate.prisonCode,
-      incentiveLevel: inmate.incentiveLevel,
-      payBands: relevantPaybands,
-    })
-  })
-  return payBandsPerInmate
-}
-
-export function payBandWithDescription(originalPayBands: payBandDetail[], incentiveLevel: string): payBandDetail[] {
-  const formattedPayBands: payBandDetail[] = []
-  const relevantOriginalPayBands = originalPayBands.filter(pb => pb.incentiveLevel === incentiveLevel)
-  const uniquePayBandIds = [...new Set(relevantOriginalPayBands.map(pay => pay.bandId))]
-  uniquePayBandIds.forEach(i => {
-    const payBand = singlePayBandForPayBandId(relevantOriginalPayBands, i)
-    formattedPayBands.push(payBand)
-  })
-  return formattedPayBands
-}
-
-function singlePayBandForPayBandId(originalPayBands: payBandDetail[], bandId: number): payBandDetail {
-  const possiblePayBands: payBandDetail[] = originalPayBands
-    .filter(a => a.bandId === bandId && (a.startDate == null || parseISODate(a.startDate) <= startOfToday()))
-    .sort(
-      (a, b) =>
-        (parseISODate(a.startDate) == null ? 0 : parseISODate(a.startDate).valueOf()) -
-        (parseISODate(b.startDate) == null ? 0 : parseISODate(b.startDate).valueOf()),
-    )
-
-  const currentPayBand = possiblePayBands[possiblePayBands.length - 1]
-
-  const futurePaybands: payBandDetail[] = originalPayBands
-    .filter(a => a.bandId === bandId && a.startDate != null && parseISODate(a.startDate) > startOfToday())
-    .sort((a, b) => parseISODate(a.startDate).valueOf() - parseISODate(b.startDate).valueOf())
-
-  if (futurePaybands.length > 0) {
-    currentPayBand.description = `, set to change to ${toMoney(futurePaybands[0].rate)} from ${formatDate(parseISODate(futurePaybands[0].startDate))}`
-  }
-
-  return currentPayBand
 }

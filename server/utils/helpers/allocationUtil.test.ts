@@ -1,3 +1,4 @@
+import { addDays } from 'date-fns'
 import {
   mapPrisonersAllocated,
   PrisonerAllocated,
@@ -7,9 +8,13 @@ import {
   addOtherAllocations,
   addNonAssociations,
   addPayBand,
+  PayBandDetail,
+  payBandWithDescription,
 } from './allocationUtil'
 import { Inmate } from '../../routes/activities/manage-allocations/journey'
 import { Activity, Allocation, PrisonerAllocations } from '../../@types/activitiesAPI/types'
+import { formatIsoDate } from '../datePickerUtils'
+import { formatDate } from '../utils'
 
 describe('Allocation helper function tests', () => {
   const inmate1: Inmate = {
@@ -296,5 +301,48 @@ describe('Allocation helper function tests', () => {
     addPayBand([inmate2], payBands)
     expect(inmate2.payBand).toEqual({ id: 444, alias: 'Some other name', rate: 10 })
     expect(inmate2.numberPayBandsAvailable).toEqual(2)
+  })
+
+  describe('payBandWithDescription', () => {
+    const inThreeDays = addDays(new Date(), 3)
+    const inThreeDaysStr = formatIsoDate(inThreeDays)
+    const inThreeDaysMsg = formatDate(inThreeDaysStr)
+    it('should create an array of pay bands with descriptions where there is a pay change in the future', async () => {
+      const originalPayBands: PayBandDetail[] = [
+        {
+          bandId: 19,
+          bandAlias: 'Pay band 3',
+          rate: 75,
+          startDate: null,
+          incentiveLevel: 'Standard',
+        },
+        {
+          bandId: 19,
+          bandAlias: 'Pay band 3',
+          rate: 95,
+          startDate: inThreeDaysStr,
+          incentiveLevel: 'Standard',
+        },
+        {
+          bandId: 20,
+          bandAlias: 'Pay band 4',
+          rate: 100,
+          startDate: null,
+          incentiveLevel: 'Enhanced',
+        },
+      ]
+
+      const result = payBandWithDescription(originalPayBands, 'Standard')
+      expect(result).toEqual([
+        {
+          bandId: 19,
+          bandAlias: 'Pay band 3',
+          rate: 75,
+          startDate: null,
+          incentiveLevel: 'Standard',
+          description: `, set to change to £0.95 from ${inThreeDaysMsg}`,
+        },
+      ])
+    })
   })
 })
