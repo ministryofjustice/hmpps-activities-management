@@ -41,6 +41,8 @@ export default class ReviewUploadPrisonerListRoutes {
       req.session.allocateJourney.inmates = unallocatedInmates
     }
 
+    // FIXME need to pass whether it's from a CSV or other activity to change the message
+
     return res.render('pages/activities/manage-allocations/allocateMultiplePeople/reviewUploadPrisonerList', {
       unallocatedInmates: req.session.allocateJourney.inmates,
       withoutMatchingIncentiveLevelInmates: req.session.allocateJourney.withoutMatchingIncentiveLevelInmates,

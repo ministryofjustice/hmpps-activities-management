@@ -28,6 +28,7 @@ import ReviewSearchPrisonerListRoutes from './handlers/allocateMultiplePeople/re
 import CheckAndConfirmMultipleRoutes from './handlers/allocateMultiplePeople/checkAndConfirmMultiple'
 import PayBandMultipleRoutes, { PayBandMultipleForm } from './handlers/allocateMultiplePeople/payBandMultiple'
 import ConfirmMultipleAllocationsRoutes from './handlers/allocateMultiplePeople/confirmation'
+import FromActivityListRoutes from './handlers/allocateMultiplePeople/fromActivityList'
 
 export default function Index({
   activitiesService,
@@ -61,6 +62,7 @@ export default function Index({
     activitiesService,
     nonAssociationsService,
   )
+  const fromActivityListHandler = new FromActivityListRoutes(prisonService, activitiesService, nonAssociationsService)
   const reviewUploadPrisonerListHandler = new ReviewUploadPrisonerListRoutes(activitiesService)
   const activityRequirementsReviewHandler = new ActivityRequirementsReviewRoutes(activitiesService)
   const reviewSearchPrisonerListHandler = new ReviewSearchPrisonerListRoutes(nonAssociationsService, activitiesService)
@@ -104,6 +106,8 @@ export default function Index({
     validationMiddleware(UploadPrisonerList),
     asyncMiddleware(uploadPrisonerListHandler.POST),
   )
+  get('/multiple/from-activity-list', fromActivityListHandler.GET, true)
+  post('/multiple/from-activity-list', fromActivityListHandler.POST)
   get('/multiple/review-upload-prisoner-list', reviewUploadPrisonerListHandler.GET, true)
   get('/multiple/review-upload-prisoner-list/:prisonNumber/remove', reviewUploadPrisonerListHandler.REMOVE, true)
   post('/multiple/review-upload-prisoner-list', reviewUploadPrisonerListHandler.POST)

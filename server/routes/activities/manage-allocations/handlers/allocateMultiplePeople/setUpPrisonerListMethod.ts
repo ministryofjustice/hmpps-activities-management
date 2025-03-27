@@ -55,11 +55,12 @@ export default class SetUpPrisonerListMethodRoutes {
       scheduledInstance: findNextSchedulesInstance(schedule),
     } as AllocateToActivityJourney
 
-    // TODO: add redirects for the other options in later tickets
     if (HowToAddOptions[howToAdd] === HowToAddOptions.SEARCH) {
       res.redirect('select-prisoner')
     } else if (HowToAddOptions[howToAdd] === HowToAddOptions.CSV) {
       res.redirect('upload-prisoner-list')
+    } else if (HowToAddOptions[howToAdd] === HowToAddOptions.EXISTING_LIST) {
+      res.redirect('from-activity-list')
     }
   }
 }
