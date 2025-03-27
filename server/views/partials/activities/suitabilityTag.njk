@@ -1,0 +1,7 @@
+{%- from "govuk/components/tag/macro.njk" import govukTag -%}
+{% macro suitablityTag(suitable) %}
+    {{ govukTag({
+        text: 'Yes' if suitable else 'No',
+        classes: 'govuk-tag--green' if suitable else 'govuk-tag--red'
+    }) }}
+{% endmacro %}

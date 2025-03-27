@@ -1,0 +1,114 @@
+{% extends "layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "partials/activities/allocation-dashboard/nonAssociationsHtml.njk" import nonAssociationsHtml %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - review who you're allocating" %}
+{% set pageId = 'activities-allocate-multiple-review-search-prisoner-list-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
+      <p class="govuk-body">Add or remove people, or continue with the current {% if inmates | length > 1 %}people{% else %}person{% endif %} to allocate.</p>
+
+  {% set rows = [] %}
+  {% for inmate in inmates %}
+    {% set removeLink = 'review-search-prisoner-list/'+inmate.prisonerNumber+'/remove'+ ('?preserveHistory=true' if preserveHistory else '')%}
+
+    {% set otherAllocationsHtml %}  
+        <ul class='govuk-list'>
+            {% for allocation in inmate.otherAllocations %}
+                <li><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary | escape }}</a></li>
+            {% else %}
+                <li>None</li>
+            {% endfor %}
+        </ul>
+    {% endset %}
+
+    {% set rows = (rows.push([
+      {
+        html: showProfileLink({
+        firstName: inmate.firstName,
+        middleNames: inmate.middleNames,
+        lastName: inmate.lastName,
+        prisonerNumber: inmate.prisonerNumber
+        }),
+        attributes: {
+          "data-sort-value": inmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+        }
+      },
+      {
+        text: statusBasedCellLocation(inmate.cellLocation, inmate.status, inmate.prisonCode == user.activeCaseLoadId),
+        attributes: { id: 'prisoner-cell-location', "data-qa": "prisoner-cell-location" }
+      },
+      {
+        html: nonAssociationsHtml(inmate, inmate.prisonerNumber, session.allocateJourney.activity.activityId),
+        attributes: {
+            id: 'prisoner-non-associations',
+            'data-qa': 'non-associations-link-'+inmate.prisonerNumber
+        }
+      },
+      {
+        html: otherAllocationsHtml,
+        attributes: {
+            id: 'prisoner-allocations',
+            "data-sort-value": inmate.otherAllocations
+        }
+      },
+      {
+        html: '<a class="govuk-link" href="'+ removeLink +'">Remove</a>'
+      }
+    ]), rows) %}
+  {% endfor %}
+
+    {{ govukTable({
+      head: [
+        {
+          text: "Name",
+          attributes: { "aria-sort": "ascending", "data-qa": "prisoner-summary" }
+        },
+        {
+          text: "Cell location",
+          attributes: { "aria-sort": "none", "data-qa": "prisoner-cell-location"}
+        },
+        {
+            text: "Non-associations"
+        },
+        {
+            text: "Current allocations",
+            attributes: {
+                "aria-sort": "none"
+            }
+        },
+        {
+          html: '<span class="govuk-visually-hidden">Actions</span>',
+          classes: "govuk-!-display-none-print"
+        }
+      ],
+      rows: rows,
+      attributes: {
+        'data-module': 'moj-sortable-table',
+        'data-qa': 'prisoner-list'
+      }
+    }) }}
+
+    {{ govukButton({
+        text: "Add another person",
+        id: "add-prisoner",
+        classes: "govuk-button--secondary",
+        href: "select-prisoner" + ('?preserveHistory=true' if preserveHistory else ''),
+        attributes: { 'data-qa': 'add-prisoner' }
+    }) }}
+
+        <form method="POST">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            {{ govukButton({ text: "Continue", id: "continue-button"}) }}
+        </form>
+    </div>
+  </div>
+{% endblock %}

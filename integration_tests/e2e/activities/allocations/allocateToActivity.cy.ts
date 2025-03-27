@@ -49,7 +49,7 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('POST', '/schedules/2/allocations')
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
 
-    resetActivityAndScheduleStubs(subWeeks(new Date(), 2))
+    resetActivityAndScheduleStubs({ activityStartDate: subWeeks(new Date(), 2) })
 
     cy.signIn()
   })

@@ -45,9 +45,7 @@ describe('Route Handlers - Allocation - Remove Date option', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/remove-date-option', {
-        prisonerName: 'John Smith',
-      })
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/remove-date-option')
     })
   })
 

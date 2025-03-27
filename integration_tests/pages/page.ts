@@ -59,6 +59,8 @@ export default abstract class Page {
 
   saveAndContinue = () => cy.get('button').contains('Save and continue').click()
 
+  selectAndContinue = () => cy.get('button').contains('Select and continue').click()
+
   back = () => cy.get('.govuk-back-link').contains('Back').click()
 
   assertNoBackLink = () => cy.get('.govuk-back-link').should('not.exist')
