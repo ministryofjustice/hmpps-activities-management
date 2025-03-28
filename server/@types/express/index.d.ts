@@ -41,7 +41,6 @@ declare module 'express-session' {
     calendarSpikeJourney: CalendarSpikeJourney
     attendanceSummaryJourney: AttendanceSummaryJourney
     unlockListJourney: UnlockListJourney
-    movementListJourney: MovementListJourney
     waitListApplicationJourney: WaitListApplicationJourney
     recordAttendanceJourney: RecordAttendanceJourney
     recordAppointmentAttendanceJourney: RecordAppointmentAttendanceJourney
@@ -85,8 +84,13 @@ export declare global {
       appointmentSeries?: AppointmentSeriesDetails
       appointment?: AppointmentDetails
       appointmentSet?: AppointmentSetDetails
+      journeyData: JourneyData
     }
   }
+}
+
+export type JourneyData = {
+  movementListJourney?: MovementListJourney
 }
 
 export type ServiceUser = Express.User &

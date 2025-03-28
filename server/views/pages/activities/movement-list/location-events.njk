@@ -12,7 +12,7 @@
 {% set pageTitle = (locations[0].description + " - movement list" if locations | length == 1 else "Movement lists for " + locations | length + " locations") + " - " + date | toDate | formatDate + " " + timeSlot + " session" %}
 {% set pageId = 'movement-list-location-events-page' %}
 {% set hardBackLinkText = 'Back' %}
-{% set hardBackLinkHref = "locations?dateOption=" + session.movementListJourney.dateOption + "&date=" + session.movementListJourney.date + "&timeSlot=" + session.movementListJourney.timeSlot %}
+{% set hardBackLinkHref = "locations?dateOption=" + movementListJourney.dateOption + "&date=" + movementListJourney.date + "&timeSlot=" + movementListJourney.timeSlot %}
 
 {% macro showEvents(events, location) %}
     {% if events | length == 0 %}
@@ -72,7 +72,7 @@
 
     {% set filterOptionsHtml %}
 
-        {{ alertFilters(alertOptions, session.movementListJourney.alertFilters) }}
+        {{ alertFilters(alertOptions, movementListJourney.alertFilters) }}
 
         <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
             Apply filters
@@ -128,7 +128,7 @@
                             }
                         ) %}
 
-                        {% if session.movementListJourney.alertFilters|length %}
+                        {% if movementListJourney.alertFilters | length %}
                             {% set row = row.concat(
                                 {
                                     html: alertsList({ alerts: prisonerEvents.alerts, category: prisonerEvents.category }),
@@ -193,7 +193,7 @@
                                     }
                                 ] %}
 
-                                {% if session.movementListJourney.alertFilters|length %}
+                                {% if movementListJourney.alertFilters | length %}
                                     {% set headRows = headRows.concat(
                                         {
                                             text: "Relevant alerts"

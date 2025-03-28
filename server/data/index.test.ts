@@ -11,11 +11,12 @@ import NonAssociationsApiClient from './nonAssociationsApiClient'
 import AlertsApiClient from './alertsApiClient'
 import LocationsInsidePrisonApiClient from './locationsInsidePrisonApiClient'
 import NomisMappingClient from './nomisMappingClient'
+import TokenStore from './tokenStore'
 
 describe('DataAccess', () => {
   test('The correct rest clients are instantiated', () => {
     const clients = dataAccess()
-    expect(Object.values(clients).length).toBe(14)
+    expect(Object.values(clients).length).toBe(15)
     expect(clients.manageUsersApiClient).toBeInstanceOf(ManageUsersApiClient)
     expect(clients.caseNotesApiClient).toBeInstanceOf(CaseNotesApiClient)
     expect(clients.prisonApiClient).toBeInstanceOf(PrisonApiClient)
@@ -28,6 +29,7 @@ describe('DataAccess', () => {
     expect(clients.alertsApiClient).toBeInstanceOf(AlertsApiClient)
     expect(clients.locationsInsidePrisonApiClient).toBeInstanceOf(LocationsInsidePrisonApiClient)
     expect(clients.nomisMappingClient).toBeInstanceOf(NomisMappingClient)
+    expect(clients.tokenStore).toBeInstanceOf(TokenStore)
     expect(clients.applicationInfo.applicationName).toBe('hmpps-activities-management')
   })
 })
