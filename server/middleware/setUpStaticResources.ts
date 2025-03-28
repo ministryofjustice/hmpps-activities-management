@@ -35,9 +35,6 @@ export default function setUpStaticResources(): Router {
   // set favicon redirect
   staticRoute('/favicon.ico', '/node_modules/govuk-frontend/dist/govuk/assets/favicon.ico')
 
-  // DPR
-  staticRoute('/assets/dpr', '/node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/assets')
-
   // // Third-party plugins that DPR does not automatically bundle - day.js and chart.js
   staticRoute('/assets/ext/chart.js', '/node_modules/chart.js/dist/chart.umd.js')
   staticRoute('/assets/ext/chart.umd.js.map', '/node_modules/chart.js/dist/chart.umd.js.map')
