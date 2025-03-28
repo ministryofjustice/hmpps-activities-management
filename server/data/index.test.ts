@@ -11,7 +11,7 @@ import NonAssociationsApiClient from './nonAssociationsApiClient'
 import AlertsApiClient from './alertsApiClient'
 import LocationsInsidePrisonApiClient from './locationsInsidePrisonApiClient'
 import NomisMappingClient from './nomisMappingClient'
-import RedisTokenStore from './tokenStore/redisTokenStore'
+import TokenStore from './tokenStore'
 
 describe('DataAccess', () => {
   test('The correct rest clients are instantiated', () => {
@@ -29,7 +29,7 @@ describe('DataAccess', () => {
     expect(clients.alertsApiClient).toBeInstanceOf(AlertsApiClient)
     expect(clients.locationsInsidePrisonApiClient).toBeInstanceOf(LocationsInsidePrisonApiClient)
     expect(clients.nomisMappingClient).toBeInstanceOf(NomisMappingClient)
-    expect(clients.tokenStore).toBeInstanceOf(RedisTokenStore)
+    expect(clients.tokenStore).toBeInstanceOf(TokenStore)
     expect(clients.applicationInfo.applicationName).toBe('hmpps-activities-management')
   })
 })

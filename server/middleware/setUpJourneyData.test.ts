@@ -1,13 +1,13 @@
 import { Request, RequestHandler, Response } from 'express'
 import { v4 as uuidV4 } from 'uuid'
 import setUpJourneyData from './setUpJourneyData'
-import TokenStore from '../data/tokenStore/tokenStore'
+import TokenStoreInterface from '../data/tokenStoreInterface'
 
 let middleware: RequestHandler
 
 let req: Request
 let res: Response
-let tokenStore: TokenStore
+let tokenStore: TokenStoreInterface
 
 let journeyId: string
 

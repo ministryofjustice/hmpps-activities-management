@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 import { JourneyData } from '../@types/express'
-import TokenStore from '../data/tokenStore/tokenStore'
+import TokenStoreInterface from '../data/tokenStoreInterface'
 
 // Off by default for cypress tests to enable the many isolated page tests to work without mocking
 // Enable this in test explicitly by injecting journeyData with stateGuard set to true
 // const stateGuard = process.env.NODE_ENV !== 'e2e-test'
 
-export default function setUpJourneyData(store: TokenStore) {
+export default function setUpJourneyData(store: TokenStoreInterface) {
   return async (req: Request, res: Response, next: NextFunction) => {
     const journeyId = req.params.journeyId ?? 'default'
     const journeyTokenKey = `journey.${req.user?.username}.${journeyId}`

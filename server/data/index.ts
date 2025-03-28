@@ -22,10 +22,10 @@ import NonAssociationsApiClient from './nonAssociationsApiClient'
 import AlertsApiClient from './alertsApiClient'
 import LocationsInsidePrisonApiClient from './locationsInsidePrisonApiClient'
 import NomisMappingClient from './nomisMappingClient'
-import RedisTokenStore from './tokenStore/redisTokenStore'
 import { createRedisClient } from './redisClient'
+import TokenStore from './tokenStore'
 
-const tokenStore = new RedisTokenStore(createRedisClient())
+const tokenStore = new TokenStore(createRedisClient())
 
 export default function dataAccess() {
   return {
