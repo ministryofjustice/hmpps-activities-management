@@ -1,8 +1,9 @@
 import type { RedisClient } from './redisClient'
 
 import logger from '../../logger'
+import TokenStoreInterface from './tokenStoreInterface'
 
-export default class TokenStore {
+export default class TokenStore implements TokenStoreInterface {
   private readonly prefix = 'systemToken:'
 
   constructor(private readonly client: RedisClient) {
@@ -25,5 +26,10 @@ export default class TokenStore {
   public async getToken(key: string): Promise<string> {
     await this.ensureConnected()
     return this.client.get(`${this.prefix}${key}`)
+  }
+
+  public async delToken(key: string): Promise<void> {
+    await this.ensureConnected()
+    await this.client.del(`${this.prefix}${key}`)
   }
 }

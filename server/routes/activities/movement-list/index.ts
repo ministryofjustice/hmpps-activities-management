@@ -8,15 +8,21 @@ import LocationEventsRoutes from './handlers/locationEvents'
 import ApplyFiltersRoutes, { Filters } from './handlers/applyFilters'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
-export default function Index({ activitiesService, prisonService, alertsFilterService }: Services): Router {
+export default function Index({ activitiesService, prisonService, alertsFilterService, tokenStore }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('movementListJourney', stepRequiresSession), asyncMiddleware(handler))
+    router.get(
+      path,
+      emptyJourneyHandler('movementListJourney', stepRequiresSession),
+      setUpJourneyData(tokenStore),
+      asyncMiddleware(handler),
+    )
 
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), setUpJourneyData(tokenStore), asyncMiddleware(handler))
 
   const chooseDetailsRoutes = new ChooseDetailsRoutes()
   const locationsRoutes = new LocationsRoutes(activitiesService)
@@ -24,6 +30,9 @@ export default function Index({ activitiesService, prisonService, alertsFilterSe
   const applyFiltersHandler = new ApplyFiltersRoutes()
 
   router.use(insertJourneyIdentifier())
+
+  // router.use(setUpJourneyData(tokenStore))
+
   get('/:journeyId/choose-details', chooseDetailsRoutes.GET)
   post('/:journeyId/choose-details', chooseDetailsRoutes.POST, DateAndTimeSlot)
   get('/:journeyId/locations', locationsRoutes.GET)
