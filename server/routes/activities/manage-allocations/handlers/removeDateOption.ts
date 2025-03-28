@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
+import config from '../../../../config'
 
 enum Options {
   CHANGE = 'change',
@@ -17,13 +18,8 @@ export class RemoveDateOption {
 export default class RemoveDateOptionRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response): Promise<void> => {
-    const { prisonerName } = req.session.allocateJourney.inmate
-
-    res.render('pages/activities/manage-allocations/remove-date-option', {
-      prisonerName,
-    })
-  }
+  GET = async (req: Request, res: Response): Promise<void> =>
+    res.render('pages/activities/manage-allocations/remove-date-option')
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { allocationId } = req.params
@@ -47,6 +43,12 @@ export default class RemoveDateOptionRoutes {
       )
     }
 
+    if (
+      config.multiplePrisonerActivityAllocationEnabled &&
+      req.session.allocateJourney.allocateMultipleInmatesMode &&
+      req.query.preserveHistory
+    )
+      return res.redirect('multiple/check-answers')
     return res.redirect(`check-answers`)
   }
 }

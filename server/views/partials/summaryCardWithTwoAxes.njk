@@ -1,0 +1,35 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{%- from "govuk/components/tag/macro.njk" import govukTag -%}
+
+{% macro summaryCardWithTwoAxes(prisoner, rows, head, removeLink, removeLinkPresent = true) %}
+{% set prisonerNumber = prisoner.prisonerNumber %}
+
+
+<div class="govuk-summary-card appointment-schedule">
+<div class="govuk-summary-card__title-wrapper">
+    <h2 class="govuk-summary-card__title"
+        data-qa="schedule-card-title-prison-number-{{ prisonerNumber }}">
+        {{ prisoner.prisonerName | toTitleCase if prisoner.prisonerName else "No matching name" }} ({{ prisonerNumber }})
+    </h2>
+    <ul class="govuk-summary-card__actions"
+        data-qa="schedule-card-actions-prison-number-{{ prisonerNumber }}">
+        <li class="govuk-summary-card__action">
+            <a href= {{ removeLink }}
+                class="govuk-link--no-visited-state">
+                Remove <span class="govuk-visually-hidden">{{ prisonerNumber }}</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="govuk-summary-card__content">
+    {{ govukTable({
+    caption: 'Attendee',
+    captionClasses: "govuk-visually-hidden",
+    firstCellIsHeader: true,
+    classes: "govuk-!-margin-bottom-1",
+    head: head,
+    rows: rows
+    }) }}
+</div>
+</div>
+{% endmacro %}

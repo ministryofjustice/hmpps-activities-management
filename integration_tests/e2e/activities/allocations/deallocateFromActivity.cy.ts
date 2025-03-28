@@ -45,7 +45,7 @@ context('Deallocation from activity', () => {
   describe('Activity has already started', () => {
     it('should de-allocate from sessions after today', () => {
       // Set start date to 15 days ago so no activity session today
-      resetActivityAndScheduleStubs(subDays(subWeeks(new Date(), 2), 1))
+      resetActivityAndScheduleStubs({ activityStartDate: subDays(subWeeks(new Date(), 2), 1) })
 
       const indexPage = Page.verifyOnPage(IndexPage)
       indexPage.activitiesCard().click()
@@ -84,7 +84,11 @@ context('Deallocation from activity', () => {
 
     it('should de-allocate from session today and remove any attendances later today', () => {
       // Set start date to 2 weeks ago so activity session is later today
-      resetActivityAndScheduleStubs(subWeeks(new Date(), 2), 'english', formatDate(addMinutes(new Date(), 2), 'HH:mm'))
+      resetActivityAndScheduleStubs({
+        activityStartDate: subWeeks(new Date(), 2),
+        startTime: formatDate(addMinutes(new Date(), 2), 'HH:mm'),
+        subject: 'english',
+      })
 
       const indexPage = Page.verifyOnPage(IndexPage)
       indexPage.activitiesCard().click()
@@ -129,7 +133,7 @@ context('Deallocation from activity', () => {
   describe('Activity starts in the future', () => {
     it('should de-allocate from sessions', () => {
       // Set start date to tomorrow
-      resetActivityAndScheduleStubs(addDays(new Date(), 1))
+      resetActivityAndScheduleStubs({ activityStartDate: addDays(new Date(), 1) })
 
       const indexPage = Page.verifyOnPage(IndexPage)
       indexPage.activitiesCard().click()

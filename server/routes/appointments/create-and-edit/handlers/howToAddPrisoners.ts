@@ -1,11 +1,8 @@
 import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
 import { Request, Response } from 'express'
+import HowToAddOptions from '../../../../enum/allocations'
 
-export enum HowToAddOptions {
-  SEARCH = 'SEARCH',
-  CSV = 'CSV',
-}
 export class HowToAddPrisonersForm {
   @Expose()
   @IsEnum(HowToAddOptions, { message: 'You must select one option' })

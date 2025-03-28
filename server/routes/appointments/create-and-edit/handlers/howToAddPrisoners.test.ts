@@ -1,8 +1,9 @@
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { Request, Response } from 'express'
-import HowToAddPrisoners, { HowToAddOptions, HowToAddPrisonersForm } from './howToAddPrisoners'
+import HowToAddPrisoners, { HowToAddPrisonersForm } from './howToAddPrisoners'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import HowToAddOptions from '../../../../enum/allocations'
 
 describe('Route Handlers - Create Appointment - How to add prisoners', () => {
   const handler = new HowToAddPrisoners()

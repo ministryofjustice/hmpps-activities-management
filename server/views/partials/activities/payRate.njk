@@ -1,0 +1,8 @@
+{% macro payRate(payBand, incentiveLevel) %}
+    {% if payBand %}
+        <div>{{ incentiveLevel }} incentive level:</div>
+        <div>{{ payBand.alias or payBand.bandAlias }} - {{ payBand.rate | toMoney }}</div>
+    {% else %}
+        No pay rate for this activity
+    {% endif %}
+{% endmacro %}

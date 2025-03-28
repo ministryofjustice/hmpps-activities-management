@@ -39,4 +39,19 @@ describe('nonAssociationsApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+  describe('getNonAssociationsInvolving', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+
+      fakeNonAssociationsApi
+        .post('/non-associations/involving')
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200, response)
+
+      const output = await nonAssociationsApiClient.getNonAssociationsInvolving(['AA1111A', 'BB2222B'], user)
+
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

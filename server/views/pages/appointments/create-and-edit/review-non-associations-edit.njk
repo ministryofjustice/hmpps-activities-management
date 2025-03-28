@@ -1,5 +1,5 @@
 {% extends "layout.njk" %}
-{% from "partials/summaryCardWithTable.njk" import summaryCardWithTable %}
+{% from "partials/nonAssociationsSummaryCardWithTable.njk" import nonAssociationsSummaryCardWithTable %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
@@ -51,7 +51,7 @@
                 <p class="govuk-body">People already attending: {{ existingAttendeesCount }}</p>
                 <p class="govuk-body">You can only remove people you’re adding. You can remove people who are already attending once you’ve finished adding people.</p>
                 {% for attendee in nonAssociations %}
-                    {{ summaryCardWithTable(attendee, existingPrisonerNumbers) }}
+                    {{ nonAssociationsSummaryCardWithTable(attendee, existingPrisonerNumbers) }}
                 {% endfor %}
 
                 <form method="POST">

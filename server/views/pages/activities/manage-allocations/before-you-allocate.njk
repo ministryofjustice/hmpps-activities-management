@@ -8,6 +8,8 @@
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
 {% from "partials/activities/suspension-badge.njk" import suspensionBadge %}
+{% from "partials/activities/prisonerEducation.njk" import prisonerEducation %}
+{% from "partials/activities/suitabilityTag.njk" import suitablityTag %}
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Before you allocate" %}
 {% set pageId = 'before-you-allocate-page' %}
@@ -249,20 +251,3 @@
         </div>
     </div>
 {% endblock %}
-
-{% macro suitablityTag(suitable) %}
-    {{ govukTag({
-        text: 'Yes' if suitable else 'No',
-        classes: 'govuk-tag--green' if suitable else 'govuk-tag--red'
-    }) }}
-{% endmacro %}
-
-{% macro prisonerEducation(educationItems) %}
-    {% for education in educationItems %}
-        {% if loop.index <= 3 %}    
-            <div>{{ education.studyArea }}: {{ education.educationLevel }}</div>
-        {% endif %}
-    {% else %}
-        None
-    {% endfor %}
-{% endmacro %}

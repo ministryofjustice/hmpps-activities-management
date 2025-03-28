@@ -1,7 +1,10 @@
 import { ActivitySchedule, Allocation, ScheduledInstance, Slot } from '../../../@types/activitiesAPI/types'
 
-type Inmate = {
+export type Inmate = {
   prisonerName: string
+  firstName?: string
+  middleNames?: string
+  lastName?: string
   prisonerNumber: string
   prisonCode: string
   status: string
@@ -12,6 +15,10 @@ type Inmate = {
     alias: string
     rate: number
   }
+  otherAllocations?: Allocation[]
+  startDate?: string
+  nonAssociations?: boolean
+  numberPayBandsAvailable?: number
 }
 
 export type AllocateToActivityJourney = {
@@ -61,6 +68,9 @@ export type AllocateToActivityJourney = {
     notInWork?: boolean
     schedule?: ActivitySchedule
   }[]
+  withoutMatchingIncentiveLevelInmates?: Array<Inmate>
+  allocatedInmates?: Array<Inmate>
+  allocateMultipleInmatesMode?: boolean
 }
 
 export enum EndDecision {

@@ -11,6 +11,7 @@ import {
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
 import { parseDate } from '../../../../utils/utils'
+import config from '../../../../config'
 
 export class EndDate {
   @Expose()
@@ -82,6 +83,10 @@ export default class EndDateRoutes {
       return res.redirectOrReturn(`reason`)
     }
     if (req.session.allocateJourney.activity.paid) {
+      if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
+        if (req.query.preserveHistory) return res.redirect('multiple/check-answers')
+        return res.redirectOrReturn('multiple/pay-band-multiple')
+      }
       return res.redirectOrReturn('pay-band')
     }
     return res.redirectOrReturn('exclusions')

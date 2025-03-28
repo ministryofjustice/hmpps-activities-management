@@ -13,6 +13,15 @@ export default class NonAssociationsService {
     return this.nonAssociationsApiClient.getNonAssociationsBetween(prisonerNumbers, user)
   }
 
+  async getNonAssociationsInvolving(prisonerNumbers: string[], user: ServiceUser): Promise<NonAssociation[]> {
+    return this.nonAssociationsApiClient.getNonAssociationsInvolving(prisonerNumbers, user)
+  }
+
+  async getListPrisonersWithNonAssociations(prisonerNumbers: string[], user: ServiceUser): Promise<string[]> {
+    const nonAssociations = await this.getNonAssociationsInvolving(prisonerNumbers, user)
+    return Array.from(new Set(nonAssociations.flatMap(na => [na.firstPrisonerNumber, na.secondPrisonerNumber])))
+  }
+
   async enhanceNonAssociations(nonAssociations: NonAssociation[], user: ServiceUser) {
     if (!nonAssociations.length) return []
 

@@ -1,5 +1,5 @@
 {% extends "layout.njk" %}
-{% from "partials/summaryCardWithTable.njk" import summaryCardWithTable %}
+{% from "partials/nonAssociationsSummaryCardWithTable.njk" import nonAssociationsSummaryCardWithTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
@@ -26,7 +26,7 @@
                 }) }}
                 <p class="govuk-body" data-qa="attendee-numbers">You’re reviewing {{ nonAssociations | length }} people with non-associations out of a total of {{ attendeesTotalCount }} attendees.</p>
                 {% for attendee in nonAssociations %}
-                    {{ summaryCardWithTable(attendee) }}
+                    {{ nonAssociationsSummaryCardWithTable(attendee) }}
                 {% endfor %}
             {% else %}
                 <p class="govuk-body" data-qa="remaining-attendees">There {% if attendeesTotalCount === 1 %}is one attendee {% else %}are {{ attendeesTotalCount }} attendees{% endif %} remaining on the appointment list.</p>

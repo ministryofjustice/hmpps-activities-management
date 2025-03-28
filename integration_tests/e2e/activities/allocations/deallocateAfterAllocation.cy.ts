@@ -81,10 +81,10 @@ context('Deallocate from activities after an allocation', () => {
     const today = new Date()
     const hours = addHours(today, 2).getHours().toString().padStart(2, '0')
     const mins = today.getMinutes().toString().padStart(2, '0')
-    resetActivityAndScheduleStubs(subWeeks(today, 2), 'english')
+    resetActivityAndScheduleStubs({ activityStartDate: subWeeks(today, 2), subject: 'english' })
 
-    resetActivityAndScheduleStubs(new Date(), 'maths', `${hours}:${mins}`)
-    resetActivityAndScheduleStubs(new Date(), 'science', `${hours}:${mins}`)
+    resetActivityAndScheduleStubs({ activityStartDate: new Date(), subject: 'maths', startTime: `${hours}:${mins}` })
+    resetActivityAndScheduleStubs({ activityStartDate: new Date(), subject: 'science', startTime: `${hours}:${mins}` })
 
     cy.signIn()
   })
