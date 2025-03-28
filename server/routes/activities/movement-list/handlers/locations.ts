@@ -10,15 +10,16 @@ export default class LocationsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { dateOption, date, timeSlot } = req.query
+    const { movementListJourney } = req.journeyData
 
     const richDate = dateFromDateOption(dateOption as DateOption, date as string)
     if (!richDate || !isValid(richDate)) {
       return res.redirect('choose-details')
     }
 
-    req.session.movementListJourney.dateOption = dateOption as string
-    req.session.movementListJourney.date = formatIsoDate(richDate)
-    req.session.movementListJourney.timeSlot = timeSlot as string
+    movementListJourney.dateOption = dateOption as string
+    movementListJourney.date = formatIsoDate(richDate)
+    movementListJourney.timeSlot = timeSlot as string
 
     const locations = await this.activitiesService.getInternalLocationEventsSummaries(
       user.activeCaseLoadId,
@@ -29,9 +30,10 @@ export default class LocationsRoutes {
 
     return res.render('pages/activities/movement-list/locations', {
       dateOption,
-      date: req.session.movementListJourney.date,
+      date: req.journeyData.movementListJourney.date,
       timeSlot,
       locations,
+      movementListJourney,
     })
   }
 }

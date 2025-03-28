@@ -31,6 +31,7 @@ export default function services() {
     alertsApiClient,
     locationsInsidePrisonApiClient,
     nomisMappingClient,
+    tokenStore,
   } = dataAccess()
 
   const alertsFilterService = new AlertsFilterService()
@@ -54,6 +55,7 @@ export default function services() {
     alertsService,
     locationMappingService: new LocationMappingService(locationsInsidePrisonApiClient, nomisMappingClient),
     locationsService: new LocationsService(locationsInsidePrisonApiClient),
+    tokenStore,
   }
 }
 

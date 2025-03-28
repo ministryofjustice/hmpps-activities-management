@@ -11,7 +11,7 @@ export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
     const { alertFilters } = req.body
 
-    req.session.movementListJourney.alertFilters = alertFilters ?? []
+    req.journeyData.movementListJourney.alertFilters = alertFilters ?? []
 
     res.redirect('back')
   }

@@ -27,7 +27,7 @@ describe('Movement list routes - choose details', () => {
     } as unknown as Response
 
     req = {
-      session: {},
+      journeyData: {},
       query: {},
     } as unknown as Request
   })

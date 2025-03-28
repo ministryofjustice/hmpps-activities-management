@@ -20,6 +20,7 @@ export default class LocationEventsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { locationIds, dateOption, date, timeSlot } = req.query
+    const { movementListJourney } = req.journeyData
 
     const richDate = dateFromDateOption(dateOption as DateOption, date as string)
     if (!richDate || !isValid(richDate) || !(locationIds as string)) {
@@ -61,9 +62,9 @@ export default class LocationEventsRoutes {
 
     const alertOptions = this.alertsFilterService.getAllAlertFilterOptions()
 
-    req.session.movementListJourney.alertFilters ??= alertOptions.map(a => a.key)
+    movementListJourney.alertFilters ??= alertOptions.map(a => a.key)
 
-    const { alertFilters } = req.session.movementListJourney
+    const selectedAlerts = movementListJourney.alertFilters
 
     const locations = internalLocationEvents.map(
       l =>
@@ -123,8 +124,8 @@ export default class LocationEventsRoutes {
 
               return {
                 ...p,
-                alerts: this.alertsFilterService.getFilteredAlerts(alertFilters, p?.alerts),
-                category: this.alertsFilterService.getFilteredCategory(alertFilters, p?.category),
+                alerts: this.alertsFilterService.getFilteredAlerts(selectedAlerts, p?.alerts),
+                category: this.alertsFilterService.getFilteredCategory(selectedAlerts, p?.category),
                 events: filteredEvents,
                 clashingEvents,
               } as MovementListPrisonerEvents
@@ -139,6 +140,7 @@ export default class LocationEventsRoutes {
       timeSlot,
       locations,
       alertOptions,
+      movementListJourney,
     })
   }
 }

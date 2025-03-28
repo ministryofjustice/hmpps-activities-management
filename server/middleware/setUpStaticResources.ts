@@ -10,8 +10,16 @@ export default function setUpStaticResources(): Router {
 
   router.use(compression())
 
-  //  Static Resources Configuration
-  const cacheControl = { maxAge: config.staticResourceCacheDuration }
+  /** Add a static asset route */
+  function staticRoute(assetUrl: string, assetPath: string): void {
+    router.use(
+      assetUrl,
+      express.static(path.join(process.cwd(), assetPath), {
+        maxAge: config.staticResourceCacheDuration,
+        redirect: false,
+      }),
+    )
+  }
 
   // TODO: JQuery is a peer dependency of moj-frontend, consider helping to remove this from there and therefore as a dependency of this project
   Array.of(
@@ -20,60 +28,22 @@ export default function setUpStaticResources(): Router {
     '/node_modules/govuk-frontend/dist',
     '/node_modules/@ministryofjustice/frontend/moj/assets',
     '/node_modules/@ministryofjustice/frontend',
+    '/node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend',
     '/node_modules/jquery/dist',
-  ).forEach(dir => {
-    router.use('/assets', express.static(path.join(process.cwd(), dir), cacheControl))
-  })
+  ).forEach(dir => staticRoute('/assets', dir))
 
   // set favicon redirect
-  router.use(
-    '/favicon.ico',
-    express.static(
-      path.join(process.cwd(), '/node_modules/govuk-frontend/dist/govuk/assets/favicon.ico'),
-      cacheControl,
-    ),
-  )
+  staticRoute('/favicon.ico', '/node_modules/govuk-frontend/dist/govuk/assets/favicon.ico')
 
-  // DPR assets
-  router.use(
-    '/assets/dpr',
-    express.static(
-      path.join(process.cwd(), '/node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/assets'),
-      cacheControl,
-    ),
-  )
-
-  // moj assets for DPR
-  router.use(
-    '/moj/assets',
-    express.static(path.join(process.cwd(), '/node_modules/@ministryofjustice/frontend/moj/assets'), cacheControl),
-  )
-
-  // Chart js
-  router.use(
-    '/assets/ext/chart.js',
-    express.static(path.join(process.cwd(), '/node_modules/chart.js/dist/chart.umd.js')),
-  )
-
-  router.use(
-    '/assets/ext/chart.umd.js.map',
-    express.static(path.join(process.cwd(), '/node_modules/chart.js/dist/chart.umd.js.map')),
-  )
-
-  router.use(
+  // // Third-party plugins that DPR does not automatically bundle - day.js and chart.js
+  staticRoute('/assets/ext/chart.js', '/node_modules/chart.js/dist/chart.umd.js')
+  staticRoute('/assets/ext/chart.umd.js.map', '/node_modules/chart.js/dist/chart.umd.js.map')
+  staticRoute(
     '/assets/ext/chartjs-datalabels.js',
-    express.static(
-      path.join(process.cwd(), '/node_modules/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.min.js'),
-    ),
+    '/node_modules/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.min.js',
   )
-
-  // Dayjs
-  router.use('/assets/ext/day.js', express.static(path.join(process.cwd(), '/node_modules/dayjs/dayjs.min.js')))
-
-  router.use(
-    '/assets/ext/dayjs/plugin/customParseFormat.js',
-    express.static(path.join(process.cwd(), '/node_modules/dayjs/plugin/customParseFormat.js')),
-  )
+  staticRoute('/assets/ext/day.js', '/node_modules/dayjs/dayjs.min.js')
+  staticRoute('/assets/ext/dayjs/plugin/customParseFormat.js', '/node_modules/dayjs/plugin/customParseFormat.js')
 
   // Don't cache dynamic resources
   router.use(noCache())
