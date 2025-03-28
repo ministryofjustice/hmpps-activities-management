@@ -144,6 +144,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           activity: {
             activityId: 1,
             scheduleId: 1,
+            name: 'Box making',
           },
         },
       },
@@ -192,6 +193,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           unallocatedInmates: [inmateWithStandard, inmateWithEnhanced],
           allocatedInmates: [inmateWithBasic],
           withoutMatchingIncentiveLevelInmates: [],
+          cannotAllocateMessage: '1 person from  your CSV file cannot be allocated',
         },
       )
     })
@@ -214,6 +216,61 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           unallocatedInmates: [inmateWithStandard, inmateWithEnhanced],
           allocatedInmates: [],
           withoutMatchingIncentiveLevelInmates: [inmateWithBasic],
+          cannotAllocateMessage: '1 person from  your CSV file cannot be allocated',
+        },
+      )
+    })
+
+    it('should add correct allocations to unallocated and failed incentive level lists when one allocation does not have the required incentive level - from activity', async () => {
+      req.query = {
+        fromActivity: 'Cooking',
+      }
+
+      when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(activity)
+
+      when(activitiesService.getAllocationsWithParams)
+        .calledWith(1, { includePrisonerSummary: true }, res.locals.user)
+        .mockResolvedValue([])
+
+      const activityPay: ActivityPay[] = [activityPayStandard, activityPayEnhanced]
+      activity.pay = activityPay
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/allocateMultiplePeople/reviewUploadPrisonerList',
+        {
+          unallocatedInmates: [inmateWithStandard, inmateWithEnhanced],
+          allocatedInmates: [],
+          withoutMatchingIncentiveLevelInmates: [inmateWithBasic],
+          cannotAllocateMessage: '1 person from Cooking cannot be allocated to Box making',
+        },
+      )
+    })
+
+    it('should add correct allocations to unallocated and failed incentive level lists when two allocations do not have the required incentive level - from activity', async () => {
+      req.query = {
+        fromActivity: 'Cooking',
+      }
+
+      when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(activity)
+
+      when(activitiesService.getAllocationsWithParams)
+        .calledWith(1, { includePrisonerSummary: true }, res.locals.user)
+        .mockResolvedValue([])
+
+      const activityPay: ActivityPay[] = [activityPayEnhanced]
+      activity.pay = activityPay
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/allocateMultiplePeople/reviewUploadPrisonerList',
+        {
+          unallocatedInmates: [inmateWithEnhanced],
+          allocatedInmates: [],
+          withoutMatchingIncentiveLevelInmates: [inmateWithBasic, inmateWithStandard],
+          cannotAllocateMessage: '2 people from Cooking cannot be allocated to Box making',
         },
       )
     })

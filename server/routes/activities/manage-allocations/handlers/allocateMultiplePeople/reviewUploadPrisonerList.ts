@@ -15,6 +15,9 @@ export default class ReviewUploadPrisonerListRoutes {
     const { user } = res.locals
     const { inmates, withoutMatchingIncentiveLevelInmates, allocatedInmates, activity } = req.session.allocateJourney
     const { scheduleId } = activity
+    const { fromActivity } = req.query
+
+    const activityCopied = fromActivity !== undefined ? fromActivity : undefined
 
     // prisoner without incentive levels and prisoners already allocated haven't been calculated
     if (withoutMatchingIncentiveLevelInmates === undefined && allocatedInmates === undefined) {
@@ -41,10 +44,26 @@ export default class ReviewUploadPrisonerListRoutes {
       req.session.allocateJourney.inmates = unallocatedInmates
     }
 
+    let cannotAllocateMessage
+    const cannotAllocate: number =
+      req.session.allocateJourney.withoutMatchingIncentiveLevelInmates.length +
+      req.session.allocateJourney.allocatedInmates.length
+    if (cannotAllocate > 0) {
+      if (cannotAllocate === 1) {
+        cannotAllocateMessage = '1 person from '
+      } else {
+        cannotAllocateMessage = `${cannotAllocate} people from `
+      }
+      cannotAllocateMessage += activityCopied
+        ? `${activityCopied} cannot be allocated to ${activity.name}`
+        : ' your CSV file cannot be allocated'
+    }
+
     return res.render('pages/activities/manage-allocations/allocateMultiplePeople/reviewUploadPrisonerList', {
       unallocatedInmates: req.session.allocateJourney.inmates,
       withoutMatchingIncentiveLevelInmates: req.session.allocateJourney.withoutMatchingIncentiveLevelInmates,
       allocatedInmates: req.session.allocateJourney.allocatedInmates,
+      cannotAllocateMessage,
     })
   }
 
