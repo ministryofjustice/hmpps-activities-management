@@ -50,7 +50,7 @@ describe('Movement list routes - locations', () => {
   describe('GET', () => {
     beforeEach(() => {
       req = {
-        session: {
+        journeyData: {
           movementListJourney: {},
         },
       } as unknown as Request
@@ -73,10 +73,11 @@ describe('Movement list routes - locations', () => {
         date,
         timeSlot,
         locations,
+        movementListJourney: req.journeyData.movementListJourney,
       })
-      expect(req.session.movementListJourney.dateOption).toEqual(dateOption)
-      expect(req.session.movementListJourney.date).toEqual(date)
-      expect(req.session.movementListJourney.timeSlot).toEqual(timeSlot)
+      expect(req.journeyData.movementListJourney.dateOption).toEqual(dateOption)
+      expect(req.journeyData.movementListJourney.date).toEqual(date)
+      expect(req.journeyData.movementListJourney.timeSlot).toEqual(timeSlot)
     })
 
     it('redirects to choose details when date is invalid', async () => {
@@ -113,10 +114,11 @@ describe('Movement list routes - locations', () => {
         date: expectedDate,
         timeSlot,
         locations,
+        movementListJourney: req.journeyData.movementListJourney,
       })
-      expect(req.session.movementListJourney.dateOption).toEqual(dateOption)
-      expect(req.session.movementListJourney.date).toEqual(expectedDate)
-      expect(req.session.movementListJourney.timeSlot).toEqual(timeSlot)
+      expect(req.journeyData.movementListJourney.dateOption).toEqual(dateOption)
+      expect(req.journeyData.movementListJourney.date).toEqual(expectedDate)
+      expect(req.journeyData.movementListJourney.timeSlot).toEqual(timeSlot)
     })
 
     it("uses tomorrow's date when date option is tomorrow", async () => {
@@ -138,10 +140,11 @@ describe('Movement list routes - locations', () => {
         date: expectedDate,
         timeSlot,
         locations,
+        movementListJourney: req.journeyData.movementListJourney,
       })
-      expect(req.session.movementListJourney.dateOption).toEqual(dateOption)
-      expect(req.session.movementListJourney.date).toEqual(expectedDate)
-      expect(req.session.movementListJourney.timeSlot).toEqual(timeSlot)
+      expect(req.journeyData.movementListJourney.dateOption).toEqual(dateOption)
+      expect(req.journeyData.movementListJourney.date).toEqual(expectedDate)
+      expect(req.journeyData.movementListJourney.timeSlot).toEqual(timeSlot)
     })
 
     it('uses supplied date when date option is other', async () => {
@@ -161,10 +164,11 @@ describe('Movement list routes - locations', () => {
         date,
         timeSlot,
         locations,
+        movementListJourney: req.journeyData.movementListJourney,
       })
-      expect(req.session.movementListJourney.dateOption).toEqual(dateOption)
-      expect(req.session.movementListJourney.date).toEqual(date)
-      expect(req.session.movementListJourney.timeSlot).toEqual(timeSlot)
+      expect(req.journeyData.movementListJourney.dateOption).toEqual(dateOption)
+      expect(req.journeyData.movementListJourney.date).toEqual(date)
+      expect(req.journeyData.movementListJourney.timeSlot).toEqual(timeSlot)
     })
   })
 })

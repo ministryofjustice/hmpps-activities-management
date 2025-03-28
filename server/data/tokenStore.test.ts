@@ -53,4 +53,20 @@ describe('tokenStore', () => {
       expect(redisClient.connect).toHaveBeenCalledWith()
     })
   })
+
+  describe('del token', () => {
+    it('Can delete token', async () => {
+      await tokenStore.setToken('user-1', 'token-1', 10)
+
+      expect(redisClient.set).toHaveBeenCalledWith('systemToken:user-1', 'token-1', { EX: 10 })
+    })
+
+    it('Connects when no connection calling set token', async () => {
+      ;(redisClient as unknown as Record<string, boolean>).isOpen = false
+
+      await tokenStore.setToken('user-1', 'token-1', 10)
+
+      expect(redisClient.connect).toHaveBeenCalledWith()
+    })
+  })
 })
