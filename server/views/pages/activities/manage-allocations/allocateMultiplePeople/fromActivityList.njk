@@ -1,0 +1,43 @@
+{% extends "layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% set pageTitle = applicationName + " - Allocate to an activity - who do you want to allocate?" %}
+{% set pageId = 'from-activity-list-page' %}
+{% set jsBackLink = true %}
+
+{% set options = [{ value: '-', text: '' }] %}
+{% for activity in activities %}
+  {% set options = (options.push( { value: activity.id, text: activity.activityName }), options) %}
+{% endfor %}
+
+{% block meta %}
+  <meta name="autocompleteElements" content="activityId"/>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-l">{{ session.allocateJourney.activity.name }}</span>
+            <h1 class="govuk-heading-l">Search for an activity to get the list of people allocated to it</h1>
+            <form method="POST" action="from-activity-list{{ '?preserveHistory=true' if preserveHistory else '' }}">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+              {{
+                govukSelect({
+                  id: "activityId",
+                  name: "activityId",
+                  label: {
+                    text: "Start typing the activity name and select it from the list."
+                  },
+                  errorMessage: validationErrors | findError('activityId'),
+                  value: formResponses.activity,
+                  items: options
+                })
+              }}
+              {{ govukButton({
+                text: "Continue"
+              }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
