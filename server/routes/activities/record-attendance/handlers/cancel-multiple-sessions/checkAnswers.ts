@@ -10,7 +10,7 @@ export default class CancelMultipleSessionsCheckAnswersRoutes {
     const { activityDate, sessionFilters, selectedInstanceIds, sessionCancellationMultiple } =
       req.session.recordAttendanceJourney
 
-    const date = toDate(activityDate)
+    const sessionDate = toDate(activityDate)
     const instances = await this.activitiesService.getScheduledActivities(
       convertToNumberArray(selectedInstanceIds),
       user,
@@ -21,7 +21,7 @@ export default class CancelMultipleSessionsCheckAnswersRoutes {
 
     res.render('pages/activities/record-attendance/cancel-multiple-sessions/check-answers', {
       instances,
-      date,
+      sessionDate,
       isPayable,
       reason: sessionCancellationMultiple.reason,
       issuePayment: sessionCancellationMultiple.issuePayment ? 'Yes' : 'No',

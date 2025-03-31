@@ -129,7 +129,7 @@ export default class ActivitiesRoutes {
       sessionFilters,
     }
 
-    return res.redirect(`cancel-multiple/cancel-reason`)
+    return res.redirect('cancel-multiple/cancel-reason')
   }
 }
 

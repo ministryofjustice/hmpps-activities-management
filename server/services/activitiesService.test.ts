@@ -1067,4 +1067,26 @@ describe('Activities Service', () => {
       )
     })
   })
+
+  describe('cancelMultipleActivities', () => {
+    it('should cancel multiple activities', async () => {
+      const serviceRequest = {
+        reason: 'Cancel reason',
+        comment: 'Cancel comment',
+        issuePayment: true,
+      }
+
+      const apiRequest = {
+        reason: 'Cancel reason',
+        comment: 'Cancel comment',
+        issuePayment: true,
+        scheduleInstanceIds: [1, 2],
+        username: user.username,
+      }
+
+      await activitiesService.cancelMultipleActivities([1, 2], serviceRequest, user)
+
+      expect(activitiesApiClient.putCancelMultipleActivities).toHaveBeenCalledWith(apiRequest, user)
+    })
+  })
 })
