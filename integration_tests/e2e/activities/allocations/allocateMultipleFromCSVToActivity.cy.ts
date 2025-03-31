@@ -30,6 +30,7 @@ import ActivityRequirementsReviewPage from '../../../pages/allocateToActivity/ac
 import ReviewUploadPrisonerListPage from '../../../pages/allocateToActivity/reviewUploadPrisoner'
 import PayBandMultiplePage from '../../../pages/allocateToActivity/payBandMultiple'
 import CheckAndConfirmMultiplePage from '../../../pages/allocateToActivity/checkAndConfirmMultiple'
+import ConfirmMultipleAllocationsPage from '../../../pages/allocateToActivity/confirmationMultiple'
 
 context('Allocate multiple via CSV to an activity', () => {
   beforeEach(() => {
@@ -62,7 +63,6 @@ context('Allocate multiple via CSV to an activity', () => {
     cy.signIn()
   })
 
-  // FIXME page asserts required through the journey
   it('should be able to allocate when selecting multiple inmates', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
@@ -128,7 +128,12 @@ context('Allocate multiple via CSV to an activity', () => {
     const checkAndConfirmMultiple = Page.verifyOnPage(CheckAndConfirmMultiplePage)
     checkAndConfirmMultiple.inmatePayRows().should('have.length', 2)
     checkAndConfirmMultiple.selectConfirm('Confirm 2 allocations').click()
-    // FIXME click through and finish journey
+
+    const confirmMultipleAllocationsPage = Page.verifyOnPage(ConfirmMultipleAllocationsPage)
+    confirmMultipleAllocationsPage.panelHeader().should('contain.text', 'Allocations complete')
+    confirmMultipleAllocationsPage
+      .panelText()
+      .should('contain.text', '2 people are now allocated to Entry level English 1')
   })
 
   it('should be able to allocate when selecting multiple inmates and remove one prisoner', () => {
