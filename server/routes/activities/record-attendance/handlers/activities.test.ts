@@ -7,6 +7,7 @@ import PrisonService from '../../../../services/prisonService'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import LocationType from '../../../../enum/locationType'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -206,7 +207,7 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
-        cancelMultipleSessionsEnabled: false,
+        cancelMultipleSessionsEnabled: config.cancelMultipleSessionsEnabled,
       })
     })
 
@@ -250,7 +251,7 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
-        cancelMultipleSessionsEnabled: false,
+        cancelMultipleSessionsEnabled: config.cancelMultipleSessionsEnabled,
       })
     })
 
@@ -295,7 +296,7 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
-        cancelMultipleSessionsEnabled: false,
+        cancelMultipleSessionsEnabled: config.cancelMultipleSessionsEnabled,
       })
     })
 
@@ -327,7 +328,7 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
-        cancelMultipleSessionsEnabled: false,
+        cancelMultipleSessionsEnabled: config.cancelMultipleSessionsEnabled,
       })
     })
 
@@ -367,7 +368,7 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
-        cancelMultipleSessionsEnabled: false,
+        cancelMultipleSessionsEnabled: config.cancelMultipleSessionsEnabled,
       })
     })
 
@@ -419,7 +420,7 @@ describe('Route Handlers - Activities', () => {
             },
           ],
           locations: [],
-          cancelMultipleSessionsEnabled: false,
+          cancelMultipleSessionsEnabled: config.cancelMultipleSessionsEnabled,
         })
       })
 
@@ -454,7 +455,7 @@ describe('Route Handlers - Activities', () => {
             },
           ],
           locations: [],
-          cancelMultipleSessionsEnabled: false,
+          cancelMultipleSessionsEnabled: config.cancelMultipleSessionsEnabled,
         })
       })
 
@@ -489,7 +490,7 @@ describe('Route Handlers - Activities', () => {
             },
           ],
           locations: [],
-          cancelMultipleSessionsEnabled: false,
+          cancelMultipleSessionsEnabled: config.cancelMultipleSessionsEnabled,
         })
       })
 
@@ -525,7 +526,7 @@ describe('Route Handlers - Activities', () => {
             },
           ],
           locations: [],
-          cancelMultipleSessionsEnabled: false,
+          cancelMultipleSessionsEnabled: config.cancelMultipleSessionsEnabled,
         })
       })
     })
