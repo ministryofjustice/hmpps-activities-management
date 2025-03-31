@@ -17,7 +17,7 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l">{{ session.allocateJourney.activity.name }}</span>
             <h1 class="govuk-heading-l">Search for an activity to get the list of people allocated to it</h1>
             <form method="POST" action="from-activity-list{{ '?preserveHistory=true' if preserveHistory else '' }}">

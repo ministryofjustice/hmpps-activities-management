@@ -92,7 +92,7 @@ const mockActivity: Activity = {
   riskLevel: '',
   schedules: [activitySchedule as unknown as ActivitySchedule],
   startDate: '',
-  summary: '',
+  summary: 'Writing',
   description: 'Writing',
 }
 
@@ -251,7 +251,6 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
     })
   })
 
-  // FiXME implement post tests
   describe('POST', () => {
     it('should redirect to review upload a prisoner list view', async () => {
       when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(mockActivity)
@@ -345,10 +344,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
 
       await handler.POST(req, res)
 
-      expect(res.validationFailed).toHaveBeenCalledWith(
-        'activityId',
-        'There are no active allocations for this activity',
-      )
+      expect(res.validationFailed).toHaveBeenCalledWith('activityId', 'No-one is currently allocated to Writing')
     })
   })
 
