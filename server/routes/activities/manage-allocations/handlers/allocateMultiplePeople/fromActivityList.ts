@@ -41,9 +41,8 @@ export default class FromActivityListRoutes {
       .filter(alloc => alloc.status === 'ACTIVE')
       .map(alloc => alloc.prisonerNumber)
 
-    // FIXME what message should be displayed?
     if (prisonerNumbers.length === 0) {
-      return res.validationFailed('activityId', 'There are no active allocations for this activity')
+      return res.validationFailed('activityId', `No-one is currently allocated to ${activityToCopy.summary}`)
     }
 
     const prisoners: Prisoner[] = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
