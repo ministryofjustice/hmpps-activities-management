@@ -7,6 +7,7 @@ import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import PrisonService from '../../../../services/prisonService'
 import LocationType from '../../../../enum/locationType'
+import config from '../../../../config'
 
 export default class ActivitiesRoutes {
   constructor(
@@ -84,6 +85,7 @@ export default class ActivitiesRoutes {
       selectedSessions: filterValues.sessionFilters,
       activityRows,
       locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
+      cancelMultipleSessionsEnabled: config.cancelMultipleSessionsEnabled,
     })
   }
 
@@ -116,6 +118,18 @@ export default class ActivitiesRoutes {
       return res.redirect(`${selectedInstanceIdsArr[0]}/attendance-list`)
     }
     return res.redirect('attendance-list')
+  }
+
+  POST_CANCELLATIONS = async (req: Request, res: Response): Promise<void> => {
+    const { selectedInstanceIds, activityDate, sessionFilters } = req.body
+    const selectedInstanceIdsArr = selectedInstanceIds ? convertToArray(selectedInstanceIds) : []
+    req.session.recordAttendanceJourney = {
+      selectedInstanceIds: selectedInstanceIdsArr,
+      activityDate,
+      sessionFilters,
+    }
+
+    return res.redirect(`cancel-multiple/cancel-reason`)
   }
 }
 

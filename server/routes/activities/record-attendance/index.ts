@@ -16,6 +16,11 @@ import HomeRoutes from './handlers/home'
 import ResetAttendanceRoutes, { ResetAttendance } from './handlers/resetAttendance'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
+import CancelMultipleSessionsReasonRoutes, {
+  CancelReasonMultipleForm,
+} from './handlers/cancel-multiple-sessions/reason'
+import CancelMultipleSessionsPayRoutes, { SessionPayMultipleForm } from './handlers/cancel-multiple-sessions/payment'
+import CancelMultipleSessionsCheckAnswersRoutes from './handlers/cancel-multiple-sessions/checkAnswers'
 
 export default function Index({ activitiesService, prisonService, userService }: Services): Router {
   const router = Router()
@@ -37,6 +42,9 @@ export default function Index({ activitiesService, prisonService, userService }:
   const editAttendanceHandler = new EditAttendanceRoutes(activitiesService, prisonService)
   const removePayHandler = new RemovePayRoutes(activitiesService, prisonService)
   const resetAttendanceRoutes = new ResetAttendanceRoutes(activitiesService, prisonService)
+  const cancelMultipleSessionsReasonRoutes = new CancelMultipleSessionsReasonRoutes(activitiesService)
+  const cancelMultipleSessionsPayRoutes = new CancelMultipleSessionsPayRoutes()
+  const cancelMultipleSessionsCheckAnswersRoutes = new CancelMultipleSessionsCheckAnswersRoutes(activitiesService)
 
   get('/', homeHandler.GET)
 
@@ -83,6 +91,18 @@ export default function Index({ activitiesService, prisonService, userService }:
     resetAttendanceRoutes.POST,
     ResetAttendance,
   )
+
+  post('/:journeyId/activities/cancel-multiple', activitiesHandler.POST_CANCELLATIONS)
+  get('/:journeyId/activities/cancel-multiple/cancel-reason', cancelMultipleSessionsReasonRoutes.GET, true)
+  post(
+    '/:journeyId/activities/cancel-multiple/cancel-reason',
+    cancelMultipleSessionsReasonRoutes.POST,
+    CancelReasonMultipleForm,
+  )
+  get('/:journeyId/activities/cancel-multiple/payment', cancelMultipleSessionsPayRoutes.GET, true)
+  post('/:journeyId/activities/cancel-multiple/payment', cancelMultipleSessionsPayRoutes.POST, SessionPayMultipleForm)
+  get('/:journeyId/activities/cancel-multiple/check-answers', cancelMultipleSessionsCheckAnswersRoutes.GET, true)
+  post('/:journeyId/activities/cancel-multiple/check-answers', cancelMultipleSessionsCheckAnswersRoutes.POST)
 
   return router
 }

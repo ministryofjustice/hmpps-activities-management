@@ -206,6 +206,7 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
+        cancelMultipleSessionsEnabled: false,
       })
     })
 
@@ -249,6 +250,7 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
+        cancelMultipleSessionsEnabled: false,
       })
     })
 
@@ -293,6 +295,7 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
+        cancelMultipleSessionsEnabled: false,
       })
     })
 
@@ -324,6 +327,7 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
+        cancelMultipleSessionsEnabled: false,
       })
     })
 
@@ -363,6 +367,7 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
+        cancelMultipleSessionsEnabled: false,
       })
     })
 
@@ -414,6 +419,7 @@ describe('Route Handlers - Activities', () => {
             },
           ],
           locations: [],
+          cancelMultipleSessionsEnabled: false,
         })
       })
 
@@ -448,6 +454,7 @@ describe('Route Handlers - Activities', () => {
             },
           ],
           locations: [],
+          cancelMultipleSessionsEnabled: false,
         })
       })
 
@@ -482,6 +489,7 @@ describe('Route Handlers - Activities', () => {
             },
           ],
           locations: [],
+          cancelMultipleSessionsEnabled: false,
         })
       })
 
@@ -517,6 +525,7 @@ describe('Route Handlers - Activities', () => {
             },
           ],
           locations: [],
+          cancelMultipleSessionsEnabled: false,
         })
       })
     })
