@@ -13,6 +13,7 @@ import getMdiPrisonPayBands from '../../../fixtures/activitiesApi/getMdiPrisonPa
 import getCandidates from '../../../fixtures/activitiesApi/getCandidates.json'
 import getCandidateSuitability from '../../../fixtures/activitiesApi/getCandidateSuitability.json'
 import getNonAssociations from '../../../fixtures/activitiesApi/non_associations.json'
+import getNonAssociationsInvolving from '../../../fixtures/nonAssociationsApi/getNonAssociationsInvolving.json'
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
 import StartDatePage from '../../../pages/allocateToActivity/startDate'
@@ -54,8 +55,7 @@ context('Allocate multiple via CSV to an activity', () => {
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
     cy.stubEndpoint('POST', '/schedules/2/allocations')
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
-    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=&size=50', getInmateDetails)
-    cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociations)
+    cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociationsInvolving)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails.content)
 
     resetActivityAndScheduleStubs({ activityStartDate: subWeeks(new Date(), 2) })
@@ -101,6 +101,8 @@ context('Allocate multiple via CSV to an activity', () => {
     const reviewUploadPrisonerListPage = Page.verifyOnPage(ReviewUploadPrisonerListPage)
     reviewUploadPrisonerListPage.caption().should('contain.text', 'Entry level English 1')
     reviewUploadPrisonerListPage.rows('inmate-list').should('have.length', 2)
+    reviewUploadPrisonerListPage.checkTableCell('inmate-list', 2, 'None')
+    reviewUploadPrisonerListPage.checkTableCell('inmate-list', 7, 'View non-associations')
     reviewUploadPrisonerListPage.continue()
 
     const activityRequirementsReviewPage = Page.verifyOnPage(ActivityRequirementsReviewPage)
