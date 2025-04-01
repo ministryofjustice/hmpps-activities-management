@@ -70,14 +70,8 @@ export default class UploadPrisonerListRoutes {
     addOtherAllocations(inmates, prisonerAllocationsList, activity.scheduleId)
 
     // get non associations
-    const result = await this.prisonService.searchPrisonInmates('', user)
-    let allPrisoners: Prisoner[] = []
-    if (result && !result.empty) {
-      allPrisoners = result.content
-    }
-    const allPrisonerNumbers = allPrisoners.map(prisoner => prisoner.prisonerNumber)
     const nonAssociations: string[] = await this.nonAssociationsService.getListPrisonersWithNonAssociations(
-      allPrisonerNumbers,
+      unallocatedPrisonerNumbers,
       user,
     )
 

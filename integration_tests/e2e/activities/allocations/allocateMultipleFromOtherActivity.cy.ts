@@ -6,7 +6,6 @@ import prisonerAllocations from '../../../fixtures/activitiesApi/prisonerAllocat
 import moorlandIncentiveLevels from '../../../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
 import getCandidates from '../../../fixtures/activitiesApi/getCandidates.json'
 import getCandidateSuitability from '../../../fixtures/activitiesApi/getCandidateSuitability.json'
-import getNonAssociations from '../../../fixtures/activitiesApi/non_associations.json'
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
 import ActivitiesDashboardPage from '../../../pages/allocateToActivity/activitiesDashboard'
@@ -25,9 +24,13 @@ import CheckAndConfirmMultiplePage from '../../../pages/allocateToActivity/check
 import ConfirmMultipleAllocationsPage from '../../../pages/allocateToActivity/confirmationMultiple'
 import SearchForActivityPage from '../../../pages/allocateToActivity/activitySearch'
 import ReviewUploadPrisonerListPage from '../../../pages/allocateToActivity/reviewUploadPrisoner'
+import getNonAssociationsInvolving from '../../../fixtures/nonAssociationsApi/getNonAssociationsInvolving.json'
 
 const getCandidateSuitability2 = { ...getCandidateSuitability }
 getCandidateSuitability2.incentiveLevel.incentiveLevel = 'Enhanced 2'
+
+const nonAssociationsPresent = [...getNonAssociationsInvolving]
+nonAssociationsPresent[0].firstPrisonerNumber = 'G4793VF'
 
 context('Allocate multiple people to an activity by copying from another activity', () => {
   beforeEach(() => {
@@ -43,8 +46,7 @@ context('Allocate multiple people to an activity by copying from another activit
     cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', JSON.parse('[]'))
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', prisonersOnChosenActivity.content)
-    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=&size=50', prisonersOnChosenActivity)
-    cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociations)
+    cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', nonAssociationsPresent)
     cy.stubEndpoint('GET', '/schedules/2/allocations\\?includePrisonerSummary=true', [getAllocations[1]])
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=G4793VF', getCandidateSuitability)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=B1351RE', getCandidateSuitability2)
@@ -98,7 +100,7 @@ context('Allocate multiple people to an activity by copying from another activit
     reviewUploadPrisonerListPage.rows('inmate-list').should('have.length', 1)
     reviewUploadPrisonerListPage.checkTableCell('inmate-list', 0, 'Ramroop, Robert Bob')
     reviewUploadPrisonerListPage.checkTableCell('inmate-list', 1, '2-2-024')
-    reviewUploadPrisonerListPage.checkTableCell('inmate-list', 2, 'None')
+    reviewUploadPrisonerListPage.checkTableCell('inmate-list', 2, 'View non-associations')
     reviewUploadPrisonerListPage.checkTableCell('inmate-list', 3, 'Maths level 1\nEnglish level 1')
     reviewUploadPrisonerListPage.checkTableCell('inmate-list', 4, 'Remove')
     reviewUploadPrisonerListPage.checkTableCell('incentive-level-list', 0, 'Potter, Harry Peter')
