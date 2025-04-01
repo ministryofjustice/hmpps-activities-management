@@ -19,8 +19,7 @@
       firstName: allocatedInmate.firstName,
       middleNames: allocatedInmate.middleNames,
       lastName: allocatedInmate.lastName,
-      prisonerNumber: allocatedInmate.prisonerNumber,
-      cellLocation: allocatedInmate.cellLocation
+      prisonerNumber: allocatedInmate.prisonerNumber
     }),
       attributes: {
       "data-sort-value": allocatedInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
@@ -51,8 +50,7 @@
       firstName: unallocatedInmate.firstName,
       middleNames: unallocatedInmate.middleNames,
       lastName: unallocatedInmate.lastName,
-      prisonerNumber: unallocatedInmate.prisonerNumber,
-      cellLocation: unallocatedInmate.cellLocation
+      prisonerNumber: unallocatedInmate.prisonerNumber
       }),
       attributes: {
         "data-sort-value": unallocatedInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
@@ -90,8 +88,7 @@
       firstName: withoutMatchingIncentiveLevelInmate.firstName,
       middleNames: withoutMatchingIncentiveLevelInmate.middleNames,
       lastName: withoutMatchingIncentiveLevelInmate.lastName,
-      prisonerNumber: withoutMatchingIncentiveLevelInmate.prisonerNumber,
-      cellLocation: withoutMatchingIncentiveLevelInmate.cellLocation
+      prisonerNumber: withoutMatchingIncentiveLevelInmate.prisonerNumber
     }),
       attributes: {
       "data-sort-value": withoutMatchingIncentiveLevelInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
@@ -148,10 +145,10 @@
 
       {% set totalCannotBeAllocated = withoutMatchingIncentiveLevelInmates.length + allocatedInmates.length %}
       {% if totalCannotBeAllocated > 0 %}
-          <p class="govuk-heading-m govuk-!-margin-top-3">{{ cannotAllocateMessage }}</p>
+          <p class="govuk-heading-m govuk-!-margin-top-3" data-qa="incentive-level-title">{{ cannotAllocateMessage }}</p>
       {% endif %}
       {% if withoutMatchingIncentiveLevelInmates.length > 0 %}
-        <p class="govuk-body">
+        <p class="govuk-body" data-qa="incentive-level-text">
           {% if withoutMatchingIncentiveLevelInmates.length == 1 %}
             There is 1 person with an incentive level that does not match a pay rate for this activity.
           {% else %}
@@ -183,7 +180,7 @@
       {% endif %}
 
       {% if allocatedInmates.length > 0 %}
-        <p class="govuk-body">
+        <p class="govuk-body govuk-!-margin-top-3" data-qa="already-allocated-text">
           {% if allocatedInmates.length == 1 %}
             There is 1 person already allocated to {{ session.allocateJourney.activity.name }}
           {% else %}
