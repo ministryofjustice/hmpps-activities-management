@@ -7,7 +7,6 @@ import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import PrisonService from '../../../../services/prisonService'
 import LocationType from '../../../../enum/locationType'
-import config from '../../../../config'
 
 export default class ActivitiesRoutes {
   constructor(
@@ -85,7 +84,6 @@ export default class ActivitiesRoutes {
       selectedSessions: filterValues.sessionFilters,
       activityRows,
       locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
-      cancelMultipleSessionsEnabled: config.cancelMultipleSessionsEnabled,
     })
   }
 

@@ -179,7 +179,7 @@
                         <div class="moj-action-bar__filter"></div>
                     </div>
 
-                    {{ activitiesTable(activityRows, activityDate, filterParams, now, cancelMultipleSessionsEnabled) }}
+                    {{ activitiesTable(activityRows, activityDate, filterParams, now) }}
 
                     {% if activitiesBySession['AM'].length == 0 and activitiesBySession['PM'].length == 0 and activitiesBySession['ED'].length == 0 %}
                         {{ govukWarningText({
