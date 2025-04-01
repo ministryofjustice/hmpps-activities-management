@@ -99,7 +99,7 @@ describe('Route Handlers - Cancel Multiple Sessions Payment', () => {
       expect(errors).toEqual(
         expect.arrayContaining([
           {
-            error: 'Confirm if you would like payment to be issued for these sessions',
+            error: 'Select if people should be paid for these cancelled sessions',
             property: 'issuePayOption',
           },
         ]),
