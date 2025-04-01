@@ -155,7 +155,7 @@
           {% if withoutMatchingIncentiveLevelInmates.length == 1 %}
             There is 1 person with an incentive level that does not match a pay rate for this activity.
           {% else %}
-            There are {{ allocatedInmates | length }} people with an incentive level that does not match a pay rate for this activity.
+            There are {{ withoutMatchingIncentiveLevelInmates | length }} people with an incentive level that does not match a pay rate for this activity.
           {% endif %}
           <a href='/activities/view/{{ session.allocateJourney.activity.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>You can edit the activity to change pay rates</a>
         </p>
