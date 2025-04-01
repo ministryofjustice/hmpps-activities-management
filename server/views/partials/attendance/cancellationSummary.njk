@@ -9,7 +9,7 @@
       {{ session.activitySchedule.description }} ({{ session.timeSlot }})
     {% endset %}
 
-    {% if session.timeSlot not in headerSlots %}
+    {% if session.timeSlot="AM" and not in headerSlots %}
       {% set headerSlots = (headerSlots.push(session.timeSlot), headerSlots) %}
     {% endif %}
 
