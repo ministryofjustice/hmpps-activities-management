@@ -1,5 +1,6 @@
 export type RecordAttendanceJourney = {
   sessionCancellation?: SessionCancellationRequest
+  sessionCancellationMultiple?: MultipleSessionCancellationRequest
   selectedInstanceIds?: string[]
   activityDate?: string
   sessionFilters?: string[]
@@ -25,4 +26,10 @@ type NotAttendedJourney = {
 export type SessionCancellationRequest = {
   reason: string
   comment?: string
+}
+
+export type MultipleSessionCancellationRequest = {
+  reason: string
+  comment?: string
+  issuePayment: boolean
 }

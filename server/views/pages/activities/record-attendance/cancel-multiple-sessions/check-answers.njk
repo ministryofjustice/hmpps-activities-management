@@ -1,0 +1,102 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "partials/attendance/activitiesTable.njk" import activitiesTable %}
+{% from "partials/attendance/cancellationSummary.njk" import cancellationSummary %}
+
+{% set pageTitle = applicationName + " - Cancel multiple sessions - Check cancellation details" %}
+{% set pageId = 'check-cancellation-details-page' %}
+{% set jsBackLink = true %}
+
+{% set cancellationSummaryHtml %}
+  {{ cancellationSummary(selectedDateAndSlotsText, instances) }}
+{% endset %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-l">Cancel activity sessions</span>
+      <h1 class="govuk-heading-l">Check and confirm cancellation details</h1>
+
+      {{ govukSummaryList({
+        rows: [
+          {
+            key: {
+            text: "Sessions you're cancelling"
+          },
+            value: {
+            text: instances.length
+          },
+            actions: {
+            items: [
+              {
+                href: activitiesRedirectUrl,
+                text: "Change",
+                visuallyHiddenText: "change sessions"
+              }
+            ]
+          }
+          },
+          {
+            key: {
+            text: "Cancellation Reason"
+          },
+            value: {
+            text: reason
+          },
+            actions: {
+            items: [
+              {
+                href: "cancel-reason?preserveHistory=true",
+                text: "Change",
+                visuallyHiddenText: "change cancellation reason"
+              }
+            ]
+          }
+          },
+          {
+            key: {
+            text: "Pay for cancelled sessions"
+          },
+            value: {
+            text: issuePayment
+          },
+            actions: {
+            items: [
+              {
+                href: "payment?preserveHistory=true",
+                text: "Change",
+                visuallyHiddenText: "change payment"
+              }
+            ] if isPayable
+          }
+          }
+        ]
+      }) }}
+
+      <form method="POST" data-module="form-spinner" data-loading-text="Creating activity">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: "Confirm activity cancellations",
+            preventDoubleClick: true
+          }) }}
+        </div>
+      </form>
+
+      {{ govukDetails({
+        summaryText: "View the sessions you're cancelling",
+        html: cancellationSummaryHtml
+      }) }}
+    </div>
+  </div>
+{% endblock %}
+
+
+
+
+
+

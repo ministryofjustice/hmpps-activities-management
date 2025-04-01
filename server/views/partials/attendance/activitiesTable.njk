@@ -3,14 +3,31 @@
 {% from "partials/showLocation.njk" import showLocation %}
 
 {% macro activitiesTable(activities, activityDate, filterParams, now) %}
-    {% set rows = [] %}
+    {% set formActions = [] %}
+    {% if cancelMultipleSessionsEnabled and not ((activityDate | toDateString) < (now | toDateString)) %}
+      {% set formActions = (formActions.push({
+        text: 'Cancel activity sessions',
+        formAction: 'activities/cancel-multiple'
+      }), formActions) %}
+    {% endif %}
+    {% if not ((activityDate | toDateString) > (now | toDateString)) %}
+      {% set formActions = (formActions.push({
+        text: 'Record or edit attendance',
+        formAction: 'activities/attendance-list'
+      }), formActions) %}
+    {% endif %}
 
+    {% set rows = [] %}
     {% for activity in activities %}
+        {% set allowSelection = not activity.cancelled and activity.attendanceRequired and activity.attendanceSummary.allocations > 0 %}
+        {% if not cancelMultipleSessionsEnabled %}
+          {% set allowSelection = allowSelection and not ((activity.sessionDate | toDateString) > (now | toDateString)) %}
+        {% endif %}
         {% set activityLocation = showLocation(activity, makeCapitals = true) %}
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + activity.summary + ' ' + (activity.session),
             value: activity.scheduledInstanceId,
-            selectable: not activity.cancelled and activity.attendanceRequired and activity.attendanceSummary.allocations > 0 and not ((activity.sessionDate | toDateString) > (now | toDateString)),
+            selectable: allowSelection,
             items: [
                 {
                     attributes: {
@@ -117,12 +134,7 @@
                 }
             ],
             rows: rows,
-            actions: [
-                {
-                    text: 'Record or edit attendance',
-                    formAction: 'activities/attendance-list'
-                }
-            ],
+            actions: formActions,
             itemsDescription: 'activity',
             itemsDescriptionPlural: 'activities',
             pagination: {

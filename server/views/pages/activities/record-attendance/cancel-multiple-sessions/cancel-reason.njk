@@ -4,15 +4,15 @@
 {% from "partials/attendance/cancelReasonList.njk" import cancelReasonList %}
 
 {% set jsBackLink = true %}
-{% set pageTitle = applicationName + " - Cancel session - Reason" %}
-{% set pageId = 'cancel-session-reason-page' %}
+{% set pageTitle = applicationName + " - Cancel multiple sessions - Reason" %}
+{% set pageId = 'cancel-multiple-session-reason-page' %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <span class="govuk-caption-l">Record activity attendance</span>
-      <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Why are you cancelling the session?</h1>
-      <span class="govuk-caption-m govuk-!-margin-bottom-3">Prisoners will be {{ "paid and" if isPayable}} recorded as having an acceptable absence.</span>
+      <span class="govuk-caption-l">Cancel activity sessions</span>
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Why are you cancelling these sessions?</h1>
+      <span class="govuk-caption-m govuk-!-margin-bottom-3">This will be recorded as an acceptable absence for everyone who was due to attend.</span>
 
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
