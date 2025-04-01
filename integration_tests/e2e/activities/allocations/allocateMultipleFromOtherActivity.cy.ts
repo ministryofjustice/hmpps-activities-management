@@ -16,7 +16,7 @@ import ManageActivitiesDashboardPage from '../../../pages/activities/manageActiv
 import ActivitiesIndexPage from '../../../pages/activities'
 import resetActivityAndScheduleStubs from './allocationsStubHelper'
 import HowToAddOptions from '../../../../server/enum/allocations'
-import prisonersOnChosenActivity from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-G4793VF.json'
+import prisonersOnChosenActivity from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-G4793VF-A1351DZ-B1351RE.json'
 import ActivityRequirementsReviewPage from '../../../pages/allocateToActivity/activityRequirementsReview'
 import StartDatePage from '../../../pages/allocateToActivity/startDate'
 import EndDateOptionPage from '../../../pages/allocateToActivity/endDateOption'
@@ -25,6 +25,9 @@ import CheckAndConfirmMultiplePage from '../../../pages/allocateToActivity/check
 import ConfirmMultipleAllocationsPage from '../../../pages/allocateToActivity/confirmationMultiple'
 import SearchForActivityPage from '../../../pages/allocateToActivity/activitySearch'
 import ReviewUploadPrisonerListPage from '../../../pages/allocateToActivity/reviewUploadPrisoner'
+
+const getCandidateSuitability2 = { ...getCandidateSuitability }
+getCandidateSuitability2.incentiveLevel.incentiveLevel = 'Enhanced 2'
 
 context('Allocate multiple people to an activity by copying from another activity', () => {
   beforeEach(() => {
@@ -42,21 +45,28 @@ context('Allocate multiple people to an activity by copying from another activit
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', prisonersOnChosenActivity.content)
     cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=&size=50', prisonersOnChosenActivity)
     cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociations)
-    cy.stubEndpoint('GET', '/schedules/2/allocations\\?includePrisonerSummary=true', [])
+    cy.stubEndpoint('GET', '/schedules/2/allocations\\?includePrisonerSummary=true', [getAllocations[1]])
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=G4793VF', getCandidateSuitability)
+    cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=B1351RE', getCandidateSuitability2)
+    cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A1351DZ', getCandidateSuitability)
     cy.stubEndpoint('POST', '/schedules/2/allocations')
 
-    resetActivityAndScheduleStubs({ activityStartDate: subWeeks(new Date(), 2), reducedPayOptions: true })
+    resetActivityAndScheduleStubs({
+      activityStartDate: subWeeks(new Date(), 2),
+      reducedPayOptions: true,
+      addExtraAllocations: true,
+    })
     resetActivityAndScheduleStubs({
       activityStartDate: subWeeks(new Date(), 2),
       subject: 'maths',
       reducedPayOptions: true,
+      addExtraAllocations: true,
     })
 
     cy.signIn()
   })
 
-  it('should be able to allocate when selecting an existing activity', () => {
+  it('should be able to allocate when selecting an existing activity - multiple people, some not applicable', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -86,6 +96,33 @@ context('Allocate multiple people to an activity by copying from another activit
     const reviewUploadPrisonerListPage = Page.verifyOnPage(ReviewUploadPrisonerListPage)
     reviewUploadPrisonerListPage.caption().should('contain.text', 'Entry level English 1')
     reviewUploadPrisonerListPage.rows('inmate-list').should('have.length', 1)
+    reviewUploadPrisonerListPage.checkTableCell('inmate-list', 0, 'Ramroop, Robert Bob')
+    reviewUploadPrisonerListPage.checkTableCell('inmate-list', 1, '2-2-024')
+    reviewUploadPrisonerListPage.checkTableCell('inmate-list', 2, 'None')
+    reviewUploadPrisonerListPage.checkTableCell('inmate-list', 3, 'Maths level 1\nEnglish level 1')
+    reviewUploadPrisonerListPage.checkTableCell('inmate-list', 4, 'Remove')
+    reviewUploadPrisonerListPage.checkTableCell('incentive-level-list', 0, 'Potter, Harry Peter')
+    reviewUploadPrisonerListPage.checkTableCell('incentive-level-list', 1, 'Enhanced2')
+    reviewUploadPrisonerListPage.rows('incentive-level-list').should('have.length', 1)
+    reviewUploadPrisonerListPage.checkTableCell('allocated-inmate-list', 0, 'Somewhere, Some Body')
+    reviewUploadPrisonerListPage.checkTableCell('allocated-inmate-list', 1, '10 October 2022')
+    reviewUploadPrisonerListPage.rows('allocated-inmate-list').should('have.length', 1)
+    reviewUploadPrisonerListPage
+      .incentiveLevelTitle()
+      .should(
+        'contain.text',
+        '2 people from A basic maths course suitable for introduction to the subject cannot be allocated to Entry level English 1',
+      )
+    reviewUploadPrisonerListPage
+      .incentiveLevelText()
+      .should(
+        'contain.text',
+        'There is 1 person with an incentive level that does not match a pay rate for this activity',
+      )
+    reviewUploadPrisonerListPage
+      .alreadyAllocatedText()
+      .should('contain.text', 'There is 1 person already allocated to Entry level English 1')
+
     reviewUploadPrisonerListPage.continue()
 
     const activityRequirementsReviewPage = Page.verifyOnPage(ActivityRequirementsReviewPage)
