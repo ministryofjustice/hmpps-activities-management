@@ -1,19 +1,23 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
+import PrisonService from '../../../../services/prisonService'
 import { AppointmentDetails, PrisonerScheduledEvents } from '../../../../@types/activitiesAPI/types'
 import AttendeesRoutes from './attendees'
 import AttendanceAction from '../../../../enum/attendanceAction'
 import { toDate } from '../../../../utils/utils'
+import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { AppointmentFrequency } from '../../../../@types/appointments'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/userService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Record Appointment Attendance', () => {
-  const handler = new AttendeesRoutes(activitiesService)
+  const handler = new AttendeesRoutes(activitiesService, prisonService)
 
   let req: Request
   let res: Response
@@ -496,6 +500,15 @@ describe('Route Handlers - Record Appointment Attendance', () => {
         attendanceIds: ['44-1234BC'],
       }
 
+      const selectedPrisoner = {
+        prisonerNumber: '1234BC',
+        firstName: 'Aldgorse',
+        lastName: 'Ashlinda',
+      } as Prisoner
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith('1234BC', res.locals.user)
+        .mockResolvedValue(selectedPrisoner)
+
       await handler.ATTEND(req, res)
 
       expect(activitiesService.updateMultipleAppointmentAttendances).toHaveBeenCalledWith(
@@ -512,7 +525,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../attendees',
         'Attendance recorded',
-        "You've saved attendance details for 1 attendee.",
+        "You've saved attendance details for Aldgorse Ashlinda",
       )
     })
 
@@ -545,7 +558,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../attendees',
         'Attendance recorded',
-        "You've saved attendance details for 4 attendees.",
+        "You've saved attendance details for 4 attendees",
       )
     })
   })
@@ -556,6 +569,15 @@ describe('Route Handlers - Record Appointment Attendance', () => {
         attendanceIds: ['44-1234BC'],
       }
 
+      const selectedPrisoner = {
+        prisonerNumber: 'A1234BC',
+        firstName: 'Aldgorse',
+        lastName: 'Ashlinda',
+      } as Prisoner
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith('A1234BC', res.locals.user)
+        .mockResolvedValue(selectedPrisoner)
+
       await handler.NON_ATTEND(req, res)
 
       expect(activitiesService.updateMultipleAppointmentAttendances).toHaveBeenCalledWith(
@@ -572,7 +594,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../attendees',
         'Non-attendance recorded',
-        "You've saved attendance details for 1 attendee.",
+        "You've saved attendance details for Aldgorse Ashlinda",
       )
     })
 
@@ -605,7 +627,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../attendees',
         'Non-attendance recorded',
-        "You've saved attendance details for 4 attendees.",
+        "You've saved attendance details for 4 attendees",
       )
     })
   })

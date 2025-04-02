@@ -60,7 +60,7 @@
             value: formResponses.notAttendedData[index].caseNote,
             maxlength: 3800,
             hint: {
-                html: '<div class="govuk-warning-text govuk-!-margin-bottom-0"><span class="govuk-warning-text__icon" aria-hidden="true">!</span><strong class="govuk-warning-text__text"><span class="govuk-visually-hidden">Warning</span>' + warningText +'</strong></div>'      
+                html: '<div class="govuk-warning-text govuk-!-margin-bottom-0"><span class="govuk-warning-text__icon" aria-hidden="true">!</span><strong class="govuk-warning-text__text"><span class="govuk-visually-hidden">Warning</span>' + warningText +'</strong></div>'
             }
         }) }}
 
@@ -176,7 +176,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <span class="govuk-caption-l">Record activity attendance</span>
-            <h1 class="govuk-heading-l">Select a reason why people did not attend</h1>
+            <h1 class="govuk-heading-l">Select a reason why {{ rows | length }} people did not attend</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
