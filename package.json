@@ -189,6 +189,8 @@
     "path-to-regexp": "~0.1.12",
     "undici": "~6.21.2",
     "serialize-javascript": "~6.0.2",
+    "@babel/runtime": "~7.26.10",
+    "@babel/helpers": "~7.26.10",
     "@jgoz/esbuild-plugin-typecheck": {
       "esbuild": "$esbuild"
     }

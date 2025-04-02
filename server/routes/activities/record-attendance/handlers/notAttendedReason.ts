@@ -123,10 +123,17 @@ export default class NotAttendedReasonRoutes {
       }
     })
 
-    res.render('pages/activities/record-attendance/not-attended-reason-multiple', {
-      notAttendedReasons,
-      rows,
-    })
+    if (selectedPrisoners.length === 1) {
+      res.render(`pages/activities/record-attendance/not-attended-reason`, {
+        notAttendedReasons,
+        rows,
+      })
+    } else {
+      res.render(`pages/activities/record-attendance/not-attended-reason-multiple`, {
+        notAttendedReasons,
+        rows,
+      })
+    }
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -169,7 +176,7 @@ export default class NotAttendedReasonRoutes {
     const successMessage = `You've saved attendance details for ${
       selectedPrisoners.length === 1
         ? convertToTitleCase(selectedPrisoners[0].prisonerName)
-        : `${selectedPrisoners.length} people`
+        : `${selectedPrisoners.length} attendees`
     }`
 
     const returnUrl = req.session.recordAttendanceJourney.singleInstanceSelected

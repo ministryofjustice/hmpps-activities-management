@@ -5,6 +5,7 @@ import AppointmentsManagementPage from '../../../pages/appointments/appointments
 import SelectDatePage from '../../../pages/appointments/attendance/selectDate'
 import getAppointmentAttendanceSummaries from '../../../fixtures/activitiesApi/appointments/getAppointmentAttendanceSummaries.json'
 import getPrisoners from '../../../fixtures/activitiesApi/appointments/getPrisoners.json'
+import getPrisonerG0256VF from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-G0256VF.json'
 import getAppointmentLocations from '../../../fixtures/activitiesApi/appointments/getAppointmentLocationsMDI.json'
 import getAppointmentsDetailsGym from '../../../fixtures/activitiesApi/appointments/getAppointmentsDetailsGym.json'
 import getAppointmentsDetailsMultiple from '../../../fixtures/activitiesApi/appointments/getAppointmentsDetailsMultiple.json'
@@ -38,6 +39,7 @@ context('Record appointment attendance', () => {
       `/appointments/MDI/attendance-summaries\\?date=${todayFormatted}`,
       getAppointmentAttendanceSummaries,
     )
+    cy.stubEndpoint('GET', '/prisoner/G0256VF', getPrisonerG0256VF)
     cy.stubEndpoint('POST', `/prisoner-search/prisoner-numbers`, getPrisoners)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/scheduled-events/prison/MDI\\?date=2024-11-05', getScheduledEvents)
@@ -125,7 +127,7 @@ context('Record appointment attendance', () => {
     attendeesPage.selectAttendees('Adalie, Izrmonntas', 'Palabert, Ussalwe')
     attendeesPage.getButton('Mark as attended').click()
     attendeesPage.notificationHeading().should('contain.text', 'Attendance recorded')
-    attendeesPage.notificationBody().should('contain.text', "You've saved attendance details for 2 attendees.")
+    attendeesPage.notificationBody().should('contain.text', "You've saved attendance details for 2 attendees")
 
     attendeesPage.assertNumRows(5)
     attendeesPage.assertRowForMultipleAppointments(
@@ -166,7 +168,7 @@ context('Record appointment attendance', () => {
     attendeesPage.selectAttendees('Adalie, Izrmonntas')
     attendeesPage.getButton('Mark as not attended').click()
     attendeesPage.notificationHeading().should('contain.text', 'Non-attendance recorded')
-    attendeesPage.notificationBody().should('contain.text', "You've saved attendance details for 1 attendee.")
+    attendeesPage.notificationBody().should('contain.text', "You've saved attendance details for Adalie Izrmonntas")
 
     cy.log('View attendance')
 
