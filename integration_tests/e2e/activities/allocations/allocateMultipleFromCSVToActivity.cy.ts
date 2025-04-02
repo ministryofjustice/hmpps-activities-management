@@ -13,6 +13,7 @@ import getMdiPrisonPayBands from '../../../fixtures/activitiesApi/getMdiPrisonPa
 import getCandidates from '../../../fixtures/activitiesApi/getCandidates.json'
 import getCandidateSuitability from '../../../fixtures/activitiesApi/getCandidateSuitability.json'
 import getNonAssociations from '../../../fixtures/activitiesApi/non_associations.json'
+import getNonAssociationsInvolving from '../../../fixtures/nonAssociationsApi/getNonAssociationsInvolving.json'
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
 import StartDatePage from '../../../pages/allocateToActivity/startDate'
@@ -30,6 +31,7 @@ import ActivityRequirementsReviewPage from '../../../pages/allocateToActivity/ac
 import ReviewUploadPrisonerListPage from '../../../pages/allocateToActivity/reviewUploadPrisoner'
 import PayBandMultiplePage from '../../../pages/allocateToActivity/payBandMultiple'
 import CheckAndConfirmMultiplePage from '../../../pages/allocateToActivity/checkAndConfirmMultiple'
+import ConfirmMultipleAllocationsPage from '../../../pages/allocateToActivity/confirmationMultiple'
 
 context('Allocate multiple via CSV to an activity', () => {
   beforeEach(() => {
@@ -53,8 +55,7 @@ context('Allocate multiple via CSV to an activity', () => {
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', getMdiPrisonPayBands)
     cy.stubEndpoint('POST', '/schedules/2/allocations')
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', getNonAssociations)
-    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=&size=50', getInmateDetails)
-    cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociations)
+    cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', getNonAssociationsInvolving)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails.content)
 
     resetActivityAndScheduleStubs({ activityStartDate: subWeeks(new Date(), 2) })
@@ -62,7 +63,6 @@ context('Allocate multiple via CSV to an activity', () => {
     cy.signIn()
   })
 
-  // FIXME page asserts required through the journey
   it('should be able to allocate when selecting multiple inmates', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
@@ -101,6 +101,8 @@ context('Allocate multiple via CSV to an activity', () => {
     const reviewUploadPrisonerListPage = Page.verifyOnPage(ReviewUploadPrisonerListPage)
     reviewUploadPrisonerListPage.caption().should('contain.text', 'Entry level English 1')
     reviewUploadPrisonerListPage.rows('inmate-list').should('have.length', 2)
+    reviewUploadPrisonerListPage.checkTableCell('inmate-list', 2, 'None')
+    reviewUploadPrisonerListPage.checkTableCell('inmate-list', 7, 'View non-associations')
     reviewUploadPrisonerListPage.continue()
 
     const activityRequirementsReviewPage = Page.verifyOnPage(ActivityRequirementsReviewPage)
@@ -128,7 +130,12 @@ context('Allocate multiple via CSV to an activity', () => {
     const checkAndConfirmMultiple = Page.verifyOnPage(CheckAndConfirmMultiplePage)
     checkAndConfirmMultiple.inmatePayRows().should('have.length', 2)
     checkAndConfirmMultiple.selectConfirm('Confirm 2 allocations').click()
-    // FIXME click through and finish journey
+
+    const confirmMultipleAllocationsPage = Page.verifyOnPage(ConfirmMultipleAllocationsPage)
+    confirmMultipleAllocationsPage.panelHeader().should('contain.text', 'Allocations complete')
+    confirmMultipleAllocationsPage
+      .panelText()
+      .should('contain.text', '2 people are now allocated to Entry level English 1')
   })
 
   it('should be able to allocate when selecting multiple inmates and remove one prisoner', () => {

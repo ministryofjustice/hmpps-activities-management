@@ -56,6 +56,7 @@ import {
   ScheduledAttendee,
   ScheduledInstanceAttendanceSummary,
   ScheduleInstanceCancelRequest,
+  ScheduleInstancesCancelRequest,
   Slot,
   SuspendedPrisonerAttendance,
   SuspendPrisonerRequest,
@@ -881,6 +882,15 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       data: request,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async putCancelMultipleActivities(cancelRequest: ScheduleInstancesCancelRequest, user: ServiceUser): Promise<void> {
+    return this.put({
+      path: `/scheduled-instances/cancel`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: cancelRequest,
     })
   }
 }

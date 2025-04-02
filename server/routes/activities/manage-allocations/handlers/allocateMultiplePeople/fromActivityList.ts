@@ -41,9 +41,8 @@ export default class FromActivityListRoutes {
       .filter(alloc => alloc.status === 'ACTIVE')
       .map(alloc => alloc.prisonerNumber)
 
-    // FIXME what message should be displayed?
     if (prisonerNumbers.length === 0) {
-      return res.validationFailed('activityId', 'There are no active allocations for this activity')
+      return res.validationFailed('activityId', `No-one is currently allocated to ${activityToCopy.summary}`)
     }
 
     const prisoners: Prisoner[] = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
@@ -73,14 +72,8 @@ export default class FromActivityListRoutes {
     addOtherAllocations(inmates, prisonerAllocationsList, activity.scheduleId)
 
     // get non associations
-    const result = await this.prisonService.searchPrisonInmates('', user)
-    let allPrisoners: Prisoner[] = []
-    if (result && !result.empty) {
-      allPrisoners = result.content
-    }
-    const allPrisonerNumbers = allPrisoners.map(prisoner => prisoner.prisonerNumber)
     const nonAssociations: string[] = await this.nonAssociationsService.getListPrisonersWithNonAssociations(
-      allPrisonerNumbers,
+      unallocatedPrisonerNumbers,
       user,
     )
     addNonAssociations(inmates, nonAssociations)

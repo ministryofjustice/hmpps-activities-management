@@ -1,0 +1,31 @@
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+
+{% macro cancelReasonList(cancellationReasons) %}
+    {% set cancellationReasonsValues = [] %}
+    {% for key, text in cancellationReasons %}
+      {% set cancellationReasonsValues = (cancellationReasonsValues.push({
+        value: key,
+        text: text,
+        checked: formResponses.reason == key
+      }), cancellationReasonsValues) %}
+    {% endfor %}
+
+    {{ govukRadios({
+      name: "reason",
+      items: cancellationReasonsValues,
+      errorMessage: validationErrors | findError('reason')
+    }) }}
+
+    {{ govukCharacterCount({
+      label: {
+        text: "More details (optional)"
+      },
+      name: "comment",
+      id: "comment",
+      rows: "3",
+      maxlength: "100",
+      value: formResponses.comment,
+      errorMessage: validationErrors | findError('comment')
+    }) }}
+{% endmacro %}

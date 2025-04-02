@@ -1000,4 +1000,24 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('putCancelMultipleActivities', () => {
+    it('should cancel multiple activity sessions', async () => {
+      fakeActivitiesApi
+        .put('/scheduled-instances/cancel')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+
+      const body = {
+        scheduledInstanceIds: [1, 2],
+        reason: 'Cancellation reason',
+        username: 'USER1',
+        issuePayment: true,
+      }
+
+      await activitiesApiClient.putCancelMultipleActivities(body, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

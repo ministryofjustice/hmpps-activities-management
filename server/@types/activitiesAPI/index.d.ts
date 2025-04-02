@@ -62,6 +62,7 @@ export interface paths {
     get?: never
     /**
      * Cancel a scheduled instance
+     * @deprecated
      * @description Cancels scheduled instance and associated attendance records
      *
      *     Requires one of the following roles:
@@ -69,6 +70,30 @@ export interface paths {
      *     * ACTIVITY_ADMIN
      */
     put: operations['cancelScheduledInstance']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/scheduled-instances/cancel': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /**
+     * Cancel multiple schedule instances
+     * @description Cancels multiple schedule instances and associated attendance records
+     *
+     *     Requires one of the following roles:
+     *     * PRISON
+     *     * ACTIVITY_ADMIN
+     */
+    put: operations['cancelScheduledInstances']
     post?: never
     delete?: never
     options?: never
@@ -201,35 +226,6 @@ export interface paths {
      *     * ACTIVITY_ADMIN
      */
     put: operations['cancelAppointment']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/appointments/{appointmentId}/attendance': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    /**
-     * Mark the attendance for an appointment
-     * @description
-     *         Mark or update the attendance records for the attendees of an appointment. This sets the current attendance record
-     *         for each supplied prison number, replacing any existing record. This supports both the initial recording of attendance
-     *         and changing that attendance record. There are no restrictions on when attendance can be recorded. It can be done
-     *         for past and future appointments.
-     *
-     *
-     *     Requires one of the following roles:
-     *     * PRISON
-     *     * ACTIVITY_ADMIN
-     */
-    put: operations['markAttendance']
     post?: never
     delete?: never
     options?: never
@@ -420,6 +416,7 @@ export interface paths {
     put?: never
     /**
      * Get a list of scheduled events for a prison and list of internal location ids numbers for a date and optional time slot
+     * @deprecated
      * @description
      *           Returns scheduled events for the prison, internal location ids, single date and an optional time slot.
      *           This endpoint only returns activities and appointments and these come from the local database.
@@ -432,6 +429,35 @@ export interface paths {
      *     * ACTIVITY_ADMIN
      */
     post: operations['getScheduledEventsForMultipleLocations']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/scheduled-events/prison/{prisonCode}/location-events': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Get a list of scheduled events for a prison given list of DPS location UUIDs, a date and optional time slot
+     * @description
+     *           Returns scheduled events for the prison, locations UUIDs, date and optional time slot.
+     *           This endpoint only returns activities and appointments and these come from the local database.
+     *           This endpoint supports the creation of movement lists.
+     *           Note that activities are only scheduled 60 days in advance. Appointments may be scheduled for any date in the future.
+     *
+     *
+     *     Requires one of the following roles:
+     *     * PRISON
+     *     * ACTIVITY_ADMIN
+     */
+    post: operations['getScheduledEventsForMultipleLocationsByDPSLocationsIds']
     delete?: never
     options?: never
     head?: never
@@ -1152,6 +1178,26 @@ export interface paths {
      *     * ACTIVITY_ADMIN
      */
     patch: operations['update_1']
+    trace?: never
+  }
+  '/utility/invalid-activity-locations': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get any activities with invalid locations
+     * @description Return any activities with invalid locations.
+     */
+    get: operations['getInvalidActivityLocations']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
     trace?: never
   }
   '/synchronisation/reconciliation/attendances/{prisonId}': {
@@ -2274,18 +2320,18 @@ export interface components {
        */
       type: 'GEN' | 'NEG'
       /** @description The text which will appear on the case note. */
-      text: string
+      text?: string
     }
     /** @description The prisoner deallocation request details */
     PrisonerDeallocationRequest: {
       /** @description The prisoner or prisoners to be deallocated. Must be allocated to the schedule affected by the request. */
-      prisonerNumbers: string[]
+      prisonerNumbers?: string[]
       /**
        * @description The reason code for the deallocation
        * @example RELEASED
        * @enum {string}
        */
-      reasonCode:
+      reasonCode?:
         | 'COMPLETED'
         | 'TRANSFERRED'
         | 'WITHDRAWN_STAFF'
@@ -2347,6 +2393,31 @@ export interface components {
        * @example Resume tomorrow
        */
       comment?: string
+    }
+    /** @description The scheduled instances cancellation request */
+    ScheduleInstancesCancelRequest: {
+      /** @description The scheduled instance ids to cancel */
+      scheduleInstanceIds?: number[]
+      /**
+       * @description The reason for cancelling the schedule instances
+       * @example No tutor available
+       */
+      reason: string
+      /**
+       * @description The username of the user cancelling the schedule instances
+       * @example RJ56DDE
+       */
+      username: string
+      /**
+       * @description A field for any additional comments
+       * @example Resume tomorrow
+       */
+      comment?: string
+      /**
+       * @description Should payment be issued? Will be ignored if the activity is unpaid.
+       * @example true
+       */
+      issuePayment: boolean
     }
     RetryDlqResult: {
       /** Format: int32 */
@@ -2481,13 +2552,11 @@ export interface components {
        */
       startDate: string
       /**
-       * Format: partial-time
        * @description The starting time of this appointment
        * @example 13:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time of this appointment
        * @example 13:30
        */
@@ -2728,13 +2797,11 @@ export interface components {
        */
       startDate: string
       /**
-       * Format: partial-time
        * @description The starting time of the appointment or appointments in the series
        * @example 09:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time of the appointment or appointments in the series
        * @example 10:30
        */
@@ -2950,9 +3017,9 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
+      unpaged?: boolean
       /** Format: int32 */
       pageSize?: number
-      unpaged?: boolean
       paged?: boolean
       /** Format: int32 */
       pageNumber?: number
@@ -3110,7 +3177,7 @@ export interface components {
        *       2
        *     ]
        */
-      identifiers: number[]
+      identifiers?: number[]
     }
     /** @description The prisoner allocation request details */
     PrisonerAllocationRequest: {
@@ -3118,7 +3185,7 @@ export interface components {
        * @description The prisoner number (Nomis ID)
        * @example A1234AA
        */
-      prisonerNumber: string
+      prisonerNumber?: string
       /**
        * Format: int64
        * @description Where a prison uses pay bands to differentiate earnings, this is the pay band code given to this prisoner. Can be null for unpaid activities.
@@ -3169,9 +3236,9 @@ export interface components {
       friday: boolean
       saturday: boolean
       sunday: boolean
-      /** Format: partial-time */
+      /** @example 14:30:00 */
       customStartTime?: string
-      /** Format: partial-time */
+      /** @example 14:30:00 */
       customEndTime?: string
       daysOfWeek: ('MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY')[]
     }
@@ -3345,13 +3412,11 @@ export interface components {
        */
       date: string
       /**
-       * Format: partial-time
        * @description The start time for this scheduled instance
        * @example 09:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time for this scheduled instance
        * @example 10:00
        */
@@ -3495,13 +3560,11 @@ export interface components {
        */
       weekNumber: number
       /**
-       * Format: partial-time
        * @description The time that any instances of this schedule slot will start
        * @example 9:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The time that any instances of this schedule slot will finish
        * @example 11:30
        */
@@ -3955,13 +4018,11 @@ export interface components {
        */
       date?: string
       /**
-       * Format: partial-time
        * @description The start time for this scheduled instance
        * @example 09:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time for this scheduled instance
        * @example 10:00
        */
@@ -3977,7 +4038,6 @@ export interface components {
        */
       appointmentSeriesCancellationStartDate?: string
       /**
-       * Format: partial-time
        * @description The start time of the first appointment cancelled in the series
        * @example 10:30
        */
@@ -4025,9 +4085,7 @@ export interface components {
       id: number
       /**
        * Format: uuid
-       * @description
-       *         The DPS location UUID for this schedule.
-       *
+       * @description The DPS location UUID for this schedule
        * @example b7602cc8-e769-4cbb-8194-62d8e655992a
        */
       dpsLocationId: string
@@ -4055,17 +4113,17 @@ export interface components {
     PrisonRegimeSlot: {
       /** @enum {string} */
       dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
-      /** Format: partial-time */
+      /** @example 14:30:00 */
       amStart: string
-      /** Format: partial-time */
+      /** @example 14:30:00 */
       amFinish: string
-      /** Format: partial-time */
+      /** @example 14:30:00 */
       pmStart: string
-      /** Format: partial-time */
+      /** @example 14:30:00 */
       pmFinish: string
-      /** Format: partial-time */
+      /** @example 14:30:00 */
       edStart: string
-      /** Format: partial-time */
+      /** @example 14:30:00 */
       edFinish: string
     }
     /** @description Describes a top-level activity */
@@ -4082,37 +4140,31 @@ export interface components {
        */
       prisonCode: string
       /**
-       * Format: partial-time
        * @description The start time for the am slot
        * @example 09:00
        */
       amStart: string
       /**
-       * Format: partial-time
        * @description The end time for the am slot
        * @example 12:00
        */
       amFinish: string
       /**
-       * Format: partial-time
        * @description The start time for the pm slot
        * @example 13:00
        */
       pmStart: string
       /**
-       * Format: partial-time
        * @description The end time for the pm slot
        * @example 16:30
        */
       pmFinish: string
       /**
-       * Format: partial-time
        * @description The start time for the ed slot
        * @example 18:00
        */
       edStart: string
       /**
-       * Format: partial-time
        * @description The end time for the ed slot
        * @example 20:00
        */
@@ -4574,13 +4626,11 @@ export interface components {
     /** @description The scheduling rules in Nomis. At least one day and time must be specified. */
     NomisScheduleRule: {
       /**
-       * Format: partial-time
        * @description Start time on the day
        * @example 10:45
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description End time on the day
        * @example 11:45
        */
@@ -4639,12 +4689,12 @@ export interface components {
        * @description The NOMIS prison code where this appointment takes place
        * @example PVI
        */
-      prisonCode: string
+      prisonCode?: string
       /**
        * @description The prisoner to allocate to the appointment
        * @example A1234BC
        */
-      prisonerNumber: string
+      prisonerNumber?: string
       /**
        * Format: int64
        * @description The NOMIS OFFENDER_BOOKINGS.OFFENDER_BOOK_ID value for mapping to a prisoner booking record in NOMIS
@@ -4655,7 +4705,7 @@ export interface components {
        * @description The NOMIS reference code for this appointment.
        * @example CHAP
        */
-      categoryCode: string
+      categoryCode?: string
       /**
        * Format: int64
        * @description
@@ -4670,13 +4720,11 @@ export interface components {
        */
       startDate: string
       /**
-       * Format: partial-time
        * @description The starting time of the appointment
        * @example 09:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time of the appointment
        * @example 10:30
        */
@@ -4706,7 +4754,7 @@ export interface components {
        *
        * @example AAA01U
        */
-      createdBy: string
+      createdBy?: string
       /**
        * Format: date-time
        * @description
@@ -4821,13 +4869,11 @@ export interface components {
        */
       appointmentDate: string
       /**
-       * Format: partial-time
        * @description The starting time of the appointment instance
        * @example 09:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time of the appointment instance
        * @example 10:30
        */
@@ -5270,13 +5316,11 @@ export interface components {
        */
       startDate: string
       /**
-       * Format: partial-time
        * @description The starting time of this appointment
        * @example 13:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time of this appointment
        * @example 13:30
        */
@@ -5475,13 +5519,11 @@ export interface components {
        */
       startDate: string
       /**
-       * Format: partial-time
        * @description The starting time of this appointment
        * @example 13:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time of this appointment
        * @example 13:30
        */
@@ -5684,13 +5726,11 @@ export interface components {
        */
       prisonerNumber: string
       /**
-       * Format: partial-time
        * @description The starting time of the appointment
        * @example 09:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time of the appointment
        * @example 10:30
        */
@@ -5710,18 +5750,18 @@ export interface components {
        * @description The NOMIS prison code where these appointments takes place
        * @example PVI
        */
-      prisonCode: string
+      prisonCode?: string
       /**
        * @description The NOMIS reference code for these appointments. Must exist and be active
        * @example CHAP
        */
-      categoryCode: string
+      categoryCode?: string
       /**
        * @description The tier code for this appointment
        * @example TIER_1
        * @enum {string}
        */
-      tierCode: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
+      tierCode?: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
       /**
        * @description The organiser code for this appointment
        * @example PRISON_STAFF
@@ -5847,7 +5887,7 @@ export interface components {
        * @description The NOMIS prison code where this appointment series takes place
        * @example PVI
        */
-      prisonCode: string
+      prisonCode?: string
       /**
        * @description The prisoner or prisoners attending the appointment or appointments in the series
        * @example [
@@ -5859,13 +5899,13 @@ export interface components {
        * @description The NOMIS reference code for this appointment. Must exist and be active
        * @example CHAP
        */
-      categoryCode: string
+      categoryCode?: string
       /**
        * @description The tier code for this appointment
        * @example TIER_1
        * @enum {string}
        */
-      tierCode: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
+      tierCode?: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
       /**
        * @description The organiser code for this appointment
        * @example PRISON_STAFF
@@ -5903,13 +5943,11 @@ export interface components {
        */
       startDate: string
       /**
-       * Format: partial-time
        * @description The starting time of the appointment or appointments in the series
        * @example 09:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time of the appointment or appointments in the series
        * @example 10:30
        */
@@ -5944,7 +5982,7 @@ export interface components {
        * @description The prisoner number (NOMIS ID)
        * @example A1234AA
        */
-      prisonerNumber: string
+      prisonerNumber?: string
       /**
        * Format: int64
        * @description The internally-generated ID for this activity schedule (assumes 1-2-1 with activity)
@@ -5961,7 +5999,7 @@ export interface components {
        * @description The person who made the request
        * @example Fred Bloggs
        */
-      requestedBy: string
+      requestedBy?: string
       /**
        * @description Any particular comments related to the waiting list request
        * @example The prisoner has specifically requested to attend this activity
@@ -5980,7 +6018,7 @@ export interface components {
        * @description The prisoner number (NOMIS ID)
        * @example A1234AA
        */
-      prisonerNumber: string
+      prisonerNumber?: string
       /**
        * @description The allocation or allocations affected by the suspensions request. They must all be for the same prisoner
        * @example [
@@ -6004,7 +6042,7 @@ export interface components {
        * @description The prisoner number (NOMIS ID)
        * @example A1234AA
        */
-      prisonerNumber: string
+      prisonerNumber?: string
       /**
        * @description The allocation or allocations affected by the suspensions request. They must all be for the same prisoner
        * @example [
@@ -6036,7 +6074,7 @@ export interface components {
        * @description The prison code where this activity takes place
        * @example PVI
        */
-      prisonCode: string
+      prisonCode?: string
       /**
        * @description Flag to indicate if attendance is required for this activity, e.g. gym induction might not be mandatory attendance
        * @example false
@@ -6082,7 +6120,7 @@ export interface components {
        * @description A brief summary description of this activity for use in forms and lists
        * @example Maths level 1
        */
-      summary: string
+      summary?: string
       /**
        * @description A detailed description for this activity
        * @example A basic maths course suitable for introduction to the subject
@@ -6098,7 +6136,7 @@ export interface components {
        * @example TIER_1
        * @enum {string}
        */
-      tierCode: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
+      tierCode?: 'TIER_1' | 'TIER_2' | 'FOUNDATION'
       /**
        * @description The organiser code for the organiser of this activity
        * @example PRISON_STAFF
@@ -6119,7 +6157,7 @@ export interface components {
        * @description The most recent risk assessment level for this activity
        * @example high
        */
-      riskLevel: string
+      riskLevel?: string
       /**
        * Format: date
        * @description The future date on which this activity will start. From this date, any schedules will be created as real, planned instances
@@ -6153,7 +6191,7 @@ export interface components {
        */
       scheduleWeeks: number
       /** @description The days and times an activity schedule can take place */
-      slots: components['schemas']['Slot'][]
+      slots?: components['schemas']['Slot'][]
       /**
        * @description Whether the schedule runs on bank holidays
        * @example true
@@ -6189,12 +6227,12 @@ export interface components {
        * @description The NOMIS code for the incentive/earned privilege level
        * @example BAS
        */
-      incentiveNomisCode: string
+      incentiveNomisCode?: string
       /**
        * @description The incentive/earned privilege level
        * @example Basic
        */
-      incentiveLevel: string
+      incentiveLevel?: string
       /**
        * Format: int64
        * @description The id of the prison pay band used
@@ -6513,13 +6551,11 @@ export interface components {
        */
       date: string
       /**
-       * Format: partial-time
        * @description The start time for this scheduled instance
        * @example 09:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time for this scheduled instance
        * @example 10:00
        */
@@ -6604,7 +6640,7 @@ export interface components {
        * @description The alternative text to use in place of the description e.g. Low, Medium, High
        * @example Low
        */
-      alias: string
+      alias?: string
     }
     /** @description The update request with the new appointment details and how to apply the update */
     AppointmentUpdateRequest: {
@@ -6655,13 +6691,11 @@ export interface components {
        */
       startDate?: string
       /**
-       * Format: partial-time
        * @description The updated starting time
        * @example 09:00
        */
       startTime?: string
       /**
-       * Format: partial-time
        * @description The updated end time
        * @example 10:30
        */
@@ -6924,13 +6958,11 @@ export interface components {
        */
       sessionDate: string
       /**
-       * Format: partial-time
        * @description The scheduled instance start time
        * @example 10:00
        */
       sessionStartTime: string
       /**
-       * Format: partial-time
        * @description The scheduled instance end time
        * @example 11:00
        */
@@ -7487,13 +7519,11 @@ export interface components {
        */
       sessionDate: string
       /**
-       * Format: partial-time
        * @description The start time of the scheduled instance
        * @example 09:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time of the scheduled instance
        * @example 12:00
        */
@@ -7730,9 +7760,7 @@ export interface components {
       id: number
       /**
        * Format: uuid
-       * @description
-       *         The DPS location UUID for the location.
-       *
+       * @description The DPS location UUID for the location
        * @example b7602cc8-e769-4cbb-8194-62d8e655992a
        */
       dpsLocationId: string
@@ -7872,13 +7900,11 @@ export interface components {
        */
       timeSlot: string
       /**
-       * Format: partial-time
        * @description The start time
        * @example 9:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time
        * @example 11:30
        */
@@ -7947,13 +7973,13 @@ export interface components {
     /** @description suspended prisoner activity attendance */
     SuspendedPrisonerActivityAttendance: {
       /**
-       * Format: partial-time
        * @description the activity start time
+       * @example 14:30:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description the activity end time
+       * @example 14:30:00
        */
       endTime: string
       /** @description internal location description */
@@ -8010,9 +8036,9 @@ export interface components {
       appointmentName: string
       /** Format: date */
       startDate: string
-      /** Format: partial-time */
+      /** @example 14:30:00 */
       startTime: string
-      /** Format: partial-time */
+      /** @example 14:30:00 */
       endTime: string
     }
     /** @description
@@ -8049,13 +8075,11 @@ export interface components {
        */
       startDate: string
       /**
-       * Format: partial-time
        * @description The starting time of this appointment
        * @example 13:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time of this appointment
        * @example 13:30
        */
@@ -8246,13 +8270,11 @@ export interface components {
        */
       startDate: string
       /**
-       * Format: partial-time
        * @description The starting time of the appointment or appointments in the series
        * @example 09:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time of the appointment or appointments in the series
        * @example 10:30
        */
@@ -8332,13 +8354,11 @@ export interface components {
        */
       startDate: string
       /**
-       * Format: partial-time
        * @description The starting time of this appointment
        * @example 13:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time of this appointment
        * @example 13:30
        */
@@ -8550,6 +8570,57 @@ export interface operations {
       }
       /** @description The scheduled instance was not found. */
       404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  cancelScheduledInstances: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ScheduleInstancesCancelRequest']
+      }
+    }
+    responses: {
+      /** @description Scheduled instances successfully cancelled */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': Record<string, never>
+        }
+      }
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
         headers: {
           [name: string]: unknown
         }
@@ -9233,6 +9304,74 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': number[]
+      }
+    }
+    responses: {
+      /** @description Successful call - zero or more scheduled events found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['InternalLocationEvents'][]
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Requested resource not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getScheduledEventsForMultipleLocationsByDPSLocationsIds: {
+    parameters: {
+      query: {
+        /** @description The exact date to return events for (required) in format YYYY-MM-DD */
+        date: string
+        /** @description Time slot of the events (optional). If supplied, one of AM, PM or ED. */
+        timeSlot?: 'AM' | 'PM' | 'ED'
+      }
+      header?: never
+      path: {
+        /** @description The 3-character prison code. */
+        prisonCode: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': string[]
       }
     }
     responses: {
@@ -10607,6 +10746,26 @@ export interface operations {
       }
     }
   }
+  getInvalidActivityLocations: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'text/plain': string
+        }
+      }
+    }
+  }
   getAttendanceReconciliation: {
     parameters: {
       query: {
@@ -11496,6 +11655,8 @@ export interface operations {
     parameters: {
       query?: {
         excludeArchived?: boolean
+        /** @description The activity name contains this case insensitive search term */
+        nameSearch?: string
       }
       header?: never
       path: {
