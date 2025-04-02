@@ -3,11 +3,12 @@ import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { MultipleAppointmentAttendanceRequest } from '../../../../@types/activitiesAPI/types'
-import { asString, convertToArray, eventClashes, toDate, convertToTitleCase } from '../../../../utils/utils'
+import { asString, convertToArray, eventClashes, toDate, formatName } from '../../../../utils/utils'
 import AttendanceAction from '../../../../enum/attendanceAction'
 import { getAttendanceSummaryFromAppointmentDetails } from '../../utils/attendanceUtils'
 import { EventType, Prisoner } from '../../../../@types/activities'
 import applyCancellationDisplayRule from '../../../../utils/applyCancellationDisplayRule'
+import { NameFormatStyle } from '../../../../utils/helpers/nameFormatStyle'
 
 export default class AttendeesRoutes {
   constructor(
@@ -129,7 +130,13 @@ export default class AttendeesRoutes {
         user,
       )
 
-      prisonerName = convertToTitleCase(`${selectedPrisoner.firstName} ${selectedPrisoner.lastName}`)
+      prisonerName = formatName(
+        selectedPrisoner.firstName,
+        undefined,
+        selectedPrisoner.lastName,
+        NameFormatStyle.firstLast,
+        false,
+      )
     }
 
     const requests: MultipleAppointmentAttendanceRequest[] = []

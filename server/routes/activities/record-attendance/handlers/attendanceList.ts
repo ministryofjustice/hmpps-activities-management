@@ -9,7 +9,7 @@ import {
   eventClashes,
   getAttendanceSummary,
   toDate,
-  convertToTitleCase,
+  formatName,
 } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 import { Attendance, AttendanceUpdateRequest, ScheduledEvent } from '../../../../@types/activitiesAPI/types'
@@ -17,6 +17,7 @@ import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import { EventType, Prisoner } from '../../../../@types/activities'
+import { NameFormatStyle } from '../../../../utils/helpers/nameFormatStyle'
 
 import applyCancellationDisplayRule from '../../../../utils/applyCancellationDisplayRule'
 import UserService from '../../../../services/userService'
@@ -220,7 +221,13 @@ export default class AttendanceListRoutes {
         selectedAttendances[0].split('-')[2],
         user,
       )
-      prisonerName = convertToTitleCase(`${selectedPrisoner.firstName} ${selectedPrisoner.lastName}`)
+      prisonerName = formatName(
+        selectedPrisoner.firstName,
+        undefined,
+        selectedPrisoner.lastName,
+        NameFormatStyle.firstLast,
+        false,
+      )
     }
 
     const successMessage = `You've saved attendance details for ${
@@ -260,7 +267,13 @@ export default class AttendanceListRoutes {
         selectedAttendances[0].split('-')[2],
         user,
       )
-      prisonerName = convertToTitleCase(`${selectedPrisoner.firstName} ${selectedPrisoner.lastName}`)
+      prisonerName = formatName(
+        selectedPrisoner.firstName,
+        undefined,
+        selectedPrisoner.lastName,
+        NameFormatStyle.firstLast,
+        false,
+      )
     }
 
     const successMessage = `You've saved attendance details for ${
