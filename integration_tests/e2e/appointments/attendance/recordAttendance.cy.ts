@@ -5,6 +5,7 @@ import AppointmentsManagementPage from '../../../pages/appointments/appointments
 import SelectDatePage from '../../../pages/appointments/attendance/selectDate'
 import getAppointmentAttendanceSummaries from '../../../fixtures/activitiesApi/appointments/getAppointmentAttendanceSummaries.json'
 import getPrisoners from '../../../fixtures/activitiesApi/appointments/getPrisoners.json'
+import getPrisonerG0256VF from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-G0256VF.json'
 import getAppointmentLocations from '../../../fixtures/activitiesApi/appointments/getAppointmentLocationsMDI.json'
 import getAppointmentsDetailsGym from '../../../fixtures/activitiesApi/appointments/getAppointmentsDetailsGym.json'
 import getAppointmentsDetailsMultiple from '../../../fixtures/activitiesApi/appointments/getAppointmentsDetailsMultiple.json'
@@ -38,6 +39,7 @@ context('Record appointment attendance', () => {
       `/appointments/MDI/attendance-summaries\\?date=${todayFormatted}`,
       getAppointmentAttendanceSummaries,
     )
+    cy.stubEndpoint('GET', '/prisoner/G0256VF', getPrisonerG0256VF)
     cy.stubEndpoint('POST', `/prisoner-search/prisoner-numbers`, getPrisoners)
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getAppointmentLocations)
     cy.stubEndpoint('POST', '/scheduled-events/prison/MDI\\?date=2024-11-05', getScheduledEvents)
