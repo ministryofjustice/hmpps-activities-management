@@ -117,7 +117,112 @@ describe('Route Handlers - Non Attendance', () => {
   })
 
   describe('GET', () => {
-    it('should render with the expected view', async () => {
+    it('should render with the expected single view', async () => {
+      req = {
+        session: {
+          recordAttendanceJourney: {
+            notAttended: {
+              selectedPrisoners: [
+                {
+                  instanceId: 1,
+                  attendanceId: 1,
+                  prisonerNumber: 'ABC123',
+                  prisonerName: 'JOE BLOGGS',
+                  firstName: 'JOE',
+                  lastName: 'BLOGGS',
+                },
+              ],
+            },
+          },
+        },
+        body: plainToInstance(NotAttendedForm, {
+          notAttendedData: [
+            {
+              instanceId: 1,
+              prisonerNumber: 'ABC123',
+              prisonerName: 'JOE BLOGGS',
+              firstName: 'JOE',
+              lastName: 'BLOGGS',
+              notAttendedReason: AttendanceReasons.SICK,
+              moreDetail: '',
+              caseNote: '',
+              otherAbsenceReason: '',
+              sickPay: YesNo.YES,
+              isPayable: true,
+            },
+          ],
+        }),
+      } as unknown as Request
+
+      when(activitiesService.getScheduledActivity)
+        .calledWith(1, res.locals.user)
+        .mockResolvedValue({
+          id: 1,
+          startTime: '09:00',
+          timeSlot: TimeSlot.AM,
+          activitySchedule: {
+            id: 2,
+            activity: {
+              id: 2,
+              summary: 'Maths 1',
+              paid: true,
+            },
+          },
+        } as ScheduledActivity)
+
+      when(activitiesService.getAttendanceReasons)
+        .calledWith(res.locals.user)
+        .mockResolvedValue([
+          {
+            id: 1,
+            code: 'SICK',
+            description: 'Sickness',
+            attended: false,
+            capturePay: true,
+            captureMoreDetail: true,
+            captureCaseNote: false,
+            captureIncentiveLevelWarning: false,
+            captureOtherText: false,
+            displaySequence: 1,
+            displayInAbsence: true,
+          },
+        ] as AttendanceReason[])
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/not-attended-reason', {
+        notAttendedReasons: [
+          {
+            id: 1,
+            code: 'SICK',
+            description: 'Sickness',
+            attended: false,
+            capturePay: true,
+            captureMoreDetail: true,
+            captureCaseNote: false,
+            captureIncentiveLevelWarning: false,
+            captureOtherText: false,
+            displaySequence: 1,
+            displayInAbsence: true,
+          },
+        ],
+        rows: [
+          {
+            instanceId: 1,
+            attendanceId: 1,
+            prisonerNumber: 'ABC123',
+            prisonerName: 'JOE BLOGGS',
+            firstName: 'JOE',
+            lastName: 'BLOGGS',
+            session: 'AM',
+            activityName: 'Maths 1',
+            isPayable: true,
+          },
+        ],
+      })
+    })
+
+    it('should render with the expected multiple view', async () => {
       when(activitiesService.getScheduledActivity)
         .calledWith(1, res.locals.user)
         .mockResolvedValue({
@@ -322,7 +427,7 @@ describe('Route Handlers - Non Attendance', () => {
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `${url}`,
           'Attendance recorded',
-          "You've saved attendance details for 3 people",
+          "You've saved attendance details for 3 attendees",
         )
       },
     )

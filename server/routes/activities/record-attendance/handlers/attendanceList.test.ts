@@ -413,7 +413,7 @@ describe('Route Handlers - Attendance List', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance-list',
         'Attendance recorded',
-        "You've saved attendance details for 2 people",
+        "You've saved attendance details for 2 attendees",
       )
     })
 
@@ -430,8 +430,17 @@ describe('Route Handlers - Attendance List', () => {
       }
       when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(noPayInstance)
 
+      const selectedPrisoner = {
+        prisonerNumber: 'A1234BC',
+        firstName: 'Aldgorse',
+        lastName: 'Ashlinda',
+      } as Prisoner
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith('A123', res.locals.user)
+        .mockResolvedValue(selectedPrisoner)
+
       req.body = {
-        selectedAttendances: ['999-1'],
+        selectedAttendances: ['999-1-A123'],
       }
 
       await handler.ATTENDED(req, res)
@@ -452,7 +461,7 @@ describe('Route Handlers - Attendance List', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance-list',
         'Attendance recorded',
-        "You've saved attendance details for 1 person",
+        "You've saved attendance details for Aldgorse Ashlinda",
       )
     })
   })
@@ -746,7 +755,7 @@ describe('Route Handlers - Attendance List', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'attendance-list',
         'Attendance recorded',
-        "You've saved attendance details for 2 people",
+        "You've saved attendance details for 2 attendees",
       )
     })
 

@@ -26,7 +26,7 @@
                 {% if numActivities == 1 %}
                     {{ attendanceRows[0].instance.activitySchedule.activity.summary }}
                 {% else %}
-                    Record attendance at  {{  numActivities }} activities
+                    Record attendance at {{  numActivities }} activity sessions
                 {% endif %}
                 <span class="govuk-caption-l">
                     {{ formatSessions(selectedSessions) }}
@@ -35,7 +35,7 @@
 
                 <span class="govuk-caption-l">{{ activityDate }}</span>
 
-                <h2 class="govuk-heading-m">{{ attendanceRows | length }} allocations</h2>
+                <h2 class="govuk-heading-m">{{ attendanceRows | length }} attendees</h2>
             </h1>
         </div>
     </div>
@@ -206,8 +206,8 @@
                     formAction: 'not-attended'
                 }
             ],
-            itemsDescription: 'allocation',
-            itemsDescriptionPlural: 'allocations'
+            itemsDescription: 'attendee',
+            itemsDescriptionPlural: 'attendees'
         }) }}
     </form>
 {% endblock %}

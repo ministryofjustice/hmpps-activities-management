@@ -125,7 +125,7 @@ context('Record appointment attendance', () => {
     attendeesPage.selectAttendees('Adalie, Izrmonntas', 'Palabert, Ussalwe')
     attendeesPage.getButton('Mark as attended').click()
     attendeesPage.notificationHeading().should('contain.text', 'Attendance recorded')
-    attendeesPage.notificationBody().should('contain.text', "You've saved attendance details for 2 attendees.")
+    attendeesPage.notificationBody().should('contain.text', "You've saved attendance details for 2 attendees")
 
     attendeesPage.assertNumRows(5)
     attendeesPage.assertRowForMultipleAppointments(
@@ -166,7 +166,7 @@ context('Record appointment attendance', () => {
     attendeesPage.selectAttendees('Adalie, Izrmonntas')
     attendeesPage.getButton('Mark as not attended').click()
     attendeesPage.notificationHeading().should('contain.text', 'Non-attendance recorded')
-    attendeesPage.notificationBody().should('contain.text', "You've saved attendance details for 1 attendee.")
+    attendeesPage.notificationBody().should('contain.text', "You've saved attendance details for Adalie Izrmonntas")
 
     cy.log('View attendance')
 

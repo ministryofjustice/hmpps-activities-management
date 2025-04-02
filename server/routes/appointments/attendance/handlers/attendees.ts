@@ -1,15 +1,19 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
+import PrisonService from '../../../../services/prisonService'
 import { MultipleAppointmentAttendanceRequest } from '../../../../@types/activitiesAPI/types'
-import { asString, convertToArray, eventClashes, toDate } from '../../../../utils/utils'
+import { asString, convertToArray, eventClashes, toDate, convertToTitleCase } from '../../../../utils/utils'
 import AttendanceAction from '../../../../enum/attendanceAction'
 import { getAttendanceSummaryFromAppointmentDetails } from '../../utils/attendanceUtils'
-import { EventType } from '../../../../@types/activities'
+import { EventType, Prisoner } from '../../../../@types/activities'
 import applyCancellationDisplayRule from '../../../../utils/applyCancellationDisplayRule'
 
 export default class AttendeesRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET_MULTIPLE = async (req: Request, res: Response): Promise<void> => {
     const { appointmentIds } = req.session.recordAppointmentAttendanceJourney
@@ -103,6 +107,7 @@ export default class AttendeesRoutes {
   private updateAttendances = async (req: Request, res: Response, action: AttendanceAction): Promise<void> => {
     const attendanceIds: string[] = convertToArray(req.body.attendanceIds)
     const { user } = res.locals
+    let prisonerName
 
     const appointmentsMap = new Map<number, string[]>()
 
@@ -118,6 +123,15 @@ export default class AttendeesRoutes {
       appointmentsMap.get(appointmentId).push(prisonerNumber)
     })
 
+    if (attendanceIds.length === 1) {
+      const selectedPrisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(
+        attendanceIds[0].split('-')[1],
+        user,
+      )
+
+      prisonerName = convertToTitleCase(`${selectedPrisoner.firstName} ${selectedPrisoner.lastName}`)
+    }
+
     const requests: MultipleAppointmentAttendanceRequest[] = []
 
     appointmentsMap.forEach((prisonerNumbers, appointmentId) => {
@@ -127,8 +141,8 @@ export default class AttendeesRoutes {
     await this.activitiesService.updateMultipleAppointmentAttendances(action, requests, user)
 
     const successHeader = action === AttendanceAction.ATTENDED ? 'Attendance recorded' : 'Non-attendance recorded'
-    const successMessage = `You've saved attendance details for ${attendanceIds.length} ${
-      attendanceIds.length === 1 ? 'attendee.' : 'attendees.'
+    const successMessage = `You've saved attendance details for ${
+      attendanceIds.length === 1 ? prisonerName : `${attendanceIds.length} attendees`
     }`
 
     return res.redirectWithSuccess('../attendees', successHeader, successMessage)

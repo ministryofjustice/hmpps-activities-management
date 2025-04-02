@@ -13,7 +13,7 @@
 {% set pageId = 'not-attended-reason-page' %}
 {% set jsBackLink = true %}
 
-{% macro nestedReasonData(index, reason, prisoner, validationErrors, formResponses) %}
+{% macro nestedReasonData(index, reason, row, validationErrors, formResponses) %}
     {% if reason.code === "SICK" %}
        {{ govukRadios({
             classes: "govuk-radios--inline",
@@ -35,7 +35,7 @@
                     checked: formResponses.notAttendedData[index].sickPay == YesNo.NO
                 }
             ]
-        }) if isPayable }}
+        }) if row.isPayable }}
         {{ govukCharacterCount({
             label: {
                 text: "Can you provide more detail? (optional)"
@@ -48,7 +48,7 @@
             value: formResponses.notAttendedData[index].moreDetail
         }) }}
     {% elseif reason.captureCaseNote %}
-        {% set warningText = (prisoner | formatName(NameFormatStyle.firstLast, false) + (" won't be paid because this is" if isPayable else "'s attendance will be recorded as") + " an unacceptable absence.") %}
+        {% set warningText = (row | formatName(NameFormatStyle.firstLast, false) + (" won't be paid because this is" if row.isPayable else "'s attendance will be recorded as") + " an unacceptable absence.") %}
         {{ govukCharacterCount({
             label: {
                 text: "Add a case note"
@@ -60,7 +60,7 @@
             value: formResponses.notAttendedData[index].caseNote,
             maxlength: 3800,
             hint: {
-                html: '<div class="govuk-warning-text govuk-!-margin-bottom-0"><span class="govuk-warning-text__icon" aria-hidden="true">!</span><strong class="govuk-warning-text__text"><span class="govuk-visually-hidden">Warning</span>' + warningText +'</strong></div>'      
+                html: '<div class="govuk-warning-text govuk-!-margin-bottom-0"><span class="govuk-warning-text__icon" aria-hidden="true">!</span><strong class="govuk-warning-text__text"><span class="govuk-visually-hidden">Warning</span>' + warningText +'</strong></div>'
             }
         }) }}
 
@@ -91,7 +91,7 @@
         }) }}
     {% elseif reason.code === 'NOT_REQUIRED' %}
         <span class="govuk-label">
-            {{ prisoner | formatName(NameFormatStyle.firstLast, false) + ("will be paid and their" if isPayable else "'s") + ' attendance will be recorded as an acceptable absence.' }}
+            {{ row | formatName(NameFormatStyle.firstLast, false) + ("will be paid and their" if row.isPayable else "'s") + ' attendance will be recorded as an acceptable absence.' }}
         </span>
     {% elseif reason.code === "REST" %}
        {{ govukRadios({
@@ -114,14 +114,14 @@
                     checked: formResponses.notAttendedData[index].restPay == YesNo.NO
                 }
             ]
-        }) if isPayable }}
+        }) if row.isPayable }}
     {% elseif reason.code === 'CLASH' %}
         <div class="govuk-!-margin-bottom-4">
-            {% for event in prisoner.otherEvents %}
+            {% for event in row.otherEvents %}
                 {{ otherEvent(event, false) }}
             {% endfor %}
         </div>
-        <p class="govuk-body">{{ prisoner | formatName(NameFormatStyle.firstLast, false) + (" will be paid and their" if isPayable else "'s") }} attendance will be recorded as an acceptable absence.</p>
+        <p class="govuk-body">{{ row | formatName(NameFormatStyle.firstLast, false) + (" will be paid and their" if row.isPayable else "'s") }} attendance will be recorded as an acceptable absence.</p>
     {% elseif reason.captureOtherText %}
         {{ govukCharacterCount({
             label: {
@@ -155,50 +155,49 @@
 
                 }
             ]
-        }) if isPayable }}
+        }) if row.isPayable }}
     {% endif %}
 {% endmacro %}
 
 {% macro getSpanContent(reason) %}
-{# We need a span so that VoiceOver can make users aware that there's some conditionally revealed content. The extra fullstop is to make sure Voiceover reads the content as two sentences, but we don't want to show it visually #}
-{% if reason.code === 'SICK' %}
-    <span class="govuk-visually-hidden">. If sick, select if they should be paid</span>
-{% elif reason.code === 'REFUSED' %}
-    <span class="govuk-visually-hidden">. If refused, add a case note</span>
-{% elif reason.code === 'REST' %}
-    <span class="govuk-visually-hidden">. If resting, select if they should be paid</span>
-{% elif reason.captureOtherText %}
-    <span class="govuk-visually-hidden">. If the absence reason is not listed, add a reason</span>
-{% endif %}
+    {# We need a span so that VoiceOver can make users aware that there's some conditionally revealed content. The extra fullstop is to make sure Voiceover reads the content as two sentences, but we don't want to show it visually #}
+    {% if reason.code === 'SICK' %}
+        <span class="govuk-visually-hidden">. If sick, select if they should be paid</span>
+    {% elif reason.code === 'REFUSED' %}
+        <span class="govuk-visually-hidden">. If refused, add a case note</span>
+    {% elif reason.code === 'REST' %}
+        <span class="govuk-visually-hidden">. If resting, select if they should be paid</span>
+    {% elif reason.captureOtherText %}
+        <span class="govuk-visually-hidden">. If the absence reason is not listed, add a reason</span>
+    {% endif %}
 {% endmacro %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            {% if selectedPrisoners | length > 1 %}
-                <h1 class="govuk-heading-l">Select a reason why {{ selectedPrisoners | length }} people did not attend</h1>
-            {% endif %}
+            <span class="govuk-caption-l">Record activity attendance</span>
+            {% set prisonerIndex = 0 %}
+            <h1 class="govuk-heading-l">Select why {{ rows[prisonerIndex] | formatName(NameFormatStyle.firstLast, false) }} did not attend {{ rows[prisonerIndex].activityName }} - {{ rows[prisonerIndex].session }}</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% for prisoner in selectedPrisoners %}
+                {% for row in rows %}
                     {% set hasActivityClash = false %}
-                    {% for event in prisoner.otherEvents %}
+                    {% for event in row.otherEvents %}
                         {% if event.eventType == "ACTIVITY" %}
                             {% set hasActivityClash = true %}
                         {% endif %}
                     {% endfor %}
 
-                    {% set prisonerIndex = loop.index0 %}
-
-                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerNumber]" }}" value="{{ prisoner.prisonerNumber }}" />
-                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerName]" }}" value="{{ prisoner | formatName(NameFormatStyle.firstLast, false) }}" />
-                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][isPayable]" }}" value="{{ isPayable }}" />
+                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerNumber]" }}" value="{{ row.prisonerNumber }}" />
+                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerName]" }}" value="{{ row | formatName(NameFormatStyle.firstLast, false) }}" />
+                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][instanceId]" }}" value="{{ row.instanceId }}" />
+                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][isPayable]" }}" value="{{ row.isPayable }}" />
 
                     {% set notAttendedReasonOptions = [] %}
                      {% for notAttendedReason in notAttendedReasons %}
-                        {% if (notAttendedReason.code != "CLASH") or (prisoner.otherEvents|length and not hasActivityClash) %}
-                            {% set conditionalOptionsHtml = nestedReasonData(prisonerIndex, notAttendedReason, prisoner, validationErrors, formResponses) | trim %}
+                        {% if (notAttendedReason.code != "CLASH") or (row.otherEvents|length and not hasActivityClash) %}
+                            {% set conditionalOptionsHtml = nestedReasonData(prisonerIndex, notAttendedReason, row, validationErrors, formResponses) | trim %}
                             {% set conditionalRevealExplanationText = getSpanContent(notAttendedReason) %}
                             {% set notAttendedReasonOptions = (notAttendedReasonOptions.push(
                                  {
@@ -212,20 +211,8 @@
                             ), notAttendedReasonOptions) %}
                         {% endif %}
                     {% endfor %}
-                    {% if selectedPrisoners | length > 1 %}
-                        <hr class="govuk-!-margin-bottom-6" />
-                        <h2 class="govuk-heading-m govuk-!-margin-bottom-0">{{ prisoner | formatName(NameFormatStyle.lastCommaFirst, false) }}</h2>
-                        <div class="govuk-hint">{{ prisoner.prisonerNumber }}</div>
-                    {% else %}
-                        <h1 class="govuk-heading-l">Select a reason why {{ prisoner | formatName(NameFormatStyle.firstLast, false) }} did not attend</h1>
-                    {% endif %}
+
                     {{ govukRadios({
-                        fieldset: {
-                            legend: {
-                                text: "Why did " + prisoner | formatName(NameFormatStyle.firstLast, false) + " not attend?" if selectedPrisoners | length > 1,
-                                classes: "govuk-label"
-                            }
-                        },
                         idPrefix: "notAttendedData-"  + prisonerIndex + "-notAttendedReason",
                         name: "notAttendedData[" + prisonerIndex + "][notAttendedReason]",
                         errorMessage: validationErrors | findError("notAttendedData-"  + prisonerIndex + "-notAttendedReason"),

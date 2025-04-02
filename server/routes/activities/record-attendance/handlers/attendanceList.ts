@@ -3,7 +3,14 @@ import { startOfDay, startOfToday } from 'date-fns'
 import { Expose, Transform } from 'class-transformer'
 import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
-import { asString, convertToNumberArray, eventClashes, getAttendanceSummary, toDate } from '../../../../utils/utils'
+import {
+  asString,
+  convertToNumberArray,
+  eventClashes,
+  getAttendanceSummary,
+  toDate,
+  convertToTitleCase,
+} from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 import { Attendance, AttendanceUpdateRequest, ScheduledEvent } from '../../../../@types/activitiesAPI/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
@@ -190,6 +197,7 @@ export default class AttendanceListRoutes {
     const instanceId = +req.params.id
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
     const { user } = res.locals
+    let prisonerName
 
     const instance = await this.activitiesService.getScheduledActivity(instanceId, user)
     const isPaid = instance.activitySchedule.activity.paid
@@ -207,8 +215,16 @@ export default class AttendanceListRoutes {
 
     await this.activitiesService.updateAttendances(attendances, user)
 
-    const successMessage = `You've saved attendance details for ${selectedAttendances.length} ${
-      selectedAttendances.length === 1 ? 'person' : 'people'
+    if (selectedAttendances.length === 1) {
+      const selectedPrisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(
+        selectedAttendances[0].split('-')[2],
+        user,
+      )
+      prisonerName = convertToTitleCase(`${selectedPrisoner.firstName} ${selectedPrisoner.lastName}`)
+    }
+
+    const successMessage = `You've saved attendance details for ${
+      selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`
     }`
 
     return res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
@@ -217,6 +233,7 @@ export default class AttendanceListRoutes {
   ATTENDED_MULTIPLE = async (req: Request, res: Response): Promise<void> => {
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
     const { user } = res.locals
+    let prisonerName
 
     const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
 
@@ -238,8 +255,16 @@ export default class AttendanceListRoutes {
 
     await this.activitiesService.updateAttendances(attendances, user)
 
-    const successMessage = `You've saved attendance details for ${selectedAttendances.length} ${
-      selectedAttendances.length === 1 ? 'person' : 'people'
+    if (selectedAttendances.length === 1) {
+      const selectedPrisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(
+        selectedAttendances[0].split('-')[2],
+        user,
+      )
+      prisonerName = convertToTitleCase(`${selectedPrisoner.firstName} ${selectedPrisoner.lastName}`)
+    }
+
+    const successMessage = `You've saved attendance details for ${
+      selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`
     }`
 
     return res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
