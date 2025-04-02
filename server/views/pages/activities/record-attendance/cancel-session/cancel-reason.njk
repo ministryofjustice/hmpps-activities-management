@@ -1,8 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "partials/attendance/cancelReasonList.njk" import cancelReasonList %}
 
 {% set jsBackLink = true %}
 {% set pageTitle = applicationName + " - Cancel session - Reason" %}
@@ -18,32 +17,7 @@
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        {% set cancellationReasonsValues = [] %}
-        {% for key, text in cancellationReasons %}
-          {% set cancellationReasonsValues = (cancellationReasonsValues.push({
-            value: key,
-            text: text,
-            checked: formResponses.reason == key
-          }), cancellationReasonsValues) %}
-        {% endfor %}
-
-        {{ govukRadios({
-          name: "reason",
-          items: cancellationReasonsValues,
-          errorMessage: validationErrors | findError('reason')
-        }) }}
-
-        {{ govukCharacterCount({
-            label: {
-              text: "More details (optional)"
-            },
-            name: "comment",
-            id: "comment",
-            rows: "3",
-            maxlength: "100",
-            value: formResponses.comment,
-            errorMessage: validationErrors | findError('comment')
-        }) }}
+        {{ cancelReasonList(cancellationReasons) }}
 
         {{ govukButton({
           text: "Continue"

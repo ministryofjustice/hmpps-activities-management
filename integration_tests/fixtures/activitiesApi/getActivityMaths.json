@@ -151,7 +151,8 @@
           "allocatedBy": "MR BLOGS",
           "deallocatedTime": null,
           "deallocatedBy": null,
-          "deallocatedReason": null
+          "deallocatedReason": null,
+          "status": "ACTIVE"
         }
       ],
       "description": "Entry level Maths 1",

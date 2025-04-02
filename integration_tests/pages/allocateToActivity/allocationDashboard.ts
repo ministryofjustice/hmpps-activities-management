@@ -46,4 +46,6 @@ export default class AllocationDashboard extends Page {
   applyFilters = () => cy.get('#apply-filters').click()
 
   nonAssociationsLink = (prn: string) => cy.get(`[data-qa=non-associations-link-${prn}]`)
+
+  allocateGroupLink = () => cy.get('#candidates-tab').contains('allocate a group of people').click()
 }

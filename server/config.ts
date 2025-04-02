@@ -239,6 +239,8 @@ export default {
     get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),
   ),
   inServiceReportingEnabled: toBoolean(get('IN_SERVICE_REPORTING_ENABLED', 'false')),
+  multiplePrisonerActivityAllocationEnabled: toBoolean(get('MULTIPLE_PRISONER_ALLOCATION_ENABLED', 'false')),
+  cancelMultipleSessionsEnabled: toBoolean(get('CANCEL_MULTIPLE_SESSIONS_ENABLED', 'false')),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
   },

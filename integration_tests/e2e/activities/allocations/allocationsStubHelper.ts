@@ -7,7 +7,54 @@ import getMathsSchedule from '../../../fixtures/activitiesApi/getScheduleMaths.j
 /* eslint no-return-assign: "off" */
 /* eslint no-param-reassign: "off" */
 
-export function resetActivitiesStub(activityStartDate: Date, startTime: string = '10:00', subject = 'english') {
+const extraAllocations = [
+  {
+    id: 1,
+    prisonerNumber: 'A1351DZ',
+    bookingId: 1200993,
+    activitySummary: 'English level 1',
+    scheduleDescription: 'Entry level English 1',
+    payBandId: 1,
+    startDate: '2022-10-10',
+    endDate: null,
+    allocatedTime: '2022-10-10T09:30:00',
+    allocatedBy: 'MR BLOGS',
+    deallocatedTime: null,
+    deallocatedBy: null,
+    deallocatedReason: null,
+    status: 'ACTIVE',
+  },
+  {
+    id: 3,
+    prisonerNumber: 'B1351RE',
+    bookingId: 1200993,
+    activitySummary: 'English level 1',
+    scheduleDescription: 'Entry level English 1',
+    payBandId: 1,
+    startDate: '2022-10-10',
+    endDate: null,
+    allocatedTime: '2022-10-10T09:30:00',
+    allocatedBy: 'MR BLOGS',
+    deallocatedTime: null,
+    deallocatedBy: null,
+    deallocatedReason: null,
+    status: 'ACTIVE',
+  },
+]
+
+export function resetActivitiesStub({
+  activityStartDate,
+  startTime = '10:00',
+  subject = 'english',
+  reducedPayOptions = false,
+  addExtraAllocations = false,
+}: {
+  activityStartDate: Date
+  startTime: string
+  subject: string
+  reducedPayOptions: boolean
+  addExtraAllocations: boolean
+}) {
   let currentDate = activityStartDate
   let newActivity
   if (subject === 'maths') {
@@ -28,11 +75,28 @@ export function resetActivitiesStub(activityStartDate: Date, startTime: string =
   newActivity.schedules[0].instances[2].startTime = startTime
   newActivity.schedules[0].instances[0].startTime = startTime
 
+  if (reducedPayOptions) {
+    const reducedPayRatesList = newActivity.pay.slice(0, 4)
+    newActivity.pay = reducedPayRatesList
+  }
+
+  if (addExtraAllocations) {
+    firstActivitySchedule.allocations.push(...extraAllocations)
+  }
+
   const activityNumber = getActivityNumber(subject)
   cy.stubEndpoint('GET', `/activities/${activityNumber}/filtered`, newActivity)
 }
 
-export function resetScheduleStub(activityStartDate: Date, startTime: string = '10:00', subject = 'english') {
+export function resetScheduleStub({
+  activityStartDate,
+  startTime = '10:00',
+  subject = 'english',
+}: {
+  activityStartDate: Date
+  startTime: string
+  subject: string
+}) {
   let currentDate = activityStartDate
   let newSchedule
   if (subject === 'maths') {
@@ -53,13 +117,21 @@ export function resetScheduleStub(activityStartDate: Date, startTime: string = '
   cy.stubEndpoint('GET', `/schedules/${number}`, newSchedule)
 }
 
-export default function resetActivityAndScheduleStubs(
-  activityStartDate: Date,
-  subject: string = 'english',
-  startTime: string = '10:00',
-) {
-  resetActivitiesStub(activityStartDate, startTime, subject)
-  resetScheduleStub(activityStartDate, startTime, subject)
+export default function resetActivityAndScheduleStubs({
+  activityStartDate,
+  startTime = '10:00',
+  subject = 'english',
+  reducedPayOptions = false,
+  addExtraAllocations = false,
+}: {
+  activityStartDate: Date
+  startTime?: string
+  subject?: string
+  reducedPayOptions?: boolean
+  addExtraAllocations?: boolean
+}) {
+  resetActivitiesStub({ activityStartDate, startTime, subject, reducedPayOptions, addExtraAllocations })
+  resetScheduleStub({ activityStartDate, startTime, subject })
 }
 
 const getActivityNumber = activitySubject => {

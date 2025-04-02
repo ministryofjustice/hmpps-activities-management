@@ -17,4 +17,17 @@ export default class NonAssociationsApiClient extends AbstractHmppsRestClient {
       user,
     )
   }
+
+  async getNonAssociationsInvolving(prisonerNumbers: string[], user: ServiceUser): Promise<NonAssociation[]> {
+    return this.post(
+      {
+        path: `/non-associations/involving`,
+        data: prisonerNumbers,
+        query: {
+          prisonId: user.activeCaseLoadId,
+        },
+      },
+      user,
+    )
+  }
 }

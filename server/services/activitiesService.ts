@@ -47,6 +47,7 @@ import {
   ScheduledActivity,
   ScheduledEvent,
   ScheduleInstanceCancelRequest,
+  ScheduleInstancesCancelRequest,
   Slot,
   SuspendedPrisonerAttendance,
   SuspendPrisonerRequest,
@@ -57,7 +58,10 @@ import {
   WaitingListSearchRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
-import { SessionCancellationRequest } from '../routes/activities/record-attendance/journey'
+import {
+  MultipleSessionCancellationRequest,
+  SessionCancellationRequest,
+} from '../routes/activities/record-attendance/journey'
 import { AttendanceStatus } from '../@types/appointments'
 import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
@@ -568,5 +572,18 @@ export default class ActivitiesService {
     user: ServiceUser,
   ): Promise<PrisonPayBand> {
     return this.activitiesApiClient.patchPrisonPayBand(prisonCode, prisonPayBandId, request, user)
+  }
+
+  async cancelMultipleActivities(
+    scheduledInstanceIds: number[],
+    cancelRequest: MultipleSessionCancellationRequest,
+    user: ServiceUser,
+  ) {
+    const scheduleInstancesCancelRequest: ScheduleInstancesCancelRequest = {
+      ...cancelRequest,
+      scheduleInstanceIds: scheduledInstanceIds,
+      username: user.username,
+    }
+    return this.activitiesApiClient.putCancelMultipleActivities(scheduleInstancesCancelRequest, user)
   }
 }

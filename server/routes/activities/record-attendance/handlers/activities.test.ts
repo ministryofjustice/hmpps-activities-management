@@ -561,4 +561,27 @@ describe('Route Handlers - Activities', () => {
       expect(res.redirect).toHaveBeenCalledWith('345/attendance-list')
     })
   })
+
+  describe('POST_CANCELLATIONS', () => {
+    it('should save the selected instance ids and redirect when multiple sessions are chosen', async () => {
+      req = {
+        body: {
+          selectedInstanceIds: [789, 567],
+          activityDate: '2024-03-24',
+          sessionFilters: ['AM', 'PM'],
+        },
+        session: {},
+      } as unknown as Request
+
+      await handler.POST_CANCELLATIONS(req, res)
+
+      expect(req.session.recordAttendanceJourney).toEqual({
+        selectedInstanceIds: [789, 567],
+        activityDate: '2024-03-24',
+        sessionFilters: ['AM', 'PM'],
+      })
+
+      expect(res.redirect).toHaveBeenCalledWith('cancel-multiple/cancel-reason')
+    })
+  })
 })

@@ -4,11 +4,12 @@ import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import { addDays, subDays } from 'date-fns'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
-import PayBandRoutes, { PayBand, payBandDetail, payBandWithDescription } from './payBand'
+import PayBandRoutes, { PayBand, payBandWithDescription } from './payBand'
 import atLeast from '../../../../../jest.setup'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
+import { PayBandDetail } from '../../../../utils/helpers/allocationUtil'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -178,7 +179,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
 
   describe('multiple paybands', () => {
     it('should create an array of pay bands with descriptions where there is a pay change in the future', async () => {
-      const originalPayBands: payBandDetail[] = [
+      const originalPayBands: PayBandDetail[] = [
         {
           bandId: 19,
           bandAlias: 'Pay band 3',
@@ -206,7 +207,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
     })
 
     it('should create an array of pay bands with descriptions where there is a pay change in the past and future', async () => {
-      const originalPayBands: payBandDetail[] = [
+      const originalPayBands: PayBandDetail[] = [
         {
           bandId: 19,
           bandAlias: 'Pay band 3',

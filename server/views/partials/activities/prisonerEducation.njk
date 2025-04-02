@@ -1,0 +1,9 @@
+{% macro prisonerEducation(educationItems) %}
+    {% for education in educationItems %}
+        {% if loop.index <= 3 %}    
+            <div>{{ education.studyArea }}: {{ education.educationLevel }}</div>
+        {% endif %}
+    {% else %}
+        None
+    {% endfor %}
+{% endmacro %}

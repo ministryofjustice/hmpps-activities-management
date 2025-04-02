@@ -78,6 +78,7 @@ import { PaidType } from '../routes/activities/suspensions/handlers/viewSuspensi
 import { WaitingListStatus } from '../enum/waitingListStatus'
 import logger from '../../logger'
 import LocationType from '../enum/locationType'
+import HowToAddOptions from '../enum/allocations'
 
 export default function nunjucksSetup(
   app: express.Express,
@@ -201,6 +202,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addFilter('excludeArray', excludeArrayObject)
   njkEnv.addFilter('absenceReasonDisplayConverter', absenceReasonDisplayConverter)
   njkEnv.addFilter('absenceReasonCheckboxMatch', absenceReasonCheckboxMatch)
+  njkEnv.addFilter('numberToWord', number => (number === 1 ? 'one' : number))
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
@@ -237,6 +239,8 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('bvlsMasteredVlpmFeatureToggleEnabled', config.bvlsMasteredVlpmFeatureToggleEnabled)
   njkEnv.addGlobal('appointmentMultipleAttendanceToggleEnabled', config.appointmentMultipleAttendanceToggleEnabled)
   njkEnv.addGlobal('inServiceReportingEnabled', config.inServiceReportingEnabled)
+  njkEnv.addGlobal('multiplePrisonerActivityAllocationEnabled', config.multiplePrisonerActivityAllocationEnabled)
+  njkEnv.addGlobal('cancelMultipleSessionsEnabled', config.cancelMultipleSessionsEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
   njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
   njkEnv.addGlobal('NameFormatStyle', NameFormatStyle)
@@ -245,6 +249,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('WaitingListStatus', WaitingListStatus)
   njkEnv.addGlobal('LocationType', LocationType)
   njkEnv.addGlobal('DeallocateAfterAllocationDateOption', DeallocateAfterAllocationDateOption)
+  njkEnv.addGlobal('HowToAddOptions', HowToAddOptions)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

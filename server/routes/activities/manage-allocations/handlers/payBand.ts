@@ -7,6 +7,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { AllocationUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import { formatDate, parseISODate, toMoney } from '../../../../utils/utils'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
+import { PayBandDetail } from '../../../../utils/helpers/allocationUtil'
 
 export class PayBand {
   @Expose()
@@ -21,9 +22,9 @@ export default class PayBandRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { inmate } = req.session.allocateJourney
 
-    const allPayBands: payBandDetail[] = await this.getActivityPayRates(req, res)
+    const allPayBands: PayBandDetail[] = await this.getActivityPayRates(req, res)
 
-    const payBands: payBandDetail[] = payBandWithDescription(allPayBands)
+    const payBands: PayBandDetail[] = payBandWithDescription(allPayBands)
 
     res.render('pages/activities/manage-allocations/pay-band', {
       prisonerName: inmate.prisonerName,
@@ -53,18 +54,18 @@ export default class PayBandRoutes {
       )
     }
 
-    const payBandDetails: payBandDetail = (await this.getActivityPayRates(req, res)).find(b => b.bandId === payBand)
+    const PayBandDetails: PayBandDetail = (await this.getActivityPayRates(req, res)).find(b => b.bandId === payBand)
 
     req.session.allocateJourney.inmate.payBand = {
-      id: payBandDetails.bandId,
-      alias: payBandDetails.bandAlias,
-      rate: payBandDetails.rate,
+      id: PayBandDetails.bandId,
+      alias: PayBandDetails.bandAlias,
+      rate: PayBandDetails.rate,
     }
 
     return res.redirectOrReturn('exclusions')
   }
 
-  private async getActivityPayRates(req: Request, res: Response): Promise<payBandDetail[]> {
+  private async getActivityPayRates(req: Request, res: Response): Promise<PayBandDetail[]> {
     const { inmate, activity } = req.session.allocateJourney
 
     const payRates = (await this.activitiesService.getActivity(activity.activityId, res.locals.user)).pay
@@ -79,8 +80,8 @@ export default class PayBandRoutes {
   }
 }
 
-export function payBandWithDescription(originalPayBands: payBandDetail[]): payBandDetail[] {
-  const formattedPayBands: payBandDetail[] = []
+export function payBandWithDescription(originalPayBands: PayBandDetail[]): PayBandDetail[] {
+  const formattedPayBands: PayBandDetail[] = []
   const uniquePayBandIds = originalPayBands
     .map(pay => pay.bandId)
     .filter((value, index, self) => self.indexOf(value) === index)
@@ -92,8 +93,8 @@ export function payBandWithDescription(originalPayBands: payBandDetail[]): payBa
   return formattedPayBands
 }
 
-function singlePayBandForPayBandId(originalPayBands: payBandDetail[], bandId: number): payBandDetail {
-  const possiblePayBands: payBandDetail[] = originalPayBands
+function singlePayBandForPayBandId(originalPayBands: PayBandDetail[], bandId: number): PayBandDetail {
+  const possiblePayBands: PayBandDetail[] = originalPayBands
     .filter(a => a.bandId === bandId && (a.startDate == null || parseISODate(a.startDate) <= startOfToday()))
     .sort(
       (a, b) =>
@@ -103,7 +104,7 @@ function singlePayBandForPayBandId(originalPayBands: payBandDetail[], bandId: nu
 
   const currentPayBand = possiblePayBands[possiblePayBands.length - 1]
 
-  const futurePaybands: payBandDetail[] = originalPayBands
+  const futurePaybands: PayBandDetail[] = originalPayBands
     .filter(a => a.bandId === bandId && a.startDate != null && parseISODate(a.startDate) > startOfToday())
     .sort((a, b) => parseISODate(a.startDate).valueOf() - parseISODate(b.startDate).valueOf())
 
@@ -112,12 +113,4 @@ function singlePayBandForPayBandId(originalPayBands: payBandDetail[], bandId: nu
   }
 
   return currentPayBand
-}
-
-export interface payBandDetail {
-  bandId: number
-  bandAlias: string
-  rate: number
-  startDate?: string
-  description?: string
 }

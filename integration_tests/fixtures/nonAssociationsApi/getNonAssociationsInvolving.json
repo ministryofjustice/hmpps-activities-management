@@ -1,0 +1,24 @@
+[
+  {
+    "id": 83519,
+    "firstPrisonerNumber": "A8644DY",
+    "firstPrisonerRole": "VICTIM",
+    "firstPrisonerRoleDescription": "Victim",
+    "secondPrisonerNumber": "G7931GA",
+    "secondPrisonerRole": "PERPETRATOR",
+    "secondPrisonerRoleDescription": "Perpetrator",
+    "reason": "BULLYING",
+    "reasonDescription": "Bullying",
+    "restrictionType": "LANDING",
+    "restrictionTypeDescription": "Cell and landing",
+    "comment": "some comments",
+    "whenCreated": "2024-10-16T15:39:08",
+    "whenUpdated": "2024-10-16T15:39:08",
+    "updatedBy": "NCLAMP_GEN",
+    "isClosed": false,
+    "closedBy": null,
+    "closedReason": null,
+    "closedAt": null,
+    "isOpen": true
+  }
+]

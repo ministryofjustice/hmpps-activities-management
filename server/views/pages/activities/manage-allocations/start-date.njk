@@ -28,11 +28,22 @@
                     {% set nextSessionText = session.allocateJourney.activity.startDate | formatDate %}
                 {% endif %}
 
+                {% set count = session.allocateJourney.inmates | length %}
+                {% if session.allocateJourney.allocateMultipleInmatesMode %}
+                    {% if count > 1 %}
+                        {% set title = "When do you want " + count + " people to start attending this activity?" %}
+                    {% else %}
+                        {% set title = "When do you want " + session.allocateJourney.inmates[0] | formatName(firstLast) + " to start attending this activity?" %}
+                    {% endif %}
+                {% else %}
+                 {% set title = "When do you want " + session.allocateJourney.inmate.prisonerName + " to start attending this activity?" %}
+                {% endif %}
+
                 {{ govukRadios({
                     name: "startDateOption",
                     fieldset: {
                         legend: {
-                            text: "When do you want " + session.allocateJourney.inmate.prisonerName + " to start attending this activity?",
+                            text: title,
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--xl"
                         }
@@ -42,12 +53,12 @@
                         {
                             value: "NEXT_SESSION",
                             text: "The next session - " + nextSessionText,
-                            checked: formResponses.startDateOption == 'NEXT_SESSION'
+                            checked: formResponses.startDateOption == 'NEXT_SESSION' or session.allocateJourney.startDateOption == 'NEXT_SESSION'
                         },
                         {
                             value: "START_DATE",
                             text: "A different date",
-                            checked: formResponses.startDateOption == 'START_DATE',
+                            checked: formResponses.startDateOption == 'START_DATE' or session.allocateJourney.startDateOption == 'START_DATE',
                             conditional: {
                                 html: mojDatePicker({
                                     id: 'startDate',
