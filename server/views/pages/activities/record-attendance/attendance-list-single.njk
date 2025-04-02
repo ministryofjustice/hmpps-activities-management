@@ -268,7 +268,7 @@
         }) }}
     </form>
 
-    <div class="print-only govuk-body-s govuk-!-margin-top-6">Printed at {{ now | formatDate('h:mmbbb \'on\' EEEE, d MMMM yyyy') }}</div>
+    <div class="print-only govuk-body-s govuk-!-margin-top-6">Printed at {{ now | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}</div>
 {% endblock %}
 
 {% macro renderOtherEvents(otherEvents) %}
