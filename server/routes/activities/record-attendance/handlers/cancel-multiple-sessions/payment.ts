@@ -10,7 +10,7 @@ enum IssuePayOptions {
 export class SessionPayMultipleForm {
   @Expose()
   @IsIn(Object.values(IssuePayOptions), {
-    message: 'Confirm if you would like payment to be issued for these sessions',
+    message: 'Select if people should be paid for these cancelled sessions',
   })
   issuePayOption: string
 }
