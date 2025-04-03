@@ -1,10 +1,12 @@
 import type { Request, Response } from 'express'
 import { when } from 'jest-when'
+import { addDays, subDays } from 'date-fns'
 import fetchAppointmentSeries from './fetchAppointmentSeries'
 import { AppointmentSeriesDetails } from '../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../@types/express'
 import ActivitiesService from '../../services/activitiesService'
 import { AppointmentType } from '../../routes/appointments/create-and-edit/appointmentJourney'
+import { formatDate } from '../../utils/utils'
 
 jest.mock('../../services/activitiesService')
 
@@ -44,19 +46,52 @@ describe('fetchAppointmentSeries', () => {
         code: 'CHAP',
         description: 'Chaplaincy',
       },
-      startDate: '2023-04-13',
+      startDate: formatDate(new Date(), 'yyyy-MM-dd'),
       startTime: '09:00',
       endTime: '10:30',
       appointmentType: AppointmentType.GROUP,
     } as unknown as AppointmentSeriesDetails
+
+    appointmentSeriesDetails.appointments = [
+      {
+        id: 100,
+        sequenceNumber: 1,
+        startDate: formatDate(subDays(Date(), 1), 'yyyy-MM-dd'),
+        startTime: '18:00',
+      },
+      {
+        id: 101,
+        sequenceNumber: 2,
+        startDate: formatDate(new Date(), 'yyyy-MM-dd'),
+        startTime: '00:00',
+      },
+      {
+        id: 102,
+        sequenceNumber: 3,
+        startDate: formatDate(new Date(), 'yyyy-MM-dd'),
+        startTime: '15:00',
+      },
+      {
+        id: 103,
+        sequenceNumber: 4,
+        startDate: formatDate(new Date(), 'yyyy-MM-dd'),
+        startTime: '08:00',
+      },
+      {
+        id: 104,
+        sequenceNumber: 5,
+        startDate: formatDate(addDays(Date(), 1), 'yyyy-MM-dd'),
+        startTime: '12:00',
+      },
+    ] as unknown as AppointmentSeriesDetails['appointments']
 
     when(activitiesServiceMock.getAppointmentSeriesDetails)
       .calledWith(123, res.locals.user)
       .mockResolvedValue(appointmentSeriesDetails)
 
     await middleware(req, res, next)
-
-    expect(req.appointmentSeries).toEqual(appointmentSeriesDetails)
+    expect(req.appointmentSeries.appointments.length).toEqual(4)
+    expect(req.appointmentSeries.appointments.filter(appointment => appointment.id === 100).length).toEqual(0)
     expect(next).toBeCalledTimes(1)
   })
 
