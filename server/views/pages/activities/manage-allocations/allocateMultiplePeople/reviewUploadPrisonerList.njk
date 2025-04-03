@@ -21,8 +21,9 @@
       lastName: allocatedInmate.lastName,
       prisonerNumber: allocatedInmate.prisonerNumber
     }),
+      classes: 'govuk-!-margin-0',
       attributes: {
-      "data-sort-value": allocatedInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
+        "data-sort-value": allocatedInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
     }
     },
     {
@@ -52,6 +53,7 @@
       lastName: unallocatedInmate.lastName,
       prisonerNumber: unallocatedInmate.prisonerNumber
       }),
+      classes: 'govuk-!-margin-0',
       attributes: {
         "data-sort-value": unallocatedInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
       }
@@ -90,6 +92,7 @@
       lastName: withoutMatchingIncentiveLevelInmate.lastName,
       prisonerNumber: withoutMatchingIncentiveLevelInmate.prisonerNumber
     }),
+      classes: 'govuk-!-margin-0',
       attributes: {
       "data-sort-value": withoutMatchingIncentiveLevelInmate | formatName(NameFormatStyle.lastCommaFirstMiddle, false)
     }
@@ -100,52 +103,72 @@
   ]), withoutMatchingIncentiveLevelInmatesRows) %}
 {% endfor %}
 
+{% set allocationsAvailable = unallocatedInmatesRows | length > 0 %}
+
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <span class="govuk-caption-l">{{ session.allocateJourney.activity.name }}</span>
-      <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
-      <p class="govuk-body">Remove anyone who should not be allocated, or continue with the current list of people to allocate.</p>
+      {% if allocationsAvailable %}
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
+        <p class="govuk-body">Remove anyone who should not be allocated, or continue with the current list of people to allocate.</p>
 
-      {{ govukTable({
-        head: [
-          {
-            text: "Name",
-            classes: "govuk-!-display-none-print",
-            attributes: { "aria-sort": "ascending", "data-qa": "unallocated-inmate-name" }
-          },
-          {
-            text: "Cell location",
-            classes: "govuk-!-display-none-print",
-            attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-cell-location"}
-          },
-          {
-            text: "Non-associations",
-            classes: "govuk-!-display-none-print",
-            attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-non-associations"}
-          },
-          {
-            text: "Current allocations",
-            classes: "govuk-!-display-none-print",
-            attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-current-allocations"}
-          },
-          {
-            html: '<span class="govuk-visually-hidden">Actions</span>',
-            classes: "govuk-!-display-none-print"
+        {{ govukTable({
+          head: [
+            {
+              text: "Name",
+              classes: "govuk-!-display-none-print",
+              attributes: { "aria-sort": "ascending", "data-qa": "unallocated-inmate-name" }
+            },
+            {
+              text: "Cell location",
+              classes: "govuk-!-display-none-print",
+              attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-cell-location"}
+            },
+            {
+              text: "Non-associations",
+              classes: "govuk-!-display-none-print",
+              attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-non-associations"}
+            },
+            {
+              text: "Current allocations",
+              classes: "govuk-!-display-none-print",
+              attributes: { "aria-sort": "none", "data-qa": "unallocated-inmate-current-allocations"}
+            },
+            {
+              html: '<span class="govuk-visually-hidden">Actions</span>',
+              classes: "govuk-!-display-none-print"
+            }
+          ],
+          rows: unallocatedInmatesRows,
+          attributes: {
+            'data-module': 'moj-sortable-table',
+            'data-qa': 'inmate-list'
           }
-        ],
-        rows: unallocatedInmatesRows,
-        classes: 'govuk-!-margin-0',
-        attributes: {
-          'data-module': 'moj-sortable-table',
-          'data-qa': 'inmate-list'
-        }
-      }) }}
+        }) }}
+      {% else %}
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-7">{{ nobodyToAllocateTitle }}</h1>
+        <p class="govuk-body">Check the list of people you’re using is correct. You may need to:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>select a different activity</li>
+          <li>edit people’s allocations</li>
+          <li>change activity requirements</li>
+        </ul>
+        {{ govukButton({
+            text: "Return to the activity",
+            classes: "govuk-!-margin-top-5",
+            href: '/activities/allocation-dashboard/'+session.allocateJourney.activity.activityId
+        }) }}
+      {% endif %}
 
 
       {% set totalCannotBeAllocated = withoutMatchingIncentiveLevelInmates.length + allocatedInmates.length %}
       {% if totalCannotBeAllocated > 0 %}
-          <p class="govuk-heading-m govuk-!-margin-top-3" data-qa="incentive-level-title">{{ cannotAllocateMessage }}</p>
+          {% if not allocationsAvailable %}
+          <p class="govuk-heading-m govuk-!-margin-top-3" data-qa="cannot-allocate-title">Why people could not be allocated</p>
+          {% else %}
+          <p class="govuk-heading-m govuk-!-margin-top-3" data-qa="cannot-allocate-title">{{ cannotAllocateMessage }}</p>
+          {% endif %}
       {% endif %}
       {% if withoutMatchingIncentiveLevelInmates.length > 0 %}
         <p class="govuk-body" data-qa="incentive-level-text">
@@ -171,7 +194,6 @@
             }
           ],
           rows: withoutMatchingIncentiveLevelInmatesRows,
-          classes: 'govuk-!-margin-0',
           attributes: {
             'data-module': 'moj-sortable-table',
             'data-qa': 'incentive-level-list'
@@ -202,7 +224,6 @@
             }
           ],
           rows: allocatedInmatesRows,
-          classes: 'govuk-!-margin-0',
           attributes: {
             'data-module': 'moj-sortable-table',
             'data-qa': 'allocated-inmate-list'
@@ -210,6 +231,7 @@
         }) }}
       {% endif %}
 
+      {% if allocationsAvailable %}
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
           {{ govukButton({
@@ -218,6 +240,7 @@
             classes: 'govuk-!-margin-top-3'
           }) }}
       </form>
+      {% endif %}
     </div>
   </div>
 

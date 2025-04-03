@@ -38,7 +38,6 @@ export default class ReviewUploadPrisonerListRoutes {
       // update for matching incentive levels
       unallocatedInmates = inmatesWithMatchingIncentiveLevel(unallocatedInmates, act)
 
-      // req.session.allocateJourney.inmates = unallocatedInmates
       req.session.allocateJourney.withoutMatchingIncentiveLevelInmates = withoutMatchingIncentiveLevel
       req.session.allocateJourney.allocatedInmates = allocated
       req.session.allocateJourney.inmates = unallocatedInmates
@@ -59,11 +58,17 @@ export default class ReviewUploadPrisonerListRoutes {
         : ' your CSV file cannot be allocated'
     }
 
+    let nobodyToAllocateTitle
+    if (req.session.allocateJourney.inmates.length < 1) {
+      nobodyToAllocateTitle = `No-one from ${activityCopied || `your CSV`} can be allocated`
+    }
+
     return res.render('pages/activities/manage-allocations/allocateMultiplePeople/reviewUploadPrisonerList', {
       unallocatedInmates: req.session.allocateJourney.inmates,
       withoutMatchingIncentiveLevelInmates: req.session.allocateJourney.withoutMatchingIncentiveLevelInmates,
       allocatedInmates: req.session.allocateJourney.allocatedInmates,
       cannotAllocateMessage,
+      nobodyToAllocateTitle,
     })
   }
 

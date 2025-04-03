@@ -47,7 +47,7 @@ context('Allocate multiple people to an activity by copying from another activit
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', prisonersOnChosenActivity.content)
     cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', nonAssociationsPresent)
-    cy.stubEndpoint('GET', '/schedules/2/allocations\\?includePrisonerSummary=true', [getAllocations[1]])
+
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=G4793VF', getCandidateSuitability)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=B1351RE', getCandidateSuitability2)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A1351DZ', getCandidateSuitability)
@@ -69,6 +69,8 @@ context('Allocate multiple people to an activity by copying from another activit
   })
 
   it('should be able to allocate when selecting an existing activity - multiple people, some not applicable', () => {
+    cy.stubEndpoint('GET', '/schedules/2/allocations\\?includePrisonerSummary=true', [getAllocations[1]])
+
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -110,7 +112,7 @@ context('Allocate multiple people to an activity by copying from another activit
     reviewUploadPrisonerListPage.checkTableCell('allocated-inmate-list', 1, '10 October 2022')
     reviewUploadPrisonerListPage.rows('allocated-inmate-list').should('have.length', 1)
     reviewUploadPrisonerListPage
-      .incentiveLevelTitle()
+      .cannotAllocateTitle()
       .should(
         'contain.text',
         '2 people from A basic maths course suitable for introduction to the subject cannot be allocated to Entry level English 1',
@@ -156,5 +158,63 @@ context('Allocate multiple people to an activity by copying from another activit
     confirmMultipleAllocationsPage
       .panelText()
       .should('contain.text', 'Robert Ramroop is now allocated to Entry level English 1')
+  })
+  it('should block allocation if there are no appropriate people from the selected activity', () => {
+    const alreadyAllocated = getAllocations.slice(0, 2)
+    cy.stubEndpoint('GET', '/schedules/2/allocations\\?includePrisonerSummary=true', alreadyAllocated)
+
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.allocateToActivitiesCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
+    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.allocateToActivityCard().click()
+
+    const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
+    activitiesPage.activityRows().should('have.length', 3)
+    activitiesPage.selectActivityWithName('English level 1')
+
+    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    allocatePage.tabWithTitle('Other people').click()
+    allocatePage.allocateGroupLink()
+
+    const setUpPrisonerListMethodPage = Page.verifyOnPage(SetUpPrisonerListMethodPage)
+    setUpPrisonerListMethodPage.selectHowToAddDecisionRadio(HowToAddOptions.EXISTING_LIST)
+    setUpPrisonerListMethodPage.getButton('Continue').click()
+
+    const searchForActivityPage = Page.verifyOnPage(SearchForActivityPage)
+    searchForActivityPage.searchBox().type('Maths level 1')
+    searchForActivityPage.getButton('Continue').click()
+
+    const reviewUploadPrisonerListPage = Page.verifyOnPage(ReviewUploadPrisonerListPage)
+    reviewUploadPrisonerListPage
+      .title()
+      .should(
+        'contain.text',
+        'No-one from A basic maths course suitable for introduction to the subject can be allocated',
+      )
+    reviewUploadPrisonerListPage.cannotAllocateTitle().should('contain.text', 'Why people could not be allocated')
+    reviewUploadPrisonerListPage.hasText('Check the list of people you’re using is correct. You may need to:')
+    reviewUploadPrisonerListPage.list().should('exist')
+    reviewUploadPrisonerListPage.caption().should('contain.text', 'Entry level English 1')
+    cy.get(`[data-qa="inmate-list"]`).should('not.exist')
+    reviewUploadPrisonerListPage.rows('incentive-level-list').should('have.length', 1)
+    reviewUploadPrisonerListPage.checkTableCell('incentive-level-list', 0, 'Potter, Harry Peter')
+    reviewUploadPrisonerListPage.rows('allocated-inmate-list').should('have.length', 2)
+    reviewUploadPrisonerListPage.checkTableCell('allocated-inmate-list', 0, 'Ramroop, Robert Bob')
+    reviewUploadPrisonerListPage.checkTableCell('allocated-inmate-list', 2, 'Somewhere, Some Body')
+    reviewUploadPrisonerListPage
+      .incentiveLevelText()
+      .should(
+        'contain.text',
+        'There is 1 person with an incentive level that does not match a pay rate for this activity',
+      )
+    reviewUploadPrisonerListPage
+      .alreadyAllocatedText()
+      .should('contain.text', 'There are 2 people already allocated to Entry level English 1')
+    reviewUploadPrisonerListPage.getLinkByText('Return to the activity').should('exist')
   })
 })
