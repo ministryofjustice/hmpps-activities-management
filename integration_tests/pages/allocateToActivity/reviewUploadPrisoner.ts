@@ -7,6 +7,8 @@ export default class ReviewUploadPrisonerListPage extends Page {
 
   caption = (): Cypress.Chainable => cy.get('.govuk-caption-l')
 
+  title = (): Cypress.Chainable => cy.get('.govuk-heading-l')
+
   rows = (listId: string): Cypress.Chainable =>
     cy
       .get(`[data-qa="${listId}"]`)
@@ -24,11 +26,13 @@ export default class ReviewUploadPrisonerListPage extends Page {
 
   removeCandidateLink = (prn: string) => cy.get(`[data-qa=remove-uploaded-prison-number-${prn}]`)
 
-  incentiveLevelTitle = () => cy.get(`[data-qa="incentive-level-title"]`)
+  cannotAllocateTitle = () => cy.get(`[data-qa="cannot-allocate-title"]`)
 
   incentiveLevelText = () => cy.get(`[data-qa=incentive-level-text]`)
 
   alreadyAllocatedText = () => cy.get(`[data-qa=already-allocated-text]`)
+
+  list = () => cy.get('.govuk-list--bullet')
 
   hasText = (text: string) => cy.contains(text)
 }

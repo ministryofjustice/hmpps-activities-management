@@ -38,9 +38,8 @@ export default class FromActivityListRoutes {
 
     const activityToCopy: Activity = await this.activitiesService.getActivity(+activityId, user)
     const prisonerNumbers: string[] = activityToCopy.schedules[0].allocations
-      .filter(alloc => alloc.status === 'ACTIVE')
+      .filter(alloc => alloc.status === 'ACTIVE' || alloc.status === 'PENDING')
       .map(alloc => alloc.prisonerNumber)
-
     if (prisonerNumbers.length === 0) {
       return res.validationFailed('activityId', `No-one is currently allocated to ${activityToCopy.summary}`)
     }

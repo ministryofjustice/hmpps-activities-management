@@ -274,6 +274,86 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
         },
       )
     })
+    it('should pass the empty allocations title text when there are no people to allocate', async () => {
+      req.query = {
+        fromActivity: 'Cooking',
+      }
+
+      const activityPay: ActivityPay[] = []
+      activity.pay = activityPay
+
+      when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(activity)
+
+      when(activitiesService.getAllocationsWithParams)
+        .calledWith(1, { includePrisonerSummary: true }, res.locals.user)
+        .mockResolvedValue([allocation])
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/allocateMultiplePeople/reviewUploadPrisonerList',
+        {
+          unallocatedInmates: [],
+          allocatedInmates: [
+            {
+              cellLocation: '1-1-1',
+              firstName: 'TEST01',
+              incentiveLevel: 'Basic',
+              lastName: 'PRISONER01',
+              otherAllocations: [
+                {
+                  activityId: 22,
+                  activitySummary: 'other',
+                  bookingId: 0,
+                  exclusions: [],
+                  id: 0,
+                  isUnemployment: false,
+                  prisonerNumber: 'A1234BC',
+                  scheduleDescription: '',
+                  scheduleId: 22,
+                  startDate: '2024-01-01',
+                  status: undefined,
+                },
+              ],
+              payBand: undefined,
+              prisonCode: 'TPR',
+              prisonerName: 'TEST01 PRISONER01',
+              prisonerNumber: 'A1234BC',
+              startDate: '2024-01-01',
+              status: 'ACTIVE IN',
+            },
+          ],
+          withoutMatchingIncentiveLevelInmates: [
+            {
+              cellLocation: '2-2-2',
+              firstName: 'TEST02',
+              incentiveLevel: 'Standard',
+              lastName: 'PRISONER02',
+              otherAllocations: [],
+              payBand: undefined,
+              prisonCode: 'TPR',
+              prisonerName: 'TEST02 PRISONER02',
+              prisonerNumber: 'B2345CD',
+              status: 'ACTIVE IN',
+            },
+            {
+              cellLocation: '2-2-2',
+              firstName: 'TEST02',
+              incentiveLevel: 'Enhanced',
+              lastName: 'PRISONER02',
+              otherAllocations: [],
+              payBand: undefined,
+              prisonCode: 'TPR',
+              prisonerName: 'TEST02 PRISONER02',
+              prisonerNumber: 'B2345CD',
+              status: 'ACTIVE IN',
+            },
+          ],
+          cannotAllocateMessage: '3 people from Cooking cannot be allocated to Box making',
+          nobodyToAllocateTitle: 'No-one from Cooking can be allocated',
+        },
+      )
+    })
   })
 
   describe('REMOVE', () => {
