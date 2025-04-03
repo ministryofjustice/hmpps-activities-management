@@ -16,10 +16,10 @@
             <h1 class="govuk-heading-l">Change when {{ prisonerName | safe }} should attend this activity</h1>
 
             {% if session.req.params.mode == 'create' %}
-                <p class='govuk-body'>Unselect a session to exclude {{ prisonerName | safe }}. They will not be scheduled to attend that session.</p>
+                <p class='govuk-body'>Unselect a session to modify {{ prisonerName | safe }} out.</p>
             {% else %}
-                <p class='govuk-body'>Unselect a session to exclude {{ prisonerName | safe }}. They will no longer be scheduled to attend that session.</p>
-                <p class='govuk-body'>Select a session to add it to their schedule.</p>
+                <p class='govuk-body'>Unselect a session to modify {{ prisonerName | safe }} out.</p>
+                <p class='govuk-body'>If they are already modified out of a session, select it to add them back in.</p>
             {% endif %}
 
             {% if disabledSlotsExist %}
