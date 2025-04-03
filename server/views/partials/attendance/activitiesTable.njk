@@ -6,7 +6,7 @@
     {% set formActions = [] %}
     {% if cancelMultipleSessionsEnabled and not ((activityDate | toDateString) < (now | toDateString)) %}
       {% set formActions = (formActions.push({
-        text: 'Cancel activity sessions',
+        text: 'Cancel sessions',
         formAction: 'activities/cancel-multiple'
       }), formActions) %}
     {% endif %}
@@ -135,8 +135,8 @@
             ],
             rows: rows,
             actions: formActions,
-            itemsDescription: 'activity session',
-            itemsDescriptionPlural: 'activity sessions',
+            itemsDescription: 'session',
+            itemsDescriptionPlural: 'sessions',
             pagination: {
                 previous: {
                     title: 'Previous day',
