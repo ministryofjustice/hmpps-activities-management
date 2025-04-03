@@ -107,7 +107,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
         attendeeRows,
-        numAppointments: 2,
+        appointments,
         attendanceSummary: {
           attendeeCount: 3,
           attended: 0,
@@ -197,7 +197,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
         attendeeRows,
-        numAppointments: 2,
+        appointments,
         attendanceSummary: {
           attendeeCount: 7,
           attended: 2,
@@ -371,7 +371,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
         attendeeRows,
-        numAppointments: 1,
+        appointments,
         attendanceSummary: {
           attendeeCount: 1,
           attended: 0,
@@ -467,7 +467,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/attendees', {
         attendeeRows,
-        numAppointments: 2,
+        appointments,
         attendanceSummary: {
           attendeeCount: 3,
           attended: 1,

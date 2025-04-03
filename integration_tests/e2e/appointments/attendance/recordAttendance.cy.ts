@@ -489,6 +489,13 @@ context('Record appointment attendance', () => {
       'Chaplaincy\n15:00 to 16:00\nMulti Faith',
       'Not recorded yet',
     )
+    attendeesPage.getInputByLabel('Search by prisoner name or prison number').clear().type('gobbledegook')
+    attendeesPage.getButton('Search').click()
+
+    cy.location().should(loc => {
+      expect(loc.search).contains('searchTerm=gobbledegook')
+    })
+    attendeesPage.assertNoAttendees()
   })
 
   it('Should be able to navigate directly to attendees view', () => {
