@@ -162,7 +162,7 @@
     "cypress-circleci-reporter": "^0.3.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-multi-reporters": "^2.0.5",
-    "esbuild": "^0.25.1",
+    "esbuild": "^0.25.2",
     "esbuild-plugin-clean": "^1.0.1",
     "esbuild-plugin-copy": "^2.1.1",
     "esbuild-plugin-manifest": "^1.0.5",
@@ -189,8 +189,8 @@
     "path-to-regexp": "~0.1.12",
     "undici": "~6.21.2",
     "serialize-javascript": "~6.0.2",
-    "@babel/runtime": "~7.26.10",
-    "@babel/helpers": "~7.26.10",
+    "@babel/runtime": "~7.27.0",
+    "@babel/helpers": "~7.27.0",
     "@jgoz/esbuild-plugin-typecheck": {
       "esbuild": "$esbuild"
     }
