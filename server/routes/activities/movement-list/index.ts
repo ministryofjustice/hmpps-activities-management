@@ -31,9 +31,6 @@ export default function Index({ activitiesService, prisonService, alertsFilterSe
 
   router.use(insertJourneyIdentifier())
 
-  // router.use(setUpJourneyData(tokenStore))
-  // router.use(setUpJourneyData(tokenStore))
-
   get('/:journeyId/choose-details', chooseDetailsRoutes.GET)
   post('/:journeyId/choose-details', chooseDetailsRoutes.POST, DateAndTimeSlot)
   get('/:journeyId/locations', locationsRoutes.GET)
