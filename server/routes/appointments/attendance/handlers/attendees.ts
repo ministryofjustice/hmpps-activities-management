@@ -77,7 +77,7 @@ export default class AttendeesRoutes {
 
     return res.render('pages/appointments/attendance/attendees', {
       attendeeRows,
-      numAppointments: appointments.length,
+      appointments,
       attendanceSummary: getAttendanceSummaryFromAppointmentDetails(attendeeRows),
     })
   }
