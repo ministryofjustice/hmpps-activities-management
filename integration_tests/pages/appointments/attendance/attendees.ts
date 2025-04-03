@@ -32,6 +32,10 @@ export default class AttendeesPage extends Page {
     this.stickyTableRows().should('have.length', expectedNumRows)
   }
 
+  assertNoAttendees() {
+    this.stickyTableRows().contains('No attendees to display')
+  }
+
   assertRowForMultipleAppointments(rowNum, prisonerName, cellLocation, appointmentName, attendance) {
     this.stickyTableRows()
       .eq(rowNum)

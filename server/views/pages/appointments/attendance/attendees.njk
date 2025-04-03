@@ -10,8 +10,10 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
+{%  set numAppointments = appointments | length %}
+
 {% if numAppointments == 1 %}
-    {% set singleAppointment = attendeeRows[0].appointment %}
+    {% set singleAppointment = appointments[0] %}
 {% endif %}
 
 {% if singleAppointment %}
