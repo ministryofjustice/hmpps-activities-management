@@ -23,7 +23,7 @@
                 }) }}
             {% else %}
                 {{ govukInsetText({
-                    text: "You're seeing only sessions when each activity is scheduled to run."
+                    text: "This page only lists sessions that " + prisonerName + " is scheduled to attend."
                 }) }}
 
                 {% set rows = [] %}
