@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express'
+import { startOfToday } from 'date-fns'
 import logger from '../../../logger'
 import ActivitiesService from '../../services/activitiesService'
 import { parseDate } from '../../utils/utils'
@@ -12,9 +13,8 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
       if (appointmentSeriesId && !Number.isNaN(appointmentSeriesId) && appointmentSeries?.id !== appointmentSeriesId) {
         req.appointmentSeries = await activitiesService.getAppointmentSeriesDetails(appointmentSeriesId, user)
 
-        const now = new Date()
         req.appointmentSeries.appointments = req.appointmentSeries.appointments.filter(
-          a => parseDate(`${a.startDate}T${a.startTime}`, "yyyy-MM-dd'T'HH:mm") >= now,
+          a => parseDate(`${a.startDate}T${a.startTime}`, "yyyy-MM-dd'T'HH:mm") >= startOfToday(),
         )
       }
     } catch (error) {
