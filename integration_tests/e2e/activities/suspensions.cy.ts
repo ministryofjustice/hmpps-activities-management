@@ -315,7 +315,7 @@ context('Suspensions', () => {
   it('should render the page, all suspended', () => {
     cy.visit('/activities/suspensions/prisoner/G0995GW')
     const page = Page.verifyOnPage(ViewAllocationsPage)
-    page.caption().should('contain.text', 'Manage suspensions from activities')
+    page.caption().should('contain.text', 'Manage suspensions')
     page.title().should('contain.text', "Alfonso Cholak's activities")
     page
       .noActiveAllocationsPara()
@@ -406,7 +406,7 @@ context('Suspensions', () => {
 
     cy.visit('/activities/suspensions/prisoner/G0995GW')
     const page = Page.verifyOnPage(ViewAllocationsPage)
-    page.caption().should('contain.text', 'Manage suspensions from activities')
+    page.caption().should('contain.text', 'Manage suspensions')
     page.title().should('contain.text', "Alfonso Cholak's activities")
     page.noActiveAllocationsPara().should('not.exist')
     page
@@ -477,12 +477,12 @@ context('Suspensions', () => {
   it('should suspend an active allocation immediately', () => {
     cy.visit('/activities/suspensions/prisoner/G0995GW')
     const page = Page.verifyOnPage(ViewAllocationsPage)
-    page.caption().should('contain.text', 'Manage suspensions from activities')
+    page.caption().should('contain.text', 'Manage suspensions')
     page.title().should('contain.text', "Alfonso Cholak's activities")
     page.suspendLink(9876).click()
 
     const suspendFromPage = Page.verifyOnPage(SuspendFromPage)
-    suspendFromPage.caption().should('contain.text', 'Manage suspensions from activities')
+    suspendFromPage.caption().should('contain.text', 'Manage suspensions')
     suspendFromPage.title().should('contain.text', "When does Alfonso Cholak's suspension from Active activity start?")
     suspendFromPage.selectRadio('immediately')
     suspendFromPage.continue()
@@ -524,12 +524,12 @@ context('Suspensions', () => {
   it('should not ask the pay question if the activity is unpaid', () => {
     cy.visit('/activities/suspensions/prisoner/G0995GW')
     const page = Page.verifyOnPage(ViewAllocationsPage)
-    page.caption().should('contain.text', 'Manage suspensions from activities')
+    page.caption().should('contain.text', 'Manage suspensions')
     page.title().should('contain.text', "Alfonso Cholak's activities")
     page.suspendLink(4765).click()
 
     const suspendFromPage = Page.verifyOnPage(SuspendFromPage)
-    suspendFromPage.caption().should('contain.text', 'Manage suspensions from activities')
+    suspendFromPage.caption().should('contain.text', 'Manage suspensions')
     suspendFromPage
       .title()
       .should('contain.text', "When does Alfonso Cholak's suspension from Active unpaid activity start?")
@@ -542,7 +542,7 @@ context('Suspensions', () => {
   it('should unsuspend a prisoner from an activity - unpaid activity', () => {
     cy.visit('/activities/suspensions/prisoner/G0995GW')
     const page = Page.verifyOnPage(ViewAllocationsPage)
-    page.caption().should('contain.text', 'Manage suspensions from activities')
+    page.caption().should('contain.text', 'Manage suspensions')
     page.title().should('contain.text', "Alfonso Cholak's activities")
     page.endSuspensionLink(7528).click()
 
