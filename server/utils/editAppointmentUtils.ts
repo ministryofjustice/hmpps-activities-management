@@ -91,7 +91,7 @@ export const getConfirmAppointmentEditCta = (
   }
 
   if (editAppointmentJourney.uncancel) {
-    return 'Confirm'
+    return 'Continue'
   }
 
   const updateProperties = []
