@@ -1,4 +1,5 @@
 import {
+  Contracts,
   defaultClient,
   DistributedTracingModes,
   getCorrelationContext,
@@ -6,7 +7,13 @@ import {
   type TelemetryClient,
 } from 'applicationinsights'
 import { RequestHandler } from 'express'
+import { EnvelopeTelemetry } from 'applicationinsights/out/Declarations/Contracts'
 import type { ApplicationInfo } from '../applicationInfo'
+
+export type ContextObject = {
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  [name: string]: any
+}
 
 export function initialiseAppInsights(): void {
   if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
@@ -25,13 +32,7 @@ export function buildAppInsightsClient(
     defaultClient.context.tags['ai.cloud.role'] = overrideName || applicationName
     defaultClient.context.tags['ai.application.ver'] = buildNumber
 
-    defaultClient.addTelemetryProcessor(({ tags, data }, contextObjects) => {
-      const operationNameOverride = contextObjects.correlationContext?.customProperties?.getProperty('operationName')
-      if (operationNameOverride) {
-        tags['ai.operation.name'] = data.baseData.name = operationNameOverride // eslint-disable-line no-param-reassign,no-multi-assign
-      }
-      return true
-    })
+    defaultClient.addTelemetryProcessor(addUserDataToRequests)
 
     return defaultClient
   }
@@ -48,4 +49,33 @@ export function appInsightsMiddleware(): RequestHandler {
     })
     next()
   }
+}
+
+/**
+ * Adds extra data in the requests logged for the service, to identify unique username and active caseload.
+ * @param envelope
+ * @param contextObjects
+ */
+export function addUserDataToRequests(envelope: EnvelopeTelemetry, contextObjects: ContextObject) {
+  const isRequest = envelope.data.baseType === Contracts.TelemetryTypeString.Request
+  const operationNameOverride = contextObjects.correlationContext?.customProperties?.getProperty('operationName')
+
+  if (isRequest) {
+    const { username, activeCaseLoadId } = contextObjects?.['http.ServerRequest']?.res?.locals?.user || {}
+    if (username) {
+      const { properties } = envelope.data.baseData
+      // eslint-disable-next-line no-param-reassign
+      envelope.data.baseData.properties = {
+        username,
+        activeCaseLoadId,
+        ...properties,
+      }
+    }
+
+    if (operationNameOverride) {
+      envelope.tags['ai.operation.name'] = envelope.data.baseData.name = operationNameOverride // eslint-disable-line no-param-reassign,no-multi-assign
+    }
+  }
+
+  return true
 }
