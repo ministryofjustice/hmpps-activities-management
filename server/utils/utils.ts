@@ -21,6 +21,7 @@ import { Activity, ActivitySchedule, Attendance, ScheduledEvent, Slot } from '..
 import { CreateAnActivityJourney, Slots } from '../routes/activities/create-an-activity/journey'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
 import DateOption from '../enum/dateOption'
+import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
@@ -416,4 +417,18 @@ export const getDatePresetOptionWithTomorrow = (date: string): DateOption => {
   if (date === getDateFromDateAndTimeFormat(new Date())) return DateOption.TODAY
   if (date === getDateFromDateAndTimeFormat(addDays(new Date(), 1))) return DateOption.TOMORROW
   return DateOption.OTHER
+}
+
+export const getSortableItemForAttendee = (attendees, prisonersDetails: Prisoner[]) => {
+  if (attendees.length === 1) {
+    const prisoner = prisonersDetails[attendees[0].prisonerNumber]
+    return formatName(
+      prisoner.firstName,
+      prisoner.middleNames,
+      prisoner.lastName,
+      NameFormatStyle.lastCommaFirstMiddle,
+      false,
+    )
+  }
+  return attendees.length
 }
