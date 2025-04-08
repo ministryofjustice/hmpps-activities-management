@@ -189,7 +189,7 @@ describe('Activity requirements review page', () => {
         .mockResolvedValue(allocationSuitability)
 
       await handler.GET(req, res)
-
+      expect(req.session.allocateJourney.allocateMultipleInmatesMode).toEqual(true)
       expect(res.redirect).toHaveBeenCalledWith('../start-date')
     })
   })
@@ -197,6 +197,7 @@ describe('Activity requirements review page', () => {
     it('redirects to the start-date page', async () => {
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('../start-date')
+      expect(req.session.allocateJourney.allocateMultipleInmatesMode).toEqual(true)
     })
   })
   describe('REMOVE', () => {
