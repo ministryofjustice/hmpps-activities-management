@@ -194,6 +194,11 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
       {
         startDate: '2023-05-26',
         startTime: '10:00',
+        attendees: [
+          {
+            prisonerNumber: 'A1111AA',
+          },
+        ],
       },
     ]
 

@@ -419,16 +419,24 @@ export const getDatePresetOptionWithTomorrow = (date: string): DateOption => {
   return DateOption.OTHER
 }
 
-export const getSortableItemForAttendee = (attendees, prisonersDetails: Prisoner[]) => {
+type AppointmentSearchResult = {
+  appointmentAttendeeId: number
+  prisonerNumber: string
+  bookingId: number
+}
+
+export const getSortableItemForAttendee = (attendees: AppointmentSearchResult[], prisonersDetails: Prisoner[]) => {
   if (attendees.length === 1) {
     const prisoner = prisonersDetails[attendees[0].prisonerNumber]
-    return formatName(
-      prisoner.firstName,
-      prisoner.middleNames,
-      prisoner.lastName,
-      NameFormatStyle.lastCommaFirstMiddle,
-      false,
-    )
+    if (prisoner) {
+      return formatName(
+        prisoner.firstName,
+        prisoner.middleNames,
+        prisoner.lastName,
+        NameFormatStyle.lastCommaFirstMiddle,
+        false,
+      )
+    }
   }
   return attendees.length
 }
