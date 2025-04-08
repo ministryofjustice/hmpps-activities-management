@@ -41,6 +41,7 @@ export default class ActivityRequirementsReviewRoutes {
           prisoners: [],
         })
       // skip loading this page if there are no failures to meet requirements
+      req.session.allocateJourney.allocateMultipleInmatesMode = true
       return res.redirect('../start-date')
     }
 
