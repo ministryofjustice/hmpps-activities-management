@@ -66,11 +66,6 @@ export default class EditAppointmentService {
     const { appointmentJourney, editAppointmentJourney } = req.session
     const { appointmentId } = req.params
 
-    const successHeading = `You've ${this.getEditedMessage(
-      appointmentJourney,
-      editAppointmentJourney,
-    )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo)}`
-
     if (editAppointmentJourney.cancellationReason) {
       const { cancellationReason } = editAppointmentJourney
 
@@ -100,7 +95,10 @@ export default class EditAppointmentService {
         MetricsEvent.UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED(+appointmentId, applyTo, req, res.locals.user),
       )
       this.clearSession(req)
-      return res.redirectWithSuccess(`/appointments/${appointmentId}`, successHeading)
+      return res.redirectWithSuccess(
+        `/appointments/${appointmentId}`,
+        `You've uncancelled ${this.getUncancelledAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo)}`,
+      )
     }
 
     const request = { applyTo } as AppointmentUpdateRequest
@@ -163,7 +161,13 @@ export default class EditAppointmentService {
     )
 
     this.clearSession(req)
-    return res.redirectWithSuccess(`/appointments/${appointmentId}`, successHeading)
+    return res.redirectWithSuccess(
+      `/appointments/${appointmentId}`,
+      `You've ${this.getEditedMessage(
+        appointmentJourney,
+        editAppointmentJourney,
+      )} ${this.getAppliedToAppointmentMessage(editAppointmentJourney, appointmentJourney, applyTo)}`,
+    )
   }
 
   private getEditedMessage(appointmentJourney: AppointmentJourney, editAppointmentJourney: EditAppointmentJourney) {
@@ -199,6 +203,25 @@ export default class EditAppointmentService {
           }
       }
     }
+    return 'this appointment'
+  }
+
+  private getUncancelledAppointmentMessage(
+    editAppointmentJourney: EditAppointmentJourney,
+    appointmentJourney: AppointmentJourney,
+    applyTo: AppointmentApplyTo,
+  ) {
+    if (appointmentJourney.repeat === YesNo.YES) {
+      const numberOfAppointments = applyToAppointmentCount(applyTo, editAppointmentJourney)
+
+      if (
+        applyTo === AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS ||
+        applyTo === AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS
+      ) {
+        return `${numberOfAppointments} appointments in this series`
+      }
+    }
+
     return 'this appointment'
   }
 
