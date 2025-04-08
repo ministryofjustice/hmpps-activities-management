@@ -716,14 +716,20 @@ describe('Edit Appointment Utils', () => {
     it('cancel appointment', () => {
       req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
 
-      const options = getAppointmentApplyToOptions(req)
-
-      expect(options[1].additionalDescription).toEqual(
-        "You're cancelling the following 3 appointments:<br>2 January 2023 (2 of 4) to 4 January 2023 (4 of 4)",
-      )
-      expect(options[2].additionalDescription).toEqual(
-        "You're cancelling the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
-      )
+      expect(getAppointmentApplyToOptions(req)).toEqual([
+        {
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
+          description: `Just this one - ${weekTomorrowFormatted} (2 of 4)`,
+        },
+        {
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+          description: 'This one and all 3 appointments that come after it',
+        },
+        {
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
+          description: 'All 4 appointments left in this series',
+        },
+      ] as AppointmentApplyToOption[])
     })
 
     it('uncancel appointment where all future appointments are cancelled', () => {
@@ -761,21 +767,20 @@ describe('Edit Appointment Utils', () => {
         uncancel: true,
       }
 
-      const options = getAppointmentApplyToOptions(req)
-
-      const firstFrom = formatDate(addDays(Date(), 1), 'd MMMM yyyy')
-      const secondFrom = formatDate(addDays(Date(), 2), 'd MMMM yyyy')
-      const lastDateTo = formatDate(addDays(Date(), 3), 'd MMMM yyyy')
-
-      expect(options[0].description).toEqual(
-        `Just this one - ${formatDate(addDays(Date(), 2), 'EEEE, d MMMM yyyy')} (2 of 3)`,
-      )
-      expect(options[1].additionalDescription).toEqual(
-        `You're uncancelling the following 2 appointments:<br>${secondFrom} (2 of 3) to ${lastDateTo} (3 of 3)`,
-      )
-      expect(options[2].additionalDescription).toEqual(
-        `You're uncancelling the following 3 appointments:<br>${firstFrom} (1 of 3) to ${lastDateTo} (3 of 3)`,
-      )
+      expect(getAppointmentApplyToOptions(req)).toEqual([
+        {
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
+          description: `Just this one - ${formatDate(addDays(Date(), 2), 'EEEE, d MMMM yyyy')} (2 of 3)`,
+        },
+        {
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+          description: 'This one and the cancelled appointment that comes after it',
+        },
+        {
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
+          description: 'This one and all 3 cancelled appointments that were not due to have happened yet',
+        },
+      ] as AppointmentApplyToOption[])
     })
 
     it('uncancel appointment where all future appointments are not cancelled', () => {
@@ -813,31 +818,35 @@ describe('Edit Appointment Utils', () => {
         uncancel: true,
       }
 
-      const options = getAppointmentApplyToOptions(req)
-
-      const secondFrom = formatDate(addDays(Date(), 2), 'd MMMM yyyy')
-      const lastDateTo = formatDate(addDays(Date(), 3), 'd MMMM yyyy')
-
-      expect(options.length).toEqual(2)
-      expect(options[0].description).toEqual(
-        `Just this one - ${formatDate(addDays(Date(), 2), 'EEEE, d MMMM yyyy')} (2 of 3)`,
-      )
-      expect(options[1].additionalDescription).toEqual(
-        `You're uncancelling the following 2 appointments:<br>${secondFrom} (2 of 3) to ${lastDateTo} (3 of 3)`,
-      )
+      expect(getAppointmentApplyToOptions(req)).toEqual([
+        {
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
+          description: `Just this one - ${formatDate(addDays(Date(), 2), 'EEEE, d MMMM yyyy')} (2 of 3)`,
+        },
+        {
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+          description: 'This one and the cancelled appointment that comes after it',
+        },
+      ] as AppointmentApplyToOption[])
     })
 
     it('delete appointment', () => {
       req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
-      const options = getAppointmentApplyToOptions(req)
-
-      expect(options[1].additionalDescription).toEqual(
-        "You're deleting the following 3 appointments:<br>2 January 2023 (2 of 4) to 4 January 2023 (4 of 4)",
-      )
-      expect(options[2].additionalDescription).toEqual(
-        "You're deleting the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
-      )
+      expect(getAppointmentApplyToOptions(req)).toEqual([
+        {
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
+          description: `Just this one - ${weekTomorrowFormatted} (2 of 4)`,
+        },
+        {
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+          description: 'This one and all 3 appointments that come after it',
+        },
+        {
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
+          description: 'All 4 appointments left in this series',
+        },
+      ] as AppointmentApplyToOption[])
     })
 
     it('add one person to the appointment', () => {
@@ -851,14 +860,24 @@ describe('Edit Appointment Utils', () => {
         },
       ]
 
-      const options = getAppointmentApplyToOptions(req)
-
-      expect(options[1].additionalDescription).toEqual(
-        "You're adding this person to the following 3 appointments:<br>2 January 2023 (2 of 4) to 4 January 2023 (4 of 4)",
-      )
-      expect(options[2].additionalDescription).toEqual(
-        "You're adding this person to the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
-      )
+      expect(getAppointmentApplyToOptions(req)).toEqual([
+        {
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
+          description: `Just this one - ${weekTomorrowFormatted} (2 of 4)`,
+        },
+        {
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+          description: 'This one and all the appointments that come after it in the series',
+          additionalDescription:
+            "You're adding this person to the following 3 appointments:<br>2 January 2023 (2 of 4) to 4 January 2023 (4 of 4)",
+        },
+        {
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
+          description: "This one and all the appointments in the series that haven't happened yet",
+          additionalDescription:
+            "You're adding this person to the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
+        },
+      ] as AppointmentApplyToOption[])
     })
 
     it('add two people to the appointment', () => {
@@ -879,14 +898,24 @@ describe('Edit Appointment Utils', () => {
         },
       ]
 
-      const options = getAppointmentApplyToOptions(req)
-
-      expect(options[1].additionalDescription).toEqual(
-        "You're adding these people to the following 3 appointments:<br>2 January 2023 (2 of 4) to 4 January 2023 (4 of 4)",
-      )
-      expect(options[2].additionalDescription).toEqual(
-        "You're adding these people to the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
-      )
+      expect(getAppointmentApplyToOptions(req)).toEqual([
+        {
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
+          description: `Just this one - ${weekTomorrowFormatted} (2 of 4)`,
+        },
+        {
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+          description: 'This one and all the appointments that come after it in the series',
+          additionalDescription:
+            "You're adding these people to the following 3 appointments:<br>2 January 2023 (2 of 4) to 4 January 2023 (4 of 4)",
+        },
+        {
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
+          description: "This one and all the appointments in the series that haven't happened yet",
+          additionalDescription:
+            "You're adding these people to the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
+        },
+      ] as AppointmentApplyToOption[])
     })
 
     it('remove a person from the appointment', () => {
@@ -901,14 +930,24 @@ describe('Edit Appointment Utils', () => {
         category: 'H',
       }
 
-      const options = getAppointmentApplyToOptions(req)
-
-      expect(options[1].additionalDescription).toEqual(
-        "You're removing this person from the following 3 appointments:<br>2 January 2023 (2 of 4) to 4 January 2023 (4 of 4)",
-      )
-      expect(options[2].additionalDescription).toEqual(
-        "You're removing this person from the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
-      )
+      expect(getAppointmentApplyToOptions(req)).toEqual([
+        {
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
+          description: `Just this one - ${weekTomorrowFormatted} (2 of 4)`,
+        },
+        {
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+          description: 'This one and all the appointments that come after it in the series',
+          additionalDescription:
+            "You're removing this person from the following 3 appointments:<br>2 January 2023 (2 of 4) to 4 January 2023 (4 of 4)",
+        },
+        {
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
+          description: "This one and all the appointments in the series that haven't happened yet",
+          additionalDescription:
+            "You're removing this person from the following 4 appointments:<br>1 January 2023 (1 of 4) to 4 January 2023 (4 of 4)",
+        },
+      ] as AppointmentApplyToOption[])
     })
   })
 
