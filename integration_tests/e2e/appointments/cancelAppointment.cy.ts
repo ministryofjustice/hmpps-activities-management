@@ -19,7 +19,7 @@ import getAppointmentSeries from '../../fixtures/activitiesApi/getAppointmentSer
 import CancellationReasonPage from '../../pages/appointments/appointment/cancellationReasonPage'
 import CancellationConfirmPage from '../../pages/appointments/appointment/cancellationConfirmPage'
 
-context('Uncancel appointment', () => {
+context('Cancel appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
 
@@ -48,7 +48,7 @@ context('Uncancel appointment', () => {
     cy.stubEndpoint('PUT', '/appointments/11/cancel', getAppointmentDetails)
   })
 
-  it('Should be able to duplicate a single appointment', () => {
+  it('Should be able to cancel a single appointment', () => {
     postPrisonerNumbers[0].status = 'ACTIVE_IN'
     postPrisonerNumbers[1].inOutStatus = 'IN'
 
