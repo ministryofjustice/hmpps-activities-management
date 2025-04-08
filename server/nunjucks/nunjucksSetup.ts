@@ -55,6 +55,8 @@ import TimeSlot from '../enum/timeSlot'
 import {
   getAppointmentEditApplyToCta,
   getAppointmentEditMessage,
+  getAppointmentEditHintMessage,
+  getAppointmentEditHeadingMessage,
   getConfirmAppointmentEditCta,
 } from '../utils/editAppointmentUtils'
 import ServiceName from '../enum/serviceName'
@@ -227,6 +229,8 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('PayNoPay', PayNoPay)
   njkEnv.addGlobal('EventOrganiser', EventOrganiser)
   njkEnv.addGlobal('getAppointmentEditMessage', getAppointmentEditMessage)
+  njkEnv.addGlobal('getAppointmentEditHintMessage', getAppointmentEditHintMessage)
+  njkEnv.addGlobal('getAppointmentEditHeadingMessage', getAppointmentEditHeadingMessage)
   njkEnv.addGlobal('getConfirmAppointmentEditCta', getConfirmAppointmentEditCta)
   njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)
   njkEnv.addGlobal('concatArrays', concatArrays)

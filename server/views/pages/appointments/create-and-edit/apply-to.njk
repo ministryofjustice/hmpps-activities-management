@@ -7,6 +7,8 @@
 {% from "pages/appointments/partials/add-prisoner-list.njk" import addPrisonerList %}
 
 {% set editMessage = getAppointmentEditMessage(session.appointmentJourney, session.editAppointmentJourney) %}
+{% set editHintMessage = getAppointmentEditHintMessage(session.appointmentJourney, session.editAppointmentJourney) %}
+{% set editHeadingMessage = getAppointmentEditHeadingMessage(session.appointmentJourney, session.editAppointmentJourney) %}
 {% set pageTitle = appointmentJourneyTitle(editMessage + ' which appointments', session.appointmentJourney) %}
 {% set pageId = 'appointment-apply-to-page' %}
 {% set jsBackLink = true %}
@@ -26,7 +28,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session) }}
-            <h1 class="govuk-heading-l">Which appointments do you want to {{ editMessage }}?</h1>
+            <h1 class="govuk-heading-l">{{ editHeadingMessage }}</h1>
+            <p class="govuk-hint">{{ editHintMessage }}</p>
 
             {{ addPrisonerList(session.editAppointmentJourney.addPrisoners, user) }}
 
