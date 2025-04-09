@@ -723,7 +723,7 @@ describe('Edit Appointment Utils', () => {
         },
         {
           applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
-          description: 'This one and all 3 appointments that come after it',
+          description: 'This one and all 2 appointments that come after it',
         },
         {
           applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
@@ -778,7 +778,7 @@ describe('Edit Appointment Utils', () => {
         },
         {
           applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
-          description: 'This one and all 3 cancelled appointments that were not due to have happened yet',
+          description: 'All 3 cancelled appointments that were not due to have happened yet',
         },
       ] as AppointmentApplyToOption[])
     })
@@ -840,7 +840,7 @@ describe('Edit Appointment Utils', () => {
         },
         {
           applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
-          description: 'This one and all 3 appointments that come after it',
+          description: 'This one and all 2 appointments that come after it',
         },
         {
           applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
