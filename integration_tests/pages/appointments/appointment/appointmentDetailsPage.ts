@@ -65,6 +65,8 @@ export default class AppointmentDetailsPage extends Page {
 
   cancelAppointmentLink = (): Cypress.Chainable => cy.get('[data-qa=cancel-appointment]')
 
+  uncancelAppointmentLink = (): Cypress.Chainable => cy.get('[data-qa=uncancel-appointment]')
+
   assertSeriesFrequency = (frequency: string) => this.assertSeriesDetail('Frequency', frequency)
 
   assertSeriesSequence = (sequence: string) => this.assertSeriesDetail('Appointment', sequence)

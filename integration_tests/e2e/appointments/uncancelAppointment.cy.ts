@@ -19,7 +19,7 @@ import getAppointmentSeries from '../../fixtures/activitiesApi/getAppointmentSer
 import CancellationReasonPage from '../../pages/appointments/appointment/cancellationReasonPage'
 import ConfirmEditPage from '../../pages/appointments/appointment/confirmEditPage'
 
-context('Cancel appointment', () => {
+context('Uncancel appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
 
@@ -45,7 +45,8 @@ context('Cancel appointment', () => {
     cy.stubEndpoint('POST', '/search/alerts/prison-numbers\\?includeInactive=false', getPrisonerAlerts)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
     cy.stubEndpoint('POST', '/appointment-series', getAppointmentSeries)
-    cy.stubEndpoint('PUT', '/appointments/11/cancel', getAppointmentDetails)
+    cy.stubEndpoint('PUT', '/appointments/11/cancel', getCancelledAppointmentDetails)
+    cy.stubEndpoint('PUT', '/appointments/11/uncancel', getAppointmentDetails)
   })
 
   it('Should be able to cancel a single appointment', () => {
@@ -85,5 +86,16 @@ context('Cancel appointment', () => {
 
     const cancelledAppointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
     cancelledAppointmentDetailsPage.assertNotificationContents('Appointment cancelled')
+    cancelledAppointmentDetailsPage.uncancelAppointmentLink().click()
+
+    cy.stubEndpoint('GET', '/appointments/11/details', getAppointmentDetails)
+
+    const uncancellationConfirmPage = Page.verifyOnPage(ConfirmEditPage)
+    uncancellationConfirmPage.caption().should('contain.text', 'Chaplain Meeting (Chaplaincy)')
+    uncancellationConfirmPage.yesRadioClick().click()
+    uncancellationConfirmPage.continue()
+
+    const uncancelledAppointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
+    uncancelledAppointmentDetailsPage.assertNotificationContents("You've uncancelled this appointment")
   })
 })

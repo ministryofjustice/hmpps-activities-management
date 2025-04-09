@@ -1,6 +1,6 @@
 import Page from '../../page'
 
-export default class CancellationConfirmPage extends Page {
+export default class ConfirmEditPage extends Page {
   constructor() {
     super('appointment-confirm-edit-page')
   }
