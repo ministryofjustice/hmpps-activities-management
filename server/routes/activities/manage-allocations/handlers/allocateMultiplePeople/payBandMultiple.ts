@@ -31,6 +31,11 @@ export default class PayBandMultipleRoutes {
     const { inmates } = req.session.allocateJourney
     const allPayBandsForActivity: PayBandDetail[] = await this.getActivityPayRates(req, res)
 
+    // If the activity is unpaid then there will not be any paybands and we dont need to render this page
+    if (!allPayBandsForActivity) {
+      return res.redirect('check-answers')
+    }
+
     // Get the applicable paybands per prisoner needing to be allocated
     const payBandsPerInmate = getApplicablePayBandsForInmates(inmates, allPayBandsForActivity)
 

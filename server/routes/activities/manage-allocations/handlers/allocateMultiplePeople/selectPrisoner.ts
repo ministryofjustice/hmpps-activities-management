@@ -99,8 +99,10 @@ export default class SelectPrisonerRoutes {
 
     const prisonerFreeToAllocate = await this.checkPrisonerIsntCurrentlyAllocated([inmate], currentlyAllocated)
     const prisonerIncentiveLevelSuitable = await this.checkPrisonerHasSuitableIncentiveLevel([inmate], act)
+
     if (prisonerFreeToAllocate) {
-      if (prisonerIncentiveLevelSuitable) {
+      // If the prisoner has an incentive level appropriate for the activity, or if the activity is unpaid
+      if (prisonerIncentiveLevelSuitable || act.paid === false) {
         await this.addPrisonersToSession(req, inmate, user)
         return res.redirect(`review-search-prisoner-list${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
       }
