@@ -48,12 +48,14 @@ export function resetActivitiesStub({
   subject = 'english',
   reducedPayOptions = false,
   addExtraAllocations = false,
+  paid = true,
 }: {
   activityStartDate: Date
   startTime: string
   subject: string
   reducedPayOptions: boolean
   addExtraAllocations: boolean
+  paid: boolean
 }) {
   let currentDate = activityStartDate
   let newActivity
@@ -75,9 +77,14 @@ export function resetActivitiesStub({
   newActivity.schedules[0].instances[2].startTime = startTime
   newActivity.schedules[0].instances[0].startTime = startTime
 
-  if (reducedPayOptions) {
+  if (reducedPayOptions && paid) {
     const reducedPayRatesList = newActivity.pay.slice(0, 4)
     newActivity.pay = reducedPayRatesList
+  }
+
+  if (!paid) {
+    newActivity.paid = false
+    newActivity.pay = []
   }
 
   if (addExtraAllocations) {
@@ -123,14 +130,16 @@ export default function resetActivityAndScheduleStubs({
   subject = 'english',
   reducedPayOptions = false,
   addExtraAllocations = false,
+  paid = true,
 }: {
   activityStartDate: Date
   startTime?: string
   subject?: string
   reducedPayOptions?: boolean
   addExtraAllocations?: boolean
+  paid?: boolean
 }) {
-  resetActivitiesStub({ activityStartDate, startTime, subject, reducedPayOptions, addExtraAllocations })
+  resetActivitiesStub({ activityStartDate, startTime, subject, reducedPayOptions, addExtraAllocations, paid })
   resetScheduleStub({ activityStartDate, startTime, subject })
 }
 

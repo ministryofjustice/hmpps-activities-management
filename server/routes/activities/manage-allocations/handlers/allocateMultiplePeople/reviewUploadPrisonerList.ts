@@ -31,16 +31,20 @@ export default class ReviewUploadPrisonerListRoutes {
       const allocated: Inmate[] = inmatesAllocated(inmates, currentlyAllocated, false)
       let unallocatedInmates: Inmate[] = inmatesAllocated(inmates, currentlyAllocated, true)
 
-      // get incentive level for the activity
       const act = await this.activitiesService.getActivity(activity.activityId, user)
-      const withoutMatchingIncentiveLevel: Inmate[] = inmatesWithoutMatchingIncentiveLevel(unallocatedInmates, act)
+      if (act.paid) {
+        // get incentive level for the activity
+        const withoutMatchingIncentiveLevel: Inmate[] = inmatesWithoutMatchingIncentiveLevel(unallocatedInmates, act)
 
-      // update for matching incentive levels
-      unallocatedInmates = inmatesWithMatchingIncentiveLevel(unallocatedInmates, act)
+        // update for matching incentive levels
+        unallocatedInmates = inmatesWithMatchingIncentiveLevel(unallocatedInmates, act)
 
-      req.session.allocateJourney.withoutMatchingIncentiveLevelInmates = withoutMatchingIncentiveLevel
-      req.session.allocateJourney.allocatedInmates = allocated
+        req.session.allocateJourney.withoutMatchingIncentiveLevelInmates = withoutMatchingIncentiveLevel
+      } else {
+        req.session.allocateJourney.withoutMatchingIncentiveLevelInmates = []
+      }
       req.session.allocateJourney.inmates = unallocatedInmates
+      req.session.allocateJourney.allocatedInmates = allocated
     }
 
     let cannotAllocateMessage

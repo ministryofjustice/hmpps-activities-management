@@ -21,7 +21,7 @@ const activity: Activity = {
   offWing: false,
   onWing: false,
   outsideWork: false,
-  paid: false,
+  paid: true,
   pay: [],
   payPerSession: undefined,
   pieceWork: false,
@@ -153,7 +153,29 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
     } as unknown as Request
   })
   describe('GET', () => {
+    it('should not check incentive levels if the activity is upaid, and add prisoners to session appropriately', async () => {
+      activity.paid = false
+      activity.pay = []
+      when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(activity)
+
+      when(activitiesService.getAllocationsWithParams)
+        .calledWith(1, { includePrisonerSummary: true }, res.locals.user)
+        .mockResolvedValue([])
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/allocateMultiplePeople/reviewUploadPrisonerList',
+        {
+          unallocatedInmates: [inmateWithBasic, inmateWithStandard, inmateWithEnhanced],
+          allocatedInmates: [],
+          withoutMatchingIncentiveLevelInmates: [],
+        },
+      )
+    })
+
     it('should add all allocations to the unallocated list when all are new allocations and have incentive level', async () => {
+      activity.paid = true
       const activityPay: ActivityPay[] = [activityPayBasic, activityPayStandard, activityPayEnhanced]
       activity.pay = activityPay
 
