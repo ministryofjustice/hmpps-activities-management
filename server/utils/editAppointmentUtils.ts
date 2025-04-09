@@ -331,14 +331,14 @@ export const getAppointmentApplyToOptions = (req: Request) => {
           applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
           description: isSecondLastRemainingAppointment(editAppointmentJourney)
             ? 'This one and the appointment that comes after it'
-            : `This one and all ${applyToCount} appointments that come after it`,
+            : `This one and all ${applyToCount - 1} appointments that come after it`,
         })
       } else if (editAppointmentJourney.uncancel) {
         applyToOptions.push({
           applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
           description: isSecondLastRemainingAppointment(editAppointmentJourney)
             ? 'This one and the cancelled appointment that comes after it'
-            : `This one and all ${applyToCount} cancelled appointments that come after it`,
+            : `This one and all ${applyToCount - 1} cancelled appointments that come after it`,
         })
       } else {
         applyToOptions.push({
@@ -374,7 +374,7 @@ export const getAppointmentApplyToOptions = (req: Request) => {
       } else if (editAppointmentJourney.uncancel) {
         applyToOptions.push({
           applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
-          description: `This one and all ${applyToCount} cancelled appointments that were not due to have happened yet`,
+          description: `All ${applyToCount} cancelled appointments that were not due to have happened yet`,
         })
       } else {
         applyToOptions.push({
