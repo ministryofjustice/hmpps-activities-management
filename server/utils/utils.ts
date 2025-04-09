@@ -21,7 +21,7 @@ import { Activity, ActivitySchedule, Attendance, ScheduledEvent, Slot } from '..
 import { CreateAnActivityJourney, Slots } from '../routes/activities/create-an-activity/journey'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
 import DateOption from '../enum/dateOption'
-import { Prisoner } from '../@types/prisonerOffenderSearchImport/types'
+import { Prisoner } from '../@types/activities'
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
@@ -425,7 +425,10 @@ type AppointmentSearchResult = {
   bookingId: number
 }
 
-export const getSortableItemForAttendee = (attendees: AppointmentSearchResult[], prisonersDetails: Prisoner[]) => {
+export const getSortableItemForAttendee = (
+  attendees: AppointmentSearchResult[],
+  prisonersDetails: { [prisonerNumber: string]: Prisoner },
+) => {
   if (attendees.length === 1) {
     const prisoner = prisonersDetails[attendees[0].prisonerNumber]
     if (prisoner) {
