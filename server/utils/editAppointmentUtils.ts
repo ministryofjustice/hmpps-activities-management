@@ -204,59 +204,192 @@ export const getAppointmentEditApplyToCta = (
   return ''
 }
 
+export const getAppointmentEditHintMessage = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => {
+  const currentAppointment = getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)
+  const lastAppointment = getLastAppointment(editAppointmentJourney)
+  const applyToCount = applyToAppointmentCount(
+    AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+    editAppointmentJourney,
+  )
+
+  if (
+    editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED ||
+    editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR
+  ) {
+    return `There are ${applyToCount} appointments left in this series. They run from ${formatDate(
+      currentAppointment?.startDate,
+      'd MMMM yyyy',
+    )} to ${formatDate(lastAppointment?.startDate, 'd MMMM yyyy')}.`
+  }
+
+  if (editAppointmentJourney.uncancel) {
+    return `There are ${applyToCount} cancelled appointments in this series that can still be uncancelled.
+    They were due to run from ${formatDate(currentAppointment?.startDate, 'd MMMM yyyy')} to ${formatDate(
+      lastAppointment?.startDate,
+      'd MMMM yyyy',
+    )}.`
+  }
+
+  return ''
+}
+
+export const getAppointmentEditHeadingMessage = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => {
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
+    return 'This appointment is in a series: select which appointments you want to cancel?'
+  }
+
+  if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
+    return 'This appointment is in a series: select which appointments you want to delete?'
+  }
+
+  if (editAppointmentJourney.uncancel) {
+    return 'This cancelled appointment is in a series: select which appointments you want to uncancel?'
+  }
+
+  const updateProperties = []
+  if (hasAppointmentTierChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('tier')
+  }
+
+  if (hasAppointmentOrganiserChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('host')
+  }
+
+  if (hasAppointmentLocationChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('location')
+  }
+
+  if (hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('date')
+  }
+
+  if (
+    hasAppointmentStartTimeChanged(appointmentJourney, editAppointmentJourney) ||
+    hasAppointmentEndTimeChanged(appointmentJourney, editAppointmentJourney)
+  ) {
+    updateProperties.push('time')
+  }
+
+  if (hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney)) {
+    updateProperties.push('extra information')
+  }
+
+  if (updateProperties.length > 0) {
+    return `Which appointments do you want to change the ${updateProperties.join(', ').replace(/(,)(?!.*\1)/, ' and')} for?`
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length === 1) {
+    return `Which appointments do you want to add ${convertToTitleCase(editAppointmentJourney.addPrisoners[0].name)} to?`
+  }
+
+  if (editAppointmentJourney.addPrisoners?.length > 1) {
+    return 'Which appointments do you want to add these people to?'
+  }
+
+  if (editAppointmentJourney.removePrisoner) {
+    return `Which appointments do you want to remove ${convertToTitleCase(fullName(editAppointmentJourney.removePrisoner))} from?`
+  }
+
+  return ''
+}
+
 export const getAppointmentApplyToOptions = (req: Request) => {
   const { appointmentJourney, editAppointmentJourney } = req.session
+  const currentAppointment = getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)
+  const firstAppointment = getFirstAppointment(editAppointmentJourney)
+  const lastAppointment = getLastAppointment(editAppointmentJourney)
 
   const applyToOptions = [
     {
       applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
       description: `Just this one - ${formatDate(parseIsoDate(appointmentJourney.startDate), 'EEEE, d MMMM yyyy')} (${
-        getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)?.sequenceNumber
-      } of ${getLastAppointment(editAppointmentJourney)?.sequenceNumber})`,
+        currentAppointment?.sequenceNumber
+      } of ${lastAppointment?.sequenceNumber})`,
     },
   ] as AppointmentApplyToOption[]
 
   if (isApplyToQuestionRequired(editAppointmentJourney)) {
-    const lastAppointment = getLastAppointment(editAppointmentJourney)
     const editHint = getEditHintAction(appointmentJourney, editAppointmentJourney)
+
     if (isFirstRemainingAppointment(editAppointmentJourney) || !isLastRemainingAppointment(editAppointmentJourney)) {
       const applyToCount = applyToAppointmentCount(
         AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
         editAppointmentJourney,
       )
-      applyToOptions.push({
-        applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
-        description: isSecondLastRemainingAppointment(editAppointmentJourney)
-          ? 'This one and the appointment that comes after it in the series'
-          : 'This one and all the appointments that come after it in the series',
-        additionalDescription: `You're ${editHint} the following ${applyToCount} appointments:<br>${formatDate(
-          getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)?.startDate,
-          'd MMMM yyyy',
-        )} (${editAppointmentJourney.sequenceNumber} of ${lastAppointment.sequenceNumber}) to ${formatDate(
-          lastAppointment.startDate,
-          'd MMMM yyyy',
-        )} (${lastAppointment.sequenceNumber} of ${lastAppointment.sequenceNumber})`,
-      })
-    }
 
+      if (
+        editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED ||
+        editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR
+      ) {
+        applyToOptions.push({
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+          description: isSecondLastRemainingAppointment(editAppointmentJourney)
+            ? 'This one and the appointment that comes after it'
+            : `This one and all ${applyToCount} appointments that come after it`,
+        })
+      } else if (editAppointmentJourney.uncancel) {
+        applyToOptions.push({
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+          description: isSecondLastRemainingAppointment(editAppointmentJourney)
+            ? 'This one and the cancelled appointment that comes after it'
+            : `This one and all ${applyToCount} cancelled appointments that come after it`,
+        })
+      } else {
+        applyToOptions.push({
+          applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
+          description: isSecondLastRemainingAppointment(editAppointmentJourney)
+            ? 'This one and the appointment that comes after it in the series'
+            : 'This one and all the appointments that come after it in the series',
+          additionalDescription: `You're ${editHint} the following ${applyToCount} appointments:<br>${formatDate(
+            currentAppointment?.startDate,
+            'd MMMM yyyy',
+          )} (${editAppointmentJourney.sequenceNumber} of ${lastAppointment.sequenceNumber}) to ${formatDate(
+            lastAppointment.startDate,
+            'd MMMM yyyy',
+          )} (${lastAppointment.sequenceNumber} of ${lastAppointment.sequenceNumber})`,
+        })
+      }
+    }
     if (
       !isFirstRemainingAppointment(editAppointmentJourney) &&
       !hasAppointmentStartDateChanged(appointmentJourney, editAppointmentJourney) &&
       !isUncancelAndAllFutureNotCancelled(editAppointmentJourney)
     ) {
       const applyToCount = applyToAppointmentCount(AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS, editAppointmentJourney)
-      applyToOptions.push({
-        applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
-        description: "This one and all the appointments in the series that haven't happened yet",
-        additionalDescription: `You're ${editHint} the following ${applyToCount} appointments:<br>${formatDate(
-          getFirstAppointment(editAppointmentJourney).startDate,
-          'd MMMM yyyy',
-        )} (${getFirstAppointment(editAppointmentJourney).sequenceNumber} of ${
-          lastAppointment.sequenceNumber
-        }) to ${formatDate(lastAppointment.startDate, 'd MMMM yyyy')} (${lastAppointment.sequenceNumber} of ${
-          lastAppointment.sequenceNumber
-        })`,
-      })
+
+      if (
+        editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED ||
+        editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR
+      ) {
+        applyToOptions.push({
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
+          description: `All ${applyToCount} appointments left in this series`,
+        })
+      } else if (editAppointmentJourney.uncancel) {
+        applyToOptions.push({
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
+          description: `This one and all ${applyToCount} cancelled appointments that were not due to have happened yet`,
+        })
+      } else {
+        applyToOptions.push({
+          applyTo: AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS,
+          description: "This one and all the appointments in the series that haven't happened yet",
+          additionalDescription: `You're ${editHint} the following ${applyToCount} appointments:<br>${formatDate(
+            firstAppointment.startDate,
+            'd MMMM yyyy',
+          )} (${firstAppointment.sequenceNumber} of ${
+            lastAppointment.sequenceNumber
+          }) to ${formatDate(lastAppointment.startDate, 'd MMMM yyyy')} (${lastAppointment.sequenceNumber} of ${
+            lastAppointment.sequenceNumber
+          })`,
+        })
+      }
     }
   }
 

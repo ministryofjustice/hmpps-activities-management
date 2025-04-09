@@ -810,7 +810,7 @@ describe('Edit Appointment Service', () => {
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
-          "You've uncancelled appointments 2 to 4 in the series",
+          "You've uncancelled 3 appointments in this series",
         )
       })
 
@@ -963,7 +963,7 @@ describe('Edit Appointment Service', () => {
         expect(req.session.journeyMetrics).toBeNull()
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(
           `/appointments/${appointmentId}`,
-          "You've uncancelled appointments 1 to 4 in the series",
+          "You've uncancelled 4 appointments in this series",
         )
       })
 
