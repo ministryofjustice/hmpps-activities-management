@@ -82,12 +82,17 @@ export default class EndDateRoutes {
     if (req.params.mode === 'remove') {
       return res.redirectOrReturn(`reason`)
     }
+
     if (req.session.allocateJourney.activity.paid) {
       if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
         if (req.query.preserveHistory) return res.redirect('multiple/check-answers')
         return res.redirectOrReturn('multiple/pay-band-multiple')
       }
       return res.redirectOrReturn('pay-band')
+    }
+
+    if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
+      return res.redirectOrReturn('multiple/pay-band-multiple')
     }
     return res.redirectOrReturn('exclusions')
   }
