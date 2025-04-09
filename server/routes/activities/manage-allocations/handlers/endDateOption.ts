@@ -17,6 +17,7 @@ export default class EndDateOptionRoutes {
     if (req.body.endDateOption === 'yes') {
       return res.redirectOrReturn(`end-date`)
     }
+
     if (req.session.allocateJourney.activity.paid) {
       if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
         return res.redirectOrReturn('multiple/pay-band-multiple')
@@ -24,6 +25,9 @@ export default class EndDateOptionRoutes {
       return res.redirectOrReturn(`pay-band`)
     }
 
+    if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
+      return res.redirectOrReturn('multiple/pay-band-multiple')
+    }
     return res.redirectOrReturn('exclusions')
   }
 }

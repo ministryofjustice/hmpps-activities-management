@@ -59,13 +59,24 @@ describe('Route Handlers - Allocation - End Date option', () => {
       expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-band')
     })
 
-    it('should redirect to check answers page when selecting no and activity is unpaid', async () => {
+    it('should redirect to exclusions page when selecting no and activity is unpaid (single allocation mode)', async () => {
       req.body.endDateOption = 'no'
       req.session.allocateJourney.activity.paid = false
+      req.session.allocateJourney.allocateMultipleInmatesMode = false
 
       await handler.POST(req, res)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('exclusions')
+    })
+
+    it('should redirect to exclusions page when selecting no and activity is unpaid (multiple allocation mode)', async () => {
+      req.body.endDateOption = 'no'
+      req.session.allocateJourney.activity.paid = false
+      req.session.allocateJourney.allocateMultipleInmatesMode = true
+
+      await handler.POST(req, res)
+
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('multiple/pay-band-multiple')
     })
   })
 
