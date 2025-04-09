@@ -7,6 +7,7 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import EndDateRoutes, { EndDate } from './endDate'
 import { formatDatePickerDate, formatIsoDate, isoDateToDatePickerDate } from '../../../../utils/datePickerUtils'
 import { DeallocateTodayOption } from '../journey'
+import config from '../../../../config'
 
 describe('Route Handlers - Edit allocation - End date', () => {
   const handler = new EndDateRoutes()
@@ -159,10 +160,11 @@ describe('Route Handlers - Edit allocation - End date', () => {
       expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-band')
     })
 
-    it('should redirect to the check answers page if in create mode and activity is unpaid', async () => {
+    it('should redirect to the exclusions page if in create mode, activity is unpaid and not allocating multiple people', async () => {
       req.params.mode = 'create'
 
       req.session.allocateJourney.activity.paid = false
+      req.session.allocateJourney.allocateMultipleInmatesMode = false
 
       const endDate = startOfToday()
       req.body = { endDate }
@@ -171,6 +173,22 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
       expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
       expect(res.redirectOrReturn).toHaveBeenCalledWith('exclusions')
+    })
+
+    it('should redirect to the pay band (mulitple) page if in create mode, activity is unpaid and user is allocating multiple people', async () => {
+      req.params.mode = 'create'
+
+      req.session.allocateJourney.activity.paid = false
+      req.session.allocateJourney.allocateMultipleInmatesMode = true
+      config.multiplePrisonerActivityAllocationEnabled = true
+
+      const endDate = startOfToday()
+      req.body = { endDate }
+
+      await handler.POST(req, res)
+
+      expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('multiple/pay-band-multiple')
     })
 
     it('should redirect to the deallocate reason page in remove mode', async () => {

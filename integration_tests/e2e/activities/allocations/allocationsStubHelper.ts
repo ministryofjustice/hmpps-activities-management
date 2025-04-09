@@ -99,10 +99,12 @@ export function resetScheduleStub({
   activityStartDate,
   startTime = '10:00',
   subject = 'english',
+  paid = true,
 }: {
   activityStartDate: Date
   startTime: string
   subject: string
+  paid: boolean
 }) {
   let currentDate = activityStartDate
   let newSchedule
@@ -119,6 +121,10 @@ export function resetScheduleStub({
 
   newSchedule.instances[2].startTime = startTime
   newSchedule.instances[0].startTime = startTime
+
+  if (!paid) {
+    newSchedule.activity.paid = false
+  }
 
   const number = getActivityNumber(subject)
   cy.stubEndpoint('GET', `/schedules/${number}`, newSchedule)
@@ -140,7 +146,7 @@ export default function resetActivityAndScheduleStubs({
   paid?: boolean
 }) {
   resetActivitiesStub({ activityStartDate, startTime, subject, reducedPayOptions, addExtraAllocations, paid })
-  resetScheduleStub({ activityStartDate, startTime, subject })
+  resetScheduleStub({ activityStartDate, startTime, subject, paid })
 }
 
 const getActivityNumber = activitySubject => {
