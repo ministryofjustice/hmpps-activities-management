@@ -67,6 +67,36 @@ describe('Pay band page', () => {
   })
 
   describe('GET', () => {
+    it('redurects the page if the activity is unpaid and has no paybands', async () => {
+      when(activitiesService.getActivity)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce({
+          pay: [],
+          paid: false,
+        } as Activity)
+      await handler.GET(req, res)
+      expect(req.session.allocateJourney.inmates).toStrictEqual([
+        {
+          prisonerName: 'Joe Bloggs',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
+          prisonCode: 'MDI',
+          prisonerNumber: 'G9566GQ',
+          cellLocation: '1-2-001',
+          incentiveLevel: 'Enhanced',
+        },
+        {
+          prisonerName: 'Gill Blake',
+          firstName: 'Gill',
+          lastName: 'Blake',
+          prisonCode: 'MDI',
+          prisonerNumber: 'G7174GE',
+          cellLocation: '2-2-002',
+          incentiveLevel: 'Standard',
+        },
+      ])
+      expect(res.redirect).toHaveBeenCalledWith('check-answers')
+    })
     it('redirects the page as all prisoners have their paybands automatically assigned', async () => {
       when(activitiesService.getActivity)
         .calledWith(atLeast(1))

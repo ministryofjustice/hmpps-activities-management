@@ -61,7 +61,7 @@ context('Allocate multiple one by one to an activity', () => {
     cy.signIn()
   })
 
-  it('should be able to allocate when selecting multiple inmates', () => {
+  it('should be able to allocate when selecting multiple inmates - paid activity', () => {
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A1350DZ', getCandidateSuitability)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A8644DY', getCandidateSuitability)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A1351DZ', getCandidateSuitability)
@@ -151,6 +151,100 @@ context('Allocate multiple one by one to an activity', () => {
     checkAndConfirmMultiple.checkTableCell(5, 'Change')
     checkAndConfirmMultiple.checkTableCell(7, 'Standard incentive level:\nLow - £1.50')
     checkAndConfirmMultiple.checkTableCell(8, '')
+    checkAndConfirmMultiple.selectConfirm('Confirm 3 allocations').click()
+
+    const confirmMultipleAllocationsPage = Page.verifyOnPage(ConfirmMultipleAllocationsPage)
+    confirmMultipleAllocationsPage.panelHeader().should('contain.text', 'Allocations complete')
+    confirmMultipleAllocationsPage
+      .panelText()
+      .should('contain.text', '3 people are now allocated to Entry level English 1')
+    confirmMultipleAllocationsPage.activityPageLink().click()
+    cy.location().should(loc => {
+      expect(loc.pathname).to.eq('/activities/allocation-dashboard/2')
+    })
+    cy.go('back')
+    confirmMultipleAllocationsPage.allocationsDashLink().click()
+    cy.location().should(loc => {
+      expect(loc.pathname).to.eq('/activities/allocation-dashboard')
+    })
+  })
+  it('should be able to allocate when selecting multiple inmates - unpaid activity', () => {
+    cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A1350DZ', getCandidateSuitability)
+    cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A8644DY', getCandidateSuitability)
+    cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A1351DZ', getCandidateSuitability)
+
+    resetActivityAndScheduleStubs({ activityStartDate: subWeeks(new Date(), 2), paid: false })
+
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.allocateToActivitiesCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
+    manageActivitiesPage.allocateToActivityCard().should('contain.text', 'Manage allocations')
+    manageActivitiesPage.allocateToActivityCard().click()
+
+    const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
+    activitiesPage.activityRows().should('have.length', 3)
+    activitiesPage.selectActivityWithName('English level 1')
+
+    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    allocatePage.allocatedPeopleRows().should('have.length', 3)
+    allocatePage.nonAssociationsLink('G4793VF').contains('View non-associations')
+    allocatePage.nonAssociationsLink('A1351DZ').should('not.exist')
+    allocatePage.nonAssociationsLink('B1351RE').contains('View non-associations')
+    allocatePage.tabWithTitle('Entry level English 1 schedule').click()
+    allocatePage.activeTimeSlots().should('have.length', 1)
+
+    allocatePage.tabWithTitle('Other people').click()
+    allocatePage.allocateGroupLink()
+
+    const setUpPrisonerListMethodPage = Page.verifyOnPage(SetUpPrisonerListMethodPage)
+    setUpPrisonerListMethodPage.selectHowToAddDecisionRadio(HowToAddOptions.SEARCH)
+    setUpPrisonerListMethodPage.getButton('Continue').click()
+
+    const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
+    selectPrisonerPage.caption().should('contain.text', 'Entry level English 1')
+    selectPrisonerPage.enterQuery('s')
+    selectPrisonerPage.getButton('Search').click()
+    selectPrisonerPage.selectRadio('A1350DZ').click()
+    selectPrisonerPage.selectPrisonerAndContinue()
+
+    selectPrisonerPage.addAnotherPersonLink()
+    selectPrisonerPage.enterQuery('s')
+    selectPrisonerPage.getButton('Search').click()
+    selectPrisonerPage.selectRadio('A8644DY').click()
+    selectPrisonerPage.selectPrisonerAndContinue()
+
+    selectPrisonerPage.addAnotherPersonLink()
+    selectPrisonerPage.enterQuery('s')
+    selectPrisonerPage.getButton('Search').click()
+    selectPrisonerPage.selectRadio('A1351DZ').click()
+    selectPrisonerPage.selectPrisonerAndContinue()
+
+    selectPrisonerPage.inmateRows().should('have.length', 3)
+    selectPrisonerPage.continue()
+
+    const activityRequirementsReviewPage = Page.verifyOnPage(ActivityRequirementsReviewPage)
+    activityRequirementsReviewPage.caption().should('contain.text', 'Entry level English 1')
+    activityRequirementsReviewPage.continue()
+
+    const startDatePage = Page.verifyOnPage(StartDatePage)
+    startDatePage.selectNextSession()
+    startDatePage.continue()
+
+    const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)
+    endDateOptionPage.addEndDate('Yes')
+    endDateOptionPage.continue()
+
+    const endDatePage = Page.verifyOnPage(EndDatePage)
+    const endDate = addMonths(new Date(), 8)
+    endDatePage.selectDatePickerDate(endDate)
+    endDatePage.continue()
+
+    const checkAndConfirmMultiple = Page.verifyOnPage(CheckAndConfirmMultiplePage)
+    cy.get(`[data-qa="prisoner-pay-list"]`).should('not.exist')
     checkAndConfirmMultiple.selectConfirm('Confirm 3 allocations').click()
 
     const confirmMultipleAllocationsPage = Page.verifyOnPage(ConfirmMultipleAllocationsPage)

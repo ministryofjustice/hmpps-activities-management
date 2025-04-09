@@ -167,6 +167,73 @@ describe('Select prisoner - alllocate multiple people to an activity', () => {
     })
   })
   describe('SELECT_PRISONER', () => {
+    it("should add inmates to the session if they're not already allocated and the activity is unpaid", async () => {
+      req.body = {
+        selectedPrisoner: 'G9566GQ',
+      }
+      const prisonerInfo = {
+        prisonerNumber: 'G9566GQ',
+        firstName: 'Daphne',
+        middleNames: 'Frances',
+        prisonCode: 'MDI',
+        status: undefined,
+        prisonId: 'MDI',
+        lastName: 'Doe',
+        cellLocation: '1-1-1',
+        currentIncentive: {
+          level: {
+            description: 'Standard',
+          },
+        },
+      } as unknown as Prisoner
+      const activity = {
+        category: { code: 'EDUCATION', id: 1, name: 'Education' },
+        endDate: toDateString(addDays(new Date(), 7)),
+        inCell: false,
+        pay: [],
+        paid: false,
+        schedules: [activitySchedule],
+        startDate: toDateString(new Date()),
+        summary: 'Maths Level 1',
+        id: 1,
+      } as unknown as Activity
+      const prisonerAllocations = [
+        {
+          prisonerNumber: 'G9566GQ',
+          allocations: [],
+        },
+      ] as PrisonerAllocations[]
+
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith('G9566GQ', res.locals.user)
+        .mockResolvedValueOnce(prisonerInfo)
+      when(activitiesService.getAllocationsWithParams).calledWith(atLeast(100)).mockResolvedValueOnce([])
+      when(activitiesService.getActivity).calledWith(atLeast(100)).mockResolvedValueOnce(activity)
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith(['G9566GQ'], res.locals.user)
+        .mockResolvedValue(prisonerAllocations)
+      when(nonAssociationsService.getListPrisonersWithNonAssociations)
+        .calledWith(['G9566GQ'], res.locals.user)
+        .mockResolvedValue(['G9566GQ', 'H4623WP'])
+      await handler.SELECT_PRISONER(req, res)
+      expect(req.session.allocateJourney.inmates).toEqual([
+        {
+          prisonerName: `Daphne Doe`,
+          firstName: 'Daphne',
+          middleNames: 'Frances',
+          lastName: 'Doe',
+          prisonerNumber: 'G9566GQ',
+          prisonCode: 'MDI',
+          status: undefined,
+          cellLocation: '1-1-1',
+          incentiveLevel: 'Standard',
+          payBand: undefined,
+          nonAssociations: true,
+          otherAllocations: [],
+        },
+      ])
+      expect(res.redirect).toHaveBeenCalledWith('review-search-prisoner-list')
+    })
     it('should add inmate to the session if they meet requirements', async () => {
       req.body = {
         selectedPrisoner: 'G9566GQ',
@@ -211,6 +278,7 @@ describe('Select prisoner - alllocate multiple people to an activity', () => {
         startDate: toDateString(new Date()),
         summary: 'Maths Level 1',
         id: 1,
+        paid: true,
       } as unknown as Activity
       const prisonerAllocations = [
         {
@@ -302,6 +370,7 @@ describe('Select prisoner - alllocate multiple people to an activity', () => {
         startDate: toDateString(new Date()),
         summary: 'Maths Level 1',
         id: 1,
+        paid: true,
       } as unknown as Activity
 
       when(prisonService.getInmateByPrisonerNumber)
@@ -362,6 +431,7 @@ describe('Select prisoner - alllocate multiple people to an activity', () => {
         startDate: toDateString(new Date()),
         summary: 'Maths Level 1',
         id: 1,
+        paid: true,
       } as unknown as Activity
 
       when(prisonService.getInmateByPrisonerNumber)
