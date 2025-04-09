@@ -6,7 +6,12 @@ export default class CheckAndConfirmMultipleRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response) => {
-    res.render('pages/activities/manage-allocations/allocateMultiplePeople/checkAndConfirmMultiple')
+    const { inmates } = req.session.allocateJourney
+
+    const hasPayBand = inmates.some(inmate => inmate.payBand !== undefined)
+    res.render('pages/activities/manage-allocations/allocateMultiplePeople/checkAndConfirmMultiple', {
+      showPayRates: hasPayBand,
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
@@ -18,7 +23,7 @@ export default class CheckAndConfirmMultipleRoutes {
         this.activitiesService.allocateToSchedule(
           activity.scheduleId,
           inmate.prisonerNumber,
-          inmate.payBand.id,
+          inmate.payBand?.id || null,
           user,
           startDate,
           endDate,

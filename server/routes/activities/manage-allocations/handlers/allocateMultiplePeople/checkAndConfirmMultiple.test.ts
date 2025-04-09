@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../../services/activitiesService'
 import CheckAndConfirmMultipleRoutes from './checkAndConfirmMultiple'
-import { AllocateToActivityJourney, StartDateOption } from '../../journey'
+import { AllocateToActivityJourney, Inmate, StartDateOption } from '../../journey'
 
 jest.mock('../../../../../services/activitiesService')
 
@@ -74,10 +74,39 @@ describe('Allocate multiple people - check and confirm answers', () => {
   })
 
   describe('GET', () => {
-    it('Renders the page', async () => {
+    it('Renders the page - shows pay rates section', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/manage-allocations/allocateMultiplePeople/checkAndConfirmMultiple',
+        {
+          showPayRates: true,
+        },
+      )
+    })
+    it('Renders the page - hides pay rates section', async () => {
+      req.session.allocateJourney.inmates = [
+        {
+          prisonerName: 'Joe Bloggs',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
+          prisonerNumber: 'G3096GX',
+          cellLocation: '1-2-001',
+        },
+        {
+          prisonerName: 'Jane Cash',
+          firstName: 'Jane',
+          lastName: 'Cash',
+          prisonerNumber: 'G4977UO',
+          cellLocation: '2-2-002',
+        },
+      ] as Inmate[]
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/allocateMultiplePeople/checkAndConfirmMultiple',
+        {
+          showPayRates: false,
+        },
       )
     })
   })
@@ -162,6 +191,49 @@ describe('Allocate multiple people - check and confirm answers', () => {
         [],
         123,
       )
+    })
+    it('No payband id', async () => {
+      req.session.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
+      req.session.allocateJourney.inmates = [
+        {
+          prisonerName: 'Joe Bloggs',
+          firstName: 'Joe',
+          lastName: 'Bloggs',
+          prisonerNumber: 'G3096GX',
+          cellLocation: '1-2-001',
+        },
+        {
+          prisonerName: 'Jane Cash',
+          firstName: 'Jane',
+          lastName: 'Cash',
+          prisonerNumber: 'G4977UO',
+          cellLocation: '2-2-002',
+        },
+      ] as Inmate[]
+
+      await handler.POST(req, res)
+      expect(activitiesService.allocateToSchedule).toHaveBeenCalledTimes(2)
+      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
+        1,
+        'G3096GX',
+        null,
+        { username: 'joebloggs' },
+        '2025-01-01',
+        '2026-01-01',
+        [],
+        123,
+      )
+      expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
+        1,
+        'G4977UO',
+        null,
+        { username: 'joebloggs' },
+        '2025-01-01',
+        '2026-01-01',
+        [],
+        123,
+      )
+      expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
   })
 })

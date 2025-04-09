@@ -73,6 +73,7 @@
                     ]
                 }) }}
 
+            {% if showPayRates %}
             <h2 class="govuk-heading-m">Pay rates</h2>
             <p class="govuk-body">You can only change the pay rate where there’s more than one pay band available for an incentive level.</p>
 
@@ -114,6 +115,7 @@
                   'data-qa': 'prisoner-pay-list'
                 }
             }) }}
+            {% endif %}
 
 
             {% set buttonText = "Confirm allocation" if session.allocateJourney.inmates | length === 1 else "Confirm " + session.allocateJourney.inmates | length + " allocations" %}

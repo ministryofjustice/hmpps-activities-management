@@ -1,0 +1,47 @@
+{
+  "id": 11,
+  "appointmentSeries": {
+    "id": 10
+  },
+  "sequenceNumber": 1,
+  "category": {
+    "code": "CHAP",
+    "description": "Chaplaincy"
+  },
+  "prisonCode": "MDI",
+  "appointmentName": "Chaplain Meeting (Chaplaincy)",
+  "internalLocation": {
+    "id": 26152,
+    "prisonCode": "MDI",
+    "description": "Chapel"
+  },
+  "inCell": false,
+  "startDate": "2023-02-22",
+  "startTime": "14:00",
+  "endTime": "15:30",
+  "appointmentType": "GROUP",
+  "extraInformation": "Appointment extra information",
+  "isEdited": false,
+  "isCancelled": true,
+  "cancellationReasonId": 12345,
+  "cancelledBy": "AAA01U",
+  "cancelledTime": "2025-04-08T14:23:25.846Z",
+  "isExpired": false,
+  "created": "2023-02-20T10:00:00",
+  "createdBy": "jsmith",
+  "updated": null,
+  "updatedBy": null,
+  "attendees": [
+    {
+      "id": 12,
+      "prisoner": {
+        "prisonerNumber": "A8644DY",
+        "bookingId": 1202189,
+        "firstName": "STEPHEN",
+        "lastName": "GREGS",
+        "prisonCode": "MDI",
+        "cellLocation": "1-3"
+      }
+    }
+  ]
+}
