@@ -25,7 +25,7 @@
             idPrefix: 'categoryFilters',
             name: 'categoryFilters',
             hint: {
-                text: "Select all that apply"
+                text: "Select all that apply."
             },
             fieldset: {
                 legend: {
@@ -173,7 +173,7 @@
     {% for suspendedPrisoner in suspendedAttendancesByPrisoner %}
         {% if timeSlot === 'DAY' or timeSlot in suspendedPrisoner.timeSlots %}
             {% set sessions %}
-            {% for session in (suspendedPrisoner.sessions if timeSlot === 'DAY' else 
+            {% for session in (suspendedPrisoner.sessions if timeSlot === 'DAY' else
                 suspendedPrisoner.sessions | filter('sessionSlot', timeSlot)
             ) %}
                 <div class="govuk-body-s govuk-!-margin-0">
