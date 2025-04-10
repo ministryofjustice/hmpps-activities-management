@@ -584,39 +584,4 @@ describe('Route Handlers - Activities', () => {
       expect(res.redirect).toHaveBeenCalledWith('cancel-multiple/cancel-reason')
     })
   })
-
-  describe('GET_CANCELLATIONS', () => {
-    it('should redirect to the cancel reason page if instance ids have been selected', async () => {
-      req = {
-        body: {},
-        session: {
-          recordAttendanceJourney: {
-            selectedInstanceIds: [789, 567],
-            activityDate: '2024-03-24',
-            sessionFilters: ['AM', 'PM'],
-          },
-        },
-      } as unknown as Request
-
-      await handler.GET_CANCELLATIONS(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith('cancel-multiple/cancel-reason')
-    })
-
-    it('should redirect to the activity instances list page if instance ids have not been selected', async () => {
-      req = {
-        body: {},
-        session: {
-          recordAttendanceJourney: {
-            activityDate: '2024-03-24',
-            sessionFilters: ['AM', 'PM'],
-          },
-        },
-      } as unknown as Request
-
-      await handler.GET_CANCELLATIONS(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith('../activities')
-    })
-  })
 })

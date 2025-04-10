@@ -92,7 +92,6 @@ export default function Index({ activitiesService, prisonService, userService }:
     ResetAttendance,
   )
 
-  get('/:journeyId/activities/cancel-multiple', activitiesHandler.GET_CANCELLATIONS, true)
   post('/:journeyId/activities/cancel-multiple', activitiesHandler.POST_CANCELLATIONS)
   get('/:journeyId/activities/cancel-multiple/cancel-reason', cancelMultipleSessionsReasonRoutes.GET, true)
   post(

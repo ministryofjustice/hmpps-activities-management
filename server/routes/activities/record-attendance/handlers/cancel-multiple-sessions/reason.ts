@@ -1,14 +1,14 @@
 import { Expose } from 'class-transformer'
 import { IsIn, IsNotEmpty, MaxLength } from 'class-validator'
 import { Request, Response } from 'express'
-import cancellationReasons from '../../cancellationReasons'
+import CancellationReasons from '../../cancellationReasons'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { convertToNumberArray } from '../../../../../utils/utils'
 
 export class CancelReasonMultipleForm {
   @Expose()
   @IsNotEmpty({ message: "Select why you're cancelling these sessions" })
-  @IsIn(Object.keys(cancellationReasons), { message: "Select why you're cancelling these sessions" })
+  @IsIn(Object.keys(CancellationReasons), { message: "Select why you're cancelling these sessions" })
   reason: string
 
   @Expose()
@@ -21,7 +21,7 @@ export default class CancelMultipleSessionsReasonRoutes {
 
   GET = async (req: Request, res: Response) => {
     res.render('pages/activities/record-attendance/cancel-multiple-sessions/cancel-reason', {
-      cancellationReasons,
+      cancellationReasons: CancellationReasons,
     })
   }
 
@@ -36,7 +36,7 @@ export default class CancelMultipleSessionsReasonRoutes {
     const isPayable = !!instances.find(instance => instance.activitySchedule.activity.paid)
 
     const { reason, comment }: CancelReasonMultipleForm = req.body
-    const textReason = cancellationReasons[reason]
+    const textReason = CancellationReasons[reason]
 
     req.session.recordAttendanceJourney.sessionCancellationMultiple = {
       reason: textReason,

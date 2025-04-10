@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import CancelMultipleSessionsReasonRoutes, { CancelReasonMultipleForm } from './reason'
-import cancellationReasons from '../../cancellationReasons'
+import CancellationReasons from '../../cancellationReasons'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
@@ -49,7 +49,7 @@ describe('Route Handlers - Cancel Multiple Sessions Reason', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/record-attendance/cancel-multiple-sessions/cancel-reason',
         {
-          cancellationReasons,
+          cancellationReasons: CancellationReasons,
         },
       )
     })
@@ -97,7 +97,7 @@ describe('Route Handlers - Cancel Multiple Sessions Reason', () => {
       await handler.POST(addReasonRequest, res)
 
       expect(addReasonRequest.session.recordAttendanceJourney.sessionCancellationMultiple).toEqual({
-        reason: cancellationReasons.LOCATION_UNAVAILABLE,
+        reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',
         issuePayment: false,
       })
@@ -134,7 +134,7 @@ describe('Route Handlers - Cancel Multiple Sessions Reason', () => {
       await handler.POST(addReasonRequest, res)
 
       expect(addReasonRequest.session.recordAttendanceJourney.sessionCancellationMultiple).toEqual({
-        reason: cancellationReasons.LOCATION_UNAVAILABLE,
+        reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',
         issuePayment: false,
       })
