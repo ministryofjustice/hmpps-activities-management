@@ -210,10 +210,7 @@ export const getAppointmentEditHintMessage = (
 ) => {
   const currentAppointment = getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)
   const lastAppointment = getLastAppointment(editAppointmentJourney)
-  const applyToCount = applyToAppointmentCount(
-    AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
-    editAppointmentJourney,
-  )
+  const applyToCount = applyToAppointmentCount(AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS, editAppointmentJourney)
 
   if (
     editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED ||
