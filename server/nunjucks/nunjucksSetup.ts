@@ -20,6 +20,7 @@ import {
   formatDate,
   formatName,
   fullName,
+  getSortableItemForAttendee,
   getSplitTime,
   initialiseName,
   padNumber,
@@ -205,6 +206,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addFilter('absenceReasonDisplayConverter', absenceReasonDisplayConverter)
   njkEnv.addFilter('absenceReasonCheckboxMatch', absenceReasonCheckboxMatch)
   njkEnv.addFilter('numberToWord', number => (number === 1 ? 'one' : number))
+  njkEnv.addFilter('getSortableItemForAttendee', getSortableItemForAttendee)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
   njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)

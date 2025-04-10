@@ -17,6 +17,7 @@ import {
   asString,
   getSplitTime,
   formatName,
+  getSortableItemForAttendee,
 } from './utils'
 import { Attendance } from '../@types/activitiesAPI/types'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
@@ -412,5 +413,45 @@ describe('getSplitTime', () => {
       minute: '0',
     }
     expect(result).toEqual(expectedResult)
+  })
+})
+
+describe('getSortableItemForAttendee', () => {
+  it('it returns the number of attendees if there are multiple', () => {
+    const attendees = [
+      {
+        appointmentAttendeeId: 227407,
+        prisonerNumber: 'G0596UV',
+        bookingId: 1100952,
+      },
+      {
+        appointmentAttendeeId: 227607,
+        prisonerNumber: 'G0642UL',
+        bookingId: 1090734,
+      },
+    ]
+
+    const result = getSortableItemForAttendee(attendees, null)
+    expect(result).toEqual(2)
+  })
+  it('it returns the name of the prisoner in the appropriate format, if there is only one prisoner on the appointment', () => {
+    const attendees = [
+      {
+        appointmentAttendeeId: 227407,
+        prisonerNumber: 'G0596UV',
+        bookingId: 1100952,
+      },
+    ]
+    const prisonersDetails = {
+      G0596UV: {
+        firstName: 'Lee',
+        lastName: 'Petersen',
+        middleNames: 'John',
+        prisonerNumber: 'G0596UV',
+        cellLocation: '1-1-1',
+      },
+    }
+    const result = getSortableItemForAttendee(attendees, prisonersDetails)
+    expect(result).toEqual('Petersen, Lee John')
   })
 })
