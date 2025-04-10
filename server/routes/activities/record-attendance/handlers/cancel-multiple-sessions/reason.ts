@@ -3,6 +3,7 @@ import { IsIn, IsNotEmpty, MaxLength } from 'class-validator'
 import { Request, Response } from 'express'
 import cancellationReasons from '../../cancellationReasons'
 import ActivitiesService from '../../../../../services/activitiesService'
+import { convertToNumberArray } from '../../../../../utils/utils'
 
 export class CancelReasonMultipleForm {
   @Expose()
@@ -26,10 +27,13 @@ export default class CancelMultipleSessionsReasonRoutes {
 
   POST = async (req: Request, res: Response) => {
     const { user } = res.locals
-    const instanceId = req.session.recordAttendanceJourney.selectedInstanceIds[0]
+    const { selectedInstanceIds } = req.session.recordAttendanceJourney
 
-    const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
-    const isPayable = instance.activitySchedule.activity.paid
+    const instances = await this.activitiesService.getScheduledActivities(
+      convertToNumberArray(selectedInstanceIds),
+      user,
+    )
+    const isPayable = !!instances.find(instance => instance.activitySchedule.activity.paid)
 
     const { reason, comment }: CancelReasonMultipleForm = req.body
     const textReason = cancellationReasons[reason]

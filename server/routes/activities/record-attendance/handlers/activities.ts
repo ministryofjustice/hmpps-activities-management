@@ -118,6 +118,14 @@ export default class ActivitiesRoutes {
     return res.redirect('attendance-list')
   }
 
+  GET_CANCELLATIONS = async (req: Request, res: Response): Promise<void> => {
+    const { selectedInstanceIds } = req.session.recordAttendanceJourney
+    if (selectedInstanceIds) {
+      return res.redirect('cancel-multiple/cancel-reason')
+    }
+    return res.redirect('../activities')
+  }
+
   POST_CANCELLATIONS = async (req: Request, res: Response): Promise<void> => {
     const { selectedInstanceIds, activityDate, sessionFilters } = req.body
     const selectedInstanceIdsArr = selectedInstanceIds ? convertToArray(selectedInstanceIds) : []

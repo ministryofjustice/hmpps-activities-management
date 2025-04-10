@@ -1,0 +1,85 @@
+[
+  {
+    "scheduledInstanceId": 93,
+    "activityId": 1,
+    "activityScheduleId": 2,
+    "summary": "English level 1",
+    "categoryId": 2,
+    "sessionDate": "2023-03-30",
+    "startTime": "09:00",
+    "endTime": "10:00",
+    "timeSlot": "AM",
+    "inCell": false,
+    "onWing": false,
+    "offWing": false,
+    "attendanceRequired": true,
+    "internalLocation": {
+      "id": 999555,
+      "code": "ED2",
+      "description": "EDUCATION 2"
+    },
+    "cancelled": false,
+    "attendanceSummary": {
+      "allocations": 5,
+      "attendees": 4,
+      "notRecorded": 1,
+      "attended": 2,
+      "absences": 1,
+      "paid": 2
+    }
+  },
+  {
+    "scheduledInstanceId": 94,
+    "activityId": 1,
+    "activityScheduleId": 2,
+    "summary": "Gym sports and fitness",
+    "categoryId": 2,
+    "sessionDate": "2023-03-30",
+    "startTime": "09:00",
+    "endTime": "09:45",
+    "timeSlot": "AM",
+    "inCell": false,
+    "onWing": false,
+    "offWing": true,
+    "attendanceRequired": false,
+    "internalLocation": null,
+    "cancelled": false,
+    "attendanceSummary": {
+      "allocations": 20,
+      "attendees": 16,
+      "notRecorded": 3,
+      "attended": 10,
+      "absences": 3,
+      "paid": false
+    }
+  },
+  {
+    "scheduledInstanceId": 11,
+    "activityId": 2,
+    "activityScheduleId": 3,
+    "summary": "English level 2",
+    "categoryId": 2,
+    "sessionDate": "2023-03-30",
+    "startTime": "09:00",
+    "endTime": "10:00",
+    "timeSlot": "AM",
+    "inCell": false,
+    "onWing": false,
+    "offWing": false,
+    "attendanceRequired": true,
+    "internalLocation": {
+      "id": 777888,
+      "code": "ED1",
+      "description": "EDUCATION 1"
+    },
+    "cancelled": false,
+    "attendanceSummary": {
+      "allocations": 10,
+      "attendees": 7,
+      "notRecorded": 2,
+      "attended": 5,
+      "absences": 1,
+      "paid": 2
+    }
+  }
+]
