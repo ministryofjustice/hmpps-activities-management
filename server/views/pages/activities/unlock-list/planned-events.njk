@@ -31,17 +31,15 @@
                                 <div class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
                                     {{ unlockListItems.length }} people to unlock
                             </div>
-                                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.leavingWing }}
-                                leaving wing
+                                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.leavingWing }} leaving wing
                             </div>
-                                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.stayingOnWing }}
-                                staying on wing
+                                <div class="govuk-body govuk-!-margin-bottom-0">{{ movementCounts.stayingOnWing }} staying on wing
                             </div>
                             </div>
                             <div class="search-input search-input--inline-search govuk-!-margin-top-6 govuk-!-display-none-print">
                                 <div class="search-input__form-inputs">
                                     <div class="govuk-form-group">
-                                        <label class="govuk-label govuk-label--s" for="searchTerm">Search by prisoner name, prison number, or by event name</label>
+                                        <label class="govuk-label govuk-label--s" for="searchTerm">Search by name or prison number, or event name</label>
                                         <input class="govuk-input" id="searchTerm" name="searchTerm" type="search" form="filter-form" value="{{ session.unlockListJourney.searchTerm }}">
                                     </div>
                                     <button type="submit" class="govuk-button" data-module="govuk-button" form="filter-form">Search</button>
