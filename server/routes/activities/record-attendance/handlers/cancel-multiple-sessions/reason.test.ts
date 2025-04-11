@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import CancelMultipleSessionsReasonRoutes, { CancelReasonMultipleForm } from './reason'
-import cancellationReasons from '../../cancellationReasons'
+import CancellationReasons from '../../cancellationReasons'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
@@ -49,7 +49,7 @@ describe('Route Handlers - Cancel Multiple Sessions Reason', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/record-attendance/cancel-multiple-sessions/cancel-reason',
         {
-          cancellationReasons,
+          cancellationReasons: CancellationReasons,
         },
       )
     })
@@ -68,24 +68,36 @@ describe('Route Handlers - Cancel Multiple Sessions Reason', () => {
       } as unknown as Request
     })
 
-    it('should add cancel reason to session and redirect to check answers page if payment not required', async () => {
-      when(activitiesService.getScheduledActivity)
-        .calledWith(1, res.locals.user)
-        .mockResolvedValue({
-          id: 1,
-          activitySchedule: {
-            id: 2,
-            activity: {
+    it('should add cancel reason to session and redirect to payment page if payment required', async () => {
+      when(activitiesService.getScheduledActivities)
+        .calledWith([1, 2], res.locals.user)
+        .mockResolvedValue([
+          {
+            id: 1,
+            activitySchedule: {
               id: 2,
-              paid: true,
+              activity: {
+                id: 2,
+                paid: true,
+              },
             },
-          },
-        } as ScheduledActivity)
+          } as ScheduledActivity,
+          {
+            id: 2,
+            activitySchedule: {
+              id: 2,
+              activity: {
+                id: 2,
+                paid: false,
+              },
+            },
+          } as ScheduledActivity,
+        ])
 
       await handler.POST(addReasonRequest, res)
 
       expect(addReasonRequest.session.recordAttendanceJourney.sessionCancellationMultiple).toEqual({
-        reason: cancellationReasons.LOCATION_UNAVAILABLE,
+        reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',
         issuePayment: false,
       })
@@ -93,24 +105,36 @@ describe('Route Handlers - Cancel Multiple Sessions Reason', () => {
       expect(res.redirect).toHaveBeenCalledWith('payment')
     })
 
-    it('should add cancel reason to session and redirect to payment page if payment required', async () => {
-      when(activitiesService.getScheduledActivity)
-        .calledWith(1, res.locals.user)
-        .mockResolvedValue({
-          id: 1,
-          activitySchedule: {
-            id: 2,
-            activity: {
+    it('should add cancel reason to session and redirect to check answers page if payment not required', async () => {
+      when(activitiesService.getScheduledActivities)
+        .calledWith([1, 2], res.locals.user)
+        .mockResolvedValue([
+          {
+            id: 1,
+            activitySchedule: {
               id: 2,
-              paid: false,
+              activity: {
+                id: 2,
+                paid: false,
+              },
             },
-          },
-        } as ScheduledActivity)
+          } as ScheduledActivity,
+          {
+            id: 2,
+            activitySchedule: {
+              id: 2,
+              activity: {
+                id: 2,
+                paid: false,
+              },
+            },
+          } as ScheduledActivity,
+        ])
 
       await handler.POST(addReasonRequest, res)
 
       expect(addReasonRequest.session.recordAttendanceJourney.sessionCancellationMultiple).toEqual({
-        reason: cancellationReasons.LOCATION_UNAVAILABLE,
+        reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',
         issuePayment: false,
       })

@@ -1,13 +1,13 @@
 import { Expose } from 'class-transformer'
 import { IsIn, IsNotEmpty, MaxLength } from 'class-validator'
 import { Request, Response } from 'express'
-import cancellationReasons from '../../cancellationReasons'
+import CancellationReasons from '../../cancellationReasons'
 import ActivitiesService from '../../../../../services/activitiesService'
 
 export class CancelReasonForm {
   @Expose()
   @IsNotEmpty({ message: "Select why you're cancelling the session" })
-  @IsIn(Object.keys(cancellationReasons), { message: "Select why you're cancelling the session" })
+  @IsIn(Object.keys(CancellationReasons), { message: "Select why you're cancelling the session" })
   reason: string
 
   @Expose()
@@ -26,7 +26,7 @@ export default class CancelSessionRoutes {
     const isPayable = instance.activitySchedule.activity.paid
 
     res.render('pages/activities/record-attendance/cancel-session/cancel-reason', {
-      cancellationReasons,
+      cancellationReasons: CancellationReasons,
       isPayable,
     })
   }
@@ -34,7 +34,7 @@ export default class CancelSessionRoutes {
   POST = async (req: Request, res: Response) => {
     const { reason, comment }: CancelReasonForm = req.body
 
-    const textReason = cancellationReasons[reason]
+    const textReason = CancellationReasons[reason]
 
     req.session.recordAttendanceJourney = {
       ...req.session.recordAttendanceJourney,

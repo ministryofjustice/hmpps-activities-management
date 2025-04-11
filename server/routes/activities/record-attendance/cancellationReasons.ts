@@ -1,4 +1,4 @@
-enum cancellationReasons {
+enum CancellationReasons {
   STAFF_UNAVAILABLE = 'Staff unavailable',
   STAFF_TRAINING = 'Staff training',
   NOT_REQUIRED = 'Session not required',
@@ -6,4 +6,4 @@ enum cancellationReasons {
   OPERATIONAL_ISSUE = 'Prison operational issue',
 }
 
-export default cancellationReasons
+export default CancellationReasons
