@@ -848,6 +848,27 @@ describe('Edit Appointment Utils', () => {
       ] as AppointmentApplyToOption[])
     })
 
+    it('uncancel standalone appointment', () => {
+      req.session.appointmentJourney.startDate = toDateString(addDays(Date(), 1))
+      req.session.editAppointmentJourney = {
+        numberOfAppointments: 1,
+        appointments: [
+          {
+            sequenceNumber: 1,
+            startDate: toDateString(addDays(Date(), 1)),
+            cancelled: false,
+          },
+        ],
+        sequenceNumber: 1,
+        appointmentSet: null,
+        uncancel: true,
+      }
+
+      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'Confirm',
+      )
+    })
+
     it('uncancel appointment where all future appointments are cancelled', () => {
       req.session.appointmentJourney.startDate = toDateString(addDays(Date(), 2))
       req.session.editAppointmentJourney = {
@@ -897,6 +918,10 @@ describe('Edit Appointment Utils', () => {
           description: 'All 3 cancelled appointments that were not due to have happened yet',
         },
       ] as AppointmentApplyToOption[])
+
+      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'Continue',
+      )
     })
 
     it('uncancel appointment where all future appointments are not cancelled', () => {
@@ -919,6 +944,11 @@ describe('Edit Appointment Utils', () => {
             startDate: toDateString(addDays(Date(), 3)),
             cancelled: true,
           },
+          {
+            sequenceNumber: 4,
+            startDate: toDateString(addDays(Date(), 4)),
+            cancelled: false,
+          },
         ],
         sequenceNumber: 2,
         appointmentSeries: {
@@ -937,13 +967,17 @@ describe('Edit Appointment Utils', () => {
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
           applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
-          description: `Just this one - ${formatDate(addDays(Date(), 2), 'EEEE, d MMMM yyyy')} (2 of 3)`,
+          description: `Just this one - ${formatDate(addDays(Date(), 2), 'EEEE, d MMMM yyyy')} (2 of 4)`,
         },
         {
           applyTo: AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS,
-          description: 'This one and the cancelled appointment that comes after it',
+          description: 'This one and all 2 cancelled appointments that come after it',
         },
       ] as AppointmentApplyToOption[])
+
+      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+        'Confirm',
+      )
     })
 
     it('delete appointment', () => {
