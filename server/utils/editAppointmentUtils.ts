@@ -15,6 +15,18 @@ import { AppointmentDetails } from '../@types/activitiesAPI/types'
 export const isApplyToQuestionRequired = (editAppointmentJourney: EditAppointmentJourney) =>
   editAppointmentJourney.appointments?.length > 1
 
+export const isApplyToRequiredForUncancel = (
+  appointmentJourney: AppointmentJourney,
+  editAppointmentJourney: EditAppointmentJourney,
+) => {
+  const startDate = toDate(appointmentJourney.startDate)
+  const anyAfter = editAppointmentJourney.appointments.some(i => toDate(i.startDate) > startDate)
+  const anyAfterScheduled = editAppointmentJourney.appointments.some(
+    i => toDate(i.startDate) > startDate && i.cancelled === false,
+  )
+  return anyAfter && !anyAfterScheduled
+}
+
 export const getAppointmentEditMessage = (
   appointmentJourney: AppointmentJourney,
   editAppointmentJourney: EditAppointmentJourney,
@@ -90,8 +102,11 @@ export const getConfirmAppointmentEditCta = (
     return 'Delete appointment'
   }
 
-  if (editAppointmentJourney.uncancel) {
+  if (editAppointmentJourney.uncancel && isApplyToRequiredForUncancel(appointmentJourney, editAppointmentJourney)) {
     return 'Continue'
+  }
+  if (editAppointmentJourney.uncancel) {
+    return 'Confirm'
   }
 
   const updateProperties = []
