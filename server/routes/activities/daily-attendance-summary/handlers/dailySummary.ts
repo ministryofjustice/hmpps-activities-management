@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import _ from 'lodash'
 import { toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
-import cancellationReasons from '../../record-attendance/cancellationReasons'
+import CancellationReasons from '../../record-attendance/cancellationReasons'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import TimeSlot from '../../../../enum/timeSlot'
@@ -76,19 +76,19 @@ export default class DailySummaryRoutes {
 
       totalCancelledSessions.DAY += 1
       totalCancelledSessions[activity.timeSlot.toUpperCase()] += 1
-      if (activity.cancelledReason === cancellationReasons.STAFF_UNAVAILABLE) {
+      if (activity.cancelledReason === CancellationReasons.STAFF_UNAVAILABLE) {
         totalStaffUnavailable.DAY += 1
         totalStaffUnavailable[activity.timeSlot.toUpperCase()] += 1
-      } else if (activity.cancelledReason === cancellationReasons.STAFF_TRAINING) {
+      } else if (activity.cancelledReason === CancellationReasons.STAFF_TRAINING) {
         totalStaffTraining.DAY += 1
         totalStaffTraining[activity.timeSlot.toUpperCase()] += 1
-      } else if (activity.cancelledReason === cancellationReasons.NOT_REQUIRED) {
+      } else if (activity.cancelledReason === CancellationReasons.NOT_REQUIRED) {
         totalActivityNotRequired.DAY += 1
         totalActivityNotRequired[activity.timeSlot.toUpperCase()] += 1
-      } else if (activity.cancelledReason === cancellationReasons.LOCATION_UNAVAILABLE) {
+      } else if (activity.cancelledReason === CancellationReasons.LOCATION_UNAVAILABLE) {
         totalLocationUnavailable.DAY += 1
         totalLocationUnavailable[activity.timeSlot.toUpperCase()] += 1
-      } else if (activity.cancelledReason === cancellationReasons.OPERATIONAL_ISSUE) {
+      } else if (activity.cancelledReason === CancellationReasons.OPERATIONAL_ISSUE) {
         totalOperationalIssue.DAY += 1
         totalOperationalIssue[activity.timeSlot.toUpperCase()] += 1
       }

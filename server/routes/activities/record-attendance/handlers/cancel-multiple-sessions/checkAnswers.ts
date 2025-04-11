@@ -15,7 +15,7 @@ export default class CancelMultipleSessionsCheckAnswersRoutes {
       convertToNumberArray(selectedInstanceIds),
       user,
     )
-    const isPayable = instances[0].activitySchedule.activity.paid
+    const isPayable = !!instances.find(instance => instance.activitySchedule.activity.paid)
     const sessionFiltersString = sessionFilters ? convertToArray(sessionFilters).join(',') : ''
     const activitiesRedirectUrl = `../../activities?date=${activityDate}&sessionFilters=${sessionFiltersString}&preserveHistory=true`
     const orderedTimeSlots = Object.values(TimeSlot).filter(
