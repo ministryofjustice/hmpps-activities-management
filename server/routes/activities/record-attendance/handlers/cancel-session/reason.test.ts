@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { when } from 'jest-when'
 import CancelReasonRoutes, { CancelReasonForm } from './reason'
-import cancellationReasons from '../../cancellationReasons'
+import CancellationReasons from '../../cancellationReasons'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
@@ -57,7 +57,7 @@ describe('Route Handlers - Cancel Session Reason', () => {
     it('should render cancel session reasons page', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/cancel-session/cancel-reason', {
-        cancellationReasons,
+        cancellationReasons: CancellationReasons,
         isPayable: true,
       })
     })
@@ -81,7 +81,7 @@ describe('Route Handlers - Cancel Session Reason', () => {
       await handler.POST(addReasonRequest, res)
 
       expect(addReasonRequest.session.recordAttendanceJourney.sessionCancellation).toEqual({
-        reason: cancellationReasons.LOCATION_UNAVAILABLE,
+        reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',
       })
 
