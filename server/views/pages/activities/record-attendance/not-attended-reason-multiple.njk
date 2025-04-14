@@ -203,7 +203,7 @@
                             {% set notAttendedReasonOptions = (notAttendedReasonOptions.push(
                                  {
                                     value: notAttendedReason.code,
-                                    html: '<p class="govuk-body">' + notAttendedReason.description + conditionalRevealExplanationText + '</p>',
+                                    html: notAttendedReason.description + conditionalRevealExplanationText,
                                     conditional: {
                                         html: conditionalOptionsHtml if conditionalOptionsHtml | length
                                     },
