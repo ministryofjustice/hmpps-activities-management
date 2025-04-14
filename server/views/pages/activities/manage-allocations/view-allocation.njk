@@ -34,11 +34,11 @@
                 <h2 class='govuk-heading-m'>Suspension added on {{ allocation.plannedSuspension.plannedAt | parseISODate | formatDate }}</h2>
                 <dl class="govuk-summary-list {{ 'govuk-!-margin-bottom-0' if suspensionCaseNote}}">
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Suspension start date</dt>
+                        <dt class="govuk-summary-list__key">First day of suspension</dt>
                         <dd class="govuk-summary-list__value">{{ allocation.plannedSuspension.plannedStartDate | formatDate }}</dd>
                     </div>
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Suspension end date</dt>
+                        <dt class="govuk-summary-list__key">Last day of suspension</dt>
                         <dd class="govuk-summary-list__value">{{ (allocation.plannedSuspension.plannedEndDate | formatDate) or "No end date" }}</dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="/activities/suspensions/unsuspend/{{ allocation.prisonerNumber }}/suspend-until?allocationIds={{ allocation.id }}" class="govuk-link govuk-link--no-visited-state">End suspension</a>
@@ -129,7 +129,7 @@
                             <a href="../edit/{{ allocation.id }}/pay-band"
                                class="govuk-link govuk-link--no-visited-state">
                                 Change
-                            </a>                            
+                            </a>
                         {% endif %}
                     </dd>
                 </div>

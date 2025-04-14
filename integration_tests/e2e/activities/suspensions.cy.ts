@@ -327,8 +327,8 @@ context('Suspensions', () => {
       .find('th')
       .then($headers => {
         expect($headers.get(0).innerText).to.contain('Activity')
-        expect($headers.get(1).innerText).to.contain('Suspension start date')
-        expect($headers.get(2).innerText).to.contain('Suspension end date')
+        expect($headers.get(1).innerText).to.contain('First day of suspension')
+        expect($headers.get(2).innerText).to.contain('Last day of suspension')
         expect($headers.get(3).innerText).to.contain('Paid while suspended?')
         expect($headers.get(4).innerText).to.contain('')
       })
@@ -441,8 +441,8 @@ context('Suspensions', () => {
       .find('th')
       .then($headers => {
         expect($headers.get(0).innerText).to.contain('Activity')
-        expect($headers.get(1).innerText).to.contain('Suspension start date')
-        expect($headers.get(2).innerText).to.contain('Suspension end date')
+        expect($headers.get(1).innerText).to.contain('First day of suspension')
+        expect($headers.get(2).innerText).to.contain('Last day of suspension')
         expect($headers.get(3).innerText).to.contain('Paid while suspended?')
         expect($headers.get(4).innerText).to.contain('')
       })
@@ -502,7 +502,7 @@ context('Suspensions', () => {
       .then($dt => {
         expect($dt.get(0).innerText).to.contain('Prisoner')
         expect($dt.get(1).innerText).to.contain('Activity')
-        expect($dt.get(2).innerText).to.contain('Start of suspension')
+        expect($dt.get(2).innerText).to.contain('First day of suspension')
         expect($dt.get(3).innerText).to.contain('Paid while suspended?')
         expect($dt.get(4).innerText).to.contain('Do you want to add a case note?')
       })
@@ -552,8 +552,8 @@ context('Suspensions', () => {
       .find('dt')
       .then($dt => {
         expect($dt.get(0).innerText).to.contain('Activity')
-        expect($dt.get(1).innerText).to.contain('Suspension start date')
-        expect($dt.get(2).innerText).to.contain('Suspension end date')
+        expect($dt.get(1).innerText).to.contain('First day of suspension')
+        expect($dt.get(2).innerText).to.contain('Last day of suspension')
         expect($dt.get(3).innerText).to.contain('Paid while suspended?')
         expect($dt.get(4).innerText).to.contain('Added by')
       })
@@ -579,7 +579,7 @@ context('Suspensions', () => {
       .then($dt => {
         expect($dt.get(0).innerText).to.contain('Prisoner')
         expect($dt.get(1).innerText).to.contain('Activity')
-        expect($dt.get(2).innerText).to.contain('End of suspension')
+        expect($dt.get(2).innerText).to.contain('Last day of suspension')
       })
     checkAnswersPage
       .summary()
@@ -862,7 +862,7 @@ context('Bulk suspend/unsuspend', () => {
       .then($dt => {
         expect($dt.get(0).innerText).to.contain('Prisoner')
         expect($dt.get(1).innerText).to.contain('Activity')
-        expect($dt.get(2).innerText).to.contain('End of suspension')
+        expect($dt.get(2).innerText).to.contain('Last day of suspension')
       })
     checkAnswersPage
       .summary()
