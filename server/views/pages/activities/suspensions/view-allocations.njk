@@ -38,11 +38,11 @@
 {% set suspendedAllocationRows = [] %}
 {% for allocation in suspendedAllocations %}
     {% set paid %}
-    {% if allocation.prisonPayBand and(allocation.status == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY or allocation.plannedSuspension.paid) %} 
+    {% if allocation.prisonPayBand and(allocation.status == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY or allocation.plannedSuspension.paid) %}
                 Yes
-            {% elif allocation.prisonPayBand == null %} 
+            {% elif allocation.prisonPayBand == null %}
                 No - activity is unpaid
-            {% else %} 
+            {% else %}
                 No
             {% endif %}
     {% endset %}
@@ -119,10 +119,10 @@
                         text: "Activity"
                         },
                         {
-                        text: "Suspension start date"
+                        text: "First day of suspension"
                         },
                         {
-                        text: "Suspension end date"
+                        text: "Last day of suspension"
                         },
                         {
                         text: "Paid while suspended?"

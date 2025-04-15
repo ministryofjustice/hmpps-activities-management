@@ -48,11 +48,11 @@
                         value: { text: activitiesText }
                     },
                     {
-                        key: { text: "Start of suspension" },
+                        key: { text: "First day of suspension" },
                         value: {
                             text: (
                                 ("Immediately" if session.suspendJourney.suspendFrom == now | toDateString) or
-                                ("From tomorrow: " + session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom == now | addDays(1) | toDateString) or
+                                ("Tomorrow: " + session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom == now | addDays(1) | toDateString) or
                                 (session.suspendJourney.suspendFrom | formatDate('d MMMM yyyy') if session.suspendJourney.suspendFrom > now | addDays(1) | toDateString)
                             )
                         },
@@ -85,11 +85,11 @@
                         }
                     } if session.suspendJourney.paid != null,
                     {
-                        key: { text: "End of suspension" },
+                        key: { text: "Last day of suspension" },
                         value: {
                             text: (
                                 ("Immediately" if session.suspendJourney.suspendUntil == now | toDateString) or
-                                ("From tomorrow: " + session.suspendJourney.suspendUntil | formatDate('d MMMM yyyy') if session.suspendJourney.suspendUntil == now | addDays(1) | toDateString) or
+                                ("End of today: " + session.suspendJourney.suspendUntil | subDays(1) | formatDate('d MMMM yyyy') if session.suspendJourney.suspendUntil == now | addDays(1) | toDateString) or
                                 (session.suspendJourney.suspendUntil | formatDate('d MMMM yyyy') if session.suspendJourney.suspendUntil > now | addDays(1) | toDateString)
                             )
                         },
@@ -162,7 +162,7 @@
             <form method="POST" data-module="form-spinner" data-loading-text="Updating suspension">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
-                    {{ govukButton({ 
+                    {{ govukButton({
                         text: "Confirm and suspend" if session.req.params.mode == 'suspend' else "Confirm end of suspension",
                         preventDoubleClick: true
                     }) }}

@@ -29,11 +29,11 @@
                 {% set endDate = group[0].plannedSuspension.plannedEndDate %}
 
                 {% set paid %}
-                    {% if group[0].paidWhileSuspended == PaidType.YES %} 
+                    {% if group[0].paidWhileSuspended == PaidType.YES %}
                         Yes
-                    {% elif group[0].paidWhileSuspended == PaidType.NO_UNPAID %} 
+                    {% elif group[0].paidWhileSuspended == PaidType.NO_UNPAID %}
                         No - activity is unpaid
-                    {% else %} 
+                    {% else %}
                         No
                     {% endif %}
                 {% endset %}
@@ -54,11 +54,11 @@
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Suspension start date</dt>
+                        <dt class="govuk-summary-list__key">First day of suspension</dt>
                         <dd class="govuk-summary-list__value">{{ startDate | formatDate }}</dd>
                     </div>
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Suspension end date</dt>
+                        <dt class="govuk-summary-list__key">Last day of suspension</dt>
                         <dd class="govuk-summary-list__value">{{ (endDate | formatDate) or "No end date" }}</dd>
                     </div>
                     <div class="govuk-summary-list__row">
