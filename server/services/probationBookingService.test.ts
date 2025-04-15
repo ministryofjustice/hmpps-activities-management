@@ -16,6 +16,7 @@ describe('Probation booking service', () => {
       prisonCode: 'MDI',
       number: 'ABC123',
     },
+    prisonCode: 'MDI',
     date: '2022-03-20T00:00:00Z',
     locationCode: 'LOCATION',
     startTime: '1970-01-01T13:30:00Z',

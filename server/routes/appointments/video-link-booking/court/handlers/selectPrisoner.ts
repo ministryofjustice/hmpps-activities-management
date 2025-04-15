@@ -16,7 +16,9 @@ export default class SelectPrisonerRoutes {
       return res.render('pages/appointments/video-link-booking/court/select-prisoner')
     }
 
-    ;[req.session.bookACourtHearingJourney.prisoner] = prisoners
+    const [prisoner] = prisoners
+    req.session.bookACourtHearingJourney.prisoner = prisoner
+    req.session.bookACourtHearingJourney.prisonCode = prisoner.prisonCode
     return res.redirect('hearing-details')
   }
 
@@ -24,7 +26,10 @@ export default class SelectPrisonerRoutes {
     const { prisonerNumber } = req.body
     const { prisoners } = req.session.bookACourtHearingJourney
 
-    req.session.bookACourtHearingJourney.prisoner = prisoners.find(p => p.number === prisonerNumber)
+    const prisoner = prisoners.find(p => p.number === prisonerNumber)
+
+    req.session.bookACourtHearingJourney.prisoner = prisoner
+    req.session.bookACourtHearingJourney.prisonCode = prisoner.prisonCode
     return res.redirect('hearing-details')
   }
 }

@@ -11,6 +11,7 @@
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
 {% from "partials/showLocation.njk" import showLocation %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = "Appointments Management - Appointment Search Results" %}
 {% set pageId = 'appointments-search-results-page' %}
@@ -25,7 +26,8 @@
             middleNames: prisonerDetails.middleNames,
             lastName: prisonerDetails.lastName,
             prisonerNumber: prisonerDetails.prisonerNumber or attendees[0].prisonerNumber,
-            cellLocation: prisonerDetails.cellLocation,
+            cellLocation: statusBasedCellLocation(prisonerDetails.cellLocation, prisonerDetails.status, prisonerDetails.prisonId == user.activeCaseLoadId),
+            inCaseLoad: prisonerDetails.prisonId == user.activeCaseLoadId,
             link: true,
             classes: 'hmpps-inline-block'
         }) }}

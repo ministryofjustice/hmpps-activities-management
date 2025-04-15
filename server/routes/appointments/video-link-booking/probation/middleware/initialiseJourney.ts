@@ -66,6 +66,7 @@ export default ({
         cellLocation: prisoner.cellLocation,
         status: prisoner.status,
       },
+      prisonCode: mainAppointment.prisonCode,
       probationTeamCode: booking.probationTeamCode,
       meetingTypeCode: booking.probationMeetingType,
       officerDetailsNotKnown: booking.additionalBookingDetails?.contactName === undefined,

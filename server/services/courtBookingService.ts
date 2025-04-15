@@ -28,7 +28,7 @@ export default class CourtBookingService {
       bookingType: 'COURT',
       prisoners: [
         {
-          prisonCode: journey.prisoner.prisonCode,
+          prisonCode: journey.prisonCode,
           prisonerNumber: journey.prisoner.number,
           appointments: this.mapSessionToAppointments(journey),
         },
