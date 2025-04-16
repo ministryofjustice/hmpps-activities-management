@@ -1,11 +1,13 @@
 import * as cheerio from 'cheerio'
 import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
-import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
+import { registerNunjucks } from '../../../../../nunjucks/nunjucksSetup'
 
-const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/select-prisoner.njk')
+const view = fs.readFileSync(
+  'server/views/pages/activities/manage-allocations/allocateMultiplePeople/selectPrisoner.njk',
+)
 
-describe('Views - Appointments Management - Select Prisoner', () => {
+describe('Views - Allocate to an activity - Select Prisoner', () => {
   let compiledTemplate: Template
 
   const njkEnv = registerNunjucks()
