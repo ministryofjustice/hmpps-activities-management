@@ -45,11 +45,11 @@
 
                     {% if prisoners | length > 0 %}
                         <p class="govuk-heading-m" id="prisoner-results-text">
-                            {{ ("There is one matching person" if prisoners.length == 1 else "Select the correct person from the list (maximum 50 results shown)") }}
+                            {{ ("There is 1 matching person" if prisoners.length == 1 else "Select the correct person from the list (maximum 50 results shown)") }}
                         </p>
                     {% else %}
                         {{ govukWarningText({
-                            text: "There are no matching search results.",
+                            text: "No people found matching that name or prison number.",
                             iconFallbackText: "Warning"
                         }) }}
                     {% endif %}

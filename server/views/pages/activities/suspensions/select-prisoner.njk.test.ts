@@ -3,9 +3,9 @@ import nunjucks, { Template } from 'nunjucks'
 import fs from 'fs'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 
-const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/select-prisoner.njk')
+const view = fs.readFileSync('server/views/pages/activities/suspensions/select-prisoner.njk')
 
-describe('Views - Appointments Management - Select Prisoner', () => {
+describe('Views - Manage suspensions - Select Prisoner', () => {
   let compiledTemplate: Template
 
   const njkEnv = registerNunjucks()
