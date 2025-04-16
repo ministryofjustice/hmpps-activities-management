@@ -14,9 +14,9 @@ export default class LocationRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { prisoner } = req.session.bookAProbationMeetingJourney
+    const { prisonCode } = req.session.bookAProbationMeetingJourney
 
-    const rooms = await this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonCode, user)
+    const rooms = await this.bookAVideoLinkService.getAppointmentLocations(prisonCode, user)
 
     return res.render('pages/appointments/video-link-booking/probation/location', { rooms })
   }

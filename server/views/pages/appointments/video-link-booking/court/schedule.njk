@@ -5,6 +5,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/showLocation.njk" import showLocation %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 
@@ -42,7 +43,8 @@
                                 middleNames: session.bookACourtHearingJourney.prisoner.middleNames,
                                 lastName: session.bookACourtHearingJourney.prisoner.lastName,
                                 prisonerNumber: session.bookACourtHearingJourney.prisoner.number,
-                                cellLocation: session.bookACourtHearingJourney.prisoner.cellLocation
+                                cellLocation: statusBasedCellLocation(session.bookACourtHearingJourney.prisoner.cellLocation, session.bookACourtHearingJourney.prisoner.status, session.bookACourtHearingJourney.prisoner.prisonId == user.activeCaseLoadId),
+                                inCaseLoad: session.bookACourtHearingJourney.prisoner.prisonId == user.activeCaseLoadId
                             })
                         }
                     },

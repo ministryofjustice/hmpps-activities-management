@@ -16,7 +16,8 @@ export default class ScheduleRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { prisoner, date, locationCode, preLocationCode, postLocationCode } = req.session.bookACourtHearingJourney
+    const { prisoner, prisonCode, date, locationCode, preLocationCode, postLocationCode } =
+      req.session.bookACourtHearingJourney
 
     const locations = await Promise.all(
       _.uniq([locationCode, preLocationCode, postLocationCode])
@@ -51,7 +52,7 @@ export default class ScheduleRoutes {
             ),
           })),
         ),
-      this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonCode, user),
+      this.bookAVideoLinkService.getAppointmentLocations(prisonCode, user),
     ])
 
     return res.render('pages/appointments/video-link-booking/court/schedule', {
