@@ -22,12 +22,12 @@ describe('Views - Activity Requirements Review', () => {
       prisoners: [
         {
           workplaceRiskAssessment: {
-            riskLevel: '',
-            suitable: '',
+            riskLevel: 'low',
+            suitable: true,
           },
           education: {
-            education: '',
-            suitable: '',
+            education: null,
+            suitable: true,
           },
         },
       ],
@@ -43,22 +43,22 @@ describe('Views - Activity Requirements Review', () => {
       prisoners: [
         {
           workplaceRiskAssessment: {
-            riskLevel: '',
-            suitable: '',
+            riskLevel: 'low',
+            suitable: true,
           },
           education: {
-            education: '',
-            suitable: '',
+            education: null,
+            suitable: true,
           },
         },
         {
           workplaceRiskAssessment: {
-            riskLevel: '',
-            suitable: '',
+            riskLevel: 'none',
+            suitable: true,
           },
           education: {
-            education: '',
-            suitable: '',
+            education: null,
+            suitable: true,
           },
         },
       ],
