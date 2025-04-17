@@ -9,7 +9,7 @@
 {% from "partials/earliestReleaseDate.njk" import earliestReleaseDate %}
 {% from "partials/activities/suspension-badge.njk" import suspensionBadge %}
 {% from "partials/activities/prisonerEducation.njk" import prisonerEducation %}
-{% from "partials/activities/suitabilityTag.njk" import suitablityTag %}
+{% from "partials/activities/suitabilityTag.njk" import suitabilityTag %}
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Before you allocate" %}
 {% set pageId = 'before-you-allocate-page' %}
@@ -105,7 +105,7 @@
                             text: allocationSuitability.workplaceRiskAssessment.riskLevel | toTitleCase or "None assigned"
                         },
                         {
-                            html: suitablityTag(allocationSuitability.workplaceRiskAssessment.suitable)
+                            html: suitabilityTag(allocationSuitability.workplaceRiskAssessment.suitable)
                         }
                     ],
                     [
@@ -116,7 +116,7 @@
                             text: allocationSuitability.incentiveLevel.incentiveLevel or "None"
                         },
                         {
-                            html: suitablityTag(allocationSuitability.incentiveLevel.suitable)
+                            html: suitabilityTag(allocationSuitability.incentiveLevel.suitable)
                         }
                     ],
                     [
@@ -127,7 +127,7 @@
                             html: prisonerEducation(allocationSuitability.education.education)
                         },
                         {
-                            html: suitablityTag(allocationSuitability.education.suitable)
+                            html: suitabilityTag(allocationSuitability.education.suitable)
                         }
                     ],
                     [
@@ -141,7 +141,7 @@
                             html: govukTag({
                                 text: 'Not applicable',
                                 classes: 'govuk-tag--grey'
-                            }) if allocationSuitability.releaseDate.suitable else suitablityTag(
+                            }) if allocationSuitability.releaseDate.suitable else suitabilityTag(
                                 allocationSuitability.releaseDate.suitable
                             )
                         }
