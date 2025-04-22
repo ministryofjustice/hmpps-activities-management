@@ -1,4 +1,4 @@
-import { formatDate, subDays } from 'date-fns'
+import { addDays, formatDate, subDays } from 'date-fns'
 import Page from '../../../pages/page'
 import getPrisonerA1350DZ from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-A1350DZ.json'
 import RequestDatePage from '../../../pages/activities/waitlist/requestDatePage'
@@ -137,5 +137,38 @@ context('Waitlist', () => {
       .contains(`${getPrisonerA1350DZ.firstName} ${getPrisonerA1350DZ.lastName}`, { matchCase: false })
     confirmationPage.panelHeader().should('contain', getActivity1.summary)
     confirmationPage.panelText().should('contain', 'Declined')
+  })
+
+  it('Shouldnt be able to select a date in the future', () => {
+    cy.visit('/activities/waitlist/2f0b204c-2d68-4c53-b581-b4d0075dd231/A1350DZ/apply')
+    const tomorrow = addDays(new Date(), 1)
+    const requestDatePage = Page.verifyOnPage(RequestDatePage)
+    requestDatePage.selectDatePickerDate(tomorrow)
+    requestDatePage.continue()
+
+    requestDatePage.assertValidationError('requestDate', 'The request date cannot be in the future')
+  })
+
+  it('Should warn the user if prisoner is already allocated', () => {
+    cy.visit('/activities/waitlist/2f0b204c-2d68-4c53-b581-b4d0075dd231/A1350DZ/apply')
+    const yesterday = subDays(new Date(), 1)
+    const requestDatePage = Page.verifyOnPage(RequestDatePage)
+    requestDatePage.selectDatePickerDate(yesterday)
+    requestDatePage.continue()
+
+    cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', [{ allocations: [{ scheduleId: 1 }] }])
+    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', [
+      {
+        prisonerNumber: 'A1350DZ',
+        scheduleId: 1,
+        status: 'PENDING',
+      },
+    ])
+
+    const searchForActivityPage = Page.verifyOnPage(WaitlistSearchForActivityPage)
+    searchForActivityPage.searchBox().type('Maths level 1')
+    searchForActivityPage.continue()
+
+    searchForActivityPage.assertValidationError('activityId', 'is already allocated or on the waitlist for')
   })
 })
