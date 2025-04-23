@@ -2,16 +2,14 @@ import { nodeListForEach } from '../../utils'
 
 function StickySelect(container) {
   this.container = container
+  var table = container.querySelector('.govuk-table')
+  var multiSelect = table.querySelector(table.getAttribute('data-multi-select-checkbox'))
 
-  var $table = container.querySelector('.govuk-table')
-  new MOJFrontend.MultiSelect({
-    container: $table.querySelector($table.getAttribute('data-multi-select-checkbox')),
-    checkboxes: $table.querySelectorAll('tbody .govuk-checkboxes__input'),
+  new MOJFrontend.MultiSelect(multiSelect, {
+    checkboxes: table.querySelectorAll('tbody .govuk-checkboxes__input'),
   })
 
-  new MOJFrontend.SortableTable({
-    table: $table,
-  })
+  new MOJFrontend.SortableTable(table)
 
   this.toggleAllButton = this.container.querySelector('#checkboxes-all')
   this.checkboxes = this.container.querySelectorAll('tbody .govuk-checkboxes__input')
@@ -32,18 +30,18 @@ function StickySelect(container) {
 
   nodeListForEach(
     this.checkboxes,
-    function ($cb) {
-      $cb.addEventListener('change', this.handleCheckboxChanged.bind(this))
-      $cb.setAttribute('autocomplete', 'off')
-    }.bind(this)
+    function (cb) {
+      cb.addEventListener('change', this.handleCheckboxChanged.bind(this))
+      cb.setAttribute('autocomplete', 'off')
+    }.bind(this),
   )
 
   nodeListForEach(
     this.radios,
-    function ($r) {
-      $r.addEventListener('change', this.handleRadioChanged.bind(this))
-      $r.setAttribute('autocomplete', 'off')
-    }.bind(this)
+    function (r) {
+      r.addEventListener('change', this.handleRadioChanged.bind(this))
+      r.setAttribute('autocomplete', 'off')
+    }.bind(this),
   )
 }
 
@@ -51,9 +49,9 @@ StickySelect.prototype.handleCheckboxChanged = function () {
   var count = 0
   nodeListForEach(
     this.checkboxes,
-    function ($cb) {
-      if ($cb.checked) count++
-    }.bind(this)
+    function (cb) {
+      if (cb.checked) count++
+    }.bind(this),
   )
 
   if (count > 0) {
@@ -79,19 +77,19 @@ StickySelect.prototype.handleRadioChanged = function () {
   var count = 0
   nodeListForEach(
     this.radios,
-    function ($cb) {
-      if ($cb.checked) count++
-    }.bind(this)
+    function (cb) {
+      if (cb.checked) count++
+    }.bind(this),
   )
 
   if (count > 0) {
     this.stickyBar.classList.add('sticky-select-action-bar--active')
     this.stickyBar.setAttribute('aria-disabled', 'false')
 
-    this.selectedCount.innerText = `${count} selected`
+    this.selectedCount.innerText = `{count} selected`
 
     if (this.itemsDescriptionSingular) {
-      this.selectedCount.innerText = `${count} ${this.itemsDescriptionSingular} selected`
+      this.selectedCount.innerText = `{count} {this.itemsDescriptionSingular} selected`
     }
 
     this.handleDisabledButtons(count)
@@ -104,55 +102,55 @@ StickySelect.prototype.handleRadioChanged = function () {
 StickySelect.prototype.handleToggleAllButtonChanged = function () {
   nodeListForEach(
     this.checkboxes,
-    function ($el) {
+    function (el) {
       var event = document.createEvent('HTMLEvents')
       event.initEvent('change', false, true)
-      $el.dispatchEvent(event)
-    }.bind(this)
+      el.dispatchEvent(event)
+    }.bind(this),
   )
 }
 
-StickySelect.prototype.handleDisabledButtons = function(checkCount) {
+StickySelect.prototype.handleDisabledButtons = function (checkCount) {
   const forbiddenActionIds = [...this.radios, ...this.checkboxes]
-    .filter($el => $el.checked)
-    .flatMap($el => $el.getAttribute('data-forbidden-action')?.split(' '))
-    .filter($el => Boolean($el))
+    .filter(el => el.checked)
+    .flatMap(el => el.getAttribute('data-forbidden-action')?.split(' '))
+    .filter(el => Boolean(el))
 
   nodeListForEach(
     this.actionButtons,
-    function ($el) {
-      if (parseInt($el.dataset.maxItems) < checkCount || forbiddenActionIds.includes($el.id)) {
-        $el.setAttribute('disabled', 'disabled')
+    function (el) {
+      if (parseInt(el.dataset.maxItems) < checkCount || forbiddenActionIds.includes(el.id)) {
+        el.setAttribute('disabled', 'disabled')
       } else {
-        $el.removeAttribute('disabled')
+        el.removeAttribute('disabled')
       }
-    }.bind(this)
+    }.bind(this),
   )
 }
 
 StickySelect.prototype.clearAll = function () {
   nodeListForEach(
     this.checkboxes,
-    function ($el) {
-      if ($el.checked) {
-        $el.checked = false
+    function (el) {
+      if (el.checked) {
+        el.checked = false
         var event = document.createEvent('HTMLEvents')
         event.initEvent('change', false, true)
-        $el.dispatchEvent(event)
+        el.dispatchEvent(event)
       }
-    }.bind(this)
+    }.bind(this),
   )
 
   nodeListForEach(
     this.radios,
-    function ($el) {
-      if ($el.checked) {
-        $el.checked = false
+    function (el) {
+      if (el.checked) {
+        el.checked = false
         var event = document.createEvent('HTMLEvents')
         event.initEvent('change', false, true)
-        $el.dispatchEvent(event)
+        el.dispatchEvent(event)
       }
-    }.bind(this)
+    }.bind(this),
   )
 
   if (this.toggleAllButton?.checked) {
