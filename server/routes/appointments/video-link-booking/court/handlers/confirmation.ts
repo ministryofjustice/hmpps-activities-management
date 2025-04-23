@@ -14,11 +14,10 @@ export default class ConfirmationRoutes {
     req.session.bookACourtHearingJourney = null
 
     const vlb = await this.bookAVideoLinkService.getVideoLinkBookingById(+vlbId, user)
-    const court = await this.bookAVideoLinkService
-      .getAllCourts(user)
-      .then(courts => courts.find(c => c.code === vlb.courtCode))
-
-    const prisoner = await this.prisonService.getInmateByPrisonerNumber(vlb.prisonAppointments[0].prisonerNumber, user)
+    const [court, prisoner] = await Promise.all([
+      this.bookAVideoLinkService.getAllCourts(user).then(courts => courts.find(c => c.code === vlb.courtCode)),
+      this.prisonService.getInmateByPrisonerNumber(vlb.prisonAppointments[0].prisonerNumber, user),
+    ])
 
     return res.render('pages/appointments/video-link-booking/court/confirmation', { vlb, court, prisoner })
   }
