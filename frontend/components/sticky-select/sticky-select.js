@@ -3,11 +3,15 @@ import { nodeListForEach } from '../../utils'
 function StickySelect(container) {
   this.container = container
   var table = container.querySelector('.govuk-table')
-  var multiSelect = table.querySelector(table.getAttribute('data-multi-select-checkbox'))
+  var multiSelectSelector = table.getAttribute('data-multi-select-checkbox')
+  var multiSelect = document.querySelector(multiSelectSelector)
 
-  new MOJFrontend.MultiSelect(multiSelect, {
-    checkboxes: table.querySelectorAll('tbody .govuk-checkboxes__input'),
-  })
+  if (multiSelect && !multiSelect.hasAttribute('data-multi-select-initialised')) {
+    new MOJFrontend.MultiSelect(multiSelect, {
+      checkboxes: table.querySelectorAll('tbody .govuk-checkboxes__input'),
+    })
+    multiSelect.setAttribute('data-multi-select-initialised', 'true')
+  }
 
   new MOJFrontend.SortableTable(table)
 
