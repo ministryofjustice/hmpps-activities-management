@@ -32,7 +32,7 @@ export default function CreateRoutes({
   const courtHearingLink = new CourtHearingLinkRoutes(courtBookingService)
   const extraInformation = new ExtraInformationRoutes(courtBookingService)
   const checkBooking = new CheckBookingRoutes(bookAVideoLinkService, courtBookingService)
-  const confirmation = new ConfirmationRoutes(bookAVideoLinkService)
+  const confirmation = new ConfirmationRoutes(bookAVideoLinkService, prisonService)
 
   // Book a video link journey is required in session for the following routes
   router.use((req, res, next) => {

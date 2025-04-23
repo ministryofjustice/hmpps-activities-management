@@ -1,8 +1,12 @@
 import { Request, Response } from 'express'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
+import PrisonService from '../../../../../services/prisonService'
 
 export default class ConfirmationRoutes {
-  constructor(private readonly bookAVideoLinkService: BookAVideoLinkService) {}
+  constructor(
+    private readonly bookAVideoLinkService: BookAVideoLinkService,
+    private readonly prisonService: PrisonService,
+  ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { vlbId } = req.params
@@ -14,6 +18,8 @@ export default class ConfirmationRoutes {
       .getAllProbationTeams(user)
       .then(probationTeams => probationTeams.find(p => p.code === vlb.probationTeamCode))
 
-    return res.render('pages/appointments/video-link-booking/probation/confirmation', { vlb, probationTeam })
+    const prisoner = await this.prisonService.getInmateByPrisonerNumber(vlb.prisonAppointments[0].prisonerNumber, user)
+
+    return res.render('pages/appointments/video-link-booking/probation/confirmation', { vlb, probationTeam, prisoner })
   }
 }

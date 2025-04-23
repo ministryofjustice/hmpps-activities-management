@@ -131,7 +131,7 @@ context('Create group appointment', () => {
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
-    const successMessage = `You have successfully scheduled an appointment for 1 person on ${formatDate(
+    const successMessage = `You have successfully scheduled an appointment for Stephen Gregs on ${formatDate(
       tomorrow,
       'EEEE, d MMMM yyyy',
     )}.`
