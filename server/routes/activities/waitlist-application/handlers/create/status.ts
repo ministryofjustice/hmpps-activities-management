@@ -22,8 +22,8 @@ export default class StatusRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.waitListApplicationJourney.status = req.body.status
-    req.session.waitListApplicationJourney.comment = req.body.comment
+    req.journeyData.waitListApplicationJourney.status = req.body.status
+    req.journeyData.waitListApplicationJourney.comment = req.body.comment
     return res.redirect(`check-answers`)
   }
 }

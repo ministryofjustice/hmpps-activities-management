@@ -26,7 +26,8 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      params: {},
+      journeyData: {
         waitListApplicationJourney: {
           prisoner: {
             name: 'Alan Key',
@@ -42,6 +43,9 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
           comment: 'test comment',
           status: 'PENDING',
         },
+      },
+      session: {
+        journeyMetrics: {},
       },
     } as unknown as Request
   })
@@ -80,7 +84,7 @@ describe('Route Handlers - Waitlist application - Check answers', () => {
       expect(
         metricsService.trackEvent(
           MetricsEvent.WAITLIST_APPLICATION_JOURNEY_COMPLETED(
-            req.session.waitListApplicationJourney,
+            req.journeyData.waitListApplicationJourney,
             res.locals.user,
           ).addJourneyCompletedMetrics(req),
         ),

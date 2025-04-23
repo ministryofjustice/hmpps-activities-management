@@ -17,14 +17,14 @@ export class Requester {
 export default class RequesterRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     return res.render(`pages/activities/waitlist-application/requester`, {
-      prisonerName: req.session.waitListApplicationJourney.prisoner.name,
+      prisonerName: req.journeyData.waitListApplicationJourney.prisoner.name,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { requester, otherRequester } = req.body
 
-    req.session.waitListApplicationJourney.requester =
+    req.journeyData.waitListApplicationJourney.requester =
       requester !== WaitlistRequester.SOMEONE_ELSE.code ? requester : otherRequester
 
     return res.redirectOrReturn(`status`)

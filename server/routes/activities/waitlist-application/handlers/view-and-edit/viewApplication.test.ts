@@ -34,6 +34,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
       params: { applicationId: 1 },
       query: {},
       session: {},
+      journeyData: {},
     } as unknown as Request
 
     next = jest.fn()
@@ -83,7 +84,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
 
       await handler.GET(req, res, next)
 
-      expect(req.session.waitListApplicationJourney).toEqual({
+      expect(req.journeyData.waitListApplicationJourney).toEqual({
         prisoner: {
           name: 'Alan Key',
           prisonerNumber: 'ABC123',
@@ -243,7 +244,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
 
       await handler.GET(req, res, next)
 
-      expect(req.session.waitListApplicationJourney.journeyEntry).toEqual('waitlist-dashboard')
+      expect(req.journeyData.waitListApplicationJourney.journeyEntry).toEqual('waitlist-dashboard')
 
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/waitlist-application/view-application',

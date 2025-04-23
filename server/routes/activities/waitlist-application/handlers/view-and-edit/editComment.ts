@@ -28,7 +28,7 @@ export default class EditCommentRoutes {
 
     return res.redirectWithSuccess(
       `view`,
-      `You have updated the comment for ${req.session.waitListApplicationJourney.prisoner.name}'s application`,
+      `You have updated the comment for ${req.journeyData.waitListApplicationJourney.prisoner.name}'s application`,
     )
   }
 }

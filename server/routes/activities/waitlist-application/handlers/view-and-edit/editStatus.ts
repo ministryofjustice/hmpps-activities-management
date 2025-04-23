@@ -26,7 +26,7 @@ export default class EditStatusRoutes {
 
     return res.redirectWithSuccess(
       `view`,
-      `You have updated the status of ${req.session.waitListApplicationJourney.prisoner.name}'s application`,
+      `You have updated the status of ${req.journeyData.waitListApplicationJourney.prisoner.name}'s application`,
     )
   }
 }

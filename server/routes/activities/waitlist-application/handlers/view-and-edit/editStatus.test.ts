@@ -27,7 +27,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
 
     req = {
       params: { applicationId: 1 },
-      session: { waitListApplicationJourney: { prisoner: { name: 'Alan Key' } } },
+      journeyData: { waitListApplicationJourney: { prisoner: { name: 'Alan Key' } } },
     } as unknown as Request
   })
 

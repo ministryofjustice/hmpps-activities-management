@@ -35,7 +35,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         waitListApplicationJourney: {
           prisoner: {
             name: 'Alan Key',
@@ -93,7 +93,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.activity).toEqual({
+      expect(req.journeyData.waitListApplicationJourney.activity).toEqual({
         activityId: 1,
         scheduleId: 1,
         activityName: 'test activity',

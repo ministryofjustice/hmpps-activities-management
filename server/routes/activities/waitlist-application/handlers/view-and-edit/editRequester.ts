@@ -7,7 +7,7 @@ export default class EditRequesterRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     return res.render(`pages/activities/waitlist-application/edit-requester`, {
-      prisonerName: req.session.waitListApplicationJourney.prisoner.name,
+      prisonerName: req.journeyData.waitListApplicationJourney.prisoner.name,
     })
   }
 
@@ -22,7 +22,7 @@ export default class EditRequesterRoutes {
 
     return res.redirectWithSuccess(
       `view`,
-      `You have updated the requester of ${req.session.waitListApplicationJourney.prisoner.name}'s application`,
+      `You have updated the requester of ${req.journeyData.waitListApplicationJourney.prisoner.name}'s application`,
     )
   }
 }

@@ -27,7 +27,7 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
 
     req = {
       params: { applicationId: 1 },
-      session: { waitListApplicationJourney: { prisoner: { name: 'Alan Key' }, createdTime: '2022-12-01' } },
+      journeyData: { waitListApplicationJourney: { prisoner: { name: 'Alan Key' }, createdTime: '2022-12-01' } },
     } as unknown as Request
   })
 
