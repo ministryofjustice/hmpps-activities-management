@@ -232,7 +232,7 @@ context('Create group appointment - check answers change links', () => {
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.assertMessageEquals(
-      `You have successfully scheduled an appointment for 1 person on ${formatDate(
+      `You have successfully scheduled an appointment for David Winchurch on ${formatDate(
         dayAfterTomorrow,
         'EEEE, d MMMM yyyy',
       )}.`,

@@ -12,7 +12,7 @@ window.MOJFrontend = mojFrontend
 
 govukFrontend.initAll()
 mojFrontend.initAll()
-dprFrontend.default()
+dprFrontend.initAll()
 ActivitiesFrontend.initAll()
 
 export default {

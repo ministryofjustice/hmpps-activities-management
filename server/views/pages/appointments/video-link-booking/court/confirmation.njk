@@ -15,7 +15,7 @@
            {{ govukPanel({ titleText: pageTitle }) }}
 
             <p class="govuk-body">
-                You have successfully scheduled an appointment for 1 person on {{ vlb.prisonAppointments[0].appointmentDate | toDate | formatDate }}
+                You have successfully scheduled an appointment for {{ prisoner | formatName(NameFormatStyle.firstLast, false) }} on {{ vlb.prisonAppointments[0].appointmentDate | toDate | formatDate }}.
             </p>
 
             {% if not court.enabled %}
