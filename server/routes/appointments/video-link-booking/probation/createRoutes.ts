@@ -31,7 +31,7 @@ export default function CreateRoutes({
   const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService, probationBookingService)
   const extraInformation = new ExtraInformationRoutes(probationBookingService)
   const checkBooking = new CheckBookingRoutes(bookAVideoLinkService, probationBookingService)
-  const confirmation = new ConfirmationRoutes(bookAVideoLinkService)
+  const confirmation = new ConfirmationRoutes(bookAVideoLinkService, prisonService)
 
   // The bvlsMasteredVlpmFeatureToggleEnabled feature toggle is required for the following routes
   router.use((req, res, next) => {

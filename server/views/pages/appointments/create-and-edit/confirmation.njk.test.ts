@@ -4,6 +4,7 @@ import fs from 'fs'
 import { addDays, format, subDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentJourney, AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
+import { AppointmentSetJourney } from '../../../../routes/appointments/create-and-edit/appointmentSetJourney'
 import { AppointmentFrequency } from '../../../../@types/appointments'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
@@ -19,6 +20,7 @@ describe('Views - Create Appointment - Confirmation', () => {
     session: {
       appointmentJourney: {} as AppointmentJourney,
     },
+    appointmentSet: null as AppointmentSetJourney,
   }
 
   const njkEnv = registerNunjucks()
@@ -30,6 +32,7 @@ describe('Views - Create Appointment - Confirmation', () => {
       session: {
         appointmentJourney: {} as AppointmentJourney,
       },
+      appointmentSet: null as AppointmentSetJourney,
     }
   })
 
@@ -51,7 +54,7 @@ describe('Views - Create Appointment - Confirmation', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
-      `You have successfully scheduled an appointment for 1 person on ${format(tomorrow, 'EEEE, d MMMM yyyy')}.`,
+      `You have successfully scheduled an appointment for Test Prisoner on ${format(tomorrow, 'EEEE, d MMMM yyyy')}.`,
     )
   })
 
@@ -76,7 +79,62 @@ describe('Views - Create Appointment - Confirmation', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
-      `You have successfully created an appointment for 1 person on ${format(fiveDaysAgo, 'EEEE, d MMMM yyyy')}.`,
+      `You have successfully created an appointment for Test Prisoner on ${format(fiveDaysAgo, 'EEEE, d MMMM yyyy')}.`,
+    )
+  })
+
+  it('should display create message for single person in the appointment set', () => {
+    viewContext.appointmentSet = {
+      startDate: '2025-04-22',
+      appointments: [
+        {
+          startTime: { hour: 9, minute: 0 },
+          endTime: { hour: 9, minute: 15 },
+          prisoner: {
+            number: 'A1234BC',
+            name: 'TEST01 PRISONER01',
+            firstName: 'TEST01',
+            lastName: 'PRISONER01',
+            cellLocation: '1-1-1',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
+          },
+        },
+      ],
+    } as AppointmentSetJourney
+
+    viewContext.session.appointmentJourney.retrospective = YesNo.YES
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
+      `You have successfully created an appointment for Test01 Prisoner01 on ${format('2025-04-22', 'EEEE, d MMMM yyyy')}.`,
+    )
+  })
+
+  it('should display scheduled message for single person in the appointment set', () => {
+    viewContext.appointmentSet = {
+      startDate: '2025-04-22',
+      appointments: [
+        {
+          startTime: { hour: 9, minute: 0 },
+          endTime: { hour: 9, minute: 15 },
+          prisoner: {
+            number: 'A1234BC',
+            name: 'TEST01 PRISONER01',
+            firstName: 'TEST01',
+            lastName: 'PRISONER01',
+            cellLocation: '1-1-1',
+            status: 'ACTIVE IN',
+            prisonCode: 'MDI',
+          },
+        },
+      ],
+    } as AppointmentSetJourney
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
+      `You have successfully scheduled an appointment for Test01 Prisoner01 on ${format('2025-04-22', 'EEEE, d MMMM yyyy')}.`,
     )
   })
 
@@ -106,16 +164,16 @@ describe('Views - Create Appointment - Confirmation', () => {
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 
       expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
-        `You have successfully scheduled an appointment for 1 person starting on ${format(
+        `You have successfully scheduled an appointment for Test Prisoner starting on ${format(
           tomorrow,
           'EEEE, d MMMM yyyy',
-        )}. It will repeat ${expectedText} for 6 appointments`,
+        )}. It will repeat ${expectedText} for 6 appointments.`,
       )
     },
   )
 
   describe('Group Appointment', () => {
-    it('should display number of prisoners added to appointment', () => {
+    it('should display number of prisoners scheduled to appointment', () => {
       viewContext.appointment = {
         appointmentSeries: { schedule: null },
         appointmentType: AppointmentType.GROUP,
@@ -146,6 +204,116 @@ describe('Views - Create Appointment - Confirmation', () => {
 
       expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
         `You have successfully scheduled an appointment for 3 people on ${format(tomorrow, 'EEEE, d MMMM yyyy')}.`,
+      )
+    })
+
+    it('should display number of prisoners added to appointment', () => {
+      viewContext.appointment = {
+        appointmentSeries: { schedule: null },
+        appointmentType: AppointmentType.GROUP,
+        startDate: formatDate(tomorrow, 'yyyy-MM-dd'),
+        attendees: [
+          {
+            prisoner: {
+              firstName: 'TEST',
+              lastName: 'PRISONER',
+            },
+          },
+          {
+            prisoner: {
+              firstName: 'SECOND',
+              lastName: 'PRISONER',
+            },
+          },
+        ],
+      } as AppointmentDetails
+
+      viewContext.session.appointmentJourney.retrospective = YesNo.YES
+      const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
+        `You have successfully created an appointment for 2 people on ${format(tomorrow, 'EEEE, d MMMM yyyy')}.`,
+      )
+    })
+
+    it('should display number of prisoners added to appointment from appointment set', () => {
+      viewContext.appointmentSet = {
+        startDate: '2025-04-22',
+        appointments: [
+          {
+            startTime: { hour: 9, minute: 0 },
+            endTime: { hour: 9, minute: 15 },
+            prisoner: {
+              number: 'A1234BC',
+              name: 'TEST01 PRISONER01',
+              firstName: 'TEST01',
+              lastName: 'PRISONER01',
+              cellLocation: '1-1-1',
+              status: 'ACTIVE IN',
+              prisonCode: 'MDI',
+            },
+          },
+          {
+            startTime: { hour: 9, minute: 15 },
+            endTime: { hour: 9, minute: 30 },
+            prisoner: {
+              number: 'B2345CD',
+              name: 'TEST02 PRISONER02',
+              firstName: 'TEST02',
+              lastName: 'PRISONER02',
+              cellLocation: '1-1-2',
+              status: 'ACTIVE IN',
+              prisonCode: 'MDI',
+            },
+          },
+        ],
+      } as AppointmentSetJourney
+
+      viewContext.session.appointmentJourney.retrospective = YesNo.YES
+      const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
+        `You have successfully created appointments for 2 people starting on ${format('2025-04-22', 'EEEE, d MMMM yyyy')}.`,
+      )
+    })
+
+    it('should display number of prisoners scheduled to appointment from appointment set', () => {
+      viewContext.appointmentSet = {
+        startDate: '2025-04-22',
+        appointments: [
+          {
+            startTime: { hour: 9, minute: 0 },
+            endTime: { hour: 9, minute: 15 },
+            prisoner: {
+              number: 'A1234BC',
+              name: 'TEST01 PRISONER01',
+              firstName: 'TEST01',
+              lastName: 'PRISONER01',
+              cellLocation: '1-1-1',
+              status: 'ACTIVE IN',
+              prisonCode: 'MDI',
+            },
+          },
+          {
+            startTime: { hour: 9, minute: 15 },
+            endTime: { hour: 9, minute: 30 },
+            prisoner: {
+              number: 'B2345CD',
+              name: 'TEST02 PRISONER02',
+              firstName: 'TEST02',
+              lastName: 'PRISONER02',
+              cellLocation: '1-1-2',
+              status: 'ACTIVE IN',
+              prisonCode: 'MDI',
+            },
+          },
+        ],
+      } as AppointmentSetJourney
+
+      const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('[data-qa=message]').text().trim().replace(/\s+/g, ' ')).toEqual(
+        `You have successfully scheduled appointments for 2 people starting on ${format('2025-04-22', 'EEEE, d MMMM yyyy')}.`,
       )
     })
   })
