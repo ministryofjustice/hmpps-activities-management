@@ -3,12 +3,13 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% set pageTitle = "Are you sure you want to cancel " + (session.bookACourtHearingJourney.prisoner.name | toTitleCase) + "'s booking?" %}
+{% set pageTitle = "Are you sure you want to cancel this booking?" %}
+{% set pageHeading = "Are you sure you want to cancel " + (session.bookACourtHearingJourney.prisoner.name | toTitleCase) + "'s booking?" %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <h1 class="govuk-heading-l">{{ pageTitle }}</h1>
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
             {{ govukInsetText({
                 html: "The cancellation of a booking cannot be reversed."
             }) }}
