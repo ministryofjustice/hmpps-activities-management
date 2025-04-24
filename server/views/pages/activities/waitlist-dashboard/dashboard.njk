@@ -133,7 +133,7 @@
                 </button>
             {% endset %}
 
-            <div class="moj-filter-layout moj-filter-layout__flex govuk-!-margin-bottom-6" data-module="activities-list-filter" data-filter-start-shown="true">
+            <div class="moj-filter-layout moj-filter-layout__flex govuk-!-margin-bottom-6" data-module="activities-list-filter">
                 <div class="moj-filter-layout__filter moj-filter-layout__flex moj-filter-layout__filter--small govuk-!-display-none-print">
                     <form method="POST">
                         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
@@ -141,6 +141,9 @@
                         {{ mojFilter({
                             heading: {
                                 text: 'Filter'
+                            },
+                            attributes: {
+                                'data-filter-start-shown': 'true'
                             },
                             optionsHtml: filterOptionsHtml
                         }) }}

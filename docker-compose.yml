@@ -28,7 +28,7 @@ services:
 
   # For the API to seed & interact with - there is no direct connection from the UI service
   activities-db:
-    image: postgres
+    image: postgres:latest
     networks:
       - hmpps
     container_name: activities-db

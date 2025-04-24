@@ -8,7 +8,8 @@ import { SortableTable } from '@ministryofjustice/frontend'
  */
 SortableTable.prototype.mojSort = SortableTable.prototype.sort
 SortableTable.prototype.sort = function (rows, columnNumber, sortDirection) {
-  if (!this.table.data('table-fixed-rows')) return SortableTable.prototype.mojSort(...arguments)
+  var tableHasFixedRow = rows[0].closest('table').getAttribute('data-table-fixed-rows')
+  if (!tableHasFixedRow) return SortableTable.prototype.mojSort(...arguments)
 
   return rows.sort(
     function (rowA, rowB) {
@@ -23,8 +24,8 @@ SortableTable.prototype.sort = function (rows, columnNumber, sortDirection) {
         return tdB.getAttribute('data-sort-fixed') === 'top' ? 1 : -1
       }
 
-      var valueA = this.getCellValue($(tdA))
-      var valueB = this.getCellValue($(tdB))
+      var valueA = this.getCellValue(tdA)
+      var valueB = this.getCellValue(tdB)
 
       var sortVal = 0
       if (valueA < valueB) {
@@ -34,6 +35,6 @@ SortableTable.prototype.sort = function (rows, columnNumber, sortDirection) {
       }
 
       return sortDirection === 'ascending' ? sortVal : -sortVal
-    }.bind(this)
+    }.bind(this),
   )
 }

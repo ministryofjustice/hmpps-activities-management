@@ -21,7 +21,6 @@ export default function setUpStaticResources(): Router {
     )
   }
 
-  // TODO: JQuery is a peer dependency of moj-frontend, consider helping to remove this from there and therefore as a dependency of this project
   Array.of(
     '/dist/assets',
     '/node_modules/govuk-frontend/dist/govuk/assets',
@@ -29,7 +28,6 @@ export default function setUpStaticResources(): Router {
     '/node_modules/@ministryofjustice/frontend/moj/assets',
     '/node_modules/@ministryofjustice/frontend',
     '/node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend',
-    '/node_modules/jquery/dist',
   ).forEach(dir => staticRoute('/assets', dir))
 
   // set favicon redirect
