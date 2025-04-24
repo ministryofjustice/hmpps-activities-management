@@ -15,9 +15,10 @@ export class Comment {
 export default class EditCommentRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response): Promise<void> => {
-    return res.render(`pages/activities/waitlist-application/edit-comment`)
-  }
+  GET = async (req: Request, res: Response): Promise<void> =>
+    res.render(`pages/activities/waitlist-application/edit-comment`, {
+      waitListApplicationJourney: req.journeyData.waitListApplicationJourney,
+    })
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { applicationId } = req.params

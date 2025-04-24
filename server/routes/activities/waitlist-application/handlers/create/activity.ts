@@ -22,7 +22,10 @@ export default class ActivityRoutes {
       .then(act => act.filter(a => a.category.code !== 'SAA_NOT_IN_WORK'))
       .then(act => act.map(a => ({ id: a.id, name: a.activityName })))
 
-    return res.render(`pages/activities/waitlist-application/activity`, { activities })
+    return res.render(`pages/activities/waitlist-application/activity`, {
+      activities,
+      waitListApplicationJourney: req.journeyData.waitListApplicationJourney,
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

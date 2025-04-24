@@ -8,6 +8,7 @@ import EditRequestDateRoutes, { EditRequestDate } from './editRequestDate'
 jest.mock('../../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null)
+const fakeWaitlistApplicationJourneyData = { prisoner: { name: 'Alan Key' }, createdTime: '2022-12-01' }
 
 describe('Route Handlers - Waitlist application - Edit Request date', () => {
   const handler = new EditRequestDateRoutes(activitiesService)
@@ -27,14 +28,16 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
 
     req = {
       params: { applicationId: 1 },
-      journeyData: { waitListApplicationJourney: { prisoner: { name: 'Alan Key' }, createdTime: '2022-12-01' } },
+      journeyData: { waitListApplicationJourney: fakeWaitlistApplicationJourneyData },
     } as unknown as Request
   })
 
   describe('GET', () => {
     it('should render the edit request date template', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-request-date`)
+      expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-request-date`, {
+        waitListApplicationJourney: fakeWaitlistApplicationJourneyData,
+      })
     })
   })
 

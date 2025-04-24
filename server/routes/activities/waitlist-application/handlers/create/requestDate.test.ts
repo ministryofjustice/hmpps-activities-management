@@ -30,7 +30,9 @@ describe('Route Handlers - Waitlist application - Request date', () => {
   describe('GET', () => {
     it('should render the request date template', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/request-date`)
+      expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/request-date`, {
+        waitListApplicationJourney: {},
+      })
     })
   })
 

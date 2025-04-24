@@ -4,6 +4,10 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import RequesterRoutes, { Requester } from './requester'
 
+const fakeWaitlistApplicationJourneyData = {
+  prisoner: { name: 'Alan Key' },
+}
+
 describe('Route Handlers - Waitlist application - Requester', () => {
   const handler = new RequesterRoutes()
   let req: Request
@@ -22,9 +26,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
 
     req = {
       journeyData: {
-        waitListApplicationJourney: {
-          prisoner: { name: 'Alan Key' },
-        },
+        waitListApplicationJourney: fakeWaitlistApplicationJourneyData,
       },
     } as unknown as Request
   })
@@ -34,6 +36,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/requester`, {
         prisonerName: 'Alan Key',
+        waitListApplicationJourney: fakeWaitlistApplicationJourneyData,
       })
     })
   })

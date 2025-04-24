@@ -14,7 +14,10 @@ export default class EditStatusRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    return res.render(`pages/activities/waitlist-application/edit-status`, { WaitingListStatusOptions })
+    return res.render(`pages/activities/waitlist-application/edit-status`, {
+      WaitingListStatusOptions,
+      waitListApplicationJourney: req.journeyData.waitListApplicationJourney,
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

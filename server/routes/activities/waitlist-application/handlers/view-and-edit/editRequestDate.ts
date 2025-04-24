@@ -27,7 +27,10 @@ export class EditRequestDate {
 export default class EditRequestDateRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response) => res.render('pages/activities/waitlist-application/edit-request-date')
+  GET = async (req: Request, res: Response) =>
+    res.render('pages/activities/waitlist-application/edit-request-date', {
+      waitListApplicationJourney: req.journeyData.waitListApplicationJourney,
+    })
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { applicationId } = req.params

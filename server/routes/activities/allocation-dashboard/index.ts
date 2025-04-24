@@ -4,12 +4,15 @@ import { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import AllocationDashboardRoutes, { SelectedAllocation, SelectedAllocations } from './handlers/allocationDashboard'
 import ActivitiesRoutes from './handlers/activitiesDashboard'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
-export default function Index({ activitiesService, prisonService }: Services): Router {
+export default function Index({ activitiesService, prisonService, tokenStore }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+  const postWithJourneyData = (path: string, handler: RequestHandler, type?: new () => object) =>
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), asyncMiddleware(handler))
 
   const activitiesHandler = new ActivitiesRoutes(activitiesService)
   const allocationDashboardHandler = new AllocationDashboardRoutes(prisonService, activitiesService)
@@ -17,7 +20,11 @@ export default function Index({ activitiesService, prisonService }: Services): R
   get('/', activitiesHandler.GET)
   get('/:activityId', allocationDashboardHandler.GET)
   post('/:activityId/allocate', allocationDashboardHandler.ALLOCATE, SelectedAllocation)
-  post('/:activityId/view-waitlist-application', allocationDashboardHandler.VIEW_APPLICATION, SelectedAllocation)
+  postWithJourneyData(
+    '/:activityId/view-waitlist-application',
+    allocationDashboardHandler.VIEW_APPLICATION,
+    SelectedAllocation,
+  )
   post('/:activityId/check-allocation', allocationDashboardHandler.UPDATE, SelectedAllocations)
   post('/:activityId/deallocate', allocationDashboardHandler.DEALLOCATE, SelectedAllocations)
 
