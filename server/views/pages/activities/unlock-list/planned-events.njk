@@ -155,16 +155,19 @@
                     <button class="govuk-button govuk-!-margin-top-3 govuk-!-margin-bottom-3" data-module="govuk-button">Apply filters</button>
                     {% endset %}
 
-                    <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter" data-filter-start-shown="true">
+                    <div class="moj-filter-layout moj-filter-layout__flex" data-module="activities-list-filter">
 
                         <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
                             <form id="filter-form" method="POST" action="update-filters" novalidate>
                                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                                 {{ mojFilter({
-                                heading: {
-                                text: 'Filters'
-                                },
-                                optionsHtml: filterOptionsHtml
+                                    heading: {
+                                        text: 'Filters'
+                                    },
+                                    attributes: {
+                                        'data-filter-start-shown': 'true'
+                                    },
+                                    optionsHtml: filterOptionsHtml
                                 }) }}
                             </form>
                         </div>

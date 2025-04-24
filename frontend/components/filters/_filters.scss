@@ -47,3 +47,9 @@
 .moj-filter-layout__filter--small {
   max-width: 340px;
 }
+
+.moj-filter {
+  .govuk-select {
+    max-width: 300px;
+  }
+}

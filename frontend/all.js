@@ -47,7 +47,7 @@ function initAll() {
     new Calendar($calendar).init()
   })
 
-  var $filters = document.querySelectorAll('[data-module="activities-list-filter"]')
+  var $filters = document.querySelectorAll('[data-module="moj-filter"]')
   nodeListForEach($filters, function ($filter) {
     new ListFilter($filter)
   })
