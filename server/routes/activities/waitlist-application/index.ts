@@ -23,12 +23,12 @@ export default function Index({ prisonService, activitiesService, metricsService
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(
       path,
-      emptyJourneyHandler('waitListApplicationJourney', stepRequiresSession),
       setUpJourneyData(tokenStore),
+      emptyJourneyHandler('waitListApplicationJourney', stepRequiresSession),
       asyncMiddleware(handler),
     )
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), setUpJourneyData(tokenStore), asyncMiddleware(handler))
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), asyncMiddleware(handler))
 
   const startJourneyHandler = new StartJourneyRoutes(prisonService, metricsService)
   const requestDateHandler = new RequestDateRoutes()
