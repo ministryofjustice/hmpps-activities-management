@@ -89,10 +89,10 @@ StickySelect.prototype.handleRadioChanged = function () {
     this.stickyBar.classList.add('sticky-select-action-bar--active')
     this.stickyBar.setAttribute('aria-disabled', 'false')
 
-    this.selectedCount.innerText = `{count} selected`
+    this.selectedCount.innerText = `${count} selected`
 
     if (this.itemsDescriptionSingular) {
-      this.selectedCount.innerText = `{count} {this.itemsDescriptionSingular} selected`
+      this.selectedCount.innerText = `${count} ${this.itemsDescriptionSingular} selected`
     }
 
     this.handleDisabledButtons(count)
