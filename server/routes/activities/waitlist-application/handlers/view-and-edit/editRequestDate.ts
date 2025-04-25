@@ -33,7 +33,7 @@ export default class EditRequestDateRoutes {
     const { applicationId } = req.params
     const { user } = res.locals
     const { requestDate } = req.body
-    const { prisoner } = req.session.waitListApplicationJourney
+    const { prisoner } = req.journeyData.waitListApplicationJourney
 
     const updatedApplication = { applicationDate: formatIsoDate(requestDate) }
     await this.activitiesService.patchWaitlistApplication(+applicationId, updatedApplication, user)

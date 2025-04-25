@@ -8,6 +8,7 @@ import EditStatusRoutes, { EditStatus } from './editStatus'
 jest.mock('../../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null)
+const fakeWaitlistApplicationJourneyData = { prisoner: { name: 'Alan Key' } }
 
 describe('Route Handlers - Waitlist application - Edit Status', () => {
   const handler = new EditStatusRoutes(activitiesService)
@@ -27,7 +28,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
 
     req = {
       params: { applicationId: 1 },
-      session: { waitListApplicationJourney: { prisoner: { name: 'Alan Key' } } },
+      journeyData: { waitListApplicationJourney: fakeWaitlistApplicationJourneyData },
     } as unknown as Request
   })
 

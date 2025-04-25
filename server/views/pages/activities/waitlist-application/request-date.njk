@@ -30,7 +30,7 @@
                             '<div>Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.</div>'
                     },
                     errorMessage: validationErrors | findError('requestDate'),
-                    value: formResponses.requestDate or session.waitListApplicationJourney.requestDate | isoDateToDatePickerDate
+                    value: formResponses.requestDate or waitListApplicationJourney.requestDate | isoDateToDatePickerDate
                 }) }}
 
                 <div class="govuk-button-group">

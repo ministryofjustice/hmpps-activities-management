@@ -27,7 +27,7 @@ export default class ActivityRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { activityId } = req.body
-    const { prisoner } = req.session.waitListApplicationJourney
+    const { prisoner } = req.journeyData.waitListApplicationJourney
     const { user } = res.locals
 
     const activity = await this.activitiesService.getActivity(activityId, user)
@@ -52,7 +52,7 @@ export default class ActivityRoutes {
       )
     }
 
-    req.session.waitListApplicationJourney.activity = {
+    req.journeyData.waitListApplicationJourney.activity = {
       activityId: activity.id,
       scheduleId: getScheduleIdFromActivity(activity),
       activityName: activity.description,

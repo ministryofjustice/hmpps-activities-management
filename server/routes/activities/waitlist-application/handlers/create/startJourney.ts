@@ -22,7 +22,7 @@ export default class StartJourneyRoutes {
       return next(createHttpError.NotFound())
     }
 
-    req.session.waitListApplicationJourney = {
+    req.journeyData.waitListApplicationJourney = {
       prisoner: {
         prisonerNumber,
         name: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),

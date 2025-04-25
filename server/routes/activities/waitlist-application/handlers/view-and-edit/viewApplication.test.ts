@@ -13,6 +13,21 @@ jest.mock('../../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
+const fakeWaitlistApplicationJourneyData = {
+  prisoner: {
+    name: 'Alan Key',
+    prisonerNumber: 'ABC123',
+  },
+  requestDate: '2023-07-31',
+  activity: {
+    activityId: 1,
+    activityName: 'Test activity',
+  },
+  requester: 'PRISONER',
+  status: 'PENDING',
+  comment: 'test comment',
+  createdTime: '2023-08-16',
+}
 
 describe('Route Handlers - Waitlist application - View application', () => {
   const handler = new ViewApplicationRoutes(activitiesService, prisonService)
@@ -34,6 +49,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
       params: { applicationId: 1 },
       query: {},
       session: {},
+      journeyData: {},
     } as unknown as Request
 
     next = jest.fn()
@@ -83,21 +99,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
 
       await handler.GET(req, res, next)
 
-      expect(req.session.waitListApplicationJourney).toEqual({
-        prisoner: {
-          name: 'Alan Key',
-          prisonerNumber: 'ABC123',
-        },
-        requestDate: '2023-07-31',
-        activity: {
-          activityId: 1,
-          activityName: 'Test activity',
-        },
-        requester: 'PRISONER',
-        status: 'PENDING',
-        comment: 'test comment',
-        createdTime: '2023-08-16',
-      })
+      expect(req.journeyData.waitListApplicationJourney).toEqual(fakeWaitlistApplicationJourneyData)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/view-application`, {
         prisoner: {
           name: 'Alan Key',
@@ -112,6 +114,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
         activityId: 1,
         isMostRecent: true,
         isNotAlreadyAllocated: true,
+        journeyEntry: undefined,
       })
     })
 
@@ -243,7 +246,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
 
       await handler.GET(req, res, next)
 
-      expect(req.session.waitListApplicationJourney.journeyEntry).toEqual('waitlist-dashboard')
+      expect(req.journeyData.waitListApplicationJourney.journeyEntry).toEqual('waitlist-dashboard')
 
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/waitlist-application/view-application',

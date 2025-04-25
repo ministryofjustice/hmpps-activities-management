@@ -23,7 +23,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
     } as unknown as Response
 
     req = {
-      session: { waitListApplicationJourney: {} },
+      journeyData: { waitListApplicationJourney: {} },
     } as unknown as Request
   })
 
@@ -43,7 +43,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.requestDate).toEqual(formatIsoDate(today))
+      expect(req.journeyData.waitListApplicationJourney.requestDate).toEqual(formatIsoDate(today))
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`activity`)
     })
   })

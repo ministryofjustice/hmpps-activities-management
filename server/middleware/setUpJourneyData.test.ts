@@ -27,6 +27,7 @@ beforeEach(() => {
       // @ts-expect-error null object
       this.callback()
     },
+    locals: {},
   } as unknown as Response
 
   req = {
