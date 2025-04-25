@@ -13,11 +13,10 @@ export class EditStatus {
 export default class EditStatusRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response): Promise<void> => {
-    return res.render(`pages/activities/waitlist-application/edit-status`, {
+  GET = async (req: Request, res: Response): Promise<void> =>
+    res.render(`pages/activities/waitlist-application/edit-status`, {
       WaitingListStatusOptions,
     })
-  }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { applicationId } = req.params
