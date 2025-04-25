@@ -18,7 +18,6 @@ export default class RequesterRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     return res.render(`pages/activities/waitlist-application/requester`, {
       prisonerName: req.journeyData.waitListApplicationJourney.prisoner.name,
-      waitListApplicationJourney: req.journeyData.waitListApplicationJourney,
     })
   }
 

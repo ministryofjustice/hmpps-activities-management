@@ -14,10 +14,7 @@ export class RequestDate {
 }
 
 export default class RequestDateRoutes {
-  GET = async (req: Request, res: Response) =>
-    res.render('pages/activities/waitlist-application/request-date', {
-      waitListApplicationJourney: req.journeyData.waitListApplicationJourney,
-    })
+  GET = async (req: Request, res: Response) => res.render('pages/activities/waitlist-application/request-date')
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.journeyData.waitListApplicationJourney.requestDate = formatIsoDate(req.body.requestDate)

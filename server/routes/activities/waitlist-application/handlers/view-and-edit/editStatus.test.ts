@@ -41,7 +41,6 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
           DECLINED: 'DECLINED',
           PENDING: 'PENDING',
         },
-        waitListApplicationJourney: fakeWaitlistApplicationJourneyData,
       })
     })
   })

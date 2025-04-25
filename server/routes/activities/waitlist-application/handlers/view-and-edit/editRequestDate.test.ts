@@ -35,9 +35,7 @@ describe('Route Handlers - Waitlist application - Edit Request date', () => {
   describe('GET', () => {
     it('should render the edit request date template', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-request-date`, {
-        waitListApplicationJourney: fakeWaitlistApplicationJourneyData,
-      })
+      expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-request-date`)
     })
   })
 

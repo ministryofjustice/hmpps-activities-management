@@ -35,9 +35,7 @@ describe('Route Handlers - Waitlist application - Edit Comment', () => {
   describe('GET', () => {
     it('should render the edit comment template', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-comment`, {
-        waitListApplicationJourney: fakeWaitlistApplicationJourneyData,
-      })
+      expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-comment`)
     })
   })
 

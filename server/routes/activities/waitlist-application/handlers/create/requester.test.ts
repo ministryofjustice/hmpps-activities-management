@@ -36,7 +36,6 @@ describe('Route Handlers - Waitlist application - Requester', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/requester`, {
         prisonerName: 'Alan Key',
-        waitListApplicationJourney: fakeWaitlistApplicationJourneyData,
       })
     })
   })

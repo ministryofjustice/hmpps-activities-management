@@ -68,7 +68,6 @@ export default class ViewApplicationRoutes {
       isMostRecent,
       isNotAlreadyAllocated,
       journeyEntry,
-      waitListApplicationJourney: req.journeyData.waitListApplicationJourney,
     })
   }
 }

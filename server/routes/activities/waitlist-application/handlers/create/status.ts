@@ -18,10 +18,7 @@ export class Status {
 
 export default class StatusRoutes {
   GET = async (req: Request, res: Response): Promise<void> =>
-    res.render(`pages/activities/waitlist-application/status`, {
-      WaitingListStatusOptions,
-      waitListApplicationJourney: req.journeyData.waitListApplicationJourney,
-    })
+    res.render(`pages/activities/waitlist-application/status`, { WaitingListStatusOptions })
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.journeyData.waitListApplicationJourney.status = req.body.status

@@ -16,7 +16,6 @@ export default class EditStatusRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     return res.render(`pages/activities/waitlist-application/edit-status`, {
       WaitingListStatusOptions,
-      waitListApplicationJourney: req.journeyData.waitListApplicationJourney,
     })
   }
 

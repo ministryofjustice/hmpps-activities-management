@@ -73,7 +73,6 @@ describe('Route Handlers - Waitlist application - Request date', () => {
             name: 'test activity',
           },
         ],
-        waitListApplicationJourney: fakeWaitlistApplicationJourneyData,
       })
     })
   })

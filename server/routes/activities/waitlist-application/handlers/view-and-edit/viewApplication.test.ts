@@ -115,7 +115,6 @@ describe('Route Handlers - Waitlist application - View application', () => {
         isMostRecent: true,
         isNotAlreadyAllocated: true,
         journeyEntry: undefined,
-        waitListApplicationJourney: fakeWaitlistApplicationJourneyData,
       })
     })
 
