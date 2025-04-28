@@ -20,10 +20,12 @@ export default class CancelMultipleSessionsViewEditDetailsRoutes {
     }))
 
     const userMap = await this.userService.getUserMap([instance.cancelledBy], user)
+    const isPayable = instance.activitySchedule.activity.paid
 
     res.render('pages/activities/record-attendance/cancel-multiple-sessions/view-cancellation-details', {
       instance,
       userMap,
+      isPayable,
     })
   }
 }

@@ -29,7 +29,7 @@ export default class CancelSessionRoutes {
     res.render('pages/activities/record-attendance/cancel-session/cancel-reason', {
       cancellationReasons: CancellationReasons,
       isPayable,
-      editMode,
+      editMode: editMode || false,
       instanceId,
     })
   }

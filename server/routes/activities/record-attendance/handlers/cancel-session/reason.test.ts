@@ -59,6 +59,8 @@ describe('Route Handlers - Cancel Session Reason', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/cancel-session/cancel-reason', {
         cancellationReasons: CancellationReasons,
         isPayable: true,
+        editMode: false,
+        instanceId: '1',
       })
     })
   })
@@ -86,6 +88,22 @@ describe('Route Handlers - Cancel Session Reason', () => {
       })
 
       expect(res.redirect).toHaveBeenCalledWith('cancel/confirm')
+    })
+
+    it('should update the reason and redirect back to the view/edit page if in edit mode', async () => {
+      req.query.editMode = 'true'
+      await handler.POST(addReasonRequest, res)
+
+      expect(activitiesService.updateCancelledSession).toHaveBeenCalledWith(
+        1,
+        {
+          cancelledReason: 'Location unavailable',
+          comment: 'A comment',
+        },
+        res.locals.user,
+      )
+
+      expect(res.redirect).toHaveBeenCalledWith('../cancel-multiple/view-edit-details/1')
     })
   })
 
