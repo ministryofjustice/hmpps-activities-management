@@ -33,6 +33,7 @@ generic-service:
     IN_SERVICE_REPORTING_ENABLED: "true"
     MULTIPLE_PRISONER_ALLOCATION_ENABLED: "true"
     CANCEL_MULTIPLE_SESSIONS_ENABLED: "true"
+    NOT_REQUIRED_IN_ADVANCE_ENABLED: "true"
 
   allowlist: null
 
