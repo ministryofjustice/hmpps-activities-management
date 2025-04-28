@@ -21,6 +21,8 @@ import CancelMultipleSessionsReasonRoutes, {
 } from './handlers/cancel-multiple-sessions/reason'
 import CancelMultipleSessionsPayRoutes, { SessionPayMultipleForm } from './handlers/cancel-multiple-sessions/payment'
 import CancelMultipleSessionsCheckAnswersRoutes from './handlers/cancel-multiple-sessions/checkAnswers'
+import CancelMultipleSessionsViewEditDetailsRoutes from './handlers/cancel-multiple-sessions/viewOrEditDetails'
+import UpdateCancelledSessionPayRoutes, { SessionPayForm } from './handlers/cancel-session/updatePayment'
 
 export default function Index({ activitiesService, prisonService, userService }: Services): Router {
   const router = Router()
@@ -36,6 +38,7 @@ export default function Index({ activitiesService, prisonService, userService }:
   const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService, userService)
   const notAttendedReasonHandler = new NotAttendedReasonRoutes(activitiesService)
   const cancelSessionReasonRoutes = new CancelSessionReasonRoutes(activitiesService)
+  const updateCancelledSessionPayRoutes = new UpdateCancelledSessionPayRoutes(activitiesService)
   const cancelSessionConfirmationRoutes = new CancelSessionConfirmationRoutes(activitiesService)
   const uncancelSessionConfirmationRoutes = new UncancelSessionConfirmationRoutes(activitiesService)
   const attendanceDetailsHandler = new AttendanceDetailsRoutes(activitiesService, prisonService, userService)
@@ -45,6 +48,10 @@ export default function Index({ activitiesService, prisonService, userService }:
   const cancelMultipleSessionsReasonRoutes = new CancelMultipleSessionsReasonRoutes(activitiesService)
   const cancelMultipleSessionsPayRoutes = new CancelMultipleSessionsPayRoutes()
   const cancelMultipleSessionsCheckAnswersRoutes = new CancelMultipleSessionsCheckAnswersRoutes(activitiesService)
+  const cancelMultipleSessionsViewEditDetailsRoutes = new CancelMultipleSessionsViewEditDetailsRoutes(
+    activitiesService,
+    userService,
+  )
 
   get('/', homeHandler.GET)
 
@@ -71,6 +78,8 @@ export default function Index({ activitiesService, prisonService, userService }:
 
   get('/:journeyId/activities/:id/cancel', cancelSessionReasonRoutes.GET, true)
   post('/:journeyId/activities/:id/cancel', cancelSessionReasonRoutes.POST, CancelReasonForm)
+  get('/:journeyId/activities/:id/cancel/payment', updateCancelledSessionPayRoutes.GET, true)
+  post('/:journeyId/activities/:id/cancel/payment', updateCancelledSessionPayRoutes.POST, SessionPayForm)
   get('/:journeyId/activities/:id/cancel/confirm', cancelSessionConfirmationRoutes.GET, true)
   post('/:journeyId/activities/:id/cancel/confirm', cancelSessionConfirmationRoutes.POST, CancelConfirmForm)
   get('/:journeyId/activities/:id/uncancel', uncancelSessionConfirmationRoutes.GET, true)
@@ -103,6 +112,12 @@ export default function Index({ activitiesService, prisonService, userService }:
   post('/:journeyId/activities/cancel-multiple/payment', cancelMultipleSessionsPayRoutes.POST, SessionPayMultipleForm)
   get('/:journeyId/activities/cancel-multiple/check-answers', cancelMultipleSessionsCheckAnswersRoutes.GET, true)
   post('/:journeyId/activities/cancel-multiple/check-answers', cancelMultipleSessionsCheckAnswersRoutes.POST)
+
+  get(
+    '/:journeyId/activities/cancel-multiple/view-edit-details/:id',
+    cancelMultipleSessionsViewEditDetailsRoutes.GET,
+    true,
+  )
 
   return router
 }

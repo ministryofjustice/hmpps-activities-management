@@ -1,0 +1,69 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "partials/service-user-name.njk" import serviceUserName %}
+
+{% set jsBackLink = true %}
+{% set pageTitle = applicationName + " - Cancel session - View or edit" %}
+{% set pageId = 'view-or-edit-cancellation-page' %}
+
+{# TODO: This data isn't available yet - Lance to introduce onto instance data #}
+{% set cancellationPay = instance.cancellationPay %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-l">{{ instance.activitySchedule.activity.summary }}</span>
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-2">View or edit cancellation details</h1>
+
+        {{ govukSummaryList({
+            attributes: { 'data-qa': 'cancellation-details' },
+            rows: [
+            {
+                key: {
+                    text: "Reason"
+                },
+                value: {
+                    text: instance.cancelledReason
+                },
+                actions: {
+                    items: [
+                        {
+                            href: "../../"+instance.id+"/cancel?preserveHistory=true&editMode=true",
+                            text: "Change",
+                            visuallyHiddenText: " cancellation reason"
+                        }
+                    ]
+                }
+            },
+            {
+                key: {
+                    text: "Pay"
+                },
+                value: {
+                    text: cancellationPay or 'Not recorded'
+                },
+                actions: {
+                items: [
+                {
+                    href: "../../"+instance.id+"/cancel/payment",
+                    text: "Change",
+                    visuallyHiddenText: " pay"
+                }
+                ]
+            } if instance.isAmendable
+            },
+            {
+                key: {
+                    text: "Cancelled by"
+                },
+                value: {
+                    text: serviceUserName(userMap.get(instance.cancelledBy))
+                }
+            }
+            ]
+        }) }}
+
+    </div>
+  </div>
+{% endblock %}

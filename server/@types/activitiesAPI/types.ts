@@ -55,6 +55,7 @@ export type AppointmentAttendeeSummary = components['schemas']['AppointmentAtten
 export type UncancelScheduledInstanceRequest = components['schemas']['UncancelScheduledInstanceRequest']
 export type ScheduleInstanceCancelRequest = components['schemas']['ScheduleInstanceCancelRequest']
 export type ScheduleInstancesCancelRequest = components['schemas']['ScheduleInstancesCancelRequest']
+export type ScheduledInstancedUpdateRequest = components['schemas']['ScheduledInstancedUpdateRequest']
 export type PrisonerSummary = components['schemas']['PrisonerSummary']
 export type ActivityCandidate = components['schemas']['ActivityCandidate']
 export type PageActivityCandidate = components['schemas']['PageActivityCandidate']

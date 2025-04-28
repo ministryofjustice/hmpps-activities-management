@@ -21,7 +21,7 @@
 {% set pageTitle = applicationName %}
 {% set pageId = 'attendance-list-page' %}
 {% set cancelledComment = '' %}
-{% if instance.comment !== undefined and instance.comment !== null %}
+{% if instance is defined and instance.comment %}
   {% set cancelledComment = " - "+instance.comment %}
 {% endif %}
 {% set activityDate = instance.date | toDate | formatDate %}
@@ -38,6 +38,14 @@
                     <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
                     <p class="govuk-body">This activity session has been cancelled by {{ serviceUserName(userMap.get(instance.cancelledBy)) }} on {{ instance.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }} for the following reason:</p>
                     <ul class="govuk-list govuk-list--bullet"><li>{{ instance.cancelledReason }} {{ cancelledComment }}</li></ul>
+                    {# TODO: Do i need to have a flag here to say whether the session was cancelled via a bulk cancellation? #}
+                    <p class="govuk-body">
+                        <a href='../cancel-multiple/view-edit-details/{{instance.id}}' class="govuk-link">View or edit cancellation </a>
+                        {% if instance.isAmendable %}
+                        or
+                        <a href="uncancel" class="govuk-link"> uncancel this session</a>
+                        {% endif %}
+                    </p>
                 {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',

@@ -1,0 +1,45 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set jsBackLink = true %}
+{% set pageTitle = applicationName + " - Cancel an activity - Payment" %}
+{% set pageId = 'update-cancelled-session-payment-page' %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-l">Cancel an activity</span>
+      <h1 class="govuk-heading-l">Change if people should be paid for this cancelled session</h1>
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{ govukRadios({
+          name: "issuePayOption",
+          errorMessage: validationErrors | findError('issuePayOption'),
+          items: [
+            {
+              value: "yes",
+              text: "Yes",
+              checked: "yes" == formResponses.issuePayOption
+            },
+            {
+              value: "no",
+              text: "No",
+              checked: "no" == formResponses.issuePayOption
+            }
+          ]
+        }) }}
+
+          <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Update pay for this cancelled session",
+          preventDoubleClick: true
+        }) }}
+          <a href='../cancel-multiple/view-edit-details/{{ instanceId }}' class="govuk-link govuk-link--no-visited-state">Do not change pay for this session</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
