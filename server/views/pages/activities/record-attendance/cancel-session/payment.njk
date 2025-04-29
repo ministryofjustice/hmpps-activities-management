@@ -31,14 +31,14 @@
           ]
         }) }}
 
-          <div class="govuk-button-group">
-        {{ govukButton({
-          text: "Update pay for this cancelled session",
-          preventDoubleClick: true
-        }) }}
-          <a href='../cancel-multiple/view-edit-details/{{ instanceId }}' class="govuk-link govuk-link--no-visited-state">Do not change pay for this session</a>
-          </div>
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: "Update pay for this cancelled session",
+            preventDoubleClick: true
+          }) }}
+          <a href='../cancel-multiple/view-edit-details/{{ instanceId }}' class="govuk-link js-backlink">Do not change pay for this session</a>
         </div>
+
       </form>
     </div>
   </div>

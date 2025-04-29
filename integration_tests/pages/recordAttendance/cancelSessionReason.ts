@@ -7,6 +7,13 @@ export default class CancelSessionPage extends Page {
 
   caption = () => cy.get('.govuk-caption-m').contains('Prisoners will be recorded as having an acceptable absence.')
 
+  editTitle = () => cy.get('.govuk-heading-l').contains('Change the reason this session was cancelled')
+
+  editCaption = () =>
+    cy
+      .get('.govuk-caption-m')
+      .contains('This will be recorded as an acceptable absence for everyone who was due to attend.')
+
   selectReason = (text: string) => this.getInputByLabel(text).click()
 
   moreDetailsInput = () => this.getInputById('comment')

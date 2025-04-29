@@ -8,6 +8,7 @@
   "comment": "this is a comment",
   "cancelledBy": "USER1",
   "cancelledReason": "Location unavailable",
+  "cancelledIssuePayment": false,
   "attendances": [
     {
       "id": 4,
@@ -103,7 +104,8 @@
         "name": "Education",
         "description": "Such as classes in English, maths, construction and computer skills"
       },
-      "riskLevel": null
+      "riskLevel": null,
+      "paid": true
     },
     "slots": [
       {

@@ -31,7 +31,7 @@
 {% endif %}
 
 {# If cancellationPayInfoAvailable is not null, it means that the session was cancelled as part of a mass cancellation, and therefore we can allow the user to access the view/edit page #}
-{% set cancellationPayInfoAvailable = instance.cancellationPay is defined %}
+{% set cancellationPayInfoAvailable = instance.cancelledIssuePayment is defined %}
 
 {% block content %}
     <div class="govuk-grid-row">
