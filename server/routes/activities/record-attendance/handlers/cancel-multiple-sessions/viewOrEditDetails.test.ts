@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { format, startOfTomorrow, startOfYesterday, subDays } from 'date-fns'
+import { format, startOfTomorrow, startOfYesterday } from 'date-fns'
 import { when } from 'jest-when'
 import { ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../../services/activitiesService'

@@ -7,6 +7,7 @@
 {% set pageTitle = applicationName + " - Cancel session - View or edit" %}
 {% set pageId = 'view-or-edit-cancellation-page' %}
 
+{# If instance.cancellationPay is not null, it means that the session was cancelled as part of a mass cancellation, and therefore we can allow the user to edit the pay option (if payment has not run yet) #}
 {# TODO: This data isn't available yet - Lance to introduce onto instance data #}
 {% set cancellationPay = instance.cancellationPay %}
 

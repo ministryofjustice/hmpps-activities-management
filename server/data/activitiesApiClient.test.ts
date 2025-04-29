@@ -1020,4 +1020,23 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('putUpdateCancelledSessionDetails', () => {
+    it('should update activity session instance details', async () => {
+      fakeActivitiesApi
+        .put('/scheduled-instances/1')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+
+      const body = {
+        cancelledReason: 'Cancellation reason',
+        comment: 'Some comment on the cancellation',
+        issuePayment: true,
+      }
+
+      await activitiesApiClient.putUpdateCancelledSessionDetails(1, body, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

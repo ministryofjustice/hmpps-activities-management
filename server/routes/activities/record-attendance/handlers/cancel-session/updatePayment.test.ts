@@ -1,10 +1,8 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
-import { ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
 import UpdateCancelledSessionPayRoutes, { SessionPayForm } from './updatePayment'
 
 jest.mock('../../../../../services/activitiesService')

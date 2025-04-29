@@ -30,6 +30,9 @@
     {% set hardBackLinkHref = '../../activities?date=' + instance.date + '&sessionFilters=' + selectedSessions | join(",") %}
 {% endif %}
 
+{# If cancellationPayInfoAvailable is not null, it means that the session was cancelled as part of a mass cancellation, and therefore we can allow the user to access the view/edit page #}
+{% set cancellationPayInfoAvailable = instance.cancellationPay is defined %}
+
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -38,14 +41,15 @@
                     <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
                     <p class="govuk-body">This activity session has been cancelled by {{ serviceUserName(userMap.get(instance.cancelledBy)) }} on {{ instance.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }} for the following reason:</p>
                     <ul class="govuk-list govuk-list--bullet"><li>{{ instance.cancelledReason }} {{ cancelledComment }}</li></ul>
-                    {# TODO: Do i need to have a flag here to say whether the session was cancelled via a bulk cancellation? #}
-                    <p class="govuk-body">
+                    {% if cancellationPayInfoAvailable %}
+                    <p class="govuk-body govuk-!-margin-top-4">
                         <a href='../cancel-multiple/view-edit-details/{{instance.id}}' class="govuk-link">View or edit cancellation </a>
                         {% if instance.isAmendable %}
                         or
                         <a href="uncancel" class="govuk-link"> uncancel this session</a>
                         {% endif %}
                     </p>
+                    {% endif %}
                 {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',
