@@ -31,6 +31,7 @@ export default class UpdateCancelledSessionPayRoutes {
       issuePayment,
     }
     this.activitiesService.updateCancelledSession(instanceId, updatedDetails, user)
-    return res.redirect(`../../cancel-multiple/view-edit-details/${instanceId}`)
+    // the detailsEdited query is so we know to use a hard coded back link on the view/edit cancellation details page
+    return res.redirect(`../../cancel-multiple/view-edit-details/${instanceId}?detailsEdited=true`)
   }
 }

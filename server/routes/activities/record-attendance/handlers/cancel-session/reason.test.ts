@@ -103,7 +103,7 @@ describe('Route Handlers - Cancel Session Reason', () => {
         res.locals.user,
       )
 
-      expect(res.redirect).toHaveBeenCalledWith('../cancel-multiple/view-edit-details/1')
+      expect(res.redirect).toHaveBeenCalledWith('../cancel-multiple/view-edit-details/1?detailsEdited=true')
     })
   })
 

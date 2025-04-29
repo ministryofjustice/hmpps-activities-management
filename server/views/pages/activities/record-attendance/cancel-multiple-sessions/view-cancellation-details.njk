@@ -3,7 +3,12 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
 
-{% set jsBackLink = true %}
+{% if not detailsEdited %}
+    {% set jsBackLink = true %}
+{% else %}
+    {% set hardBackLinkHref = "../../"+instance.id+"/attendance-list" %}
+    {% set hardBackLinkText = "Back" %}
+{% endif %}
 {% set pageTitle = applicationName + " - Cancel session - View or edit" %}
 {% set pageId = 'view-or-edit-cancellation-page' %}
 

@@ -13,6 +13,7 @@ export default class CancelMultipleSessionsViewEditDetailsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const instanceId = +req.params.id
     const { user } = res.locals
+    const { detailsEdited } = req.query
 
     const instance = await this.activitiesService.getScheduledActivity(instanceId, user).then(i => ({
       ...i,
@@ -26,6 +27,7 @@ export default class CancelMultipleSessionsViewEditDetailsRoutes {
       instance,
       userMap,
       isPayable,
+      detailsEdited,
     })
   }
 }

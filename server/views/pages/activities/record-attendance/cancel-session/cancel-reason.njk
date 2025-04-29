@@ -28,7 +28,7 @@
           {{ govukButton({
           text: "Update cancellation reason"
           }) }}
-          <a href='../cancel-multiple/view-edit-details/{{ instanceId }}' class="govuk-link govuk-link--no-visited-state">Do not change the reason</a>
+          <a href='window.history.go(-1)' class="govuk-link js-backlink">Do not change the reason</a>
           </div>
         {% else %}
           {{ govukButton({

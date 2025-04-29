@@ -48,7 +48,7 @@ export default class CancelSessionRoutes {
         comment,
       }
       this.activitiesService.updateCancelledSession(instanceId, updatedReason, user)
-      res.redirect(`../cancel-multiple/view-edit-details/${instanceId}`)
+      res.redirect(`../cancel-multiple/view-edit-details/${instanceId}?detailsEdited=true`)
     } else {
       req.session.recordAttendanceJourney = {
         ...req.session.recordAttendanceJourney,

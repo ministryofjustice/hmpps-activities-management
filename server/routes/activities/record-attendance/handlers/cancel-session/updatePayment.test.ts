@@ -56,7 +56,7 @@ describe('Route Handlers - Update payment for cancelled session', () => {
 
       expect(activitiesService.updateCancelledSession).toHaveBeenCalledWith(1, { issuePayment: true }, res.locals.user)
 
-      expect(res.redirect).toHaveBeenCalledWith('../../cancel-multiple/view-edit-details/1')
+      expect(res.redirect).toHaveBeenCalledWith('../../cancel-multiple/view-edit-details/1?detailsEdited=true')
     })
     it('should update cancellation details and redirect - no', async () => {
       addReasonRequest = {
@@ -69,7 +69,7 @@ describe('Route Handlers - Update payment for cancelled session', () => {
 
       expect(activitiesService.updateCancelledSession).toHaveBeenCalledWith(1, { issuePayment: false }, res.locals.user)
 
-      expect(res.redirect).toHaveBeenCalledWith('../../cancel-multiple/view-edit-details/1')
+      expect(res.redirect).toHaveBeenCalledWith('../../cancel-multiple/view-edit-details/1?detailsEdited=true')
     })
   })
 
