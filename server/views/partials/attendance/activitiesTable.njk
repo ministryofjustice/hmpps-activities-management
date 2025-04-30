@@ -2,9 +2,9 @@
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from "partials/showLocation.njk" import showLocation %}
 
-{% macro activitiesTable(activities, activityDate, filterParams, now) %}
+{% macro activitiesTable(activities, activityDate, filterParams, now, isUncancelPage) %}
     {% set formActions = [] %}
-    {% if cancelMultipleSessionsEnabled and not ((activityDate | toDateString) < (now | toDateString)) %}
+    {% if not ((activityDate | toDateString) < (now | toDateString)) %}
       {% set formActions = (formActions.push({
         text: 'Cancel sessions',
         formAction: 'activities/cancel-multiple'
@@ -16,12 +16,18 @@
         formAction: 'activities/attendance-list'
       }), formActions) %}
     {% endif %}
+  {% if uncancelMultipleSessionsEnabled and isUncancelPage and not ((activityDate | toDateString) < (now | toDateString)) %}
+    {% set formActions = [{
+      text: 'Uncancel activity sessions',
+      formAction: 'uncancel-multiple/next'
+    }]%}
+  {% endif %}
 
     {% set rows = [] %}
     {% for activity in activities %}
         {% set allowSelection = not activity.cancelled and activity.attendanceRequired and activity.attendanceSummary.allocations > 0 %}
-        {% if not cancelMultipleSessionsEnabled %}
-          {% set allowSelection = allowSelection and not ((activity.sessionDate | toDateString) > (now | toDateString)) %}
+        {% if uncancelMultipleSessionsEnabled and isUncancelPage %}
+          {% set allowSelection = activity.cancelled and activity.attendanceRequired and activity.attendanceSummary.allocations > 0 and not ((activityDate | toDateString) < (now | toDateString)) %}
         {% endif %}
         {% set activityLocation = showLocation(activity, makeCapitals = true) %}
         {% set rows = (rows.push({

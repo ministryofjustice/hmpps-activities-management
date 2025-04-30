@@ -1,0 +1,108 @@
+{% extends "layout.njk" %}
+
+{% from "components/searchBar.njk" import searchBar %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "partials/attendance/activitiesTable.njk" import activitiesTable %}
+{% from "partials/attendance/activitiesTableFilters.njk" import activitiesTableFilters %}
+
+{% set pageTitle = applicationName + " - Uncancel sessions" %}
+{% set pageId = 'uncancel-sessions-page' %}
+{% set activitiesListLink = "../activities?date="+(activityDate | toDateString or '')+"&sessions="+(session.req.query.sessionFilters or '') %}
+
+{% set hardBackLinkHref = activitiesListLink %}
+{% set hardBackLinkText = "Back" %}
+
+{% set filterParams = (('&searchTerm=' + session.req.query.searchTerm) if session.req.query.searchTerm else '') +
+  (('&sessionFilters=' + session.req.query.sessionFilters) if session.req.query.sessionFilters else '') +
+  (('&categoryFilters=' + session.req.query.categoryFilters) if session.req.query.categoryFilters else '') +
+  (('&locationId=' + session.req.query.locationId) if session.req.query.locationId else '') +
+  (('&locationType=' + session.req.query.locationType) if session.req.query.locationType else '') %}
+
+{% block meta %}
+  <meta name="autocompleteElements" content="locationId"/>
+{% endblock %}
+
+{% block content %}
+  <form id="filter-form" method="POST" novalidate>
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+    <input type="hidden" name="activityDate" value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <span class="govuk-caption-l">Record activity attendance</span>
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Uncancel activity sessions that have been cancelled</h1>
+        <span class="govuk-caption-m govuk-!-margin-bottom-4">
+          {{ activityDate | formatDate }}
+          {% set comma = joiner(', ') %}
+          {%- for session in selectedSessions -%}
+            {{  ' - ' if loop.first and session }}
+            {{- ' and ' if loop.last and not loop.first else comma() }}{{ session }}
+          {%- endfor -%}
+        </span>
+        <ul class="govuk-list govuk-!-margin-bottom-4">
+          <li><a href="../select-period" class="govuk-link govuk-!-font-size-19">View a different day or time period</a></li>
+          <li><a href="/activities/attendance-summary/summary?date={{ activityDate | toDateString }}{{ filterParams }}" class="govuk-link govuk-!-font-size-19">Go to daily attendance summary</a></li>
+        </ul>
+      </div>
+      <div class="govuk-grid-column-two-thirds">
+        {{ searchBar({
+          inputParams: {
+            id: 'searchTerm',
+            name: 'searchTerm',
+            label: {
+              text: 'Search by activity name',
+              classes: 'govuk-label--s'
+            },
+            type: 'search',
+            value: session.req.query.searchTerm
+          },
+          buttonParams: {
+            text: 'Search'
+          }
+        }) }}
+      </div>
+    </div>
+
+    <div class="attendance-activities">
+      {% if activityRows.length == 0 %}
+        <P>
+          There are no cancelled sessions for {{ activityDate | formatDate }}
+          {% set comma = joiner(', ') %}
+          {%- for session in selectedSessions -%}
+            {{  ' - ' if loop.first and session }}
+            {{- ' and ' if loop.last and not loop.first else comma() }}{{ session }}
+          {%- endfor -%}
+        </P>
+
+        {{ govukButton({
+          text: "Return to record or edit attendance",
+          href: activitiesListLink,
+          preventDoubleClick: true
+        }) }}
+      {% else %}
+        <div class="moj-filter-layout moj-filter-layout__flex" data-module="uncancel-activities-filter">
+
+          {{ activitiesTableFilters(locations, filterItems) }}
+
+          <hr class="print-only"/>
+          <div class="moj-filter-layout__content">
+            <div class="moj-action-bar govuk-!-display-none-print">
+              <div class="moj-action-bar__filter"></div>
+            </div>
+
+            {{ activitiesTable(activityRows, activityDate, filterParams, now, true) }}
+
+            {% if activitiesBySession['AM'].length == 0 and activitiesBySession['PM'].length == 0 and activitiesBySession['ED'].length == 0 %}
+              {{ govukWarningText({
+                text: "There are no matching activities.",
+                iconFallbackText: "Warning"
+              }) }}
+            {% endif %}
+
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </form>
+{% endblock %}

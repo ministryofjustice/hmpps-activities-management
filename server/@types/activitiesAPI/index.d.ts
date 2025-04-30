@@ -38,6 +38,7 @@ export interface paths {
     get?: never
     /**
      * Un-cancels a scheduled instance.
+     * @deprecated
      * @description Un-cancels a previously cancelled scheduled instance.
      *
      *     Requires one of the following roles:
@@ -70,6 +71,30 @@ export interface paths {
      *     * ACTIVITY_ADMIN
      */
     put: operations['cancelScheduledInstance']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/scheduled-instances/uncancel': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /**
+     * Uncancel multiple schedule instances
+     * @description Uncancel multiple schedule instances and reset associated un-suspended attendances
+     *
+     *     Requires one of the following roles:
+     *     * PRISON
+     *     * ACTIVITY_ADMIN
+     */
+    put: operations['uncancelScheduledInstances']
     post?: never
     delete?: never
     options?: never
@@ -530,6 +555,35 @@ export interface paths {
      *     * ACTIVITY_ADMIN
      */
     post: operations['createPayBand']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/migrate/{prisonCode}/move-activity-start-dates': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Move the start date for activities their schedules and allocations for a prison
+     * @description
+     *           Move a prisons activities to a later start date.
+     *           Only allocations due to start before the new start date will be moved.
+     *           Activities that have already started will be ignored.
+     *           Activities that are not before the new start date will be ignored.
+     *
+     *
+     *     Requires one of the following roles:
+     *     * NOMIS_ACTIVITIES
+     *     * ACTIVITY_ADMIN
+     */
+    post: operations['moveActivityStartDates']
     delete?: never
     options?: never
     head?: never
@@ -2394,7 +2448,12 @@ export interface components {
        */
       comment?: string
     }
-    /** @description The scheduled instances cancellation request */
+    /** @description The uncancel scheduled instances request */
+    ScheduleInstancesUncancelRequest: {
+      /** @description The scheduled instance ids to uncancel */
+      scheduleInstanceIds?: number[]
+    }
+    /** @description The cancel scheduled instances request */
     ScheduleInstancesCancelRequest: {
       /** @description The scheduled instance ids to cancel */
       scheduleInstanceIds?: number[]
@@ -3017,12 +3076,12 @@ export interface components {
       /** Format: int64 */
       offset?: number
       sort?: components['schemas']['SortObject']
-      unpaged?: boolean
       /** Format: int32 */
       pageSize?: number
       paged?: boolean
       /** Format: int32 */
       pageNumber?: number
+      unpaged?: boolean
     }
     PagedWaitingListApplication: {
       /** Format: int32 */
@@ -8579,6 +8638,57 @@ export interface operations {
       }
     }
   }
+  uncancelScheduledInstances: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ScheduleInstancesUncancelRequest']
+      }
+    }
+    responses: {
+      /** @description Scheduled instances successfully uncancelled */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': Record<string, never>
+        }
+      }
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   cancelScheduledInstances: {
     parameters: {
       query?: never
@@ -9532,6 +9642,67 @@ export interface operations {
       }
       /** @description Forbidden, requires an appropriate role */
       403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  moveActivityStartDates: {
+    parameters: {
+      query: {
+        /** @description The new activity start date for the activities. Must be in the future. */
+        activityStartDate: string
+      }
+      header?: never
+      path: {
+        prisonCode: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description The start dates have been updated where possible */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': string[]
+        }
+      }
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The prison code is unknown. */
+      404: {
         headers: {
           [name: string]: unknown
         }

@@ -1,15 +1,15 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { addDays, format, parse } from 'date-fns'
-import ActivitiesRoutes from './activities'
-import ActivitiesService from '../../../../services/activitiesService'
-import PrisonService from '../../../../services/prisonService'
-import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
-import TimeSlot from '../../../../enum/timeSlot'
-import LocationType from '../../../../enum/locationType'
+import ActivitiesService from '../../../../../services/activitiesService'
+import PrisonService from '../../../../../services/prisonService'
+import { ActivityCategory } from '../../../../../@types/activitiesAPI/types'
+import TimeSlot from '../../../../../enum/timeSlot'
+import LocationType from '../../../../../enum/locationType'
+import UncancelMultipleSessionsRoutes from './activitiesList'
 
-jest.mock('../../../../services/activitiesService')
-jest.mock('../../../../services/prisonService')
+jest.mock('../../../../../services/activitiesService')
+jest.mock('../../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
@@ -29,7 +29,7 @@ const attendanceSummaryResponse = [
     offWing: false,
     timeSlot: TimeSlot.PM,
     attendanceRequired: true,
-    cancelled: false,
+    cancelled: true,
     attendanceSummary: {
       allocations: 1,
       attendees: 1,
@@ -58,7 +58,7 @@ const attendanceSummaryResponse = [
       code: 'MDI-WORK-1',
       description: 'WORKSHOP 1',
     },
-    cancelled: false,
+    cancelled: true,
     attendanceSummary: {
       allocations: 2,
       attendees: 2,
@@ -106,7 +106,7 @@ const attendanceSummaryResponse = [
     onWing: false,
     offWing: true,
     attendanceRequired: true,
-    cancelled: false,
+    cancelled: true,
     attendanceSummary: {
       allocations: 5,
       attendees: 4,
@@ -118,8 +118,8 @@ const attendanceSummaryResponse = [
   },
 ]
 
-describe('Route Handlers - Activities', () => {
-  const handler = new ActivitiesRoutes(activitiesService, prisonService)
+describe('Route Handlers - Uncancel Multiple Sessions', () => {
+  const handler = new UncancelMultipleSessionsRoutes(activitiesService, prisonService)
 
   let req: Request
   let res: Response
@@ -183,30 +183,33 @@ describe('Route Handlers - Activities', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
-        filterItems: {
-          categoryFilters: [
-            { value: 'SAA_EDUCATION', text: 'Education', checked: true },
-            { value: 'SAA_INDUSTRIES', text: 'Packing', checked: false },
-          ],
-          sessionFilters: [
-            { value: 'AM', text: 'Morning (AM)', checked: false },
-            { value: 'PM', text: 'Afternoon (PM)', checked: true },
-            { value: 'ED', text: 'Evening (ED)', checked: true },
-          ],
-          locationType: LocationType.IN_CELL,
-          locationId: null,
-        },
-        activityDate: date,
-        selectedSessions: ['PM', 'ED'],
-        activityRows: [
-          {
-            ...attendanceSummaryResponse[0],
-            session: 'PM',
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/record-attendance/uncancel-multiple-sessions/cancelled-activities',
+        {
+          filterItems: {
+            categoryFilters: [
+              { value: 'SAA_EDUCATION', text: 'Education', checked: true },
+              { value: 'SAA_INDUSTRIES', text: 'Packing', checked: false },
+            ],
+            sessionFilters: [
+              { value: 'AM', text: 'Morning (AM)', checked: false },
+              { value: 'PM', text: 'Afternoon (PM)', checked: true },
+              { value: 'ED', text: 'Evening (ED)', checked: true },
+            ],
+            locationType: LocationType.IN_CELL,
+            locationId: null,
           },
-        ],
-        locations: [],
-      })
+          activityDate: date,
+          selectedSessions: ['PM', 'ED'],
+          activityRows: [
+            {
+              ...attendanceSummaryResponse[0],
+              session: 'PM',
+            },
+          ],
+          locations: [],
+        },
+      )
     })
 
     it('should render with the expected view when multiple sessions are returned', async () => {
@@ -218,38 +221,37 @@ describe('Route Handlers - Activities', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
-        filterItems: {
-          categoryFilters: [
-            { value: 'SAA_EDUCATION', text: 'Education', checked: true },
-            { value: 'SAA_INDUSTRIES', text: 'Packing', checked: true },
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/record-attendance/uncancel-multiple-sessions/cancelled-activities',
+        {
+          filterItems: {
+            categoryFilters: [
+              { value: 'SAA_EDUCATION', text: 'Education', checked: true },
+              { value: 'SAA_INDUSTRIES', text: 'Packing', checked: true },
+            ],
+            sessionFilters: [
+              { value: 'AM', text: 'Morning (AM)', checked: true },
+              { value: 'PM', text: 'Afternoon (PM)', checked: true },
+              { value: 'ED', text: 'Evening (ED)', checked: false },
+            ],
+            locationType: 'ALL',
+            locationId: null,
+          },
+          activityDate: date,
+          selectedSessions: ['AM', 'PM'],
+          activityRows: [
+            {
+              ...attendanceSummaryResponse[1],
+              session: 'AM',
+            },
+            {
+              ...attendanceSummaryResponse[0],
+              session: 'PM',
+            },
           ],
-          sessionFilters: [
-            { value: 'AM', text: 'Morning (AM)', checked: true },
-            { value: 'PM', text: 'Afternoon (PM)', checked: true },
-            { value: 'ED', text: 'Evening (ED)', checked: false },
-          ],
-          locationType: 'ALL',
-          locationId: null,
+          locations: [],
         },
-        activityDate: date,
-        selectedSessions: ['AM', 'PM'],
-        activityRows: [
-          {
-            ...attendanceSummaryResponse[1],
-            session: 'AM',
-          },
-          {
-            ...attendanceSummaryResponse[0],
-            session: 'PM',
-          },
-          {
-            ...attendanceSummaryResponse[2],
-            session: 'PM',
-          },
-        ],
-        locations: [],
-      })
+      )
     })
 
     it('should redirect back to select date page if selected date is out of range', async () => {
@@ -259,7 +261,7 @@ describe('Route Handlers - Activities', () => {
 
       await handler.GET(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('select-period')
+      expect(res.redirect).toHaveBeenCalledWith('../select-period')
     })
 
     it('should clear any session data for record attendance', async () => {
@@ -279,47 +281,7 @@ describe('Route Handlers - Activities', () => {
     })
   })
 
-  describe('POST_ATTENDANCES', () => {
-    it('should save the selected instance ids and redirect when multiple instances are chosen', async () => {
-      req = {
-        body: {
-          selectedInstanceIds: [345, 567],
-          activityDate: '2024-01-24',
-          sessionFilters: ['AM', 'ED'],
-        },
-        session: {},
-      } as unknown as Request
-
-      await handler.POST_ATTENDANCES(req, res)
-
-      expect(req.session.recordAttendanceJourney).toEqual({
-        selectedInstanceIds: [345, 567],
-        activityDate: '2024-01-24',
-        sessionFilters: ['AM', 'ED'],
-      })
-
-      expect(res.redirect).toHaveBeenCalledWith('attendance-list')
-    })
-
-    it('should save the selected instance ids and redirect when a single instance is chosen', async () => {
-      req = {
-        body: {
-          selectedInstanceIds: [345],
-        },
-        session: {},
-      } as unknown as Request
-
-      await handler.POST_ATTENDANCES(req, res)
-
-      expect(req.session.recordAttendanceJourney).toEqual({
-        selectedInstanceIds: [345],
-      })
-
-      expect(res.redirect).toHaveBeenCalledWith('345/attendance-list')
-    })
-  })
-
-  describe('POST_CANCELLATIONS', () => {
+  describe('POST_UNCANCEL', () => {
     it('should save the selected instance ids and redirect when multiple sessions are chosen', async () => {
       req = {
         body: {
@@ -330,7 +292,7 @@ describe('Route Handlers - Activities', () => {
         session: {},
       } as unknown as Request
 
-      await handler.POST_CANCELLATIONS(req, res)
+      await handler.POST_UNCANCEL(req, res)
 
       expect(req.session.recordAttendanceJourney).toEqual({
         selectedInstanceIds: [789, 567],
@@ -338,7 +300,7 @@ describe('Route Handlers - Activities', () => {
         sessionFilters: ['AM', 'PM'],
       })
 
-      expect(res.redirect).toHaveBeenCalledWith('cancel-multiple/cancel-reason')
+      expect(res.redirect).toHaveBeenCalledWith('confirm')
     })
   })
 })

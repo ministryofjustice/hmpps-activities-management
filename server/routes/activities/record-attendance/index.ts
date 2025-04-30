@@ -21,6 +21,10 @@ import CancelMultipleSessionsReasonRoutes, {
 } from './handlers/cancel-multiple-sessions/reason'
 import CancelMultipleSessionsPayRoutes, { SessionPayMultipleForm } from './handlers/cancel-multiple-sessions/payment'
 import CancelMultipleSessionsCheckAnswersRoutes from './handlers/cancel-multiple-sessions/checkAnswers'
+import UncancelMultipleSessionsConfirmRoutes, {
+  UncancelMultipleConfirmForm,
+} from './handlers/uncancel-multiple-sessions/confirmation'
+import UncancelMultipleSessionsRoutes from './handlers/uncancel-multiple-sessions/activitiesList'
 
 export default function Index({ activitiesService, prisonService, userService }: Services): Router {
   const router = Router()
@@ -45,6 +49,8 @@ export default function Index({ activitiesService, prisonService, userService }:
   const cancelMultipleSessionsReasonRoutes = new CancelMultipleSessionsReasonRoutes(activitiesService)
   const cancelMultipleSessionsPayRoutes = new CancelMultipleSessionsPayRoutes()
   const cancelMultipleSessionsCheckAnswersRoutes = new CancelMultipleSessionsCheckAnswersRoutes(activitiesService)
+  const uncancelMultipleSessionsRoutes = new UncancelMultipleSessionsRoutes(activitiesService, prisonService)
+  const uncancelMultipleSessionsConfirmRoutes = new UncancelMultipleSessionsConfirmRoutes(activitiesService)
 
   get('/', homeHandler.GET)
 
@@ -103,6 +109,16 @@ export default function Index({ activitiesService, prisonService, userService }:
   post('/:journeyId/activities/cancel-multiple/payment', cancelMultipleSessionsPayRoutes.POST, SessionPayMultipleForm)
   get('/:journeyId/activities/cancel-multiple/check-answers', cancelMultipleSessionsCheckAnswersRoutes.GET, true)
   post('/:journeyId/activities/cancel-multiple/check-answers', cancelMultipleSessionsCheckAnswersRoutes.POST)
+
+  get('/:journeyId/activities/uncancel-multiple', uncancelMultipleSessionsRoutes.GET, true)
+  post('/:journeyId/activities/uncancel-multiple', uncancelMultipleSessionsRoutes.POST)
+  post('/:journeyId/activities/uncancel-multiple/next', uncancelMultipleSessionsRoutes.POST_UNCANCEL)
+  get('/:journeyId/activities/uncancel-multiple/confirm', uncancelMultipleSessionsConfirmRoutes.GET, true)
+  post(
+    '/:journeyId/activities/uncancel-multiple/confirm',
+    uncancelMultipleSessionsConfirmRoutes.POST,
+    UncancelMultipleConfirmForm,
+  )
 
   return router
 }
