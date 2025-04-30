@@ -76,7 +76,9 @@ context('Record attendance', () => {
     activitiesPage.cancelSessions()
 
     const cancelMultipleReasonPage = Page.verifyOnPage(CancelMultipleReasonPage)
-    cancelMultipleReasonPage.caption()
+    cancelMultipleReasonPage
+      .caption()
+      .contains('This will be recorded as an acceptable absence for everyone who was due to attend.')
 
     cancelMultipleReasonPage.selectReason('Location unavailable')
     cancelMultipleReasonPage.moreDetailsInput().type('Location in use')
@@ -133,7 +135,9 @@ context('Record attendance', () => {
     activitiesPage.cancelSessions()
 
     const cancelMultipleReasonPage = Page.verifyOnPage(CancelMultipleReasonPage)
-    cancelMultipleReasonPage.caption()
+    cancelMultipleReasonPage
+      .caption()
+      .contains('This will be recorded as an acceptable absence for everyone who was due to attend.')
 
     cancelMultipleReasonPage.selectReason('Location unavailable')
     cancelMultipleReasonPage.moreDetailsInput().type('Location in use')
@@ -232,8 +236,10 @@ context('Updating cancellation details', () => {
     viewOrEditCancellationDetailsPage.getLinkByText('Change cancellation reason').click()
 
     const cancelSingleReasonPage = Page.verifyOnPage(CancelSessionPage)
-    cancelSingleReasonPage.editTitle()
-    cancelSingleReasonPage.editCaption()
+    cancelSingleReasonPage.title().contains('Change the reason this session was cancelled')
+    cancelSingleReasonPage
+      .caption()
+      .contains('This will be recorded as an acceptable absence for everyone who was due to attend.')
     cancelSingleReasonPage.selectReason('Session not required')
     cancelSingleReasonPage.moreDetailsInput().type('The prisoners are having a day off this activity.')
     cancelSingleReasonPage.getButton('Update cancellation reason').click()
@@ -310,7 +316,7 @@ context('Updating cancellation details', () => {
     getScheduledInstanceEnglishLevel1Cancelled.activitySchedule.activity.paid = true
 
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstanceEnglishLevel1Cancelled as unknown as JSON)
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=2025-04-29`, getScheduledEvents as unknown as JSON)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${todayStr}`, getScheduledEvents as unknown as JSON)
 
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
@@ -346,7 +352,7 @@ context('Updating cancellation details', () => {
     attendanceListPage.getLinkByText('Change pay').click()
 
     const updateCancelledSessionPayPage = Page.verifyOnPage(UpdateCancelledSessionPayPage)
-    updateCancelledSessionPayPage.title()
+    updateCancelledSessionPayPage.title().contains('Change if people should be paid for this cancelled session')
     updateCancelledSessionPayPage.getLinkByText('Do not change pay for this session').click()
 
     attendanceListPage.getLinkByText('Change pay').click()
@@ -358,7 +364,7 @@ context('Updating cancellation details', () => {
     getScheduledInstanceEnglishLevel1Cancelled.date = todayStr
 
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstanceEnglishLevel1Cancelled as unknown as JSON)
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=2025-04-29`, getScheduledEvents as unknown as JSON)
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${todayStr}`, getScheduledEvents as unknown as JSON)
     cy.stubEndpoint('PUT', '/scheduled-instances/93/uncancel')
 
     const indexPage = Page.verifyOnPage(IndexPage)

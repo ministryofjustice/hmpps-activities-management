@@ -5,17 +5,9 @@ export default class CancelSessionPage extends Page {
     super('cancel-session-reason-page')
   }
 
-  title = () => cy.get('.govuk-heading-l').contains('Why are you cancelling the session?')
+  title = () => cy.get('.govuk-heading-l')
 
-  caption = () =>
-    cy.get('.govuk-caption-m').contains('Prisoners will be paid and recorded as having an acceptable absence.')
-
-  editTitle = () => cy.get('.govuk-heading-l').contains('Change the reason this session was cancelled')
-
-  editCaption = () =>
-    cy
-      .get('.govuk-caption-m')
-      .contains('This will be recorded as an acceptable absence for everyone who was due to attend.')
+  caption = () => cy.get('.govuk-caption-m')
 
   selectReason = (text: string) => this.getInputByLabel(text).click()
 

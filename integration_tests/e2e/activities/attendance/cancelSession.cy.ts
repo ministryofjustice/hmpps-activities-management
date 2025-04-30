@@ -65,13 +65,15 @@ context('Cancel an activity session (single)', () => {
 
     const cancelSessionPage = Page.verifyOnPage(CancelSessionPage)
     cancelSessionPage.title()
-    cancelSessionPage.caption()
+    cancelSessionPage.caption().contains('Prisoners will be paid and recorded as having an acceptable absence.')
     cancelSessionPage.selectReason('Staff unavailable')
     cancelSessionPage.continue()
 
     const cancelSessionConfirmPage = Page.verifyOnPage(CancelSessionConfirmPage)
     cancelSessionConfirmPage.title()
-    cancelSessionConfirmPage.caption()
+    cancelSessionConfirmPage
+      .caption()
+      .contains('Cancelling the session will record an acceptable absence for all prisoners.')
     cancelSessionConfirmPage.selectConfirmation('No')
     cancelSessionConfirmPage.confirm()
 
