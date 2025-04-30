@@ -21,6 +21,7 @@ export default class CancelSessionRoutes {
   GET = async (req: Request, res: Response) => {
     const { user } = res.locals
     const instanceId = req.params.id
+    const { editMode } = req.query
 
     const instance = await this.activitiesService.getScheduledActivity(+instanceId, user)
     const isPayable = instance.activitySchedule.activity.paid
@@ -28,19 +29,32 @@ export default class CancelSessionRoutes {
     res.render('pages/activities/record-attendance/cancel-session/cancel-reason', {
       cancellationReasons: CancellationReasons,
       isPayable,
+      editMode: editMode || false,
+      instanceId,
     })
   }
 
   POST = async (req: Request, res: Response) => {
+    const { user } = res.locals
+    const { editMode } = req.query
     const { reason, comment }: CancelReasonForm = req.body
+    const instanceId = +req.params.id
 
     const textReason = CancellationReasons[reason]
 
-    req.session.recordAttendanceJourney = {
-      ...req.session.recordAttendanceJourney,
-      sessionCancellation: { reason: textReason, comment },
+    if (editMode) {
+      const updatedReason = {
+        cancelledReason: textReason,
+        comment,
+      }
+      this.activitiesService.updateCancelledSession(instanceId, updatedReason, user)
+      res.redirect(`../cancel-multiple/view-edit-details/${instanceId}?detailsEdited=true`)
+    } else {
+      req.session.recordAttendanceJourney = {
+        ...req.session.recordAttendanceJourney,
+        sessionCancellation: { reason: textReason, comment },
+      }
+      res.redirect('cancel/confirm')
     }
-
-    res.redirect('cancel/confirm')
   }
 }
