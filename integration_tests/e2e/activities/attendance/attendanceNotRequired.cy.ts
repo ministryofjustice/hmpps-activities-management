@@ -73,7 +73,7 @@ context('Attendance not required', () => {
     cy.stubEndpoint('GET', '/scheduled-instances/94', getCancelledScheduledInstance)
 
     const cancelSessionReasonPage = Page.verifyOnPage(CancelSessionReason)
-    cancelSessionReasonPage.caption()
+    cancelSessionReasonPage.caption().contains('Prisoners will be recorded as having an acceptable absence.')
     cancelSessionReasonPage.selectReason('Location unavailable')
     cancelSessionReasonPage.moreDetailsInput().type('Location in use')
     cancelSessionReasonPage.continue()

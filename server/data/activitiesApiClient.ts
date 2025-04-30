@@ -58,6 +58,7 @@ import {
   ScheduleInstanceCancelRequest,
   ScheduleInstancesCancelRequest,
   ScheduleInstancesUncancelRequest,
+  ScheduledInstancedUpdateRequest,
   Slot,
   SuspendedPrisonerAttendance,
   SuspendPrisonerRequest,
@@ -894,7 +895,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       data: cancelRequest,
     })
   }
-
+  
   async putUncancelMultipleActivities(
     uncancelRequest: ScheduleInstancesUncancelRequest,
     user: ServiceUser,
@@ -904,6 +905,19 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: uncancelRequest,
+    })
+  }
+
+  async putUpdateCancelledSessionDetails(
+    instanceId: number,
+    cancelRequest: ScheduledInstancedUpdateRequest,
+    user: ServiceUser,
+  ): Promise<void> {
+    return this.put({
+      path: `/scheduled-instances/${instanceId}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: cancelRequest,
     })
   }
 }

@@ -1089,12 +1089,48 @@ describe('Activities Service', () => {
       expect(activitiesApiClient.putCancelMultipleActivities).toHaveBeenCalledWith(apiRequest, user)
     })
   })
-
+  
   describe('uncancelMultipleActivities', () => {
     it('should uncancel multiple activities', async () => {
       const apiRequest = { scheduleInstanceIds: [1, 2] }
       await activitiesService.uncancelMultipleActivities([1, 2], user)
       expect(activitiesApiClient.putUncancelMultipleActivities).toHaveBeenCalledWith(apiRequest, user)
+    })
+  })
+
+  describe('updateCancelledSession', () => {
+    it('should update a cancelled activity session instance - just reason and comment', async () => {
+      const serviceRequest = {
+        reason: 'Cancel reason',
+        comment: 'Cancel comment',
+      }
+
+      await activitiesService.updateCancelledSession(1, serviceRequest, user)
+
+      expect(activitiesApiClient.putUpdateCancelledSessionDetails).toHaveBeenCalledWith(
+        1,
+        {
+          reason: 'Cancel reason',
+          comment: 'Cancel comment',
+        },
+        user,
+      )
+    })
+    it('should update a cancelled activity session instance - just pay', async () => {
+      const serviceRequest = {
+        issuePayment: true,
+      }
+
+      await activitiesService.updateCancelledSession(1, serviceRequest, user)
+
+      expect(activitiesApiClient.putUpdateCancelledSessionDetails).toHaveBeenCalledWith(
+        1,
+        {
+          reason: 'Cancel reason',
+          comment: 'Cancel comment',
+        },
+        user,
+      )
     })
   })
 })

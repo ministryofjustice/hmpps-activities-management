@@ -57,6 +57,7 @@ import {
   WaitingListApplicationUpdateRequest,
   WaitingListSearchParams,
   WaitingListSearchRequest,
+  ScheduledInstancedUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import {
@@ -593,5 +594,13 @@ export default class ActivitiesService {
       scheduleInstanceIds: scheduledInstanceIds,
     }
     return this.activitiesApiClient.putUncancelMultipleActivities(scheduleInstancesUncancelRequest, user)
+  }
+
+  async updateCancelledSession(
+    scheduledInstanceId: number,
+    cancelRequest: ScheduledInstancedUpdateRequest,
+    user: ServiceUser,
+  ) {
+    return this.activitiesApiClient.putUpdateCancelledSessionDetails(scheduledInstanceId, cancelRequest, user)
   }
 }

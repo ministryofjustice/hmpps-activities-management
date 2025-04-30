@@ -10,18 +10,31 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <span class="govuk-caption-l">Record activity attendance</span>
-      <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Why are you cancelling the session?</h1>
-      <span class="govuk-caption-m govuk-!-margin-bottom-3">Prisoners will be {{ "paid and" if isPayable}} recorded as having an acceptable absence.</span>
+      <span class="govuk-caption-l">{{ "Cancel an activity" if editMode else "Record activity attendance" }} </span>
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-2">{{"Change the reason this session was cancelled" if editMode else "Why are you cancelling the session?"}}</h1>
+      {% if editMode %}
+        <span class="govuk-caption-m govuk-!-margin-bottom-3">This will be recorded as an acceptable absence for everyone who was due to attend.</span>
+      {% else %}
+        <span class="govuk-caption-m govuk-!-margin-bottom-3">Prisoners will be {{ "paid and" if isPayable}} recorded as having an acceptable absence.</span>
+      {% endif %}
 
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
         {{ cancelReasonList(cancellationReasons) }}
 
-        {{ govukButton({
-          text: "Continue"
-        }) }}
+        {% if editMode %}
+          <div class="govuk-button-group">
+          {{ govukButton({
+          text: "Update cancellation reason"
+          }) }}
+          <a href='window.history.go(-1)' class="govuk-link js-backlink">Do not change the reason</a>
+          </div>
+        {% else %}
+          {{ govukButton({
+            text: "Continue"
+          }) }}
+        {% endif %}
       </form>
     </div>
   </div>
