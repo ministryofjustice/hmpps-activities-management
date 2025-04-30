@@ -21,7 +21,7 @@
 {% set pageTitle = applicationName %}
 {% set pageId = 'attendance-list-page' %}
 {% set cancelledComment = '' %}
-{% if instance is defined and instance.comment %}
+{% if instance and instance.comment %}
   {% set cancelledComment = " - "+instance.comment %}
 {% endif %}
 {% set activityDate = instance.date | toDate | formatDate %}
@@ -31,7 +31,7 @@
 {% endif %}
 
 {# If cancellationPayInfoAvailable is not null, it means that the session was cancelled as part of a mass cancellation, and therefore we can allow the user to access the view/edit page #}
-{% set cancellationPayInfoAvailable = instance.cancelledIssuePayment is defined %}
+{% set cancellationPayInfoAvailable = instance.cancelledIssuePayment is not null %}
 
 {% block content %}
     <div class="govuk-grid-row">
