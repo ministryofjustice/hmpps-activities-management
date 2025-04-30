@@ -1020,7 +1020,7 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
-  
+
   describe('putUncancelMultipleActivities', () => {
     it('should uncancel multiple activity sessions', async () => {
       fakeActivitiesApi

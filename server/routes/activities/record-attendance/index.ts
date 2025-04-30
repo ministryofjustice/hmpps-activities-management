@@ -128,7 +128,7 @@ export default function Index({ activitiesService, prisonService, userService }:
     uncancelMultipleSessionsConfirmRoutes.POST,
     UncancelMultipleConfirmForm,
   )
-  
+
   get(
     '/:journeyId/activities/cancel-multiple/view-edit-details/:id',
     cancelMultipleSessionsViewEditDetailsRoutes.GET,

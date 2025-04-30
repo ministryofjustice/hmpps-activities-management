@@ -895,7 +895,7 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       data: cancelRequest,
     })
   }
-  
+
   async putUncancelMultipleActivities(
     uncancelRequest: ScheduleInstancesUncancelRequest,
     user: ServiceUser,
