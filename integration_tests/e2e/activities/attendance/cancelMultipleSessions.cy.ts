@@ -15,7 +15,7 @@ import CancelMultipleReasonPage from '../../../pages/recordAttendance/cancelMult
 import CancelMultiplePaymentPage from '../../../pages/recordAttendance/cancelMultiplePayment'
 import CancelMultipleCheckAnswersPage from '../../../pages/recordAttendance/cancelMultipleCheckAnswers'
 
-context('Record attendance', () => {
+context('Cancel Multiple Sessions', () => {
   const today = startOfToday()
   const todayStr = format(today, 'yyyy-MM-dd')
 

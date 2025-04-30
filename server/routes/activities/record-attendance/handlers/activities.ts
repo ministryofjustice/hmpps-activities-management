@@ -55,7 +55,7 @@ export default class ActivitiesRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { searchTerm, sessionFilters, categoryFilters, locationId, locationType } = req.body
 
-    const activityDate = req.query.date ?? formatDate(new Date(), 'YYYY-MM-dd')
+    const activityDate = req.query.date ?? formatDate(new Date(), 'yyyy-MM-dd')
     const sessionFiltersString = sessionFilters ? convertToArray(sessionFilters).join(',') : ''
     const categoryFiltersString = categoryFilters ? convertToArray(categoryFilters).join(',') : ''
 
