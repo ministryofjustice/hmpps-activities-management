@@ -25,11 +25,14 @@ describe('Route Handlers - Waitlist - Confirmation', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      params: {},
+      journeyData: {
         waitListApplicationJourney: {
           prisoner: { name: 'Alan Key', prisonerNumber: 'ABC1234' },
           activity: { activityId: 1, scheduleId: 1 },
         },
+      },
+      session: {
         journeyMetrics: {},
       },
     } as unknown as Request
@@ -72,7 +75,7 @@ describe('Route Handlers - Waitlist - Confirmation', () => {
         currentlyAllocated: 3,
         capacity: 5,
       })
-      expect(req.session.waitListApplicationJourney).toBeUndefined()
+      expect(req.journeyData.waitListApplicationJourney).toBeUndefined()
     })
   })
 })

@@ -13,9 +13,10 @@ export class EditStatus {
 export default class EditStatusRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response): Promise<void> => {
-    return res.render(`pages/activities/waitlist-application/edit-status`, { WaitingListStatusOptions })
-  }
+  GET = async (req: Request, res: Response): Promise<void> =>
+    res.render(`pages/activities/waitlist-application/edit-status`, {
+      WaitingListStatusOptions,
+    })
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { applicationId } = req.params
@@ -26,7 +27,7 @@ export default class EditStatusRoutes {
 
     return res.redirectWithSuccess(
       `view`,
-      `You have updated the status of ${req.session.waitListApplicationJourney.prisoner.name}'s application`,
+      `You have updated the status of ${req.journeyData.waitListApplicationJourney.prisoner.name}'s application`,
     )
   }
 }

@@ -16,13 +16,20 @@ import EditStatusRoutes, { EditStatus } from './handlers/view-and-edit/editStatu
 import EditRequesterRoutes from './handlers/view-and-edit/editRequester'
 import EditRequestDateRoutes, { EditRequestDate } from './handlers/view-and-edit/editRequestDate'
 import EditCommentRoutes, { Comment } from './handlers/view-and-edit/editComment'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
-export default function Index({ prisonService, activitiesService, metricsService }: Services): Router {
+export default function Index({ prisonService, activitiesService, metricsService, tokenStore }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('waitListApplicationJourney', stepRequiresSession), asyncMiddleware(handler))
+    router.get(
+      path,
+      setUpJourneyData(tokenStore),
+      emptyJourneyHandler('waitListApplicationJourney', stepRequiresSession),
+      asyncMiddleware(handler),
+    )
+
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), asyncMiddleware(handler))
 
   const startJourneyHandler = new StartJourneyRoutes(prisonService, metricsService)
   const requestDateHandler = new RequestDateRoutes()

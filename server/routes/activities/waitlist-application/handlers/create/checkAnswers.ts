@@ -12,7 +12,7 @@ export default class CheckAnswersRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { prisoner, requestDate, activity, requester, comment, status } = req.session.waitListApplicationJourney
+    const { prisoner, requestDate, activity, requester, comment, status } = req.journeyData.waitListApplicationJourney
 
     return res.render(`pages/activities/waitlist-application/check-answers`, {
       prisoner,
@@ -26,7 +26,7 @@ export default class CheckAnswersRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { waitListApplicationJourney } = req.session
+    const { waitListApplicationJourney } = req.journeyData
 
     const waitlistApplication = {
       prisonerNumber: waitListApplicationJourney.prisoner.prisonerNumber,

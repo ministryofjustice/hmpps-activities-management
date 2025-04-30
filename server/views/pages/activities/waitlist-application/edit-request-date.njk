@@ -14,13 +14,13 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                <span class="govuk-caption-xl">{{ session.waitListApplicationJourney.activity.activityName }}</span>
+                <span class="govuk-caption-xl">{{ waitListApplicationJourney.activity.activityName }}</span>
                 {{ mojDatePicker({
                     id: 'requestDate',
                     name: 'requestDate',
                     leadingZeros: 'true',
                     label: {
-                        text: "Change the date of " + session.waitListApplicationJourney.prisoner.name + "'s application",
+                        text: "Change the date of " + waitListApplicationJourney.prisoner.name + "'s application",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
@@ -30,7 +30,7 @@
                             '<div>Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.</div>'
                     },
                     errorMessage: validationErrors | findError('requestDate'),
-                    value: formResponses.requestDate or session.waitListApplicationJourney.requestDate | isoDateToDatePickerDate
+                    value: formResponses.requestDate or waitListApplicationJourney.requestDate | isoDateToDatePickerDate
                 }) }}
 
                 <div class="govuk-button-group">

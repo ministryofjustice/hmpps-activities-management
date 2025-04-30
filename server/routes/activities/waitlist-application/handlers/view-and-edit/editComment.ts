@@ -15,9 +15,8 @@ export class Comment {
 export default class EditCommentRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response): Promise<void> => {
-    return res.render(`pages/activities/waitlist-application/edit-comment`)
-  }
+  GET = async (req: Request, res: Response): Promise<void> =>
+    res.render(`pages/activities/waitlist-application/edit-comment`)
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { applicationId } = req.params
@@ -28,7 +27,7 @@ export default class EditCommentRoutes {
 
     return res.redirectWithSuccess(
       `view`,
-      `You have updated the comment for ${req.session.waitListApplicationJourney.prisoner.name}'s application`,
+      `You have updated the comment for ${req.journeyData.waitListApplicationJourney.prisoner.name}'s application`,
     )
   }
 }

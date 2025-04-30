@@ -41,7 +41,7 @@
                         text: 'Start typing the activity name and select it from the list.'
                     },
                     errorMessage: validationErrors | findError('activityId'),
-                    value: formResponses.activityId or session.waitListApplicationJourney.activity.activityId,
+                    value: formResponses.activityId or waitListApplicationJourney.activity.activityId,
                     items: activityOptions
                 }) }}
 

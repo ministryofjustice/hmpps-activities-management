@@ -21,7 +21,7 @@ describe('Route Handlers - Waitlist application - Status', () => {
     } as unknown as Response
 
     req = {
-      session: { waitListApplicationJourney: {} },
+      journeyData: { waitListApplicationJourney: {} },
     } as unknown as Request
   })
 
@@ -47,8 +47,8 @@ describe('Route Handlers - Waitlist application - Status', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.status).toEqual('PENDING')
-      expect(req.session.waitListApplicationJourney.comment).toEqual('test comment')
+      expect(req.journeyData.waitListApplicationJourney.status).toEqual('PENDING')
+      expect(req.journeyData.waitListApplicationJourney.comment).toEqual('test comment')
       expect(res.redirect).toHaveBeenCalledWith(`check-answers`)
     })
   })

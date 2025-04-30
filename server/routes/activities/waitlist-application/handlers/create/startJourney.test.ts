@@ -34,6 +34,7 @@ describe('Route Handlers - Waitlist application - Start', () => {
       session: {
         journeyMetrics: {},
       },
+      journeyData: {},
     } as unknown as Request
 
     next = jest.fn()
@@ -54,7 +55,7 @@ describe('Route Handlers - Waitlist application - Start', () => {
           MetricsEvent.WAITLIST_APPLICATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
         ),
       )
-      expect(req.session.waitListApplicationJourney).toEqual({
+      expect(req.journeyData.waitListApplicationJourney).toEqual({
         prisoner: {
           prisonerNumber: 'ABC123',
           name: 'Joe Bloggs',

@@ -17,6 +17,13 @@ jest.mock('../../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null)
 
+const fakeWaitlistApplicationJourneyData = {
+  prisoner: {
+    name: 'Alan Key',
+    prisonerNumber: 'ABC123',
+  },
+}
+
 describe('Route Handlers - Waitlist application - Request date', () => {
   const handler = new ActivityRoutes(activitiesService)
   let req: Request
@@ -35,13 +42,8 @@ describe('Route Handlers - Waitlist application - Request date', () => {
     } as unknown as Response
 
     req = {
-      session: {
-        waitListApplicationJourney: {
-          prisoner: {
-            name: 'Alan Key',
-            prisonerNumber: 'ABC123',
-          },
-        },
+      journeyData: {
+        waitListApplicationJourney: fakeWaitlistApplicationJourneyData,
       },
     } as unknown as Request
   })
@@ -93,7 +95,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.activity).toEqual({
+      expect(req.journeyData.waitListApplicationJourney.activity).toEqual({
         activityId: 1,
         scheduleId: 1,
         activityName: 'test activity',

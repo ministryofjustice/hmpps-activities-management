@@ -5,7 +5,7 @@ export default class ConfirmationRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { waitListApplicationJourney } = req.session
+    const { waitListApplicationJourney } = req.journeyData
     const { user } = res.locals
     const { activityId, scheduleId } = waitListApplicationJourney.activity
 
@@ -24,6 +24,6 @@ export default class ConfirmationRoutes {
       currentlyAllocated: allocated,
       capacity,
     })
-    req.session.waitListApplicationJourney = undefined
+    req.journeyData.waitListApplicationJourney = undefined
   }
 }

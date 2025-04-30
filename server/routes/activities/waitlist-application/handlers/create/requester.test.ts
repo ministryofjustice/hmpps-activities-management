@@ -4,6 +4,10 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import RequesterRoutes, { Requester } from './requester'
 
+const fakeWaitlistApplicationJourneyData = {
+  prisoner: { name: 'Alan Key' },
+}
+
 describe('Route Handlers - Waitlist application - Requester', () => {
   const handler = new RequesterRoutes()
   let req: Request
@@ -21,10 +25,8 @@ describe('Route Handlers - Waitlist application - Requester', () => {
     } as unknown as Response
 
     req = {
-      session: {
-        waitListApplicationJourney: {
-          prisoner: { name: 'Alan Key' },
-        },
+      journeyData: {
+        waitListApplicationJourney: fakeWaitlistApplicationJourneyData,
       },
     } as unknown as Request
   })
@@ -46,7 +48,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.requester).toEqual('PRISONER')
+      expect(req.journeyData.waitListApplicationJourney.requester).toEqual('PRISONER')
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`status`)
     })
 
@@ -57,7 +59,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.requester).toEqual('GUIDANCE_STAFF')
+      expect(req.journeyData.waitListApplicationJourney.requester).toEqual('GUIDANCE_STAFF')
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`status`)
     })
 
@@ -69,7 +71,7 @@ describe('Route Handlers - Waitlist application - Requester', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.waitListApplicationJourney.requester).toEqual('ACTIVITY_LEADER')
+      expect(req.journeyData.waitListApplicationJourney.requester).toEqual('ACTIVITY_LEADER')
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`status`)
     })
   })

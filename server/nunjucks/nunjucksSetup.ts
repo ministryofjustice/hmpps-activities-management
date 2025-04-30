@@ -247,6 +247,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('inServiceReportingEnabled', config.inServiceReportingEnabled)
   njkEnv.addGlobal('multiplePrisonerActivityAllocationEnabled', config.multiplePrisonerActivityAllocationEnabled)
   njkEnv.addGlobal('uncancelMultipleSessionsEnabled', config.uncancelMultipleSessionsEnabled)
+  njkEnv.addGlobal('notRequiredInAdvanceEnabled', config.notRequiredInAdvanceEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
   njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
   njkEnv.addGlobal('NameFormatStyle', NameFormatStyle)

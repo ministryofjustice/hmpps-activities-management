@@ -16,7 +16,7 @@ export default class ViewApplicationRoutes {
     const { applicationId } = req.params
     const { user } = res.locals
     let journeyEntry = req.query.journeyEntry ? asString(req.query.journeyEntry) : null
-    journeyEntry ??= req.session?.waitListApplicationJourney?.journeyEntry
+    journeyEntry ??= req.journeyData?.waitListApplicationJourney?.journeyEntry
 
     const application = await this.activitiesService.fetchWaitlistApplication(+applicationId, user)
 
@@ -38,7 +38,7 @@ export default class ViewApplicationRoutes {
         a => a.prisonerNumber === prisoner.prisonerNumber && a.status !== 'ENDED',
       ) === undefined
 
-    req.session.waitListApplicationJourney = {
+    req.journeyData.waitListApplicationJourney = {
       prisoner: {
         prisonerNumber: prisoner.prisonerNumber,
         name: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
@@ -57,7 +57,7 @@ export default class ViewApplicationRoutes {
     }
 
     return res.render(`pages/activities/waitlist-application/view-application`, {
-      prisoner: req.session.waitListApplicationJourney.prisoner,
+      prisoner: req.journeyData.waitListApplicationJourney.prisoner,
       requestDate: parseDate(application.requestedDate),
       activityName: activity.description,
       requester: WaitlistRequester.valueOf(application.requestedBy),

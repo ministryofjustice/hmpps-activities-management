@@ -14,6 +14,13 @@ export default function setUpJourneyData(store: TokenStoreInterface) {
     const cached = await store.getToken(journeyTokenKey)
 
     req.journeyData = cached ? (JSON.parse(cached) as JourneyData) : (req.journeyData ?? {})
+
+    if (req.journeyData) {
+      Object.entries(req.journeyData).forEach(([key, value]) => {
+        res.locals[key] = value
+      })
+    }
+
     res.prependOnceListener('close', async () => {
       if (!req.journeyData) {
         await store.delToken(journeyTokenKey)
