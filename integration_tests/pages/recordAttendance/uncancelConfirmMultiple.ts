@@ -5,5 +5,10 @@ export default class UncancelConfirmMultiplePage extends Page {
     super('uncancel-sessions-confirm-multiple-page')
   }
 
-  selectConfirmation = () => cy.get('button').contains('Confirm').click()
+  title = (numberOfSessions: number) =>
+    cy.get('.govuk-heading-l').contains(`Are you sure you want to uncancel ${numberOfSessions} activity sessions?`)
+
+  selectYes = () => this.getInputByLabel('Yes').click()
+
+  selectNo = () => this.getInputByLabel('No').click()
 }

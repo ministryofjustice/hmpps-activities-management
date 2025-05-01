@@ -59,6 +59,8 @@ export default class ActivitiesPage extends Page {
 
   sessionPMCheckbox = () => cy.get(`[name=sessionFilters][value="PM"]`)
 
+  uncancelSessionsLink = () => cy.get('a').contains('Uncancel activity sessions')
+
   recordEditAttendance = () => cy.get('button').contains('Record or edit attendance').click()
 
   cancelSessions = () => cy.get('button').contains('Cancel sessions').click()

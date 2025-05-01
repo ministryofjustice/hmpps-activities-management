@@ -5,5 +5,10 @@ export default class UncancelConfirmSinglePage extends Page {
     super('uncancel-sessions-confirm-single-page')
   }
 
-  selectConfirmation = () => cy.get('button').contains('Confirm').click()
+  title = (activityName: string) =>
+    cy.get('.govuk-heading-l').contains(`Are you sure you want to uncancel ${activityName}?`)
+
+  selectYes = () => this.getInputByLabel('Yes').click()
+
+  selectNo = () => this.getInputByLabel('No').click()
 }
