@@ -1,3 +1,4 @@
+import { addWeeks, format, startOfTomorrow } from 'date-fns'
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../../../services/activitiesService'
@@ -14,6 +15,8 @@ const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesS
 const metricsService = new MetricsService(null) as jest.Mocked<MetricsService>
 
 describe('Allocate multiple people to an activity - method for adding list', () => {
+  const tomorrow = startOfTomorrow()
+  const nextWeek = addWeeks(tomorrow, 1)
   const handler = new SetUpPrisonerListMethodRoutes(activitiesService, metricsService)
   let req: Request
   let res: Response
@@ -55,7 +58,7 @@ describe('Allocate multiple people to an activity - method for adding list', () 
         internalLocation: {
           description: 'A-WING',
         },
-        startDate: '01-01-2025',
+        startDate: format(tomorrow, 'dd-MM-yyyy'),
         endDate: null,
         scheduleWeeks: 1,
         activity: {
@@ -68,7 +71,7 @@ describe('Allocate multiple people to an activity - method for adding list', () 
         instances: [
           {
             id: 153,
-            date: '2025-05-01',
+            date: format(tomorrow, 'yyyy-MM-dd'),
             startTime: '08:30',
             endTime: '11:45',
             timeSlot: 'AM',
@@ -79,7 +82,7 @@ describe('Allocate multiple people to an activity - method for adding list', () 
           },
           {
             id: 154,
-            date: '2025-05-02',
+            date: format(nextWeek, 'yyyy-MM-dd'),
             startTime: '08:30',
             endTime: '11:45',
             timeSlot: 'AM',
@@ -107,14 +110,14 @@ describe('Allocate multiple people to an activity - method for adding list', () 
           inCell: false,
           onWing: false,
           offWing: true,
-          startDate: '01-01-2025',
+          startDate: format(tomorrow, 'dd-MM-yyyy'),
           endDate: null,
           scheduleWeeks: 1,
           paid: true,
         },
         scheduledInstance: {
           id: 153,
-          date: '2025-05-01',
+          date: format(tomorrow, 'yyyy-MM-dd'),
           startTime: '08:30',
           endTime: '11:45',
           timeSlot: 'AM',
@@ -122,7 +125,7 @@ describe('Allocate multiple people to an activity - method for adding list', () 
           cancelledTime: null,
           cancelledBy: null,
           attendances: [],
-          startDateTime: '2025-05-01 08:30',
+          startDateTime: `${format(tomorrow, 'yyyy-MM-dd')} 08:30`,
         },
       })
     })
