@@ -66,7 +66,7 @@ context('Cancel Multiple Sessions', () => {
     activitiesPage.uncancelSessionsLink().click()
 
     const uncancelActivitiesListPage = Page.verifyOnPage(UncancelActivitiesListPage)
-    uncancelActivitiesListPage.containsActivities('English level 1', 'English level 2', 'Gym sports and fitness')
+    uncancelActivitiesListPage.containsActivities('English level 1', 'English level 2')
     uncancelActivitiesListPage.selectActivitiesWithNames('English level 1', 'English level 2')
     uncancelActivitiesListPage.getLinkByText('Previous day').should('not.exist')
     uncancelActivitiesListPage.getLinkByText('Next day').should('exist')
@@ -111,7 +111,7 @@ context('Cancel Multiple Sessions', () => {
     activitiesPage.uncancelSessionsLink().click()
 
     const uncancelActivitiesListPage = Page.verifyOnPage(UncancelActivitiesListPage)
-    uncancelActivitiesListPage.containsActivities('English level 1', 'English level 2', 'Gym sports and fitness')
+    uncancelActivitiesListPage.containsActivities('English level 1', 'English level 2')
     uncancelActivitiesListPage.selectActivitiesWithNames('English level 2')
     uncancelActivitiesListPage.getLinkByText('Previous day').should('exist')
     uncancelActivitiesListPage.getLinkByText('Next day').should('exist')
