@@ -48,6 +48,7 @@ import {
   ScheduledEvent,
   ScheduleInstanceCancelRequest,
   ScheduleInstancesCancelRequest,
+  ScheduleInstancesUncancelRequest,
   Slot,
   SuspendedPrisonerAttendance,
   SuspendPrisonerRequest,
@@ -586,6 +587,13 @@ export default class ActivitiesService {
       username: user.username,
     }
     return this.activitiesApiClient.putCancelMultipleActivities(scheduleInstancesCancelRequest, user)
+  }
+
+  async uncancelMultipleActivities(scheduledInstanceIds: number[], user: ServiceUser) {
+    const scheduleInstancesUncancelRequest: ScheduleInstancesUncancelRequest = {
+      scheduleInstanceIds: scheduledInstanceIds,
+    }
+    return this.activitiesApiClient.putUncancelMultipleActivities(scheduleInstancesUncancelRequest, user)
   }
 
   async updateCancelledSession(

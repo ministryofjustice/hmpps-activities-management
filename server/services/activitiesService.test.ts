@@ -1090,6 +1090,14 @@ describe('Activities Service', () => {
     })
   })
 
+  describe('uncancelMultipleActivities', () => {
+    it('should uncancel multiple activities', async () => {
+      const apiRequest = { scheduleInstanceIds: [1, 2] }
+      await activitiesService.uncancelMultipleActivities([1, 2], user)
+      expect(activitiesApiClient.putUncancelMultipleActivities).toHaveBeenCalledWith(apiRequest, user)
+    })
+  })
+
   describe('updateCancelledSession', () => {
     it('should update a cancelled activity session instance - just reason and comment', async () => {
       const serviceRequest = {

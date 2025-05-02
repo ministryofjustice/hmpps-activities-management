@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
 import { addDays, startOfDay } from 'date-fns'
 import _ from 'lodash'
-import ActivitiesService from '../../../../services/activitiesService'
-import { asString, convertToArray, formatDate, toDate } from '../../../../utils/utils'
-import PrisonService from '../../../../services/prisonService'
-import { activityRows, filterItems } from '../utils/activitiesPageUtils'
+import ActivitiesService from '../../../../../services/activitiesService'
+import { asString, convertToArray, formatDate, toDate } from '../../../../../utils/utils'
+import PrisonService from '../../../../../services/prisonService'
+import { activityRows, filterItems } from '../../utils/activitiesPageUtils'
 
-export default class ActivitiesRoutes {
+export default class UncancelMultipleSessionsRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
@@ -17,7 +17,7 @@ export default class ActivitiesRoutes {
     const { date, searchTerm, sessionFilters, categoryFilters, locationId, locationType } = req.query
 
     const activityDate = date ? toDate(asString(date)) : new Date()
-    if (startOfDay(activityDate) > startOfDay(addDays(new Date(), 60))) return res.redirect('select-period')
+    if (startOfDay(activityDate) > startOfDay(addDays(new Date(), 60))) return res.redirect('../select-period')
 
     const [categories, activityAttendanceSummary] = await Promise.all([
       this.activitiesService.getActivityCategories(user),
@@ -31,12 +31,12 @@ export default class ActivitiesRoutes {
 
     const locationTypeFilter = locationType !== undefined ? asString(locationType) : 'ALL'
 
-    req.session.recordAttendanceJourney = {}
+    req.session.recordAttendanceJourney = req.session.recordAttendanceJourney ?? {}
 
     const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'locationId')
 
-    return res.render('pages/activities/record-attendance/activities', {
+    return res.render('pages/activities/record-attendance/uncancel-multiple-sessions/cancelled-activities', {
       activityDate,
       filterItems: filterItems(categories, filterValues, asString(locationId), locationTypeFilter),
       selectedSessions: filterValues.sessionFilters,
@@ -47,6 +47,7 @@ export default class ActivitiesRoutes {
         asString(locationId),
         locationTypeFilter,
         asString(searchTerm),
+        true,
       ),
       locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
     })
@@ -60,7 +61,7 @@ export default class ActivitiesRoutes {
     const categoryFiltersString = categoryFilters ? convertToArray(categoryFilters).join(',') : ''
 
     const redirectUrl =
-      `activities?date=${activityDate}&searchTerm=${searchTerm ?? ''}` +
+      `uncancel-multiple?date=${activityDate}&searchTerm=${searchTerm ?? ''}` +
       `&sessionFilters=${sessionFiltersString}` +
       `&categoryFilters=${categoryFiltersString}` +
       `&locationId=${locationId ?? ''}` +
@@ -69,21 +70,7 @@ export default class ActivitiesRoutes {
     res.redirect(redirectUrl)
   }
 
-  POST_ATTENDANCES = async (req: Request, res: Response): Promise<void> => {
-    const { selectedInstanceIds, activityDate, sessionFilters } = req.body
-    const selectedInstanceIdsArr = selectedInstanceIds ? convertToArray(selectedInstanceIds) : []
-    req.session.recordAttendanceJourney = {
-      selectedInstanceIds: selectedInstanceIdsArr,
-      activityDate,
-      sessionFilters,
-    }
-    if (selectedInstanceIdsArr.length === 1) {
-      return res.redirect(`${selectedInstanceIdsArr[0]}/attendance-list`)
-    }
-    return res.redirect('attendance-list')
-  }
-
-  POST_CANCELLATIONS = async (req: Request, res: Response): Promise<void> => {
+  POST_UNCANCEL = async (req: Request, res: Response): Promise<void> => {
     const { selectedInstanceIds, activityDate, sessionFilters } = req.body
     const selectedInstanceIdsArr = selectedInstanceIds ? convertToArray(selectedInstanceIds) : []
     req.session.recordAttendanceJourney = {
@@ -92,6 +79,6 @@ export default class ActivitiesRoutes {
       sessionFilters,
     }
 
-    return res.redirect('cancel-multiple/cancel-reason')
+    return res.redirect('confirm')
   }
 }

@@ -25,7 +25,7 @@ import ViewOrEditCancellationDetailsPage from '../../../pages/recordAttendance/v
 import CancelSessionPage from '../../../pages/recordAttendance/cancelSessionReason'
 import UpdateCancelledSessionPayPage from '../../../pages/recordAttendance/cancelSessionPay'
 
-context('Record attendance', () => {
+context('Cancel Multiple Sessions', () => {
   const today = startOfToday()
   const todayStr = format(today, 'yyyy-MM-dd')
 
