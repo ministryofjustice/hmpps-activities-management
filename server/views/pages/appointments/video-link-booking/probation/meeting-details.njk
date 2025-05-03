@@ -15,7 +15,6 @@
   {% if session.req.params.mode == 'create' %}
     <meta name="autocompleteElements" content="probationTeamCode"/>
   {% endif %}
-  <meta name="autocompleteElements" content="meetingTypeCode"/>
 {% endblock %}
 
 {% block content %}
@@ -30,6 +29,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method='POST' data-module="form-spinner" data-loading-text="Changing appointment details">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
                 {% set items = [{ text: "", value: "" }] %}
                     {% for team in probationTeams %}
                         {% set items = (items.push({

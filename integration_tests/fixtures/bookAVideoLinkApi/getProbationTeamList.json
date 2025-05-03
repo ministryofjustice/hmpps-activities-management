@@ -1,0 +1,23 @@
+[
+  {
+    "probationTeamId": 1,
+    "code": "BARKING",
+    "description": "Barking - Probation",
+    "enabled": true,
+    "notes": null
+  },
+  {
+    "probationTeamId": 2,
+    "code": "BOLTON",
+    "description": "Bolton - Probation",
+    "enabled": true,
+    "notes": null
+  },
+  {
+    "probationTeamId": 3,
+    "code": "BIGGLE",
+    "description": "Biggleswade - Probation",
+    "enabled": true,
+    "notes": null
+  }
+]
