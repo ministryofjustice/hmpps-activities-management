@@ -14,7 +14,7 @@
         <div class="govuk-grid-column-two-thirds">
            {{ govukPanel({ titleText: pageTitle }) }}
 
-            <p class="govuk-body">
+            <p class="govuk-body" data-qa="message">
                 You have successfully scheduled an appointment for {{ prisoner | formatName(NameFormatStyle.firstLast, false) }} on {{ vlb.prisonAppointments[0].appointmentDate | toDate | formatDate }}.
             </p>
 
