@@ -16,25 +16,20 @@ import getPrisonPrisoners from '../../fixtures/prisonerSearchApi/getPrisonPrison
 import getPrisonerA8644DY from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A8644DY.json'
 import getAppointmentDetails from '../../fixtures/activitiesApi/getAppointmentDetails.json'
 import ReviewPrisonerAlertsPage from '../../pages/appointments/create-and-edit/reviewPrisonerAlertsPage'
-import getCourtList from '../../fixtures/bookAVideoLinkApi/getCourtList.json'
 import getProbationTeamList from '../../fixtures/bookAVideoLinkApi/getProbationTeamList.json'
-import getCourtHearingTypes from '../../fixtures/bookAVideoLinkApi/getCourtHearingTypes.json'
 import getProbationMeetingTypes from '../../fixtures/bookAVideoLinkApi/getProbationMeetingTypes.json'
 import getBvlsLocations from '../../fixtures/bookAVideoLinkApi/getBvlsLocations.json'
 import getBvlsVccRoom1 from '../../fixtures/bookAVideoLinkApi/getBvlsLocation-VCC_ROOM_1.json'
-import getBvlsCompletedBooking from '../../fixtures/bookAVideoLinkApi/getBvlsCompletedBooking.json'
+import getCompletedProbationBooking from '../../fixtures/bookAVideoLinkApi/getCompletedProbationBooking.json'
 import getPrisonerAlerts from '../../fixtures/alertsApi/getPrisonerAlertsA8644DY.json'
 import PrisonLocationsPage from '../../pages/appointments/create-and-edit/video-link-booking/prisonLocationsPage'
-import HearingDetailsPage from '../../pages/appointments/create-and-edit/video-link-booking/hearingDetailsPage'
 import ProbationMeetingDetailsPage from '../../pages/appointments/create-and-edit/video-link-booking/probationMeetingDetailsPage'
 import VideoLinkDateAndTimePage from '../../pages/appointments/create-and-edit/video-link-booking/videoLinkDateAndTimePage'
-import CourtHearingLinkPage from '../../pages/appointments/create-and-edit/video-link-booking/courtHearingLinkPage'
 import VideoLinkSchedulePage from '../../pages/appointments/create-and-edit/video-link-booking/videoLinkSchedulePage'
-import VideoLinkCheckAnswersPage from '../../pages/appointments/create-and-edit/video-link-booking/videoLinkCheckAnswersPage'
+import VideoLinkProbationCheckAnswersPage from '../../pages/appointments/create-and-edit/video-link-booking/videoLinkProbationCheckAnswersPage'
 import VideoLinkConfirmationPage from '../../pages/appointments/create-and-edit/video-link-booking/videoLinkConfirmationPage'
-import { YesNo } from '../../../server/@types/activities'
 
-context('Create video link appointments', () => {
+context('Create video link probation appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
 
@@ -47,7 +42,7 @@ context('Create video link appointments', () => {
   getAppointmentDetails.startDate = tomorrowFormatted
 
   // Ensure the BVLS booking confirmation reflects tomorrow's date too
-  getBvlsCompletedBooking.prisonAppointments[0].appointmentDate = tomorrowFormatted
+  getCompletedProbationBooking.prisonAppointments[0].appointmentDate = tomorrowFormatted
 
   beforeEach(() => {
     cy.task('reset')
@@ -85,174 +80,88 @@ context('Create video link appointments', () => {
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getMdiAppointmentLocations)
 
     // Video link booking API stubs
-    cy.stubEndpoint('GET', '/courts\\?enabledOnly=false', getCourtList)
-    cy.stubEndpoint('GET', '/reference-codes/group/COURT_HEARING_TYPE', getCourtHearingTypes)
     cy.stubEndpoint('GET', '/prisons/MDI/locations\\?videoLinkOnly=false', getBvlsLocations)
     cy.stubEndpoint('GET', '/api/locations/code/VCC-ROOM-1', getBvlsVccRoom1)
     cy.stubEndpoint('POST', '/video-link-booking', JSON.parse('1234'))
-    cy.stubEndpoint('GET', '/video-link-booking/id/1234', getBvlsCompletedBooking)
+    cy.stubEndpoint('GET', '/video-link-booking/id/1234', getCompletedProbationBooking)
     cy.stubEndpoint('GET', '/probation-teams\\?enabledOnly=false', getProbationTeamList)
     cy.stubEndpoint('GET', '/reference-codes/group/PROBATION_MEETING_TYPE', getProbationMeetingTypes)
   })
 
-  it('Should create a video link court hearing', () => {
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.appointmentsManagementCard().click()
-
-    const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
-    appointmentsManagementPage.createGroupAppointmentCard().click()
-
-    const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
-    howToAddPrisonersPage.selectOneByOne()
-    howToAddPrisonersPage.continue()
-
-    const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
-    selectPrisonerPage.enterPrisonerNumber('A8644DY')
-    selectPrisonerPage.searchButton().click()
-    selectPrisonerPage.continueButton().click()
-
-    const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
-    reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
-    reviewPrisonersPage.continue()
-
-    const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
-    reviewPrisonerAlertsPage.continue()
-
-    const namePage = Page.verifyOnPage(NamePage)
-    namePage.selectCategory('Video Link - Court Hearing')
-    namePage.continue()
-
-    // Type of meeting page
-    const hearingDetailsPage = Page.verifyOnPage(HearingDetailsPage)
-    hearingDetailsPage.selectCourt('Aylesbury Crown')
-    hearingDetailsPage.selectHearingType('Bail')
-    hearingDetailsPage.continue()
-
-    // Location in the VCC
-    const prisonLocationsPage = Page.verifyOnPage(PrisonLocationsPage)
-    prisonLocationsPage.selectLocation('VCC Room 1')
-    prisonLocationsPage.continue()
-
-    // Date of hearing, start and end times, whether a pre-hearing, or post-hearing, is required
-    const videoLinkDateAndTimePage = Page.verifyOnPage(VideoLinkDateAndTimePage)
-    videoLinkDateAndTimePage.selectDate(tomorrow)
-    videoLinkDateAndTimePage.selectStartTime(14, 0)
-    videoLinkDateAndTimePage.selectEndTime(15, 30)
-    videoLinkDateAndTimePage.preCourtHearing(YesNo.NO)
-    videoLinkDateAndTimePage.postCourtHearing(YesNo.NO)
-    videoLinkDateAndTimePage.continue()
-
-    // Review events for the prisoner
-    const schedulePage = Page.verifyOnPage(VideoLinkSchedulePage)
-    schedulePage.continue()
-
-    // CVP link
-    const courtHearingLinkPage = Page.verifyOnPage(CourtHearingLinkPage)
-    courtHearingLinkPage.selectYes()
-    courtHearingLinkPage.enterCvpLink('https://test.video.link/1234')
-    courtHearingLinkPage.continue()
-
-    // Extra information
-    const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
-    extraInformationPage.continue()
-
-    // Specific check answers page for video link bookings
-    const checkAnswersPage = Page.verifyOnPage(VideoLinkCheckAnswersPage)
-    checkAnswersPage.assertPrisonerInList('Gregs, Stephen', 'A8644DY')
-    checkAnswersPage.assertCourt('Aylesbury Crown')
-    checkAnswersPage.assertHearingType('Bail')
-    checkAnswersPage.assertCategory('Video Link - Court Hearing')
-    checkAnswersPage.assertHearingLink('https://test.video.link/1234')
-    checkAnswersPage.assertMainLocation('VCC Room 1')
-    checkAnswersPage.assertMainStartDate(tomorrow)
-    checkAnswersPage.assertMainStartTime(14, 0)
-    checkAnswersPage.assertMainEndTime(15, 30)
-    checkAnswersPage.assertPreHearingNone()
-    checkAnswersPage.assertPostHearingNone()
-    checkAnswersPage.createAppointment()
-
-    const confirmationPage = Page.verifyOnPage(VideoLinkConfirmationPage)
-    const successMessage = `You have successfully scheduled an appointment for Stephen Gregs on ${formatDate(
-      tomorrow,
-      'EEEE, d MMMM yyyy',
-    )}.`
-    confirmationPage.assertMessageEquals(successMessage)
-    confirmationPage.assertCreateAnotherLinkExists()
-    confirmationPage.assertViewAppointmentLinkExists()
-  })
-
   it('Should create a video link probation meeting', () => {
+    // Home page
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.appointmentsManagementCard().click()
 
+    // Appointments page
     const appointmentsManagementPage = Page.verifyOnPage(AppointmentsManagementPage)
     appointmentsManagementPage.createGroupAppointmentCard().click()
 
+    // How to add prisoners page
     const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
     howToAddPrisonersPage.selectOneByOne()
     howToAddPrisonersPage.continue()
 
+    // Select specific prisoner page
     const selectPrisonerPage = Page.verifyOnPage(SelectPrisonerPage)
     selectPrisonerPage.enterPrisonerNumber('A8644DY')
     selectPrisonerPage.searchButton().click()
     selectPrisonerPage.continueButton().click()
 
+    // Review prisoners page
     const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
     reviewPrisonersPage.assertPrisonerInList('Gregs, Stephen')
     reviewPrisonersPage.continue()
 
+    // Review alerts page
     const reviewPrisonerAlertsPage = Page.verifyOnPage(ReviewPrisonerAlertsPage)
     reviewPrisonerAlertsPage.continue()
 
+    // Appointment type page
     const namePage = Page.verifyOnPage(NamePage)
     namePage.selectCategory('Video Link - Probation Meeting')
     namePage.continue()
 
-    // Location in the VCC
+    // Location in prison page
     const prisonLocationsPage = Page.verifyOnPage(PrisonLocationsPage)
     prisonLocationsPage.selectLocation('VCC Room 1')
     prisonLocationsPage.continue()
 
-    // Type of probation meeting page
+    // Probation team, type of meeting and officer details page
     const meetingDetailsPage = Page.verifyOnPage(ProbationMeetingDetailsPage)
     meetingDetailsPage.selectProbationTeam('Barking - Probation')
     meetingDetailsPage.selectFirstMeetingType()
-    // meetingDetailsPage.selectMeetingType('Recall report')
     meetingDetailsPage.checkOfficerDetailsNotKnown()
     meetingDetailsPage.continue()
 
-    // Date of hearing, start and end times, whether a pre-hearing, or post-hearing, is required
+    // Date and time of meeting page
     const videoLinkDateAndTimePage = Page.verifyOnPage(VideoLinkDateAndTimePage)
     videoLinkDateAndTimePage.selectDate(tomorrow)
     videoLinkDateAndTimePage.selectStartTime(14, 0)
     videoLinkDateAndTimePage.selectEndTime(15, 30)
     videoLinkDateAndTimePage.continue()
 
-    // Review events for the prisoner
+    // Review events for the prisoner page
     const schedulePage = Page.verifyOnPage(VideoLinkSchedulePage)
     schedulePage.continue()
 
-    // Extra information
+    // Extra information page
     const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
     extraInformationPage.continue()
 
-    // Specific check answers page for video link bookings
-    const checkAnswersPage = Page.verifyOnPage(VideoLinkCheckAnswersPage)
+    // Specific check answers page for video link probation bookings
+    const checkAnswersPage = Page.verifyOnPage(VideoLinkProbationCheckAnswersPage)
     checkAnswersPage.assertPrisonerInList('Gregs, Stephen', 'A8644DY')
-
-    /*
-    checkAnswersPage.assertCourt('Aylesbury Crown')
-    checkAnswersPage.assertHearingType('Bail')
-    checkAnswersPage.assertCategory('Video Link - Court Hearing')
-    checkAnswersPage.assertHearingLink('https://test.video.link/1234')
-    checkAnswersPage.assertMainLocation('VCC Room 1')
-    checkAnswersPage.assertMainStartDate(tomorrow)
-    checkAnswersPage.assertMainStartTime(14, 0)
-    checkAnswersPage.assertMainEndTime(15, 30)
-    checkAnswersPage.assertPreHearingNone()
-    checkAnswersPage.assertPostHearingNone()
+    checkAnswersPage.assertProbationTeam('Barking - Probation')
+    checkAnswersPage.assertMeetingType('Pre-sentence report')
+    checkAnswersPage.assertCategory('Video Link - Probation Meeting')
+    checkAnswersPage.assertLocation('VCC Room 1')
+    checkAnswersPage.assertStartDate(tomorrow)
+    checkAnswersPage.assertStartTime(14, 0)
+    checkAnswersPage.assertEndTime(15, 30)
     checkAnswersPage.createAppointment()
 
+    // Confirmation page
     const confirmationPage = Page.verifyOnPage(VideoLinkConfirmationPage)
     const successMessage = `You have successfully scheduled an appointment for Stephen Gregs on ${formatDate(
       tomorrow,
@@ -261,6 +170,5 @@ context('Create video link appointments', () => {
     confirmationPage.assertMessageEquals(successMessage)
     confirmationPage.assertCreateAnotherLinkExists()
     confirmationPage.assertViewAppointmentLinkExists()
-    */
   })
 })

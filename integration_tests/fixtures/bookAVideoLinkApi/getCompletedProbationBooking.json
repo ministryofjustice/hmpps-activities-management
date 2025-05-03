@@ -1,0 +1,39 @@
+{
+  "videoLinkBookingId": 1234,
+  "statusCode": "ACTIVE",
+  "bookingType": "PROBATION",
+  "prisonAppointments": [
+    {
+      "prisonAppointmentId": 1,
+      "prisonCode": "MDI",
+      "prisonerNumber": "A8644DY",
+      "appointmentType": "VLB_PROBATION",
+      "comments": "Test",
+      "prisonLocKey": "VCC-ROOM-1",
+      "appointmentDate": "2025-01-01",
+      "startTime": "14:00",
+      "endTime": "15:30",
+      "timeSlot": "PM"
+    }
+  ],
+  "courtCode": null,
+  "courtDescription": null,
+  "courtHearingType": null,
+  "courtHearingTypeDescription": null,
+  "probationTeamCode": "BARKING",
+  "probationTeamDescription": "Barking - Probation",
+  "probationMeetingType": "PSR",
+  "probationMeetingTypeDescription": "Pre-sentence report",
+  "comments": "Test",
+  "createdByPrison": false,
+  "createdBy": "J Smith",
+  "createdAt": "2024-01-01 14:30",
+  "amendedBy": null,
+  "amendedAt": null,
+  "videoLinkUrl": null,
+  "additionalBookingDetails": {
+    "contactName": null,
+    "contactEmail": null,
+    "contactNumber": null
+  }
+}

@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 import Page from '../../../page'
 
-export default class VideoLinkCheckAnswersPage extends Page {
+export default class VideoLinkCourtCheckAnswersPage extends Page {
   constructor() {
     super('appointment-check-answers-page')
   }
