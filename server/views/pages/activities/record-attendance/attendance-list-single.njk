@@ -43,10 +43,10 @@
                     <ul class="govuk-list govuk-list--bullet"><li>{{ instance.cancelledReason }} {{ cancelledComment }}</li></ul>
                     {% if cancellationPayInfoAvailable %}
                     <p class="govuk-body govuk-!-margin-top-4">
-                        <a href='../cancel-multiple/view-edit-details/{{instance.id}}' class="govuk-link">View or edit cancellation </a>
+                        <a href='../cancel-multiple/view-edit-details/{{instance.id}}' class="govuk-link">View or edit cancellation</a>
                         {% if instance.isAmendable %}
-                        or
-                        <a href="uncancel" class="govuk-link"> uncancel this session</a>
+                         or 
+                        <a href="uncancel" class="govuk-link">uncancel this session</a>
                         {% endif %}
                     </p>
                     {% endif %}

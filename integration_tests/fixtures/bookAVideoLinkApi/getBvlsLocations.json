@@ -1,0 +1,18 @@
+[
+  {
+    "key": "VCC-ROOM-1",
+    "prisonCode": "MDI",
+    "description": "VCC Room 1",
+    "enabled": true,
+    "dpsLocationId": "abcd-1234-abcd-1234",
+    "extraAttributes": null
+  },
+  {
+    "key": "VCC-ROOM-2",
+    "prisonCode": "MDI",
+    "description": "VCC Room 2",
+    "enabled": true,
+    "dpsLocationId": "abcd-4321-abcd-4321",
+    "extraAttributes": null
+  }
+]

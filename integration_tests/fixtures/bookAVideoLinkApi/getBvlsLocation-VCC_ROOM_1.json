@@ -1,0 +1,13 @@
+{
+  "agencyId": "MDI",
+  "currentOccupancy": 0,
+  "description": "VCC ROOM 1",
+  "internalLocationCode": "VCC-ROOM-1",
+  "locationId": 1,
+  "locationPrefix": "MDI-VCC",
+  "locationType": "VIDE",
+  "locationUsage": "APP",
+  "operationalCapacity": 10,
+  "parentLocationId": 0,
+  "userDescription": "VCC Room 1"
+}

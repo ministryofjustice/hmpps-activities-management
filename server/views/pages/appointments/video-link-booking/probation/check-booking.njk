@@ -76,7 +76,8 @@
                                 ]
                             }
                         }
-                    ]
+                    ],
+                    attributes: { 'data-qa': 'appointment-details' }
                 }) }}
 
                 <h2 class="govuk-heading-m">Scheduling information</h2>
@@ -221,7 +222,8 @@
                                 text: (rooms | find('key', session.bookAProbationMeetingJourney.locationCode)).extraAttributes.prisonVideoUrl or "None entered"
                             }
                         } if bvlsMasteredVlpmFeatureToggleEnabled
-                    ]
+                    ],
+                    attributes: { 'data-qa': 'scheduling-information' }
                 }) }}
 
                 <h2 class="govuk-heading-m">Extra information</h2>

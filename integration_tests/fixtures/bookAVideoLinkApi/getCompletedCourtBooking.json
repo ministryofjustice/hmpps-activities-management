@@ -1,0 +1,39 @@
+{
+  "videoLinkBookingId": 1234,
+  "statusCode": "ACTIVE",
+  "bookingType": "COURT",
+  "prisonAppointments": [
+    {
+      "prisonAppointmentId": 1,
+      "prisonCode": "MDI",
+      "prisonerNumber": "A8644DY",
+      "appointmentType": "VLB_COURT_MAIN",
+      "comments": "Test",
+      "prisonLocKey": "VCC-ROOM-1",
+      "appointmentDate": "2025-01-01",
+      "startTime": "14:00",
+      "endTime": "15:30",
+      "timeSlot": "PM"
+    }
+  ],
+  "courtCode": "AYLCRN",
+  "courtDescription": "Aylesbury Crown",
+  "courtHearingType": "BAIL",
+  "courtHearingTypeDescription": "Bail",
+  "probationTeamCode": null,
+  "probationTeamDescription": null,
+  "probationMeetingType": null,
+  "probationMeetingTypeDescription": null,
+  "comments": "Test",
+  "createdByPrison": false,
+  "createdBy": "J Smith",
+  "createdAt": "2024-01-01 14:30",
+  "amendedBy": null,
+  "amendedAt": null,
+  "videoLinkUrl": null,
+  "additionalBookingDetails": {
+    "contactName": null,
+    "contactEmail": null,
+    "contactNumber": null
+  }
+}

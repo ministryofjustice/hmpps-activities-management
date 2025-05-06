@@ -25,6 +25,7 @@ describe('Route Handlers - Cancel Session Reason', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -103,7 +104,11 @@ describe('Route Handlers - Cancel Session Reason', () => {
         res.locals.user,
       )
 
-      expect(res.redirect).toHaveBeenCalledWith('../cancel-multiple/view-edit-details/1?detailsEdited=true')
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '../cancel-multiple/view-edit-details/1?detailsEdited=true',
+        'Session updated',
+        "You've updated the reason for cancelling this session",
+      )
     })
   })
 
