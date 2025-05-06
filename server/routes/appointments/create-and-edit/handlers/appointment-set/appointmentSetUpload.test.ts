@@ -84,32 +84,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
       expect(res.validationFailed).toHaveBeenCalledWith('file', 'The selected file does not contain any prison numbers')
     })
 
-    it('validation fails when single prisoner not found', async () => {
-      req.file = {
-        path: 'uploads/unknown.csv',
-      } as unknown as Express.Multer.File
-
-      when(prisonerListCsvParser.getAppointments)
-        .calledWith(req.file)
-        .mockReturnValue(
-          Promise.resolve([
-            {
-              prisonerNumber: 'A1234BC',
-              startTime: null,
-              endTime: null,
-            },
-          ]),
-        )
-      when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['A1234BC'], res.locals.user)
-        .mockResolvedValue([] as Prisoner[])
-
-      await handler.POST(req, res)
-
-      expect(res.validationFailed).toHaveBeenCalledWith('file', 'Prisoner with number A1234BC was not found')
-    })
-
-    it('validation fails when two prisoners not found', async () => {
+    it('filters out a prisoners who is not recognised as being in the active caseload', async () => {
       req.file = {
         path: 'uploads/unknown.csv',
       } as unknown as Express.Multer.File
@@ -128,18 +103,101 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
               startTime: null,
               endTime: null,
             },
+            {
+              prisonerNumber: 'C9876DE',
+              startTime: null,
+              endTime: null,
+            },
           ]),
         )
       when(prisonService.searchInmatesByPrisonerNumbers)
-        .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
+        .calledWith(['A1234BC', 'B2345CD', 'C9876DE'], res.locals.user)
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'A1234BC',
+            firstName: 'TEST01',
+            lastName: 'PRISONER01',
+            prisonId: 'TPR',
+            cellLocation: '1-1-1',
+            status: 'ACTIVE IN',
+          },
+          {
+            prisonerNumber: 'B2345CD',
+            firstName: 'TEST02',
+            lastName: 'PRISONER02',
+            prisonId: 'TPR',
+            cellLocation: '2-2-2',
+            status: 'ACTIVE IN',
+          },
+        ] as Prisoner[])
+
+      await handler.POST(req, res)
+      expect(req.session.appointmentSetJourney.appointments).toEqual([
+        {
+          prisoner: {
+            number: 'A1234BC',
+            firstName: 'TEST01',
+            lastName: 'PRISONER01',
+            name: 'TEST01 PRISONER01',
+            cellLocation: '1-1-1',
+            prisonCode: 'TPR',
+            status: 'ACTIVE IN',
+          },
+          startTime: null,
+          endTime: null,
+        },
+        {
+          prisoner: {
+            number: 'B2345CD',
+            name: 'TEST02 PRISONER02',
+            firstName: 'TEST02',
+            lastName: 'PRISONER02',
+            cellLocation: '2-2-2',
+            prisonCode: 'TPR',
+            status: 'ACTIVE IN',
+          },
+          startTime: null,
+          endTime: null,
+        },
+      ])
+      expect(req.session.appointmentSetJourney.prisonersNotFound).toEqual(['C9876DE'])
+      expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
+    })
+
+    it('returns no prisoners to the next page if none of them are in the prison', async () => {
+      req.file = {
+        path: 'uploads/unknown.csv',
+      } as unknown as Express.Multer.File
+
+      when(prisonerListCsvParser.getAppointments)
+        .calledWith(req.file)
+        .mockReturnValue(
+          Promise.resolve([
+            {
+              prisonerNumber: 'A1234BC',
+              startTime: null,
+              endTime: null,
+            },
+            {
+              prisonerNumber: 'B2345CD',
+              startTime: null,
+              endTime: null,
+            },
+            {
+              prisonerNumber: 'C9876DE',
+              startTime: null,
+              endTime: null,
+            },
+          ]),
+        )
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['A1234BC', 'B2345CD', 'C9876DE'], res.locals.user)
         .mockResolvedValue([] as Prisoner[])
 
       await handler.POST(req, res)
-
-      expect(res.validationFailed).toHaveBeenCalledWith(
-        'file',
-        'Prisoners with numbers A1234BC, B2345CD were not found',
-      )
+      expect(req.session.appointmentSetJourney.appointments).toEqual([])
+      expect(req.session.appointmentSetJourney.prisonersNotFound).toEqual(['A1234BC', 'B2345CD', 'C9876DE'])
+      expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
     })
 
     it('should save appointments to session and redirect to review prisoners page', async () => {
