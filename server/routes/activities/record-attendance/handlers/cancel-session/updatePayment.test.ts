@@ -22,6 +22,7 @@ describe('Route Handlers - Update payment for cancelled session', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      redirectOrReturnWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -29,6 +30,7 @@ describe('Route Handlers - Update payment for cancelled session', () => {
       params: {
         id: '1',
       },
+      session: {},
       flash: jest.fn(),
     } as unknown as Request
   })
@@ -56,7 +58,11 @@ describe('Route Handlers - Update payment for cancelled session', () => {
 
       expect(activitiesService.updateCancelledSession).toHaveBeenCalledWith(1, { issuePayment: true }, res.locals.user)
 
-      expect(res.redirect).toHaveBeenCalledWith('../../cancel-multiple/view-edit-details/1?detailsEdited=true')
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '../../cancel-multiple/view-edit-details/1?detailsEdited=true',
+        'Session updated',
+        "You've updated the pay for this session",
+      )
     })
     it('should update cancellation details and redirect - no', async () => {
       addReasonRequest = {
@@ -69,7 +75,11 @@ describe('Route Handlers - Update payment for cancelled session', () => {
 
       expect(activitiesService.updateCancelledSession).toHaveBeenCalledWith(1, { issuePayment: false }, res.locals.user)
 
-      expect(res.redirect).toHaveBeenCalledWith('../../cancel-multiple/view-edit-details/1?detailsEdited=true')
+      expect(res.redirectOrReturnWithSuccess).toHaveBeenCalledWith(
+        '../../cancel-multiple/view-edit-details/1?detailsEdited=true',
+        'Session updated',
+        "You've updated the pay for this session",
+      )
     })
   })
 
