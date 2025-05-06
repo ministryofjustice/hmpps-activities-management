@@ -25,7 +25,9 @@ export default class TokenStore implements TokenStoreInterface {
 
   public async getToken(key: string): Promise<string> {
     await this.ensureConnected()
-    return this.client.get(`${this.prefix}${key}`)
+
+    const token = await this.client.get(`${this.prefix}${key}`)
+    return typeof token === 'string' ? token : token?.toString() || ''
   }
 
   public async delToken(key: string): Promise<void> {
