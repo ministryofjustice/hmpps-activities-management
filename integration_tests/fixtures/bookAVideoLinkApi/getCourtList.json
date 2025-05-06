@@ -1,0 +1,23 @@
+[
+  {
+    "courtId": 1,
+    "code": "AMRCRN",
+    "description": "Amersham Crown",
+    "enabled": true,
+    "notes": null
+  },
+  {
+    "courtId": 2,
+    "code": "AYLCRN",
+    "description": "Aylesbury Crown",
+    "enabled": true,
+    "notes": null
+  },
+  {
+    "courtId": 3,
+    "code": "BRNMAG",
+    "description": "Barnstaple Magistrates",
+    "enabled": true,
+    "notes": null
+  }
+]

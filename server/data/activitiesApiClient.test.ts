@@ -1021,6 +1021,23 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('putUncancelMultipleActivities', () => {
+    it('should uncancel multiple activity sessions', async () => {
+      fakeActivitiesApi
+        .put('/scheduled-instances/uncancel')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+
+      const body = {
+        scheduleInstanceIds: [1, 2],
+      }
+
+      await activitiesApiClient.putUncancelMultipleActivities(body, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('putUpdateCancelledSessionDetails', () => {
     it('should update activity session instance details', async () => {
       fakeActivitiesApi

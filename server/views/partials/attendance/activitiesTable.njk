@@ -2,9 +2,9 @@
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from "partials/showLocation.njk" import showLocation %}
 
-{% macro activitiesTable(activities, activityDate, filterParams, now) %}
+{% macro activitiesTable(activities, activityDate, filterParams, now, isUncancelPage) %}
     {% set formActions = [] %}
-    {% if cancelMultipleSessionsEnabled and not ((activityDate | toDateString) < (now | toDateString)) %}
+    {% if not ((activityDate | toDateString) < (now | toDateString)) %}
       {% set formActions = (formActions.push({
         text: 'Cancel sessions',
         formAction: 'activities/cancel-multiple'
@@ -16,12 +16,56 @@
         formAction: 'activities/attendance-list'
       }), formActions) %}
     {% endif %}
+    {% if uncancelMultipleSessionsEnabled and isUncancelPage and not ((activityDate | toDateString) < (now | toDateString)) %}
+      {% set formActions = [{
+        text: 'Uncancel activity sessions',
+        formAction: 'uncancel-multiple/next'
+      }]%}
+    {% endif %}
+
+    {% set pagination =  {
+      previous: {
+        title: 'Previous day',
+        label: activityDate | addDays(-1) | formatDate,
+        href: 'activities?date=' + activityDate | addDays(-1) | formatDate('yyyy-MM-dd') + filterParams
+      },
+      next: {
+        title: 'Next day',
+        label: activityDate | addDays(1) | formatDate,
+        href: 'activities?date=' + activityDate | addDays(1) | formatDate('yyyy-MM-dd') + filterParams
+      }
+    } %}
+
+    {% if uncancelMultipleSessionsEnabled and isUncancelPage %}
+      {% if ((activityDate | toDateString) > (now | toDateString)) %}
+        {% set pagination =  {
+          previous: {
+            title: 'Previous day',
+            label: activityDate | addDays(-1) | formatDate,
+            href: 'uncancel-multiple?date=' + activityDate | addDays(-1) | formatDate('yyyy-MM-dd') + filterParams
+          },
+          next: {
+            title: 'Next day',
+            label: activityDate | addDays(1) | formatDate,
+            href: 'uncancel-multiple?date=' + activityDate | addDays(1) | formatDate('yyyy-MM-dd') + filterParams
+          }
+        } %}
+      {% else %}
+        {% set pagination =  {
+          next: {
+            title: 'Next day',
+            label: activityDate | addDays(1) | formatDate,
+            href: 'uncancel-multiple?date=' + activityDate | addDays(1) | formatDate('yyyy-MM-dd') + filterParams
+          }
+        } %}
+      {% endif %}
+    {% endif %}
 
     {% set rows = [] %}
     {% for activity in activities %}
         {% set allowSelection = not activity.cancelled and activity.attendanceRequired and activity.attendanceSummary.allocations > 0 %}
-        {% if not cancelMultipleSessionsEnabled %}
-          {% set allowSelection = allowSelection and not ((activity.sessionDate | toDateString) > (now | toDateString)) %}
+        {% if uncancelMultipleSessionsEnabled and isUncancelPage %}
+          {% set allowSelection = activity.cancelled and activity.attendanceRequired and activity.attendanceSummary.allocations > 0 and not ((activityDate | toDateString) < (now | toDateString)) %}
         {% endif %}
         {% set activityLocation = showLocation(activity, makeCapitals = true) %}
         {% set rows = (rows.push({
@@ -93,63 +137,52 @@
         }), rows) %}
     {% endfor %}
 
-        {{ stickySelect({
-            idPrefix: 'activities',
-            type: 'check',
-            caption: "(" + activities.length + ") sessions",
-            captionClasses: "govuk-visually-hidden",
-            name: 'selectedInstanceIds',
-            head: [
-                {
-                    text: "Activity",
-                    attributes: { "aria-sort": "ascending" }
-                },
-                {
-                    text: "Location",
-                    attributes: { "aria-sort": "none" }
-                },
-                {
-                    text: "Time",
-                    attributes: { "aria-sort": "ascending" }
-                },
-                {
-                    text: "Allocated",
-                    attributes: { "aria-sort": "none" },
-                    classes: "numeric-col-width"
-                },
-                {
-                    text: "Attended",
-                    attributes: { "aria-sort": "none" },
-                    classes: "numeric-col-width"
-                },
-                {
-                    text: "Not recorded",
-                    attributes: { "aria-sort": "none" },
-                    classes: "numeric-col-width"
-                },
-                {
-                    text: "Absent",
-                    attributes: { "aria-sort": "none" },
-                    classes: "numeric-col-width"
-                }
-            ],
-            rows: rows,
-            actions: formActions,
-            itemsDescription: 'session',
-            itemsDescriptionPlural: 'sessions',
-            pagination: {
-                previous: {
-                    title: 'Previous day',
-                    label: activityDate | addDays(-1) | formatDate,
-                    href: 'activities?date=' + activityDate | addDays(-1) | formatDate('yyyy-MM-dd') + filterParams
-                },
-                next: {
-                    title: 'Next day',
-                    label: activityDate | addDays(1) | formatDate,
-                    href: 'activities?date=' + activityDate | addDays(1) | formatDate('yyyy-MM-dd') + filterParams
-                }
+    {{ stickySelect({
+        idPrefix: 'activities',
+        type: 'check',
+        caption: "(" + activities.length + ") sessions",
+        captionClasses: "govuk-visually-hidden",
+        name: 'selectedInstanceIds',
+        head: [
+            {
+                text: "Activity",
+                attributes: { "aria-sort": "ascending" }
+            },
+            {
+                text: "Location",
+                attributes: { "aria-sort": "none" }
+            },
+            {
+                text: "Time",
+                attributes: { "aria-sort": "ascending" }
+            },
+            {
+                text: "Allocated",
+                attributes: { "aria-sort": "none" },
+                classes: "numeric-col-width"
+            },
+            {
+                text: "Attended",
+                attributes: { "aria-sort": "none" },
+                classes: "numeric-col-width"
+            },
+            {
+                text: "Not recorded",
+                attributes: { "aria-sort": "none" },
+                classes: "numeric-col-width"
+            },
+            {
+                text: "Absent",
+                attributes: { "aria-sort": "none" },
+                classes: "numeric-col-width"
             }
-        }) }}
+        ],
+        rows: rows,
+        actions: formActions,
+        itemsDescription: 'session',
+        itemsDescriptionPlural: 'sessions',
+        pagination: pagination
+    }) }}
 
 {% endmacro %}
 

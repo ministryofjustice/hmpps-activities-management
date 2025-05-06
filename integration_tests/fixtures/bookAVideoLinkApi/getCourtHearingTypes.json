@@ -1,0 +1,37 @@
+[
+  {
+    "referenceCodeId": 1,
+    "groupCode": "COURT_HEARING_TYPE",
+    "code": "APPEAL",
+    "description": "Appeal",
+    "enabled": true
+  },
+  {
+    "referenceCodeId": 2,
+    "groupCode": "COURT_HEARING_TYPE",
+    "code": "APPLICATION",
+    "description": "Application",
+    "enabled": true
+  },
+  {
+    "referenceCodeId": 3,
+    "groupCode": "COURT_HEARING_TYPE",
+    "code": "BACKER",
+    "description": "Backer trial",
+    "enabled": true
+  },
+  {
+    "referenceCodeId": 4,
+    "groupCode": "COURT_HEARING_TYPE",
+    "code": "BAIL",
+    "description": "Bail",
+    "enabled": true
+  },
+  {
+    "referenceCodeId": 5,
+    "groupCode": "COURT_HEARING_TYPE",
+    "code": "TRIAL",
+    "description": "Trial",
+    "enabled": true
+  }
+]

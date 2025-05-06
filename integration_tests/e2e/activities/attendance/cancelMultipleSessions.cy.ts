@@ -25,7 +25,7 @@ import ViewOrEditCancellationDetailsPage from '../../../pages/recordAttendance/v
 import CancelSessionPage from '../../../pages/recordAttendance/cancelSessionReason'
 import UpdateCancelledSessionPayPage from '../../../pages/recordAttendance/cancelSessionPay'
 
-context('Record attendance', () => {
+context('Cancel Multiple Sessions', () => {
   const today = startOfToday()
   const todayStr = format(today, 'yyyy-MM-dd')
 
@@ -244,6 +244,10 @@ context('Updating cancellation details', () => {
     cancelSingleReasonPage.moreDetailsInput().type('The prisoners are having a day off this activity.')
     cancelSingleReasonPage.getButton('Update cancellation reason').click()
     Page.verifyOnPage(ViewOrEditCancellationDetailsPage)
+    viewOrEditCancellationDetailsPage.assertNotificationContents(
+      'Session updated',
+      "You've updated the reason for cancelling this session",
+    )
   })
   it('Should show the user the correct cancellation details - paid activity, prisoners to be paid, but not editable', () => {
     getScheduledInstanceEnglishLevel1Cancelled.cancelledIssuePayment = true
@@ -359,6 +363,10 @@ context('Updating cancellation details', () => {
     updateCancelledSessionPayPage.issuePayment('Yes')
     updateCancelledSessionPayPage.getButton('Update pay for this cancelled session').click()
     Page.verifyOnPage(ViewOrEditCancellationDetailsPage)
+    viewOrEditCancellationDetailsPage.assertNotificationContents(
+      'Session updated',
+      "You've updated the pay for this session",
+    )
   })
   it('Allows uncancel of a single session if the session was cancelled as part of a mass cancellation', () => {
     getScheduledInstanceEnglishLevel1Cancelled.date = todayStr

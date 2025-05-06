@@ -143,7 +143,8 @@
                             }
                         }
                     ] if session.bookACourtHearingJourney.preLocationCode else [{ value: { text: "No pre-court hearing" } }],
-                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not session.bookACourtHearingJourney.preLocationCode
+                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not session.bookACourtHearingJourney.preLocationCode,
+                    attributes: { 'data-qa': 'pre-scheduling-information' }
                 }) }}
 
                 {{ govukSummaryList({
@@ -229,7 +230,8 @@
                                 ]
                             }
                         }
-                    ]
+                    ],
+                    attributes: { 'data-qa': 'main-scheduling-information' }
                 }) }}
 
                 {{ govukSummaryList({
@@ -274,7 +276,8 @@
                             }
                         }
                     ] if session.bookACourtHearingJourney.postLocationCode else [{ value: { text: "No post-court hearing" } }],
-                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not session.bookACourtHearingJourney.postLocationCode
+                    classes: "govuk-summary-list govuk-summary-list--no-keys" if not session.bookACourtHearingJourney.postLocationCode,
+                    attributes: { 'data-qa': 'post-scheduling-information' }
                 }) }}
 
                 <h2 class="govuk-heading-m">Extra information</h2>

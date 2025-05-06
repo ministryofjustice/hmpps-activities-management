@@ -3,10 +3,8 @@ import { addDays, startOfDay } from 'date-fns'
 import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import { asString, convertToArray, formatDate, toDate } from '../../../../utils/utils'
-import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
-import TimeSlot from '../../../../enum/timeSlot'
 import PrisonService from '../../../../services/prisonService'
-import LocationType from '../../../../enum/locationType'
+import { activityRows, filterItems } from '../utils/activitiesPageUtils'
 
 export default class ActivitiesRoutes {
   constructor(
@@ -19,7 +17,6 @@ export default class ActivitiesRoutes {
     const { date, searchTerm, sessionFilters, categoryFilters, locationId, locationType } = req.query
 
     const activityDate = date ? toDate(asString(date)) : new Date()
-
     if (startOfDay(activityDate) > startOfDay(addDays(new Date(), 60))) return res.redirect('select-period')
 
     const [categories, activityAttendanceSummary] = await Promise.all([
@@ -34,45 +31,6 @@ export default class ActivitiesRoutes {
 
     const locationTypeFilter = locationType !== undefined ? asString(locationType) : 'ALL'
 
-    const selectedCategoryIds = categories
-      .filter(c => filterValues.categoryFilters?.includes(c.code) ?? true)
-      .map(c => c.id)
-
-    const filteredActivities = activityAttendanceSummary
-      .filter(a => (searchTerm ? a.summary.toLowerCase().includes(asString(searchTerm).toLowerCase()) : true))
-      .filter(a => filterValues.sessionFilters?.includes(a.timeSlot) ?? true)
-      .filter(a => selectedCategoryIds?.includes(a.categoryId) ?? true)
-      .filter(a => {
-        switch (locationTypeFilter) {
-          case LocationType.OUT_OF_CELL:
-            return a.internalLocation?.id === +asString(locationId)
-          case LocationType.IN_CELL:
-            return a.inCell
-          case LocationType.ON_WING:
-            return a.onWing
-          case LocationType.OFF_WING:
-            return a.offWing
-          default:
-            return true
-        }
-      })
-
-    const activityRows = filteredActivities
-      .map(a => {
-        const session = TimeSlot[a.timeSlot]
-        return {
-          ...a,
-          session,
-        }
-      })
-      .filter(a => !filterValues.sessionFilters || filterValues.sessionFilters.includes(a.session))
-      .sort((a, b) => {
-        if (a.startTime !== b.startTime) {
-          return a.startTime.localeCompare(b.startTime)
-        }
-        return a.endTime.localeCompare(b.endTime)
-      })
-
     req.session.recordAttendanceJourney = {}
 
     const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
@@ -82,7 +40,14 @@ export default class ActivitiesRoutes {
       activityDate,
       filterItems: filterItems(categories, filterValues, asString(locationId), locationTypeFilter),
       selectedSessions: filterValues.sessionFilters,
-      activityRows,
+      activityRows: activityRows(
+        categories,
+        activityAttendanceSummary,
+        filterValues,
+        asString(locationId),
+        locationTypeFilter,
+        asString(searchTerm),
+      ),
       locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
     })
   }
@@ -90,7 +55,7 @@ export default class ActivitiesRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { searchTerm, sessionFilters, categoryFilters, locationId, locationType } = req.body
 
-    const activityDate = req.query.date ?? formatDate(new Date(), 'YYYY-MM-dd')
+    const activityDate = req.query.date ?? formatDate(new Date(), 'yyyy-MM-dd')
     const sessionFiltersString = sessionFilters ? convertToArray(sessionFilters).join(',') : ''
     const categoryFiltersString = categoryFilters ? convertToArray(categoryFilters).join(',') : ''
 
@@ -128,30 +93,5 @@ export default class ActivitiesRoutes {
     }
 
     return res.redirect('cancel-multiple/cancel-reason')
-  }
-}
-
-const filterItems = (
-  categories: ActivityCategory[],
-  filterValues: { [key: string]: string[] },
-  locationId: string,
-  locationType: string,
-) => {
-  const categoryFilters = categories.map(category => ({
-    value: category.code,
-    text: category.name,
-    checked: filterValues.categoryFilters?.includes(category.code) ?? true,
-  }))
-  const sessionFilters = [
-    { value: 'AM', text: 'Morning (AM)' },
-    { value: 'PM', text: 'Afternoon (PM)' },
-    { value: 'ED', text: 'Evening (ED)' },
-  ].map(c => ({ ...c, checked: filterValues.sessionFilters?.includes(c.value) ?? true }))
-
-  return {
-    sessionFilters,
-    categoryFilters,
-    locationType,
-    locationId: locationType === LocationType.OUT_OF_CELL ? locationId : null,
   }
 }
