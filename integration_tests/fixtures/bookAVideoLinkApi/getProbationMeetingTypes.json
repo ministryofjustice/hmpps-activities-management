@@ -1,0 +1,23 @@
+[
+  {
+    "referenceCodeId": 10,
+    "groupCode": "PROBATION_MEETING_TYPE",
+    "code": "PSR",
+    "description": "Pre-sentence report",
+    "enabled": true
+  },
+  {
+    "referenceCodeId": 11,
+    "groupCode": "PROBATION_MEETING_TYPE",
+    "code": "RR",
+    "description": "Recall report",
+    "enabled": true
+  },
+  {
+    "referenceCodeId": 12,
+    "groupCode": "PROBATION_MEETING_TYPE",
+    "code": "UNKNOWN",
+    "description": "Unknown",
+    "enabled": true
+  }
+]
