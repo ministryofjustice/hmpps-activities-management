@@ -48,13 +48,16 @@ export default class CancelSessionRoutes {
         comment,
       }
       this.activitiesService.updateCancelledSession(instanceId, updatedReason, user)
-      res.redirect(`../cancel-multiple/view-edit-details/${instanceId}?detailsEdited=true`)
-    } else {
-      req.session.recordAttendanceJourney = {
-        ...req.session.recordAttendanceJourney,
-        sessionCancellation: { reason: textReason, comment },
-      }
-      res.redirect('cancel/confirm')
+      const successMessage = `You've updated the reason for cancelling this session`
+      const returnTo = `../cancel-multiple/view-edit-details/${instanceId}?detailsEdited=true`
+      req.session.returnTo = returnTo
+      return res.redirectOrReturnWithSuccess(returnTo, 'Session updated', successMessage)
     }
+
+    req.session.recordAttendanceJourney = {
+      ...req.session.recordAttendanceJourney,
+      sessionCancellation: { reason: textReason, comment },
+    }
+    return res.redirect('cancel/confirm')
   }
 }
