@@ -37,7 +37,7 @@ context('Create group appointment - CSV upload validation', () => {
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
-    uploadPrisonerListPage.attatchFile('larger-than-100kb.csv')
+    uploadPrisonerListPage.attachFile('larger-than-100kb.csv')
     uploadPrisonerListPage.uploadFile()
 
     cy.writeFile('integration_tests/fixtures/fileUpload/larger-than-100kb.csv', '')
@@ -51,7 +51,7 @@ context('Create group appointment - CSV upload validation', () => {
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
-    uploadPrisonerListPage.attatchFile('empty-upload-prisoner-list.csv')
+    uploadPrisonerListPage.attachFile('empty-upload-prisoner-list.csv')
     uploadPrisonerListPage.uploadFile()
 
     uploadPrisonerListPage.assertValidationError('file', 'The selected file is empty')
@@ -63,7 +63,7 @@ context('Create group appointment - CSV upload validation', () => {
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
-    uploadPrisonerListPage.attatchFile('non-csv-file.xlsx')
+    uploadPrisonerListPage.attachFile('non-csv-file.xlsx')
     uploadPrisonerListPage.uploadFile()
 
     uploadPrisonerListPage.assertValidationError('file', 'You must upload a CSV file')
@@ -75,7 +75,7 @@ context('Create group appointment - CSV upload validation', () => {
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
-    uploadPrisonerListPage.attatchFile('non-csv-file.csv')
+    uploadPrisonerListPage.attachFile('non-csv-file.csv')
     uploadPrisonerListPage.uploadFile()
 
     uploadPrisonerListPage.assertValidationError('file', 'You must upload a CSV file')
@@ -87,7 +87,7 @@ context('Create group appointment - CSV upload validation', () => {
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
-    uploadPrisonerListPage.attatchFile('upload-prisoner-list-no-numbers.csv')
+    uploadPrisonerListPage.attachFile('upload-prisoner-list-no-numbers.csv')
     uploadPrisonerListPage.uploadFile()
 
     uploadPrisonerListPage.assertValidationError('file', 'The selected file does not contain any prison numbers')
@@ -99,7 +99,7 @@ context('Create group appointment - CSV upload validation', () => {
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
-    uploadPrisonerListPage.attatchFile('upload-prisoner-list-one-not-found.csv')
+    uploadPrisonerListPage.attachFile('upload-prisoner-list-one-not-found.csv')
     uploadPrisonerListPage.uploadFile()
 
     uploadPrisonerListPage.assertValidationError('file', "The prison number 'NOTFOUND' was not recognised")
@@ -111,7 +111,7 @@ context('Create group appointment - CSV upload validation', () => {
     howToAddPrisonersPage.continue()
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
-    uploadPrisonerListPage.attatchFile('upload-prisoner-list-two-not-found.csv')
+    uploadPrisonerListPage.attachFile('upload-prisoner-list-two-not-found.csv')
     uploadPrisonerListPage.uploadFile()
 
     uploadPrisonerListPage.assertValidationError(

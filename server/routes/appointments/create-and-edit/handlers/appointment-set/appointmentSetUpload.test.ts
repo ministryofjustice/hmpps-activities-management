@@ -84,7 +84,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
       expect(res.validationFailed).toHaveBeenCalledWith('file', 'The selected file does not contain any prison numbers')
     })
 
-    it('filters out a prisoners who is not recognised as being in the active caseload', async () => {
+    it('filters out a prisoner who is not recognised as being in the active caseload', async () => {
       req.file = {
         path: 'uploads/unknown.csv',
       } as unknown as Express.Multer.File
@@ -164,7 +164,7 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
     })
 
-    it('returns no prisoners to the next page if none of them are in the prison', async () => {
+    it('returns empty prisoner list to the next page if CSV has unidentified prisoners', async () => {
       req.file = {
         path: 'uploads/unknown.csv',
       } as unknown as Express.Multer.File
