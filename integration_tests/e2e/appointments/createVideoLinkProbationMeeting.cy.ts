@@ -33,15 +33,17 @@ context('Create video link probation appointment', () => {
   const tomorrow = addDays(new Date(), 1)
   const tomorrowFormatted = formatDate(tomorrow, 'yyyy-MM-dd')
 
-  // To pass validation we must ensure the appointment start date is set to tomorrow
+  // This puts activities onto the prisoner's schedule for the same day - but has no impact on the test result
   getScheduledEvents.activities
-    .filter(e => e.prisonerNumber === 'A7789DY')
+    .filter(e => e.prisonerNumber === 'A8644DY')
     .forEach(e => {
-      e.prisonerNumber = 'A8644DY'
+      e.date = tomorrowFormatted
     })
+
+  // Ensure the appointment start date is set to tomorrow
   getAppointmentDetails.startDate = tomorrowFormatted
 
-  // Ensure the BVLS booking confirmation reflects tomorrow's date too
+  // Ensure the booking confirmation reflects tomorrow's date
   getCompletedProbationBooking.prisonAppointments[0].appointmentDate = tomorrowFormatted
 
   beforeEach(() => {
@@ -51,7 +53,11 @@ context('Create video link probation appointment', () => {
 
     // A&A API stubs
     cy.stubEndpoint('GET', '/appointment-categories', getCategories)
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`, getScheduledEvents)
+    cy.stubEndpoint(
+      'POST',
+      `/scheduled-events/prison/MDI\\?date=${tomorrowFormatted}`,
+      getScheduledEvents as unknown as JSON,
+    )
     cy.stubEndpoint(
       'POST',
       `/scheduled-events/prison/MDI/locations\\?date=${tomorrowFormatted}`,
@@ -66,24 +72,28 @@ context('Create video link probation appointment', () => {
     )
 
     // Alerts API stubs
-    cy.stubEndpoint('POST', '/search/alerts/prison-numbers\\?includeInactive=false', getPrisonerAlerts)
+    cy.stubEndpoint(
+      'POST',
+      '/search/alerts/prison-numbers\\?includeInactive=false',
+      getPrisonerAlerts as unknown as JSON,
+    )
 
     // Non-associations API stubs
     cy.stubEndpoint('POST', '/non-associations/between', [])
 
     // Prisoner search API stubs
-    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A8644DY&size=50', getPrisonPrisoners)
-    cy.stubEndpoint('GET', '/prisoner/A8633DY', getPrisonPrisoners)
-    cy.stubEndpoint('GET', '/prisoner/A8644DY', getPrisonerA8644DY)
+    cy.stubEndpoint('GET', '/prison/MDI/prisoners\\?term=A8644DY&size=50', getPrisonPrisoners as unknown as JSON)
+    cy.stubEndpoint('GET', '/prisoner/A8633DY', getPrisonPrisoners as unknown as JSON)
+    cy.stubEndpoint('GET', '/prisoner/A8644DY', getPrisonerA8644DY as unknown as JSON)
 
     // Prison API stubs
     cy.stubEndpoint('GET', '/appointment-locations/MDI', getMdiAppointmentLocations)
 
     // Video link booking API stubs
     cy.stubEndpoint('GET', '/prisons/MDI/locations\\?videoLinkOnly=false', getBvlsLocations)
-    cy.stubEndpoint('GET', '/api/locations/code/VCC-ROOM-1', getBvlsVccRoom1)
+    cy.stubEndpoint('GET', '/api/locations/code/VCC-ROOM-1', getBvlsVccRoom1 as unknown as JSON)
     cy.stubEndpoint('POST', '/video-link-booking', JSON.parse('1234'))
-    cy.stubEndpoint('GET', '/video-link-booking/id/1234', getCompletedProbationBooking)
+    cy.stubEndpoint('GET', '/video-link-booking/id/1234', getCompletedProbationBooking as unknown as JSON)
     cy.stubEndpoint('GET', '/probation-teams\\?enabledOnly=false', getProbationTeamList)
     cy.stubEndpoint('GET', '/reference-codes/group/PROBATION_MEETING_TYPE', getProbationMeetingTypes)
   })
