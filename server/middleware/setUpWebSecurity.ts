@@ -36,7 +36,7 @@ export default function setUpWebSecurity(): Router {
   const styleSrc = ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`]
   const imgSrc = ["'self'", 'https://*.google-analytics.com', 'https://*.googletagmanager.com', 'data:']
   const fontSrc = ["'self'"]
-  const formAction = [`'self' ${config.dpsUrl}`, `'self' ${config.domain}`]
+  const formAction = [`'self' ${config.dpsUrl}`]
 
   router.use(
     helmet({
