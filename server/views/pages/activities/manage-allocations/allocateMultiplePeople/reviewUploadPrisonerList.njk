@@ -109,7 +109,16 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <span class="govuk-caption-l">{{ session.allocateJourney.activity.name }}</span>
-      {% if allocationsAvailable %}
+      {% if unidentifiable === true %}
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
+        <p class="govuk-body">No prison numbers in your CSV file could be used</p>
+        <p class="govuk-body">This may be because the number is wrong, or the person is no longer in your prison</p>
+        {{ govukButton({
+            text: "Return to the activity",
+            classes: "govuk-!-margin-top-5",
+            href: '/activities/allocation-dashboard/'+session.allocateJourney.activity.activityId
+        }) }}
+      {% elif allocationsAvailable %}
         <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
         <p class="govuk-body">Remove anyone who should not be allocated, or continue with the current list of people to allocate.</p>
 
@@ -146,6 +155,18 @@
             'data-qa': 'inmate-list'
           }
         }) }}
+
+        {% if session.allocateJourney.notFoundPrisoners.length > 0 %}
+          <h1 class="govuk-heading-m govuk-!-margin-bottom-7">Some prison numbers in your CSV file could not be used</h1>
+            <p class="govuk-body">These numbers did not match anyone in your prison:</p>
+              <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-4">
+                {% for prisonNumber in session.allocateJourney.notFoundPrisoners %}
+                  <li>{{ prisonNumber }}</li>
+                {% endfor %}
+              </ul>
+            <p class="govuk-body">This may be because the number is wrong, or the person is no longer in your prison</p>
+        {% endif %}
+      
       {% else %}
         <h1 class="govuk-heading-l govuk-!-margin-bottom-7">{{ nobodyToAllocateTitle }}</h1>
         <p class="govuk-body">Check the list of people you’re using is correct. You may need to:</p>
@@ -232,6 +253,14 @@
       {% endif %}
 
       {% if allocationsAvailable %}
+      {{ govukButton({
+        text: "Add people using CSV file",
+        id: "add-prisoner-csv",
+        classes: "govuk-button--secondary",
+        href: "upload-prisoner-list",
+        attributes: { 'data-qa': 'add-prisoner-csv' }
+      }) }}
+
       <form method="POST">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
           {{ govukButton({

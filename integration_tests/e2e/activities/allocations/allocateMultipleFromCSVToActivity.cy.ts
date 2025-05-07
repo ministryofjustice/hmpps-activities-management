@@ -95,7 +95,7 @@ context('Allocate multiple via CSV to an activity', () => {
 
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.caption().should('contain.text', 'Entry level English 1')
-    uploadPrisonerListPage.attatchFile('upload-prisoner-list.csv')
+    uploadPrisonerListPage.attatchFile('upload-prisoner-list-two-not-found.csv')
     uploadPrisonerListPage.uploadFile()
 
     const reviewUploadPrisonerListPage = Page.verifyOnPage(ReviewUploadPrisonerListPage)
@@ -103,6 +103,9 @@ context('Allocate multiple via CSV to an activity', () => {
     reviewUploadPrisonerListPage.rows('inmate-list').should('have.length', 2)
     reviewUploadPrisonerListPage.checkTableCell('inmate-list', 2, 'None')
     reviewUploadPrisonerListPage.checkTableCell('inmate-list', 7, 'View non-associations')
+    reviewUploadPrisonerListPage.hasText('Some prison numbers in your CSV file could not be used')
+    reviewUploadPrisonerListPage.list().should('contain.text', 'NOTFOUND1')
+    reviewUploadPrisonerListPage.list().should('contain.text', 'NOTFOUND2')
     reviewUploadPrisonerListPage.continue()
 
     const activityRequirementsReviewPage = Page.verifyOnPage(ActivityRequirementsReviewPage)
