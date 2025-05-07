@@ -79,7 +79,6 @@ export default class UploadPrisonerListRoutes {
       )
 
       req.session.allocateJourney.notFoundPrisoners = prisonerNumbersNotFound
-
       req.session.allocateJourney.inmates = inmates
       req.session.allocateJourney.allocatedInmates = undefined
       req.session.allocateJourney.withoutMatchingIncentiveLevelInmates = undefined
@@ -87,7 +86,6 @@ export default class UploadPrisonerListRoutes {
 
       return res.redirect('review-upload-prisoner-list')
     }
-
     req.session.allocateJourney.unidentifiable = true
 
     return res.redirect('review-upload-prisoner-list')

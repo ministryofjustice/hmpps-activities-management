@@ -226,6 +226,101 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
       expect(req.session.allocateJourney.inmates).toEqual(expectedInmates)
       expect(res.redirect).toHaveBeenCalledWith('review-upload-prisoner-list')
     })
+
+    it('should pass not found prisoner and redirect to review upload a prisoner list view', async () => {
+      req.file = {
+        path: 'uploads/three-prisoners.csv',
+      } as unknown as Express.Multer.File
+
+      when(prisonerListCsvParser.getPrisonNumbers)
+        .calledWith(req.file)
+        .mockReturnValue(Promise.resolve(['A1234BC', 'B2345CD', 'A12gvv34BC']))
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['A1234BC', 'B2345CD', 'A12gvv34BC'], res.locals.user)
+        .mockResolvedValue([prisonerA, prisonerB])
+
+      when(prisonService.searchPrisonInmates)
+        .calledWith('', res.locals.user)
+        .mockResolvedValue({ content: prisonersResult })
+
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
+        .mockResolvedValue([prisonerAllocations1, prisonerAllocations2])
+
+      when(nonAssociationsService.getListPrisonersWithNonAssociations)
+        .calledWith(['A1234BC', 'B2345CD'], res.locals.user)
+        .mockResolvedValue(['A1234BC'])
+
+      await handler.POST(req, res)
+
+      const expectedInmates: Inmate[] = [
+        {
+          prisonerName: 'TEST01 PRISONER01',
+          firstName: 'TEST01',
+          lastName: 'PRISONER01',
+          prisonerNumber: 'A1234BC',
+          prisonCode: 'TPR',
+          status: 'ACTIVE IN',
+          cellLocation: '1-1-1',
+          incentiveLevel: 'Standard',
+          payBand: undefined,
+          otherAllocations: [
+            {
+              activityId: 22,
+              activitySummary: 'other',
+              bookingId: 0,
+              exclusions: [],
+              id: 0,
+              isUnemployment: false,
+              prisonerNumber: 'A1234BC',
+              scheduleDescription: '',
+              scheduleId: 22,
+              startDate: '2024-01-01',
+              status: undefined,
+            },
+          ],
+          nonAssociations: true,
+        },
+        {
+          prisonerName: 'TEST02 PRISONER02',
+          firstName: 'TEST02',
+          lastName: 'PRISONER02',
+          prisonerNumber: 'B2345CD',
+          prisonCode: 'TPR',
+          status: 'ACTIVE IN',
+          cellLocation: '2-2-2',
+          incentiveLevel: 'Basic',
+          payBand: undefined,
+          otherAllocations: [],
+          nonAssociations: false,
+        },
+      ]
+      expect(req.session.allocateJourney.notFoundPrisoners).toEqual(['A12gvv34BC'])
+      expect(req.session.allocateJourney.unidentifiable).toEqual(false)
+      expect(req.session.allocateJourney.inmates).toEqual(expectedInmates)
+      expect(res.redirect).toHaveBeenCalledWith('review-upload-prisoner-list')
+    })
+
+    it('should pass unidentifiable trigger when all uploaded prison numbers are incorrect', async () => {
+      req.file = {
+        path: 'uploads/two-prisoners.csv',
+      } as unknown as Express.Multer.File
+
+      when(prisonerListCsvParser.getPrisonNumbers)
+        .calledWith(req.file)
+        .mockReturnValue(Promise.resolve(['A12gvv34BC', 'Bgvv2345CD']))
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['A12gvv34BC', 'Bgvv2345CD'], res.locals.user)
+        .mockResolvedValue([])
+
+      await handler.POST(req, res)
+
+      expect(req.session.allocateJourney.unidentifiable).toEqual(true)
+      expect(req.session.allocateJourney.inmates).toEqual([])
+      expect(res.redirect).toHaveBeenCalledWith('review-upload-prisoner-list')
+    })
   })
 
   describe('Validation', () => {
