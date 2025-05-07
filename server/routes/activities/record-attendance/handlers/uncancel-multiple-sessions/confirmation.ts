@@ -37,14 +37,17 @@ export default class UncancelMultipleSessionsConfirmRoutes {
   }
 
   POST = async (req: Request, res: Response) => {
+    const { activityDate, sessionFilters, selectedInstanceIds } = req.session.recordAttendanceJourney
     const { user } = res.locals
-    const instanceIds = convertToNumberArray(req.session.recordAttendanceJourney.selectedInstanceIds)
     const { confirm }: UncancelConfirmForm = req.body
+
+    const sessionFiltersString = sessionFilters ? sessionFilters.join(',') : ''
+    const instanceIds = convertToNumberArray(selectedInstanceIds)
 
     if (confirm === 'yes') {
       await this.activitiesService.uncancelMultipleActivities(instanceIds, user)
     }
 
-    return res.redirect(`../uncancel-multiple`)
+    return res.redirect(`../uncancel-multiple?date=${activityDate}&sessionFilters=${sessionFiltersString}`)
   }
 }

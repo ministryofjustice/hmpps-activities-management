@@ -71,7 +71,7 @@
                         <div class="moj-action-bar__filter"></div>
                     </div>
 
-                    {% if uncancelMultipleSessionsEnabled and not ((activityDate | toDateString) < (now | toDateString)) %}
+                    {% if uncancelMultipleSessionsEnabled and hasCancelledSessions and not ((activityDate | toDateString) < (now | toDateString)) %}
                       <a href="activities/uncancel-multiple?date={{ activityDate | toDateString }}{{ filterParams }}" class="govuk-link govuk-!-font-size-19">Uncancel activity sessions</a>
                     {% endif %}
 
