@@ -31,11 +31,14 @@ export default class ReviewPrisonerRoutes {
 
     const prisoners = ReviewPrisonerRoutes.getPrisoners(req)
 
+    const notFoundPrisoners = ReviewPrisonerRoutes.getNotFoundPrisoners(req)
+
     res.render('pages/appointments/create-and-edit/review-prisoners', {
       appointmentId,
       backLinkHref,
       preserveHistory,
       prisoners,
+      notFoundPrisoners,
       originalAppointmentId: appointmentJourney.originalAppointmentId,
     })
   }
@@ -50,6 +53,18 @@ export default class ReviewPrisonerRoutes {
       return appointmentSetJourney.appointments.map(appointment => appointment.prisoner)
     }
     return appointmentJourney.prisoners
+  }
+
+  private static getNotFoundPrisoners(req: Request): string[] {
+    const { appointmentJourney, appointmentSetJourney } = req.session
+
+    if (appointmentJourney.type === AppointmentType.SET && appointmentSetJourney.prisonersNotFound) {
+      const unidentifiedPrisonerNumbers = appointmentSetJourney.prisonersNotFound
+      appointmentSetJourney.prisonersNotFound = null
+      return unidentifiedPrisonerNumbers
+    }
+    // TODO: Can add another check here on the ticket to add unfound prisoners on the normal appointment journey
+    return []
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
