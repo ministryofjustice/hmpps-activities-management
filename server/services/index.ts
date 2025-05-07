@@ -32,6 +32,7 @@ export default function services() {
     locationsInsidePrisonApiClient,
     nomisMappingClient,
     tokenStore,
+    bankHolidaysClient,
   } = dataAccess()
 
   const alertsFilterService = new AlertsFilterService()
@@ -47,7 +48,7 @@ export default function services() {
     courtBookingService: new CourtBookingService(bookAVideoLinkApiClient),
     probationBookingService: new ProbationBookingService(bookAVideoLinkApiClient),
     caseNotesService: new CaseNotesService(caseNotesApiClient),
-    ukBankHolidayService: new BankHolidayService(),
+    ukBankHolidayService: new BankHolidayService(bankHolidaysClient),
     alertsFilterService,
     unlockListService: new UnlockListService(prisonerSearchApiClient, activitiesApiClient, alertsFilterService),
     metricsService: new MetricsService(applicationInsightsClient),

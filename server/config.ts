@@ -186,6 +186,14 @@ export default {
       },
       agent: new AgentConfig(Number(get('NOMIS_MAPPING_API_TIMEOUT_RESPONSE', 30000))),
     },
+    bankHolidaysApi: {
+      url: get('BANK_HOLIDAYS_API_URL', 'https://www.gov.uk/bank-holidays.json', requiredInProduction),
+      timeout: {
+        response: Number(get('BANK_HOLIDAYS_API_TIMEOUT_RESPONSE', 30000)),
+        deadline: Number(get('BANK_HOLIDAYS_API_TIMEOUT_DEADLINE', 30000)),
+      },
+      agent: new AgentConfig(Number(get('BANK_HOLIDAYS_API_TIMEOUT_RESPONSE', 30000))),
+    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   analytics: {
