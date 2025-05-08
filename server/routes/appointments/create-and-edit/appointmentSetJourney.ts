@@ -13,4 +13,5 @@ export type AppointmentSetJourney = {
     prisoner?: AppointmentPrisonerDetails
     extraInformation?: string
   }[]
+  prisonersNotFound?: string[]
 }
