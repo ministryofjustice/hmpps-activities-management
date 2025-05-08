@@ -232,9 +232,6 @@ export default {
     },
   ] as RouteAuth[],
   spikesFeatureToggleEnabled: toBoolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', 'false')),
-  bvlsMasteredVlpmFeatureToggleEnabled: toBoolean(
-    get('BVLS_MASTERED_VLPM_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
-  ),
   appointmentMultipleAttendanceToggleEnabled: toBoolean(
     get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),
   ),

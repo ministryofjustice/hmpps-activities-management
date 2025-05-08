@@ -4,7 +4,6 @@ import validationMiddleware from '../../../../middleware/validationMiddleware'
 import SelectPrisonerRoutes, { Prisoner } from './handlers/selectPrisoner'
 import LocationRoutes, { Location } from './handlers/location'
 import { Services } from '../../../../services'
-import config from '../../../../config'
 import MeetingDetailsRoutes, { MeetingDetails } from './handlers/meetingDetails'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
@@ -32,12 +31,6 @@ export default function CreateRoutes({
   const extraInformation = new ExtraInformationRoutes(probationBookingService)
   const checkBooking = new CheckBookingRoutes(bookAVideoLinkService, probationBookingService)
   const confirmation = new ConfirmationRoutes(bookAVideoLinkService, prisonService)
-
-  // The bvlsMasteredVlpmFeatureToggleEnabled feature toggle is required for the following routes
-  router.use((req, res, next) => {
-    if (!config.bvlsMasteredVlpmFeatureToggleEnabled) return res.redirect('/')
-    return next()
-  })
 
   // Book a video link journey is required in session for the following routes
   router.use((req, res, next) => {
