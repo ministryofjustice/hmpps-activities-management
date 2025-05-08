@@ -4,12 +4,12 @@ export interface BankHolidayResponse {
   'northern-ireland': BankHolidayDivision
 }
 
-export interface BankHolidayDivision {
+interface BankHolidayDivision {
   division: string
   events: BankHoliday[]
 }
 
-export interface BankHoliday {
+interface BankHoliday {
   title: string
   date: string
   notes: string
