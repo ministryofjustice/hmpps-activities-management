@@ -82,7 +82,7 @@ const attendanceSummaryResponse = [
     onWing: true,
     offWing: false,
     attendanceRequired: true,
-    cancelled: false,
+    cancelled: true,
     attendanceSummary: {
       allocations: 4,
       attendees: 4,
@@ -206,6 +206,7 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
+        hasCancelledSessions: false,
       })
     })
 
@@ -249,6 +250,7 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
+        hasCancelledSessions: true,
       })
     })
 

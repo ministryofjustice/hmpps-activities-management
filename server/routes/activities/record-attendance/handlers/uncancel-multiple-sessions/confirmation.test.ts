@@ -38,7 +38,9 @@ describe('Route Handlers - Uncancel Multiple Sessions Confirmation', () => {
       },
       session: {
         recordAttendanceJourney: {
+          activityDate: '2021-01-01',
           selectedInstanceIds: ['1'],
+          sessionFilters: ['AM', 'PM'],
         },
       },
     } as unknown as Request
@@ -105,7 +107,7 @@ describe('Route Handlers - Uncancel Multiple Sessions Confirmation', () => {
         lastName: 'Bloggs',
       })
 
-      expect(res.redirect).toHaveBeenCalledWith('../uncancel-multiple')
+      expect(res.redirect).toHaveBeenCalledWith('../uncancel-multiple?date=2021-01-01&sessionFilters=AM,PM')
     })
 
     it('should redirect back to uncancel activities list page if not confirmed', async () => {
@@ -113,7 +115,7 @@ describe('Route Handlers - Uncancel Multiple Sessions Confirmation', () => {
       await handler.POST(confirmRequest, res)
 
       expect(activitiesService.uncancelMultipleActivities).toHaveBeenCalledTimes(0)
-      expect(res.redirect).toHaveBeenCalledWith('../uncancel-multiple')
+      expect(res.redirect).toHaveBeenCalledWith('../uncancel-multiple?date=2021-01-01&sessionFilters=AM,PM')
     })
   })
 
