@@ -120,8 +120,11 @@
         }) }}
       {% elif allocationsAvailable %}
         <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
-        <p class="govuk-body">Remove anyone who should not be allocated, or continue with the current list of people to allocate.</p>
-
+          {% if session.req.query.csv %} 
+            <p class="govuk-body">You can remove anyone who is not required. If you want to add someone, change the list of prison numbers in the CSV file and <a href="upload-prisoner-list" class="govuk-link--no-visited-state">upload it again</a>.</p>
+          {% else %}
+            <p class="govuk-body">Remove anyone who should not be allocated, or continue with the current list of people to allocate.</p>     
+          {% endif %}
         {{ govukTable({
           head: [
             {
@@ -253,22 +256,14 @@
       {% endif %}
 
       {% if allocationsAvailable %}
-      {{ govukButton({
-        text: "Add people using CSV file",
-        id: "add-prisoner-csv",
-        classes: "govuk-button--secondary",
-        href: "upload-prisoner-list",
-        attributes: { 'data-qa': 'add-prisoner-csv' }
-      }) }}
-
-      <form method="POST">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-          {{ govukButton({
-            text: "Continue",
-            preventDoubleClick: true,
-            classes: 'govuk-!-margin-top-3'
-          }) }}
-      </form>
+        <form method="POST">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            {{ govukButton({
+              text: "Continue",
+              preventDoubleClick: true,
+              classes: 'govuk-!-margin-top-3'
+            }) }}
+        </form>
       {% endif %}
     </div>
   </div>

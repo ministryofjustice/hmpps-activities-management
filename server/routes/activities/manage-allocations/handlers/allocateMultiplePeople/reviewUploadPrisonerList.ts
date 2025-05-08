@@ -22,7 +22,7 @@ export default class ReviewUploadPrisonerListRoutes {
       unidentifiable,
     } = req.session.allocateJourney
     const { scheduleId } = activity
-    const { fromActivity } = req.query
+    const { fromActivity, csv } = req.query
 
     const activityCopied = fromActivity !== undefined ? fromActivity : undefined
 
@@ -87,6 +87,7 @@ export default class ReviewUploadPrisonerListRoutes {
       cannotAllocateMessage,
       nobodyToAllocateTitle,
       notFoundPrisoners,
+      csv,
     })
   }
 

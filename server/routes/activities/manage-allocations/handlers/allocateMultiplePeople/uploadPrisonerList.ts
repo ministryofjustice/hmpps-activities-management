@@ -84,7 +84,7 @@ export default class UploadPrisonerListRoutes {
       req.session.allocateJourney.withoutMatchingIncentiveLevelInmates = undefined
       req.session.allocateJourney.unidentifiable = false
 
-      return res.redirect('review-upload-prisoner-list')
+      return res.redirect('review-upload-prisoner-list?csv=true')
     }
     req.session.allocateJourney.unidentifiable = true
 

@@ -224,7 +224,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
       ]
 
       expect(req.session.allocateJourney.inmates).toEqual(expectedInmates)
-      expect(res.redirect).toHaveBeenCalledWith('review-upload-prisoner-list')
+      expect(res.redirect).toHaveBeenCalledWith('review-upload-prisoner-list?csv=true')
     })
 
     it('should pass not found prisoner and redirect to review upload a prisoner list view', async () => {
@@ -299,7 +299,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
       expect(req.session.allocateJourney.notFoundPrisoners).toEqual(['A12gvv34BC'])
       expect(req.session.allocateJourney.unidentifiable).toEqual(false)
       expect(req.session.allocateJourney.inmates).toEqual(expectedInmates)
-      expect(res.redirect).toHaveBeenCalledWith('review-upload-prisoner-list')
+      expect(res.redirect).toHaveBeenCalledWith('review-upload-prisoner-list?csv=true')
     })
 
     it('should pass unidentifiable trigger when all uploaded prison numbers are incorrect', async () => {
