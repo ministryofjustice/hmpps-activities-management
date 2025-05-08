@@ -99,7 +99,7 @@ context('Create group appointment', () => {
     uploadPrisonerListPage.howToUseCSVSection()
     uploadPrisonerListPage.getLinkByText('prison number list template').click()
     uploadPrisonerListPage.assertFileDownload('prisoner-list.csv')
-    uploadPrisonerListPage.attatchFile('upload-prisoner-list.csv')
+    uploadPrisonerListPage.attachFile('upload-prisoner-list.csv')
     uploadPrisonerListPage.uploadFile()
 
     let reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)

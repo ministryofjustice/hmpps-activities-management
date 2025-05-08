@@ -16,6 +16,12 @@ export class AppointmentsList {
   file: Express.Multer.File
 }
 
+type AppointmentJourneyInfo = {
+  prisonerNumber: string
+  startTime: string
+  endTime: string
+}
+
 export default class AppointmentSetUploadRoutes {
   constructor(
     private readonly prisonerListCsvParser: PrisonerListCsvParser,
@@ -44,17 +50,16 @@ export default class AppointmentSetUploadRoutes {
     const prisonersDetails = await this.getPrisonerDetails(newPrisonerNumbers, user)
     const prisonerNumbersNotFound = this.getNotFoundPrisoners(newPrisonerNumbers, prisonersDetails)
 
+    let appointmentInstancesForAvailablePrisoners = appointmentInstances
     if (prisonerNumbersNotFound.length > 0) {
-      const message =
-        prisonerNumbersNotFound.length === 1
-          ? `Prisoner with number ${prisonerNumbersNotFound[0]} was not found`
-          : `Prisoners with numbers ${prisonerNumbersNotFound.join(', ')} were not found`
-
-      res.validationFailed('file', message)
-      return false
+      req.session.appointmentSetJourney.prisonersNotFound = prisonerNumbersNotFound
+      appointmentInstancesForAvailablePrisoners = this.getInstancesForAvailablePrisoners(
+        appointmentInstances,
+        prisonerNumbersNotFound,
+      )
     }
 
-    req.session.appointmentSetJourney.appointments = appointmentInstances.map(instance => {
+    req.session.appointmentSetJourney.appointments = appointmentInstancesForAvailablePrisoners.map(instance => {
       const prisonerDetails = prisonersDetails.get(instance.prisonerNumber)
 
       return {
@@ -86,5 +91,12 @@ export default class AppointmentSetUploadRoutes {
 
   private getNotFoundPrisoners(newPrisonerNumbers: string[], prisonerDetails: Map<string, Prisoner>) {
     return newPrisonerNumbers.filter(newPrisonerNumber => !prisonerDetails.has(newPrisonerNumber))
+  }
+
+  private getInstancesForAvailablePrisoners(
+    appointmentInstances: AppointmentJourneyInfo[],
+    prisonerNumbersNotFound: string[],
+  ): AppointmentJourneyInfo[] {
+    return appointmentInstances.filter(instance => !prisonerNumbersNotFound.includes(instance.prisonerNumber))
   }
 }

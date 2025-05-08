@@ -73,6 +73,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         backLinkHref: 'how-to-add-prisoners',
         prisoners,
+        notFoundPrisoners: [],
       })
     })
 
@@ -84,6 +85,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         backLinkHref: 'how-to-add-prisoners',
         prisoners,
         originalAppointmentId: 1234,
+        notFoundPrisoners: [],
       })
     })
 
@@ -112,6 +114,52 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         backLinkHref: 'upload-appointment-set',
+        notFoundPrisoners: [],
+        prisoners: [
+          {
+            number: 'A1234BC',
+            name: '',
+            cellLocation: '',
+            prisonCode: '',
+            status: '',
+          },
+          {
+            number: 'B2345CD',
+            name: '',
+            cellLocation: '',
+            prisonCode: '',
+            status: '',
+          },
+        ],
+      })
+    })
+    it('should render the review prisoners view - appointment set - some prisoners not found', async () => {
+      req.session.appointmentJourney.type = AppointmentType.SET
+      req.session.appointmentSetJourney.appointments = [
+        {
+          prisoner: {
+            number: 'A1234BC',
+            name: '',
+            cellLocation: '',
+            status: '',
+            prisonCode: '',
+          },
+        },
+        {
+          prisoner: {
+            number: 'B2345CD',
+            name: '',
+            cellLocation: '',
+            status: '',
+            prisonCode: '',
+          },
+        },
+      ]
+      req.session.appointmentSetJourney.prisonersNotFound = ['C9876GF']
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
+        backLinkHref: 'upload-appointment-set',
+        notFoundPrisoners: ['C9876GF'],
         prisoners: [
           {
             number: 'A1234BC',
@@ -137,6 +185,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
         backLinkHref: 'https://digital-dev.prison.service.justice.gov.uk/prisoner/A1234BC',
         prisoners: [],
+        notFoundPrisoners: [],
       })
     })
 
@@ -158,6 +207,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         appointmentId,
         backLinkHref: 'how-to-add-prisoners',
         prisoners,
+        notFoundPrisoners: [],
       })
     })
 
@@ -169,6 +219,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         backLinkHref: 'how-to-add-prisoners',
         preserveHistory: 'true',
         prisoners,
+        notFoundPrisoners: [],
       })
     })
   })
