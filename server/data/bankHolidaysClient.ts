@@ -8,7 +8,7 @@ export default class BankHolidaysClient extends AbstractHmppsRestClient {
     super('Bank Holidays API', config.apis.bankHolidaysApi as ApiConfig)
   }
 
-  async getBankHolidays(user: ServiceUser): Promise<{ content: BankHolidayResponse }> {
+  async getBankHolidays(user: ServiceUser): Promise<BankHolidayResponse> {
     return this.get({ path: '' }, user)
   }
 }
