@@ -101,7 +101,7 @@ export default function nunjucksSetup(
   app.locals.feedbackUrl = config.feedbackUrl
 
   router.use(async (req, res, next) => {
-    app.locals.ukBankHolidays = await ukBankHolidayService.getUkBankHolidays()
+    app.locals.ukBankHolidays = await ukBankHolidayService.getUkBankHolidays('england-and-wales', res.locals.user)
     next()
   })
 
