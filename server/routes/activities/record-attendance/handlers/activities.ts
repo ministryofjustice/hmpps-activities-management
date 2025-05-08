@@ -36,19 +36,22 @@ export default class ActivitiesRoutes {
     const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'locationId')
 
+    const activities = activityRows(
+      categories,
+      activityAttendanceSummary,
+      filterValues,
+      asString(locationId),
+      locationTypeFilter,
+      asString(searchTerm),
+    )
+
     return res.render('pages/activities/record-attendance/activities', {
       activityDate,
       filterItems: filterItems(categories, filterValues, asString(locationId), locationTypeFilter),
       selectedSessions: filterValues.sessionFilters,
-      activityRows: activityRows(
-        categories,
-        activityAttendanceSummary,
-        filterValues,
-        asString(locationId),
-        locationTypeFilter,
-        asString(searchTerm),
-      ),
+      activityRows: activities,
       locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
+      hasCancelledSessions: !!activities.find(a => a.cancelled),
     })
   }
 

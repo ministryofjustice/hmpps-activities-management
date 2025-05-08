@@ -1,8 +1,8 @@
 import Page from '../../page'
 
-export default class UploadPrisonerListPage extends Page {
+export default class UploadPrisonerListForAppointmentSet extends Page {
   constructor() {
-    super('appointment-upload-prisoner-list-page')
+    super('appointment-set-upload-page')
   }
 
   attachFile = (filename: string) =>
