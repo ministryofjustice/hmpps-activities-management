@@ -13,11 +13,24 @@ export default class ReviewUploadPrisonerListRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { inmates, withoutMatchingIncentiveLevelInmates, allocatedInmates, activity } = req.session.allocateJourney
+    const {
+      inmates,
+      withoutMatchingIncentiveLevelInmates,
+      allocatedInmates,
+      activity,
+      notFoundPrisoners,
+      unidentifiable,
+    } = req.session.allocateJourney
     const { scheduleId } = activity
-    const { fromActivity } = req.query
+    const { fromActivity, csv } = req.query
 
     const activityCopied = fromActivity !== undefined ? fromActivity : undefined
+
+    if (unidentifiable) {
+      return res.render('pages/activities/manage-allocations/allocateMultiplePeople/reviewUploadPrisonerList', {
+        unidentifiable,
+      })
+    }
 
     // prisoner without incentive levels and prisoners already allocated haven't been calculated
     if (withoutMatchingIncentiveLevelInmates === undefined && allocatedInmates === undefined) {
@@ -73,6 +86,8 @@ export default class ReviewUploadPrisonerListRoutes {
       allocatedInmates: req.session.allocateJourney.allocatedInmates,
       cannotAllocateMessage,
       nobodyToAllocateTitle,
+      notFoundPrisoners,
+      csv,
     })
   }
 
