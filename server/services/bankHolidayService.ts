@@ -1,11 +1,12 @@
-import HolidayFeed from '@hmcts/uk-bank-holidays'
+import { ServiceUser } from '../@types/express'
+import BankHolidaysClient from '../data/bankHolidaysClient'
 
-export default class BankHolidayService extends HolidayFeed {
-  constructor() {
-    super(['england-and-wales'])
-  }
+export default class BankHolidayService {
+  constructor(private readonly bankHolidaysClient: BankHolidaysClient) {}
 
-  async getUkBankHolidays(): Promise<Date[]> {
-    return super.load().then(dates => dates.map(date => new Date(date)))
+  async getUkBankHolidays(division: string, user: ServiceUser): Promise<Date[]> {
+    return this.bankHolidaysClient
+      .getBankHolidays(user)
+      .then(response => response[division].events.map(event => new Date(event.date)))
   }
 }
