@@ -120,7 +120,7 @@
         }) }}
       {% elif allocationsAvailable %}
         <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
-          {% if session.req.query.csv %} 
+          {% if csv %} 
             <p class="govuk-body">You can remove anyone who is not required. If you want to add someone, change the list of prison numbers in the CSV file and <a href="upload-prisoner-list" class="govuk-link--no-visited-state">upload it again</a>.</p>
           {% else %}
             <p class="govuk-body">Remove anyone who should not be allocated, or continue with the current list of people to allocate.</p>     
