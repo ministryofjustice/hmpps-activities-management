@@ -27,7 +27,7 @@
             {% endif %}
 
             <span class="govuk-caption-l" data-qa="caption">Manage appointments</span>
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>{{ 'Video Link - Probation Meeting' if bvlsMasteredVlpmFeatureToggleEnabled else 'Video Link - Court Hearing' }}</h1>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-2" data-qa='heading'>{{ 'Video Link - Probation Meeting' }}</h1>
             <span class="govuk-caption-m govuk-!-margin-bottom-4" data-qa="date-caption">{{ mainAppointment.appointmentDate | formatDate }}</span>
 
             {% if videoBooking.statusCode != 'CANCELLED' and isAmendable %}
@@ -101,7 +101,7 @@
                                 }
                             ]
                       } if isAmendable
-                    } if bvlsMasteredVlpmFeatureToggleEnabled,
+                    },
                     {
                         key: {
                             text: "Email address"
@@ -118,7 +118,7 @@
                                 }
                             ]
                       } if isAmendable
-                    } if bvlsMasteredVlpmFeatureToggleEnabled,
+                    },
                     {
                         key: {
                             text: "UK phone number"
@@ -135,7 +135,7 @@
                                 }
                             ]
                         } if isAmendable
-                    } if bvlsMasteredVlpmFeatureToggleEnabled,
+                    },
                     {
                         key: {
                             text: "Meeting type"
@@ -228,7 +228,7 @@
                         value: {
                             text: videoBooking.videoLinkUrl or "None entered"
                         }
-                    } if bvlsMasteredVlpmFeatureToggleEnabled,
+                    },
                     {
                         key: {
                             text: "Extra information"

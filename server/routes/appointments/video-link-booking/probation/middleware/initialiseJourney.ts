@@ -3,7 +3,6 @@ import { parse } from 'date-fns'
 import createHttpError from 'http-errors'
 import { Services } from '../../../../../services'
 import asyncMiddleware from '../../../../../middleware/asyncMiddleware'
-import config from '../../../../../config'
 
 export default ({
   activitiesService,
@@ -46,7 +45,7 @@ export default ({
       .then(apps =>
         apps.find(
           app =>
-            ['VLB', config.bvlsMasteredVlpmFeatureToggleEnabled ? 'VLPM' : ''].includes(app.category.code) && // Handle legacy probation bookings which may have type VLB
+            ['VLB', 'VLPM'].includes(app.category.code) && // Handle legacy probation bookings which may have type VLB
             app.internalLocation.id === locationId &&
             mainAppointment.startTime === app.startTime &&
             mainAppointment.endTime === app.endTime,

@@ -7,7 +7,6 @@ import NameRoutes, { Name } from './name'
 import ActivitiesService from '../../../../services/activitiesService'
 import { AppointmentCategorySummary } from '../../../../@types/activitiesAPI/types'
 import { AppointmentType } from '../appointmentJourney'
-import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -80,14 +79,13 @@ describe('Route Handlers - Create Appointment - Name', () => {
       })
     })
 
-    it.each([[true], [false]])('should remove VLB and VLPM category for appointment sets - toggle %s', async toggle => {
-      config.bvlsMasteredVlpmFeatureToggleEnabled = toggle
+    it('should remove VLB and VLPM category for appointment sets ', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
 
       when(activitiesService.getAppointmentCategories).mockResolvedValue(categories)
       const filteredCategories = categories
         .filter(category => category.code !== 'VLB')
-        .filter(category => !toggle || category.code !== 'VLPM')
+        .filter(category => category.code !== 'VLPM')
 
       await handler.GET(req, res)
 
