@@ -5,6 +5,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/activities/days-and-custom-times.njk" import daysAndCustomTimes %}
+{% from "partials/activities/runsOnBankHolidays.njk" import runsOnBankHolidays %}
 {% from "partials/showLocation.njk" import showLocation %}
 
 {% set pageTitle = applicationName + " - Activities Dashboard - View activity" %}
@@ -214,7 +215,7 @@
             }) }}
 
             <h2 class="govuk-heading-m">Schedule and dates</h2>
-            {{ govukInsetText({ 
+            {{ govukInsetText({
                 text: 'The current week is: Week ' + currentWeek,
                 classes: 'govuk-!-margin-top-0 govuk-!-margin-bottom-0'
             }) if schedule.scheduleWeeks > 1 and currentWeek }}
@@ -296,7 +297,7 @@
                         text: "Runs on bank holidays"
                     },
                     value: {
-                        text: "Yes" if schedule.runsOnBankHoliday else "No"
+                        html: runsOnBankHolidays(schedule.runsOnBankHoliday, hasAtLeastOneValidDay)
                     },
                     actions: {
                         items: [
@@ -307,7 +308,7 @@
                                 classes: "govuk-link--no-visited-state"
                             }
                         ]
-                    } if not activityEnded
+                    } if (not activityEnded) and hasAtLeastOneValidDay
                 }
             ), dateAndScheduleRows) %}
 

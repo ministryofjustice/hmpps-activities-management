@@ -39,7 +39,12 @@ import CustomTimesChangeDefaultOrCustomRoutes, {
   DefaultOrCustomOption,
 } from './handlers/customTimesChangeDefaultOrCustom'
 
-export default function Index({ activitiesService, prisonService, locationsService }: Services): Router {
+export default function Index({
+  activitiesService,
+  prisonService,
+  locationsService,
+  ukBankHolidayService,
+}: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(path, emptyJourneyHandler('createJourney', stepRequiresSession), asyncMiddleware(handler))
@@ -68,11 +73,11 @@ export default function Index({ activitiesService, prisonService, locationsServi
   const startDateHandler = new StartDateRoutes(activitiesService)
   const endDateOptionHandler = new EndDateOptionRoutes()
   const removeEndDateHandler = new RemoveEndDateRoutes(activitiesService)
-  const endDateHandler = new EndDateRoutes(activitiesService)
+  const endDateHandler = new EndDateRoutes(activitiesService, ukBankHolidayService)
   const scheduleFrequencyHandler = new ScheduleFrequencyRoutes()
   const daysAndSessionsHandler = new DaysAndSessionsRoutes(activitiesService)
   const bankHolidayHandler = new BankHolidayOptionRoutes(activitiesService)
-  const sessionTimesOptionHandler = new SessionTimesOptionRoutes(activitiesService)
+  const sessionTimesOptionHandler = new SessionTimesOptionRoutes(activitiesService, ukBankHolidayService)
   const sessionTimesHandler = new SessionTimesRoutes(activitiesService)
   const customTimesChangeOptionHandler = new CustomTimesChangeOptionRoutes(activitiesService)
   const CustomTimesChangeDefaultOrCustomHandler = new CustomTimesChangeDefaultOrCustomRoutes(activitiesService)

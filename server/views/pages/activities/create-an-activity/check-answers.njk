@@ -4,6 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 {% from "partials/activities/days-and-custom-times.njk" import daysAndCustomTimes %}
+{% from "partials/activities/runsOnBankHolidays.njk" import runsOnBankHolidays %}
 {% from "partials/showLocation.njk" import showLocation %}
 
 {% set pageTitle = applicationName + " - Create an activity - Check answers" %}
@@ -235,13 +236,13 @@
             {% set scheduleRows = (scheduleRows.push(
                 {
                     key: { text: "Runs on bank holidays" },
-                    value: { text: "Yes" if session.createJourney.runsOnBankHoliday else "No"},
+                    value: { html: runsOnBankHolidays(session.createJourney.runsOnBankHoliday, session.createJourney.hasAtLeastOneValidDay) },
                     actions: {
                         items: [{
                             href: "bank-holiday-option?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: "Change bank holiday option"
-                        }]
+                        }] if session.createJourney.hasAtLeastOneValidDay
                     }
                 }
             ), scheduleRows) %}

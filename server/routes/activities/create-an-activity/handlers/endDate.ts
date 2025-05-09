@@ -4,6 +4,8 @@ import { startOfToday } from 'date-fns'
 import { ValidateIf } from 'class-validator'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
+import BankHolidayService from '../../../../services/bankHolidayService'
+import ActivityDateValidator from '../../../../utils/helpers/activityDateValidator'
 import {
   formatIsoDate,
   isoDateToDatePickerDate,
@@ -57,21 +59,35 @@ export class EndDate {
 }
 
 export default class EndDateRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  private readonly helper: ActivityDateValidator
+
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly bankHolidayService: BankHolidayService,
+  ) {
+    this.helper = new ActivityDateValidator(bankHolidayService)
+  }
 
   GET = async (req: Request, res: Response) => res.render('pages/activities/create-an-activity/end-date')
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
     const updatedEndDate = req.body.endDate
 
     req.session.createJourney.endDate = updatedEndDate ? formatIsoDate(updatedEndDate) : null
+    req.session.createJourney.hasAtLeastOneValidDay = await this.helper.hasAtLeastOneValidDay(
+      req.session.createJourney,
+      user,
+    )
+
+    if (!req.session.createJourney.hasAtLeastOneValidDay) {
+      req.session.createJourney.runsOnBankHoliday = true
+    }
 
     if (req.params.mode === 'edit') {
-      const { user } = res.locals
       const { activityId, name, endDate } = req.session.createJourney
       const activity = { endDate, removeEndDate: !endDate } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)
-
       const successMessage = `You've updated the end date for ${name}. Anyone allocated to the activity who was due to be taken off after this date will now finish on this date.`
       return res.redirectWithSuccess(`/activities/view/${activityId}`, 'Activity updated', successMessage)
     }

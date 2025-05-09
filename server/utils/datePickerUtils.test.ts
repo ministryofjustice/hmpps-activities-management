@@ -8,6 +8,7 @@ import {
   isValidIsoDate,
   parseDatePickerDate,
   parseIsoDate,
+  findDatesInRange,
 } from './datePickerUtils'
 import DateOption from '../enum/dateOption'
 
@@ -128,6 +129,27 @@ describe('Date Picker Utils', () => {
 
     it('uses other date when date option is other', () => {
       expect(dateFromDateOption(DateOption.OTHER, '2023-10-16')).toEqual(parseIsoDate('2023-10-16'))
+    })
+  })
+
+  describe('findDatesInRange', () => {
+    const startDate = '2025-05-01'
+    const endDate = '2025-05-25'
+    const dateList: Date[] = [
+      new Date('2025-05-05'),
+      new Date('2025-04-01'),
+      new Date('2025-05-01'),
+      new Date('2025-07-25'),
+      new Date('2025-05-25'),
+    ]
+
+    it('find the list of date within the given date range', () => {
+      const allowedDateList = findDatesInRange(dateList, startDate, endDate)
+
+      expect(allowedDateList.length).toEqual(3)
+      expect(formatIsoDate(allowedDateList[0])).toEqual('2025-05-05')
+      expect(formatIsoDate(allowedDateList[1])).toEqual('2025-05-01')
+      expect(formatIsoDate(allowedDateList[2])).toEqual('2025-05-25')
     })
   })
 })

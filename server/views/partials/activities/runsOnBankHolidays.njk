@@ -1,0 +1,15 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% macro runsOnBankHolidays(runsOnBankHoliday, hasAtLeastOneValidDay) %}
+
+    {% if runsOnBankHoliday %}
+        <div class='govuk-summary-list__key--normal-key-weight'> Yes </div>
+    {% else %}
+        <div class='govuk-summary-list__key--normal-key-weight'> No </div>
+    {% endif %}
+
+    {% if runsOnBankHoliday and not hasAtLeastOneValidDay %}
+        <div class='govuk-hint govuk-!-margin-bottom-0'> You cannot change this as the schedule and dates mean this activity only runs on a bank holiday.</div>
+    {% endif %}
+
+{% endmacro %}
