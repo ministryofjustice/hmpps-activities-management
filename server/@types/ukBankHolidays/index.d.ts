@@ -1,7 +1,17 @@
-declare module '@hmcts/uk-bank-holidays' {
-  export default class HolidayFeed {
-    constructor(divisions: string[])
+export interface BankHolidayResponse {
+  'england-and-wales': BankHolidayDivision
+  scotland: BankHolidayDivision
+  'northern-ireland': BankHolidayDivision
+}
 
-    async load(): Promise<string[]>
-  }
+interface BankHolidayDivision {
+  division: string
+  events: BankHoliday[]
+}
+
+interface BankHoliday {
+  title: string
+  date: string
+  notes: string
+  bunting: boolean
 }

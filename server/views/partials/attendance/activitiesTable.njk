@@ -37,28 +37,7 @@
     } %}
 
     {% if uncancelMultipleSessionsEnabled and isUncancelPage %}
-      {% if ((activityDate | toDateString) > (now | toDateString)) %}
-        {% set pagination =  {
-          previous: {
-            title: 'Previous day',
-            label: activityDate | addDays(-1) | formatDate,
-            href: 'uncancel-multiple?date=' + activityDate | addDays(-1) | formatDate('yyyy-MM-dd') + filterParams
-          },
-          next: {
-            title: 'Next day',
-            label: activityDate | addDays(1) | formatDate,
-            href: 'uncancel-multiple?date=' + activityDate | addDays(1) | formatDate('yyyy-MM-dd') + filterParams
-          }
-        } %}
-      {% else %}
-        {% set pagination =  {
-          next: {
-            title: 'Next day',
-            label: activityDate | addDays(1) | formatDate,
-            href: 'uncancel-multiple?date=' + activityDate | addDays(1) | formatDate('yyyy-MM-dd') + filterParams
-          }
-        } %}
-      {% endif %}
+      {% set pagination =  {} %}
     {% endif %}
 
     {% set rows = [] %}
