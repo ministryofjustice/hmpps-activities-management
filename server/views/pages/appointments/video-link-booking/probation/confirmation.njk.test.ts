@@ -60,7 +60,7 @@ describe('Video link booking - Probation - Confirmation page', () => {
       'View, print movement slips and manage this appointment',
     ])
     expect(
-      $('h2')
+      $('#main-content h2')
         .map((i, e) => $(e).text().trim())
         .get(),
     ).toEqual(['Email the probation team this booking is for to confirm', 'What you can do next'])

@@ -1,6 +1,9 @@
 {% extends "layout.njk" %}
 
 {% block main %}
+  {% if liveIssueOutageBannerEnabled or plannedDowntimeOutageBannerEnabled %}
+    {% include 'partials/serviceOutageBanner.njk' %}
+  {% endif %}
   <div class="govuk-width-container {{ containerClasses }}">
     {% include 'partials/beforeContent.njk' %}
   </div>
