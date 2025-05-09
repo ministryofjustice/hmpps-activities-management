@@ -25,7 +25,7 @@ export default class CancelMultipleCheckAnswersPage extends Page {
       })
   }
 
-  expandSessionsSummary = () => cy.get('details').click()
+  expandSessionsSummary = () => cy.get('.govuk-details .govuk-details__summary-text').click()
 
   confirmCancellationButton = () => cy.get('button').contains('Confirm activity cancellations')
 }
