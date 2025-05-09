@@ -55,7 +55,7 @@
             text: allocation.plannedSuspension.plannedStartDate | formatDate('d MMMM yyyy')
         },
         {
-            text:  allocation.plannedSuspension.plannedEndDate | subDays(1) | formatDate('d MMMM yyyy') if allocation.plannedSuspension.plannedEndDate != null else 'No end date set'
+            text:  allocation.plannedSuspension.plannedEndDate | formatDate('d MMMM yyyy') if allocation.plannedSuspension.plannedEndDate != null else 'No end date set'
         },
         {
             text: paid or 'Unknown'

@@ -98,7 +98,7 @@
                         {% else %}
                             their allocated activities again
                         {% endif %}
-                        from {{ session.suspendJourney.suspendUntil | formatDate('d MMMM yyyy') }}
+                        from {{ session.suspendJourney.suspendUntil | addDays(1) |  formatDate('d MMMM yyyy') }}
                     {% endset %}
 
                     {{ govukPanel({
