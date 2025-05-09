@@ -32,6 +32,11 @@ export default class ViewAllocationRoutes {
 
     const prisonerName = convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`)
 
+    const isOnlyPay =
+      activity.pay.filter(
+        p => p.incentiveLevel === prisoner.currentIncentive?.level?.description && p.startDate == null,
+      ).length === 1
+
     const currentPay = getCurrentPay(activity, allocation, prisoner)
 
     const schedule = activity.schedules[0]
@@ -65,6 +70,7 @@ export default class ViewAllocationRoutes {
       prisonerName,
       pay: currentPay,
       isStarted,
+      isOnlyPay,
       dailySlots,
       currentWeek,
       userMap,

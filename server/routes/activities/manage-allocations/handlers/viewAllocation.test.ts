@@ -155,6 +155,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           allocatedBy: 'MIGRATION',
           allocatedTime: '2024-05-03T13:22:00',
         },
+        isOnlyPay: true,
         isStarted: true,
         pay: {
           incentiveLevel: 'Standard',
@@ -283,6 +284,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           allocatedBy: 'GEOFFT',
           allocatedTime: '2024-05-03T13:22:00',
         },
+        isOnlyPay: true,
         isStarted: true,
         pay: {
           incentiveLevel: 'Standard',
@@ -455,6 +457,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           allocatedBy: 'GEOFFT',
           allocatedTime: '2024-05-03T13:22:00',
         },
+        isOnlyPay: false,
         isStarted: true,
         pay: {
           incentiveLevel: 'Standard',
