@@ -72,7 +72,7 @@
                     </div>
 
                     {% if uncancelMultipleSessionsEnabled and hasCancelledSessions and not ((activityDate | toDateString) < (now | toDateString)) %}
-                      <a href="activities/uncancel-multiple?date={{ activityDate | toDateString }}{{ filterParams }}" class="govuk-!-display-block govuk-!-margin-bottom-3 govuk-link govuk-!-font-size-19">Uncancel activity sessions</a>
+                      <a href="activities/uncancel-multiple?date={{ activityDate | toDateString }}{{ filterParams }}" class="govuk-!-display-inline-block govuk-!-margin-bottom-3 govuk-link govuk-!-font-size-19">Uncancel activity sessions</a>
                     {% endif %}
 
                     {{ activitiesTable(activityRows, activityDate, filterParams, now, false) }}
