@@ -75,6 +75,7 @@ export default class ViewAllocationRoutes {
       currentWeek,
       userMap,
       suspensionCaseNote,
+      activityIsPaid: activity?.paid,
     })
   }
 }

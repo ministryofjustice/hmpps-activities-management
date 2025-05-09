@@ -84,6 +84,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           endDate: '2022-12-31',
           inCell: false,
           outsideWork: false,
+          paid: true,
           pay: [
             { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
             {
@@ -156,6 +157,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           allocatedTime: '2024-05-03T13:22:00',
         },
         isOnlyPay: true,
+        activityIsPaid: true,
         isStarted: true,
         pay: {
           incentiveLevel: 'Standard',
@@ -285,6 +287,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           allocatedTime: '2024-05-03T13:22:00',
         },
         isOnlyPay: true,
+        activityIsPaid: true,
         isStarted: true,
         pay: {
           incentiveLevel: 'Standard',
@@ -411,6 +414,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           endDate: '2022-12-31',
           inCell: false,
           outsideWork: false,
+          paid: true,
           pay: [
             { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
             { incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 150 },
@@ -458,6 +462,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           allocatedTime: '2024-05-03T13:22:00',
         },
         isOnlyPay: false,
+        activityIsPaid: true,
         isStarted: true,
         pay: {
           incentiveLevel: 'Standard',
