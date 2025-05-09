@@ -122,15 +122,10 @@
                         {{ payRate(pay) }}
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        {% if isOnlyPay %}
-                            <div>No alternative</div>
-                            <div>pay rates</div>
-                        {% elseif pay.prisonPayBand %}
-                            <a href="../edit/{{ allocation.id }}/pay-band"
-                               class="govuk-link govuk-link--no-visited-state">
-                                Change
-                            </a>
-                        {% endif %}
+                        <a href="../edit/{{ allocation.id }}/pay-band"
+                            class="govuk-link govuk-link--no-visited-state">
+                            Change
+                        </a>
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
