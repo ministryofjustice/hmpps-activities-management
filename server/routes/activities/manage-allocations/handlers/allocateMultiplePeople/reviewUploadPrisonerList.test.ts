@@ -34,7 +34,7 @@ const activity: Activity = {
 
 const allocation: Allocation = {
   activityId: 22,
-  activitySummary: 'Alread Allocated',
+  activitySummary: 'Already Allocated',
   bookingId: 0,
   exclusions: [],
   id: 0,
@@ -108,13 +108,13 @@ const activityPayBasic: ActivityPay = {
 const activityPayStandard: ActivityPay = {
   id: 1,
   incentiveLevel: 'Standard',
-  incentiveNomisCode: 'BAS',
+  incentiveNomisCode: 'STD',
   prisonPayBand: { alias: '', description: '', displaySequence: 0, id: 0, nomisPayBand: 0, prisonCode: '' },
 }
 const activityPayEnhanced: ActivityPay = {
   id: 1,
   incentiveLevel: 'Enhanced',
-  incentiveNomisCode: 'BAS',
+  incentiveNomisCode: 'ENH',
   prisonPayBand: { alias: '', description: '', displaySequence: 0, id: 0, nomisPayBand: 0, prisonCode: '' },
 }
 
@@ -146,6 +146,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
             scheduleId: 1,
             name: 'Box making',
           },
+          notFoundPrisoners: ['dsfkjf', '234243df', 'Raf21A'],
         },
       },
       query: {},
@@ -153,7 +154,30 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
     } as unknown as Request
   })
   describe('GET', () => {
-    it('should not check incentive levels if the activity is upaid, and add prisoners to session appropriately', async () => {
+    it('should redirect to the review page if there are no identifiable  prison numbers', async () => {
+      req = {
+        session: {
+          allocateJourney: {
+            inmates: [],
+            activity: {
+              scheduleId: 1,
+            },
+            unidentifiable: true,
+          },
+        },
+        query: {},
+        params: {},
+      } as unknown as Request
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/manage-allocations/allocateMultiplePeople/reviewUploadPrisonerList',
+        { unidentifiable: true },
+      )
+    })
+
+    it('should not check incentive levels if the activity is unpaid, and add prisoners to session appropriately', async () => {
       activity.paid = false
       activity.pay = []
       when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(activity)
@@ -170,6 +194,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           unallocatedInmates: [inmateWithBasic, inmateWithStandard, inmateWithEnhanced],
           allocatedInmates: [],
           withoutMatchingIncentiveLevelInmates: [],
+          notFoundPrisoners: ['dsfkjf', '234243df', 'Raf21A'],
         },
       )
     })
@@ -193,6 +218,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           unallocatedInmates: [inmateWithBasic, inmateWithStandard, inmateWithEnhanced],
           allocatedInmates: [],
           withoutMatchingIncentiveLevelInmates: [],
+          notFoundPrisoners: ['dsfkjf', '234243df', 'Raf21A'],
         },
       )
     })
@@ -216,6 +242,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           allocatedInmates: [inmateWithBasic],
           withoutMatchingIncentiveLevelInmates: [],
           cannotAllocateMessage: '1 person from  your CSV file cannot be allocated',
+          notFoundPrisoners: ['dsfkjf', '234243df', 'Raf21A'],
         },
       )
     })
@@ -239,6 +266,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           allocatedInmates: [],
           withoutMatchingIncentiveLevelInmates: [inmateWithBasic],
           cannotAllocateMessage: '1 person from  your CSV file cannot be allocated',
+          notFoundPrisoners: ['dsfkjf', '234243df', 'Raf21A'],
         },
       )
     })
@@ -266,6 +294,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           allocatedInmates: [],
           withoutMatchingIncentiveLevelInmates: [inmateWithBasic],
           cannotAllocateMessage: '1 person from Cooking cannot be allocated to Box making',
+          notFoundPrisoners: ['dsfkjf', '234243df', 'Raf21A'],
         },
       )
     })
@@ -293,6 +322,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           allocatedInmates: [],
           withoutMatchingIncentiveLevelInmates: [inmateWithBasic, inmateWithStandard],
           cannotAllocateMessage: '2 people from Cooking cannot be allocated to Box making',
+          notFoundPrisoners: ['dsfkjf', '234243df', 'Raf21A'],
         },
       )
     })
@@ -371,6 +401,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
               status: 'ACTIVE IN',
             },
           ],
+          notFoundPrisoners: ['dsfkjf', '234243df', 'Raf21A'],
           cannotAllocateMessage: '3 people from Cooking cannot be allocated to Box making',
           nobodyToAllocateTitle: 'No-one from Cooking can be allocated',
         },

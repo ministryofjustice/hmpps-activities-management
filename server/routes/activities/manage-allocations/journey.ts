@@ -41,6 +41,7 @@ export type AllocateToActivityJourney = {
   startDateOption?: StartDateOption
   deallocateTodayOption?: DeallocateTodayOption
   deallocateAfterAllocationDateOption?: DeallocateAfterAllocationDateOption
+  unidentifiable?: boolean
   startDate?: string
   endDate?: string
   deallocationReason?: string
@@ -51,6 +52,7 @@ export type AllocateToActivityJourney = {
     type: string
     text: string
   }
+  notFoundPrisoners?: string[]
   scheduledInstance?: ScheduledInstance
   otherAllocations?: Array<Allocation>
   activitiesToDeallocate?: {
