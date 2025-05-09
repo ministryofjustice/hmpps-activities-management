@@ -73,3 +73,10 @@ export const dateFromDateOption = (dateOption: DateOption, isoDate?: string) => 
       return parseIsoDate(isoDate)
   }
 }
+
+export const findDatesInRange = (dates: Date[], startDate: string, endDate: string): Date[] => {
+  const start = parseIsoDate(startDate)
+  const end = parseIsoDate(endDate)
+
+  return dates.filter(date => date >= start && date <= end)
+}

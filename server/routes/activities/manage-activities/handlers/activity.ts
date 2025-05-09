@@ -4,7 +4,9 @@ import PrisonService from '../../../../services/prisonService'
 import { sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import ActivitiesService from '../../../../services/activitiesService'
+import BankHolidayService from '../../../../services/bankHolidayService'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
+import ActivityDateValidator from '../../../../utils/helpers/activityDateValidator'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
 import { organiserDescriptions } from '../../../../enum/eventOrganisers'
 import { groupPayBand } from '../../../../utils/helpers/payBandMappingUtil'
@@ -13,11 +15,15 @@ import { ActivitySchedule, Allocation } from '../../../../@types/activitiesAPI/t
 export default class ActivityRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
 
+  private readonly activityDateValidator: ActivityDateValidator
+
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
+    private readonly bankHolidayService: BankHolidayService,
   ) {
     this.helper = new IncentiveLevelPayMappingUtil(prisonService)
+    this.activityDateValidator = new ActivityDateValidator(bankHolidayService)
   }
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -35,6 +41,17 @@ export default class ActivityRoutes {
     const richStartDate = parseISO(activity.startDate)
     const currentWeek = calcCurrentWeek(richStartDate, schedule.scheduleWeeks)
 
+    const hasAtLeastOneValidDay = await this.activityDateValidator.hasAtLeastOneValidDayInActivity(
+      activity.startDate,
+      activity.endDate,
+      schedule.scheduleWeeks,
+      slots,
+      user,
+    )
+    if (!hasAtLeastOneValidDay) {
+      schedule.runsOnBankHoliday = true
+    }
+
     res.render('pages/activities/manage-activities/view-activity', {
       activity,
       schedule,
@@ -43,6 +60,7 @@ export default class ActivityRoutes {
       incentiveLevelPays,
       displayPays,
       currentWeek,
+      hasAtLeastOneValidDay,
       tier: eventTierDescriptions[activity.tier?.code],
       organiser: organiserDescriptions[activity.organiser?.code],
     })
