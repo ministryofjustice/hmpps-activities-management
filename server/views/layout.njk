@@ -32,14 +32,24 @@
 {% block header %}
   {{ feComponents.header | safe }}
   {% block meta %}{% endblock %}
+{% endblock %}
+
+
+{% block main %}
   {% if liveIssueOutageBannerEnabled or plannedDowntimeOutageBannerEnabled %}
     {% include 'partials/serviceOutageBanner.njk' %}
   {% endif %}
+  <div class="govuk-width-container {%- if containerClasses %} {{ containerClasses }}{% endif %}">
+  {% block beforeContent %}
+    {% include 'partials/beforeContent.njk' %}
+  {% endblock %}
+    <main class="govuk-main-wrapper {%- if mainClasses %} {{ mainClasses }}{% endif %}" id="main-content" {%- if mainLang %} lang="{{ mainLang }}"{% endif %}>
+      {% block content %}{% endblock %}
+    </main>
+  </div>
 {% endblock %}
 
-{% block beforeContent %}
-  {% include 'partials/beforeContent.njk' %}
-{% endblock %}
+
 
 {% block footer %}
   {{ feComponents.footer | safe }}
