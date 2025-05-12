@@ -3,6 +3,7 @@ import { when } from 'jest-when'
 
 import { addDays } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
+import BankHolidayService from '../../../../services/bankHolidayService'
 import ActivityRoutes, { editPay } from './activity'
 import PrisonService from '../../../../services/prisonService'
 import atLeast from '../../../../../jest.setup'
@@ -14,16 +15,26 @@ import { eventTierDescriptions } from '../../../../enum/eventTiers'
 import { organiserDescriptions } from '../../../../enum/eventOrganisers'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/bankHolidayService')
 jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
+const bankHolidayService = new BankHolidayService(null) as jest.Mocked<BankHolidayService>
 
 const today = new Date()
 const nextWeek = addDays(today, 7)
 
 describe('Route Handlers - View Activity', () => {
-  const handler = new ActivityRoutes(activitiesService, prisonService)
+  const handler = new ActivityRoutes(activitiesService, prisonService, bankHolidayService)
+  const mockBankHolidaysList = [
+    new Date('2025-01-01'),
+    new Date('2025-04-18'),
+    new Date('2025-04-21'),
+    new Date('2025-05-05'),
+    new Date('2025-05-26'),
+  ]
+
   let req: Request
   let res: Response
 
@@ -44,6 +55,10 @@ describe('Route Handlers - View Activity', () => {
       },
       session: {},
     } as unknown as Request
+
+    when(bankHolidayService.getUkBankHolidays)
+      .calledWith(atLeast(res.locals.user))
+      .mockResolvedValueOnce(mockBankHolidaysList)
   })
 
   afterEach(() => {
@@ -183,6 +198,7 @@ describe('Route Handlers - View Activity', () => {
           ],
         },
         currentWeek: 1,
+        hasAtLeastOneValidDay: true,
         tier: eventTierDescriptions[1],
         organiser: organiserDescriptions[1],
       })
@@ -321,6 +337,7 @@ describe('Route Handlers - View Activity', () => {
           ],
         },
         currentWeek: 1,
+        hasAtLeastOneValidDay: true,
         tier: eventTierDescriptions[1],
         organiser: organiserDescriptions[1],
       })
@@ -465,6 +482,7 @@ describe('Route Handlers - View Activity', () => {
           ],
         },
         currentWeek: 1,
+        hasAtLeastOneValidDay: true,
         tier: eventTierDescriptions[1],
         organiser: organiserDescriptions[1],
       })
