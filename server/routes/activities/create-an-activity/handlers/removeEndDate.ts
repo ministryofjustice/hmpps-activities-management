@@ -18,6 +18,8 @@ export default class RemoveEndDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    req.session.createJourney.hasAtLeastOneValidDay = true
+
     if (req.body.removeEndDate && req.body.removeEndDate === 'change') {
       if (req.params.mode === 'edit') {
         return res.redirectOrReturn(
