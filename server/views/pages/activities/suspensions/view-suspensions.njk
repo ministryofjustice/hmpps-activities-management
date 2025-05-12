@@ -59,7 +59,7 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Last day of suspension</dt>
-                        <dd class="govuk-summary-list__value">{{ (endDate | subDays(1) | formatDate) if endDate != null else "No end date" }}</dd>
+                        <dd class="govuk-summary-list__value">{{ (endDate | formatDate) if endDate != null else "No end date" }}</dd>
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Paid while suspended?</dt>
