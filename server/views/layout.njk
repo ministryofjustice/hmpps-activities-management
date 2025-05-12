@@ -32,18 +32,13 @@
 {% block header %}
   {{ feComponents.header | safe }}
   {% block meta %}{% endblock %}
-{% endblock %}
-
-{% block main %}
   {% if liveIssueOutageBannerEnabled or plannedDowntimeOutageBannerEnabled %}
     {% include 'partials/serviceOutageBanner.njk' %}
   {% endif %}
-  {% block beforeContent %}
-    {% include 'partials/beforeContent.njk' %}
-  {% endblock %}
-  <main class="govuk-main-wrapper" id="main-content">
-    {% block content %}{% endblock %}
-  </main>
+{% endblock %}
+
+{% block beforeContent %}
+  {% include 'partials/beforeContent.njk' %}
 {% endblock %}
 
 {% block footer %}
