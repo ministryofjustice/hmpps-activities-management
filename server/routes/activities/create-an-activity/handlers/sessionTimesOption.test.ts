@@ -187,6 +187,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
           usePrisonRegimeTime: 'true',
         }
         req.session.createJourney.startDate = '2025-05-08'
+        req.session.createJourney.endDateOption = 'yes'
         req.session.createJourney.endDate = '2025-06-08'
         req.session.createJourney.scheduleWeeks = 1
         await handler.POST(req, res)
@@ -216,7 +217,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
           usePrisonRegimeTime: 'true',
         }
         req.session.createJourney.startDate = '2025-05-08'
-        req.session.createJourney.endDate = '2025-06-08'
+        req.session.createJourney.endDateOption = 'no'
         req.session.createJourney.scheduleWeeks = 1
         await handler.POST(req, res)
 
