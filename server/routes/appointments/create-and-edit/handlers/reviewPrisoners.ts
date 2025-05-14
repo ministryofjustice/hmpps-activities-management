@@ -63,7 +63,11 @@ export default class ReviewPrisonerRoutes {
       appointmentSetJourney.prisonersNotFound = null
       return unidentifiedPrisonerNumbers
     }
-    // TODO: Can add another check here on the ticket to add unfound prisoners on the normal appointment journey
+    if (appointmentJourney.type === AppointmentType.GROUP && appointmentJourney.prisonersNotFound) {
+      const unidentifiedPrisonerNumbers = appointmentJourney.prisonersNotFound
+      appointmentJourney.prisonersNotFound = null
+      return unidentifiedPrisonerNumbers
+    }
     return []
   }
 

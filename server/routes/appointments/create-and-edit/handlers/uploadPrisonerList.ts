@@ -84,14 +84,7 @@ export default class UploadPrisonerListRoutes {
       prisonerNumber => !prisonerNumbersFound.includes(prisonerNumber),
     )
 
-    if (prisonerNumbersNotFound.length > 0) {
-      const message =
-        prisonerNumbersNotFound.length === 1
-          ? `The prison number '${prisonerNumbersNotFound[0]}' was not recognised`
-          : `The following prison numbers '${prisonerNumbersNotFound.join("', '")}' were not recognised`
-      res.validationFailed('file', message)
-      return false
-    }
+    req.session.appointmentJourney.prisonersNotFound = prisonerNumbersNotFound
 
     const existingPrisonersNotInUploadedList = (existingPrisoners ?? []).filter(
       prisoner => !prisonerNumbersFound.includes(prisoner.number),

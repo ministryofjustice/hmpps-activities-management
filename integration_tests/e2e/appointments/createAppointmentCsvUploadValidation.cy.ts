@@ -5,7 +5,7 @@ import UploadPrisonerListPage from '../../pages/appointments/create-and-edit/upl
 import UploadPrisonerListForAppointmentSet from '../../pages/appointments/create-and-edit/uploadPrisonerListForAppointmentSet'
 import ReviewPrisonersPage from '../../pages/appointments/create-and-edit/reviewPrisonersPage'
 
-context('Create group appointment - CSV upload validation', () => {
+context('Create group appointment - CSV upload validation - single appointment', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -104,7 +104,9 @@ context('Create group appointment - CSV upload validation', () => {
     uploadPrisonerListPage.attachFile('upload-prisoner-list-one-not-found.csv')
     uploadPrisonerListPage.uploadFile()
 
-    uploadPrisonerListPage.assertValidationError('file', "The prison number 'NOTFOUND' was not recognised")
+    const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    reviewPrisonersPage.hasText('Some prison numbers in your CSV file could not be used')
+    reviewPrisonersPage.list().should('contain.text', 'NOTFOUND')
   })
 
   it('Should fail validation when two prisoners not found', () => {
@@ -116,10 +118,21 @@ context('Create group appointment - CSV upload validation', () => {
     uploadPrisonerListPage.attachFile('upload-prisoner-list-two-not-found.csv')
     uploadPrisonerListPage.uploadFile()
 
-    uploadPrisonerListPage.assertValidationError(
-      'file',
-      "The following prison numbers 'NOTFOUND1', 'NOTFOUND2' were not recognised",
-    )
+    const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    reviewPrisonersPage.hasText('Some prison numbers in your CSV file could not be used')
+    reviewPrisonersPage.list().should('contain.text', 'NOTFOUND1')
+    reviewPrisonersPage.list().should('contain.text', 'NOTFOUND2')
+  })
+
+  it('should filter out unidentified prisoner numbers - all prisoners missing', () => {
+    cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers')
+    const howToAddPrisonersPage = Page.verifyOnPage(HowToAddPrisonersPage)
+    howToAddPrisonersPage.selectGroup()
+    howToAddPrisonersPage.continue()
+
+    const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
+    uploadPrisonerListPage.attachFile('upload-prisoner-list-all-not-found.csv')
+    uploadPrisonerListPage.uploadFile()
   })
 })
 context('Create group appointment - CSV upload validation - back-to-back appointments (set)', () => {
