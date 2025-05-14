@@ -250,4 +250,9 @@ export default {
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
   },
+  liveIssueOutageBannerEnabled: toBoolean(get('LIVE_ISSUE_OUTAGE_BANNER_ENABLED', 'false')),
+  plannedDowntimeOutageBannerEnabled: toBoolean(get('PLANNED_DOWNTIME_OUTAGE_BANNER_ENABLED', 'false')),
+  plannedDowntimeDate: Date.parse(get('PLANNED_DOWNTIME_DATE', new Date().toLocaleDateString())),
+  plannedDowntimeStartTime: get('PLANNED_DOWNTIME_START_TIME', '9am'),
+  plannedDowntimeEndTime: get('PLANNED_DOWNTIME_END_TIME', '5pm'),
 }

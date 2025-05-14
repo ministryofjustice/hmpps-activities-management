@@ -9,10 +9,10 @@
           var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),
             dl=l!='dataLayer'?'&l='+l:'';
-            
+
           j.async=true;j.src=
           'https://www.googletagmanager.com/gtm.js?id='+ i + dl +'{{ tagManagerEnvironment | safe }}';
-          
+
           var n=d.querySelector('[nonce]');
           n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));
           f.parentNode.insertBefore(j,f);
@@ -34,9 +34,22 @@
   {% block meta %}{% endblock %}
 {% endblock %}
 
-{% block beforeContent %}
-  {% include 'partials/beforeContent.njk' %}
+
+{% block main %}
+  {% if liveIssueOutageBannerEnabled or plannedDowntimeOutageBannerEnabled %}
+    {% include 'partials/serviceOutageBanner.njk' %}
+  {% endif %}
+  <div class="govuk-width-container {%- if containerClasses %} {{ containerClasses }}{% endif %}">
+  {% block beforeContent %}
+    {% include 'partials/beforeContent.njk' %}
+  {% endblock %}
+    <main class="govuk-main-wrapper {%- if mainClasses %} {{ mainClasses }}{% endif %}" id="main-content" {%- if mainLang %} lang="{{ mainLang }}"{% endif %}>
+      {% block content %}{% endblock %}
+    </main>
+  </div>
 {% endblock %}
+
+
 
 {% block footer %}
   {{ feComponents.footer | safe }}
