@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { IsNotEmpty } from 'class-validator'
 import { Expose } from 'class-transformer'
 import { Slots } from '../journey'
-import { YesNo } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import BankHolidayService from '../../../../services/bankHolidayService'
 import getApplicableDaysAndSlotsInRegime from '../../../../utils/helpers/applicableRegimeTimeUtil'
@@ -44,9 +43,6 @@ export default class SessionTimesOptionRoutes {
     const { createJourney } = req.session
 
     createJourney.hasAtLeastOneValidDay = await this.helper.hasAtLeastOneValidDay(createJourney, res.locals.user)
-    if (!createJourney.hasAtLeastOneValidDay) {
-      createJourney.runsOnBankHoliday = true
-    }
 
     if (usePrisonRegimeTime === 'true') {
       createJourney.customSlots = undefined
@@ -54,9 +50,11 @@ export default class SessionTimesOptionRoutes {
         return res.redirect('../check-answers')
       }
 
-      if (createJourney.endDateOption.toUpperCase() === YesNo.YES && createJourney.hasAtLeastOneValidDay) {
+      if (createJourney.hasAtLeastOneValidDay) {
         return res.redirectOrReturn('../bank-holiday-option')
       }
+      createJourney.runsOnBankHoliday = true
+
       // If the location has already been set, skip the location page
       if (createJourney.inCell) return res.redirectOrReturn('../capacity')
       return res.redirectOrReturn('../location')

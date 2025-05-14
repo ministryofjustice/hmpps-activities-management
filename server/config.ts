@@ -240,9 +240,6 @@ export default {
     },
   ] as RouteAuth[],
   spikesFeatureToggleEnabled: toBoolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', 'false')),
-  bvlsMasteredVlpmFeatureToggleEnabled: toBoolean(
-    get('BVLS_MASTERED_VLPM_FEATURE_TOGGLE_ENABLED', 'false', requiredInProduction),
-  ),
   appointmentMultipleAttendanceToggleEnabled: toBoolean(
     get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),
   ),
@@ -253,4 +250,9 @@ export default {
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
   },
+  liveIssueOutageBannerEnabled: toBoolean(get('LIVE_ISSUE_OUTAGE_BANNER_ENABLED', 'false')),
+  plannedDowntimeOutageBannerEnabled: toBoolean(get('PLANNED_DOWNTIME_OUTAGE_BANNER_ENABLED', 'false')),
+  plannedDowntimeDate: Date.parse(get('PLANNED_DOWNTIME_DATE', new Date().toLocaleDateString())),
+  plannedDowntimeStartTime: get('PLANNED_DOWNTIME_START_TIME', '9am'),
+  plannedDowntimeEndTime: get('PLANNED_DOWNTIME_END_TIME', '5pm'),
 }

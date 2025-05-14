@@ -105,7 +105,7 @@
                                     }
                                 ]
                             }
-                        } if bvlsMasteredVlpmFeatureToggleEnabled,
+                        },
                         {
                             key: {
                                 text: "Email address"
@@ -123,7 +123,7 @@
                                     }
                                 ]
                             }
-                        } if bvlsMasteredVlpmFeatureToggleEnabled,
+                        },
                         {
                             key: {
                                 text: "UK phone number"
@@ -141,7 +141,7 @@
                                     }
                                 ]
                             }
-                        } if bvlsMasteredVlpmFeatureToggleEnabled,
+                        },
                         {
                             key: {
                                 text: "Location"
@@ -221,7 +221,7 @@
                             value: {
                                 text: (rooms | find('key', session.bookAProbationMeetingJourney.locationCode)).extraAttributes.prisonVideoUrl or "None entered"
                             }
-                        } if bvlsMasteredVlpmFeatureToggleEnabled
+                        }
                     ],
                     attributes: { 'data-qa': 'scheduling-information' }
                 }) }}
