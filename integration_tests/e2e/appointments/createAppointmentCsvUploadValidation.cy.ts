@@ -133,6 +133,9 @@ context('Create group appointment - CSV upload validation - single appointment',
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListPage)
     uploadPrisonerListPage.attachFile('upload-prisoner-list-all-not-found.csv')
     uploadPrisonerListPage.uploadFile()
+
+    const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
+    reviewPrisonersPage.missingPrisonersTitle().contains('No prison numbers in your CSV file could be used')
   })
 })
 context('Create group appointment - CSV upload validation - back-to-back appointments (set)', () => {
