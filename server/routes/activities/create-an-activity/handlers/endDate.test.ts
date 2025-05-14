@@ -6,6 +6,7 @@ import { addDays, addWeeks, startOfToday } from 'date-fns'
 import { associateErrorsWithProperty, formatDate } from '../../../../utils/utils'
 import EndDateRoutes, { EndDate } from './endDate'
 import ActivitiesService from '../../../../services/activitiesService'
+import BankHolidayService from '../../../../services/bankHolidayService'
 import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
@@ -13,14 +14,24 @@ import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePicke
 import { getNearestInvalidEndDate, isEndDateValid } from '../../../../utils/helpers/activityScheduleValidator'
 
 jest.mock('../../../../services/activitiesService')
+jest.mock('../../../../services/bankHolidayService')
 jest.mock('../../../../utils/helpers/activityScheduleValidator')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+const bankHolidayService = new BankHolidayService(null) as jest.Mocked<BankHolidayService>
 const isEndDateValidMock = isEndDateValid as jest.MockedFunction<typeof isEndDateValid>
 const nearestInvalidEndDateMock = getNearestInvalidEndDate as jest.MockedFunction<typeof getNearestInvalidEndDate>
 
 describe('Route Handlers - Create an activity schedule - End date', () => {
-  const handler = new EndDateRoutes(activitiesService)
+  const handler = new EndDateRoutes(activitiesService, bankHolidayService)
+  const mockBankHolidaysList = [
+    new Date('2025-01-01'),
+    new Date('2025-04-18'),
+    new Date('2025-04-21'),
+    new Date('2025-05-05'),
+    new Date('2025-05-26'),
+  ]
+
   let req: Request
   let res: Response
 
@@ -49,6 +60,9 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
     } as unknown as Request
 
     isEndDateValidMock.mockReturnValue(true)
+    when(bankHolidayService.getUkBankHolidays)
+      .calledWith(atLeast(res.locals.user))
+      .mockResolvedValueOnce(mockBankHolidaysList)
   })
 
   describe('GET', () => {
@@ -93,7 +107,8 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       }
 
       await handler.POST(req, res)
-
+      expect(req.session.createJourney.hasAtLeastOneValidDay).toEqual(false)
+      expect(req.session.createJourney.runsOnBankHoliday).toEqual(true)
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',

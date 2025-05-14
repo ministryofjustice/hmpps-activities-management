@@ -1,9 +1,11 @@
 import { Request, Response } from 'express'
 import { IsNotEmpty } from 'class-validator'
 import { Expose } from 'class-transformer'
-import ActivitiesService from '../../../../services/activitiesService'
-import getApplicableDaysAndSlotsInRegime from '../../../../utils/helpers/applicableRegimeTimeUtil'
 import { Slots } from '../journey'
+import ActivitiesService from '../../../../services/activitiesService'
+import BankHolidayService from '../../../../services/bankHolidayService'
+import getApplicableDaysAndSlotsInRegime from '../../../../utils/helpers/applicableRegimeTimeUtil'
+import ActivityDateValidator from '../../../../utils/helpers/activityDateValidator'
 
 export class SessionTimesOption {
   @Expose()
@@ -12,7 +14,14 @@ export class SessionTimesOption {
 }
 
 export default class SessionTimesOptionRoutes {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  private readonly helper: ActivityDateValidator
+
+  constructor(
+    private readonly activitiesService: ActivitiesService,
+    private readonly bankHolidayService: BankHolidayService,
+  ) {
+    this.helper = new ActivityDateValidator(bankHolidayService)
+  }
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
@@ -31,13 +40,24 @@ export default class SessionTimesOptionRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { usePrisonRegimeTime } = req.body
     const { preserveHistory } = req.query
+    const { createJourney } = req.session
+
+    createJourney.hasAtLeastOneValidDay = await this.helper.hasAtLeastOneValidDay(createJourney, res.locals.user)
 
     if (usePrisonRegimeTime === 'true') {
-      req.session.createJourney.customSlots = undefined
+      createJourney.customSlots = undefined
       if (preserveHistory === 'true') {
         return res.redirect('../check-answers')
       }
-      return res.redirectOrReturn('../bank-holiday-option')
+
+      if (createJourney.hasAtLeastOneValidDay) {
+        return res.redirectOrReturn('../bank-holiday-option')
+      }
+      createJourney.runsOnBankHoliday = true
+
+      // If the location has already been set, skip the location page
+      if (createJourney.inCell) return res.redirectOrReturn('../capacity')
+      return res.redirectOrReturn('../location')
     }
 
     let redirectParams = ''

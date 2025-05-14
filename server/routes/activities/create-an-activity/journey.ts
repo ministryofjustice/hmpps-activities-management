@@ -60,5 +60,6 @@ export type CreateAnActivityJourney = {
   capacity?: number
   allocations?: Allocation[]
   runsOnBankHoliday?: boolean
+  hasAtLeastOneValidDay?: boolean
   incentiveLevel?: string
 }

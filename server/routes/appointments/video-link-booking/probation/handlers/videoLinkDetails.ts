@@ -9,7 +9,6 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import { ServiceUser } from '../../../../../@types/express'
 import { AppointmentSearchResult } from '../../../../../@types/activitiesAPI/types'
 import LocationMappingService from '../../../../../services/locationMappingService'
-import config from '../../../../../config'
 
 export default class VideoLinkDetailsRoutes {
   constructor(
@@ -79,7 +78,7 @@ export default class VideoLinkDetailsRoutes {
       .then(apps =>
         apps.find(
           app =>
-            ['VLB', config.bvlsMasteredVlpmFeatureToggleEnabled ? 'VLPM' : ''].includes(app.category.code) && // Handle legacy probation bookings which may have type VLB
+            ['VLB', 'VLPM'].includes(app.category.code) && // Handle legacy probation bookings which may have type VLB
             locationId === app.internalLocation.id &&
             mainAppointment.startTime === app.startTime &&
             mainAppointment.endTime === app.endTime,
