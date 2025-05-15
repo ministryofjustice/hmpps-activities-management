@@ -66,7 +66,7 @@ describe('Video link booking - Court - Confirmation page', () => {
       'View, print movement slips and manage this appointment',
     ])
     expect(
-      $('h2')
+      $('#main-content h2')
         .map((i, e) => $(e).text().trim())
         .get(),
     ).toEqual(['Email Disabled Court to confirm the booking', 'What you can do next'])
