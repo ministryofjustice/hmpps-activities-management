@@ -57,6 +57,10 @@ export default abstract class Page {
 
   confirm = () => cy.get('button').contains('Confirm').click()
 
+  list = () => cy.get('.govuk-list--bullet')
+
+  hasText = (text: string) => cy.contains(text)
+
   saveAndContinue = () => cy.get('button').contains('Save and continue').click()
 
   selectAndContinue = () => cy.get('button').contains('Select and continue').click()
