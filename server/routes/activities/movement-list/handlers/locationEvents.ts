@@ -70,17 +70,14 @@ export default class LocationEventsRoutes {
       l =>
         ({
           ...l,
-          prisonerEvents: prisoners
-            .map(p => {
-              const events = scheduledEventSort(l.events.filter(e => e.prisonerNumber === p.prisonerNumber))
-
-              if (events.length === 0) {
-                return null
-              }
-
+          prisonerEvents: l.events
+            .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e))
+            .map(event => {
+              const prisoner = prisoners.find(p => p.prisonerNumber === event.prisonerNumber)
+              const events = scheduledEventSort(l.events.filter(e => e.prisonerNumber === prisoner.prisonerNumber))
               const clashingEvents = scheduledEventSort(
                 allEvents
-                  .filter(ce => ce.prisonerNumber === p.prisonerNumber)
+                  .filter(ce => ce.prisonerNumber === prisoner.prisonerNumber)
                   // Exclude any activities for the prisoner scheduled at the current location
                   .filter(
                     ce =>
@@ -118,19 +115,21 @@ export default class LocationEventsRoutes {
                   .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e)),
               )
 
-              const filteredEvents = events.filter(
-                e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e),
-              )
-
               return {
-                ...p,
-                alerts: this.alertsFilterService.getFilteredAlerts(selectedAlerts, p?.alerts),
-                category: this.alertsFilterService.getFilteredCategory(selectedAlerts, p?.category),
-                events: filteredEvents,
+                // firstName: prisoner?.firstName,
+                // middleNames: prisoner?.middleNames,
+                // lastName: prisoner?.lastName,
+                // prisonerNumber: prisoner?.prisonerNumber,
+                // cellLocation: prisoner?.cellLocation,
+                // status: prisoner?.status,
+                alerts: this.alertsFilterService.getFilteredAlerts(selectedAlerts, prisoner?.alerts),
+                category: this.alertsFilterService.getFilteredCategory(selectedAlerts, prisoner?.category),
                 clashingEvents,
+                ...prisoner,
+                ...event,
               } as MovementListPrisonerEvents
-            })
-            .filter(pe => pe),
+            }),
+          prisonerCount: prisoners.length,
         }) as MovementListLocation,
     )
 

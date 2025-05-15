@@ -31,6 +31,7 @@ export type MovementListLocation = {
   id: number
   code: string
   description: string
+  prisonerCount: number
   prisonerEvents: MovementListPrisonerEvents[]
 }
 
