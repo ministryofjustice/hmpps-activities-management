@@ -28,21 +28,19 @@
         <div class="govuk-grid-column-two-thirds">
             {{ appointmentTypeCaption(session) }}
             {% if prisoners.length == 0 %}
-                {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+                {% if notFoundPrisoners | length %}
+                    <h1 class="govuk-heading-l">Review who’s attending the appointment</h1>
+                    <h2 class="govuk-heading-m">No prison numbers in your CSV file could be used</h2>
+                    <p class="govuk-body">This may be because the numbers were wrong, or the people are out.</p>
+                    <p class="govuk-body">If you want to continue scheduling this appointment, you must add someone.</p>
+                {% elseif session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
                     <h1 class="govuk-heading-l">There are no attendees to add</h1>
                     <p class="govuk-body">You’ve removed the last new attendee.</p>
                     <p class="govuk-body">You can <a href="/appointments/{{ appointmentId }}" class="govuk-link--no-visited-state">return to the appointment details</a> or add someone else to continue updating.</p>
                 {% elseif session.appointmentJourney.type == AppointmentType.SET %}
-                     {% if notFoundPrisoners | length %}
-                        <h1 class="govuk-heading-l">Review who’s attending the appointment</h1>
-                        <h2 class="govuk-heading-m">No prison numbers in your CSV file could be used</h2>
-                        <p class="govuk-body">This may be because the numbers were wrong, or the people are out.</p>
-                        <p class="govuk-body">If you want to continue scheduling this appointment, you must add someone.</p>
-                    {% else %}
-                        <h1 class="govuk-heading-l">There are no attendees for this set</h1>
-                        <p class="govuk-body">You’ve removed the last attendee for this set of appointments.</p>
-                        <p class="govuk-body">You need to add a new list of prison numbers to continue scheduling the set of back-to-backs.</p>
-                    {% endif %}
+                    <h1 class="govuk-heading-l">There are no attendees for this set</h1>
+                    <p class="govuk-body">You’ve removed the last attendee for this set of appointments.</p>
+                    <p class="govuk-body">You need to add a new list of prison numbers to continue scheduling the set of back-to-backs.</p>
                 {% else %}
                     <h1 class="govuk-heading-l">There are no attendees for this appointment</h1>
                     <p class="govuk-body">You’ve removed the last attendee for this appointment.</p>
