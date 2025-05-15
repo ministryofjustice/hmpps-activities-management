@@ -324,6 +324,18 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
   })
 
   describe('Validation', () => {
+    it('validation fails when uploaded file does not contain any appointments', async () => {
+      req.file = {
+        path: 'uploads/no-appointments.csv',
+      } as unknown as Express.Multer.File
+
+      when(prisonerListCsvParser.getPrisonNumbers).calledWith(req.file).mockReturnValue(Promise.resolve([]))
+
+      await handler.POST(req, res)
+
+      expect(res.validationFailed).toHaveBeenCalledWith('file', 'The selected file does not contain any prison numbers')
+    })
+
     it('validation fails when no file is uploaded', async () => {
       const body = {}
 

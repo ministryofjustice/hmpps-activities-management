@@ -50,12 +50,16 @@
                                     id: 'date',
                                     name: 'date',
                                     leadingZeros: 'true',
+                                    label: {
+                                        text: 'Date',
+                                        classes: "govuk-visually-hidden"
+                                    },
                                     hint: {
                                         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
                                     },
                                     classes: 'moj-datepicker--fixed-width',
                                     errorMessage: validationErrors | findError('date'),
-                                    value: formResponses.date or session.suspendJourney.suspendUntil | isoDateToDatePickerDate
+                                    value: (formResponses.date | subDays(1) if formResponses.date) or (session.suspendJourney.suspendUntil | subDays(1) | formatDatePickerDate if session.suspendJourney.suspendUntil)
                                 })
                             }
                         }

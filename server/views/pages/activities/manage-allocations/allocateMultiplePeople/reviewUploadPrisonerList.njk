@@ -111,8 +111,8 @@
       <span class="govuk-caption-l">{{ session.allocateJourney.activity.name }}</span>
       {% if unidentifiable === true %}
         <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
-        <p class="govuk-body">No prison numbers in your CSV file could be used</p>
-        <p class="govuk-body">This may be because the number is wrong, or the person is no longer in your prison</p>
+        <h2 class="govuk-heading-m">No prison numbers in your CSV file could be used</h2>
+        <p class="govuk-body">This may be because the numbers were wrong, or the people are out.</p>
         {{ govukButton({
             text: "Return to the activity",
             classes: "govuk-!-margin-top-5",

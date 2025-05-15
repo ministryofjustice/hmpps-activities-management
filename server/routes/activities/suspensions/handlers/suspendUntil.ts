@@ -60,6 +60,7 @@ export default class SuspendUntilRoutes {
   }
 
   private dateFromOptions = (dateOption: PresetDateOptions, date: Date) => {
+    // This is the date that the user will return to the activity
     const today = new Date()
     switch (dateOption) {
       case PresetDateOptions.IMMEDIATELY:
@@ -67,7 +68,7 @@ export default class SuspendUntilRoutes {
       case PresetDateOptions.TOMORROW:
         return addDays(today, 1)
       case PresetDateOptions.OTHER:
-        return date
+        return addDays(date, 1)
       default:
         throw new Error('No suitable date found')
     }

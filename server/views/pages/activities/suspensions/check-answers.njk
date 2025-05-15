@@ -89,8 +89,7 @@
                         value: {
                             text: (
                                 ("Immediately" if session.suspendJourney.suspendUntil == now | toDateString) or
-                                ("End of today: " + session.suspendJourney.suspendUntil | subDays(1) | formatDate('d MMMM yyyy') if session.suspendJourney.suspendUntil == now | addDays(1) | toDateString) or
-                                (session.suspendJourney.suspendUntil | formatDate('d MMMM yyyy') if session.suspendJourney.suspendUntil > now | addDays(1) | toDateString)
+                                (session.suspendJourney.suspendUntil | subDays(1) | formatDate('d MMMM yyyy'))
                             )
                         },
                         actions: {
