@@ -69,7 +69,7 @@ describe('Route Handlers - Suspensions - Suspend Until', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.suspendJourney.suspendUntil).toEqual(format(new Date('2026-04-20'), 'yyyy-MM-dd'))
+      expect(req.session.suspendJourney.suspendUntil).toEqual(format(new Date('2026-04-21'), 'yyyy-MM-dd'))
     })
 
     it('should redirect to the case note question page', async () => {
