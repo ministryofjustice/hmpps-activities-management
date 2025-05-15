@@ -1,4 +1,4 @@
-import { addDays, formatDate } from 'date-fns'
+import { addDays, format, formatDate, startOfToday } from 'date-fns'
 import getInmateDetails from '../../fixtures/prisonerSearchApi/getPrisoner-MDI-A5015DY.json'
 import { Activity } from '../../../server/@types/activitiesAPI/types'
 import ViewAllocationsPage from '../../pages/activities/suspensions/viewAllocations'
@@ -343,7 +343,7 @@ context('Suspensions', () => {
         expect($data.get(4).innerText).to.contain('View or end suspension')
         expect($data.get(5).innerText).to.contain('A Wing Cleaner 2')
         expect($data.get(6).innerText).to.contain('12 December 2024')
-        expect($data.get(7).innerText).to.contain(formatDate(toDateString(addDays(new Date(), 3)), 'd MMMM yyyy'))
+        expect($data.get(7).innerText).to.contain(formatDate(toDateString(addDays(new Date(), 2)), 'd MMMM yyyy'))
         expect($data.get(8).innerText).to.contain('No')
         expect($data.get(9).innerText).to.contain('View or end suspension')
         expect($data.get(10).innerText).to.contain("Dave's Cake Making")
@@ -457,7 +457,7 @@ context('Suspensions', () => {
         expect($data.get(4).innerText).to.contain('View or end suspension')
         expect($data.get(5).innerText).to.contain('A Wing Cleaner 2')
         expect($data.get(6).innerText).to.contain('12 December 2024')
-        expect($data.get(7).innerText).to.contain(formatDate(toDateString(addDays(new Date(), 3)), 'd MMMM yyyy'))
+        expect($data.get(7).innerText).to.contain(formatDate(toDateString(addDays(new Date(), 2)), 'd MMMM yyyy'))
         expect($data.get(8).innerText).to.contain('No')
         expect($data.get(9).innerText).to.contain('View or end suspension')
         expect($data.get(10).innerText).to.contain("Dave's Cake Making")
@@ -593,6 +593,70 @@ context('Suspensions', () => {
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.title().should('contain.text', 'Suspension ended')
+  })
+  it('should unsuspend a prisoner from an activity - end of today', () => {
+    const today = format(startOfToday(), 'dd MMMM yyyy')
+    const tomorrow = format(addDays(startOfToday(), 1), 'dd MMMM yyyy')
+    cy.visit('/activities/suspensions/prisoner/G0995GW')
+    const page = Page.verifyOnPage(ViewAllocationsPage)
+    page.caption().should('contain.text', 'Manage suspensions')
+    page.title().should('contain.text', "Alfonso Cholak's activities")
+    page.endSuspensionLink(7528).click()
+
+    const viewSuspensionPage = Page.verifyOnPage(ViewSuspensionPage)
+    viewSuspensionPage.endSuspensionButton()
+
+    const suspendUntil = Page.verifyOnPage(SuspendUntilPage)
+    suspendUntil.selectRadio('tomorrow')
+    suspendUntil.continue()
+
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage
+      .summary()
+      .find('dd')
+      .then($dd => {
+        expect($dd.get(0).innerText).to.contain('Alfonso Cholak\nG0995GW')
+        expect($dd.get(1).innerText).to.contain("Nat's unpaid stuff")
+        expect($dd.get(2).innerText).to.contain(today)
+      })
+    checkAnswersPage.confirm()
+
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.title().should('contain.text', 'Suspension set to end')
+    confirmationPage.subtitle().should('contain.text', tomorrow)
+  })
+  it('should unsuspend a prisoner from an activity - a date chosen by the user', () => {
+    const chosenDate = addDays(startOfToday(), 3)
+    const lastDayOfSuspension = format(chosenDate, 'dd MMMM yyyy')
+    const attendAgainDate = format(addDays(chosenDate, 1), 'dd MMMM yyyy')
+    cy.visit('/activities/suspensions/prisoner/G0995GW')
+    const page = Page.verifyOnPage(ViewAllocationsPage)
+    page.caption().should('contain.text', 'Manage suspensions')
+    page.title().should('contain.text', "Alfonso Cholak's activities")
+    page.endSuspensionLink(7528).click()
+
+    const viewSuspensionPage = Page.verifyOnPage(ViewSuspensionPage)
+    viewSuspensionPage.endSuspensionButton()
+
+    const suspendUntil = Page.verifyOnPage(SuspendUntilPage)
+    suspendUntil.selectRadio('other')
+    suspendUntil.selectDatePickerDate(chosenDate)
+    suspendUntil.continue()
+
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage
+      .summary()
+      .find('dd')
+      .then($dd => {
+        expect($dd.get(0).innerText).to.contain('Alfonso Cholak\nG0995GW')
+        expect($dd.get(1).innerText).to.contain("Nat's unpaid stuff")
+        expect($dd.get(2).innerText).to.contain(lastDayOfSuspension)
+      })
+    checkAnswersPage.confirm()
+
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.title().should('contain.text', 'Suspension set to end')
+    confirmationPage.subtitle().should('contain.text', attendAgainDate)
   })
   it('should unsuspend a prisoner from an activity - paid activity - should show correctly on view suspensions', () => {
     cy.visit('/activities/suspensions/prisoner/G0995GW')

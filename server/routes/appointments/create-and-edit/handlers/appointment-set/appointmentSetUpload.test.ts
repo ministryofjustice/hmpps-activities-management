@@ -95,18 +95,18 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
           Promise.resolve([
             {
               prisonerNumber: 'A1234BC',
-              startTime: null,
-              endTime: null,
+              startTime: { hour: 9, minute: 0 },
+              endTime: { hour: 10, minute: 0 },
             },
             {
               prisonerNumber: 'B2345CD',
-              startTime: null,
-              endTime: null,
+              startTime: { hour: 8, minute: 30 },
+              endTime: { hour: 9, minute: 30 },
             },
             {
               prisonerNumber: 'C9876DE',
-              startTime: null,
-              endTime: null,
+              startTime: { hour: 10, minute: 0 },
+              endTime: { hour: 11, minute: 0 },
             },
           ]),
         )
@@ -143,8 +143,8 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
             prisonCode: 'TPR',
             status: 'ACTIVE IN',
           },
-          startTime: null,
-          endTime: null,
+          startTime: { hour: 9, minute: 0 },
+          endTime: { hour: 10, minute: 0 },
         },
         {
           prisoner: {
@@ -156,8 +156,8 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
             prisonCode: 'TPR',
             status: 'ACTIVE IN',
           },
-          startTime: null,
-          endTime: null,
+          startTime: { hour: 8, minute: 30 },
+          endTime: { hour: 9, minute: 30 },
         },
       ])
       expect(req.session.appointmentSetJourney.prisonersNotFound).toEqual(['C9876DE'])
@@ -175,18 +175,18 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
           Promise.resolve([
             {
               prisonerNumber: 'A1234BC',
-              startTime: null,
-              endTime: null,
+              startTime: { hour: 9, minute: 30 },
+              endTime: { hour: 10, minute: 30 },
             },
             {
               prisonerNumber: 'B2345CD',
-              startTime: null,
-              endTime: null,
+              startTime: { hour: 8, minute: 30 },
+              endTime: { hour: 9, minute: 30 },
             },
             {
               prisonerNumber: 'C9876DE',
-              startTime: null,
-              endTime: null,
+              startTime: { hour: 8, minute: 30 },
+              endTime: { hour: 9, minute: 30 },
             },
           ]),
         )
@@ -211,13 +211,13 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
           Promise.resolve([
             {
               prisonerNumber: 'A1234BC',
-              startTime: null,
-              endTime: null,
+              startTime: { hour: 8, minute: 30 },
+              endTime: { hour: 10, minute: 30 },
             },
             {
               prisonerNumber: 'B2345CD',
-              startTime: null,
-              endTime: null,
+              startTime: { hour: 8, minute: 30 },
+              endTime: { hour: 9, minute: 30 },
             },
           ]),
         )
@@ -255,8 +255,8 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
             prisonCode: 'TPR',
             status: 'ACTIVE IN',
           },
-          startTime: null,
-          endTime: null,
+          startTime: { hour: 8, minute: 30 },
+          endTime: { hour: 10, minute: 30 },
         },
         {
           prisoner: {
@@ -268,8 +268,8 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
             prisonCode: 'TPR',
             status: 'ACTIVE IN',
           },
-          startTime: null,
-          endTime: null,
+          startTime: { hour: 8, minute: 30 },
+          endTime: { hour: 9, minute: 30 },
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
@@ -287,13 +287,13 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
           Promise.resolve([
             {
               prisonerNumber: 'A1234BC',
-              startTime: null,
-              endTime: null,
+              startTime: { hour: 9, minute: 30 },
+              endTime: { hour: 10, minute: 30 },
             },
             {
               prisonerNumber: 'B2345CD',
-              startTime: null,
-              endTime: null,
+              startTime: { hour: 8, minute: 30 },
+              endTime: { hour: 9, minute: 30 },
             },
           ]),
         )
@@ -331,8 +331,8 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
             prisonCode: 'TPR',
             status: 'ACTIVE IN',
           },
-          startTime: null,
-          endTime: null,
+          startTime: { hour: 9, minute: 30 },
+          endTime: { hour: 10, minute: 30 },
         },
         {
           prisoner: {
@@ -344,8 +344,8 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
             prisonCode: 'TPR',
             status: 'ACTIVE IN',
           },
-          startTime: null,
-          endTime: null,
+          startTime: { hour: 8, minute: 30 },
+          endTime: { hour: 9, minute: 30 },
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners?preserveHistory=true')
@@ -452,6 +452,92 @@ describe('Route Handlers - Create Appointment Set - Upload', () => {
         },
       ])
       expect(res.redirect).toHaveBeenCalledWith('review-prisoners')
+    })
+  })
+
+  describe('fetchPrisonerDetails', () => {
+    it('should return an empty map if the API does not recognise the PRNS', async () => {
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['A1234BC', 'B2345CD', 'C9876DE'], res.locals.user)
+        .mockResolvedValue([] as Prisoner[])
+
+      const result = await handler.fetchPrisonerDetails(['A1234BC', 'B2345CD', 'C9876DE'], res.locals.user)
+      const entries = [...result.entries()]
+      expect(entries).toEqual([])
+    })
+    it('should return an empty array map of the PRNs are within the active case load', async () => {
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['A1234BC', 'B2345CD', 'C9876DE'], res.locals.user)
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'A1234BC',
+            firstName: 'TEST01',
+            lastName: 'PRISONER01',
+            prisonId: 'RSI',
+            cellLocation: '1-1-1',
+            status: 'ACTIVE IN',
+          },
+          {
+            prisonerNumber: 'B2345CD',
+            firstName: 'TEST02',
+            lastName: 'PRISONER02',
+            prisonId: 'RSI',
+            cellLocation: '2-2-2',
+            status: 'ACTIVE IN',
+          },
+        ] as Prisoner[])
+
+      const result = await handler.fetchPrisonerDetails(['A1234BC', 'B2345CD', 'C9876DE'], res.locals.user)
+      const entries = [...result.entries()]
+      expect(entries).toEqual([])
+    })
+    it('should return map of prisoner numbers within the active caseload', async () => {
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['A1234BC', 'B2345CD', 'C9876DE'], res.locals.user)
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'A1234BC',
+            firstName: 'TEST01',
+            lastName: 'PRISONER01',
+            prisonId: 'TPR',
+            cellLocation: '1-1-1',
+            status: 'ACTIVE IN',
+          },
+          {
+            prisonerNumber: 'B2345CD',
+            firstName: 'TEST02',
+            lastName: 'PRISONER02',
+            prisonId: 'TPR',
+            cellLocation: '2-2-2',
+            status: 'ACTIVE IN',
+          },
+        ] as Prisoner[])
+      const result = await handler.fetchPrisonerDetails(['A1234BC', 'B2345CD', 'C9876DE'], res.locals.user)
+      const entries = [...result.entries()]
+      expect(entries).toEqual([
+        [
+          'A1234BC',
+          {
+            cellLocation: '1-1-1',
+            firstName: 'TEST01',
+            lastName: 'PRISONER01',
+            prisonId: 'TPR',
+            prisonerNumber: 'A1234BC',
+            status: 'ACTIVE IN',
+          },
+        ],
+        [
+          'B2345CD',
+          {
+            cellLocation: '2-2-2',
+            firstName: 'TEST02',
+            lastName: 'PRISONER02',
+            prisonId: 'TPR',
+            prisonerNumber: 'B2345CD',
+            status: 'ACTIVE IN',
+          },
+        ],
+      ])
     })
   })
 

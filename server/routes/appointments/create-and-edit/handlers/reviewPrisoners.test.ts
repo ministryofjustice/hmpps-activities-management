@@ -133,7 +133,50 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         ],
       })
     })
-    it('should render the review prisoners view - appointment set - some prisoners not found', async () => {
+
+    it('should render the review prisoners view - create new appointment - some prisoners not found', async () => {
+      req.session.appointmentJourney.type = AppointmentType.GROUP
+      req.session.appointmentJourney.prisoners = [
+        {
+          number: 'A1234BC',
+          name: '',
+          cellLocation: '',
+          status: '',
+          prisonCode: '',
+        },
+        {
+          number: 'B2345CD',
+          name: '',
+          cellLocation: '',
+          status: '',
+          prisonCode: '',
+        },
+      ]
+      req.session.appointmentJourney.prisonersNotFound = ['C9876GF']
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
+        backLinkHref: 'how-to-add-prisoners',
+        notFoundPrisoners: ['C9876GF'],
+        prisoners: [
+          {
+            number: 'A1234BC',
+            name: '',
+            cellLocation: '',
+            prisonCode: '',
+            status: '',
+          },
+          {
+            number: 'B2345CD',
+            name: '',
+            cellLocation: '',
+            prisonCode: '',
+            status: '',
+          },
+        ],
+      })
+    })
+
+    it('should render the review prisoners view - create back to back appointments - some prisoners not found', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
       req.session.appointmentSetJourney.appointments = [
         {
@@ -174,6 +217,49 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
             cellLocation: '',
             prisonCode: '',
             status: '',
+          },
+        ],
+      })
+    })
+
+    it('should render the review prisoners view - edit appointment - some prisoners not found', async () => {
+      req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+      req.session.appointmentJourney.type = AppointmentType.GROUP
+      req.session.editAppointmentJourney.addPrisoners = [
+        {
+          number: 'A1234BC',
+          name: '',
+          cellLocation: '',
+          status: '',
+          prisonCode: '',
+        },
+        {
+          number: 'B2345CD',
+          name: '',
+          cellLocation: '',
+          status: '',
+          prisonCode: '',
+        },
+      ]
+      req.session.appointmentJourney.prisonersNotFound = ['C9876GF']
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/review-prisoners', {
+        backLinkHref: 'how-to-add-prisoners',
+        notFoundPrisoners: ['C9876GF'],
+        prisoners: [
+          {
+            number: 'A1234BC',
+            name: '',
+            cellLocation: '',
+            status: '',
+            prisonCode: '',
+          },
+          {
+            number: 'B2345CD',
+            name: '',
+            cellLocation: '',
+            status: '',
+            prisonCode: '',
           },
         ],
       })
