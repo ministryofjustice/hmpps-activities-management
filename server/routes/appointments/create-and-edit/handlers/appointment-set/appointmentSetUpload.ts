@@ -18,8 +18,14 @@ export class AppointmentsList {
 
 type AppointmentJourneyInfo = {
   prisonerNumber: string
-  startTime: string
-  endTime: string
+  startTime: {
+    hour: number
+    minute: number
+  }
+  endTime: {
+    hour: number
+    minute: number
+  }
 }
 
 export default class AppointmentSetUploadRoutes {
@@ -35,68 +41,57 @@ export default class AppointmentSetUploadRoutes {
   }
 
   POST = async (req: Request, res: Response) => {
-    const prisonerListCsvFile = req.file
+    const appointments = await this.getAppointmentInstances(req, res)
+    if (!appointments) return
+
+    req.session.appointmentSetJourney.appointments = appointments
+
+    res.redirect(`review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
+  }
+
+  private getAppointmentInstances = async (req: Request, res: Response) => {
+    const { file } = req
     const { user } = res.locals
 
-    const appointmentInstances = await this.prisonerListCsvParser.getAppointments(prisonerListCsvFile)
+    const appointmentInstances = await this.prisonerListCsvParser.getAppointments(file)
 
     if (appointmentInstances.length === 0) {
       res.validationFailed('file', 'The selected file does not contain any prison numbers')
       return false
     }
 
-    const newPrisonerNumbers = appointmentInstances.map(instance => instance.prisonerNumber)
+    const prisonerNumbers = appointmentInstances.map(a => a.prisonerNumber)
+    const prisonerDetails = await this.fetchPrisonerDetails(prisonerNumbers, user)
 
-    const prisonersDetails = await this.getPrisonerDetails(newPrisonerNumbers, user)
-    const prisonerNumbersNotFound = this.getNotFoundPrisoners(newPrisonerNumbers, prisonersDetails)
-
-    let appointmentInstancesForAvailablePrisoners = appointmentInstances
-    if (prisonerNumbersNotFound.length > 0) {
-      req.session.appointmentSetJourney.prisonersNotFound = prisonerNumbersNotFound
-      appointmentInstancesForAvailablePrisoners = this.getInstancesForAvailablePrisoners(
-        appointmentInstances,
-        prisonerNumbersNotFound,
-      )
+    const notFound = prisonerNumbers.filter(num => !prisonerDetails.has(num))
+    if (notFound.length) {
+      req.session.appointmentSetJourney.prisonersNotFound = notFound
     }
 
-    req.session.appointmentSetJourney.appointments = appointmentInstancesForAvailablePrisoners.map(instance => {
-      const prisonerDetails = prisonersDetails.get(instance.prisonerNumber)
+    const availableAppointments: AppointmentJourneyInfo[] = appointmentInstances.filter(
+      a => !notFound.includes(a.prisonerNumber),
+    )
 
+    return availableAppointments.map(instance => {
+      const prisoner = prisonerDetails.get(instance.prisonerNumber)
       return {
         prisoner: {
-          number: prisonerDetails.prisonerNumber,
-          name: `${prisonerDetails.firstName} ${prisonerDetails.lastName}`,
-          firstName: prisonerDetails.firstName,
-          lastName: prisonerDetails.lastName,
-          prisonCode: prisonerDetails.prisonId,
-          status: prisonerDetails.status,
-          cellLocation: prisonerDetails.cellLocation,
+          number: prisoner.prisonerNumber,
+          name: `${prisoner.firstName} ${prisoner.lastName}`,
+          firstName: prisoner.firstName,
+          lastName: prisoner.lastName,
+          prisonCode: prisoner.prisonId,
+          status: prisoner.status,
+          cellLocation: prisoner.cellLocation,
         },
         startTime: instance.startTime,
         endTime: instance.endTime,
       }
     })
-
-    return res.redirect(`review-prisoners${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 
-  private async getPrisonerDetails(prisonerNumbers: string[], user: ServiceUser) {
-    return (await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user))
-      .filter(prisoner => prisoner.prisonId === user.activeCaseLoadId)
-      .reduce(
-        (prisonerMap, prisoner) => prisonerMap.set(prisoner.prisonerNumber, prisoner),
-        new Map<string, Prisoner>(),
-      )
-  }
-
-  private getNotFoundPrisoners(newPrisonerNumbers: string[], prisonerDetails: Map<string, Prisoner>) {
-    return newPrisonerNumbers.filter(newPrisonerNumber => !prisonerDetails.has(newPrisonerNumber))
-  }
-
-  private getInstancesForAvailablePrisoners(
-    appointmentInstances: AppointmentJourneyInfo[],
-    prisonerNumbersNotFound: string[],
-  ): AppointmentJourneyInfo[] {
-    return appointmentInstances.filter(instance => !prisonerNumbersNotFound.includes(instance.prisonerNumber))
+  async fetchPrisonerDetails(prisonerNumbers: string[], user: ServiceUser): Promise<Map<string, Prisoner>> {
+    const results = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
+    return new Map(results.filter(p => p.prisonId === user.activeCaseLoadId).map(p => [p.prisonerNumber, p]))
   }
 }

@@ -206,7 +206,7 @@ context('Create group appointment - CSV upload validation - back-to-back appoint
 
   it('should filter out unidentified prisoner numbers - 1 prisoner missing', () => {
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListForAppointmentSet)
-    uploadPrisonerListPage.attachFile('upload-prisoner-list-one-not-found.csv')
+    uploadPrisonerListPage.attachFile('upload-prisoner-list-one-not-found-with-times.csv')
     uploadPrisonerListPage.uploadFile()
 
     const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
@@ -218,7 +218,7 @@ context('Create group appointment - CSV upload validation - back-to-back appoint
 
   it('should filter out unidentified prisoner numbers - 2 prisoners missing', () => {
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListForAppointmentSet)
-    uploadPrisonerListPage.attachFile('upload-prisoner-list-two-not-found.csv')
+    uploadPrisonerListPage.attachFile('upload-prisoner-list-two-not-found-with-times.csv')
     uploadPrisonerListPage.uploadFile()
 
     const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
@@ -230,8 +230,9 @@ context('Create group appointment - CSV upload validation - back-to-back appoint
   })
 
   it('should filter out unidentified prisoner numbers - all prisoners missing', () => {
+    cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', [])
     const uploadPrisonerListPage = Page.verifyOnPage(UploadPrisonerListForAppointmentSet)
-    uploadPrisonerListPage.attachFile('upload-prisoner-list-all-not-found.csv')
+    uploadPrisonerListPage.attachFile('upload-prisoner-list-all-not-found-with-times.csv')
     uploadPrisonerListPage.uploadFile()
 
     const reviewPrisonersPage = Page.verifyOnPage(ReviewPrisonersPage)
