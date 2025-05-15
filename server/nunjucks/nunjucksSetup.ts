@@ -63,7 +63,12 @@ import {
 import ServiceName from '../enum/serviceName'
 import DateOption from '../enum/dateOption'
 import { PrisonerStatus } from '../@types/prisonApiImportCustom'
-import { isoDateToDatePickerDate, isoDateToTimePicker, parseIsoDate } from '../utils/datePickerUtils'
+import {
+  isoDateToDatePickerDate,
+  isoDateToTimePicker,
+  parseIsoDate,
+  formatDatePickerDate,
+} from '../utils/datePickerUtils'
 import WaitlistRequester from '../enum/waitlistRequester'
 import { SERVICE_AS_USERNAME } from '../services/userService'
 import EventTier from '../enum/eventTiers'
@@ -265,6 +270,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)
   njkEnv.addFilter('isoDateToDatePickerDate', isoDateToDatePickerDate)
+  njkEnv.addFilter('formatDatePickerDate', formatDatePickerDate)
   njkEnv.addFilter('isoDateToTimePicker', isoDateToTimePicker)
   njkEnv.addGlobal('exampleDatePickerDate', () => `29/9/${formatDate(addYears(new Date(), 1), 'yyyy')}`)
 
