@@ -68,6 +68,56 @@
     {% endif %}
 {% endmacro %}
 
+{% macro showEventDetails(event, location) %}
+    {% if event %}
+        <div>
+            {% if event.eventType == EventType.ACTIVITY and event.eventSource =='SAA' %}
+                <div>
+                    <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list"
+                        class="govuk-link govuk-link--no-visited-state" target="_blank">
+                        {{ event.summary | trim }}
+                    </a>
+                </div>
+            {% elseif event.eventType == EventType.APPOINTMENT and event.eventSource =='SAA' %}
+                <div>
+                    <a href="/appointments/{{ event.appointmentId }}"
+                        class="govuk-link govuk-link--no-visited-state" target="_blank">
+                        {{ event.summary | trim }}
+                    </a>
+                </div>
+                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
+                {% if event.comments %}
+                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow govuk-!-display-none-print' }) }}</div>
+                {% endif %}
+            {% else %}
+                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ event.summary | trim }}</div>
+            {% endif %}
+
+            {% if event.cancelled %}
+                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
+            {% endif %}
+
+            {% if event.suspended %}
+                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Prisoner suspended', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
+            {% endif %}
+
+            {% if event.autoSuspended %}
+                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Temporarily absent', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
+            {% endif %}
+
+            {% if event.eventType != EventType.EXTERNAL_TRANSFER and event.eventType != EventType.COURT_HEARING %}
+                <div class="movement-list__location-events__secondary-information govuk-body-s govuk-!-margin-0">{{ event.internalLocationUserDescription or event.internalLocationDescription }}</div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro showEventTime(event) %}
+    {% if event.eventType != EventType.EXTERNAL_TRANSFER and event.eventType != EventType.COURT_HEARING %}
+       {{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}
+    {% endif %}
+{% endmacro %}
+
 {% block content %}
 
     {% set filterOptionsHtml %}
@@ -108,52 +158,61 @@
                     {% set locationIndex = loop.index %}
                     {% set prisonerEventsTableRows = [] %}
                     {% for prisonerEvents in location.prisonerEvents %}
-                        {% set row = [] %}
-                        {% set row = row.concat(
-                            {
-                                html: '<span class="print-checkbox"></span>',
-                                classes: 'print-only'
-                            }, {
-                                html: showProfileLink({
-                                    firstName: prisonerEvents.firstName,
-                                    middleNames: prisonerEvents.middleNames,
-                                    lastName: prisonerEvents.lastName,
-                                    prisonerNumber: prisonerEvents.prisonerNumber,
-                                    inCaseLoad: prisonerEvents.prisonId == user.activeCaseLoadId
-                                }),
-                                attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-name-and-number', "data-sort-value": prisonerEvents | formatName(NameFormatStyle.lastCommaFirstMiddle, false) }
-                            }, {
-                                text: statusBasedCellLocation(prisonerEvents.cellLocation, prisonerEvents.status, prisonerEvents.prisonId == user.activeCaseLoadId),
-                                attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-cell-location' }
-                            }
-                        ) %}
-
-                        {% if movementListJourney.alertFilters | length %}
+                        {% for event in prisonerEvents.events %}
+                            {% set row = [] %}
                             {% set row = row.concat(
                                 {
-                                    html: alertsList({ alerts: prisonerEvents.alerts, category: prisonerEvents.category }),
-                                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-alerts' }
+                                    html: '<span class="print-checkbox"></span>',
+                                    classes: 'print-only'
+                                }, {
+                                    html: showProfileLink({
+                                        firstName: prisonerEvents.firstName,
+                                        middleNames: prisonerEvents.middleNames,
+                                        lastName: prisonerEvents.lastName,
+                                        prisonerNumber: prisonerEvents.prisonerNumber,
+                                        inCaseLoad: prisonerEvents.prisonId == user.activeCaseLoadId
+                                    }),
+                                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-name-and-number', "data-sort-value": prisonerEvents | formatName(NameFormatStyle.lastCommaFirstMiddle, false) }
+                                }, {
+                                    text: statusBasedCellLocation(prisonerEvents.cellLocation, prisonerEvents.status, prisonerEvents.prisonId == user.activeCaseLoadId),
+                                    attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-cell-location' }
                                 }
                             ) %}
-                        {% endif %}
 
-                        {% set row = row.concat(
-                            {
-                                html: showEvents(prisonerEvents.events, location),
-                                attributes: {
-                                    'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-events',
-                                    'data-sort-value': prisonerEvents.events[0].summary
-                                }
-                            },
-                            {
-                                html: showEvents(prisonerEvents.clashingEvents, location),
-                                attributes: {
-                                    'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-clashing-events'
-                                }
-                            }
-                        ) %}
+                            {% if movementListJourney.alertFilters | length %}
+                                {% set row = row.concat(
+                                    {
+                                        html: alertsList({ alerts: prisonerEvents.alerts, category: prisonerEvents.category }),
+                                        attributes: { 'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-alerts' }
+                                    }
+                                ) %}
+                            {% endif %}
 
-                        {% set prisonerEventsTableRows = (prisonerEventsTableRows.push(row), prisonerEventsTableRows) %}
+                            {% set row = row.concat(
+                                {
+                                    html: showEventDetails(event, location),
+                                    attributes: {
+                                        'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-events',
+                                        'data-sort-value': prisonerEvents.events[0].summary
+                                    }
+                                },
+                                {
+                                    html: showEventTime(event),
+                                    attributes: {
+                                        'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-activity-time',
+                                        'data-sort-value': event.startTime
+                                    }
+                                },
+                                {
+                                    html: showEvents(prisonerEvents.clashingEvents, location),
+                                    attributes: {
+                                        'data-qa': 'location-' + locationIndex + '-prisoner-' + loop.index + '-clashing-events'
+                                    }
+                                }
+                            ) %}
+
+                            {% set prisonerEventsTableRows = (prisonerEventsTableRows.push(row), prisonerEventsTableRows) %}
+                        {% endfor %}
                     {% endfor %}
 
                     <div class="movement-list{{ " print-page-break" if not loop.first }}">
@@ -203,7 +262,10 @@
 
                                 {% set headRows = headRows.concat(
                                     {
-                                        text: "Activity",
+                                        text: "Event details",
+                                        attributes: { "aria-sort": "none" }
+                                    }, {
+                                        text: "Time",
                                         attributes: { "aria-sort": "none" }
                                     }, {
                                         text: "Clashing events"
