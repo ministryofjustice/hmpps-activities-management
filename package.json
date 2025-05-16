@@ -185,7 +185,7 @@
   },
   "overrides": {
     "path-to-regexp": "~0.1.12",
-    "undici": "~6.21.2",
+    "undici": "~6.21.3",
     "serialize-javascript": "~6.0.2",
     "@babel/runtime": "~7.27.1",
     "@babel/helpers": "~7.27.1",
