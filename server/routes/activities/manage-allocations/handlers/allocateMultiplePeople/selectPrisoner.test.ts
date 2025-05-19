@@ -158,12 +158,12 @@ describe('Select prisoner - alllocate multiple people to an activity', () => {
   describe('SEARCH', () => {
     it('should redirect with query string', async () => {
       req.body = {
-        query: 'scooby',
+        query: 'egurztof',
       }
 
       await handler.SEARCH(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`select-prisoner?query=scooby`)
+      expect(res.redirect).toHaveBeenCalledWith(`select-prisoner?query=egurztof`)
     })
   })
   describe('SELECT_PRISONER', () => {
@@ -260,9 +260,9 @@ describe('Select prisoner - alllocate multiple people to an activity', () => {
           prisonerNumber: 'GX123VU',
           allocatedTime: '2023-02-17T15:22:00',
           startDate: '2023-02-17',
-          prisonerName: 'Scooby Doo',
-          prisonerFirstName: 'Scooby',
-          prisonerLastName: 'Doo',
+          prisonerName: 'Egurztof Aisho',
+          prisonerFirstName: 'Egurztof',
+          prisonerLastName: 'Aisho',
           cellLocation: '1-1-1',
           earliestReleaseDate: { releaseDate: '2026-12-25' },
           isUnemployment: false,
@@ -413,9 +413,9 @@ describe('Select prisoner - alllocate multiple people to an activity', () => {
           prisonerNumber: 'GX123VU',
           allocatedTime: '2023-02-17T15:22:00',
           startDate: '2023-02-17',
-          prisonerName: 'Scooby Doo',
-          prisonerFirstName: 'Scooby',
-          prisonerLastName: 'Doo',
+          prisonerName: 'Egurztof Aisho',
+          prisonerFirstName: 'Egurztof',
+          prisonerLastName: 'Aisho',
           cellLocation: '1-1-1',
           earliestReleaseDate: { releaseDate: '2026-12-25' },
           isUnemployment: false,
