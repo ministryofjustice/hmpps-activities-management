@@ -52,6 +52,8 @@ generic-service:
     elasticache-redis:
       REDIS_HOST: "primary_endpoint_address"
       REDIS_AUTH_TOKEN: "auth_token"
+    feature-toggles:
+      BVLS_FEATURE_MASTER_PUBLIC_PRIVATE_NOTES: "BVLS_FEATURE_MASTER_PUBLIC_PRIVATE_NOTES"
 
   allowlist:
     ark-nps-hmcts-ttp2: 194.33.192.0/25

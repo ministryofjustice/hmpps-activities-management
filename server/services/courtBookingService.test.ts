@@ -38,6 +38,8 @@ describe('Court booking service', () => {
         hearingTypeCode: 'APPEAL',
         comments: 'comments',
         videoLinkUrl: 'videoLinkUrl',
+        notesForStaff: 'notes for staff',
+        notesForPrisoners: 'notes for prisoners',
       } as BookACourtHearingJourney
 
       const expectedBody = {
@@ -61,6 +63,8 @@ describe('Court booking service', () => {
         courtHearingType: 'APPEAL',
         comments: 'comments',
         videoLinkUrl: 'videoLinkUrl',
+        notesForStaff: 'notes for staff',
+        notesForPrisoners: 'notes for prisoners',
       }
 
       const result = await courtBookingService.createVideoLinkBooking(journey, user)
@@ -90,6 +94,8 @@ describe('Court booking service', () => {
         hearingTypeCode: 'APPEAL',
         comments: 'comments',
         videoLinkUrl: 'videoLinkUrl',
+        notesForStaff: 'notes for staff',
+        notesForPrisoners: 'notes for prisoners',
       } as BookACourtHearingJourney
 
       const expectedBody = {
@@ -127,6 +133,8 @@ describe('Court booking service', () => {
         courtHearingType: 'APPEAL',
         comments: 'comments',
         videoLinkUrl: 'videoLinkUrl',
+        notesForStaff: 'notes for staff',
+        notesForPrisoners: 'notes for prisoners',
       }
 
       await courtBookingService.createVideoLinkBooking(journey, user)
