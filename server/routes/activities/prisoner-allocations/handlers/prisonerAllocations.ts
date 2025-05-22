@@ -9,6 +9,6 @@ export default class PrisonerAllocationsHandler {
   }
 
   POST = async (req: Request, res: Response) => {
-    res.redirect(`/activities/prisoner-allocations/`)
+    res.redirect('/activities/prisoner-allocations')
   }
 }
