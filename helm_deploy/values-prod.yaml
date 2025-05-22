@@ -38,6 +38,7 @@ generic-service:
     PLANNED_DOWNTIME_DATE: "2025-05-20"
     PLANNED_DOWNTIME_START_TIME: "9am"
     PLANNED_DOWNTIME_END_TIME: "11am"
+    PRISONER_ALLOCATIONS_ENABLED: "false"
 
   allowlist:
     groups:

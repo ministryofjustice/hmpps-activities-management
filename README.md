@@ -115,7 +115,7 @@ DPR_PASSWORD=dpr_password
 
 Start the required containers:
 
-`$ docker-compose -f docker-compose.yaml up -d`
+`$ docker-compose -f docker-compose.yml up -d`
 
 Start a local `hmpps-activities-management-api` service with the `$ ./run-local.sh` script.
 This will setup essential environment variables - local DB credentials, API URLs etc.
