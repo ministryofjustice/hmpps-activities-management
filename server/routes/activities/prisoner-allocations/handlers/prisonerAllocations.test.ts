@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonerAllocationsHandler from './prisonerAllocations'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -30,7 +31,15 @@ describe('Route Handlers - Prisoner Allocations', () => {
   })
 
   describe('GET', () => {
+    it('should redirect if feature toggle disabled', async () => {
+      config.prisonerAllocationsEnabled = false
+      await handler.GET(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/activities')
+    })
+
     it('should render a prisoners allocation details', async () => {
+      config.prisonerAllocationsEnabled = true
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/prisoner-allocations/dashboard')
