@@ -30,6 +30,9 @@ export default class VideoLinkCourtCheckAnswersPage extends Page {
       .contains(number)
   }
 
+  assertExtraInformationDetail = (header: string, value: string) =>
+    this.assertSummaryListValue('extra-information', header, value)
+
   assertCategory = (category: string) => this.assertAppointmentDetail('Appointment name', category)
 
   assertCourt = (courtDescription: string) => this.assertAppointmentDetail('Court', courtDescription)
@@ -39,6 +42,11 @@ export default class VideoLinkCourtCheckAnswersPage extends Page {
   assertHearingLink = (hearingLink: string) => this.assertAppointmentDetail('Court hearing link', hearingLink)
 
   assertMainLocation = (location: string) => this.assertMainScheduleDetail('Location', location)
+
+  assertNotesForStaff = (staffNotes: string) => this.assertExtraInformationDetail('Notes for prison staff', staffNotes)
+
+  assertNotesForPrisoners = (prisonersNotes: string) =>
+    this.assertExtraInformationDetail('Notes for prisoner', prisonersNotes)
 
   assertMainStartDate = (startDate: Date) =>
     this.assertMainScheduleDetail('Date', format(startDate, 'EEEE, d MMMM yyyy'))

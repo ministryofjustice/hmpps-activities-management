@@ -166,6 +166,8 @@ context('Create video link court appointment', () => {
 
     // Extra information page
     const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
+    extraInformationPage.enterStaffNotes('staff notes for the hearing')
+    extraInformationPage.enterPrisonersNotes('prisoners notes for the hearing')
     extraInformationPage.continue()
 
     // Specific check answers page for video link court booking
@@ -179,6 +181,8 @@ context('Create video link court appointment', () => {
     checkAnswersPage.assertMainStartDate(tomorrow)
     checkAnswersPage.assertMainStartTime(14, 0)
     checkAnswersPage.assertMainEndTime(15, 30)
+    checkAnswersPage.assertNotesForStaff('staff notes for the hearing')
+    checkAnswersPage.assertNotesForPrisoners('prisoners notes for the hearing')
     checkAnswersPage.assertPreHearingNone()
     checkAnswersPage.assertPostHearingNone()
     checkAnswersPage.createAppointment()

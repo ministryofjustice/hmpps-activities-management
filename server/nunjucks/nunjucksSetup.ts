@@ -267,6 +267,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('LocationType', LocationType)
   njkEnv.addGlobal('DeallocateAfterAllocationDateOption', DeallocateAfterAllocationDateOption)
   njkEnv.addGlobal('HowToAddOptions', HowToAddOptions)
+  njkEnv.addGlobal('bvlsMasterPublicPrivateNotesEnabled', config.bvlsMasterPublicPrivateNotesEnabled)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)
