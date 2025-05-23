@@ -245,6 +245,28 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/utility/publish': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Endpoint to publish an event to the domain events SNS topic.
+     * @description
+     *
+     *     This endpoint can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
+     */
+    post: operations['publishDomainEvent']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/room-admin/{dpsLocationId}/schedule': {
     parameters: {
       query?: never
@@ -307,28 +329,6 @@ export interface paths {
      *     This endpoint can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
      */
     post: operations['runJob']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/job-admin/publish/{domainEventType}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /**
-     * Endpoint to publish an event to the domain events SNS topic.
-     * @description
-     *
-     *     This endpoint can only be accessed from within the ingress. Requests from elsewhere will result in a 401 response code.
-     */
-    post: operations['publishDomainEvent']
     delete?: never
     options?: never
     head?: never
@@ -858,6 +858,7 @@ export interface components {
        */
       probationMeetingType?: 'OTHER' | 'PSR' | 'RR' | 'UNKNOWN'
       /**
+       * @deprecated
        * @description Free text comments for the video link booking
        * @example Waiting to hear on legal representation
        */
@@ -872,6 +873,16 @@ export interface components {
        *           be ignored if not a probation booking.
        *            */
       additionalBookingDetails?: components['schemas']['AdditionalBookingDetails']
+      /**
+       * @description Private free text notes for the booking. These notes are are only visible to external users.
+       * @example Legal representation details ...
+       */
+      notesForStaff?: string
+      /**
+       * @description Public free text notes for the booking. These notes are visible outside of the service, care should be taken what is entered.
+       * @example Waiting to hear on legal representation ...
+       */
+      notesForPrisoners?: string
     }
     Appointment: {
       /**
@@ -884,7 +895,7 @@ export interface components {
        * @description The location key for the appointment
        * @example PVI-A-1-001
        */
-      locationKey: string
+      locationKey?: string
       /**
        * Format: date
        * @description The future date for which the appointment will start
@@ -892,13 +903,11 @@ export interface components {
        */
       date: string
       /**
-       * Format: partial-time
        * @description Start time for the appointment on the day
        * @example 10:45
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description End time for the appointment on the day
        * @example 11:45
        */
@@ -909,12 +918,12 @@ export interface components {
        * @description The prison code for the prisoner
        * @example PVI
        */
-      prisonCode: string
+      prisonCode?: string
       /**
        * @description The prisoner number (NOMIS ID)
        * @example A1234AA
        */
-      prisonerNumber: string
+      prisonerNumber?: string
       /** @description
        *           The appointment or appointments associated with the prisoner.
        *
@@ -1068,13 +1077,11 @@ export interface components {
        */
       endDayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
       /**
-       * Format: partial-time
        * @description Start time of this slot (24 hr clock, HH:MI)
        * @example 10:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description End time of this slot (24 hr clock, HH:MI)
        * @example 16:00
        */
@@ -1117,13 +1124,11 @@ export interface components {
        */
       endDayOfWeek: number
       /**
-       * Format: partial-time
        * @description Start time for the schedule
        * @example 12:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description End time for the schedule
        * @example 15:00
        */
@@ -1207,11 +1212,6 @@ export interface components {
        */
       probationMeetingType?: 'OTHER' | 'PSR' | 'RR' | 'UNKNOWN'
       /**
-       * @description Free text comments for the video link booking
-       * @example Waiting to hear on legal representation
-       */
-      comments?: string
-      /**
        * @description The video link for the appointment.
        * @example https://video.here.com
        */
@@ -1221,6 +1221,22 @@ export interface components {
        *           be ignored if not a probation booking.
        *            */
       additionalBookingDetails?: components['schemas']['AdditionalBookingDetails']
+      /**
+       * @deprecated
+       * @description Free text comments for the video link booking
+       * @example Waiting to hear on legal representation
+       */
+      comments?: string
+      /**
+       * @description Private free text notes for the booking. These notes are are only visible to external users.
+       * @example Some notes that will not be visible outside of the service
+       */
+      notesForStaff?: string
+      /**
+       * @description Public free text notes for the booking. These notes are visible outside of the service, care should be taken what is entered.
+       * @example Some notes that will be visible outside of the service
+       */
+      notesForPrisoners?: string
     }
     /** @description The request with the search criteria for a video booking */
     VideoBookingSearchRequest: {
@@ -1228,12 +1244,12 @@ export interface components {
        * @description The prisoner number (NOMIS ID)
        * @example A1234AA
        */
-      prisonerNumber: string
+      prisonerNumber?: string
       /**
        * @description The location key for the appointment
        * @example PVI-A-1-001
        */
-      locationKey: string
+      locationKey?: string
       /**
        * Format: date
        * @description The date for which the appointment starts
@@ -1241,13 +1257,11 @@ export interface components {
        */
       date: string
       /**
-       * Format: partial-time
        * @description Start time for the appointment on the day
        * @example 10:45
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description End time for the appointment on the day
        * @example 11:45
        */
@@ -1299,13 +1313,11 @@ export interface components {
        */
       appointmentDate: string
       /**
-       * Format: partial-time
        * @description The start time for this appointment
        * @example 11:30
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time for this appointment
        * @example 12:30
        */
@@ -1445,6 +1457,16 @@ export interface components {
       amendedAt?: string
       /** @description Additional details for the booking if there are any. */
       additionalBookingDetails?: components['schemas']['AdditionalBookingDetails']
+      /**
+       * @description Private free text notes for the booking. These notes are are only visible to external users.
+       * @example Legal representation details ...
+       */
+      notesForStaff?: string
+      /**
+       * @description Public free text notes for the booking. These notes are visible outside of the service, care should be taken what is entered.
+       * @example Waiting to hear on legal representation ...
+       */
+      notesForPrisoners?: string
     }
     /** @description The request with the requested video link booking details */
     RequestVideoBookingRequest: {
@@ -1514,23 +1536,52 @@ export interface components {
        * @example https://video.here.com
        */
       videoLinkUrl?: string
+      /** @description
+       *           The additional booking details for the booking. Additional details are only applicable to probation bookings. Will
+       *           be ignored if not a probation booking.
+       *            */
+      additionalBookingDetails?: components['schemas']['AdditionalBookingDetails']
+    }
+    RequestedAppointment: {
+      /**
+       * @description The appointment type
+       * @example VLB_COURT_MAIN
+       * @enum {string}
+       */
+      type: 'VLB_PROBATION' | 'VLB_COURT_PRE' | 'VLB_COURT_MAIN' | 'VLB_COURT_POST'
+      /**
+       * Format: date
+       * @description The future date for which the appointment will start
+       * @example 2022-12-23
+       */
+      date: string
+      /**
+       * @description Start time for the appointment on the day
+       * @example 10:45
+       */
+      startTime: string
+      /**
+       * @description End time for the appointment on the day
+       * @example 11:45
+       */
+      endTime: string
     }
     UnknownPrisonerDetails: {
       /**
        * @description The prison code for the prison which the prisoner is due to arrive
        * @example PVI
        */
-      prisonCode: string
+      prisonCode?: string
       /**
        * @description The prisoner's first name
        * @example Joe
        */
-      firstName: string
+      firstName?: string
       /**
        * @description The prisoner's last name
        * @example Bloggs
        */
-      lastName: string
+      lastName?: string
       /**
        * Format: date
        * @description The prisoner's date of birth
@@ -1546,7 +1597,20 @@ export interface components {
        *
        *           Appointment dates and times must not overlap.
        *          */
-      appointments: components['schemas']['Appointment'][]
+      appointments: components['schemas']['RequestedAppointment'][]
+    }
+    /** @description Describes an event to be published to the domain events SNS topic */
+    PublishEventUtilityModel: {
+      /** @enum {string} */
+      event: 'APPOINTMENT_CREATED' | 'VIDEO_BOOKING_CREATED' | 'VIDEO_BOOKING_CANCELLED' | 'VIDEO_BOOKING_AMENDED'
+      /**
+       * @description A list of entity identifiers to be published with the event
+       * @example [
+       *       1,
+       *       2
+       *     ]
+       */
+      identifiers?: number[]
     }
     /** @description The request with the new decoration details */
     CreateDecoratedRoomRequest: {
@@ -1606,13 +1670,11 @@ export interface components {
        */
       endDayOfWeek: number
       /**
-       * Format: partial-time
        * @description Start time for the schedule
        * @example 12:00
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description End time for the schedule
        * @example 15:00
        */
@@ -1635,17 +1697,6 @@ export interface components {
        * @description The count of probation teams saved as preferences for this user
        */
       probationTeamsSaved: number
-    }
-    /** @description Describes an event to be published to the domain events SNS topic */
-    PublishEventUtilityModel: {
-      /**
-       * @description A list of entity identifiers to be published with the event
-       * @example [
-       *       1,
-       *       2
-       *     ]
-       */
-      identifiers: number[]
     }
     /** @description The request body containing the user court preferences */
     SetCourtPreferencesRequest: {
@@ -1699,13 +1750,11 @@ export interface components {
     /** @description A time interval between a start and end time */
     Interval: {
       /**
-       * Format: partial-time
        * @description The interval start time, inclusive. ISO-8601 format (hh:mm)
        * @example 09:00
        */
       start: string
       /**
-       * Format: partial-time
        * @description The interval end time (inclusive). ISO-8601 format (hh:mm)
        * @example 09:30
        */
@@ -1791,13 +1840,11 @@ export interface components {
     AvailableLocation: {
       name: string
       /**
-       * Format: partial-time
        * @description The start time in 15 minute slots when the location is available in ISO time format (HH:MI)
        * @example 12:45
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time in 15 minute slots when the location is available in ISO time format (HH:MI)
        * @example 12:45
        */
@@ -1859,22 +1906,20 @@ export interface components {
        */
       date: string
       /**
-       * Format: partial-time
        * @description Start time for on the day
        * @example 10:45
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description End time for on the day
        * @example 11:45
        */
       endTime: string
       /**
        * Format: int64
-       * @description Exclude the video link booking with this ID from the availability check. Useful when checking availability during the amending of a booking.
+       * @description Exclude the appointment with this ID from the availability check. Useful when checking availability during the amending of a booking.
        */
-      vlbIdToExclude?: number
+      appointmentToExclude?: number
     }
     /** @description An item on a schedule i.e. prison appointments and their booking details */
     ScheduleItem: {
@@ -2052,13 +2097,11 @@ export interface components {
        */
       appointmentDate: string
       /**
-       * Format: partial-time
        * @description The start time for the appointment ISO time format (HH:MI)
        * @example 12:45
        */
       startTime: string
       /**
-       * Format: partial-time
        * @description The end time for the appointment ISO time format (HH:MI)
        * @example 13:15
        */
@@ -2085,6 +2128,16 @@ export interface components {
        * @example amender@email.com
        */
       updatedBy?: string
+      /**
+       * @description The name of the probation officer if this is a probation booking and present
+       * @example Jane Doe
+       */
+      probationOfficerName?: string
+      /**
+       * @description The email address of the probation officer if this is a probation booking and present
+       * @example jane.doe@somewhere.com
+       */
+      probationOfficerEmailAddress?: string
     }
     /** @description Describes the details of a reference code */
     ReferenceCode: {
@@ -2940,6 +2993,30 @@ export interface operations {
       }
     }
   }
+  publishDomainEvent: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PublishEventUtilityModel']
+      }
+    }
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'text/plain': string
+        }
+      }
+    }
+  }
   createSchedule: {
     parameters: {
       query?: never
@@ -3050,44 +3127,11 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        jobName: 'COURT_HEARING_LINK_REMINDER'
+        jobName: 'COURT_HEARING_LINK_REMINDER' | 'PROBATION_OFFICER_DETAILS_REMINDER'
       }
       cookie?: never
     }
     requestBody?: never
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'text/plain': string
-        }
-      }
-    }
-  }
-  publishDomainEvent: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        domainEventType:
-          | 'VIDEO_BOOKING_CREATED'
-          | 'APPOINTMENT_CREATED'
-          | 'VIDEO_BOOKING_CANCELLED'
-          | 'VIDEO_BOOKING_AMENDED'
-          | 'PRISONER_RELEASED'
-          | 'PRISONER_MERGED'
-          | 'PRISONER_VIDEO_APPOINTMENT_CANCELLED'
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['PublishEventUtilityModel']
-      }
-    }
     responses: {
       /** @description OK */
       200: {

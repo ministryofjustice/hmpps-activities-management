@@ -256,4 +256,7 @@ export default {
   plannedDowntimeStartTime: get('PLANNED_DOWNTIME_START_TIME', '9am'),
   plannedDowntimeEndTime: get('PLANNED_DOWNTIME_END_TIME', '5pm'),
   prisonerAllocationsEnabled: toBoolean(get('PRISONER_ALLOCATIONS_ENABLED', 'false')),
+  bvlsMasterPublicPrivateNotesEnabled: toBoolean(
+    get('BVLS_FEATURE_MASTER_PUBLIC_PRIVATE_NOTES', 'false', requiredInProduction),
+  ),
 }
