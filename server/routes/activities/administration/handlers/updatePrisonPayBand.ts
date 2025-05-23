@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, Type } from 'class-transformer'
-import { IsInt, IsNotEmpty, IsNumber, Min } from 'class-validator'
+import { IsInt, IsNotEmpty, IsNumber, Min, MaxLength } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { PrisonPayBand, PrisonPayBandUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
@@ -14,6 +14,7 @@ export class UpdatePrisonPayBand {
 
   @Expose()
   @IsNotEmpty({ message: 'Add an alias' })
+  @MaxLength(30, { message: 'Alias must be 30 characters or less' })
   alias: string
 }
 

@@ -288,12 +288,54 @@ describe('Route Handlers - Add a prison pay band', () => {
       )
     })
 
-    it('passes validation if description, alias, display sequece, nomis pay band are all supplied', async () => {
+    it('validation fails if the description is more than 100 characters', async () => {
       const body = {
-        description: 'desc',
-        nomisPayBand: '1',
+        description:
+          'BySEMZZqJouYpkeJaksCqKBYPnitreuxoyRifTuWaIInRLpcEfYQbDjkZkaHBhaVPqcuZbjCLSLoohYpIRfApfhPpiGcpWLmeQvZa',
         displaySequence: '1',
         alias: 'alias',
+      }
+
+      const requestObject = plainToInstance(AddPrisonPayBand, { ...body })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: 'Description must be 100 characters or less',
+            property: 'description',
+          },
+        ]),
+      )
+    })
+
+    it('validation fails if the alias is more than 30 characters', async () => {
+      const body = {
+        description: 'desc',
+        displaySequence: '1',
+        alias: 'mFJRoUNSzbTEdidbNLeafvggsYcZwua',
+      }
+
+      const requestObject = plainToInstance(AddPrisonPayBand, { ...body })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: 'Alias must be 30 characters or less',
+            property: 'alias',
+          },
+        ]),
+      )
+    })
+
+    it('passes validation if description, alias, display sequence, nomis pay band are all supplied', async () => {
+      const body = {
+        description:
+          'BySEMZZqJouYpkeJaksCqKBYPnitreuxoyRifTuWaIInRLpcEfYQbDjkZkaHBhaVPqcuZbjCLSLoohYpIRfApfhPpiGcpWLmeQvZ',
+        nomisPayBand: '1',
+        displaySequence: '1',
+        alias: 'mFJRoUNSzbTEdidbNLeafvggsYcZwu',
       }
 
       const requestObject = plainToInstance(AddPrisonPayBand, { ...body })
