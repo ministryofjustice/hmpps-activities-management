@@ -13,6 +13,49 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       {{ appointmentTypeCaption(session) }}
+      {% if bvlsMasterPublicPrivateNotesEnabled %}
+      <h1 class="govuk-heading-l">
+         <label class="govuk-label govuk-label--l">{{ pageHeading }}</label>
+      </h1>
+      <form method="POST" {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing extra information" {% endif %}>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="400">
+          <div class="govuk-form-group">
+            {{ govukCharacterCount({
+                id: "notesForStaff",
+                name: "notesForStaff",
+                errorMessage: validationErrors | findError("notesForStaff"),
+                value: formResponses.notesForStaff or session.bookAProbationMeetingJourney.notesForStaff,
+                label: {
+                  text: "Notes for prison staff (optional)",
+                  classes: 'govuk-fieldset__legend--s'
+                },
+                hint: { text: "This can include any additional information the prison staff need to know about the booking. For example, interpreter details if required." },
+                maxlength: "400"
+            }) }}
+          </div>
+        </div>
+        <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="400">
+          <div class="govuk-form-group">
+            {{ govukCharacterCount({
+                id: "notesForPrisoners",
+                name: "notesForPrisoners",
+                errorMessage: validationErrors | findError("notesForPrisoner"),
+                value: formResponses.notesForPrisoners or session.bookAProbationMeetingJourney.notesForPrisoners,
+                label: {
+                  text: "Notes for prisoner (optional)",
+                  classes: 'govuk-fieldset__legend--s'
+                },
+                hint: { html: "<p class='govuk-hint'>Add information the prisoner needs to know about their video link booking. This will appear on movement slips and will be seen by the prisoner.</p><p class='govuk-hint'>Do not add anything that should not be seen by or shared with a prisoner.</p>" },
+                maxlength: "400"
+            }) }}
+          </div>
+        </div>
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+      </form>
+      {% else %}
       <h1 class="govuk-heading-l">
          <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information (optional)</label>
       </h1>
@@ -39,6 +82,7 @@
           text: "Continue"
         }) }}
       </form>
+      {% endif %}
     </div>
   </div>
 {% endblock %}
