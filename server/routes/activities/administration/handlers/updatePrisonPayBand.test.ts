@@ -216,11 +216,32 @@ describe('Route Handlers - Update a prison pay band', () => {
       )
     })
 
-    it('passes validation if description, alias and display sequence are all supplied', async () => {
+    it('validation fails if the alias is more than 30 characters', async () => {
       const body = {
         description: 'desc',
         displaySequence: '1',
-        alias: 'alias',
+        alias: 'mFJRoUNSzbTEdidbNLeafvggsYcZwua',
+      }
+
+      const requestObject = plainToInstance(UpdatePrisonPayBand, { ...body })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: 'Alias must be 30 characters or less',
+            property: 'alias',
+          },
+        ]),
+      )
+    })
+
+    it('passes validation if description, alias and display sequence are all supplied', async () => {
+      const body = {
+        description:
+          'BySEMZZqJouYpkeJaksCqKBYPnitreuxoyRifTuWaIInRLpcEfYQbDjkZkaHBhaVPqcuZbjCLSLoohYpIRfApfhPpiGcpWLmeQvZ',
+        displaySequence: '1',
+        alias: 'mFJRoUNSzbTEdidbNLeafvggsYcZwu',
       }
 
       const requestObject = plainToInstance(UpdatePrisonPayBand, { ...body })
