@@ -1,8 +1,11 @@
 import { Request, Response } from 'express'
-import ExtraInformationRoutes from './extraInformation'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
+import ExtraInformationRoutes, { ExtraInformation } from './extraInformation'
 import CourtBookingService from '../../../../../services/courtBookingService'
 import { BookACourtHearingJourney } from '../journey'
 import config from '../../../../../config'
+import { associateErrorsWithProperty } from '../../../../../utils/utils'
 
 jest.mock('../../../../../services/courtBookingService')
 
@@ -35,6 +38,95 @@ describe('ExtraInformationRoutes', () => {
       await extraInformationRoutes.GET(req as Request, res as Response)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/court/extra-information')
+    })
+  })
+
+  describe('ExtraInformation', () => {
+    it('it should validate extra information when master notes toggle is off', async () => {
+      config.bvlsMasterPublicPrivateNotesEnabled = false
+
+      const extraInformation = plainToInstance(ExtraInformation, {
+        extraInformation: 'x'.repeat(3601),
+      })
+
+      const errors = await validate(extraInformation).then(errs => errs.flatMap(associateErrorsWithProperty))
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: 'You must enter extra information which has no more than 3600 characters',
+            property: 'extraInformation',
+          },
+        ]),
+      )
+    })
+
+    it('it should not validate extra information when master notes toggle is off', async () => {
+      config.bvlsMasterPublicPrivateNotesEnabled = true
+
+      const extraInformation = plainToInstance(ExtraInformation, {
+        extraInformation: 'x'.repeat(3601),
+      })
+
+      const errors = await validate(extraInformation).then(errs => errs.flatMap(associateErrorsWithProperty))
+      expect(errors).toHaveLength(0)
+    })
+
+    it('it should validate staff notes when master notes toggle is on', async () => {
+      config.bvlsMasterPublicPrivateNotesEnabled = true
+
+      const extraInformation = plainToInstance(ExtraInformation, {
+        notesForStaff: 'x'.repeat(401),
+      })
+
+      const errors = await validate(extraInformation).then(errs => errs.flatMap(associateErrorsWithProperty))
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: 'You must enter notes for staff which has no more than 400 characters',
+            property: 'notesForStaff',
+          },
+        ]),
+      )
+    })
+
+    it('it should not validate staff notes when master notes toggle is off', async () => {
+      config.bvlsMasterPublicPrivateNotesEnabled = false
+
+      const extraInformation = plainToInstance(ExtraInformation, {
+        notesForStaff: 'x'.repeat(401),
+      })
+
+      const errors = await validate(extraInformation).then(errs => errs.flatMap(associateErrorsWithProperty))
+      expect(errors).toHaveLength(0)
+    })
+
+    it('it should validate prisoners notes when master notes toggle is on', async () => {
+      config.bvlsMasterPublicPrivateNotesEnabled = true
+
+      const extraInformation = plainToInstance(ExtraInformation, {
+        notesForPrisoners: 'x'.repeat(401),
+      })
+
+      const errors = await validate(extraInformation).then(errs => errs.flatMap(associateErrorsWithProperty))
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          {
+            error: 'You must enter notes for prisoner which has no more than 400 characters',
+            property: 'notesForPrisoners',
+          },
+        ]),
+      )
+    })
+
+    it('it should not validate prisoners notes when master notes toggle is off', async () => {
+      config.bvlsMasterPublicPrivateNotesEnabled = false
+
+      const extraInformation = plainToInstance(ExtraInformation, {
+        notesForPrisoners: 'x'.repeat(401),
+      })
+
+      const errors = await validate(extraInformation).then(errs => errs.flatMap(associateErrorsWithProperty))
+      expect(errors).toHaveLength(0)
     })
   })
 

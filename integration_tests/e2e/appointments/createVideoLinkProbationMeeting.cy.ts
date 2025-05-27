@@ -157,6 +157,8 @@ context('Create video link probation appointment', () => {
 
     // Extra information page
     const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
+    extraInformationPage.enterStaffNotes('some staff notes')
+    extraInformationPage.enterPrisonersNotes('some prisoners notes')
     extraInformationPage.continue()
 
     // Specific check answers page for video link probation bookings
@@ -169,6 +171,8 @@ context('Create video link probation appointment', () => {
     checkAnswersPage.assertStartDate(tomorrow)
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
+    checkAnswersPage.assertNotesForStaff('some staff notes')
+    checkAnswersPage.assertNotesForPrisoners('some prisoners notes')
     checkAnswersPage.createAppointment()
 
     // Confirmation page
