@@ -16,14 +16,10 @@
 
       {% if bvlsMasterPublicPrivateNotesEnabled %}
       <h1 class="govuk-heading-l">
-         <label class="govuk-label govuk-label--l">Add extra information</label>
+         <label class="govuk-label govuk-label--l">{{ pageHeading }}</label>
       </h1>
       <form method="POST" {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing extra information" {% endif %}>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-        <span class="govuk-heading-m" for="notesForStaff">Notes for prison staff (optional)</span>
-        <p class="govuk-body" data-qa="first-paragraph">
-          This can include case number, co-defendant details if this is a multi-handler case, interpreter, or solicitor's details.
-        </p>
         <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="400">
           <div class="govuk-form-group">
             {{ govukCharacterCount({
@@ -31,17 +27,15 @@
                 name: "notesForStaff",
                 errorMessage: validationErrors | findError("notesForStaff"),
                 value: formResponses.notesForStaff or session.bookACourtHearingJourney.notesForStaff,
+                label: {
+                  text: "Notes for prison staff (optional)",
+                  classes: 'govuk-fieldset__legend--s'
+                },
+                hint: { text: "This can include case number, co-defendant details if this is a multi-hander case, interpreter, or solicitor's details." },
                 maxlength: "400"
             }) }}
           </div>
         </div>
-        <span class="govuk-heading-m" for="notesForPrisoner">Notes for prisoner (optional)</span>
-        <p class="govuk-body" data-qa="first-paragraph">
-          Add information the prisoner needs to know about their video link booking. This will appear on movement slips and will be seen by the prisoner.
-        </p>
-        <p class="govuk-body">
-         Do not add anything that should not be seen by or shared with a prisoner.
-        </p>
         <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="400">
           <div class="govuk-form-group">
             {{ govukCharacterCount({
@@ -49,6 +43,11 @@
                 name: "notesForPrisoners",
                 errorMessage: validationErrors | findError("notesForPrisoner"),
                 value: formResponses.notesForPrisoners or session.bookACourtHearingJourney.notesForPrisoners,
+                label: {
+                  text: "Notes for prisoner (optional)",
+                  classes: 'govuk-fieldset__legend--s'
+                },
+                hint: { html: "<p class='govuk-hint'>Add information the prisoner needs to know about their video link booking. This will appear on movement slips and will be seen by the prisoner.</p><p class='govuk-hint'>Do not add anything that should not be seen by or shared with a prisoner.</p>" },
                 maxlength: "400"
             }) }}
           </div>

@@ -246,8 +246,47 @@
                                     }
                                 ]
                             }
-                        }
-                    ]
+                        } if not bvlsMasterPublicPrivateNotesEnabled,
+                        {
+                            key: {
+                                text: 'Notes for prison staff'
+                            },
+                            value: {
+                                html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.notesForStaff | escape) + '</span>'
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "extra-information?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "extra information",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-extra-information' }
+                                    }
+                                ]
+                            }
+                        } if bvlsMasterPublicPrivateNotesEnabled,
+                        {
+                            key: {
+                                text: "Notes for prisoner"
+                            },
+                            value: {
+                                html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.notesForPrisoners | escape) + '</span>'
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "extra-information?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "extra information",
+                                        classes: "govuk-link--no-visited-state",
+                                        attributes: { 'data-qa': 'change-extra-information' }
+                                    }
+                                ]
+                            }
+                        } if bvlsMasterPublicPrivateNotesEnabled
+                    ],
+                    attributes: { 'data-qa': 'extra-information' }
                 }) }}
 
                 <div class="govuk-button-group">

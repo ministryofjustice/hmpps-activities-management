@@ -38,4 +38,12 @@ export default class VideoLinkProbationCheckAnswersPage extends Page {
     this.assertScheduleDetail('End time', `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`)
 
   createAppointment = () => cy.get('button').contains('Confirm').click()
+
+  assertExtraInformationDetail = (header: string, value: string) =>
+    this.assertSummaryListValue('extra-information', header, value)
+
+  assertNotesForStaff = (staffNotes: string) => this.assertExtraInformationDetail('Notes for prison staff', staffNotes)
+
+  assertNotesForPrisoners = (prisonersNotes: string) =>
+    this.assertExtraInformationDetail('Notes for prisoner', prisonersNotes)
 }

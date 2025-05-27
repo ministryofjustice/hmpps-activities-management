@@ -24,6 +24,8 @@ describe('Probation booking service', () => {
     probationTeamCode: 'BLACKPP',
     meetingTypeCode: 'PSR',
     comments: 'comments',
+    notesForStaff: 'notes for staff',
+    notesForPrisoners: 'notes for prisoners',
   } as BookAProbationMeetingJourney
 
   beforeEach(() => {
@@ -59,6 +61,8 @@ describe('Probation booking service', () => {
         probationTeamCode: 'BLACKPP',
         probationMeetingType: 'PSR',
         comments: 'comments',
+        notesForStaff: 'notes for staff',
+        notesForPrisoners: 'notes for prisoners',
       }
 
       const result = await probationBookingService.createVideoLinkBooking(journey, user)
@@ -92,6 +96,8 @@ describe('Probation booking service', () => {
         probationTeamCode: 'BLACKPP',
         probationMeetingType: 'PSR',
         comments: 'comments',
+        notesForStaff: 'notes for staff',
+        notesForPrisoners: 'notes for prisoners',
       }
 
       const result = await probationBookingService.amendVideoLinkBooking({ ...journey, bookingId: 1 }, user)
