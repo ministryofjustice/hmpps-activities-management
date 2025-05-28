@@ -9,11 +9,17 @@
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-l">{{ prisonerName }}'s activity allocations</h1>
             <div class="mini-profile">
-                <img src="{{ prisoner.imageUrl }}" alt="Image of {{ prisonerName }}" class="mini-profile__image" />
+                <img
+                    src="/profileImage/{{ prisoner.prisonerNumber }}/image"
+                    alt="Photograph of {{ prisonerName }}"
+                    aria-label="Photograph of {{ prisonerName }}"
+                    data-qa="offender-image"
+                    class="prisonerInfoBanner__prisoner-image"
+                />
                 <div class="mini-profile__details">
                     <div class="mini-profile__detail">
                         <div class="mini-profile__detail-label">
-                            {{ prisonerName }}
+                            <a href="{{ dpsUrl }}/prisoner/{{ prisoner.prisonerNumber }}" target="_blank">{{ prisonerName }}</a>
                         </div>
                         <div class="mini-profile__detail-value">
                             {{ prisoner.prisonerNumber }}
@@ -24,7 +30,7 @@
                             Location
                         </div>
                         <div class="mini-profile__detail-value">
-                            {{ prisoner.cellLocation }}
+                            <a href="{{ dpsUrl }}/prisoner/{{ prisoner.prisonerNumber }}/location-details" target="_blank">{{ prisoner.cellLocation }}</a>
                         </div>
                     </div>
                     <div class="mini-profile__detail">
@@ -32,7 +38,7 @@
                             Incentive level
                         </div>
                         <div class="mini-profile__detail-value">
-                            {{ prisoner.currentIncentive.level.description }}
+                            <a href="{{ dpsUrl }}/incentive-reviews/prisoner/{{ prisoner.prisonerNumber }}" target="_blank">{{ prisoner.currentIncentive.level.description }}</a>
                         </div>
                     </div>
                     <div class="mini-profile__detail">
@@ -40,7 +46,7 @@
                             Earliest release date
                         </div>
                         <div class="mini-profile__detail-value">
-                            {{ prisoner.earliestReleaseDate | formatDate('d MMMM yyyy') }}
+                            <a href="{{ dpsUrl }}/prisoner/{{ prisoner.prisonerNumber }}/offences" target="_blank">{{ prisoner.earliestReleaseDate | formatDate('d MMMM yyyy') }}</a>
                         </div>
                     </div>
                     <div class="mini-profile__detail">

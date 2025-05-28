@@ -3,9 +3,12 @@
   @include govuk-font($size: 19);
   background-color: govuk-colour("light-grey");
   display: flex;
+  flex-direction: row;
+  align-items: start;
 
   .mini-profile__details {
-    // @include govuk-responsive-padding(3);
+    @include govuk-responsive-padding(3, "left");
+    @include govuk-responsive-padding(3, "right");
     flex: 1;
     display: flex;
     flex-direction: row;
@@ -18,6 +21,11 @@
       .mini-profile__detail-label {
         @include govuk-font($size: 19, $weight: bold);
       }
+
+      .mini-profile__detail-value a {
+        color: govuk-colour("black");
+      }
     }
+    
   }
 }
