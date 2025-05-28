@@ -2,11 +2,57 @@
 
 {% set pageTitle = applicationName + " - Record attendance" %}
 {% set pageId = 'prisoner-allocations-dashboard' %}
+{% set prisonerName = prisoner | firstNameLastName | toTitleCase %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-l">Prisoner's activity allocations</h1>
+            <h1 class="govuk-heading-l">{{ prisonerName }}'s activity allocations</h1>
+            <div class="mini-profile">
+                <img src="{{ prisoner.imageUrl }}" alt="Image of {{ prisonerName }}" class="mini-profile__image" />
+                <div class="mini-profile__details">
+                    <div class="mini-profile__detail">
+                        <div class="mini-profile__detail-label">
+                            {{ prisonerName }}
+                        </div>
+                        <div class="mini-profile__detail-value">
+                            {{ prisoner.prisonerNumber }}
+                        </div>
+                    </div>
+                    <div class="mini-profile__detail">
+                        <div class="mini-profile__detail-label">
+                            Location
+                        </div>
+                        <div class="mini-profile__detail-value">
+                            {{ prisoner.cellLocation }}
+                        </div>
+                    </div>
+                    <div class="mini-profile__detail">
+                        <div class="mini-profile__detail-label">
+                            Incentive level
+                        </div>
+                        <div class="mini-profile__detail-value">
+                            {{ prisoner.currentIncentive.level.description }}
+                        </div>
+                    </div>
+                    <div class="mini-profile__detail">
+                        <div class="mini-profile__detail-label">
+                            Earliest release date
+                        </div>
+                        <div class="mini-profile__detail-value">
+                            {{ prisoner.earliestReleaseDate | formatDate('d MMMM yyyy') }}
+                        </div>
+                    </div>
+                    <div class="mini-profile__detail">
+                        <div class="mini-profile__detail-label">
+                            Workplace risk assessment
+                        </div>
+                        <div class="mini-profile__detail-value">
+                            {{ prisoner.workplaceRiskAssessment | toTitleCase }}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
