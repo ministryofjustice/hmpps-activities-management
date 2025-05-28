@@ -43,6 +43,8 @@ export default class ProbationBookingService {
           }
         : undefined,
       comments: journey.comments,
+      notesForStaff: journey.notesForStaff,
+      notesForPrisoners: journey.notesForPrisoners,
     } as T
   }
 

@@ -21,4 +21,6 @@ export type BookACourtHearingJourney = {
   postLocationCode?: string
   comments?: string
   videoLinkUrl?: string
+  notesForStaff?: string
+  notesForPrisoners?: string
 }

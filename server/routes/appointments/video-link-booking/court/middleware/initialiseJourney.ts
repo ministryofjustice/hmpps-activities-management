@@ -91,6 +91,8 @@ export default ({
       postLocationCode: postAppointment?.prisonLocKey,
       comments: booking.comments,
       videoLinkUrl: booking.videoLinkUrl,
+      notesForStaff: booking.notesForStaff,
+      notesForPrisoners: booking.notesForPrisoners,
     }
 
     return next()

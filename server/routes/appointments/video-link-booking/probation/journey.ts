@@ -20,4 +20,6 @@ export type BookAProbationMeetingJourney = {
   endTime?: string
   locationCode?: string
   comments?: string
+  notesForStaff?: string
+  notesForPrisoners?: string
 }
