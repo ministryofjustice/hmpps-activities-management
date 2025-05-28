@@ -6,7 +6,12 @@
   flex-direction: row;
   align-items: start;
 
-  .mini-profile__details {
+  &__image {
+    width: 90px;
+    height: 100%;
+  }
+
+  &__details {
     @include govuk-responsive-padding(3, "left");
     @include govuk-responsive-padding(3, "right");
     flex: 1;
