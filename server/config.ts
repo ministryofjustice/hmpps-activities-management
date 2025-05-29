@@ -201,6 +201,7 @@ export default {
     tagManagerEnvironment: get('TAG_MANAGER_ENVIRONMENT', ''),
   },
   dpsUrl: get('DPS_URL', 'https://digital-dev.prison.service.justice.gov.uk', requiredInProduction),
+  prisonerUrl: get('PRISONER_URL', 'https://prisoner-dev.digital.prison.service.justice.gov.uk', requiredInProduction),
   incentivesUrl: get('INCENTIVES_URL', 'https://incentives-ui-dev.hmpps.service.justice.gov.uk', requiredInProduction),
   videoConferenceScheduleUrl: get(
     'VIDEO_CONFERENCE_SCHEDULE_URL',

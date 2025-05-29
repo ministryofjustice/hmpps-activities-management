@@ -11,7 +11,7 @@
         <div class="mini-profile__details">
             <div class="mini-profile__detail">
                 <div class="mini-profile__detail-label">
-                    <a href="{{ dpsUrl }}/prisoner/{{ prisoner.prisonerNumber }}" target="_blank">{{ prisonerName }}</a>
+                    <a href="{{ prisonerUrl }}/prisoner/{{ prisoner.prisonerNumber }}" target="_blank">{{ prisonerName }}</a>
                 </div>
                 <div class="mini-profile__detail-value">
                     {{ prisoner.prisonerNumber }}
@@ -22,7 +22,7 @@
                     Location
                 </div>
                 <div class="mini-profile__detail-value">
-                    <a href="{{ dpsUrl }}/prisoner/{{ prisoner.prisonerNumber }}/location-details" target="_blank">{{ prisoner.cellLocation }}</a>
+                    <a href="{{ prisonerUrl }}/prisoner/{{ prisoner.prisonerNumber }}/location-details" target="_blank">{{ prisoner.cellLocation }}</a>
                 </div>
             </div>
             <div class="mini-profile__detail">
@@ -38,7 +38,7 @@
                     Earliest release date
                 </div>
                 <div class="mini-profile__detail-value">
-                    <a href="{{ dpsUrl }}/prisoner/{{ prisoner.prisonerNumber }}/offences" target="_blank">{{ prisoner.earliestReleaseDate | formatDate('d MMMM yyyy') }}</a>
+                    <a href="{{ prisonerUrl }}/prisoner/{{ prisoner.prisonerNumber }}/offences#release-dates" target="_blank">{{ prisoner.earliestReleaseDate | formatDate('d MMMM yyyy') }}</a>
                 </div>
             </div>
             <div class="mini-profile__detail">
