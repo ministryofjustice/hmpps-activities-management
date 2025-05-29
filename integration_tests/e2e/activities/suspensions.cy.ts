@@ -627,8 +627,8 @@ context('Suspensions', () => {
   })
   it('should unsuspend a prisoner from an activity - a date chosen by the user', () => {
     const chosenDate = addDays(startOfToday(), 3)
-    const lastDayOfSuspension = format(chosenDate, 'dd MMMM yyyy')
-    const attendAgainDate = format(addDays(chosenDate, 1), 'dd MMMM yyyy')
+    const lastDayOfSuspension = format(chosenDate, 'd MMMM yyyy')
+    const attendAgainDate = format(addDays(chosenDate, 1), 'd MMMM yyyy')
     cy.visit('/activities/suspensions/prisoner/G0995GW')
     const page = Page.verifyOnPage(ViewAllocationsPage)
     page.caption().should('contain.text', 'Manage suspensions')
