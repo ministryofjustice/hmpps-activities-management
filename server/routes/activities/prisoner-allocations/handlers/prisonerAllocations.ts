@@ -23,7 +23,6 @@ export default class PrisonerAllocationsHandler {
 
     const prisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
     const earliestReleaseDate = determineEarliestReleaseDate(prisoner)
-
     const wra = determineWorkplaceRiskAssessment(prisoner)
 
     const viewPrisoner = {
