@@ -18,6 +18,7 @@ generic-service:
     CASE_NOTES_API_URL: "https://dev.offender-case-notes.service.justice.gov.uk"
     PRISON_API_URL: "https://prison-api-dev.prison.service.justice.gov.uk"
     PRISONER_SEARCH_API_URL: "https://prisoner-search-dev.prison.service.justice.gov.uk"
+    INCENTIVES_URL: "https://incentives-ui-dev.hmpps.service.justice.gov.uk"
     INCENTIVES_API_URL: "https://incentives-api-dev.hmpps.service.justice.gov.uk"
     COMPONENT_API_URL: "https://frontend-components-dev.hmpps.service.justice.gov.uk"
     PRISON_REGISTER_API_URL: "https://prison-register-dev.hmpps.service.justice.gov.uk"
