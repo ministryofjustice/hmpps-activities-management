@@ -24,14 +24,7 @@ export default class PrisonerAllocationsHandler {
     const prisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
     const earliestReleaseDate = determineEarliestReleaseDate(prisoner)
 
-    let wra = 'NONE'
-    if (prisoner.alerts.some(alert => alert.alertCode === WORKPLACE_RISK_LEVEL_HIGH)) {
-      wra = 'HIGH'
-    } else if (prisoner.alerts.some(alert => alert.alertCode === WORKPLACE_RISK_LEVEL_MEDIUM)) {
-      wra = 'MEDIUM'
-    } else if (prisoner.alerts.some(alert => alert.alertCode === WORKPLACE_RISK_LEVEL_LOW)) {
-      wra = 'LOW'
-    }
+    const wra = determineWorkplaceRiskAssessment(prisoner)
 
     const viewPrisoner = {
       ...prisoner,
@@ -45,6 +38,19 @@ export default class PrisonerAllocationsHandler {
   POST = async (req: Request, res: Response) => {
     res.redirect('/activities/prisoner-allocations')
   }
+}
+
+const determineWorkplaceRiskAssessment = (prisoner: Prisoner) => {
+  if (prisoner.alerts.some(alert => alert.alertCode === WORKPLACE_RISK_LEVEL_HIGH)) {
+    return 'HIGH'
+  }
+  if (prisoner.alerts.some(alert => alert.alertCode === WORKPLACE_RISK_LEVEL_MEDIUM)) {
+    return 'MEDIUM'
+  }
+  if (prisoner.alerts.some(alert => alert.alertCode === WORKPLACE_RISK_LEVEL_LOW)) {
+    return 'LOW'
+  }
+  return 'NONE'
 }
 
 const determineEarliestReleaseDate = (prisoner: Prisoner) =>
