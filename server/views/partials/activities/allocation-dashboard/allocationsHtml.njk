@@ -1,0 +1,30 @@
+{% set rows = [] %}
+
+<form method='POST'>
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    {{ stickySelect({
+        idPrefix: 'allocations',
+        type: 'check',
+        caption: "Current allocations",
+        captionClasses: "govuk-visually-hidden",
+        name: 'selectedAllocations',
+        head: [
+            {
+                text: "Activity",
+                attributes: { "aria-sort": "ascending" }
+            },
+            {
+                text: "Start Date",
+                attributes: { "aria-sort": "none" }
+            },
+            {
+                text: "End Date",
+                attributes: { "aria-sort": "none" }
+            }
+        ],
+        rows: rows,
+        actions: [],
+        itemsDescription: 'person',
+        itemsDescriptionPlural: 'people'
+    }) }}
+</form>
