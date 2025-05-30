@@ -242,6 +242,8 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)
   njkEnv.addGlobal('concatArrays', concatArrays)
   njkEnv.addGlobal('dpsUrl', config.dpsUrl)
+  njkEnv.addGlobal('prisonerUrl', config.prisonerUrl)
+  njkEnv.addGlobal('incentivesUrl', config.incentivesUrl)
   njkEnv.addGlobal('nonAssociationsUrl', config.nonAssociationsUrl)
   njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
   njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)

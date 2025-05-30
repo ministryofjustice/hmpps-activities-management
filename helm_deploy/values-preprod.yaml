@@ -11,6 +11,7 @@ generic-service:
   env:
     INGRESS_URL: "https://activities-preprod.prison.service.justice.gov.uk"
     DPS_URL: "https://digital-preprod.prison.service.justice.gov.uk"
+    PRISONER_URL: "https://prisoner-preprod.digital.prison.service.justice.gov.uk"
     NON_ASSOCIATIONS_URL: "https://non-associations-preprod.hmpps.service.justice.gov.uk"
     HMPPS_AUTH_URL: "https://sign-in-preprod.hmpps.service.justice.gov.uk/auth"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-preprod.prison.service.justice.gov.uk"
@@ -18,6 +19,7 @@ generic-service:
     CASE_NOTES_API_URL: "https://preprod.offender-case-notes.service.justice.gov.uk"
     PRISON_API_URL: "https://prison-api-preprod.prison.service.justice.gov.uk"
     PRISONER_SEARCH_API_URL: "https://prisoner-search-preprod.prison.service.justice.gov.uk"
+    INCENTIVES_URL: "https://incentives-ui-preprod.hmpps.service.justice.gov.uk"
     INCENTIVES_API_URL: "https://incentives-api-preprod.hmpps.service.justice.gov.uk"
     COMPONENT_API_URL: "https://frontend-components-preprod.hmpps.service.justice.gov.uk"
     PRISON_REGISTER_API_URL: "https://prison-register-preprod.hmpps.service.justice.gov.uk"

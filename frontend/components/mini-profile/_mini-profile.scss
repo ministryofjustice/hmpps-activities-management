@@ -1,0 +1,35 @@
+.mini-profile {
+  @include govuk-responsive-padding(3);
+  @include govuk-font($size: 19);
+  background-color: govuk-colour("light-grey");
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+
+  &__image {
+    width: 90px;
+    height: 100%;
+  }
+
+  &__details {
+    @include govuk-responsive-padding(3, "left");
+    @include govuk-responsive-padding(3, "right");
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .mini-profile__detail {
+      display: flex;
+      flex-direction: column;
+
+      .mini-profile__detail-label {
+        @include govuk-font($size: 19, $weight: bold);
+      }
+
+      .mini-profile__detail-value a {
+        color: govuk-colour("black");
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{% macro miniProfile(prisoner) %}
+    {% set prisonerName = prisoner | firstNameLastName | toTitleCase %}
+    <div class="mini-profile">
+        <img
+            src="/profileImage/{{ prisoner.prisonerNumber }}/image"
+            alt="Photograph of {{ prisonerName }}"
+            aria-label="Photograph of {{ prisonerName }}"
+            data-qa="offender-image"
+            class="mini-profile__image"
+        />
+        <div class="mini-profile__details">
+            <div class="mini-profile__detail">
+                <div class="mini-profile__detail-label">
+                    <a href="{{ prisonerUrl }}/prisoner/{{ prisoner.prisonerNumber }}" target="_blank">{{ prisonerName }}</a>
+                </div>
+                <div class="mini-profile__detail-value">
+                    {{ prisoner.prisonerNumber }}
+                </div>
+            </div>
+            <div class="mini-profile__detail">
+                <div class="mini-profile__detail-label">
+                    Location
+                </div>
+                <div class="mini-profile__detail-value">
+                    <a href="{{ prisonerUrl }}/prisoner/{{ prisoner.prisonerNumber }}/location-details" target="_blank">{{ prisoner.location }}</a>
+                </div>
+            </div>
+            <div class="mini-profile__detail">
+                <div class="mini-profile__detail-label">
+                    Incentive level
+                </div>
+                <div class="mini-profile__detail-value">
+                    <a href="{{ incentivesUrl }}/incentive-reviews/prisoner/{{ prisoner.prisonerNumber }}" target="_blank">{{ prisoner.currentIncentive.level.description }}</a>
+                </div>
+            </div>
+            <div class="mini-profile__detail">
+                <div class="mini-profile__detail-label">
+                    Earliest release date
+                </div>
+                <div class="mini-profile__detail-value">
+                    <a href="{{ prisonerUrl }}/prisoner/{{ prisoner.prisonerNumber }}/offences#release-dates" target="_blank">{{ prisoner.earliestReleaseDate | formatDate('d MMMM yyyy') }}</a>
+                </div>
+            </div>
+            <div class="mini-profile__detail">
+                <div class="mini-profile__detail-label">
+                    Workplace risk assessment
+                </div>
+                <div class="mini-profile__detail-value">
+                    {{ prisoner.workplaceRiskAssessment | toTitleCase }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
