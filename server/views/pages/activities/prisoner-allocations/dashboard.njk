@@ -1,5 +1,12 @@
 {% extends "layout.njk" %}
 
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "components/sticky-select.njk" import stickySelect %}
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/miniProfile.njk" import miniProfile %}
 
 {% set pageTitle = applicationName + " - Record attendance" %}
@@ -8,9 +15,37 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
             <h1 class="govuk-heading-l">{{ prisonerName }}'s activity allocations</h1>
             {{ miniProfile(prisoner) }}
         </div>
     </div>
+
+    {% set allocationsHtml %}
+        {% include 'partials/activities/allocation-dashboard/allocationsHtml.njk' %}
+    {% endset %}
+    {% set waitlistApplicationsHtml %}
+        {% include 'partials/activities/allocation-dashboard/waitlistApplicationsHtml.njk' %}
+    {% endset %}
+
+    {{ govukTabs({
+        classes: "govuk-tabs--borderless",
+        items: [
+            {
+                label: "Allocations",
+                id: "allocations-tab",
+                panel: {
+                    html: allocationsHtml
+                }
+            },
+            {
+                label: "Waitlist and applications",
+                id: "waitlistApplications-tab",
+                panel: {
+                    html: waitlistApplicationsHtml
+                }
+            }
+        ]
+    }) }}
+
 {% endblock %}
