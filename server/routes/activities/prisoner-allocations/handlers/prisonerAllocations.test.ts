@@ -20,6 +20,7 @@ const mockPrisoner: Prisoner = {
   cellLocation: '1-2-001',
   prisonId: 'LEI',
   status: 'ACTIVE IN',
+  lastMovementTypeCode: 'CRT',
   releaseDate: '2019-11-30',
   alerts: [{ alertType: 'R', alertCode: 'RLO', active: true, expired: false }],
 } as Prisoner
@@ -60,6 +61,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
       req.params.prisonerNumber = 'ABC123'
       const expectedPrisoner = {
         ...mockPrisoner,
+        location: 'Court',
         earliestReleaseDate: '2019-11-30',
         workplaceRiskAssessment: 'LOW',
       }

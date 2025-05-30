@@ -22,13 +22,16 @@ export default class PrisonerAllocationsHandler {
     const { user } = res.locals
 
     const prisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
+
     const earliestReleaseDate = determineEarliestReleaseDate(prisoner)
     const workplaceRiskAssessment = determineWorkplaceRiskAssessment(prisoner)
+    const location = determineLocation(prisoner)
 
     const viewPrisoner = {
       ...prisoner,
       earliestReleaseDate,
       workplaceRiskAssessment,
+      location,
     }
 
     return res.render('pages/activities/prisoner-allocations/dashboard', { prisoner: viewPrisoner })
@@ -36,6 +39,17 @@ export default class PrisonerAllocationsHandler {
 
   POST = async (req: Request, res: Response) => {
     res.redirect('/activities/prisoner-allocations')
+  }
+}
+
+const determineLocation = (prisoner: Prisoner) => {
+  switch (prisoner.lastMovementTypeCode) {
+    case 'CRT':
+      return 'Court'
+    case 'REL':
+      return 'Released'
+    default:
+      return prisoner.cellLocation
   }
 }
 
