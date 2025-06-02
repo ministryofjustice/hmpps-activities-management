@@ -209,48 +209,6 @@
         </div>
     </div>
 
-    {% if bvlsMasterPublicPrivateNotesEnabled %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-
-            {{ govukSummaryList({
-                card: {
-                    title: {
-                        text: "Extra information"
-                    },
-                    actions: {
-                        items: [
-                            {
-                                href: 'amend/' + videoBooking.videoLinkBookingId + '/extra-information',
-                                text: "Change",
-                                classes: "govuk-link--no-visited-state"
-                            }
-                        ]
-                    } if isAmendable
-                },
-                rows: [
-                    {
-                        key: {
-                            text: 'Notes for prison staff'
-                        },
-                        value: {
-                            text: videoBooking.notesForStaff or "None provided"
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Notes for prisoner"
-                        },
-                        value: {
-                            text: videoBooking.notesForPrisoners or "None provided"
-                        }
-                    }
-                ]
-            }) }}
-        </div>
-    </div>
-    {% endif %}
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
@@ -343,6 +301,48 @@
             }) }}
         </div>
     </div>
+
+    {% if bvlsMasterPublicPrivateNotesEnabled %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Extra information"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: 'amend/' + videoBooking.videoLinkBookingId + '/extra-information',
+                                text: "Change",
+                                classes: "govuk-link--no-visited-state"
+                            }
+                        ]
+                    } if isAmendable
+                },
+                rows: [
+                    {
+                        key: {
+                            text: 'Notes for prison staff'
+                        },
+                        value: {
+                            text: videoBooking.notesForStaff or "None entered"
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Notes for prisoner"
+                        },
+                        value: {
+                            text: videoBooking.notesForPrisoners or "None entered"
+                        }
+                    }
+                ]
+            }) }}
+        </div>
+    </div>
+    {% endif %}
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">

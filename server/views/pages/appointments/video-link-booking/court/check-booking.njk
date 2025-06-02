@@ -280,45 +280,30 @@
                     attributes: { 'data-qa': 'post-scheduling-information' }
                 }) }}
 
-                <h2 class="govuk-heading-m">Extra information</h2>
                 {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Extra information"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "extra-information?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "extra information",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-extra-information' }
+                                }
+                            ]
+                        }
+                    },
                     rows: [
-                        {
-                            key: {
-                                text: "Extra information"
-                            },
-                            value: {
-                                html: '<span class="preserve-line-breaks">' + (session.bookACourtHearingJourney.comments | escape) + '</span>'
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "extra-information?preserveHistory=true",
-                                        text: "Change",
-                                        visuallyHiddenText: "extra information",
-                                        classes: "govuk-link--no-visited-state",
-                                        attributes: { 'data-qa': 'change-extra-information' }
-                                    }
-                                ]
-                            }
-                        } if not bvlsMasterPublicPrivateNotesEnabled,
                         {
                             key: {
                                 text: 'Notes for prison staff'
                             },
                             value: {
-                                html: '<span class="preserve-line-breaks">' + (session.bookACourtHearingJourney.notesForStaff | escape) + '</span>'
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "extra-information?preserveHistory=true",
-                                        text: "Change",
-                                        visuallyHiddenText: "extra information",
-                                        classes: "govuk-link--no-visited-state",
-                                        attributes: { 'data-qa': 'change-extra-information' }
-                                    }
-                                ]
+                                html: '<span class="preserve-line-breaks">' + (session.bookACourtHearingJourney.notesForStaff or 'None entered' | escape) + '</span>'
                             }
                         } if bvlsMasterPublicPrivateNotesEnabled,
                         {
@@ -326,18 +311,7 @@
                                 text: "Notes for prisoner"
                             },
                             value: {
-                                html: '<span class="preserve-line-breaks">' + (session.bookACourtHearingJourney.notesForPrisoners | escape) + '</span>'
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "extra-information?preserveHistory=true",
-                                        text: "Change",
-                                        visuallyHiddenText: "extra information",
-                                        classes: "govuk-link--no-visited-state",
-                                        attributes: { 'data-qa': 'change-extra-information' }
-                                    }
-                                ]
+                                html: '<span class="preserve-line-breaks">' + (session.bookACourtHearingJourney.notesForPrisoners or 'None entered' | escape) + '</span>'
                             }
                         } if bvlsMasterPublicPrivateNotesEnabled
                     ],
