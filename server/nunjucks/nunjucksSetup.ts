@@ -88,10 +88,7 @@ import logger from '../../logger'
 import LocationType from '../enum/locationType'
 import HowToAddOptions from '../enum/allocations'
 
-export default function nunjucksSetup(
-  app: express.Express,
-  { ukBankHolidayService, applicationInfo }: Services,
-): Router {
+export default function nunjucksSetup(app: express.Express, { applicationInfo }: Services): Router {
   const router = express.Router()
 
   app.set('view engine', 'njk')
@@ -104,11 +101,6 @@ export default function nunjucksSetup(
   app.locals.nonAssociationsUrl = config.nonAssociationsUrl
   app.locals.reportAFaultUrl = config.reportAFaultUrl
   app.locals.feedbackUrl = config.feedbackUrl
-
-  router.use(async (req, res, next) => {
-    app.locals.ukBankHolidays = await ukBankHolidayService.getUkBankHolidays('england-and-wales', res.locals.user)
-    next()
-  })
 
   router.use((req, res, next) => {
     res.locals.session = req.session
@@ -214,7 +206,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addFilter('getSortableItemForAttendee', getSortableItemForAttendee)
 
   njkEnv.addGlobal('calendarConfig', getCalendarConfig)
-  njkEnv.addGlobal('ukBankHolidays', () => app.locals.ukBankHolidays)
 
   njkEnv.addGlobal('ServiceAsUsername', SERVICE_AS_USERNAME)
   njkEnv.addGlobal('ServiceName', ServiceName)
