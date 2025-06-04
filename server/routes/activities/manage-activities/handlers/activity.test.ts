@@ -20,7 +20,7 @@ jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
-const bankHolidayService = new BankHolidayService(null) as jest.Mocked<BankHolidayService>
+const bankHolidayService = new BankHolidayService(null, null) as jest.Mocked<BankHolidayService>
 
 const today = new Date()
 const nextWeek = addDays(today, 7)
