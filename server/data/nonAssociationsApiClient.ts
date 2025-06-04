@@ -2,6 +2,7 @@ import AbstractHmppsRestClient from './abstractHmppsRestClient'
 import config, { ApiConfig } from '../config'
 import { ServiceUser } from '../@types/express'
 import { NonAssociation } from '../@types/nonAssociationsApi/types'
+import { PrisonerNonAssociations } from '../@types/activitiesAPI/types'
 
 export default class NonAssociationsApiClient extends AbstractHmppsRestClient {
   constructor() {
@@ -26,6 +27,18 @@ export default class NonAssociationsApiClient extends AbstractHmppsRestClient {
         query: {
           prisonId: user.activeCaseLoadId,
         },
+      },
+      user,
+    )
+  }
+
+  async getNonAssociationsByPrisonerNumber(
+    prisonerNumber: string,
+    user: ServiceUser,
+  ): Promise<PrisonerNonAssociations> {
+    return this.get(
+      {
+        path: `/prisoner/${prisonerNumber}/non-associations`,
       },
       user,
     )

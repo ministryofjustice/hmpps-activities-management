@@ -7367,6 +7367,107 @@ export interface components {
        */
       riskLevel: string
     }
+    /** @description List of non-associations for a given prisoner */
+    PrisonerNonAssociations: {
+      /**
+       * @description The prisoners number
+       * @example G0135GA
+       */
+      prisonerNumber: string
+      /**
+       * @description The prisoners first name
+       * @example Joseph
+       */
+      firstName: string
+      /**
+       * @description The prisoners last name
+       * @example Bloggs
+       */
+      lastName: string
+      /** @description Prison id */
+      prisonId?: string
+      /**
+       * @description Description of living unit (e.g. cell) the offender is assigned to.
+       * @example PVI-1-2-4
+       */
+      cellLocation?: string
+      /**
+       * @description Number of open non-associations
+       * @example 2
+       */
+      openCount: number
+      /**
+       * @description Number of closed non-associations
+       * @example 1
+       */
+      closedCount: number
+      nonAssociations: components['schemas']['PrisonerNonAssociation'][]
+    }
+    PrisonerNonAssociation: {
+      /**
+       * @description The internal ID of the non-association
+       * @example 123456
+       */
+      id: number
+      /**
+       * @description The prisoners role code
+       * @example VICTIM
+       */
+      role: string
+      /**
+       * @description The restriction type
+       * @example WING
+       */
+      roleDescription: string
+      /**
+       * @description The reason code
+       * @example GANG_RELATED
+       */
+      reason: string
+      /**
+       * @description The reason description
+       * @example Gang related
+       */
+      reasonDescription: string
+      /**
+       * @description The restriction type
+       * @example WING
+       */
+      restrictionType: string
+      /**
+       * @description The restriction type description
+       * @example Cell, landing and wing
+       */
+      restrictionTypeDescription: string
+      /**
+       * @description Additional free text comments related to the non-association.
+       * @example Violent acts
+       */
+      comment: string
+      /**
+       * Format: date-time
+       * @description Date and time the non-association was updated. In Europe/London (ISO 8601) format without timezone offset e.g. YYYY-MM-DDTHH:MM:SS.
+       * @example 2021-07-05T10:35:17
+       */
+      whenUpdated: string
+      /**
+       * @description Whether the non-association is closed or is in effect.
+       * @example true
+       */
+      isClosed: boolean
+      /**
+       * @description Reason why the non-association was closed.
+       * @example true
+       */
+      closedReason?: string
+      /**
+       * @description Date and time of when the non-association was closed.
+       * @example true
+       */
+      closedAt?: string
+      otherPrisonerDetails: components['schemas']['OtherPrisonerDetails']
+      isOpen: boolean
+    }
     /** @description Prisoner non-association details */
     NonAssociationDetails: {
       /**

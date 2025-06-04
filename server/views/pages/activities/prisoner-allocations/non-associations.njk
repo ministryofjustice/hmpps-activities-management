@@ -1,0 +1,22 @@
+{% extends "layout.njk" %}
+
+{% from "partials/miniProfile.njk" import miniProfile %}
+{% from "partials/activities/nonAssociationsTable.njk" import nonAssociationsTable %}
+
+{% set pageTitle = applicationName + " - Record attendance" %}
+{% set pageId = 'prisoner-allocations-dashboard' %}
+{% set prisonerName = prisoner | firstNameLastName | toTitleCase %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-l">View non-associations</span>
+            <h1 class="govuk-heading-l">{{ prisonerName }}'s non-associations</h1>
+            
+            <div class="govuk-!-margin-bottom-5">
+                {{ miniProfile(prisoner) }}
+            </div>
+            {{ nonAssociationsTable(prisoner.enhancedNonAssociations, prisonerName) }}
+        </div>
+    </div>
+{% endblock %}

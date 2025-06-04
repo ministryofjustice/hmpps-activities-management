@@ -86,3 +86,5 @@ export type SuspendedPrisonerAttendance = components['schemas']['SuspendedPrison
 export type AppointmentAttendeeByStatus = components['schemas']['AppointmentAttendeeByStatus']
 export type ScheduledInstance = components['schemas']['ScheduledInstance']
 export type NonAssociationDetails = components['schemas']['NonAssociationDetails']
+export type PrisonerNonAssociation = components['schemas']['PrisonerNonAssociation']
+export type PrisonerNonAssociations = components['schemas']['PrisonerNonAssociations']
