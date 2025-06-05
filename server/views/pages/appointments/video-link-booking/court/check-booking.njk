@@ -300,6 +300,14 @@
                     rows: [
                         {
                             key: {
+                                text: 'Extra information'
+                            },
+                            value: {
+                                html: '<span class="preserve-line-breaks">' + (session.bookACourtHearingJourney.comments or 'None entered' | escape) + '</span>'
+                            }
+                        } if not bvlsMasterPublicPrivateNotesEnabled,
+                        {
+                            key: {
                                 text: 'Notes for prison staff'
                             },
                             value: {
