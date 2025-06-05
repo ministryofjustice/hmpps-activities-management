@@ -48,7 +48,7 @@ export default function services() {
     courtBookingService: new CourtBookingService(bookAVideoLinkApiClient),
     probationBookingService: new ProbationBookingService(bookAVideoLinkApiClient),
     caseNotesService: new CaseNotesService(caseNotesApiClient),
-    ukBankHolidayService: new BankHolidayService(bankHolidaysClient),
+    ukBankHolidayService: new BankHolidayService(bankHolidaysClient, tokenStore),
     alertsFilterService,
     unlockListService: new UnlockListService(prisonerSearchApiClient, activitiesApiClient, alertsFilterService),
     metricsService: new MetricsService(applicationInsightsClient),

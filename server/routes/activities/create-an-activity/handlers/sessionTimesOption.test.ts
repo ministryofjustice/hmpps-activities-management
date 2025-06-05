@@ -14,7 +14,7 @@ jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/bankHolidayService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-const bankHolidayService = new BankHolidayService(null) as jest.Mocked<BankHolidayService>
+const bankHolidayService = new BankHolidayService(null, null) as jest.Mocked<BankHolidayService>
 
 const prisonRegime: PrisonRegime[] = [
   {
