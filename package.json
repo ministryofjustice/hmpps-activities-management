@@ -120,7 +120,7 @@
     "openapi-typescript": "^7.8.0",
     "passport": "^0.7.0",
     "passport-oauth2": "^1.8.0",
-    "redis": "^5.1.1",
+    "redis": "^5.5.5",
     "reflect-metadata": "^0.2.2",
     "superagent": "^10.2.1",
     "url-value-parser": "^2.2.0",
