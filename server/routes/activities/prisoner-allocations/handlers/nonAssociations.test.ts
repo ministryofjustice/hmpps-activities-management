@@ -34,9 +34,27 @@ const mockPrisoner: Prisoner = {
   alerts: [{ alertType: 'R', alertCode: 'RLO', active: true, expired: false }],
 } as Prisoner
 
+const mockOtherPrisonerDetails = {
+  prisonerNumber: 'G6512VC',
+  firstName: 'John',
+  lastName: 'Smith',
+  cellLocation: '1-2-002',
+}
+
+const mockNonAssociation = {
+  id: 51510,
+  role: 'NOT_RELEVANT',
+  reason: 'GANG_RELATED',
+  restrictionType: 'WING',
+  restrictionTypeDescription: 'Cell, landing and wing',
+  otherPrisonerDetails: mockOtherPrisonerDetails,
+  isOpen: true,
+}
+
 const mockNonAssociations = {
-  nonAssociations: [],
-} as PrisonerNonAssociations
+  prisonerNumber: 'ABC123',
+  nonAssociations: [mockNonAssociation],
+} as unknown as PrisonerNonAssociations
 
 const naAllocations = [
   {
@@ -111,7 +129,20 @@ describe('Route Handlers - Prisoner Allocations - Non associations', () => {
       req.params.prisonerNumber = 'ABC123'
       const expectedPrisoner = {
         ...mockPrisoner,
-        enhancedNonAssociations: [],
+        enhancedNonAssociations: [
+          {
+            allocations: [
+              {
+                activitySummary: 'Barbering A',
+                scheduleId: 837,
+                activityId: 858,
+                schedule: activitySchedule,
+              },
+            ],
+            ...mockNonAssociation,
+            otherPrisonerDetails: mockOtherPrisonerDetails,
+          },
+        ],
       }
 
       when(prisonService.getInmateByPrisonerNumber).calledWith(atLeast('ABC123')).mockResolvedValue(mockPrisoner)
