@@ -1,8 +1,7 @@
 import { ServiceUser } from '../@types/express'
 import NonAssociationsApiClient from '../data/nonAssociationsApiClient'
-import { NonAssociation } from '../@types/nonAssociationsApi/types'
+import { NonAssociation, PrisonerNonAssociations } from '../@types/nonAssociationsApi/types'
 import PrisonService from './prisonService'
-import { PrisonerNonAssociations } from '../@types/activitiesAPI/types'
 
 export default class NonAssociationsService {
   constructor(

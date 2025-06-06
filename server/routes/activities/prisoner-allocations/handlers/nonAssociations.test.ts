@@ -7,12 +7,8 @@ import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import NonAssociationsHandler from './nonAssociations'
 import NonAssociationsService from '../../../../services/nonAssociationsService'
-import {
-  Activity,
-  ActivitySchedule,
-  PrisonerAllocations,
-  PrisonerNonAssociations,
-} from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivitySchedule, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
+import { PrisonerNonAssociations } from '../../../../@types/nonAssociationsApi/types'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')

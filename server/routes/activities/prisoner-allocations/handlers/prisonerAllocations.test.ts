@@ -7,7 +7,7 @@ import PrisonerAllocationsHandler from './prisonerAllocations'
 import config from '../../../../config'
 import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { PrisonerNonAssociations } from '../../../../@types/activitiesAPI/types'
+import { PrisonerNonAssociations } from '../../../../@types/nonAssociationsApi/types'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')

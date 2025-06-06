@@ -1,8 +1,7 @@
 import AbstractHmppsRestClient from './abstractHmppsRestClient'
 import config, { ApiConfig } from '../config'
 import { ServiceUser } from '../@types/express'
-import { NonAssociation } from '../@types/nonAssociationsApi/types'
-import { PrisonerNonAssociations } from '../@types/activitiesAPI/types'
+import { NonAssociation, PrisonerNonAssociations } from '../@types/nonAssociationsApi/types'
 
 export default class NonAssociationsApiClient extends AbstractHmppsRestClient {
   constructor() {

@@ -4,8 +4,9 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import NonAssociationsService from '../../../../services/nonAssociationsService'
-import { PrisonerAllocations, PrisonerNonAssociation } from '../../../../@types/activitiesAPI/types'
+import { PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../../../@types/express'
+import { PrisonerNonAssociation } from '../../../../@types/nonAssociationsApi/types'
 
 export default class NonAssociationsHandler {
   constructor(
