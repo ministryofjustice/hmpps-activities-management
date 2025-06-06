@@ -8,20 +8,13 @@ const WORKPLACE_RISK_LEVEL_HIGH = 'RHI'
 
 export default function populatePrisonerProfile(prisonService: PrisonService) {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const { prisonerNumber } = req.params
-    const { user } = res.locals
-
-    const prisoner: Prisoner = await prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
-
-    const earliestReleaseDate = determineEarliestReleaseDate(prisoner)
-    const workplaceRiskAssessment = determineWorkplaceRiskAssessment(prisoner)
-    const location = determineLocation(prisoner)
+    const prisoner: Prisoner = await prisonService.getInmateByPrisonerNumber(req.params.prisonerNumber, res.locals.user)
 
     res.locals.prisonerProfile = {
       ...prisoner,
-      earliestReleaseDate,
-      workplaceRiskAssessment,
-      location,
+      earliestReleaseDate: determineEarliestReleaseDate(prisoner),
+      workplaceRiskAssessment: determineWorkplaceRiskAssessment(prisoner),
+      location: determineLocation(prisoner),
     }
 
     next()

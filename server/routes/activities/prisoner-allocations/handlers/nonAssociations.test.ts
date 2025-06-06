@@ -7,9 +7,16 @@ import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import NonAssociationsHandler from './nonAssociations'
 import NonAssociationsService from '../../../../services/nonAssociationsService'
+import {
+  Activity,
+  ActivitySchedule,
+  PrisonerAllocations,
+  PrisonerNonAssociations,
+} from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
+jest.mock('../../../../services/nonAssociationsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
@@ -26,6 +33,47 @@ const mockPrisoner: Prisoner = {
   releaseDate: '2019-11-30',
   alerts: [{ alertType: 'R', alertCode: 'RLO', active: true, expired: false }],
 } as Prisoner
+
+const mockNonAssociations = {
+  nonAssociations: [],
+} as PrisonerNonAssociations
+
+const naAllocations = [
+  {
+    prisonerNumber: 'G6512VC',
+    allocations: [
+      {
+        activitySummary: 'Barbering A',
+        activityId: 858,
+        scheduleId: 837,
+      },
+    ],
+  },
+] as unknown as PrisonerAllocations[]
+
+const activitySchedule = {
+  id: 1,
+  description: '',
+  internalLocation: {
+    id: 1,
+    code: 'EDU-ROOM-1',
+    description: 'Education - R1',
+  },
+  capacity: 10,
+  activity: {
+    id: 858,
+    prisonCode: 'MDI',
+    attendanceRequired: true,
+    inCell: false,
+    onWing: false,
+    offWing: false,
+  },
+} as unknown as ActivitySchedule
+
+const mockActivity = {
+  schedules: [activitySchedule],
+  id: 858,
+} as unknown as Activity
 
 describe('Route Handlers - Prisoner Allocations - Non associations', () => {
   const handler = new NonAssociationsHandler(activitiesService, prisonService, nonAssociationsService)
@@ -58,20 +106,24 @@ describe('Route Handlers - Prisoner Allocations - Non associations', () => {
       expect(res.redirect).toHaveBeenCalledWith('/activities')
     })
 
-    xit('should render a prisoners non associations', async () => {
+    it('should render a prisoners non associations', async () => {
       config.prisonerAllocationsEnabled = true
       req.params.prisonerNumber = 'ABC123'
       const expectedPrisoner = {
         ...mockPrisoner,
-        location: 'Court',
-        earliestReleaseDate: '2019-11-30',
-        workplaceRiskAssessment: 'LOW',
+        enhancedNonAssociations: [],
       }
+
       when(prisonService.getInmateByPrisonerNumber).calledWith(atLeast('ABC123')).mockResolvedValue(mockPrisoner)
+      when(nonAssociationsService.getNonAssociationByPrisonerId)
+        .calledWith(atLeast('ABC123'))
+        .mockResolvedValue(mockNonAssociations)
+      when(activitiesService.getActivity).calledWith(atLeast(858)).mockResolvedValue(mockActivity)
+      when(activitiesService.getActivePrisonPrisonerAllocations).mockResolvedValue(naAllocations)
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/activities/prisoner-allocations/dashboard', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/prisoner-allocations/non-associations', {
         prisoner: expectedPrisoner,
       })
     })
