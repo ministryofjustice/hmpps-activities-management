@@ -82,7 +82,7 @@ describe('ExtraInformationRoutes', () => {
       expect(errors).toEqual(
         expect.arrayContaining([
           {
-            error: 'You must enter notes for staff which has no more than 400 characters',
+            error: 'Notes for prison staff must be 400 characters or less',
             property: 'notesForStaff',
           },
         ]),
@@ -111,7 +111,7 @@ describe('ExtraInformationRoutes', () => {
       expect(errors).toEqual(
         expect.arrayContaining([
           {
-            error: 'You must enter notes for prisoner which has no more than 400 characters',
+            error: 'Notes for prisoner must be 400 characters or less',
             property: 'notesForPrisoners',
           },
         ]),

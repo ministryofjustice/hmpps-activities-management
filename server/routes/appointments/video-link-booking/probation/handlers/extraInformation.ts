@@ -14,13 +14,13 @@ export class ExtraInformation {
   @Expose()
   @ValidateIf(o => o.notesForStaff && config.bvlsMasterPublicPrivateNotesEnabled)
   @IsOptional()
-  @MaxLength(400, { message: 'You must enter notes for staff which has no more than $constraint1 characters' })
+  @MaxLength(400, { message: 'Notes for prison staff must be $constraint1 characters or less' })
   notesForStaff: string
 
   @Expose()
   @ValidateIf(o => o.notesForPrisoners && config.bvlsMasterPublicPrivateNotesEnabled)
   @IsOptional()
-  @MaxLength(400, { message: 'You must enter notes for prisoner which has no more than $constraint1 characters' })
+  @MaxLength(400, { message: 'Notes for prisoner must be $constraint1 characters or less' })
   notesForPrisoners: string
 }
 
