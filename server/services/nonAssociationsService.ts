@@ -1,6 +1,6 @@
 import { ServiceUser } from '../@types/express'
 import NonAssociationsApiClient from '../data/nonAssociationsApiClient'
-import { NonAssociation } from '../@types/nonAssociationsApi/types'
+import { NonAssociation, PrisonerNonAssociations } from '../@types/nonAssociationsApi/types'
 import PrisonService from './prisonService'
 
 export default class NonAssociationsService {
@@ -15,6 +15,10 @@ export default class NonAssociationsService {
 
   async getNonAssociationsInvolving(prisonerNumbers: string[], user: ServiceUser): Promise<NonAssociation[]> {
     return this.nonAssociationsApiClient.getNonAssociationsInvolving(prisonerNumbers, user)
+  }
+
+  async getNonAssociationByPrisonerId(prisonerNumber: string, user: ServiceUser): Promise<PrisonerNonAssociations> {
+    return this.nonAssociationsApiClient.getNonAssociationsByPrisonerNumber(prisonerNumber, user)
   }
 
   async getListPrisonersWithNonAssociations(prisonerNumbers: string[], user: ServiceUser): Promise<string[]> {
