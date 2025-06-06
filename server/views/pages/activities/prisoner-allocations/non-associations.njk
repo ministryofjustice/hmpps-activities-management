@@ -3,8 +3,8 @@
 {% from "partials/miniProfile.njk" import miniProfile %}
 {% from "partials/activities/nonAssociationsTable.njk" import nonAssociationsTable %}
 
-{% set pageTitle = applicationName + " - Record attendance" %}
-{% set pageId = 'prisoner-allocations-dashboard' %}
+{% set pageTitle = applicationName + " - Non Associations" %}
+{% set pageId = 'prisoner-allocations-non-associations' %}
 {% set prisonerName = prisoner | firstNameLastName | toTitleCase %}
 
 {% block content %}
