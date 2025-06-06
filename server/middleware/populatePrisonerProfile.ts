@@ -6,6 +6,8 @@ const WORKPLACE_RISK_LEVEL_LOW = 'RLO'
 const WORKPLACE_RISK_LEVEL_MEDIUM = 'RME'
 const WORKPLACE_RISK_LEVEL_HIGH = 'RHI'
 
+// Can be added as middleware on routes where server/views/partials/miniProfile.njk is being used
+// Example use in view: {{ miniProfile(prisonerProfile) }}
 export default function populatePrisonerProfile(prisonService: PrisonService) {
   return async (req: Request, res: Response, next: NextFunction) => {
     const prisoner: Prisoner = await prisonService.getInmateByPrisonerNumber(req.params.prisonerNumber, res.locals.user)
