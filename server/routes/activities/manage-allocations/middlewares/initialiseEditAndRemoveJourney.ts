@@ -41,10 +41,13 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
 
     const allocations = allocationId
       ? [await activitiesService.getAllocation(+allocationId, user)]
-      : await activitiesService
-          .getAllocations(+scheduleId, user)
-          .then(r => r.filter(a => allocationIds.includes(a.id.toString())))
-          .then(r => r.sort((a, b) => (a.startDate < b.startDate ? -1 : 1)))
+      : await activitiesService.getAllocations(+scheduleId, user)
+
+    if (allocations.length === 0) return res.redirect('back')
+
+    allocations
+      .filter(a => allocationIds.includes(a.id.toString()))
+      .sort((a, b) => (a.startDate < b.startDate ? -1 : 1))
 
     const [prisoners, activity]: [Prisoner[], Activity] = await Promise.all([
       prisonService.searchInmatesByPrisonerNumbers(
