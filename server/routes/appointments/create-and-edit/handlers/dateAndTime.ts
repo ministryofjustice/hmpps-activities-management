@@ -25,14 +25,14 @@ export class DateAndTime {
 
   @Expose()
   @Type(() => SimpleTime)
-  @ValidateIf(o => o.appointmentJourney.mode !== AppointmentJourneyMode.COPY)
+  @ValidateIf(o => o.appointmentJourney?.mode !== AppointmentJourneyMode.COPY)
   @ValidateNested()
   @IsNotEmpty({ message: 'Select a start time for the appointment' })
   startTime: SimpleTime
 
   @Expose()
   @Type(() => SimpleTime)
-  @ValidateIf(o => o.appointmentJourney.mode !== AppointmentJourneyMode.COPY)
+  @ValidateIf(o => o.appointmentJourney?.mode !== AppointmentJourneyMode.COPY)
   @ValidateNested()
   @TimeIsAfter('startTime', { message: 'Select an end time after the start time' })
   @IsNotEmpty({ message: 'Select an end time for the appointment' })

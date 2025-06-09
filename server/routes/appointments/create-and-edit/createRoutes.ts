@@ -50,8 +50,13 @@ export default function Create({
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(path, emptyAppointmentJourneyHandler(stepRequiresSession), asyncMiddleware(handler))
-  const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+  const post = (path: string, handler: RequestHandler, type?: new () => object, stepRequiresSession = false) =>
+    router.post(
+      path,
+      emptyAppointmentJourneyHandler(stepRequiresSession),
+      validationMiddleware(type),
+      asyncMiddleware(handler),
+    )
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const appointeeAttendeeService = new AppointeeAttendeeService(prisonService)
@@ -86,7 +91,7 @@ export default function Create({
   get('/start-set', startJourneyRoutes.SET)
   get('/start-prisoner/:prisonNumber', startJourneyRoutes.PRISONER)
   get('/select-prisoner', selectPrisonerRoutes.GET, true)
-  post('/select-prisoner', selectPrisonerRoutes.SELECT_PRISONER, SelectPrisoner)
+  post('/select-prisoner', selectPrisonerRoutes.SELECT_PRISONER, SelectPrisoner, true)
   post('/search-prisoner', selectPrisonerRoutes.SEARCH, PrisonerSearch)
   get('/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
   router.post(
@@ -111,16 +116,16 @@ export default function Create({
   get('/location', locationRoutes.GET, true)
   post('/location', locationRoutes.CREATE, Location)
   get('/date-and-time', dateAndTimeRoutes.GET, true)
-  post('/date-and-time', dateAndTimeRoutes.CREATE, DateAndTime)
+  post('/date-and-time', dateAndTimeRoutes.CREATE, DateAndTime, true)
   get('/repeat', repeatRoutes.GET, true)
   post('/repeat', repeatRoutes.POST, Repeat)
   get('/repeat-frequency-and-count', repeatFrequencyAndCountRoutes.GET, true)
-  post('/repeat-frequency-and-count', repeatFrequencyAndCountRoutes.POST, RepeatFrequencyAndCount)
+  post('/repeat-frequency-and-count', repeatFrequencyAndCountRoutes.POST, RepeatFrequencyAndCount, true)
   get('/extra-information', extraInformationRoutes.GET, true)
   get('/schedule', scheduleRoutes.GET, true)
-  post('/schedule', scheduleRoutes.POST)
+  post('/schedule', scheduleRoutes.POST, undefined, true)
   get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
-  get('/schedule/change', scheduleRoutes.CHANGE)
+  get('/schedule/change', scheduleRoutes.CHANGE, true)
   get('/appointment-set-extra-information', appointmentSetExtraInformationRoutes.GET, true)
   post('/appointment-set-extra-information', appointmentSetExtraInformationRoutes.POST)
   get('/appointment-set-extra-information/:prisonerNumber', appointmentSetAddExtraInformationRoutes.GET, true)
@@ -131,7 +136,7 @@ export default function Create({
   )
   post('/extra-information', extraInformationRoutes.CREATE, ExtraInformation)
   get('/check-answers', checkAnswersRoutes.GET, true)
-  post('/check-answers', checkAnswersRoutes.POST)
+  post('/check-answers', checkAnswersRoutes.POST, undefined, true)
   router.get(
     '/confirmation/:appointmentId',
     fetchAppointment(activitiesService),
@@ -143,7 +148,7 @@ export default function Create({
   get('/review-prisoners', reviewPrisonerRoutes.GET, true)
   post('/review-prisoners', reviewPrisonerRoutes.POST)
   get('/review-prisoners/:prisonNumber/remove', reviewPrisonerRoutes.REMOVE, true)
-  post('/review-prisoners-alerts', reviewPrisonerAlerts.POST)
+  post('/review-prisoners-alerts', reviewPrisonerAlerts.POST, undefined, true)
   get('/review-prisoners-alerts', reviewPrisonerAlerts.GET, true)
   get('/review-prisoners-alerts/:prisonNumber/remove', reviewPrisonerAlerts.REMOVE, true)
   get('/review-non-associations', reviewNonAssociations.GET, true)
@@ -154,7 +159,7 @@ export default function Create({
   get('/appointment-set-date', appointmentSetDateRoutes.GET, true)
   post('/appointment-set-date', appointmentSetDateRoutes.POST, AppointmentSetDate)
   get('/appointment-set-times', appointmentSetTimesRoutes.GET, true)
-  post('/appointment-set-times', appointmentSetTimesRoutes.POST, AppointmentTimes)
+  post('/appointment-set-times', appointmentSetTimesRoutes.POST, AppointmentTimes, true)
   router.get(
     '/set-confirmation/:appointmentSetId',
     fetchAppointmentSet(activitiesService),
