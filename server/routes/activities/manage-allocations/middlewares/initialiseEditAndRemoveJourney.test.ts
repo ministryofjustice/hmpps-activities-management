@@ -101,6 +101,7 @@ describe('initialiseEditAndRemoveJourney', () => {
     } as unknown as Request
 
     res = {
+      redirect: jest.fn(),
       locals: {
         user,
       },
@@ -129,6 +130,20 @@ describe('initialiseEditAndRemoveJourney', () => {
     expect(activitiesService.getAllocations).not.toHaveBeenCalled()
 
     expect(next).toHaveBeenCalledTimes(1)
+  })
+
+  it('should redirect back if there is no scheduleId, allocationId or selectActivity on the query/params', async () => {
+    req.query = {}
+    req.params = {
+      mode: 'remove',
+    }
+
+    await middleware(req, res, next)
+
+    expect(activitiesService.getAllocation).not.toHaveBeenCalled()
+    expect(activitiesService.getAllocations).not.toHaveBeenCalled()
+
+    expect(res.redirect).toHaveBeenCalled()
   })
 
   it.each(['route param', 'query param'])('should populate session using allocation ID from %s', async routeOrQuery => {
