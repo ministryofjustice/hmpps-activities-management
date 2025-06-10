@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import ActivitiesService from '../../../../services/activitiesService'
 import config from '../../../../config'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -7,7 +6,6 @@ import NonAssociationsService from '../../../../services/nonAssociationsService'
 
 export default class PrisonerAllocationsHandler {
   constructor(
-    private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
     private readonly nonAssociationsService: NonAssociationsService,
   ) {}

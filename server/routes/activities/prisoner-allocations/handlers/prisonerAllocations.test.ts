@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
-import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import NonAssociationsService from '../../../../services/nonAssociationsService'
 import PrisonerAllocationsHandler from './prisonerAllocations'
@@ -9,11 +8,9 @@ import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { PrisonerNonAssociations } from '../../../../@types/nonAssociationsApi/types'
 
-jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/nonAssociationsService')
 
-const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const nonAssociationsService = new NonAssociationsService(null, null) as jest.Mocked<NonAssociationsService>
 
@@ -34,7 +31,7 @@ const mockNonAssociations = {
 } as PrisonerNonAssociations
 
 describe('Route Handlers - Prisoner Allocations', () => {
-  const handler = new PrisonerAllocationsHandler(activitiesService, prisonService, nonAssociationsService)
+  const handler = new PrisonerAllocationsHandler(prisonService, nonAssociationsService)
   let req: Request
   let res: Response
 

@@ -13,11 +13,7 @@ export default function Index({ activitiesService, prisonService, nonAssociation
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), asyncMiddleware(handler))
 
-  const prisonerAllocationsHandler = new PrisonerAllocationsHandler(
-    activitiesService,
-    prisonService,
-    nonAssociationsService,
-  )
+  const prisonerAllocationsHandler = new PrisonerAllocationsHandler(prisonService, nonAssociationsService)
   const prisonerNonAssociationsHandler = new NonAssociationsHandler(
     activitiesService,
     prisonService,
