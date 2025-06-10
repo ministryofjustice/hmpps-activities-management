@@ -99,4 +99,44 @@ describe('populatePrisonerProfile', () => {
       location: 'Released',
     })
   })
+
+  it('should populate res.locals with the prisoner high risk', async () => {
+    const mockPrisonerHighRisk = {
+      ...mockPrisoner,
+      alerts: [{ alertType: 'R', alertCode: 'RHI', active: true, expired: false }],
+    }
+    when(prisonService.getInmateByPrisonerNumber)
+      .calledWith(atLeast('ABC123'))
+      .mockResolvedValueOnce(mockPrisonerHighRisk)
+
+    await middleware(req, res, next)
+
+    expect(next).toHaveBeenCalled()
+    expect(res.locals.prisonerProfile).toEqual({
+      ...mockPrisonerHighRisk,
+      earliestReleaseDate: '2019-11-30',
+      workplaceRiskAssessment: 'HIGH',
+      location: 'Court',
+    })
+  })
+
+  it('should populate res.locals with the prisoner medium risk', async () => {
+    const mockPrisonerMediumRisk = {
+      ...mockPrisoner,
+      alerts: [{ alertType: 'R', alertCode: 'RME', active: true, expired: false }],
+    }
+    when(prisonService.getInmateByPrisonerNumber)
+      .calledWith(atLeast('ABC123'))
+      .mockResolvedValueOnce(mockPrisonerMediumRisk)
+
+    await middleware(req, res, next)
+
+    expect(next).toHaveBeenCalled()
+    expect(res.locals.prisonerProfile).toEqual({
+      ...mockPrisonerMediumRisk,
+      earliestReleaseDate: '2019-11-30',
+      workplaceRiskAssessment: 'MEDIUM',
+      location: 'Court',
+    })
+  })
 })
