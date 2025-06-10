@@ -73,10 +73,11 @@ export default class UncancelMultipleSessionsRoutes {
   POST_UNCANCEL = async (req: Request, res: Response): Promise<void> => {
     const { selectedInstanceIds, activityDate, sessionFilters } = req.body
     const selectedInstanceIdsArr = selectedInstanceIds ? convertToArray(selectedInstanceIds) : []
+    const sessionFiltersArr = sessionFilters ? convertToArray(sessionFilters) : []
     req.session.recordAttendanceJourney = {
       selectedInstanceIds: selectedInstanceIdsArr,
       activityDate,
-      sessionFilters,
+      sessionFilters: sessionFiltersArr,
     }
 
     return res.redirect('confirm')
