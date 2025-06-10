@@ -45,21 +45,21 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
 
     if (allocations.length === 0) return res.redirect('back')
 
-    allocations
+    const filteredAllocations = allocations
       .filter(a => allocationIds.includes(a.id.toString()))
       .sort((a, b) => (a.startDate < b.startDate ? -1 : 1))
 
     const [prisoners, activity]: [Prisoner[], Activity] = await Promise.all([
       prisonService.searchInmatesByPrisonerNumbers(
-        allocations.map(a => a.prisonerNumber),
+        filteredAllocations.map(a => a.prisonerNumber),
         user,
       ),
-      activitiesService.getActivity(allocations[0].activityId, user),
+      activitiesService.getActivity(filteredAllocations[0]?.activityId, user),
     ])
 
     const inmates = prisoners.map(p => {
       const activityPay = activity.pay.filter(pay => pay.incentiveLevel === p.currentIncentive?.level?.description)
-      const payBand = allocations.find(a => a.prisonerNumber === p.prisonerNumber).prisonPayBand
+      const payBand = filteredAllocations.find(a => a.prisonerNumber === p.prisonerNumber).prisonPayBand
 
       return {
         prisonerName: convertToTitleCase(`${p.firstName} ${p.lastName}`),
@@ -93,17 +93,17 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         onWing: activity.onWing,
         offWing: activity.offWing,
       },
-      latestAllocationStartDate: allocations[allocations.length - 1].startDate,
+      latestAllocationStartDate: filteredAllocations[filteredAllocations.length - 1].startDate,
       exclusions: [],
       updatedExclusions: [],
       scheduledInstance: findNextSchedulesInstance(activity.schedules[0]),
     }
 
     if (req.params.mode === 'edit' || req.params.mode === 'exclude') {
-      req.session.allocateJourney.startDate = allocations[0].startDate
-      req.session.allocateJourney.endDate = allocations[0].endDate
-      req.session.allocateJourney.deallocationReason = allocations[0].plannedDeallocation?.plannedReason?.code
-      req.session.allocateJourney.exclusions = allocations[0].exclusions
+      req.session.allocateJourney.startDate = filteredAllocations[0]?.startDate
+      req.session.allocateJourney.endDate = filteredAllocations[0]?.endDate
+      req.session.allocateJourney.deallocationReason = filteredAllocations[0]?.plannedDeallocation?.plannedReason?.code
+      req.session.allocateJourney.exclusions = filteredAllocations[0]?.exclusions
     }
 
     return next()
