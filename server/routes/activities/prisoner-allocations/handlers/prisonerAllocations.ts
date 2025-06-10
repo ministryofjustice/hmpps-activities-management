@@ -23,9 +23,7 @@ export default class PrisonerAllocationsHandler {
       user,
     )
 
-    const hasNonAssociations =
-      prisonerNonAssociations.nonAssociations.length > 0 &&
-      prisonerNonAssociations.nonAssociations.some(na => na.isOpen)
+    const hasNonAssociations = prisonerNonAssociations.nonAssociations.length > 0
 
     return res.render('pages/activities/prisoner-allocations/dashboard', { prisoner, hasNonAssociations })
   }
