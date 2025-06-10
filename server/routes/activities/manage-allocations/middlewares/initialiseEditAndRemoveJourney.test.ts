@@ -101,6 +101,7 @@ describe('initialiseEditAndRemoveJourney', () => {
     } as unknown as Request
 
     res = {
+      redirect: jest.fn(),
       locals: {
         user,
       },
@@ -131,20 +132,56 @@ describe('initialiseEditAndRemoveJourney', () => {
     expect(next).toHaveBeenCalledTimes(1)
   })
 
-  it.each(['route param', 'query param'])('should populate session using allocation ID from %s', async routeOrQuery => {
-    if (routeOrQuery === 'route param') {
-      req.query = {}
-    } else {
-      req.params = { mode: 'remove' }
-      req.query = { scheduleId: '1', allocationIds: ['6543'] }
+  it('should redirect back if there is no scheduleId, allocationId or selectActivity on the query/params', async () => {
+    req.query = {}
+    req.params = {
+      mode: 'remove',
     }
 
-    when(activitiesService.getAllocation).calledWith(atLeast(6543, user)).defaultResolvedValue(allocation)
-    when(activitiesService.getAllocations).calledWith(atLeast(6543, user)).defaultResolvedValue([allocation])
-    when(activitiesService.getActivity).calledWith(atLeast(2, user)).defaultResolvedValue(activity)
+    await middleware(req, res, next)
+
+    expect(activitiesService.getAllocation).not.toHaveBeenCalled()
+    expect(activitiesService.getAllocations).not.toHaveBeenCalled()
+
+    expect(res.redirect).toHaveBeenCalled()
+  })
+
+  it('should redirect back if there are no allocaions available due to api call issues - allocationId used', async () => {
+    req.query = {
+      allocationId: '2',
+    }
+    req.params = {
+      mode: 'remove',
+    }
+
+    when(activitiesService.getAllocation).calledWith(atLeast(2, user)).mockResolvedValueOnce(allocation)
+
+    await middleware(req, res, next)
+
+    expect(res.redirect).toHaveBeenCalled()
+  })
+  it('should redirect back if there are no allocations available due to api call issues - scheduleId used', async () => {
+    req.query = { scheduleId: '1', allocationIds: ['6543'] }
+    req.params = {
+      mode: 'remove',
+      allocationId: null,
+    }
+    when(activitiesService.getAllocations).calledWith(atLeast(1, user)).mockResolvedValueOnce([])
+
+    await middleware(req, res, next)
+
+    expect(res.redirect).toHaveBeenCalled()
+  })
+
+  it('should populate session using allocation ID from param', async () => {
+    req.params = { mode: 'remove', allocationId: '6543' }
+    req.query = {}
+
+    when(activitiesService.getAllocation).calledWith(atLeast(6543, user)).mockResolvedValueOnce(allocation)
+    when(activitiesService.getActivity).calledWith(atLeast(2, user)).mockResolvedValueOnce(activity)
     when(prisonService.searchInmatesByPrisonerNumbers)
       .calledWith(atLeast(['ABC1234'], user))
-      .defaultResolvedValue([prisoner])
+      .mockResolvedValueOnce([prisoner])
 
     await middleware(req, res, next)
 
@@ -205,4 +242,142 @@ describe('initialiseEditAndRemoveJourney', () => {
 
     expect(next).toHaveBeenCalledTimes(1)
   })
+
+  it('should populate session using allocation ID from query', async () => {
+    req.params = { mode: 'remove' }
+    req.query = { scheduleId: '1', allocationIds: ['6543'] }
+
+    when(activitiesService.getAllocations).calledWith(atLeast(1, user)).mockResolvedValueOnce([allocation])
+    when(activitiesService.getActivity).calledWith(atLeast(2, user)).mockResolvedValueOnce(activity)
+    when(prisonService.searchInmatesByPrisonerNumbers)
+      .calledWith(atLeast(['ABC1234'], user))
+      .mockResolvedValueOnce([prisoner])
+
+    await middleware(req, res, next)
+
+    expect(req.session.allocateJourney).toEqual({
+      inmate: {
+        prisonerName: 'John Smith',
+        prisonerNumber: 'ABC1234',
+        prisonCode: 'RSI',
+        status: 'ACTIVE IN',
+        cellLocation: 'MDI-1-1-001',
+        incentiveLevel: 'Basic',
+        payBand: {
+          id: 1,
+          alias: 'Low',
+          rate: 150,
+        },
+      },
+      inmates: [
+        {
+          prisonerName: 'John Smith',
+          prisonerNumber: 'ABC1234',
+          prisonCode: 'RSI',
+          status: 'ACTIVE IN',
+          cellLocation: 'MDI-1-1-001',
+          incentiveLevel: 'Basic',
+          payBand: {
+            id: 1,
+            alias: 'Low',
+            rate: 150,
+          },
+        },
+      ],
+      activity: {
+        activityId: activity.id,
+        scheduleId: getScheduleIdFromActivity(activity),
+        name: activity.summary,
+        startDate: activity.startDate,
+        endDate: activity.endDate,
+        location: activity.schedules[0].internalLocation?.description,
+        inCell: activity.inCell,
+        onWing: activity.onWing,
+        offWing: activity.offWing,
+        scheduleWeeks: 2,
+      },
+      latestAllocationStartDate: allocation.startDate,
+      exclusions: [],
+      updatedExclusions: [],
+      scheduledInstance: {
+        id: 123,
+        cancelled: false,
+        date: '2024-08-23',
+        endTime: '14:00',
+        startTime: '13:00',
+        timeSlot: 'AM',
+        attendances: [],
+      },
+    })
+
+    expect(next).toHaveBeenCalledTimes(1)
+  })
+
+  // it.each(['route param', 'query param'])('should populate session using allocation ID from %s', async routeOrQuery => {
+  //   when(activitiesService.getAllocation).calledWith(atLeast(6543, user)).mockResolvedValueOnce(allocation)
+  //   when(activitiesService.getAllocations).calledWith(atLeast(1, user)).mockResolvedValueOnce([allocation])
+  //   when(activitiesService.getActivity).calledWith(atLeast(2, user)).mockResolvedValueOnce(activity)
+  //   when(prisonService.searchInmatesByPrisonerNumbers)
+  //     .calledWith(atLeast(['ABC1234'], user))
+  //     .mockResolvedValueOnce([prisoner])
+
+  //   await middleware(req, res, next)
+
+  //   expect(req.session.allocateJourney).toEqual({
+  //     inmate: {
+  //       prisonerName: 'John Smith',
+  //       prisonerNumber: 'ABC1234',
+  //       prisonCode: 'RSI',
+  //       status: 'ACTIVE IN',
+  //       cellLocation: 'MDI-1-1-001',
+  //       incentiveLevel: 'Basic',
+  //       payBand: {
+  //         id: 1,
+  //         alias: 'Low',
+  //         rate: 150,
+  //       },
+  //     },
+  //     inmates: [
+  //       {
+  //         prisonerName: 'John Smith',
+  //         prisonerNumber: 'ABC1234',
+  //         prisonCode: 'RSI',
+  //         status: 'ACTIVE IN',
+  //         cellLocation: 'MDI-1-1-001',
+  //         incentiveLevel: 'Basic',
+  //         payBand: {
+  //           id: 1,
+  //           alias: 'Low',
+  //           rate: 150,
+  //         },
+  //       },
+  //     ],
+  //     activity: {
+  //       activityId: activity.id,
+  //       scheduleId: getScheduleIdFromActivity(activity),
+  //       name: activity.summary,
+  //       startDate: activity.startDate,
+  //       endDate: activity.endDate,
+  //       location: activity.schedules[0].internalLocation?.description,
+  //       inCell: activity.inCell,
+  //       onWing: activity.onWing,
+  //       offWing: activity.offWing,
+  //       scheduleWeeks: 2,
+  //     },
+  //     latestAllocationStartDate: allocation.startDate,
+  //     exclusions: [],
+  //     updatedExclusions: [],
+  //     scheduledInstance: {
+  //       id: 123,
+  //       cancelled: false,
+  //       date: '2024-08-23',
+  //       endTime: '14:00',
+  //       startTime: '13:00',
+  //       timeSlot: 'AM',
+  //       attendances: [],
+  //     },
+  //   })
+
+  //   expect(next).toHaveBeenCalledTimes(1)
+  // })
 })

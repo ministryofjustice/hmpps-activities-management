@@ -1,4 +1,3 @@
-version: '3.1'
 services:
 
   redis:
@@ -11,6 +10,8 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - '6379:6379'
+    healthcheck:
+      test: [ "CMD", "wget", "-q", "-O", "-", "http://localhost:6379/health" ]
 
   hmpps-activities-management-api:
     image: quay.io/hmpps/hmpps-activities-management-api:latest
@@ -25,6 +26,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=local
       - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal/activities-management-db
+    healthcheck:
+      test: [ "CMD", "wget", "-q", "-O", "-", "http://localhost:8080/health" ]
 
   # For the API to seed & interact with - there is no direct connection from the UI service
   activities-db:
@@ -39,6 +42,8 @@ services:
       - POSTGRES_PASSWORD=activities-management
       - POSTGRES_USER=activities-management
       - POSTGRES_DB=activities-management-db
+    healthcheck:
+      test: [ "CMD", "wget", "-q", "-O", "-", "http://localhost:5432/health" ]
 
   # Needed only when running cypress tests
   wiremock:
