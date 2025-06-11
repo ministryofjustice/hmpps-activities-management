@@ -54,4 +54,34 @@ describe('nonAssociationsApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+  describe('getNonAssociationsByPrisonerNumber', () => {
+    it('should return data from api', async () => {
+      const mockOtherPrisonerDetails = {
+        prisonerNumber: 'G6512VC',
+        firstName: 'John',
+        lastName: 'Smith',
+        cellLocation: '1-2-002',
+      }
+
+      const mockNonAssociation = {
+        id: 51510,
+        role: 'NOT_RELEVANT',
+        reason: 'GANG_RELATED',
+        restrictionType: 'WING',
+        restrictionTypeDescription: 'Cell, landing and wing',
+        otherPrisonerDetails: mockOtherPrisonerDetails,
+        isOpen: true,
+      }
+
+      fakeNonAssociationsApi
+        .get('/prisoner/AA1111A/non-associations')
+        .matchHeader('authorization', `Bearer accessToken`)
+        .reply(200, mockNonAssociation)
+
+      const output = await nonAssociationsApiClient.getNonAssociationsByPrisonerNumber('AA1111A', user)
+
+      expect(output).toEqual(mockNonAssociation)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })
