@@ -46,6 +46,8 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
           .then(r => r.filter(a => allocationIds.includes(a.id.toString())))
           .then(r => r.sort((a, b) => (a.startDate < b.startDate ? -1 : 1)))
 
+    if (allocations.length === 0) return res.redirect('back')
+
     const [prisoners, activity]: [Prisoner[], Activity] = await Promise.all([
       prisonService.searchInmatesByPrisonerNumbers(
         allocations.map(a => a.prisonerNumber),
