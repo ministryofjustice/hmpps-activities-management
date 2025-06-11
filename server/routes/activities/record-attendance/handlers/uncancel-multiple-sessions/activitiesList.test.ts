@@ -302,5 +302,26 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
 
       expect(res.redirect).toHaveBeenCalledWith('confirm')
     })
+
+    it('should save the selected instance ids and redirect when a single session is chosen', async () => {
+      req = {
+        body: {
+          selectedInstanceIds: [789, 567],
+          activityDate: '2024-03-24',
+          sessionFilters: 'AM',
+        },
+        session: {},
+      } as unknown as Request
+
+      await handler.POST_UNCANCEL(req, res)
+
+      expect(req.session.recordAttendanceJourney).toEqual({
+        selectedInstanceIds: [789, 567],
+        activityDate: '2024-03-24',
+        sessionFilters: ['AM'],
+      })
+
+      expect(res.redirect).toHaveBeenCalledWith('confirm')
+    })
   })
 })
