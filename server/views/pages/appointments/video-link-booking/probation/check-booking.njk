@@ -226,25 +226,30 @@
                     attributes: { 'data-qa': 'scheduling-information' }
                 }) }}
 
-                <h2 class="govuk-heading-m">Extra information</h2>
                 {{ govukSummaryList({
+                    card: {
+                        title: {
+                            text: "Extra information"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "extra-information?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "extra information",
+                                    classes: "govuk-link--no-visited-state",
+                                    attributes: { 'data-qa': 'change-extra-information' }
+                                }
+                            ]
+                        }
+                    },
                     rows: [
                         {
                             key: {
-                                text: "Extra information"
+                                text: 'Extra information'
                             },
                             value: {
-                                html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.comments | escape) + '</span>'
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "extra-information?preserveHistory=true",
-                                        text: "Change",
-                                        visuallyHiddenText: "extra information",
-                                        classes: "govuk-link--no-visited-state"
-                                    }
-                                ]
+                                html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.comments or 'None entered' | escape) + '</span>'
                             }
                         } if not bvlsMasterPublicPrivateNotesEnabled,
                         {
@@ -252,18 +257,7 @@
                                 text: 'Notes for prison staff'
                             },
                             value: {
-                                html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.notesForStaff | escape) + '</span>'
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "extra-information?preserveHistory=true",
-                                        text: "Change",
-                                        visuallyHiddenText: "extra information",
-                                        classes: "govuk-link--no-visited-state",
-                                        attributes: { 'data-qa': 'change-extra-information' }
-                                    }
-                                ]
+                                html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.notesForStaff or 'None entered' | escape) + '</span>'
                             }
                         } if bvlsMasterPublicPrivateNotesEnabled,
                         {
@@ -271,18 +265,7 @@
                                 text: "Notes for prisoner"
                             },
                             value: {
-                                html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.notesForPrisoners | escape) + '</span>'
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "extra-information?preserveHistory=true",
-                                        text: "Change",
-                                        visuallyHiddenText: "extra information",
-                                        classes: "govuk-link--no-visited-state",
-                                        attributes: { 'data-qa': 'change-extra-information' }
-                                    }
-                                ]
+                                html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.notesForPrisoners or 'None entered' | escape) + '</span>'
                             }
                         } if bvlsMasterPublicPrivateNotesEnabled
                     ],

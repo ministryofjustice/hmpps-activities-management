@@ -18,7 +18,7 @@ jest.mock('../../../../services/bankHolidayService')
 jest.mock('../../../../utils/helpers/activityScheduleValidator')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-const bankHolidayService = new BankHolidayService(null) as jest.Mocked<BankHolidayService>
+const bankHolidayService = new BankHolidayService(null, null) as jest.Mocked<BankHolidayService>
 const isEndDateValidMock = isEndDateValid as jest.MockedFunction<typeof isEndDateValid>
 const nearestInvalidEndDateMock = getNearestInvalidEndDate as jest.MockedFunction<typeof getNearestInvalidEndDate>
 

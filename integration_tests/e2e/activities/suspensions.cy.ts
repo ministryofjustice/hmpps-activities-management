@@ -595,8 +595,8 @@ context('Suspensions', () => {
     confirmationPage.title().should('contain.text', 'Suspension ended')
   })
   it('should unsuspend a prisoner from an activity - end of today', () => {
-    const today = format(startOfToday(), 'dd MMMM yyyy')
-    const tomorrow = format(addDays(startOfToday(), 1), 'dd MMMM yyyy')
+    const today = format(startOfToday(), 'd MMMM yyyy')
+    const tomorrow = format(addDays(startOfToday(), 1), 'd MMMM yyyy')
     cy.visit('/activities/suspensions/prisoner/G0995GW')
     const page = Page.verifyOnPage(ViewAllocationsPage)
     page.caption().should('contain.text', 'Manage suspensions')

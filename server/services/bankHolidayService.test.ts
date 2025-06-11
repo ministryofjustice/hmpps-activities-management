@@ -2,8 +2,10 @@ import { when } from 'jest-when'
 import { ServiceUser } from '../@types/express'
 import BankHolidaysClient from '../data/bankHolidaysClient'
 import BankHolidayService from './bankHolidayService'
+import TokenStoreInterface from '../data/tokenStoreInterface'
 
 jest.mock('../data/bankHolidaysClient')
+let tokenStore: TokenStoreInterface
 
 const mockBankHolidaysList = {
   'england-and-wales': {
@@ -84,8 +86,13 @@ describe('Bank Holiday service', () => {
   const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
 
   beforeEach(() => {
+    tokenStore = {
+      getToken: async () => null,
+      setToken: jest.fn(),
+      delToken: jest.fn(),
+    }
     bankHolidaysClient = new BankHolidaysClient() as jest.Mocked<BankHolidaysClient>
-    bankHolidaysService = new BankHolidayService(bankHolidaysClient)
+    bankHolidaysService = new BankHolidayService(bankHolidaysClient, tokenStore)
   })
 
   afterEach(() => {
@@ -94,6 +101,7 @@ describe('Bank Holiday service', () => {
 
   describe('getUkBankHolidays', () => {
     it('should get a list of bank holidays for england-and-wales', async () => {
+      tokenStore.getToken = jest.fn().mockResolvedValue(null)
       const expectedResult = [new Date('2019-01-01'), new Date('2019-04-19'), new Date('2019-04-22')]
 
       when(bankHolidaysClient.getBankHolidays).mockResolvedValue(mockBankHolidaysList)
@@ -102,9 +110,15 @@ describe('Bank Holiday service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(bankHolidaysClient.getBankHolidays).toHaveBeenCalledWith(user)
+      expect(tokenStore.setToken).toHaveBeenCalledWith(
+        'england-and-wales.bankHolidays',
+        JSON.stringify({ events: expectedResult.map(date => ({ date })) }),
+        60 * 60 * 24 * 7,
+      )
     })
 
     it('should get a list of bank holidays for scotland', async () => {
+      tokenStore.getToken = jest.fn().mockResolvedValue(null)
       const expectedResult = [new Date('2019-05-06'), new Date('2019-05-27'), new Date('2019-08-26')]
 
       when(bankHolidaysClient.getBankHolidays).mockResolvedValue(mockBankHolidaysList)
@@ -113,9 +127,15 @@ describe('Bank Holiday service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(bankHolidaysClient.getBankHolidays).toHaveBeenCalledWith(user)
+      expect(tokenStore.setToken).toHaveBeenCalledWith(
+        'scotland.bankHolidays',
+        JSON.stringify({ events: expectedResult.map(date => ({ date })) }),
+        60 * 60 * 24 * 7,
+      )
     })
 
     it('should get a list of bank holidays for northern-ireland', async () => {
+      tokenStore.getToken = jest.fn().mockResolvedValue(null)
       const expectedResult = [new Date('2019-12-25'), new Date('2019-12-26'), new Date('2020-01-01')]
 
       when(bankHolidaysClient.getBankHolidays).mockResolvedValue(mockBankHolidaysList)
@@ -124,6 +144,22 @@ describe('Bank Holiday service', () => {
 
       expect(actualResult).toEqual(expectedResult)
       expect(bankHolidaysClient.getBankHolidays).toHaveBeenCalledWith(user)
+      expect(tokenStore.setToken).toHaveBeenCalledWith(
+        'northern-ireland.bankHolidays',
+        JSON.stringify({ events: expectedResult.map(date => ({ date })) }),
+        60 * 60 * 24 * 7,
+      )
+    })
+
+    it('should get cached bank holidays', async () => {
+      const expectedResult = [new Date('2019-01-01'), new Date('2019-04-19'), new Date('2019-04-22')]
+      tokenStore.getToken = jest.fn().mockResolvedValue(JSON.stringify(mockBankHolidaysList['england-and-wales']))
+
+      const actualResult = await bankHolidaysService.getUkBankHolidays('england-and-wales', user)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(bankHolidaysClient.getBankHolidays).not.toHaveBeenCalled()
+      expect(tokenStore.setToken).not.toHaveBeenCalled()
     })
   })
 })

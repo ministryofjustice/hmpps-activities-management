@@ -2,7 +2,7 @@ import { when } from 'jest-when'
 import atLeast from '../../jest.setup'
 import NonAssociationsApiClient from '../data/nonAssociationsApiClient'
 import { ServiceUser } from '../@types/express'
-import { NonAssociation } from '../@types/nonAssociationsApi/types'
+import { NonAssociation, PrisonerNonAssociations } from '../@types/nonAssociationsApi/types'
 import NonAssociationsService from './nonAssociationsService'
 import PrisonService from './prisonService'
 
@@ -52,6 +52,33 @@ describe('NonAssociationsService', () => {
 
       expect(actualResult).toEqual(apiResponse)
       expect(nonAssociationsApiClient.getNonAssociationsBetween).toHaveBeenCalledWith(prisonerNumbers, user)
+    })
+  })
+  describe('getNonAssociationByPrisonerId', () => {
+    it('should get non-associations for a prisoner', async () => {
+      const mockNonAssociation = {
+        id: 51510,
+        role: 'NOT_RELEVANT',
+        reason: 'GANG_RELATED',
+        restrictionType: 'WING',
+        restrictionTypeDescription: 'Cell, landing and wing',
+        otherPrisonerDetails: {
+          prisonerNumber: 'G6512VC',
+          firstName: 'John',
+          lastName: 'Smith',
+          cellLocation: '1-2-002',
+        },
+        isOpen: true,
+      } as unknown as PrisonerNonAssociations
+
+      when(nonAssociationsApiClient.getNonAssociationsByPrisonerNumber)
+        .calledWith(atLeast('AA1111A'))
+        .mockResolvedValue(mockNonAssociation)
+
+      const actualResult = await nonAssociationsService.getNonAssociationByPrisonerId('AA1111A', user)
+
+      expect(actualResult).toEqual(mockNonAssociation)
+      expect(nonAssociationsApiClient.getNonAssociationsByPrisonerNumber).toHaveBeenCalledWith('AA1111A', user)
     })
   })
 })

@@ -89,10 +89,11 @@ export default {
     manageUsersApi: {
       url: get('MANAGE_USERS_API_URL', 'http://localhost:8088', requiredInProduction),
       timeout: {
-        response: Number(get('MANAGE_USERS_API_TIMEOUT_RESPONSE', 5000)),
-        deadline: Number(get('MANAGE_USERS_API_TIMEOUT_DEADLINE', 5000)),
+        // Manage users API often has an internal 5s timeout with retry so we should give the retry a chance to work
+        response: Number(get('MANAGE_USERS_API_TIMEOUT_RESPONSE', 12000)),
+        deadline: Number(get('MANAGE_USERS_API_TIMEOUT_DEADLINE', 12000)),
       },
-      agent: new AgentConfig(Number(get('MANAGE_USERS_API_TIMEOUT_RESPONSE', 5000))),
+      agent: new AgentConfig(Number(get('MANAGE_USERS_API_TIMEOUT_RESPONSE', 12000))),
     },
     activitiesApi: {
       url: get('ACTIVITIES_API_URL', 'http://localhost:8089', requiredInProduction),

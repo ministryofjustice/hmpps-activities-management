@@ -7,7 +7,7 @@ import ActivityDateValidator from './activityDateValidator'
 import BankHolidayService from '../../services/bankHolidayService'
 
 jest.mock('../../services/bankHolidayService')
-const bankHolidayService = new BankHolidayService(null) as jest.Mocked<BankHolidayService>
+const bankHolidayService = new BankHolidayService(null, null) as jest.Mocked<BankHolidayService>
 
 describe('Activity Date Validator', () => {
   const handler = new ActivityDateValidator(bankHolidayService)

@@ -41,7 +41,7 @@
             {{ govukCharacterCount({
                 id: "notesForPrisoners",
                 name: "notesForPrisoners",
-                errorMessage: validationErrors | findError("notesForPrisoner"),
+                errorMessage: validationErrors | findError("notesForPrisoners"),
                 value: formResponses.notesForPrisoners or session.bookACourtHearingJourney.notesForPrisoners,
                 label: {
                   text: "Notes for prisoner (optional)",
