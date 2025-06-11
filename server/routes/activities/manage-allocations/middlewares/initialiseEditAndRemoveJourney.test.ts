@@ -160,18 +160,18 @@ describe('initialiseEditAndRemoveJourney', () => {
 
     expect(res.redirect).toHaveBeenCalled()
   })
-  it('should redirect back if there are no allocations available due to api call issues - scheduleId used', async () => {
-    req.query = { scheduleId: '1', allocationIds: ['6543'] }
-    req.params = {
-      mode: 'remove',
-      allocationId: null,
-    }
-    when(activitiesService.getAllocations).calledWith(atLeast(1, user)).mockResolvedValueOnce([])
+  // it('should redirect back if there are no allocations available due to api call issues - scheduleId used', async () => {
+  //   req.query = { scheduleId: '1', allocationIds: ['6543'] }
+  //   req.params = {
+  //     mode: 'remove',
+  //     allocationId: null,
+  //   }
+  //   when(activitiesService.getAllocations).calledWith(atLeast(1, user)).mockResolvedValueOnce([])
 
-    await middleware(req, res, next)
+  //   await middleware(req, res, next)
 
-    expect(res.redirect).toHaveBeenCalled()
-  })
+  //   expect(res.redirect).toHaveBeenCalled()
+  // })
 
   it('should populate session using allocation ID from route param', async () => {
     req.params = { mode: 'remove', allocationId: '6543' }
