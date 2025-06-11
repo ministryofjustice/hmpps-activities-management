@@ -6,6 +6,7 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { asString, convertToTitleCase, getScheduleIdFromActivity } from '../../../../utils/utils'
 import findNextSchedulesInstance from '../../../../utils/helpers/nextScheduledInstanceCalculator'
 import { AllocateToActivityJourney } from '../journey'
+import logger from '../../../../../logger'
 
 export default (prisonService: PrisonService, activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
@@ -13,6 +14,10 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
     const allocationIds = req.query.allocationIds !== undefined ? asString(req.query.allocationIds).split(',') : []
     const { scheduleId, selectActivity, otherAllocationIds } = req.query
     const { user } = res.locals
+
+    logger.info(
+      `mode: ${mode}, allocationId (route param): ${allocationId}, allocationIds (query): ${allocationIds}, scheduleId (query): ${scheduleId}, selectActivity: ${selectActivity}, otherAllocationIds: ${otherAllocationIds}`,
+    )
 
     if ((mode !== 'remove' && mode !== 'edit' && mode !== 'exclude') || req.session.allocateJourney) return next()
 
