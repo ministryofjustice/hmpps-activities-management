@@ -1,17 +1,13 @@
 import { Request, Response } from 'express'
-import ActivitiesService from '../../../../services/activitiesService'
 import config from '../../../../config'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-
-const WORKPLACE_RISK_LEVEL_LOW = 'RLO'
-const WORKPLACE_RISK_LEVEL_MEDIUM = 'RME'
-const WORKPLACE_RISK_LEVEL_HIGH = 'RHI'
+import NonAssociationsService from '../../../../services/nonAssociationsService'
 
 export default class PrisonerAllocationsHandler {
   constructor(
-    private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
+    private readonly nonAssociationsService: NonAssociationsService,
   ) {}
 
   GET = async (req: Request, res: Response) => {
@@ -22,57 +18,17 @@ export default class PrisonerAllocationsHandler {
     const { user } = res.locals
 
     const prisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
+    const prisonerNonAssociations = await this.nonAssociationsService.getNonAssociationByPrisonerId(
+      prisonerNumber,
+      user,
+    )
 
-    const earliestReleaseDate = determineEarliestReleaseDate(prisoner)
-    const workplaceRiskAssessment = determineWorkplaceRiskAssessment(prisoner)
-    const location = determineLocation(prisoner)
+    const hasNonAssociations = prisonerNonAssociations.nonAssociations.length > 0
 
-    const viewPrisoner = {
-      ...prisoner,
-      earliestReleaseDate,
-      workplaceRiskAssessment,
-      location,
-    }
-
-    return res.render('pages/activities/prisoner-allocations/dashboard', { prisoner: viewPrisoner })
+    return res.render('pages/activities/prisoner-allocations/dashboard', { prisoner, hasNonAssociations })
   }
 
   POST = async (req: Request, res: Response) => {
     res.redirect('/activities/prisoner-allocations')
   }
 }
-
-const determineLocation = (prisoner: Prisoner) => {
-  switch (prisoner.lastMovementTypeCode) {
-    case 'CRT':
-      return 'Court'
-    case 'REL':
-      return 'Released'
-    default:
-      return prisoner.cellLocation
-  }
-}
-
-const determineWorkplaceRiskAssessment = (prisoner: Prisoner) => {
-  if (prisoner.alerts.some(alert => alert.alertCode === WORKPLACE_RISK_LEVEL_HIGH)) {
-    return 'HIGH'
-  }
-  if (prisoner.alerts.some(alert => alert.alertCode === WORKPLACE_RISK_LEVEL_MEDIUM)) {
-    return 'MEDIUM'
-  }
-  if (prisoner.alerts.some(alert => alert.alertCode === WORKPLACE_RISK_LEVEL_LOW)) {
-    return 'LOW'
-  }
-  return 'NONE'
-}
-
-const determineEarliestReleaseDate = (prisoner: Prisoner) =>
-  prisoner.releaseDate ||
-  (hasActualParoleDate(prisoner) ? prisoner.actualParoleDate : null) ||
-  (hasTariffDate(prisoner) ? prisoner.tariffDate : null)
-
-const hasActualParoleDate = (prisoner: Prisoner) =>
-  prisoner.legalStatus === 'INDETERMINATE_SENTENCE' && prisoner.actualParoleDate != null
-
-const hasTariffDate = (prisoner: Prisoner) =>
-  prisoner.legalStatus === 'INDETERMINATE_SENTENCE' && prisoner.tariffDate != null
