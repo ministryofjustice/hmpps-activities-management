@@ -6,6 +6,7 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { asString, convertToTitleCase, getScheduleIdFromActivity } from '../../../../utils/utils'
 import findNextSchedulesInstance from '../../../../utils/helpers/nextScheduledInstanceCalculator'
 import { AllocateToActivityJourney } from '../journey'
+import logger from '../../../../../logger'
 
 export default (prisonService: PrisonService, activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
@@ -13,6 +14,10 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
     const allocationIds = req.query.allocationIds !== undefined ? asString(req.query.allocationIds).split(',') : []
     const { scheduleId, selectActivity, otherAllocationIds } = req.query
     const { user } = res.locals
+
+    logger.info(
+      `mode: ${mode}, allocationId (route param): ${allocationId}, allocationIds (query): ${allocationIds}, scheduleId (query): ${scheduleId}, selectActivity: ${selectActivity}, otherAllocationIds: ${otherAllocationIds}`,
+    )
 
     if ((mode !== 'remove' && mode !== 'edit' && mode !== 'exclude') || req.session.allocateJourney) return next()
 
@@ -39,70 +44,77 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
       return next()
     }
 
-    const allocations = allocationId
-      ? [await activitiesService.getAllocation(+allocationId, user)]
-      : await activitiesService
-          .getAllocations(+scheduleId, user)
-          .then(r => r.filter(a => allocationIds.includes(a.id.toString())))
-          .then(r => r.sort((a, b) => (a.startDate < b.startDate ? -1 : 1)))
+    try {
+      const allocations = allocationId
+        ? [await activitiesService.getAllocation(+allocationId, user)]
+        : await activitiesService
+            .getAllocations(+scheduleId, user)
+            .then(r => r.filter(a => allocationIds.includes(a.id.toString())))
+            .then(r => r.sort((a, b) => (a.startDate < b.startDate ? -1 : 1)))
 
-    const [prisoners, activity]: [Prisoner[], Activity] = await Promise.all([
-      prisonService.searchInmatesByPrisonerNumbers(
-        allocations.map(a => a.prisonerNumber),
-        user,
-      ),
-      activitiesService.getActivity(allocations[0].activityId, user),
-    ])
+      if (!allocations || allocations.length === 0) return res.redirect('back')
 
-    const inmates = prisoners.map(p => {
-      const activityPay = activity.pay.filter(pay => pay.incentiveLevel === p.currentIncentive?.level?.description)
-      const payBand = allocations.find(a => a.prisonerNumber === p.prisonerNumber).prisonPayBand
+      const [prisoners, activity]: [Prisoner[], Activity] = await Promise.all([
+        prisonService.searchInmatesByPrisonerNumbers(
+          allocations.map(a => a.prisonerNumber),
+          user,
+        ),
+        activitiesService.getActivity(allocations[0].activityId, user),
+      ])
 
-      return {
-        prisonerName: convertToTitleCase(`${p.firstName} ${p.lastName}`),
-        prisonerNumber: p.prisonerNumber,
-        prisonCode: p.prisonId,
-        status: p.status,
-        cellLocation: p.cellLocation,
-        incentiveLevel: p.currentIncentive?.level?.description,
-        payBand: payBand
-          ? {
-              id: payBand.id,
-              alias: payBand.alias,
-              rate: activityPay?.find(pay => pay.prisonPayBand.id === payBand.id)?.rate,
-            }
-          : null,
+      const inmates = prisoners.map(p => {
+        const activityPay = activity.pay.filter(pay => pay.incentiveLevel === p.currentIncentive?.level?.description)
+        const payBand = allocations.find(a => a.prisonerNumber === p.prisonerNumber).prisonPayBand
+
+        return {
+          prisonerName: convertToTitleCase(`${p.firstName} ${p.lastName}`),
+          prisonerNumber: p.prisonerNumber,
+          prisonCode: p.prisonId,
+          status: p.status,
+          cellLocation: p.cellLocation,
+          incentiveLevel: p.currentIncentive?.level?.description,
+          payBand: payBand
+            ? {
+                id: payBand.id,
+                alias: payBand.alias,
+                rate: activityPay?.find(pay => pay.prisonPayBand.id === payBand.id)?.rate,
+              }
+            : null,
+        }
+      })
+
+      req.session.allocateJourney = {
+        inmate: inmates[0],
+        inmates,
+        activity: {
+          activityId: activity.id,
+          scheduleId: getScheduleIdFromActivity(activity),
+          name: activity.summary,
+          startDate: activity.startDate,
+          endDate: activity.endDate,
+          scheduleWeeks: activity.schedules[0].scheduleWeeks,
+          location: activity.schedules[0].internalLocation?.description,
+          inCell: activity.inCell,
+          onWing: activity.onWing,
+          offWing: activity.offWing,
+        },
+        latestAllocationStartDate: allocations[allocations.length - 1].startDate,
+        exclusions: [],
+        updatedExclusions: [],
+        scheduledInstance: findNextSchedulesInstance(activity.schedules[0]),
       }
-    })
 
-    req.session.allocateJourney = {
-      inmate: inmates[0],
-      inmates,
-      activity: {
-        activityId: activity.id,
-        scheduleId: getScheduleIdFromActivity(activity),
-        name: activity.summary,
-        startDate: activity.startDate,
-        endDate: activity.endDate,
-        scheduleWeeks: activity.schedules[0].scheduleWeeks,
-        location: activity.schedules[0].internalLocation?.description,
-        inCell: activity.inCell,
-        onWing: activity.onWing,
-        offWing: activity.offWing,
-      },
-      latestAllocationStartDate: allocations[allocations.length - 1].startDate,
-      exclusions: [],
-      updatedExclusions: [],
-      scheduledInstance: findNextSchedulesInstance(activity.schedules[0]),
+      if (req.params.mode === 'edit' || req.params.mode === 'exclude') {
+        req.session.allocateJourney.startDate = allocations[0].startDate
+        req.session.allocateJourney.endDate = allocations[0].endDate
+        req.session.allocateJourney.deallocationReason = allocations[0].plannedDeallocation?.plannedReason?.code
+        req.session.allocateJourney.exclusions = allocations[0].exclusions
+      }
+
+      return next()
+    } catch (error) {
+      logger.error(`Failed to set up session in middleware: ${error}`)
+      return res.redirect('back')
     }
-
-    if (req.params.mode === 'edit' || req.params.mode === 'exclude') {
-      req.session.allocateJourney.startDate = allocations[0].startDate
-      req.session.allocateJourney.endDate = allocations[0].endDate
-      req.session.allocateJourney.deallocationReason = allocations[0].plannedDeallocation?.plannedReason?.code
-      req.session.allocateJourney.exclusions = allocations[0].exclusions
-    }
-
-    return next()
   }
 }

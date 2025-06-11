@@ -146,7 +146,7 @@ describe('initialiseEditAndRemoveJourney', () => {
     expect(res.redirect).toHaveBeenCalled()
   })
 
-  it('should redirect back if there are no allocaions available due to api call issues - allocationId used', async () => {
+  it('should redirect back if there are no allocations available - allocationId used', async () => {
     req.query = {
       allocationId: '2',
     }
@@ -154,24 +154,58 @@ describe('initialiseEditAndRemoveJourney', () => {
       mode: 'remove',
     }
 
-    when(activitiesService.getAllocation).calledWith(atLeast(2, user)).mockResolvedValueOnce(allocation)
+    when(activitiesService.getAllocation)
+      .calledWith(atLeast(2, user))
+      .mockResolvedValueOnce({} as Allocation)
 
     await middleware(req, res, next)
 
     expect(res.redirect).toHaveBeenCalled()
   })
-  // it('should redirect back if there are no allocations available due to api call issues - scheduleId used', async () => {
-  //   req.query = { scheduleId: '1', allocationIds: ['6543'] }
-  //   req.params = {
-  //     mode: 'remove',
-  //     allocationId: null,
-  //   }
-  //   when(activitiesService.getAllocations).calledWith(atLeast(1, user)).mockResolvedValueOnce([])
+  it('should redirect back if there are no allocations available - scheduleId used', async () => {
+    req.query = { scheduleId: '1', allocationIds: ['6543'] }
+    req.params = {
+      mode: 'remove',
+      allocationId: null,
+    }
+    when(activitiesService.getAllocations).calledWith(atLeast(1, user)).mockResolvedValueOnce([])
 
-  //   await middleware(req, res, next)
+    await middleware(req, res, next)
 
-  //   expect(res.redirect).toHaveBeenCalled()
-  // })
+    expect(res.redirect).toHaveBeenCalled()
+  })
+
+  it('should redirect back if allocations return value is null - allocationId used', async () => {
+    req.query = {
+      allocationId: '2',
+    }
+    req.params = {
+      mode: 'remove',
+    }
+
+    when(activitiesService.getAllocation)
+      .calledWith(atLeast(2, user))
+      .mockResolvedValueOnce({} as never)
+
+    await middleware(req, res, next)
+
+    expect(res.redirect).toHaveBeenCalled()
+  })
+
+  it('should redirect back if allocations return value is null - scheduleId used', async () => {
+    req.query = { scheduleId: '1', allocationIds: ['6543'] }
+    req.params = {
+      mode: 'remove',
+      allocationId: null,
+    }
+    when(activitiesService.getAllocations)
+      .calledWith(atLeast(1, user))
+      .mockResolvedValueOnce({} as never)
+
+    await middleware(req, res, next)
+
+    expect(res.redirect).toHaveBeenCalled()
+  })
 
   it('should populate session using allocation ID from route param', async () => {
     req.params = { mode: 'remove', allocationId: '6543' }
