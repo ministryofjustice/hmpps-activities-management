@@ -173,9 +173,9 @@ describe('initialiseEditAndRemoveJourney', () => {
     expect(res.redirect).toHaveBeenCalled()
   })
 
-  it('should populate session using allocation ID from param', async () => {
+  it('should populate session using allocation ID from route param', async () => {
     req.params = { mode: 'remove', allocationId: '6543' }
-    req.query = {}
+    req.query = { allocationIds: ['6543'] }
 
     when(activitiesService.getAllocation).calledWith(atLeast(6543, user)).mockResolvedValueOnce(allocation)
     when(activitiesService.getActivity).calledWith(atLeast(2, user)).mockResolvedValueOnce(activity)
@@ -312,72 +312,4 @@ describe('initialiseEditAndRemoveJourney', () => {
 
     expect(next).toHaveBeenCalledTimes(1)
   })
-
-  // it.each(['route param', 'query param'])('should populate session using allocation ID from %s', async routeOrQuery => {
-  //   when(activitiesService.getAllocation).calledWith(atLeast(6543, user)).mockResolvedValueOnce(allocation)
-  //   when(activitiesService.getAllocations).calledWith(atLeast(1, user)).mockResolvedValueOnce([allocation])
-  //   when(activitiesService.getActivity).calledWith(atLeast(2, user)).mockResolvedValueOnce(activity)
-  //   when(prisonService.searchInmatesByPrisonerNumbers)
-  //     .calledWith(atLeast(['ABC1234'], user))
-  //     .mockResolvedValueOnce([prisoner])
-
-  //   await middleware(req, res, next)
-
-  //   expect(req.session.allocateJourney).toEqual({
-  //     inmate: {
-  //       prisonerName: 'John Smith',
-  //       prisonerNumber: 'ABC1234',
-  //       prisonCode: 'RSI',
-  //       status: 'ACTIVE IN',
-  //       cellLocation: 'MDI-1-1-001',
-  //       incentiveLevel: 'Basic',
-  //       payBand: {
-  //         id: 1,
-  //         alias: 'Low',
-  //         rate: 150,
-  //       },
-  //     },
-  //     inmates: [
-  //       {
-  //         prisonerName: 'John Smith',
-  //         prisonerNumber: 'ABC1234',
-  //         prisonCode: 'RSI',
-  //         status: 'ACTIVE IN',
-  //         cellLocation: 'MDI-1-1-001',
-  //         incentiveLevel: 'Basic',
-  //         payBand: {
-  //           id: 1,
-  //           alias: 'Low',
-  //           rate: 150,
-  //         },
-  //       },
-  //     ],
-  //     activity: {
-  //       activityId: activity.id,
-  //       scheduleId: getScheduleIdFromActivity(activity),
-  //       name: activity.summary,
-  //       startDate: activity.startDate,
-  //       endDate: activity.endDate,
-  //       location: activity.schedules[0].internalLocation?.description,
-  //       inCell: activity.inCell,
-  //       onWing: activity.onWing,
-  //       offWing: activity.offWing,
-  //       scheduleWeeks: 2,
-  //     },
-  //     latestAllocationStartDate: allocation.startDate,
-  //     exclusions: [],
-  //     updatedExclusions: [],
-  //     scheduledInstance: {
-  //       id: 123,
-  //       cancelled: false,
-  //       date: '2024-08-23',
-  //       endTime: '14:00',
-  //       startTime: '13:00',
-  //       timeSlot: 'AM',
-  //       attendances: [],
-  //     },
-  //   })
-
-  //   expect(next).toHaveBeenCalledTimes(1)
-  // })
 })
