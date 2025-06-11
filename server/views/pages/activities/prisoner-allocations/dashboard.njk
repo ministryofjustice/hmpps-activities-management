@@ -32,9 +32,6 @@
     {% set allocationsHtml %}
         {% include 'partials/activities/allocation-dashboard/allocationsHtml.njk' %}
     {% endset %}
-    {% set waitlistApplicationsHtml %}
-        {% include 'partials/activities/allocation-dashboard/waitlistApplicationsHtml.njk' %}
-    {% endset %}
 
     {{ govukTabs({
         classes: "govuk-tabs--borderless",
@@ -44,13 +41,6 @@
                 id: "allocations-tab",
                 panel: {
                     html: allocationsHtml
-                }
-            },
-            {
-                label: "Waitlist and applications",
-                id: "waitlistApplications-tab",
-                panel: {
-                    html: waitlistApplicationsHtml
                 }
             }
         ]
