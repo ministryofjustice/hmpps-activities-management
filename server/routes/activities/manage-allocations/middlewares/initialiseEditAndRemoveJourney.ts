@@ -113,7 +113,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
 
       return next()
     } catch (error) {
-      logger.error(`Failed to set up session in middleware: ${error}`)
+      logger.error(error, `Failed to set up session in middleware: ${error?.message}`)
       return res.redirect('back')
     }
   }
