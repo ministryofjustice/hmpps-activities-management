@@ -2,7 +2,7 @@
 
 {% from "partials/miniProfile.njk" import miniProfile %}
 
-{% set pageTitle = applicationName + " - Record attendance" %}
+{% set pageTitle = applicationName + " - Prisoner Allocations" %}
 {% set pageId = 'prisoner-allocations-dashboard' %}
 {% set prisonerName = prisoner | firstNameLastName | toTitleCase %}
 
@@ -10,7 +10,15 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-l">{{ prisonerName }}'s activity allocations</h1>
-            {{ miniProfile(prisoner) }}
+            {{ miniProfile(prisonerProfile) }}
+
+            {% if hasNonAssociations %}
+                <div class="govuk-inset-text">
+                    <a href="/activities/prisoner-allocations/{{ prisoner.prisonerNumber }}/non-associations" target="_blank">
+                        View {{ prisonerName }}'s open non-associations
+                    </a>, to check if they may come into contact with someone they must be kept apart from.
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
