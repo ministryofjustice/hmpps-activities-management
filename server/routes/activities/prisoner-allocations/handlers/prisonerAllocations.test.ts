@@ -3,15 +3,19 @@ import { when } from 'jest-when'
 import PrisonService from '../../../../services/prisonService'
 import NonAssociationsService from '../../../../services/nonAssociationsService'
 import PrisonerAllocationsHandler from './prisonerAllocations'
+import ActivitiesService from '../../../../services/activitiesService'
 import config from '../../../../config'
 import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { PrisonerNonAssociations } from '../../../../@types/nonAssociationsApi/types'
+import { PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 
+jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 jest.mock('../../../../services/nonAssociationsService')
 
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const nonAssociationsService = new NonAssociationsService(null, null) as jest.Mocked<NonAssociationsService>
 
 const mockPrisoner: Prisoner = {
@@ -26,12 +30,27 @@ const mockPrisoner: Prisoner = {
   alerts: [{ alertType: 'R', alertCode: 'RLO', active: true, expired: false }],
 } as Prisoner
 
+const allocations = [
+  { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+  { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
+]
+
 const mockNonAssociations = {
   nonAssociations: [],
 } as PrisonerNonAssociations
 
+const mockPrisonerAllocations = [
+  {
+    prisonerNumber: 'ABC123',
+    allocations: [
+      { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+      { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
+    ],
+  },
+] as PrisonerAllocations[]
+
 describe('Route Handlers - Prisoner Allocations', () => {
-  const handler = new PrisonerAllocationsHandler(prisonService, nonAssociationsService)
+  const handler = new PrisonerAllocationsHandler(activitiesService, prisonService, nonAssociationsService)
   let req: Request
   let res: Response
 
@@ -66,6 +85,9 @@ describe('Route Handlers - Prisoner Allocations', () => {
       req.params.prisonerNumber = 'ABC123'
 
       when(prisonService.getInmateByPrisonerNumber).calledWith(atLeast('ABC123')).mockResolvedValue(mockPrisoner)
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith(atLeast(['ABC123']))
+        .mockResolvedValue(mockPrisonerAllocations)
       when(nonAssociationsService.getNonAssociationByPrisonerId)
         .calledWith(atLeast('ABC123'))
         .mockResolvedValue(mockNonAssociations)
@@ -75,6 +97,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/prisoner-allocations/dashboard', {
         prisoner: mockPrisoner,
         hasNonAssociations: false,
+        allocationsData: allocations,
       })
     })
   })
