@@ -98,7 +98,7 @@
                 },
                 {
                     attributes: { id: 'activity-' + loop.index },
-                    html: '<a href=/activities/attendance/activities/' + attendee.id + '/attendance-list class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a><br>' + sessionTimes,
+                    html: '<a href=/activities/attendance/activities/' + attendee.attendance.scheduledInstanceId + '/attendance-list class="govuk-link govuk-link--no-visited-state" target="_blank">' + (attendee.attendance.activitySummary | escape) + '</a><br>' + sessionTimes,
                     classes: 'govuk-table_cell'
                 },
                 {
