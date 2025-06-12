@@ -56,7 +56,7 @@ export default function Index({ prisonService, activitiesService, metricsService
   post('/:journeyId/status', statusHandler.POST, Status)
   get('/:journeyId/check-answers', checkAnswersHandler.GET, true)
   post('/:journeyId/check-answers', checkAnswersHandler.POST)
-  get('/:journeyId/confirmation', confirmationHandler.GET)
+  get('/:journeyId/confirmation', confirmationHandler.GET, true)
   get('/:journeyId/view-and-edit/:applicationId/view', viewApplicationHandler.GET)
   get('/:journeyId/view-and-edit/:applicationId/status', editStatusHandler.GET, true)
   post('/:journeyId/view-and-edit/:applicationId/status', editStatusHandler.POST, EditStatus)
