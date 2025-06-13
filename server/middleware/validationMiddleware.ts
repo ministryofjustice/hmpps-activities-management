@@ -66,7 +66,7 @@ function validationMiddleware(type: new () => object): RequestHandler {
     req.flash('validationErrors', JSON.stringify(flattenErrors(errors)))
     req.flash('formResponses', JSON.stringify(req.body))
 
-    return res.redirect('back')
+    return res.redirect(req.get('Referrer') || '/')
   }
 }
 

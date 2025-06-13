@@ -30,6 +30,7 @@ describe('initialiseSuspendJourney', () => {
   beforeEach(() => {
     jest.resetAllMocks()
     req = {
+      get: jest.fn(),
       session: {},
       params: {},
       query: {},
@@ -92,7 +93,7 @@ describe('initialiseSuspendJourney', () => {
     expect(activitiesService.getAllocations).not.toHaveBeenCalled()
 
     expect(res.redirect).toHaveBeenCalledTimes(1)
-    expect(res.redirect).toHaveBeenCalledWith('back')
+    expect(res.redirect).toHaveBeenCalledWith('/')
   })
 
   it('should throw 404 when allocation not found', async () => {

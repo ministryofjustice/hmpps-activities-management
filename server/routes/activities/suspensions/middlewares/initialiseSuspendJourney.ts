@@ -14,7 +14,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
     const { prisonerNumber, mode } = req.params
     const { user } = res.locals
 
-    if (!allocationIds) return res.redirect('back')
+    if (!allocationIds) return res.redirect(req.get('Referrer') || '/')
 
     const allocations = await activitiesService
       .getActivePrisonPrisonerAllocations([prisonerNumber], user)

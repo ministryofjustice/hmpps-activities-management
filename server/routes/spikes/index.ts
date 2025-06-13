@@ -1,6 +1,5 @@
 import { RequestHandler, Router } from 'express'
 import createHttpError from 'http-errors'
-import asyncMiddleware from '../../middleware/asyncMiddleware'
 import { Services } from '../../services'
 import CalendarSpikeRoutes from './handlers/calendarSpike'
 import config from '../../config'
@@ -8,7 +7,7 @@ import config from '../../config'
 export default function Index({ activitiesService }: Services): Router {
   const router = Router()
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
 
   const calendarSpikeHandler = new CalendarSpikeRoutes(activitiesService)
 

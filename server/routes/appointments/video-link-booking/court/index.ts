@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../../middleware/asyncMiddleware'
 import { Services } from '../../../../services'
 import VideoLinkDetailsRoutes from './handlers/videoLinkDetails'
 import createRoutes from './createRoutes'
@@ -11,7 +10,7 @@ import initialiseJourney from './middleware/initialiseJourney'
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
 
   const videoLinkDetailsRoutes = new VideoLinkDetailsRoutes(
     services.bookAVideoLinkService,

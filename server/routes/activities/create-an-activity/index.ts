@@ -4,7 +4,6 @@ import createAndEditRoutes from './createAndEditRoutes'
 import createRoutes from './createRoutes'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 import initialiseEditJourney from './middlewares/initialiseEditJourney'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 
 export default function Index(services: Services): Router {
   const { activitiesService } = services
@@ -17,7 +16,7 @@ export default function Index(services: Services): Router {
   router.use('/:mode(edit)/:activityId(\\d+)', insertJourneyIdentifier())
   router.use(
     '/:mode(edit)/:activityId(\\d+)/:journeyId',
-    asyncMiddleware(initialiseEditJourney(activitiesService)),
+    initialiseEditJourney(activitiesService),
     createAndEditRoutes(services),
   )
 

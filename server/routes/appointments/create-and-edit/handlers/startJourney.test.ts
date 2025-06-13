@@ -424,6 +424,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
   describe('EDIT', () => {
     beforeEach(() => {
       req = {
+        get: jest.fn(),
         session: {},
         params: { journeyId },
         appointmentSeries,
@@ -441,7 +442,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(req.session.journeyMetrics).toBeUndefined()
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
-      expect(res.redirect).toHaveBeenCalledWith('back')
+      expect(res.redirect).toHaveBeenCalledWith('/')
     })
 
     it('should redirect back if property is empty', async () => {
@@ -456,7 +457,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(req.session.journeyMetrics).toBeUndefined()
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
-      expect(res.redirect).toHaveBeenCalledWith('back')
+      expect(res.redirect).toHaveBeenCalledWith('/')
     })
 
     it('should populate the session with appointment details and redirect to the correct edit route', async () => {
@@ -519,6 +520,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
   describe('REMOVE_PRISONER', () => {
     beforeEach(() => {
       req = {
+        get: jest.fn(),
         session: {},
         params: { journeyId },
         appointmentSeries,
@@ -538,7 +540,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(req.session.journeyMetrics).toBeUndefined()
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
-      expect(res.redirect).toHaveBeenCalledWith('back')
+      expect(res.redirect).toHaveBeenCalledWith('/')
     })
 
     it('should populate the session with prisoner details and redirect to apply to', async () => {

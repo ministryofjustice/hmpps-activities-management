@@ -2,7 +2,6 @@ import { RequestHandler } from 'express'
 import { parse } from 'date-fns'
 import createHttpError from 'http-errors'
 import { Services } from '../../../../../services'
-import asyncMiddleware from '../../../../../middleware/asyncMiddleware'
 
 export default ({
   activitiesService,
@@ -10,7 +9,7 @@ export default ({
   prisonService,
   locationMappingService,
 }: Services): RequestHandler => {
-  return asyncMiddleware(async (req, res, next) => {
+  return async (req, res, next) => {
     const { bookingId } = req.params
     const { user } = res.locals
 
@@ -86,5 +85,5 @@ export default ({
     }
 
     return next()
-  })
+  }
 }

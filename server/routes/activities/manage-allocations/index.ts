@@ -6,12 +6,11 @@ import editRoutes from './editRoutes'
 import excludeRoutes from './excludeRoutes'
 import removeRoutes from './removeRoutes'
 import ViewAllocationRoutes from './handlers/viewAllocation'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import initialiseEditAndRemoveJourney from './middlewares/initialiseEditAndRemoveJourney'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
 
   const viewAllocationHandler = new ViewAllocationRoutes(
     services.activitiesService,

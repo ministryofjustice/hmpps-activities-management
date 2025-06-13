@@ -13,6 +13,6 @@ export default class ApplyFiltersRoutes {
 
     req.journeyData.movementListJourney.alertFilters = alertFilters ?? []
 
-    res.redirect('back')
+    res.redirect(req.get('Referrer') || '/')
   }
 }

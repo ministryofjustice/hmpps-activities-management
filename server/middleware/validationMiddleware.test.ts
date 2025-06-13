@@ -53,6 +53,7 @@ describe('validationMiddleware', () => {
     it('should return flash responses', async () => {
       const next = jest.fn()
       req = {
+        get: jest.fn(),
         params: {},
         flash: jest.fn(),
         body: {
@@ -76,6 +77,7 @@ describe('validationMiddleware', () => {
     it('should chain parent and child property names to report the bottom level error message', async () => {
       const next = jest.fn()
       req = {
+        get: jest.fn(),
         params: {},
         flash: jest.fn(),
         body: {

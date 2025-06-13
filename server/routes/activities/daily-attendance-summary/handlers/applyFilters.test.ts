@@ -17,6 +17,7 @@ describe('Route Handlers - applyFilters', () => {
     } as unknown as Response
 
     req = {
+      get: jest.fn(),
       session: {
         attendanceSummaryJourney: {
           categoryFilters: ['Original category'],
