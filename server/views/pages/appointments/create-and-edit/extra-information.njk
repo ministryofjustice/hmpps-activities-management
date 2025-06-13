@@ -23,33 +23,17 @@
                     <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information (optional)</label>
                 </h1>
 
-                {# For Video link court hearing and probation meetings - inform that movement slips will not contain the extra (potentially sensitive) information #}
-                {% if session.appointmentJourney.category.code == 'VLB' or session.appointmentJourney.category.code == 'VLPM' %}
-                  <p class="govuk-body" data-qa="first-paragraph">
-                    This information will not appear on movement slips for Video Link - Court Hearing and Video Link - Probation Meeting appointments.
-                  </p>
-                {% else %}
-                  <p class="govuk-body" data-qa="first-paragraph">
+                 <p class="govuk-body" data-qa="first-paragraph">
                     Add or edit any important information for who’s attending about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.
-                  </p>
-                {% endif %}
-
+                 </p>
             {% else %}
                 <h1 class="govuk-heading-l">
                     <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information (optional)</label>
                 </h1>
 
-                {# For Video link court hearing and probation meetings - inform that movement slips will not contain the extra (potentially sensitive) information #}
-                {% if session.appointmentJourney.category.code == 'VLB' or session.appointmentJourney.category.code == 'VLPM' %}
-                  <p class="govuk-body" data-qa="first-paragraph">
-                    This information will not appear on movement slips for Video Link - Court Hearing and Video Link - Probation Meeting appointments.
-                  </p>
-                {% else %}
-                  <p class="govuk-body" data-qa="first-paragraph">
-                      Add any important information for who’s attending about how to prepare for their appointment. It will be printed on their movement slip.
-                  </p>
-                {% endif %}
-
+                <p class="govuk-body" data-qa="first-paragraph">
+                     Add any important information for who’s attending about how to prepare for their appointment. It will be printed on their movement slip.
+                </p>
             {% endif %}
             <p class="govuk-body">
                 For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.

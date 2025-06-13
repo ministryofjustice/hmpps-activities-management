@@ -34,13 +34,7 @@
                     '<li>' + (appointment.startDate | toDate | formatDate) + '</li>' +
                 '</ul>') }}
                 {{ labelAndValue('Location', showLocation(appointment)) }}
-
-                {# Suppress extra information on movement slip for some video appointments (may contain personal data) #}
-                {% if appointment.category.code == 'VLB' or appointment.category.code == 'VLPM' %}
-                  {{ labelAndValue('Extra information', '', 'movement-slip__row--no-border', 'preserve-line-breaks') }}
-                {% else %}
-                  {{ labelAndValue('Extra information', appointment.extraInformation | escape, 'movement-slip__row--no-border', 'preserve-line-breaks') if appointment.extraInformation }}
-                {% endif %}
+                {{ labelAndValue('Extra information', appointment.extraInformation | escape, 'movement-slip__row--no-border', 'preserve-line-breaks') if appointment.extraInformation }}
             </dl>
 
             <p class="govuk-body-s movement-slip-footer">Printed at {{ printedAt | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}</p>
