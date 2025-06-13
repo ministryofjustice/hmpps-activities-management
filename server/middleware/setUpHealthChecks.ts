@@ -15,6 +15,13 @@ export default function setUpHealthChecks({ activitiesService, applicationInfo }
     }, applicationInfo)
   })
 
+  // @ts-expect-error: Type '(req: Request<{}, any, any, ParsedQs, Record<string, any>>, res: Response<any, Record<string, any>, number>) => Response<any, Record<...>, number>' is missing the following properties from type 'Application<Record<string, any>>': init, defaultConfiguration, engine, set, and 63 more.
+  router.get('/ping', (req, res) =>
+    res.json({
+      status: 'UP',
+    }),
+  )
+
   router.get('/info', (req, res) => {
     activitiesService.activeRolledPrisons().then(activeAgencies => {
       res.json({
@@ -32,12 +39,6 @@ export default function setUpHealthChecks({ activitiesService, applicationInfo }
       })
     })
   })
-
-  router.get('/ping', (req, res) =>
-    res.send({
-      status: 'UP',
-    }),
-  )
 
   return router
 }

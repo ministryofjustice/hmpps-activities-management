@@ -1,7 +1,6 @@
 import { RequestHandler, Router } from 'express'
 import createHttpError from 'http-errors'
 import { parseISO } from 'date-fns'
-import asyncMiddleware from '../../../../middleware/asyncMiddleware'
 import type { Services } from '../../../../services'
 import validationMiddleware from '../../../../middleware/validationMiddleware'
 import ConfirmCancelRoutes from './handlers/confirmCancel'
@@ -10,9 +9,9 @@ import CancelConfirmedRoutes from './handlers/cancelConfirmed'
 export default function CancelRoutes({ bookAVideoLinkService, probationBookingService }: Services): Router {
   const router = Router({ mergeParams: true })
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const confirmCancel = new ConfirmCancelRoutes(probationBookingService)
   const cancelConfirmed = new CancelConfirmedRoutes(bookAVideoLinkService)

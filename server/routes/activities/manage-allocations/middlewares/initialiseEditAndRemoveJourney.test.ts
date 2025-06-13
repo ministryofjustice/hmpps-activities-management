@@ -92,6 +92,7 @@ describe('initialiseEditAndRemoveJourney', () => {
   beforeEach(() => {
     jest.resetAllMocks()
     req = {
+      get: jest.fn(),
       session: {},
       params: {
         mode: 'remove',

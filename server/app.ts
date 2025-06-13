@@ -50,7 +50,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCurrentUser(services))
   app.use(trimRequestBody())
   app.use(setUpValidationExtensions())
-  app.get('*', dpsComponents.getPageComponents({ includeSharedData: true, dpsUrl: config.dpsUrl, logger }))
+  app.get(/(.*)/, dpsComponents.getPageComponents({ includeSharedData: true, dpsUrl: config.dpsUrl, logger }))
   app.use(dpsComponents.retrieveCaseLoadData({ logger }))
   app.use(populateJourney())
   app.use(routes(services))

@@ -21,7 +21,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
 
     if ((mode !== 'remove' && mode !== 'edit' && mode !== 'exclude') || req.session.allocateJourney) return next()
 
-    if (!scheduleId && !allocationId && !selectActivity) return res.redirect('back')
+    if (!scheduleId && !allocationId && !selectActivity) return res.redirect(req.get('Referrer') || '/')
 
     if (selectActivity) {
       const otherAllocationIdsList = otherAllocationIds.toString().split(',')
@@ -52,7 +52,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
             .then(r => r.filter(a => allocationIds.includes(a.id.toString())))
             .then(r => r.sort((a, b) => (a.startDate < b.startDate ? -1 : 1)))
 
-      if (!allocations || allocations.length === 0) return res.redirect('back')
+      if (!allocations || allocations.length === 0) return res.redirect(req.get('Referrer') || '/')
 
       const [prisoners, activity]: [Prisoner[], Activity] = await Promise.all([
         prisonService.searchInmatesByPrisonerNumbers(
@@ -114,7 +114,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
       return next()
     } catch (error) {
       logger.error(error, `Failed to set up session in middleware: ${error?.message}`)
-      return res.redirect('back')
+      return res.redirect(req.get('Referrer') || '/')
     }
   }
 }

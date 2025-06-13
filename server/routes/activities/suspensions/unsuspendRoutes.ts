@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import CheckAnswersRoutes from './handlers/checkAnswers'
@@ -10,9 +9,9 @@ import SuspendUntilRoutes, { SuspendUntil } from './handlers/suspendUntil'
 export default function Index({ activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('suspendJourney', stepRequiresSession), asyncMiddleware(handler))
+    router.get(path, emptyJourneyHandler('suspendJourney', stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const suspendUntilHandler = new SuspendUntilRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)

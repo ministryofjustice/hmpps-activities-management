@@ -16,7 +16,7 @@ export default function setUpValidationExtensions(): Router {
 
       req.flash('validationErrors', JSON.stringify(validationErrors))
       req.flash('formResponses', JSON.stringify(req.body))
-      res.redirect('back')
+      res.redirect(req.get('Referrer') || '/')
     }
 
     next()

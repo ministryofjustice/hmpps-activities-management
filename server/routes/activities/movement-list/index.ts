@@ -1,6 +1,5 @@
 import { RequestHandler, Router } from 'express'
 import { Services } from '../../../services'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import ChooseDetailsRoutes, { DateAndTimeSlot } from './handlers/chooseDetails'
 import LocationsRoutes from './handlers/locations'
@@ -18,11 +17,11 @@ export default function Index({ activitiesService, prisonService, alertsFilterSe
       path,
       emptyJourneyHandler('movementListJourney', stepRequiresSession),
       setUpJourneyData(tokenStore),
-      asyncMiddleware(handler),
+      handler,
     )
 
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), setUpJourneyData(tokenStore), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), setUpJourneyData(tokenStore), handler)
 
   const chooseDetailsRoutes = new ChooseDetailsRoutes()
   const locationsRoutes = new LocationsRoutes(activitiesService)

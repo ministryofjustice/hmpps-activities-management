@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import StartJourneyRoutes from './handlers/startJourney'
@@ -10,9 +9,9 @@ import ConfirmationRoutes from './handlers/confirmation'
 export default function Index({ activitiesService, prisonService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('createJourney', stepRequiresSession), asyncMiddleware(handler))
+    router.get(path, emptyJourneyHandler('createJourney', stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const startHandler = new StartJourneyRoutes(metricsService)
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService, prisonService, metricsService)

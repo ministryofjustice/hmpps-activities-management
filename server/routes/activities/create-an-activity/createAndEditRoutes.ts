@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import CategoryRoutes, { Category } from './handlers/category'
@@ -47,9 +46,9 @@ export default function Index({
 }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('createJourney', stepRequiresSession), asyncMiddleware(handler))
+    router.get(path, emptyJourneyHandler('createJourney', stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const categoryHandler = new CategoryRoutes(activitiesService)
   const nameHandler = new NameRoutes(activitiesService)
