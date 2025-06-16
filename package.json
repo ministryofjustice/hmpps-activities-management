@@ -124,7 +124,8 @@
     "reflect-metadata": "^0.2.2",
     "superagent": "^10.2.1",
     "url-value-parser": "^2.2.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "brace-expansion": "^2.0.2"
   },
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
