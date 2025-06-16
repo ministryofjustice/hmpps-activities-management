@@ -19,6 +19,10 @@
             <h1 class="govuk-heading-l">{{ prisonerName }}'s activity allocations</h1>
             {{ miniProfile(prisonerProfile) }}
 
+            {% if locationStatus %}
+                <strong class="govuk-tag govuk-tag--grey no-max-width govuk-!-margin-top-7">{{ locationStatus }}</strong>
+            {% endif %}
+
             {% if hasNonAssociations %}
                 <div class="govuk-inset-text">
                     <a href="/activities/prisoner-allocations/{{ prisoner.prisonerNumber }}/non-associations" target="_blank">
@@ -30,7 +34,7 @@
     </div>
 
     {% set allocationsHtml %}
-        {% include 'partials/activities/allocation-dashboard/allocationsHtml.njk' %}
+    {% include 'partials/activities/allocation-dashboard/allocationsHtml.njk' %}
     {% endset %}
 
     {{ govukTabs({
