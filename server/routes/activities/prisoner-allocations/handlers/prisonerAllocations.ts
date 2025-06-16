@@ -36,10 +36,18 @@ export default class PrisonerAllocationsHandler {
       prisoner,
       hasNonAssociations,
       allocationsData,
+      locationStatus: getLocationStatus(prisoner),
     })
   }
 
   POST = async (req: Request, res: Response) => {
     res.redirect('/activities/prisoner-allocations')
   }
+}
+
+function getLocationStatus(prisonerData: Prisoner) {
+  if (prisonerData.status === 'ACTIVE OUT') {
+    return `Temporarily out from ${prisonerData.prisonName}`
+  }
+  return null
 }
