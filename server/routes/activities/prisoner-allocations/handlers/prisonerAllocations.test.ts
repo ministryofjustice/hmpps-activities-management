@@ -24,7 +24,8 @@ const mockPrisoner: Prisoner = {
   lastName: 'Bloggs',
   cellLocation: '1-2-001',
   prisonId: 'LEI',
-  status: 'ACTIVE IN',
+  status: 'ACTIVE OUT',
+  prisonName: 'Leicester Prison',
   lastMovementTypeCode: 'CRT',
   releaseDate: '2019-11-30',
   alerts: [{ alertType: 'R', alertCode: 'RLO', active: true, expired: false }],
@@ -98,6 +99,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
         prisoner: mockPrisoner,
         hasNonAssociations: false,
         allocationsData: allocations,
+        locationStatus: 'Temporarily out from Leicester Prison',
       })
     })
   })
