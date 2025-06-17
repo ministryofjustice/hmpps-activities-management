@@ -39,6 +39,8 @@ export default class CourtBookingService {
       videoLinkUrl: journey.videoLinkUrl,
       notesForStaff: journey.notesForStaff,
       notesForPrisoners: journey.notesForPrisoners,
+      hmctsNumber: journey.hmctsNumber,
+      guestPin: journey.guestPin,
     } as T
   }
 

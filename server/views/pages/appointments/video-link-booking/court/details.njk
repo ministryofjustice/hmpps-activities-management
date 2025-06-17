@@ -7,6 +7,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
+{% from "partials/video-link-booking/formatCvpLink.njk" import formatCvpLink %}
 
 {% set pageId = 'video-booking-details-page' %}
 {% set hardBackLinkText = 'Go to Appointments Dashboard' %}
@@ -175,7 +176,24 @@
                             text: "Court hearing link"
                         },
                         value: {
-                            text: videoBooking.videoLinkUrl or "Not entered"
+                            text: formatCvpLink(videoBooking.hmctsNumber, videoBooking.videoLinkUrl, bvlsHmctsLinkGuestPinEnabled)
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/court-hearing-link',
+                                    text: "Change",
+                                    classes: "govuk-link--no-visited-state"
+                                }
+                            ]
+                        } if isAmendable
+                    },
+                    {
+                        key: {
+                            text: "Guest pin"
+                        },
+                        value: {
+                            text: videoBooking.guestPin or "Not entered"
                         },
                         actions: {
                             items: [

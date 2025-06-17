@@ -40,6 +40,8 @@ describe('Court booking service', () => {
         videoLinkUrl: 'videoLinkUrl',
         notesForStaff: 'notes for staff',
         notesForPrisoners: 'notes for prisoners',
+        hmctsNumber: '54321',
+        guestPin: 'A9A476',
       } as BookACourtHearingJourney
 
       const expectedBody = {
@@ -65,6 +67,8 @@ describe('Court booking service', () => {
         videoLinkUrl: 'videoLinkUrl',
         notesForStaff: 'notes for staff',
         notesForPrisoners: 'notes for prisoners',
+        hmctsNumber: '54321',
+        guestPin: 'A9A476',
       }
 
       const result = await courtBookingService.createVideoLinkBooking(journey, user)

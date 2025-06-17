@@ -87,6 +87,7 @@ import { WaitingListStatus } from '../enum/waitingListStatus'
 import logger from '../../logger'
 import LocationType from '../enum/locationType'
 import HowToAddOptions from '../enum/allocations'
+import { toFullCourtLink } from '../routes/appointments/video-link-booking/utils/utils'
 
 export default function nunjucksSetup(app: express.Express, { applicationInfo }: Services): Router {
   const router = express.Router()
@@ -261,6 +262,10 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('DeallocateAfterAllocationDateOption', DeallocateAfterAllocationDateOption)
   njkEnv.addGlobal('HowToAddOptions', HowToAddOptions)
   njkEnv.addGlobal('bvlsMasterPublicPrivateNotesEnabled', config.bvlsMasterPublicPrivateNotesEnabled)
+  njkEnv.addGlobal('bvlsHmctsLinkGuestPinEnabled', config.bvlsHmctsLinkGuestPinEnabled)
+  // Default base URLs for court meeting links
+  njkEnv.addGlobal('defaultCourtVideoUrl', config.defaultCourtVideoUrl)
+  njkEnv.addFilter('toFullCourtLink', toFullCourtLink)
 
   // Date picker
   njkEnv.addFilter('parseIsoDate', parseIsoDate)

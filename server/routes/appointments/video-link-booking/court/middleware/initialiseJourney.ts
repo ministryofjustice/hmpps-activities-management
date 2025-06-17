@@ -93,6 +93,8 @@ export default ({
       videoLinkUrl: booking.videoLinkUrl,
       notesForStaff: booking.notesForStaff,
       notesForPrisoners: booking.notesForPrisoners,
+      hmctsNumber: booking.hmctsNumber,
+      guestPin: booking.guestPin,
     }
 
     return next()

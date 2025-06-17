@@ -3,6 +3,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/video-link-booking/formatCvpLink.njk" import formatCvpLink %}
 
 {% set pageTitle = "Check and confirm appointment details" %}
 {% set pageId = 'appointment-check-answers-page' %}
@@ -83,7 +84,7 @@
                                 text: "Court hearing link"
                             },
                             value: {
-                                text: session.bookACourtHearingJourney.videoLinkUrl or "Not entered"
+                                text: formatCvpLink(session.bookACourtHearingJourney.hmcstNumber, session.bookACourtHearingJourney.videoLinkUrl, bvlsHmctsLinkGuestPinEnabled)
                             },
                             actions: {
                                 items: [
@@ -91,6 +92,24 @@
                                         href: "court-hearing-link?preserveHistory=true",
                                         text: "Change",
                                         visuallyHiddenText: "change court video link",
+                                        classes: "govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Guest pin"
+                            },
+                            value: {
+                                text: session.bookACourtHearingJourney.guestPin or "Not entered"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "court-hearing-link?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change guestPin",
                                         classes: "govuk-link--no-visited-state"
                                     }
                                 ]

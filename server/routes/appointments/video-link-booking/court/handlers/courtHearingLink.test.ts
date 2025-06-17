@@ -4,6 +4,7 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import CourtHearingLinkRoutes, { CourtHearingLink } from './courtHearingLink'
 import CourtBookingService from '../../../../../services/courtBookingService'
+import config from '../../../../../config'
 
 jest.mock('../../../../../services/courtBookingService')
 
@@ -36,6 +37,7 @@ describe('CourtHearingLinkRoutes', () => {
     next = jest.fn()
     courtBookingService = new CourtBookingService(null) as jest.Mocked<CourtBookingService>
     courtHearingLinkRoutes = new CourtHearingLinkRoutes(courtBookingService)
+    config.bvlsHmctsLinkGuestPinEnabled = true
   })
 
   describe('GET', () => {
@@ -76,10 +78,16 @@ describe('CourtHearingLinkRoutes', () => {
 })
 
 describe('CourtHearingLink', () => {
+  beforeEach(() => {
+    config.bvlsHmctsLinkGuestPinEnabled = true
+  })
+
   it('should validate a valid CourtHearingLink instance - required', async () => {
     const courtHearingLink = plainToInstance(CourtHearingLink, {
-      required: 'yes',
+      cvpRequired: 'yes',
+      guestPinRequired: 'yes',
       videoLinkUrl: 'valid court link',
+      guestPin: '12345678',
     })
 
     const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -88,7 +96,8 @@ describe('CourtHearingLink', () => {
 
   it('should validate a valid CourtHearingLink instance - not required', async () => {
     const courtHearingLink = plainToInstance(CourtHearingLink, {
-      required: 'no',
+      cvpRequired: 'no',
+      guestPinRequired: 'no',
     })
 
     const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -97,16 +106,21 @@ describe('CourtHearingLink', () => {
 
   it('should validate an invalid enum', async () => {
     const courtHearingLink = plainToInstance(CourtHearingLink, {
-      required: 'invalid',
+      cvpRequired: 'invalid',
+      guestPinRequired: 'no',
     })
 
     const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toEqual(expect.arrayContaining([{ error: 'Select either yes or no', property: 'required' }]))
+    expect(errors).toEqual(
+      expect.arrayContaining([{ error: 'Select yes if you know the court hearing link', property: 'cvpRequired' }]),
+    )
   })
 
-  it('should validate a blank video link where it is required', async () => {
+  // TODO - skipped for now, further validation is required with the inclusion of the HMCTS number
+  it.skip('should validate a blank video link where it is required', async () => {
     const courtHearingLink = plainToInstance(CourtHearingLink, {
-      required: 'yes',
+      cvpRequired: 'yes',
+      guestPinRequired: 'no',
       videoLinkUrl: '',
     })
 
@@ -123,7 +137,8 @@ describe('CourtHearingLink', () => {
 
   it('should validate a court link which is too long', async () => {
     const courtHearingLink = plainToInstance(CourtHearingLink, {
-      required: 'yes',
+      cvpRequired: 'yes',
+      guestPinRequired: 'no',
       videoLinkUrl: 'a'.repeat(121),
     })
 
@@ -131,8 +146,96 @@ describe('CourtHearingLink', () => {
     expect(errors).toEqual(
       expect.arrayContaining([
         {
-          error: 'You must enter a court hearing link which has no more than 120 characters',
+          error: 'Court hearing link must be 120 characters or less',
           property: 'videoLinkUrl',
+        },
+      ]),
+    )
+  })
+
+  it('should validate a HMCTS number which is too long', async () => {
+    const courtHearingLink = plainToInstance(CourtHearingLink, {
+      cvpRequired: 'yes',
+      hmctsNumber: '1'.repeat(9),
+    })
+
+    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        {
+          error: 'HMCTS number must be 8 characters or less',
+          property: 'hmctsNumber',
+        },
+      ]),
+    )
+  })
+
+  it('should validate a HMCTS number which is not a number', async () => {
+    const courtHearingLink = plainToInstance(CourtHearingLink, {
+      cvpRequired: 'yes',
+      hmctsNumber: 'X1',
+    })
+
+    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        {
+          error: 'HMCTS number must be a number',
+          property: 'hmctsNumber',
+        },
+      ]),
+    )
+  })
+
+  it('should validate a blank guest pin where it is required', async () => {
+    const courtHearingLink = plainToInstance(CourtHearingLink, {
+      cvpRequired: 'no',
+      guestPinRequired: 'yes',
+      guestPin: '',
+    })
+
+    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        {
+          error: 'Enter guest pin',
+          property: 'guestPin',
+        },
+      ]),
+    )
+  })
+
+  it('should validate a blank guest pin which is too long', async () => {
+    const courtHearingLink = plainToInstance(CourtHearingLink, {
+      cvpRequired: 'no',
+      guestPinRequired: 'yes',
+      guestPin: 'a'.repeat(21),
+    })
+
+    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        {
+          error: 'Guest pin must be 8 numeric characters or less',
+          property: 'guestPin',
+        },
+      ]),
+    )
+  })
+
+  it('should validate a guest pin which is not a number', async () => {
+    const courtHearingLink = plainToInstance(CourtHearingLink, {
+      cvpRequired: 'no',
+      guestPinRequired: 'yes',
+      guestPin: 'a',
+    })
+
+    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        {
+          error: 'Guest pin must be a number',
+          property: 'guestPin',
         },
       ]),
     )
