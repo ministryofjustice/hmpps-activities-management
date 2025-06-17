@@ -83,11 +83,11 @@ describe('Route Handlers - Create Appointment - Repeat Frequency and Count', () 
 
       await handler.POST(req, res)
 
-      expect(res.validationFailed).toBeCalledWith(
+      expect(res.validationFailed).toHaveBeenCalledWith(
         'numberOfAppointments',
         `You cannot schedule more than ${maxAllowedAppointmentInstances} appointments for this number of attendees.`,
       )
-      expect(res.redirectOrReturn).toBeCalledTimes(0)
+      expect(res.redirectOrReturn).toHaveBeenCalledTimes(0)
     })
   })
 

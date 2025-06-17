@@ -26,7 +26,7 @@ describe('insertJourneyIdentifier', () => {
 
     middleware(req, res, next)
 
-    expect(res.redirect).toBeCalledWith(
+    expect(res.redirect).toHaveBeenCalledWith(
       expect.stringMatching(
         /\/activities\/attendance-summary\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/select-period/,
       ),
@@ -40,6 +40,6 @@ describe('insertJourneyIdentifier', () => {
 
     middleware(req, res, next)
 
-    expect(next).toBeCalled()
+    expect(next).toHaveBeenCalled()
   })
 })

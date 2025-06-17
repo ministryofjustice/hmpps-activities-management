@@ -44,7 +44,7 @@ describe('Route Handlers - Create an activity - Schedule frequency', () => {
       await handler.POST(req, res)
 
       expect(req.session.createJourney.scheduleWeeks).toEqual(1)
-      expect(res.redirect).toBeCalledWith('days-and-times/1')
+      expect(res.redirect).toHaveBeenCalledWith('days-and-times/1')
     })
 
     it('should remove invalid slots', async () => {

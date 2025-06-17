@@ -39,7 +39,7 @@ describe('populateCurrentUser', () => {
       displayName: 'Joe Bloggs',
       authSource: 'nomis',
     })
-    expect(next).toBeCalled()
+    expect(next).toHaveBeenCalled()
   })
 
   it('should throw 403 http response if user is not a prison user', async () => {
@@ -47,7 +47,7 @@ describe('populateCurrentUser', () => {
 
     await middleware(req, res, next)
 
-    expect(next).toBeCalledWith(createHttpError.Forbidden())
+    expect(next).toHaveBeenCalledWith(createHttpError.Forbidden())
   })
 
   it('should catch error from user service and persist it to next', async () => {
@@ -55,6 +55,6 @@ describe('populateCurrentUser', () => {
 
     await middleware(req, res, next)
 
-    expect(next).toBeCalledWith(new Error('Some error'))
+    expect(next).toHaveBeenCalledWith(new Error('Some error'))
   })
 })

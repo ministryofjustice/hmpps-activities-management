@@ -153,7 +153,7 @@ describe('initialiseEditJourney', () => {
       earliestAllocationStartDate: allocation1.startDate,
     })
 
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it('it should skip initialisation if session object already set', async () => {
@@ -161,12 +161,12 @@ describe('initialiseEditJourney', () => {
 
     await middleware(req, res, next)
 
-    expect(activitiesService.getActivity).toBeCalledTimes(0)
+    expect(activitiesService.getActivity).toHaveBeenCalledTimes(0)
 
     expect(req.session.createJourney).toEqual({
       activityId: 1,
     })
 
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 })

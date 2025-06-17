@@ -46,7 +46,7 @@ describe('fetchAppointmentSet', () => {
     await middleware(req, res, next)
 
     expect(req.appointmentSet).toEqual(appointmentSetDetails)
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it('should not retrieve appointment set if already on request', async () => {
@@ -58,9 +58,9 @@ describe('fetchAppointmentSet', () => {
 
     await middleware(req, res, next)
 
-    expect(activitiesServiceMock.getAppointmentSetDetails).not.toBeCalled()
+    expect(activitiesServiceMock.getAppointmentSetDetails).not.toHaveBeenCalled()
     expect(req.appointmentSet).toEqual(appointmentSetDetails)
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it('should catch errors while retrieving appointment set and pass to next', async () => {
@@ -70,6 +70,6 @@ describe('fetchAppointmentSet', () => {
 
     await middleware(req, res, next)
 
-    expect(next).toBeCalledWith(new Error('Some error'))
+    expect(next).toHaveBeenCalledWith(new Error('Some error'))
   })
 })

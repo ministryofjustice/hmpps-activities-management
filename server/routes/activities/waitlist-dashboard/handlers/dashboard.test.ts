@@ -111,7 +111,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
 
       await handler.GET(req, res)
 
-      expect(prisonService.searchPrisonInmates).toBeCalledTimes(0)
+      expect(prisonService.searchPrisonInmates).toHaveBeenCalledTimes(0)
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/waitlist-dashboard/dashboard',
         expect.objectContaining({
@@ -174,7 +174,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
 
       await handler.GET(req, res)
 
-      expect(prisonService.searchInmatesByPrisonerNumbers).toBeCalledTimes(0)
+      expect(prisonService.searchInmatesByPrisonerNumbers).toHaveBeenCalledTimes(0)
 
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/waitlist-dashboard/dashboard',
@@ -251,7 +251,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
 
       await handler.ALLOCATE(req, res)
 
-      expect(res.redirect).toBeCalledWith(
+      expect(res.redirect).toHaveBeenCalledWith(
         `/activities/allocations/create/prisoner/ABC1234` +
           `?scheduleId=2` +
           `&source=waitlist-dashboard` +

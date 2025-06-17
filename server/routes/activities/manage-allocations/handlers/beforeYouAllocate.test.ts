@@ -146,7 +146,7 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
 
       await handler.GET(req, res)
 
-      expect(res.render).toBeCalledWith('pages/activities/manage-allocations/before-you-allocate', {
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/before-you-allocate', {
         allocationSuitability,
         caseload: 'Moorland (HMP & YOI)',
         nonAssociations,

@@ -15,7 +15,7 @@
     "lint": "eslint . --cache --max-warnings 0",
     "lint:fix": "eslint . --cache --max-warnings 0 --fix",
     "typecheck": "tsc && tsc -p integration_tests",
-    "test": "NODE_ENV=unit-test TZ=utc NODE_OPTIONS=--experimental-vm-modules jest --runInBand --detectOpenHandles --collectCoverage=true --testPathPattern='(server|frontend)/.*'",
+    "test": "NODE_ENV=unit-test TZ=utc NODE_OPTIONS=--experimental-vm-modules jest --runInBand --detectOpenHandles --collectCoverage=true --testPathPatterns='(server|frontend)/.*'",
     "security_audit": "better-npm-audit audit",
     "int-test": "cypress run --config video=false",
     "int-test-ui": "cypress open --config watchForFileChanges=false",
@@ -52,12 +52,6 @@
         "jest-junit",
         {
           "outputDirectory": "test_results/jest/"
-        }
-      ],
-      [
-        "./node_modules/jest-html-reporter",
-        {
-          "outputPath": "test_results/unit-test-reports.html"
         }
       ]
     ],
@@ -170,7 +164,6 @@
     "husky": "^9.1.7",
     "jest": "^30.0.0",
     "jest-date": "^1.1.6",
-    "jest-html-reporter": "^4.1.0",
     "jest-junit": "^16.0.0",
     "jest-when": "^3.7.0",
     "jsonwebtoken": "^9.0.2",

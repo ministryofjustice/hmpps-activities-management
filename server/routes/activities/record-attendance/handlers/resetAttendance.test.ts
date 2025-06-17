@@ -138,7 +138,7 @@ describe('Route Handlers - Reset Attendance', () => {
 
           await handler.POST(req, res)
 
-          expect(activitiesService.updateAttendances).toBeCalledTimes(0)
+          expect(activitiesService.updateAttendances).toHaveBeenCalledTimes(0)
           expect(res.redirect).toHaveBeenCalledWith(`../../../${url}`)
         },
       )

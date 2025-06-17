@@ -76,8 +76,8 @@ describe('abstractHmppsRestClient', () => {
       await client.testRequest(user)
 
       expect(nock.isDone()).toBe(true)
-      expect(tokenStoreSpy.getToken).toBeCalledTimes(1)
-      expect(tokenStoreSpy.getToken).toBeCalledWith('user-name')
+      expect(tokenStoreSpy.getToken).toHaveBeenCalledTimes(1)
+      expect(tokenStoreSpy.getToken).toHaveBeenCalledWith('user-name')
     })
 
     it('should generate a token using the username', async () => {
@@ -94,10 +94,10 @@ describe('abstractHmppsRestClient', () => {
       await client.testRequest(user)
 
       expect(nock.isDone()).toBe(true)
-      expect(tokenStoreSpy.getToken).toBeCalledTimes(1)
-      expect(tokenStoreSpy.getToken).toBeCalledWith('user-name')
-      expect(tokenStoreSpy.setToken).toBeCalledTimes(1)
-      expect(tokenStoreSpy.setToken).toBeCalledWith('user-name', 'accessToken', 2940)
+      expect(tokenStoreSpy.getToken).toHaveBeenCalledTimes(1)
+      expect(tokenStoreSpy.getToken).toHaveBeenCalledWith('user-name')
+      expect(tokenStoreSpy.setToken).toHaveBeenCalledTimes(1)
+      expect(tokenStoreSpy.setToken).toHaveBeenCalledWith('user-name', 'accessToken', 2940)
     })
   })
 
@@ -111,8 +111,8 @@ describe('abstractHmppsRestClient', () => {
       await client.testRequest()
 
       expect(nock.isDone()).toBe(true)
-      expect(tokenStoreSpy.getToken).toBeCalledTimes(1)
-      expect(tokenStoreSpy.getToken).toBeCalledWith('%ANONYMOUS%')
+      expect(tokenStoreSpy.getToken).toHaveBeenCalledTimes(1)
+      expect(tokenStoreSpy.getToken).toHaveBeenCalledWith('%ANONYMOUS%')
     })
 
     it('should generate a token using the username', async () => {
@@ -129,10 +129,10 @@ describe('abstractHmppsRestClient', () => {
       await client.testRequest()
 
       expect(nock.isDone()).toBe(true)
-      expect(tokenStoreSpy.getToken).toBeCalledTimes(1)
-      expect(tokenStoreSpy.getToken).toBeCalledWith('%ANONYMOUS%')
-      expect(tokenStoreSpy.setToken).toBeCalledTimes(1)
-      expect(tokenStoreSpy.setToken).toBeCalledWith('%ANONYMOUS%', 'accessToken', 2940)
+      expect(tokenStoreSpy.getToken).toHaveBeenCalledTimes(1)
+      expect(tokenStoreSpy.getToken).toHaveBeenCalledWith('%ANONYMOUS%')
+      expect(tokenStoreSpy.setToken).toHaveBeenCalledTimes(1)
+      expect(tokenStoreSpy.setToken).toHaveBeenCalledWith('%ANONYMOUS%', 'accessToken', 2940)
     })
   })
 

@@ -130,7 +130,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
         howToAdd: 'SEARCH',
       }
       await handler.POST(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('review-non-associations')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('review-non-associations')
     })
 
     it('should redirect or return to name page during copy', async () => {
@@ -139,7 +139,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
         howToAdd: 'SEARCH',
       }
       await handler.POST(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('date-and-time')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('date-and-time')
     })
 
     it('should populate return to with schedule', async () => {
@@ -153,7 +153,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
     it('should redirect to the non-assocaitions page', async () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       await handler.EDIT(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('review-non-associations')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('review-non-associations')
     })
   })
 
@@ -191,7 +191,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
           status: '',
         },
       ])
-      expect(res.redirect).toBeCalledWith('../../review-prisoners-alerts')
+      expect(res.redirect).toHaveBeenCalledWith('../../review-prisoners-alerts')
     })
 
     it('should remove appointment and redirect back to GET', async () => {
@@ -234,7 +234,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
           },
         },
       ])
-      expect(res.redirect).toBeCalledWith('../../review-prisoners-alerts')
+      expect(res.redirect).toHaveBeenCalledWith('../../review-prisoners-alerts')
     })
 
     it('should redirect back to GET with preserve history', async () => {
@@ -244,7 +244,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
         prisonNumber: 'B2345CD',
       }
       await handler.REMOVE(req, res)
-      expect(res.redirect).toBeCalledWith('../../review-prisoners-alerts?preserveHistory=true')
+      expect(res.redirect).toHaveBeenCalledWith('../../review-prisoners-alerts?preserveHistory=true')
     })
   })
 })

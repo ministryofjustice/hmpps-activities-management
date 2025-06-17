@@ -66,7 +66,7 @@ describe('Route Handlers - Cancel Session Confirmation', () => {
     it('should cancel scheduled activity', async () => {
       await handler.POST(confirmRequest, res)
 
-      expect(activitiesService.cancelScheduledActivity).toBeCalledWith(
+      expect(activitiesService.cancelScheduledActivity).toHaveBeenCalledWith(
         1,
         {
           reason: 'Staff unavailable',

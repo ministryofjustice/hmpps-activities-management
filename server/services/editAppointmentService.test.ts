@@ -128,7 +128,7 @@ describe('Edit Appointment Service', () => {
       await service.redirectOrEdit(req, res, '')
 
       expect(activitiesService.editAppointment).not.toHaveBeenCalled()
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
           .addProperty('journeyId', journeyId)
           .addProperty('appointmentId', appointmentId)
@@ -165,7 +165,7 @@ describe('Edit Appointment Service', () => {
         { internalLocationId: 2, applyTo: AppointmentApplyTo.THIS_APPOINTMENT } as AppointmentUpdateRequest,
         res.locals.user,
       )
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
           .addProperty('journeyId', journeyId)
           .addProperty('appointmentId', appointmentId)
@@ -218,7 +218,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -246,7 +246,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -278,7 +278,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -322,7 +322,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -355,7 +355,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -385,7 +385,7 @@ describe('Edit Appointment Service', () => {
           { internalLocationId: 2, applyTo: AppointmentApplyTo.THIS_APPOINTMENT } as AppointmentUpdateRequest,
           res.locals.user,
         )
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -419,7 +419,7 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -457,7 +457,7 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -495,7 +495,7 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -534,7 +534,7 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -578,7 +578,7 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -618,7 +618,7 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -658,7 +658,7 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -704,7 +704,7 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -738,7 +738,7 @@ describe('Edit Appointment Service', () => {
           } as AppointmentUpdateRequest,
           res.locals.user,
         )
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -768,7 +768,7 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -796,7 +796,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -822,7 +822,7 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -846,7 +846,7 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -891,7 +891,7 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.THIS_AND_ALL_FUTURE_APPOINTMENTS)
 
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -921,7 +921,7 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -949,7 +949,7 @@ describe('Edit Appointment Service', () => {
           res.locals.user,
         )
         expect(activitiesService.editAppointment).not.toHaveBeenCalled()
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -975,7 +975,7 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -999,7 +999,7 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -1040,7 +1040,7 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -1085,7 +1085,7 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
@@ -1125,7 +1125,7 @@ describe('Edit Appointment Service', () => {
 
         await service.edit(req, res, AppointmentApplyTo.ALL_FUTURE_APPOINTMENTS)
 
-        expect(metricsService.trackEvent).toBeCalledWith(
+        expect(metricsService.trackEvent).toHaveBeenCalledWith(
           new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
             .addProperty('journeyId', journeyId)
             .addProperty('appointmentId', appointmentId)
