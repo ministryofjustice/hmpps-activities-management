@@ -71,7 +71,7 @@
                         {
                             value: 'yes',
                             text: "Yes",
-                            checked: formResponses.required == 'yes' or (session.bookACourtHearingJourney.videoLinkUrl or session.bookACourtHearingJourney.hmctsNumber),
+                            checked: formResponses.cvpRequired == 'yes' or (session.bookACourtHearingJourney.videoLinkUrl or session.bookACourtHearingJourney.hmctsNumber),
                             conditional: {
                                 html: courtHearingLinkHtml
                             }
@@ -79,7 +79,7 @@
                         {
                             value: 'no',
                             text: "No",
-                            checked: formResponses.required == 'no' or session.journey.bookACourtHearingJourney.cvpRequired == false or (not session.bookACourtHearingJourney.videoLinkUrl and not session.bookACourtHearingJourney.hmctsNumber and (session.req.params.mode == 'amend' or session.req.query.preserveHistory == 'true') and not formResponses)
+                            checked: formResponses.cvpRequired == 'no' or session.journey.bookACourtHearingJourney.cvpRequired == false or (not session.bookACourtHearingJourney.videoLinkUrl and not session.bookACourtHearingJourney.hmctsNumber and (session.req.params.mode == 'amend' or session.req.query.preserveHistory == 'true') and not formResponses)
                         }
                     ]
                 }) }}
@@ -114,7 +114,7 @@
                         {
                             value: 'yes',
                             text: "Yes",
-                            checked: formResponses.required == 'yes' or (session.bookACourtHearingJourney.guestPin),
+                            checked: formResponses.guestPinRequired == 'yes' or (session.bookACourtHearingJourney.guestPin),
                             conditional: {
                                 html: guestPinHtml
                             }
@@ -122,7 +122,7 @@
                         {
                             value: 'no',
                             text: "No",
-                            checked: formResponses.required == 'no' or session.journey.bookACourtHearingJourney.guestPinRequired == false or (not session.bookACourtHearingJourney.guestPin and (session.req.params.mode == 'amend' or session.req.query.preserveHistory == 'true') and not formResponses)
+                            checked: formResponses.guestPinRequired == 'no' or session.journey.bookACourtHearingJourney.guestPinRequired == false or (not session.bookACourtHearingJourney.guestPin and (session.req.params.mode == 'amend' or session.req.query.preserveHistory == 'true') and not formResponses)
                         }
                     ]
                 }) }}

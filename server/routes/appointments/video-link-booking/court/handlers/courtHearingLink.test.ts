@@ -163,7 +163,7 @@ describe('CourtHearingLink', () => {
     expect(errors).toEqual(
       expect.arrayContaining([
         {
-          error: 'HMCTS number must be 8 characters or less',
+          error: 'Number from CVP address must be 8 characters or less',
           property: 'hmctsNumber',
         },
       ]),
@@ -180,7 +180,7 @@ describe('CourtHearingLink', () => {
     expect(errors).toEqual(
       expect.arrayContaining([
         {
-          error: 'HMCTS number must be a number',
+          error: 'Number from CVP address must be a number, like 3457',
           property: 'hmctsNumber',
         },
       ]),
@@ -209,14 +209,14 @@ describe('CourtHearingLink', () => {
     const courtHearingLink = plainToInstance(CourtHearingLink, {
       cvpRequired: 'no',
       guestPinRequired: 'yes',
-      guestPin: 'a'.repeat(21),
+      guestPin: '1'.repeat(21),
     })
 
     const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
     expect(errors).toEqual(
       expect.arrayContaining([
         {
-          error: 'Guest pin must be 8 numeric characters or less',
+          error: 'Guest pin must be 8 characters or less',
           property: 'guestPin',
         },
       ]),
