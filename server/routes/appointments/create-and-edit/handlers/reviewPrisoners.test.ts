@@ -327,7 +327,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 1 } as PrisonerAlertResults))
 
         await handler.POST(req, res)
-        expect(res.redirectOrReturn).toBeCalledWith('review-prisoners-alerts')
+        expect(res.redirectOrReturn).toHaveBeenCalledWith('review-prisoners-alerts')
       },
     )
 
@@ -337,7 +337,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
 
       await handler.POST(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('name')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('name')
     })
 
     it('should redirect or return to name page when there are no alerts when mode is COPY', async () => {
@@ -348,7 +348,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
 
       await handler.POST(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('date-and-time')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('date-and-time')
     })
 
     it('should populate return to with schedule', async () => {
@@ -388,7 +388,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
       await handler.EDIT(req, res)
 
-      expect(res.redirect).toBeCalledWith('review-prisoners-alerts')
+      expect(res.redirect).toHaveBeenCalledWith('review-prisoners-alerts')
     })
 
     it('should redirect to the alerts page if there are no alerts', async () => {
@@ -398,7 +398,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
       await handler.EDIT(req, res)
 
-      expect(res.redirect).toBeCalledWith('../../schedule')
+      expect(res.redirect).toHaveBeenCalledWith('../../schedule')
     })
   })
 
@@ -436,7 +436,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           status: '',
         },
       ])
-      expect(res.redirect).toBeCalledWith('../../review-prisoners')
+      expect(res.redirect).toHaveBeenCalledWith('../../review-prisoners')
     })
 
     it('should remove appointment and redirect back to GET', async () => {
@@ -479,7 +479,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
           },
         },
       ])
-      expect(res.redirect).toBeCalledWith('../../review-prisoners')
+      expect(res.redirect).toHaveBeenCalledWith('../../review-prisoners')
     })
 
     it('should redirect back to GET with preserve history', async () => {
@@ -489,7 +489,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         prisonNumber: 'B2345CD',
       }
       await handler.REMOVE(req, res)
-      expect(res.redirect).toBeCalledWith('../../review-prisoners?preserveHistory=true')
+      expect(res.redirect).toHaveBeenCalledWith('../../review-prisoners?preserveHistory=true')
     })
   })
 })

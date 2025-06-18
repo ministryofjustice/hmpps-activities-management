@@ -33,7 +33,7 @@ describe('Route Handlers - Duplicate Appointment - No Attendees', () => {
     it('should redirect to how to add prisoners page when user click continue', async () => {
       await handler.POST(req, res)
 
-      expect(res.redirect).toBeCalledWith('how-to-add-prisoners')
+      expect(res.redirect).toHaveBeenCalledWith('how-to-add-prisoners')
     })
   })
 })

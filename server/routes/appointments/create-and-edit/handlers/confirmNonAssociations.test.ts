@@ -105,7 +105,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
   describe('POST', () => {
     it('should redirect or return to the confirm non-associations page during create journey - if user has not resolved any non-associations', async () => {
       await handler.POST(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('name')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('name')
     })
   })
 })

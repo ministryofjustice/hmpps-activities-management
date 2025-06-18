@@ -793,6 +793,6 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
 
     await handler.POST(req, res)
 
-    expect(res.addValidationError).toBeCalledTimes(0)
+    expect(res.addValidationError).toHaveBeenCalledTimes(0)
   })
 })

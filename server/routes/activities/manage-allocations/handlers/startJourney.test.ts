@@ -128,7 +128,7 @@ describe('Route Handlers - Allocate - Start', () => {
           id: 123,
         },
       })
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.CREATE_ALLOCATION_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
       )
       expect(res.redirect).toHaveBeenCalledWith('../before-you-allocate')

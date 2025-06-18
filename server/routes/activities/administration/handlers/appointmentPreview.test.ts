@@ -101,7 +101,7 @@ describe('Route Handlers - Change Regime times', () => {
 
       await handler.POST(req, res)
 
-      expect(activitiesService.deleteMigratedAppointments).toBeCalledTimes(2)
+      expect(activitiesService.deleteMigratedAppointments).toHaveBeenCalledTimes(2)
 
       expect(activitiesService.deleteMigratedAppointments).toHaveBeenCalledWith(
         'RSI',

@@ -21,7 +21,7 @@ describe('appointmentsStartNewJourney', () => {
 
     middleware(req, res)
 
-    expect(res.redirect).toBeCalledWith(
+    expect(res.redirect).toHaveBeenCalledWith(
       expect.stringMatching(
         /\/appointments\/create\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/start-group/,
       ),
@@ -34,7 +34,7 @@ describe('appointmentsStartNewJourney', () => {
 
     middleware(req, res)
 
-    expect(res.redirect).toBeCalledWith(
+    expect(res.redirect).toHaveBeenCalledWith(
       expect.stringMatching(
         /\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/appointments\/create\/start-group/,
       ),
@@ -47,7 +47,7 @@ describe('appointmentsStartNewJourney', () => {
 
     middleware(req, res)
 
-    expect(res.redirect).toBeCalledWith('/appointments/create/start-group')
+    expect(res.redirect).toHaveBeenCalledWith('/appointments/create/start-group')
   })
 
   it('should redirect to original url without adding a journey id if url segment undefined', async () => {
@@ -56,7 +56,7 @@ describe('appointmentsStartNewJourney', () => {
 
     middleware(req, res)
 
-    expect(res.redirect).toBeCalledWith('/appointments/create/start-group')
+    expect(res.redirect).toHaveBeenCalledWith('/appointments/create/start-group')
   })
 
   it('should redirect to original url without adding a journey id if url segment null', async () => {
@@ -65,7 +65,7 @@ describe('appointmentsStartNewJourney', () => {
 
     middleware(req, res)
 
-    expect(res.redirect).toBeCalledWith('/appointments/create/start-group')
+    expect(res.redirect).toHaveBeenCalledWith('/appointments/create/start-group')
   })
 
   it('should redirect to original url without adding a journey id if url segment empty', async () => {
@@ -74,6 +74,6 @@ describe('appointmentsStartNewJourney', () => {
 
     middleware(req, res)
 
-    expect(res.redirect).toBeCalledWith('/appointments/create/start-group')
+    expect(res.redirect).toHaveBeenCalledWith('/appointments/create/start-group')
   })
 })

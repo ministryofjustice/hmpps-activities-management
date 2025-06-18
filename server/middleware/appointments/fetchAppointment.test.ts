@@ -56,7 +56,7 @@ describe('fetchAppointment', () => {
     await middleware(req, res, next)
 
     expect(req.appointment).toEqual(appointmentDetails)
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it('should order attendee list by lastname, firstname', async () => {
@@ -111,7 +111,7 @@ describe('fetchAppointment', () => {
         },
       ],
     })
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it('should catch errors while retrieving appointment and pass to next', async () => {
@@ -121,6 +121,6 @@ describe('fetchAppointment', () => {
 
     await middleware(req, res, next)
 
-    expect(next).toBeCalledWith(new Error('Some error'))
+    expect(next).toHaveBeenCalledWith(new Error('Some error'))
   })
 })

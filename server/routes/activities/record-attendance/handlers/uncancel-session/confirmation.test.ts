@@ -61,7 +61,7 @@ describe('Route Handlers - Uncancel Session Confirmation', () => {
     it('should uncancel scheduled activity', async () => {
       await handler.POST(confirmRequest, res)
 
-      expect(activitiesService.uncancelScheduledActivity).toBeCalledWith(1, {
+      expect(activitiesService.uncancelScheduledActivity).toHaveBeenCalledWith(1, {
         username: 'joebloggs',
         firstName: 'Joe',
         lastName: 'Bloggs',

@@ -444,7 +444,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       await handler.REMOVE(req, res)
 
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
           req.session.appointmentJourney.mode,
           'remove-prisoner',
@@ -461,7 +461,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           status: 'ACTIVE IN',
         },
       ])
-      expect(res.redirect).toBeCalledWith('../../schedule')
+      expect(res.redirect).toHaveBeenCalledWith('../../schedule')
     })
 
     it('should remove prisoners when editing appointment and redirect back to GET', async () => {
@@ -486,7 +486,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       await handler.REMOVE(req, res)
 
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
           req.session.appointmentJourney.mode,
           'remove-prisoner',
@@ -504,7 +504,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           status: 'ACTIVE IN',
         },
       ])
-      expect(res.redirect).toBeCalledWith('../../schedule')
+      expect(res.redirect).toHaveBeenCalledWith('../../schedule')
     })
 
     it('should remove prisoner appointment from appointment set and redirect back to GET', async () => {
@@ -536,7 +536,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       await handler.REMOVE(req, res)
 
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
           req.session.appointmentJourney.mode,
           'remove-prisoner',
@@ -555,7 +555,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
           },
         },
       ])
-      expect(res.redirect).toBeCalledWith('../../schedule')
+      expect(res.redirect).toHaveBeenCalledWith('../../schedule')
     })
 
     it('should redirect back to GET with preserve history', async () => {
@@ -565,7 +565,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         prisonNumber: 'B2345CD',
       }
       await handler.REMOVE(req, res)
-      expect(res.redirect).toBeCalledWith('../../schedule?preserveHistory=true')
+      expect(res.redirect).toHaveBeenCalledWith('../../schedule?preserveHistory=true')
     })
   })
   describe('CHANGE', () => {
@@ -577,7 +577,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
       await handler.CHANGE(req, res)
 
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
           req.session.appointmentJourney.mode,
           'date-and-time',
@@ -585,7 +585,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         ),
       )
 
-      expect(res.redirect).toBeCalledWith('../date-and-time?preserveHistory=true')
+      expect(res.redirect).toHaveBeenCalledWith('../date-and-time?preserveHistory=true')
     })
   })
 })

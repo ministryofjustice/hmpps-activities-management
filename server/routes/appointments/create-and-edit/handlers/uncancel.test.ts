@@ -201,7 +201,7 @@ describe('Route Handlers - Uncancel an Appointment', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toBeCalledWith('apply-to')
+      expect(res.redirect).toHaveBeenCalledWith('apply-to')
     })
 
     it('should redirect to appointment screen when part of an appointment series and last appointment is being uncancelled', async () => {

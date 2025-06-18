@@ -73,7 +73,7 @@ describe('Prison Service', () => {
 
       const actualResult = await prisonService.searchInmatesByPrisonerNumbers(requestedPrisonerNumbers, user)
       expect(actualResult).toEqual([expectedResult, expectedResult].flat())
-      expect(prisonerSearchApiClient.searchByPrisonerNumbers).toBeCalledTimes(2)
+      expect(prisonerSearchApiClient.searchByPrisonerNumbers).toHaveBeenCalledTimes(2)
     })
 
     it('should not request duplicates multiple times', async () => {

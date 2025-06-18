@@ -58,7 +58,7 @@ describe('Route Handlers - Suspensions - Confirmation', () => {
   describe('GET', () => {
     it('should render page with data from session', async () => {
       await handler.GET(req, res)
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.SUSPEND_ALLOCATION_JOURNEY_COMPLETED(suspendJourney, res.locals.user).addJourneyCompletedMetrics(
           req,
         ),
@@ -68,7 +68,7 @@ describe('Route Handlers - Suspensions - Confirmation', () => {
 
     it('should record suspend journey complete in metrics', async () => {
       await handler.GET(req, res)
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.SUSPEND_ALLOCATION_JOURNEY_COMPLETED(suspendJourney, res.locals.user).addJourneyCompletedMetrics(
           req,
         ),

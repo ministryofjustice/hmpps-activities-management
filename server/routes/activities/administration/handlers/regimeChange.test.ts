@@ -3687,7 +3687,7 @@ describe('Route Handlers - Change Regime times', () => {
 
       await handler.POST(req, res)
 
-      expect(activitiesService.getActivity).toBeCalledTimes(3)
+      expect(activitiesService.getActivity).toHaveBeenCalledTimes(3)
 
       expect(activitiesService.updatePrisonRegime).toHaveBeenCalledWith(
         expectedRegimeTimes,
@@ -3696,7 +3696,7 @@ describe('Route Handlers - Change Regime times', () => {
       )
       expect(activitiesService.updateActivity).toHaveBeenCalledWith(401, { slots: slots1 }, res.locals.user)
       expect(activitiesService.updateActivity).toHaveBeenCalledWith(539, { slots: slots2 }, res.locals.user)
-      expect(activitiesService.updateActivity).toBeCalledTimes(2)
+      expect(activitiesService.updateActivity).toHaveBeenCalledTimes(2)
     })
   })
 
