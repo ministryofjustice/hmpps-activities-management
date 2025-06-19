@@ -53,7 +53,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
         howToAdd: 'SEARCH',
       }
       await handler.POST(req, res)
-      expect(res.redirect).toBeCalledWith('select-prisoner')
+      expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
     })
 
     it('should redirect to select prisoner page with preserve history', async () => {
@@ -62,7 +62,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
         howToAdd: 'SEARCH',
       }
       await handler.POST(req, res)
-      expect(res.redirect).toBeCalledWith('select-prisoner?preserveHistory=true')
+      expect(res.redirect).toHaveBeenCalledWith('select-prisoner?preserveHistory=true')
     })
 
     it('should redirect to upload by CSV page', async () => {
@@ -70,7 +70,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
         howToAdd: 'CSV',
       }
       await handler.POST(req, res)
-      expect(res.redirect).toBeCalledWith('upload-prisoner-list')
+      expect(res.redirect).toHaveBeenCalledWith('upload-prisoner-list')
     })
 
     it('should redirect to upload by CSV page with preserve history', async () => {
@@ -79,7 +79,7 @@ describe('Route Handlers - Create Appointment - How to add prisoners', () => {
         howToAdd: 'CSV',
       }
       await handler.POST(req, res)
-      expect(res.redirect).toBeCalledWith('upload-prisoner-list?preserveHistory=true')
+      expect(res.redirect).toHaveBeenCalledWith('upload-prisoner-list?preserveHistory=true')
     })
   })
 

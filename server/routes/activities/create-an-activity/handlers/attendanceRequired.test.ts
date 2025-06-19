@@ -116,7 +116,7 @@ describe('Route Handlers - Create an activity schedule - Attendance Required opt
         await handler.POST(req, res)
 
         expect(req.session.createJourney.attendanceRequired).toEqual(true)
-        expect(activitiesService.updateActivity).toBeCalledWith(
+        expect(activitiesService.updateActivity).toHaveBeenCalledWith(
           req.session.createJourney.activityId,
           expectedActivityUpdateRequest,
           res.locals.user,

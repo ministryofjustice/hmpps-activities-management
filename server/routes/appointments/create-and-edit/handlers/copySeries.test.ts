@@ -43,7 +43,7 @@ describe('Route Handlers - Duplicate Appointment - Copy Appointment Series', () 
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toBeCalledWith('schedule')
+      expect(res.redirect).toHaveBeenCalledWith('schedule')
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.YES)
     })
 
@@ -54,7 +54,7 @@ describe('Route Handlers - Duplicate Appointment - Copy Appointment Series', () 
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toBeCalledWith('schedule')
+      expect(res.redirect).toHaveBeenCalledWith('schedule')
       expect(req.session.appointmentJourney.repeat).toEqual(YesNo.NO)
     })
   })

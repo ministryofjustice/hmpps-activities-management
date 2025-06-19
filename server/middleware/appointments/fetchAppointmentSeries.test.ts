@@ -92,7 +92,7 @@ describe('fetchAppointmentSeries', () => {
     await middleware(req, res, next)
     expect(req.appointmentSeries.appointments.length).toEqual(4)
     expect(req.appointmentSeries.appointments.filter(appointment => appointment.id === 100).length).toEqual(0)
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it('should catch errors while retrieving appointment and pass to next', async () => {
@@ -102,6 +102,6 @@ describe('fetchAppointmentSeries', () => {
 
     await middleware(req, res, next)
 
-    expect(next).toBeCalledWith(new Error('Some error'))
+    expect(next).toHaveBeenCalledWith(new Error('Some error'))
   })
 })

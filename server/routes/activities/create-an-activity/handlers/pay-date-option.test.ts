@@ -384,7 +384,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         `You've changed Basic incentive level: High 2. Your change will take effect from ${inFiveDaysMessageDate}`,
       )
 
-      expect(activitiesService.updateActivity).lastCalledWith(
+      expect(activitiesService.updateActivity).toHaveBeenLastCalledWith(
         33,
         {
           paid: true,
@@ -450,7 +450,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         `You've changed Basic incentive level: High 2. Your change will take effect from ${tomorrowMessageDate}`,
       )
 
-      expect(activitiesService.updateActivity).lastCalledWith(
+      expect(activitiesService.updateActivity).toHaveBeenLastCalledWith(
         33,
         {
           paid: true,
@@ -516,7 +516,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         `You've changed Basic incentive level: High 2. Your change will take effect from ${inFiveDaysMessageDate}`,
       )
 
-      expect(activitiesService.updateActivity).lastCalledWith(
+      expect(activitiesService.updateActivity).toHaveBeenLastCalledWith(
         33,
         {
           paid: true,
@@ -688,7 +688,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         `You've changed Basic incentive level: Pay band 1 (Lowest). Your change will take effect from ${tomorrowMessageDate}`,
       )
 
-      expect(activitiesService.updateActivity).lastCalledWith(
+      expect(activitiesService.updateActivity).toHaveBeenLastCalledWith(
         44,
         {
           paid: true,
@@ -852,7 +852,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         `You've changed Basic incentive level: Pay band 1 (Lowest). Your change will take effect from ${tomorrowMessageDate}`,
       )
 
-      expect(activitiesService.updateActivity).lastCalledWith(
+      expect(activitiesService.updateActivity).toHaveBeenLastCalledWith(
         44,
         {
           paid: true,
@@ -992,7 +992,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         `You've changed Basic incentive level: Pay band 1 (Lowest). There are 2 people assigned to this pay rate. Your change will take effect from ${inFiveDaysMessageDate}`,
       )
 
-      expect(activitiesService.updateActivity).lastCalledWith(
+      expect(activitiesService.updateActivity).toHaveBeenLastCalledWith(
         33,
         {
           paid: true,

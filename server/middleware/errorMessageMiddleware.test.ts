@@ -25,7 +25,7 @@ describe('errorMessageMiddleware', () => {
   it('should call next if no errors', async () => {
     middleware(req, res, next)
     expect(res.locals).toEqual({})
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it('should not read from flash if request method is not GET', async () => {
@@ -34,7 +34,7 @@ describe('errorMessageMiddleware', () => {
     middleware(req, res, next)
     expect(res.locals).toEqual({})
     expect(flashMock).not.toHaveBeenCalled()
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it('should set validation errors if they exist', async () => {
@@ -44,7 +44,7 @@ describe('errorMessageMiddleware', () => {
 
     middleware(req, res, next)
     expect(res.locals).toMatchObject({ validationErrors: { val: 'error' } })
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 
   it('should set formResponses if they exist', async () => {
@@ -54,6 +54,6 @@ describe('errorMessageMiddleware', () => {
 
     middleware(req, res, next)
     expect(res.locals).toMatchObject({ formResponses: { form: 'response' } })
-    expect(next).toBeCalledTimes(1)
+    expect(next).toHaveBeenCalledTimes(1)
   })
 })

@@ -86,7 +86,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
     it('should render the confirmation page with appointment details when creating a new appointment', async () => {
       await handler.GET(req, res)
 
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
           .addProperty('journeyId', journeyId)
           .addProperty('journeySource', 'startLink')
@@ -103,7 +103,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
 
       await handler.GET(req, res)
 
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
           .addProperty('journeyId', journeyId)
           .addProperty('journeySource', 'startLink')
@@ -129,7 +129,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
 
       await handler.GET_SET(req, res)
 
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         new MetricsEvent(MetricsEventType.CREATE_APPOINTMENT_SET_JOURNEY_COMPLETED, res.locals.user)
           .addProperty('journeyId', journeyId)
           .addProperty('appointmentSetId', 3)

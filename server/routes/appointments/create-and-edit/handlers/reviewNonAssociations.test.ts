@@ -243,7 +243,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       }
 
       await handler.POST(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('name')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('name')
     })
     it('should redirect or return to the confirm non-associations page during create journey - if user has not resolved any non-associations', async () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
@@ -253,7 +253,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       }
 
       await handler.POST(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('confirm-non-associations?nonAssociationsRemainingCount=2')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('confirm-non-associations?nonAssociationsRemainingCount=2')
     })
   })
 
@@ -271,7 +271,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
       await handler.REMOVE(req, res)
 
       expect(req.session.appointmentJourney.prisoners).toEqual([{ number: 'G6123VU', name: 'SAMUEL RAMROOP' }])
-      expect(res.redirect).toBeCalledWith('../../review-non-associations?prisonerRemoved=true')
+      expect(res.redirect).toHaveBeenCalledWith('../../review-non-associations?prisonerRemoved=true')
     })
 
     it('should redirect back to GET with preserve history', async () => {
@@ -281,7 +281,9 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
         prisonNumber: 'G6123VU',
       }
       await handler.REMOVE(req, res)
-      expect(res.redirect).toBeCalledWith('../../review-non-associations?prisonerRemoved=true&preserveHistory=true')
+      expect(res.redirect).toHaveBeenCalledWith(
+        '../../review-non-associations?prisonerRemoved=true&preserveHistory=true',
+      )
     })
     it('should remove appointment and redirect back to GET - set', async () => {
       req.session.appointmentJourney.type = AppointmentType.SET
@@ -296,7 +298,7 @@ describe('Route Handlers - Create Appointment - Review non-associations', () => 
         { prisoner: { number: 'A1234BC' } },
         { prisoner: { number: 'B2345CD' } },
       ])
-      expect(res.redirect).toBeCalledWith('../../review-non-associations?prisonerRemoved=true')
+      expect(res.redirect).toHaveBeenCalledWith('../../review-non-associations?prisonerRemoved=true')
     })
   })
 })
@@ -452,7 +454,7 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
   describe('EDIT', () => {
     it('should redirect to the schedule page to continue the edit journey', async () => {
       await handler.EDIT(req, res)
-      expect(res.redirectOrReturn).toBeCalledWith('../../schedule')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('../../schedule')
     })
   })
   describe('EDIT_REMOVE', () => {
@@ -464,7 +466,7 @@ describe('Route Handlers - Edit Appointment - Review non-associations', () => {
 
       await handler.EDIT_REMOVE(req, res)
       expect(req.session.editAppointmentJourney.addPrisoners).toEqual([])
-      expect(res.redirect).toBeCalledWith('../../review-non-associations?prisonerRemoved=true')
+      expect(res.redirect).toHaveBeenCalledWith('../../review-non-associations?prisonerRemoved=true')
     })
   })
 })

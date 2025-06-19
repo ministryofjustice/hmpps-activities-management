@@ -194,7 +194,7 @@ describe('Route Handlers - Cancel Multiple Sessions Check Answers', () => {
     it('should call the activity cancel instances endpoint with the correct data', async () => {
       await handler.POST(req, res)
 
-      expect(activitiesService.cancelMultipleActivities).toBeCalledWith(
+      expect(activitiesService.cancelMultipleActivities).toHaveBeenCalledWith(
         [1],
         {
           reason: 'Staff unavailable',

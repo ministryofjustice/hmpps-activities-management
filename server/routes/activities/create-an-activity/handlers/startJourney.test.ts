@@ -35,7 +35,7 @@ describe('Route Handlers - Create an activity - Start', () => {
       await handler.GET(req, res)
 
       expect(req.session.createJourney).toEqual({})
-      expect(metricsService.trackEvent).toBeCalledWith(
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.CREATE_ACTIVITY_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
       )
       expect(res.redirect).toHaveBeenCalledWith('category?preserveHistory=true')

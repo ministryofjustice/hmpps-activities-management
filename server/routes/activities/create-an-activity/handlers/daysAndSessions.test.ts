@@ -124,7 +124,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
         expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
         expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-        expect(res.redirect).toBeCalledWith('../session-times-option/1')
+        expect(res.redirect).toHaveBeenCalledWith('../session-times-option/1')
       })
       it('should add the preserveHistory flag', async () => {
         req.session.createJourney.scheduleWeeks = 1
@@ -135,7 +135,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
         expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
         expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-        expect(res.redirect).toBeCalledWith('../session-times-option/1?preserveHistory=true')
+        expect(res.redirect).toHaveBeenCalledWith('../session-times-option/1?preserveHistory=true')
       })
 
       it('should save slots in session and redirect to set activity times page for a single session', async () => {
@@ -149,7 +149,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         expect(req.session.createJourney.slots['1'].days).toEqual(['friday'])
         expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM'])
-        expect(res.redirect).toBeCalledWith('../session-times-option/1')
+        expect(res.redirect).toHaveBeenCalledWith('../session-times-option/1')
       })
 
       it('should save slots in session and redirect to days and times page (#2) if first week of bi-weekly schedule', async () => {
@@ -160,7 +160,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
         expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
         expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-        expect(res.redirect).toBeCalledWith('2')
+        expect(res.redirect).toHaveBeenCalledWith('2')
       })
       it('should save slots in session and redirect to session times option page if second week of bi-weekly schedule', async () => {
         req.query = {
@@ -185,7 +185,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         expect(req.session.createJourney.slots['2'].days).toEqual(['monday'])
         expect(req.session.createJourney.slots['2'].timeSlotsMonday).toEqual(['AM'])
-        expect(res.redirect).toBeCalledWith(`../session-times-option/2?preserveHistory=true`)
+        expect(res.redirect).toHaveBeenCalledWith(`../session-times-option/2?preserveHistory=true`)
       })
 
       describe('Change data from check answers page', () => {
@@ -394,7 +394,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
             expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
             expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
             expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-            expect(res.redirect).toBeCalledWith('../session-times-option/1?preserveHistory=true')
+            expect(res.redirect).toHaveBeenCalledWith('../session-times-option/1?preserveHistory=true')
           })
 
           it('should move to the second week of two weeks when changed to no days selected', async () => {
@@ -419,7 +419,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
                 days: [],
               },
             })
-            expect(res.redirect).toBeCalledWith('2')
+            expect(res.redirect).toHaveBeenCalledWith('2')
           })
         })
 
@@ -909,12 +909,12 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         const startDateStr = formatDate(startDate)
         const endDateStr = formatDate(endDate)
-        expect(res.addValidationError).toBeCalledTimes(1)
+        expect(res.addValidationError).toHaveBeenCalledTimes(1)
         expect(res.addValidationError).toHaveBeenCalledWith(
           'timeSlotsMonday',
           `You cannot select Monday. This is because the activity starts on ${startDateStr} and ends on ${endDateStr}`,
         )
-        expect(res.validationFailed).toBeCalledTimes(1)
+        expect(res.validationFailed).toHaveBeenCalledTimes(1)
       })
 
       it('validation fails if any slots are outside date range second week', async () => {
@@ -934,12 +934,12 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         const startDateStr = formatDate(startDate)
         const endDateStr = formatDate(endDate)
-        expect(res.addValidationError).toBeCalledTimes(1)
+        expect(res.addValidationError).toHaveBeenCalledTimes(1)
         expect(res.addValidationError).toHaveBeenCalledWith(
           'timeSlotsMonday',
           `You cannot select Monday. As this activity starts on ${startDateStr} and ends on ${endDateStr}, there cannot be a Monday session in week 2`,
         )
-        expect(res.validationFailed).toBeCalledTimes(1)
+        expect(res.validationFailed).toHaveBeenCalledTimes(1)
       })
 
       it('validation fails if no slots are selected', async () => {
@@ -953,9 +953,9 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         await handler.POST(req, res, next)
 
-        expect(res.validationFailed).toBeCalledTimes(1)
+        expect(res.validationFailed).toHaveBeenCalledTimes(1)
         expect(res.validationFailed).toHaveBeenCalledWith('days', `You must select at least 1 slot across the schedule`)
-        expect(res.validationFailed).toBeCalledTimes(1)
+        expect(res.validationFailed).toHaveBeenCalledTimes(1)
       })
     })
   })
