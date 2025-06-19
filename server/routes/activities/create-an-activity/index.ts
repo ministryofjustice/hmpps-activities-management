@@ -10,15 +10,23 @@ export default function Index(services: Services): Router {
 
   const router = Router({ mergeParams: true })
 
-  router.use('/:mode(create)', insertJourneyIdentifier())
-  router.use('/:mode(create)/:journeyId', createRoutes(services), createAndEditRoutes(services))
+  router.use('/create', insertJourneyIdentifier())
+  router.use('/:mode/:journeyId', (req, res, next) => {
+    if (req.params.mode === 'create') {
+      createRoutes(services)
+      createAndEditRoutes(services)
+    }
+    next()
+  })
 
-  router.use('/:mode(edit)/:activityId(\\d+)', insertJourneyIdentifier())
-  router.use(
-    '/:mode(edit)/:activityId(\\d+)/:journeyId',
-    initialiseEditJourney(activitiesService),
-    createAndEditRoutes(services),
-  )
+  router.use('/edit/:activityId', insertJourneyIdentifier())
+  router.use('/:mode/:activityId/:journeyId', (req, res, next) => {
+    if (req.params.mode === 'edit') {
+      initialiseEditJourney(activitiesService)
+      createAndEditRoutes(services)
+    }
+    next()
+  })
 
   return router
 }

@@ -222,7 +222,15 @@ export default {
       roles: [Roles.ACTIVITY_HUB],
     },
     {
-      route: '/activities/:mode(create|edit|view)',
+      route: '/activities/create',
+      roles: [Roles.ACTIVITY_HUB],
+    },
+    {
+      route: '/activities/edit',
+      roles: [Roles.ACTIVITY_HUB],
+    },
+    {
+      route: '/activities/view',
       roles: [Roles.ACTIVITY_HUB],
     },
     {

@@ -20,29 +20,34 @@ export default function Index(services: Services): Router {
   )
 
   get('/', (req, res) => res.render('pages/activities/manage-allocations/home'))
-  get('/view/:allocationId(\\d+)', viewAllocationHandler.GET)
+  get('/view/:allocationId', viewAllocationHandler.GET)
 
-  router.use('/:mode(create)', insertJourneyIdentifier())
-  router.use('/:mode(edit)/:allocationId(\\d+)', insertJourneyIdentifier())
-  router.use('/:mode(exclude)/:allocationId(\\d+)', insertJourneyIdentifier())
-  router.use('/:mode(remove)', insertJourneyIdentifier())
+  router.use('/create', insertJourneyIdentifier())
+  router.use('/edit/:allocationId', insertJourneyIdentifier())
+  router.use('/exclude/:allocationId', insertJourneyIdentifier())
+  router.use('/remove', insertJourneyIdentifier())
 
-  router.use('/:mode(create)/:journeyId', createRoutes(services))
-  router.use(
-    '/:mode(edit)/:allocationId(\\d+)/:journeyId',
-    initialiseEditAndRemoveJourney(services.prisonService, services.activitiesService),
-    editRoutes(services),
-  )
-  router.use(
-    '/:mode(exclude)/:allocationId(\\d+)/:journeyId',
-    initialiseEditAndRemoveJourney(services.prisonService, services.activitiesService),
-    excludeRoutes(services),
-  )
-  router.use(
-    '/:mode(remove)/:journeyId',
-    initialiseEditAndRemoveJourney(services.prisonService, services.activitiesService),
-    removeRoutes(services),
-  )
+  router.use('/:mode/:journeyId', (req, res, next) => {
+    if (req.params.mode === 'create') {
+      createRoutes(services)
+    }
+    if (req.params.mode === 'remove') {
+      initialiseEditAndRemoveJourney(services.prisonService, services.activitiesService)
+      removeRoutes(services)
+    }
+    next()
+  })
+  router.use('/:mode/:allocationId/:journeyId', (req, res, next) => {
+    if (req.params.mode === 'edit') {
+      initialiseEditAndRemoveJourney(services.prisonService, services.activitiesService)
+      editRoutes(services)
+    }
+    if (req.params.mode === 'exclude') {
+      initialiseEditAndRemoveJourney(services.prisonService, services.activitiesService)
+      excludeRoutes(services)
+    }
+    next()
+  })
 
   return router
 }

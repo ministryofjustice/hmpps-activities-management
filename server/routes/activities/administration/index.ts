@@ -38,12 +38,8 @@ export default function Index(services: Services): Router {
 
   get('/admin/prison-pay-bands', prisonPayBandsRouteHandler.GET)
 
-  get('/admin/update-prison-pay-band/:prisonPayBandId(\\d+)', updatePrisonPayBandRouteHandler.GET)
-  post(
-    '/admin/update-prison-pay-band/:prisonPayBandId(\\d+)',
-    updatePrisonPayBandRouteHandler.POST,
-    UpdatePrisonPayBand,
-  )
+  get('/admin/update-prison-pay-band/:prisonPayBandId', updatePrisonPayBandRouteHandler.GET)
+  post('/admin/update-prison-pay-band/:prisonPayBandId', updatePrisonPayBandRouteHandler.POST, UpdatePrisonPayBand)
 
   get('/admin/add-prison-pay-band', addPrisonPayBandRouteHandler.GET)
   post('/admin/add-prison-pay-band', addPrisonPayBandRouteHandler.POST, AddPrisonPayBand)

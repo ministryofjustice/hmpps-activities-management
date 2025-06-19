@@ -34,7 +34,6 @@ export default function createApp(services: Services): express.Application {
   app.set('json spaces', 2)
   app.set('trust proxy', true)
   app.set('port', process.env.PORT || 3000)
-
   app.use(setUpHealthChecks(services))
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
@@ -50,9 +49,10 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCurrentUser(services))
   app.use(trimRequestBody())
   app.use(setUpValidationExtensions())
-  app.get(/(.*)/, dpsComponents.getPageComponents({ includeSharedData: true, dpsUrl: config.dpsUrl, logger }))
+  app.get('*dpsComponents', dpsComponents.getPageComponents({ includeSharedData: true, dpsUrl: config.dpsUrl, logger }))
   app.use(dpsComponents.retrieveCaseLoadData({ logger }))
   app.use(populateJourney())
+
   app.use(routes(services))
   app.use(formValidationErrorHandler)
   app.use((req, res, next) => next(createHttpError.NotFound()))

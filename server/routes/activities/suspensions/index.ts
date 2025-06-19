@@ -29,19 +29,24 @@ export default function Index(services: Services): Router {
   post('/search-prisoner', selectPrisonerRoutes.SEARCH, PrisonerSearch)
   post('/select-prisoner', selectPrisonerRoutes.SELECT_PRISONER, SelectPrisoner)
 
-  router.use('/:mode(suspend|unsuspend)/:prisonerNumber', insertJourneyIdentifier())
+  router.use('/:mode/:prisonerNumber', (req, res, next) => {
+    if (req.params.mode === 'suspend' || req.params.mode === 'unsuspend') {
+      insertJourneyIdentifier()
+    }
+    next()
+  })
 
-  router.use(
-    '/:mode(suspend)/:prisonerNumber/:journeyId',
-    initialiseSuspendJourney(services.prisonService, services.activitiesService),
-    suspendRoutes(services),
-  )
-
-  router.use(
-    '/:mode(unsuspend)/:prisonerNumber/:journeyId',
-    initialiseSuspendJourney(services.prisonService, services.activitiesService),
-    unsuspendRoutes(services),
-  )
+  router.use('/:mode/:prisonerNumber/:journeyId', (req, res, next) => {
+    if (req.params.mode === 'suspend') {
+      initialiseSuspendJourney(services.prisonService, services.activitiesService)
+      suspendRoutes(services)
+    }
+    if (req.params.mode === 'unsuspend') {
+      initialiseSuspendJourney(services.prisonService, services.activitiesService)
+      unsuspendRoutes(services)
+    }
+    next()
+  })
 
   return router
 }

@@ -14,7 +14,7 @@ export default function Index(services: Services): Router {
   const activityRouteHandler = new ActivityRoutes(activitiesService, prisonService, ukBankHolidayService)
 
   get('/dashboard', activitiesListRouteHandler.GET)
-  get('/view/:activityId(\\d+)', activityRouteHandler.GET)
+  get('/view/:activityId', activityRouteHandler.GET)
 
   return router
 }

@@ -20,14 +20,31 @@ export default function Index(services: Services): Router {
     services.locationMappingService,
   )
 
-  get('/:vlbId(\\d+)', videoLinkDetailsRoutes.GET)
-  router.use('/:mode(create)/:journeyId', createRoutes(services))
+  get('/:vlbId', videoLinkDetailsRoutes.GET)
+  router.use('/:mode/:journeyId', (req, res, next) => {
+    if (req.params.mode === 'create') {
+      createRoutes(services)
+    }
+    next()
+  })
 
-  router.use('/:mode(amend)/:bookingId', insertJourneyIdentifier())
-  router.use('/:mode(amend)/:bookingId/:journeyId', initialiseJourney(services), amendRoutes(services))
+  router.use('/amend/:bookingId', insertJourneyIdentifier())
+  router.use('/:mode/:bookingId/:journeyId', (req, res, next) => {
+    if (req.params.mode === 'amend') {
+      initialiseJourney(services)
+      amendRoutes(services)
+    }
+    next()
+  })
 
-  router.use('/:mode(cancel)/:bookingId', insertJourneyIdentifier())
-  router.use('/:mode(cancel)/:bookingId/:journeyId', initialiseJourney(services), cancelRoutes(services))
+  router.use('/cancel/:bookingId', insertJourneyIdentifier())
+  router.use('/:mode/:bookingId/:journeyId', (req, res, next) => {
+    if (req.params.mode === 'cancel') {
+      initialiseJourney(services)
+      cancelRoutes(services)
+    }
+    next()
+  })
 
   return router
 }
