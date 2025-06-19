@@ -193,7 +193,7 @@
                             text: "Guest pin"
                         },
                         value: {
-                            text: videoBooking.guestPin or "Not entered"
+                            text: videoBooking.guestPin or "None entered"
                         },
                         actions: {
                             items: [
@@ -204,7 +204,7 @@
                                 }
                             ]
                         } if isAmendable
-                    },
+                    } if bvlsHmctsLinkGuestPinEnabled,
                     {
                         key: {
                             text: "Extra information"

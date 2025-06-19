@@ -1,38 +1,47 @@
 import { NextFunction, Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { IsIn, isNotEmpty, IsNotEmpty, IsNumberString, MaxLength, ValidateIf } from 'class-validator'
+import {
+  IsIn,
+  isNotEmpty,
+  IsNotEmpty,
+  IsNumberString,
+  MaxLength,
+  ValidateIf,
+  ValidationArguments,
+} from 'class-validator'
 import CourtBookingService from '../../../../../services/courtBookingService'
 import config from '../../../../../config'
-import { MutuallyExclusive } from '../../../../../validators/mutallyExclusive'
+import CvpLinkOneOrTheOther from '../../../../../validators/cvpLinkOneOrTheOther'
 
+@Expose()
 export class CourtHearingLink {
-  @Expose()
   @IsIn(['yes', 'no'], { message: 'Select yes if you know the court hearing link' })
+  @CvpLinkOneOrTheOther('videoLinkUrl', 'hmctsNumber', config.bvlsHmctsLinkGuestPinEnabled, {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    message: (args: ValidationArguments) => {
+      if (config.bvlsHmctsLinkGuestPinEnabled) {
+        return 'Enter number from CVP address or enter full web address (URL)'
+      }
+      return 'Enter court hearing link'
+    },
+  })
   cvpRequired: string
 
-  @Expose()
   @Transform(({ value, obj }) => (obj.cvpRequired === 'yes' ? value : undefined))
-  @ValidateIf(o => o.cvpRequired === 'yes')
-  @MutuallyExclusive({ message: 'Provide either a full web address or a CVP number' }, 'cvp-link')
+  @ValidateIf(o => o.cvpRequired === 'yes' && isNotEmpty(o.videoLinkUrl))
   @MaxLength(120, { message: 'Court hearing link must be $constraint1 characters or less' })
-  @IsNotEmpty({ message: 'Enter a video link address' })
   videoLinkUrl: string
 
-  @Expose()
   @Transform(({ value, obj }) => (obj.cvpRequired === 'yes' ? value : undefined))
-  @ValidateIf(o => config.bvlsHmctsLinkGuestPinEnabled && o.cvpRequired === 'yes')
-  @MutuallyExclusive({ message: 'Provide either a CVP number or a full web address' }, 'cvp-link')
+  @ValidateIf(o => o.cvpRequired === 'yes' && config.bvlsHmctsLinkGuestPinEnabled && isNotEmpty(o.hmctsNumber))
   @MaxLength(8, { message: 'Number from CVP address must be $constraint1 characters or less' })
-  @ValidateIf(o => o.hmctsNumber)
   @IsNumberString({ no_symbols: true }, { message: 'Number from CVP address must be a number, like 3457' })
   hmctsNumber: string
 
-  @Expose()
   @ValidateIf(() => config.bvlsHmctsLinkGuestPinEnabled)
   @IsIn(['yes', 'no'], { message: 'Select yes if you know the guest pin' })
   guestPinRequired: string
 
-  @Expose()
   @Transform(({ value, obj }) => (obj.guestPinRequired === 'yes' ? value : undefined))
   @ValidateIf(o => config.bvlsHmctsLinkGuestPinEnabled && o.guestPinRequired === 'yes')
   @IsNotEmpty({ message: 'Enter guest pin' })

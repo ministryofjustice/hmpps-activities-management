@@ -140,9 +140,9 @@
                 {% endset %}
 
                 {{ govukRadios({
-                    idPrefix: "required",
-                    name: "required",
-                    errorMessage: validationErrors | findError('required'),
+                    idPrefix: "cvpRequired",
+                    name: "cvpRequired",
+                    errorMessage: validationErrors | findError('cvpRequired'),
                     fieldset: {
                         legend: {
                             text: "Do you know the link for this video link hearing?",
@@ -153,7 +153,7 @@
                         {
                             value: 'yes',
                             text: "Yes",
-                            checked: formResponses.required == 'yes' or session.bookACourtHearingJourney.videoLinkUrl,
+                            checked: formResponses.cvpRequired == 'yes' or session.bookACourtHearingJourney.videoLinkUrl,
                             conditional: {
                                 html: courtHearingLinkHtml
                             }
@@ -161,7 +161,7 @@
                         {
                             value: 'no',
                             text: "No",
-                            checked: formResponses.required == 'no' or (not session.bookACourtHearingJourney.videoLinkUrl and (session.req.params.mode == 'amend' or session.req.query.preserveHistory == 'true') and not formResponses)
+                            checked: formResponses.cvpRequired == 'no' or (not session.bookACourtHearingJourney.videoLinkUrl and (session.req.params.mode == 'amend' or session.req.query.preserveHistory == 'true') and not formResponses)
                         }
                     ]
                 }) }}
