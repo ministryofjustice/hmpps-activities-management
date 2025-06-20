@@ -32,7 +32,7 @@ describe('Pay band page', () => {
 
     req = {
       params: { allocationId: 1 },
-      routeContext: { mode: 'create'},
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney: {
           inmates: [

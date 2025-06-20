@@ -121,7 +121,7 @@ describe('Select how to change the activity start and end times page', () => {
           },
         },
       },
-      routeContext: { mode: 'remove' }
+      routeContext: { mode: 'remove' },
     } as unknown as Request
 
     activitiesService.getPrisonRegime.mockReturnValue(Promise.resolve(prisonRegime))

@@ -35,7 +35,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
     } as unknown as Response
 
     req = {
-      routeContext: { mode: 'create '},
+      routeContext: { mode: 'create ' },
       session: {
         createJourney: {},
       },

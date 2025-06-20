@@ -43,7 +43,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       session: {
         createJourney: {},
       },
-      routeContext: { mode: 'create '},
+      routeContext: { mode: 'create ' },
     } as unknown as Request
 
     isStartDateValidMock.mockReturnValue(true)

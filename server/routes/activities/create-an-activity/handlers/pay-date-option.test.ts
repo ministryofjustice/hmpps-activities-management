@@ -150,7 +150,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
     } as unknown as Response
 
     req = {
-      routeContext: { mode: 'edit'},
+      routeContext: { mode: 'edit' },
       params: { payRateType: 'single' },
       session: {
         createJourney: {
@@ -560,8 +560,8 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
 
     it('should update existing pay rate where there is no existing future payment change and the activity is due to start tomorrow', async () => {
       const req2 = {
-        params: { payRateType: 'single'},
-        routeContext: { mode: 'edit'},
+        params: { payRateType: 'single' },
+        routeContext: { mode: 'edit' },
         session: {
           createJourney: {
             activityId: 44,
@@ -725,7 +725,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
 
     it('should update existing pay rate where there is no existing future payment change and the activity is due to start after tomorrow', async () => {
       const req2 = {
-        routeContext: { mode: 'edit'},
+        routeContext: { mode: 'edit' },
         params: { payRateType: 'single' },
         session: {
           createJourney: {

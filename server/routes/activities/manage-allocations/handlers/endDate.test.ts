@@ -27,7 +27,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
     } as unknown as Response
 
     req = {
-      routeContext: { mode: 'create'},
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney: {
           startDate: formatIsoDate(new Date()),

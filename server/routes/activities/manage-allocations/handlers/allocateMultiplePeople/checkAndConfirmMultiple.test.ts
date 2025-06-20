@@ -62,7 +62,7 @@ describe('Allocate multiple people - check and confirm answers', () => {
     } as AllocateToActivityJourney
 
     req = {
-      routeContext: { mode: 'create'},
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney,
       },

@@ -23,7 +23,7 @@ describe('LocationRoutes', () => {
       body: {},
       params: {},
       query: {},
-      routeContext: { mode: 'create' }
+      routeContext: { mode: 'create' },
     } as unknown as Request
     res = {
       locals: { user: {} },

@@ -44,7 +44,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
     } as unknown as Response
 
     req = {
-      routeContext: { mode: 'edit'},
+      routeContext: { mode: 'edit' },
       params: { payRateType: 'single' },
       session: {
         createJourney: {

@@ -67,7 +67,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         weekNumber: '1',
       }
       req.routeContext = {
-        mode: 'create'
+        mode: 'create',
       }
 
       await handler.GET(req, res, next)
@@ -112,7 +112,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           weekNumber: '1',
         }
         req.routeContext = {
-          mode: 'create'
+          mode: 'create',
         }
         req.body = {
           days: ['tuesday', 'friday'],
@@ -199,8 +199,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
             weekNumber: '1',
           }
           req.routeContext = {
-          mode: 'create'
-        }
+            mode: 'create',
+          }
           req.query = {
             preserveHistory: 'true',
           }
@@ -434,7 +434,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           beforeEach(() => {
             req.session.createJourney.scheduleWeeks = 2
             req.routeContext = {
-              mode: 'create'
+              mode: 'create',
             }
 
             req.query = {

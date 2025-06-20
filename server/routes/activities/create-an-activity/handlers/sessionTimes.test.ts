@@ -139,7 +139,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
         },
       },
       params: {},
-      routeContext: { mode: 'create' }
+      routeContext: { mode: 'create' },
     } as unknown as Request
 
     req.query = {}

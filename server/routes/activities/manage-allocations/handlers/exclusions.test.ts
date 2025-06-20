@@ -31,7 +31,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
 
     req = {
       params: {},
-      routeContext: { mode: 'create'},
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney: {
           inmate: {

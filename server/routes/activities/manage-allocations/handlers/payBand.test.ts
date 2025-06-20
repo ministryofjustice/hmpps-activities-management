@@ -42,7 +42,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
 
     req = {
       params: { allocationId: 1 },
-      routeContext: { mode: 'create'},
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney: {
           inmate: {

@@ -32,7 +32,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
 
     req = {
       params: { allocationId: 1 },
-      routeContext: { mode: 'create'},
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney: {
           inmate: {

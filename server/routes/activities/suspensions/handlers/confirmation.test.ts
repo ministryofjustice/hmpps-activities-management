@@ -44,7 +44,7 @@ describe('Route Handlers - Suspensions - Confirmation', () => {
 
     req = {
       params: {},
-      routeContext: { mode: 'edit'},
+      routeContext: { mode: 'edit' },
       session: {
         suspendJourney,
         journeyMetrics: {},

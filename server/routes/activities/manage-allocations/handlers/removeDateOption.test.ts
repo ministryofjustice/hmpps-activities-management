@@ -30,7 +30,7 @@ describe('Route Handlers - Allocation - Remove Date option', () => {
 
     req = {
       params: { allocationId: 1 },
-      routeContext: { mode: 'create'},
+      routeContext: { mode: 'create' },
       query: { preserveHistory: true },
       session: {
         allocateJourney: {

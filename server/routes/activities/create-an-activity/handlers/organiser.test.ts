@@ -32,7 +32,7 @@ describe('Route Handlers - Create an activity - Organiser', () => {
     } as unknown as Response
 
     req = {
-      routeContext: { mode: 'create'}, 
+      routeContext: { mode: 'create' },
       params: {},
       session: {
         createJourney: {},
@@ -77,7 +77,7 @@ describe('Route Handlers - Create an activity - Organiser', () => {
         attendanceRequired: true,
       }
       req.routeContext = {
-        mode: 'edit'
+        mode: 'edit',
       }
 
       await handler.POST(req, res)

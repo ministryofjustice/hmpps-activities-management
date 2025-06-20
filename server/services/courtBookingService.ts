@@ -24,9 +24,6 @@ export default class CourtBookingService {
   }
 
   private buildBookingRequest<T extends VideoBookingRequest>(journey: BookACourtHearingJourney): T {
-    console.log(journey.startTime)
-    console.log(parseISODate(journey.startTime))
-    console.log(formatDate(parseISODate(journey.startTime), 'HH:mm'))
     return {
       bookingType: 'COURT',
       prisoners: [
