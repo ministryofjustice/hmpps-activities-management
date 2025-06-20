@@ -66,7 +66,7 @@ export default class RemovePayRoutes {
       })
     }
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       return this.updateActivity(req, res)
     }
     return res.redirectWithSuccess(

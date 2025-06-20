@@ -34,6 +34,7 @@ describe('initialiseSuspendJourney', () => {
       session: {},
       params: {},
       query: {},
+      routeContext: { mode: 'suspend' },
     } as unknown as Request
 
     res = {
@@ -106,8 +107,9 @@ describe('initialiseSuspendJourney', () => {
   })
 
   it('should populate the session', async () => {
-    req.params = { prisonerNumber: 'ABC123', mode: 'unsuspend' }
+    req.params = { prisonerNumber: 'ABC123' }
     req.query.allocationIds = '1,2'
+    req.routeContext = { mode: 'unsuspend' }
 
     await middleware(req, res, next)
 
@@ -134,8 +136,9 @@ describe('initialiseSuspendJourney', () => {
   })
 
   it('should populate the session and filter out already suspended allocations when in suspend mode', async () => {
-    req.params = { prisonerNumber: 'ABC123', mode: 'suspend' }
+    req.params = { prisonerNumber: 'ABC123' }
     req.query.allocationIds = '1,2'
+    req.routeContext = { mode: 'suspend' }
 
     await middleware(req, res, next)
 

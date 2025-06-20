@@ -50,6 +50,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
     } as unknown as Response
 
     req = {
+      routeContext: { mode: 'create '},
       params: {},
       session: {
         createJourney: {
@@ -99,8 +100,8 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         activityId: 1,
         name: 'Maths level 1',
       }
-      req.params = {
-        mode: 'edit',
+      req.routeContext = {
+        mode: 'edit'
       }
       req.body = {
         endDate,

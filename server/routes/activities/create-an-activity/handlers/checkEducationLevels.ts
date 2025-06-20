@@ -12,7 +12,7 @@ export default class CheckEducationLevelHandler {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
       const { activityId } = req.session.createJourney
       const activity = {

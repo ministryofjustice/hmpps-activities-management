@@ -10,7 +10,8 @@ import logger from '../../../../../logger'
 
 export default (prisonService: PrisonService, activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
-    const { mode, allocationId } = req.params
+    const { allocationId } = req.params
+    const { mode } = req.routeContext
     const allocationIds = req.query.allocationIds !== undefined ? asString(req.query.allocationIds).split(',') : []
     const { scheduleId, selectActivity, otherAllocationIds } = req.query
     const { user } = res.locals
@@ -104,7 +105,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         scheduledInstance: findNextSchedulesInstance(activity.schedules[0]),
       }
 
-      if (req.params.mode === 'edit' || req.params.mode === 'exclude') {
+      if (mode === 'edit' || mode === 'exclude') {
         req.session.allocateJourney.startDate = allocations[0].startDate
         req.session.allocateJourney.endDate = allocations[0].endDate
         req.session.allocateJourney.deallocationReason = allocations[0].plannedDeallocation?.plannedReason?.code

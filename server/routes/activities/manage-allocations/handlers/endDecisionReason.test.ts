@@ -22,7 +22,7 @@ describe('Route Handlers - Edit allocation - End decision reason', () => {
     } as unknown as Response
 
     req = {
-      params: { mode: 'remove' },
+      routeContext: { mode: 'remove'},
       session: {
         allocateJourney: {
           activity: {

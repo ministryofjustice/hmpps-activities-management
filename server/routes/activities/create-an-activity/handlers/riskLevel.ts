@@ -26,7 +26,7 @@ export default class RiskLevelRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.createJourney.riskLevel = req.body.riskLevel
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
       const { activityId } = req.session.createJourney
       const activity = {

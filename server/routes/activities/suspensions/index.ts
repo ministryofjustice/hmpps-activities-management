@@ -8,6 +8,7 @@ import initialiseSuspendJourney from './middlewares/initialiseSuspendJourney'
 import suspendRoutes from './suspendRoutes'
 import unsuspendRoutes from './unsuspendRoutes'
 import ViewSuspensionsRoutes from './handlers/viewSuspensions'
+import insertRouteContext from '../../../middleware/routeContext'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -29,24 +30,20 @@ export default function Index(services: Services): Router {
   post('/search-prisoner', selectPrisonerRoutes.SEARCH, PrisonerSearch)
   post('/select-prisoner', selectPrisonerRoutes.SELECT_PRISONER, SelectPrisoner)
 
-  router.use('/:mode/:prisonerNumber', (req, res, next) => {
-    if (req.params.mode === 'suspend' || req.params.mode === 'unsuspend') {
-      insertJourneyIdentifier()
-    }
-    next()
-  })
+  router.use(['/suspend/:prisonerNumber', '/unsuspend/:prisonerNumber'], insertJourneyIdentifier())
 
-  router.use('/:mode/:prisonerNumber/:journeyId', (req, res, next) => {
-    if (req.params.mode === 'suspend') {
-      initialiseSuspendJourney(services.prisonService, services.activitiesService)
-      suspendRoutes(services)
-    }
-    if (req.params.mode === 'unsuspend') {
-      initialiseSuspendJourney(services.prisonService, services.activitiesService)
-      unsuspendRoutes(services)
-    }
-    next()
-  })
+  router.use(
+    '/suspend/:prisonerNumber/:journeyId',
+    insertRouteContext('suspend'),
+    initialiseSuspendJourney(services.prisonService, services.activitiesService),
+    suspendRoutes(services),
+  )
+  router.use(
+    '/unsuspend/:prisonerNumber/:journeyId',
+    insertRouteContext('unsuspend'),
+    initialiseSuspendJourney(services.prisonService, services.activitiesService),
+    unsuspendRoutes(services),
+  )
 
   return router
 }

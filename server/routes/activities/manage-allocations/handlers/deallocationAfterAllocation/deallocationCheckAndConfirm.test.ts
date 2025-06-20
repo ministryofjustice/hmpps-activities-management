@@ -37,7 +37,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
     }
 
     req = {
-      params: { mode: 'remove' },
+      routeContext: { mode: 'remove'},
       session: {
         allocateJourney: {
           inmate,

@@ -119,7 +119,6 @@ export default function Index({
   post('/multiple/check-answers', checkAndConfirmMultipleHandler.POST)
   get('/multiple/confirmation', confirmMultipleAllocationsHandler.GET, true)
 
-  get('/error/:errorType(transferred)', errorHandler.GET, true)
-
+  get('/error/:errorType', errorHandler.GET, true)
   return router
 }

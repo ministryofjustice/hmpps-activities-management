@@ -73,7 +73,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
 
   describe('POST', () => {
     it('suspend mode should post the allocation amendments (SUSPENDED_WITH_PAY) and redirect', async () => {
-      req.params.mode = 'suspend'
+      req.routeContext = { mode: 'suspend' }
 
       await handler.POST(req, res)
 
@@ -94,7 +94,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
     it('suspend mode should post the allocation amendments (SUSPENDED and redirect', async () => {
-      req.params.mode = 'suspend'
+      req.routeContext = { mode: 'suspend' }
 
       req.session.suspendJourney.paid = YesNo.NO
 
@@ -118,7 +118,7 @@ describe('Route Handlers - Suspensions - Check answers', () => {
     })
 
     it('unsuspend mode should post the allocation amendments and redirect', async () => {
-      req.params.mode = 'unsuspend'
+      req.routeContext = { mode: 'unsuspend' }
 
       await handler.POST(req, res)
 

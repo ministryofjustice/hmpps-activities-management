@@ -31,7 +31,8 @@ describe('Route Handlers - Edit allocation - Start date', () => {
     } as unknown as Response
 
     req = {
-      params: { mode: 'create', allocationId: 1 },
+      params: { allocationId: 1 },
+      routeContext: { mode: 'create'},
       session: {
         allocateJourney: {
           inmate: {
@@ -107,7 +108,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
 
     describe('Edit', () => {
       beforeEach(() => {
-        req.params.mode = 'edit'
+        req.routeContext = { mode: 'edit' }
       })
 
       it('should update the allocation and redirect with success if user selected a specific date', async () => {

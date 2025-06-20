@@ -35,6 +35,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
     } as unknown as Response
 
     req = {
+      routeContext: { mode: 'create '},
       session: {
         createJourney: {},
       },
@@ -111,7 +112,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
 
     describe('Edit', () => {
       beforeEach(() => {
-        req.params.mode = 'edit'
+        req.routeContext = { mode: 'edit' }
         req.session.createJourney.activityId = 2
         req.session.createJourney.name = 'Activity name'
       })

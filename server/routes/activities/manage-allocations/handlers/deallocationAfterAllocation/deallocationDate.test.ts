@@ -30,7 +30,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
     } as unknown as Response
 
     req = {
-      params: { mode: 'remove' },
+      routeContext: { mode: 'remove'},
       session: {
         allocateJourney: {
           startDate: formatIsoDate(subDays(new Date(), 1)),
@@ -89,7 +89,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
         },
       }
 
-      req.params.mode = 'remove'
+      req.routeContext = { mode: 'remove' }
     })
 
     it('when next session is later today', async () => {

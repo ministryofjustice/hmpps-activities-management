@@ -71,7 +71,7 @@ export default class SessionTimesRoutes {
       regimeTimes,
       slots,
       scheduleWeeks,
-      req.params.mode === 'edit',
+      req.routeContext.mode === 'edit',
       +activityId,
       user,
     )
@@ -131,7 +131,7 @@ export default class SessionTimesRoutes {
 
     req.session.createJourney.customSlots = customSlots
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const activity = {
         slots: req.session.createJourney.customSlots,
         scheduleWeeks,

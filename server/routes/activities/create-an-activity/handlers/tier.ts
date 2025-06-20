@@ -32,7 +32,7 @@ export default class TierRoutes {
     }
     req.session.createJourney.organiserCode = null
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
       const { activityId } = req.session.createJourney
       const activity = {

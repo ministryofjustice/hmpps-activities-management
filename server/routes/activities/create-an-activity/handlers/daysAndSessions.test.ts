@@ -52,6 +52,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       body: {},
       params: {},
       query: {},
+      routeContext: { mode: 'create' },
     } as unknown as Request
 
     next = jest.fn()
@@ -64,7 +65,9 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       req.session.createJourney.scheduleWeeks = 1
       req.params = {
         weekNumber: '1',
-        mode: 'create',
+      }
+      req.routeContext = {
+        mode: 'create'
       }
 
       await handler.GET(req, res, next)
@@ -107,7 +110,9 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       beforeEach(() => {
         req.params = {
           weekNumber: '1',
-          mode: 'create',
+        }
+        req.routeContext = {
+          mode: 'create'
         }
         req.body = {
           days: ['tuesday', 'friday'],
@@ -192,8 +197,10 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         beforeEach(() => {
           req.params = {
             weekNumber: '1',
-            mode: 'create',
           }
+          req.routeContext = {
+          mode: 'create'
+        }
           req.query = {
             preserveHistory: 'true',
           }
@@ -426,9 +433,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         describe('Change to bi-weekly schedule frequency', () => {
           beforeEach(() => {
             req.session.createJourney.scheduleWeeks = 2
-
-            req.params = {
-              mode: 'create',
+            req.routeContext = {
+              mode: 'create'
             }
 
             req.query = {
@@ -481,8 +487,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           },
           params: {
             weekNumber: '1',
-            mode: 'edit',
           },
+          routeContext: { mode: 'edit' },
           query: {
             preserveHistory: 'true',
           },
@@ -556,8 +562,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           },
           params: {
             weekNumber: '2',
-            mode: 'edit',
           },
+          routeContext: { mode: 'edit' },
           query: {
             preserveHistory: 'true',
           },
@@ -659,8 +665,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           },
           params: {
             weekNumber: '1',
-            mode: 'edit',
           },
+          routeContext: { mode: 'edit' },
           query: {
             preserveHistory: 'true',
           },
@@ -732,8 +738,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           },
           params: {
             weekNumber: '1',
-            mode: 'edit',
           },
+          routeContext: { mode: 'edit' },
           query: {
             preserveHistory: 'true',
           },
@@ -792,8 +798,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           },
           params: {
             weekNumber: '1',
-            mode: 'edit',
           },
+          routeContext: { mode: 'edit' },
           body: {
             days: ['tuesday', 'friday'],
             timeSlotsTuesday: ['AM'],
@@ -849,8 +855,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           },
           params: {
             weekNumber: '2',
-            mode: 'edit',
           },
+          routeContext: { mode: 'edit' },
           body: {
             days: ['tuesday', 'friday'],
             timeSlotsTuesday: ['AM'],

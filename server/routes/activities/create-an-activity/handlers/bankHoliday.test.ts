@@ -62,9 +62,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
         session: {
           createJourney: { activityId: 1, name: 'Maths level 1' },
         },
-        params: {
-          mode: 'edit',
-        },
+        routeContext: { mode: 'edit' },
         body: {
           runsOnBankHoliday,
         },

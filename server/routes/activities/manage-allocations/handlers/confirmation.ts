@@ -13,7 +13,7 @@ export default class ConfirmationRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { inmate, activity, activitiesToDeallocate } = req.session.allocateJourney
 
-    if (req.params.mode === 'create') {
+    if (req.routeContext.mode === 'create') {
       const allocationEvent = MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(
         req.session.allocateJourney,
         res.locals.user,
@@ -22,7 +22,7 @@ export default class ConfirmationRoutes {
     }
 
     let otherAllocations: Allocation[] = []
-    if (req.params.mode === 'create') {
+    if (req.routeContext.mode === 'create') {
       const [prisonerAllocationsList] = await this.activitiesService.getActivePrisonPrisonerAllocations(
         [inmate.prisonerNumber],
         res.locals.user,
@@ -32,14 +32,14 @@ export default class ConfirmationRoutes {
         otherAllocations = allocations.filter(a => a.scheduleId !== req.session.allocateJourney.activity.scheduleId)
       }
     }
-    const deallocateMultipleActivitiesMode = req.params.mode === 'remove' && activitiesToDeallocate?.length > 0
+    const deallocateMultipleActivitiesMode = req.routeContext.mode === 'remove' && activitiesToDeallocate?.length > 0
 
     res.render('pages/activities/manage-allocations/confirmation', {
       activityId: activity?.activityId,
       prisonerName: inmate.prisonerName,
       prisonerNumber: inmate.prisonerNumber,
       activityName: deallocateMultipleActivitiesMode ? `${activitiesToDeallocate.length} activities` : activity?.name,
-      otherAllocations: req.params.mode === 'create' ? otherAllocations : null,
+      otherAllocations: req.routeContext.mode === 'create' ? otherAllocations : null,
       deallocateMultipleActivitiesMode,
     })
   }
