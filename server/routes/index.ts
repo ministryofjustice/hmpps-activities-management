@@ -13,20 +13,18 @@ import profileImage from './profileImage'
 
 export default function routes(services: Services): Router {
   const router = Router({ mergeParams: true })
-
   router.use(routeAuthMiddleware())
 
   router.use(errorMessageMiddleware())
   router.use(successMessageMiddleware())
   router.use(timeNowMiddleware())
-
   router.use('/', homeRoutes())
   router.use('/profileImage', profileImage(services))
   router.use('/activities', activityRoutes(services))
   router.use('/appointments', appointmentRoutes(services))
+
   router.use('/dpr-reporting', reportingRoutes())
   // Add more beta build routes here
-
   // Spikes under here spikes
   router.use('/spikes', spikeRoutes(services))
 

@@ -22,7 +22,7 @@ export default class AttendanceRequired {
     const attendanceRequired = req.body.attendanceRequired === YesNo.YES
     req.session.createJourney.attendanceRequired = attendanceRequired
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
       const { activityId } = req.session.createJourney
       const activity = { attendanceRequired } as ActivityUpdateRequest

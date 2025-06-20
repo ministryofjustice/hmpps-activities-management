@@ -54,7 +54,7 @@ export default class ScheduleRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { mode } = req.params
+    const { mode } = req.routeContext
 
     if (mode === 'amend') {
       await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)

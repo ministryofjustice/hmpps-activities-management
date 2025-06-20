@@ -51,7 +51,8 @@ describe('Route Handlers - Allocate - Confirmation', () => {
     } as unknown as Response
 
     req = {
-      params: { mode: 'create' },
+      params: {},
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney,
         journeyMetrics: {},
@@ -85,7 +86,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
       )
     })
     it('should render page with data from session', async () => {
-      req.params.mode = 'create'
+      req.routeContext = { mode: 'create' }
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(allocateJourney, res.locals.user).addJourneyCompletedMetrics(
@@ -104,7 +105,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
       })
     })
     it('should render page with data from session - one activity removed', async () => {
-      req.params.mode = 'remove'
+      req.routeContext = { mode: 'remove' }
       await handler.GET(req, res)
 
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
@@ -120,7 +121,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
       })
     })
     it('should render page with data from session - multiple activities removed', async () => {
-      req.params.mode = 'remove'
+      req.routeContext = { mode: 'remove' }
       req.session.allocateJourney.activity = null
       req.session.allocateJourney.activitiesToDeallocate = [
         {
@@ -154,7 +155,7 @@ describe('Route Handlers - Allocate - Confirmation', () => {
     })
 
     it('should not record create journey complete in metrics when in the remove journey', async () => {
-      req.params.mode = 'remove'
+      req.routeContext = { mode: 'remove' }
       await handler.GET(req, res)
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
     })

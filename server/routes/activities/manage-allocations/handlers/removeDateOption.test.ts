@@ -29,7 +29,8 @@ describe('Route Handlers - Allocation - Remove Date option', () => {
     } as unknown as Response
 
     req = {
-      params: { mode: 'create', allocationId: 1 },
+      params: { allocationId: 1 },
+      routeContext: { mode: 'create' },
       query: { preserveHistory: true },
       session: {
         allocateJourney: {
@@ -72,7 +73,7 @@ describe('Route Handlers - Allocation - Remove Date option', () => {
     })
 
     it('edit mode should update the allocation and redirect with success', async () => {
-      req.params.mode = 'edit'
+      req.routeContext = { mode: 'edit' }
       req.body = {
         endDateOption: 'remove',
       }

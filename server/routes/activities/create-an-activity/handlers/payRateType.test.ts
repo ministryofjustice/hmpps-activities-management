@@ -33,6 +33,7 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
         createJourney: {},
       },
       query: {},
+      routeContext: { mode: 'create' },
     } as unknown as Request
   })
 
@@ -104,9 +105,8 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
       req.query = {
         preserveHistory: 'true',
       }
-      req.params = {
-        mode: 'edit',
-      }
+      req.params = {}
+      req.routeContext = { mode: 'edit' }
 
       await handler.POST(req, res)
 

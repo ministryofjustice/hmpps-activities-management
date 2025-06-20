@@ -84,7 +84,7 @@ export default class EndDateRoutes {
       req.session.createJourney.runsOnBankHoliday = true
     }
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const { activityId, name, endDate } = req.session.createJourney
       const activity = { endDate, removeEndDate: !endDate } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)

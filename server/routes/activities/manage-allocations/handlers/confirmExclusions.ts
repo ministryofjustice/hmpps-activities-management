@@ -31,7 +31,8 @@ export default class ConfirmExclusionsRoutes {
 
   POST = async (req: Request, res: Response) => {
     const { user } = res.locals
-    const { mode, allocationId } = req.params
+    const { allocationId } = req.params
+    const { mode } = req.routeContext
     const { exclusions, updatedExclusions, activity, inmate } = req.session.allocateJourney
 
     const newSlots = calculateUniqueSlots(updatedExclusions, exclusions)

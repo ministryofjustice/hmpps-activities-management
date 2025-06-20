@@ -11,10 +11,11 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
     if (req.session.suspendJourney) return next()
 
     const allocationIds = (req.query.allocationIds as string)?.split(',')
-    const { prisonerNumber, mode } = req.params
+    const { prisonerNumber } = req.params
+    const { mode } = req.routeContext
     const { user } = res.locals
 
-    if (!allocationIds) return res.redirect('back')
+    if (!allocationIds) return res.redirect(req.get('Referrer') || '/')
 
     const allocations = await activitiesService
       .getActivePrisonPrisonerAllocations([prisonerNumber], user)

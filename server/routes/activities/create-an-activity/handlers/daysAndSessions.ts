@@ -100,7 +100,7 @@ export default class DaysAndSessionsRoutes {
       return res.redirect(this.getRedirectUrl(weekNumberInt, preserveHistoryBool, fromScheduleFrequencyBool))
     }
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       return this.editDaysAndSessions(req, res)
     }
 

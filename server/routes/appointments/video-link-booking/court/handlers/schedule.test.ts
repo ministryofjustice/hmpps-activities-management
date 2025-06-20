@@ -124,7 +124,7 @@ describe('ScheduleRoutes', () => {
 
   describe('POST', () => {
     it('redirects with success message when mode is amend', async () => {
-      req.params.mode = 'amend'
+      req.routeContext = { mode: 'amend' }
       req.session.bookACourtHearingJourney.bookingId = 1
 
       await scheduleRoutes.POST(req as Request, res as Response)
@@ -140,7 +140,7 @@ describe('ScheduleRoutes', () => {
     })
 
     it('redirects to cvp link when mode is not amend', async () => {
-      req.params.mode = 'create'
+      req.routeContext = { mode: 'create' }
 
       await scheduleRoutes.POST(req as Request, res as Response)
 

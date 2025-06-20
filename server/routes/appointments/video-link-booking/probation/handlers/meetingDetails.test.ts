@@ -58,7 +58,7 @@ describe('MeetingDetailsRoutes', () => {
     it('redirects with success message when mode is amend', async () => {
       req.body.probationTeamCode = 'TEAM1'
       req.body.meetingTypeCode = 'TYPE1'
-      req.params.mode = 'amend'
+      req.routeContext = { mode: 'amend' }
       req.session.bookAProbationMeetingJourney.bookingId = 1
 
       await meetingDetailsRoutes.POST(req as Request, res as Response)
@@ -75,7 +75,7 @@ describe('MeetingDetailsRoutes', () => {
 
     it('redirects to date and time when mode is create', async () => {
       req.body.meetingTypeCode = 'TYPE1'
-      req.params.mode = 'create'
+      req.routeContext = { mode: 'create' }
 
       await meetingDetailsRoutes.POST(req as Request, res as Response)
 

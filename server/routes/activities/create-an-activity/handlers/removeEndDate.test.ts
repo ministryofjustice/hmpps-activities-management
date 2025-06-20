@@ -36,6 +36,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
       session: {
         createJourney: {},
       },
+      routeContext: { mode: 'create' },
     } as unknown as Request
   })
 
@@ -58,9 +59,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
         endDate: today,
       }
 
-      req.params = {
-        mode: 'edit',
-      }
+      req.routeContext = { mode: 'edit' }
 
       await handler.POST(req, res)
 
@@ -80,9 +79,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
         endDate: today,
       }
 
-      req.params = {
-        mode: 'create',
-      }
+      req.routeContext = { mode: 'create' }
 
       await handler.POST(req, res)
 
@@ -110,9 +107,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
         endDate: today,
       }
 
-      req.params = {
-        mode: 'edit',
-      }
+      req.routeContext = { mode: 'edit' }
 
       await handler.POST(req, res)
 
@@ -136,9 +131,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
         endDate: today,
       }
 
-      req.params = {
-        mode: 'create',
-      }
+      req.routeContext = { mode: 'create' }
 
       await handler.POST(req, res)
 

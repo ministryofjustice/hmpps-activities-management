@@ -92,11 +92,12 @@ describe('initialiseEditAndRemoveJourney', () => {
   beforeEach(() => {
     jest.resetAllMocks()
     req = {
+      get: jest.fn(),
       session: {},
       params: {
-        mode: 'remove',
         allocationId: '6543',
       },
+      routeContext: { mode: 'remove' },
       query: {},
     } as unknown as Request
 
@@ -111,7 +112,7 @@ describe('initialiseEditAndRemoveJourney', () => {
   })
 
   it('it should skip initialisation if not edit or remove mode', async () => {
-    req.params.mode = 'create'
+    req.routeContext = { mode: 'create' }
 
     await middleware(req, res, next)
 
@@ -134,9 +135,8 @@ describe('initialiseEditAndRemoveJourney', () => {
 
   it('should redirect back if there is no scheduleId, allocationId or selectActivity on the query/params', async () => {
     req.query = {}
-    req.params = {
-      mode: 'remove',
-    }
+    req.params = {}
+    req.routeContext = { mode: 'remove' }
 
     await middleware(req, res, next)
 
@@ -150,9 +150,7 @@ describe('initialiseEditAndRemoveJourney', () => {
     req.query = {
       allocationId: '2',
     }
-    req.params = {
-      mode: 'remove',
-    }
+    req.routeContext = { mode: 'remove' }
 
     when(activitiesService.getAllocation)
       .calledWith(atLeast(2, user))
@@ -165,9 +163,9 @@ describe('initialiseEditAndRemoveJourney', () => {
   it('should redirect back if there are no allocations available - scheduleId used', async () => {
     req.query = { scheduleId: '1', allocationIds: ['6543'] }
     req.params = {
-      mode: 'remove',
       allocationId: null,
     }
+    req.routeContext = { mode: 'remove' }
     when(activitiesService.getAllocations).calledWith(atLeast(1, user)).mockResolvedValueOnce([])
 
     await middleware(req, res, next)
@@ -179,9 +177,7 @@ describe('initialiseEditAndRemoveJourney', () => {
     req.query = {
       allocationId: '2',
     }
-    req.params = {
-      mode: 'remove',
-    }
+    req.routeContext = { mode: 'remove' }
 
     when(activitiesService.getAllocation)
       .calledWith(atLeast(2, user))
@@ -195,9 +191,9 @@ describe('initialiseEditAndRemoveJourney', () => {
   it('should redirect back if allocations return value is null - scheduleId used', async () => {
     req.query = { scheduleId: '1', allocationIds: ['6543'] }
     req.params = {
-      mode: 'remove',
       allocationId: null,
     }
+    req.routeContext = { mode: 'remove' }
     when(activitiesService.getAllocations)
       .calledWith(atLeast(1, user))
       .mockResolvedValueOnce({} as never)
@@ -208,7 +204,8 @@ describe('initialiseEditAndRemoveJourney', () => {
   })
 
   it('should populate session using allocation ID from route param', async () => {
-    req.params = { mode: 'remove', allocationId: '6543' }
+    req.params = { allocationId: '6543' }
+    req.routeContext = { mode: 'remove' }
     req.query = { allocationIds: ['6543'] }
 
     when(activitiesService.getAllocation).calledWith(atLeast(6543, user)).mockResolvedValueOnce(allocation)
@@ -278,7 +275,8 @@ describe('initialiseEditAndRemoveJourney', () => {
   })
 
   it('should populate session using allocation ID from query', async () => {
-    req.params = { mode: 'remove' }
+    req.routeContext = { mode: 'remove' }
+    req.params = {}
     req.query = { scheduleId: '1', allocationIds: ['6543'] }
 
     when(activitiesService.getAllocations).calledWith(atLeast(1, user)).mockResolvedValueOnce([allocation])

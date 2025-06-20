@@ -32,7 +32,7 @@ export default class ExtraInformationRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { mode } = req.params
+    const { mode } = req.routeContext
     const { user } = res.locals
 
     if (config.bvlsMasterPublicPrivateNotesEnabled) {

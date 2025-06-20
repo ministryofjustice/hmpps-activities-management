@@ -47,7 +47,7 @@ export default class CheckAnswersRoutes {
     } = req.session.allocateJourney
     const { user } = res.locals
 
-    if (req.params.mode === 'create') {
+    if (req.routeContext.mode === 'create') {
       await this.activitiesService.allocateToSchedule(
         activity.scheduleId,
         inmate.prisonerNumber,
@@ -60,7 +60,7 @@ export default class CheckAnswersRoutes {
       )
     }
 
-    if (req.params.mode === 'remove') {
+    if (req.routeContext.mode === 'remove') {
       await this.activitiesService.deallocateFromActivity(
         activity.scheduleId,
         inmates.map(p => p.prisonerNumber),

@@ -53,7 +53,7 @@ export default class LocationRoutes {
     req.session.createJourney.onWing = locationType === LocationType.ON_WING
     req.session.createJourney.offWing = locationType === LocationType.OFF_WING
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const { activityId } = req.session.createJourney
       const activity = {
         inCell: req.session.createJourney.inCell,

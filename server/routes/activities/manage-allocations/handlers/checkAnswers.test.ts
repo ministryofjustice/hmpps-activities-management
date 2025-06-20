@@ -38,7 +38,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
     }
 
     req = {
-      params: { mode: 'create' },
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney: {
           inmate,
@@ -273,7 +273,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
   describe('POST', () => {
     describe('New Allocation', () => {
       it('should redirect to confirmation page when start date is a specific date', async () => {
-        req.params.mode = 'create'
+        req.routeContext = { mode: 'create' }
         await handler.POST(req, res)
         expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
           1,
@@ -290,7 +290,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
 
       it('should pass correct details when there is no scheduled instance', async () => {
         req.session.allocateJourney.scheduledInstance = null
-        req.params.mode = 'create'
+        req.routeContext = { mode: 'create' }
         await handler.POST(req, res)
         expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
           1,
@@ -306,7 +306,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
       })
 
       it('should redirect to confirmation page when with custom scheduled slots and exclusions', async () => {
-        req.params.mode = 'create'
+        req.routeContext = { mode: 'create' }
         req.session.allocateJourney.activity = {
           activityId: 877,
           scheduleId: 876,
@@ -400,7 +400,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
 
       it('should redirect to confirmation page when start date is next session', async () => {
         req.session.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
-        req.params.mode = 'create'
+        req.routeContext = { mode: 'create' }
         await handler.POST(req, res)
         expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
           1,
@@ -418,7 +418,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
 
     describe('Remove Allocation', () => {
       it('should deallocate and redirect to confirmation page when deallocating sessions from a future day', async () => {
-        req.params.mode = 'remove'
+        req.routeContext = { mode: 'remove' }
 
         await handler.POST(req, res)
 
@@ -435,7 +435,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
       })
 
       it('should deallocate and redirect to confirmation page when deallocating sessions today', async () => {
-        req.params.mode = 'remove'
+        req.routeContext = { mode: 'remove' }
         req.session.allocateJourney.deallocateTodayOption = DeallocateTodayOption.TODAY
 
         await handler.POST(req, res)

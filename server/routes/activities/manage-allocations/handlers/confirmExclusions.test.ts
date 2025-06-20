@@ -30,7 +30,8 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
     } as unknown as Response
 
     req = {
-      params: { mode: 'create' },
+      params: {},
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney: {
           inmate: {
@@ -131,7 +132,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
 
   describe('POST', () => {
     it('should update the exclusions on the allocation and redirect with success message when in edit mode', async () => {
-      req.params.mode = 'edit'
+      req.routeContext = { mode: 'edit' }
       req.params.allocationId = '1'
 
       await handler.POST(req, res)
@@ -164,7 +165,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
     })
 
     it('should update the exclusions on the allocation and redirect with success message when in exclude mode', async () => {
-      req.params.mode = 'exclude'
+      req.routeContext = { mode: 'exclude' }
       req.params.allocationId = '1'
 
       await handler.POST(req, res)
@@ -196,7 +197,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
     })
 
     it('should redirect without updating allocation if there are no changes in edit mode', async () => {
-      req.params.mode = 'edit'
+      req.routeContext = { mode: 'edit' }
       req.params.allocationId = '1'
 
       req.session.allocateJourney.exclusions = [
@@ -236,7 +237,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
     })
 
     it('should redirect without updating allocation if there are no changes in exclude mode', async () => {
-      req.params.mode = 'exclude'
+      req.routeContext = { mode: 'exclude' }
       req.params.allocationId = '1'
 
       req.session.allocateJourney.exclusions = [

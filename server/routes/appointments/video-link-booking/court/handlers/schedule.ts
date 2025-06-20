@@ -63,7 +63,7 @@ export default class ScheduleRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { mode } = req.params
+    const { mode } = req.routeContext
     const { user } = res.locals
 
     if (mode === 'amend') {

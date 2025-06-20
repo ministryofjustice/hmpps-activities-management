@@ -139,7 +139,7 @@ export default class PayRoutes {
 
     req.session.createJourney.attendanceRequired = true
 
-    if (req.params.mode === 'edit') await this.updatePay(req, res)
+    if (req.routeContext.mode === 'edit') await this.updatePay(req, res)
     else res.redirect(`../check-pay${preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 

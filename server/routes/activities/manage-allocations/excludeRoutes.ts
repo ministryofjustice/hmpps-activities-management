@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
@@ -9,9 +8,9 @@ import ConfirmExclusionsRoutes from './handlers/confirmExclusions'
 export default function Index({ activitiesService }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('allocateJourney', stepRequiresSession), asyncMiddleware(handler))
+    router.get(path, emptyJourneyHandler('allocateJourney', stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const exclusionsHandler = new ExclusionRoutes(activitiesService)
   const confirmExclusionsHandler = new ConfirmExclusionsRoutes(activitiesService)

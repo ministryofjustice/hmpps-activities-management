@@ -68,7 +68,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-export declare global {
+declare global {
   namespace Express {
     interface User {
       username: string
@@ -84,6 +84,7 @@ export declare global {
       appointment?: AppointmentDetails
       appointmentSet?: AppointmentSetDetails
       journeyData: JourneyData
+      routeContext?: { mode?: string }
     }
   }
 }

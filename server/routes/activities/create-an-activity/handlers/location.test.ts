@@ -55,6 +55,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
         createJourney: {},
       },
       params: {},
+      routeContext: { mode: 'create' },
     } as unknown as Request
   })
 
@@ -159,9 +160,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
             activityId: '1',
           },
         },
-        params: {
-          mode: 'edit',
-        },
+        routeContext: { mode: 'edit' },
         body: {
           location: 1234,
         },

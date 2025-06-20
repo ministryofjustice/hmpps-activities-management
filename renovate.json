@@ -10,7 +10,6 @@
     "rajaram-justice",
     "AlexYoungmanMoJ"
   ],
-  "ignoreDeps": ["path-to-regexp"],
   "packageRules": [
     {
       "matchManagers": ["npm"],

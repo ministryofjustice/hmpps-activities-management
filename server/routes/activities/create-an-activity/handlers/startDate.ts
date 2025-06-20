@@ -60,7 +60,7 @@ export default class StartDateRoutes {
 
     req.session.createJourney.startDate = formatIsoDate(updatedStartDate)
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
       const { activityId, name, startDate } = req.session.createJourney
       const activity = { startDate } as ActivityUpdateRequest

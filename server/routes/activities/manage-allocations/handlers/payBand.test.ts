@@ -41,7 +41,8 @@ describe('Route Handlers - Allocate - Pay band', () => {
     } as unknown as Response
 
     req = {
-      params: { mode: 'create', allocationId: 1 },
+      params: { allocationId: 1 },
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney: {
           inmate: {
@@ -133,7 +134,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
     })
 
     it('edit mode should edit the allocation and redirect with success', async () => {
-      req.params.mode = 'edit'
+      req.routeContext = { mode: 'edit' }
       req.body = {
         payBand: 2,
       }

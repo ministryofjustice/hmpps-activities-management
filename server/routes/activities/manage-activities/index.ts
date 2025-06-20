@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import { Services } from '../../../services'
 import ActivitiesRoutes from './handlers/activities'
 import ActivityRoutes from './handlers/activity'
@@ -9,13 +8,13 @@ export default function Index(services: Services): Router {
 
   const router = Router({ mergeParams: true })
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
 
   const activitiesListRouteHandler = new ActivitiesRoutes(activitiesService)
   const activityRouteHandler = new ActivityRoutes(activitiesService, prisonService, ukBankHolidayService)
 
   get('/dashboard', activitiesListRouteHandler.GET)
-  get('/view/:activityId(\\d+)', activityRouteHandler.GET)
+  get('/view/:activityId', activityRouteHandler.GET)
 
   return router
 }

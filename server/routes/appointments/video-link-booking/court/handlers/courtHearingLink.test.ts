@@ -49,7 +49,7 @@ describe('CourtHearingLinkRoutes', () => {
   describe('POST', () => {
     it('redirects with success message when mode is amend', async () => {
       req.body.videoLinkUrl = 'URL'
-      req.params.mode = 'amend'
+      req.routeContext = { mode: 'amend' }
       req.session.bookACourtHearingJourney.bookingId = 1
 
       await courtHearingLinkRoutes.POST(req as Request, res as Response)
@@ -66,7 +66,7 @@ describe('CourtHearingLinkRoutes', () => {
 
     it('redirects to location when mode is not amend', async () => {
       req.body.videoLinkUrl = 'URL'
-      req.params.mode = 'create'
+      req.routeContext = { mode: 'create' }
 
       await courtHearingLinkRoutes.POST(req as Request, res as Response)
 

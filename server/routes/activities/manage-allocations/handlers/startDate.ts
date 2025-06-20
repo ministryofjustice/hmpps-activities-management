@@ -79,7 +79,7 @@ export default class StartDateRoutes {
     req.session.allocateJourney.startDate = startDate
     req.session.allocateJourney.latestAllocationStartDate = startDate
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const allocationUpdate = {
         startDate,
         scheduleInstanceId: startDateOption === StartDateOption.NEXT_SESSION ? nextAvailableInstance?.id : null,

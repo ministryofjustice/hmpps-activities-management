@@ -1,7 +1,6 @@
 import { RequestHandler, Router } from 'express'
 import { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import StartJourneyRoutes from './handlers/create/startJourney'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
@@ -25,11 +24,11 @@ export default function Index({ prisonService, activitiesService, metricsService
       path,
       setUpJourneyData(tokenStore),
       emptyJourneyHandler('waitListApplicationJourney', stepRequiresSession),
-      asyncMiddleware(handler),
+      handler,
     )
 
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
   const startJourneyHandler = new StartJourneyRoutes(prisonService, metricsService)
   const requestDateHandler = new RequestDateRoutes()

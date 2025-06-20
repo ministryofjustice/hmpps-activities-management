@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../../middleware/asyncMiddleware'
 import { Services } from '../../../../services'
 import VideoLinkDetailsRoutes from './handlers/videoLinkDetails'
 import insertJourneyIdentifier from '../../../../middleware/insertJourneyIdentifier'
@@ -7,11 +6,12 @@ import initialiseJourney from './middleware/initialiseJourney'
 import cancelRoutes from './cancelRoutes'
 import amendRoutes from './amendRoutes'
 import createRoutes from './createRoutes'
+import insertRouteContext from '../../../../middleware/routeContext'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
 
   const videoLinkDetailsRoutes = new VideoLinkDetailsRoutes(
     services.bookAVideoLinkService,
@@ -21,14 +21,24 @@ export default function Index(services: Services): Router {
     services.locationMappingService,
   )
 
-  get('/:vlbId(\\d+)', videoLinkDetailsRoutes.GET)
-  router.use('/:mode(create)/:journeyId', createRoutes(services))
+  get('/:vlbId', videoLinkDetailsRoutes.GET)
+  router.use('/create/:journeyId', insertRouteContext('create'), createRoutes(services))
 
-  router.use('/:mode(amend)/:bookingId', insertJourneyIdentifier())
-  router.use('/:mode(amend)/:bookingId/:journeyId', initialiseJourney(services), amendRoutes(services))
+  router.use('/amend/:bookingId', insertJourneyIdentifier())
+  router.use(
+    '/amend/:bookingId/:journeyId',
+    insertRouteContext('amend'),
+    initialiseJourney(services),
+    amendRoutes(services),
+  )
 
-  router.use('/:mode(cancel)/:bookingId', insertJourneyIdentifier())
-  router.use('/:mode(cancel)/:bookingId/:journeyId', initialiseJourney(services), cancelRoutes(services))
+  router.use('/cancel/:bookingId', insertJourneyIdentifier())
+  router.use(
+    '/cancel/:bookingId/:journeyId',
+    insertRouteContext('cancel'),
+    initialiseJourney(services),
+    cancelRoutes(services),
+  )
 
   return router
 }

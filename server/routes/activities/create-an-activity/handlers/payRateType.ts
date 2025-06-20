@@ -35,7 +35,7 @@ export default class PayRateTypeRoutes {
     } else {
       payRateTypeOption = 'single'
       req.session.createJourney.incentiveLevel = incentiveLevel
-      if (req.params?.mode === 'edit') iep = incentiveLevel
+      if (req.routeContext.mode === 'edit') iep = incentiveLevel
     }
     const { preserveHistory } = req.query
     res.redirect(`pay/${payRateTypeOption}${preserveHistory ? '?preserveHistory=true' : ''}${iep ? `&iep=${iep}` : ''}`)

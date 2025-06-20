@@ -39,7 +39,7 @@ export default class PayBandRoutes {
     const { user } = res.locals
     const { allocationId } = req.params
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const allocation = {
         payBandId: +payBand,
       } as AllocationUpdateRequest

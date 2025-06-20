@@ -90,6 +90,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
 
   describe('POST', () => {
     it('should add the minimum education level to the session and redirect', async () => {
+      req.routeContext = { mode: 'create' }
       await handler.POST(req, res)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('start-date')
     })
@@ -125,10 +126,8 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
           ],
         },
       },
-      params: {
-        mode: 'edit',
-      },
       body: {},
+      routeContext: { mode: 'edit' },
     } as unknown as Request
 
     await handler.POST(req, res)

@@ -53,6 +53,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
         },
       },
       query: {},
+      routeContext: { mode: 'create' },
     } as unknown as Request
 
     when(activitiesService.getPayBandsForPrison).mockResolvedValue([
@@ -273,8 +274,8 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
       req.params = {
         payRateType: 'flat',
-        mode: 'edit',
       }
+      req.routeContext = { mode: 'edit' }
       req.body = {
         rate: 150,
         bandId: 3,

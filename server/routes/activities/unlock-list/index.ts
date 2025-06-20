@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import SelectDateAndLocationRoutes, { DateAndLocation } from './handlers/selectDateAndLocation'
 import PlannedEventsRoutes from './handlers/plannedEvents'
 import { Services } from '../../../services'
@@ -18,9 +17,9 @@ export default function Index({
   const router = Router()
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('unlockListJourney', stepRequiresSession), asyncMiddleware(handler))
+    router.get(path, emptyJourneyHandler('unlockListJourney', stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const homeHandler = new HomeRoutes()
   const dateAndLocationHandler = new SelectDateAndLocationRoutes(activitiesService)

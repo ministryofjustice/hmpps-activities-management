@@ -57,6 +57,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
 
   describe('POST', () => {
     it('should save selected tier in session and redirect to risk level page', async () => {
+      req.routeContext = { mode: 'create' }
       req.body = {
         tier: EventTier.TIER_1,
       }
@@ -68,6 +69,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
     })
 
     it('should save selected tier in session and redirect organiser page if tier 2 selected', async () => {
+      req.routeContext = { mode: 'create' }
       req.body = {
         tier: EventTier.TIER_2,
       }
@@ -79,6 +81,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
     })
 
     it('should remove organiser if tier 2 not selected', async () => {
+      req.routeContext = { mode: 'create' }
       req.body = {
         tier: EventTier.TIER_1,
       }
@@ -92,15 +95,13 @@ describe('Route Handlers - Create an activity - Tier', () => {
     })
 
     it('should update activity with selected activity tier', async () => {
+      req.routeContext = { mode: 'edit' }
       req.body = {
         tier: EventTier.TIER_1,
       }
       req.session.createJourney = {
         activityId: 1,
         name: 'English 1',
-      }
-      req.params = {
-        mode: 'edit',
       }
 
       await handler.POST(req, res)
@@ -122,6 +123,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
     })
 
     it('should set attendance required to true if tier is not foundation', async () => {
+      req.routeContext = { mode: 'create' }
       req.body = {
         tier: EventTier.TIER_1,
       }
@@ -136,6 +138,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
   describe('type validation', () => {
     it('validation fails if a value is not entered', async () => {
       const body = {}
+      req.routeContext = { mode: 'create' }
 
       const requestObject = plainToInstance(TierForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -147,6 +150,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
       const body = {
         tier: 'invalid',
       }
+      req.routeContext = { mode: 'create' }
 
       const requestObject = plainToInstance(TierForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
@@ -158,6 +162,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
       const body = {
         tier: EventTier.TIER_1,
       }
+      req.routeContext = { mode: 'create' }
 
       const requestObject = plainToInstance(TierForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))

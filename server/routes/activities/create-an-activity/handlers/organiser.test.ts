@@ -32,6 +32,7 @@ describe('Route Handlers - Create an activity - Organiser', () => {
     } as unknown as Response
 
     req = {
+      routeContext: { mode: 'create' },
       params: {},
       session: {
         createJourney: {},
@@ -75,7 +76,7 @@ describe('Route Handlers - Create an activity - Organiser', () => {
         tierCode: EventTier.FOUNDATION,
         attendanceRequired: true,
       }
-      req.params = {
+      req.routeContext = {
         mode: 'edit',
       }
 

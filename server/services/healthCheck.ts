@@ -10,8 +10,8 @@ interface HealthCheckStatus {
 }
 
 interface HealthCheckResult extends Record<string, unknown> {
-  healthy: boolean
-  checks: Record<string, unknown>
+  status: string
+  components: Record<string, unknown>
 }
 
 export type HealthCheckService = () => Promise<HealthCheckStatus>
@@ -21,23 +21,25 @@ function service(name: string, url: string, agentConfig: AgentConfig): HealthChe
   const check = serviceCheckFactory(name, url, agentConfig)
   return () =>
     check()
-      .then(result => ({ name, status: 'ok', message: result }))
-      .catch(err => ({ name, status: 'ERROR', message: err }))
+      .then(result => ({ name, status: 'UP', message: result }))
+      .catch(err => ({ name, status: 'DOWN', message: err }))
 }
 
 function addAppInfo(result: HealthCheckResult, applicationInfo: ApplicationInfo): HealthCheckResult {
-  const buildInformation = { buildNumber: applicationInfo?.buildNumber, gitRef: applicationInfo?.gitRef }
   const buildInfo = {
     uptime: process.uptime(),
-    build: { buildInformation },
-    version: buildInformation && buildInformation.buildNumber,
+    build: {
+      buildNumber: applicationInfo.buildNumber,
+      gitRef: applicationInfo.gitRef,
+    },
+    version: applicationInfo.buildNumber,
   }
 
   return { ...result, ...buildInfo }
 }
 
 function gatherCheckInfo(aggregateStatus: Record<string, unknown>, currentStatus: HealthCheckStatus) {
-  return { ...aggregateStatus, [currentStatus.name]: currentStatus.message }
+  return { ...aggregateStatus, [currentStatus.name]: { status: currentStatus.status, details: currentStatus.message } }
 }
 
 const apiChecks = [
@@ -74,16 +76,16 @@ const apiChecks = [
 ]
 
 export default function healthCheck(
-  callback: HealthCheckCallback,
   applicationInfo: ApplicationInfo,
+  callback: HealthCheckCallback,
   checks = apiChecks,
 ): void {
   Promise.all(checks.map(fn => fn())).then(checkResults => {
-    const allOk = checkResults.every(item => item.status === 'ok')
+    const allOk = checkResults.every(item => item.status === 'UP') ? 'UP' : 'DOWN'
 
     const result = {
-      healthy: allOk,
-      checks: checkResults.reduce(gatherCheckInfo, {}),
+      status: allOk,
+      components: checkResults.reduce(gatherCheckInfo, {}),
     }
 
     callback(addAppInfo(result, applicationInfo))

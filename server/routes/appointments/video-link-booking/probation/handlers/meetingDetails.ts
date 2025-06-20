@@ -74,7 +74,7 @@ export default class MeetingDetailsRoutes {
       officerEmail,
       officerTelephone,
     } = req.body
-    const { mode } = req.params
+    const { mode } = req.routeContext
     const { user } = res.locals
 
     req.session.bookAProbationMeetingJourney = {

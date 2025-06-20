@@ -30,7 +30,8 @@ describe('Route Handlers - Allocation - Exclusions', () => {
     } as unknown as Response
 
     req = {
-      params: { mode: 'create' },
+      params: {},
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney: {
           inmate: {
@@ -195,7 +196,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
 
   describe('POST', () => {
     it('should update the exclusions on the allocation and redirect when in create mode', async () => {
-      req.params.mode = 'create'
+      req.routeContext = { mode: 'create' }
       req.body = {
         week2: {
           monday: ['AM'],
@@ -244,7 +245,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
     })
 
     it('should update the exclusions in session and redirect when in create mode', async () => {
-      req.params.mode = 'edit'
+      req.routeContext = { mode: 'edit' }
       req.params.allocationId = '1'
 
       req.body = {
@@ -300,7 +301,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
     })
 
     it('should allow zero slots to be selected', async () => {
-      req.params.mode = 'edit'
+      req.routeContext = { mode: 'edit' }
       req.params.allocationId = '1'
 
       req.body = {}
