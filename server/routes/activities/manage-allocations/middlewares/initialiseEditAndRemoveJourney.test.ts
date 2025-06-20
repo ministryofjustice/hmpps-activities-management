@@ -135,6 +135,7 @@ describe('initialiseEditAndRemoveJourney', () => {
 
   it('should redirect back if there is no scheduleId, allocationId or selectActivity on the query/params', async () => {
     req.query = {}
+    req.params = {}
     req.routeContext = { mode: 'remove' }
 
     await middleware(req, res, next)
@@ -275,6 +276,7 @@ describe('initialiseEditAndRemoveJourney', () => {
 
   it('should populate session using allocation ID from query', async () => {
     req.routeContext = { mode: 'remove' }
+    req.params = {}
     req.query = { scheduleId: '1', allocationIds: ['6543'] }
 
     when(activitiesService.getAllocations).calledWith(atLeast(1, user)).mockResolvedValueOnce([allocation])

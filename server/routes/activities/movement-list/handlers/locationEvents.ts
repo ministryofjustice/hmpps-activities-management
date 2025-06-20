@@ -34,7 +34,7 @@ export default class LocationEventsRoutes {
       user,
       timeSlot as string,
     )
-    console.log(internalLocationEvents)
+
     if (internalLocationEvents.length === 0) {
       const dateQuery = dateOption === DateOption.OTHER ? `&date=${formatIsoDate(richDate)}` : ''
       return res.redirect(`locations?dateOption=${dateOption}${dateQuery}&timeSlot=${timeSlot}`)

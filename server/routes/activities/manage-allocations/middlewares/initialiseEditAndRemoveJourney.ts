@@ -29,6 +29,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
       const otherAllocations = await Promise.all(
         otherAllocationIdsList.map(id => activitiesService.getAllocation(+id, user)),
       )
+
       const inmate = await prisonService.getInmateByPrisonerNumber(otherAllocations[0].prisonerNumber, user)
       const inmateDetails = {
         prisonerNumber: inmate.prisonerNumber,

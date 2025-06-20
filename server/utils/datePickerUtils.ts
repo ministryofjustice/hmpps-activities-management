@@ -22,8 +22,7 @@ export const parseDatePickerDate = (datePickerDate: string): Date => {
 
 export const parseIsoDate = (isoDate: string): Date => {
   if (!isoDate) return null
-  // TODO: Why do we not need to use parseISO anymore? What changes in express v5?
-  const date = new Date(isoDate)
+  const date = parseISO(isoDate)
   if (!isValid(date)) return new Date(NaN)
 
   return date
@@ -77,6 +76,6 @@ export const dateFromDateOption = (dateOption: DateOption, isoDate?: string) => 
 export const findDatesInRange = (dates: Date[], startDate: string, endDate: string): Date[] => {
   const start = parseIsoDate(startDate)
   const end = parseIsoDate(endDate)
-  console.log(startDate, start)
+
   return dates.filter(date => date >= start && date <= end)
 }
