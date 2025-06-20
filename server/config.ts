@@ -262,4 +262,6 @@ export default {
   bvlsMasterPublicPrivateNotesEnabled: toBoolean(
     get('BVLS_FEATURE_MASTER_PUBLIC_PRIVATE_NOTES', 'false', requiredInProduction),
   ),
+  bvlsHmctsLinkGuestPinEnabled: toBoolean(get('BVLS_FEATURE_HMCTS_LINK_GUEST_PIN', 'false', requiredInProduction)),
+  defaultCourtVideoUrl: get('DEFAULT_COURT_VIDEO_URL', 'meet.video.justice.gov.uk'),
 }

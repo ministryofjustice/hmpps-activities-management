@@ -160,8 +160,10 @@ context('Create video link court appointment', () => {
 
     // Enter the court hearing link page
     const courtHearingLinkPage = Page.verifyOnPage(CourtHearingLinkPage)
-    courtHearingLinkPage.selectYes()
+    courtHearingLinkPage.selectYesToCvpLink()
     courtHearingLinkPage.enterCvpLink('https://test.video.link/1234')
+    courtHearingLinkPage.selectYesToGuestPin()
+    courtHearingLinkPage.enterGuestPin('54321')
     courtHearingLinkPage.continue()
 
     // Extra information page
@@ -177,6 +179,7 @@ context('Create video link court appointment', () => {
     checkAnswersPage.assertHearingType('Bail')
     checkAnswersPage.assertCategory('Video Link - Court Hearing')
     checkAnswersPage.assertHearingLink('https://test.video.link/1234')
+    checkAnswersPage.assertGuestPin('54321')
     checkAnswersPage.assertMainLocation('VCC Room 1')
     checkAnswersPage.assertMainStartDate(tomorrow)
     checkAnswersPage.assertMainStartTime(14, 0)

@@ -5,9 +5,11 @@ export default class CourtHearingLinkPage extends Page {
     super('court-hearing-link-page')
   }
 
-  selectYes = () => this.getInputByLabel('Yes').click()
-
-  selectNo = () => this.getInputByLabel('No').click()
+  selectYesToCvpLink = () => this.getInputById('cvpRequired').click()
 
   enterCvpLink = (link: string) => this.getInputById('videoLinkUrl').clear().type(link)
+
+  selectYesToGuestPin = () => this.getInputById('guestPinRequired').click()
+
+  enterGuestPin = (pin: string) => this.getInputById('guestPin').clear().type(pin)
 }
