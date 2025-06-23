@@ -1,4 +1,4 @@
-import { addDays, isValid, parse, parseISO, subDays } from 'date-fns'
+import { addDays, isValid, parse, subDays } from 'date-fns'
 import {
   dateFromDateOption,
   datePickerDateToIsoDate,
@@ -136,11 +136,11 @@ describe('Date Picker Utils', () => {
     const startDate = '2025-05-01'
     const endDate = '2025-05-25'
     const dateList: Date[] = [
-      parseISO('2025-05-05'),
-      parseISO('2025-04-01'),
-      parseISO('2025-05-01'),
-      parseISO('2025-07-25'),
-      parseISO('2025-05-25'),
+      new Date('2025-05-05'),
+      new Date('2025-04-01'),
+      new Date('2025-05-01'),
+      new Date('2025-07-25'),
+      new Date('2025-05-25'),
     ]
 
     it('find the list of date within the given date range', () => {
