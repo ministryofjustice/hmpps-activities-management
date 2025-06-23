@@ -311,6 +311,7 @@ describe('Route Handlers - Attendance List', () => {
         instance: {
           ...instanceA,
           isAmendable: true,
+          isInFuture: false,
         },
         attendance,
         attendanceSummary: getAttendanceSummary(instanceA.attendances),
@@ -328,6 +329,7 @@ describe('Route Handlers - Attendance List', () => {
         instance: {
           ...instanceA,
           isAmendable: true,
+          isInFuture: false,
         },
         attendance,
         attendanceSummary: getAttendanceSummary(instanceA.attendances),
@@ -352,6 +354,7 @@ describe('Route Handlers - Attendance List', () => {
         instance: {
           ...instanceA,
           isAmendable: false,
+          isInFuture: false,
           date: activityDate,
         },
         attendance,
@@ -373,6 +376,7 @@ describe('Route Handlers - Attendance List', () => {
         instance: {
           ...instanceA,
           isAmendable: true,
+          isInFuture: false,
         },
         attendance,
         attendanceSummary: getAttendanceSummary(instanceA.attendances),
@@ -904,5 +908,32 @@ describe('Route Handlers - Attendance List', () => {
         expect(res.redirect).toHaveBeenCalledWith(url)
       },
     )
+  })
+
+  describe('Not required or excused', () => {
+    it('should redirect to the paid or not page', async () => {
+      req.body = {
+        selectedAttendances: ['1-undefined-ABC123', '1-undefined-ABC321'],
+      }
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC123', 'ABC321'], res.locals.user)
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'ABC123',
+            firstName: 'Joe',
+            lastName: 'Bloggs',
+          },
+          {
+            prisonerNumber: 'ABC321',
+            firstName: 'Mary',
+            lastName: 'Smith',
+          },
+        ] as Prisoner[])
+
+      await handler.NOT_REQUIRED_OR_EXCUSED(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('not-required-or-excused/paid-or-not')
+    })
   })
 })

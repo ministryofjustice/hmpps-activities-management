@@ -22,7 +22,7 @@
 {% set pageId = 'attendance-list-page' %}
 {% set cancelledComment = '' %}
 {% if instance and instance.comment %}
-  {% set cancelledComment = " - "+instance.comment %}
+    {% set cancelledComment = " - "+instance.comment %}
 {% endif %}
 {% set activityDate = instance.date | toDate | formatDate %}
 {% if selectedSessions.length > 0 %}
@@ -38,10 +38,13 @@
         <div class="govuk-grid-column-two-thirds">
             {% if instance.cancelled %}
                 {% set cancelledSessionHeadingHtml %}
-                    <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
-                    <p class="govuk-body">This activity session has been cancelled by {{ serviceUserName(userMap.get(instance.cancelledBy)) }} on {{ instance.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }} for the following reason:</p>
-                    <ul class="govuk-list govuk-list--bullet"><li>{{ instance.cancelledReason }} {{ cancelledComment }}</li></ul>
-                    {% if cancellationPayInfoAvailable %}
+                <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
+                <p class="govuk-body">This activity session has been cancelled by {{ serviceUserName(userMap.get(instance.cancelledBy)) }} on {{ instance.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }} for the following reason:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>{{ instance.cancelledReason }}
+                        {{ cancelledComment }}</li>
+                </ul>
+                {% if cancellationPayInfoAvailable %}
                     <p class="govuk-body govuk-!-margin-top-4">
                         <a href='../cancel-multiple/view-edit-details/{{instance.id}}' class="govuk-link">View or edit cancellation</a>
                         {% if instance.isAmendable %}
@@ -49,7 +52,7 @@
                         <a href="uncancel" class="govuk-link">uncancel this session</a>
                         {% endif %}
                     </p>
-                    {% endif %}
+                {% endif %}
                 {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',
@@ -65,7 +68,8 @@
                     {{ instance.startTime }} to {{ instance.endTime }} ({{ instance.timeSlot }})
                 </span>
                 <span class="govuk-caption-l">{{ activityDate }}</span>
-                <span class="govuk-caption-l">{{ showLocation(instance.activitySchedule.activity, instance.activitySchedule.internalLocation.description, true) }} </span>
+                <span class="govuk-caption-l">{{ showLocation(instance.activitySchedule.activity, instance.activitySchedule.internalLocation.description, true) }}
+                </span>
             </h1>
 
             <div class="govuk-button-group govuk-!-display-none-print">
@@ -90,8 +94,9 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">{{ attendance | length }} {{ "person" if attendance | length == 1 else "people" }} allocated</h2>
-            {% if instance.activitySchedule.activity.attendanceRequired %} 
+            <h2 class="govuk-heading-m">{{ attendance | length }}
+                {{ "person" if attendance | length == 1 else "people" }} allocated</h2>
+            {% if instance.activitySchedule.activity.attendanceRequired %}
                 <ul class="govuk-list">
                     <li>
                         <span>Attended:</span>
@@ -117,12 +122,12 @@
                             <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
                         {% endif %}
                     </li>
-                </ul>     
-            {% endif %}    
+                </ul>
+            {% endif %}
 
-            {% if instance.date | toDate > now and not instance.cancelled %}
+            {% if instance.isInFuture %}
                 {{ govukInsetText({
-                    text: 'You cannot record attendance for this session until, ' + instance.date | formatDate
+                    text: 'Before ' + instance.date | formatDate + ', you can only mark people as not required or excused. This will be recorded as an acceptable absence.'
                 }) }}
             {% endif %}
         </div>
@@ -141,10 +146,20 @@
     {% set rows = [] %}
     {% for attendee in attendance | sort(false, false, 'location') %}
 
+        {% if instance.isInFuture %}
+            {% set isSelectable = true %}
+        {% else %}
+            {% if attendee.attendance.status === "WAITING" and attendee.attendance.editable and instance.activitySchedule.activity.attendanceRequired === true %}
+                {% set isSelectable = true %}
+            {% else %}
+                {% set isSelectable = false %}
+            {% endif %}
+        {% endif %}
+
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
             value: instance.id + '-' + attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
-            selectable: attendee.attendance.status === "WAITING" and attendee.attendance.editable and instance.activitySchedule.activity.attendanceRequired === true,
+            selectable: isSelectable,
             items: [
                 {
                     html: '<span class="print-checkbox govuk-!-margin-left-3"></span>',
@@ -214,71 +229,137 @@
         }), rows) %}
     {% endfor %}
 
-    <form method='POST'>
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-        {{ stickySelect({
-            type: 'check',
-            id: "attendanceList",
-            caption: "Attendance list",
-            captionClasses: "govuk-visually-hidden",
-            name: 'selectedAttendances',
-            head: [
-                {
-                    text: "",
-                    classes: 'print-only'
-                },
-                {
-                    text: "Name",
-                    attributes: { "aria-sort": "ascending" }
-                },
-                {
-                    text: "Cell location",
-                    attributes: { "aria-sort": "none" }
-                },
-                {
-                    text: "Relevant alerts"
-                },
-                {
-                    text: "Clashing events"
-                },
-                {
-                    text: "Attendance and pay",
-                    classes: 'govuk-!-display-none-print',
-                    colspan: 2,
-                    attributes: { "aria-sort": "none" }
-                },
-                {
-                    text: "Notes",
-                    classes: 'govuk-table__header print-only hmpps-width-20-percent'
+    {% if instance.isInFuture %}
+        <form method='POST'>
+            <p>Amending</p>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            {{ stickySelect({
+                type: 'check',
+                id: "attendanceList",
+                caption: "Attendance list",
+                captionClasses: "govuk-visually-hidden",
+                name: 'selectedAttendances',
+                head: [
+                    {
+                        text: "",
+                        classes: 'print-only'
+                    },
+                    {
+                        text: "Name",
+                        attributes: { "aria-sort": "ascending" }
+                    },
+                    {
+                        text: "Cell location",
+                        attributes: { "aria-sort": "none" }
+                    },
+                    {
+                        text: "Relevant alerts"
+                    },
+                    {
+                        text: "Clashing events"
+                    },
+                    {
+                        text: "Attendance and pay",
+                        classes: 'govuk-!-display-none-print',
+                        colspan: 2,
+                        attributes: { "aria-sort": "none" }
+                    },
+                    {
+                        text: "Notes",
+                        classes: 'govuk-table__header print-only hmpps-width-20-percent'
+                    }
+                ],
+                rows: rows,
+                actions: [
+                    {
+                        text: 'Mark as not required or excused',
+                        formAction: 'not-required-or-excused'
+                    }
+                ],
+                itemsDescription: 'person',
+                itemsDescriptionPlural: 'people',
+                pagination: {
+                    previous: {
+                        title: 'Previous session',
+                        label: instance.previousScheduledInstanceDate | toDate | formatDate('d MMMM yyyy'),
+                        href: '/activities/attendance/activities/' + instance.previousScheduledInstanceId + '/attendance-list'
+                    } if instance.previousScheduledInstanceId,
+                    next: {
+                        title: 'Next session',
+                        label: instance.nextScheduledInstanceDate | toDate | formatDate('d MMMM yyyy'),
+                        href: '/activities/attendance/activities/' + instance.nextScheduledInstanceId + '/attendance-list'
+                    } if instance.nextScheduledInstanceId
                 }
-            ],
-            rows: rows,
-            actions: [
-                {
-                    text: 'Mark as attended',
-                    formAction: 'attended'
-                },
-                {
-                    text: 'Mark as not attended',
-                    formAction: 'not-attended'
+            }) }}
+        </form>
+    {% else %}
+        <form method='POST'>
+
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            {{ stickySelect({
+                type: 'check',
+                id: "attendanceList",
+                caption: "Attendance list",
+                captionClasses: "govuk-visually-hidden",
+                name: 'selectedAttendances',
+                head: [
+                    {
+                        text: "",
+                        classes: 'print-only'
+                    },
+                    {
+                        text: "Name",
+                        attributes: { "aria-sort": "ascending" }
+                    },
+                    {
+                        text: "Cell location",
+                        attributes: { "aria-sort": "none" }
+                    },
+                    {
+                        text: "Relevant alerts"
+                    },
+                    {
+                        text: "Clashing events"
+                    },
+                    {
+                        text: "Attendance and pay",
+                        classes: 'govuk-!-display-none-print',
+                        colspan: 2,
+                        attributes: { "aria-sort": "none" }
+                    },
+                    {
+                        text: "Notes",
+                        classes: 'govuk-table__header print-only hmpps-width-20-percent'
+                    }
+                ],
+                rows: rows,
+                actions: [
+                    {
+                        text: 'Mark as attended',
+                        formAction: 'attended'
+                    },
+                    {
+                        text: 'Mark as not attended',
+                        formAction: 'not-attended'
+                    }
+                ],
+                itemsDescription: 'person',
+                itemsDescriptionPlural: 'people',
+                pagination: {
+                    previous: {
+                        title: 'Previous session',
+                        label: instance.previousScheduledInstanceDate | toDate | formatDate('d MMMM yyyy'),
+                        href: '/activities/attendance/activities/' + instance.previousScheduledInstanceId + '/attendance-list'
+                    } if instance.previousScheduledInstanceId,
+                    next: {
+                        title: 'Next session',
+                        label: instance.nextScheduledInstanceDate | toDate | formatDate('d MMMM yyyy'),
+                        href: '/activities/attendance/activities/' + instance.nextScheduledInstanceId + '/attendance-list'
+                    } if instance.nextScheduledInstanceId
                 }
-            ],
-            itemsDescription: 'person',
-            itemsDescriptionPlural: 'people',
-            pagination: {
-                previous: {
-                    title: 'Previous session',
-                    label: instance.previousScheduledInstanceDate | toDate | formatDate('d MMMM yyyy'),
-                    href: '/activities/attendance/activities/' + instance.previousScheduledInstanceId + '/attendance-list'
-                } if instance.previousScheduledInstanceId,
-                next: {
-                    title: 'Next session',
-                    label: instance.nextScheduledInstanceDate | toDate | formatDate('d MMMM yyyy'),
-                    href: '/activities/attendance/activities/' + instance.nextScheduledInstanceId + '/attendance-list'
-                } if instance.nextScheduledInstanceId
-            }
-        }) }}
-    </form>
+            }) }}
+        </form>
+    {% endif %}
 
     <div class="print-only govuk-body-s govuk-!-margin-top-6">Printed at {{ now | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}</div>
 {% endblock %}
@@ -291,7 +372,7 @@
 {% endmacro %}
 
 {% macro renderViewLink(attendance) %}
-    {% if attendance.status === 'COMPLETED' or attendance.attendanceHistory|length %}
+    {% if attendance.status === 'COMPLETED' or attendance.attendanceHistory | length %}
         <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">
             {% if attendance.editable and instance.activitySchedule.activity.attendanceRequired %}
                 View or Edit

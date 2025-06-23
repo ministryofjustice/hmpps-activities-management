@@ -54,7 +54,10 @@ export default class AttendanceListRoutes {
     const instance = await this.activitiesService.getScheduledActivity(instanceId, user).then(i => ({
       ...i,
       isAmendable: startOfDay(toDate(i.date)) >= startOfToday(),
+      isInFuture: startOfDay(toDate(i.date)) > startOfToday(),
     }))
+
+    // console.log(instance);
 
     const prisonerNumbers = (await this.activitiesService.getAttendees(instanceId, user)).map(a => a.prisonerNumber)
 
@@ -91,6 +94,7 @@ export default class AttendanceListRoutes {
         }
       })
     }
+    // console.log(attendance);
 
     const userMap = await this.userService.getUserMap([instance.cancelledBy], user)
 
@@ -344,6 +348,52 @@ export default class AttendanceListRoutes {
       return res.redirect('../not-attended-reason')
     }
     return res.redirect('not-attended-reason')
+  }
+
+  NOT_REQUIRED_OR_EXCUSED = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
+    const { selectedAttendances }: { selectedAttendances: string[] } = req.body
+    const { recordAttendanceJourney } = req.session
+    // console.log(selectedAttendances)
+
+    const ids = selectedAttendances
+      .map(id => id.split('-'))
+      .map(tokens => {
+        return { instanceId: +tokens[0], prisonerNumber: tokens[2] }
+      })
+
+    const allInstances = await Promise.all(
+      _.uniq(ids.map(id => id.instanceId)).map(instanceId =>
+        this.activitiesService.getScheduledActivity(instanceId, user),
+      ),
+    )
+
+    // console.log(selectedAttendances)
+    // console.log(recordAttendanceJourney)
+
+    // console.log(ids)
+
+    const allPrisonerNumbers = _.uniq(ids.map(id => id.prisonerNumber))
+
+    const allPrisoners = await this.prisonService.searchInmatesByPrisonerNumbers(allPrisonerNumbers, user)
+
+    recordAttendanceJourney.notRequiredOrExcused = {
+      selectedPrisoners: [],
+    }
+
+    ids.forEach(id => {
+      const instance = allInstances.find(inst => inst.id === id.instanceId)
+
+      const prisoner = allPrisoners.find(pris => pris.prisonerNumber === id.prisonerNumber)
+
+      recordAttendanceJourney.notRequiredOrExcused.selectedPrisoners.push({
+        instanceId: instance.id,
+        prisonerNumber: id.prisonerNumber,
+        prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+      })
+    })
+
+    return res.redirect('not-required-or-excused/paid-or-not')
   }
 
   private getAttendanceId = (prisonerNumber: string, attendances: Attendance[]) => {
