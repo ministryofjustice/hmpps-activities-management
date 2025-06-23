@@ -68,7 +68,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-declare global {
+export declare global {
   namespace Express {
     interface User {
       username: string

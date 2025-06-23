@@ -70,7 +70,6 @@ export default class LocationEventsRoutes {
       l =>
         ({
           ...l,
-
           prisonerEvents: prisoners
             .map(p => {
               const events = scheduledEventSort(l.events.filter(e => e.prisonerNumber === p.prisonerNumber))
