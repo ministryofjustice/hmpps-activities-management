@@ -21,7 +21,7 @@
                     name: 'endDate',
                     leadingZeros: 'true',
                     label: {
-                        text: "Change the end date for this activity" if session.req.params.mode == 'edit' else "Enter the end date for this activity",
+                        text: "Change the end date for this activity" if session.req.routeContext.mode == 'edit' else "Enter the end date for this activity",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
@@ -32,7 +32,7 @@
                     errorMessage: validationErrors | findError('endDate'),
                     value: formResponses.endDate or session.createJourney.endDate | isoDateToDatePickerDate
                 }) }}
-                {% if session.req.params.mode == 'edit' %}
+                {% if session.req.routeContext.mode == 'edit' %}
                     {{ govukInsetText({
                           text: "Anyone allocated to the activity who was due to be taken off after this date will now finish on this date."
                      }) }}

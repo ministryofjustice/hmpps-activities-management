@@ -14,9 +14,9 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
-            {% if session.req.params.mode == 'create' %}
+            {% if session.req.routeContext.mode == 'create' %}
                 <h1 class="govuk-heading-xl">Check and confirm this allocation</h1>
-            {% elseif session.req.params.mode == 'remove' %}
+            {% elseif session.req.routeContext.mode == 'remove' %}
                 <h1 class="govuk-heading-l">Check and confirm who you're taking off the activity</h1>
             {% endif %}
         </div>
@@ -55,7 +55,7 @@
 
             {% set endDateOption = ('remove-end-date-option' if session.allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
 
-            {% if session.req.params.mode == 'create' %}
+            {% if session.req.routeContext.mode == 'create' %}
                 {% if session.allocateJourney.scheduledInstance %}
                     {% set nextSessionSlot = session.allocateJourney.scheduledInstance.timeSlot %}
                     {% set nextSessionDate =  session.allocateJourney.scheduledInstance.date | toDate | formatDate %}
@@ -142,7 +142,7 @@
                 }) }}
             {% endif %}
 
-            {% if session.req.params.mode == 'remove' %}
+            {% if session.req.routeContext.mode == 'remove' %}
                 {% set eligibleForCaseNote = true if
                     deallocationReason.code in ['WITHDRAWN_STAFF', 'DISMISSED', 'SECURITY', 'OTHER']
                         and session.allocateJourney.inmates | length == 1
@@ -247,14 +247,14 @@
                 }) }}
             {% endif %}
 
-            <form method="POST" data-module="form-spinner" data-loading-text="{{ 'Removing prisoner' if session.req.params.mode == 'remove' else 'Allocating prisoner' }}">
+            <form method="POST" data-module="form-spinner" data-loading-text="{{ 'Removing prisoner' if session.req.routeContext.mode == 'remove' else 'Allocating prisoner' }}">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
                     {{ govukButton({ 
-                        text: "Confirm this allocation" if session.req.params.mode == 'create' else "Confirm and remove",
+                        text: "Confirm this allocation" if session.req.routeContext.mode == 'create' else "Confirm and remove",
                         preventDoubleClick: true
                     }) }}
-                    <a href="cancel" class="govuk-link govuk-link--no-visited-state">{{ 'Cancel' + (' and return to the list of candidates' if session.req.params.mode == 'create')}}</a>
+                    <a href="cancel" class="govuk-link govuk-link--no-visited-state">{{ 'Cancel' + (' and return to the list of candidates' if session.req.routeContext.mode == 'create')}}</a>
                 </div>
             </form>
         </div>

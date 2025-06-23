@@ -47,7 +47,7 @@
                 }) }}
             {% endfor %}
 
-            {% if session.req.params.mode == 'edit' %}
+            {% if session.req.routeContext.mode == 'edit' %}
                 {{ govukInsetText({
                 text: "If you change the education requirements, this may affect people who are currently allocated to this activity."
                 }) }}
@@ -63,7 +63,7 @@
                     }) }}
                 </div>
                 {{ govukButton({
-                    text: "Update education levels" if session.req.params.mode == 'edit' else "Confirm",
+                    text: "Update education levels" if session.req.routeContext.mode == 'edit' else "Confirm",
                     preventDoubleClick: true
                 }) }}
             </form>

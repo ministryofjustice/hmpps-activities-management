@@ -18,7 +18,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {% if session.req.params.mode == 'edit' %}
+                {% if session.req.routeContext.mode == 'edit' %}
                     <h1 class='govuk-heading-xl'>Are you sure you want to remove the end date for this allocation?</h1>
                     <input type='hidden' name='endDateOption' value='remove'>
                     {{ govukInsetText({
@@ -56,7 +56,7 @@
                         text: "Continue",
                         preventDoubleClick: true
                     }) }}
-                    <a class="govuk-link" href="{{ 'check-answers' if session.req.params.mode == 'create' else '/activities/allocations/view/' + session.req.params.allocationId }}">Cancel</a>
+                    <a class="govuk-link" href="{{ 'check-answers' if session.req.routeContext.mode == 'create' else '/activities/allocations/view/' + session.req.params.allocationId }}">Cancel</a>
                 </div>
             </form>
         </div>

@@ -20,7 +20,7 @@
                     name: 'startDate',
                     leadingZeros: 'true',
                     label: {
-                        text: "Change the start date for this activity" if session.req.params.mode == 'edit' else "Enter the start date for this activity",
+                        text: "Change the start date for this activity" if session.req.routeContext.mode == 'edit' else "Enter the start date for this activity",
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
@@ -31,7 +31,7 @@
                     errorMessage: validationErrors | findError('startDate'),
                     value: formResponses.startDate or session.createJourney.startDate | isoDateToDatePickerDate
                 }) }}
-                {% if session.req.params.mode == 'edit' %}
+                {% if session.req.routeContext.mode == 'edit' %}
                     <div class="govuk-button-group">
                         {{ govukButton({
                             text: "Update start date",

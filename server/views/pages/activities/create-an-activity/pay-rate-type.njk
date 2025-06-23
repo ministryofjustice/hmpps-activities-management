@@ -14,7 +14,7 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ activityJourneyCaption(session.createJourney) }}
-                {% if session.req.params.mode == 'edit' and hasAllocations %}
+                {% if session.req.routeContext.mode == 'edit' and hasAllocations %}
                     <input type='hidden' name='incentiveLevel' value='{{ iep }}' >
                 {% else %}
                     {% set incentiveLevelOptions = [] %}

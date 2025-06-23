@@ -9,7 +9,7 @@
 {% set pageId = 'pay-date-option-page' %}
 {% set jsBackLink = true %}
 
-{% set editMode = session.req.params.mode == 'edit' and iep and band %}
+{% set editMode = session.req.routeContext.mode == 'edit' and iep and band %}
 
 {% block content %}
     <div class="govuk-grid-row">

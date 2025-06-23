@@ -36,7 +36,7 @@
                     items: organiserOptions
                 }) }}
 
-                {% if session.req.params.mode == 'edit' %}
+                {% if session.req.routeContext.mode == 'edit' %}
                     <div class="govuk-button-group">
                         {{ govukButton({
                             text: "Update organiser",
