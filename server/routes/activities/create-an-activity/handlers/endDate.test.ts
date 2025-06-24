@@ -167,7 +167,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
             latestAllocationStartDate: '2022-04-04',
           },
         },
-        pathParams: {
+        routeContext: {
           mode: 'create',
         },
       })
@@ -188,7 +188,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
           startDate: formatIsoDate(tomorrow),
           latestAllocationStartDate: formatIsoDate(tomorrow),
         },
-        pathParams: {
+        routeContext: {
           mode: 'create',
         },
       })
@@ -209,7 +209,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         createJourney: {
           startDate: formatIsoDate(nextWeek),
         },
-        pathParams: {
+        routeContext: {
           mode: 'create',
         },
       })
@@ -236,7 +236,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         createJourney: {
           latestAllocationStartDate: formatIsoDate(latestAllocationStartDate),
         },
-        pathParams: {
+        routeContext: {
           mode: 'create',
         },
       })
@@ -266,7 +266,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
           startDate: formatDate(today, 'yyyy-MM-dd'),
           latestAllocationStartDate: '2022-04-04',
         },
-        pathParams: {
+        routeContext: {
           mode: 'create',
         },
       })
@@ -287,7 +287,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
           startDate: formatDate(addDays(new Date(), 1), 'yyyy-MM-dd'),
           endDate: formatDatePickerDate(endDate),
         },
-        pathParams: {
+        routeContext: {
           mode: 'create',
         },
       })
@@ -317,7 +317,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
           startDate: formatDate(addDays(new Date(), 1), 'yyyy-MM-dd'),
           endDate: formatDatePickerDate(endDate),
         },
-        pathParams: {
+        routeContext: {
           mode: 'edit',
         },
       })

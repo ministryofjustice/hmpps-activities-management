@@ -45,7 +45,7 @@ export class EndDate {
     },
   })
   @Validator(
-    (date, { createJourney, pathParams }) => pathParams.mode === 'edit' || isEndDateValid(createJourney, date),
+    (date, { createJourney, routeContext }) => routeContext.mode === 'edit' || isEndDateValid(createJourney, date),
     {
       message: ({ object }) => {
         const { createJourney } = object as { createJourney: CreateAnActivityJourney }

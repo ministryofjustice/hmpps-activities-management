@@ -1,19 +1,53 @@
 import { NextFunction, Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { IsIn, IsNotEmpty, MaxLength, ValidateIf } from 'class-validator'
+import {
+  IsIn,
+  isNotEmpty,
+  IsNotEmpty,
+  IsNumberString,
+  MaxLength,
+  ValidateIf,
+  ValidationArguments,
+} from 'class-validator'
 import CourtBookingService from '../../../../../services/courtBookingService'
+import config from '../../../../../config'
+import CvpLinkOneOrTheOther from '../../../../../validators/cvpLinkOneOrTheOther'
 
+@Expose()
 export class CourtHearingLink {
-  @Expose()
-  @IsIn(['yes', 'no'], { message: 'Select either yes or no' })
-  required: string
+  @IsIn(['yes', 'no'], { message: 'Select yes if you know the court hearing link' })
+  @CvpLinkOneOrTheOther('videoLinkUrl', 'hmctsNumber', config.bvlsHmctsLinkGuestPinEnabled, {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    message: (args: ValidationArguments) => {
+      if (config.bvlsHmctsLinkGuestPinEnabled) {
+        return 'Enter number from CVP address or enter full web address (URL)'
+      }
+      return 'Enter court hearing link'
+    },
+  })
+  cvpRequired: string
 
-  @Expose()
-  @Transform(({ value, obj }) => (obj.required === 'yes' ? value : undefined))
-  @ValidateIf(o => o.required === 'yes')
-  @MaxLength(120, { message: 'You must enter a court hearing link which has no more than 120 characters' })
-  @IsNotEmpty({ message: 'Enter the court hearing link' })
+  @Transform(({ value, obj }) => (obj.cvpRequired === 'yes' ? value : undefined))
+  @ValidateIf(o => o.cvpRequired === 'yes' && isNotEmpty(o.videoLinkUrl))
+  @MaxLength(120, { message: 'Court hearing link must be $constraint1 characters or less' })
   videoLinkUrl: string
+
+  @Transform(({ value, obj }) => (obj.cvpRequired === 'yes' ? value : undefined))
+  @ValidateIf(o => o.cvpRequired === 'yes' && config.bvlsHmctsLinkGuestPinEnabled && isNotEmpty(o.hmctsNumber))
+  @MaxLength(8, { message: 'Number from CVP address must be $constraint1 characters or less' })
+  @IsNumberString({ no_symbols: true }, { message: 'Number from CVP address must be a number, like 3457' })
+  hmctsNumber: string
+
+  @ValidateIf(() => config.bvlsHmctsLinkGuestPinEnabled)
+  @IsIn(['yes', 'no'], { message: 'Select yes if you know the guest pin' })
+  guestPinRequired: string
+
+  @Transform(({ value, obj }) => (obj.guestPinRequired === 'yes' ? value : undefined))
+  @ValidateIf(o => config.bvlsHmctsLinkGuestPinEnabled && o.guestPinRequired === 'yes')
+  @IsNotEmpty({ message: 'Enter guest pin' })
+  @MaxLength(8, { message: 'Guest pin must be $constraint1 characters or less' })
+  @IsNumberString({ no_symbols: true }, { message: 'Guest pin must be a number' })
+  guestPin: string
 }
 
 export default class CourtHearingLinkRoutes {
@@ -26,9 +60,16 @@ export default class CourtHearingLinkRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { mode } = req.routeContext
     const { user } = res.locals
-    const { videoLinkUrl } = req.body
+    const { cvpRequired, videoLinkUrl, hmctsNumber, guestPinRequired, guestPin } = req.body
 
-    req.session.bookACourtHearingJourney.videoLinkUrl = videoLinkUrl
+    req.session.bookACourtHearingJourney = {
+      ...req.session.bookACourtHearingJourney,
+      cvpRequired: cvpRequired === 'yes',
+      videoLinkUrl: isNotEmpty(videoLinkUrl) ? videoLinkUrl : null,
+      hmctsNumber: config.bvlsHmctsLinkGuestPinEnabled && isNotEmpty(hmctsNumber) ? hmctsNumber : null,
+      guestPinRequired: config.bvlsHmctsLinkGuestPinEnabled && guestPinRequired === 'yes',
+      guestPin: config.bvlsHmctsLinkGuestPinEnabled && isNotEmpty(guestPin) ? guestPin : null,
+    }
 
     if (mode === 'amend') {
       await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)

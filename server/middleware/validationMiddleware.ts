@@ -17,6 +17,7 @@ function validationMiddleware(type: new () => object): RequestHandler {
     const requestObject = plainToInstance(type, {
       ...req.body,
       pathParams: req.params,
+      routeContext: req.routeContext,
       queryParams: req.query,
       file: req.file,
       createJourney: req.session.createJourney,

@@ -4,10 +4,11 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/characterCountInput.njk" import characterCountInput %}
 
 {% set pageId = 'court-hearing-link-page' %}
 {% set jsBackLink = true %}
-{% set pageHeading = "Do you know the link for this video link hearing?" %}
+{% set pageHeading = "Enter link details" if bvlsHmctsLinkGuestPinEnabled else "Do you know the link for this video link hearing?" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -22,6 +23,110 @@
             <form method='POST' {% if session.req.routeContext.mode == 'amend' %} data-module="form-spinner" data-loading-text="{{ 'Changing court hearing link' }}" {% endif %}>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
+                {% if bvlsHmctsLinkGuestPinEnabled %}
+                {% set courtHearingLinkHtml %}
+                    {{ govukInput({
+                        name: "hmctsNumber",
+                        id: "hmctsNumber",
+                        label: {
+                            text: "Enter number from CVP address",
+                            classes: 'govuk-label--s'
+                        },
+                        prefix: {
+                            text: "HMCTS",
+                            classes: 'govuk-label--s'
+                        },
+                        hint: {
+                            text: "For example 3457"
+                        },
+                        classes: "govuk-input--width-5",
+                        inputmode: "numeric",
+                        value: formResponses.hmctsNumber or session.bookACourtHearingJourney.hmctsNumber,
+                        errorMessage: validationErrors | findError("hmctsNumber")
+                    }) }}
+                    <p class="govuk-body">Or</p>
+                    {{ govukInput({
+                        name: "videoLinkUrl",
+                        id: "videoLinkUrl",
+                        label: {
+                            text: "Enter full web address (URL)",
+                            classes: 'govuk-label--s'
+                        },
+                        value: formResponses.videoLinkUrl or session.bookACourtHearingJourney.videoLinkUrl,
+                        errorMessage: validationErrors | findError("videoLinkUrl")
+                    }) }}
+                {% endset %}
+
+                {{ govukRadios({
+                    idPrefix: "cvpRequired",
+                    name: "cvpRequired",
+                    errorMessage: validationErrors | findError('cvpRequired'),
+                    fieldset: {
+                        legend: {
+                            text: "Do you know the link for this video link hearing?",
+                            classes: "govuk-fieldset__legend--s"
+                        }
+                    },
+                    items: [
+                        {
+                            value: 'yes',
+                            text: "Yes",
+                            checked: formResponses.cvpRequired == 'yes' or (session.bookACourtHearingJourney.videoLinkUrl or session.bookACourtHearingJourney.hmctsNumber),
+                            conditional: {
+                                html: courtHearingLinkHtml
+                            }
+                        },
+                        {
+                            value: 'no',
+                            text: "No",
+                            checked: formResponses.cvpRequired == 'no' or (session.bookACourtHearingJourney.cvpRequired == false and not formResponses)
+                        }
+                    ]
+                }) }}
+
+                {% set guestPinHtml %}
+                    {{ govukInput({
+                        name: "guestPin",
+                        id: "guestPin",
+                        label: {
+                            text: "Enter guest pin",
+                            classes: 'govuk-label--s'
+                        },
+                        classes: "govuk-input--width-10",
+                        value: formResponses.guestPin or session.bookACourtHearingJourney.guestPin,
+                        errorMessage: validationErrors | findError("guestPin")
+                    }) }}
+                {% endset %}
+                {{ govukRadios({
+                    idPrefix: "guestPinRequired",
+                    name: "guestPinRequired",
+                    errorMessage: validationErrors | findError('guestPinRequired'),
+                    fieldset: {
+                        legend: {
+                            text: "Is a guest pin required?",
+                            classes: "govuk-fieldset__legend--s"
+                        }
+                    },
+                    hint: {
+                        text: "Some meetings require a guest pin for security reasons."
+                    },
+                    items: [
+                        {
+                            value: 'yes',
+                            text: "Yes",
+                            checked: formResponses.guestPinRequired == 'yes' or (session.bookACourtHearingJourney.guestPin),
+                            conditional: {
+                                html: guestPinHtml
+                            }
+                        },
+                        {
+                            value: 'no',
+                            text: "No",
+                            checked: formResponses.guestPinRequired == 'no' or (session.bookACourtHearingJourney.guestPinRequired == false and not formResponses)
+                        }
+                    ]
+                }) }}
+                {% else %}
                 {% set courtHearingLinkHtml %}
                     {{ govukInput({
                         name: "videoLinkUrl",
@@ -35,9 +140,9 @@
                 {% endset %}
 
                 {{ govukRadios({
-                    idPrefix: "required",
-                    name: "required",
-                    errorMessage: validationErrors | findError('required'),
+                    idPrefix: "cvpRequired",
+                    name: "cvpRequired",
+                    errorMessage: validationErrors | findError('cvpRequired'),
                     fieldset: {
                         legend: {
                             text: "Do you know the link for this video link hearing?",
@@ -48,7 +153,7 @@
                         {
                             value: 'yes',
                             text: "Yes",
-                            checked: formResponses.required == 'yes' or session.bookACourtHearingJourney.videoLinkUrl,
+                            checked: formResponses.cvpRequired == 'yes' or session.bookACourtHearingJourney.videoLinkUrl,
                             conditional: {
                                 html: courtHearingLinkHtml
                             }
@@ -56,10 +161,11 @@
                         {
                             value: 'no',
                             text: "No",
-                            checked: formResponses.required == 'no' or (not session.bookACourtHearingJourney.videoLinkUrl and (session.req.routeContext.mode == 'amend' or session.req.query.preserveHistory == 'true') and not formResponses)
+                            checked: formResponses.cvpRequired == 'no' or (session.bookACourtHearingJourney.cvpRequired == false and not formResponses)
                         }
                     ]
                 }) }}
+                {% endif %}
 
                 {{ govukButton({
                     text: "Continue"
