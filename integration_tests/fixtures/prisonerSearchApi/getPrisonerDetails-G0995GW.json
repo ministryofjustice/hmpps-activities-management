@@ -1,0 +1,30 @@
+{
+  "prisonerNumber": "G0995GW",
+  "fullName": "Aeticake Potta",
+  "firstName": "Aeticake",
+  "lastName": "Potta",
+  "dateOfBirth": "1985-05-20",
+  "releaseDate": "2019-11-30",
+  "workplaceRiskAssessment": "None",
+  "cellLocation": "A-N-3-30N",
+  "currentIncentive": {
+    "level": {
+      "code": "STD",
+      "description": "Standard"
+    },
+    "dateTime": "2023-02-16T19:30:30",
+    "nextReviewDate": "2023-05-16"
+  },
+  "alerts": [
+    {
+      "alertCode": "XNR",
+      "alertType": "X",
+      "description": "Not For Release",
+      "isActive": true
+    }
+  ],
+  "category": "C",
+  "iepLevel": "Standard",
+  "csra": "Low",
+  "bookingId": 123456
+}

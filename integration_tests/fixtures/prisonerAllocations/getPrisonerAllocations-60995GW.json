@@ -1,0 +1,50 @@
+[
+  {
+    "prisonerNumber": "G0995GW",
+    "bookingId": 1205035,
+    "allocations": [
+      {
+        "activityId": 2,
+        "activitySummary": "Workshop - Woodwork",
+        "allocatedDate": "2025-01-11T14:00:00Z",
+        "location": "Workshop A",
+        "status": "ACTIVE",
+        "startDate": "2025-01-11",
+        "endDate": "2025-02-11"
+      },
+      {
+        "activityId": 45,
+        "activitySummary": "Library Access",
+        "allocatedDate": "2025-01-12T09:00:00Z",
+        "location": "Library",
+        "status": "ACTIVE",
+        "startDate": "2025-01-12",
+        "endDate": "2025-02-12"
+      }
+    ]
+  },
+  {
+    "prisonerNumber": "G6123VU",
+    "bookingId": 1205036,
+    "allocations": [
+      {
+        "activityId": 2,
+        "activitySummary": "Workshop - Woodwork",
+        "allocatedDate": "2025-01-11T14:00:00Z",
+        "location": "Workshop A",
+        "status": "ACTIVE",
+        "startDate": "2025-01-11",
+        "endDate": "2025-02-11"
+      },
+      {
+        "activityId": 45,
+        "activitySummary": "Library Access",
+        "allocatedDate": "2025-01-12T09:00:00Z",
+        "location": "Library",
+        "status": "ACTIVE",
+        "startDate": "2025-01-12",
+        "endDate": "2025-02-12"
+      }
+    ]
+  }
+]
