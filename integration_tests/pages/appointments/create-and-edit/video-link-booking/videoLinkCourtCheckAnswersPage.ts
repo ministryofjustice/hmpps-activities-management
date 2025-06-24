@@ -41,6 +41,8 @@ export default class VideoLinkCourtCheckAnswersPage extends Page {
 
   assertHearingLink = (hearingLink: string) => this.assertAppointmentDetail('Court hearing link', hearingLink)
 
+  assertGuestPin = (pin: string) => this.assertAppointmentDetail('Guest pin', pin)
+
   assertMainLocation = (location: string) => this.assertMainScheduleDetail('Location', location)
 
   assertNotesForStaff = (staffNotes: string) => this.assertExtraInformationDetail('Notes for prison staff', staffNotes)

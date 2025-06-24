@@ -2,6 +2,7 @@ import { RequestHandler } from 'express'
 import { parse } from 'date-fns'
 import _ from 'lodash'
 import createHttpError from 'http-errors'
+import { isNotEmpty } from 'class-validator'
 import { Services } from '../../../../../services'
 import asyncMiddleware from '../../../../../middleware/asyncMiddleware'
 
@@ -90,9 +91,13 @@ export default ({
       preLocationCode: preAppointment?.prisonLocKey,
       postLocationCode: postAppointment?.prisonLocKey,
       comments: booking.comments,
-      videoLinkUrl: booking.videoLinkUrl,
+      videoLinkUrl: isNotEmpty(booking.videoLinkUrl) ? booking.videoLinkUrl : undefined,
       notesForStaff: booking.notesForStaff,
       notesForPrisoners: booking.notesForPrisoners,
+      hmctsNumber: isNotEmpty(booking.hmctsNumber) ? booking.hmctsNumber : undefined,
+      guestPin: booking.guestPin,
+      guestPinRequired: isNotEmpty(booking.guestPin),
+      cvpRequired: isNotEmpty(booking.videoLinkUrl) || isNotEmpty(booking.hmctsNumber),
     }
 
     return next()
