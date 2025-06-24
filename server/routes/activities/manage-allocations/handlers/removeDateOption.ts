@@ -31,7 +31,7 @@ export default class RemoveDateOptionRoutes {
 
     req.session.allocateJourney.endDate = null
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const allocationUpdate = { removeEndDate: true }
       await this.activitiesService.updateAllocation(+allocationId, allocationUpdate, user)
 

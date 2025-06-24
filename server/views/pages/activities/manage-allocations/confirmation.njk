@@ -17,7 +17,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {% if session.req.params.mode == 'create' %}
+            {% if session.req.routeContext.mode == 'create' %}
                 {{ govukPanel({
                     titleText: "Allocation complete",
                     text: prisonerName + ' (' + prisonerNumber + ') is now allocated to ' + activityName
@@ -36,7 +36,7 @@
                 </ul>
             {% endif %}
 
-            {% if session.req.params.mode == 'remove' %}
+            {% if session.req.routeContext.mode == 'remove' %}
                 {% if session.allocateJourney.inmates | length > 1 %}
                     {{ govukPanel({
                         titleText: "Removal complete",

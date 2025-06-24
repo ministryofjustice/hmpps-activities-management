@@ -22,7 +22,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method='POST' {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing location" {% endif %}>
+            <form method='POST' {% if session.req.routeContext.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing location" {% endif %}>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {% set items = [{ text: "", value: "" }] %}

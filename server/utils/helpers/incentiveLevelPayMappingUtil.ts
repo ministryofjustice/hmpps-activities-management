@@ -41,6 +41,7 @@ export default class IncentiveLevelPayMappingUtil {
         iepPay =>
           ({
             incentiveLevel: iepPay.incentiveLevel,
+
             pays: iepPay.pays.map(p => ({
               ...p,
               allocationCount: allocationsMaybe.filter(

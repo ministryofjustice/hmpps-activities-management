@@ -23,6 +23,7 @@ describe('LocationRoutes', () => {
       body: {},
       params: {},
       query: {},
+      routeContext: { mode: 'create' },
     } as unknown as Request
     res = {
       locals: { user: {} },
@@ -57,7 +58,7 @@ describe('LocationRoutes', () => {
     })
 
     it('redirects to schedule when mode is amend', async () => {
-      req.params.mode = 'amend'
+      req.routeContext = { mode: 'amend' }
 
       await locationRoutes.POST(req as Request, res as Response)
 
@@ -65,7 +66,7 @@ describe('LocationRoutes', () => {
     })
 
     it('redirects to meeting details when mode is create', async () => {
-      req.params.mode = 'create'
+      req.routeContext = { mode: 'create' }
 
       await locationRoutes.POST(req as Request, res as Response)
 

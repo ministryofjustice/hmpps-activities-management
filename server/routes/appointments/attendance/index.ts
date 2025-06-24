@@ -1,6 +1,5 @@
 import { RequestHandler, Router } from 'express'
 import { Services } from '../../../services'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import SelectDateRoutes, { SelectDate } from './handlers/selectDate'
 import SummariesRoutes from './handlers/summaries'
@@ -13,15 +12,11 @@ import EditAttendanceRoutes, { EditAttendance } from './handlers/editAttendance'
 export default function Index({ activitiesService, prisonService, userService }: Services): Router {
   const router = Router({ mergeParams: true })
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
   const getForJourney = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(
-      path,
-      emptyJourneyHandler('recordAppointmentAttendanceJourney', stepRequiresSession),
-      asyncMiddleware(handler),
-    )
+    router.get(path, emptyJourneyHandler('recordAppointmentAttendanceJourney', stepRequiresSession), handler)
 
   const selectDateRoutes = new SelectDateRoutes()
   const summariesRoutes = new SummariesRoutes(activitiesService, prisonService)

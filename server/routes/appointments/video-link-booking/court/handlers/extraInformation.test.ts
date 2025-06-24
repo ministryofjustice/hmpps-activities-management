@@ -136,7 +136,7 @@ describe('ExtraInformationRoutes', () => {
 
       req.body.notesForStaff = 'Notes for staff'
       req.body.notesForPrisoners = 'Notes for prisoners'
-      req.params.mode = 'amend'
+      req.routeContext = { mode: 'amend' }
       req.session.bookACourtHearingJourney.bookingId = 1
 
       await extraInformationRoutes.POST(req as Request, res as Response)
@@ -159,7 +159,7 @@ describe('ExtraInformationRoutes', () => {
       config.bvlsMasterPublicPrivateNotesEnabled = false
 
       req.body.extraInformation = 'some extra information'
-      req.params.mode = 'amend'
+      req.routeContext = { mode: 'amend' }
       req.session.bookACourtHearingJourney.bookingId = 2
 
       await extraInformationRoutes.POST(req as Request, res as Response)
@@ -178,7 +178,7 @@ describe('ExtraInformationRoutes', () => {
     })
 
     it('redirects to check-answers when mode is not amend', async () => {
-      req.params.mode = 'create'
+      req.routeContext = { mode: 'create' }
 
       await extraInformationRoutes.POST(req as Request, res as Response)
 

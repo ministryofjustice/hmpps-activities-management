@@ -22,9 +22,9 @@ describe('initialiseEditJourney', () => {
       createJourney: {},
     },
     params: {
-      mode: 'edit',
       activityId: '1',
     },
+    routeContext: { mode: 'edit' },
   } as unknown as Request
 
   const res = {

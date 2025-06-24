@@ -32,7 +32,7 @@ export default class PayOption {
       req.session.createJourney.pay = []
       req.session.createJourney.flat = []
 
-      if (req.params.mode === 'edit') {
+      if (req.routeContext.mode === 'edit') {
         const { activityId } = req.session.createJourney
 
         const activity = {

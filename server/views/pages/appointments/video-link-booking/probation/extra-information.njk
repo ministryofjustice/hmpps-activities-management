@@ -17,7 +17,7 @@
       <h1 class="govuk-heading-l">
          <label class="govuk-label govuk-label--l">{{ pageHeading }}</label>
       </h1>
-      <form method="POST" {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing extra information" {% endif %}>
+      <form method="POST" {% if session.req.routeContext.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing extra information" {% endif %}>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
         <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="400">
           <div class="govuk-form-group">

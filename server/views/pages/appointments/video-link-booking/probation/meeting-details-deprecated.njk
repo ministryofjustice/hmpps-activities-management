@@ -9,7 +9,7 @@
 {% set pageHeading = "Enter the type of meeting" %}
 
 {% block meta %}
-  {% if session.req.params.mode == 'create' %}
+  {% if session.req.routeContext.mode == 'create' %}
     <meta name="autocompleteElements" content="probationTeamCode"/>
   {% endif %}
   <meta name="autocompleteElements" content="meetingTypeCode"/>
@@ -36,7 +36,7 @@
                         }), items) %}
                 {% endfor %}
 
-                {% if session.req.params.mode == 'create' %}
+                {% if session.req.routeContext.mode == 'create' %}
                     {{ govukSelect({
                         name: "probationTeamCode",
                         id: "probationTeamCode",

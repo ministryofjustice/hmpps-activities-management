@@ -49,6 +49,6 @@ export default class ApplyFiltersRoutes {
       req.session.attendanceSummaryJourney.payFilters = undefined
     }
 
-    res.redirect('back')
+    res.redirect(req.get('Referrer') || '/')
   }
 }

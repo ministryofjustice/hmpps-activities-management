@@ -84,6 +84,7 @@ export declare global {
       appointment?: AppointmentDetails
       appointmentSet?: AppointmentSetDetails
       journeyData: JourneyData
+      routeContext?: { mode?: string }
     }
   }
 }

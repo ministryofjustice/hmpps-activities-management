@@ -12,7 +12,7 @@
 {% set pageId = 'pay-page' %}
 {% set jsBackLink = true %}
 
-{% set editMode = session.req.params.mode == 'edit' and iep and band %}
+{% set editMode = session.req.routeContext.mode == 'edit' and iep and band %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -55,7 +55,7 @@
                     value: formResponses.rate or (rate / 100) | toFixed
                 }) }}
 
-                {% if session.req.params.mode == 'create' %}
+                {% if session.req.routeContext.mode == 'create' %}
                     {{ govukDetails({
                         summaryText: "What to do if the pay amount is due to change soon",
                         text: "Finish setting up the activity with the current pay rates. Then edit the activity. You can schedule changes to pay rates up to 30 days in advance.",
@@ -100,9 +100,9 @@
                 }) }}
 
                 {% if payRateType === "single" %}
-                    {% if session.req.params.mode == 'create' and session.createJourney.incentiveLevel !== null %}
+                    {% if session.req.routeContext.mode == 'create' and session.createJourney.incentiveLevel !== null %}
                         <input type='hidden' name='incentiveLevel' value='{{ session.createJourney.incentiveLevel }}' >
-                    {% elseif session.req.params.mode == 'edit' and (hasAllocations or iep) %}
+                    {% elseif session.req.routeContext.mode == 'edit' and (hasAllocations or iep) %}
                         <input type='hidden' name='incentiveLevel' value='{{ iep }}' >
                     {% else %}
                         {% set incentiveLevelOptions = [] %}

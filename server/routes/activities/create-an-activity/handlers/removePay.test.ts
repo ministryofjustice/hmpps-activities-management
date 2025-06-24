@@ -35,6 +35,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
 
     req = {
       query: {},
+      routeContext: { mode: 'create' },
       params: {},
       session: {
         createJourney: {
@@ -149,7 +150,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       ] as CreateAnActivityJourney['pay']
 
       req.session.createJourney.pay = payRates
-      req.params = { mode: 'edit' }
+      req.routeContext = { mode: 'edit' }
       req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
 
       await handler.POST(req, res)
@@ -197,7 +198,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
 
       req.session.createJourney.pay = pay
       req.body = { iep: 'Basic', bandId: '2', choice: 'yes' }
-      req.params = { mode: 'edit' }
+      req.routeContext = { mode: 'edit' }
 
       await handler.POST(req, res)
       expect(req.session.createJourney.pay).toEqual([
@@ -296,7 +297,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
 
       req.session.createJourney.pay = pay
       req.body = { iep: 'Basic', bandId: '61', choice: 'yes' }
-      req.params = { mode: 'edit' }
+      req.routeContext = { mode: 'edit' }
 
       await handler.POST(req, res)
       expect(req.session.createJourney.pay).toEqual([

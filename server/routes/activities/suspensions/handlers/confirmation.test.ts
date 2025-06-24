@@ -43,7 +43,7 @@ describe('Route Handlers - Suspensions - Confirmation', () => {
     } as unknown as Response
 
     req = {
-      params: { mode: 'create' },
+      params: {},
       session: {
         suspendJourney,
         journeyMetrics: {},

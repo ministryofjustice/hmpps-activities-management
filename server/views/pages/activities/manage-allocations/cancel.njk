@@ -17,7 +17,7 @@
                     name: "choice",
                     fieldset: {
                         legend: {
-                            text: "Are you sure you want to cancel this " + ("allocation?" if session.req.params.mode == 'create' else 'removal?'),
+                            text: "Are you sure you want to cancel this " + ("allocation?" if session.req.routeContext.mode == 'create' else 'removal?'),
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--xl"
                         }

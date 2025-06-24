@@ -12,7 +12,8 @@ export default class CheckAnswersRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { allocations, suspendFrom, suspendUntil, caseNote, paid } = req.session.suspendJourney
     const { user } = res.locals
-    const { mode, prisonerNumber } = req.params
+    const { prisonerNumber } = req.params
+    const { mode } = req.routeContext
 
     const allocationIds = allocations.map(a => a.allocationId)
     const prisonerSuspensionStatus =

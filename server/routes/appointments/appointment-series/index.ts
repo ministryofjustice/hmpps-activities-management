@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import AppointmentSeriesDetailsRoutes from './handlers/appointmentSeriesDetails'
 
 import { Services } from '../../../services'
@@ -9,7 +8,7 @@ export default function Index({ activitiesService, userService }: Services): Rou
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler) =>
-    router.get(path, fetchAppointmentSeries(activitiesService), asyncMiddleware(handler))
+    router.get(path, fetchAppointmentSeries(activitiesService), handler)
 
   const appointmentSeriesDetailsRoutes = new AppointmentSeriesDetailsRoutes(userService)
 

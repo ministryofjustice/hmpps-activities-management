@@ -23,7 +23,6 @@ export const parseDatePickerDate = (datePickerDate: string): Date => {
 export const parseIsoDate = (isoDate: string): Date => {
   if (!isoDate) return null
   const date = parseISO(isoDate)
-
   if (!isValid(date)) return new Date(NaN)
 
   return date

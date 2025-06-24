@@ -78,7 +78,7 @@
                     {% endif %}
                 </div>
 
-                {% if session.req.params.mode == 'remove' and session.allocateJourney.inmates | length > 1 %}
+                {% if session.req.routeContext.mode == 'remove' and session.allocateJourney.inmates | length > 1 %}
                     {% set rows = [] %}
                     {% for inmate in session.allocateJourney.inmates %}
                         {% set rows = (rows.push([

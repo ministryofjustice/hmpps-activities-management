@@ -58,7 +58,7 @@ export default class CourtHearingLinkRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { mode } = req.params
+    const { mode } = req.routeContext
     const { user } = res.locals
     const { cvpRequired, videoLinkUrl, hmctsNumber, guestPinRequired, guestPin } = req.body
 

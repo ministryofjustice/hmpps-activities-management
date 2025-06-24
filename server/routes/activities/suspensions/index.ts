@@ -1,6 +1,5 @@
 import { RequestHandler, Router } from 'express'
 import { Services } from '../../../services'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import ViewAllocationsRoutes from './handlers/viewAllocations'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import SelectPrisonerRoutes, { PrisonerSearch, SelectPrisoner } from './handlers/selectPrisoner'
@@ -9,12 +8,13 @@ import initialiseSuspendJourney from './middlewares/initialiseSuspendJourney'
 import suspendRoutes from './suspendRoutes'
 import unsuspendRoutes from './unsuspendRoutes'
 import ViewSuspensionsRoutes from './handlers/viewSuspensions'
+import insertRouteContext from '../../../middleware/routeContext'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const viewAllocationsHandler = new ViewAllocationsRoutes(services.activitiesService, services.prisonService)
   const viewSuspensionsHandler = new ViewSuspensionsRoutes(
@@ -30,17 +30,18 @@ export default function Index(services: Services): Router {
   post('/search-prisoner', selectPrisonerRoutes.SEARCH, PrisonerSearch)
   post('/select-prisoner', selectPrisonerRoutes.SELECT_PRISONER, SelectPrisoner)
 
-  router.use('/:mode(suspend|unsuspend)/:prisonerNumber', insertJourneyIdentifier())
+  router.use(['/suspend/:prisonerNumber', '/unsuspend/:prisonerNumber'], insertJourneyIdentifier())
 
   router.use(
-    '/:mode(suspend)/:prisonerNumber/:journeyId',
-    asyncMiddleware(initialiseSuspendJourney(services.prisonService, services.activitiesService)),
+    '/suspend/:prisonerNumber/:journeyId',
+    insertRouteContext('suspend'),
+    initialiseSuspendJourney(services.prisonService, services.activitiesService),
     suspendRoutes(services),
   )
-
   router.use(
-    '/:mode(unsuspend)/:prisonerNumber/:journeyId',
-    asyncMiddleware(initialiseSuspendJourney(services.prisonService, services.activitiesService)),
+    '/unsuspend/:prisonerNumber/:journeyId',
+    insertRouteContext('unsuspend'),
+    initialiseSuspendJourney(services.prisonService, services.activitiesService),
     unsuspendRoutes(services),
   )
 

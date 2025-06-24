@@ -53,7 +53,7 @@ describe('CourtHearingLinkRoutes', () => {
       config.bvlsHmctsLinkGuestPinEnabled = toggle === 'true'
 
       req.body.videoLinkUrl = 'URL'
-      req.params.mode = 'amend'
+      req.routeContext = { mode: 'amend' }
       req.session.bookACourtHearingJourney.bookingId = 1
 
       await courtHearingLinkRoutes.POST(req as Request, res as Response)
@@ -72,7 +72,7 @@ describe('CourtHearingLinkRoutes', () => {
       config.bvlsHmctsLinkGuestPinEnabled = toggle === 'true'
 
       req.body.videoLinkUrl = 'URL'
-      req.params.mode = 'create'
+      req.routeContext = { mode: 'create' }
 
       await courtHearingLinkRoutes.POST(req as Request, res as Response)
 

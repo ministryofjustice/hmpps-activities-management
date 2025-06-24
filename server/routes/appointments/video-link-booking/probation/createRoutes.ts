@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../../middleware/validationMiddleware'
 import SelectPrisonerRoutes, { Prisoner } from './handlers/selectPrisoner'
 import LocationRoutes, { Location } from './handlers/location'
@@ -19,9 +18,9 @@ export default function CreateRoutes({
 }: Services): Router {
   const router = Router({ mergeParams: true })
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const selectPrisoner = new SelectPrisonerRoutes()
   const location = new LocationRoutes(bookAVideoLinkService)

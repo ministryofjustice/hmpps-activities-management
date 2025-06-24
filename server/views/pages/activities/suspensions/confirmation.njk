@@ -9,7 +9,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {% if session.req.params.mode == 'suspend' %}
+            {% if session.req.routeContext.mode == 'suspend' %}
                 {% if session.suspendJourney.suspendFrom == now | toDateString %}
                     {% set subText %}
                     {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) is now suspended from
@@ -70,7 +70,7 @@
                 {% endif %}
             {% endif %}
 
-            {% if session.req.params.mode == 'unsuspend' %}
+            {% if session.req.routeContext.mode == 'unsuspend' %}
                 {% if session.suspendJourney.suspendUntil == now | toDateString %}
                     {% set subText %}
                     {{ session.suspendJourney.inmate.prisonerName | safe }} ({{ session.suspendJourney.inmate.prisonerNumber }}) is now due to attend

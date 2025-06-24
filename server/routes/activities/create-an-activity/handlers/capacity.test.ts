@@ -35,6 +35,7 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
       session: {
         createJourney: {},
       },
+      routeContext: { mode: 'create' },
     } as unknown as Request
   })
 
@@ -74,9 +75,7 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
             allocations: [],
           },
         },
-        params: {
-          mode: 'edit',
-        },
+        routeContext: { mode: 'edit' },
         body: {
           capacity: 10,
         },

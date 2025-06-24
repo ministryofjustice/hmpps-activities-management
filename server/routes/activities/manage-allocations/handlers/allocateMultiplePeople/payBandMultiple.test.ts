@@ -31,7 +31,8 @@ describe('Pay band page', () => {
     } as unknown as Response
 
     req = {
-      params: { mode: 'create', allocationId: 1 },
+      params: { allocationId: 1 },
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney: {
           inmates: [
