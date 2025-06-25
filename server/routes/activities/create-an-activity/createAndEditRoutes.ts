@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import CategoryRoutes, { Category } from './handlers/category'
@@ -47,9 +46,9 @@ export default function Index({
 }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('createJourney', stepRequiresSession), asyncMiddleware(handler))
+    router.get(path, emptyJourneyHandler('createJourney', stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const categoryHandler = new CategoryRoutes(activitiesService)
   const nameHandler = new NameRoutes(activitiesService)
@@ -130,19 +129,19 @@ export default function Index({
   post('/remove-end-date', removeEndDateHandler.POST, RemoveEndDateOptions)
   get('/schedule-frequency', scheduleFrequencyHandler.GET, true)
   post('/schedule-frequency', scheduleFrequencyHandler.POST, ScheduleFrequencyForm)
-  get('/days-and-times/:weekNumber(\\d+)', daysAndSessionsHandler.GET, true)
-  post('/days-and-times/:weekNumber(\\d+)', daysAndSessionsHandler.POST, DaysAndSessions)
+  get('/days-and-times/:weekNumber', daysAndSessionsHandler.GET, true)
+  post('/days-and-times/:weekNumber', daysAndSessionsHandler.POST, DaysAndSessions)
   get('/bank-holiday-option', bankHolidayHandler.GET, true)
   post('/bank-holiday-option', bankHolidayHandler.POST, BankHolidayOption)
-  get('/session-times-option/:weekNumber(\\d+)', sessionTimesOptionHandler.GET, true)
-  post('/session-times-option/:weekNumber(\\d+)', sessionTimesOptionHandler.POST, SessionTimesOption)
+  get('/session-times-option/:weekNumber', sessionTimesOptionHandler.GET, true)
+  post('/session-times-option/:weekNumber', sessionTimesOptionHandler.POST, SessionTimesOption)
   get('/session-times', sessionTimesHandler.GET, true)
   post('/session-times', sessionTimesHandler.POST, SessionTimes)
-  get('/custom-times-change-option/:weekNumber(\\d+)', customTimesChangeOptionHandler.GET)
-  post('/custom-times-change-option/:weekNumber(\\d+)', customTimesChangeOptionHandler.POST, ScheduleOption)
-  get('/custom-times-change-default-or-custom/:weekNumber(\\d+)', CustomTimesChangeDefaultOrCustomHandler.GET)
+  get('/custom-times-change-option/:weekNumber', customTimesChangeOptionHandler.GET)
+  post('/custom-times-change-option/:weekNumber', customTimesChangeOptionHandler.POST, ScheduleOption)
+  get('/custom-times-change-default-or-custom/:weekNumber', CustomTimesChangeDefaultOrCustomHandler.GET)
   post(
-    '/custom-times-change-default-or-custom/:weekNumber(\\d+)',
+    '/custom-times-change-default-or-custom/:weekNumber',
     CustomTimesChangeDefaultOrCustomHandler.POST,
     DefaultOrCustomOption,
   )

@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import emptyAppointmentJourneyHandler from '../../../middleware/emptyAppointmentJourneyHandler'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import StartJourneyRoutes from './handlers/startJourney'
@@ -49,9 +48,9 @@ export default function Create({
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyAppointmentJourneyHandler(stepRequiresSession), asyncMiddleware(handler))
+    router.get(path, emptyAppointmentJourneyHandler(stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const appointeeAttendeeService = new AppointeeAttendeeService(prisonService)
@@ -93,14 +92,14 @@ export default function Create({
     '/upload-prisoner-list',
     setUpMultipartFormDataParsing(),
     validationMiddleware(PrisonerList),
-    asyncMiddleware(uploadPrisonerListRoutes.POST),
+    uploadPrisonerListRoutes.POST,
   )
   get('/upload-appointment-set', appointmentSetUploadRoutes.GET, true)
   router.post(
     '/upload-appointment-set',
     setUpMultipartFormDataParsing(),
     validationMiddleware(AppointmentsList),
-    asyncMiddleware(appointmentSetUploadRoutes.POST),
+    appointmentSetUploadRoutes.POST,
   )
   get('/name', nameRoutes.GET, true)
   post('/name', nameRoutes.POST, Name)
@@ -136,7 +135,7 @@ export default function Create({
     '/confirmation/:appointmentId',
     fetchAppointment(activitiesService),
     emptyAppointmentJourneyHandler(true),
-    asyncMiddleware(confirmationRoutes.GET),
+    confirmationRoutes.GET,
   )
   get('/how-to-add-prisoners', howToAddPrisonerRoutes.GET, true)
   post('/how-to-add-prisoners', howToAddPrisonerRoutes.POST, HowToAddPrisonersForm)
@@ -159,7 +158,7 @@ export default function Create({
     '/set-confirmation/:appointmentSetId',
     fetchAppointmentSet(activitiesService),
     emptyAppointmentJourneyHandler(true),
-    asyncMiddleware(confirmationRoutes.GET_SET),
+    confirmationRoutes.GET_SET,
   )
 
   router.get(

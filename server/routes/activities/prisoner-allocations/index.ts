@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import { Services } from '../../../services'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import PrisonerAllocationsHandler from './handlers/prisonerAllocations'
@@ -9,9 +8,9 @@ import populatePrisonerProfile from '../../../middleware/populatePrisonerProfile
 export default function Index({ activitiesService, prisonService, nonAssociationsService }: Services): Router {
   const router = Router({ mergeParams: true })
   const getWithProfile = (path: string, handler: RequestHandler) =>
-    router.get(path, populatePrisonerProfile(prisonService), asyncMiddleware(handler))
+    router.get(path, populatePrisonerProfile(prisonService), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const prisonerAllocationsHandler = new PrisonerAllocationsHandler(
     activitiesService,

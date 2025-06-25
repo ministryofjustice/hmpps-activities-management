@@ -54,7 +54,7 @@ describe('HearingDetailsRoutes', () => {
     it('redirects with success message when mode is amend', async () => {
       req.body.courtCode = 'COURT1'
       req.body.hearingTypeCode = 'TYPE1'
-      req.params.mode = 'amend'
+      req.routeContext = { mode: 'amend' }
       req.session.bookACourtHearingJourney.bookingId = 1
 
       await hearingDetailsRoutes.POST(req as Request, res as Response)
@@ -72,7 +72,7 @@ describe('HearingDetailsRoutes', () => {
     it('redirects to location when mode is not amend', async () => {
       req.body.courtCode = 'COURT1'
       req.body.hearingTypeCode = 'TYPE1'
-      req.params.mode = 'create'
+      req.routeContext = { mode: 'create' }
 
       await hearingDetailsRoutes.POST(req as Request, res as Response)
 

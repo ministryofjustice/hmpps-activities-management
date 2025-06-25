@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import SelectPeriodRoutes, { TimePeriod } from './handlers/selectPeriod'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import ActivitiesRoutes from './handlers/activities'
@@ -34,9 +33,9 @@ export default function Index({ activitiesService, prisonService, userService }:
   const router = Router()
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('recordAttendanceJourney', stepRequiresSession), asyncMiddleware(handler))
+    router.get(path, emptyJourneyHandler('recordAttendanceJourney', stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const homeHandler = new HomeRoutes()
   const selectPeriodHandler = new SelectPeriodRoutes()

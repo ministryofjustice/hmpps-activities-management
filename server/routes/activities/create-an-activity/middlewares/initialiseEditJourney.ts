@@ -4,7 +4,8 @@ import { mapActivityModelSlotsToJourney } from '../../../../utils/utils'
 
 export default (activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
-    const { mode, activityId } = req.params
+    const { activityId } = req.params
+    const { mode } = req.routeContext
 
     if (mode !== 'edit' || activityId === req.session.createJourney?.activityId?.toString()) return next()
 

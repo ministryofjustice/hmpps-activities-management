@@ -22,17 +22,22 @@ export default function routes(services: Services): Router {
   const serviceName = ServiceName.APPOINTMENTS
 
   router.use(rolloutMiddleware(serviceName))
-  router.use(/\/.+/, addServiceReturnLink('Go to all appointments tasks', '/appointments'))
 
+  router.use('/*allAppointments', (req, res, next) => {
+    if (req.path !== '/') {
+      return addServiceReturnLink('Go to all appointments tasks', '/appointments')(req, res, next)
+    }
+    return next()
+  })
   // Appointments tiles route
   router.use('/', appointmentsHomeRoutes())
 
   // Search and view appointment routes
   router.use('/attendance', appointmentAttendanceRoutes(services))
   router.use('/search', appointmentSearchRoutes(services))
-  router.use('/series/:appointmentSeriesId(\\d+)', appointmentSeriesDetailsRoutes(services))
-  router.use('/set/:appointmentSetId(\\d+)', appointmentSetDetailsRoutes(services))
-  router.use('/:appointmentId(\\d+)', appointmentDetailsRoutes(services))
+  router.use('/series/:appointmentSeriesId', appointmentSeriesDetailsRoutes(services))
+  router.use('/set/:appointmentSetId', appointmentSetDetailsRoutes(services))
+  router.use('/:appointmentId', appointmentDetailsRoutes(services))
   router.use('/video-link-booking/court', courtBookingRoutes(services))
   router.use('/video-link-booking/probation', probationBookingRoutes(services))
 
@@ -55,7 +60,7 @@ export default function routes(services: Services): Router {
   // Edit appointment journey routes. These are the starting points for all appointment modification journeys.
   // They use the startNewJourney middleware which adds a unique journeyId into the url after the /edit/ path segment
   // then redirects to that new url
-  const editAppointmentBaseUrl = '/:appointmentId(\\d+)/edit'
+  const editAppointmentBaseUrl = '/:appointmentId/edit'
   router.get(`${editAppointmentBaseUrl}/start/cancel`, appointmentsStartNewJourney('/edit/'))
   router.get(`${editAppointmentBaseUrl}/start/uncancel`, appointmentsStartNewJourney('/edit/'))
   router.get(`${editAppointmentBaseUrl}/start/:property`, appointmentsStartNewJourney('/edit/'))

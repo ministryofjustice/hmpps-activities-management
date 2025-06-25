@@ -36,6 +36,7 @@ describe('Route Handlers - Create an activity - Category', () => {
       session: {
         createJourney: {},
       },
+      routeContext: { mode: 'create' },
     } as unknown as Request
   })
 
@@ -101,9 +102,7 @@ describe('Route Handlers - Create an activity - Category', () => {
             activityId: '1',
           },
         },
-        params: {
-          mode: 'edit',
-        },
+        routeContext: { mode: 'edit' },
         body: {
           category: 2,
         },

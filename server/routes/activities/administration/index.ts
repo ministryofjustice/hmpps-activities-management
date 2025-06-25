@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import { Services } from '../../../services'
 import AdministrationRoutes from './handlers/administration'
 import RegimeChangeRoutes, { RegimeTimes } from './handlers/regimeChange'
@@ -15,9 +14,9 @@ export default function Index(services: Services): Router {
 
   const router = Router({ mergeParams: true })
 
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const adminRouteHandler = new AdministrationRoutes()
   const regimeChangeRouteHandler = new RegimeChangeRoutes(activitiesService)
@@ -39,12 +38,8 @@ export default function Index(services: Services): Router {
 
   get('/admin/prison-pay-bands', prisonPayBandsRouteHandler.GET)
 
-  get('/admin/update-prison-pay-band/:prisonPayBandId(\\d+)', updatePrisonPayBandRouteHandler.GET)
-  post(
-    '/admin/update-prison-pay-band/:prisonPayBandId(\\d+)',
-    updatePrisonPayBandRouteHandler.POST,
-    UpdatePrisonPayBand,
-  )
+  get('/admin/update-prison-pay-band/:prisonPayBandId', updatePrisonPayBandRouteHandler.GET)
+  post('/admin/update-prison-pay-band/:prisonPayBandId', updatePrisonPayBandRouteHandler.POST, UpdatePrisonPayBand)
 
   get('/admin/add-prison-pay-band', addPrisonPayBandRouteHandler.GET)
   post('/admin/add-prison-pay-band', addPrisonPayBandRouteHandler.POST, AddPrisonPayBand)

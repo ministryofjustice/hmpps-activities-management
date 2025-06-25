@@ -121,9 +121,7 @@ describe('Select how to change the activity start and end times page', () => {
           },
         },
       },
-      params: {
-        mode: 'edit',
-      },
+      routeContext: { mode: 'edit' },
     } as unknown as Request
 
     activitiesService.getPrisonRegime.mockReturnValue(Promise.resolve(prisonRegime))
@@ -174,9 +172,7 @@ describe('Select how to change the activity start and end times page', () => {
             },
           },
         },
-        params: {
-          mode: 'edit',
-        },
+        routeContext: { mode: 'edit' },
         body: {
           selectHowToChangeTimes: DefaultOrCustomTimes.DEFAULT_PRISON_REGIME,
         },
@@ -206,9 +202,7 @@ describe('Select how to change the activity start and end times page', () => {
             },
           },
         },
-        params: {
-          mode: 'edit',
-        },
+        routeContext: { mode: 'edit' },
         body: {
           selectHowToChangeTimes: DefaultOrCustomTimes.CUSTOM_START_END_TIMES,
         },

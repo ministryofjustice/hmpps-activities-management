@@ -21,7 +21,7 @@ export default class RemoveEndDateRoutes {
     req.session.createJourney.hasAtLeastOneValidDay = true
 
     if (req.body.removeEndDate && req.body.removeEndDate === 'change') {
-      if (req.params.mode === 'edit') {
+      if (req.routeContext.mode === 'edit') {
         return res.redirectOrReturn(
           `/activities/edit/${req.session.createJourney.activityId}/end-date?preserveHistory=true`,
         )
@@ -30,7 +30,7 @@ export default class RemoveEndDateRoutes {
     }
 
     req.session.createJourney.endDate = null
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
       const { activityId, name, endDate } = req.session.createJourney
       const activity = { endDate, removeEndDate: true } as ActivityUpdateRequest

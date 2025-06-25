@@ -31,7 +31,7 @@ export default class HearingDetailsRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { courtCode, hearingTypeCode } = req.body
-    const { mode } = req.params
+    const { mode } = req.routeContext
     const { user } = res.locals
 
     req.session.bookACourtHearingJourney.courtCode = courtCode

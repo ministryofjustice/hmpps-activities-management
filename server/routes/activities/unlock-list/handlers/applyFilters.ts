@@ -61,6 +61,6 @@ export default class ApplyFiltersRoutes {
 
     req.session.unlockListJourney.searchTerm = asString(searchTerm)
 
-    res.redirect('back')
+    res.redirect(req.get('Referrer') || '/')
   }
 }

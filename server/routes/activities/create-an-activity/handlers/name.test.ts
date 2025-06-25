@@ -36,6 +36,7 @@ describe('Route Handlers - Create an activity - Name', () => {
       session: {
         createJourney: {},
       },
+      routeContext: { mode: 'create' },
     } as unknown as Request
   })
 
@@ -110,9 +111,7 @@ describe('Route Handlers - Create an activity - Name', () => {
             activityId: '1',
           },
         },
-        params: {
-          mode: 'edit',
-        },
+        routeContext: { mode: 'edit' },
         body: {
           name: 'updated activity name',
         },
@@ -134,9 +133,7 @@ describe('Route Handlers - Create an activity - Name', () => {
             activityId: undefined,
           },
         },
-        params: {
-          mode: 'create',
-        },
+        routeContext: { mode: 'create' },
         body: {
           name: 'Gym Induction',
         },
@@ -158,9 +155,7 @@ describe('Route Handlers - Create an activity - Name', () => {
             activityId: 6,
           },
         },
-        params: {
-          mode: 'edit',
-        },
+        routeContext: { mode: 'edit' },
         body: {
           name: 'Gym Induction',
         },

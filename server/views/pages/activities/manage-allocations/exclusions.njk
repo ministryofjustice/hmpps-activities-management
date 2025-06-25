@@ -15,7 +15,7 @@
             <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name | safe }}</span>
             <h1 class="govuk-heading-l">Change when {{ prisonerName | safe }} should attend this activity</h1>
 
-            {% if session.req.params.mode == 'create' %}
+            {% if session.req.routeContext.mode == 'create' %}
                 <p class='govuk-body'>Unselect a session to modify {{ prisonerName | safe }} out.</p>
             {% else %}
                 <p class='govuk-body'>Unselect a session to modify {{ prisonerName | safe }} out.</p>
@@ -85,7 +85,7 @@
                     {{ govukButton({
                         text: "Continue"
                     }) }}
-                    {% if session.req.params.mode == 'create' and not session.req.query.preserveHistory %}
+                    {% if session.req.routeContext.mode == 'create' and not session.req.query.preserveHistory %}
                         <a class="govuk-link" href="cancel">Cancel</a>
                     {% endif %}
                 </div>

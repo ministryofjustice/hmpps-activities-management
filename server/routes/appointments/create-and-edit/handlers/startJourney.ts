@@ -114,7 +114,7 @@ export default class StartJourneyRoutes {
     const { appointment } = req
     const { property } = req.params
 
-    if (!property) return res.redirect('back')
+    if (!property) return res.redirect(req.get('Referrer') || '/')
 
     this.populateEditSession(req, property)
 
@@ -129,7 +129,7 @@ export default class StartJourneyRoutes {
 
     const attendee = appointment.attendees.filter(a => a.prisoner.prisonerNumber === prisonNumber)[0]
 
-    if (!attendee?.prisoner) return res.redirect('back')
+    if (!attendee?.prisoner) return res.redirect(req.get('Referrer') || '/')
 
     this.populateEditSession(req, 'remove-prisoner')
 

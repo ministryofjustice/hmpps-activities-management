@@ -19,7 +19,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             {{ activityJourneyCaption(session.createJourney) }}
-            {% if session.req.params.mode == 'edit' %}
+            {% if session.req.routeContext.mode == 'edit' %}
             <h1 class="govuk-heading-l">{{ editPageHeading }}</h1>
             {% else %}
             <h1 class="govuk-heading-l">{{ createPageHeading }}</h1>

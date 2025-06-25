@@ -40,7 +40,7 @@ export default class CategoryRoutes {
       req.session.createJourney.tierCode = EventTier.FOUNDATION
     }
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       const { activityId } = req.session.createJourney
       const activity = {
         categoryId: req.session.createJourney.category.id,

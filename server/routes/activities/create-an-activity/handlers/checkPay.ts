@@ -22,7 +22,7 @@ export default class CheckPayRoutes {
     const displayPays = groupPayBand(incentiveLevelPays)
     const flatPay = req.session.createJourney.flat
 
-    if (req.params.mode === 'edit') {
+    if (req.routeContext.mode === 'edit') {
       res.render(`pages/activities/create-an-activity/edit-pay`, {
         incentiveLevelPays,
         flatPay,

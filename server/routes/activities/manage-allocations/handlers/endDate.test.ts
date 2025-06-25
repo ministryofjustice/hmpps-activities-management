@@ -27,7 +27,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
     } as unknown as Response
 
     req = {
-      params: { mode: 'create' },
+      routeContext: { mode: 'create' },
       session: {
         allocateJourney: {
           startDate: formatIsoDate(new Date()),
@@ -72,7 +72,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
         },
       }
 
-      req.params.mode = 'remove'
+      req.routeContext = { mode: 'remove' }
     })
 
     it('should redirect to the dellocate today option view if there are sessions later today and only one prisoner is being deallocated', async () => {
@@ -83,7 +83,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
     describe('should render end date view', () => {
       it('when mode is not remove', async () => {
-        req.params.mode = 'create'
+        req.routeContext = { mode: 'create' }
 
         await handler.GET(req, res)
 
@@ -147,7 +147,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
   describe('POST', () => {
     it('should redirect to the pay band page if in create mode and activity is paid', async () => {
-      req.params.mode = 'create'
+      req.routeContext = { mode: 'create' }
 
       req.session.allocateJourney.activity.paid = true
 
@@ -161,7 +161,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
 
     it('should redirect to the exclusions page if in create mode, activity is unpaid and not allocating multiple people', async () => {
-      req.params.mode = 'create'
+      req.routeContext = { mode: 'create' }
 
       req.session.allocateJourney.activity.paid = false
       req.session.allocateJourney.allocateMultipleInmatesMode = false
@@ -176,7 +176,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
 
     it('should redirect to the pay band (mulitple) page if in create mode, activity is unpaid and user is allocating multiple people', async () => {
-      req.params.mode = 'create'
+      req.routeContext = { mode: 'create' }
 
       req.session.allocateJourney.activity.paid = false
       req.session.allocateJourney.allocateMultipleInmatesMode = true
@@ -192,7 +192,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
 
     it('should redirect to the deallocate reason page in remove mode', async () => {
-      req.params.mode = 'remove'
+      req.routeContext = { mode: 'remove' }
 
       const endDate = startOfToday()
       req.body = { endDate }

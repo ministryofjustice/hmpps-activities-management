@@ -6,13 +6,19 @@ import { Services } from '../services'
 export default function setUpHealthChecks({ activitiesService, applicationInfo }: Services): Router {
   const router = express.Router()
 
-  router.get('/health', (req, res) => {
-    healthcheck(result => {
-      if (!result.healthy) {
+  router.get('/health', (req, res, next) => {
+    healthcheck(applicationInfo, result => {
+      if (result.status !== 'UP') {
         res.status(503)
       }
       res.json(result)
-    }, applicationInfo)
+    })
+  })
+
+  router.get('/ping', (req, res) => {
+    res.json({
+      status: 'UP',
+    })
   })
 
   router.get('/info', (req, res) => {
@@ -32,12 +38,6 @@ export default function setUpHealthChecks({ activitiesService, applicationInfo }
       })
     })
   })
-
-  router.get('/ping', (req, res) =>
-    res.send({
-      status: 'UP',
-    }),
-  )
 
   return router
 }

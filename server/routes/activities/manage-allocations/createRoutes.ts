@@ -1,5 +1,4 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import { Services } from '../../../services'
 import BeforeYouAllocateRoutes, { ConfirmOptions } from './handlers/beforeYouAllocate'
 import validationMiddleware from '../../../middleware/validationMiddleware'
@@ -38,9 +37,9 @@ export default function Index({
 }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('allocateJourney', stepRequiresSession), asyncMiddleware(handler))
+    router.get(path, emptyJourneyHandler('allocateJourney', stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const startJourneyHandler = new StartJourneyRoutes(prisonService, activitiesService, metricsService)
   const beforeYouAllocateHandler = new BeforeYouAllocateRoutes(activitiesService)
@@ -104,7 +103,7 @@ export default function Index({
     '/multiple/upload-prisoner-list',
     setUpMultipartFormDataParsing(),
     validationMiddleware(UploadPrisonerList),
-    asyncMiddleware(uploadPrisonerListHandler.POST),
+    uploadPrisonerListHandler.POST,
   )
   get('/multiple/from-activity-list', fromActivityListHandler.GET, true)
   post('/multiple/from-activity-list', fromActivityListHandler.POST)
@@ -120,7 +119,6 @@ export default function Index({
   post('/multiple/check-answers', checkAndConfirmMultipleHandler.POST)
   get('/multiple/confirmation', confirmMultipleAllocationsHandler.GET, true)
 
-  get('/error/:errorType(transferred)', errorHandler.GET, true)
-
+  get('/error/:errorType', errorHandler.GET, true)
   return router
 }

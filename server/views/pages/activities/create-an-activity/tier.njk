@@ -26,7 +26,7 @@
                 {{ govukRadios({
                     fieldset: {
                         legend: {
-                            text: "Which tier is this activity in?" if session.req.params.mode == 'edit' else "Select a tier for the new activity",
+                            text: "Which tier is this activity in?" if session.req.routeContext.mode == 'edit' else "Select a tier for the new activity",
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }
@@ -39,7 +39,7 @@
                     items: activityTierOptions
                 }) }}
 
-                {% if session.req.params.mode == 'edit' %}
+                {% if session.req.routeContext.mode == 'edit' %}
                     <div class="govuk-button-group">
                       {{ govukButton({
                         text: "Update tier",

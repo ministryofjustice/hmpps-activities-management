@@ -15,6 +15,7 @@ describe('LocationRoutes', () => {
 
   beforeEach(() => {
     req = {
+      routeContext: { mode: 'create' },
       session: {
         bookACourtHearingJourney: {
           prisoner: { prisonCode: 'PRISON1' },
@@ -63,7 +64,7 @@ describe('LocationRoutes', () => {
     })
 
     it('redirects to schedule when mode is amend', async () => {
-      req.params.mode = 'amend'
+      req.routeContext = { mode: 'amend' }
 
       await locationRoutes.POST(req as Request, res as Response)
 

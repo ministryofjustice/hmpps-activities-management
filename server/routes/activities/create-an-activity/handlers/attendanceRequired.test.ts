@@ -49,7 +49,7 @@ describe('Route Handlers - Create an activity schedule - Attendance Required opt
   describe('POST', () => {
     describe('Create', () => {
       beforeEach(() => {
-        req.params.mode = 'create'
+        req.routeContext = { mode: 'create' }
       })
 
       it('should reset payment details if attendance is not required during create', async () => {
@@ -93,7 +93,7 @@ describe('Route Handlers - Create an activity schedule - Attendance Required opt
 
     describe('Edit', () => {
       beforeEach(() => {
-        req.params.mode = 'edit'
+        req.routeContext = { mode: 'edit' }
         req.session.createJourney = {
           activityId: 111,
           name: 'Maths level 1',

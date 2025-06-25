@@ -11,7 +11,6 @@ import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPri
 import SelectPrisonerRoutes, { PrisonerSearch, SelectPrisoner } from './handlers/selectPrisoner'
 import UploadPrisonerListRoutes, { PrisonerList } from './handlers/uploadPrisonerList'
 import ReviewPrisoners from './handlers/reviewPrisoners'
-import asyncMiddleware from '../../../middleware/asyncMiddleware'
 import validationMiddleware from '../../../middleware/validationMiddleware'
 import emptyEditAppointmentJourneyHandler from '../../../middleware/emptyEditAppointmentJourneyHandler'
 import fetchAppointment from '../../../middleware/appointments/fetchAppointment'
@@ -37,9 +36,9 @@ export default function Edit({
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyEditAppointmentJourneyHandler(stepRequiresSession), asyncMiddleware(handler))
+    router.get(path, emptyEditAppointmentJourneyHandler(stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), asyncMiddleware(handler))
+    router.post(path, validationMiddleware(type), handler)
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const appointeeAttendeeService = new AppointeeAttendeeService(prisonService)
@@ -142,7 +141,7 @@ export default function Edit({
     '/prisoners/add/upload-prisoner-list',
     setUpMultipartFormDataParsing(),
     validationMiddleware(PrisonerList),
-    asyncMiddleware(uploadPrisonerListRoutes.EDIT),
+    uploadPrisonerListRoutes.EDIT,
   )
   get('/prisoners/add/review-prisoners', reviewPrisoners.GET, true)
   post('/prisoners/add/review-prisoners', reviewPrisoners.EDIT)

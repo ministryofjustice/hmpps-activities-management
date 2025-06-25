@@ -10,7 +10,8 @@ import logger from '../../../../../logger'
 
 export default (prisonService: PrisonService, activitiesService: ActivitiesService): RequestHandler => {
   return async (req, res, next) => {
-    const { mode, allocationId } = req.params
+    const { allocationId } = req.params
+    const { mode } = req.routeContext
     const allocationIds = req.query.allocationIds !== undefined ? asString(req.query.allocationIds).split(',') : []
     const { scheduleId, selectActivity, otherAllocationIds } = req.query
     const { user } = res.locals
@@ -21,13 +22,14 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
 
     if ((mode !== 'remove' && mode !== 'edit' && mode !== 'exclude') || req.session.allocateJourney) return next()
 
-    if (!scheduleId && !allocationId && !selectActivity) return res.redirect('back')
+    if (!scheduleId && !allocationId && !selectActivity) return res.redirect(req.get('Referrer') || '/')
 
     if (selectActivity) {
       const otherAllocationIdsList = otherAllocationIds.toString().split(',')
       const otherAllocations = await Promise.all(
         otherAllocationIdsList.map(id => activitiesService.getAllocation(+id, user)),
       )
+
       const inmate = await prisonService.getInmateByPrisonerNumber(otherAllocations[0].prisonerNumber, user)
       const inmateDetails = {
         prisonerNumber: inmate.prisonerNumber,
@@ -52,7 +54,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
             .then(r => r.filter(a => allocationIds.includes(a.id.toString())))
             .then(r => r.sort((a, b) => (a.startDate < b.startDate ? -1 : 1)))
 
-      if (!allocations || allocations.length === 0) return res.redirect('back')
+      if (!allocations || allocations.length === 0) return res.redirect(req.get('Referrer') || '/')
 
       const [prisoners, activity]: [Prisoner[], Activity] = await Promise.all([
         prisonService.searchInmatesByPrisonerNumbers(
@@ -104,7 +106,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         scheduledInstance: findNextSchedulesInstance(activity.schedules[0]),
       }
 
-      if (req.params.mode === 'edit' || req.params.mode === 'exclude') {
+      if (mode === 'edit' || mode === 'exclude') {
         req.session.allocateJourney.startDate = allocations[0].startDate
         req.session.allocateJourney.endDate = allocations[0].endDate
         req.session.allocateJourney.deallocationReason = allocations[0].plannedDeallocation?.plannedReason?.code
@@ -114,7 +116,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
       return next()
     } catch (error) {
       logger.error(error, `Failed to set up session in middleware: ${error?.message}`)
-      return res.redirect('back')
+      return res.redirect(req.get('Referrer') || '/')
     }
   }
 }

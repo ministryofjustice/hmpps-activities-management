@@ -43,6 +43,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       flash: jest.fn(),
       query: {},
       params: {},
+      routeContext: {},
       session: {
         createJourney: {
           name: 'Maths level 1',
@@ -98,7 +99,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
     })
 
     it('should render EDIT page correctly', async () => {
-      req.params.mode = 'edit'
+      req.routeContext.mode = 'edit'
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/edit-pay', {
         activityName: 'Maths level 1',

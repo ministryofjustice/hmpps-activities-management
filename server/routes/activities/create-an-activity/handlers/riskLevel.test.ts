@@ -32,6 +32,9 @@ describe('Route Handlers - Create an activity - Risk level', () => {
     } as unknown as Response
 
     req = {
+      routeContext: {
+        mode: 'create',
+      },
       session: {
         createJourney: {
           tierCode: EventTier.TIER_1,
@@ -89,7 +92,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
             activityId: '1',
           },
         },
-        params: {
+        routeContext: {
           mode: 'edit',
         },
         body: {

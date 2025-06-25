@@ -10,7 +10,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-xl">Manage suspensions</span>
-            {% if session.req.params.mode == 'suspend' %}
+            {% if session.req.routeContext.mode == 'suspend' %}
                 <h1 class="govuk-heading-l">Check and confirm suspension details</h1>
             {% else %}
                 <h1 class="govuk-heading-l">Check and confirm end of suspension details</h1>
@@ -65,7 +65,7 @@
                                 }
                             ]
                         }
-                    } if session.req.params.mode == 'suspend',
+                    } if session.req.routeContext.mode == 'suspend',
                     {
                         key: {
                             text: "Paid while suspended?"
@@ -101,7 +101,7 @@
                                 }
                             ]
                         }
-                    } if session.req.params.mode == 'unsuspend',
+                    } if session.req.routeContext.mode == 'unsuspend',
                     {
                         key: {
                             text: "Do you want to add a case note?"
@@ -118,7 +118,7 @@
                                 }
                             ]
                         }
-                    } if session.req.params.mode == 'suspend',
+                    } if session.req.routeContext.mode == 'suspend',
                     {
                         key: {
                             text: "Case note type"
@@ -136,7 +136,7 @@
                                 }
                             ]
                         }
-                    } if session.suspendJourney.caseNote and session.req.params.mode == 'suspend',
+                    } if session.suspendJourney.caseNote and session.req.routeContext.mode == 'suspend',
                     {
                         key: {
                             text: "Case note"
@@ -154,7 +154,7 @@
                                 }
                             ]
                         }
-                    } if session.suspendJourney.caseNote and session.req.params.mode == 'suspend'
+                    } if session.suspendJourney.caseNote and session.req.routeContext.mode == 'suspend'
                 ]
             }) }}
 
@@ -162,7 +162,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Confirm and suspend" if session.req.params.mode == 'suspend' else "Confirm end of suspension",
+                        text: "Confirm and suspend" if session.req.routeContext.mode == 'suspend' else "Confirm end of suspension",
                         preventDoubleClick: true
                     }) }}
                     <a class="govuk-link govuk-link--no-visited-state" href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}">Cancel and return to the prisoner's activities</a>

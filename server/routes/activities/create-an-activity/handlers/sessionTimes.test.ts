@@ -139,6 +139,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
         },
       },
       params: {},
+      routeContext: { mode: 'create' },
     } as unknown as Request
 
     req.query = {}
@@ -212,7 +213,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
           ...mockActivity,
         })
 
-      req.params.mode = 'edit'
+      req.routeContext = { mode: 'edit' }
       req.session.createJourney.activityId = 1
       req.session.createJourney.scheduleWeeks = 2
       req.session.createJourney.slots = {
@@ -440,9 +441,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
       endMap.set('1-MONDAY-AM', endTime)
 
       req = {
-        params: {
-          mode: 'edit',
-        },
+        routeContext: { mode: 'edit' },
         body: {
           startTimes: startMap,
           endTimes: endMap,

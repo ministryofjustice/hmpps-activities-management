@@ -1,12 +1,11 @@
 import { RequestHandler, Router } from 'express'
-import asyncMiddleware from '../../middleware/asyncMiddleware'
 import ActivitiesReportingHomeRoutes from './handlers/activitiesHome'
 import AppointmentsReportingHomeRoutes from './handlers/appointmentsHome'
 import ReportRoutes from './handlers/reportHandler'
 
 export default function Index(): Router {
   const router = Router({ mergeParams: true })
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const get = (path: string, handler: RequestHandler) => router.get(path, handler)
 
   const reportingActivitiesHomeHandler = new ActivitiesReportingHomeRoutes()
   const reportingAppointmentsHomeHandler = new AppointmentsReportingHomeRoutes()

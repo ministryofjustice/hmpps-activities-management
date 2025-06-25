@@ -64,7 +64,7 @@ export default class EndDateRoutes {
       )
 
       if (
-        req.params.mode === 'remove' &&
+        req.routeContext.mode === 'remove' &&
         allocateJourney.inmates.length === 1 &&
         isToday(nextSessionDateAndTime) &&
         !isPast(nextSessionDateAndTime) &&
@@ -79,7 +79,7 @@ export default class EndDateRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.session.allocateJourney.endDate = formatIsoDate(req.body.endDate)
-    if (req.params.mode === 'remove') {
+    if (req.routeContext.mode === 'remove') {
       return res.redirectOrReturn(`reason`)
     }
 

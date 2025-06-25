@@ -21,7 +21,7 @@ export default class NameRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { category } = req.session.createJourney
-    const editJourney = req.params.mode === 'edit'
+    const editJourney = req.routeContext.mode === 'edit'
     req.session.createJourney.name = req.body.name
 
     const activities = await this.activitiesService.getActivities(true, user)

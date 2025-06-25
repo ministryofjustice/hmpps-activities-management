@@ -12,7 +12,7 @@
     {% set pageHeading = "Enter the type of hearing" if videoBooking.bookingType == 'COURT' else "Enter the type of meeting" %}
 {% endif %}
 {% block meta %}
-    {% if session.req.params.mode == 'create' %}
+    {% if session.req.routeContext.mode == 'create' %}
         <meta name="autocompleteElements" content="courtCode"/>
     {% endif %}
     <meta name="autocompleteElements" content="hearingTypeCode"/>
@@ -28,7 +28,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method='POST' {% if session.req.params.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing hearing type" {% endif %}>
+            <form method='POST' {% if session.req.routeContext.mode == 'amend' %} data-module="form-spinner" data-loading-text="Changing hearing type" {% endif %}>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {% set items = [{ text: "", value: "" }] %}
@@ -40,7 +40,7 @@
                     }), items) %}
                 {% endfor %}
 
-                {% if session.req.params.mode == 'create' %}
+                {% if session.req.routeContext.mode == 'create' %}
                     {{ govukSelect({
                         name: "courtCode",
                         id: "courtCode",

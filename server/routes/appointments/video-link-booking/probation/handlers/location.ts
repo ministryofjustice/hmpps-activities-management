@@ -23,7 +23,7 @@ export default class LocationRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { location } = req.body
-    const { mode } = req.params
+    const { mode } = req.routeContext
     const { preserveHistory } = req.query
 
     req.session.bookAProbationMeetingJourney.locationCode = location
