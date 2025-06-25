@@ -1,37 +1,24 @@
 import { Request, Response } from 'express'
-import { Expose } from 'class-transformer'
-import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
 
-enum IssuePayOptions {
-  YES = 'yes',
-  NO = 'no',
-}
-
-export class PayNotRequiredOrExcusedForm {
-  @Expose()
-  @IsIn(Object.values(IssuePayOptions), {
-    message: 'Select if people should be paid for this session they are not required at',
-  })
-  paidOrNot: string
-}
-
-export default class PaidOrNotRoutes {
+export default class CheckAndConfirmRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response) => {
     const { user } = res.locals
     const instanceId = +req.params.id
-    const { selectedPrisoners } = req.session.recordAttendanceJourney.notRequiredOrExcused
+    const { selectedPrisoners, isPaid } = req.session.recordAttendanceJourney.notRequiredOrExcused
 
     const instance: ScheduledActivity = await this.activitiesService.getScheduledActivity(instanceId, user)
 
+    // console.log(instance)
     // console.log(selectedPrisoners)
 
-    res.render('pages/activities/record-attendance/not-required-or-excused/paid-or-not', {
+    res.render('pages/activities/record-attendance/not-required-or-excused/check-and-confirm', {
       selectedPrisoners,
       instance,
+      isPaid,
     })
   }
 
@@ -41,7 +28,7 @@ export default class PaidOrNotRoutes {
     //   const { selectedPrisoners } = req.session.recordAttendanceJourney.notRequiredOrExcused
     // console.log('POST /not-required-or-excused/paid-or-not', req.body)
 
-    req.session.recordAttendanceJourney.notRequiredOrExcused.isPaid = req.body.paidOrNot === 'yes'
-    res.redirect('check-and-confirm')
+    req.session.recordAttendanceJourney.sessionCancellationMultiple.issuePayment = req.body.issuePayOption === 'yes'
+    res.redirect('not-required-or-excused/check-and-confirm')
   }
 }

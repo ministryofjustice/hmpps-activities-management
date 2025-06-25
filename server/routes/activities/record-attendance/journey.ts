@@ -29,8 +29,8 @@ type NotRequiredOrExcusedJourney = {
     instanceId?: number
     prisonerNumber?: string
     prisonerName?: string
-    isPaid?: boolean
   }>
+  isPaid?: boolean
 }
 
 export type SessionCancellationRequest = {
