@@ -40,8 +40,10 @@ import {
   AppointmentCancelRequest,
   MultipleAppointmentAttendanceRequest,
   RolloutPrisonPlan,
+  ActivityPayHistory,
 } from '../@types/activitiesAPI/types'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
+import activityPayHistory from './fixtures/activity_pay_history_1.json'
 import appointmentSeriesDetails from './fixtures/appointment_series_details_1.json'
 import appointmentDetails from './fixtures/appointment_details_1.json'
 import multipleAppointmentDetails from './fixtures/appointment_details_multiple.json'
@@ -277,6 +279,17 @@ describe('Activities Service', () => {
       const result = await activitiesService.getActivitySchedule(1, user)
       expect(activitiesApiClient.getActivitySchedule).toHaveBeenCalledWith(1, user)
       expect(result).toEqual(activitySchedule1)
+    })
+  })
+
+  describe('getActivityPayHistory', () => {
+    it('should fetch activity pay history by id using the activities API', async () => {
+      when(activitiesApiClient.getActivityPayHistory)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce(activityPayHistory as unknown as ActivityPayHistory)
+      const result = await activitiesService.getActivityPayHistory(1, user)
+      expect(activitiesApiClient.getActivityPayHistory).toHaveBeenCalledWith(1, user)
+      expect(result).toEqual(activityPayHistory)
     })
   })
 

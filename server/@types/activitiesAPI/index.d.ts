@@ -6240,6 +6240,8 @@ export interface components {
       eligibilityRuleIds: number[]
       /** @description The list of pay rates that can apply to this activity */
       pay: components['schemas']['ActivityPayCreateRequest'][]
+      /** @description The list of recent pay rates history that can apply to this activity */
+      payChange: components['schemas']['ActivityPayHistoryCreateRequest'][]
       /**
        * @description The most recent risk assessment level for this activity
        * @example high
@@ -6350,6 +6352,47 @@ export interface components {
        * @example 2022-12-23
        */
       startDate?: string
+    }
+    /** @description Describes the pay rates history to be created for an activity */
+    ActivityPayHistoryCreateRequest: {
+      /**
+       * @description The NOMIS code for the incentive/earned privilege level
+       * @example BAS
+       */
+      incentiveNomisCode?: string
+      /**
+       * @description The incentive/earned privilege level
+       * @example Basic
+       */
+      incentiveLevel?: string
+      /**
+       * Format: int64
+       * @description The id of the prison pay band used
+       * @example 1
+       */
+      payBandId: number
+      /**
+       * Format: int32
+       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
+       * @example 150
+       */
+      rate?: number
+      /**
+       * Format: date
+       * @description The effective start date for this pay rate
+       * @example 2022-12-23
+       */
+      startDate?: string
+      /**
+       * @description The pay rate change details
+       * @example New pay rate added: £1.00
+       */
+      changedDetails?: string
+      /**
+       * @description The person who updated this activity pay rate
+       * @example ABC123 - A. Smith
+       */
+      changedBy?: string
     }
     /** @description Describes a top-level activity */
     Activity: {
@@ -6527,6 +6570,43 @@ export interface components {
        * @example 2024-06-18
        */
       startDate?: string
+    }
+    /** @description Describes the pay rates history and bands which apply to an activity */
+    ActivityPayHistory: {
+      /**
+       * @description The NOMIS code for the incentive/earned privilege level
+       * @example BAS
+       */
+      incentiveNomisCode: string
+      /**
+       * @description The incentive/earned privilege level
+       * @example Basic
+       */
+      incentiveLevel: string
+      /** @description The pay band for this activity pay */
+      prisonPayBand: components['schemas']['PrisonPayBand']
+      /**
+       * Format: int32
+       * @description The earning rate for one half day session for someone of this incentive level and pay band (in pence)
+       * @example 150
+       */
+      rate?: number
+      /**
+       * Format: date
+       * @description The effective start date for this pay rate
+       * @example 2024-06-18
+       */
+      startDate?: string
+      /**
+       * @description The pay rate change details
+       * @example New pay rate added: £1.00
+       */
+      changedDetails?: string
+      /**
+       * @description The person who updated this activity pay rate
+       * @example ABC123 - A. Smith
+       */
+      changedBy?: string
     }
     /** @description
      *       Describes the weekly schedule for an activity. There can be several of these defined for one activity.
@@ -6949,6 +7029,8 @@ export interface components {
       minimumEducationLevel?: components['schemas']['ActivityMinimumEducationLevelCreateRequest'][]
       /** @description The list of pay rates that can apply to this activity. Must be null or empty if the activity is unpaid */
       pay?: components['schemas']['ActivityPayCreateRequest'][]
+      /** @description The list of recent pay rates change that can apply to this activity */
+      payChange?: components['schemas']['ActivityPayHistoryCreateRequest'][]
       /**
        * Format: int32
        * @description The number of weeks in the schedule

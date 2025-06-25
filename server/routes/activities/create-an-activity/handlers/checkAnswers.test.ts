@@ -6,7 +6,7 @@ import CheckAnswersRoutes from './checkAnswers'
 import activity from '../../../../services/fixtures/activity_1.json'
 import atLeast from '../../../../../jest.setup'
 import PrisonService from '../../../../services/prisonService'
-import { Activity, PrisonRegime, Slot } from '../../../../@types/activitiesAPI/types'
+import { Activity, PrisonRegime } from '../../../../@types/activitiesAPI/types'
 import { regimeSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
 import Organiser, { organiserDescriptions } from '../../../../enum/eventOrganisers'
@@ -43,6 +43,8 @@ describe('Route Handlers - Create an activity - Check answers', () => {
     res = {
       locals: {
         user: {
+          userId: 'ABC123',
+          name: 'Adam Smith',
           username: 'joebloggs',
           activeCaseLoadId: 'MDI',
         },
@@ -63,6 +65,15 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           riskLevel: 'High',
           paid: true,
           pay: [{ incentiveLevel: 'Standard', prisonPayBand: { id: 1 }, rate: 100 }],
+          payChange: [
+            {
+              incentiveLevel: 'Standard',
+              prisonPayBand: { id: 1 },
+              rate: 100,
+              changedDetails: 'New pay rate added: £1.00',
+              changedBy: 'ABC123 - A. Smith',
+            },
+          ],
           incentiveLevels: ['Standard', 'Enhanced'],
           educationLevels: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
           startDate: '2023-01-17',
@@ -195,7 +206,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
     })
 
     it('should render page with data from session when there are custom slots', async () => {
-      const customSlots: Slot[] = [
+      req.session.createJourney.customSlots = [
         {
           customStartTime: '09:00',
           customEndTime: '11:00',
@@ -239,8 +250,6 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           weekNumber: 1,
         },
       ]
-
-      req.session.createJourney.customSlots = customSlots
 
       await handler.GET(req, res)
 
@@ -318,6 +327,15 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         minimumEducationLevel: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
         paid: true,
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
+        payChange: [
+          {
+            incentiveLevel: 'Standard',
+            payBandId: 1,
+            rate: 100,
+            changedDetails: 'New pay rate added: £1.00',
+            changedBy: 'ABC123 - A. Smith',
+          },
+        ],
         description: 'Maths level 1',
         startDate: '2023-01-17',
         endDate: '2023-01-18',
@@ -344,6 +362,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
       const reqWithCustomSlots = {
         session: {
           createJourney: {
+            activityId: 1,
             name: 'Maths level 1',
             category: {
               id: 1,
@@ -353,6 +372,15 @@ describe('Route Handlers - Create an activity - Check answers', () => {
             riskLevel: 'High',
             paid: true,
             pay: [{ incentiveLevel: 'Standard', prisonPayBand: { id: 1 }, rate: 100 }],
+            payChange: [
+              {
+                incentiveLevel: 'Standard',
+                prisonPayBand: { id: 1 },
+                rate: 100,
+                changedDetails: 'New pay rate added: £1.00',
+                changedBy: 'ABC123 - A. Smith',
+              },
+            ],
             incentiveLevels: ['Standard', 'Enhanced'],
             educationLevels: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
             startDate: '2023-01-17',
@@ -408,6 +436,15 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         minimumEducationLevel: [{ educationLevelCode: '1', educationLevelDescription: 'xxx' }],
         paid: true,
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
+        payChange: [
+          {
+            incentiveLevel: 'Standard',
+            payBandId: 1,
+            rate: 100,
+            changedDetails: 'New pay rate added: £1.00',
+            changedBy: 'ABC123 - A. Smith',
+          },
+        ],
         description: 'Maths level 1',
         startDate: '2023-01-17',
         endDate: '2023-01-18',
@@ -465,6 +502,15 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         riskLevel: 'High',
         paid: true,
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
+        payChange: [
+          {
+            incentiveLevel: 'Standard',
+            payBandId: 1,
+            rate: 100,
+            changedDetails: 'New pay rate added: £1.00',
+            changedBy: 'ABC123 - A. Smith',
+          },
+        ],
         description: 'Maths level 1',
         startDate: '2023-01-17',
         endDate: '2023-01-18',
@@ -503,6 +549,15 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         riskLevel: 'High',
         paid: true,
         pay: [{ incentiveLevel: 'Standard', payBandId: 1, rate: 100 }],
+        payChange: [
+          {
+            incentiveLevel: 'Standard',
+            payBandId: 1,
+            rate: 100,
+            changedDetails: 'New pay rate added: £1.00',
+            changedBy: 'ABC123 - A. Smith',
+          },
+        ],
         description: 'Maths level 1',
         startDate: '2023-01-17',
         endDate: '2023-01-18',

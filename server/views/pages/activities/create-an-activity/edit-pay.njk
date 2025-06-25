@@ -17,20 +17,20 @@
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">Pay rate</th>
-            <th scope="col" class="govuk-table__header">Details of Change</th>
-            <th scope="col" class="govuk-table__header">Start Date</th>
+            <th scope="col" class="govuk-table__header">Details of the change</th>
+            <th scope="col" class="govuk-table__header">Changed by</th>
+            <th scope="col" class="govuk-table__header">When the change was made</th>
             </tr>
         </thead>
-        {% for incentiveLevelPay in incentiveLevelPays %}
-                {% for pay in incentiveLevelPay.pays %}
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">{{ pay.incentiveLevel }} {{ pay.prisonPayBand.alias }}</td>
-                        <td class="govuk-table__cell">{{ pay.rate | toMoney }}{{ pay.description }}</td>
-                        <td class="govuk-table__cell">{{ pay.startDate | isoDateToDatePickerDate }}</td>
-                        </tr>
-                    </tbody>
-                {% endfor %}
+        {% for activityPay in activityPayHistory %}
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                <td class="govuk-table__cell">{{ activityPay.incentiveLevel }} {{ activityPay.prisonPayBand.alias }}</td>
+                <td class="govuk-table__cell">{{ activityPay.changedDetails }}</td>
+                <td class="govuk-table__cell">{{ activityPay.changedBy }}</td>
+                <td class="govuk-table__cell">{% if activityPay.changedTime %} {{ activityPay.changedTime | parseISODate | formatDate('HH:mm')}} on {{ activityPay.changedTime | parseISODate | formatDate('d MMM yyyy')}} {% endif %}</td>
+                </tr>
+            </tbody>
         {% endfor %}
     </table>
 {% endset %}
@@ -57,7 +57,7 @@
             {% endif %}
 
             {% for displayPay in displayPays %}
-                <h2 class="govuk-heading-m">{{ displayPay.incentiveLevel }} incentive level pay rates 2</h2>
+                <h2 class="govuk-heading-m">{{ displayPay.incentiveLevel }} incentive level pay rates</h2>
                 {% for pay in displayPay.pays %}
                     {% set rows = [] %}
                     {% set rows = (rows.push(
@@ -130,7 +130,7 @@
 
 
             <div class="govuk-!-margin-top-6">
-                {{ 
+                {{
                     govukButton({
                         text: "Return to edit activity page",
                         href: '/activities/view/' + session.createJourney.activityId,

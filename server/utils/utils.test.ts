@@ -18,6 +18,7 @@ import {
   getSplitTime,
   formatName,
   getSortableItemForAttendee,
+  formatUserIdWithName,
 } from './utils'
 import { Attendance } from '../@types/activitiesAPI/types'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
@@ -49,6 +50,23 @@ describe('utils', () => {
       ['Double barrelled', 'Robert-John Smith-Jones-Wilson', 'R. Smith-Jones-Wilson'],
     ])('%s initialiseName(%s, %s)', (_: string, a: string, expected: string) => {
       expect(initialiseName(a)).toEqual(expected)
+    })
+  })
+
+  describe('formatUserIdWithName', () => {
+    it.each([
+      [null, null, null, 'UNKNOWN'],
+      ['user id null', null, 'Robert James', 'R. James'],
+      ['user name null', 'ABCD123', null, 'ABCD123'],
+      ['Empty string', '', '', 'UNKNOWN'],
+      ['user id empty', '', 'Robert James', 'R. James'],
+      ['user name empty', 'ABCD123', '', 'ABCD123'],
+      ['One word', 'ABCD123', 'robert', 'ABCD123 - r. robert'],
+      ['Two words', 'ABCD123', 'Robert James', 'ABCD123 - R. James'],
+      ['Three words', 'ABCD123', 'Robert James Smith', 'ABCD123 - R. Smith'],
+      ['Double barrelled', 'ABCD123', 'Robert-John Smith-Jones-Wilson', 'ABCD123 - R. Smith-Jones-Wilson'],
+    ])('%s formatUserIdWithName(%s, %s, %s, %s)', (_: string, userId: string, userName: string, expected: string) => {
+      expect(formatUserIdWithName(userId, userName)).toEqual(expected)
     })
   })
 

@@ -2,8 +2,8 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import PrisonService from '../../../../services/prisonService'
 import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import { formatUserIdWithName } from '../../../../utils/utils'
 
 export class ConfirmRemoveOptions {
   @Expose()
@@ -12,10 +12,7 @@ export class ConfirmRemoveOptions {
 }
 
 export default class RemovePayRoutes {
-  constructor(
-    private readonly activitiesService: ActivitiesService,
-    private readonly prisonService: PrisonService,
-  ) {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { iep } = req.query
@@ -32,6 +29,7 @@ export default class RemovePayRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
     const { iep, choice } = req.body
     const bandId = +req.body.bandId
     const { preserveHistory } = req.query
@@ -45,7 +43,17 @@ export default class RemovePayRoutes {
     if (choice !== 'yes' || payIndex < 0) {
       return res.redirect(`check-pay${preserveHistoryString}`)
     }
+
     const payInfo = req.session.createJourney.pay[payIndex]
+    req.session.createJourney.payChange = []
+    req.session.createJourney.payChange.push({
+      incentiveNomisCode: payInfo.incentiveNomisCode,
+      incentiveLevel: payInfo.incentiveLevel,
+      prisonPayBand: payInfo.prisonPayBand,
+      rate: payInfo.rate,
+      changedDetails: `Pay rate removed`,
+      changedBy: formatUserIdWithName(user.userId, user.name),
+    })
     req.session.createJourney.pay.splice(payIndex, 1)
 
     const otherPays: ActivityPay[] = req.session.createJourney.pay.filter(
@@ -87,8 +95,19 @@ export default class RemovePayRoutes {
       startDate: p.startDate,
     }))
 
+    const deletedPayRates = req.session.createJourney.payChange.map(p => ({
+      incentiveNomisCode: p.incentiveNomisCode,
+      incentiveLevel: p.incentiveLevel,
+      payBandId: p.prisonPayBand.id,
+      rate: p.rate,
+      startDate: p.startDate,
+      changedDetails: p.changedDetails,
+      changedBy: p.changedBy,
+    }))
+
     const updatedActivity = {
       pay: updatedPayRates,
+      payChange: deletedPayRates,
     } as ActivityUpdateRequest
     await this.activitiesService.updateActivity(activityId, updatedActivity, user)
 

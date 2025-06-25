@@ -1,0 +1,134 @@
+[
+  {
+    "id": 33,
+    "incentiveNomisCode": "BAS",
+    "incentiveLevel": "Basic",
+    "prisonPayBand": {
+      "id": 19,
+      "displaySequence": 3,
+      "alias": "Pay band 3",
+      "description": "Pay band 3",
+      "nomisPayBand": 3,
+      "prisonCode": "RSI",
+      "createdTime": null,
+      "createdBy": null,
+      "updatedTime": null,
+      "updatedBy": null
+    },
+    "rate": 50,
+    "startDate": "2025-07-10",
+    "changedDetails": "Amount reduced to £0.50, from 10 Jul 2025",
+    "changedTime": "2025-06-24T11:57:11.489",
+    "changedBy": "ABC123 - A. Smith"
+  },
+  {
+    "id": 32,
+    "incentiveNomisCode": "BAS",
+    "incentiveLevel": "Basic",
+    "prisonPayBand": {
+      "id": 19,
+      "displaySequence": 3,
+      "alias": "Pay band 3",
+      "description": "Pay band 3",
+      "nomisPayBand": 3,
+      "prisonCode": "RSI",
+      "createdTime": null,
+      "createdBy": null,
+      "updatedTime": null,
+      "updatedBy": null
+    },
+    "rate": 150,
+    "startDate": null,
+    "changedDetails": "Pay rate change cancelled",
+    "changedTime": "2025-06-24T11:56:52.517",
+    "changedBy": "ABC123 - A. Smith"
+  },
+  {
+    "id": 31,
+    "incentiveNomisCode": "STD",
+    "incentiveLevel": "Standard",
+    "prisonPayBand": {
+      "id": 20,
+      "displaySequence": 4,
+      "alias": "Pay band 4",
+      "description": "Pay band 4",
+      "nomisPayBand": 4,
+      "prisonCode": "RSI",
+      "createdTime": null,
+      "createdBy": null,
+      "updatedTime": null,
+      "updatedBy": null
+    },
+    "rate": 200,
+    "startDate": null,
+    "changedDetails": "Pay rate removed",
+    "changedTime": "2025-06-24T11:56:45.737",
+    "changedBy": "ABC123 - A. Smith"
+  },
+  {
+    "id": 30,
+    "incentiveNomisCode": "BAS",
+    "incentiveLevel": "Basic",
+    "prisonPayBand": {
+      "id": 19,
+      "displaySequence": 3,
+      "alias": "Pay band 3",
+      "description": "Pay band 3",
+      "nomisPayBand": 3,
+      "prisonCode": "RSI",
+      "createdTime": null,
+      "createdBy": null,
+      "updatedTime": null,
+      "updatedBy": null
+    },
+    "rate": 150,
+    "startDate": "2025-06-28",
+    "changedDetails": "Amount increased to £1.50, from 28 Jun 2025",
+    "changedTime": "2025-06-24T11:56:35.372",
+    "changedBy": "ABC123 - A. Smith"
+  },
+  {
+    "id": 29,
+    "incentiveNomisCode": "STD",
+    "incentiveLevel": "Standard",
+    "prisonPayBand": {
+      "id": 20,
+      "displaySequence": 4,
+      "alias": "Pay band 4",
+      "description": "Pay band 4",
+      "nomisPayBand": 4,
+      "prisonCode": "RSI",
+      "createdTime": null,
+      "createdBy": null,
+      "updatedTime": null,
+      "updatedBy": null
+    },
+    "rate": 200,
+    "startDate": null,
+    "changedDetails": "New pay rate added: £2.00",
+    "changedTime": "2025-06-24T11:56:17.886",
+    "changedBy": "ABC123 - A. Smith"
+  },
+  {
+    "id": 28,
+    "incentiveNomisCode": "BAS",
+    "incentiveLevel": "Basic",
+    "prisonPayBand": {
+      "id": 19,
+      "displaySequence": 3,
+      "alias": "Pay band 3",
+      "description": "Pay band 3",
+      "nomisPayBand": 3,
+      "prisonCode": "RSI",
+      "createdTime": null,
+      "createdBy": null,
+      "updatedTime": null,
+      "updatedBy": null
+    },
+    "rate": 100,
+    "startDate": null,
+    "changedDetails": "New pay rate added: £1.00",
+    "changedTime": "2025-06-24T11:55:54.135",
+    "changedBy": "ABC123 - A. Smith"
+  }
+]

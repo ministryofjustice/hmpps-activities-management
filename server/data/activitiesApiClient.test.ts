@@ -128,6 +128,20 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getActivityPayHistory', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi
+        .get('/activities/1/pay-history')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
+      const output = await activitiesApiClient.getActivityPayHistory(1, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getScheduledActivitiesAtPrison', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
