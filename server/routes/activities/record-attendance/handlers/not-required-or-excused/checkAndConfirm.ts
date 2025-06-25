@@ -12,9 +12,6 @@ export default class CheckAndConfirmRoutes {
 
     const instance: ScheduledActivity = await this.activitiesService.getScheduledActivity(instanceId, user)
 
-    // console.log(instance)
-    // console.log(selectedPrisoners)
-
     res.render('pages/activities/record-attendance/not-required-or-excused/check-and-confirm', {
       selectedPrisoners,
       instance,
@@ -23,12 +20,23 @@ export default class CheckAndConfirmRoutes {
   }
 
   POST = async (req: Request, res: Response) => {
-    //   const { user } = res.locals
-    //   const instanceId = +req.params.id
-    //   const { selectedPrisoners } = req.session.recordAttendanceJourney.notRequiredOrExcused
-    // console.log('POST /not-required-or-excused/paid-or-not', req.body)
+    const { user } = res.locals
+    const instanceId = +req.params.id
+    const { selectedPrisoners } = req.session.recordAttendanceJourney.notRequiredOrExcused
 
-    req.session.recordAttendanceJourney.sessionCancellationMultiple.issuePayment = req.body.issuePayOption === 'yes'
-    res.redirect('not-required-or-excused/check-and-confirm')
+    await Promise.all(
+      selectedPrisoners.map(prisoner =>
+        this.activitiesService.postAdvanceAttendances(
+          {
+            scheduleInstanceId: instanceId,
+            prisonerNumber: prisoner.prisonerNumber,
+            issuePayment: req.session.recordAttendanceJourney.notRequiredOrExcused.isPaid,
+          },
+          user,
+        ),
+      ),
+    )
+    const successMessage = `You've marked ${selectedPrisoners.length === 1 ? '1 person' : `${selectedPrisoners.length} people`} as not required for this session.`
+    return res.redirectWithSuccess('../attendance-list', 'Attendee list updated', successMessage)
   }
 }

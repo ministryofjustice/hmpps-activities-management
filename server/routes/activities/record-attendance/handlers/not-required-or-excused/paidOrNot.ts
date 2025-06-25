@@ -36,11 +36,6 @@ export default class PaidOrNotRoutes {
   }
 
   POST = async (req: Request, res: Response) => {
-    //   const { user } = res.locals
-    //   const instanceId = +req.params.id
-    //   const { selectedPrisoners } = req.session.recordAttendanceJourney.notRequiredOrExcused
-    // console.log('POST /not-required-or-excused/paid-or-not', req.body)
-
     req.session.recordAttendanceJourney.notRequiredOrExcused.isPaid = req.body.paidOrNot === 'yes'
     res.redirect('check-and-confirm')
   }

@@ -70,6 +70,7 @@ import {
   WaitingListApplicationUpdateRequest,
   WaitingListSearchParams,
   WaitingListSearchRequest,
+  AdvanceAttendanceCreateRequest,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -918,6 +919,15 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: cancelRequest,
+    })
+  }
+
+  async postAdvanceAttendances(createRequest: AdvanceAttendanceCreateRequest, user: ServiceUser): Promise<void> {
+    return this.post({
+      path: '/advance-attendances',
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: createRequest,
     })
   }
 }

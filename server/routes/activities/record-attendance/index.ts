@@ -95,11 +95,7 @@ export default function Index({ activitiesService, prisonService, userService }:
   )
 
   get('/:journeyId/activities/:id/not-required-or-excused/check-and-confirm', checkAndConfirmRoutes.GET, true)
-  post(
-    '/:journeyId/activities/:id/not-required-or-excused/check-and-confirm',
-    checkAndConfirmRoutes.POST,
-    PayNotRequiredOrExcusedForm,
-  )
+  post('/:journeyId/activities/:id/not-required-or-excused/check-and-confirm', checkAndConfirmRoutes.POST)
 
   get('/:journeyId/activities/not-attended-reason', notAttendedReasonHandler.GET, true)
   post('/:journeyId/activities/not-attended-reason', notAttendedReasonHandler.POST, NotAttendedForm)

@@ -12,7 +12,12 @@ import {
   formatName,
 } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
-import { Attendance, AttendanceUpdateRequest, ScheduledEvent } from '../../../../@types/activitiesAPI/types'
+import {
+  AdvanceAttendance,
+  Attendance,
+  AttendanceUpdateRequest,
+  ScheduledEvent,
+} from '../../../../@types/activitiesAPI/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
@@ -32,7 +37,7 @@ export class AttendanceList {
 
 export interface ScheduledInstanceAttendance {
   prisoner: Prisoner
-  attendance?: Attendance
+  attendance?: Attendance | AdvanceAttendance
   otherEvents: ScheduledEvent[]
 }
 
@@ -89,7 +94,9 @@ export default class AttendanceListRoutes {
 
         return {
           prisoner: attendee,
-          attendance: instance.attendances.find(a => a.prisonerNumber === att.prisonerNumber),
+          attendance:
+            instance.attendances.find(a => a.prisonerNumber === att.prisonerNumber) ||
+            instance.advanceAttendances.find(a => a.prisonerNumber === att.prisonerNumber),
           otherEvents: prisonerEvents,
         }
       })
