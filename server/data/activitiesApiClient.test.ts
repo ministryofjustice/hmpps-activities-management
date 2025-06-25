@@ -1010,7 +1010,7 @@ describe('activitiesApiClient', () => {
         .reply(200)
 
       const body = {
-        scheduledInstanceIds: [1, 2],
+        scheduleInstanceIds: [1, 2],
         reason: 'Cancellation reason',
         username: 'USER1',
         issuePayment: true,

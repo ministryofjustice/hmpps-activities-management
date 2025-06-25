@@ -714,6 +714,7 @@ describe('Route Handlers - Change Regime times', () => {
                     payable: true,
                   },
                 ],
+                advanceAttendances: [],
               },
               {
                 id: 166865,
@@ -746,6 +747,7 @@ describe('Route Handlers - Change Regime times', () => {
                     payable: true,
                   },
                 ],
+                advanceAttendances: [],
               },
               {
                 id: 10964,
@@ -757,6 +759,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10965,
@@ -768,6 +771,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10966,
@@ -779,6 +783,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10967,
@@ -790,6 +795,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 9282,
@@ -801,6 +807,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 9283,
@@ -812,6 +819,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 9957,
@@ -823,6 +831,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 9958,
@@ -834,6 +843,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 9960,
@@ -845,6 +855,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 9964,
@@ -856,6 +867,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 9966,
@@ -867,6 +879,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 9968,
@@ -878,6 +891,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 9970,
@@ -889,6 +903,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 9974,
@@ -900,6 +915,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 9976,
@@ -911,6 +927,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10014,
@@ -922,6 +939,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10016,
@@ -933,6 +951,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10017,
@@ -944,6 +963,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10018,
@@ -955,6 +975,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10019,
@@ -966,6 +987,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10020,
@@ -977,6 +999,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10022,
@@ -988,6 +1011,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10023,
@@ -999,6 +1023,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10024,
@@ -1010,6 +1035,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10025,
@@ -1021,6 +1047,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10026,
@@ -1032,6 +1059,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
             ],
             allocations: [
@@ -1561,6 +1589,7 @@ describe('Route Handlers - Change Regime times', () => {
                     payable: true,
                   },
                 ],
+                advanceAttendances: [],
               },
               {
                 id: 10968,
@@ -1572,6 +1601,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10969,
@@ -1583,6 +1613,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10970,
@@ -1594,6 +1625,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2846,
@@ -1605,6 +1637,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2847,
@@ -1616,6 +1649,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2848,
@@ -1627,6 +1661,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2849,
@@ -1638,6 +1673,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2851,
@@ -1649,6 +1685,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2863,
@@ -1660,6 +1697,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2864,
@@ -1671,6 +1709,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2865,
@@ -1682,6 +1721,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2867,
@@ -1693,6 +1733,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2879,
@@ -1704,6 +1745,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2880,
@@ -1715,6 +1757,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2881,
@@ -1726,6 +1769,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2883,
@@ -1737,6 +1781,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2895,
@@ -1748,6 +1793,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2896,
@@ -1759,6 +1805,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2897,
@@ -1770,6 +1817,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2899,
@@ -1781,6 +1829,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2911,
@@ -1792,6 +1841,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2912,
@@ -1803,6 +1853,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2913,
@@ -1814,6 +1865,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2915,
@@ -1825,6 +1877,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2927,
@@ -1836,6 +1889,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2928,
@@ -1847,6 +1901,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2929,
@@ -1858,6 +1913,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2931,
@@ -1869,6 +1925,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2943,
@@ -1880,6 +1937,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2944,
@@ -1891,6 +1949,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2945,
@@ -1902,6 +1961,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 2947,
@@ -1913,6 +1973,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10027,
@@ -1924,6 +1985,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10028,
@@ -1935,6 +1997,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10029,
@@ -1946,6 +2009,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10030,
@@ -1957,6 +2021,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10031,
@@ -1968,6 +2033,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10032,
@@ -1979,6 +2045,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10034,
@@ -1990,6 +2057,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10035,
@@ -2001,6 +2069,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10036,
@@ -2012,6 +2081,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10037,
@@ -2023,6 +2093,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10038,
@@ -2034,6 +2105,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10039,
@@ -2045,6 +2117,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10040,
@@ -2056,6 +2129,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10041,
@@ -2067,6 +2141,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10042,
@@ -2078,6 +2153,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10043,
@@ -2089,6 +2165,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10044,
@@ -2100,6 +2177,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10046,
@@ -2111,6 +2189,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10047,
@@ -2122,6 +2201,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10048,
@@ -2133,6 +2213,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10049,
@@ -2144,6 +2225,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 10050,
@@ -2155,6 +2237,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
             ],
             allocations: [
@@ -3023,6 +3106,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1394,
@@ -3034,6 +3118,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1395,
@@ -3045,6 +3130,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1396,
@@ -3056,6 +3142,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1397,
@@ -3067,6 +3154,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1398,
@@ -3078,6 +3166,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1399,
@@ -3089,6 +3178,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1400,
@@ -3100,6 +3190,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1401,
@@ -3111,6 +3202,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1402,
@@ -3122,6 +3214,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1403,
@@ -3133,6 +3226,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1404,
@@ -3144,6 +3238,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1405,
@@ -3155,6 +3250,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1406,
@@ -3166,6 +3262,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
               {
                 id: 1407,
@@ -3177,6 +3274,7 @@ describe('Route Handlers - Change Regime times', () => {
                 cancelledTime: null,
                 cancelledBy: null,
                 attendances: [],
+                advanceAttendances: [],
               },
             ],
             allocations: [],
