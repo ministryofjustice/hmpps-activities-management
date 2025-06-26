@@ -45,6 +45,7 @@ export default class AttendanceRequired {
 
     req.session.createJourney.paid = false
     req.session.createJourney.pay = []
+    req.session.createJourney.payChange = []
     return res.redirectOrReturn('qualification')
   }
 }

@@ -71,6 +71,7 @@ export default class PayRoutes {
     const maximumPayRate = payProfile.maxHalfDayRate * 100
 
     req.session.createJourney.pay ??= []
+    req.session.createJourney.payChange ??= []
     req.session.createJourney.flat ??= []
     req.session.createJourney.minimumPayRate = minimumPayRate
     req.session.createJourney.maximumPayRate = maximumPayRate

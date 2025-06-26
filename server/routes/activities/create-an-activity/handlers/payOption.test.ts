@@ -5,7 +5,7 @@ import { validate } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import PayOption, { PayOptionForm } from './payOption'
 import { YesNo } from '../../../../@types/activities'
-import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import { ActivityPay, ActivityPayHistory, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 
@@ -65,9 +65,20 @@ describe('Route Handlers - Create an activity - Pay option', () => {
           incentiveNomisCode: 'STD',
           incentiveLevel: 'Standard',
           prisonPayBand: { id: 1 },
-          rate: 1,
+          rate: 100,
         },
       ] as ActivityPay[]
+
+      req.session.createJourney.payChange = [
+        {
+          incentiveNomisCode: 'STD',
+          incentiveLevel: 'Standard',
+          prisonPayBand: { id: 1 },
+          rate: 100,
+          changedDetails: 'New pay rate added: £1.00',
+          changedBy: 'ABC123 - A. Smith',
+        },
+      ] as ActivityPayHistory[]
 
       req.session.createJourney.flat = [
         {
@@ -79,6 +90,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
       await handler.POST(req, res)
 
       expect(req.session.createJourney.pay).toHaveLength(0)
+      expect(req.session.createJourney.payChange).toHaveLength(0)
       expect(req.session.createJourney.flat).toHaveLength(0)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('qualification')
@@ -91,18 +103,32 @@ describe('Route Handlers - Create an activity - Pay option', () => {
           incentiveNomisCode: 'STD',
           incentiveLevel: 'Standard',
           prisonPayBand: { id: 1 },
-          rate: 1,
+          rate: 100,
         },
       ] as ActivityPay[]
 
+      req.session.createJourney.payChange = [
+        {
+          incentiveNomisCode: 'STD',
+          incentiveLevel: 'Standard',
+          prisonPayBand: { id: 1 },
+          rate: 100,
+          changedDetails: 'New pay rate added: £1.00',
+          changedBy: 'ABC123 - A. Smith',
+        },
+      ] as ActivityPayHistory[]
+
       await handler.POST(req, res)
 
+      expect(req.session.createJourney.pay).toHaveLength(1)
+      expect(req.session.createJourney.payChange).toHaveLength(1)
       expect(res.redirect).toHaveBeenCalledWith('check-pay')
     })
 
     it('should redirect to check pay page if activity is paid and has no pay', async () => {
       req.body.paid = YesNo.YES
       req.session.createJourney.pay = []
+      req.session.createJourney.payChange = []
       req.session.createJourney.flat = []
 
       await handler.POST(req, res)
@@ -125,8 +151,11 @@ describe('Route Handlers - Create an activity - Pay option', () => {
         const activityUpdateRequest = {
           paid: false,
           pay: [],
+          payChange: [],
         } as ActivityUpdateRequest
 
+        expect(req.session.createJourney.pay).toHaveLength(0)
+        expect(req.session.createJourney.payChange).toHaveLength(0)
         expect(activitiesService.updateActivity).toHaveBeenCalledWith(2, activityUpdateRequest, res.locals.user)
 
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(

@@ -30,6 +30,7 @@ export default class PayOption {
 
     if (req.body.paid === YesNo.NO) {
       req.session.createJourney.pay = []
+      req.session.createJourney.payChange = []
       req.session.createJourney.flat = []
 
       if (req.routeContext.mode === 'edit') {
@@ -38,6 +39,7 @@ export default class PayOption {
         const activity = {
           paid: req.session.createJourney.paid,
           pay: [],
+          payChange: [],
         } as ActivityUpdateRequest
 
         await this.activitiesService.updateActivity(activityId, activity, user)
