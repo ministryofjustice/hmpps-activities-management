@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import PrisonService from '../../../../services/prisonService'
 import PayOption, { PayOptionForm } from './payOption'
 import { YesNo } from '../../../../@types/activities'
 import { ActivityPay, ActivityPayHistory, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
@@ -13,10 +12,9 @@ jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create an activity - Pay option', () => {
-  const handler = new PayOption(activitiesService, prisonService)
+  const handler = new PayOption(activitiesService)
   let req: Request
   let res: Response
 

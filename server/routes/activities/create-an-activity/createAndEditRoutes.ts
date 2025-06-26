@@ -56,7 +56,7 @@ export default function Index({
   const organiserHandler = new OrganiserRoutes(activitiesService)
   const riskLevelHandler = new RiskLevelRoutes(activitiesService)
   const attendanceRequired = new AttendanceRequired(activitiesService)
-  const payOption = new PayOption(activitiesService, prisonService)
+  const payOption = new PayOption(activitiesService)
   const payRateTypeHandler = new PayRateTypeRoutes(prisonService)
   const payHandler = new PayRoutes(prisonService, activitiesService)
   const payAmountHandler = new PayAmountRoutes(prisonService, activitiesService)

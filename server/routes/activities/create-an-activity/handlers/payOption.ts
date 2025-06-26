@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
 import { YesNo } from '../../../../@types/activities'
-import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
@@ -13,10 +12,7 @@ export class PayOptionForm {
 }
 
 export default class PayOption {
-  constructor(
-    private readonly activitiesService: ActivitiesService,
-    private readonly prisonService: PrisonService,
-  ) {}
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> =>
     res.render('pages/activities/create-an-activity/pay-option')
