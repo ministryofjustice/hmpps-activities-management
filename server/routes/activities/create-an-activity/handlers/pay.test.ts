@@ -56,6 +56,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           riskLevel: 'High',
           incentiveLevels: ['Basic', 'Standard'],
           pay: [],
+          payChange: [],
           flat: [],
           allocations: [],
         },

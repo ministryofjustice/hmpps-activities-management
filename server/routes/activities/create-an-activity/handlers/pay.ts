@@ -135,7 +135,6 @@ export default class PayRoutes {
 
     if (payRateType === 'single') {
       req.session.createJourney.pay.push(newRate)
-      req.session.createJourney.payChange = []
       req.session.createJourney.payChange.push(newRate)
     } else {
       req.session.createJourney.flat.push(newRate)
