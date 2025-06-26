@@ -3,6 +3,14 @@
 generic-service:
   replicaCount: 6
 
+  resources:
+    requests:
+      cpu: 10m
+      memory: 768Mi
+    limits:
+      cpu: 2000m
+      memory: 2048Mi
+
   ingress:
     host: activities.prison.service.justice.gov.uk
     contextColour: green
@@ -50,3 +58,4 @@ generic-service:
 
 generic-prometheus-alerts:
   alertSeverity: digital-prison-service
+
