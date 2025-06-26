@@ -10,6 +10,7 @@ import {
   getAttendanceSummary,
   toDate,
   formatName,
+  getAttendanceSummaryForFuture,
 } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 import {
@@ -37,7 +38,8 @@ export class AttendanceList {
 
 export interface ScheduledInstanceAttendance {
   prisoner: Prisoner
-  attendance?: Attendance | AdvanceAttendance
+  attendance?: Attendance
+  advancedAttendance?: AdvanceAttendance
   otherEvents: ScheduledEvent[]
 }
 
@@ -94,13 +96,14 @@ export default class AttendanceListRoutes {
 
         return {
           prisoner: attendee,
-          attendance:
-            instance.attendances.find(a => a.prisonerNumber === att.prisonerNumber) ||
-            instance.advanceAttendances.find(a => a.prisonerNumber === att.prisonerNumber),
+          attendance: instance.attendances.find(a => a.prisonerNumber === att.prisonerNumber), // || instance.advanceAttendances.find(a => a.prisonerNumber === att.prisonerNumber),
+          advancedAttendance: instance.advanceAttendances.find(a => a.prisonerNumber === att.prisonerNumber),
           otherEvents: prisonerEvents,
         }
       })
     }
+    // console.log(instance.advanceAttendances);
+
     // console.log(attendance);
 
     const userMap = await this.userService.getUserMap([instance.cancelledBy], user)
@@ -119,7 +122,9 @@ export default class AttendanceListRoutes {
       instance,
       isPayable: instance.activitySchedule.activity.paid,
       attendance,
-      attendanceSummary: getAttendanceSummary(instance.attendances),
+      attendanceSummary: instance.isInFuture
+        ? getAttendanceSummaryForFuture(instance.attendances, instance.advanceAttendances, attendance.length)
+        : getAttendanceSummary(instance.attendances, instance.advanceAttendances),
       userMap,
       selectedSessions,
     })

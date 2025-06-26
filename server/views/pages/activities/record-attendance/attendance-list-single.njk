@@ -38,21 +38,21 @@
         <div class="govuk-grid-column-two-thirds">
             {% if instance.cancelled %}
                 {% set cancelledSessionHeadingHtml %}
-                <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
-                <p class="govuk-body">This activity session has been cancelled by {{ serviceUserName(userMap.get(instance.cancelledBy)) }} on {{ instance.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }} for the following reason:</p>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>{{ instance.cancelledReason }}
-                        {{ cancelledComment }}</li>
-                </ul>
-                {% if cancellationPayInfoAvailable %}
-                    <p class="govuk-body govuk-!-margin-top-4">
-                        <a href='../cancel-multiple/view-edit-details/{{instance.id}}' class="govuk-link">View or edit cancellation</a>
-                        {% if instance.isAmendable %}
-                         or 
-                        <a href="uncancel" class="govuk-link">uncancel this session</a>
-                        {% endif %}
-                    </p>
-                {% endif %}
+                    <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
+                    <p class="govuk-body">This activity session has been cancelled by {{ serviceUserName(userMap.get(instance.cancelledBy)) }} on {{ instance.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }} for the following reason:</p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>{{ instance.cancelledReason }}
+                            {{ cancelledComment }}</li>
+                    </ul>
+                    {% if cancellationPayInfoAvailable %}
+                        <p class="govuk-body govuk-!-margin-top-4">
+                            <a href='../cancel-multiple/view-edit-details/{{instance.id}}' class="govuk-link">View or edit cancellation</a>
+                            {% if instance.isAmendable %}
+                            or 
+                            <a href="uncancel" class="govuk-link">uncancel this session</a>
+                            {% endif %}
+                        </p>
+                    {% endif %}
                 {% endset %}
                 {{ govukNotificationBanner({
                     type: 'important',
@@ -97,38 +97,65 @@
             <h2 class="govuk-heading-m">{{ attendance | length }}
                 {{ "person" if attendance | length == 1 else "people" }} allocated</h2>
             {% if instance.activitySchedule.activity.attendanceRequired %}
-                <ul class="govuk-list">
-                    <li>
-                        <span>Attended:</span>
-                        {% if attendanceSummary.attendanceCount == 0 %}
-                            -
-                        {% else %}
-                            <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
-                        {% endif %}
-                    </li>
-                    <li>
-                        <span>Absent:</span>
-                        {% if attendanceSummary.attendanceCount == 0 %}
-                            -
-                        {% else %}
-                            <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
-                        {% endif %}
-                    </li>
-                    <li>
-                        <span>Not recorded:</span>
-                        {% if attendanceSummary.attendanceCount == 0 %}
-                            -
-                        {% else %}
-                            <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
-                        {% endif %}
-                    </li>
-                </ul>
+                {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
+                    <ul class="govuk-list">
+                        <li>
+                            <span>Attended: </span><span class="govuk-!-font-weight-bold">-</span>
+                        </li>
+                        <li>
+                            <span>Absent:</span>
+                            {% if attendanceSummary.notAttended == 0 %}
+                                <span class="govuk-!-font-weight-bold">-</span>
+                            {% else %}
+                                <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
+                            {% endif %}
+                        </li>
+                        <li>
+                            <span>Not recorded: </span><span class="govuk-!-font-weight-bold">-</span>
+                        </li>
+                    </ul>
+                {% else %}
+                    <ul class="govuk-list">
+                        <li>
+                            <span>Attended:</span>
+                            {% if attendanceSummary.attendanceCount == 0 %}
+                                -
+                            {% else %}
+                                <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
+                            {% endif %}
+                        </li>
+                        <li>
+                            <span>Absent:</span>
+                            {% if attendanceSummary.attendanceCount == 0 %}
+                                -
+                            {% else %}
+                                <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
+                            {% endif %}
+                        </li>
+                        <li>
+                            <span>Not recorded:</span>
+                            {% if attendanceSummary.attendanceCount == 0 %}
+                                -
+                            {% else %}
+                                <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
+                            {% endif %}
+                        </li>
+                    </ul>
+                {% endif %}
             {% endif %}
 
-            {% if instance.isInFuture %}
-                {{ govukInsetText({
-                    text: 'Before ' + instance.date | formatDate + ', you can only mark people as not required or excused. This will be recorded as an acceptable absence.'
-                }) }}
+            {% if notRequiredInAdvanceEnabled %}
+                {% if instance.isInFuture %}
+                    {{ govukInsetText({
+                        text: 'Before ' + instance.date | formatDate + ', you can only mark people as not required or excused. This will be recorded as an acceptable absence.'
+                    }) }}
+                {% endif %}
+            {% else %}
+                {% if instance.date | toDate > now and not instance.cancelled %}
+                    {{ govukInsetText({
+                        text: 'You cannot record attendance for this session until, ' + instance.date | formatDate
+                    }) }}
+                {% endif %}
             {% endif %}
         </div>
         <div class="govuk-grid-column-one-third">
@@ -146,8 +173,12 @@
     {% set rows = [] %}
     {% for attendee in attendance | sort(false, false, 'location') %}
 
-        {% if instance.isInFuture %}
-            {% set isSelectable = true %}
+        {% if instance.isInFuture and notRequiredInAdvanceEnabled %}
+            {% if attendee.advancedAttendance %}
+                {% set isSelectable = false %}
+            {% else %}
+                {% set isSelectable = true %}
+            {% endif %}
         {% else %}
             {% if attendee.attendance.status === "WAITING" and attendee.attendance.editable and instance.activitySchedule.activity.attendanceRequired === true %}
                 {% set isSelectable = true %}
@@ -155,6 +186,32 @@
                 {% set isSelectable = false %}
             {% endif %}
         {% endif %}
+
+        {% set attendanceTagDetails %}
+            {% if attendee.advancedAttendance %}
+                {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', instance.activitySchedule.activity.attendanceRequired) }}
+                {{ payStatus( 
+                    { 
+                        dataPresentCheck: attendee.advancedAttendance,
+                        status: 'COMPLETED',
+                        payable: isPayable,
+                        issuePayment: attendee.advancedAttendance.issuePayment,
+                        marginTagClass: true
+                    }) }}
+            {% else %}    
+                {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) }}
+                {{ payStatus( 
+                    { 
+                        dataPresentCheck: attendee.attendance,
+                        status: attendee.attendance.status,
+                        payable: isPayable,
+                        issuePayment: attendee.attendance.issuePayment,
+                        marginTagClass: true
+                    }) }}
+                {{ incentiveLevelWarningTag(attendee.attendance) }}
+            {% endif %}
+
+        {% endset %}
 
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
@@ -202,16 +259,7 @@
                     }
                 },
                 {
-                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' + 
-                    payStatus( 
-                    { 
-                        dataPresentCheck: attendee.attendance,
-                        status: attendee.attendance.status,
-                        payable: isPayable,
-                        issuePayment: attendee.attendance.issuePayment,
-                        marginTagClass: true
-                    }) + ' ' +
-                    incentiveLevelWarningTag(attendee.attendance),
+                    html: attendanceTagDetails,
                     classes: 'govuk-!-display-none-print',
                     attributes: {
                         "data-qa": "attendance"
@@ -229,7 +277,7 @@
         }), rows) %}
     {% endfor %}
 
-    {% if instance.isInFuture %}
+    {% if instance.isInFuture and notRequiredInAdvanceEnabled %}
         <form method='POST'>
             <p>Amending</p>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}">
