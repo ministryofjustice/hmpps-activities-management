@@ -33,7 +33,6 @@ generic-service:
     REPORT_A_FAULT_URL: "https://report-problem-activities.form.service.justice.gov.uk"
     FEEDBACK_URL: "https://www.smartsurvey.co.uk/s/ActivitiesAndAppointments/"
     BANK_HOLIDAYS_API_URL: "https://www.gov.uk/bank-holidays.json"
-    BVLS_FEATURE_HMCTS_LINK_GUEST_PIN: "false"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:
@@ -55,6 +54,7 @@ generic-service:
       REDIS_AUTH_TOKEN: "auth_token"
     feature-toggles:
       BVLS_FEATURE_MASTER_PUBLIC_PRIVATE_NOTES: "BVLS_FEATURE_MASTER_PUBLIC_PRIVATE_NOTES"
+      BVLS_FEATURE_HMCTS_LINK_GUEST_PIN: "BVLS_FEATURE_HMCTS_LINK_GUEST_PIN"
 
   allowlist:
     ark-nps-hmcts-ttp2: 194.33.192.0/25
