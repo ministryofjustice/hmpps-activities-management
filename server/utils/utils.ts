@@ -10,7 +10,8 @@ import {
   isYesterday,
   parse,
   parseISO,
-  set, startOfDay,
+  set,
+  startOfDay,
   subDays,
 } from 'date-fns'
 import { enGB } from 'date-fns/locale/en-GB'

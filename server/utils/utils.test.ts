@@ -17,7 +17,8 @@ import {
   asString,
   getSplitTime,
   formatName,
-  getSortableItemForAttendee, eventClashes,
+  getSortableItemForAttendee,
+  eventClashes,
 } from './utils'
 import { Attendance, ScheduledEvent } from '../@types/activitiesAPI/types'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
