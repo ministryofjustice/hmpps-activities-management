@@ -87,7 +87,7 @@
             {% endfor %}
             <div class="govuk-button-group">
                 {{ govukButton({
-                    text: "End all suspensions" if groupedAllocations | length > 1 else "End suspension",
+                    text: "End all suspensions" if groupedAllocations[0] | length > 1 else "End suspension",
                     href: '../../unsuspend/' + session.req.params.prisonerNumber + '/suspend-until?allocationIds=' + groupedAllocations | flatten | flatMap('id')
                 }) }}
             </div>
