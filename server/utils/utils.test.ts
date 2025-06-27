@@ -17,9 +17,9 @@ import {
   asString,
   getSplitTime,
   formatName,
-  getSortableItemForAttendee,
+  getSortableItemForAttendee, eventClashes,
 } from './utils'
-import { Attendance } from '../@types/activitiesAPI/types'
+import { Attendance, ScheduledEvent } from '../@types/activitiesAPI/types'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
 
 describe('utils', () => {
@@ -453,5 +453,40 @@ describe('getSortableItemForAttendee', () => {
     }
     const result = getSortableItemForAttendee(attendees, prisonersDetails)
     expect(result).toEqual('Petersen, Lee John')
+  })
+})
+
+describe('eventClashes', () => {
+  it.each([
+    { thisStartTime: null, thisEndTime: null, otherStartTime: null, otherEndTime: null },
+    { thisStartTime: null, thisEndTime: null, otherStartTime: null, otherEndTime: '12:00' },
+    { thisStartTime: null, thisEndTime: null, otherStartTime: '11:00', otherEndTime: null },
+    { thisStartTime: null, thisEndTime: null, otherStartTime: '11:00', otherEndTime: '12:00' },
+    { thisStartTime: null, thisEndTime: '12:00', otherStartTime: null, otherEndTime: null },
+    { thisStartTime: null, thisEndTime: '12:00', otherStartTime: null, otherEndTime: '11:59' },
+    { thisStartTime: null, thisEndTime: '11:59', otherStartTime: null, otherEndTime: '12:00' },
+    { thisStartTime: '10:00', thisEndTime: null, otherStartTime: '09:59', otherEndTime: null },
+    { thisStartTime: '10:00', thisEndTime: null, otherStartTime: '10:00', otherEndTime: null },
+    { thisStartTime: '11:00', thisEndTime: null, otherStartTime: null, otherEndTime: null },
+    { thisStartTime: '11:00', thisEndTime: '12:00', otherStartTime: null, otherEndTime: null },
+    { thisStartTime: '11:00', thisEndTime: '12:00', otherStartTime: '10:00', otherEndTime: '11:01' },
+    { thisStartTime: '11:00', thisEndTime: '12:00', otherStartTime: '10:00', otherEndTime: '12:00' },
+    { thisStartTime: '11:00', thisEndTime: '12:00', otherStartTime: '10:00', otherEndTime: '12:01' },
+    { thisStartTime: '12:00', thisEndTime: '13:00', otherStartTime: '10:00', otherEndTime: '12:01' },
+  ])('Should overlap: %s', ({ thisStartTime, thisEndTime, otherStartTime, otherEndTime }) => {
+    const thisEvent = { startTime: thisStartTime, endTime: thisEndTime }
+    const otherEvent = { startTime: otherStartTime, endTime: otherEndTime } as ScheduledEvent
+    expect(eventClashes(otherEvent, thisEvent)).toEqual(true)
+  })
+
+  it.each([
+    { thisStartTime: '11:00', thisEndTime: '12:00', otherStartTime: '10:00', otherEndTime: '11:00' },
+    { thisStartTime: '11:01', thisEndTime: '12:00', otherStartTime: '10:00', otherEndTime: '11:00' },
+    { thisStartTime: '09:00', thisEndTime: '09:59', otherStartTime: '10:00', otherEndTime: '11:00' },
+    { thisStartTime: '09:00', thisEndTime: '10:00', otherStartTime: '10:00', otherEndTime: '11:00' },
+  ])('Should not overlap: %s', ({ thisStartTime, thisEndTime, otherStartTime, otherEndTime }) => {
+    const thisEvent = { startTime: thisStartTime, endTime: thisEndTime }
+    const otherEvent = { startTime: otherStartTime, endTime: otherEndTime } as ScheduledEvent
+    expect(eventClashes(otherEvent, thisEvent)).toEqual(false)
   })
 })
