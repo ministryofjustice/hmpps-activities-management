@@ -86,6 +86,25 @@ describe('Route Handlers - Cancel Session Confirmation', () => {
       expect(activitiesService.cancelScheduledActivity).toHaveBeenCalledTimes(0)
       expect(res.redirect).toHaveBeenCalledWith('../../1/attendance-list')
     })
+
+    it("should redirect the user back if the reason isn't present on the session", async () => {
+      confirmRequest = {
+        ...req,
+        body: {
+          confirm: 'yes',
+        },
+        session: {
+          recordAttendanceJourney: {
+            sessionCancellation: {},
+          },
+        },
+      } as unknown as Request
+
+      await handler.POST(confirmRequest, res)
+
+      expect(activitiesService.cancelScheduledActivity).not.toHaveBeenCalledWith()
+      expect(res.redirect).toHaveBeenCalledWith('../../1/cancel')
+    })
   })
 
   describe('Validation', () => {
