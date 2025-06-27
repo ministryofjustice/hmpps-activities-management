@@ -1,4 +1,6 @@
 import jwt from 'jsonwebtoken'
+import fs from 'fs'
+import path from 'path'
 
 import { stubFor, getMatchingRequests, stubHealthPing } from './wiremock'
 
@@ -209,11 +211,45 @@ const stubUserCaseLoads = () =>
       ],
     },
   })
+export const stubOffenderImage = (useAltImage = false) => {
+  const imagePath = useAltImage
+    ? path.join(__dirname, '../fixtures/prisonerAllocations/altDummy.jpg')
+    : path.join(__dirname, '../fixtures/prisonerAllocations/dummy.jpg')
+
+  const base64Image = fs.readFileSync(imagePath, 'base64')
+
+  if (useAltImage) {
+    return stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: '^/profileImage/[^/]+/image$',
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'image/jpeg' },
+        base64Body: base64Image,
+      },
+    })
+  }
+
+  return stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: '^/api/bookings/offenderNo/[^/]+/image/data$',
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'image/jpeg' },
+      base64Body: base64Image,
+    },
+  })
+}
 
 export default {
   getSignInUrl,
   stubHealthPing,
   stubVerifyToken,
+  stubOffenderImage,
   stubSignIn: (name = 'john smith') =>
     Promise.all([
       favicon(),
@@ -227,5 +263,6 @@ export default {
       stubAuthUser(name),
       stubPrisonInformation(),
       stubRolloutPlan(),
+      stubOffenderImage(),
     ]),
 }
