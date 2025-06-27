@@ -1056,4 +1056,19 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('postAdvanceAttendances', () => {
+    it('should call endpoint to create an advanced attendance', async () => {
+      fakeActivitiesApi
+        .post('/advance-attendances')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.postAdvanceAttendances(
+        { prisonerNumber: 'A1234BC', scheduleInstanceId: 1, issuePayment: false },
+        user,
+      )
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })
