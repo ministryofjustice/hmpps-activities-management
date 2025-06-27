@@ -144,18 +144,14 @@
                 {% endif %}
             {% endif %}
 
-            {% if notRequiredInAdvanceEnabled %}
-                {% if instance.isInFuture %}
-                    {{ govukInsetText({
-                        text: 'Before ' + instance.date | formatDate + ', you can only mark people as not required or excused. This will be recorded as an acceptable absence.'
-                    }) }}
-                {% endif %}
-            {% else %}
-                {% if instance.date | toDate > now and not instance.cancelled %}
-                    {{ govukInsetText({
-                        text: 'You cannot record attendance for this session until, ' + instance.date | formatDate
-                    }) }}
-                {% endif %}
+            {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
+                {{ govukInsetText({
+                    text: 'Before ' + instance.date | formatDate + ', you can only mark people as not required or excused. This will be recorded as an acceptable absence.'
+                }) }}
+            {% elif instance.date | toDate > now and not instance.cancelled %}
+                {{ govukInsetText({
+                    text: 'You cannot record attendance for this session until, ' + instance.date | formatDate
+                }) }}
             {% endif %}
         </div>
         <div class="govuk-grid-column-one-third">

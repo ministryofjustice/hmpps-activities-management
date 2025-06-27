@@ -273,7 +273,7 @@ export const getAttendanceSummary = (attendance: Attendance[], advanceAttendance
   const attendanceCount = attendance.length
   const attended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason?.code === 'ATTENDED').length
   let notAttended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason?.code !== 'ATTENDED').length
-  if (config.notRequiredInAdvanceEnabled) {
+  if (config.notRequiredInAdvanceEnabled && advanceAttendances) {
     notAttended += advanceAttendances.length
   }
   const notRecorded = attendanceCount - attended - notAttended
