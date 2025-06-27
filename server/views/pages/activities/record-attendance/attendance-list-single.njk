@@ -206,8 +206,22 @@
                     }) }}
                 {{ incentiveLevelWarningTag(attendee.attendance) }}
             {% endif %}
-
         {% endset %}
+
+        {% set profileLink %}
+            {{showProfileLink({
+                firstName: attendee.prisoner.firstName,
+                middleNames: attendee.prisoner.middleNames,
+                lastName: attendee.prisoner.lastName,
+                prisonerNumber: attendee.prisoner.prisonerNumber,
+                inCaseLoad: attendee.prisoner.prisonId == user.activeCaseLoadId
+            })}}
+            {% if instance.activitySchedule.activity.attendanceRequired and attendee.attendance.attendanceReason.code === 'NOT_REQUIRED' %}
+                <div class="print-only govuk-!-margin-top-1">{{ attendanceTag('COMPLETED', 'NOT_REQUIRED', instance.activitySchedule.activity.attendanceRequired) }}</div>
+            {% endif %}
+        {% endset %}
+
+
 
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
@@ -217,19 +231,13 @@
                 {
                     html: '<span class="print-checkbox govuk-!-margin-left-3"></span>',
                     classes: 'govuk-table_cell print-only'
-                } if instance.activitySchedule.activity.attendanceRequired else 
+                } if instance.activitySchedule.activity.attendanceRequired and attendee.attendance.attendanceReason.code !== 'NOT_REQUIRED' else 
                 {
                     html: '<span class="govuk-!-margin-left-0"></span>',
                     classes: 'govuk-table_cell print-only'
                 },
                 {
-                    html: showProfileLink({
-                        firstName: attendee.prisoner.firstName,
-                        middleNames: attendee.prisoner.middleNames,
-                        lastName: attendee.prisoner.lastName,
-                        prisonerNumber: attendee.prisoner.prisonerNumber,
-                        inCaseLoad: attendee.prisoner.prisonId == user.activeCaseLoadId
-                    }),
+                    html: profileLink,
                     attributes: {
                         "data-qa": "prisoner-details",
                         "data-sort-value": attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false)
