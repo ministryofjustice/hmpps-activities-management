@@ -11,6 +11,7 @@ import {
   parse,
   parseISO,
   set,
+  startOfDay,
   subDays,
 } from 'date-fns'
 import { enGB } from 'date-fns/locale/en-GB'
@@ -276,17 +277,21 @@ export const convertToNumberArray = (maybeArray: string | string[]): number[] =>
     .filter(item => item)
 }
 
-export const eventClashes = (event: ScheduledEvent, thisEvent: { startTime: string; endTime?: string }) => {
+export const eventClashes = (otherEvent: ScheduledEvent, thisEvent: { startTime?: string; endTime?: string }) => {
   const timeToDate = (time: string) => parse(time, 'HH:mm', new Date())
   const toInterval = (start: Date, end: Date) => ({ start, end })
 
+  // If either is has no start and end times then assume a potential clash
+  if (!otherEvent.startTime && !otherEvent.endTime) return true
+  if (!thisEvent.startTime && !thisEvent.endTime) return true
+
   return areIntervalsOverlapping(
     toInterval(
-      timeToDate(event.startTime),
-      event.endTime ? timeToDate(event.endTime) : endOfDay(timeToDate(event.startTime)),
+      otherEvent.startTime ? timeToDate(otherEvent.startTime) : startOfDay(timeToDate(otherEvent.endTime)),
+      otherEvent.endTime ? timeToDate(otherEvent.endTime) : endOfDay(timeToDate(otherEvent.startTime)),
     ),
     toInterval(
-      timeToDate(thisEvent.startTime),
+      thisEvent.startTime ? timeToDate(thisEvent.startTime) : startOfDay(timeToDate(thisEvent.endTime)),
       thisEvent.endTime ? timeToDate(thisEvent.endTime) : endOfDay(timeToDate(thisEvent.startTime)),
     ),
   )
