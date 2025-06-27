@@ -81,7 +81,14 @@ export default class DaysAndSessionsRoutes {
     const weekNumberInt = +weekNumber
 
     if (!selectedDaysForWeek) {
-      this.handleSelectedDays(req, slots, weekNumberInt, scheduleWeeks, preserveHistoryBool, res)
+      const updatedSlots: { [p: string]: Slots } = { ...slots }
+      updatedSlots[weekNumber] = { days: [] }
+
+      const hasDaysSelected = Object.values(updatedSlots).find(slot => slot?.days?.length > 0)
+      if ((scheduleWeeks === weekNumberInt || preserveHistoryBool) && !hasDaysSelected) {
+        return res.validationFailed('days', 'You must select at least 1 slot across the schedule')
+      }
+      req.session.createJourney.slots = updatedSlots
     } else {
       this.updateWeeklySlots(req, weekNumber.toString(), selectedDaysForWeek)
     }
@@ -126,25 +133,6 @@ export default class DaysAndSessionsRoutes {
       redirectParams += fromScheduleFrequencyBool ? '&fromScheduleFrequency=true' : ''
     }
     return `${weekNumber + 1}${redirectParams}`
-  }
-
-  // eslint-disable-next-line consistent-return
-  private handleSelectedDays(
-    req: Request,
-    slots: { [key: number]: Slots },
-    weekNumber: number,
-    scheduleWeeks: number,
-    preserveHistory: boolean,
-    res: Response,
-  ) {
-    const updatedSlots: { [p: string]: Slots } = { ...slots }
-    updatedSlots[weekNumber] = { days: [] }
-
-    const hasDaysSelected = Object.values(updatedSlots).find(slot => slot?.days?.length > 0)
-    if ((scheduleWeeks === weekNumber || preserveHistory) && !hasDaysSelected) {
-      return res.validationFailed('days', 'You must select at least 1 slot across the schedule')
-    }
-    req.session.createJourney.slots = updatedSlots
   }
 
   private async editDaysAndSessions(req: Request, res: Response) {
