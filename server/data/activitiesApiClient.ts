@@ -70,6 +70,7 @@ import {
   WaitingListApplicationUpdateRequest,
   WaitingListSearchParams,
   WaitingListSearchRequest,
+  ActivityPayHistory,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -297,6 +298,14 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
     return this.get({
       path: `/schedules/${id}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  getActivityPayHistory(activityId: number, user: ServiceUser): Promise<ActivityPayHistory> {
+    return this.get({
+      path: `/activities/${activityId}/pay-history`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })

@@ -102,6 +102,7 @@ context('Edit activity', () => {
     ]
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
     cy.stubEndpoint('GET', '/activities/2/filtered', getActivity2)
+    cy.stubEndpoint('GET', '/activities/2/pay-history', getActivity2)
     cy.stubEndpoint('PATCH', '/activities/MDI/activityId/2', getActivity2)
   })
 

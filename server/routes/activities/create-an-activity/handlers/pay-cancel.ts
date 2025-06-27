@@ -6,6 +6,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { YesNo } from '../../../../@types/activities'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
+import { formatUserIdWithName } from '../../../../utils/utils'
 
 export class PayCancel {
   @Expose()
@@ -50,6 +51,10 @@ export default class PayCancelRoutes {
     const bandId = Number(req.body.bandId)
 
     if (req.body.cancelOption === YesNo.YES) {
+      const previousPay = req.session.createJourney.pay.find(
+        p => p.prisonPayBand.id === bandId && p.incentiveLevel === incentiveLevel && p.startDate === startDate,
+      )
+
       let singlePayIndex = -1
       if (startDate === undefined || parseIsoDate(startDate as string) > startOfToday()) {
         singlePayIndex = req.session.createJourney.pay.findIndex(
@@ -65,6 +70,16 @@ export default class PayCancelRoutes {
         req.session.createJourney.pay.splice(singlePayIndex, 1)
       }
 
+      req.session.createJourney.payChange = []
+      req.session.createJourney.payChange.push({
+        incentiveNomisCode: previousPay.incentiveNomisCode,
+        incentiveLevel: previousPay.incentiveLevel,
+        prisonPayBand: previousPay.prisonPayBand,
+        rate: previousPay.rate,
+        changedDetails: `Pay rate change cancelled`,
+        changedBy: formatUserIdWithName(user.userId, user.name),
+      })
+
       const updatedPayRates = activityPay.map(p => ({
         incentiveNomisCode: p.incentiveNomisCode,
         incentiveLevel: p.incentiveLevel,
@@ -73,10 +88,20 @@ export default class PayCancelRoutes {
         startDate: p.startDate,
       }))
 
+      const cancelledPayRates = req.session.createJourney.payChange.map(p => ({
+        incentiveNomisCode: p.incentiveNomisCode,
+        incentiveLevel: p.incentiveLevel,
+        payBandId: p.prisonPayBand.id,
+        rate: p.rate,
+        changedDetails: p.changedDetails,
+        changedBy: p.changedBy,
+      }))
+
       const updatedActivity = {
         paid: true,
         attendanceRequired: true,
         pay: updatedPayRates,
+        payChange: cancelledPayRates,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, updatedActivity, user)
 
