@@ -72,6 +72,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       it('should save next session start date in session and redirect if user selected the next session', async () => {
         req.session.allocateJourney.scheduledInstance = {
           attendances: [],
+          advanceAttendances: [],
           cancelled: false,
           endTime: '',
           timeSlot: 'AM',
@@ -137,6 +138,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       it('should update the allocation and redirect with success if user selected the next session', async () => {
         req.session.allocateJourney.scheduledInstance = {
           attendances: [],
+          advanceAttendances: [],
           cancelled: false,
           endTime: '',
           startTime: '',

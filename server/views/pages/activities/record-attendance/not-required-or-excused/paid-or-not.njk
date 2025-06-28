@@ -1,0 +1,52 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = applicationName + " - Not Required or Excused - Paid or not" %}
+{% set pageId = 'not-required-or-excused-paid-or-not-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <span class="govuk-caption-l">Record activity attendance</span>
+      {% set prisonerIndex = 0 %}
+      <h1 class="govuk-heading-l">Should {{ selectedPrisoners.length }} people be paid for this session they are not required at?</h1>
+      <div class="govuk-inset-text">
+        {{ instance.activitySchedule.description }} on {{ instance.date | formatDate }} ({{ instance.timeSlot }})
+      </div>
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+        {{ govukRadios({
+          name: "paidOrNot",
+          errorMessage: validationErrors | findError('paidOrNot'),
+          items: [
+            {
+              value: "yes",
+              text: "Yes",
+              checked: "yes" == formResponses.paidOrNot,
+              hint: {
+                text: "They'll be paid overnight on " + instance.date | formatDate
+              }
+            },
+            {
+              value: "no",
+              text: "No",
+              checked: "no" == formResponses.paidOrNot
+            }
+          ]
+        }) }}
+
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: "Continue",
+            preventDoubleClick: true
+          }) }}
+          <a class="govuk-link js-backlink" href="/activities/attendance/{{ session.recordAttendanceJourney.activityId }}/activities/{{ instance.id }}/attendance-list">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

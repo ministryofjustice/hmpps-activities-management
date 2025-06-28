@@ -43,6 +43,7 @@ describe('initialiseEditAndRemoveJourney', () => {
     startTime: '13:00',
     timeSlot: 'AM',
     attendances: [],
+    advanceAttendances: [],
   }
 
   const schedule: ActivitySchedule = {
@@ -268,6 +269,7 @@ describe('initialiseEditAndRemoveJourney', () => {
         startTime: '13:00',
         timeSlot: 'AM',
         attendances: [],
+        advanceAttendances: [],
       },
     })
 
@@ -339,6 +341,7 @@ describe('initialiseEditAndRemoveJourney', () => {
         startTime: '13:00',
         timeSlot: 'AM',
         attendances: [],
+        advanceAttendances: [],
       },
     })
 
