@@ -4289,7 +4289,7 @@ export interface components {
        * @description The start time for this scheduled instance
        * @example 09:00
        */
-      startTime: string
+      startTime?: string
       /**
        * @description The end time for this scheduled instance
        * @example 10:00
