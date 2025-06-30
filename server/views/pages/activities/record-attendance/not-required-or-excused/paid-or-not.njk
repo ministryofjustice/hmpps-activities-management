@@ -12,7 +12,7 @@
     <div class="govuk-grid-column-full">
       <span class="govuk-caption-l">Record activity attendance</span>
       {% set prisonerIndex = 0 %}
-      <h1 class="govuk-heading-l">Should {{ selectedPrisoners.length }} people be paid for this session they are not required at?</h1>
+      <h1 class="govuk-heading-l">Should {{ "1 person" if selectedPrisoners | length == 1 else selectedPrisoners | length + " people" }} be paid for this session they are not required at?</h1>
       <div class="govuk-inset-text">
         {{ instance.activitySchedule.description }} on {{ instance.date | formatDate }} ({{ instance.timeSlot }})
       </div>

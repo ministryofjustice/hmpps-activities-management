@@ -3,15 +3,15 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 
-{% set pageTitle = applicationName + " - Not Required or Excused - Paid or not" %}
-{% set pageId = 'not-required-or-excused-paid-or-not-page' %}
+{% set pageTitle = applicationName + " - Not Required or Excused - Check and confirm" %}
+{% set pageId = 'not-required-or-excused-check-and-confirm' %}
 {% set jsBackLink = true %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <span class="govuk-caption-l">Record activity attendance</span>
-      <h1 class="govuk-heading-l">Check and confirm that {{ selectedPrisoners.length }} people are not required for this session</h1>
+      <h1 class="govuk-heading-l">Check and confirm that {{ "1 person is" if selectedPrisoners | length == 1 else selectedPrisoners | length + " people are" }} not required for this session</h1>
       <p class="govuk-body">People not required:</p>
       <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
         {% for prisoner in selectedPrisoners %}
