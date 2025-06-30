@@ -4,7 +4,6 @@ import { validate } from 'class-validator'
 import ExtraInformationRoutes, { ExtraInformation } from './extraInformation'
 import CourtBookingService from '../../../../../services/courtBookingService'
 import { BookACourtHearingJourney } from '../journey'
-import config from '../../../../../config'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 
 jest.mock('../../../../../services/courtBookingService')
@@ -42,38 +41,7 @@ describe('ExtraInformationRoutes', () => {
   })
 
   describe('ExtraInformation', () => {
-    it('it should validate extra information when master notes toggle is off', async () => {
-      config.bvlsMasterPublicPrivateNotesEnabled = false
-
-      const extraInformation = plainToInstance(ExtraInformation, {
-        extraInformation: 'x'.repeat(3601),
-      })
-
-      const errors = await validate(extraInformation).then(errs => errs.flatMap(associateErrorsWithProperty))
-      expect(errors).toEqual(
-        expect.arrayContaining([
-          {
-            error: 'You must enter extra information which has no more than 3600 characters',
-            property: 'extraInformation',
-          },
-        ]),
-      )
-    })
-
-    it('it should not validate extra information when master notes toggle is off', async () => {
-      config.bvlsMasterPublicPrivateNotesEnabled = true
-
-      const extraInformation = plainToInstance(ExtraInformation, {
-        extraInformation: 'x'.repeat(3601),
-      })
-
-      const errors = await validate(extraInformation).then(errs => errs.flatMap(associateErrorsWithProperty))
-      expect(errors).toHaveLength(0)
-    })
-
-    it('it should validate staff notes when master notes toggle is on', async () => {
-      config.bvlsMasterPublicPrivateNotesEnabled = true
-
+    it('it should validate staff notes', async () => {
       const extraInformation = plainToInstance(ExtraInformation, {
         notesForStaff: 'x'.repeat(401),
       })
@@ -89,20 +57,7 @@ describe('ExtraInformationRoutes', () => {
       )
     })
 
-    it('it should not validate staff notes when master notes toggle is off', async () => {
-      config.bvlsMasterPublicPrivateNotesEnabled = false
-
-      const extraInformation = plainToInstance(ExtraInformation, {
-        notesForStaff: 'x'.repeat(401),
-      })
-
-      const errors = await validate(extraInformation).then(errs => errs.flatMap(associateErrorsWithProperty))
-      expect(errors).toHaveLength(0)
-    })
-
-    it('it should validate prisoners notes when master notes toggle is on', async () => {
-      config.bvlsMasterPublicPrivateNotesEnabled = true
-
+    it('it should validate prisoners notes', async () => {
       const extraInformation = plainToInstance(ExtraInformation, {
         notesForPrisoners: 'x'.repeat(401),
       })
@@ -117,23 +72,10 @@ describe('ExtraInformationRoutes', () => {
         ]),
       )
     })
-
-    it('it should not validate prisoners notes when master notes toggle is off', async () => {
-      config.bvlsMasterPublicPrivateNotesEnabled = false
-
-      const extraInformation = plainToInstance(ExtraInformation, {
-        notesForPrisoners: 'x'.repeat(401),
-      })
-
-      const errors = await validate(extraInformation).then(errs => errs.flatMap(associateErrorsWithProperty))
-      expect(errors).toHaveLength(0)
-    })
   })
 
   describe('POST', () => {
-    it('redirects with success message when mode is amend and master notes toggle is on', async () => {
-      config.bvlsMasterPublicPrivateNotesEnabled = true
-
+    it('redirects with success message when mode is amend', async () => {
       req.body.notesForStaff = 'Notes for staff'
       req.body.notesForPrisoners = 'Notes for prisoners'
       req.routeContext = { mode: 'amend' }
@@ -151,28 +93,6 @@ describe('ExtraInformationRoutes', () => {
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/video-link-booking/court/1',
-        "You've changed the extra information for this court hearing",
-      )
-    })
-
-    it('redirects with success message when mode is amend and master notes toggle is off', async () => {
-      config.bvlsMasterPublicPrivateNotesEnabled = false
-
-      req.body.extraInformation = 'some extra information'
-      req.routeContext = { mode: 'amend' }
-      req.session.bookACourtHearingJourney.bookingId = 2
-
-      await extraInformationRoutes.POST(req as Request, res as Response)
-
-      expect(courtBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(
-        {
-          bookingId: 2,
-          comments: 'some extra information',
-        } as BookACourtHearingJourney,
-        res.locals.user,
-      )
-      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/appointments/video-link-booking/court/2',
         "You've changed the extra information for this court hearing",
       )
     })
