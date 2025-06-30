@@ -238,7 +238,7 @@ export const toDate = (date: string) => parse(date, 'yyyy-MM-dd', new Date())
 
 export const sliceArray = (arr: Array<unknown>, start: number, end: number) => arr?.slice(start, end)
 
-export const getAttendanceSummaryForFuture = (
+export const getAdvancedAttendanceSummary = (
   attendance: Attendance[],
   advanceAttendances?: AdvanceAttendance[],
   total?: number,
@@ -270,13 +270,10 @@ export const getAttendanceSummaryForFuture = (
   }
 }
 
-export const getAttendanceSummary = (attendance: Attendance[], advanceAttendances?: AdvanceAttendance[]) => {
+export const getAttendanceSummary = (attendance: Attendance[]) => {
   const attendanceCount = attendance.length
   const attended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason?.code === 'ATTENDED').length
-  let notAttended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason?.code !== 'ATTENDED').length
-  if (config.notRequiredInAdvanceEnabled && advanceAttendances) {
-    notAttended += advanceAttendances.length
-  }
+  const notAttended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason?.code !== 'ATTENDED').length
   const notRecorded = attendanceCount - attended - notAttended
   let attendedPercentage = '-'
   let notAttendedPercentage = '-'

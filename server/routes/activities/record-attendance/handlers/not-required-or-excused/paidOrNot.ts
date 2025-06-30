@@ -24,10 +24,7 @@ export default class PaidOrNotRoutes {
     const { user } = res.locals
     const instanceId = +req.params.id
     const { selectedPrisoners } = req.session.recordAttendanceJourney.notRequiredOrExcused
-
     const instance: ScheduledActivity = await this.activitiesService.getScheduledActivity(instanceId, user)
-
-    // console.log(selectedPrisoners)
 
     res.render('pages/activities/record-attendance/not-required-or-excused/paid-or-not', {
       selectedPrisoners,

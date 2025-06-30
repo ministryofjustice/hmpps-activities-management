@@ -10,7 +10,7 @@ import {
   getAttendanceSummary,
   toDate,
   formatName,
-  getAttendanceSummaryForFuture,
+  getAdvancedAttendanceSummary,
 } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
 import {
@@ -63,10 +63,8 @@ export default class AttendanceListRoutes {
     const instance = await this.activitiesService.getScheduledActivity(instanceId, user).then(i => ({
       ...i,
       isAmendable: startOfDay(toDate(i.date)) >= startOfToday(),
-      isInFuture: startOfDay(toDate(i.date)) > startOfToday(),
+      isInFuture: notRequiredInAdvanceEnabled && startOfDay(toDate(i.date)) > startOfToday(),
     }))
-
-    // console.log(instance);
 
     const prisonerNumbers = (await this.activitiesService.getAttendees(instanceId, user)).map(a => a.prisonerNumber)
 
@@ -99,7 +97,7 @@ export default class AttendanceListRoutes {
         return {
           prisoner: attendee,
           attendance: instance.attendances.find(a => a.prisonerNumber === att.prisonerNumber),
-          advancedAttendance: notRequiredInAdvanceEnabled
+          advancedAttendance: instance.isInFuture
             ? instance.advanceAttendances.find(a => a.prisonerNumber === att.prisonerNumber)
             : undefined,
           otherEvents: prisonerEvents,
@@ -119,10 +117,9 @@ export default class AttendanceListRoutes {
 
     req.session.recordAttendanceJourney.singleInstanceSelected = true
 
-    const summary =
-      notRequiredInAdvanceEnabled && instance.isInFuture
-        ? getAttendanceSummaryForFuture(instance.attendances, instance.advanceAttendances, attendance.length)
-        : getAttendanceSummary(instance.attendances, instance.advanceAttendances)
+    const summary = instance.isInFuture
+      ? getAdvancedAttendanceSummary(instance.attendances, instance.advanceAttendances, attendance.length)
+      : getAttendanceSummary(instance.attendances)
 
     res.render('pages/activities/record-attendance/attendance-list-single', {
       instance,
@@ -367,6 +364,9 @@ export default class AttendanceListRoutes {
   }
 
   NOT_REQUIRED_OR_EXCUSED = async (req: Request, res: Response): Promise<void> => {
+    if (!config.notRequiredInAdvanceEnabled) {
+      return res.redirect('attendance-list')
+    }
     const { user } = res.locals
     const { recordAttendanceJourney } = req.session
     const instanceId = +req.params.id

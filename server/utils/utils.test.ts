@@ -19,8 +19,9 @@ import {
   formatName,
   getSortableItemForAttendee,
   eventClashes,
+  getAdvancedAttendanceSummary,
 } from './utils'
-import { Attendance, ScheduledEvent } from '../@types/activitiesAPI/types'
+import { AdvanceAttendance, Attendance, ScheduledEvent } from '../@types/activitiesAPI/types'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
 
 describe('utils', () => {
@@ -258,6 +259,30 @@ describe('utils', () => {
         notAttendedPercentage: '33',
         notRecorded: 1,
         notRecordedPercentage: '33',
+      })
+    })
+  })
+
+  describe('getAdvancedAttendanceSummary', () => {
+    it('calculates the attendance summary', () => {
+      const attendance = []
+      const advanceAttendances = [
+        {
+          id: 1,
+        },
+        {
+          id: 2,
+        },
+      ] as AdvanceAttendance[]
+
+      expect(getAdvancedAttendanceSummary(attendance, advanceAttendances, 5)).toEqual({
+        attendanceCount: 5,
+        attended: 0,
+        attendedPercentage: '-',
+        notAttended: 2,
+        notAttendedPercentage: '40',
+        notRecorded: 3,
+        notRecordedPercentage: '-',
       })
     })
   })
