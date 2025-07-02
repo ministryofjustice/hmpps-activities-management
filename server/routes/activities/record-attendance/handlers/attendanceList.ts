@@ -10,9 +10,15 @@ import {
   getAttendanceSummary,
   toDate,
   formatName,
+  getAdvancedAttendanceSummary,
 } from '../../../../utils/utils'
 import PrisonService from '../../../../services/prisonService'
-import { Attendance, AttendanceUpdateRequest, ScheduledEvent } from '../../../../@types/activitiesAPI/types'
+import {
+  AdvanceAttendance,
+  Attendance,
+  AttendanceUpdateRequest,
+  ScheduledEvent,
+} from '../../../../@types/activitiesAPI/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
@@ -22,6 +28,7 @@ import { NameFormatStyle } from '../../../../utils/helpers/nameFormatStyle'
 import applyCancellationDisplayRule from '../../../../utils/applyCancellationDisplayRule'
 import UserService from '../../../../services/userService'
 import TimeSlot from '../../../../enum/timeSlot'
+import config from '../../../../config'
 
 export class AttendanceList {
   @Expose()
@@ -33,6 +40,7 @@ export class AttendanceList {
 export interface ScheduledInstanceAttendance {
   prisoner: Prisoner
   attendance?: Attendance
+  advancedAttendance?: AdvanceAttendance
   otherEvents: ScheduledEvent[]
 }
 
@@ -48,12 +56,14 @@ export default class AttendanceListRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const instanceId = +req.params.id
     const { user } = res.locals
+    const { notRequiredInAdvanceEnabled } = config
 
     let attendance: ScheduledInstanceAttendance[] = []
 
     const instance = await this.activitiesService.getScheduledActivity(instanceId, user).then(i => ({
       ...i,
       isAmendable: startOfDay(toDate(i.date)) >= startOfToday(),
+      isInFuture: notRequiredInAdvanceEnabled && startOfDay(toDate(i.date)) > startOfToday(),
     }))
 
     const prisonerNumbers = (await this.activitiesService.getAttendees(instanceId, user)).map(a => a.prisonerNumber)
@@ -87,6 +97,9 @@ export default class AttendanceListRoutes {
         return {
           prisoner: attendee,
           attendance: instance.attendances.find(a => a.prisonerNumber === att.prisonerNumber),
+          advancedAttendance: instance.isInFuture
+            ? instance.advanceAttendances.find(a => a.prisonerNumber === att.prisonerNumber)
+            : undefined,
           otherEvents: prisonerEvents,
         }
       })
@@ -104,11 +117,15 @@ export default class AttendanceListRoutes {
 
     req.session.recordAttendanceJourney.singleInstanceSelected = true
 
+    const summary = instance.isInFuture
+      ? getAdvancedAttendanceSummary(instance.attendances, instance.advanceAttendances, attendance.length)
+      : getAttendanceSummary(instance.attendances)
+
     res.render('pages/activities/record-attendance/attendance-list-single', {
       instance,
       isPayable: instance.activitySchedule.activity.paid,
       attendance,
-      attendanceSummary: getAttendanceSummary(instance.attendances),
+      attendanceSummary: summary,
       userMap,
       selectedSessions,
     })
@@ -344,6 +361,35 @@ export default class AttendanceListRoutes {
       return res.redirect('../not-attended-reason')
     }
     return res.redirect('not-attended-reason')
+  }
+
+  NOT_REQUIRED_OR_EXCUSED = async (req: Request, res: Response): Promise<void> => {
+    if (!config.notRequiredInAdvanceEnabled) {
+      return res.redirect('attendance-list')
+    }
+    const { user } = res.locals
+    const { recordAttendanceJourney } = req.session
+    const instanceId = +req.params.id
+
+    const prisonerNumbers = req.body.selectedAttendances.map(id => id.split('-')).map(tokens => tokens[2])
+
+    const instance = await this.activitiesService.getScheduledActivity(instanceId, user)
+    const allPrisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
+
+    recordAttendanceJourney.notRequiredOrExcused = {
+      selectedPrisoners: allPrisoners.map(prisoner => ({
+        instanceId: instance.id,
+        prisonerNumber: prisoner.prisonerNumber,
+        prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+      })),
+    }
+
+    if (!instance.activitySchedule.activity.paid) {
+      req.session.recordAttendanceJourney.notRequiredOrExcused.isPaid = false
+      return res.redirect('not-required-or-excused/check-and-confirm')
+    }
+
+    return res.redirect('not-required-or-excused/paid-or-not')
   }
 
   private getAttendanceId = (prisonerNumber: string, attendances: Attendance[]) => {
