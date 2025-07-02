@@ -18,11 +18,19 @@ import { enGB } from 'date-fns/locale/en-GB'
 import { ValidationError } from 'class-validator'
 import _ from 'lodash'
 import { FieldValidationError } from '../middleware/validationMiddleware'
-import { Activity, ActivitySchedule, Attendance, ScheduledEvent, Slot } from '../@types/activitiesAPI/types'
+import {
+  Activity,
+  ActivitySchedule,
+  AdvanceAttendance,
+  Attendance,
+  ScheduledEvent,
+  Slot,
+} from '../@types/activitiesAPI/types'
 import { CreateAnActivityJourney, Slots } from '../routes/activities/create-an-activity/journey'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
 import DateOption from '../enum/dateOption'
 import { Prisoner } from '../@types/activities'
+import config from '../config'
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
@@ -229,6 +237,38 @@ export const toDateString = (date: Date) => format(date, 'yyyy-MM-dd')
 export const toDate = (date: string) => parse(date, 'yyyy-MM-dd', new Date())
 
 export const sliceArray = (arr: Array<unknown>, start: number, end: number) => arr?.slice(start, end)
+
+export const getAdvancedAttendanceSummary = (
+  attendance: Attendance[],
+  advanceAttendances?: AdvanceAttendance[],
+  total?: number,
+) => {
+  const attendanceCount = total ?? attendance.length
+
+  const attended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason?.code === 'ATTENDED').length
+  let notAttended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason?.code !== 'ATTENDED').length
+  if (config.notRequiredInAdvanceEnabled) {
+    notAttended += advanceAttendances.length
+  }
+  const notRecorded = attendanceCount - attended - notAttended
+
+  const attendedPercentage = '-'
+  let notAttendedPercentage = '-'
+  const notRecordedPercentage = '-'
+  if (attendanceCount > 0) {
+    notAttendedPercentage = toFixed((notAttended / attendanceCount) * 100, 0)
+  }
+
+  return {
+    attendanceCount,
+    attended,
+    notAttended,
+    notRecorded,
+    attendedPercentage,
+    notAttendedPercentage,
+    notRecordedPercentage,
+  }
+}
 
 export const getAttendanceSummary = (attendance: Attendance[]) => {
   const attendanceCount = attendance.length
