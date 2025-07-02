@@ -42,7 +42,6 @@ export default class ProbationBookingService {
             contactNumber: journey.officer.telephone,
           }
         : undefined,
-      comments: journey.comments,
       notesForStaff: journey.notesForStaff,
       notesForPrisoners: journey.notesForPrisoners,
     } as T

@@ -89,7 +89,6 @@ export default ({
       locationCode: mainAppointment.prisonLocKey,
       preLocationCode: preAppointment?.prisonLocKey,
       postLocationCode: postAppointment?.prisonLocKey,
-      comments: booking.comments,
       videoLinkUrl: isNotEmpty(booking.videoLinkUrl) ? booking.videoLinkUrl : undefined,
       notesForStaff: booking.notesForStaff,
       notesForPrisoners: booking.notesForPrisoners,

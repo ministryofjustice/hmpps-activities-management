@@ -204,24 +204,7 @@
                                 }
                             ]
                         } if isAmendable
-                    } if bvlsHmctsLinkGuestPinEnabled,
-                    {
-                        key: {
-                            text: "Extra information"
-                        },
-                        value: {
-                            text: videoBooking.comments or "None provided"
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/extra-information',
-                                    text: "Change",
-                                    classes: "govuk-link--no-visited-state"
-                                }
-                            ]
-                        } if isAmendable
-                    } if not bvlsMasterPublicPrivateNotesEnabled
+                    } if bvlsHmctsLinkGuestPinEnabled
                 ]
             }) }}
         </div>
@@ -320,7 +303,6 @@
         </div>
     </div>
 
-    {% if bvlsMasterPublicPrivateNotesEnabled %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
@@ -360,7 +342,6 @@
             }) }}
         </div>
     </div>
-    {% endif %}
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
