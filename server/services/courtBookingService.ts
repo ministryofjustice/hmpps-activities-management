@@ -35,7 +35,6 @@ export default class CourtBookingService {
       ],
       courtCode: journey.courtCode,
       courtHearingType: journey.hearingTypeCode,
-      comments: journey.comments,
       videoLinkUrl: journey.videoLinkUrl,
       notesForStaff: journey.notesForStaff,
       notesForPrisoners: journey.notesForPrisoners,

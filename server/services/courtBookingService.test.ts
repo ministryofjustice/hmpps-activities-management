@@ -36,7 +36,6 @@ describe('Court booking service', () => {
         endTime: '1970-01-01T14:30:00Z',
         courtCode: 'COURT_HOUSE',
         hearingTypeCode: 'APPEAL',
-        comments: 'comments',
         videoLinkUrl: 'videoLinkUrl',
         notesForStaff: 'notes for staff',
         notesForPrisoners: 'notes for prisoners',
@@ -63,7 +62,6 @@ describe('Court booking service', () => {
         ],
         courtCode: 'COURT_HOUSE',
         courtHearingType: 'APPEAL',
-        comments: 'comments',
         videoLinkUrl: 'videoLinkUrl',
         notesForStaff: 'notes for staff',
         notesForPrisoners: 'notes for prisoners',
@@ -96,7 +94,6 @@ describe('Court booking service', () => {
         postHearingEndTime: '1970-01-01T14:45:00Z',
         courtCode: 'COURT_HOUSE',
         hearingTypeCode: 'APPEAL',
-        comments: 'comments',
         videoLinkUrl: 'videoLinkUrl',
         notesForStaff: 'notes for staff',
         notesForPrisoners: 'notes for prisoners',
@@ -135,7 +132,6 @@ describe('Court booking service', () => {
         ],
         courtCode: 'COURT_HOUSE',
         courtHearingType: 'APPEAL',
-        comments: 'comments',
         videoLinkUrl: 'videoLinkUrl',
         notesForStaff: 'notes for staff',
         notesForPrisoners: 'notes for prisoners',
@@ -160,7 +156,6 @@ describe('Court booking service', () => {
       prisonCode: 'MDI',
       courtCode: 'COURT_HOUSE',
       hearingTypeCode: 'APPEAL',
-      comments: 'comments',
       videoLinkUrl: 'videoLinkUrl',
     } as BookACourtHearingJourney
 
@@ -186,7 +181,6 @@ describe('Court booking service', () => {
         ],
         courtCode: 'COURT_HOUSE',
         courtHearingType: 'APPEAL',
-        comments: 'comments',
         videoLinkUrl: 'videoLinkUrl',
       }
 

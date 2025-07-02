@@ -246,20 +246,12 @@
                     rows: [
                         {
                             key: {
-                                text: 'Extra information'
-                            },
-                            value: {
-                                html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.comments or 'None entered' | escape) + '</span>'
-                            }
-                        } if not bvlsMasterPublicPrivateNotesEnabled,
-                        {
-                            key: {
                                 text: 'Notes for prison staff'
                             },
                             value: {
                                 html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.notesForStaff or 'None entered' | escape) + '</span>'
                             }
-                        } if bvlsMasterPublicPrivateNotesEnabled,
+                        },
                         {
                             key: {
                                 text: "Notes for prisoner"
@@ -267,7 +259,7 @@
                             value: {
                                 html: '<span class="preserve-line-breaks">' + (session.bookAProbationMeetingJourney.notesForPrisoners or 'None entered' | escape) + '</span>'
                             }
-                        } if bvlsMasterPublicPrivateNotesEnabled
+                        }
                     ],
                     attributes: { 'data-qa': 'extra-information' }
                 }) }}
