@@ -1024,7 +1024,7 @@ describe('activitiesApiClient', () => {
         .reply(200)
 
       const body = {
-        scheduledInstanceIds: [1, 2],
+        scheduleInstanceIds: [1, 2],
         reason: 'Cancellation reason',
         username: 'USER1',
         issuePayment: true,
@@ -1067,6 +1067,21 @@ describe('activitiesApiClient', () => {
       }
 
       await activitiesApiClient.putUpdateCancelledSessionDetails(1, body, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('postAdvanceAttendances', () => {
+    it('should call endpoint to create an advanced attendance', async () => {
+      fakeActivitiesApi
+        .post('/advance-attendances')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.postAdvanceAttendances(
+        { prisonerNumber: 'A1234BC', scheduleInstanceId: 1, issuePayment: false },
+        user,
+      )
       expect(nock.isDone()).toBe(true)
     })
   })

@@ -58,6 +58,8 @@ import {
   WaitingListSearchParams,
   WaitingListSearchRequest,
   ScheduledInstancedUpdateRequest,
+  AdvanceAttendanceCreateRequest,
+  AdvanceAttendance,
   ActivityPayHistory,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
@@ -607,5 +609,12 @@ export default class ActivitiesService {
     user: ServiceUser,
   ) {
     return this.activitiesApiClient.putUpdateCancelledSessionDetails(scheduledInstanceId, cancelRequest, user)
+  }
+
+  async postAdvanceAttendances(
+    createRequest: AdvanceAttendanceCreateRequest,
+    user: ServiceUser,
+  ): Promise<AdvanceAttendance> {
+    return this.activitiesApiClient.postAdvanceAttendances(createRequest, user)
   }
 }

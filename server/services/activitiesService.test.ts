@@ -40,6 +40,7 @@ import {
   AppointmentCancelRequest,
   MultipleAppointmentAttendanceRequest,
   RolloutPrisonPlan,
+  AdvanceAttendance,
   ActivityPayHistory,
 } from '../@types/activitiesAPI/types'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
@@ -1144,6 +1145,33 @@ describe('Activities Service', () => {
         },
         user,
       )
+    })
+  })
+
+  describe('postAdvanceAttendances', () => {
+    it('should create and return an advanced attendance', async () => {
+      const expectedResult = {
+        id: 123456,
+        scheduleInstanceId: 123456,
+        prisonerNumber: 'A1234AA',
+        issuePayment: true,
+        payAmount: 100,
+        recordedTime: '2023-09-10T09:30:00',
+        recordedBy: 'A.JONES',
+        attendanceHistory: [],
+      } as AdvanceAttendance
+
+      const serviceRequest = {
+        scheduleInstanceId: 123,
+        prisonerNumber: 'A1234AA',
+        issuePayment: true,
+      }
+
+      when(activitiesApiClient.postAdvanceAttendances).mockResolvedValue(expectedResult)
+
+      await activitiesService.postAdvanceAttendances(serviceRequest, user)
+
+      expect(activitiesApiClient.postAdvanceAttendances).toHaveBeenCalledWith(serviceRequest, user)
     })
   })
 })
