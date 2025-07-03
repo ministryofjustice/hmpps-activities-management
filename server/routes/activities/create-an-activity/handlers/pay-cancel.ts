@@ -6,7 +6,6 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { YesNo } from '../../../../@types/activities'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
-import { formatUserIdWithName } from '../../../../utils/utils'
 
 export class PayCancel {
   @Expose()
@@ -77,7 +76,7 @@ export default class PayCancelRoutes {
         prisonPayBand: previousPay.prisonPayBand,
         rate: previousPay.rate,
         changedDetails: `Pay rate change cancelled`,
-        changedBy: formatUserIdWithName(user.userId, user.name),
+        changedBy: user.username,
       })
 
       const updatedPayRates = activityPay.map(p => ({

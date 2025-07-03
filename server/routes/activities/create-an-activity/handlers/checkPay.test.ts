@@ -34,8 +34,6 @@ describe('Route Handlers - Create an activity - Check pay', () => {
     res = {
       locals: {
         user: {
-          userId: 'ABC123',
-          name: 'Adam Smith',
           username: 'joebloggs',
           activeCaseLoadId: 'MDI',
         },
@@ -163,7 +161,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
             startDate: null,
             changedDetails: 'New pay rate added: £1.00',
             changedTime: '2025-06-24T11:55:54.135',
-            changedBy: 'ABC123 - A. Smith',
+            changedBy: 'joebloggs',
           },
         ],
       })

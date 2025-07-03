@@ -6592,7 +6592,7 @@ export interface components {
       changedDetails?: string
       /**
        * @description The person who updated this activity pay rate
-       * @example ABC123 - A. Smith
+       * @example joebloggs
        */
       changedBy?: string
     }
@@ -6806,7 +6806,7 @@ export interface components {
       changedDetails?: string
       /**
        * @description The person who updated this activity pay rate
-       * @example ABC123 - A. Smith
+       * @example joebloggs
        */
       changedBy?: string
     }

@@ -65,25 +65,6 @@ export const initialiseName = (fullName?: string): string | null => {
 }
 
 /**
- * Converts an unformatted username string to the format 'J. Bloggs' and concatenates with user id separated by hyphen.
- * @param userId - user internal id
- * @param userName - user full name
- * @returns formatted user id with name string
- */
-export const formatUserIdWithName = (userId?: string, userName?: string): string | null => {
-  if (userId && userName) {
-    return `${userId} - ${initialiseName(userName)}`
-  }
-  if (userId) {
-    return userId
-  }
-  if (userName) {
-    return initialiseName(userName)
-  }
-  return 'UNKNOWN'
-}
-
-/**
  * Converts a user object containing firstName, lastName and middleNames to a full name string.
  * @param user user to extract full name from
  * @returns name string

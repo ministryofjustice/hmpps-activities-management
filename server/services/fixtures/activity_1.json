@@ -117,7 +117,7 @@
       "payBand": "A",
       "rate": 125,
       "changedDetails": "New pay rate added: $1.25",
-      "changedBy": "ABC123 - A. Smith"
+      "changedBy": "adsmith"
     },
     {
       "id": 82,
@@ -126,7 +126,7 @@
       "payBand": "B",
       "rate": 150,
       "changedDetails": "New pay rate added: $1.50",
-      "changedBy": "ABC123 - A. Smith"
+      "changedBy": "joebloggs"
     },
     {
       "id": 83,
@@ -135,7 +135,7 @@
       "payBand": "A",
       "rate": 125,
       "changedDetails": "New pay rate added: $1.25",
-      "changedBy": "ABC123 - A. Smith"
+      "changedBy": "joebloggs"
     },
     {
       "id": 84,
@@ -144,7 +144,7 @@
       "payBand": "B",
       "rate": 150,
       "changedDetails": "New pay rate added: $1.50",
-      "changedBy": "ABC123 - A. Smith"
+      "changedBy": "adsmith"
     },
     {
       "id": 85,
@@ -153,7 +153,7 @@
       "payBand": "A",
       "rate": 125,
       "changedDetails": "New pay rate added: $1.25",
-      "changedBy": "ABC123 - A. Smith"
+      "changedBy": "joebloggs"
     },
     {
       "id": 86,
@@ -162,7 +162,7 @@
       "payBand": "B",
       "rate": 150,
       "changedDetails": "New pay rate added: $1.50",
-      "changedBy": "ABC123 - A. Smith"
+      "changedBy": "joebloggs"
     },
     {
       "id": 87,
@@ -171,7 +171,7 @@
       "payBand": "A",
       "rate": 125,
       "changedDetails": "New pay rate added: $1.25",
-      "changedBy": "ABC123 - A. Smith"
+      "changedBy": "adsmith"
     },
     {
       "id": 88,
@@ -180,7 +180,7 @@
       "payBand": "B",
       "rate": 150,
       "changedDetails": "New pay rate added: $1.50",
-      "changedBy": "ABC123 - A. Smith"
+      "changedBy": "joebloggs"
     },
     {
       "id": 89,
@@ -189,7 +189,7 @@
       "payBand": "A",
       "rate": 125,
       "changedDetails": "New pay rate added: $1.25",
-      "changedBy": "ABC123 - A. Smith"
+      "changedBy": "adsmith"
     },
     {
       "id": 90,
@@ -198,7 +198,7 @@
       "payBand": "B",
       "rate": 150,
       "changedDetails": "New pay rate added: $1.50",
-      "changedBy": "ABC123 - A. Smith"
+      "changedBy": "adsmith"
     }
   ],
   "startDate": "14/01/2023",

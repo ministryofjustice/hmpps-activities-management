@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityCreateRequest, Slot } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
-import { formatUserIdWithName, mapJourneySlotsToActivityRequest, toMoney } from '../../../../utils/utils'
+import { mapJourneySlotsToActivityRequest, toMoney } from '../../../../utils/utils'
 import { customSlotsToSchedule, regimeSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
@@ -78,7 +78,7 @@ export default class CheckAnswersRoutes {
         payBandId: pay.prisonPayBand.id,
         rate: pay.rate,
         changedDetails: `New pay rate added: ${toMoney(pay.rate)}`,
-        changedBy: formatUserIdWithName(user.userId, user.name),
+        changedBy: user.username,
       })),
       minimumEducationLevel: createJourney.educationLevels,
       description: createJourney.name,
@@ -112,7 +112,7 @@ export default class CheckAnswersRoutes {
             payBandId: flatRate.prisonPayBand.id,
             rate: flatRate.rate,
             changedDetails: `New pay rate added: ${toMoney(flatRate.rate)}`,
-            changedBy: formatUserIdWithName(user.userId, user.name),
+            changedBy: user.username,
           })
         })
       })

@@ -21,8 +21,6 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     res = {
       locals: {
         user: {
-          userId: 'ABC123',
-          name: 'Adam Smith',
           username: 'joebloggs',
           activeCaseLoadId: 'MDI',
         },
@@ -159,7 +157,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
             payBandId: 1,
             rate: 100,
             changedDetails: 'Pay rate removed',
-            changedBy: 'ABC123 - A. Smith',
+            changedBy: 'joebloggs',
           },
         ],
       } as ActivityUpdateRequest
@@ -223,7 +221,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
             payBandId: 2,
             rate: 100,
             changedDetails: 'Pay rate removed',
-            changedBy: 'ABC123 - A. Smith',
+            changedBy: 'joebloggs',
           },
         ],
       } as ActivityUpdateRequest
@@ -366,7 +364,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
             payBandId: 61,
             rate: 50,
             changedDetails: 'Pay rate removed',
-            changedBy: 'ABC123 - A. Smith',
+            changedBy: 'joebloggs',
           },
         ],
       } as ActivityUpdateRequest

@@ -74,7 +74,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
           prisonPayBand: { id: 1 },
           rate: 100,
           changedDetails: 'New pay rate added: £1.00',
-          changedBy: 'ABC123 - A. Smith',
+          changedBy: 'joebloggs',
         },
       ] as ActivityPayHistory[]
 
@@ -112,7 +112,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
           prisonPayBand: { id: 1 },
           rate: 100,
           changedDetails: 'New pay rate added: £1.00',
-          changedBy: 'ABC123 - A. Smith',
+          changedBy: 'joebloggs',
         },
       ] as ActivityPayHistory[]
 

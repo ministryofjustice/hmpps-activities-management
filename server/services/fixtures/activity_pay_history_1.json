@@ -19,7 +19,7 @@
     "startDate": "2025-07-10",
     "changedDetails": "Amount reduced to £0.50, from 10 Jul 2025",
     "changedTime": "2025-06-24T11:57:11.489",
-    "changedBy": "ABC123 - A. Smith"
+    "changedBy": "joebloggs"
   },
   {
     "id": 32,
@@ -41,7 +41,7 @@
     "startDate": null,
     "changedDetails": "Pay rate change cancelled",
     "changedTime": "2025-06-24T11:56:52.517",
-    "changedBy": "ABC123 - A. Smith"
+    "changedBy": "joebloggs"
   },
   {
     "id": 31,
@@ -63,7 +63,7 @@
     "startDate": null,
     "changedDetails": "Pay rate removed",
     "changedTime": "2025-06-24T11:56:45.737",
-    "changedBy": "ABC123 - A. Smith"
+    "changedBy": "adsmith"
   },
   {
     "id": 30,
@@ -85,7 +85,7 @@
     "startDate": "2025-06-28",
     "changedDetails": "Amount increased to £1.50, from 28 Jun 2025",
     "changedTime": "2025-06-24T11:56:35.372",
-    "changedBy": "ABC123 - A. Smith"
+    "changedBy": "joebloggs"
   },
   {
     "id": 29,
@@ -107,7 +107,7 @@
     "startDate": null,
     "changedDetails": "New pay rate added: £2.00",
     "changedTime": "2025-06-24T11:56:17.886",
-    "changedBy": "ABC123 - A. Smith"
+    "changedBy": "joebloggs"
   },
   {
     "id": 28,
@@ -129,6 +129,6 @@
     "startDate": null,
     "changedDetails": "New pay rate added: £1.00",
     "changedTime": "2025-06-24T11:55:54.135",
-    "changedBy": "ABC123 - A. Smith"
+    "changedBy": "adsmith"
   }
 ]

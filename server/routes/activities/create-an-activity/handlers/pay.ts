@@ -10,7 +10,7 @@ import { CreateAnActivityJourney } from '../journey'
 import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import { AgencyPrisonerPayProfile } from '../../../../@types/prisonApiImport/types'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
-import { formatUserIdWithName, toMoney } from '../../../../utils/utils'
+import { toMoney } from '../../../../utils/utils'
 
 export class Pay {
   @Expose()
@@ -189,7 +189,7 @@ export default class PayRoutes {
       rate: p.rate,
       startDate: p.startDate,
       changedDetails: `New pay rate added: ${toMoney(p.rate)}`,
-      changedBy: formatUserIdWithName(user.userId, user.name),
+      changedBy: user.username,
     }))
 
     const updatedActivity = {

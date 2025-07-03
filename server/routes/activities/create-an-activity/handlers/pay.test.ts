@@ -33,8 +33,6 @@ describe('Route Handlers - Create an activity - Pay', () => {
     res = {
       locals: {
         user: {
-          userId: 'ABC123',
-          name: 'Adam Smith',
           username: 'joebloggs',
           activeCaseLoadId: 'MDI',
         },
@@ -316,7 +314,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
             payBandId: 3,
             rate: 150,
             changedDetails: 'New pay rate added: £1.50',
-            changedBy: 'ABC123 - A. Smith',
+            changedBy: 'joebloggs',
           },
           {
             incentiveNomisCode: 'STD',
@@ -324,7 +322,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
             payBandId: 3,
             rate: 150,
             changedDetails: 'New pay rate added: £1.50',
-            changedBy: 'ABC123 - A. Smith',
+            changedBy: 'joebloggs',
           },
         ] as unknown as ActivityPayHistory[],
       } as unknown as ActivityUpdateRequest

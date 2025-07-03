@@ -13,7 +13,7 @@ import {
   parseDatePickerDate,
   parseIsoDate,
 } from '../../../../utils/datePickerUtils'
-import { formatDate, formatUserIdWithName, toMoney } from '../../../../utils/utils'
+import { formatDate, toMoney } from '../../../../utils/utils'
 import Validator from '../../../../validators/validator'
 import DateOption from '../../../../enum/dateOption'
 
@@ -152,7 +152,7 @@ export default class PayDateOptionRoutes {
       rate,
       startDate: changeDate,
       changedDetails: `Amount ${revisedMessage} to ${toMoney(rate)}, from ${formatDate(changeDate, 'd MMM yyyy')}`,
-      changedBy: formatUserIdWithName(user.userId, user.name),
+      changedBy: user.username,
     })
 
     req.session.createJourney.attendanceRequired = true

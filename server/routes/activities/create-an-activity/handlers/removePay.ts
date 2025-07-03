@@ -3,7 +3,6 @@ import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
-import { formatUserIdWithName } from '../../../../utils/utils'
 
 export class ConfirmRemoveOptions {
   @Expose()
@@ -52,7 +51,7 @@ export default class RemovePayRoutes {
       prisonPayBand: payInfo.prisonPayBand,
       rate: payInfo.rate,
       changedDetails: `Pay rate removed`,
-      changedBy: formatUserIdWithName(user.userId, user.name),
+      changedBy: user.username,
     })
     req.session.createJourney.pay.splice(payIndex, 1)
 

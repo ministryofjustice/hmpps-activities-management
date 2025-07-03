@@ -20,8 +20,6 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
   const handler = new PayCancelRoutes(activitiesService)
 
   const user = {
-    userId: 'ABC123',
-    name: 'Adam Smith',
     username: 'joebloggs',
     activeCaseLoadId: 'MDI',
   } as ServiceUser
@@ -36,8 +34,6 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
     res = {
       locals: {
         user: {
-          userId: 'ABC123',
-          name: 'Adam Smith',
           username: 'joebloggs',
           activeCaseLoadId: 'MDI',
         },
@@ -189,7 +185,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
             payBandId: 17,
             rate: 50,
             changedDetails: 'Pay rate change cancelled',
-            changedBy: 'ABC123 - A. Smith',
+            changedBy: 'joebloggs',
           },
         ],
       } as ActivityUpdateRequest

@@ -32,8 +32,6 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
   const handler = new PayDateOptionRoutes(prisonService, activitiesService)
 
   const user = {
-    userId: 'ABC123',
-    name: 'Adam Smith',
     username: 'joebloggs',
   } as ServiceUser
 
@@ -142,8 +140,6 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
     res = {
       locals: {
         user: {
-          userId: 'ABC123',
-          name: 'Adam Smith',
           username: 'joebloggs',
           activeCaseLoadId: 'MDI',
         },
@@ -434,14 +430,12 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               rate: 72,
               startDate: inFiveDaysStr,
               changedDetails: `Amount increased to £0.72, from ${formatDate(inFiveDaysStr, 'd MMM yyyy')}`,
-              changedBy: 'ABC123 - A. Smith',
+              changedBy: 'joebloggs',
             },
           ],
         },
         {
           activeCaseLoadId: 'MDI',
-          name: 'Adam Smith',
-          userId: 'ABC123',
           username: 'joebloggs',
         },
       )
@@ -515,14 +509,12 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               rate: 72,
               startDate: tomorrowStr,
               changedDetails: `Amount increased to £0.72, from ${formatDate(tomorrowStr, 'd MMM yyyy')}`,
-              changedBy: 'ABC123 - A. Smith',
+              changedBy: 'joebloggs',
             },
           ],
         },
         {
           activeCaseLoadId: 'MDI',
-          name: 'Adam Smith',
-          userId: 'ABC123',
           username: 'joebloggs',
         },
       )
@@ -596,14 +588,12 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               rate: 72,
               startDate: inFiveDaysStr,
               changedDetails: `Amount increased to £0.72, from ${formatDate(inFiveDaysStr, 'd MMM yyyy')}`,
-              changedBy: 'ABC123 - A. Smith',
+              changedBy: 'joebloggs',
             },
           ],
         },
         {
           activeCaseLoadId: 'MDI',
-          name: 'Adam Smith',
-          userId: 'ABC123',
           username: 'joebloggs',
         },
       )
@@ -776,14 +766,12 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               rate: 72,
               startDate: tomorrowStr,
               changedDetails: `Amount reduced to £0.72, from ${formatDate(tomorrowStr, 'd MMM yyyy')}`,
-              changedBy: 'ABC123 - A. Smith',
+              changedBy: 'joebloggs',
             },
           ],
         },
         {
           activeCaseLoadId: 'MDI',
-          name: 'Adam Smith',
-          userId: 'ABC123',
           username: 'joebloggs',
         },
       )
@@ -956,14 +944,12 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               rate: 72,
               startDate: tomorrowStr,
               changedDetails: `Amount increased to £0.72, from ${formatDate(tomorrowStr, 'd MMM yyyy')}`,
-              changedBy: 'ABC123 - A. Smith',
+              changedBy: 'joebloggs',
             },
           ],
         },
         {
           activeCaseLoadId: 'MDI',
-          name: 'Adam Smith',
-          userId: 'ABC123',
           username: 'joebloggs',
         },
       )
@@ -1121,14 +1107,12 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               rate: 72,
               startDate: inFiveDaysStr,
               changedDetails: `Amount increased to £0.72, from ${formatDate(inFiveDaysStr, 'd MMM yyyy')}`,
-              changedBy: 'ABC123 - A. Smith',
+              changedBy: 'joebloggs',
             },
           ],
         },
         {
           activeCaseLoadId: 'MDI',
-          name: 'Adam Smith',
-          userId: 'ABC123',
           username: 'joebloggs',
         },
       )
