@@ -7,18 +7,18 @@
             {% set activityNameHtml%}
                 <ul class='govuk-list'>
                     <li><a href='/activities/allocation-dashboard/{{ allocation.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ allocation.activitySummary }}</a></li>
-                <ul>
+                </ul>
             {% endset %}
             {% set activityStartDateHtml%}
                 <ul class='govuk-list'>
                     <li>{{ allocation.startDate | formatDate('d MMMM yyyy') }}</li>
-                <ul>
+                </ul>
             {% endset %}
             {% set activityEndDateHtml%}
                 {% if allocation.endDate %}
                     <ul class='govuk-list'>
                         <li>{{ allocation.endDate | formatDate('d MMMM yyyy') }}</li>
-                    <ul>
+                    </ul>
                 {% else %}
                     None set
                 {% endif %}
