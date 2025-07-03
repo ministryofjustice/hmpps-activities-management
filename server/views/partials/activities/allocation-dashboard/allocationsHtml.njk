@@ -11,13 +11,13 @@
             {% endset %}
             {% set activityStartDateHtml%}
                 <ul class='govuk-list'>
-                    <li>{{ allocation.startDate }}</li>
+                    <li>{{ allocation.startDate | formatDate('d MMMM yyyy') }}</li>
                 <ul>
             {% endset %}
             {% set activityEndDateHtml%}
                 {% if allocation.endDate %}
                     <ul class='govuk-list'>
-                        <li>{{ allocation.endDate }}</li>
+                        <li>{{ allocation.endDate | formatDate('d MMMM yyyy') }}</li>
                     <ul>
                 {% else %}
                     None set
@@ -111,7 +111,7 @@
         <div class="govuk-button-group">
             {{ govukButton({
                         text: "Allocate to an activity",
-                        href:"",
+                        href:'/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/activity-search',
                         attributes: {
                             "data-qa": ""
                         }
@@ -130,7 +130,7 @@
             {% if allocationsData | length == suspendedAllocationRows | length or not allocationsData %}
             {% else %}
             <p class="govuk-body">
-                <a class="govuk-link govuk-link--no-visited-state" href="{{ prisonerUrl }}/prisoner/{{ prisonerNumber }}/schedule" class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ prisonerName }} schedule(opens in new tab)</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="{{ prisonerUrl }}/prisoner/{{ session.req.params.prisonerNumber }}/schedule" class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ prisonerName }} schedule(opens in new tab)</a>
             </p>
             {% endif %}
         </div>
