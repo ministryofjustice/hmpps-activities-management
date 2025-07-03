@@ -228,30 +228,12 @@
                         value: {
                             text: videoBooking.videoLinkUrl or "None entered"
                         }
-                    },
-                    {
-                        key: {
-                            text: "Extra information"
-                        },
-                        value: {
-                            text: videoBooking.comments or "None provided"
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: 'amend/' + videoBooking.videoLinkBookingId + '/extra-information',
-                                    text: "Change",
-                                    classes: "govuk-link--no-visited-state"
-                                }
-                            ]
-                        } if isAmendable
-                    } if not bvlsMasterPublicPrivateNotesEnabled
+                    }
                 ]
             }) }}
         </div>
     </div>
 
-    {% if bvlsMasterPublicPrivateNotesEnabled %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
@@ -291,7 +273,6 @@
             }) }}
         </div>
     </div>
-    {% endif %}
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">

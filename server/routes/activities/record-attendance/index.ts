@@ -26,6 +26,8 @@ import UncancelMultipleSessionsConfirmRoutes, {
 import UncancelMultipleSessionsRoutes from './handlers/uncancel-multiple-sessions/activitiesList'
 import CancelMultipleSessionsViewEditDetailsRoutes from './handlers/cancel-multiple-sessions/viewOrEditDetails'
 import UpdateCancelledSessionPayRoutes, { SessionPayForm } from './handlers/cancel-session/updatePayment'
+import PaidOrNotRoutes, { PayNotRequiredOrExcusedForm } from './handlers/not-required-or-excused/paidOrNot'
+import CheckAndConfirmRoutes from './handlers/not-required-or-excused/checkAndConfirm'
 
 export default function Index({ activitiesService, prisonService, userService }: Services): Router {
   const router = Router()
@@ -39,6 +41,8 @@ export default function Index({ activitiesService, prisonService, userService }:
   const selectPeriodHandler = new SelectPeriodRoutes()
   const activitiesHandler = new ActivitiesRoutes(activitiesService, prisonService)
   const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService, userService)
+  const paidOrNotRoutes = new PaidOrNotRoutes(activitiesService)
+  const checkAndConfirmRoutes = new CheckAndConfirmRoutes(activitiesService)
   const notAttendedReasonHandler = new NotAttendedReasonRoutes(activitiesService)
   const cancelSessionReasonRoutes = new CancelSessionReasonRoutes(activitiesService)
   const updateCancelledSessionPayRoutes = new UpdateCancelledSessionPayRoutes(activitiesService)
@@ -77,6 +81,21 @@ export default function Index({ activitiesService, prisonService, userService }:
 
   post('/:journeyId/activities/:id/not-attended', attendanceListHandler.NOT_ATTENDED, AttendanceList)
   post('/:journeyId/activities/not-attended', attendanceListHandler.NOT_ATTENDED, AttendanceList)
+
+  post(
+    '/:journeyId/activities/:id/not-required-or-excused',
+    attendanceListHandler.NOT_REQUIRED_OR_EXCUSED,
+    AttendanceList,
+  )
+  get('/:journeyId/activities/:id/not-required-or-excused/paid-or-not', paidOrNotRoutes.GET, true)
+  post(
+    '/:journeyId/activities/:id/not-required-or-excused/paid-or-not',
+    paidOrNotRoutes.POST,
+    PayNotRequiredOrExcusedForm,
+  )
+
+  get('/:journeyId/activities/:id/not-required-or-excused/check-and-confirm', checkAndConfirmRoutes.GET, true)
+  post('/:journeyId/activities/:id/not-required-or-excused/check-and-confirm', checkAndConfirmRoutes.POST)
 
   get('/:journeyId/activities/not-attended-reason', notAttendedReasonHandler.GET, true)
   post('/:journeyId/activities/not-attended-reason', notAttendedReasonHandler.POST, NotAttendedForm)

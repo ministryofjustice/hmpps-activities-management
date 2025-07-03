@@ -6,6 +6,7 @@ export type RecordAttendanceJourney = {
   sessionFilters?: string[]
   singleInstanceSelected?: boolean
   notAttended?: NotAttendedJourney
+  notRequiredOrExcused?: NotRequiredOrExcusedJourney
 }
 
 type NotAttendedJourney = {
@@ -21,6 +22,15 @@ type NotAttendedJourney = {
       summary?: string
     }[]
   }>
+}
+
+type NotRequiredOrExcusedJourney = {
+  selectedPrisoners?: Array<{
+    instanceId?: number
+    prisonerNumber?: string
+    prisonerName?: string
+  }>
+  isPaid?: boolean
 }
 
 export type SessionCancellationRequest = {

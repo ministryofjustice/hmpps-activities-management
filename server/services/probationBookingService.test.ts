@@ -23,7 +23,6 @@ describe('Probation booking service', () => {
     endTime: '1970-01-01T14:30:00Z',
     probationTeamCode: 'BLACKPP',
     meetingTypeCode: 'PSR',
-    comments: 'comments',
     notesForStaff: 'notes for staff',
     notesForPrisoners: 'notes for prisoners',
   } as BookAProbationMeetingJourney
@@ -60,7 +59,6 @@ describe('Probation booking service', () => {
         ],
         probationTeamCode: 'BLACKPP',
         probationMeetingType: 'PSR',
-        comments: 'comments',
         notesForStaff: 'notes for staff',
         notesForPrisoners: 'notes for prisoners',
       }
@@ -95,7 +93,6 @@ describe('Probation booking service', () => {
         ],
         probationTeamCode: 'BLACKPP',
         probationMeetingType: 'PSR',
-        comments: 'comments',
         notesForStaff: 'notes for staff',
         notesForPrisoners: 'notes for prisoners',
       }

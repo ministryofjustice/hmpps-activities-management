@@ -505,6 +505,7 @@ describe('Route Handlers - View Activity', () => {
             cancelledTime: null,
             cancelledBy: null,
             attendances: [],
+            advanceAttendances: [],
           },
           {
             id: 154,
@@ -516,6 +517,7 @@ describe('Route Handlers - View Activity', () => {
             cancelledTime: null,
             cancelledBy: null,
             attendances: [],
+            advanceAttendances: [],
           },
         ],
         allocations: [
@@ -680,6 +682,7 @@ describe('Route Handlers - View Activity', () => {
             cancelledTime: null,
             cancelledBy: null,
             attendances: [],
+            advanceAttendances: [],
           },
           {
             id: 154,
@@ -691,6 +694,7 @@ describe('Route Handlers - View Activity', () => {
             cancelledTime: null,
             cancelledBy: null,
             attendances: [],
+            advanceAttendances: [],
           },
         ],
         allocations: [
@@ -855,6 +859,7 @@ describe('Route Handlers - View Activity', () => {
             cancelledTime: null,
             cancelledBy: null,
             attendances: [],
+            advanceAttendances: [],
           },
           {
             id: 154,
@@ -866,6 +871,7 @@ describe('Route Handlers - View Activity', () => {
             cancelledTime: null,
             cancelledBy: null,
             attendances: [],
+            advanceAttendances: [],
           },
         ],
         allocations: [

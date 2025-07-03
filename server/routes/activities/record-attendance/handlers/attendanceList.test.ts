@@ -11,12 +11,13 @@ import {
 import PrisonService from '../../../../services/prisonService'
 import AttendanceListRoutes, { ScheduledInstanceAttendance } from './attendanceList'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { getAttendanceSummary, toDateString } from '../../../../utils/utils'
+import { toDateString } from '../../../../utils/utils'
 import { AppointmentFrequency } from '../../../../@types/appointments'
 import UserService from '../../../../services/userService'
 import atLeast from '../../../../../jest.setup'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 import TimeSlot from '../../../../enum/timeSlot'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -231,7 +232,18 @@ describe('Route Handlers - Attendance List', () => {
       { id: 1002, prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
       { id: 1003, prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
     ],
+    advanceAttendances: [],
   } as unknown as ScheduledActivity
+
+  const instanceAAttendanceSummary = {
+    attendanceCount: 3,
+    attended: 1,
+    attendedPercentage: '33',
+    notAttended: 1,
+    notAttendedPercentage: '33',
+    notRecorded: 1,
+    notRecordedPercentage: '33',
+  }
 
   beforeEach(() => {
     res = {
@@ -311,9 +323,10 @@ describe('Route Handlers - Attendance List', () => {
         instance: {
           ...instanceA,
           isAmendable: true,
+          isInFuture: false,
         },
         attendance,
-        attendanceSummary: getAttendanceSummary(instanceA.attendances),
+        attendanceSummary: instanceAAttendanceSummary,
         isPayable: true,
         selectedSessions: [],
       })
@@ -328,9 +341,10 @@ describe('Route Handlers - Attendance List', () => {
         instance: {
           ...instanceA,
           isAmendable: true,
+          isInFuture: false,
         },
         attendance,
-        attendanceSummary: getAttendanceSummary(instanceA.attendances),
+        attendanceSummary: instanceAAttendanceSummary,
         isPayable: true,
         selectedSessions: ['AM', 'ED'],
       })
@@ -352,10 +366,11 @@ describe('Route Handlers - Attendance List', () => {
         instance: {
           ...instanceA,
           isAmendable: false,
+          isInFuture: false,
           date: activityDate,
         },
         attendance,
-        attendanceSummary: getAttendanceSummary(instanceA.attendances),
+        attendanceSummary: instanceAAttendanceSummary,
         isPayable: true,
         selectedSessions: [],
       })
@@ -373,9 +388,10 @@ describe('Route Handlers - Attendance List', () => {
         instance: {
           ...instanceA,
           isAmendable: true,
+          isInFuture: false,
         },
         attendance,
-        attendanceSummary: getAttendanceSummary(instanceA.attendances),
+        attendanceSummary: instanceAAttendanceSummary,
         isPayable: true,
         selectedSessions: ['AM'],
       })
@@ -486,6 +502,7 @@ describe('Route Handlers - Attendance List', () => {
         { id: 2001, prisonerNumber: 'ABC123', status: 'WAITING' },
         { id: 2002, prisonerNumber: 'XYZ345', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
       ],
+      advanceAttendances: [],
     } as unknown as ScheduledActivity
 
     const prisonersToAttend = [
@@ -643,7 +660,15 @@ describe('Route Handlers - Attendance List', () => {
           },
         ],
         numActivities: 2,
-        attendanceSummary: getAttendanceSummary([...instanceA.attendances, ...instanceB.attendances]),
+        attendanceSummary: {
+          attendanceCount: 5,
+          attended: 2,
+          attendedPercentage: '40',
+          notAttended: 1,
+          notAttendedPercentage: '20',
+          notRecorded: 2,
+          notRecordedPercentage: '40',
+        },
         selectedDate: instanceA.date,
         selectedSessions: ['AM', 'PM'],
       })
@@ -653,8 +678,6 @@ describe('Route Handlers - Attendance List', () => {
       req.query.searchTerm = 'jOe'
 
       await handler.GET_ATTENDANCES(req, res)
-
-      const expectedSummary = [instanceA.attendances[0], instanceB.attendances[0]]
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-multiple', {
         attendanceRows: [
@@ -693,7 +716,15 @@ describe('Route Handlers - Attendance List', () => {
           },
         ],
         numActivities: 2,
-        attendanceSummary: getAttendanceSummary(expectedSummary),
+        attendanceSummary: {
+          attendanceCount: 2,
+          attended: 0,
+          attendedPercentage: '0',
+          notAttended: 0,
+          notAttendedPercentage: '0',
+          notRecorded: 2,
+          notRecordedPercentage: '100',
+        },
         selectedDate: instanceA.date,
         selectedSessions: ['AM', 'PM'],
       })
@@ -904,5 +935,33 @@ describe('Route Handlers - Attendance List', () => {
         expect(res.redirect).toHaveBeenCalledWith(url)
       },
     )
+  })
+
+  describe('Not required or excused', () => {
+    it('should redirect to the paid or not page', async () => {
+      config.notRequiredInAdvanceEnabled = true
+      req.body = {
+        selectedAttendances: ['1-undefined-ABC123', '1-undefined-ABC321'],
+      }
+
+      when(prisonService.searchInmatesByPrisonerNumbers)
+        .calledWith(['ABC123', 'ABC321'], res.locals.user)
+        .mockResolvedValue([
+          {
+            prisonerNumber: 'ABC123',
+            firstName: 'Joe',
+            lastName: 'Bloggs',
+          },
+          {
+            prisonerNumber: 'ABC321',
+            firstName: 'Mary',
+            lastName: 'Smith',
+          },
+        ] as Prisoner[])
+
+      await handler.NOT_REQUIRED_OR_EXCUSED(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('not-required-or-excused/paid-or-not')
+    })
   })
 })
