@@ -52,6 +52,9 @@
                             text: "Enter full web address (URL)",
                             classes: 'govuk-label--s'
                         },
+                        hint: {
+                            text: "This should start with https://"
+                        },
                         value: formResponses.videoLinkUrl or session.bookACourtHearingJourney.videoLinkUrl,
                         errorMessage: validationErrors | findError("videoLinkUrl")
                     }) }}
