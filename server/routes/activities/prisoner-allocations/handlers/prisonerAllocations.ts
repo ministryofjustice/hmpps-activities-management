@@ -4,7 +4,6 @@ import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import NonAssociationsService from '../../../../services/nonAssociationsService'
 import ActivitiesService from '../../../../services/activitiesService'
-import { convertToArray } from '../../../../utils/utils'
 
 export default class PrisonerAllocationsHandler {
   constructor(
@@ -20,11 +19,11 @@ export default class PrisonerAllocationsHandler {
     const { prisonerNumber } = req.params
     const { user } = res.locals
 
-    const addPrisoner = convertToArray(prisonerNumber)
-
     const prisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
-    const prisonerAllocations = await this.activitiesService.getActivePrisonPrisonerAllocations(addPrisoner, user)
+    const prisonerAllocations = await this.activitiesService.getActivePrisonPrisonerAllocations([prisonerNumber], user)
     const allocationsData = prisonerAllocations[0]?.allocations.flat(1)
+
+    const activeAllocations = allocationsData?.filter(all => !all.plannedSuspension)
 
     const prisonerNonAssociations = await this.nonAssociationsService.getNonAssociationByPrisonerId(
       prisonerNumber,
@@ -36,6 +35,7 @@ export default class PrisonerAllocationsHandler {
       prisoner,
       hasNonAssociations,
       allocationsData,
+      activeAllocationIdsForSuspending: activeAllocations?.map(allocation => allocation.id),
       locationStatus: getLocationStatus(prisoner),
     })
   }

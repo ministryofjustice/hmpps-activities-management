@@ -43,7 +43,7 @@ context('Waitlist - Prisoner Allocations Page', () => {
     prisonerAllocationsPage.getPrisonerName('Aeticake Potta').should('be.visible')
     prisonerAllocationsPage.verifyMiniProfileDetails(expectedDetails)
     prisonerAllocationsPage.verifyMiniProfileLinks(linkLabels)
-    prisonerAllocationsPage.getButton('Allocate to an activity').should('be.visible')
+    prisonerAllocationsPage.getLinkByText('Allocate to an activity').should('be.visible')
     prisonerAllocationsPage.getLinkByText('Suspend all allocations').should('be.visible')
     prisonerAllocationsPage.getLinkByText('Aeticake Potta schedule(opens in new tab)').should('be.visible')
   })
