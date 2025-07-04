@@ -10,6 +10,7 @@ import { CreateAnActivityJourney } from '../journey'
 import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import { AgencyPrisonerPayProfile } from '../../../../@types/prisonApiImport/types'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
+import { toMoney } from '../../../../utils/utils'
 
 export class Pay {
   @Expose()
@@ -70,6 +71,7 @@ export default class PayRoutes {
     const maximumPayRate = payProfile.maxHalfDayRate * 100
 
     req.session.createJourney.pay ??= []
+    req.session.createJourney.payChange ??= []
     req.session.createJourney.flat ??= []
     req.session.createJourney.minimumPayRate = minimumPayRate
     req.session.createJourney.maximumPayRate = maximumPayRate
@@ -133,6 +135,7 @@ export default class PayRoutes {
 
     if (payRateType === 'single') {
       req.session.createJourney.pay.push(newRate)
+      req.session.createJourney.payChange.push(newRate)
     } else {
       req.session.createJourney.flat.push(newRate)
     }
@@ -149,6 +152,7 @@ export default class PayRoutes {
     const { payRateType } = req.params
 
     const activityPay = req.session.createJourney.pay ?? []
+    const activityPayChange = req.session.createJourney.payChange ?? []
     const activityFlatPay = req.session.createJourney.flat ?? []
 
     const flatRateBandAlias = activityFlatPay.find(p => p.prisonPayBand.id === req.body.bandId)?.prisonPayBand?.alias
@@ -166,6 +170,7 @@ export default class PayRoutes {
       )
 
       activityPay.push(...flatPayRates)
+      activityPayChange.push(...flatPayRates)
       req.session.createJourney.flat = []
     }
 
@@ -177,10 +182,21 @@ export default class PayRoutes {
       startDate: p.startDate,
     }))
 
+    const changedPayRates = activityPayChange.map(p => ({
+      incentiveNomisCode: p.incentiveNomisCode,
+      incentiveLevel: p.incentiveLevel,
+      payBandId: p.prisonPayBand.id,
+      rate: p.rate,
+      startDate: p.startDate,
+      changedDetails: `New pay rate added: ${toMoney(p.rate)}`,
+      changedBy: user.username,
+    }))
+
     const updatedActivity = {
       paid: true,
       attendanceRequired: true,
       pay: updatedPayRates,
+      payChange: changedPayRates,
     } as ActivityUpdateRequest
     await this.activitiesService.updateActivity(activityId, updatedActivity, user)
 
@@ -200,7 +216,7 @@ export default class PayRoutes {
     } else if (!req.query.bandId && !req.query.iep) {
       successMessage = `You've added a pay rate for ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}`
     } else if (affectedAllocations > 0) {
-      successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. There are ${affectedAllocations} people 
+      successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}. There are ${affectedAllocations} people
           assigned to this pay rate. Your changes will take effect from tomorrow.`
     } else {
       successMessage = `You've changed ${req.body.incentiveLevel} incentive level: ${singlePayBandAlias}.`

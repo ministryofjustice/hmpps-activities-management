@@ -8,7 +8,13 @@ import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import atLeast from '../../../../../jest.setup'
 import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
-import { Activity, ActivityPay, ActivityUpdateRequest, PrisonPayBand } from '../../../../@types/activitiesAPI/types'
+import {
+  Activity,
+  ActivityPay,
+  ActivityPayHistory,
+  ActivityUpdateRequest,
+  PrisonPayBand,
+} from '../../../../@types/activitiesAPI/types'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { CreateAnActivityJourney } from '../journey'
 
@@ -48,6 +54,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           riskLevel: 'High',
           incentiveLevels: ['Basic', 'Standard'],
           pay: [],
+          payChange: [],
           flat: [],
           allocations: [],
         },
@@ -264,12 +271,10 @@ describe('Route Handlers - Create an activity - Pay', () => {
     })
 
     it('should update activity pay rates if its an edit journey', async () => {
-      const payRates = [
+      req.session.createJourney.pay = [
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 150 },
         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
       ] as CreateAnActivityJourney['pay']
-
-      req.session.createJourney.pay = payRates
       req.session.createJourney.flat = []
 
       req.params = {
@@ -302,6 +307,24 @@ describe('Route Handlers - Create an activity - Pay', () => {
           { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', payBandId: 3, rate: 150 },
           { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 3, rate: 150 },
         ] as unknown as ActivityPay[],
+        payChange: [
+          {
+            incentiveNomisCode: 'BAS',
+            incentiveLevel: 'Basic',
+            payBandId: 3,
+            rate: 150,
+            changedDetails: 'New pay rate added: £1.50',
+            changedBy: 'joebloggs',
+          },
+          {
+            incentiveNomisCode: 'STD',
+            incentiveLevel: 'Standard',
+            payBandId: 3,
+            rate: 150,
+            changedDetails: 'New pay rate added: £1.50',
+            changedBy: 'joebloggs',
+          },
+        ] as unknown as ActivityPayHistory[],
       } as unknown as ActivityUpdateRequest
 
       expect(activitiesService.updateActivity).toHaveBeenCalledWith(1, updatedActivity, res.locals.user)

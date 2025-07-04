@@ -347,6 +347,8 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         originalBandId: '3',
         originalIncentiveLevel: 'Basic',
         originalPaymentStartDate: 'undefined',
+        bandId: '3',
+        iep: 'Basic',
       }
 
       when(activitiesService.getActivity).calledWith(atLeast(33, user)).defaultResolvedValue(activity)
@@ -373,6 +375,8 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         originalBandId: '17',
         originalIncentiveLevel: 'Basic',
         originalPaymentStartDate: 'undefined',
+        bandId: '3',
+        iep: 'Basic',
       }
 
       when(activitiesService.getActivity).calledWith(atLeast(33, user)).defaultResolvedValue(activity)
@@ -418,6 +422,17 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               startDate: inFiveDaysStr,
             },
           ],
+          payChange: [
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 3,
+              rate: 72,
+              startDate: inFiveDaysStr,
+              changedDetails: `Amount increased to £0.72, from ${formatDate(inFiveDaysStr, 'd MMM yyyy')}`,
+              changedBy: 'joebloggs',
+            },
+          ],
         },
         {
           activeCaseLoadId: 'MDI',
@@ -439,6 +454,8 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         originalBandId: '17',
         originalIncentiveLevel: 'Basic',
         originalPaymentStartDate: inThreeDaysStr,
+        bandId: '3',
+        iep: 'Basic',
       }
 
       when(activitiesService.getActivity).calledWith(atLeast(33, user)).defaultResolvedValue(activity)
@@ -484,6 +501,17 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               startDate: tomorrowStr,
             },
           ],
+          payChange: [
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 3,
+              rate: 72,
+              startDate: tomorrowStr,
+              changedDetails: `Amount increased to £0.72, from ${formatDate(tomorrowStr, 'd MMM yyyy')}`,
+              changedBy: 'joebloggs',
+            },
+          ],
         },
         {
           activeCaseLoadId: 'MDI',
@@ -505,6 +533,8 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         originalBandId: '17',
         originalIncentiveLevel: 'Basic',
         originalPaymentStartDate: inThreeDaysStr,
+        bandId: '3',
+        iep: 'Basic',
       }
 
       when(activitiesService.getActivity).calledWith(atLeast(33, user)).defaultResolvedValue(activity)
@@ -550,6 +580,17 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               startDate: inFiveDaysStr,
             },
           ],
+          payChange: [
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 3,
+              rate: 72,
+              startDate: inFiveDaysStr,
+              changedDetails: `Amount increased to £0.72, from ${formatDate(inFiveDaysStr, 'd MMM yyyy')}`,
+              changedBy: 'joebloggs',
+            },
+          ],
         },
         {
           activeCaseLoadId: 'MDI',
@@ -583,7 +624,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
                   nomisPayBand: 1,
                   prisonCode: 'RSI',
                 },
-                rate: 50,
+                rate: 150,
                 pieceRate: null,
                 pieceRateItems: null,
               },
@@ -678,6 +719,8 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         originalBandId: '17',
         originalIncentiveLevel: 'Basic',
         originalPaymentStartDate: 'undefined',
+        bandId: '17',
+        iep: 'Basic',
       }
 
       when(activitiesService.getActivity).calledWith(atLeast(44, user)).defaultResolvedValue(activity2)
@@ -713,6 +756,17 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               incentiveLevel: 'Basic',
               payBandId: 3,
               rate: 65,
+            },
+          ],
+          payChange: [
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 17,
+              rate: 72,
+              startDate: tomorrowStr,
+              changedDetails: `Amount reduced to £0.72, from ${formatDate(tomorrowStr, 'd MMM yyyy')}`,
+              changedBy: 'joebloggs',
             },
           ],
         },
@@ -843,6 +897,8 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         originalBandId: '17',
         originalIncentiveLevel: 'Basic',
         originalPaymentStartDate: 'undefined',
+        bandId: '17',
+        iep: 'Basic',
       }
 
       when(activitiesService.getActivity).calledWith(atLeast(44, user)).defaultResolvedValue(activity2)
@@ -878,6 +934,17 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               incentiveLevel: 'Basic',
               payBandId: 3,
               rate: 65,
+            },
+          ],
+          payChange: [
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 17,
+              rate: 72,
+              startDate: tomorrowStr,
+              changedDetails: `Amount increased to £0.72, from ${formatDate(tomorrowStr, 'd MMM yyyy')}`,
+              changedBy: 'joebloggs',
             },
           ],
         },
@@ -983,6 +1050,8 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
         originalBandId: '17',
         originalIncentiveLevel: 'Basic',
         originalPaymentStartDate: 'undefined',
+        bandId: '17',
+        iep: 'Basic',
       }
 
       when(activitiesService.getActivity).calledWith(atLeast(33, user)).defaultResolvedValue(activityWithAllocation)
@@ -1028,6 +1097,17 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
               payBandId: 17,
               rate: 72,
               startDate: inFiveDaysStr,
+            },
+          ],
+          payChange: [
+            {
+              incentiveNomisCode: 'BAS',
+              incentiveLevel: 'Basic',
+              payBandId: 17,
+              rate: 72,
+              startDate: inFiveDaysStr,
+              changedDetails: `Amount increased to £0.72, from ${formatDate(inFiveDaysStr, 'd MMM yyyy')}`,
+              changedBy: 'joebloggs',
             },
           ],
         },

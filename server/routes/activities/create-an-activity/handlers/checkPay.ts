@@ -1,12 +1,16 @@
 import { Request, Response } from 'express'
 import PrisonService from '../../../../services/prisonService'
+import ActivitiesService from '../../../../services/activitiesService'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 import { groupPayBand } from '../../../../utils/helpers/payBandMappingUtil'
 
 export default class CheckPayRoutes {
   private readonly helper: IncentiveLevelPayMappingUtil
 
-  constructor(private readonly prisonService: PrisonService) {
+  constructor(
+    private readonly prisonService: PrisonService,
+    private readonly activitiesService: ActivitiesService,
+  ) {
     this.helper = new IncentiveLevelPayMappingUtil(this.prisonService)
   }
 
@@ -23,11 +27,16 @@ export default class CheckPayRoutes {
     const flatPay = req.session.createJourney.flat
 
     if (req.routeContext.mode === 'edit') {
+      const activityPayHistory = await this.activitiesService.getActivityPayHistory(
+        req.session.createJourney.activityId,
+        user,
+      )
       res.render(`pages/activities/create-an-activity/edit-pay`, {
         incentiveLevelPays,
         flatPay,
         displayPays,
         activityName,
+        activityPayHistory,
       })
     } else {
       res.render(`pages/activities/create-an-activity/check-pay`, {

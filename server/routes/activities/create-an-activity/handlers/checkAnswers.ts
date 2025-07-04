@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityCreateRequest, Slot } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
-import { mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
+import { mapJourneySlotsToActivityRequest, toMoney } from '../../../../utils/utils'
 import { customSlotsToSchedule, regimeSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
 import { eventTierDescriptions } from '../../../../enum/eventTiers'
@@ -72,6 +72,14 @@ export default class CheckAnswersRoutes {
         payBandId: pay.prisonPayBand.id,
         rate: pay.rate,
       })),
+      payChange: createJourney.payChange.map(pay => ({
+        incentiveNomisCode: pay.incentiveNomisCode,
+        incentiveLevel: pay.incentiveLevel,
+        payBandId: pay.prisonPayBand.id,
+        rate: pay.rate,
+        changedDetails: `New pay rate added: ${toMoney(pay.rate)}`,
+        changedBy: user.username,
+      })),
       minimumEducationLevel: createJourney.educationLevels,
       description: createJourney.name,
       startDate: createJourney.startDate,
@@ -90,14 +98,23 @@ export default class CheckAnswersRoutes {
       const incentiveLevels = await this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user)
 
       createJourney.flat.forEach(flatRate => {
-        incentiveLevels.forEach(iep =>
+        incentiveLevels.forEach(iep => {
           activity.pay.push({
             incentiveNomisCode: iep.levelCode,
             incentiveLevel: iep.levelName,
             payBandId: flatRate.prisonPayBand.id,
             rate: flatRate.rate,
-          }),
-        )
+          })
+
+          activity.payChange.push({
+            incentiveNomisCode: iep.levelCode,
+            incentiveLevel: iep.levelName,
+            payBandId: flatRate.prisonPayBand.id,
+            rate: flatRate.rate,
+            changedDetails: `New pay rate added: ${toMoney(flatRate.rate)}`,
+            changedBy: user.username,
+          })
+        })
       })
     }
 
