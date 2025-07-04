@@ -41,7 +41,7 @@ export default class PlannedEventsRoutes {
 
     // we need to know if the user is filtering on activity category, if they are we will only return activities and ignore other event types
     const activityCategoryFilterBeingUsed =
-      req.session.unlockListJourney.activityCategoriesFilters.length !== activityCategories.map(c => c.code).length
+      req.session.unlockListJourney.activityCategoriesFilters.length !== activityCategories.length
 
     const {
       subLocationFilters,
