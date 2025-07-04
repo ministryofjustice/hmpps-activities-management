@@ -184,9 +184,9 @@
         {% endif %}
 
         {% set attendanceTagDetails %}
-        {% if attendee.advancedAttendance %}
-            {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', instance.activitySchedule.activity.attendanceRequired) }}
-            {{ payStatus( 
+            {% if attendee.advancedAttendance %}
+                {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', instance.activitySchedule.activity.attendanceRequired) }}
+                {{ payStatus( 
                     { 
                         dataPresentCheck: attendee.advancedAttendance,
                         status: 'COMPLETED',
@@ -194,9 +194,9 @@
                         issuePayment: attendee.advancedAttendance.issuePayment,
                         marginTagClass: true
                     }) }}
-        {% else %}
-            {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) }}
-            {{ payStatus( 
+            {% else %}
+                {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) }}
+                {{ payStatus( 
                     { 
                         dataPresentCheck: attendee.attendance,
                         status: attendee.attendance.status,
@@ -204,21 +204,21 @@
                         issuePayment: attendee.attendance.issuePayment,
                         marginTagClass: true
                     }) }}
-            {{ incentiveLevelWarningTag(attendee.attendance) }}
-        {% endif %}
+                {{ incentiveLevelWarningTag(attendee.attendance) }}
+            {% endif %}
         {% endset %}
 
         {% set profileLink %}
-        {{showProfileLink({
+            {{showProfileLink({
                 firstName: attendee.prisoner.firstName,
                 middleNames: attendee.prisoner.middleNames,
                 lastName: attendee.prisoner.lastName,
                 prisonerNumber: attendee.prisoner.prisonerNumber,
                 inCaseLoad: attendee.prisoner.prisonId == user.activeCaseLoadId
             })}}
-        {% if instance.activitySchedule.activity.attendanceRequired and attendee.attendance.attendanceReason.code === 'NOT_REQUIRED' %}
-            <div class="print-only govuk-!-margin-top-1">{{ attendanceTag('COMPLETED', 'NOT_REQUIRED', instance.activitySchedule.activity.attendanceRequired) }}</div>
-        {% endif %}
+            {% if instance.activitySchedule.activity.attendanceRequired and attendee.attendance.attendanceReason.code === 'NOT_REQUIRED' %}
+                <div class="print-only govuk-!-margin-top-1">{{ attendanceTag('COMPLETED', 'NOT_REQUIRED', instance.activitySchedule.activity.attendanceRequired) }}</div>
+            {% endif %}
         {% endset %}
 
         {% set rows = (rows.push({
