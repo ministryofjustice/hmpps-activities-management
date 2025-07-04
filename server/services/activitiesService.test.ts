@@ -1179,7 +1179,7 @@ describe('Activities Service', () => {
 
       const actual = await activitiesService.getAdvanceAttendanceDetails(123456, user)
 
-      expect(activitiesApiClient.postAdvanceAttendances).toHaveBeenCalledWith(123456, user)
+      expect(activitiesApiClient.getAdvanceAttendanceDetails).toHaveBeenCalledWith(123456, user)
       expect(actual).toEqual(expectedResult)
     })
   })
@@ -1190,7 +1190,7 @@ describe('Activities Service', () => {
 
       await activitiesService.deleteAdvanceAttendance(123456, user)
 
-      expect(activitiesApiClient.postAdvanceAttendances).toHaveBeenCalledWith(123456, user)
+      expect(activitiesApiClient.deleteAdvanceAttendance).toHaveBeenCalledWith(123456, user)
     })
   })
 })
