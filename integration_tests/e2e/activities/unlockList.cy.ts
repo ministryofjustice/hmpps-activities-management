@@ -20,6 +20,59 @@ context('Create activity', () => {
 
   const toLocPrefix = (prefix: string) => JSON.parse(`{"locationPrefix": "${prefix}"}`)
 
+  getScheduledEvents.courtHearings.push({
+    prisonCode: 'MDI',
+    eventSource: 'NOMIS',
+    eventType: 'COURT_HEARING',
+    eventId: 10001,
+    bookingId: 10001,
+    internalLocationDescription: 'Bradford County Court',
+    summary: 'Court hearing',
+    prisonerNumber: 'A2345DP',
+    date: '2024-03-25',
+    startTime: '13:00',
+    endTime: '15:00',
+    priority: 1,
+  })
+
+  getPrisonPrisoners.content.push({
+    prisonerNumber: 'A2345DP',
+    bookingId: '1202189',
+    bookNumber: '39298A',
+    firstName: 'TEST',
+    lastName: 'COURTEE',
+    dateOfBirth: '1970-01-01',
+    gender: 'Male',
+    youthOffender: false,
+    status: 'ACTIVE IN',
+    lastMovementTypeCode: 'ADM',
+    lastMovementReasonCode: 'I',
+    inOutStatus: 'IN',
+    prisonId: 'MDI',
+    prisonName: 'Moorland (HMP & YOI)',
+    cellLocation: '1-3-015',
+    category: 'C',
+    aliases: [],
+    alerts: [],
+    legalStatus: 'SENTENCED',
+    imprisonmentStatus: 'UNK_SENT',
+    imprisonmentStatusDescription: 'Unknown Sentenced',
+    mostSeriousOffence: 'Drive vehicle for more than 13 hours or more in a working day - domestic',
+    recall: false,
+    indeterminateSentence: false,
+    receptionDate: '2022-04-25',
+    locationDescription: 'Moorland (HMP & YOI)',
+    restrictedPatient: false,
+    currentIncentive: {
+      level: {
+        code: 'ENH',
+        description: 'Enhanced',
+      },
+      dateTime: '2022-04-25T12:16:58',
+      nextReviewDate: '2023-04-25',
+    },
+  })
+
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -121,5 +174,36 @@ context('Create activity', () => {
     plannedEventsPage.getButton('Apply filters').eq(0).click()
 
     plannedEventsPage.relevantAlertColumn().should('not.exist')
+  })
+  it('Only shows activities if the user uses the activity filter - court hearing not shown', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.unlockAndMovementCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
+    manageActivitiesPage.createUnlockListsCard().should('contain.text', 'Create unlock lists')
+    manageActivitiesPage.createUnlockListsCard().click()
+
+    const chooseDateAndLocationPage = Page.verifyOnPage(ChooseDateAndLocationPage)
+    chooseDateAndLocationPage.selectToday()
+    chooseDateAndLocationPage.selectAM()
+    chooseDateAndLocationPage.selectLocation('Houseblock 1')
+    chooseDateAndLocationPage.continue()
+
+    const plannedEventsPage = Page.verifyOnPage(PlannedEventsPage)
+    plannedEventsPage.selectAllCategories().click()
+    plannedEventsPage.categoryCheckbox('SAA_INDUSTRIES').click()
+    plannedEventsPage.getButton('Apply filters').eq(0).click()
+    plannedEventsPage.table().find('tr').should('have.length', 3) // this includes the header row
+    plannedEventsPage
+      .table()
+      .find('td')
+      .then(data => {
+        expect(data.get(3).innerText).to.contain('Pottery AM')
+        expect(data.get(3).innerText).to.contain('Tailors AM')
+        expect(data.get(7).innerText).to.contain('Pottery AM')
+      })
   })
 })
