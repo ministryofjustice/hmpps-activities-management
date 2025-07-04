@@ -3,6 +3,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { AdvanceAttendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import { convertToTitleCase } from '../../../../utils/utils'
+import config from '../../../../config'
 
 export default class ResetAdvanceAttendanceRoutes {
   constructor(
@@ -11,6 +12,9 @@ export default class ResetAdvanceAttendanceRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
+    if (!config.notRequiredInAdvanceEnabled) {
+      return res.redirect('attendance-list')
+    }
     const { user } = res.locals
     const { id } = req.params
     const { advanceAttendanceId } = req.params
@@ -22,7 +26,7 @@ export default class ResetAdvanceAttendanceRoutes {
 
     const attendee = await this.prisonService.getInmateByPrisonerNumber(advanceAttendance.prisonerNumber, user)
 
-    res.render('pages/activities/record-attendance/reset-advance-attendance', {
+    return res.render('pages/activities/record-attendance/reset-advance-attendance', {
       instance,
       advanceAttendance,
       attendee,
