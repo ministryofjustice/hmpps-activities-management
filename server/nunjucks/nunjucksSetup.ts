@@ -261,7 +261,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('LocationType', LocationType)
   njkEnv.addGlobal('DeallocateAfterAllocationDateOption', DeallocateAfterAllocationDateOption)
   njkEnv.addGlobal('HowToAddOptions', HowToAddOptions)
-  njkEnv.addGlobal('bvlsMasterPublicPrivateNotesEnabled', config.bvlsMasterPublicPrivateNotesEnabled)
   njkEnv.addGlobal('bvlsHmctsLinkGuestPinEnabled', config.bvlsHmctsLinkGuestPinEnabled)
   // Default base URLs for court meeting links
   njkEnv.addGlobal('defaultCourtVideoUrl', config.defaultCourtVideoUrl)
