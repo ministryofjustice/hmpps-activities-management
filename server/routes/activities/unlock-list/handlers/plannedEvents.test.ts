@@ -121,6 +121,7 @@ describe('Unlock list routes - planned events', () => {
         ['ALERT_HA'],
         '',
         YesNo.YES,
+        false,
         res.locals.user,
       )
 
@@ -206,6 +207,7 @@ describe('Unlock list routes - planned events', () => {
         ['CAT_A'],
         'search term',
         YesNo.YES,
+        false,
         res.locals.user,
       )
 
@@ -233,6 +235,61 @@ describe('Unlock list routes - planned events', () => {
         },
         alertOptions: alertFilterOptions,
       })
+    })
+    it('should pass true into function call if the user has selected/removed any activity category filters', async () => {
+      req = {
+        query: {
+          date: '2022-01-01',
+        },
+        session: {
+          unlockListJourney: {
+            locationKey: 'A',
+            timeSlot: 'AM',
+            stayingOrLeavingFilter: 'Leaving',
+            activityFilter: 'With',
+            subLocationFilters: ['A'],
+            searchTerm: 'search term',
+            alertFilters: ['CAT_A'],
+            cancelledEventsFilter: YesNo.YES,
+            activityCategoriesFilters: ['SAA_EDUCATION'],
+          },
+        },
+      } as unknown as Request
+
+      const unlockListItems = [
+        {
+          prisonerNumber: 'A1111AA',
+          isLeavingWing: true,
+        },
+        {
+          prisonerNumber: 'B2222BB',
+          isLeavingWing: true,
+        },
+      ] as UnlockListItem[]
+
+      when(activitiesService.getLocationGroups).mockResolvedValue(locationsAtPrison)
+      when(unlockListService.getFilteredUnlockList).mockResolvedValue(unlockListItems)
+      when(alertsFilterService.getAllAlertFilterOptions).mockReturnValue([
+        { key: 'CAT_A', description: 'CAT A', codes: ['A', 'E'] },
+      ])
+      when(activitiesService.getActivityCategories).mockResolvedValue(activityCategories as ActivityCategory[])
+
+      await handler.GET(req, res)
+
+      expect(unlockListService.getFilteredUnlockList).toHaveBeenCalledWith(
+        new Date('2022-01-01'),
+        'AM',
+        'A',
+        ['A'],
+        'With',
+        ['SAA_EDUCATION'],
+        'Leaving',
+        ['CAT_A'],
+        'search term',
+        YesNo.YES,
+        true,
+        res.locals.user,
+      )
     })
   })
 })

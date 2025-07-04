@@ -237,6 +237,7 @@ describe('Unlock list service', () => {
         [],
         null,
         YesNo.YES,
+        false,
         user,
       )
 
@@ -281,6 +282,7 @@ describe('Unlock list service', () => {
         [],
         null,
         YesNo.YES,
+        false,
         user,
       )
 
@@ -314,6 +316,7 @@ describe('Unlock list service', () => {
         [],
         null,
         YesNo.YES,
+        false,
         user,
       )
 
@@ -336,6 +339,7 @@ describe('Unlock list service', () => {
         [],
         null,
         YesNo.YES,
+        false,
         user,
       )
 
@@ -359,6 +363,7 @@ describe('Unlock list service', () => {
         [],
         null,
         YesNo.YES,
+        false,
         user,
       )
 
@@ -381,6 +386,7 @@ describe('Unlock list service', () => {
         [],
         null,
         YesNo.YES,
+        false,
         user,
       )
 
@@ -403,6 +409,7 @@ describe('Unlock list service', () => {
         [],
         null,
         YesNo.YES,
+        false,
         user,
       )
 
@@ -425,6 +432,7 @@ describe('Unlock list service', () => {
         [],
         null,
         YesNo.YES,
+        false,
         user,
       )
 
@@ -453,6 +461,7 @@ describe('Unlock list service', () => {
         ['CAT_A'],
         null,
         YesNo.YES,
+        false,
         user,
       )
 
@@ -478,11 +487,13 @@ describe('Unlock list service', () => {
         ['CAT_A'],
         null,
         YesNo.YES,
+        true,
         user,
       )
 
-      expect(unlockListItems).toHaveLength(3)
-      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA'])
+      expect(unlockListItems).toHaveLength(2)
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A2222AA', 'A3333AA'])
+      unlockListItems.forEach(prisoner => prisoner.events.forEach(event => expect(event.eventType).toBe('ACTIVITY')))
     })
 
     it('should filter activity category and include when event category not selected, but the prisoner has another event which is selected', async () => {
@@ -524,11 +535,12 @@ describe('Unlock list service', () => {
         ['CAT_A'],
         null,
         YesNo.YES,
+        true,
         user,
       )
 
-      expect(unlockListItems).toHaveLength(4)
-      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA', 'A4444AA'])
+      expect(unlockListItems).toHaveLength(3)
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A2222AA', 'A3333AA', 'A4444AA'])
       const multiplePrisonerEvents = unlockListItems.find(item => item.prisonerNumber === 'A4444AA').events
       expect(multiplePrisonerEvents).toEqual([
         {
@@ -613,11 +625,12 @@ describe('Unlock list service', () => {
         ['CAT_A'],
         null,
         YesNo.YES,
+        true,
         user,
       )
 
-      expect(unlockListItems).toHaveLength(3)
-      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A1111AA', 'A2222AA', 'A3333AA'])
+      expect(unlockListItems).toHaveLength(2)
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A2222AA', 'A3333AA'])
     })
 
     it('should filter alerts', async () => {
@@ -645,6 +658,7 @@ describe('Unlock list service', () => {
         alertFilters,
         null,
         YesNo.YES,
+        false,
         user,
       )
 
@@ -718,6 +732,7 @@ describe('Unlock list service', () => {
         [],
         null,
         YesNo.YES,
+        false,
         user,
       )
 
@@ -862,6 +877,7 @@ describe('Unlock list service', () => {
         [],
         null,
         YesNo.NO,
+        false,
         user,
       )
       expect(unlockListItems).toEqual([
