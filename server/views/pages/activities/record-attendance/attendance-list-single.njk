@@ -41,7 +41,8 @@
                     <h3 class="govuk-notification-banner__heading">Session cancelled</h3>
                     <p class="govuk-body">This activity session has been cancelled by {{ serviceUserName(userMap.get(instance.cancelledBy)) }} on {{ instance.cancelledTime | parseDate("yyyy-MM-dd'T'HH:mm:ss") | formatDate }} for the following reason:</p>
                     <ul class="govuk-list govuk-list--bullet">
-                        <li>{{ instance.cancelledReason }} {{ cancelledComment }}</li>
+                        <li>{{ instance.cancelledReason }}
+                            {{ cancelledComment }}</li>
                     </ul>
                     {% if cancellationPayInfoAvailable %}
                     <p class="govuk-body govuk-!-margin-top-4">
@@ -99,7 +100,8 @@
                 {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
                     <ul class="govuk-list">
                         <li>
-                            <span>Attended: </span><span class="govuk-!-font-weight-bold">-</span>
+                            <span>Attended: </span>
+                            <span class="govuk-!-font-weight-bold">-</span>
                         </li>
                         <li>
                             <span>Absent:</span>
@@ -110,7 +112,8 @@
                             {% endif %}
                         </li>
                         <li>
-                            <span>Not recorded: </span><span class="govuk-!-font-weight-bold">-</span>
+                            <span>Not recorded: </span>
+                            <span class="govuk-!-font-weight-bold">-</span>
                         </li>
                     </ul>
                 {% else %}
@@ -191,7 +194,7 @@
                         issuePayment: attendee.advancedAttendance.issuePayment,
                         marginTagClass: true
                     }) }}
-            {% else %}    
+            {% else %}
                 {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) }}
                 {{ payStatus( 
                     { 
@@ -217,8 +220,6 @@
                 <div class="print-only govuk-!-margin-top-1">{{ attendanceTag('COMPLETED', 'NOT_REQUIRED', instance.activitySchedule.activity.attendanceRequired) }}</div>
             {% endif %}
         {% endset %}
-
-
 
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
@@ -271,7 +272,7 @@
                     text: ''
                 },
                 {
-                    html: renderViewLink(attendee.attendance),
+                    html: renderViewLink(attendee),
                     classes: 'govuk-!-display-none-print'
                 }
             ]
@@ -353,7 +354,7 @@
             }
         }) }}
     </form>
-    
+
     <div class="print-only govuk-body-s govuk-!-margin-top-6">Printed at {{ now | formatDate("HH:mm 'on' EEEE, d MMMM yyyy") }}</div>
 {% endblock %}
 
@@ -364,14 +365,20 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro renderViewLink(attendance) %}
-    {% if attendance.status === 'COMPLETED' or attendance.attendanceHistory | length %}
-        <a href="attendance-details/{{ attendance.id }}" class="govuk-link govuk-link--no-visited-state">
-            {% if attendance.editable and instance.activitySchedule.activity.attendanceRequired %}
+{% macro renderViewLink(attendee) %}
+    {% if attendee.attendance.status === 'COMPLETED' or attendee.attendance.attendanceHistory | length or attendee.advancedAttendance %}
+        {% if attendee.advancedAttendance %}
+            <a href="advance-attendance-details/{{ attendee.advancedAttendance.id }}" class="govuk-link govuk-link--no-visited-state">
                 View or Edit
-            {% else %}
-                View
-            {% endif %}
-        </a>
+            </a>
+        {% else %}
+            <a href="attendance-details/{{ attendee.attendance.id  }}" class="govuk-link govuk-link--no-visited-state">
+                {% if attendee.attendance.editable and instance.activitySchedule.activity.attendanceRequired%}
+                    View or Edit
+                {% else %}
+                    View
+                {% endif %}
+            </a>
+        {% endif %}
     {% endif %}
 {% endmacro %}

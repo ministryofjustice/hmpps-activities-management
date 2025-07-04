@@ -1071,4 +1071,28 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('getAdvanceAttendanceDetails', () => {
+    it('should call endpoint to get advanced attendance', async () => {
+      fakeActivitiesApi
+        .get('/advance-attendances/1')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.getAdvanceAttendanceDetails(1, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('deleteAdvanceAttendance', () => {
+    it('should call endpoint to delete an advanced attendance', async () => {
+      fakeActivitiesApi
+        .delete('/advance-attendances/1')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.deleteAdvanceAttendance(1, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })
