@@ -39,6 +39,10 @@ export default class PlannedEventsRoutes {
 
     const unlockDate = date ? toDate(asString(date)) : new Date()
 
+    // we need to know if the user is filtering on activity category, if they are we will only return activities and ignore other event types
+    const activityCategoryFilterBeingUsed =
+      req.session.unlockListJourney.activityCategoriesFilters.length !== activityCategories.length
+
     const {
       subLocationFilters,
       activityFilter,
@@ -60,6 +64,7 @@ export default class PlannedEventsRoutes {
       alertFilters,
       searchTerm,
       cancelledEventsFilter,
+      activityCategoryFilterBeingUsed,
       user,
     )
 
