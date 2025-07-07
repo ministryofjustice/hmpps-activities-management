@@ -934,4 +934,20 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       data: createRequest,
     })
   }
+
+  async getAdvanceAttendanceDetails(attendanceId: number, user: ServiceUser): Promise<AdvanceAttendance> {
+    return this.get({
+      path: `/advance-attendances/${attendanceId}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async deleteAdvanceAttendance(attendanceId: number, user: ServiceUser): Promise<AdvanceAttendance> {
+    return this.delete({
+      path: `/advance-attendances/${attendanceId}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
 }
