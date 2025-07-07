@@ -1174,4 +1174,36 @@ describe('Activities Service', () => {
       expect(activitiesApiClient.postAdvanceAttendances).toHaveBeenCalledWith(serviceRequest, user)
     })
   })
+
+  describe('getAdvanceAttendanceDetails', () => {
+    it('should return an advanced attendance', async () => {
+      const expectedResult = {
+        id: 123456,
+        scheduleInstanceId: 123456,
+        prisonerNumber: 'A1234AA',
+        issuePayment: true,
+        payAmount: 100,
+        recordedTime: '2023-09-10T09:30:00',
+        recordedBy: 'A.JONES',
+        attendanceHistory: [],
+      } as AdvanceAttendance
+
+      when(activitiesApiClient.getAdvanceAttendanceDetails).mockResolvedValue(expectedResult)
+
+      const actual = await activitiesService.getAdvanceAttendanceDetails(123456, user)
+
+      expect(activitiesApiClient.getAdvanceAttendanceDetails).toHaveBeenCalledWith(123456, user)
+      expect(actual).toEqual(expectedResult)
+    })
+  })
+
+  describe('deleteAdvanceAttendance', () => {
+    it('should delete an advanced attendance', async () => {
+      when(activitiesApiClient.deleteAdvanceAttendance).mockResolvedValue({} as AdvanceAttendance)
+
+      await activitiesService.deleteAdvanceAttendance(123456, user)
+
+      expect(activitiesApiClient.deleteAdvanceAttendance).toHaveBeenCalledWith(123456, user)
+    })
+  })
 })

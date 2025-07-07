@@ -1,0 +1,92 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/service-user-name.njk" import serviceUserName %}
+
+{% set pageTitle = "Activities Management - Record Advance Attendance" %}
+{% set pageId = 'advance-attendance-view-details-page' %}
+{% set jsBackLink = true %}
+
+{% macro renderPay(advanceAttendance, payable) %}
+    {% if advanceAttendance.issuePayment %}
+        {{ '£' + (advanceAttendance.payAmount / 100) | toFixed }}
+    {% elseif payable %}
+        None
+    {% else %}
+        Unpaid
+    {% endif %}
+{% endmacro %}
+
+{% set summaryListRows = [] %}
+{% set summaryListRows = (summaryListRows.push({
+    key: {
+        text: "Attendance"
+    },
+    value: {
+        text: "Not required or excused"
+    }
+}), summaryListRows) %}
+
+{% set summaryListRows = (summaryListRows.push({
+    key: {
+        text: "Pay"
+    },
+    value: {
+        text: renderPay(advanceAttendance, instance.activitySchedule.activity.paid)
+    }
+}), summaryListRows) %}
+
+{% set summaryListRows = (summaryListRows.push({
+    key: {
+        text: "Reset by" if advanceAttendance.status === 'WAITING' else 
+            "Recorded by"
+    },
+    value: {
+        text: serviceUserName(userMap.get(advanceAttendance.recordedBy))
+    }
+}, {
+    key: {
+        text: "Date and time"
+    },
+    value: {
+        text: advanceAttendance.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
+    }
+}), summaryListRows) %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <span class="govuk-caption-l" data-qa="caption">{{ instance.activitySchedule.activity.summary }}</span>
+                <h1 class="govuk-heading-l">Attendance record for {{ attendee | firstNameLastName | toTitleCase }}</h1>
+                <div class="govuk-inset-text">
+                    <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a>
+                    on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.timeSlot }}) 
+                </div>
+                {{ govukSummaryList({
+                    rows: summaryListRows,
+                    classes: "govuk-!-margin-bottom-9",
+                    attributes: { 'data-qa': 'appointment-details' }
+                }) }}
+
+                {% if attendee.prisonId == user.activeCaseLoadId %}
+                    <p class="govuk-body govuk-!-display-none-print no-js-hidden">
+                        <a href="{{ dpsUrl }}/prisoner/{{ attendee.prisonerNumber }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">
+                            View the prisoner's profile
+                        </a>
+                    </p>
+                {% endif %}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Reset as required to attend",
+                        type: "submit",
+                        attributes: { 'data-qa': 'view-selection' }
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
