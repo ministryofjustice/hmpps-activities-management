@@ -60,6 +60,7 @@ import {
   ScheduledInstancedUpdateRequest,
   AdvanceAttendanceCreateRequest,
   AdvanceAttendance,
+  ActivityPayHistory,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import {
@@ -231,6 +232,10 @@ export default class ActivitiesService {
 
   async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
     return this.activitiesApiClient.getActivitySchedule(id, user)
+  }
+
+  async getActivityPayHistory(id: number, user: ServiceUser): Promise<ActivityPayHistory> {
+    return this.activitiesApiClient.getActivityPayHistory(id, user)
   }
 
   async updateAttendances(attendanceUpdates: AttendanceUpdateRequest[], user: ServiceUser): Promise<void> {

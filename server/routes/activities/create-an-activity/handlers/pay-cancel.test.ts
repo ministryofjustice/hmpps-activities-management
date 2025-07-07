@@ -178,6 +178,16 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
             startDate: undefined,
           },
         ],
+        payChange: [
+          {
+            incentiveNomisCode: 'BAS',
+            incentiveLevel: 'Basic',
+            payBandId: 17,
+            rate: 50,
+            changedDetails: 'Pay rate change cancelled',
+            changedBy: 'joebloggs',
+          },
+        ],
       } as ActivityUpdateRequest
 
       expect(activitiesService.updateActivity).toHaveBeenCalledWith(33, activityUpdateRequest, user)

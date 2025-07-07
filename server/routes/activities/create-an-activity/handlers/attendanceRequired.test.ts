@@ -62,6 +62,7 @@ describe('Route Handlers - Create an activity schedule - Attendance Required opt
         expect(req.session.createJourney.attendanceRequired).toEqual(false)
         expect(req.session.createJourney.paid).toBe(false)
         expect(req.session.createJourney.pay.length).toBe(0)
+        expect(req.session.createJourney.payChange.length).toBe(0)
       })
 
       it('should navigate to qualification page if attendance is not required', async () => {
@@ -74,6 +75,7 @@ describe('Route Handlers - Create an activity schedule - Attendance Required opt
         expect(req.session.createJourney.attendanceRequired).toEqual(false)
         expect(req.session.createJourney.paid).toBe(false)
         expect(req.session.createJourney.pay.length).toBe(0)
+        expect(req.session.createJourney.payChange.length).toBe(0)
         expect(res.redirectOrReturn).toHaveBeenCalledWith('qualification')
       })
 
@@ -87,6 +89,7 @@ describe('Route Handlers - Create an activity schedule - Attendance Required opt
         expect(req.session.createJourney.attendanceRequired).toEqual(true)
         expect(req.session.createJourney.paid).toBe(undefined)
         expect(req.session.createJourney.pay).toBe(undefined)
+        expect(req.session.createJourney.payChange).toBe(undefined)
         expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-option')
       })
     })
