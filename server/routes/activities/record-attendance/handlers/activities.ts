@@ -63,7 +63,8 @@ export default class ActivitiesRoutes {
     const categoryFiltersString = categoryFilters ? convertToArray(categoryFilters).join(',') : ''
 
     const redirectUrl =
-      `activities?date=${activityDate}&searchTerm=${searchTerm ?? ''}` +
+      `activities?date=${activityDate}` +
+      `&searchTerm=${encodeURIComponent(searchTerm) ?? ''}` +
       `&sessionFilters=${sessionFiltersString}` +
       `&categoryFilters=${categoryFiltersString}` +
       `&locationId=${locationId ?? ''}` +
