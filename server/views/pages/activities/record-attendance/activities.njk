@@ -10,7 +10,7 @@
 {% set hardBackLinkHref = "/activities/attendance/select-period?date="+(activityDate | toDateString or '')+"&sessions="+(session.req.query.sessionFilters or '') %}
 {% set hardBackLinkText = "Back" %}
 
-{% set filterParams = (('&searchTerm=' + session.req.query.searchTerm) if session.req.query.searchTerm else '') +
+{% set filterParams = (('&searchTerm=' + session.req.query.searchTerm | urlencode) if session.req.query.searchTerm else '') +
     (('&sessionFilters=' + session.req.query.sessionFilters) if session.req.query.sessionFilters else '') +
     (('&categoryFilters=' + session.req.query.categoryFilters) if session.req.query.categoryFilters else '') +
     (('&locationId=' + session.req.query.locationId) if session.req.query.locationId else '') +

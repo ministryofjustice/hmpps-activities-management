@@ -682,7 +682,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
       }
 
       req.body = {
-        searchTerm: 'CHap',
+        searchTerm: 'CHap & Chap',
         locationId: '123',
         locationType: 'IN_CELL',
       }
@@ -690,7 +690,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(
-        'summaries?dateOption=other&date=2024-11-23&searchTerm=CHap&locationId=123&locationType=IN_CELL',
+        'summaries?dateOption=other&date=2024-11-23&searchTerm=CHap%20%26%20Chap&locationId=123&locationType=IN_CELL',
       )
     })
   })

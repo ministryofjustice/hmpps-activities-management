@@ -281,6 +281,29 @@ describe('Route Handlers - Activities', () => {
     })
   })
 
+  describe('POST', () => {
+    it('should redirect with the given search criteria', async () => {
+      req = {
+        body: {
+          searchTerm: 'A & B test',
+          sessionFilters: ['AM', 'PM'],
+          categoryFilters: 'SAA_EDUCATION',
+          locationId: '100',
+          locationType: LocationType.IN_CELL,
+        },
+        query: {
+          date: '2025-07-09',
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(
+        'activities?date=2025-07-09&searchTerm=A%20%26%20B%20test&sessionFilters=AM,PM&categoryFilters=SAA_EDUCATION&locationId=100&locationType=IN_CELL',
+      )
+    })
+  })
+
   describe('POST_ATTENDANCES', () => {
     it('should save the selected instance ids and redirect when multiple instances are chosen', async () => {
       req = {

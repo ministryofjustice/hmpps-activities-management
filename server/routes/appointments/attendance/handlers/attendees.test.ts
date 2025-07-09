@@ -635,12 +635,12 @@ describe('Route Handlers - Record Appointment Attendance', () => {
   describe('POST', () => {
     it('redirects to GET', async () => {
       req.body = {
-        searchTerm: 'bLoggs',
+        searchTerm: 'A & B test',
       }
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('attendees?searchTerm=bLoggs')
+      expect(res.redirect).toHaveBeenCalledWith('attendees?searchTerm=A%20%26%20B%20test')
     })
   })
 })
