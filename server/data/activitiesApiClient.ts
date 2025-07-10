@@ -959,4 +959,19 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
+
+  async putAdvanceAttendance(
+    attendanceId: number,
+    issuePayment: boolean,
+    user: ServiceUser,
+  ): Promise<AdvanceAttendance> {
+    return this.put({
+      path: `/advance-attendances/${attendanceId}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: {
+        issuePayment,
+      },
+    })
+  }
 }

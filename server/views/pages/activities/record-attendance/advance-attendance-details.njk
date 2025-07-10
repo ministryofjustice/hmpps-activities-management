@@ -34,6 +34,12 @@
     },
     value: {
         text: renderPay(advanceAttendance, instance.activitySchedule.activity.paid)
+    },
+    actions: {
+        items: [{
+            href: advanceAttendance.id + "/change-pay",
+            text: "Change to pay"
+        }]
     }
 }), summaryListRows) %}
 
