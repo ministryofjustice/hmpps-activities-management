@@ -54,12 +54,14 @@ export default class PayBandRoutes {
       )
     }
 
-    const PayBandDetails: PayBandDetail = (await this.getActivityPayRates(req, res)).find(b => b.bandId === payBand)
+    const allPayBands: PayBandDetail[] = (await this.getActivityPayRates(req, res)).filter(b => b.bandId === payBand)
+
+    const selectedPayBand: PayBandDetail[] = payBandWithDescription(allPayBands)
 
     req.session.allocateJourney.inmate.payBand = {
-      id: PayBandDetails.bandId,
-      alias: PayBandDetails.bandAlias,
-      rate: PayBandDetails.rate,
+      id: selectedPayBand[0].bandId,
+      alias: selectedPayBand[0].bandAlias,
+      rate: selectedPayBand[0].rate,
     }
 
     return res.redirectOrReturn('exclusions')
