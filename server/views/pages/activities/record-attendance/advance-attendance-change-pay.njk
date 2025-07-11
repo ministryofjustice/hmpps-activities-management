@@ -21,7 +21,7 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 <span class="govuk-caption-l">Record activity attendance</span>
-                {% if attendance.issuePayment %}
+                {% if advanceAttendance.issuePayment %}
                     <h1 class="govuk-heading-l">Confirm that {{ attendee | firstNameLastName | toTitleCase }} should not be paid for this session?</h1>
                     {{ instanceDetails(instance) }}
                     <p class="govuk-body">The attendance record will be changed to 'No pay’ and this will be noted in the change history.</p>
