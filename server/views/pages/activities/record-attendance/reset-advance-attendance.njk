@@ -1,0 +1,36 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% set pageTitle = "Attendance - Reset Attendance" %}
+{% set pageId = 'reset-attendance-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <span class="govuk-caption-l">Record activity attendance</span>
+                <h1 class="govuk-heading-l">Are you sure you want to reset the attendance record for {{ attendee | firstNameLastName | toTitleCase }}?</h1>
+                <div class="govuk-inset-text">
+                    <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a>
+                    on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.timeSlot }}) 
+                </div>
+
+                <p class="govuk-body">The attendance record will be changed to 'not recorded' and this will be noted in the change history.</p>
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Confirm",
+                        type: "submit",
+                        attributes: { 'data-qa': 'confirm-reset' }
+                    }) }}
+                    <a class="govuk-link js-backlink" href="/activities/attendance/{{ session.recordAttendanceJourney.activityId }}/activities/{{ instance.id }}/advance-attendance-details/{{ attendance.id }}">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

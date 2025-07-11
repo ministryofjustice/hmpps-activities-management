@@ -1,4 +1,4 @@
-import { ActivityPay, Allocation, Slot } from '../../../@types/activitiesAPI/types'
+import { ActivityPay, ActivityPayHistory, Allocation, Slot } from '../../../@types/activitiesAPI/types'
 
 export enum ScheduleFrequency {
   WEEKLY = 1,
@@ -33,6 +33,7 @@ export type CreateAnActivityJourney = {
   attendanceRequired?: boolean
   paid?: boolean
   pay?: ActivityPay[]
+  payChange?: ActivityPayHistory[]
   flat?: ActivityPay[]
   qualificationOption?: string
   educationLevels?: Array<{

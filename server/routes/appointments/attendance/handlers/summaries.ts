@@ -96,7 +96,8 @@ export default class SummariesRoutes {
 
     const redirectUrl =
       `summaries?dateOption=${dateOption ?? ''}` +
-      `&date=${date ?? ''}&searchTerm=${searchTerm ?? ''}` +
+      `&date=${date ?? ''}` +
+      `&searchTerm=${encodeURIComponent(searchTerm) ?? ''}` +
       `&locationId=${locationId ?? ''}` +
       `&locationType=${locationType ?? ''}`
 

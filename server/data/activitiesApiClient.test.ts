@@ -128,6 +128,20 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getActivityPayHistory', () => {
+    it('should return data from api', async () => {
+      const response = { data: 'data' }
+      fakeActivitiesApi
+        .get('/activities/1/pay-history')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
+      const output = await activitiesApiClient.getActivityPayHistory(1, user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getScheduledActivitiesAtPrison', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
@@ -1068,6 +1082,30 @@ describe('activitiesApiClient', () => {
         { prisonerNumber: 'A1234BC', scheduleInstanceId: 1, issuePayment: false },
         user,
       )
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('getAdvanceAttendanceDetails', () => {
+    it('should call endpoint to get advanced attendance', async () => {
+      fakeActivitiesApi
+        .get('/advance-attendances/1')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.getAdvanceAttendanceDetails(1, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('deleteAdvanceAttendance', () => {
+    it('should call endpoint to delete an advanced attendance', async () => {
+      fakeActivitiesApi
+        .delete('/advance-attendances/1')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.deleteAdvanceAttendance(1, user)
       expect(nock.isDone()).toBe(true)
     })
   })

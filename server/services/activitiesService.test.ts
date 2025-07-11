@@ -41,8 +41,10 @@ import {
   MultipleAppointmentAttendanceRequest,
   RolloutPrisonPlan,
   AdvanceAttendance,
+  ActivityPayHistory,
 } from '../@types/activitiesAPI/types'
 import activitySchedule1 from './fixtures/activity_schedule_1.json'
+import activityPayHistory from './fixtures/activity_pay_history_1.json'
 import appointmentSeriesDetails from './fixtures/appointment_series_details_1.json'
 import appointmentDetails from './fixtures/appointment_details_1.json'
 import multipleAppointmentDetails from './fixtures/appointment_details_multiple.json'
@@ -278,6 +280,17 @@ describe('Activities Service', () => {
       const result = await activitiesService.getActivitySchedule(1, user)
       expect(activitiesApiClient.getActivitySchedule).toHaveBeenCalledWith(1, user)
       expect(result).toEqual(activitySchedule1)
+    })
+  })
+
+  describe('getActivityPayHistory', () => {
+    it('should fetch activity pay history by id using the activities API', async () => {
+      when(activitiesApiClient.getActivityPayHistory)
+        .calledWith(atLeast(1))
+        .mockResolvedValueOnce(activityPayHistory as unknown as ActivityPayHistory)
+      const result = await activitiesService.getActivityPayHistory(1, user)
+      expect(activitiesApiClient.getActivityPayHistory).toHaveBeenCalledWith(1, user)
+      expect(result).toEqual(activityPayHistory)
     })
   })
 
@@ -1159,6 +1172,38 @@ describe('Activities Service', () => {
       await activitiesService.postAdvanceAttendances(serviceRequest, user)
 
       expect(activitiesApiClient.postAdvanceAttendances).toHaveBeenCalledWith(serviceRequest, user)
+    })
+  })
+
+  describe('getAdvanceAttendanceDetails', () => {
+    it('should return an advanced attendance', async () => {
+      const expectedResult = {
+        id: 123456,
+        scheduleInstanceId: 123456,
+        prisonerNumber: 'A1234AA',
+        issuePayment: true,
+        payAmount: 100,
+        recordedTime: '2023-09-10T09:30:00',
+        recordedBy: 'A.JONES',
+        attendanceHistory: [],
+      } as AdvanceAttendance
+
+      when(activitiesApiClient.getAdvanceAttendanceDetails).mockResolvedValue(expectedResult)
+
+      const actual = await activitiesService.getAdvanceAttendanceDetails(123456, user)
+
+      expect(activitiesApiClient.getAdvanceAttendanceDetails).toHaveBeenCalledWith(123456, user)
+      expect(actual).toEqual(expectedResult)
+    })
+  })
+
+  describe('deleteAdvanceAttendance', () => {
+    it('should delete an advanced attendance', async () => {
+      when(activitiesApiClient.deleteAdvanceAttendance).mockResolvedValue({} as AdvanceAttendance)
+
+      await activitiesService.deleteAdvanceAttendance(123456, user)
+
+      expect(activitiesApiClient.deleteAdvanceAttendance).toHaveBeenCalledWith(123456, user)
     })
   })
 })

@@ -72,6 +72,7 @@ import {
   WaitingListSearchRequest,
   AdvanceAttendanceCreateRequest,
   AdvanceAttendance,
+  ActivityPayHistory,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -299,6 +300,14 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async getActivitySchedule(id: number, user: ServiceUser): Promise<ActivitySchedule> {
     return this.get({
       path: `/schedules/${id}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  getActivityPayHistory(activityId: number, user: ServiceUser): Promise<ActivityPayHistory> {
+    return this.get({
+      path: `/activities/${activityId}/pay-history`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
@@ -932,6 +941,22 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
       data: createRequest,
+    })
+  }
+
+  async getAdvanceAttendanceDetails(attendanceId: number, user: ServiceUser): Promise<AdvanceAttendance> {
+    return this.get({
+      path: `/advance-attendances/${attendanceId}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async deleteAdvanceAttendance(attendanceId: number, user: ServiceUser): Promise<AdvanceAttendance> {
+    return this.delete({
+      path: `/advance-attendances/${attendanceId}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
   }
 }

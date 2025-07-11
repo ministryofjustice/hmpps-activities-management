@@ -1,0 +1,24 @@
+[
+  {
+    "id": 28,
+    "incentiveNomisCode": "BAS",
+    "incentiveLevel": "Basic",
+    "prisonPayBand": {
+      "id": 19,
+      "displaySequence": 3,
+      "alias": "Pay band 3",
+      "description": "Pay band 3",
+      "nomisPayBand": 3,
+      "prisonCode": "RSI",
+      "createdTime": null,
+      "createdBy": null,
+      "updatedTime": null,
+      "updatedBy": null
+    },
+    "rate": 100,
+    "startDate": null,
+    "changedDetails": "New pay rate added: £1.00",
+    "changedTime": "2025-06-24T11:55:54.135",
+    "changedBy": "joebloggs"
+  }
+]

@@ -24,6 +24,7 @@ export default class UnlockListService {
     alertFilters: string[],
     searchTerm: string,
     cancelledEventsFilter: YesNo,
+    activityCategoryFilterBeingUsed: boolean,
     user: ServiceUser,
   ): Promise<UnlockListItem[]> {
     const prison = user.activeCaseLoadId
@@ -96,43 +97,59 @@ export default class UnlockListService {
       })
     })
 
-    // Match the prisoners with their events by prisonerNumber
-    const unlockListItems = filteredPrisoners.map(prisoner => {
-      const appointments = scheduledEvents?.appointments
-        .filter(app => app.prisonerNumber === prisoner.prisonerNumber)
-        .filter(app => applyCancellationDisplayRule(app))
-        .filter(app => !app.cancelled || cancelledEventsFilter === YesNo.YES)
-      const courtHearings = scheduledEvents?.courtHearings
-        .filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
-        .filter(crt => !crt.cancelled || cancelledEventsFilter === YesNo.YES)
-      const visits = scheduledEvents?.visits
-        .filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
-        .filter(vis => !vis.cancelled || cancelledEventsFilter === YesNo.YES)
-      const adjudications = scheduledEvents?.adjudications
-        .filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
-        .filter(adj => !adj.cancelled || cancelledEventsFilter === YesNo.YES)
-      const transfers = scheduledEvents?.externalTransfers
-        .filter(tra => tra.prisonerNumber === prisoner.prisonerNumber)
-        .filter(tra => !tra.cancelled || cancelledEventsFilter === YesNo.YES)
-      const activities = scheduledEvents?.activities
-        .filter(act => act.prisonerNumber === prisoner.prisonerNumber)
-        .filter(act => prisonersInAnyActivityCategory.includes(act.prisonerNumber))
-        .filter(act => !act.cancelled || cancelledEventsFilter === YesNo.YES)
-      const allEventsForPrisoner = [
-        ...appointments,
-        ...courtHearings,
-        ...visits,
-        ...adjudications,
-        ...transfers,
-        ...activities,
-      ]
+    let unlockListItems: UnlockListItem[] = []
 
-      return {
-        ...prisoner,
-        isLeavingWing: this.isLeaving(allEventsForPrisoner),
-        events: scheduledEventSort(allEventsForPrisoner),
-      } as UnlockListItem
-    })
+    if (activityCategoryFilterBeingUsed) {
+      unlockListItems = filteredPrisoners.map(prisoner => {
+        const activities = scheduledEvents?.activities
+          .filter(act => act.prisonerNumber === prisoner.prisonerNumber)
+          .filter(act => prisonersInAnyActivityCategory.includes(act.prisonerNumber))
+          .filter(act => !act.cancelled || cancelledEventsFilter === YesNo.YES)
+
+        return {
+          ...prisoner,
+          isLeavingWing: this.isLeaving(activities),
+          events: scheduledEventSort(activities),
+        } as UnlockListItem
+      })
+    } else {
+      // Match the prisoners with their events by prisonerNumber
+      unlockListItems = filteredPrisoners.map(prisoner => {
+        const appointments = scheduledEvents?.appointments
+          .filter(app => app.prisonerNumber === prisoner.prisonerNumber)
+          .filter(app => applyCancellationDisplayRule(app))
+          .filter(app => !app.cancelled || cancelledEventsFilter === YesNo.YES)
+        const courtHearings = scheduledEvents?.courtHearings
+          .filter(crt => crt.prisonerNumber === prisoner.prisonerNumber)
+          .filter(crt => !crt.cancelled || cancelledEventsFilter === YesNo.YES)
+        const visits = scheduledEvents?.visits
+          .filter(vis => vis.prisonerNumber === prisoner.prisonerNumber)
+          .filter(vis => !vis.cancelled || cancelledEventsFilter === YesNo.YES)
+        const adjudications = scheduledEvents?.adjudications
+          .filter(adj => adj.prisonerNumber === prisoner.prisonerNumber)
+          .filter(adj => !adj.cancelled || cancelledEventsFilter === YesNo.YES)
+        const transfers = scheduledEvents?.externalTransfers
+          .filter(tra => tra.prisonerNumber === prisoner.prisonerNumber)
+          .filter(tra => !tra.cancelled || cancelledEventsFilter === YesNo.YES)
+        const activities = scheduledEvents?.activities
+          .filter(act => act.prisonerNumber === prisoner.prisonerNumber)
+          .filter(act => prisonersInAnyActivityCategory.includes(act.prisonerNumber))
+          .filter(act => !act.cancelled || cancelledEventsFilter === YesNo.YES)
+        const allEventsForPrisoner = [
+          ...appointments,
+          ...courtHearings,
+          ...visits,
+          ...adjudications,
+          ...transfers,
+          ...activities,
+        ]
+        return {
+          ...prisoner,
+          isLeavingWing: this.isLeaving(allEventsForPrisoner),
+          events: scheduledEventSort(allEventsForPrisoner),
+        } as UnlockListItem
+      })
+    }
 
     const searchTermLowerCase = searchTerm?.toLowerCase()
 

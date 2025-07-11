@@ -5,18 +5,15 @@ import { addDays, subDays } from 'date-fns'
 import RemovePayRoutes, { ConfirmRemoveOptions } from './removePay'
 import { associateErrorsWithProperty, toDateString } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
-import PrisonService from '../../../../services/prisonService'
 import { CreateAnActivityJourney } from '../journey'
 import { ActivityPay, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
-jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 
 describe('Route Handlers - Create an activity - Remove pay', () => {
-  const handler = new RemovePayRoutes(activitiesService, prisonService)
+  const handler = new RemovePayRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -90,7 +87,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     })
 
     it('should remove specified pay rate and future pay rate change', async () => {
-      const pay = [
+      req.session.createJourney.pay = [
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
@@ -103,8 +100,6 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
         },
         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
       ] as ActivityPay[]
-
-      req.session.createJourney.pay = pay
       req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
 
       await handler.POST(req, res)
@@ -144,12 +139,10 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     })
 
     it('should update activity pay rates if its an edit journey', async () => {
-      const payRates = [
+      req.session.createJourney.pay = [
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'High' }, rate: 150 },
         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
       ] as CreateAnActivityJourney['pay']
-
-      req.session.createJourney.pay = payRates
       req.routeContext = { mode: 'edit' }
       req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
 
@@ -157,6 +150,16 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
 
       const updatedActivity = {
         pay: [{ incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 2, rate: 150 }],
+        payChange: [
+          {
+            incentiveNomisCode: 'BAS',
+            incentiveLevel: 'Basic',
+            payBandId: 1,
+            rate: 100,
+            changedDetails: 'Pay rate removed',
+            changedBy: 'joebloggs',
+          },
+        ],
       } as ActivityUpdateRequest
 
       expect(activitiesService.updateActivity).toHaveBeenCalledWith(1, updatedActivity, res.locals.user)
@@ -168,7 +171,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     })
 
     it('should remove specified pay rate with a future and multiple historic pay rate change in the edit journey', async () => {
-      const pay = [
+      req.session.createJourney.pay = [
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
@@ -195,8 +198,6 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
         },
         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
       ] as ActivityPay[]
-
-      req.session.createJourney.pay = pay
       req.body = { iep: 'Basic', bandId: '2', choice: 'yes' }
       req.routeContext = { mode: 'edit' }
 
@@ -213,6 +214,16 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
           { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', payBandId: 2, rate: 100 },
           { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', payBandId: 1, rate: 100 },
         ],
+        payChange: [
+          {
+            incentiveNomisCode: 'BAS',
+            incentiveLevel: 'Basic',
+            payBandId: 2,
+            rate: 100,
+            changedDetails: 'Pay rate removed',
+            changedBy: 'joebloggs',
+          },
+        ],
       } as ActivityUpdateRequest
 
       expect(activitiesService.updateActivity).toHaveBeenCalledWith(1, updatedActivity, res.locals.user)
@@ -224,7 +235,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     })
 
     it('should remove specified pay rate where other pay rates have multiple pay rates in the edit journey', async () => {
-      const pay: ActivityPay[] = [
+      req.session.createJourney.pay = [
         {
           id: 4875,
           incentiveNomisCode: 'BAS',
@@ -294,8 +305,6 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
           startDate: toDateString(new Date()),
         },
       ]
-
-      req.session.createJourney.pay = pay
       req.body = { iep: 'Basic', bandId: '61', choice: 'yes' }
       req.routeContext = { mode: 'edit' }
 
@@ -346,6 +355,16 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
             payBandId: 62,
             rate: 65,
             startDate: toDateString(new Date()),
+          },
+        ],
+        payChange: [
+          {
+            incentiveNomisCode: 'BAS',
+            incentiveLevel: 'Basic',
+            payBandId: 61,
+            rate: 50,
+            changedDetails: 'Pay rate removed',
+            changedBy: 'joebloggs',
           },
         ],
       } as ActivityUpdateRequest

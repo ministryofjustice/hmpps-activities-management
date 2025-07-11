@@ -386,8 +386,7 @@ export const padNumber = (num: number, length = 2) => {
 }
 
 export const setAttribute = (object: { [key: string]: string }, key: string, value: string) => {
-  const newObject = { ...object, [key]: value }
-  return newObject
+  return { ...object, [key]: value }
 }
 
 export const removeUndefined = (arr: object[]) => arr.filter(Boolean)
