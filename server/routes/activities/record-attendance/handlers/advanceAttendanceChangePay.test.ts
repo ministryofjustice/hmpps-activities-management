@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
+import { format } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
-import { AdvanceAttendance } from '../../../../@types/activitiesAPI/types'
+import { AdvanceAttendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import config from '../../../../config'
@@ -12,6 +13,22 @@ jest.mock('../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
+
+const instance = {
+  id: 1,
+  date: format(new Date(), 'yyyy-MM-dd'),
+  startTime: '10:00',
+  endTime: '11:00',
+  activitySchedule: {
+    activity: { summary: 'Maths level 1', paid: true },
+    internalLocation: { description: 'Houseblock 1' },
+  },
+  attendances: [
+    { prisonerNumber: 'ABC123', status: 'WAITING' },
+    { prisonerNumber: 'ABC321', status: 'COMPLETED', attendanceReason: { code: 'ATTENDED' } },
+    { prisonerNumber: 'ZXY123', status: 'COMPLETED', attendanceReason: { code: 'SICK' } },
+  ],
+} as ScheduledActivity
 
 describe('Route Handlers - Advance Attendance change pay', () => {
   config.notRequiredInAdvanceEnabled = true
@@ -63,6 +80,7 @@ describe('Route Handlers - Advance Attendance change pay', () => {
     when(activitiesService.getAdvanceAttendanceDetails).mockResolvedValue(advanceAttendance)
     when(activitiesService.putAdvanceAttendance).mockResolvedValue({} as AdvanceAttendance)
     when(prisonService.getInmateByPrisonerNumber).calledWith('ABC321', res.locals.user).mockResolvedValue(prisoner)
+    when(activitiesService.getScheduledActivity).mockResolvedValue(instance)
   })
 
   afterEach(() => {
@@ -76,7 +94,16 @@ describe('Route Handlers - Advance Attendance change pay', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/advance-attendance-change-pay', {
         advanceAttendance,
         attendee: prisoner,
+        instance,
       })
+    })
+    it('should redirect back to list view for unpaid activity', async () => {
+      instance.activitySchedule.activity.paid = false
+      when(activitiesService.getScheduledActivity).mockResolvedValue(instance)
+
+      await handler.GET(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('../../attendance-list')
     })
   })
 

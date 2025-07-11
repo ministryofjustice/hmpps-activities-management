@@ -12,7 +12,7 @@
     {% if advanceAttendance.issuePayment %}
         {{ '£' + (advanceAttendance.payAmount / 100) | toFixed }}
     {% elseif payable %}
-        None
+        No
     {% else %}
         Unpaid
     {% endif %}
@@ -39,7 +39,7 @@
         items: [{
             href: advanceAttendance.id + "/change-pay",
             text: "Change to no pay" if advanceAttendance.issuePayment else "Change to pay"
-        }]
+        }] if instance.activitySchedule.activity.paid
     }
 }), summaryListRows) %}
 

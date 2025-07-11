@@ -24,6 +24,10 @@ export default class AdvanceAttendanceChangePayRoutes {
       this.activitiesService.getAdvanceAttendanceDetails(+advanceAttendanceId, user),
     ])
 
+    if (!instance.activitySchedule.activity.paid) {
+      return res.redirect('../../attendance-list')
+    }
+
     const attendee = await this.prisonService.getInmateByPrisonerNumber(advanceAttendance.prisonerNumber, user)
 
     return res.render('pages/activities/record-attendance/advance-attendance-change-pay', {
