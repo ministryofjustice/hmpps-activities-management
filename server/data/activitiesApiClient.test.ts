@@ -1109,4 +1109,16 @@ describe('activitiesApiClient', () => {
       expect(nock.isDone()).toBe(true)
     })
   })
+
+  describe('putAdvanceAttendance', () => {
+    it('should call endpoint to update an advanced attendance', async () => {
+      fakeActivitiesApi
+        .put('/advance-attendances/1')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.putAdvanceAttendance(1, true, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
 })

@@ -30,6 +30,7 @@ import PaidOrNotRoutes, { PayNotRequiredOrExcusedForm } from './handlers/not-req
 import CheckAndConfirmRoutes from './handlers/not-required-or-excused/checkAndConfirm'
 import AdvanceAttendanceDetailsRoutes from './handlers/advanceAttendanceDetails'
 import ResetAdvanceAttendanceRoutes from './handlers/resetAdvanceAttendance'
+import AdvanceAttendanceChangePayRoutes from './handlers/advanceAttendanceChangePay'
 
 export default function Index({ activitiesService, prisonService, userService }: Services): Router {
   const router = Router()
@@ -57,6 +58,7 @@ export default function Index({ activitiesService, prisonService, userService }:
     userService,
   )
   const resetAdvanceAttendanceHandler = new ResetAdvanceAttendanceRoutes(activitiesService, prisonService)
+  const advanceAttendanceChangePayHandler = new AdvanceAttendanceChangePayRoutes(activitiesService, prisonService)
   const editAttendanceHandler = new EditAttendanceRoutes(activitiesService, prisonService)
   const removePayHandler = new RemovePayRoutes(activitiesService, prisonService)
   const resetAttendanceRoutes = new ResetAttendanceRoutes(activitiesService, prisonService)
@@ -110,7 +112,6 @@ export default function Index({ activitiesService, prisonService, userService }:
     '/:journeyId/activities/:id/advance-attendance-details/:advanceAttendanceId',
     advanceAttendanceDetailsHandler.POST,
   )
-
   get(
     '/:journeyId/activities/:id/advance-attendance-details/:advanceAttendanceId/reset',
     resetAdvanceAttendanceHandler.GET,
@@ -118,6 +119,14 @@ export default function Index({ activitiesService, prisonService, userService }:
   post(
     '/:journeyId/activities/:id/advance-attendance-details/:advanceAttendanceId/reset',
     resetAdvanceAttendanceHandler.POST,
+  )
+  get(
+    '/:journeyId/activities/:id/advance-attendance-details/:advanceAttendanceId/change-pay',
+    advanceAttendanceChangePayHandler.GET,
+  )
+  post(
+    '/:journeyId/activities/:id/advance-attendance-details/:advanceAttendanceId/change-pay',
+    advanceAttendanceChangePayHandler.POST,
   )
 
   get('/:journeyId/activities/not-attended-reason', notAttendedReasonHandler.GET, true)

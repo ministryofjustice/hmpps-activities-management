@@ -625,4 +625,12 @@ export default class ActivitiesService {
   async deleteAdvanceAttendance(attendanceId: number, user: ServiceUser): Promise<AdvanceAttendance> {
     return this.activitiesApiClient.deleteAdvanceAttendance(attendanceId, user)
   }
+
+  async putAdvanceAttendance(
+    attendanceId: number,
+    issuePayment: boolean,
+    user: ServiceUser,
+  ): Promise<AdvanceAttendance> {
+    return this.activitiesApiClient.putAdvanceAttendance(attendanceId, issuePayment, user)
+  }
 }
