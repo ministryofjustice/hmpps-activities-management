@@ -88,7 +88,7 @@ describe('Route Handlers - Advance Attendance change pay', () => {
   })
 
   describe('GET', () => {
-    it('should render reset advance attendance view', async () => {
+    it('should render reset change pay view', async () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/advance-attendance-change-pay', {
