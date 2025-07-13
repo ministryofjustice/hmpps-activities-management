@@ -77,6 +77,18 @@ describe('Route Handlers - Allocate - Pay band', () => {
           },
           {
             incentiveLevel: 'Enhanced',
+            prisonPayBand: { id: 2, alias: 'Enhanced rate 2', displaySequence: 2 },
+            rate: 175,
+            startDate: threeDaysAgoStr,
+          },
+          {
+            incentiveLevel: 'Enhanced',
+            prisonPayBand: { id: 2, alias: 'Enhanced rate 2', displaySequence: 2 },
+            rate: 200,
+            startDate: inThreeDaysStr,
+          },
+          {
+            incentiveLevel: 'Enhanced',
             prisonPayBand: { id: 3, alias: 'Enhanced rate 3', displaySequence: 3 },
             rate: 200,
           },
@@ -105,7 +117,9 @@ describe('Route Handlers - Allocate - Pay band', () => {
           {
             bandId: 2,
             bandAlias: 'Enhanced rate 2',
-            rate: 150,
+            rate: 175,
+            startDate: threeDaysAgoStr,
+            description: `, set to change to £2.00 from ${inThreeDaysMsg}`,
           },
           {
             bandId: 3,
@@ -128,7 +142,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
       expect(req.session.allocateJourney.inmate.payBand).toEqual({
         id: 2,
         alias: 'Enhanced rate 2',
-        rate: 150,
+        rate: 175,
       })
       expect(res.redirectOrReturn).toHaveBeenCalledWith('exclusions')
     })
