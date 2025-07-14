@@ -5,7 +5,7 @@ LABEL maintainer="HMPPS Digital Studio <info@digital.justice.gov.uk>"
 
 RUN apk --update-cache upgrade --available \
   && apk --no-cache add tzdata \
-  && rm -rf /var/cache/apk/* \
+  && rm -rf /var/cache/apk/*
 
 ENV TZ=Europe/London
 RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
