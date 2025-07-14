@@ -12,7 +12,7 @@
     {% if advanceAttendance.issuePayment %}
         {{ '£' + (advanceAttendance.payAmount / 100) | toFixed }}
     {% elseif payable %}
-        None
+        No
     {% else %}
         Unpaid
     {% endif %}
@@ -34,6 +34,12 @@
     },
     value: {
         text: renderPay(advanceAttendance, instance.activitySchedule.activity.paid)
+    },
+    actions: {
+        items: [{
+            href: advanceAttendance.id + "/change-pay",
+            text: "Change to no pay" if advanceAttendance.issuePayment else "Change to pay"
+        }] if instance.activitySchedule.activity.paid
     }
 }), summaryListRows) %}
 
@@ -87,6 +93,77 @@
                     }) }}
                 </div>
             </form>
+
+
+            {% if advanceAttendance.attendanceHistory | length %}
+                <h2 class="govuk-heading-m" data-qa="history-heading">Change history for this attendance record</h2>
+                {% set changeNo = advanceAttendance.attendanceHistory | length %}
+                {% for attendanceHistory in advanceAttendance.attendanceHistory %}
+                    {% set recordedTime = attendanceHistory.recordedTime.split('T') %}
+                    <h3 class="govuk-heading-s" data-qa="history-heading">Change {{ changeNo }}</h3>
+                    {% set historyListRows = [] %}
+                    {% set historyListRows = (historyListRows.push(
+                            {
+                            key: {
+                                text: "Attendance"
+                            },
+                            value: {
+                                text: attendanceHistory.attendanceReason.description or "Not recorded yet"
+                            }
+                            }
+                    ), historyListRows) %}
+
+                    {% set historyListRows = (historyListRows.push(
+                        {
+                            key: {
+                                text: "Pay"
+                            },
+                            value: { text: 'Yes' if attendanceHistory.issuePayment else 'No' }
+                        }
+                    ), historyListRows) %}
+
+                    {# Always show "comment" row if comments are applicable to attendance reason #}
+                    {% if attendanceHistory.attendanceReason.code == 'SICK' %}
+                        {% set historyListRows = (historyListRows.push(
+                            {
+                                key: {
+                                    text: "Comment"
+                                },
+                                value: {
+                                    text: attendanceHistory.comment
+                                }
+                            }
+                        ), historyListRows) %}
+                    {% endif %}
+
+                    {% set historyListRows = (historyListRows.push(
+                        {
+                            key: {
+                                text: "Recorded by"
+                            },
+                            value: {
+                                text: serviceUserName(userMap.get(attendanceHistory.recordedBy))
+                            }
+                        }, {
+                            key: {
+                                text: "Date and time"
+                            },
+                            value: {
+                                text: attendanceHistory.recordedTime | parseISODate | formatDate('d MMMM yyyy \'at\' HH:mm')
+                            }
+                        }
+                    ), historyListRows) %}
+
+                    {{ govukSummaryList({
+                        rows: historyListRows,
+                        classes: "history-list-row-count govuk-!-margin-bottom-9",
+                        attributes: { 'data-qa': 'attendance-history' }
+                    }) }}
+
+                    {% set changeNo = changeNo - 1 %}
+                {% endfor %}
+            {% endif %}
+
         </div>
     </div>
 {% endblock %}

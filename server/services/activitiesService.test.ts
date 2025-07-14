@@ -1206,4 +1206,14 @@ describe('Activities Service', () => {
       expect(activitiesApiClient.deleteAdvanceAttendance).toHaveBeenCalledWith(123456, user)
     })
   })
+
+  describe('putAdvanceAttendance', () => {
+    it('should update an advanced attendance', async () => {
+      when(activitiesApiClient.putAdvanceAttendance).mockResolvedValue({} as AdvanceAttendance)
+
+      await activitiesService.putAdvanceAttendance(123456, true, user)
+
+      expect(activitiesApiClient.putAdvanceAttendance).toHaveBeenCalledWith(123456, true, user)
+    })
+  })
 })
