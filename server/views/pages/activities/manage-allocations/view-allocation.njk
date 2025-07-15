@@ -164,15 +164,21 @@
                 </div>
             </dl>
             <div class="govuk-button-group">
-                {{ govukButton({
-                    text: "Return to currently allocated",
-                    href: "/activities/allocation-dashboard/" + allocation.activityId
-                }) }}
+                {% if prisonerAllocationsEnabled %}
+                    {{ govukButton({
+                        text: "Return to " + prisonerName + " allocations",
+                        href: "/activities/prisoner-allocations/" + allocation.prisonerNumber
+                    }) }}
+                {% endif %}
+                    {{ govukButton({
+                        text: "Return to currently allocated",
+                        href: "/activities/allocation-dashboard/" + allocation.activityId
+                    }) }} 
 
                 {% if not allocation.plannedSuspension %}
                     {{ govukButton({
                         text: "Suspend from this activity",
-                        href: "/activities/suspensions/suspend/" + allocation.prisonerNumber + "/suspend-from?allocationIds=" + allocation.id ,
+                        href: "/activities/suspensions/suspend/" + allocation.prisonerNumber + "/suspend-from?allocationIds=" + allocation.id,
                         classes: "govuk-button--warning"
                     }) }}
                 {% endif %}
