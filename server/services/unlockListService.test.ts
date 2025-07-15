@@ -496,7 +496,7 @@ describe('Unlock list service', () => {
       unlockListItems.forEach(prisoner => prisoner.events.forEach(event => expect(event.eventType).toBe('ACTIVITY')))
     })
 
-    it('should filter activity category and include when event category not selected, but the prisoner has another event which is selected', async () => {
+    it('should filter activity category and include when activity category not selected, but the prisoner has another activity which is selected', async () => {
       when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
 
       const unselectedEventForPrisoner = cloneDeep(scheduledEvents)
@@ -584,7 +584,7 @@ describe('Unlock list service', () => {
       ])
     })
 
-    it('should filter activity category and not include when event category not selected and the prisoner does not have another event which is selected', async () => {
+    it('should filter activity category and not include when activity category not selected and the prisoner does not have another activity which is selected', async () => {
       when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
 
       const unselectedEventForPrisoner2 = cloneDeep(scheduledEvents)
@@ -631,6 +631,128 @@ describe('Unlock list service', () => {
 
       expect(unlockListItems).toHaveLength(2)
       expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A2222AA', 'A3333AA'])
+    })
+
+    it('should include any appointments that clash with activities when activity category filter is used', async () => {
+      when(prisonerSearchApiClient.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
+      const prisonerEvents = cloneDeep(scheduledEvents)
+
+      // add two events, one that clashes with an activity and one that doesn't
+      prisonerEvents.appointments.push(
+        {
+          appointmentId: 1234,
+          prisonerNumber: 'A2222AA',
+          eventType: 'APPOINTMENT',
+          autoSuspended: false,
+          cancelled: true,
+          inCell: false,
+          offWing: false,
+          onWing: false,
+          outsidePrison: false,
+          priority: 0,
+          startTime: '10:00',
+          endTime: '12:00',
+          suspended: false,
+          date: '2022-01-01',
+          appointmentSeriesFrequency: AppointmentFrequency.WEEKDAY,
+          appointmentSeriesCancellationStartDate: toDateString(subDays(new Date(), 6)),
+        },
+        {
+          appointmentId: 3456,
+          prisonerNumber: 'A2222AA',
+          eventType: 'APPOINTMENT',
+          autoSuspended: false,
+          cancelled: true,
+          inCell: false,
+          offWing: false,
+          onWing: false,
+          outsidePrison: false,
+          priority: 0,
+          startTime: '07:00',
+          endTime: '07:30',
+          suspended: false,
+          date: '2022-01-01',
+          appointmentSeriesFrequency: AppointmentFrequency.WEEKDAY,
+          appointmentSeriesCancellationStartDate: toDateString(subDays(new Date(), 5)),
+        },
+      )
+
+      // add a court hearing to check that it won't come through
+      prisonerEvents.courtHearings.push({
+        prisonCode: 'MDI',
+        eventSource: 'SAA',
+        eventType: 'COURT_HEARING',
+        eventId: 10045,
+        bookingId: 10056,
+        internalLocationDescription: 'Bradford County Court',
+        summary: 'Court hearing',
+        prisonerNumber: 'A2222AA',
+        date: '2022-01-01',
+        startTime: '9:00',
+        endTime: '17:00',
+        priority: 1,
+      } as ScheduledEvent)
+
+      when(activitiesApiClient.getScheduledEventsByPrisonerNumbers).mockResolvedValue(prisonerEvents)
+
+      const selectedActivityCategories = ['SAA_INDUSTRIES']
+
+      const unlockListItems = await unlockListService.getFilteredUnlockList(
+        new Date('2022-01-01'),
+        'AM',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        'With',
+        selectedActivityCategories,
+        'Both',
+        ['CAT_A'],
+        null,
+        YesNo.YES,
+        true,
+        user,
+      )
+
+      expect(unlockListItems).toHaveLength(2)
+      expect(unlockListItems.map(i => i.prisonerNumber)).toEqual(['A2222AA', 'A3333AA'])
+      expect(unlockListItems.filter(i => i.prisonerNumber === 'A2222AA')[0].events).toEqual([
+        {
+          appointmentId: 1234,
+          prisonerNumber: 'A2222AA',
+          eventType: 'APPOINTMENT',
+          autoSuspended: false,
+          cancelled: true,
+          inCell: false,
+          offWing: false,
+          onWing: false,
+          outsidePrison: false,
+          priority: 0,
+          startTime: '10:00',
+          endTime: '12:00',
+          suspended: false,
+          date: '2022-01-01',
+          appointmentSeriesFrequency: AppointmentFrequency.WEEKDAY,
+          appointmentSeriesCancellationStartDate: toDateString(subDays(new Date(), 6)),
+        },
+        {
+          prisonCode: 'MDI',
+          eventSource: 'SAA',
+          eventType: 'ACTIVITY',
+          bookingId: 10001,
+          internalLocationId: 10001,
+          internalLocationCode: 'WOW',
+          internalLocationDescription: 'WORKSHOP 1 WORKERS',
+          onWing: false,
+          scheduledInstanceId: 1001,
+          categoryCode: 'SAA_INDUSTRIES',
+          categoryDescription: 'Prison industries',
+          summary: 'Textiles',
+          prisonerNumber: 'A2222AA',
+          date: '2022-01-01',
+          startTime: '9:00',
+          endTime: '11:30',
+          priority: 4,
+        },
+      ])
     })
 
     it('should filter alerts', async () => {
