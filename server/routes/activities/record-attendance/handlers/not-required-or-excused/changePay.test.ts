@@ -7,6 +7,7 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { Attendance, ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
+import config from '../../../../../config'
 
 jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../services/prisonService')
@@ -31,6 +32,7 @@ const instance = {
 } as ScheduledActivity
 
 describe('Route Handlers - Not Required Attendance change pay', () => {
+  config.notRequiredInAdvanceEnabled = true
   const handler = new ChangePayRoutes(activitiesService, prisonService)
 
   let req: Request
