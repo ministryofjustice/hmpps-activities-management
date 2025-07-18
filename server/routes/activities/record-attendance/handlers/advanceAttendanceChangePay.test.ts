@@ -92,7 +92,7 @@ describe('Route Handlers - Advance Attendance change pay', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/advance-attendance-change-pay', {
-        advanceAttendance,
+        attendance: advanceAttendance,
         attendee: prisoner,
         instance,
       })
