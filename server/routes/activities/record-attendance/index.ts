@@ -31,6 +31,7 @@ import CheckAndConfirmRoutes from './handlers/not-required-or-excused/checkAndCo
 import AdvanceAttendanceDetailsRoutes from './handlers/advanceAttendanceDetails'
 import ResetAdvanceAttendanceRoutes from './handlers/resetAdvanceAttendance'
 import AdvanceAttendanceChangePayRoutes from './handlers/advanceAttendanceChangePay'
+import ChangePayRoutes from './handlers/not-required-or-excused/changePay'
 
 export default function Index({ activitiesService, prisonService, userService }: Services): Router {
   const router = Router()
@@ -52,6 +53,7 @@ export default function Index({ activitiesService, prisonService, userService }:
   const cancelSessionConfirmationRoutes = new CancelSessionConfirmationRoutes(activitiesService)
   const uncancelSessionConfirmationRoutes = new UncancelSessionConfirmationRoutes(activitiesService)
   const attendanceDetailsHandler = new AttendanceDetailsRoutes(activitiesService, prisonService, userService)
+  const changePayHandler = new ChangePayRoutes(activitiesService, prisonService)
   const advanceAttendanceDetailsHandler = new AdvanceAttendanceDetailsRoutes(
     activitiesService,
     prisonService,
@@ -142,6 +144,8 @@ export default function Index({ activitiesService, prisonService, userService }:
   post('/:journeyId/activities/:id/uncancel', uncancelSessionConfirmationRoutes.POST, UncancelConfirmForm)
   get('/:journeyId/activities/:id/attendance-details/:attendanceId', attendanceDetailsHandler.GET)
   post('/:journeyId/activities/:id/attendance-details/:attendanceId', attendanceDetailsHandler.POST)
+  get('/:journeyId/activities/:id/attendance-details/:attendanceId/change-pay', changePayHandler.GET)
+  post('/:journeyId/activities/:id/attendance-details/:attendanceId/change-pay', changePayHandler.POST)
   get('/:journeyId/activities/:id/attendance-details/:attendanceId/edit-attendance', editAttendanceHandler.GET, true)
   post(
     '/:journeyId/activities/:id/attendance-details/:attendanceId/edit-attendance',

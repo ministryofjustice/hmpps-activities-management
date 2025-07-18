@@ -152,6 +152,7 @@ describe('Route Handlers - View and Edit Attendance', () => {
             ['joebloggs', { name: 'Joe Bloggs' }],
             ['jsmith', { name: 'John Smith' }],
           ]) as Map<string, UserDetails>,
+          isInFutureOrToday: true,
         })
       },
     )
@@ -231,6 +232,7 @@ describe('Route Handlers - View and Edit Attendance', () => {
         },
         activity: { summary: 'Maths level 1' },
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]) as Map<string, UserDetails>,
+        isInFutureOrToday: true,
       })
     })
   })

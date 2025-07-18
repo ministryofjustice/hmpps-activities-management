@@ -41,7 +41,7 @@
                 text: "Change",
                 visuallyHiddenText: "Change attendance option"
             }]
-        } if instance.activitySchedule.activity.attendanceRequired and attendance.editable and attendance.status !== 'WAITING'
+        } if instance.activitySchedule.activity.attendanceRequired and attendance.editable and attendance.status !== 'WAITING' and attendance.attendanceReason.code !== 'NOT_REQUIRED'
      }
 ), summaryListRows) %}
 
@@ -76,7 +76,14 @@
         },
         value: {
             text: renderPay(attendance, activity.paid)
-        }
+        },
+        actions: {
+            items: [{
+                href: attendance.id + "/change-pay",
+                text: "Change",
+                visuallyHiddenText: "Change attendance option"
+            }]
+        } if instance.activitySchedule.activity.attendanceRequired and attendance.editable and attendance.attendanceReason.code === 'NOT_REQUIRED' and isInFutureOrToday
     }
 ), summaryListRows) %}
 
@@ -154,6 +161,16 @@
                     classes: "govuk-!-margin-bottom-9",
                     attributes: { 'data-qa': 'appointment-details' }
                 }) }}
+
+                {% if attendance.attendanceReason.code == 'NOT_REQUIRED' and attendance.editable %}
+                    <div class="govuk-button-group">
+                        {{ govukButton({
+                            text: "Reset as required to attend",
+                            href: attendance.id + "/reset-attendance",
+                            attributes: { 'data-qa': 'view-selection' }
+                        }) }}
+                    </div>
+                {% endif %}
 
                 {% if attendance.attendanceHistory | length %}
                     <h2 class="govuk-heading-m" data-qa="history-heading">Change history for this attendance record</h2>

@@ -21,7 +21,7 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 <span class="govuk-caption-l">Record activity attendance</span>
-                {% if advanceAttendance.issuePayment %}
+                {% if attendance.issuePayment %}
                     <h1 class="govuk-heading-l">Confirm that {{ attendee | firstNameLastName | toTitleCase }} should not be paid for this session?</h1>
                     {{ instanceDetails(instance) }}
                     <p class="govuk-body">The attendance record will be changed to 'No pay’ and this will be noted in the change history.</p>
@@ -31,7 +31,7 @@
                             type: "submit",
                             attributes: { 'data-qa': 'confirm-reset' }
                         }) }}
-                        <a class="govuk-link js-backlink" href="/activities/attendance/{{ session.recordAttendanceJourney.activityId }}/activities/{{ instance.id }}/advance-attendance-details/{{ attendance.id }}">Cancel</a>
+                        <a class="govuk-link js-backlink" href="../{{ attendance.id }}">Cancel</a>
                     </div>
                 {% else %}
                     <h1 class="govuk-heading-l">Confirm that {{ attendee | firstNameLastName | toTitleCase }} should be paid for this session?</h1>
@@ -43,7 +43,7 @@
                             type: "submit",
                             attributes: { 'data-qa': 'confirm-reset' }
                         }) }}
-                        <a class="govuk-link js-backlink" href="/activities/attendance/{{ session.recordAttendanceJourney.activityId }}/activities/{{ instance.id }}/advance-attendance-details/{{ attendance.id }}">Cancel</a>
+                        <a class="govuk-link js-backlink" href="../{{ attendance.id }}">Cancel</a>
                     </div>
                 {% endif %}
             </form>
