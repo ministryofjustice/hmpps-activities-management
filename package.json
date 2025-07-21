@@ -77,8 +77,8 @@
     "@microsoft/applicationinsights-web": "^3.3.9",
     "@ministryofjustice/frontend": "^5.1.4",
     "@ministryofjustice/hmpps-connect-dps-components": "^2.2.0",
+    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^4.10.2",
     "@types/express-serve-static-core": "^5.0.6",
-    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^4.6.4",
     "@types/lodash": "^4.17.20",
     "accessible-autocomplete": "^3.0.1",
     "agentkeepalive": "^4.6.0",
@@ -117,7 +117,7 @@
     "passport-oauth2": "^1.8.0",
     "redis": "^5.5.6",
     "reflect-metadata": "^0.2.2",
-    "superagent": "^10.2.1",
+    "superagent": "^10.2.2",
     "url-value-parser": "^2.2.0",
     "uuid": "^11.1.0"
   },
