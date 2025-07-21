@@ -43,7 +43,7 @@ context('Allocate multiple people to an activity by copying from another activit
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', getAllocations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
-    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', JSON.parse('[]'))
+    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications\\?includeNonAssociationsCheck=true', JSON.parse('[]'))
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', prisonersOnChosenActivity.content)
     cy.stubEndpoint('POST', '/non-associations/involving\\?prisonId=MDI', nonAssociationsPresent)
