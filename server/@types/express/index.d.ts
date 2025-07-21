@@ -11,6 +11,7 @@ import { AppointmentSetJourney } from '../../routes/appointments/create-and-edit
 import { AttendanceSummaryJourney } from '../../routes/activities/daily-attendance-summary/journey'
 import { UnlockListJourney } from '../../routes/activities/unlock-list/journey'
 import { WaitListApplicationJourney } from '../../routes/activities/waitlist-application/journey'
+import { PrisonerAllocationsJourney } from '../../routes/activities/prisoner-allocations/journey'
 import { SuspendJourney } from '../../routes/activities/suspensions/journey'
 import { UserDetails } from '../manageUsersApiImport/types'
 import { MovementListJourney } from '../../routes/activities/movement-list/journey'
@@ -92,6 +93,7 @@ export declare global {
 export type JourneyData = {
   movementListJourney?: MovementListJourney
   waitListApplicationJourney?: WaitListApplicationJourney
+  prisonerAllocationsJourney?: PrisonerAllocationsJourney
 }
 
 export type ServiceUser = Express.User &

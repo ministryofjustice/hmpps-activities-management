@@ -511,6 +511,13 @@ export default class ActivitiesService {
     return this.activitiesApiClient.searchWaitingListApplications(prisonCode, searchRequest, pageOptions, user)
   }
 
+  async getWaitlistApplicationsForPrisoner(prisonCode: string, prisonerNumber: string, user: ServiceUser) {
+    const requestBody = {
+      prisonerNumbers: [prisonerNumber],
+    }
+    return this.activitiesApiClient.searchWaitingListApplications(prisonCode, requestBody, {}, user)
+  }
+
   async activeRolledPrisons(): Promise<string[]> {
     const r = await this.getRolledOutPrisons()
     return r.filter(item => item.prisonLive).map(item => item.prisonCode)

@@ -1,0 +1,100 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% set pageTitle = "Waitlist Options" %}
+{% set pageId = 'Waitlist-Options' %}
+{% set jsBackLink = true %}
+
+
+{% set options = [{ value: '-', text: '' }] %}
+{% for activity in activities %}
+  {% set options = (options.push( { value: activity.id, text: activity.activityName }), options) %}
+{% endfor %}
+
+{% block meta %}
+  <meta name="autocompleteElements" content="activityId"/>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            {% set waitlistOptions = [] %}
+            {% for application in approvedPendingWaitlist %}
+                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][activityName]" }}" value="{{ application.activity.activityName }}"/>   
+                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][id]" }}" value="{{ application.id }}"/>
+                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][status]" }}" value="{{ application.status }}"/>
+                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][scheduleId]" }}" value="{{ application.scheduleId }}"/>
+                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][requestedDate]" }}" value="{{ application.requestedDate }}"/>
+                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][requestedBy]" }}" value="{{ application.requestedBy }}"/>
+                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][comments]" }}" value="{{ application.comments }}"/>
+                {% if application.status == "APPROVED" and application.statusUpdatedTime %}
+                        {% set applicationStatus = application.status | title + " " + application.statusUpdatedTime | toDateString | formatDate('d MMMM yyyy') %}
+                    {% elif application.status == "APPROVED" %}
+                        {% set applicationStatus = application.status | title + " " + application.creationTime | toDateString | formatDate('d MMMM yyyy') %}
+                    {% else %}
+                        {% set applicationStatus = "Application not yet approved" %}
+                {% endif %}
+
+                {% set waitlistOptions = (waitlistOptions.push(
+                    {
+                        value: application.scheduleId,
+                        text: application.activity.activityName,
+                        hint: {
+                            text: applicationStatus
+                        }
+                    }
+                ), waitlistOptions) %}
+            {% endfor %}
+                {% set waitlistOptions = (waitlistOptions.push(
+                    {
+                    divider: 'or'
+                    },
+                    {
+                    text: "A different activity",
+                    checked: false,
+                    conditional: {
+                    html: govukSelect({
+                            id: "activityId",
+                            name: "activityId",
+                            label: {
+                                text: "Start typing the activity name and select it from the list."
+                            },
+                            errorMessage: validationErrors | findError('activityId'),
+                            value: formResponses.activity.id,
+                            items: options
+                            })
+                        }
+                    }
+                ), waitlistOptions) %}
+
+                <span class="govuk-caption-l">Allocate to an activity</span>
+                {{ govukRadios({
+                    name: "waitlistScheduleId",
+                    hint: {
+                        text: prisoner.firstName | title + ' ' + prisoner.lastName | title + " has " + approvedPendingWaitlist.length + " applications logged for activities"
+                    },
+                    fieldset: {
+                        legend: {
+                            text: "Select an activity to allocate " + prisoner.firstName | title + ' ' + prisoner.lastName | title,
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('waitlistOptions'),
+                    items: waitlistOptions
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
