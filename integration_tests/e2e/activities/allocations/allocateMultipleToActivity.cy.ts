@@ -42,7 +42,11 @@ context('Allocate multiple one by one to an activity', () => {
     cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', getAllocations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
-    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications\\?includeNonAssociationsCheck=true', JSON.parse('[]'))
+    cy.stubEndpoint(
+      'GET',
+      '/schedules/2/waiting-list-applications\\?includeNonAssociationsCheck=true',
+      JSON.parse('[]'),
+    )
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('GET', '/incentive-reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
