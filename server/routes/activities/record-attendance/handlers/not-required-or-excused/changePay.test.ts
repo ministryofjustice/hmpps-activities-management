@@ -1,15 +1,16 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { format } from 'date-fns'
-import ActivitiesService from '../../../../services/activitiesService'
-import { AdvanceAttendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
-import PrisonService from '../../../../services/prisonService'
-import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import config from '../../../../config'
-import AdvanceAttendanceChangePayRoutes from './advanceAttendanceChangePay'
 
-jest.mock('../../../../services/activitiesService')
-jest.mock('../../../../services/prisonService')
+import ChangePayRoutes from './changePay'
+import ActivitiesService from '../../../../../services/activitiesService'
+import PrisonService from '../../../../../services/prisonService'
+import { Attendance, ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
+import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
+import config from '../../../../../config'
+
+jest.mock('../../../../../services/activitiesService')
+jest.mock('../../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
@@ -30,15 +31,14 @@ const instance = {
   ],
 } as ScheduledActivity
 
-describe('Route Handlers - Advance Attendance change pay', () => {
+describe('Route Handlers - Not Required Attendance change pay', () => {
   config.notRequiredInAdvanceEnabled = true
-
-  const handler = new AdvanceAttendanceChangePayRoutes(activitiesService, prisonService)
+  const handler = new ChangePayRoutes(activitiesService, prisonService)
 
   let req: Request
   let res: Response
 
-  const advanceAttendance = {
+  const attendance = {
     id: 1,
     scheduleInstanceId: 301981,
     prisonerNumber: 'ABC321',
@@ -47,7 +47,7 @@ describe('Route Handlers - Advance Attendance change pay', () => {
     recordedTime: '2025-07-03T15:52:02',
     recordedBy: 'AYOUNGMAN_GEN',
     attendanceHistory: [],
-  } as AdvanceAttendance
+  } as Attendance
 
   const prisoner = {
     prisonerNumber: 'ABC321',
@@ -73,12 +73,12 @@ describe('Route Handlers - Advance Attendance change pay', () => {
 
     req = {
       session: {},
-      params: { advanceAttendanceId: 1 },
+      params: { attendanceId: 1 },
       body: {},
     } as unknown as Request
 
-    when(activitiesService.getAdvanceAttendanceDetails).mockResolvedValue(advanceAttendance)
-    when(activitiesService.putAdvanceAttendance).mockResolvedValue({} as AdvanceAttendance)
+    when(activitiesService.getAttendanceDetails).mockResolvedValue(attendance)
+    when(activitiesService.updateAttendances).mockResolvedValue(undefined)
     when(prisonService.getInmateByPrisonerNumber).calledWith('ABC321', res.locals.user).mockResolvedValue(prisoner)
     when(activitiesService.getScheduledActivity).mockResolvedValue(instance)
   })
@@ -92,7 +92,7 @@ describe('Route Handlers - Advance Attendance change pay', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/advance-attendance-change-pay', {
-        attendance: advanceAttendance,
+        attendance,
         attendee: prisoner,
         instance,
       })
@@ -109,9 +109,12 @@ describe('Route Handlers - Advance Attendance change pay', () => {
 
   describe('POST', () => {
     it('should redirect to attendance list with success', async () => {
+      const expected = [
+        { attendanceReason: 'NOT_REQUIRED', id: 1, issuePayment: true, prisonCode: 123, status: 'COMPLETED' },
+      ]
       await handler.POST(req, res)
 
-      expect(activitiesService.putAdvanceAttendance).toHaveBeenCalledWith(1, true, res.locals.user)
+      expect(activitiesService.updateAttendances).toHaveBeenCalledWith(expected, res.locals.user)
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '../../attendance-list',
         'Pay updated',
