@@ -61,7 +61,7 @@ export default class UncancelMultipleSessionsRoutes {
     const categoryFiltersString = categoryFilters ? convertToArray(categoryFilters).join(',') : ''
 
     const redirectUrl =
-      `uncancel-multiple?date=${activityDate}&searchTerm=${searchTerm ?? ''}` +
+      `uncancel-multiple?date=${activityDate}&searchTerm=${encodeURIComponent(searchTerm) ?? ''}` +
       `&sessionFilters=${sessionFiltersString}` +
       `&categoryFilters=${categoryFiltersString}` +
       `&locationId=${locationId ?? ''}` +

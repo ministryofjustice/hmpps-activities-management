@@ -93,8 +93,15 @@ export default class AttendanceDataRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { date, appointmentName, customAppointmentName, attendanceState, eventTier, organiserCode, searchTerm } =
       req.body
+
     return res.redirect(
-      `?date=${datePickerDateToIsoDate(date)}&appointmentName=${appointmentName ?? ''}&customAppointmentName=${customAppointmentName ?? ''}&attendanceState=${attendanceState ?? ''}&eventTier=${eventTier ?? ''}&organiserCode=${organiserCode ?? ''}&searchTerm=${searchTerm ?? ''}`,
+      `?date=${datePickerDateToIsoDate(date)}` +
+        `&appointmentName=${encodeURIComponent(appointmentName) ?? ''}` +
+        `&customAppointmentName=${encodeURIComponent(customAppointmentName) ?? ''}` +
+        `&attendanceState=${attendanceState ?? ''}` +
+        `&eventTier=${eventTier ?? ''}` +
+        `&organiserCode=${organiserCode ?? ''}` +
+        `&searchTerm=${encodeURIComponent(searchTerm) ?? ''}`,
     )
   }
 }

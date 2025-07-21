@@ -281,6 +281,29 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
     })
   })
 
+  describe('POST', () => {
+    it('should redirect with the given search criteria', async () => {
+      req = {
+        body: {
+          searchTerm: 'A & B test',
+          sessionFilters: ['AM', 'PM'],
+          categoryFilters: 'SAA_EDUCATION',
+          locationId: '100',
+          locationType: LocationType.IN_CELL,
+        },
+        query: {
+          date: '2025-07-09',
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith(
+        'uncancel-multiple?date=2025-07-09&searchTerm=A%20%26%20B%20test&sessionFilters=AM,PM&categoryFilters=SAA_EDUCATION&locationId=100&locationType=IN_CELL',
+      )
+    })
+  })
+
   describe('POST_UNCANCEL', () => {
     it('should save the selected instance ids and redirect when multiple sessions are chosen', async () => {
       req = {
