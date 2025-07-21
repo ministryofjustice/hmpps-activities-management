@@ -117,11 +117,17 @@
                             <a href="/activities/allocation-dashboard/{{ session.suspendJourney.allocations[0].activityId  }}" class='govuk-link govuk-link--no-visited-state'>view current allocations for {{ session.suspendJourney.allocations[0].activityName | safe }}</a>
                         </li>
                     {% endif %}
-                    <li>
+                    {% if prisonerAllocationsEnabled %}
+                        <li>
+                            <a href="/activities/prisoner-allocations/{{ session.suspendJourney.inmate.prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>check and manage {{ session.suspendJourney.inmate.prisonerName | safe }}'s allocations</a>
+                        </li>
+                    {% endif %}
+                        <li> 
                         <a href="/activities/suspensions/prisoner/{{ session.suspendJourney.inmate.prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>manage {{ session.suspendJourney.inmate.prisonerName | safe }}'s suspensions</a>
-                    </li>
-                    <li>
-                        <a href="/activities/suspensions/select-prisoner" class='govuk-link govuk-link--no-visited-state'>find another prisoner</a> to suspend them, or end a suspension</li>
+                        </li>
+                        <li>
+                        <a href="/activities/suspensions/select-prisoner" class='govuk-link govuk-link--no-visited-state'>find another prisoner</a> to suspend them, or end a suspension
+                        </li>
                 </ul>
             </div>
         </div>

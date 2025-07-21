@@ -1,0 +1,52 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% set pageTitle = "Advance Attendance - Change Pay" %}
+{% set pageId = 'change-pay-attendance-page' %}
+{% set jsBackLink = true %}
+
+{% macro instanceDetails(instance) %}
+<div class="govuk-inset-text">
+    <a href="../attendance-list" class="govuk-link govuk-link--no-visited-state">{{ instance.activitySchedule.activity.summary }}</a>
+    on {{ instance.date | toDate | formatDate('d MMMM yyyy') }} ({{ instance.timeSlot }}) 
+</div>
+{% endmacro %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <span class="govuk-caption-l">Record activity attendance</span>
+                {% if attendance.issuePayment %}
+                    <h1 class="govuk-heading-l">Confirm that {{ attendee | firstNameLastName | toTitleCase }} should not be paid for this session?</h1>
+                    {{ instanceDetails(instance) }}
+                    <p class="govuk-body">The attendance record will be changed to 'No pay’ and this will be noted in the change history.</p>
+                    <div class="govuk-button-group">
+                        {{ govukButton({
+                            text: "Confirm no pay",
+                            type: "submit",
+                            attributes: { 'data-qa': 'confirm-reset' }
+                        }) }}
+                        <a class="govuk-link js-backlink" href="../{{ attendance.id }}">Cancel</a>
+                    </div>
+                {% else %}
+                    <h1 class="govuk-heading-l">Confirm that {{ attendee | firstNameLastName | toTitleCase }} should be paid for this session?</h1>
+                    {{ instanceDetails(instance) }}
+                    <p class="govuk-body">They'll be paid overnight on {{ instance.date | toDate | formatDate('d MMMM yyyy') }}. The attendance record will be changed to 'Pay' and this will be noted in the change history.</p>
+                    <div class="govuk-button-group">
+                        {{ govukButton({
+                            text: "Confirm pay",
+                            type: "submit",
+                            attributes: { 'data-qa': 'confirm-reset' }
+                        }) }}
+                        <a class="govuk-link js-backlink" href="../{{ attendance.id }}">Cancel</a>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

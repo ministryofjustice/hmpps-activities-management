@@ -31,11 +31,6 @@ const mockPrisoner: Prisoner = {
   alerts: [{ alertType: 'R', alertCode: 'RLO', active: true, expired: false }],
 } as Prisoner
 
-const allocations = [
-  { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
-  { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
-]
-
 const mockNonAssociations = {
   nonAssociations: [],
 } as PrisonerNonAssociations
@@ -44,11 +39,18 @@ const mockPrisonerAllocations = [
   {
     prisonerNumber: 'ABC123',
     allocations: [
-      { activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
-      { activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
+      { id: 1234, activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+      { id: 5678, activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
     ],
   },
 ] as PrisonerAllocations[]
+
+const mockAllocationsData = [
+  { id: 1234, activityId: 1, scheduleId: 1, scheduleDescription: 'this schedule', isUnemployment: false },
+  { id: 5678, activityId: 2, scheduleId: 2, scheduleDescription: 'other schedule', isUnemployment: false },
+]
+
+const mockAllocationsIds = [1234, 5678]
 
 describe('Route Handlers - Prisoner Allocations', () => {
   const handler = new PrisonerAllocationsHandler(activitiesService, prisonService, nonAssociationsService)
@@ -98,7 +100,8 @@ describe('Route Handlers - Prisoner Allocations', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/prisoner-allocations/dashboard', {
         prisoner: mockPrisoner,
         hasNonAssociations: false,
-        allocationsData: allocations,
+        allocationsData: mockAllocationsData,
+        activeAllocationIdsForSuspending: mockAllocationsIds,
         locationStatus: 'Temporarily out from Leicester Prison',
       })
     })

@@ -25,9 +25,7 @@
 
             {% if hasNonAssociations %}
                 <div class="govuk-inset-text">
-                    <a href="/activities/prisoner-allocations/{{ prisoner.prisonerNumber }}/non-associations" target="_blank">
-                        View {{ prisonerName }}'s open non-associations
-                    </a>, to check if they may come into contact with someone they must be kept apart from.
+                    <a href="/activities/prisoner-allocations/{{ prisoner.prisonerNumber }}/non-associations" class="govuk-link--no-visited-state" target="_blank">View {{ prisonerName }}'s open non-associations</a>, to check if they may come into contact with someone they must be kept apart from.
                 </div>
             {% endif %}
         </div>

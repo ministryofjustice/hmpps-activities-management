@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { startOfDay, startOfToday, toDate } from 'date-fns'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import UserService from '../../../../services/userService'
@@ -45,6 +46,7 @@ export default class AttendanceDetailsRoutes {
       attendee,
       activity,
       userMap,
+      isInFutureOrToday: startOfDay(toDate(instance.date)) >= startOfToday(),
     })
   }
 

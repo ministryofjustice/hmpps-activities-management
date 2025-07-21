@@ -2,7 +2,7 @@ import { SubLocationCellPattern, UnlockListItem, YesNo } from '../@types/activit
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import { ServiceUser } from '../@types/express'
-import { scheduledEventSort, toDateString } from '../utils/utils'
+import { scheduledEventSort, toDateString, eventClashes } from '../utils/utils'
 import AlertsFilterService from './alertsFilterService'
 import applyCancellationDisplayRule from '../utils/applyCancellationDisplayRule'
 
@@ -106,10 +106,33 @@ export default class UnlockListService {
           .filter(act => prisonersInAnyActivityCategory.includes(act.prisonerNumber))
           .filter(act => !act.cancelled || cancelledEventsFilter === YesNo.YES)
 
+        const appointments = scheduledEvents?.appointments
+          .filter(app => app.prisonerNumber === prisoner.prisonerNumber)
+          .filter(app => applyCancellationDisplayRule(app))
+          .filter(app => !app.cancelled || cancelledEventsFilter === YesNo.YES)
+
+        const clashingApptsToShow = []
+        activities.forEach(act => {
+          const clashingApps = appointments.filter(app => eventClashes(act, app))
+          // if there are any appointments for the prisoner that clash with the activities that match the chosen filter, include them in the results
+          if (clashingApps.length) {
+            clashingApps.forEach(clashingAppointment => {
+              if (
+                // don't add the appointment if it's already in the array
+                !clashingApptsToShow.find(app => app.scheduledInstanceId === clashingAppointment.scheduledInstanceId)
+              ) {
+                clashingApptsToShow.push(clashingAppointment)
+              }
+            })
+          }
+        })
+
+        const events = [...activities, ...clashingApptsToShow]
+
         return {
           ...prisoner,
-          isLeavingWing: this.isLeaving(activities),
-          events: scheduledEventSort(activities),
+          isLeavingWing: this.isLeaving(events),
+          events: scheduledEventSort(events),
         } as UnlockListItem
       })
     } else {

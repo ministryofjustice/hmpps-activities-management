@@ -15,8 +15,8 @@ export default function Index({ activitiesService, prisonService, alertsFilterSe
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(
       path,
-      emptyJourneyHandler('movementListJourney', stepRequiresSession),
       setUpJourneyData(tokenStore),
+      emptyJourneyHandler('movementListJourney', stepRequiresSession),
       handler,
     )
 
@@ -32,8 +32,8 @@ export default function Index({ activitiesService, prisonService, alertsFilterSe
 
   get('/:journeyId/choose-details', chooseDetailsRoutes.GET)
   post('/:journeyId/choose-details', chooseDetailsRoutes.POST, DateAndTimeSlot)
-  get('/:journeyId/locations', locationsRoutes.GET)
-  get('/:journeyId/location-events', locationEventsRoutes.GET)
+  get('/:journeyId/locations', locationsRoutes.GET, true)
+  get('/:journeyId/location-events', locationEventsRoutes.GET, true)
   post('/:journeyId/update-filters', applyFiltersHandler.APPLY, Filters)
 
   return router
