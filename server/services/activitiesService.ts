@@ -421,8 +421,8 @@ export default class ActivitiesService {
     return this.activitiesApiClient.postWaitlistApplication(waitlistApplicationRequest, user)
   }
 
-  async fetchActivityWaitlist(scheduleId: number, user: ServiceUser) {
-    return this.activitiesApiClient.fetchActivityWaitlist(scheduleId, user)
+  async fetchActivityWaitlist(scheduleId: number, includeNonAssociationsCheck: boolean, user: ServiceUser) {
+    return this.activitiesApiClient.fetchActivityWaitlist(scheduleId, includeNonAssociationsCheck, user)
   }
 
   async fetchWaitlistApplication(applicationId: number, user: ServiceUser) {

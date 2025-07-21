@@ -247,7 +247,7 @@ export default class AllocationDashboardRoutes {
 
   private getWaitlistedPrisoners = async (scheduleId: number, filters: Filters, user: ServiceUser) => {
     const waitlist = await this.activitiesService
-      .fetchActivityWaitlist(scheduleId, user)
+      .fetchActivityWaitlist(scheduleId, true, user)
       .then(a => a.filter(w => w.status === 'PENDING' || w.status === 'APPROVED' || w.status === 'DECLINED'))
 
     const prisonerNumbers = waitlist.map(application => application.prisonerNumber)
