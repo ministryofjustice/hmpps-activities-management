@@ -143,7 +143,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
           .calledWith(atLeast(['ABC123']))
           .mockResolvedValue([])
         when(activitiesService.fetchActivityWaitlist)
-          .calledWith(atLeast(1))
+          .calledWith(atLeast(1, false))
           .mockResolvedValue([{ prisonerNumber: 'ABC123', status }] as WaitingListApplication[])
 
         await handler.POST(req, res)

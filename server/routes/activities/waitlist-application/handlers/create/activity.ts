@@ -40,7 +40,7 @@ export default class ActivityRoutes {
         )
         .then(alloc => alloc.length > 0)) ||
       (await this.activitiesService
-        .fetchActivityWaitlist(getScheduleIdFromActivity(activity), user)
+        .fetchActivityWaitlist(getScheduleIdFromActivity(activity), false, user)
         .then(waitlist => waitlist.filter(w => w.prisonerNumber === prisoner.prisonerNumber))
         .then(waitlist => waitlist.filter(w => w.status === 'PENDING' || w.status === 'APPROVED'))
         .then(alloc => alloc.length > 0))

@@ -32,7 +32,6 @@ context('Edit activity', () => {
     cy.stubEndpoint('GET', '/api/agencies/MDI/pay-profile', getPayProfile)
     cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', getAllocations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
-    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', JSON.parse('[]'))
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('POST', '/schedules/2/allocations')
     cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
