@@ -26,7 +26,7 @@ context('Waitlist', () => {
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
     cy.stubEndpoint('GET', '/activities/1/filtered', getActivity1 as unknown as JSON)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', [])
-    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', [])
+    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications\\?includeNonAssociationsCheck=false', [])
     cy.stubEndpoint('POST', '/allocations/MDI/waiting-list-application', [])
   })
 
@@ -157,7 +157,7 @@ context('Waitlist', () => {
     requestDatePage.continue()
 
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', [{ allocations: [{ scheduleId: 1 }] }])
-    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications', [
+    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications\\?includeNonAssociationsCheck=false', [
       {
         prisonerNumber: 'A1350DZ',
         scheduleId: 1,

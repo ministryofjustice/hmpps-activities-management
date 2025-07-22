@@ -54,7 +54,7 @@ describe('Route Handlers - Waitlist - Confirmation', () => {
         } as Activity)
 
       when(activitiesService.fetchActivityWaitlist)
-        .calledWith(atLeast(1))
+        .calledWith(atLeast(1, false))
         .mockResolvedValue([
           { status: 'ALLOCATED' },
           { status: 'PENDING' },

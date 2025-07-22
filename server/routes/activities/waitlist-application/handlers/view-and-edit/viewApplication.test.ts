@@ -199,7 +199,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
         } as Activity)
 
       activitiesService.fetchActivityWaitlist = jest.fn()
-      when(activitiesService.fetchActivityWaitlist).calledWith(atLeast(1)).mockResolvedValue([])
+      when(activitiesService.fetchActivityWaitlist).calledWith(atLeast(1, false)).mockResolvedValue([])
 
       await handler.GET(req, res, next)
 
