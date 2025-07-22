@@ -1,12 +1,15 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
+import { plainToInstance } from 'class-transformer'
+import { validate } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import config from '../../../../config'
 import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { Activity, ActivitySummary, WaitingListApplicationPaged } from '../../../../@types/activitiesAPI/types'
-import PrisonerWaitlistHandler from './prisonerWaitlistAllocations'
+import PrisonerWaitlistHandler, { SelectWailistOptions } from './prisonerWaitlistAllocations'
+import { associateErrorsWithProperty } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -322,7 +325,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
     } as unknown as Response
 
     req = {
-      params: { prisonerNumber: '12345' },
+      params: { prisonerNumber: 'ABC123' },
       journeyData: { prisonerAllocationsJourney: {} },
     } as unknown as Request
   })
@@ -341,16 +344,18 @@ describe('Route Handlers - Prisoner Allocations', () => {
 
     it('should render a prisoners approved and pending waitlist applications on options page', async () => {
       config.prisonerAllocationsEnabled = true
-      req.params.prisonerNumber = 'ABC123'
 
       when(activitiesService.getActivities).calledWith(true, res.locals.user).mockResolvedValue(mockActivities)
-      when(prisonService.getInmateByPrisonerNumber).calledWith(atLeast('ABC123')).mockResolvedValue(mockPrisoner)
+      when(prisonService.getInmateByPrisonerNumber)
+        .calledWith(atLeast(req.params.prisonerNumber))
+        .mockResolvedValue(mockPrisoner)
       when(activitiesService.getWaitlistApplicationsForPrisoner)
-        .calledWith(res.locals.user.activeCaseLoadId, 'ABC123', res.locals.user)
+        .calledWith(res.locals.user.activeCaseLoadId, req.params.prisonerNumber, res.locals.user)
         .mockResolvedValue(mockWaitingListSearchResults)
 
       await handler.GET(req, res)
 
+      expect(mockApplicationResults).toHaveLength(2)
       expect(res.render).toHaveBeenCalledWith('pages/activities/prisoner-allocations/waitlist-options', {
         activities: mockActivities,
         prisoner: mockPrisoner,
@@ -360,9 +365,8 @@ describe('Route Handlers - Prisoner Allocations', () => {
   })
 
   describe('POST', () => {
-    it('should redirect to allocate to activity page', async () => {
+    it('should redirect to allocate to activity page when approved app is selected', async () => {
       config.prisonerAllocationsEnabled = true
-      req.params.prisonerNumber = 'ABC123'
       req.body = {
         waitlistScheduleId: 518,
         waitlistApplicationData: {
@@ -393,9 +397,8 @@ describe('Route Handlers - Prisoner Allocations', () => {
       expect(res.redirect).toHaveBeenCalledWith('/activities/allocations/create/prisoner/ABC123?scheduleId=518')
     })
 
-    it('should redirect to allocate to activity page - When activity search does not find matching waitlist application', async () => {
+    it('should redirect to the allocate activity page, when non pending application is chosen from activity search list', async () => {
       config.prisonerAllocationsEnabled = true
-      req.params.prisonerNumber = 'ABC123'
       req.body = {
         activityId: 539,
         waitlistScheduleId: '',
@@ -421,17 +424,8 @@ describe('Route Handlers - Prisoner Allocations', () => {
         },
       }
 
-      const activity = {
+      const mockActivity = {
         id: 539,
-        prisonCode: 'RSI',
-        attendanceRequired: true,
-        inCell: false,
-        onWing: false,
-        offWing: false,
-        pieceWork: false,
-        outsideWork: false,
-        payPerSession: 'H',
-        summary: 'Admin Orderly',
         description: 'Admin Orderly',
         schedules: [
           {
@@ -440,15 +434,16 @@ describe('Route Handlers - Prisoner Allocations', () => {
         ],
       } as Activity
 
-      when(activitiesService.getActivity).calledWith(539, res.locals.user).mockResolvedValue(activity)
+      when(activitiesService.getActivity)
+        .calledWith(req.body.activityId, res.locals.user)
+        .mockResolvedValue(mockActivity)
 
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('/activities/allocations/create/prisoner/ABC123?scheduleId=385')
     })
 
-    it('should redirect to pending waitlist page - When activity search finds matching waitlist application', async () => {
+    it('should redirect to pending waitlist page, when pending waitlist application is chosen from activity search list', async () => {
       config.prisonerAllocationsEnabled = true
-      req.params.prisonerNumber = 'ABC123'
       req.body = {
         activityId: 539,
         waitlistScheduleId: undefined,
@@ -476,16 +471,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
 
       const activity = {
         id: 539,
-        prisonCode: 'RSI',
-        attendanceRequired: true,
-        inCell: false,
-        onWing: false,
-        offWing: false,
-        pieceWork: false,
-        outsideWork: false,
-        payPerSession: 'H',
-        summary: 'Admin Orderly',
-        description: 'Admin Orderly',
+        description: 'Computer Skills',
         schedules: [
           {
             id: 89,
@@ -493,10 +479,25 @@ describe('Route Handlers - Prisoner Allocations', () => {
         ],
       } as Activity
 
-      when(activitiesService.getActivity).calledWith(539, res.locals.user).mockResolvedValue(activity)
+      when(activitiesService.getActivity).calledWith(req.body.activityId, res.locals.user).mockResolvedValue(activity)
 
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`pending-application`)
+    })
+  })
+
+  describe('Validation', () => {
+    it('validation fails when no activity is selected', async () => {
+      const body = {
+        activityId: '-',
+      }
+
+      const requestObject = plainToInstance(SelectWailistOptions, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual(
+        expect.arrayContaining([{ property: 'waitlistScheduleId', error: 'You must select an activity' }]),
+      )
     })
   })
 })

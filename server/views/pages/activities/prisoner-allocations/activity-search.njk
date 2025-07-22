@@ -6,7 +6,7 @@
 {% set pageId = 'activity-search' %}
 {% set jsBackLink = true %}
 
-{% set options = [{ value: '-', text: '' }] %}
+{% set options = [{ value: '', text: '' }] %}
 {% for activity in activities %}
   {% set options = (options.push( { value: activity.id, text: activity.activityName }), options) %}
 {% endfor %}
@@ -30,8 +30,7 @@
                     text: "Start typing the activity name and select it from the list."
                   },
                   errorMessage: validationErrors | findError('activityId'),
-                  value: formResponses.activity.id,
-                  selected: formResponses.activity.id,
+                  value: formResponses.activityId,
                   items: options
                 })
               }}

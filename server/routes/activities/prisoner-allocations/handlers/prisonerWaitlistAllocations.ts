@@ -10,7 +10,7 @@ import { getScheduleIdFromActivity } from '../../../../utils/utils'
 
 export class SelectWailistOptions {
   @Expose()
-  @ValidateIf(o => o.waitlistScheduleId === undefined)
+  @ValidateIf(o => o.activityId === '-')
   @IsNotEmpty({ message: 'You must select an activity' })
   waitlistScheduleId: string
 }
@@ -71,7 +71,7 @@ export default class PrisonerWaitlistHandler {
     req.journeyData.prisonerAllocationsJourney = {
       activityName: waitlistApplicationData[waitlistScheduleId].activityName,
       status: waitlistApplicationData[waitlistScheduleId].status,
-      scheduleId: waitlistApplicationData[waitlistScheduleId].id,
+      scheduleId: waitlistScheduleId,
       applicationId: waitlistApplicationData[waitlistScheduleId].id,
       applicationDate: waitlistApplicationData[waitlistScheduleId].requestedDate,
       requestedBy: waitlistApplicationData[waitlistScheduleId].requestedBy,

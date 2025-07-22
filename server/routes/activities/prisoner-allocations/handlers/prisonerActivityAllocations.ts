@@ -1,8 +1,16 @@
 import { Request, Response } from 'express'
+import { IsNotEmpty } from 'class-validator'
+import { Expose } from 'class-transformer'
 import config from '../../../../config'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivitySummary } from '../../../../@types/activitiesAPI/types'
 import { getScheduleIdFromActivity } from '../../../../utils/utils'
+
+export class FromActivityList {
+  @Expose()
+  @IsNotEmpty({ message: 'You must select an activity' })
+  activityId: string
+}
 
 export default class ActivityAllocationHandler {
   constructor(private readonly activitiesService: ActivitiesService) {}
