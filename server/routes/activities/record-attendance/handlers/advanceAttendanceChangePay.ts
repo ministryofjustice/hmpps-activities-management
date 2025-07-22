@@ -19,7 +19,7 @@ export default class AdvanceAttendanceChangePayRoutes {
     const { id } = req.params
     const { advanceAttendanceId } = req.params
 
-    const [instance, advanceAttendance]: [ScheduledActivity, AdvanceAttendance] = await Promise.all([
+    const [instance, attendance]: [ScheduledActivity, AdvanceAttendance] = await Promise.all([
       this.activitiesService.getScheduledActivity(+id, user),
       this.activitiesService.getAdvanceAttendanceDetails(+advanceAttendanceId, user),
     ])
@@ -28,11 +28,11 @@ export default class AdvanceAttendanceChangePayRoutes {
       return res.redirect('../../attendance-list')
     }
 
-    const attendee = await this.prisonService.getInmateByPrisonerNumber(advanceAttendance.prisonerNumber, user)
+    const attendee = await this.prisonService.getInmateByPrisonerNumber(attendance.prisonerNumber, user)
 
     return res.render('pages/activities/record-attendance/advance-attendance-change-pay', {
       instance,
-      advanceAttendance,
+      attendance,
       attendee,
     })
   }
