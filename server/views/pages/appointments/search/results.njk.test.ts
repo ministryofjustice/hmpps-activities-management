@@ -20,7 +20,7 @@ describe('Views - Appointments Management - Appointment Search Results', () => {
     appointmentNameFilters: [{}],
     appointmentName: '',
     locations: [{}],
-    locationId: 1,
+    locationId: '12341234-1234-1234-1234-123412341234',
     prisonerNumber: '',
     createdBy: '',
     results: [{}],
