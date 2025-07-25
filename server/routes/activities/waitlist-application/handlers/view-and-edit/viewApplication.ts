@@ -23,7 +23,7 @@ export default class ViewApplicationRoutes {
     const [prisoner, activity, allApplications]: [Prisoner, Activity, WaitingListApplication[]] = await Promise.all([
       this.prisonService.getInmateByPrisonerNumber(application.prisonerNumber, user),
       this.activitiesService.getActivity(application.activityId, user),
-      this.activitiesService.fetchActivityWaitlist(application.scheduleId, user),
+      this.activitiesService.fetchActivityWaitlist(application.scheduleId, false, user),
     ])
 
     const isMostRecent =

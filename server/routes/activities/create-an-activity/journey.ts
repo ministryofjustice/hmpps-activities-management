@@ -33,7 +33,7 @@ export type CreateAnActivityJourney = {
   attendanceRequired?: boolean
   paid?: boolean
   pay?: ActivityPay[]
-  payChange?: ActivityPayHistory[]
+  payChange?: Omit<ActivityPayHistory, 'id'>[]
   flat?: ActivityPay[]
   qualificationOption?: string
   educationLevels?: Array<{

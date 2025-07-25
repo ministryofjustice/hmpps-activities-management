@@ -14,7 +14,7 @@ export default class ConfirmationRoutes {
       .then(a => a.schedules[0].activity)
 
     const currentWaitlist = await this.activitiesService
-      .fetchActivityWaitlist(scheduleId, user)
+      .fetchActivityWaitlist(scheduleId, false, user)
       .then(waitlist => waitlist.filter(w => w.status === 'PENDING' || w.status === 'APPROVED'))
 
     res.render('pages/activities/waitlist-application/confirmation', {

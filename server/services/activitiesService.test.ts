@@ -747,9 +747,9 @@ describe('Activities Service', () => {
     it('should call the api client to fetch the waitlist applications for an activity', async () => {
       const response = [{ id: 12345 } as WaitingListApplication]
 
-      when(activitiesApiClient.fetchActivityWaitlist).calledWith(1, user).mockResolvedValue(response)
+      when(activitiesApiClient.fetchActivityWaitlist).calledWith(1, true, user).mockResolvedValue(response)
 
-      const actualResult = await activitiesService.fetchActivityWaitlist(1, user)
+      const actualResult = await activitiesService.fetchActivityWaitlist(1, true, user)
 
       expect(actualResult).toEqual(response)
     })

@@ -662,9 +662,14 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  async fetchActivityWaitlist(scheduleId: number, user: ServiceUser): Promise<WaitingListApplication[]> {
+  async fetchActivityWaitlist(
+    scheduleId: number,
+    includeNonAssociationsCheck: boolean,
+    user: ServiceUser,
+  ): Promise<WaitingListApplication[]> {
     return this.get({
       path: `/schedules/${scheduleId}/waiting-list-applications`,
+      query: { includeNonAssociationsCheck },
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })

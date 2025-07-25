@@ -86,6 +86,7 @@ const mockActivity: Activity = {
   outsideWork: false,
   paid: false,
   pay: [],
+  payChange: [],
   payPerSession: undefined,
   pieceWork: false,
   prisonCode: '',

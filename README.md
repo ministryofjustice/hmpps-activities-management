@@ -13,6 +13,24 @@ This service requires the following dependent services:
 * `prisoner-offender-search` - prisoner search API
 * `prison-api` - prisoner detail API
 
+## Generating Open API Types
+
+There are various services which should have their types regenerated:
+
+```
+./generate-activities-types.sh
+./generate-alerts-types.sh
+./generate-book-a-video-link-api-types.sh
+./generate-case-note-types.sh
+./generate-incentives-api-types.sh
+./generate-manage-users-api-types.sh
+./generate-nomis-user-api-types.sh
+./generate-non-associations-types.sh
+./generate-prison-api-types.sh
+./generate-prison-register-types.sh
+./generate-prisoner-offender-search-types.sh
+```
+
 ## Alerts
 
 - The icons for badges can be obtained from the `digital-prison-services` repository [here](https://github.com/ministryofjustice/digital-prison-services/tree/main/static/images).
