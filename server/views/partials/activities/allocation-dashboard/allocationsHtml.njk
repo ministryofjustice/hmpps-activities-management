@@ -109,13 +109,13 @@
         </div>
 
         <div class="govuk-button-group">
-            {{ govukButton({
-                        text: "Allocate to an activity",
-                        href:'/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/activity-search',
-                        attributes: {
-                            "data-qa": ""
-                        }
-                    }) }}
+                {{ govukButton({
+                            text: "Allocate to an activity",
+                            href:'/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/waitlist-allocation' if approvedPendingWaitlist.length else '/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/select-activity',
+                            attributes: {
+                                "data-qa": ""
+                            }
+                }) }}
             {% if allocationsData | length == suspendedAllocationRows | length or not allocationsData %}
             {% else %}
             {{ govukButton({
@@ -130,7 +130,7 @@
             {% if allocationsData | length == suspendedAllocationRows | length or not allocationsData %}
             {% else %}
             <p class="govuk-body">
-                <a class="govuk-link govuk-link--no-visited-state" href="{{ prisonerUrl }}/prisoner/{{ session.req.params.prisonerNumber }}/schedule" class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ prisonerName }} schedule(opens in new tab)</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="{{ prisonerUrl }}/prisoner/{{ session.req.params.prisonerNumber }}/schedule" class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ prisonerName }}'s schedule (opens in new tab)</a>
             </p>
             {% endif %}
         </div>

@@ -1,0 +1,45 @@
+[
+  {
+    "id": 213,
+    "activityId": 539,
+    "scheduleId": 518,
+    "allocationId": null,
+    "prisonCode": "MDI",
+    "prisonerNumber": "60995GW2",
+    "bookingId": 1136879,
+    "status": "APPROVED",
+    "statusUpdatedTime": "2025-07-16T15:20:10",
+    "requestedDate": "2025-06-24",
+    "requestedBy": "PRISONER",
+    "comments": "Test",
+    "declinedReason": null,
+    "creationTime": "2025-06-24T08:34:22",
+    "createdBy": "SCH_ACTIVITY",
+    "updatedTime": "2025-07-16T15:20:10",
+    "updatedBy": "DTHOMAS_GEN",
+    "earliestReleaseDate": {
+      "releaseDate": "2018-01-26",
+      "isTariffDate": false,
+      "isIndeterminateSentence": false,
+      "isImmigrationDetainee": false,
+      "isConvictedUnsentenced": false,
+      "isRemand": false
+    },
+    "nonAssociations": false,
+    "activity": {
+      "id": 539,
+      "activityName": "A Wing Cleaner 2",
+      "category": {
+        "id": 3,
+        "code": "SAA_PRISON_JOBS",
+        "name": "Prison jobs",
+        "description": "Such as kitchen, cleaning, gardens or other maintenance and services to keep the prison running"
+      },
+      "capacity": 8,
+      "allocated": 4,
+      "waitlisted": 3,
+      "createdTime": "2023-10-23T09:59:24",
+      "activityState": "LIVE"
+    }
+  }
+]

@@ -31,6 +31,7 @@
                     {% if activitiesPresentToDeallocate %}
                         <li><a href={{ deallocationHref }} class='govuk-link'>take {{ prisonerName }} off {{ deallocationText }}</li>
                     {% endif %}
+                    {% if prisonerAllocationsEnabled %}<li><a href="/activities/prisoner-allocations/{{ prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>check and manage {{ prisonerName }} allocations</a></li>{% endif %}
                     <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>
                     <li><a href="/activities/allocation-dashboard" class='govuk-link'>find other activities with vacancies</a></li>
                 </ul>

@@ -4,13 +4,23 @@ import validationMiddleware from '../../../middleware/validationMiddleware'
 import PrisonerAllocationsHandler from './handlers/prisonerAllocations'
 import NonAssociationsHandler from './handlers/nonAssociations'
 import populatePrisonerProfile from '../../../middleware/populatePrisonerProfile'
+import PrisonerWaitlistHandler, { SelectWailistOptions } from './handlers/prisonerWaitlistAllocations'
+import ActivityAllocationHandler, { FromActivityList } from './handlers/prisonerActivityAllocations'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
+import PendingWaitlistHandler, { allocateOption } from './handlers/pendingWaitlistAllocations'
 
-export default function Index({ activitiesService, prisonService, nonAssociationsService }: Services): Router {
+export default function Index({
+  activitiesService,
+  prisonService,
+  nonAssociationsService,
+  tokenStore,
+}: Services): Router {
   const router = Router({ mergeParams: true })
   const getWithProfile = (path: string, handler: RequestHandler) =>
     router.get(path, populatePrisonerProfile(prisonService), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), handler)
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
+  const get = (path: string, handler: RequestHandler) => router.get(path, setUpJourneyData(tokenStore), handler)
 
   const prisonerAllocationsHandler = new PrisonerAllocationsHandler(
     activitiesService,
@@ -23,9 +33,19 @@ export default function Index({ activitiesService, prisonService, nonAssociation
     nonAssociationsService,
   )
 
+  const activityAllocationHandler = new ActivityAllocationHandler(activitiesService)
+  const pendingWaitlistHandler = new PendingWaitlistHandler(activitiesService, prisonService)
+  const prisonerWaitlistHandler = new PrisonerWaitlistHandler(activitiesService, prisonService)
+
   getWithProfile('/:prisonerNumber', prisonerAllocationsHandler.GET)
   post('/:prisonerNumber', prisonerAllocationsHandler.POST)
   getWithProfile('/:prisonerNumber/non-associations', prisonerNonAssociationsHandler.GET)
+  get('/:prisonerNumber/select-activity', activityAllocationHandler.GET)
+  post('/:prisonerNumber/select-activity', activityAllocationHandler.POST, FromActivityList)
+  get('/:prisonerNumber/waitlist-allocation', prisonerWaitlistHandler.GET)
+  post('/:prisonerNumber/waitlist-allocation', prisonerWaitlistHandler.POST, SelectWailistOptions)
+  get('/:prisonerNumber/pending-application', pendingWaitlistHandler.GET)
+  post('/:prisonerNumber/pending-application', pendingWaitlistHandler.POST, allocateOption)
 
   return router
 }

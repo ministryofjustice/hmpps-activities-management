@@ -22,6 +22,16 @@ export default class PrisonerAllocationsHandler {
     const prisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
     const prisonerAllocations = await this.activitiesService.getActivePrisonPrisonerAllocations([prisonerNumber], user)
     const allocationsData = prisonerAllocations[0]?.allocations.flat(1)
+    const approvedPendingWaitlist = await this.activitiesService
+      .getWaitlistApplicationsForPrisoner(user.activeCaseLoadId, prisonerNumber, user)
+      .then(searchResults =>
+        searchResults.content.map(applications => ({
+          ...applications,
+        })),
+      )
+      .then(applications =>
+        applications.filter(waitlist => waitlist.status === 'PENDING' || waitlist.status === 'APPROVED'),
+      )
 
     const activeAllocations = allocationsData?.filter(all => !all.plannedSuspension)
 
@@ -37,6 +47,7 @@ export default class PrisonerAllocationsHandler {
       allocationsData,
       activeAllocationIdsForSuspending: activeAllocations?.map(allocation => allocation.id),
       locationStatus: getLocationStatus(prisoner),
+      approvedPendingWaitlist,
     })
   }
 
