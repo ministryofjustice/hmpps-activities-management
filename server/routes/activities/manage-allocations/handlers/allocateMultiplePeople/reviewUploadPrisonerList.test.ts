@@ -23,6 +23,7 @@ const activity: Activity = {
   outsideWork: false,
   paid: true,
   pay: [],
+  payChange: [],
   payPerSession: undefined,
   pieceWork: false,
   prisonCode: '',

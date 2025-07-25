@@ -46,14 +46,17 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
   const locations = [
     {
       id: 26152,
+      dpsLocationId: '11111111-1111-1111-1111-111111111111',
       description: 'Chapel',
     },
     {
       id: 26149,
+      dpsLocationId: '22222222-2222-2222-2222-222222222222',
       description: 'Gym',
     },
     {
       id: 26151,
+      dpsLocationId: '33333333-3333-3333-3333-333333333333',
       description: 'Library',
     },
   ] as AppointmentLocationSummary[]
@@ -204,7 +207,6 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
           {
             startDate: formatIsoDate(today),
             timeSlots: [],
-            internalLocationId: null,
             createdBy: null,
           },
           user,
@@ -239,7 +241,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         startDate: formatIsoDate(today),
         timeSlots: ['PM'],
         appointmentName: 'Medical - Doctor',
-        locationId: '26151',
+        locationId: '33333333-3333-3333-3333-333333333333',
         prisonerNumber: 'A1111AA',
         createdBy: user.username,
       }
@@ -250,7 +252,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
           {
             startDate: formatIsoDate(today),
             timeSlots: ['PM'],
-            internalLocationId: 26151,
+            dpsLocationId: '33333333-3333-3333-3333-333333333333',
             createdBy: user.username,
           },
           user,
@@ -265,7 +267,7 @@ describe('Route Handlers - Appointments Management - Search Results', () => {
         appointmentNameFilters,
         appointmentName: 'Medical - Doctor',
         locations,
-        locationId: '26151',
+        locationId: '33333333-3333-3333-3333-333333333333',
         prisonerNumber: 'A1111AA',
         createdBy: user.username,
         results: [appointment2, appointment3],
