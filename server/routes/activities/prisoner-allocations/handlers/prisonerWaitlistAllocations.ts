@@ -60,22 +60,28 @@ export default class PrisonerWaitlistHandler {
     if (waitlistScheduleId === '' || waitlistScheduleId === undefined) {
       const activity = await this.activitiesService.getActivity(activityId, user)
       const activityScheduleId = getScheduleIdFromActivity(activity)
-      const matchingApplication = waitlistApplicationData[activityScheduleId]
+      const matchingApplication = waitlistApplicationData.filter(
+        applications => applications.scheduleId === activityScheduleId.toString(),
+      )
 
-      if (matchingApplication && matchingApplication.status === 'PENDING') {
+      if (matchingApplication.length > 0 && matchingApplication[0].status === 'PENDING') {
         return res.redirect(`pending-application`)
       }
-      return res.redirect(`/activities/allocations/create/prisoner/${prisonerNumber}?scheduleId=${activityScheduleId}`)
+      return res.redirect(`/activities/allocations/create/prisoner/${prisonerNumber}?scheduleId=${+activityScheduleId}`)
     }
 
+    const selectedApplication = waitlistApplicationData.filter(
+      application => application.scheduleId === waitlistScheduleId,
+    )
+
     req.journeyData.prisonerAllocationsJourney = {
-      activityName: waitlistApplicationData[waitlistScheduleId].activityName,
-      status: waitlistApplicationData[waitlistScheduleId].status,
-      scheduleId: waitlistScheduleId,
-      applicationId: waitlistApplicationData[waitlistScheduleId].id,
-      applicationDate: waitlistApplicationData[waitlistScheduleId].requestedDate,
-      requestedBy: waitlistApplicationData[waitlistScheduleId].requestedBy,
-      comments: waitlistApplicationData[waitlistScheduleId].comments,
+      activityName: selectedApplication[0].activityName,
+      status: selectedApplication[0].status,
+      scheduleId: selectedApplication[0].scheduleId,
+      applicationId: selectedApplication[0].id,
+      applicationDate: selectedApplication[0].requestedDate,
+      requestedBy: selectedApplication[0].requestedBy,
+      comments: selectedApplication[0].comments,
     }
 
     if (req.journeyData.prisonerAllocationsJourney.status === 'PENDING') {

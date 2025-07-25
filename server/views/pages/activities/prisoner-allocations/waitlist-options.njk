@@ -25,13 +25,14 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
             {% set waitlistOptions = [] %}
             {% for application in approvedPendingWaitlist %}
-                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][activityName]" }}" value="{{ application.activity.activityName }}"/>   
-                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][id]" }}" value="{{ application.id }}"/>
-                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][status]" }}" value="{{ application.status }}"/>
-                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][scheduleId]" }}" value="{{ application.scheduleId }}"/>
-                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][requestedDate]" }}" value="{{ application.requestedDate }}"/>
-                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][requestedBy]" }}" value="{{ application.requestedBy }}"/>
-                <input type="hidden" name="{{ "waitlistApplicationData[" + application.scheduleId + "][comments]" }}" value="{{ application.comments }}"/>
+            {% set applicationIndex = loop.index0 %}
+                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][activityName]" }}" value="{{ application.activity.activityName }}"/>   
+                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][id]" }}" value="{{ application.id }}"/>
+                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][status]" }}" value="{{ application.status }}"/>
+                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][scheduleId]" }}" value="{{ application.scheduleId }}"/>
+                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][requestedDate]" }}" value="{{ application.requestedDate }}"/>
+                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][requestedBy]" }}" value="{{ application.requestedBy }}"/>
+                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][comments]" }}" value="{{ application.comments }}"/>
                 {% if application.status == "APPROVED" and application.statusUpdatedTime %}
                         {% set applicationStatus = application.status | title + " " + application.statusUpdatedTime | toDateString | formatDate('d MMMM yyyy') %}
                     {% elif application.status == "APPROVED" %}

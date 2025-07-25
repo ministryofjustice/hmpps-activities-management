@@ -369,26 +369,26 @@ describe('Route Handlers - Prisoner Allocations', () => {
       config.prisonerAllocationsEnabled = true
       req.body = {
         waitlistScheduleId: 518,
-        waitlistApplicationData: {
-          '89': {
+        waitlistApplicationData: [
+          {
             activityName: 'Computer Skills',
             id: '217',
             status: 'PENDING',
-            scheduleId: '89',
+            scheduleId: 89,
             requestedDate: '2025-07-03',
             requestedBy: 'PRISONER',
             comments: '',
           },
-          '518': {
+          {
             activityName: 'A Wing Cleaner 2',
             id: '213',
             status: 'APPROVED',
-            scheduleId: '518',
+            scheduleId: 518,
             requestedDate: '2025-06-24',
             requestedBy: 'PRISONER',
             comments: 'Test',
           },
-        },
+        ],
       }
 
       await handler.POST(req, res)
@@ -402,8 +402,8 @@ describe('Route Handlers - Prisoner Allocations', () => {
       req.body = {
         activityId: 539,
         waitlistScheduleId: '',
-        waitlistApplicationData: {
-          '89': {
+        waitlistApplicationData: [
+          {
             activityName: 'Computer Skills',
             id: '217',
             status: 'PENDING',
@@ -412,7 +412,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
             requestedBy: 'PRISONER',
             comments: '',
           },
-          '518': {
+          {
             activityName: 'A Wing Cleaner 2',
             id: '213',
             status: 'APPROVED',
@@ -421,7 +421,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
             requestedBy: 'PRISONER',
             comments: 'Test',
           },
-        },
+        ],
       }
 
       const mockActivity = {
@@ -447,8 +447,8 @@ describe('Route Handlers - Prisoner Allocations', () => {
       req.body = {
         activityId: 539,
         waitlistScheduleId: undefined,
-        waitlistApplicationData: {
-          '89': {
+        waitlistApplicationData: [
+          {
             activityName: 'Computer Skills',
             id: '217',
             status: 'PENDING',
@@ -457,7 +457,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
             requestedBy: 'PRISONER',
             comments: '',
           },
-          '518': {
+          {
             activityName: 'A Wing Cleaner 2',
             id: '213',
             status: 'APPROVED',
@@ -466,7 +466,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
             requestedBy: 'PRISONER',
             comments: 'Test',
           },
-        },
+        ],
       }
 
       const activity = {
