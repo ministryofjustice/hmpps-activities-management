@@ -1,10 +1,11 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsEnum } from 'class-validator'
-import { addDays } from 'date-fns'
+import { addDays, isPast, isToday } from 'date-fns'
 import { DeallocateTodayOption } from '../journey'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import config from '../../../../config'
+import { parseDate } from '../../../../utils/utils'
 
 export class DeallocateToday {
   @Expose()
@@ -20,7 +21,17 @@ export default class DeallocateTodayOptionRoutes {
   constructor() {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/activities/manage-allocations/deallocate-today-option')
+    let nextAllocationToday = false
+    const nextAvailableInstance = req.session.allocateJourney.scheduledInstance || null
+    if (nextAvailableInstance) {
+      const nextSessionDateAndTime = parseDate(
+        `${nextAvailableInstance.date}T${nextAvailableInstance.startTime}`,
+        "yyyy-MM-dd'T'HH:mm",
+      )
+      nextAllocationToday = isToday(nextSessionDateAndTime) && !isPast(nextSessionDateAndTime)
+    }
+
+    res.render('pages/activities/manage-allocations/deallocate-today-option', { nextAllocationToday })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

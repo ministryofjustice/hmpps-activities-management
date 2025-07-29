@@ -31,7 +31,9 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocate-today-option')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocate-today-option', {
+        nextAllocationToday: false,
+      })
     })
   })
 
