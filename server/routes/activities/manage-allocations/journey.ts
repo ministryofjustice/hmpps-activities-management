@@ -87,6 +87,7 @@ export enum StartDateOption {
 
 export enum DeallocateTodayOption {
   TODAY = 'TODAY',
+  EOD = 'EOD',
   FUTURE_DATE = 'FUTURE_DATE',
 }
 

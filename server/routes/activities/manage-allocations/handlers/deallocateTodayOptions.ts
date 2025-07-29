@@ -1,14 +1,19 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsEnum } from 'class-validator'
+import { addDays } from 'date-fns'
 import { DeallocateTodayOption } from '../journey'
-import { formatIsoDate } from '../../../../utils/datePickerUtils'
+import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import config from '../../../../config'
 
 export class DeallocateToday {
   @Expose()
-  @IsEnum(DeallocateTodayOption, { message: 'Select whether the allocation should end today or in the future' })
+  @IsEnum(DeallocateTodayOption, { message: 'Select when you want this allocation to end' })
   @Transform(({ value }) => DeallocateTodayOption[value])
   deallocateTodayOption: DeallocateTodayOption
+
+  @Transform(({ value }) => parseDatePickerDate(value))
+  endDate: Date
 }
 
 export default class DeallocateTodayOptionRoutes {
@@ -19,12 +24,38 @@ export default class DeallocateTodayOptionRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { deallocateTodayOption } = req.body
+    const { deallocateTodayOption, endDate } = req.body
     req.session.allocateJourney.deallocateTodayOption = deallocateTodayOption
-    if (deallocateTodayOption === DeallocateTodayOption.TODAY) {
-      req.session.allocateJourney.endDate = formatIsoDate(new Date())
-      return res.redirect('reason')
+
+    switch (deallocateTodayOption) {
+      case DeallocateTodayOption.EOD:
+        req.session.allocateJourney.endDate = formatIsoDate(addDays(new Date(), 1))
+        break
+      case DeallocateTodayOption.TODAY:
+        req.session.allocateJourney.endDate = formatIsoDate(new Date())
+        break
+      case DeallocateTodayOption.FUTURE_DATE:
+        req.session.allocateJourney.endDate = formatIsoDate(endDate)
+        break
+      default:
+        break
     }
-    return res.redirect('end-date')
+
+    if (req.routeContext.mode === 'remove') {
+      return res.redirectOrReturn(`reason`)
+    }
+
+    if (req.session.allocateJourney.activity.paid) {
+      if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
+        if (req.query.preserveHistory) return res.redirect('multiple/check-answers')
+        return res.redirectOrReturn('multiple/pay-band-multiple')
+      }
+      return res.redirectOrReturn('pay-band')
+    }
+
+    if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
+      return res.redirectOrReturn('multiple/pay-band-multiple')
+    }
+    return res.redirectOrReturn('exclusions')
   }
 }
