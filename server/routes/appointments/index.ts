@@ -24,7 +24,7 @@ export default function routes(services: Services): Router {
   router.use(rolloutMiddleware(serviceName))
 
   router.use('/*allAppointments', (req, res, next) => {
-    if (req.path !== '/') {
+    if (Object.keys(req.params).length) {
       return addServiceReturnLink('Go to all appointments tasks', '/appointments')(req, res, next)
     }
     return next()
