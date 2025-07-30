@@ -11,7 +11,6 @@ import getCandidates from '../../../fixtures/activitiesApi/getCandidates.json'
 
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
-import EndDatePage from '../../../pages/allocateToActivity/endDate'
 import ActivitiesDashboardPage from '../../../pages/allocateToActivity/activitiesDashboard'
 import CheckAnswersPage from '../../../pages/allocateToActivity/checkAnswers'
 import ConfirmationPage from '../../../pages/allocateToActivity/confirmation'
@@ -71,10 +70,11 @@ context('Deallocation from activity', () => {
       allocationDashboardPage.selectAllocatedPrisonerByName('Body, No')
       allocationDashboardPage.deallocateSelectedPrisoners()
 
-      const endDatePage = Page.verifyOnPage(EndDatePage)
+      const deallocateTodayOptionPage = Page.verifyOnPage(DeallocateTodayOptionPage)
+      deallocateTodayOptionPage.selectDeallocateInFuture()
       const endDate = addMonths(new Date(), 8)
-      endDatePage.selectDatePickerDate(endDate)
-      endDatePage.continue()
+      deallocateTodayOptionPage.selectDatePickerDate(endDate)
+      deallocateTodayOptionPage.continue()
 
       const deallocationReasonPage = Page.verifyOnPage(DeallocationReasonPage)
       deallocationReasonPage.selectDeallocationReason('Withdrawn by staff')
