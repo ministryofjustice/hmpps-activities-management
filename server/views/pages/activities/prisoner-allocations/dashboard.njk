@@ -11,6 +11,8 @@
 
 {% set pageTitle = applicationName + " - Prisoner Allocations" %}
 {% set pageId = 'prisoner-allocations-dashboard' %}
+{% set jsBackLink = true %}
+
 {% set prisonerName = prisoner | firstNameLastName | toTitleCase %}
 
 {% block content %}

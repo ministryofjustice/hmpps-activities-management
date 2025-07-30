@@ -49,6 +49,9 @@ describe('Route Handlers - Allocation dashboard', () => {
       params: {
         allocationId: 1,
       },
+      query: {
+        activityAllocationsBtn: 'true',
+      },
     } as unknown as Request
   })
 
@@ -239,6 +242,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         suspensionCaseNote: {
           text: 'test case note',
         },
+        activityAllocationsBtn: 'true',
       })
     })
 
@@ -372,6 +376,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         suspensionCaseNote: {
           text: 'test case note',
         },
+        activityAllocationsBtn: 'true',
       })
     })
 
@@ -441,6 +446,9 @@ describe('Route Handlers - Allocation dashboard', () => {
       req = {
         params: {
           allocationId: 2,
+        },
+        query: {
+          activityAllocationsBtn: undefined,
         },
       } as unknown as Request
 
@@ -547,6 +555,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         suspensionCaseNote: {
           text: 'test case note',
         },
+        activityAllocationsBtn: undefined,
       })
     })
   })
