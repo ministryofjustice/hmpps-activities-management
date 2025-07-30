@@ -1,7 +1,7 @@
 # Per environment values which override defaults in hmpps-activities-management/values.yaml
 
 generic-service:
-  replicaCount: 6
+  replicaCount: 5
 
   resources:
     requests:

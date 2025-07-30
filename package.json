@@ -95,7 +95,7 @@
     "csv-parse": "^6.1.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
-    "dotenv": "^17.2.0",
+    "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "express-prom-bundle": "^8.0.0",
     "express-session": "^1.18.2",
@@ -112,9 +112,9 @@
     "openapi-typescript": "^7.8.0",
     "passport": "^0.7.0",
     "passport-oauth2": "^1.8.0",
-    "redis": "^5.6.0",
+    "redis": "^5.6.1",
     "reflect-metadata": "^0.2.2",
-    "superagent": "^10.2.2",
+    "superagent": "^10.2.3",
     "url-value-parser": "^2.2.0",
     "uuid": "^11.1.0"
   },
@@ -148,7 +148,7 @@
     "cheerio": "^1.1.2",
     "chokidar": "^3.6.0",
     "concurrently": "^9.2.0",
-    "cypress": "^14.5.2",
+    "cypress": "^14.5.3",
     "cypress-axe": "^1.6.0",
     "cypress-circleci-reporter": "^0.3.0",
     "cypress-file-upload": "^5.0.8",
@@ -170,7 +170,7 @@
     "prettier": "^3.6.2",
     "prettier-plugin-jinja-template": "^2.1.0",
     "sinon": "^21.0.0",
-    "supertest": "^7.1.1",
+    "supertest": "^7.1.4",
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
@@ -178,8 +178,8 @@
   "overrides": {
     "undici": "~6.21.3",
     "serialize-javascript": "~6.0.2",
-    "@babel/runtime": "~7.27.6",
-    "@babel/helpers": "~7.27.6",
+    "@babel/runtime": "~7.28.2",
+    "@babel/helpers": "~7.28.2",
     "@jgoz/esbuild-plugin-typecheck": {
       "esbuild": "$esbuild"
     }
