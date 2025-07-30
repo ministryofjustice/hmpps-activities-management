@@ -24,23 +24,21 @@
                 {% endif %}
             {% endset %}
             {% set suspensionHtml %}
-                <ul class='govuk-list'>
-                    <li><a href='/activities/allocations/view/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>Edit or suspend allocation</a></li>
+                <ul class='govuk-list govuk-!-text-align-right'>
+                    <li><a href='/activities/allocations/view/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state'>Edit or suspend allocation</a></li>
                 </ul>
             {% endset %}
             {% set removeHtml %}
-                <ul class='govuk-list'>
+                <ul class='govuk-list govuk-!-text-align-right'>
                     {% if allocation.endDate %}
-                        <li><a href={{ removeEndDateHref }} class='govuk-link govuk-link--no-visited-state' target='_blank'>Remove end date</a></li>
+                        <li><a href={{ removeEndDateHref }} class='govuk-link govuk-link--no-visited-state'>Remove end date</a></li>
                     {% else %}
-                        <li><a href={{ deallocationHref }} class='govuk-link govuk-link--no-visited-state' target='_blank'>Remove from activity</a></li>
+                        <li><a href={{ deallocationHref }} class='govuk-link govuk-link--no-visited-state'>Remove from activity</a></li>
                     {% endif %}
                 </ul>
             {% endset %}   
         {% if not allocation.plannedSuspension %}
-            {% set activeAllocationRows = (activeAllocationRows.push({
-                value: allocation.allocationId,
-                items: [
+            {% set activeAllocationRows = (activeAllocationRows.push([
                     {
                         html: activityNameHtml,
                         attributes: {
@@ -65,8 +63,7 @@
                     {
                         html: removeHtml
                     }
-                ]
-            }), activeAllocationRows) %}
+            ]), activeAllocationRows) %}
         {% endif %}
     {% endfor %}
 
@@ -75,7 +72,7 @@
         {% if allocation.plannedSuspension %}
             {% set suspendedAllocationRows = (suspendedAllocationRows.push([
             {
-                html: '<a class=govuk-link--no-visited-state href=/activities/allocation-dashboard/'+allocation.activityId+'>' +allocation.activitySummary+'</a>',
+                html: '<a class=govuk-link--no-visited-state target=_blank href=/activities/allocation-dashboard/'+allocation.activityId+'>' +allocation.activitySummary+'</a>',
                 classes: "govuk-link--no-visited-state" 
             },
             {
@@ -109,13 +106,13 @@
         </div>
 
         <div class="govuk-button-group">
-            {{ govukButton({
-                        text: "Allocate to an activity",
-                        href:'/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/activity-search',
-                        attributes: {
-                            "data-qa": ""
-                        }
-                    }) }}
+                {{ govukButton({
+                            text: "Allocate to an activity",
+                            href:'/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/waitlist-allocation' if approvedPendingWaitlist.length else '/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/select-activity',
+                            attributes: {
+                                "data-qa": ""
+                            }
+                }) }}
             {% if allocationsData | length == suspendedAllocationRows | length or not allocationsData %}
             {% else %}
             {{ govukButton({
@@ -130,13 +127,13 @@
             {% if allocationsData | length == suspendedAllocationRows | length or not allocationsData %}
             {% else %}
             <p class="govuk-body">
-                <a class="govuk-link govuk-link--no-visited-state" href="{{ prisonerUrl }}/prisoner/{{ session.req.params.prisonerNumber }}/schedule" class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ prisonerName }} schedule(opens in new tab)</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="{{ prisonerUrl }}/prisoner/{{ session.req.params.prisonerNumber }}/schedule" class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ prisonerName }}'s schedule (opens in new tab)</a>
             </p>
             {% endif %}
         </div>
 
         {% if allocationsData | length != suspendedAllocationRows | length %}
-            {{ stickySelect({
+            {{ govukTable({
                 idPrefix: 'allocations',
                 caption: "Current allocations",
                 captionClasses: "govuk-visually-hidden",

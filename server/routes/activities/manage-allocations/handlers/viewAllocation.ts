@@ -22,6 +22,7 @@ export default class ViewAllocationRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { allocationId } = req.params
+    const { activityAllocationsBtn } = req.query
 
     const allocation = await this.activitiesService.getAllocation(+allocationId, user)
 
@@ -76,6 +77,7 @@ export default class ViewAllocationRoutes {
       userMap,
       suspensionCaseNote,
       activityIsPaid: activity?.paid,
+      activityAllocationsBtn,
     })
   }
 }

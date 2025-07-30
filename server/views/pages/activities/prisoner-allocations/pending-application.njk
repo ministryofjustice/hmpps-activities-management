@@ -1,0 +1,81 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Pending application" %}
+{% set pageId = 'Pending-application' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <span class="govuk-caption-l">{{ prisonerAllocationsJourney.activityName }}</span>
+                <h1 class="govuk-heading-l">{{ firstName | title }} {{ lastName | title }}'s application</h1>
+
+                 {{ govukSummaryList({
+                    caption: "This application has not been approved yet.",
+                    captionClasses: "govuk-body govuk-!-font-weight-regular",
+                    attributes: { "data-qa": "Pending-application" },
+                    rows: [
+                        {   
+                            key: {
+                                text: "Requester"
+                            },
+                            value: {
+                                text: prisonerAllocationsJourney.requestedBy | title
+                            }
+                        },
+                        {   
+                            key: {
+                                text: "Date of request"
+                            },
+                            value: {
+                                text: prisonerAllocationsJourney.applicationDate | formatDate('d MMMM yyyy')
+                            }
+                        },
+                        {   
+                            key: {
+                                text: "Comments"
+                            },
+                            value: {
+                                text: "None" if prisonerAllocationsJourney.comments === '' else prisonerAllocationsJourney.comments
+                            }
+                        }    
+                    ]
+                }) }}
+                {{ govukRadios({
+                        fieldset: {
+                        legend: {
+                            text: "Do you want to approve " + firstName | title + ' ' + lastName | title + "'s application",
+                            isPageHeading: false,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    name: "options",
+                    errorMessage: validationErrors | findError('Pending-application'),
+                    items: [
+                    {
+                     text: 'Yes, continue to allocate them and approve the application',
+                     value: YesNo.YES
+                    },
+                    {
+                     text: "No, go back to " + firstName | title + ' ' + lastName | title + "'s allocations",
+                     value: YesNo.NO
+                    }
+                    ]
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
