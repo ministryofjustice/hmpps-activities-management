@@ -119,8 +119,8 @@ export interface components {
     /** @description Case Note */
     CaseNote: {
       /**
-       * @description Case Note Id (unique)
-       * @example 12311312
+       * @description Case Note UUID (unique)
+       * @example b7602cc8-e769-4cbb-8194-62d8e655992a
        */
       caseNoteId: string
       /**
@@ -174,6 +174,11 @@ export interface components {
        */
       authorUserId: string
       /**
+       * @description Username of case note author - username of nomis users and auth users
+       * @example USER1
+       */
+      authorUsername: string
+      /**
        * @description Case Note Text
        * @example This is some text
        */
@@ -183,6 +188,11 @@ export interface components {
        * @example MDI
        */
       locationId?: string
+      /**
+       * @description Legacy Case Note Id (unique)
+       * @example 12311312
+       */
+      legacyId?: string
       /**
        * Format: int32
        * @description Delius number representation of the case note id - will be negative for sensitive case note types

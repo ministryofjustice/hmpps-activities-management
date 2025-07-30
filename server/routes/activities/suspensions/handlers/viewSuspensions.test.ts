@@ -61,6 +61,7 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
               prisonPayBand: {},
               plannedSuspension: {
                 caseNoteId: 1,
+                dpsCaseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
                 plannedBy: 'joebloggs',
                 plannedAt: '2024-03-20T17:02:03.652743',
                 paid: false,
@@ -71,7 +72,7 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
               status: PrisonerSuspensionStatus.SUSPENDED,
               prisonPayBand: null,
               plannedSuspension: {
-                caseNote: 1,
+                dpsCaseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
                 plannedBy: 'joebloggs',
                 plannedAt: '2024-03-20T17:02:03.652743',
                 paid: false,
@@ -82,7 +83,8 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
               status: PrisonerSuspensionStatus.SUSPENDED_WITH_PAY,
               prisonPayBand: {},
               plannedSuspension: {
-                caseNote: 2,
+                caseNoteId: 2,
+                dpsCaseNoteId: '41c02efa-a46e-40ef-a2ba-73311e18e51e',
                 plannedBy: 'johnsmith',
                 plannedAt: '2024-03-19T15:35:17.362243',
                 paid: true,
@@ -98,7 +100,12 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
       req.query.allocationId = '2'
 
       when(caseNotesService.getCaseNoteMap).mockResolvedValue(
-        new Map([[1, { caseNoteId: '1', text: 'case note one' } as CaseNote]]),
+        new Map([
+          [
+            'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
+            { caseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29', text: 'case note one' } as CaseNote,
+          ],
+        ]),
       )
 
       when(userService.getUserMap).mockResolvedValue(
@@ -108,7 +115,12 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
       await handler.GET(req, res, next)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/view-suspensions', {
-        caseNotesMap: new Map([[1, { caseNoteId: '1', text: 'case note one' }]]),
+        caseNotesMap: new Map([
+          [
+            'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
+            { caseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29', text: 'case note one' },
+          ],
+        ]),
         userMap: new Map([['joebloggs', { name: 'Joe Bloggs' }]]),
         groupedAllocations: [
           [
@@ -118,6 +130,7 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
               prisonPayBand: {},
               plannedSuspension: {
                 caseNoteId: 1,
+                dpsCaseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
                 plannedBy: 'joebloggs',
                 plannedAt: '2024-03-20T17:02:03.652743',
                 paid: false,
@@ -148,8 +161,14 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
     it("should render the correct view for all of the prisoner's allocations", async () => {
       when(caseNotesService.getCaseNoteMap).mockResolvedValue(
         new Map([
-          [1, { caseNoteId: '1', text: 'case note one' } as CaseNote],
-          [2, { caseNoteId: '2', text: 'case note two' } as CaseNote],
+          [
+            'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
+            { caseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29', text: 'case note one' } as CaseNote,
+          ],
+          [
+            '41c02efa-a46e-40ef-a2ba-73311e18e51e',
+            { caseNoteId: '41c02efa-a46e-40ef-a2ba-73311e18e51e', text: 'case note two' } as CaseNote,
+          ],
         ]),
       )
 
@@ -164,8 +183,14 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/suspensions/view-suspensions', {
         caseNotesMap: new Map([
-          [1, { caseNoteId: '1', text: 'case note one' }],
-          [2, { caseNoteId: '2', text: 'case note two' }],
+          [
+            'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
+            { caseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29', text: 'case note one' },
+          ],
+          [
+            '41c02efa-a46e-40ef-a2ba-73311e18e51e',
+            { caseNoteId: '41c02efa-a46e-40ef-a2ba-73311e18e51e', text: 'case note two' },
+          ],
         ]),
         userMap: new Map([
           ['joebloggs', { name: 'Joe Bloggs' }],
@@ -178,7 +203,8 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
               status: PrisonerSuspensionStatus.SUSPENDED_WITH_PAY,
               prisonPayBand: {},
               plannedSuspension: {
-                caseNote: 2,
+                caseNoteId: 2,
+                dpsCaseNoteId: '41c02efa-a46e-40ef-a2ba-73311e18e51e',
                 plannedBy: 'johnsmith',
                 plannedAt: '2024-03-19T15:35:17.362243',
                 paid: true,
@@ -193,6 +219,7 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
               prisonPayBand: {},
               plannedSuspension: {
                 caseNoteId: 1,
+                dpsCaseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
                 plannedBy: 'joebloggs',
                 plannedAt: '2024-03-20T17:02:03.652743',
                 paid: false,
@@ -204,7 +231,7 @@ describe('Route Handlers - Suspensions - View Suspensions', () => {
               status: PrisonerSuspensionStatus.SUSPENDED,
               prisonPayBand: null,
               plannedSuspension: {
-                caseNote: 1,
+                dpsCaseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
                 plannedBy: 'joebloggs',
                 plannedAt: '2024-03-20T17:02:03.652743',
                 paid: false,
