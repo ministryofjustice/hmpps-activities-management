@@ -249,7 +249,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         })
 
       when(activitiesService.fetchActivityWaitlist)
-        .calledWith(atLeast(1))
+        .calledWith(atLeast(1, true))
         .mockResolvedValue([
           {
             id: 1,

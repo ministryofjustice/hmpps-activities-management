@@ -36,13 +36,15 @@ export default class SearchRoutes {
     const request = {
       startDate,
       timeSlots: timeSlotAsEnum,
-      internalLocationId: locationId ? +locationId : null,
+      dpsLocationId: locationId,
       createdBy: createdBy && createdBy !== 'all' ? createdBy : null,
     } as AppointmentSearchRequest
 
     const [categories, locations, appointments] = await Promise.all([
       this.activitiesService.getAppointmentCategories(user),
-      this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user),
+      this.activitiesService
+        .getAppointmentLocations(user.activeCaseLoadId, user)
+        .then(s => s.sort((a, b) => a.description.localeCompare(b.description))),
       this.activitiesService.searchAppointments(user.activeCaseLoadId, request, user),
     ])
 
