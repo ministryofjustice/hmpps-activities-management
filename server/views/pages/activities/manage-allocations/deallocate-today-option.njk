@@ -22,7 +22,7 @@
         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
     },
     errorMessage: validationErrors | findError('endDate'),
-    value: formResponses.date or date | isoDateToDatePickerDate
+    value: formResponses.endDate or session.allocateJourney.endDate | isoDateToDatePickerDate if (formResponses.deallocateTodayOption == 'FUTURE_DATE' or session.allocateJourney.deallocateTodayOption == 'FUTURE_DATE')
 }) }}
 {% endset %}
 
@@ -53,15 +53,18 @@
                     items: [
                         {
                             value: 'TODAY',
-                            text: "Now - they'll be removed from any sessions later today"
+                            text: "Now - they'll be removed from any sessions later today",
+                            checked: formResponses.deallocateTodayOption == 'TODAY' or session.allocateJourney.deallocateTodayOption == 'TODAY'
                         } if nextAllocationToday,
                         {
                             value: 'EOD',
-                            text: "At the end of today"
+                            text: "At the end of today",
+                            checked: formResponses.deallocateTodayOption == 'EOD' or session.allocateJourney.deallocateTodayOption == 'EOD'
                         },
                         {
                             value: 'FUTURE_DATE',
                             text: "On a different date",
+                            checked: formResponses.deallocateTodayOption == 'FUTURE_DATE' or session.allocateJourney.deallocateTodayOption == 'FUTURE_DATE',
                             hint: {
                                 text: "They'll attend any sessions they're allocated to on this date, then be removed."
                             },

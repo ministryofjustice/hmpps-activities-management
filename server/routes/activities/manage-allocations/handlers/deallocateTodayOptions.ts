@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { IsEnum } from 'class-validator'
+import { IsEnum, IsNotEmpty, ValidateIf } from 'class-validator'
 import { addDays, isPast, isToday } from 'date-fns'
 import { DeallocateTodayOption } from '../journey'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
@@ -13,7 +13,9 @@ export class DeallocateToday {
   @Transform(({ value }) => DeallocateTodayOption[value])
   deallocateTodayOption: DeallocateTodayOption
 
+  @ValidateIf(o => o.deallocateTodayOption === 'FUTURE_DATE')
   @Transform(({ value }) => parseDatePickerDate(value))
+  @IsNotEmpty({ message: 'Select an end date for this allocation' })
   endDate: Date
 }
 
