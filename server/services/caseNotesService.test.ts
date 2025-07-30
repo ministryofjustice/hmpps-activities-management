@@ -26,9 +26,13 @@ describe('Case notes service service', () => {
     it('Retrieves a case note', async () => {
       when(caseNotesApiClient.getCaseNote).mockResolvedValue({ text: 'test case note' } as CaseNote)
 
-      const result = await caseNotesService.getCaseNote('ABC123', 1, user)
+      const result = await caseNotesService.getCaseNote('ABC123', 'b7602cc8-e769-4cbb-8194-62d8e655992a', user)
 
-      expect(caseNotesApiClient.getCaseNote).toHaveBeenCalledWith('ABC123', 1, user)
+      expect(caseNotesApiClient.getCaseNote).toHaveBeenCalledWith(
+        'ABC123',
+        'b7602cc8-e769-4cbb-8194-62d8e655992a',
+        user,
+      )
 
       expect(result.text).toEqual('test case note')
     })
@@ -37,22 +41,57 @@ describe('Case notes service service', () => {
   describe('getCaseNoteMap', () => {
     it('Retrieves a list of case notes associated by case note ID', async () => {
       when(caseNotesApiClient.getCaseNote)
-        .calledWith(atLeast(1))
-        .mockResolvedValue({ caseNoteId: '1', text: 'case note one' } as CaseNote)
+        .calledWith(atLeast('b7602cc8-e769-4cbb-8194-62d8e655992a'))
+        .mockResolvedValue({ caseNoteId: 'b7602cc8-e769-4cbb-8194-62d8e655992a', text: 'case note one' } as CaseNote)
       when(caseNotesApiClient.getCaseNote)
-        .calledWith(atLeast(2))
-        .mockResolvedValue({ caseNoteId: '2', text: 'case note two' } as CaseNote)
+        .calledWith(atLeast('41c02efa-a46e-40ef-a2ba-73311e18e51e'))
+        .mockResolvedValue({ caseNoteId: '41c02efa-a46e-40ef-a2ba-73311e18e51e', text: 'case note two' } as CaseNote)
+      when(caseNotesApiClient.getCaseNote)
+        .calledWith(atLeast('6f1de2dc-0a9f-43cf-b94e-f9b5f408776e'))
+        .mockResolvedValue({ caseNoteId: '6f1de2dc-0a9f-43cf-b94e-f9b5f408776e', text: 'case note three' } as CaseNote)
 
-      const result = await caseNotesService.getCaseNoteMap('ABC123', [1, undefined, 2, 2], user)
+      const result = await caseNotesService.getCaseNoteMap(
+        'ABC123',
+        [
+          'b7602cc8-e769-4cbb-8194-62d8e655992a',
+          undefined,
+          '6f1de2dc-0a9f-43cf-b94e-f9b5f408776e',
+          '41c02efa-a46e-40ef-a2ba-73311e18e51e',
+        ],
+        user,
+      )
 
-      expect(caseNotesApiClient.getCaseNote).toHaveBeenCalledTimes(2)
-      expect(caseNotesApiClient.getCaseNote).toHaveBeenCalledWith('ABC123', 1, user)
-      expect(caseNotesApiClient.getCaseNote).toHaveBeenCalledWith('ABC123', 2, user)
+      expect(caseNotesApiClient.getCaseNote).toHaveBeenCalledTimes(3)
+      expect(caseNotesApiClient.getCaseNote).toHaveBeenCalledWith(
+        'ABC123',
+        'b7602cc8-e769-4cbb-8194-62d8e655992a',
+        user,
+      )
+      expect(caseNotesApiClient.getCaseNote).toHaveBeenCalledWith(
+        'ABC123',
+        '41c02efa-a46e-40ef-a2ba-73311e18e51e',
+        user,
+      )
+      expect(caseNotesApiClient.getCaseNote).toHaveBeenCalledWith(
+        'ABC123',
+        '6f1de2dc-0a9f-43cf-b94e-f9b5f408776e',
+        user,
+      )
 
       expect(result).toEqual(
         new Map([
-          [1, { caseNoteId: '1', text: 'case note one' }],
-          [2, { caseNoteId: '2', text: 'case note two' }],
+          [
+            'b7602cc8-e769-4cbb-8194-62d8e655992a',
+            { caseNoteId: 'b7602cc8-e769-4cbb-8194-62d8e655992a', text: 'case note one' },
+          ],
+          [
+            '41c02efa-a46e-40ef-a2ba-73311e18e51e',
+            { caseNoteId: '41c02efa-a46e-40ef-a2ba-73311e18e51e', text: 'case note two' },
+          ],
+          [
+            '6f1de2dc-0a9f-43cf-b94e-f9b5f408776e',
+            { caseNoteId: '6f1de2dc-0a9f-43cf-b94e-f9b5f408776e', text: 'case note three' },
+          ],
         ]),
       )
     })

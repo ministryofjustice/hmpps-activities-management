@@ -39,7 +39,7 @@
                 {% endset %}
 
                 {% set addedBy = userMap.get(group[0].plannedSuspension.plannedBy) %}
-                {% set suspensionCaseNote = caseNotesMap.get(group[0].plannedSuspension.caseNoteId) %}
+                {% set suspensionCaseNote = caseNotesMap.get(group[0].plannedSuspension.dpsCaseNoteId) %}
 
                 <h2 class='govuk-heading-m'>Suspension added on {{ plannedAt | parseISODate | formatDate("EEEE, d MMMM yyyy 'at' HH:mm") }}</h2>
                 <dl data-qa="suspension-summary" class="govuk-summary-list {{ 'govuk-!-margin-bottom-0' if suspensionCaseNote }}">

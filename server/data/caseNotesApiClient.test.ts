@@ -30,11 +30,12 @@ describe('caseNotesApiClient', () => {
       const response = { data: 'data' }
 
       fakeCaseNotesApi
-        .get('/case-notes/ABCDEFG/123456')
+        .get('/case-notes/ABCDEFG/b7602cc8-e769-4cbb-8194-62d8e655992a')
+        .matchHeader('CaseloadId', '***')
         .matchHeader('authorization', `Bearer accessToken`)
         .reply(200, response)
 
-      const output = await caseNotesApiClient.getCaseNote('ABCDEFG', 123456, user)
+      const output = await caseNotesApiClient.getCaseNote('ABCDEFG', 'b7602cc8-e769-4cbb-8194-62d8e655992a', user)
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
