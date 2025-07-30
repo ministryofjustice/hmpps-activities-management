@@ -5,9 +5,9 @@ export default class DeallocateTodayOptionPage extends Page {
     super('deallocate-today-option-page')
   }
 
-  selectDeallocateToday = () => this.getInputByLabel('Now - they will be removed from any sessions later today').click()
+  selectDeallocateToday = () => this.getInputById('deallocateTodayOption').click()
 
-  selectDeallocateEndOfDay = () => this.getInputByLabel('At the end of today').click()
+  selectDeallocateEndOfDay = () => this.getInputById('deallocateTodayOption-2').click()
 
-  selectDeallocateInFuture = () => this.getInputByLabel('On a different date').click()
+  selectDeallocateInFuture = () => this.getInputById('deallocateTodayOption-3').click()
 }
