@@ -4,7 +4,7 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import DeallocateTodayOptionRoutes, { DeallocateToday } from './deallocateTodayOptions'
 import { DeallocateTodayOption } from '../journey'
-import { formatIsoDate } from '../../../../utils/datePickerUtils'
+import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 
 describe('Route Handlers - Allocation - Deallocate Today option', () => {
   const handler = new DeallocateTodayOptionRoutes()
@@ -15,9 +15,11 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
     res = {
       render: jest.fn(),
       redirect: jest.fn(),
+      redirectOrReturn: jest.fn(),
     } as unknown as Response
 
     req = {
+      routeContext: { mode: 'remove' },
       session: {
         allocateJourney: {
           endDate: '2026-04-24',
@@ -29,7 +31,9 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocate-today-option')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocate-today-option', {
+        nextAllocationToday: false,
+      })
     })
   })
 
@@ -43,19 +47,20 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
 
       expect(req.session.allocateJourney.deallocateTodayOption).toEqual(DeallocateTodayOption.TODAY)
       expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(new Date()))
-      expect(res.redirect).toHaveBeenCalledWith('reason')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('reason')
     })
 
-    it('should redirect to end-date if deallocate today option is is FUTURE_DATE', async () => {
+    it('should redirect to reason if deallocate today option is is FUTURE_DATE', async () => {
       req.body = {
         deallocateTodayOption: 'FUTURE_DATE',
+        endDate: parseDatePickerDate('24/04/2026'),
       }
 
       await handler.POST(req, res)
 
       expect(req.session.allocateJourney.deallocateTodayOption).toEqual(DeallocateTodayOption.FUTURE_DATE)
       expect(req.session.allocateJourney.endDate).toEqual('2026-04-24')
-      expect(res.redirect).toHaveBeenCalledWith('end-date')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('reason')
     })
   })
 
@@ -69,7 +74,7 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'deallocateTodayOption', error: 'Select whether the allocation should end today or in the future' },
+        { property: 'deallocateTodayOption', error: 'Select when you want this allocation to end' },
       ])
     })
   })

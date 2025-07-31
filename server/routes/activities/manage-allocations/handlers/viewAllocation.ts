@@ -58,10 +58,10 @@ export default class ViewAllocationRoutes {
       logger.info(`Handled allocatedBy user ${allocation.allocatedBy} not found.`)
     }
 
-    const suspensionCaseNote = allocation.plannedSuspension?.caseNoteId
+    const suspensionCaseNote = allocation.plannedSuspension?.dpsCaseNoteId
       ? await this.caseNotesService.getCaseNote(
           allocation.prisonerNumber,
-          allocation.plannedSuspension?.caseNoteId,
+          allocation.plannedSuspension?.dpsCaseNoteId,
           user,
         )
       : null

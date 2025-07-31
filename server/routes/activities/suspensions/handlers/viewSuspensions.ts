@@ -5,6 +5,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import CaseNotesService from '../../../../services/caseNotesService'
 import UserService from '../../../../services/userService'
 import { PrisonerSuspensionStatus } from '../../manage-allocations/journey'
+import { Allocation } from '../../../../@types/activitiesAPI/types'
 
 export enum PaidType {
   YES = 'YES',
@@ -39,7 +40,7 @@ export default class ViewSuspensionsRoutes {
     const plannedByUsernames = allocationsWithPaidType.map(a => a.plannedSuspension.plannedBy)
     const userMap = await this.userService.getUserMap(plannedByUsernames, user)
 
-    const caseNoteIds = allocationsWithPaidType.map(a => a.plannedSuspension.caseNoteId)
+    const caseNoteIds = allocationsWithPaidType.map(a => a.plannedSuspension.dpsCaseNoteId)
     const caseNotesMap = await this.caseNotesService.getCaseNoteMap(prisonerNumber, caseNoteIds, user)
 
     const groupedAllocations = Object.values(
@@ -56,7 +57,7 @@ export default class ViewSuspensionsRoutes {
     })
   }
 
-  private getPayTypeForAllocations = allocations => {
+  private getPayTypeForAllocations = (allocations: Allocation[]) => {
     return allocations.map(allocation => {
       if (allocation.status === PrisonerSuspensionStatus.SUSPENDED_WITH_PAY || allocation.plannedSuspension.paid)
         return { ...allocation, paidWhileSuspended: PaidType.YES }

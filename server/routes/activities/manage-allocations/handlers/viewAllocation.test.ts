@@ -111,7 +111,7 @@ describe('Route Handlers - Allocation dashboard', () => {
         } as unknown as Activity)
 
       when(caseNotesService.getCaseNote)
-        .calledWith(atLeast('G4793VF', 10001))
+        .calledWith(atLeast('G4793VF', 'fe8eaa76-a7b1-4479-a0fc-cab287edda29'))
         .mockResolvedValue({ text: 'test case note' } as CaseNote)
     })
 
@@ -137,7 +137,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           startDate: '2022-05-19',
           prisonPayBand: { id: 1 },
           exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
-          plannedSuspension: { plannedBy: 'joebloggs', caseNoteId: 10001 },
+          plannedSuspension: { plannedBy: 'joebloggs', dpsCaseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29' },
           allocatedBy: 'MIGRATION',
           allocatedTime: '2024-05-03T13:22:00',
         } as Allocation)
@@ -154,7 +154,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
           plannedSuspension: {
             plannedBy: 'joebloggs',
-            caseNoteId: 10001,
+            dpsCaseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
           },
           allocatedBy: 'MIGRATION',
           allocatedTime: '2024-05-03T13:22:00',
@@ -268,7 +268,11 @@ describe('Route Handlers - Allocation dashboard', () => {
           startDate: '2022-05-19',
           prisonPayBand: { id: 1 },
           exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
-          plannedSuspension: { plannedBy: 'joebloggs', caseNoteId: 10001 },
+          plannedSuspension: {
+            plannedBy: 'joebloggs',
+            caseNoteId: 10001,
+            dpsCaseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
+          },
           allocatedBy: 'GEOFFT',
           allocatedTime: '2024-05-03T13:22:00',
         } as Allocation)
@@ -286,6 +290,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           plannedSuspension: {
             plannedBy: 'joebloggs',
             caseNoteId: 10001,
+            dpsCaseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
           },
           allocatedBy: 'GEOFFT',
           allocatedTime: '2024-05-03T13:22:00',
@@ -402,7 +407,11 @@ describe('Route Handlers - Allocation dashboard', () => {
           startDate: '2022-05-19',
           prisonPayBand: { id: 1 },
           exclusions: [{ weekNumber: 1, timeSlot: 'AM', monday: true, daysOfWeek: ['MONDAY'] }],
-          plannedSuspension: { plannedBy: 'joebloggs', caseNoteId: 10001 },
+          plannedSuspension: {
+            plannedBy: 'joebloggs',
+            caseNoteId: 10001,
+            dpsCaseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
+          },
           allocatedBy: 'GEOFFT',
           allocatedTime: '2024-05-03T13:22:00',
         } as Allocation)
@@ -465,6 +474,7 @@ describe('Route Handlers - Allocation dashboard', () => {
           plannedSuspension: {
             plannedBy: 'joebloggs',
             caseNoteId: 10001,
+            dpsCaseNoteId: 'fe8eaa76-a7b1-4479-a0fc-cab287edda29',
           },
           allocatedBy: 'GEOFFT',
           allocatedTime: '2024-05-03T13:22:00',

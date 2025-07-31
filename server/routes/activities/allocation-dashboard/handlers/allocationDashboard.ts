@@ -167,7 +167,7 @@ export default class AllocationDashboardRoutes {
       )
     } else {
       res.redirect(
-        `/activities/allocations/remove/end-date?allocationIds=${selectedAllocations}&scheduleId=${getScheduleIdFromActivity(
+        `/activities/allocations/remove/deallocate-today-option?allocationIds=${selectedAllocations}&scheduleId=${getScheduleIdFromActivity(
           activity,
         )}`,
       )

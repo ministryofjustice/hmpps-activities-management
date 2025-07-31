@@ -92,6 +92,7 @@ const getPrisonerAllocations = [
           plannedStartDate: '2024-12-13',
           plannedEndDate: null,
           caseNoteId: null,
+          dpsCaseNoteId: null,
           plannedBy: 'NCLAMP_GEN',
           plannedAt: '2024-12-13T14:40:02.594376',
           paid: true,
@@ -123,6 +124,7 @@ const getPrisonerAllocations = [
           plannedStartDate: '2024-12-12',
           plannedEndDate: toDateString(addDays(new Date(), 3)),
           caseNoteId: null,
+          dpsCaseNoteId: null,
           plannedBy: 'NCLAMP_GEN',
           plannedAt: '2024-12-13T14:40:02.594376',
           paid: false,
@@ -143,6 +145,7 @@ const getPrisonerAllocations = [
           plannedStartDate: '2024-12-11',
           plannedEndDate: null,
           caseNoteId: null,
+          dpsCaseNoteId: null,
           plannedBy: 'NCLAMP_GEN',
           plannedAt: '2024-12-13T14:40:02.594376',
           paid: null,
@@ -174,6 +177,7 @@ const getPrisonerAllocations = [
           plannedStartDate: toDateString(addDays(new Date(), 1)),
           plannedEndDate: null,
           caseNoteId: null,
+          dpsCaseNoteId: null,
           plannedBy: 'NCLAMP_GEN',
           plannedAt: '2024-12-13T14:40:02.594376',
           paid: true,
@@ -213,6 +217,7 @@ const activitiesAllSuspendedTogether = [
           plannedStartDate: '2024-12-13',
           plannedEndDate: null,
           caseNoteId: null,
+          dpsCaseNoteId: null,
           plannedBy: 'NCLAMP_GEN',
           plannedAt: '2024-12-13T14:40:02.594376',
           paid: true,
@@ -233,6 +238,7 @@ const activitiesAllSuspendedTogether = [
           plannedStartDate: '2024-12-13',
           plannedEndDate: null,
           caseNoteId: null,
+          dpsCaseNoteId: null,
           plannedBy: 'NCLAMP_GEN',
           plannedAt: '2024-12-13T14:40:02.594376',
           paid: true,
@@ -298,7 +304,7 @@ context('Suspensions', () => {
     cy.stubEndpoint('GET', '/activities/234/filtered', activityUnpaid as unknown as JSON)
     cy.stubEndpoint('GET', '/activities/123/filtered', activity123 as unknown as JSON)
     cy.stubEndpoint('GET', '/activities/546/filtered', activity546 as unknown as JSON)
-    cy.stubEndpoint('GET', '/prisoner/G0995GW', getInmateDetails)
+    cy.stubEndpoint('GET', '/prisoner/G0995GW', getInmateDetails as unknown as JSON)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', getPrisonerAllocations)
     cy.stubEndpoint('POST', '/allocations/MDI/suspend', {
       prisonerNumber: 'G0995GW',
@@ -724,6 +730,7 @@ context('Bulk suspend/unsuspend', () => {
             plannedStartDate: '2024-12-16',
             plannedEndDate: null,
             caseNoteId: null,
+            dpsCaseNoteId: null,
             plannedBy: 'NCLAMP_GEN',
             plannedAt: '2024-12-16T15:22:50.538551',
             paid: false,
@@ -758,6 +765,7 @@ context('Bulk suspend/unsuspend', () => {
             plannedStartDate: '2024-12-16',
             plannedEndDate: null,
             caseNoteId: null,
+            dpsCaseNoteId: null,
             plannedBy: 'NCLAMP_GEN',
             plannedAt: '2024-12-16T15:22:32.694814',
             paid: true,
@@ -782,6 +790,7 @@ context('Bulk suspend/unsuspend', () => {
             plannedStartDate: '2024-12-16',
             plannedEndDate: null,
             caseNoteId: null,
+            dpsCaseNoteId: null,
             plannedBy: 'NCLAMP_GEN',
             plannedAt: '2024-12-16T15:23:33.734918',
             paid: false,
@@ -813,6 +822,7 @@ context('Bulk suspend/unsuspend', () => {
             plannedStartDate: toDateString(addDays(new Date(), 1)),
             plannedEndDate: null,
             caseNoteId: null,
+            dpsCaseNoteId: null,
             plannedBy: 'NCLAMP_GEN',
             plannedAt: '2024-12-13T14:40:02.594376',
             paid: true,
@@ -827,7 +837,7 @@ context('Bulk suspend/unsuspend', () => {
     cy.task('stubSignIn')
     cy.stubEndpoint('GET', '/activities/234/filtered', activityUnpaid as unknown as JSON)
     cy.stubEndpoint('GET', '/activities/123/filtered', activity123 as unknown as JSON)
-    cy.stubEndpoint('GET', '/prisoner/G0995GW', getInmateDetails)
+    cy.stubEndpoint('GET', '/prisoner/G0995GW', getInmateDetails as unknown as JSON)
     cy.stubEndpoint('POST', '/allocations/MDI/suspend', {
       prisonerNumber: 'G0995GW',
       allocationIds: [1234, 2345],
