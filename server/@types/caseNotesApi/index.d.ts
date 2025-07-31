@@ -189,11 +189,6 @@ export interface components {
        */
       locationId?: string
       /**
-       * @description Legacy Case Note Id (unique)
-       * @example 12311312
-       */
-      legacyId?: string
-      /**
        * Format: int32
        * @description Delius number representation of the case note id - will be negative for sensitive case note types
        * @example -23
