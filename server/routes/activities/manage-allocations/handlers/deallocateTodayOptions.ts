@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsEnum, IsNotEmpty, ValidateIf } from 'class-validator'
-import { addDays, isPast, isToday } from 'date-fns'
+import { isPast, isToday } from 'date-fns'
 import { DeallocateTodayOption } from '../journey'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import config from '../../../../config'
@@ -41,10 +41,8 @@ export default class DeallocateTodayOptionRoutes {
     req.session.allocateJourney.deallocateTodayOption = deallocateTodayOption
 
     switch (deallocateTodayOption) {
-      case DeallocateTodayOption.EOD:
-        req.session.allocateJourney.endDate = formatIsoDate(addDays(new Date(), 1))
-        break
       case DeallocateTodayOption.TODAY:
+      case DeallocateTodayOption.EOD:
         req.session.allocateJourney.endDate = formatIsoDate(new Date())
         break
       case DeallocateTodayOption.FUTURE_DATE:
