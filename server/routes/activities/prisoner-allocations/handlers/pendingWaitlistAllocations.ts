@@ -9,7 +9,12 @@ import { YesNo } from '../../../../@types/activities'
 
 export class allocateOption {
   @Expose()
-  @IsEnum(YesNo, { message: 'Select yes if you want to approve the application and allocate to this activity' })
+  @IsEnum(YesNo, {
+    message: ({ object }) => {
+      const { pathParams } = object as { pathParams: { prisonerNumber: string } }
+      return `Select if you want to approve this application and allocate prisoner ${pathParams.prisonerNumber} or not`
+    },
+  })
   options: YesNo
 }
 export default class PendingWaitlistHandler {

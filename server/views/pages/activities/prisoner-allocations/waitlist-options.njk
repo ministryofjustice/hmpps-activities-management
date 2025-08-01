@@ -34,9 +34,9 @@
                 <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][requestedBy]" }}" value="{{ application.requestedBy }}"/>
                 <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][comments]" }}" value="{{ application.comments }}"/>
                 {% if application.status == "APPROVED" and application.statusUpdatedTime %}
-                        {% set applicationStatus = application.status | title + " " + application.statusUpdatedTime | toDateString | formatDate('d MMMM yyyy') %}
+                        {% set applicationStatus = application.status | title + " on " + application.statusUpdatedTime | toDateString | formatDate('d MMMM yyyy') %}
                     {% elif application.status == "APPROVED" %}
-                        {% set applicationStatus = application.status | title + " " + application.creationTime | toDateString | formatDate('d MMMM yyyy') %}
+                        {% set applicationStatus = application.status | title + " on " + application.creationTime | toDateString | formatDate('d MMMM yyyy') %}
                     {% else %}
                         {% set applicationStatus = "Application not yet approved" %}
                 {% endif %}
@@ -77,7 +77,7 @@
                 {{ govukRadios({
                     name: "waitlistScheduleId",
                     hint: {
-                        text: prisoner.firstName | title + ' ' + prisoner.lastName | title + " has " + approvedPendingWaitlist.length + " applications logged for activities"
+                        text: prisoner.firstName | title + ' ' + prisoner.lastName | title + " has " + approvedPendingWaitlist.length + " applications logged for " + approvedPendingWaitlist.length + " activities"
                     },
                     fieldset: {
                         legend: {

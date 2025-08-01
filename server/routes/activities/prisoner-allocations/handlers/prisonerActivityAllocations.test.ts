@@ -136,7 +136,11 @@ describe('Route Handlers - Prisoner Activity Allocations', () => {
       const requestObject = plainToInstance(FromActivityList, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual(expect.arrayContaining([{ property: 'activityId', error: 'You must select an activity' }]))
+      expect(errors).toEqual(
+        expect.arrayContaining([
+          { property: 'activityId', error: 'Search for an activity and select it from the list' },
+        ]),
+      )
     })
   })
 })
