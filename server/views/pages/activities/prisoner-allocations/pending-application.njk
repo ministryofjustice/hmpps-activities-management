@@ -51,16 +51,16 @@
                 {{ govukRadios({
                         fieldset: {
                         legend: {
-                            text: "Do you want to approve " + firstName | title + ' ' + lastName | title + "'s application",
+                            text: "Do you want to approve " + firstName | title + ' ' + lastName | title + "'s application?",
                             isPageHeading: false,
-                            classes: "govuk-fieldset__legend--l"
+                            classes: "govuk-fieldset__legend--m"
                         }
                     },
                     name: "options",
                     errorMessage: validationErrors | findError('Pending-application'),
                     items: [
                     {
-                     text: 'Yes, continue to allocate them and approve the application',
+                     text: 'Yes, approve the application and continue to allocate them',
                      value: YesNo.YES
                     },
                     {

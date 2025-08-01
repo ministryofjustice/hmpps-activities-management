@@ -8,7 +8,7 @@ import { getScheduleIdFromActivity } from '../../../../utils/utils'
 
 export class FromActivityList {
   @Expose()
-  @IsNotEmpty({ message: 'You must select an activity' })
+  @IsNotEmpty({ message: 'Search for an activity and select it from the list' })
   activityId: string
 }
 

@@ -95,11 +95,11 @@
     <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
-                <h1 class="govuk-heading-m">Activities {{ prisonerName }}'s is allocated to</h1>
+                <h2 class="govuk-heading-m">Activities {{ prisonerName }} is allocated to</h2>
                     {% if not allocationsData %}
-                        <p>{{ prisonerName }}'s is not allocated to any activities.</p>
+                        <p>{{ prisonerName }} is not allocated to any activities.</p>
                     {% elif allocationsData | length == suspendedAllocationRows | length %}
-                        <p>{{ prisonerName }}'s is currently suspended from every activity they're allocated to.</p>
+                        <p>{{ prisonerName }} is currently suspended from every activity they're allocated to.</p>
                     {% else %}
                     {% endif %}
             </div>
@@ -144,11 +144,11 @@
                         attributes: { "aria-sort": "ascending" }
                     },
                     {
-                        text: "Start Date",
+                        text: "Start date",
                         attributes: { "aria-sort": "none" }
                     },
                     {
-                        text: "End Date",
+                        text: "End date",
                         attributes: { "aria-sort": "none" }
                     },
                     {
