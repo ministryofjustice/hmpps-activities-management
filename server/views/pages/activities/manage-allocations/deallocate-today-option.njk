@@ -28,9 +28,9 @@
 
 {% set pageHeading %}
     {% if session.allocateJourney.inmates | length == 1 and session.allocateJourney.inmate %}
-        When do you want {{ session.allocateJourney.inmate.prisonerName | safe }}'s allocation to end
+        When do you want {{ session.allocateJourney.inmate.prisonerName | safe }}'s allocation to end?
     {% else %}
-        When do you want {{ session.allocateJourney.inmates | length }} {% if session.allocateJourney.inmates | length == 1 %}person{% else %}people{% endif %}'s allocations to end
+        When do you want {{ session.allocateJourney.inmates | length }} {% if session.allocateJourney.inmates | length == 1 %}person{% else %}people{% endif %}'s allocations to end?
     {% endif %}
 {% endset %}
 
