@@ -171,7 +171,7 @@
                     }) }}
                 {% elif prisonerAllocationsEnabled %}
                     {{ govukButton({
-                        text: "Return to " + prisonerName + " allocations",
+                        text: "Return to " + prisonerName | possessive + " allocations",
                         href: "/activities/prisoner-allocations/" + allocation.prisonerNumber
                     }) }}
                 {% endif %}
