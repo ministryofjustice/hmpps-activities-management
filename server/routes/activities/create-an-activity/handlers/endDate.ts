@@ -52,7 +52,7 @@ export class EndDate {
       },
     },
   )
-  @IsValidDate({ message: 'Enter a valid end date' })
+  @IsValidDate({ message: 'Enter an end date' })
   endDate: Date
 }
 
