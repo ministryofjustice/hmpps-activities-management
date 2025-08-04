@@ -136,7 +136,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         errs.flatMap(associateErrorsWithProperty),
       )
 
-      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a valid end date' }])
+      expect(errors).toEqual([{ property: 'endDate', error: 'Enter an end date' }])
     })
 
     it('validation fails if a bad value is entered', async () => {
@@ -156,7 +156,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
         errs.flatMap(associateErrorsWithProperty),
       )
 
-      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a valid end date' }])
+      expect(errors).toEqual([{ property: 'endDate', error: 'Enter an end date' }])
     })
 
     it('validation fails if end date is not in the future', async () => {
