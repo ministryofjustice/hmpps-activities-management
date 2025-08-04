@@ -6,13 +6,15 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { YesNo } from '../../../../@types/activities'
+import { NameFormatStyle } from '../../../../utils/helpers/nameFormatStyle'
+import { formatName } from '../../../../utils/utils'
 
 export class allocateOption {
   @Expose()
   @IsEnum(YesNo, {
     message: ({ object }) => {
-      const { pathParams } = object as { pathParams: { prisonerNumber: string } }
-      return `Select if you want to approve this application and allocate prisoner ${pathParams.prisonerNumber} or not`
+      const { prisonerName } = object as { prisonerName: string }
+      return `Select if you want to approve this application and allocate ${prisonerName} or not`
     },
   })
   options: YesNo
@@ -34,8 +36,13 @@ export default class PendingWaitlistHandler {
     const prisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
 
     return res.render('pages/activities/prisoner-allocations/pending-application', {
-      firstName: prisoner.firstName,
-      lastName: prisoner.lastName,
+      prisonerName: formatName(
+        prisoner.firstName,
+        prisoner.middleNames,
+        prisoner.lastName,
+        NameFormatStyle.firstLast,
+        false,
+      ),
     })
   }
 
