@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { startOfToday } from 'date-fns'
-import { ValidateIf } from 'class-validator'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import BankHolidayService from '../../../../services/bankHolidayService'
@@ -21,7 +20,6 @@ import { formatDate } from '../../../../utils/utils'
 export class EndDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
-  @ValidateIf((_, v) => v)
   @Validator(thisDate => thisDate > startOfToday(), { message: 'Activity end date must be in the future' })
   @Validator(
     (date, { createJourney }) => {
@@ -54,7 +52,7 @@ export class EndDate {
       },
     },
   )
-  @IsValidDate({ message: 'Enter a valid end date' })
+  @IsValidDate({ message: 'Enter an end date' })
   endDate: Date
 }
 

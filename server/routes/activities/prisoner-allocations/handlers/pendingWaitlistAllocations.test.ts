@@ -79,8 +79,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
       await handler.GET(req, res)
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/prisoner-allocations/pending-application', {
-        firstName: mockPrisoner.firstName,
-        lastName: mockPrisoner.lastName,
+        prisonerName: 'Joe Bloggs',
       })
     })
   })
@@ -114,16 +113,20 @@ describe('Route Handlers - Prisoner Allocations', () => {
 
   describe('Validation', () => {
     it('validation fails if Yes or No have not been selected', async () => {
-      const body = {}
+      const body = {
+        prisonerName: 'Joe Bloggs',
+      }
 
-      const requestObject = plainToInstance(allocateOption, body)
+      const requestObject = plainToInstance(allocateOption, {
+        ...body,
+      })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(
         expect.arrayContaining([
           {
             property: 'options',
-            error: 'Select yes if you want to approve the application and allocate to this activity',
+            error: 'Select if you want to approve this application and allocate Joe Bloggs or not',
           },
         ]),
       )
