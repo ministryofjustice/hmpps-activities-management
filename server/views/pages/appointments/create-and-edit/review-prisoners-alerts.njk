@@ -77,7 +77,17 @@
                     {% else %}
                         <h1 class="govuk-heading-l">You've removed all people with alerts</h1>
                         <p class="govuk-body">
-                            There {% if prisoners.length == 1 %} is {% else %} are {% endif %} {{ prisoners.length }} attendees remaining on the appointment list</p>
+                            There {% if prisoners.length == 1 %} is {% else %} are {% endif %} {{ prisoners.length or 'no' }} attendees remaining on the appointment list.
+                        </p>
+                        {% if not prisoners.length %}
+                        <p class="govuk-body">
+                            If you want to continue scheduling this appointment, you must add someone.
+                        </p>
+                        {{ govukButton({
+                         text: "Add someone to the list",
+                            href: "how-to-add-prisoners"
+                    }) }}
+                        {% endif %}
                     {% endif %}
                     {% if session.appointmentJourney.type == AppointmentType.EDIT %}
                         <p class="govuk-body">You're still adding {{ prisoners.length }} people</p>
