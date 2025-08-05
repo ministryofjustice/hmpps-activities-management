@@ -14,8 +14,9 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <input type="hidden" name="prisonerName" value="{{ prisonerName }}" />
                 <span class="govuk-caption-l">{{ prisonerAllocationsJourney.activityName }}</span>
-                <h1 class="govuk-heading-l">{{ firstName | title }} {{ lastName | title }}'s application</h1>
+                <h1 class="govuk-heading-l">{{ prisonerName | possessive }} application</h1>
 
                  {{ govukSummaryList({
                     caption: "This application has not been approved yet.",
@@ -51,20 +52,20 @@
                 {{ govukRadios({
                         fieldset: {
                         legend: {
-                            text: "Do you want to approve " + firstName | title + ' ' + lastName | title + "'s application",
+                            text: "Do you want to approve " + prisonerName | possessive + " application?",
                             isPageHeading: false,
-                            classes: "govuk-fieldset__legend--l"
+                            classes: "govuk-fieldset__legend--m"
                         }
                     },
                     name: "options",
                     errorMessage: validationErrors | findError('Pending-application'),
                     items: [
                     {
-                     text: 'Yes, continue to allocate them and approve the application',
+                     text: 'Yes, approve the application and continue to allocate them',
                      value: YesNo.YES
                     },
                     {
-                     text: "No, go back to " + firstName | title + ' ' + lastName | title + "'s allocations",
+                     text: "No, go back to " + prisonerName | possessive + " allocations",
                      value: YesNo.NO
                     }
                     ]
