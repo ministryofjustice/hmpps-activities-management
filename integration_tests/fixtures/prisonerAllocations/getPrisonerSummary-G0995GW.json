@@ -1,0 +1,27 @@
+{
+  "id": 2868446,
+  "iepCode": "STD",
+  "iepLevel": "Standard",
+  "prisonerNumber": "G0995GW",
+  "bookingId": 1200650,
+  "iepDate": "2018-08-21",
+  "iepTime": "2018-08-21T16:31:59",
+  "iepDetails": [
+    {
+      "id": 2868446,
+      "iepLevel": "Standard",
+      "iepCode": "STD",
+      "prisonerNumber": "G0995GW",
+      "bookingId": 1200650,
+      "iepDate": "2018-08-21",
+      "iepTime": "2018-08-21T16:31:59",
+      "agencyId": "MDI",
+      "userId": "MQE96U",
+      "reviewType": "MIGRATED",
+      "auditModuleName": "INCENTIVES_API",
+      "realReview": true
+    }
+  ],
+  "nextReviewDate": "2019-08-21",
+  "daysSinceReview": 1619
+}
