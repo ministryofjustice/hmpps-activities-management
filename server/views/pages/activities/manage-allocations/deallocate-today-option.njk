@@ -21,7 +21,6 @@
     hint: {
         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
     },
-    minDate: now | subDays(1) | formatDate('dd/MM/yyyy', false),
     errorMessage: validationErrors | findError('endDate'),
     value: formResponses.endDate or session.allocateJourney.endDate | isoDateToDatePickerDate if (formResponses.deallocateTodayOption == 'FUTURE_DATE' or session.allocateJourney.deallocateTodayOption == 'FUTURE_DATE')
 }) }}
