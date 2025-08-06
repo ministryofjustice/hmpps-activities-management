@@ -13,7 +13,7 @@ export default function profileImageRoutes({ prisonService }: { prisonService: P
         data.pipe(res)
       })
       .catch(() => {
-        const placeHolder = path.join(process.cwd(), '/frontend/images/image-missing.jpg')
+        const placeHolder = path.join(process.cwd(), '/assets/images/image-missing.jpg')
         res.sendFile(placeHolder)
       })
   })
