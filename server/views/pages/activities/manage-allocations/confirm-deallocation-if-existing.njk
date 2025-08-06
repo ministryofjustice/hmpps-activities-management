@@ -1,0 +1,72 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Deallocate from an activity - Existing deallocation" %}
+{% set pageId = 'confirmation-page' %}
+
+{% if selectedPrisoners | length == 1 and selectedPrisoners[0] %}
+{% set pageHeading = "Do you want to change the end date for this allocation?" %}
+{% set radioOptions = [
+    {
+        value: "yes",
+        text: "Yes, change their end date"
+    }, {
+        value: "no",
+        text: "No, leave their end date as " + selectedPrisoners[0].endDate | formatDate('d MMMM yyyy', false)
+    }
+] %}
+{% else %}
+{% set pageHeading = "There are " + selectedPrisoners | length + " people who already have end dates - do you want to change them?" %}
+{% set radioOptions = [
+    {
+        value: "yes",
+        text: "Yes, change their end dates"
+    }, {
+        value: "no",
+        text: "No, leave their end dates as they are"
+    }
+] %}
+{% endif %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <h1 class='govuk-heading-l'>{{ pageHeading }}</h1>
+            {% if selectedPrisoners | length == 1 and selectedPrisoners[0] %}
+                <div class="govuk-inset-text">
+                    {{ selectedPrisoners[0].prisonerName | safe }}'s allocation is already set to end on {{ selectedPrisoners[0].endDate | formatDate }}.
+                </div>
+            {% else %}
+                <p class='govuk-body'>Three people you have selected already have end dates set:</p>
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
+                    {% for inmate in selectedPrisoners %}
+                        <li>{{ inmate.prisonerName | safe }} - {{ inmate.endDate | formatDate('d MMMM yyyy', false) }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{ govukRadios({
+                    name: "choice",
+                    fieldset: {
+                        legend: {
+                            text: pageHeading,
+                            classes: "govuk-visually-hidden"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('choice'),
+                    items: radioOptions
+                }) }}
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                    <a href="cancel" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
