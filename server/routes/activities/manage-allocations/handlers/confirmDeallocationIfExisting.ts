@@ -8,7 +8,7 @@ import { getAllocationStartDateFromActivity } from '../../../../utils/utils'
 
 export class ConfirmDeallocateOptions {
   @Expose()
-  @IsIn(['yes', 'no'], { message: 'Select either yes or no' })
+  @IsIn(['yes', 'no'], { message: 'Select if you want to change the end date or leave it as it is' })
   choice: string
 }
 
