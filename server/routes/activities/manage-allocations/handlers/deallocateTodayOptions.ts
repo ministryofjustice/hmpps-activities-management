@@ -16,7 +16,7 @@ export class DeallocateToday {
 
   @ValidateIf(o => o.deallocateTodayOption === 'FUTURE_DATE')
   @Transform(({ value }) => parseDatePickerDate(value))
-  @Validator(date => date !== null && date >= startOfToday(), { message: "Enter a date on or after today's date" })
+  @Validator(date => date >= startOfToday(), { message: "Enter a date on or after today's date" })
   endDate: Date
 }
 
