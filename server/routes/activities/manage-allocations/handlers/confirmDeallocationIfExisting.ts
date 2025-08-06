@@ -1,7 +1,10 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
+import { startOfToday } from 'date-fns'
 import ActivityService from '../../../../services/activitiesService'
+import { parseIsoDate } from '../../../../utils/datePickerUtils'
+import { getAllocationStartDateFromActivity } from '../../../../utils/utils'
 
 export class ConfirmDeallocateOptions {
   @Expose()
@@ -33,6 +36,29 @@ export default class ConfirmDeallocationIfExistingRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    return res.redirectOrReturn('exclusions')
+    const { choice } = req.body
+    const { activityId, scheduleId } = req.session.allocateJourney.activity
+    const { deallocationAfterAllocation } = req.query
+    const selectedAllocationIds = req.query.allocationIds.toString().split(',')
+    const activity = await this.activitiesService.getActivity(+activityId, res.locals.user)
+    req.session.returnTo = null
+
+    if (choice === 'no') {
+      req.session.allocateJourney = null
+      if (deallocationAfterAllocation || !activity) return res.redirect(`/activities/allocation-dashboard`)
+      return res.redirect(`/activities/allocation-dashboard/${activity.id}`)
+    }
+
+    if (
+      selectedAllocationIds.length === 1 &&
+      parseIsoDate(getAllocationStartDateFromActivity(activity, +selectedAllocationIds[0])) > startOfToday()
+    ) {
+      return res.redirect(
+        `/activities/allocations/remove/end-decision?allocationIds=${selectedAllocationIds}&scheduleId=${scheduleId}`,
+      )
+    }
+    return res.redirect(
+      `/activities/allocations/remove/deallocate-today-option?allocationIds=${selectedAllocationIds}&scheduleId=${scheduleId}`,
+    )
   }
 }

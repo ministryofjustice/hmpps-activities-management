@@ -156,8 +156,8 @@ export default class AllocationDashboardRoutes {
     const activity = await this.activitiesService.getActivity(+activityId, user)
     const allocationIds = selectedAllocations.toString().split(',')
     const scheduleId = getScheduleIdFromActivity(activity)
-    const allocations = (await this.activitiesService.getAllocations(scheduleId, user)).filter(a =>
-      allocationIds.includes(a.id.toString()),
+    const allocations = (await this.activitiesService.getAllocations(scheduleId, user)).filter(
+      a => allocationIds.includes(a.id.toString()) && a.plannedDeallocation,
     )
 
     if (allocations.length) {
