@@ -18,6 +18,7 @@ import CheckAndConfirmRoutes from './handlers/deallocationAfterAllocation/deallo
 import DeallocationSelectActivities, {
   DeallocationSelect,
 } from './handlers/deallocationAfterAllocation/deallocationSelectActivities'
+import ConfirmDeallocationIfExistingRoutes, { ConfirmDeallocateOptions } from './handlers/confirmDeallocationIfExisting'
 
 export default function Index({ activitiesService, metricsService }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -35,7 +36,10 @@ export default function Index({ activitiesService, metricsService }: Services): 
   const caseNoteQuestionHandler = new DeallocationCaseNoteQuestionRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService)
   const confirmationHandler = new ConfirmationRoutes(metricsService, activitiesService)
+  const confirmDeallocationIfExistingHandler = new ConfirmDeallocationIfExistingRoutes(activitiesService)
 
+  get('/confirm-deallocation-if-existing', confirmDeallocationIfExistingHandler.GET, true)
+  post('/confirm-deallocation-if-existing', confirmDeallocationIfExistingHandler.POST, ConfirmDeallocateOptions)
   get('/cancel', cancelHandler.GET, true)
   post('/cancel', cancelHandler.POST, ConfirmCancelOptions)
   get('/deallocate-today-option', endTodayOptionHandler.GET, true)
