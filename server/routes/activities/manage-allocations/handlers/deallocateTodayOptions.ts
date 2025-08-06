@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { IsEnum, IsNotEmpty, ValidateIf } from 'class-validator'
-import { isPast, isToday } from 'date-fns'
+import { IsEnum, ValidateIf } from 'class-validator'
+import { isPast, isToday, startOfToday } from 'date-fns'
 import { DeallocateTodayOption } from '../journey'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
 import config from '../../../../config'
 import { parseDate } from '../../../../utils/utils'
+import Validator from '../../../../validators/validator'
 
 export class DeallocateToday {
   @Expose()
@@ -15,7 +16,7 @@ export class DeallocateToday {
 
   @ValidateIf(o => o.deallocateTodayOption === 'FUTURE_DATE')
   @Transform(({ value }) => parseDatePickerDate(value))
-  @IsNotEmpty({ message: 'Select an end date for this allocation' })
+  @Validator(date => date >= startOfToday(), { message: "Enter a date on or after today's date" })
   endDate: Date
 }
 
@@ -32,7 +33,6 @@ export default class DeallocateTodayOptionRoutes {
       )
       nextAllocationToday = isToday(nextSessionDateAndTime) && !isPast(nextSessionDateAndTime)
     }
-
     res.render('pages/activities/manage-allocations/deallocate-today-option', { nextAllocationToday })
   }
 
