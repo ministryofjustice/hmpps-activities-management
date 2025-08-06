@@ -155,23 +155,28 @@ export default class AllocationDashboardRoutes {
     const { selectedAllocations } = req.body
     const activity = await this.activitiesService.getActivity(+activityId, user)
     const allocationIds = selectedAllocations.toString().split(',')
+    const scheduleId = getScheduleIdFromActivity(activity)
+    const allocations = (await this.activitiesService.getAllocations(scheduleId, user)).filter(
+      a => allocationIds.includes(a.id.toString()) && a.plannedDeallocation,
+    )
+
+    if (allocations.length) {
+      return res.redirect(
+        `/activities/allocations/remove/confirm-deallocation-if-existing?allocationIds=${selectedAllocations}&scheduleId=${scheduleId}`,
+      )
+    }
 
     if (
       allocationIds.length === 1 &&
       parseIsoDate(getAllocationStartDateFromActivity(activity, +allocationIds[0])) > startOfToday()
     ) {
-      res.redirect(
-        `/activities/allocations/remove/end-decision?allocationIds=${selectedAllocations}&scheduleId=${getScheduleIdFromActivity(
-          activity,
-        )}`,
-      )
-    } else {
-      res.redirect(
-        `/activities/allocations/remove/deallocate-today-option?allocationIds=${selectedAllocations}&scheduleId=${getScheduleIdFromActivity(
-          activity,
-        )}`,
+      return res.redirect(
+        `/activities/allocations/remove/end-decision?allocationIds=${selectedAllocations}&scheduleId=${scheduleId}`,
       )
     }
+    return res.redirect(
+      `/activities/allocations/remove/deallocate-today-option?allocationIds=${selectedAllocations}&scheduleId=${scheduleId}`,
+    )
   }
 
   VIEW_APPLICATION = async (req: Request, res: Response): Promise<void> => {

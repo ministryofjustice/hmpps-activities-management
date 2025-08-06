@@ -16,7 +16,7 @@
         formAction: 'activities/attendance-list'
       }), formActions) %}
     {% endif %}
-    {% if uncancelMultipleSessionsEnabled and isUncancelPage and not ((activityDate | toDateString) < (now | toDateString)) %}
+    {% if isUncancelPage and not ((activityDate | toDateString) < (now | toDateString)) %}
       {% set formActions = [{
         text: 'Uncancel activity sessions',
         formAction: 'uncancel-multiple/next'
@@ -36,14 +36,14 @@
       }
     } %}
 
-    {% if uncancelMultipleSessionsEnabled and isUncancelPage %}
+    {% if isUncancelPage %}
       {% set pagination =  {} %}
     {% endif %}
 
     {% set rows = [] %}
     {% for activity in activities %}
         {% set allowSelection = not activity.cancelled and activity.attendanceRequired and activity.attendanceSummary.allocations > 0 %}
-        {% if uncancelMultipleSessionsEnabled and isUncancelPage %}
+        {% if isUncancelPage %}
           {% set allowSelection = activity.cancelled and activity.attendanceRequired and activity.attendanceSummary.allocations > 0 and not ((activityDate | toDateString) < (now | toDateString)) %}
         {% endif %}
         {% set activityLocation = showLocation(activity, makeCapitals = true) %}

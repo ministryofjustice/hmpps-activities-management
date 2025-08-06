@@ -77,5 +77,16 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
         { property: 'deallocateTodayOption', error: 'Select when you want this allocation to end' },
       ])
     })
+    it("fails if the date is before today's date", async () => {
+      const body = {
+        deallocateTodayOption: 'FUTURE_DATE',
+        endDate: parseDatePickerDate('05/08/2025'),
+      }
+
+      const requestObject = plainToInstance(DeallocateToday, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'endDate', error: "Enter a date on or after today's date" }])
+    })
   })
 })

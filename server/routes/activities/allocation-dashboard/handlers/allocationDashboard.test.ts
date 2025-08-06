@@ -930,6 +930,7 @@ describe('Route Handlers - Allocation dashboard', () => {
       when(prisonService.searchInmatesByPrisonerNumbers)
         .calledWith(atLeast(['G4793VF', 'A9477DY']))
         .mockResolvedValue(prisoners)
+      when(activitiesService.getAllocations).calledWith(atLeast(1)).mockResolvedValue([])
     })
 
     it('should set session and redirect to de-allocation end date page', async () => {
