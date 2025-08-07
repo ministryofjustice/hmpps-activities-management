@@ -32,7 +32,17 @@ import DateOption from '../enum/dateOption'
 import { Prisoner } from '../@types/activities'
 import config from '../config'
 
-const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+export type DaysOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
+export const DAYS_OF_WEEK: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+export const DAYS_OF_WEEK_UPPERCASE: DaysOfWeek[] = [
+  'MONDAY',
+  'TUESDAY',
+  'WEDNESDAY',
+  'THURSDAY',
+  'FRIDAY',
+  'SATURDAY',
+  'SUNDAY',
+]
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -349,7 +359,7 @@ export const mapJourneySlotsToActivityRequest = (fromSlots: CreateAnActivityJour
       slotMap.get(timeSlot)[day as keyof Slots] = true
     }
 
-    daysOfWeek.forEach(day => {
+    DAYS_OF_WEEK.forEach(day => {
       fromSlots[weekNumber][`timeSlots${day}` as keyof Slots]?.forEach((slot: string) =>
         setSlot(slot, day.toLowerCase()),
       )
@@ -369,10 +379,10 @@ export const mapActivityModelSlotsToJourney = (
   weekNumbers.forEach(week => {
     const weekSlots = fromSlots.filter(s => s.weekNumber === week)
     slots[week] = {
-      days: daysOfWeek.filter(d => weekSlots.find(s => s[`${d.toLowerCase()}Flag`])).map(d => d.toLowerCase()),
+      days: DAYS_OF_WEEK.filter(d => weekSlots.find(s => s[`${d.toLowerCase()}Flag`])).map(d => d.toLowerCase()),
     }
 
-    daysOfWeek.forEach(d => {
+    DAYS_OF_WEEK.forEach(d => {
       const timeslots = weekSlots.filter(s => s[`${d.toLowerCase()}Flag`]).map(s => s.timeSlot)
       slots[week][`timeSlots${d}`] = timeslots.map(t => t.toUpperCase())
     })

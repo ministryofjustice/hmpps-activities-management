@@ -1,0 +1,82 @@
+[
+  {
+    "id": 539,
+    "activityName": "Maths level 1",
+    "category": {
+      "id": 1,
+      "code": "EDU",
+      "description": "Education"
+    },
+    "capacity": 15,
+    "allocated": 8,
+    "waitlisted": 2,
+    "createdTime": "2023-07-20T16:05:16",
+    "activityState": "LIVE",
+    "pay": [
+      {
+        "incentiveLevel": "Standard",
+        "prisonPayBand": {
+          "id": 12,
+          "alias": "Medium",
+          "description": "Pay band 2",
+          "nomisPayBand": 2
+        },
+        "rate": 175,
+        "pieceRate": 175,
+        "pieceRateItems": 10
+      },
+      {
+        "incentiveLevel": "Enhanced",
+        "prisonPayBand": {
+          "id": 13,
+          "alias": "High",
+          "description": "Pay band 3",
+          "nomisPayBand": 3
+        },
+        "rate": 200,
+        "pieceRate": 200,
+        "pieceRateItems": 10
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "activityName": "English level 1",
+    "category": {
+      "id": 1,
+      "code": "EDU",
+      "description": "Education"
+    },
+    "capacity": 15,
+    "allocated": 8,
+    "waitlisted": 2,
+    "createdTime": "2023-07-20T16:05:16",
+    "activityState": "LIVE",
+    "pay": [
+      {
+        "incentiveLevel": "Basic",
+        "prisonPayBand": {
+          "id": 11,
+          "alias": "Low",
+          "description": "Pay band 1",
+          "nomisPayBand": 1
+        },
+        "rate": 125,
+        "pieceRate": 125,
+        "pieceRateItems": 10
+      },
+      {
+        "incentiveLevel": "Standard",
+        "prisonPayBand": {
+          "id": 12,
+          "alias": "Medium",
+          "description": "Pay band 2",
+          "nomisPayBand": 2
+        },
+        "rate": 150,
+        "pieceRate": 150,
+        "pieceRateItems": 10
+      }
+    ]
+  }
+]

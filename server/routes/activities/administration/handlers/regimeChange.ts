@@ -7,6 +7,7 @@ import { DaysAndSlotsInRegime } from '../../../../utils/helpers/applicableRegime
 import { Activity, ActivityUpdateRequest, PrisonRegime, Slot } from '../../../../@types/activitiesAPI/types'
 import SimpleTime from '../../../../commonValidationTypes/simpleTime'
 import { ServiceUser } from '../../../../@types/express'
+import { DAYS_OF_WEEK_UPPERCASE } from '../../../../utils/utils'
 
 export class RegimeTimes {
   @Transform(({ value }) =>
@@ -271,10 +272,9 @@ export function getPrisonRegimes(
   currentRegimeTimes: PrisonRegime[],
 ): PrisonRegime[] {
   const prisonRegimeTimes = currentRegimeTimes
-  const daysOfWeek = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
   const amendedRegimeTimes: PrisonRegime[] = []
 
-  daysOfWeek.forEach(day => {
+  DAYS_OF_WEEK_UPPERCASE.forEach(day => {
     const dayRegime: PrisonRegime = prisonRegimeTimes.filter(regime => regime.dayOfWeek === day)[0]
     const newRegimeTimes: PrisonRegime = {
       id: dayRegime.id,

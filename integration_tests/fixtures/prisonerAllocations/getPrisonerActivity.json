@@ -1,0 +1,30 @@
+[
+  {
+    "id": 539,
+    "activityName": "Maths level 1",
+    "category": {
+      "id": 1,
+      "code": "EDU",
+      "description": "Education"
+    },
+    "capacity": 15,
+    "allocated": 8,
+    "waitlisted": 2,
+    "createdTime": "2023-07-20T16:05:16",
+    "activityState": "LIVE"
+  },
+  {
+    "id": 2,
+    "activityName": "English level 1",
+    "category": {
+      "id": 1,
+      "code": "EDU",
+      "description": "Education"
+    },
+    "capacity": 15,
+    "allocated": 8,
+    "waitlisted": 2,
+    "createdTime": "2023-07-20T16:05:16",
+    "activityState": "LIVE"
+  }
+]

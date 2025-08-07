@@ -1,8 +1,7 @@
 import { addDays, differenceInCalendarDays, startOfDay, subDays } from 'date-fns'
 import { CreateAnActivityJourney } from '../../routes/activities/create-an-activity/journey'
 import { parseIsoDate } from '../datePickerUtils'
-
-const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+import { DAYS_OF_WEEK } from '../utils'
 
 export type ActivityTimeSlotValidationError = {
   weekNumber: number
@@ -28,7 +27,7 @@ function validateChanges(
   const slots = journey.slots[weekNumber]
 
   slots.days.forEach(day => {
-    const dayOfWeek = daysOfWeek.findIndex(d => d.toLowerCase() === day)
+    const dayOfWeek = DAYS_OF_WEEK.findIndex(d => d.toLowerCase() === day)
 
     let slotDate = addDays(activityStartDate, dayOfWeek - activityStartDayOfWeek)
 
@@ -41,7 +40,7 @@ function validateChanges(
     if (slotDate > activityEndDate) {
       errors.push({
         weekNumber,
-        day: daysOfWeek[dayOfWeek],
+        day: DAYS_OF_WEEK[dayOfWeek],
       })
     }
   })

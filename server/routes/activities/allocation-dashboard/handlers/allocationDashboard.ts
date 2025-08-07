@@ -7,7 +7,12 @@ import ActivityService from '../../../../services/activitiesService'
 import { ServiceUser } from '../../../../@types/express'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { Activity, ActivityPay, Allocation, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
-import { getAllocationStartDateFromActivity, getScheduleIdFromActivity, parseDate } from '../../../../utils/utils'
+import {
+  DAYS_OF_WEEK,
+  getAllocationStartDateFromActivity,
+  getScheduleIdFromActivity,
+  parseDate,
+} from '../../../../utils/utils'
 import { IepSummary, IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import HasAtLeastOne from '../../../../validators/hasAtLeastOne'
 import { Slots } from '../../create-an-activity/journey'
@@ -77,11 +82,9 @@ export default class AllocationDashboardRoutes {
       this.getCandidates(getScheduleIdFromActivity(activity), filters, +req.query.page, user),
     ])
 
-    const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-
     const slots: { [weekNumber: string]: Slots } = {}
     activity.schedules[0].slots.forEach(slot => {
-      daysOfWeek.forEach(day => {
+      DAYS_OF_WEEK.forEach(day => {
         const dayLowerCase = day.toLowerCase()
         slots[slot.weekNumber] ??= {
           days: [],
