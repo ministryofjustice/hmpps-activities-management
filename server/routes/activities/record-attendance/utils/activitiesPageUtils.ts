@@ -29,6 +29,7 @@ export const filterItems = (
 }
 
 export const activityRows = (
+  activityDate: Date,
   categories: ActivityCategory[],
   activityAttendanceSummary: ScheduledInstanceAttendanceSummary[],
   filterValues: { [key: string]: string[] },
@@ -61,12 +62,31 @@ export const activityRows = (
       }
     })
 
+  const today = new Date()
+
   return filteredActivities
-    .map(a => {
-      const session = TimeSlot[a.timeSlot]
+    .map(activity => {
+      let allowSelection: boolean
+      let allocatedCount: number
+      const session = TimeSlot[activity.timeSlot]
+
+      if (activityDate === today) {
+        allocatedCount = activity.attendanceSummary.attendees
+      } else {
+        allocatedCount = activity.attendanceSummary.allocations
+      }
+
+      if (isUncancelPage) {
+        allowSelection =
+          activity.cancelled && activity.attendanceRequired && allocatedCount > 0 && !(activityDate < today)
+      } else {
+        allowSelection = !activity.cancelled && activity.attendanceRequired && allocatedCount > 0
+      }
+
       return {
-        ...a,
+        ...activity,
         session,
+        allowSelection,
       }
     })
     .filter(a => !filterValues.sessionFilters || filterValues.sessionFilters.includes(a.session))

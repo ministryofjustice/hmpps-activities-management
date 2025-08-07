@@ -41,6 +41,7 @@ export default class UncancelMultipleSessionsRoutes {
       filterItems: filterItems(categories, filterValues, asString(locationId), locationTypeFilter),
       selectedSessions: filterValues.sessionFilters,
       activityRows: activityRows(
+        activityDate,
         categories,
         activityAttendanceSummary,
         filterValues,

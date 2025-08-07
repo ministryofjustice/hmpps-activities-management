@@ -37,6 +37,7 @@ export default class ActivitiesRoutes {
     const uniqueLocations = _.uniqBy(locations, 'locationId')
 
     const activities = activityRows(
+      activityDate,
       categories,
       activityAttendanceSummary,
       filterValues,
