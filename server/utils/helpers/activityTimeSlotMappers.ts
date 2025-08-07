@@ -5,6 +5,7 @@ import { ActivityScheduleSlot, PrisonRegime, Slot } from '../../@types/activitie
 import SimpleTime from '../../commonValidationTypes/simpleTime'
 import { DaysAndSlotsInRegime } from './applicableRegimeTimeUtil'
 import logger from '../../../logger'
+import { DAYS_OF_WEEK, DaysOfWeek } from '../utils'
 
 export interface WeeklyTimeSlots {
   [weekNumber: string]: {
@@ -34,10 +35,6 @@ export type DayOfWeek =
   | DayOfWeekEnum.FRIDAY
   | DayOfWeekEnum.SATURDAY
   | DayOfWeekEnum.SUNDAY
-
-export type DaysOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
-
-const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 export enum DayOfWeekEnum {
   MONDAY = 'MONDAY',
@@ -72,7 +69,7 @@ export default function activitySessionToDailyTimeSlots(
   for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
     const slots = scheduleSlots[weekNumber] ?? {}
 
-    dailySlots[weekNumber] = daysOfWeek.map(day => ({
+    dailySlots[weekNumber] = DAYS_OF_WEEK.map(day => ({
       day,
       slots:
         (slots[`timeSlots${day}`] as string[])
@@ -88,7 +85,7 @@ export function customSlotsToSchedule(scheduleWeeks: number, slots: Slot[]): Wee
 
   for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
     const slotsForSpecifiedWeek = slots.filter(slot => slot.weekNumber === weekNumber)
-    customSlots[weekNumber] = daysOfWeek.map(day => ({
+    customSlots[weekNumber] = DAYS_OF_WEEK.map(day => ({
       day,
       slots: getCustomTimeSlotsForDay(day, slotsForSpecifiedWeek),
     }))
@@ -104,7 +101,7 @@ export function sessionSlotsToSchedule(
   const scheduledSlots: WeeklyCustomTimeSlots = {}
 
   for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
-    scheduledSlots[weekNumber] = daysOfWeek.map(day => {
+    scheduledSlots[weekNumber] = DAYS_OF_WEEK.map(day => {
       return { day, slots: [] }
     })
   }
@@ -139,7 +136,7 @@ export function regimeSlotsToSchedule(
   for (let weekNumber = 1; weekNumber <= scheduleWeeks; weekNumber += 1) {
     const slots = selectedSlots[weekNumber] ?? {}
 
-    scheduledSlots[weekNumber] = daysOfWeek.map(day => {
+    scheduledSlots[weekNumber] = DAYS_OF_WEEK.map(day => {
       const regimeSlotsForTheDay = regimeTimes.find(t => t.dayOfWeek === day.toUpperCase())
       const selectedSlotsForTheDay = (slots[`timeSlots${day}`] || []) as string[]
       const scheduledSlotsForTheDay: CustomTimeSlot[] = selectedSlotsForTheDay
@@ -264,8 +261,7 @@ export function mapSlotsToWeeklyTimeSlots(slots: Slot[], scheduleSlots: Activity
   return uniq(slots.map(s => s.weekNumber)).reduce(
     (acc, weekNumber) => ({
       ...acc,
-      [weekNumber]: daysOfWeek
-        .map(d => d.toUpperCase())
+      [weekNumber]: DAYS_OF_WEEK.map(d => d.toUpperCase())
         .map(day => {
           const timeSlots: CustomTimeSlot[] = slots
             .filter(slot => slot.weekNumber === weekNumber && (slot.daysOfWeek as string[]).includes(day))
@@ -305,8 +301,7 @@ export function mapSlotsToCompleteWeeklyTimeSlots(slots: Slot[], scheduledWeeks:
     .reduce(
       (acc, weekNumber) => ({
         ...acc,
-        [weekNumber]: daysOfWeek
-          .map(d => d.toUpperCase())
+        [weekNumber]: DAYS_OF_WEEK.map(d => d.toUpperCase())
           .map(day => {
             const timeSlots = slots
               .filter(slot => slot.weekNumber === weekNumber)

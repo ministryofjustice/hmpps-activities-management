@@ -5,7 +5,7 @@ import { Slots, CreateAnActivityJourney } from '../../routes/activities/create-a
 import { WeeklyCustomTimeSlots } from './activityTimeSlotMappers'
 import BankHolidayService from '../../services/bankHolidayService'
 
-const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const SUNDAY_FIRST_DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 export default class ActivityDateValidator {
   constructor(private readonly bankHolidayService: BankHolidayService) {}
@@ -40,14 +40,14 @@ export default class ActivityDateValidator {
 
       scheduleSlots[1].forEach(scheduleSlot => {
         if (scheduleSlot.slots?.length !== 0) {
-          allowedSlot1Days.push(daysOfWeek.findIndex(d => d === scheduleSlot.day))
+          allowedSlot1Days.push(SUNDAY_FIRST_DAYS_OF_WEEK.findIndex(d => d === scheduleSlot.day))
         }
       })
 
       if (scheduleWeeks === 2) {
         scheduleSlots[2].forEach(scheduleSlot => {
           if (scheduleSlot.slots?.length !== 0) {
-            allowedSlot2Days.push(daysOfWeek.findIndex(d => d === scheduleSlot.day))
+            allowedSlot2Days.push(SUNDAY_FIRST_DAYS_OF_WEEK.findIndex(d => d === scheduleSlot.day))
           }
         })
       }
@@ -108,7 +108,7 @@ function findAllowedSlotDays(slots: Slots): number[] {
   const slotDays: number[] = []
 
   slots.days.forEach(day => {
-    slotDays.push(daysOfWeek.findIndex(d => d.toLowerCase() === day))
+    slotDays.push(SUNDAY_FIRST_DAYS_OF_WEEK.findIndex(d => d.toLowerCase() === day))
   })
 
   return slotDays
