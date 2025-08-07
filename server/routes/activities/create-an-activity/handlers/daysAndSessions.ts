@@ -3,7 +3,7 @@ import { Expose } from 'class-transformer'
 import { IsNotEmpty, ValidateIf } from 'class-validator'
 import createHttpError from 'http-errors'
 import { NextFunction } from 'express-serve-static-core'
-import { convertToArray, formatDate, mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
+import { convertToArray, DAYS_OF_WEEK, formatDate, mapJourneySlotsToActivityRequest } from '../../../../utils/utils'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
@@ -50,8 +50,6 @@ export class DaysAndSessions {
   @IsNotEmpty({ message: 'Select at least one time slot for Sunday' })
   timeSlotsSunday: string[]
 }
-
-const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 export default class DaysAndSessionsRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -165,7 +163,7 @@ export default class DaysAndSessionsRoutes {
 
     weeklySlots.days = convertToArray(selectedDays)
 
-    daysOfWeek.forEach(day => {
+    DAYS_OF_WEEK.forEach(day => {
       if (weeklySlots.days.find(selectedDay => selectedDay === day.toLowerCase())) {
         weeklySlots[`timeSlots${day}`] = convertToArray(req.body[`timeSlots${day}`])
       } else {
