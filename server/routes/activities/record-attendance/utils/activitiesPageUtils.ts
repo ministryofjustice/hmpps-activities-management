@@ -2,6 +2,7 @@ import { ActivityCategory, ScheduledInstanceAttendanceSummary } from '../../../.
 import LocationType from '../../../../enum/locationType'
 import { asString } from '../../../../utils/utils'
 import TimeSlot from '../../../../enum/timeSlot'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 export const filterItems = (
   categories: ActivityCategory[],
@@ -62,7 +63,8 @@ export const activityRows = (
       }
     })
 
-  const today = new Date()
+  const today = formatIsoDate(new Date())
+  const formattedActivityDate = formatIsoDate(activityDate)
 
   return filteredActivities
     .map(activity => {
@@ -70,7 +72,7 @@ export const activityRows = (
       let allocatedCount: number
       const session = TimeSlot[activity.timeSlot]
 
-      if (activityDate === today) {
+      if (formattedActivityDate === today) {
         allocatedCount = activity.attendanceSummary.attendees
       } else {
         allocatedCount = activity.attendanceSummary.allocations
@@ -78,7 +80,7 @@ export const activityRows = (
 
       if (isUncancelPage) {
         allowSelection =
-          activity.cancelled && activity.attendanceRequired && allocatedCount > 0 && !(activityDate < today)
+          activity.cancelled && activity.attendanceRequired && allocatedCount > 0 && !(formattedActivityDate < today)
       } else {
         allowSelection = !activity.cancelled && activity.attendanceRequired && allocatedCount > 0
       }
