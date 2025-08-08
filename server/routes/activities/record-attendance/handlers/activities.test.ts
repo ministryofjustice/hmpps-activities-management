@@ -203,6 +203,7 @@ describe('Route Handlers - Activities', () => {
           {
             ...attendanceSummaryResponse[0],
             session: 'PM',
+            allowSelection: true,
           },
         ],
         locations: [],
@@ -239,14 +240,17 @@ describe('Route Handlers - Activities', () => {
           {
             ...attendanceSummaryResponse[1],
             session: 'AM',
+            allowSelection: false,
           },
           {
             ...attendanceSummaryResponse[0],
             session: 'PM',
+            allowSelection: true,
           },
           {
             ...attendanceSummaryResponse[2],
             session: 'PM',
+            allowSelection: false,
           },
         ],
         locations: [],

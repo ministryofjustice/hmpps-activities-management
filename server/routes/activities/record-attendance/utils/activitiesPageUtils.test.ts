@@ -1,3 +1,4 @@
+import { addDays, subDays } from 'date-fns'
 import { activityRows, filterItems } from './activitiesPageUtils'
 import TimeSlot from '../../../../enum/timeSlot'
 
@@ -170,34 +171,136 @@ describe('filterItems', () => {
 })
 
 describe('activityRows', () => {
-  it('should filter the activities based on the search term', async () => {
+  it('should filter the activities based on the search term - today', async () => {
     const filterValues = {
       categoryFilters: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
       sessionFilters: ['AM', 'PM', 'ED'],
     }
 
-    const result = activityRows(categories, attendanceSummaryResponse, filterValues, null, 'ALL', 'english')
+    const result = activityRows(new Date(), categories, attendanceSummaryResponse, filterValues, null, 'ALL', 'english')
 
     expect(result).toEqual([
       {
         ...attendanceSummaryResponse[2],
         session: 'PM',
+        allowSelection: true,
       },
     ])
   })
 
-  it('should filter the activities based on the time slot', async () => {
+  it('should filter the activities based on the search term - yesterday', async () => {
+    const filterValues = {
+      categoryFilters: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
+      sessionFilters: ['AM', 'PM', 'ED'],
+    }
+
+    const result = activityRows(
+      subDays(new Date(), 1),
+      categories,
+      attendanceSummaryResponse,
+      filterValues,
+      null,
+      'ALL',
+      'english',
+    )
+
+    expect(result).toEqual([
+      {
+        ...attendanceSummaryResponse[2],
+        session: 'PM',
+        allowSelection: true,
+      },
+    ])
+  })
+
+  it('should filter the activities based on the search term - tomorrow', async () => {
+    const filterValues = {
+      categoryFilters: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
+      sessionFilters: ['AM', 'PM', 'ED'],
+    }
+
+    const result = activityRows(
+      addDays(new Date(), 1),
+      categories,
+      attendanceSummaryResponse,
+      filterValues,
+      null,
+      'ALL',
+      'english',
+    )
+
+    expect(result).toEqual([
+      {
+        ...attendanceSummaryResponse[2],
+        session: 'PM',
+        allowSelection: true,
+      },
+    ])
+  })
+
+  it('should filter the activities based on the time slot - today', async () => {
     const filterValues = {
       categoryFilters: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
       sessionFilters: ['AM'],
     }
 
-    const result = activityRows(categories, attendanceSummaryResponse, filterValues, null, 'ALL', '')
+    const result = activityRows(new Date(), categories, attendanceSummaryResponse, filterValues, null, 'ALL', '')
 
     expect(result).toEqual([
       {
         ...attendanceSummaryResponse[1],
         session: 'AM',
+        allowSelection: false,
+      },
+    ])
+  })
+
+  it('should filter the activities based on the time slot - yesterday', async () => {
+    const filterValues = {
+      categoryFilters: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
+      sessionFilters: ['AM'],
+    }
+
+    const result = activityRows(
+      subDays(new Date(), 1),
+      categories,
+      attendanceSummaryResponse,
+      filterValues,
+      null,
+      'ALL',
+      '',
+    )
+
+    expect(result).toEqual([
+      {
+        ...attendanceSummaryResponse[1],
+        session: 'AM',
+        allowSelection: false,
+      },
+    ])
+  })
+
+  it('should filter the activities based on the time slot - tomorrow', async () => {
+    const filterValues = {
+      categoryFilters: ['SAA_EDUCATION', 'SAA_INDUSTRIES'],
+      sessionFilters: ['AM'],
+    }
+
+    const result = activityRows(
+      addDays(new Date(), 1),
+      categories,
+      attendanceSummaryResponse,
+      filterValues,
+      null,
+      'ALL',
+      '',
+    )
+
+    expect(result).toEqual([
+      {
+        ...attendanceSummaryResponse[1],
+        session: 'AM',
+        allowSelection: false,
       },
     ])
   })
@@ -208,24 +311,28 @@ describe('activityRows', () => {
       sessionFilters: ['AM', 'PM', 'ED'],
     }
 
-    const result = activityRows(categories, attendanceSummaryResponse, filterValues, null, 'ALL', '')
+    const result = activityRows(new Date(), categories, attendanceSummaryResponse, filterValues, null, 'ALL', '')
 
     expect(result).toEqual([
       {
         ...attendanceSummaryResponse[0],
         session: 'PM',
+        allowSelection: true,
       },
       {
         ...attendanceSummaryResponse[2],
         session: 'PM',
+        allowSelection: true,
       },
       {
         ...attendanceSummaryResponse[3],
         session: 'ED',
+        allowSelection: true,
       },
       {
         ...attendanceSummaryResponse[4],
         session: 'ED',
+        allowSelection: false,
       },
     ])
   })
@@ -237,12 +344,13 @@ describe('activityRows', () => {
         sessionFilters: ['AM', 'PM', 'ED'],
       }
 
-      const result = activityRows(categories, attendanceSummaryResponse, filterValues, null, 'IN_CELL', '')
+      const result = activityRows(new Date(), categories, attendanceSummaryResponse, filterValues, null, 'IN_CELL', '')
 
       expect(result).toEqual([
         {
           ...attendanceSummaryResponse[0],
           session: 'PM',
+          allowSelection: true,
         },
       ])
     })
@@ -253,12 +361,13 @@ describe('activityRows', () => {
         sessionFilters: ['AM', 'PM', 'ED'],
       }
 
-      const result = activityRows(categories, attendanceSummaryResponse, filterValues, null, 'ON_WING', '')
+      const result = activityRows(new Date(), categories, attendanceSummaryResponse, filterValues, null, 'ON_WING', '')
 
       expect(result).toEqual([
         {
           ...attendanceSummaryResponse[2],
           session: 'PM',
+          allowSelection: true,
         },
       ])
     })
@@ -269,16 +378,18 @@ describe('activityRows', () => {
         sessionFilters: ['AM', 'PM', 'ED'],
       }
 
-      const result = activityRows(categories, attendanceSummaryResponse, filterValues, null, 'OFF_WING', '')
+      const result = activityRows(new Date(), categories, attendanceSummaryResponse, filterValues, null, 'OFF_WING', '')
 
       expect(result).toEqual([
         {
           ...attendanceSummaryResponse[3],
           session: 'ED',
+          allowSelection: true,
         },
         {
           ...attendanceSummaryResponse[4],
           session: 'ED',
+          allowSelection: false,
         },
       ])
     })
@@ -289,12 +400,21 @@ describe('activityRows', () => {
         sessionFilters: ['AM', 'PM', 'ED'],
       }
 
-      const result = activityRows(categories, attendanceSummaryResponse, filterValues, '100', 'OUT_OF_CELL', '')
+      const result = activityRows(
+        new Date(),
+        categories,
+        attendanceSummaryResponse,
+        filterValues,
+        '100',
+        'OUT_OF_CELL',
+        '',
+      )
 
       expect(result).toEqual([
         {
           ...attendanceSummaryResponse[1],
           session: 'AM',
+          allowSelection: false,
         },
       ])
     })
@@ -306,12 +426,13 @@ describe('activityRows', () => {
       sessionFilters: ['AM', 'PM', 'ED'],
     }
 
-    const result = activityRows(categories, attendanceSummaryResponse, filterValues, null, 'ALL', '', true)
+    const result = activityRows(new Date(), categories, attendanceSummaryResponse, filterValues, null, 'ALL', '', true)
 
     expect(result).toEqual([
       {
         ...attendanceSummaryResponse[4],
         session: 'ED',
+        allowSelection: true,
       },
     ])
   })
