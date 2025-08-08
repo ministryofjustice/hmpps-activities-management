@@ -205,6 +205,7 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
             {
               ...attendanceSummaryResponse[0],
               session: 'PM',
+              allowSelection: false,
             },
           ],
           locations: [],
@@ -243,10 +244,12 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
             {
               ...attendanceSummaryResponse[1],
               session: 'AM',
+              allowSelection: false,
             },
             {
               ...attendanceSummaryResponse[0],
               session: 'PM',
+              allowSelection: false,
             },
           ],
           locations: [],
