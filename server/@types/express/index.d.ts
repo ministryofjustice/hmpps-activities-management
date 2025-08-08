@@ -2,7 +2,6 @@ import { AllocateToActivityJourney } from '../../routes/activities/manage-alloca
 import { CreateAnActivityJourney } from '../../routes/activities/create-an-activity/journey'
 import { AppointmentJourney } from '../../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../../routes/appointments/create-and-edit/editAppointmentJourney'
-import { CalendarSpikeJourney } from '../../routes/spikes/handlers/journey'
 import { RecordAttendanceJourney } from '../../routes/activities/record-attendance/journey'
 import { JourneyMetrics } from '../../routes/journeyMetrics'
 
@@ -39,7 +38,6 @@ declare module 'express-session' {
     editAppointmentJourney: EditAppointmentJourney
     bookACourtHearingJourney: BookACourtHearingJourney
     bookAProbationMeetingJourney: BookAProbationMeetingJourney
-    calendarSpikeJourney: CalendarSpikeJourney
     attendanceSummaryJourney: AttendanceSummaryJourney
     unlockListJourney: UnlockListJourney
     recordAttendanceJourney: RecordAttendanceJourney

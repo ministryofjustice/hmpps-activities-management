@@ -254,21 +254,6 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
-  getScheduledEvents(
-    prisonCode: string,
-    prisonerNumber: string,
-    startDate: string,
-    endDate: string,
-    user: ServiceUser,
-  ): Promise<PrisonerScheduledEvents> {
-    return this.get({
-      path: `/scheduled-events/prison/${prisonCode}`,
-      query: { prisonerNumber, startDate, endDate },
-      authToken: user.token,
-      headers: CASELOAD_HEADER(user.activeCaseLoadId),
-    })
-  }
-
   getScheduledEventsByPrisonerNumbers(
     prisonCode: string,
     date: string,
