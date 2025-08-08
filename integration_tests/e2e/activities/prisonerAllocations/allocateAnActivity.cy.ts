@@ -15,6 +15,7 @@ import getPrisonerIepSummary from '../../../fixtures/prisonerAllocations/getPris
 import { Activity, ActivitySchedule } from '../../../../server/@types/activitiesAPI/types'
 import getCandidateSuitability from '../../../fixtures/activitiesApi/getCandidateSuitability.json'
 import resetActivityAndScheduleStubs from '../allocations/allocationsStubHelper'
+import AllocateActivitySearchPage from '../../../pages/activities/prisonerAllocations/allocateActivitySearchPage'
 
 const prisonerNumber = 'G0995GW'
 const prisonCode = 'MDI'
@@ -100,7 +101,8 @@ const allocationJourney = {
   },
 }
 
-const commonSetup = (waitlistStatus: 'APPROVED' | 'PENDING') => {
+// defines Waitlist application status for each test
+const commonSetup = (waitlistStatus: 'APPROVED' | 'PENDING' | 'ALLOCATED') => {
   const waitlistApplication = {
     ...baseWaitlistApplication,
     status: waitlistStatus,
@@ -212,5 +214,32 @@ context('Waitlist - Prisoner Allocations Page', () => {
       .contains(
         'Review Aeticake Potta’s 1 open non-association in Moorland to check that they can be safely allocated.',
       )
+  })
+
+  it('Should display allocate to an activity search page correctly', () => {
+    commonSetup('ALLOCATED')
+    cy.visit(`/activities/prisoner-allocations/${prisonerNumber}`)
+    const prisonerAllocationsPage = Page.verifyOnPage(PrisonerAllocationsDashboardPage)
+
+    const expectedDetails = [
+      { label: 'Location', value: 'A-N-3-30N' },
+      { label: 'Incentive level', value: 'Standard' },
+      { label: 'Earliest release date', value: '30 November 2019' },
+      { label: 'Workplace risk assessment', value: 'None' },
+    ]
+    const linkLabels = ['Location', 'Incentive level', 'Earliest release date']
+    prisonerAllocationsPage.getPrisonerName('Aeticake Potta').should('be.visible')
+    prisonerAllocationsPage.verifyMiniProfileDetails(expectedDetails)
+    prisonerAllocationsPage.verifyMiniProfileLinks(linkLabels)
+    prisonerAllocationsPage.getLinkByText('Allocate to an activity').should('be.visible')
+    prisonerAllocationsPage.getLinkByText('Suspend all allocations').should('be.visible')
+    prisonerAllocationsPage.getLinkByText("Aeticake Potta's schedule (opens in new tab)").should('be.visible')
+    prisonerAllocationsPage.getLinkByText('Allocate to an activity').should('be.visible').click()
+
+    const searchForActivityPage = Page.verifyOnPage(AllocateActivitySearchPage)
+    searchForActivityPage.searchBox().type('Maths level 1')
+    searchForActivityPage.continue()
+
+    Page.verifyOnPage(BeforeYouAllocate)
   })
 })

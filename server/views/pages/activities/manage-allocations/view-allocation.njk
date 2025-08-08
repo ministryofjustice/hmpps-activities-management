@@ -169,10 +169,15 @@
                         text: "Return to currently allocated",
                         href: "/activities/allocation-dashboard/" + allocation.activityId
                     }) }}
-                {% elif prisonerAllocationsEnabled %}
+                {% elif activityAllocationsBtn === 'false' %}
                     {{ govukButton({
                         text: "Return to " + prisonerName | possessive + " allocations",
                         href: "/activities/prisoner-allocations/" + allocation.prisonerNumber
+                    }) }}
+                {% else %}
+                    {{ govukButton({
+                        text: "Return to currently allocated",
+                        href: "/activities/allocation-dashboard/" + allocation.activityId
                     }) }}
                 {% endif %}
 

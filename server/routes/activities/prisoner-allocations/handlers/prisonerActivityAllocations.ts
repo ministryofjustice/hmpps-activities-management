@@ -35,6 +35,13 @@ export default class ActivityAllocationHandler {
 
     const activity = await this.activitiesService.getActivity(activityId, user)
     const activityScheduleId = getScheduleIdFromActivity(activity)
+    const alreadyAllocated = await this.activitiesService
+      .getActivePrisonPrisonerAllocations([prisonerNumber], user)
+      .then(alloc => alloc.filter(all => all.allocations.find(a => a.scheduleId === activityScheduleId)))
+      .then(alloc => alloc.length > 0)
+    if (alreadyAllocated) {
+      return res.validationFailed('activityId', `${prisonerNumber} is already allocated to ${activity.description}`)
+    }
 
     return res.redirect(`/activities/allocations/create/prisoner/${prisonerNumber}?scheduleId=${activityScheduleId}`)
   }

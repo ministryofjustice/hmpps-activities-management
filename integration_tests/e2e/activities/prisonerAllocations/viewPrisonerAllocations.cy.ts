@@ -8,7 +8,7 @@ import NonAssociationsPage from '../../../pages/activities/prisonerAllocations/N
 import Page from '../../../pages/page'
 import { WaitingListApplicationPaged } from '../../../../server/@types/activitiesAPI/types'
 
-context('Waitlist - Prisoner Allocations Page', () => {
+context('Prisoner Allocations Page', () => {
   beforeEach(() => {
     // Reset all mocks and sign in
     cy.task('reset')

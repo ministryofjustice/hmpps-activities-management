@@ -8,4 +8,6 @@ export default class ConfirmationPage extends Page {
   title = (): Cypress.Chainable => cy.get('h1')
 
   subtitle = (): Cypress.Chainable => cy.get('.govuk-panel__body')
+
+  manageAllocationsLink = () => cy.get('li').contains(`check and manage`)
 }

@@ -175,7 +175,8 @@ context('Deallocation from activity', () => {
       const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
       checkAnswersPage.confirmDeallocation()
 
-      Page.verifyOnPage(ConfirmationPage)
+      const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+      confirmationPage.manageAllocationsLink().should('exist')
     })
   })
 })
