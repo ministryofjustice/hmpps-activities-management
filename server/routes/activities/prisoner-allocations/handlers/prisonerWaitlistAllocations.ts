@@ -60,12 +60,19 @@ export default class PrisonerWaitlistHandler {
     if (waitlistScheduleId === '' || waitlistScheduleId === undefined) {
       const activity = await this.activitiesService.getActivity(activityId, user)
       const activityScheduleId = getScheduleIdFromActivity(activity)
-      const matchingApplication = waitlistApplicationData.filter(
+      const matchingWaitlistApplication = waitlistApplicationData.filter(
         applications => applications.scheduleId === activityScheduleId.toString(),
       )
+      const alreadyAllocated = await this.activitiesService
+        .getActivePrisonPrisonerAllocations([prisonerNumber], user)
+        .then(alloc => alloc.filter(all => all.allocations.find(a => a.scheduleId === activityScheduleId)))
+        .then(alloc => alloc.length > 0)
 
-      if (matchingApplication.length > 0 && matchingApplication[0].status === 'PENDING') {
+      if (matchingWaitlistApplication.length > 0 && matchingWaitlistApplication[0].status === 'PENDING') {
         return res.redirect(`pending-application`)
+      }
+      if (alreadyAllocated) {
+        return res.validationFailed('activityId', `${prisonerNumber} is already allocated to ${activity.description}`)
       }
       return res.redirect(`/activities/allocations/create/prisoner/${prisonerNumber}?scheduleId=${+activityScheduleId}`)
     }

@@ -5,7 +5,7 @@ import { validate } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import config from '../../../../config'
 import ActivityAllocationHandler, { FromActivityList } from './prisonerActivityAllocations'
-import { Activity, ActivitySummary } from '../../../../@types/activitiesAPI/types'
+import { Activity, ActivitySummary, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
@@ -61,6 +61,16 @@ const mockActivities = [
   },
 ] as ActivitySummary[]
 
+const mockActivity = {
+  id: 539,
+  description: 'A Wing Cleaner 2',
+  schedules: [
+    {
+      id: 89,
+    },
+  ],
+} as Activity
+
 describe('Route Handlers - Prisoner Activity Allocations', () => {
   const handler = new ActivityAllocationHandler(activitiesService)
   let req: Request
@@ -73,9 +83,11 @@ describe('Route Handlers - Prisoner Activity Allocations', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
+      body: { activityId: 539 },
       params: { prisonerNumber: 'ABC123' },
     } as unknown as Request
   })
@@ -106,23 +118,13 @@ describe('Route Handlers - Prisoner Activity Allocations', () => {
   })
 
   describe('POST', () => {
-    it('should redirect to the allocate activity page, when activity is selected from the activity search list', async () => {
+    it('should redirect to the allocate activity page, when an unallocated activity is selected from the activity search list', async () => {
       config.prisonerAllocationsEnabled = true
-      req.body = {
-        activityId: 539,
-      }
-
-      const mockActivity = {
-        id: 539,
-        description: 'A Wing Cleaner 2',
-        schedules: [
-          {
-            id: 89,
-          },
-        ],
-      } as Activity
 
       when(activitiesService.getActivity).calledWith(539, res.locals.user).mockResolvedValue(mockActivity)
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith([req.params.prisonerNumber], res.locals.user)
+        .mockResolvedValue([])
 
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('/activities/allocations/create/prisoner/ABC123?scheduleId=89')
@@ -141,6 +143,17 @@ describe('Route Handlers - Prisoner Activity Allocations', () => {
           { property: 'activityId', error: 'Search for an activity and select it from the list' },
         ]),
       )
+    })
+
+    it('should throw validation error if prisoner already allocated', async () => {
+      when(activitiesService.getActivity).calledWith(539, res.locals.user).mockResolvedValue(mockActivity)
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith([req.params.prisonerNumber], res.locals.user)
+        .mockResolvedValue([{ allocations: [{ scheduleId: 89 }] }] as PrisonerAllocations[])
+
+      await handler.POST(req, res)
+
+      expect(res.validationFailed).toHaveBeenCalledWith('activityId', 'ABC123 is already allocated to A Wing Cleaner 2')
     })
   })
 })

@@ -7,7 +7,12 @@ import ActivitiesService from '../../../../services/activitiesService'
 import config from '../../../../config'
 import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { Activity, ActivitySummary, WaitingListApplicationPaged } from '../../../../@types/activitiesAPI/types'
+import {
+  Activity,
+  ActivitySummary,
+  PrisonerAllocations,
+  WaitingListApplicationPaged,
+} from '../../../../@types/activitiesAPI/types'
 import PrisonerWaitlistHandler, { SelectWailistOptions } from './prisonerWaitlistAllocations'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 
@@ -32,48 +37,18 @@ const mockPrisoner: Prisoner = {
 
 const mockActivities = [
   {
-    id: 539,
+    id: 1,
     activityName: 'A Wing Cleaner 2',
-    category: {
-      id: 3,
-      code: 'SAA_PRISON_JOBS',
-      name: 'Prison jobs',
-      description: 'Such as kitchen, cleaning, gardens or other maintenance and services to keep the prison running',
-    },
-    capacity: 8,
-    allocated: 4,
-    waitlisted: 3,
-    createdTime: '2023-10-23T09:59:24',
     activityState: 'LIVE',
   },
   {
     id: 110,
     activityName: 'A Wing Orderly',
-    category: {
-      id: 3,
-      code: 'SAA_PRISON_JOBS',
-      name: 'Prison jobs',
-      description: 'Such as kitchen, cleaning, gardens or other maintenance and services to keep the prison running',
-    },
-    capacity: 8,
-    allocated: 4,
-    waitlisted: 3,
-    createdTime: '2023-10-23T09:59:24',
     activityState: 'LIVE',
   },
   {
     id: 310,
     activityName: 'B Wing Orderly',
-    category: {
-      id: 3,
-      code: 'SAA_PRISON_JOBS',
-      name: 'Prison jobs',
-      description: 'Such as kitchen, cleaning, gardens or other maintenance and services to keep the prison running',
-    },
-    capacity: 8,
-    allocated: 4,
-    waitlisted: 3,
-    createdTime: '2023-10-23T09:59:24',
     activityState: 'LIVE',
   },
 ] as ActivitySummary[]
@@ -81,44 +56,14 @@ const mockActivities = [
 const mockWaitlistApplications = [
   {
     id: 213,
-    activityId: 539,
+    activityId: 1,
     scheduleId: 518,
-    allocationId: null,
     prisonCode: 'LEI',
     prisonerNumber: 'ABC123',
-    bookingId: 1136879,
     status: 'APPROVED',
-    statusUpdatedTime: '2025-07-16T15:20:10',
-    requestedDate: '2025-06-24',
-    requestedBy: 'PRISONER',
-    comments: 'Test',
-    declinedReason: null,
-    creationTime: '2025-06-24T08:34:22',
-    createdBy: 'SCH_ACTIVITY',
-    updatedTime: '2025-07-16T15:20:10',
-    updatedBy: 'DTHOMAS_GEN',
-    earliestReleaseDate: {
-      releaseDate: '2018-01-26',
-      isTariffDate: false,
-      isIndeterminateSentence: false,
-      isImmigrationDetainee: false,
-      isConvictedUnsentenced: false,
-      isRemand: false,
-    },
-    nonAssociations: false,
     activity: {
-      id: 539,
+      id: 1,
       activityName: 'A Wing Cleaner 2',
-      category: {
-        id: 3,
-        code: 'SAA_PRISON_JOBS',
-        name: 'Prison jobs',
-        description: 'Such as kitchen, cleaning, gardens or other maintenance and services to keep the prison running',
-      },
-      capacity: 8,
-      allocated: 4,
-      waitlisted: 3,
-      createdTime: '2023-10-23T09:59:24',
       activityState: 'LIVE',
     },
   },
@@ -126,42 +71,12 @@ const mockWaitlistApplications = [
     id: 213,
     activityId: 110,
     scheduleId: 518,
-    allocationId: null,
     prisonCode: 'LEI',
     prisonerNumber: 'ABC123',
-    bookingId: 1136879,
     status: 'ALLOCATED',
-    statusUpdatedTime: '2025-07-16T15:20:10',
-    requestedDate: '2025-06-24',
-    requestedBy: 'PRISONER',
-    comments: 'Test',
-    declinedReason: null,
-    creationTime: '2025-06-24T08:34:22',
-    createdBy: 'SCH_ACTIVITY',
-    updatedTime: '2025-07-16T15:20:10',
-    updatedBy: 'DTHOMAS_GEN',
-    earliestReleaseDate: {
-      releaseDate: '2018-01-26',
-      isTariffDate: false,
-      isIndeterminateSentence: false,
-      isImmigrationDetainee: false,
-      isConvictedUnsentenced: false,
-      isRemand: false,
-    },
-    nonAssociations: false,
     activity: {
       id: 110,
       activityName: 'A Wing Orderly',
-      category: {
-        id: 3,
-        code: 'SAA_PRISON_JOBS',
-        name: 'Prison jobs',
-        description: 'Such as kitchen, cleaning, gardens or other maintenance and services to keep the prison running',
-      },
-      capacity: 8,
-      allocated: 4,
-      waitlisted: 3,
-      createdTime: '2023-10-23T09:59:24',
       activityState: 'LIVE',
     },
   },
@@ -169,42 +84,12 @@ const mockWaitlistApplications = [
     id: 213,
     activityId: 310,
     scheduleId: 518,
-    allocationId: null,
     prisonCode: 'LEI',
     prisonerNumber: 'ABC123',
-    bookingId: 1136879,
     status: 'PENDING',
-    statusUpdatedTime: '2025-07-16T15:20:10',
-    requestedDate: '2025-06-24',
-    requestedBy: 'PRISONER',
-    comments: 'Test',
-    declinedReason: null,
-    creationTime: '2025-06-24T08:34:22',
-    createdBy: 'SCH_ACTIVITY',
-    updatedTime: '2025-07-16T15:20:10',
-    updatedBy: 'DTHOMAS_GEN',
-    earliestReleaseDate: {
-      releaseDate: '2018-01-26',
-      isTariffDate: false,
-      isIndeterminateSentence: false,
-      isImmigrationDetainee: false,
-      isConvictedUnsentenced: false,
-      isRemand: false,
-    },
-    nonAssociations: false,
     activity: {
       id: 110,
       activityName: 'B Wing Orderly',
-      category: {
-        id: 3,
-        code: 'SAA_PRISON_JOBS',
-        name: 'Prison jobs',
-        description: 'Such as kitchen, cleaning, gardens or other maintenance and services to keep the prison running',
-      },
-      capacity: 8,
-      allocated: 4,
-      waitlisted: 3,
-      createdTime: '2023-10-23T09:59:24',
       activityState: 'LIVE',
     },
   },
@@ -219,47 +104,17 @@ const mockWaitingListSearchResults = {
   last: false,
 } as unknown as WaitingListApplicationPaged
 
-const mockApplicationResults = [
+const mockApprovedPendingWaitlist = [
   {
     id: 213,
-    activityId: 539,
+    activityId: 1,
     scheduleId: 518,
-    allocationId: null,
     prisonCode: 'LEI',
     prisonerNumber: 'ABC123',
-    bookingId: 1136879,
     status: 'APPROVED',
-    statusUpdatedTime: '2025-07-16T15:20:10',
-    requestedDate: '2025-06-24',
-    requestedBy: 'PRISONER',
-    comments: 'Test',
-    declinedReason: null,
-    creationTime: '2025-06-24T08:34:22',
-    createdBy: 'SCH_ACTIVITY',
-    updatedTime: '2025-07-16T15:20:10',
-    updatedBy: 'DTHOMAS_GEN',
-    earliestReleaseDate: {
-      releaseDate: '2018-01-26',
-      isTariffDate: false,
-      isIndeterminateSentence: false,
-      isImmigrationDetainee: false,
-      isConvictedUnsentenced: false,
-      isRemand: false,
-    },
-    nonAssociations: false,
     activity: {
-      id: 539,
+      id: 1,
       activityName: 'A Wing Cleaner 2',
-      category: {
-        id: 3,
-        code: 'SAA_PRISON_JOBS',
-        name: 'Prison jobs',
-        description: 'Such as kitchen, cleaning, gardens or other maintenance and services to keep the prison running',
-      },
-      capacity: 8,
-      allocated: 4,
-      waitlisted: 3,
-      createdTime: '2023-10-23T09:59:24',
       activityState: 'LIVE',
     },
   },
@@ -267,42 +122,12 @@ const mockApplicationResults = [
     id: 213,
     activityId: 310,
     scheduleId: 518,
-    allocationId: null,
     prisonCode: 'LEI',
     prisonerNumber: 'ABC123',
-    bookingId: 1136879,
     status: 'PENDING',
-    statusUpdatedTime: '2025-07-16T15:20:10',
-    requestedDate: '2025-06-24',
-    requestedBy: 'PRISONER',
-    comments: 'Test',
-    declinedReason: null,
-    creationTime: '2025-06-24T08:34:22',
-    createdBy: 'SCH_ACTIVITY',
-    updatedTime: '2025-07-16T15:20:10',
-    updatedBy: 'DTHOMAS_GEN',
-    earliestReleaseDate: {
-      releaseDate: '2018-01-26',
-      isTariffDate: false,
-      isIndeterminateSentence: false,
-      isImmigrationDetainee: false,
-      isConvictedUnsentenced: false,
-      isRemand: false,
-    },
-    nonAssociations: false,
     activity: {
       id: 310,
       activityName: 'B Wing Orderly',
-      category: {
-        id: 3,
-        code: 'SAA_PRISON_JOBS',
-        name: 'Prison jobs',
-        description: 'Such as kitchen, cleaning, gardens or other maintenance and services to keep the prison running',
-      },
-      capacity: 8,
-      allocated: 4,
-      waitlisted: 3,
-      createdTime: '2023-10-23T09:59:24',
       activityState: 'LIVE',
     },
   },
@@ -322,6 +147,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      validationFailed: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -355,11 +181,11 @@ describe('Route Handlers - Prisoner Allocations', () => {
 
       await handler.GET(req, res)
 
-      expect(mockApplicationResults).toHaveLength(2)
+      expect(mockApprovedPendingWaitlist).toHaveLength(2)
       expect(res.render).toHaveBeenCalledWith('pages/activities/prisoner-allocations/waitlist-options', {
         activities: mockActivities,
         prisoner: mockPrisoner,
-        approvedPendingWaitlist: mockApplicationResults,
+        approvedPendingWaitlist: mockApprovedPendingWaitlist,
       })
     })
   })
@@ -397,10 +223,10 @@ describe('Route Handlers - Prisoner Allocations', () => {
       expect(res.redirect).toHaveBeenCalledWith('/activities/allocations/create/prisoner/ABC123?scheduleId=518')
     })
 
-    it('should redirect to the allocate activity page, when non pending application is chosen from activity search list', async () => {
+    it('should redirect to the allocate activity page, when an unallocated activity or approved waitlist application is chosen from activity search list', async () => {
       config.prisonerAllocationsEnabled = true
       req.body = {
-        activityId: 539,
+        activityId: 1,
         waitlistScheduleId: '',
         waitlistApplicationData: [
           {
@@ -425,7 +251,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
       }
 
       const mockActivity = {
-        id: 539,
+        id: 1,
         description: 'Admin Orderly',
         schedules: [
           {
@@ -438,6 +264,10 @@ describe('Route Handlers - Prisoner Allocations', () => {
         .calledWith(req.body.activityId, res.locals.user)
         .mockResolvedValue(mockActivity)
 
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith([req.params.prisonerNumber], res.locals.user)
+        .mockResolvedValue([])
+
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('/activities/allocations/create/prisoner/ABC123?scheduleId=385')
     })
@@ -445,7 +275,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
     it('should redirect to pending waitlist page, when pending waitlist application is chosen from activity search list', async () => {
       config.prisonerAllocationsEnabled = true
       req.body = {
-        activityId: 539,
+        activityId: 1,
         waitlistScheduleId: undefined,
         waitlistApplicationData: [
           {
@@ -470,7 +300,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
       }
 
       const activity = {
-        id: 539,
+        id: 1,
         description: 'Computer Skills',
         schedules: [
           {
@@ -480,6 +310,9 @@ describe('Route Handlers - Prisoner Allocations', () => {
       } as Activity
 
       when(activitiesService.getActivity).calledWith(req.body.activityId, res.locals.user).mockResolvedValue(activity)
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith([req.params.prisonerNumber], res.locals.user)
+        .mockResolvedValue([])
 
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`pending-application`)
@@ -498,6 +331,43 @@ describe('Route Handlers - Prisoner Allocations', () => {
       expect(errors).toEqual(
         expect.arrayContaining([{ property: 'waitlistScheduleId', error: 'You must select an activity' }]),
       )
+    })
+
+    it('should throw validation error if prisoner already allocated', async () => {
+      req.body = {
+        activityId: 1,
+        waitlistScheduleId: '',
+        waitlistApplicationData: [
+          {
+            activityName: 'Computer Skills',
+            id: '213',
+            status: 'APPROVED',
+            scheduleId: '518',
+            requestedDate: '2025-06-24',
+            requestedBy: 'PRISONER',
+            comments: 'Test',
+          },
+        ],
+      }
+
+      const activity = {
+        id: 1,
+        description: 'A Wing Cleaner 2',
+        schedules: [
+          {
+            id: 89,
+          },
+        ],
+      } as Activity
+
+      when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(activity)
+      when(activitiesService.getActivePrisonPrisonerAllocations)
+        .calledWith([req.params.prisonerNumber], res.locals.user)
+        .mockResolvedValue([{ allocations: [{ scheduleId: 89 }] }] as PrisonerAllocations[])
+
+      await handler.POST(req, res)
+
+      expect(res.validationFailed).toHaveBeenCalledWith('activityId', 'ABC123 is already allocated to A Wing Cleaner 2')
     })
   })
 })

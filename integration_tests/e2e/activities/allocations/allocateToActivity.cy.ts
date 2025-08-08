@@ -199,6 +199,7 @@ context('Allocate to activity', () => {
     const checkAnswersPage2 = Page.verifyOnPage(CheckAnswersPage)
     checkAnswersPage2.confirmAllocation()
 
-    Page.verifyOnPage(ConfirmationPage)
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    confirmationPage.manageAllocationsLink().should('exist')
   })
 })

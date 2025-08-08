@@ -950,6 +950,7 @@ context('Bulk suspend/unsuspend', () => {
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.title().should('contain.text', 'Suspension ended')
+    confirmationPage.manageAllocationsLink().should('exist')
   })
   it('should display unpaid activities as unpaid even if it has the paid tag (occurs if all activities are suspended together)', () => {
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', activitiesAllSuspendedTogether)

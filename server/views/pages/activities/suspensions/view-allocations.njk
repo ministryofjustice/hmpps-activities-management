@@ -18,7 +18,7 @@
 {% for allocation in activeAllocations %}
     {% set activeAllocationRows = (activeAllocationRows.push([
         {
-            html: '<a href="/activities/allocation-dashboard/'+allocation.activityId+'">'+allocation.activitySummary+'</a>'
+            html: '<a class=govuk-link--no-visited-state href="/activities/allocation-dashboard/'+allocation.activityId+'">'+allocation.activitySummary+'</a>'
         },
         {
             text: allocation.startDate | formatDate('d MMMM yyyy')
@@ -49,7 +49,7 @@
 
     {% set suspendedAllocationRows = (suspendedAllocationRows.push([
         {
-            html: '<a href="/activities/allocation-dashboard/'+allocation.activityId+'">'+allocation.activitySummary+'</a>'
+            html: '<a class=govuk-link--no-visited-state href="/activities/allocation-dashboard/'+allocation.activityId+'">'+allocation.activitySummary+'</a>'
         },
         {
             text: allocation.plannedSuspension.plannedStartDate | formatDate('d MMMM yyyy')
@@ -61,7 +61,7 @@
             text: paid or 'Unknown'
         },
         {
-            html: '<a href=./' + session.req.params.prisonerNumber + '/view-suspensions?allocationId=' + allocation.id +' data-qa="end-suspension-'+allocation.id+'">View or end suspension</a>'
+            html: '<a class=govuk-link--no-visited-state href=./' + session.req.params.prisonerNumber + '/view-suspensions?allocationId=' + allocation.id +' data-qa="end-suspension-'+allocation.id+'">View or end suspension</a>'
         }
         ]), suspendedAllocationRows) %}
 {% endfor %}
