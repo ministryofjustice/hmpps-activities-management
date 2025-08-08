@@ -37,12 +37,6 @@ import {
 } from '../utils/utils'
 import config from '../config'
 import { ApplicationInfo } from '../applicationInfo'
-import {
-  filterActivitiesForDay,
-  getCalendarConfig,
-  isClashing,
-  sortActivitiesByStartTime,
-} from '../utils/calendarUtilities'
 import { Services } from '../services'
 import { EventSource, EventType, PayNoPay, YesNo } from '../@types/activities'
 import { AppointmentJourneyMode, AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -168,8 +162,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addFilter('findError', findError)
   njkEnv.addFilter('buildErrorSummaryList', buildErrorSummaryList)
   njkEnv.addFilter('formatDate', formatDate)
-  njkEnv.addFilter('filterActivitiesForDay', filterActivitiesForDay)
-  njkEnv.addFilter('sortActivitiesByStartTime', sortActivitiesByStartTime)
   njkEnv.addFilter('dateInList', dateInList)
   njkEnv.addFilter('subDays', subDays)
   njkEnv.addFilter('subMonths', subMonths)
@@ -177,7 +169,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addFilter('subWeeks', subWeeks)
   njkEnv.addFilter('getUnixTime', getUnixTime)
   njkEnv.addFilter('addWeeks', addWeeks)
-  njkEnv.addFilter('isClashing', isClashing)
   njkEnv.addFilter('toFixed', toFixed)
   njkEnv.addFilter('padNumber', padNumber)
   njkEnv.addFilter('toMoney', toMoney)
@@ -205,8 +196,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addFilter('absenceReasonCheckboxMatch', absenceReasonCheckboxMatch)
   njkEnv.addFilter('numberToWord', number => (number === 1 ? 'one' : number))
   njkEnv.addFilter('getSortableItemForAttendee', getSortableItemForAttendee)
-
-  njkEnv.addGlobal('calendarConfig', getCalendarConfig)
 
   njkEnv.addGlobal('ServiceAsUsername', SERVICE_AS_USERNAME)
   njkEnv.addGlobal('ServiceName', ServiceName)

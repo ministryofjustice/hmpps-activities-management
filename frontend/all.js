@@ -5,7 +5,6 @@ import PrintSeparateSlipsButton from './components/print-button/print-separate-s
 import Card from './components/card/card'
 import StickySelect from './components/sticky-select/sticky-select'
 import AutoComplete from './components/autocomplete/autocomplete'
-import Calendar from './spikes/calendar'
 import ListFilter from './components/list-filter/list-filter'
 import AppointmentEndDate from './components/appointment-end-date/end-date'
 import SelectAllLink from './components/select-all-link/select-all-link'
@@ -75,7 +74,6 @@ export {
   Card,
   StickySelect,
   AutoComplete,
-  Calendar,
   ListFilter,
   AppointmentEndDate,
   SelectAllLink,
