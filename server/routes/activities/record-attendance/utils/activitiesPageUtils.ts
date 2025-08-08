@@ -2,6 +2,7 @@ import { ActivityCategory, ScheduledInstanceAttendanceSummary } from '../../../.
 import LocationType from '../../../../enum/locationType'
 import { asString } from '../../../../utils/utils'
 import TimeSlot from '../../../../enum/timeSlot'
+import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
 export const filterItems = (
   categories: ActivityCategory[],
@@ -29,6 +30,7 @@ export const filterItems = (
 }
 
 export const activityRows = (
+  activityDate: Date,
   categories: ActivityCategory[],
   activityAttendanceSummary: ScheduledInstanceAttendanceSummary[],
   filterValues: { [key: string]: string[] },
@@ -61,12 +63,32 @@ export const activityRows = (
       }
     })
 
+  const today = formatIsoDate(new Date())
+  const formattedActivityDate = formatIsoDate(activityDate)
+
   return filteredActivities
-    .map(a => {
-      const session = TimeSlot[a.timeSlot]
+    .map(activity => {
+      let allowSelection: boolean
+      let allocatedCount: number
+      const session = TimeSlot[activity.timeSlot]
+
+      if (formattedActivityDate === today) {
+        allocatedCount = activity.attendanceSummary.attendees
+      } else {
+        allocatedCount = activity.attendanceSummary.allocations
+      }
+
+      if (isUncancelPage) {
+        allowSelection =
+          activity.cancelled && activity.attendanceRequired && allocatedCount > 0 && !(formattedActivityDate < today)
+      } else {
+        allowSelection = !activity.cancelled && activity.attendanceRequired && allocatedCount > 0
+      }
+
       return {
-        ...a,
+        ...activity,
         session,
+        allowSelection,
       }
     })
     .filter(a => !filterValues.sessionFilters || filterValues.sessionFilters.includes(a.session))
