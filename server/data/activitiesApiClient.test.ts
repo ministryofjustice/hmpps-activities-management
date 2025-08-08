@@ -426,38 +426,6 @@ describe('activitiesApiClient', () => {
     })
   })
 
-  describe('GET getScheduledEvents', () => {
-    const prisonCode = 'MDI'
-    const prisonerNumber = 'A1234AA'
-    const startDate = '2022-10-01'
-    const endDate = '2022-10-02'
-
-    it('should return scheduled events for an individual prisoner and a date range', async () => {
-      const response = {
-        prisonCode,
-        prisonerNumbers: [prisonerNumber],
-        startDate,
-        endDate,
-        appointments: [],
-        activities: [],
-        visits: [],
-        courtHearings: [],
-      } as PrisonerScheduledEvents
-
-      fakeActivitiesApi
-        .get(`/scheduled-events/prison/${prisonCode}`)
-        .query({ prisonerNumber, startDate, endDate })
-        .matchHeader('authorization', `Bearer token`)
-        .matchHeader('Caseload-Id', 'MDI')
-        .reply(200, response)
-
-      const result = await activitiesApiClient.getScheduledEvents(prisonCode, prisonerNumber, startDate, endDate, user)
-
-      expect(result).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
   describe('POST getScheduledEventsByPrisonerNumbers', () => {
     const prisonCode = 'MDI'
     const prisonerNumbers = ['A1234AA', 'B1234BB']

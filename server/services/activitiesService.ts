@@ -45,7 +45,6 @@ import {
   PrisonPayBandUpdateRequest,
   PrisonRegime,
   ScheduledActivity,
-  ScheduledEvent,
   ScheduleInstanceCancelRequest,
   ScheduleInstancesCancelRequest,
   ScheduleInstancesUncancelRequest,
@@ -191,30 +190,6 @@ export default class ActivitiesService {
 
   getPayBandsForPrison(user: ServiceUser): Promise<PrisonPayBand[]> {
     return this.activitiesApiClient.getPayBandsForPrison(user.activeCaseLoadId, user)
-  }
-
-  getScheduledEvents(
-    prisonerNumber: string,
-    startDate: Date,
-    endDate: Date,
-    user: ServiceUser,
-  ): Promise<ScheduledEvent[]> {
-    return this.activitiesApiClient
-      .getScheduledEvents(
-        user.activeCaseLoadId,
-        prisonerNumber,
-        format(startDate, 'yyyy-MM-dd'),
-        format(endDate, 'yyyy-MM-dd'),
-        user,
-      )
-      .then(res => [
-        ...res.activities,
-        ...res.courtHearings,
-        ...res.appointments,
-        ...res.visits,
-        ...res.externalTransfers,
-        ...res.adjudications,
-      ])
   }
 
   getScheduledEventsForPrisoners(
