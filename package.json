@@ -182,7 +182,6 @@
     "@babel/helpers": "~7.28.2",
     "@jgoz/esbuild-plugin-typecheck": {
       "esbuild": "$esbuild"
-    },
-    "@eslint/plugin-kit": "0.3.4"
+    }
   }
 }
