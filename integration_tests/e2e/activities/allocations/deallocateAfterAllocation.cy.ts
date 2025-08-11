@@ -409,5 +409,6 @@ context('Deallocate from activities after an allocation', () => {
     confirmationPage2.panelHeader().should('contain.text', 'Removal complete')
     confirmationPage2.panelText().should('include.text', 'removed from Maths level 1')
     confirmationPage2.getLinkByText('deallocateLink').should('not.exist')
+    confirmationPage2.manageAllocationsLink().should('exist')
   })
 })

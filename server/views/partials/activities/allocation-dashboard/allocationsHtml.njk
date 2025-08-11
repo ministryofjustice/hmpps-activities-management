@@ -25,7 +25,7 @@
             {% endset %}
             {% set suspensionHtml %}
                 <ul class='govuk-list govuk-!-text-align-right'>
-                    <li><a href='/activities/allocations/view/{{ allocation.id }}' class='govuk-link govuk-link--no-visited-state'>Edit or suspend allocation</a></li>
+                    <li><a href='/activities/allocations/view/{{ allocation.id }}?activityAllocationsBtn=false' class='govuk-link govuk-link--no-visited-state'>Edit or suspend allocation</a></li>
                 </ul>
             {% endset %}
             {% set removeHtml %}
@@ -72,8 +72,7 @@
         {% if allocation.plannedSuspension %}
             {% set suspendedAllocationRows = (suspendedAllocationRows.push([
             {
-                html: '<a class=govuk-link--no-visited-state target=_blank href=/activities/allocation-dashboard/'+allocation.activityId+'>' +allocation.activitySummary+'</a>',
-                classes: "govuk-link--no-visited-state" 
+                html: '<a class=govuk-link--no-visited-state target=_blank href=/activities/allocation-dashboard/'+allocation.activityId+'>' +allocation.activitySummary+'</a>'
             },
             {
                 text: allocation.plannedSuspension.plannedStartDate | formatDate('d MMMM yyyy')
