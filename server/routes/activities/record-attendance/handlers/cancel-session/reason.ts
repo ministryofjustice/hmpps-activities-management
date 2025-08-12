@@ -47,7 +47,7 @@ export default class CancelSessionRoutes {
         cancelledReason: textReason,
         comment,
       }
-      this.activitiesService.updateCancelledSession(instanceId, updatedReason, user)
+      await this.activitiesService.updateCancelledSession(instanceId, updatedReason, user)
       const successMessage = `You've updated the reason for cancelling this session`
       const returnTo = `../cancel-multiple/view-edit-details/${instanceId}?detailsEdited=true`
       req.session.returnTo = returnTo

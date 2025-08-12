@@ -1,0 +1,86 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - Cancel single session - Check cancellation details" %}
+{% set pageId = 'check-single-cancellation-details-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-l">Cancel activity session</span>
+      <h1 class="govuk-heading-l">Check and confirm cancellation details</h1>
+
+      {{ govukSummaryList({
+        attributes: { 'data-qa': 'cancellation-details' },
+        rows: [
+          {
+            key: {
+              text: "Activity"
+            },
+            value: {
+              text: activityName
+            },
+            actions: {
+              items: [
+                {
+                  href: activitiesRedirectUrl,
+                  text: "Change",
+                  visuallyHiddenText: "change session"
+                }
+              ]
+            }
+          },
+          {
+            key: {
+              text: "Cancellation reason"
+            },
+            value: {
+              text: reason
+            },
+            actions: {
+              items: [
+                {
+                  href: "cancel-reason?preserveHistory=true",
+                  text: "Change",
+                  visuallyHiddenText: "change cancellation reason"
+                }
+              ]
+            }
+          },
+          {
+            key: {
+              text: "Will people be paid?"
+            },
+            value: {
+              text: 'Yes' if issuePayment else 'No'
+            },
+            actions: {
+              items: [
+                {
+                  href: "payment?preserveHistory=true",
+                  text: "Change",
+                  visuallyHiddenText: "change payment"
+                }
+              ]
+            }
+          }
+        ]
+      }) }}
+
+      <form method="POST" data-module="form-spinner" data-loading-text="Cancelling session">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: "Confirm activity cancellation",
+            preventDoubleClick: true
+          }) }}
+        </div>
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

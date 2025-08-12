@@ -48,7 +48,7 @@ context('Cancel Multiple Sessions', () => {
     cy.stubEndpoint('PUT', '/scheduled-instances/cancel')
   })
 
-  it('Should cancel multiple paid activities', () => {
+  it('Should cancel multiple paid activities with pay', () => {
     cy.stubEndpoint('POST', '/scheduled-instances', [
       getScheduledInstanceEnglishLevel1,
       getScheduledInstanceEnglishLevel2,
@@ -94,6 +94,62 @@ context('Cancel Multiple Sessions', () => {
     cancelMultipleCheckAnswersPage.assertCancellationDetail("Sessions you're cancelling", '2')
     cancelMultipleCheckAnswersPage.assertCancellationDetail('Cancellation reason', 'Location unavailable')
     cancelMultipleCheckAnswersPage.assertCancellationDetail('Pay for cancelled sessions', 'Yes')
+
+    cancelMultipleCheckAnswersPage.expandSessionsSummary()
+    cancelMultipleCheckAnswersPage.checkSummaryTableHeader(`${format(today, 'EEEE, d MMMM yyyy')} - PM`)
+    cancelMultipleCheckAnswersPage.assertSummaryTableRow(1, 'Entry level English 4 (PM)')
+    cancelMultipleCheckAnswersPage.assertSummaryTableRow(2, 'English Level 2 (PM)')
+
+    cancelMultipleCheckAnswersPage.confirmCancellationButton().click()
+    Page.verifyOnPage(ActivitiesPage)
+  })
+
+  it('Should cancel multiple paid activities without pay', () => {
+    cy.stubEndpoint('POST', '/scheduled-instances', [
+      getScheduledInstanceEnglishLevel1,
+      getScheduledInstanceEnglishLevel2,
+    ])
+
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.recordAttendanceCard().click()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.enterDate(new Date(todayStr))
+    selectPeriodPage.selectAM()
+    selectPeriodPage.selectPM()
+    selectPeriodPage.selectED()
+    selectPeriodPage.continue()
+
+    const activitiesPage = Page.verifyOnPage(ActivitiesPage)
+    activitiesPage.containsActivities('English level 1', 'English level 2', 'Gym sports and fitness')
+    activitiesPage.selectActivitiesWithNames('English level 1', 'English level 2')
+    activitiesPage.cancelSessions()
+
+    const cancelMultipleReasonPage = Page.verifyOnPage(CancelMultipleReasonPage)
+    cancelMultipleReasonPage
+      .caption()
+      .contains('This will be recorded as an acceptable absence for everyone who was due to attend.')
+
+    cancelMultipleReasonPage.selectReason('Location unavailable')
+    cancelMultipleReasonPage.moreDetailsInput().type('Location in use')
+    cancelMultipleReasonPage.continue()
+
+    const cancelMultiplePaymentPage = Page.verifyOnPage(CancelMultiplePaymentPage)
+
+    cancelMultiplePaymentPage.issuePayment('No')
+    cancelMultiplePaymentPage.continue()
+
+    const cancelMultipleCheckAnswersPage = Page.verifyOnPage(CancelMultipleCheckAnswersPage)
+
+    cancelMultipleCheckAnswersPage.assertCancellationDetail("Sessions you're cancelling", '2')
+    cancelMultipleCheckAnswersPage.assertCancellationDetail('Cancellation reason', 'Location unavailable')
+    cancelMultipleCheckAnswersPage.assertCancellationDetail('Pay for cancelled sessions', 'No')
 
     cancelMultipleCheckAnswersPage.expandSessionsSummary()
     cancelMultipleCheckAnswersPage.checkSummaryTableHeader(`${format(today, 'EEEE, d MMMM yyyy')} - PM`)

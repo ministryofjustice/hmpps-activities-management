@@ -32,6 +32,9 @@ import AdvanceAttendanceDetailsRoutes from './handlers/advanceAttendanceDetails'
 import ResetAdvanceAttendanceRoutes from './handlers/resetAdvanceAttendance'
 import AdvanceAttendanceChangePayRoutes from './handlers/advanceAttendanceChangePay'
 import ChangePayRoutes from './handlers/not-required-or-excused/changePay'
+import CancelSingleSessionsReasonRoutes, { CancelReasonSingleForm } from './handlers/cancel-single-session/reason'
+import CancelSingleSessionPayRoutes, { SessionPaySingleForm } from './handlers/cancel-single-session/payment'
+import CancelSingleSessionsCheckAnswersRoutes from './handlers/cancel-single-session/checkAnswers'
 
 export default function Index({ activitiesService, prisonService, userService }: Services): Router {
   const router = Router()
@@ -64,6 +67,9 @@ export default function Index({ activitiesService, prisonService, userService }:
   const editAttendanceHandler = new EditAttendanceRoutes(activitiesService, prisonService)
   const removePayHandler = new RemovePayRoutes(activitiesService, prisonService)
   const resetAttendanceRoutes = new ResetAttendanceRoutes(activitiesService, prisonService)
+  const cancelSingleSessionReasonRoutes = new CancelSingleSessionsReasonRoutes(activitiesService)
+  const cancelSingleSessionPayRoutes = new CancelSingleSessionPayRoutes()
+  const cancelSingleSessionsCheckAnswersRoutes = new CancelSingleSessionsCheckAnswersRoutes(activitiesService)
   const cancelMultipleSessionsReasonRoutes = new CancelMultipleSessionsReasonRoutes(activitiesService)
   const cancelMultipleSessionsPayRoutes = new CancelMultipleSessionsPayRoutes()
   const cancelMultipleSessionsCheckAnswersRoutes = new CancelMultipleSessionsCheckAnswersRoutes(activitiesService)
@@ -160,6 +166,18 @@ export default function Index({ activitiesService, prisonService, userService }:
     resetAttendanceRoutes.POST,
     ResetAttendance,
   )
+
+  post('/:journeyId/activities/cancel-single', activitiesHandler.POST_CANCELLATIONS)
+  get('/:journeyId/activities/cancel-single/cancel-reason', cancelSingleSessionReasonRoutes.GET, true)
+  post(
+    '/:journeyId/activities/cancel-single/cancel-reason',
+    cancelSingleSessionReasonRoutes.POST,
+    CancelReasonSingleForm,
+  )
+  get('/:journeyId/activities/cancel-single/payment', cancelSingleSessionPayRoutes.GET, true)
+  post('/:journeyId/activities/cancel-single/payment', cancelSingleSessionPayRoutes.POST, SessionPaySingleForm)
+  get('/:journeyId/activities/cancel-single/check-answers', cancelSingleSessionsCheckAnswersRoutes.GET, true)
+  post('/:journeyId/activities/cancel-single/check-answers', cancelSingleSessionsCheckAnswersRoutes.POST)
 
   post('/:journeyId/activities/cancel-multiple', activitiesHandler.POST_CANCELLATIONS)
   get('/:journeyId/activities/cancel-multiple/cancel-reason', cancelMultipleSessionsReasonRoutes.GET, true)
