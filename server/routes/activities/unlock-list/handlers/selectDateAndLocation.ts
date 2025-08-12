@@ -55,7 +55,7 @@ export default class SelectDateAndLocationRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { activitySlot, locationKey, datePresetOption, date } = req.body
 
-    req.session.unlockListJourney = {
+    req.journeyData.unlockListJourney = {
       timeSlot: activitySlot,
       locationKey,
     }

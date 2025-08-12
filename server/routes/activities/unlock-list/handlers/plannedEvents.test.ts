@@ -67,7 +67,7 @@ describe('Unlock list routes - planned events', () => {
         query: {
           date: '2022-01-01',
         },
-        session: {
+        journeyData: {
           unlockListJourney: {
             locationKey: 'A',
             timeSlot: 'AM',
@@ -154,7 +154,7 @@ describe('Unlock list routes - planned events', () => {
         query: {
           date: '2022-01-01',
         },
-        session: {
+        journeyData: {
           unlockListJourney: {
             locationKey: 'A',
             timeSlot: 'AM',
@@ -241,7 +241,7 @@ describe('Unlock list routes - planned events', () => {
         query: {
           date: '2022-01-01',
         },
-        session: {
+        journeyData: {
           unlockListJourney: {
             locationKey: 'A',
             timeSlot: 'AM',
