@@ -97,6 +97,10 @@ export default class ActivitiesRoutes {
       sessionFilters,
     }
 
+    if (selectedInstanceIdsArr.length === 1) {
+      return res.redirect('cancel-single/cancel-reason')
+    }
+
     return res.redirect('cancel-multiple/cancel-reason')
   }
 }

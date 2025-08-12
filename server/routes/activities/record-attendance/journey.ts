@@ -1,6 +1,7 @@
 export type RecordAttendanceJourney = {
   sessionCancellation?: SessionCancellationRequest
   sessionCancellationMultiple?: MultipleSessionCancellationRequest
+  sessionCancellationSingle?: SingleSessionCancellationRequest
   selectedInstanceIds?: string[]
   activityDate?: string
   sessionFilters?: string[]
@@ -39,6 +40,13 @@ export type SessionCancellationRequest = {
 }
 
 export type MultipleSessionCancellationRequest = {
+  reason: string
+  comment?: string
+  issuePayment: boolean
+}
+
+export type SingleSessionCancellationRequest = {
+  activityName: string
   reason: string
   comment?: string
   issuePayment: boolean
