@@ -51,7 +51,7 @@ describe('Route Handlers - Create an activity schedule - location', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {},
       },
       params: {},
@@ -85,11 +85,11 @@ describe('Route Handlers - Create an activity schedule - location', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.location).toEqual({
+      expect(req.journeyData.createJourney.location).toEqual({
         id: '22222222-2222-2222-2222-222222222222',
         name: 'BWING',
       })
-      expect(req.session.createJourney.inCell).toEqual(false)
+      expect(req.journeyData.createJourney.inCell).toEqual(false)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('capacity')
     })
@@ -103,10 +103,10 @@ describe('Route Handlers - Create an activity schedule - location', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.location).toEqual(null)
-      expect(req.session.createJourney.inCell).toEqual(true)
-      expect(req.session.createJourney.onWing).toEqual(false)
-      expect(req.session.createJourney.offWing).toEqual(false)
+      expect(req.journeyData.createJourney.location).toEqual(null)
+      expect(req.journeyData.createJourney.inCell).toEqual(true)
+      expect(req.journeyData.createJourney.onWing).toEqual(false)
+      expect(req.journeyData.createJourney.offWing).toEqual(false)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('capacity')
     })
@@ -120,10 +120,10 @@ describe('Route Handlers - Create an activity schedule - location', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.location).toEqual(null)
-      expect(req.session.createJourney.inCell).toEqual(false)
-      expect(req.session.createJourney.onWing).toEqual(true)
-      expect(req.session.createJourney.offWing).toEqual(false)
+      expect(req.journeyData.createJourney.location).toEqual(null)
+      expect(req.journeyData.createJourney.inCell).toEqual(false)
+      expect(req.journeyData.createJourney.onWing).toEqual(true)
+      expect(req.journeyData.createJourney.offWing).toEqual(false)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('capacity')
     })
@@ -137,10 +137,10 @@ describe('Route Handlers - Create an activity schedule - location', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.location).toEqual(null)
-      expect(req.session.createJourney.inCell).toEqual(false)
-      expect(req.session.createJourney.onWing).toEqual(false)
-      expect(req.session.createJourney.offWing).toEqual(true)
+      expect(req.journeyData.createJourney.location).toEqual(null)
+      expect(req.journeyData.createJourney.inCell).toEqual(false)
+      expect(req.journeyData.createJourney.onWing).toEqual(false)
+      expect(req.journeyData.createJourney.offWing).toEqual(true)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('capacity')
     })
@@ -155,7 +155,8 @@ describe('Route Handlers - Create an activity schedule - location', () => {
         .mockResolvedValueOnce(activity as unknown as Activity)
 
       req = {
-        session: {
+        session: {},
+        journeyData: {
           createJourney: {
             activityId: '1',
           },

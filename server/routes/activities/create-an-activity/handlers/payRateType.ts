@@ -34,7 +34,7 @@ export default class PayRateTypeRoutes {
       payRateTypeOption = 'flat'
     } else {
       payRateTypeOption = 'single'
-      req.session.createJourney.incentiveLevel = incentiveLevel
+      req.journeyData.createJourney.incentiveLevel = incentiveLevel
       if (req.routeContext.mode === 'edit') iep = incentiveLevel
     }
     const { preserveHistory } = req.query

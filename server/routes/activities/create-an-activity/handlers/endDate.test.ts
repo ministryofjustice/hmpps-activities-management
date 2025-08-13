@@ -52,7 +52,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
     req = {
       routeContext: { mode: 'create ' },
       params: {},
-      session: {
+      journeyData: {
         createJourney: {
           latestAllocationStartDate: formatIsoDate(new Date()),
           startDate: formatIsoDate(new Date()),
@@ -81,7 +81,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.endDate).toEqual(formatIsoDate(today))
+      expect(req.journeyData.createJourney.endDate).toEqual(formatIsoDate(today))
       expect(res.redirectOrReturn).toHaveBeenCalledWith('schedule-frequency')
     })
 
@@ -96,7 +96,7 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
 
       const endDate = new Date()
 
-      req.session.createJourney = {
+      req.journeyData.createJourney = {
         activityId: 1,
         name: 'Maths level 1',
       }
@@ -108,8 +108,8 @@ describe('Route Handlers - Create an activity schedule - End date', () => {
       }
 
       await handler.POST(req, res)
-      expect(req.session.createJourney.hasAtLeastOneValidDay).toEqual(false)
-      expect(req.session.createJourney.runsOnBankHoliday).toEqual(true)
+      expect(req.journeyData.createJourney.hasAtLeastOneValidDay).toEqual(false)
+      expect(req.journeyData.createJourney.runsOnBankHoliday).toEqual(true)
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',

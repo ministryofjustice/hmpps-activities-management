@@ -19,7 +19,7 @@
                 {% if session.req.routeContext.mode == 'edit' %}
                     {% set pageHeading = "Change workplace risk assessment levels" %}
                 {% endif %}
-                {{ activityJourneyCaption(session.createJourney) }}
+                {{ activityJourneyCaption(createJourney) }}
                 {{ govukRadios({
                     fieldset: {
                         legend: {
@@ -38,18 +38,18 @@
                             value: "low",
                             html: "Only people with a <span class='govuk-!-font-weight-bold'>low</span> workplace
                                 risk assessment are suitable",
-                            checked: formResponses.riskLevel == 'low' or session.createJourney.riskLevel == 'low'
+                            checked: formResponses.riskLevel == 'low' or createJourney.riskLevel == 'low'
                         },
                         {
                             value: "medium",
                             html: "People with either a <span class='govuk-!-font-weight-bold'>low or medium</span> workplace
                                 risk assessment are suitable",
-                            checked: formResponses.riskLevel == 'medium' or session.createJourney.riskLevel == 'medium'
+                            checked: formResponses.riskLevel == 'medium' or createJourney.riskLevel == 'medium'
                         },
                         {
                             value: "high",
                             html: "Anyone is suitable (<span class='govuk-!-font-weight-bold'>low, medium or high</span> workplace risk assessment)",
-                            checked: formResponses.riskLevel == 'high' or session.createJourney.riskLevel == 'high'
+                            checked: formResponses.riskLevel == 'high' or createJourney.riskLevel == 'high'
                         }
                     ]
                 }) }}

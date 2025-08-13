@@ -15,7 +15,7 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <input type="hidden" name="iep" value="{{ iep }}" />
                 <input type="hidden" name="bandId" value="{{ bandId }}" />
-                {{ activityJourneyCaption(session.createJourney) }}
+                {{ activityJourneyCaption(createJourney) }}
                 {{ govukRadios({
                     classes: "govuk-radios--inline",
                     name: "choice",

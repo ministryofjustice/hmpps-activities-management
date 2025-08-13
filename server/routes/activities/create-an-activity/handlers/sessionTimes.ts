@@ -45,15 +45,11 @@ function startDateBeforeEarlierSession(customSlot: Slot, allSlots: Slot[]): bool
   )?.customStartTime
 
   // check any PM or ED session is after any AM start time
-  if (
+  return (
     amSlotStartTime !== undefined &&
     ((customSlot.timeSlot === TimeSlot.PM && customSlot.customStartTime.localeCompare(amSlotStartTime) <= 0) ||
       (customSlot.timeSlot === TimeSlot.ED && customSlot.customStartTime.localeCompare(amSlotStartTime) <= 0))
-  ) {
-    return true
-  }
-
-  return false
+  )
 }
 
 export default class SessionTimesRoutes {
@@ -62,9 +58,9 @@ export default class SessionTimesRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
-    const { activityId, slots, scheduleWeeks } = req.session.createJourney
+    const { activityId, slots, scheduleWeeks } = req.journeyData.createJourney
 
-    const richStartDate = parseISO(req.session.createJourney.startDate)
+    const richStartDate = parseISO(req.journeyData.createJourney.startDate)
     const currentWeek = calcCurrentWeek(richStartDate, scheduleWeeks)
 
     const sessionSlots = await this.getDaysAndSlotsByWeek(
@@ -84,7 +80,7 @@ export default class SessionTimesRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { activityId, name, scheduleWeeks } = req.session.createJourney
+    const { activityId, name, scheduleWeeks } = req.journeyData.createJourney
     const { startTimes, endTimes }: SessionTimes = req.body
     const { preserveHistory } = req.query
 
@@ -129,11 +125,11 @@ export default class SessionTimesRoutes {
       return res.validationFailed()
     }
 
-    req.session.createJourney.customSlots = customSlots
+    req.journeyData.createJourney.customSlots = customSlots
 
     if (req.routeContext.mode === 'edit') {
       const activity = {
-        slots: req.session.createJourney.customSlots,
+        slots: req.journeyData.createJourney.customSlots,
         scheduleWeeks,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)

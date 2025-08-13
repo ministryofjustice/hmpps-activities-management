@@ -7,6 +7,6 @@ export default class ConfirmationRoutes {
     const activityId = req.params.id
     res.render('pages/activities/create-an-activity/confirmation', { activityId })
 
-    req.session.createJourney = null
+    req.journeyData.createJourney = null
   }
 }

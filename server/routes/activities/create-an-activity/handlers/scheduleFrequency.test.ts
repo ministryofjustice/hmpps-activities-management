@@ -20,7 +20,7 @@ describe('Route Handlers - Create an activity - Schedule frequency', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {},
       },
       body: {},
@@ -37,18 +37,18 @@ describe('Route Handlers - Create an activity - Schedule frequency', () => {
 
   describe('POST', () => {
     it('should update session schedule weeks and redirect to week 1 of days and time page', async () => {
-      expect(req.session.createJourney.scheduleWeeks).toBeUndefined()
+      expect(req.journeyData.createJourney.scheduleWeeks).toBeUndefined()
 
       req.body.scheduleFrequency = 'WEEKLY'
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.scheduleWeeks).toEqual(1)
+      expect(req.journeyData.createJourney.scheduleWeeks).toEqual(1)
       expect(res.redirect).toHaveBeenCalledWith('days-and-times/1')
     })
 
     it('should remove invalid slots', async () => {
-      req.session.createJourney = {
+      req.journeyData.createJourney = {
         scheduleWeeks: 2,
         slots: {
           '1': {
@@ -78,8 +78,8 @@ describe('Route Handlers - Create an activity - Schedule frequency', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.scheduleWeeks).toEqual(1)
-      expect(req.session.createJourney.slots['1']).toEqual({
+      expect(req.journeyData.createJourney.scheduleWeeks).toEqual(1)
+      expect(req.journeyData.createJourney.slots['1']).toEqual({
         days: ['monday'],
         timeSlotsMonday: ['AM'],
         timeSlotsTuesday: [],
@@ -89,7 +89,7 @@ describe('Route Handlers - Create an activity - Schedule frequency', () => {
         timeSlotsSaturday: [],
         timeSlotsSunday: [],
       })
-      expect(req.session.createJourney.slots['2']).toBeUndefined()
+      expect(req.journeyData.createJourney.slots['2']).toBeUndefined()
     })
   })
 })

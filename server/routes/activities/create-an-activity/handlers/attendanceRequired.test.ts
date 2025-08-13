@@ -8,7 +8,6 @@ import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity, ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import AttendanceRequired, { AttendanceRequiredForm } from './attendanceRequired'
 import { YesNo } from '../../../../@types/activities'
-import { CreateAnActivityJourney } from '../journey'
 
 jest.mock('../../../../services/activitiesService')
 
@@ -32,7 +31,7 @@ describe('Route Handlers - Create an activity schedule - Attendance Required opt
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {},
       },
       params: {},
@@ -59,10 +58,10 @@ describe('Route Handlers - Create an activity schedule - Attendance Required opt
 
         await handler.POST(req, res)
 
-        expect(req.session.createJourney.attendanceRequired).toEqual(false)
-        expect(req.session.createJourney.paid).toBe(false)
-        expect(req.session.createJourney.pay.length).toBe(0)
-        expect(req.session.createJourney.payChange.length).toBe(0)
+        expect(req.journeyData.createJourney.attendanceRequired).toEqual(false)
+        expect(req.journeyData.createJourney.paid).toBe(false)
+        expect(req.journeyData.createJourney.pay.length).toBe(0)
+        expect(req.journeyData.createJourney.payChange.length).toBe(0)
       })
 
       it('should navigate to qualification page if attendance is not required', async () => {
@@ -72,10 +71,10 @@ describe('Route Handlers - Create an activity schedule - Attendance Required opt
 
         await handler.POST(req, res)
 
-        expect(req.session.createJourney.attendanceRequired).toEqual(false)
-        expect(req.session.createJourney.paid).toBe(false)
-        expect(req.session.createJourney.pay.length).toBe(0)
-        expect(req.session.createJourney.payChange.length).toBe(0)
+        expect(req.journeyData.createJourney.attendanceRequired).toEqual(false)
+        expect(req.journeyData.createJourney.paid).toBe(false)
+        expect(req.journeyData.createJourney.pay.length).toBe(0)
+        expect(req.journeyData.createJourney.payChange.length).toBe(0)
         expect(res.redirectOrReturn).toHaveBeenCalledWith('qualification')
       })
 
@@ -86,21 +85,26 @@ describe('Route Handlers - Create an activity schedule - Attendance Required opt
 
         await handler.POST(req, res)
 
-        expect(req.session.createJourney.attendanceRequired).toEqual(true)
-        expect(req.session.createJourney.paid).toBe(undefined)
-        expect(req.session.createJourney.pay).toBe(undefined)
-        expect(req.session.createJourney.payChange).toBe(undefined)
+        expect(req.journeyData.createJourney.attendanceRequired).toEqual(true)
+        expect(req.journeyData.createJourney.paid).toBe(undefined)
+        expect(req.journeyData.createJourney.pay).toBe(undefined)
+        expect(req.journeyData.createJourney.payChange).toBe(undefined)
         expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-option')
       })
     })
 
     describe('Edit', () => {
       beforeEach(() => {
-        req.routeContext = { mode: 'edit' }
-        req.session.createJourney = {
-          activityId: 111,
-          name: 'Maths level 1',
-        } as unknown as CreateAnActivityJourney
+        req = {
+          routeContext: { mode: 'edit' },
+          session: {},
+          journeyData: {
+            createJourney: {
+              activityId: 111,
+              name: 'Maths level 1',
+            },
+          },
+        } as unknown as Request
       })
 
       it('should update the activity', async () => {
@@ -113,14 +117,14 @@ describe('Route Handlers - Create an activity schedule - Attendance Required opt
         } as ActivityUpdateRequest
 
         when(activitiesService.updateActivity)
-          .calledWith(req.session.createJourney.activityId, expectedActivityUpdateRequest, res.locals.user)
+          .calledWith(req.journeyData.createJourney.activityId, expectedActivityUpdateRequest, res.locals.user)
           .mockResolvedValueOnce(activity as unknown as Activity)
 
         await handler.POST(req, res)
 
-        expect(req.session.createJourney.attendanceRequired).toEqual(true)
+        expect(req.journeyData.createJourney.attendanceRequired).toEqual(true)
         expect(activitiesService.updateActivity).toHaveBeenCalledWith(
-          req.session.createJourney.activityId,
+          req.journeyData.createJourney.activityId,
           expectedActivityUpdateRequest,
           res.locals.user,
         )

@@ -14,7 +14,7 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ activityJourneyCaption(session.createJourney) }}
+                {{ activityJourneyCaption(createJourney) }}
                 {{ mojDatePicker({
                     id: 'startDate',
                     name: 'startDate',
@@ -29,7 +29,7 @@
                         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
                     },
                     errorMessage: validationErrors | findError('startDate'),
-                    value: formResponses.startDate or session.createJourney.startDate | isoDateToDatePickerDate
+                    value: formResponses.startDate or createJourney.startDate | isoDateToDatePickerDate
                 }) }}
                 {% if session.req.routeContext.mode == 'edit' %}
                     <div class="govuk-button-group">

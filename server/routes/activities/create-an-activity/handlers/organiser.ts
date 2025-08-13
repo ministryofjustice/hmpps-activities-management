@@ -20,21 +20,21 @@ export default class OrganiserRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { organiser }: OrganiserForm = req.body
 
-    req.session.createJourney.organiserCode = organiser
+    req.journeyData.createJourney.organiserCode = organiser
 
     if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
-      const { activityId } = req.session.createJourney
+      const { activityId } = req.journeyData.createJourney
       const activity = {
-        organiserCode: req.session.createJourney.organiserCode,
-        tierCode: req.session.createJourney.tierCode,
-        attendanceRequired: req.session.createJourney.attendanceRequired,
+        organiserCode: req.journeyData.createJourney.organiserCode,
+        tierCode: req.journeyData.createJourney.tierCode,
+        attendanceRequired: req.journeyData.createJourney.attendanceRequired,
       } as ActivityUpdateRequest
 
       await this.activitiesService.updateActivity(activityId, activity, user)
-      const successMessage = `We've updated the organiser for ${req.session.createJourney.name}`
+      const successMessage = `We've updated the organiser for ${req.journeyData.createJourney.name}`
 
-      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/view/${req.journeyData.createJourney.activityId}`
       return res.redirectWithSuccess(returnTo, 'Activity updated', successMessage)
     }
     return res.redirectOrReturn('risk-level')

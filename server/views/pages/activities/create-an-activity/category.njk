@@ -17,7 +17,7 @@
             hint: {
                 text: category.description
             },
-            checked: formResponses.category == category.id or session.createJourney.category.id == category.id
+            checked: formResponses.category == category.id or createJourney.category.id == category.id
         }
     ), categoryOptions) %}
 {% endfor %}
@@ -27,7 +27,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ activityJourneyCaption(session.createJourney) }}
+                {{ activityJourneyCaption(createJourney) }}
                 {{ govukRadios({
                     fieldset: {
                         legend: {

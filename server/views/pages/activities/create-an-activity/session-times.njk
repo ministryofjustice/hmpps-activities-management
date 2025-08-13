@@ -18,7 +18,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            {{ activityJourneyCaption(session.createJourney) }}
+            {{ activityJourneyCaption(createJourney) }}
             {% if session.req.routeContext.mode == 'edit' %}
             <h1 class="govuk-heading-l">{{ editPageHeading }}</h1>
             {% else %}
@@ -35,7 +35,7 @@
                             }) if currentWeek == week }}
                         </h2>
                     {% endif %}
-                        {% set rows = [] %} 
+                        {% set rows = [] %}
                         {% for customSlot in customSlots %}
                             {% set formattedStart = customSlot.start | getSplitTime %}
                             {% set formattedFinish = customSlot.finish | getSplitTime %}
@@ -65,7 +65,7 @@
                                         })
                                 }]), rows) %}
                         {% endfor %}
-                    
+
                     {{ govukTable({
                         head: [
                                 {
@@ -82,7 +82,7 @@
                                 }
                             ],
                         rows: rows,
-                        attributes: {"data-qa": "session-times-table"}         
+                        attributes: {"data-qa": "session-times-table"}
                     }) }}
                 {% endfor %}
                 {{ govukButton({

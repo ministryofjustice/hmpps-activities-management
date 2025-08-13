@@ -21,7 +21,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
 
     req = {
       query: {},
-      session: {
+      journeyData: {
         createJourney: {
           name: 'Maths level 1',
           category: {
@@ -56,7 +56,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     it('should remove specified education level and redirect', async () => {
       req.query = { eduLevel: '1.1', studyArea: 'ENGLA' }
       await handler.GET(req, res)
-      expect(req.session.createJourney.educationLevels).toEqual([
+      expect(req.journeyData.createJourney.educationLevels).toEqual([
         {
           educationLevelCode: '1',
           educationLevelDescription: 'Reading Measure 1.0',

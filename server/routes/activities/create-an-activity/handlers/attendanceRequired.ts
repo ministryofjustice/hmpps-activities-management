@@ -20,17 +20,17 @@ export default class AttendanceRequired {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const attendanceRequired = req.body.attendanceRequired === YesNo.YES
-    req.session.createJourney.attendanceRequired = attendanceRequired
+    req.journeyData.createJourney.attendanceRequired = attendanceRequired
 
     if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
-      const { activityId } = req.session.createJourney
+      const { activityId } = req.journeyData.createJourney
       const activity = { attendanceRequired } as ActivityUpdateRequest
 
       await this.activitiesService.updateActivity(activityId, activity, user)
 
-      const successMessage = `You've updated the record attendance option for ${req.session.createJourney.name}`
-      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
+      const successMessage = `You've updated the record attendance option for ${req.journeyData.createJourney.name}`
+      const returnTo = `/activities/view/${req.journeyData.createJourney.activityId}`
 
       req.session.returnTo = returnTo
 
@@ -43,9 +43,9 @@ export default class AttendanceRequired {
       return res.redirectOrReturn('pay-option')
     }
 
-    req.session.createJourney.paid = false
-    req.session.createJourney.pay = []
-    req.session.createJourney.payChange = []
+    req.journeyData.createJourney.paid = false
+    req.journeyData.createJourney.pay = []
+    req.journeyData.createJourney.payChange = []
     return res.redirectOrReturn('qualification')
   }
 }

@@ -26,7 +26,7 @@ export default class CustomTimesChangeDefaultOrCustomRoutes {
     const { weekNumber } = req.params
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
 
-    const slots: Slots = req.session.createJourney.slots[weekNumber]
+    const slots: Slots = req.journeyData.createJourney.slots[weekNumber]
     const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(regimeTimes, slots)
     res.render(`pages/activities/create-an-activity/custom-times-change-default-or-custom`, {
       regimeTimes: applicableRegimeTimesForActivity,
@@ -35,10 +35,10 @@ export default class CustomTimesChangeDefaultOrCustomRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { activityId, name, scheduleWeeks } = req.session.createJourney
+    const { activityId, name, scheduleWeeks } = req.journeyData.createJourney
 
     if (req.body.selectHowToChangeTimes === DefaultOrCustomTimes.DEFAULT_PRISON_REGIME) {
-      const slots = mapJourneySlotsToActivityRequest(req.session.createJourney.slots)
+      const slots = mapJourneySlotsToActivityRequest(req.journeyData.createJourney.slots)
 
       const activity = {
         slots,

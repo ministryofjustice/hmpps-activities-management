@@ -23,7 +23,7 @@ describe('Route Handlers - Create an activity - Remove flat rate', () => {
     req = {
       params: {},
       query: {},
-      session: {
+      journeyData: {
         createJourney: {
           name: 'Maths level 1',
           category: {
@@ -58,7 +58,7 @@ describe('Route Handlers - Create an activity - Remove flat rate', () => {
     it('should remove specified flat rate', async () => {
       req.body = { bandId: '1', choice: 'yes' }
       await handler.POST(req, res)
-      expect(req.session.createJourney.flat).toEqual([])
+      expect(req.journeyData.createJourney.flat).toEqual([])
     })
 
     it('should redirect to check pay page', async () => {
@@ -70,13 +70,13 @@ describe('Route Handlers - Create an activity - Remove flat rate', () => {
     it('should not remove pay rate if action not confirmed', async () => {
       req.body = { bandId: '1', choice: 'no' }
       await handler.POST(req, res)
-      expect(req.session.createJourney.flat).toEqual([{ prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 }])
+      expect(req.journeyData.createJourney.flat).toEqual([{ prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 }])
     })
 
     it("should not remove pay rate if pay rate isn't found", async () => {
       req.body = { bandId: '2', choice: 'yes' }
       await handler.POST(req, res)
-      expect(req.session.createJourney.flat).toEqual([{ prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 }])
+      expect(req.journeyData.createJourney.flat).toEqual([{ prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 }])
     })
   })
 })

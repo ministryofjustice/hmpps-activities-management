@@ -108,7 +108,7 @@ describe('Select how to change the activity start and end times page', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {
           activityId: 1,
           name: 'Test activity',
@@ -159,7 +159,7 @@ describe('Select how to change the activity start and end times page', () => {
         .mockResolvedValueOnce(activity as unknown as Activity)
 
       req = {
-        session: {
+        journeyData: {
           createJourney: {
             activityId: 1,
             name: 'Test activity',
@@ -189,7 +189,7 @@ describe('Select how to change the activity start and end times page', () => {
 
     it('redirects to the session times page if the user selects to change times', async () => {
       req = {
-        session: {
+        journeyData: {
           createJourney: {
             activityId: 1,
             name: 'Test activity',

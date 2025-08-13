@@ -37,7 +37,7 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
 
     req = {
       params: { payRateType: 'single' },
-      session: {
+      journeyData: {
         createJourney: {
           activityId: 33,
           name: 'Maths level 1',

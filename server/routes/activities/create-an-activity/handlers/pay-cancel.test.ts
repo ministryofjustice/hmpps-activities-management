@@ -46,7 +46,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
     req = {
       routeContext: { mode: 'edit' },
       params: { payRateType: 'single' },
-      session: {
+      journeyData: {
         createJourney: {
           activityId: 33,
           name: 'Maths level 1',

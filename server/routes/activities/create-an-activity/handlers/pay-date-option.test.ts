@@ -152,7 +152,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
     req = {
       routeContext: { mode: 'edit' },
       params: { payRateType: 'single' },
-      session: {
+      journeyData: {
         createJourney: {
           activityId: 33,
           name: 'Maths level 1',
@@ -603,7 +603,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
       const req2 = {
         params: { payRateType: 'single' },
         routeContext: { mode: 'edit' },
-        session: {
+        journeyData: {
           createJourney: {
             activityId: 44,
             name: 'Maths level 1',
@@ -781,7 +781,7 @@ describe('Route Handlers - Create an activity - Pay date option', () => {
       const req2 = {
         routeContext: { mode: 'edit' },
         params: { payRateType: 'single' },
-        session: {
+        journeyData: {
           createJourney: {
             activityId: 44,
             name: 'Maths level 1',

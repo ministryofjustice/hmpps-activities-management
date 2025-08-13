@@ -7,7 +7,7 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
     const { activityId } = req.params
     const { mode } = req.routeContext
 
-    if (mode !== 'edit' || activityId === req.session.createJourney?.activityId?.toString()) return next()
+    if (mode !== 'edit' || activityId === req.journeyData.createJourney?.activityId?.toString()) return next()
 
     const activity = await activitiesService.getActivity(+activityId, res.locals.user)
     const schedule = activity.schedules[0]
@@ -15,7 +15,7 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
       .flatMap(s => s.allocations.filter(a => a.status !== 'ENDED'))
       .sort((a, b) => (a.startDate < b.startDate ? -1 : 1))
 
-    req.session.createJourney = {
+    req.journeyData.createJourney = {
       activityId: activity.id,
       scheduleId: schedule.id,
       category: activity.category,
@@ -41,15 +41,15 @@ export default (activitiesService: ActivitiesService): RequestHandler => {
     }
 
     if (schedule.internalLocation) {
-      req.session.createJourney.location = {
+      req.journeyData.createJourney.location = {
         id: schedule.internalLocation.dpsLocationId,
         name: schedule.internalLocation.description,
       }
     }
 
     if (allocations.length > 0) {
-      req.session.createJourney.latestAllocationStartDate = allocations[allocations.length - 1].startDate
-      req.session.createJourney.earliestAllocationStartDate = allocations[0].startDate
+      req.journeyData.createJourney.latestAllocationStartDate = allocations[allocations.length - 1].startDate
+      req.journeyData.createJourney.earliestAllocationStartDate = allocations[0].startDate
     }
 
     return next()

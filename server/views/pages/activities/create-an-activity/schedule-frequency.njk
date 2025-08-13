@@ -13,7 +13,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ activityJourneyCaption(session.createJourney) }}
+                {{ activityJourneyCaption(createJourney) }}
                 <h1 class="govuk-heading-l">How often do you want the schedule to repeat?</h1>
 
                 {{ govukRadios({
@@ -27,7 +27,7 @@
                             hint: {
                                 text: "The schedule is the same every week."
                             },
-                            checked: session.createJourney.scheduleWeeks == "1"
+                            checked: createJourney.scheduleWeeks == "1"
                         },
                         {
                             value: "BI_WEEKLY",
@@ -35,7 +35,7 @@
                             hint: {
                                 text: "The schedule has 2 alternating weeks."
                             },
-                            checked: session.createJourney.scheduleWeeks == "2"
+                            checked: createJourney.scheduleWeeks == "2"
                         }
                     ],
                     errorMessage: validationErrors | findError('scheduleFrequency')

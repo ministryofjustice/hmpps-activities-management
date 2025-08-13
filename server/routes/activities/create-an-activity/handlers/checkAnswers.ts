@@ -23,7 +23,7 @@ export default class CheckAnswersRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { createJourney } = req.session
+    const { createJourney } = req.journeyData
     const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(
       createJourney.pay,
       createJourney.allocations,
@@ -50,7 +50,7 @@ export default class CheckAnswersRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { createJourney } = req.session
+    const { createJourney } = req.journeyData
 
     const slots: Slot[] =
       createJourney.customSlots !== undefined

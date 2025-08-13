@@ -44,7 +44,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
     req = {
       params: { payRateType: 'single' },
-      session: {
+      journeyData: {
         createJourney: {
           activityId: 1,
           name: 'Maths level 1',
@@ -104,7 +104,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
     })
 
     it('should render current pay rate', async () => {
-      req.session.createJourney.pay = [
+      req.journeyData.createJourney.pay = [
         {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
@@ -167,7 +167,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.pay).toEqual([
+      expect(req.journeyData.createJourney.pay).toEqual([
         {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
@@ -190,7 +190,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
           { levelCode: 'STD', levelName: 'Standard' },
           { levelCode: 'ENH', levelName: 'Enhanced' },
         ] as IncentiveLevel[])
-      req.session.createJourney.pay = [
+      req.journeyData.createJourney.pay = [
         {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
@@ -207,7 +207,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.pay).toEqual([
+      expect(req.journeyData.createJourney.pay).toEqual([
         {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
@@ -241,7 +241,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
         incentiveLevel: 'Basic',
       }
 
-      req.session.createJourney.pay = [
+      req.journeyData.createJourney.pay = [
         {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
@@ -256,7 +256,7 @@ describe('Route Handlers - Create an activity - Pay', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.pay).toEqual([
+      expect(req.journeyData.createJourney.pay).toEqual([
         {
           incentiveNomisCode: 'BAS',
           incentiveLevel: 'Basic',
@@ -271,11 +271,11 @@ describe('Route Handlers - Create an activity - Pay', () => {
     })
 
     it('should update activity pay rates if its an edit journey', async () => {
-      req.session.createJourney.pay = [
+      req.journeyData.createJourney.pay = [
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 150 },
         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
       ] as CreateAnActivityJourney['pay']
-      req.session.createJourney.flat = []
+      req.journeyData.createJourney.flat = []
 
       req.params = {
         payRateType: 'flat',

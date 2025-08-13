@@ -25,22 +25,22 @@ export default class RiskLevelRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createJourney.riskLevel = req.body.riskLevel
+    req.journeyData.createJourney.riskLevel = req.body.riskLevel
     if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
-      const { activityId } = req.session.createJourney
+      const { activityId } = req.journeyData.createJourney
       const activity = {
-        riskLevel: req.session.createJourney.riskLevel,
+        riskLevel: req.journeyData.createJourney.riskLevel,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)
-      const successMessage = `You've updated the risk assessment level for ${req.session.createJourney.name}`
+      const successMessage = `You've updated the risk assessment level for ${req.journeyData.createJourney.name}`
 
-      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/view/${req.journeyData.createJourney.activityId}`
       req.session.returnTo = returnTo
       return res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     }
 
-    if (req.session.createJourney.tierCode === EventTier.FOUNDATION) {
+    if (req.journeyData.createJourney.tierCode === EventTier.FOUNDATION) {
       return res.redirectOrReturn('attendance-required')
     }
     return res.redirectOrReturn('pay-option')

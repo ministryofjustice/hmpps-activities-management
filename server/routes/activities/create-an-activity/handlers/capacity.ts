@@ -25,18 +25,18 @@ export default class CapacityRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createJourney.capacity = req.body.capacity
+    req.journeyData.createJourney.capacity = req.body.capacity
     if (req.routeContext.mode === 'edit') {
-      if (req.body.capacity < req.session.createJourney.allocations.length) {
+      if (req.body.capacity < req.journeyData.createJourney.allocations.length) {
         return res.redirect('confirm-capacity?preserveHistory=true')
       }
       const { user } = res.locals
-      const { activityId, capacity } = req.session.createJourney
+      const { activityId, capacity } = req.journeyData.createJourney
       const activity = { capacity } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)
-      const successMessage = `You've updated the capacity for ${req.session.createJourney.name}`
+      const successMessage = `You've updated the capacity for ${req.journeyData.createJourney.name}`
 
-      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/view/${req.journeyData.createJourney.activityId}`
       req.session.returnTo = returnTo
       return res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     }

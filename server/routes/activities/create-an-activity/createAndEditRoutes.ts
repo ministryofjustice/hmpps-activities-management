@@ -37,18 +37,20 @@ import CustomTimesChangeOptionRoutes, { ScheduleOption } from './handlers/custom
 import CustomTimesChangeDefaultOrCustomRoutes, {
   DefaultOrCustomOption,
 } from './handlers/customTimesChangeDefaultOrCustom'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
 export default function Index({
   activitiesService,
   prisonService,
   locationsService,
   ukBankHolidayService,
+  tokenStore,
 }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('createJourney', stepRequiresSession), handler)
+    router.get(path, setUpJourneyData(tokenStore), emptyJourneyHandler('createJourney', stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), handler)
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
   const categoryHandler = new CategoryRoutes(activitiesService)
   const nameHandler = new NameRoutes(activitiesService)

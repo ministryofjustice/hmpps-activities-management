@@ -21,7 +21,7 @@ export default class QualificationRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createJourney.qualificationOption = req.body.qualificationOption
+    req.journeyData.createJourney.qualificationOption = req.body.qualificationOption
     if (req.body.qualificationOption === QualificationOption.YES) res.redirectOrReturn(`education-level`)
     else res.redirectOrReturn(`start-date`)
   }

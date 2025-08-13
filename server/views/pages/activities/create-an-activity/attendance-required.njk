@@ -14,7 +14,7 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ activityJourneyCaption(session.createJourney) }}
+                {{ activityJourneyCaption(createJourney) }}
                 {{ govukRadios({
                     classes: "govuk-radios--inline",
                     name: "attendanceRequired",
@@ -32,12 +32,12 @@
                         {
                             value: "YES",
                             text: "Yes",
-                            checked: session.createJourney.attendanceRequired == true
+                            checked: createJourney.attendanceRequired == true
                         },
                         {
                             value: "NO",
                             text: "No",
-                            checked: session.createJourney.attendanceRequired == false
+                            checked: createJourney.attendanceRequired == false
                         }
                     ],
                     errorMessage: validationErrors | findError('attendanceRequired')
@@ -49,7 +49,7 @@
                             text: "Update attendance required",
                             preventDoubleClick: true
                         }) }}
-                        <a class="govuk-link js-backlink" href="/activities/view/{{ session.createJourney.activityId }}">Cancel</a>
+                        <a class="govuk-link js-backlink" href="/activities/view/{{ createJourney.activityId }}">Cancel</a>
                     </div>
                 {% else %}
                     {{ govukButton({

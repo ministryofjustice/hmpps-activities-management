@@ -31,32 +31,32 @@ export default class CategoryRoutes {
       .getActivityCategories(user)
       .then(categories => categories.find(c => c.id === req.body.category))
 
-    req.session.createJourney.category = {
+    req.journeyData.createJourney.category = {
       id: req.body.category,
       code: category.code,
       name: category.name,
     }
     if (category.code === 'SAA_NOT_IN_WORK') {
-      req.session.createJourney.tierCode = EventTier.FOUNDATION
+      req.journeyData.createJourney.tierCode = EventTier.FOUNDATION
     }
 
     if (req.routeContext.mode === 'edit') {
-      const { activityId } = req.session.createJourney
+      const { activityId } = req.journeyData.createJourney
       const activity = {
-        categoryId: req.session.createJourney.category.id,
-        tierCode: req.session.createJourney.tierCode,
+        categoryId: req.journeyData.createJourney.category.id,
+        tierCode: req.journeyData.createJourney.tierCode,
       } as ActivityUpdateRequest
 
       await this.activitiesService.updateActivity(activityId, activity, user)
-      const successMessage = `You've updated the category for ${req.session.createJourney.name}`
+      const successMessage = `You've updated the category for ${req.journeyData.createJourney.name}`
 
-      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/view/${req.journeyData.createJourney.activityId}`
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     } else {
       // If the category is not in work, default to in-cell activity location
-      if (category.code === 'SAA_NOT_IN_WORK' && !req.session.createJourney.location) {
-        req.session.createJourney.inCell = true
+      if (category.code === 'SAA_NOT_IN_WORK' && !req.journeyData.createJourney.location) {
+        req.journeyData.createJourney.inCell = true
       }
 
       res.redirectOrReturn('name')
