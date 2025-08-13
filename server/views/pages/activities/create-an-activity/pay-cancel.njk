@@ -11,13 +11,13 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(session.createJourney) }}
+            {{ activityJourneyCaption(createJourney) }}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <input type='hidden' name='incentiveLevel' value='{{ iep }}' />
                 <input type='hidden' name='bandId' value='{{ band.id }}' />
                 <input type='hidden' name='startDate' value='{{ paymentStartDate }}' />
-                
+
                 {% set otherDateHintHtml %}
                   <div>The pay rate is set to change to {{ rate | toMoney }} from  {{ paymentStartDate | formatDate }}.</div>
                 {% endset %}

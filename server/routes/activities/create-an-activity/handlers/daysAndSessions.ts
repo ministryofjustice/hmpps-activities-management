@@ -55,7 +55,7 @@ export default class DaysAndSessionsRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { scheduleWeeks, startDate } = req.session.createJourney
+    const { scheduleWeeks, startDate } = req.journeyData.createJourney
     const { weekNumber } = req.params
 
     if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) return next(createHttpError.NotFound())
@@ -66,7 +66,7 @@ export default class DaysAndSessionsRoutes {
   }
 
   POST = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { scheduleWeeks } = req.session.createJourney
+    const { scheduleWeeks } = req.journeyData.createJourney
     const { weekNumber } = req.params
     const selectedDaysForWeek = req.body.days
     const preserveHistoryBool = req.query.preserveHistory === 'true'
@@ -74,8 +74,8 @@ export default class DaysAndSessionsRoutes {
 
     if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) return next(createHttpError.NotFound())
 
-    req.session.createJourney.slots ??= {}
-    const { slots } = req.session.createJourney
+    req.journeyData.createJourney.slots ??= {}
+    const { slots } = req.journeyData.createJourney
     const weekNumberInt = +weekNumber
 
     if (!selectedDaysForWeek) {
@@ -86,12 +86,12 @@ export default class DaysAndSessionsRoutes {
       if ((scheduleWeeks === weekNumberInt || preserveHistoryBool) && !hasDaysSelected) {
         return res.validationFailed('days', 'You must select at least 1 slot across the schedule')
       }
-      req.session.createJourney.slots = updatedSlots
+      req.journeyData.createJourney.slots = updatedSlots
     } else {
       this.updateWeeklySlots(req, weekNumber.toString(), selectedDaysForWeek)
     }
 
-    if (this.findSlotErrors(req.session.createJourney, weekNumberInt, res)) {
+    if (this.findSlotErrors(req.journeyData.createJourney, weekNumberInt, res)) {
       return res.validationFailed()
     }
 
@@ -139,21 +139,24 @@ export default class DaysAndSessionsRoutes {
   }
 
   private async onPrisonRegime(req: Request, res: Response) {
-    const activity = await this.activitiesService.getActivity(+req.session.createJourney.activityId, res.locals.user)
+    const activity = await this.activitiesService.getActivity(
+      +req.journeyData.createJourney.activityId,
+      res.locals.user,
+    )
     return activity.schedules[0].usePrisonRegimeTime
   }
 
   private async editSlots(req: Request, res: Response) {
     const { user } = res.locals
-    const { activityId, scheduleWeeks } = req.session.createJourney
-    const slots = mapJourneySlotsToActivityRequest(req.session.createJourney.slots)
+    const { activityId, scheduleWeeks } = req.journeyData.createJourney
+    const slots = mapJourneySlotsToActivityRequest(req.journeyData.createJourney.slots)
     const activity = {
       slots,
       scheduleWeeks,
     } as ActivityUpdateRequest
     await this.activitiesService.updateActivity(activityId, activity, user)
-    const successMessage = `You've updated the daily schedule for ${req.session.createJourney.name}`
-    const returnTo = `/activities/view/${req.session.createJourney.activityId}`
+    const successMessage = `You've updated the daily schedule for ${req.journeyData.createJourney.name}`
+    const returnTo = `/activities/view/${req.journeyData.createJourney.activityId}`
     req.session.returnTo = returnTo
     res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
   }
@@ -173,11 +176,11 @@ export default class DaysAndSessionsRoutes {
   }
 
   private getSessionSlots = (req: Request, weekNumber: number): Slots => {
-    req.session.createJourney.slots ??= {}
-    req.session.createJourney.slots[weekNumber] ??= {
+    req.journeyData.createJourney.slots ??= {}
+    req.journeyData.createJourney.slots[weekNumber] ??= {
       days: [],
     }
-    return req.session.createJourney.slots[weekNumber]
+    return req.journeyData.createJourney.slots[weekNumber]
   }
 
   private validateWeekNumber = (weekNumber: string, scheduleWeeks: number) => {

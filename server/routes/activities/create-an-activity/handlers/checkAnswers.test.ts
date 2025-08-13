@@ -52,7 +52,8 @@ describe('Route Handlers - Create an activity - Check answers', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         createJourney: {
           name: 'Maths level 1',
           category: {
@@ -194,17 +195,17 @@ describe('Route Handlers - Create an activity - Check answers', () => {
           },
         ],
         slots: regimeSlotsToSchedule(
-          req.session.createJourney.scheduleWeeks,
-          req.session.createJourney.slots,
+          req.journeyData.createJourney.scheduleWeeks,
+          req.journeyData.createJourney.slots,
           regimeTimes,
         ),
-        organiser: organiserDescriptions[req.session.createJourney.organiserCode],
-        tier: eventTierDescriptions[req.session.createJourney.tierCode],
+        organiser: organiserDescriptions[req.journeyData.createJourney.organiserCode],
+        tier: eventTierDescriptions[req.journeyData.createJourney.tierCode],
       })
     })
 
     it('should render page with data from session when there are custom slots', async () => {
-      req.session.createJourney.customSlots = [
+      req.journeyData.createJourney.customSlots = [
         {
           customStartTime: '09:00',
           customEndTime: '11:00',
@@ -307,8 +308,8 @@ describe('Route Handlers - Create an activity - Check answers', () => {
             },
           ],
         },
-        organiser: organiserDescriptions[req.session.createJourney.organiserCode],
-        tier: eventTierDescriptions[req.session.createJourney.tierCode],
+        organiser: organiserDescriptions[req.journeyData.createJourney.organiserCode],
+        tier: eventTierDescriptions[req.journeyData.createJourney.tierCode],
       })
     })
   })
@@ -358,7 +359,8 @@ describe('Route Handlers - Create an activity - Check answers', () => {
 
     it('should create the activity with custom time slots and redirect to confirmation page', async () => {
       const reqWithCustomSlots = {
-        session: {
+        session: {},
+        journeyData: {
           createJourney: {
             activityId: 1,
             name: 'Maths level 1',
@@ -522,7 +524,7 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         ],
       }
 
-      req.session.createJourney.educationLevels = undefined
+      req.journeyData.createJourney.educationLevels = undefined
 
       when(activitiesService.createActivity)
         .calledWith(atLeast(expectedActivity))
@@ -569,10 +571,10 @@ describe('Route Handlers - Create an activity - Check answers', () => {
         ],
       }
 
-      req.session.createJourney.organiserCode = undefined
-      req.session.createJourney.educationLevels = undefined
-      req.session.createJourney.tierCode = EventTier.FOUNDATION
-      req.session.createJourney.attendanceRequired = true
+      req.journeyData.createJourney.organiserCode = undefined
+      req.journeyData.createJourney.educationLevels = undefined
+      req.journeyData.createJourney.tierCode = EventTier.FOUNDATION
+      req.journeyData.createJourney.attendanceRequired = true
 
       when(activitiesService.createActivity)
         .calledWith(atLeast(expectedActivity))

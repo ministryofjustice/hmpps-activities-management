@@ -40,9 +40,9 @@ export default class EducationLevelRoutes {
     // Prevent adding non-existant education
     if (!studyArea || !eduLevel) return res.validationFailed('eduLevelCode', 'Education not found')
 
-    req.session.createJourney.educationLevels ??= []
+    req.journeyData.createJourney.educationLevels ??= []
 
-    req.session.createJourney.educationLevels.push({
+    req.journeyData.createJourney.educationLevels.push({
       studyAreaCode: studyArea.code,
       studyAreaDescription: studyArea.description,
       educationLevelCode: eduLevel.code,

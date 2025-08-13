@@ -12,7 +12,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(session.createJourney) }}
+            {{ activityJourneyCaption(createJourney) }}
             <h1 class="govuk-heading-l">Does this activity run on bank holidays?</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -28,12 +28,12 @@
                         {
                             value: "yes",
                             text: "Yes",
-                            checked: session.createJourney.runsOnBankHoliday == true
+                            checked: createJourney.runsOnBankHoliday == true
                         },
                         {
                             value: "no",
                             text: "No",
-                            checked: session.createJourney.runsOnBankHoliday == false
+                            checked: createJourney.runsOnBankHoliday == false
                         }
                     ],
                     errorMessage: validationErrors | findError('runsOnBankHoliday')

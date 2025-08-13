@@ -33,7 +33,7 @@ describe('Route Handlers - Create an activity - Name', () => {
 
     req = {
       params: {},
-      session: {
+      journeyData: {
         createJourney: {},
       },
       routeContext: { mode: 'create' },
@@ -76,7 +76,7 @@ describe('Route Handlers - Create an activity - Name', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.name).toEqual('Maths Level 1')
+      expect(req.journeyData.createJourney.name).toEqual('Maths Level 1')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('tier')
     })
 
@@ -84,7 +84,7 @@ describe('Route Handlers - Create an activity - Name', () => {
       req.body = {
         name: 'Maths Level 1',
       }
-      req.session.createJourney.category = {
+      req.journeyData.createJourney.category = {
         id: 1,
         code: 'SAA_NOT_IN_WORK',
         name: 'Not in work',
@@ -92,7 +92,7 @@ describe('Route Handlers - Create an activity - Name', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.name).toEqual('Maths Level 1')
+      expect(req.journeyData.createJourney.name).toEqual('Maths Level 1')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('risk-level')
     })
 
@@ -106,7 +106,8 @@ describe('Route Handlers - Create an activity - Name', () => {
         .mockResolvedValueOnce(activity as unknown as Activity)
 
       req = {
-        session: {
+        session: {},
+        journeyData: {
           createJourney: {
             activityId: '1',
           },
@@ -128,7 +129,7 @@ describe('Route Handlers - Create an activity - Name', () => {
 
     it('should call duplicate activity name validation upon creating new activity name', async () => {
       req = {
-        session: {
+        journeyData: {
           createJourney: {
             activityId: undefined,
           },
@@ -141,7 +142,7 @@ describe('Route Handlers - Create an activity - Name', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.name).toEqual('Gym Induction')
+      expect(req.journeyData.createJourney.name).toEqual('Gym Induction')
       expect(res.validationFailed).toHaveBeenCalledWith(
         'name',
         'Enter a different name. There is already an activity with this name',
@@ -150,7 +151,8 @@ describe('Route Handlers - Create an activity - Name', () => {
 
     it('should not call validation upon editing existing activity with the same name and activity ID', async () => {
       req = {
-        session: {
+        session: {},
+        journeyData: {
           createJourney: {
             activityId: 6,
           },
@@ -163,7 +165,7 @@ describe('Route Handlers - Create an activity - Name', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.name).toEqual('Gym Induction')
+      expect(req.journeyData.createJourney.name).toEqual('Gym Induction')
       expect(res.validationFailed).toHaveBeenCalledTimes(0)
     })
   })

@@ -21,7 +21,7 @@ describe('Route Handlers - Create an activity schedule - End date option', () =>
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {},
       },
     } as unknown as Request
@@ -42,7 +42,7 @@ describe('Route Handlers - Create an activity schedule - End date option', () =>
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.endDateOption).toEqual('yes')
+      expect(req.journeyData.createJourney.endDateOption).toEqual('yes')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date')
     })
   })

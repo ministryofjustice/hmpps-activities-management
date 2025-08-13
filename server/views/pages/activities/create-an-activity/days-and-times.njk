@@ -15,9 +15,9 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(session.createJourney) }}
-            {% if session.createJourney.scheduleWeeks > 1 %}
-                <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }} of {{ session.createJourney.scheduleWeeks }}: {{ 'change' if session.req.routeContext.mode == 'edit' else 'select' }} the days and sessions when this activity runs</h1>
+            {{ activityJourneyCaption(createJourney) }}
+            {% if createJourney.scheduleWeeks > 1 %}
+                <h1 class="govuk-heading-l">Week {{ session.req.params.weekNumber }} of {{ createJourney.scheduleWeeks }}: {{ 'change' if session.req.routeContext.mode == 'edit' else 'select' }} the days and sessions when this activity runs</h1>
             {% else %}
                 <h1 class="govuk-heading-l">{{ 'Change' if session.req.routeContext.mode == 'edit' else 'Select' }} the days and sessions when this activity runs</h1>
             {% endif %}
@@ -27,19 +27,19 @@
             {% if session.req.routeContext.mode == 'edit' %}
                 <p class="govuk-body">Any changes you make will take effect tomorrow.</p>
                 <p class="govuk-body">You should update any unlock lists that have been printed.</p>
-            {% elseif session.createJourney.scheduleWeeks > 1 and session.req.params.weekNumber == 1 %}
+            {% elseif createJourney.scheduleWeeks > 1 and session.req.params.weekNumber == 1 %}
                 <p class="govuk-body">Your chosen start date will fall in week 1 of your schedule, even if there are no sessions planned for the rest of the week</p>
             {% endif %}
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {% if currentWeek and session.createJourney.scheduleWeeks > 1 %}
+                {% if currentWeek and createJourney.scheduleWeeks > 1 %}
                     {{ govukInsetText({
                         text: "The current week is: Week " + currentWeek
                     }) }}
                 {% endif %}
 
-                {% set selectedTimeSlots = session.createJourney.slots[session.req.params.weekNumber] %}
+                {% set selectedTimeSlots = createJourney.slots[session.req.params.weekNumber] %}
                 {% set selectedDays = selectedTimeSlots.days %}
                 {{ govukCheckboxes({
                     name: "days",
@@ -110,7 +110,7 @@
                     </div>
                 {% else %}
                     {{ govukInsetText({
-                        text: 'The start date of this activity is ' + session.createJourney.startDate | parseIsoDate | formatDate
+                        text: 'The start date of this activity is ' + createJourney.startDate | parseIsoDate | formatDate
                     }) }}
 
                     {{ govukButton({
@@ -123,7 +123,7 @@
 {% endblock %}
 
 {% macro startDayTag(slotDay, session) %}
-    {% set startDay = session.createJourney.startDate | parseIsoDate | formatDate("EEEE", false) | lower %}
+    {% set startDay = createJourney.startDate | parseIsoDate | formatDate("EEEE", false) | lower %}
     {% if not session.req.routeContext.mode == 'edit' and slotDay == startDay and session.req.params.weekNumber == 1 %}
         {{ govukTag({ text: 'Start day', classes: "govuk-tag--grey" }) }}
     {% endif %}

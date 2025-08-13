@@ -19,7 +19,9 @@ export default class RemovePayRoutes {
     const { preserveHistory } = req.query
     const preserveHistoryString = preserveHistory ? '?preserveHistory=true' : ''
 
-    const pay = req.session.createJourney.pay.findIndex(p => p.prisonPayBand.id === bandId && p.incentiveLevel === iep)
+    const pay = req.journeyData.createJourney.pay.findIndex(
+      p => p.prisonPayBand.id === bandId && p.incentiveLevel === iep,
+    )
     if (pay < 0) {
       return res.redirect(`check-pay${preserveHistoryString}`)
     }
@@ -35,7 +37,7 @@ export default class RemovePayRoutes {
     const preserveHistoryString = preserveHistory ? '?preserveHistory=true' : ''
 
     // index of default pay rate i.e. no start date
-    const payIndex = req.session.createJourney.pay.findIndex(
+    const payIndex = req.journeyData.createJourney.pay.findIndex(
       p => p.prisonPayBand.id === bandId && p.incentiveLevel === iep && p.startDate == null,
     )
 
@@ -43,9 +45,9 @@ export default class RemovePayRoutes {
       return res.redirect(`check-pay${preserveHistoryString}`)
     }
 
-    const payInfo = req.session.createJourney.pay[payIndex]
-    req.session.createJourney.payChange = []
-    req.session.createJourney.payChange.push({
+    const payInfo = req.journeyData.createJourney.pay[payIndex]
+    req.journeyData.createJourney.payChange = []
+    req.journeyData.createJourney.payChange.push({
       incentiveNomisCode: payInfo.incentiveNomisCode,
       incentiveLevel: payInfo.incentiveLevel,
       prisonPayBand: payInfo.prisonPayBand,
@@ -53,9 +55,9 @@ export default class RemovePayRoutes {
       changedDetails: `Pay rate removed`,
       changedBy: user.username,
     })
-    req.session.createJourney.pay.splice(payIndex, 1)
+    req.journeyData.createJourney.pay.splice(payIndex, 1)
 
-    const otherPays: ActivityPay[] = req.session.createJourney.pay.filter(
+    const otherPays: ActivityPay[] = req.journeyData.createJourney.pay.filter(
       pay =>
         pay.prisonPayBand.id === payInfo.prisonPayBand.id &&
         pay.incentiveLevel === payInfo.incentiveLevel &&
@@ -63,13 +65,13 @@ export default class RemovePayRoutes {
     )
     if (otherPays.length > 0) {
       otherPays.forEach(otherPay => {
-        const otherPayIndex = req.session.createJourney.pay.findIndex(
+        const otherPayIndex = req.journeyData.createJourney.pay.findIndex(
           p =>
             p.prisonPayBand.id === otherPay.prisonPayBand.id &&
             p.incentiveLevel === otherPay.incentiveLevel &&
             otherPay.startDate === p.startDate,
         )
-        req.session.createJourney.pay.splice(otherPayIndex, 1)
+        req.journeyData.createJourney.pay.splice(otherPayIndex, 1)
       })
     }
 
@@ -84,9 +86,9 @@ export default class RemovePayRoutes {
 
   updateActivity = async (req: Request, res: Response) => {
     const { user } = res.locals
-    const { activityId } = req.session.createJourney
+    const { activityId } = req.journeyData.createJourney
 
-    const updatedPayRates = req.session.createJourney.pay.map(p => ({
+    const updatedPayRates = req.journeyData.createJourney.pay.map(p => ({
       incentiveNomisCode: p.incentiveNomisCode,
       incentiveLevel: p.incentiveLevel,
       payBandId: p.prisonPayBand.id,
@@ -94,7 +96,7 @@ export default class RemovePayRoutes {
       startDate: p.startDate,
     }))
 
-    const deletedPayRates = req.session.createJourney.payChange.map(p => ({
+    const deletedPayRates = req.journeyData.createJourney.payChange.map(p => ({
       incentiveNomisCode: p.incentiveNomisCode,
       incentiveLevel: p.incentiveLevel,
       payBandId: p.prisonPayBand.id,
@@ -110,7 +112,7 @@ export default class RemovePayRoutes {
     } as ActivityUpdateRequest
     await this.activitiesService.updateActivity(activityId, updatedActivity, user)
 
-    const successMessage = `You've updated the pay for ${req.session.createJourney.name}`
+    const successMessage = `You've updated the pay for ${req.journeyData.createJourney.name}`
     return res.redirectWithSuccess('check-pay?preserveHistory=true', 'Activity updated', successMessage)
   }
 }

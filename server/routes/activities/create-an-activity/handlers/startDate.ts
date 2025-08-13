@@ -58,11 +58,11 @@ export default class StartDateRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const updatedStartDate = req.body.startDate
 
-    req.session.createJourney.startDate = formatIsoDate(updatedStartDate)
+    req.journeyData.createJourney.startDate = formatIsoDate(updatedStartDate)
 
     if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
-      const { activityId, name, startDate } = req.session.createJourney
+      const { activityId, name, startDate } = req.journeyData.createJourney
       const activity = { startDate } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)
 

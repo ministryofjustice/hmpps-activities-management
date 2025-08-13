@@ -72,7 +72,7 @@ describe('Select what you want to change in this activity’s schedule page', ()
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {
           slots: {
             '1': {

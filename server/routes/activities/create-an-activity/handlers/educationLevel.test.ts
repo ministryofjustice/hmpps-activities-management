@@ -77,7 +77,7 @@ describe('Route Handlers - Create an activity - Education Level', () => {
 
     req = {
       query: {},
-      session: {
+      journeyData: {
         createJourney: {
           name: 'Maths level 1',
           category: {
@@ -170,7 +170,7 @@ describe('Route Handlers - Create an activity - Education Level', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.educationLevels).toEqual([
+      expect(req.journeyData.createJourney.educationLevels).toEqual([
         {
           educationLevelCode: '1',
           educationLevelDescription: 'Reading Measure 1.0',
@@ -198,7 +198,7 @@ describe('Route Handlers - Create an activity - Education Level', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.educationLevels).toEqual([
+      expect(req.journeyData.createJourney.educationLevels).toEqual([
         {
           educationLevelCode: '1',
           educationLevelDescription: 'Reading Measure 1.0',
@@ -220,7 +220,7 @@ describe('Route Handlers - Create an activity - Education Level', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.educationLevels).toEqual([
+      expect(req.journeyData.createJourney.educationLevels).toEqual([
         {
           educationLevelCode: '1',
           educationLevelDescription: 'Reading Measure 1.0',

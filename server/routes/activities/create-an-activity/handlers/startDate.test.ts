@@ -40,7 +40,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
 
     req = {
       params: {},
-      session: {
+      journeyData: {
         createJourney: {},
       },
       routeContext: { mode: 'create ' },
@@ -64,7 +64,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.startDate).toEqual(formatIsoDate(today))
+      expect(req.journeyData.createJourney.startDate).toEqual(formatIsoDate(today))
       expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date-option')
     })
 
@@ -81,7 +81,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
       const startDate = today
 
       req = {
-        session: {
+        journeyData: {
           createJourney: { activityId: 1, name: 'Maths level 1' },
         },
         routeContext: { mode: 'edit' },

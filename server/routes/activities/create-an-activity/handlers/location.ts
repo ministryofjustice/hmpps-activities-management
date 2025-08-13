@@ -42,27 +42,27 @@ export default class LocationRoutes {
         .fetchActivityLocations(user.activeCaseLoadId, user)
         .then(locations => locations.find(l => l.id === location))
 
-      req.session.createJourney.location = {
+      req.journeyData.createJourney.location = {
         id: locationResult.id,
         name: locationResult.description,
       }
     } else {
-      req.session.createJourney.location = null
+      req.journeyData.createJourney.location = null
     }
-    req.session.createJourney.inCell = locationType === LocationType.IN_CELL
-    req.session.createJourney.onWing = locationType === LocationType.ON_WING
-    req.session.createJourney.offWing = locationType === LocationType.OFF_WING
+    req.journeyData.createJourney.inCell = locationType === LocationType.IN_CELL
+    req.journeyData.createJourney.onWing = locationType === LocationType.ON_WING
+    req.journeyData.createJourney.offWing = locationType === LocationType.OFF_WING
 
     if (req.routeContext.mode === 'edit') {
-      const { activityId } = req.session.createJourney
+      const { activityId } = req.journeyData.createJourney
       const activity = {
-        inCell: req.session.createJourney.inCell,
-        onWing: req.session.createJourney.onWing,
-        offWing: req.session.createJourney.offWing,
-        dpsLocationId: req.session.createJourney.location?.id,
+        inCell: req.journeyData.createJourney.inCell,
+        onWing: req.journeyData.createJourney.onWing,
+        offWing: req.journeyData.createJourney.offWing,
+        dpsLocationId: req.journeyData.createJourney.location?.id,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)
-      const successMessage = `You've updated the location for ${req.session.createJourney.name}`
+      const successMessage = `You've updated the location for ${req.journeyData.createJourney.name}`
 
       const returnTo = `/activities/view/${activityId}`
       req.session.returnTo = returnTo

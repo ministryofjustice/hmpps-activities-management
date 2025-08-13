@@ -34,7 +34,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       query: {},
       routeContext: { mode: 'create' },
       params: {},
-      session: {
+      journeyData: {
         createJourney: {
           activityId: 1,
           name: 'Maths level 1',
@@ -79,7 +79,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     it('should remove specified pay rate', async () => {
       req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
       await handler.POST(req, res)
-      expect(req.session.createJourney.pay).toEqual([
+      expect(req.journeyData.createJourney.pay).toEqual([
         { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
         { incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
         { incentiveLevel: 'Basic', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
@@ -87,7 +87,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     })
 
     it('should remove specified pay rate and future pay rate change', async () => {
-      req.session.createJourney.pay = [
+      req.journeyData.createJourney.pay = [
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
@@ -103,7 +103,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       req.body = { iep: 'Basic', bandId: '1', choice: 'yes' }
 
       await handler.POST(req, res)
-      expect(req.session.createJourney.pay).toEqual([
+      expect(req.journeyData.createJourney.pay).toEqual([
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
@@ -119,7 +119,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     it('should not remove pay rate if action not confirmed', async () => {
       req.body = { iep: 'Basic', bandId: '1', choice: 'no' }
       await handler.POST(req, res)
-      expect(req.session.createJourney.pay).toEqual([
+      expect(req.journeyData.createJourney.pay).toEqual([
         { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
         { incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
         { incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
@@ -130,7 +130,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     it("should not remove pay rate if pay rate isn't found", async () => {
       req.body = { iep: 'NonExistentLevel', bandId: '1', choice: 'yes' }
       await handler.POST(req, res)
-      expect(req.session.createJourney.pay).toEqual([
+      expect(req.journeyData.createJourney.pay).toEqual([
         { incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
         { incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
         { incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
@@ -139,7 +139,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
     })
 
     it('should update activity pay rates if its an edit journey', async () => {
-      req.session.createJourney.pay = [
+      req.journeyData.createJourney.pay = [
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'High' }, rate: 150 },
         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
       ] as CreateAnActivityJourney['pay']
@@ -166,12 +166,12 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'check-pay?preserveHistory=true',
         'Activity updated',
-        `You've updated the pay for ${req.session.createJourney.name}`,
+        `You've updated the pay for ${req.journeyData.createJourney.name}`,
       )
     })
 
     it('should remove specified pay rate with a future and multiple historic pay rate change in the edit journey', async () => {
-      req.session.createJourney.pay = [
+      req.journeyData.createJourney.pay = [
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
@@ -202,7 +202,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       req.routeContext = { mode: 'edit' }
 
       await handler.POST(req, res)
-      expect(req.session.createJourney.pay).toEqual([
+      expect(req.journeyData.createJourney.pay).toEqual([
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
         { incentiveNomisCode: 'STD', incentiveLevel: 'Standard', prisonPayBand: { id: 2, alias: 'Low' }, rate: 100 },
         { incentiveNomisCode: 'BAS', incentiveLevel: 'Basic', prisonPayBand: { id: 1, alias: 'Low' }, rate: 100 },
@@ -230,12 +230,12 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'check-pay?preserveHistory=true',
         'Activity updated',
-        `You've updated the pay for ${req.session.createJourney.name}`,
+        `You've updated the pay for ${req.journeyData.createJourney.name}`,
       )
     })
 
     it('should remove specified pay rate where other pay rates have multiple pay rates in the edit journey', async () => {
-      req.session.createJourney.pay = [
+      req.journeyData.createJourney.pay = [
         {
           id: 4875,
           incentiveNomisCode: 'BAS',
@@ -309,7 +309,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       req.routeContext = { mode: 'edit' }
 
       await handler.POST(req, res)
-      expect(req.session.createJourney.pay).toEqual([
+      expect(req.journeyData.createJourney.pay).toEqual([
         {
           id: 4876,
           incentiveNomisCode: 'BAN',
@@ -373,7 +373,7 @@ describe('Route Handlers - Create an activity - Remove pay', () => {
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         'check-pay?preserveHistory=true',
         'Activity updated',
-        `You've updated the pay for ${req.session.createJourney.name}`,
+        `You've updated the pay for ${req.journeyData.createJourney.name}`,
       )
     })
   })

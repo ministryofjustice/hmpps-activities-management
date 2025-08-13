@@ -21,7 +21,7 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {},
       },
     } as unknown as Request
@@ -46,7 +46,7 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.qualificationOption).toEqual('yes')
+      expect(req.journeyData.createJourney.qualificationOption).toEqual('yes')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('education-level')
     })
 
@@ -57,7 +57,7 @@ describe('Route Handlers - Create an activity - Qualifications', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.qualificationOption).toEqual('no')
+      expect(req.journeyData.createJourney.qualificationOption).toEqual('no')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('start-date')
     })
   })

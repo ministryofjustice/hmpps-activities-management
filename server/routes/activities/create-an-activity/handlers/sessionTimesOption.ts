@@ -29,7 +29,7 @@ export default class SessionTimesOptionRoutes {
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
     const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(
       regimeTimes,
-      req.session.createJourney.slots[weekNumber] as Slots,
+      req.journeyData.createJourney.slots[weekNumber] as Slots,
     )
 
     res.render(`pages/activities/create-an-activity/session-times-option`, {
@@ -40,7 +40,7 @@ export default class SessionTimesOptionRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { usePrisonRegimeTime } = req.body
     const { preserveHistory } = req.query
-    const { createJourney } = req.session
+    const { createJourney } = req.journeyData
 
     createJourney.hasAtLeastOneValidDay = await this.helper.hasAtLeastOneValidDay(createJourney, res.locals.user)
 

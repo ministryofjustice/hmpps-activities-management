@@ -34,7 +34,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
 
     req = {
       routeContext: { mode: 'create ' },
-      session: {
+      journeyData: {
         createJourney: {},
       },
       params: {},
@@ -58,7 +58,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
     it('should remove pay and redirect to qualifications page when unpaid is selected', async () => {
       req.body.paid = YesNo.NO
 
-      req.session.createJourney.pay = [
+      req.journeyData.createJourney.pay = [
         {
           incentiveNomisCode: 'STD',
           incentiveLevel: 'Standard',
@@ -67,7 +67,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
         },
       ] as ActivityPay[]
 
-      req.session.createJourney.payChange = [
+      req.journeyData.createJourney.payChange = [
         {
           incentiveNomisCode: 'STD',
           incentiveLevel: 'Standard',
@@ -78,7 +78,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
         },
       ] as ActivityPayHistory[]
 
-      req.session.createJourney.flat = [
+      req.journeyData.createJourney.flat = [
         {
           prisonPayBand: { id: 2 },
           rate: 2,
@@ -87,16 +87,16 @@ describe('Route Handlers - Create an activity - Pay option', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.pay).toHaveLength(0)
-      expect(req.session.createJourney.payChange).toHaveLength(0)
-      expect(req.session.createJourney.flat).toHaveLength(0)
+      expect(req.journeyData.createJourney.pay).toHaveLength(0)
+      expect(req.journeyData.createJourney.payChange).toHaveLength(0)
+      expect(req.journeyData.createJourney.flat).toHaveLength(0)
 
       expect(res.redirectOrReturn).toHaveBeenCalledWith('qualification')
     })
 
     it('should redirect to check pay page if activity is paid and has pay', async () => {
       req.body.paid = YesNo.YES
-      req.session.createJourney.pay = [
+      req.journeyData.createJourney.pay = [
         {
           incentiveNomisCode: 'STD',
           incentiveLevel: 'Standard',
@@ -105,7 +105,7 @@ describe('Route Handlers - Create an activity - Pay option', () => {
         },
       ] as ActivityPay[]
 
-      req.session.createJourney.payChange = [
+      req.journeyData.createJourney.payChange = [
         {
           incentiveNomisCode: 'STD',
           incentiveLevel: 'Standard',
@@ -118,16 +118,16 @@ describe('Route Handlers - Create an activity - Pay option', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.pay).toHaveLength(1)
-      expect(req.session.createJourney.payChange).toHaveLength(1)
+      expect(req.journeyData.createJourney.pay).toHaveLength(1)
+      expect(req.journeyData.createJourney.payChange).toHaveLength(1)
       expect(res.redirect).toHaveBeenCalledWith('check-pay')
     })
 
     it('should redirect to check pay page if activity is paid and has no pay', async () => {
       req.body.paid = YesNo.YES
-      req.session.createJourney.pay = []
-      req.session.createJourney.payChange = []
-      req.session.createJourney.flat = []
+      req.journeyData.createJourney.pay = []
+      req.journeyData.createJourney.payChange = []
+      req.journeyData.createJourney.flat = []
 
       await handler.POST(req, res)
 
@@ -136,9 +136,18 @@ describe('Route Handlers - Create an activity - Pay option', () => {
 
     describe('Edit', () => {
       beforeEach(() => {
-        req.routeContext = { mode: 'edit' }
-        req.session.createJourney.activityId = 2
-        req.session.createJourney.name = 'Activity name'
+        req = {
+          routeContext: { mode: 'edit' },
+          session: {},
+          journeyData: {
+            createJourney: {
+              activityId: 2,
+              name: 'Activity name',
+            },
+          },
+          body: {},
+          query: {},
+        } as unknown as Request
       })
 
       it('should update activity to unpaid and show success message if no pay selected', async () => {
@@ -152,8 +161,8 @@ describe('Route Handlers - Create an activity - Pay option', () => {
           payChange: [],
         } as ActivityUpdateRequest
 
-        expect(req.session.createJourney.pay).toHaveLength(0)
-        expect(req.session.createJourney.payChange).toHaveLength(0)
+        expect(req.journeyData.createJourney.pay).toHaveLength(0)
+        expect(req.journeyData.createJourney.payChange).toHaveLength(0)
         expect(activitiesService.updateActivity).toHaveBeenCalledWith(2, activityUpdateRequest, res.locals.user)
 
         expect(res.redirectWithSuccess).toHaveBeenCalledWith(

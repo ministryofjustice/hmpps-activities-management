@@ -19,7 +19,7 @@ describe('Route Handlers - Create an activity - Helper', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      journeyData: {
         createJourney: {
           pay: [
             { incentiveLevel: 'Standard', prisonPayBand: { id: 2, displaySequence: 2 }, rate: 200 },
@@ -63,8 +63,8 @@ describe('Route Handlers - Create an activity - Helper', () => {
         ] as Prisoner[])
 
       const result = await helper.getPayGroupedByIncentiveLevel(
-        req.session.createJourney.pay,
-        req.session.createJourney.allocations,
+        req.journeyData.createJourney.pay,
+        req.journeyData.createJourney.allocations,
         user,
       )
       expect(result).toEqual([

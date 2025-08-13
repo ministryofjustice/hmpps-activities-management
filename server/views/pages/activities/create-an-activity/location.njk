@@ -22,7 +22,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(session.createJourney) }}
+            {{ activityJourneyCaption(createJourney) }}
             <h1 class="govuk-heading-l">{{ 'Enter the new activity location' if session.req.routeContext.mode == 'edit' else 'Where does this activity take place?' }}</h1>
 
             <p class='govuk-body'>
@@ -38,7 +38,7 @@
                         {
                             value: LocationType.OUT_OF_CELL,
                             text: "Search for a location",
-                            checked: formResponses.locationType == 'OFF_WING' or session.createJourney.location.id,
+                            checked: formResponses.locationType == 'OFF_WING' or createJourney.location.id,
                             conditional: {
                                 html: govukSelect({
                                     id: "location",
@@ -47,7 +47,7 @@
                                         text: "Start typing a location and select from the list of options."
                                     },
                                     errorMessage: validationErrors | findError('location'),
-                                    value: formResponses.location or session.createJourney.location.id,
+                                    value: formResponses.location or createJourney.location.id,
                                     items: options
                                 })
                             }
@@ -55,17 +55,17 @@
                         {
                             value: LocationType.IN_CELL,
                             text: "In cell",
-                            checked: session.createJourney.inCell == true
+                            checked: createJourney.inCell == true
                         },
                         {
                             value: LocationType.OFF_WING,
                             text: "Off wing - not listed",
-                            checked: session.createJourney.offWing == true
+                            checked: createJourney.offWing == true
                         },
                         {
                             value: LocationType.ON_WING,
                             text: "On wing",
-                            checked: session.createJourney.onWing == true
+                            checked: createJourney.onWing == true
                         }
                     ]
                 }) }}

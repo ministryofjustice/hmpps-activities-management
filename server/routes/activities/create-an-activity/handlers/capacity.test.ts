@@ -32,7 +32,7 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
 
     req = {
       params: {},
-      session: {
+      journeyData: {
         createJourney: {},
       },
       routeContext: { mode: 'create' },
@@ -54,7 +54,7 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.capacity).toEqual(12)
+      expect(req.journeyData.createJourney.capacity).toEqual(12)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })
 
@@ -68,7 +68,8 @@ describe('Route Handlers - Create an activity schedule - Capacity', () => {
         .mockResolvedValueOnce(activity as unknown as Activity)
 
       req = {
-        session: {
+        session: {},
+        journeyData: {
           createJourney: {
             activityId: '1',
             name: 'Maths 1',

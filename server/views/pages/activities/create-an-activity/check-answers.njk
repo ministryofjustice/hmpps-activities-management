@@ -14,8 +14,8 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(session.createJourney) }}
-            <h1 class="govuk-heading-l">Check details for {{ session.createJourney.name }}</h1>
+            {{ activityJourneyCaption(createJourney) }}
+            <h1 class="govuk-heading-l">Check details for {{ createJourney.name }}</h1>
 
             <h2 class="govuk-heading-m">Activity details</h2>
             {{ govukSummaryList({
@@ -26,7 +26,7 @@
                             text: "Activity category"
                         },
                         value: {
-                            text: session.createJourney.category.name
+                            text: createJourney.category.name
                         },
                         actions: {
                             items: [
@@ -43,7 +43,7 @@
                             text: "Activity name"
                         },
                         value: {
-                            text: session.createJourney.name
+                            text: createJourney.name
                         },
                         actions: {
                             items: [
@@ -69,7 +69,7 @@
                                     text: "Change",
                                     visuallyHiddenText: "change tier"
                                 }
-                            ] if session.createJourney.category.code != 'SAA_NOT_IN_WORK'
+                            ] if createJourney.category.code != 'SAA_NOT_IN_WORK'
                         }
                     },
                     {
@@ -88,16 +88,16 @@
                                 }
                             ]
                         }
-                    } if session.createJourney.organiserCode,
+                    } if createJourney.organiserCode,
                     {
                         key: { text: "Record attendance" },
-                        value: { text: "Yes" if session.createJourney.attendanceRequired else "No"},
+                        value: { text: "Yes" if createJourney.attendanceRequired else "No"},
                         actions: {
                             items: [{
                                 href: "attendance-required?preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "Change record attendance option"
-                            }] if not (session.createJourney.paid or (session.createJourney.attendanceRequired and session.createJourney.tierCode != 'FOUNDATION'))
+                            }] if not (createJourney.paid or (createJourney.attendanceRequired and createJourney.tierCode != 'FOUNDATION'))
                         }
                     }
                 ]
@@ -111,9 +111,9 @@
                             text: "Suitable workplace risk assessment levels"
                         },
                         value: {
-                            text: ("Low" if session.createJourney.riskLevel == 'low') +
-                            ("Low and Medium" if session.createJourney.riskLevel == 'medium') +
-                            ("Low, Medium and High" if session.createJourney.riskLevel == 'high')
+                            text: ("Low" if createJourney.riskLevel == 'low') +
+                            ("Low and Medium" if createJourney.riskLevel == 'medium') +
+                            ("Low, Medium and High" if createJourney.riskLevel == 'high')
                         },
                         actions: {
                             items: [
@@ -130,7 +130,7 @@
                             text: "Education levels"
                         },
                         value: {
-                            html: educationLevelSummary(session.createJourney.educationLevels)
+                            html: educationLevelSummary(createJourney.educationLevels)
                         },
                         actions: {
                             items: [
@@ -147,12 +147,12 @@
                             text: "Pay rates"
                         },
                         value: {
-                            html: paySummary(incentiveLevelPays, session.createJourney.flat)
+                            html: paySummary(incentiveLevelPays, createJourney.flat)
                         },
                         actions: {
                             items: [
                                 {
-                                    href: ("check-pay" if session.createJourney.paid else "pay-option") + "?preserveHistory=true",
+                                    href: ("check-pay" if createJourney.paid else "pay-option") + "?preserveHistory=true",
                                     text: "Change",
                                     visuallyHiddenText: "change pay rates"
                                 }
@@ -169,7 +169,7 @@
                         text: "Start date"
                     },
                     value: {
-                        text: session.createJourney.startDate | parseIsoDate | formatDate('do MMMM yyyy')
+                        text: createJourney.startDate | parseIsoDate | formatDate('do MMMM yyyy')
                     },
                     actions: {
                         items: [
@@ -186,12 +186,12 @@
                         text: "End date"
                     },
                     value: {
-                        text: session.createJourney.endDate | parseIsoDate | formatDate('do MMMM yyyy') if session.createJourney.endDate else 'Not set'
+                        text: createJourney.endDate | parseIsoDate | formatDate('do MMMM yyyy') if createJourney.endDate else 'Not set'
                     },
                     actions: {
                         items: [
                             {
-                                href: "remove-end-date" if session.createJourney.endDate else "end-date?preserveHistory=true",
+                                href: "remove-end-date" if createJourney.endDate else "end-date?preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "change end date"
                             }
@@ -203,7 +203,7 @@
                         text: "Repeats"
                     },
                     value: {
-                        text: session.createJourney.scheduleWeeks + ' weekly' if session.createJourney.scheduleWeeks > 1 else 'Weekly'
+                        text: createJourney.scheduleWeeks + ' weekly' if createJourney.scheduleWeeks > 1 else 'Weekly'
                     },
                     actions: {
                         items: [
@@ -236,13 +236,13 @@
             {% set scheduleRows = (scheduleRows.push(
                 {
                     key: { text: "Runs on bank holidays" },
-                    value: { html: runsOnBankHolidays(session.createJourney.runsOnBankHoliday, session.createJourney.hasAtLeastOneValidDay) },
+                    value: { html: runsOnBankHolidays(createJourney.runsOnBankHoliday, createJourney.hasAtLeastOneValidDay) },
                     actions: {
                         items: [{
                             href: "bank-holiday-option?preserveHistory=true",
                             text: "Change",
                             visuallyHiddenText: "Change bank holiday option"
-                        }] if session.createJourney.hasAtLeastOneValidDay
+                        }] if createJourney.hasAtLeastOneValidDay
                     }
                 }
             ), scheduleRows) %}
@@ -259,7 +259,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: showLocation(session.createJourney)
+                            text: showLocation(createJourney)
                         },
                         actions: {
                             items: [
@@ -276,7 +276,7 @@
                             text: "Capacity"
                         },
                         value: {
-                            text: session.createJourney.capacity
+                            text: createJourney.capacity
                         },
                         actions: {
                             items: [
@@ -306,8 +306,8 @@
 {% endblock %}
 
 {% macro paySummary(incentiveLevelPays) %}
-    {% if session.createJourney.paid %}
-        {% if incentiveLevelPays | length or session.createJourney.flat | length %}
+    {% if createJourney.paid %}
+        {% if incentiveLevelPays | length or createJourney.flat | length %}
             {% for incentiveLevelPay in incentiveLevelPays %}
                 <div class="govuk-!-margin-bottom-2">
                     <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
@@ -316,10 +316,10 @@
                     {% endfor %}
                 </div>
             {% endfor %}
-            {% if session.createJourney.flat | length %}
+            {% if createJourney.flat | length %}
                 <div class="govuk-!-margin-bottom-2">
                     <div class="govuk-!-font-weight-bold">Flat rate pay</div>
-                    {% for flatRate in session.createJourney.flat %}
+                    {% for flatRate in createJourney.flat %}
                         <div>{{ flatRate.prisonPayBand.alias }}: {{ flatRate.rate | toMoney }}</div>
                     {% endfor %}
                 </div>

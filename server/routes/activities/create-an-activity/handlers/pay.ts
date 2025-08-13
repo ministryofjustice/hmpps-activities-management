@@ -58,7 +58,7 @@ export default class PayRoutes {
     const { user } = res.locals
     const { payRateType } = req.params
     const { iep, bandId } = req.query
-    const { createJourney } = req.session
+    const { createJourney } = req.journeyData
 
     const [incentiveLevels, payBands, payProfile]: [IncentiveLevel[], PrisonPayBand[], AgencyPrisonerPayProfile] =
       await Promise.all([
@@ -70,15 +70,15 @@ export default class PayRoutes {
     const minimumPayRate = payProfile.minHalfDayRate * 100
     const maximumPayRate = payProfile.maxHalfDayRate * 100
 
-    req.session.createJourney.pay ??= []
-    req.session.createJourney.payChange ??= []
-    req.session.createJourney.flat ??= []
-    req.session.createJourney.minimumPayRate = minimumPayRate
-    req.session.createJourney.maximumPayRate = maximumPayRate
+    req.journeyData.createJourney.pay ??= []
+    req.journeyData.createJourney.payChange ??= []
+    req.journeyData.createJourney.flat ??= []
+    req.journeyData.createJourney.minimumPayRate = minimumPayRate
+    req.journeyData.createJourney.maximumPayRate = maximumPayRate
 
     const rate =
-      req.session.createJourney?.pay?.find(p => p.prisonPayBand.id === +bandId && p.incentiveLevel === iep)?.rate ||
-      req.session.createJourney?.flat?.find(p => p.prisonPayBand.id === +bandId)?.rate
+      req.journeyData.createJourney?.pay?.find(p => p.prisonPayBand.id === +bandId && p.incentiveLevel === iep)?.rate ||
+      req.journeyData.createJourney?.flat?.find(p => p.prisonPayBand.id === +bandId)?.rate
 
     const hasAllocations = await this.helper
       .getPayGroupedByIncentiveLevel(createJourney.pay, createJourney.allocations, user)
@@ -109,12 +109,12 @@ export default class PayRoutes {
     const { rate, incentiveLevel, bandId } = req.body
 
     // Remove any existing pay rates with the same iep and band to avoid duplication
-    const singlePayIndex = req.session.createJourney.pay.findIndex(
+    const singlePayIndex = req.journeyData.createJourney.pay.findIndex(
       p => p.prisonPayBand.id === +originalBandId && p.incentiveLevel === originalIncentiveLevel,
     )
-    const flatPayIndex = req.session.createJourney.flat.findIndex(p => p.prisonPayBand.id === +originalBandId)
-    if (singlePayIndex >= 0) req.session.createJourney.pay.splice(singlePayIndex, 1)
-    if (flatPayIndex >= 0) req.session.createJourney.flat.splice(flatPayIndex, 1)
+    const flatPayIndex = req.journeyData.createJourney.flat.findIndex(p => p.prisonPayBand.id === +originalBandId)
+    if (singlePayIndex >= 0) req.journeyData.createJourney.pay.splice(singlePayIndex, 1)
+    if (flatPayIndex >= 0) req.journeyData.createJourney.flat.splice(flatPayIndex, 1)
 
     const [band, allIncentiveLevels]: [(string | number)[], IncentiveLevel[]] = await Promise.all([
       this.activitiesService
@@ -134,13 +134,13 @@ export default class PayRoutes {
     } as ActivityPay
 
     if (payRateType === 'single') {
-      req.session.createJourney.pay.push(newRate)
-      req.session.createJourney.payChange.push(newRate)
+      req.journeyData.createJourney.pay.push(newRate)
+      req.journeyData.createJourney.payChange.push(newRate)
     } else {
-      req.session.createJourney.flat.push(newRate)
+      req.journeyData.createJourney.flat.push(newRate)
     }
 
-    req.session.createJourney.attendanceRequired = true
+    req.journeyData.createJourney.attendanceRequired = true
 
     if (req.routeContext.mode === 'edit') await this.updatePay(req, res)
     else res.redirect(`../check-pay${preserveHistory ? '?preserveHistory=true' : ''}`)
@@ -148,12 +148,12 @@ export default class PayRoutes {
 
   updatePay = async (req: Request, res: Response) => {
     const { user } = res.locals
-    const { activityId } = req.session.createJourney
+    const { activityId } = req.journeyData.createJourney
     const { payRateType } = req.params
 
-    const activityPay = req.session.createJourney.pay ?? []
-    const activityPayChange = req.session.createJourney.payChange ?? []
-    const activityFlatPay = req.session.createJourney.flat ?? []
+    const activityPay = req.journeyData.createJourney.pay ?? []
+    const activityPayChange = req.journeyData.createJourney.payChange ?? []
+    const activityFlatPay = req.journeyData.createJourney.flat ?? []
 
     const flatRateBandAlias = activityFlatPay.find(p => p.prisonPayBand.id === req.body.bandId)?.prisonPayBand?.alias
     const singlePayBandAlias = activityPay.find(p => p.prisonPayBand.id === req.body.bandId)?.prisonPayBand?.alias
@@ -171,7 +171,7 @@ export default class PayRoutes {
 
       activityPay.push(...flatPayRates)
       activityPayChange.push(...flatPayRates)
-      req.session.createJourney.flat = []
+      req.journeyData.createJourney.flat = []
     }
 
     const updatedPayRates = activityPay.map(p => ({
@@ -201,12 +201,12 @@ export default class PayRoutes {
     await this.activitiesService.updateActivity(activityId, updatedActivity, user)
 
     const activity = await this.activitiesService.getActivity(+activityId, res.locals.user)
-    req.session.createJourney.allocations = activity.schedules.flatMap(s =>
+    req.journeyData.createJourney.allocations = activity.schedules.flatMap(s =>
       s.allocations.filter(a => a.status !== 'ENDED'),
     )
 
     const affectedAllocations = await this.helper
-      .getPayGroupedByIncentiveLevel(req.session.createJourney.pay, req.session.createJourney.allocations, user)
+      .getPayGroupedByIncentiveLevel(req.journeyData.createJourney.pay, req.journeyData.createJourney.allocations, user)
       .then(pays => pays.find(p => p.incentiveLevel === req.body.incentiveLevel)?.pays)
       .then(pays => pays?.find(p => p.prisonPayBand.id === +req.body.bandId).allocationCount)
 

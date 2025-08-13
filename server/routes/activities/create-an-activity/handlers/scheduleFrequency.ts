@@ -16,13 +16,13 @@ export default class ScheduleRoutes {
     const { preserveHistory } = req.query
     const scheduleFrequency = req.body.scheduleFrequency as string
 
-    req.session.createJourney.scheduleWeeks = ScheduleFrequency[scheduleFrequency]
+    req.journeyData.createJourney.scheduleWeeks = ScheduleFrequency[scheduleFrequency]
 
     // Remove invalid slots
-    if (req.session.createJourney.slots) {
-      Object.keys(req.session.createJourney.slots).forEach(weekNumber => {
-        if (+weekNumber > req.session.createJourney.scheduleWeeks) {
-          delete req.session.createJourney.slots[weekNumber]
+    if (req.journeyData.createJourney.slots) {
+      Object.keys(req.journeyData.createJourney.slots).forEach(weekNumber => {
+        if (+weekNumber > req.journeyData.createJourney.scheduleWeeks) {
+          delete req.journeyData.createJourney.slots[weekNumber]
         }
       })
     }

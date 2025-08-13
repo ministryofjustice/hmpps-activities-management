@@ -33,7 +33,7 @@ describe('Route Handlers - Create an activity - Category', () => {
 
     req = {
       params: {},
-      session: {
+      journeyData: {
         createJourney: {},
       },
       routeContext: { mode: 'create' },
@@ -74,7 +74,7 @@ describe('Route Handlers - Create an activity - Category', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.category).toEqual({
+      expect(req.journeyData.createJourney.category).toEqual({
         id: 2,
         code: 'SAA_EDUCATION',
         name: 'Education',
@@ -97,7 +97,8 @@ describe('Route Handlers - Create an activity - Category', () => {
         .mockResolvedValueOnce(activity as unknown as Activity)
 
       req = {
-        session: {
+        session: {},
+        journeyData: {
           createJourney: {
             activityId: '1',
           },
@@ -121,7 +122,7 @@ describe('Route Handlers - Create an activity - Category', () => {
       req.body = {
         category: 1,
       }
-      req.session.createJourney = {
+      req.journeyData.createJourney = {
         activityId: 1,
       }
 
@@ -139,7 +140,7 @@ describe('Route Handlers - Create an activity - Category', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.tierCode).toEqual(EventTier.FOUNDATION)
+      expect(req.journeyData.createJourney.tierCode).toEqual(EventTier.FOUNDATION)
     })
   })
 

@@ -9,7 +9,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ govukPanel({
-                titleText: "You've created a new activity: " + session.createJourney.name
+                titleText: "You've created a new activity: " + createJourney.name
             }) }}
             <h2 class="govuk-heading-l">What you can do next</h2>
             <p class="govuk-body">
@@ -17,7 +17,7 @@
             </p>
             <p class='govuk-body'>You can also:</p>
             <ul>
-            {% if session.createJourney.paid == true %}
+            {% if createJourney.paid == true %}
                 <li class='govuk-list govuk-list--bullet' data-qa='review-pay-link'>
                     <a href="/activities/edit/{{ activityId }}/check-pay" class='govuk-link govuk-link--no-visited-state'>set up any changes to pay rates due in the next 30 days</a>
                 </li>

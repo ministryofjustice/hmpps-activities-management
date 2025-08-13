@@ -34,7 +34,7 @@ describe('Route Handlers - Create an activity - Organiser', () => {
     req = {
       routeContext: { mode: 'create' },
       params: {},
-      session: {
+      journeyData: {
         createJourney: {},
       },
     } as unknown as Request
@@ -62,7 +62,7 @@ describe('Route Handlers - Create an activity - Organiser', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.organiserCode).toEqual(Organiser.PRISONER)
+      expect(req.journeyData.createJourney.organiserCode).toEqual(Organiser.PRISONER)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('risk-level')
     })
 
@@ -70,7 +70,7 @@ describe('Route Handlers - Create an activity - Organiser', () => {
       req.body = {
         organiser: Organiser.PRISONER,
       }
-      req.session.createJourney = {
+      req.journeyData.createJourney = {
         activityId: 1,
         name: 'English 1',
         tierCode: EventTier.FOUNDATION,

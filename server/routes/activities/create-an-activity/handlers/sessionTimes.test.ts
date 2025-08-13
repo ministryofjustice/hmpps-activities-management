@@ -125,7 +125,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {
           slots: {
             '1': {
@@ -214,9 +214,9 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
         })
 
       req.routeContext = { mode: 'edit' }
-      req.session.createJourney.activityId = 1
-      req.session.createJourney.scheduleWeeks = 2
-      req.session.createJourney.slots = {
+      req.journeyData.createJourney.activityId = 1
+      req.journeyData.createJourney.scheduleWeeks = 2
+      req.journeyData.createJourney.slots = {
         '1': {
           days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
           timeSlotsMonday: ['AM'],
@@ -364,7 +364,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
     })
 
     afterEach(() => {
-      expect(req.session.createJourney.customSlots).toEqual([
+      expect(req.journeyData.createJourney.customSlots).toEqual([
         {
           customStartTime: '05:30',
           customEndTime: '09:44',
@@ -447,7 +447,7 @@ describe('Route Handlers - Create an activity schedule - session times', () => {
           endTimes: endMap,
         },
         query: {},
-        session: {
+        journeyData: {
           createJourney: {
             activityId: 1,
             name: 'Test activity',

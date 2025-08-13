@@ -17,7 +17,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(session.createJourney) }}
+            {{ activityJourneyCaption(createJourney) }}
             <h1 class="govuk-heading-l">Select how to set the activity start and end times</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -28,12 +28,12 @@
                         {
                             value: "true",
                             text: "Use the prison\'s regime times",
-                            checked: session.createJourney.usePrisonRegimeTime == true
+                            checked: createJourney.usePrisonRegimeTime == true
                         },
                         {
                             value: "false",
                             text: "Select the start and end times",
-                            checked: session.createJourney.usePrisonRegimeTime == false
+                            checked: createJourney.usePrisonRegimeTime == false
                         }
                     ],
                     errorMessage: validationErrors | findError('usePrisonRegimeTime'),

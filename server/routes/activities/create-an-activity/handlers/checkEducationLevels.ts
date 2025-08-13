@@ -6,7 +6,7 @@ export default class CheckEducationLevelHandler {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { educationLevels } = req.session.createJourney
+    const { educationLevels } = req.journeyData.createJourney
 
     res.render(`pages/activities/create-an-activity/check-education-level`, { educationLevels })
   }
@@ -14,14 +14,14 @@ export default class CheckEducationLevelHandler {
   POST = async (req: Request, res: Response): Promise<void> => {
     if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
-      const { activityId } = req.session.createJourney
+      const { activityId } = req.journeyData.createJourney
       const activity = {
-        minimumEducationLevel: req.session.createJourney.educationLevels,
+        minimumEducationLevel: req.journeyData.createJourney.educationLevels,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)
-      const successMessage = `You've updated the education levels for ${req.session.createJourney.name}`
+      const successMessage = `You've updated the education levels for ${req.journeyData.createJourney.name}`
 
-      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/view/${req.journeyData.createJourney.activityId}`
       req.session.returnTo = returnTo
       return res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     }

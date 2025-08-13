@@ -35,7 +35,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
       routeContext: {
         mode: 'create',
       },
-      session: {
+      journeyData: {
         createJourney: {
           tierCode: EventTier.TIER_1,
         },
@@ -60,7 +60,7 @@ describe('Route Handlers - Create an activity - Risk level', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.riskLevel).toEqual('high')
+      expect(req.journeyData.createJourney.riskLevel).toEqual('high')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-option')
     })
 
@@ -69,11 +69,11 @@ describe('Route Handlers - Create an activity - Risk level', () => {
         riskLevel: 'high',
       }
 
-      req.session.createJourney.tierCode = EventTier.FOUNDATION
+      req.journeyData.createJourney.tierCode = EventTier.FOUNDATION
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.riskLevel).toEqual('high')
+      expect(req.journeyData.createJourney.riskLevel).toEqual('high')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('attendance-required')
     })
 
@@ -87,7 +87,8 @@ describe('Route Handlers - Create an activity - Risk level', () => {
         .mockResolvedValueOnce(activity as unknown as Activity)
 
       req = {
-        session: {
+        session: {},
+        journeyData: {
           createJourney: {
             activityId: '1',
           },

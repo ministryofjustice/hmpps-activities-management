@@ -13,7 +13,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ activityJourneyCaption(session.createJourney) }}
+                {{ activityJourneyCaption(createJourney) }}
                 {% if session.req.routeContext.mode == 'edit' and hasAllocations %}
                     <input type='hidden' name='incentiveLevel' value='{{ iep }}' >
                 {% else %}
