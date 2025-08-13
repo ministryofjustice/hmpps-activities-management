@@ -37,7 +37,7 @@ describe('Unlock list routes - select date and location', () => {
     } as unknown as Response
 
     req = {
-      session: {},
+      journeyData: {},
       query: {},
     } as unknown as Request
     jest.resetAllMocks()
@@ -60,7 +60,7 @@ describe('Unlock list routes - select date and location', () => {
       })
       expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(1)
       expect(activitiesService.getLocationGroups).toHaveBeenCalledWith(res.locals.user)
-      expect(req.session.unlockListJourney).not.toBeNull()
+      expect(req.journeyData.unlockListJourney).not.toBeNull()
     })
     it('should render the expected view - coming back on back link', async () => {
       when(activitiesService.getLocationGroups)
@@ -84,13 +84,13 @@ describe('Unlock list routes - select date and location', () => {
       })
       expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(1)
       expect(activitiesService.getLocationGroups).toHaveBeenCalledWith(res.locals.user)
-      expect(req.session.unlockListJourney).not.toBeNull()
+      expect(req.journeyData.unlockListJourney).not.toBeNull()
     })
   })
 
   describe('POST', () => {
     beforeEach(() => {
-      req.session.unlockListJourney = {
+      req.journeyData.unlockListJourney = {
         subLocationFilters: ['A-Wing'],
         activityFilter: 'Without',
         stayingOrLeavingFilter: 'Staying',
@@ -108,8 +108,8 @@ describe('Unlock list routes - select date and location', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${todaysDate}`)
-      expect(req.session.unlockListJourney.timeSlot).toEqual('AM')
-      expect(req.session.unlockListJourney.locationKey).toEqual('here')
+      expect(req.journeyData.unlockListJourney.timeSlot).toEqual('AM')
+      expect(req.journeyData.unlockListJourney.locationKey).toEqual('here')
     })
 
     it("redirect with the expected query params for when tomorrow's date is selected", async () => {
@@ -123,8 +123,8 @@ describe('Unlock list routes - select date and location', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=${tomorrowsDate}`)
-      expect(req.session.unlockListJourney.timeSlot).toEqual('AM')
-      expect(req.session.unlockListJourney.locationKey).toEqual('here')
+      expect(req.journeyData.unlockListJourney.timeSlot).toEqual('AM')
+      expect(req.journeyData.unlockListJourney.locationKey).toEqual('here')
     })
 
     it('redirects with the expected query params for when a custom date is selected', async () => {
@@ -138,8 +138,8 @@ describe('Unlock list routes - select date and location', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith(`planned-events?date=2022-12-01`)
-      expect(req.session.unlockListJourney.timeSlot).toEqual('AM')
-      expect(req.session.unlockListJourney.locationKey).toEqual('here')
+      expect(req.journeyData.unlockListJourney.timeSlot).toEqual('AM')
+      expect(req.journeyData.unlockListJourney.locationKey).toEqual('here')
     })
   })
 

@@ -38,7 +38,6 @@ declare module 'express-session' {
     bookACourtHearingJourney: BookACourtHearingJourney
     bookAProbationMeetingJourney: BookAProbationMeetingJourney
     attendanceSummaryJourney: AttendanceSummaryJourney
-    unlockListJourney: UnlockListJourney
     recordAttendanceJourney: RecordAttendanceJourney
     recordAppointmentAttendanceJourney: RecordAppointmentAttendanceJourney
     journeyMetrics: JourneyMetrics
@@ -92,6 +91,7 @@ export type JourneyData = {
   movementListJourney?: MovementListJourney
   waitListApplicationJourney?: WaitListApplicationJourney
   prisonerAllocationsJourney?: PrisonerAllocationsJourney
+  unlockListJourney?: UnlockListJourney
 }
 
 export type ServiceUser = Express.User &

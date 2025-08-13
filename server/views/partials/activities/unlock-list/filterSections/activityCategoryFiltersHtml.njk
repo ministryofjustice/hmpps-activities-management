@@ -1,7 +1,7 @@
 {% if activityCategories %}
     {% set activityCategoriesFilters = [] %}
     {% for category in activityCategories %}
-        {% set activityCategoriesFilters = (activityCategoriesFilters.push({value: category.code, text: category.name, checked: category.code in session.unlockListJourney.activityCategoriesFilters}), activityCategoriesFilters) %}
+        {% set activityCategoriesFilters = (activityCategoriesFilters.push({value: category.code, text: category.name, checked: category.code in unlockListJourney.activityCategoriesFilters}), activityCategoriesFilters) %}
     {% endfor %}
     {{ govukCheckboxes({
         formGroup: {
