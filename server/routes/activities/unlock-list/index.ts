@@ -7,19 +7,26 @@ import HomeRoutes from './handlers/home'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 import ApplyFiltersRoutes, { Filters } from './handlers/applyFilters'
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
 export default function Index({
   unlockListService,
   activitiesService,
   metricsService,
   alertsFilterService,
+  tokenStore,
 }: Services): Router {
   const router = Router()
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('unlockListJourney', stepRequiresSession), handler)
+    router.get(
+      path,
+      setUpJourneyData(tokenStore),
+      emptyJourneyHandler('unlockListJourney', stepRequiresSession),
+      handler,
+    )
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), handler)
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
   const homeHandler = new HomeRoutes()
   const dateAndLocationHandler = new SelectDateAndLocationRoutes(activitiesService)

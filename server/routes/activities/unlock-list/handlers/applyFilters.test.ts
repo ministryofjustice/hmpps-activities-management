@@ -16,7 +16,7 @@ describe('Route Handlers - applyFilters', () => {
 
     req = {
       get: jest.fn(),
-      session: {
+      journeyData: {
         unlockListJourney: {
           subLocationFilters: ['Original location'],
           activityFilter: 'Original activity filter',
@@ -40,7 +40,7 @@ describe('Route Handlers - applyFilters', () => {
 
       await handler.APPLY(req, res)
 
-      expect(req.session.unlockListJourney).toStrictEqual({
+      expect(req.journeyData.unlockListJourney).toStrictEqual({
         subLocationFilters: ['A'],
         activityFilter: 'With',
         stayingOrLeavingFilter: 'Staying',
@@ -55,7 +55,7 @@ describe('Route Handlers - applyFilters', () => {
       }
       await handler.APPLY(req, res)
 
-      expect(req.session.unlockListJourney).toStrictEqual({
+      expect(req.journeyData.unlockListJourney).toStrictEqual({
         subLocationFilters: [],
         activityFilter: 'Original activity filter',
         stayingOrLeavingFilter: 'Original staying or leaving filter',
@@ -68,7 +68,7 @@ describe('Route Handlers - applyFilters', () => {
       req.body = {}
       await handler.APPLY(req, res)
 
-      expect(req.session.unlockListJourney).toStrictEqual({
+      expect(req.journeyData.unlockListJourney).toStrictEqual({
         subLocationFilters: ['Original location'],
         activityFilter: 'Original activity filter',
         stayingOrLeavingFilter: 'Original staying or leaving filter',
