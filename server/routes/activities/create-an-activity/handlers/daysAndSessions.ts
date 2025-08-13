@@ -188,8 +188,7 @@ export default class DaysAndSessionsRoutes {
     const weekNumberInt = Math.floor(+weekNumber)
     if (!+weekNumber || !scheduleWeeks) return false
     if (weekNumberInt !== +weekNumber) return false
-    if (weekNumberInt <= 0 || weekNumberInt > scheduleWeeks) return false
-    return true
+    return !(weekNumberInt <= 0 || weekNumberInt > scheduleWeeks)
   }
 
   private findSlotErrors(journey: CreateAnActivityJourney, weekNumber: number, res: Response): boolean {
