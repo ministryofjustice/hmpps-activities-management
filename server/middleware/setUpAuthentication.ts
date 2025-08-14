@@ -1,21 +1,34 @@
 import type { Router } from 'express'
 import express from 'express'
 import passport from 'passport'
+import { getFrontendComponents } from '@ministryofjustice/hmpps-connect-dps-components'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
 import auth from '../authentication/auth'
+import logger from '../../logger'
+import { Services } from '../services'
 
 const router = express.Router()
 
-export default function setUpAuth(): Router {
+export default function setUpAuth(services: Services): Router {
   auth.init()
 
   router.use(passport.initialize())
   router.use(passport.session())
 
-  router.get('/autherror', (req, res) => {
-    res.status(401)
-    return res.render('pages/autherror')
-  })
+  router.get(
+    '/autherror',
+    getFrontendComponents({
+      logger,
+      authenticationClient: new AuthenticationClient(config.apis.hmppsAuth, logger, services.tokenStore),
+      componentApiConfig: config.apis.componentApi,
+      dpsUrl: config.dpsUrl,
+    }),
+    (req, res) => {
+      res.status(401)
+      return res.render('autherror')
+    },
+  )
 
   router.get('/sign-in', passport.authenticate('oauth2'))
 
