@@ -80,7 +80,7 @@ describe('Route Handlers - View and Edit Advance Attendance', () => {
 
     req = {
       params: { advanceAttendanceId: 1 },
-      session: {
+      journeyData: {
         recordAttendanceJourney: {},
       },
     } as unknown as Request

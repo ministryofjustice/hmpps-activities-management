@@ -27,7 +27,7 @@ function validationMiddleware(type: new () => object): RequestHandler {
       appointmentJourney: req.session.appointmentJourney,
       bookACourtHearingJourney: req.session.bookACourtHearingJourney,
       bookAProbationMeetingJourney: req.session.bookAProbationMeetingJourney,
-      recordAttendanceJourney: req.session.recordAttendanceJourney,
+      recordAttendanceJourney: req.journeyData?.recordAttendanceJourney,
       recordAppointmentAttendanceJourney: req.session.recordAppointmentAttendanceJourney,
     })
 

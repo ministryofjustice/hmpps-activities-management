@@ -36,7 +36,7 @@ describe('Route Handlers - Uncancel Multiple Sessions Confirmation', () => {
       params: {
         id: '1',
       },
-      session: {
+      journeyData: {
         recordAttendanceJourney: {
           activityDate: '2021-01-01',
           selectedInstanceIds: ['1'],
@@ -76,7 +76,7 @@ describe('Route Handlers - Uncancel Multiple Sessions Confirmation', () => {
     })
 
     it('should render uncancel multiple session confirmation page - multiple selection', async () => {
-      req.session.recordAttendanceJourney.selectedInstanceIds = ['1', '2']
+      req.journeyData.recordAttendanceJourney.selectedInstanceIds = ['1', '2']
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(

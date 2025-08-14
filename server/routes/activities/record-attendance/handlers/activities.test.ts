@@ -163,6 +163,7 @@ describe('Route Handlers - Activities', () => {
     beforeEach(() => {
       req = {
         session: {},
+        journeyData: {},
       } as unknown as Request
 
       when(activitiesService.getActivityCategories).calledWith(res.locals.user).mockResolvedValue(mockCategories)
@@ -276,12 +277,12 @@ describe('Route Handlers - Activities', () => {
           categoryFilters: 'SAA_EDUCATION,SAA_INDUSTRIES',
           locationType: LocationType.IN_CELL,
         },
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAttendanceJourney).toEqual({})
+      expect(req.journeyData.recordAttendanceJourney).toEqual({})
     })
   })
 
@@ -316,12 +317,12 @@ describe('Route Handlers - Activities', () => {
           activityDate: '2024-01-24',
           sessionFilters: ['AM', 'ED'],
         },
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       await handler.POST_ATTENDANCES(req, res)
 
-      expect(req.session.recordAttendanceJourney).toEqual({
+      expect(req.journeyData.recordAttendanceJourney).toEqual({
         selectedInstanceIds: [345, 567],
         activityDate: '2024-01-24',
         sessionFilters: ['AM', 'ED'],
@@ -335,12 +336,12 @@ describe('Route Handlers - Activities', () => {
         body: {
           selectedInstanceIds: [345],
         },
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       await handler.POST_ATTENDANCES(req, res)
 
-      expect(req.session.recordAttendanceJourney).toEqual({
+      expect(req.journeyData.recordAttendanceJourney).toEqual({
         selectedInstanceIds: [345],
       })
 
@@ -356,12 +357,12 @@ describe('Route Handlers - Activities', () => {
           activityDate: '2024-03-24',
           sessionFilters: ['AM', 'PM'],
         },
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       await handler.POST_CANCELLATIONS(req, res)
 
-      expect(req.session.recordAttendanceJourney).toEqual({
+      expect(req.journeyData.recordAttendanceJourney).toEqual({
         selectedInstanceIds: [789, 567],
         activityDate: '2024-03-24',
         sessionFilters: ['AM', 'PM'],

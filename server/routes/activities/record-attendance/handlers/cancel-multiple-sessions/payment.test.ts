@@ -26,7 +26,7 @@ describe('Route Handlers - Cancel Multiple Sessions Payment', () => {
       params: {
         id: '1',
       },
-      session: {
+      journeyData: {
         recordAttendanceJourney: {
           sessionCancellationMultiple: {
             issuePayment: false,
@@ -54,7 +54,7 @@ describe('Route Handlers - Cancel Multiple Sessions Payment', () => {
       }
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
-      expect(req.session.recordAttendanceJourney.sessionCancellationMultiple.issuePayment).toEqual(true)
+      expect(req.journeyData.recordAttendanceJourney.sessionCancellationMultiple.issuePayment).toEqual(true)
     })
 
     it('redirect and option is saved as expected when the issue pay option is no', async () => {
@@ -63,7 +63,7 @@ describe('Route Handlers - Cancel Multiple Sessions Payment', () => {
       }
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
-      expect(req.session.recordAttendanceJourney.sessionCancellationMultiple.issuePayment).toEqual(false)
+      expect(req.journeyData.recordAttendanceJourney.sessionCancellationMultiple.issuePayment).toEqual(false)
     })
   })
 

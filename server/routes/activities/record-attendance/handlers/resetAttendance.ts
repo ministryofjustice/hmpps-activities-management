@@ -35,7 +35,7 @@ export default class ResetAttendanceRoutes {
     const { attendanceId } = req.params
     const { confirm } = req.body
 
-    const returnUrl = req.session.recordAttendanceJourney.singleInstanceSelected
+    const returnUrl = req.journeyData.recordAttendanceJourney.singleInstanceSelected
       ? `../../../${id}/attendance-list`
       : '../../../attendance-list'
 

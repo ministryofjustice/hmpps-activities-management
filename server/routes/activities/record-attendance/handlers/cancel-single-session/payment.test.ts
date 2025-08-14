@@ -26,7 +26,7 @@ describe('Route Handlers - Cancel Single Session Payment', () => {
       params: {
         id: '1',
       },
-      session: {
+      journeyData: {
         recordAttendanceJourney: {
           sessionCancellationSingle: {
             activityName: 'Kitchen tasks',
@@ -57,8 +57,8 @@ describe('Route Handlers - Cancel Single Session Payment', () => {
       }
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
-      expect(req.session.recordAttendanceJourney.sessionCancellationSingle.activityName).toEqual('Kitchen tasks')
-      expect(req.session.recordAttendanceJourney.sessionCancellationSingle.issuePayment).toEqual(true)
+      expect(req.journeyData.recordAttendanceJourney.sessionCancellationSingle.activityName).toEqual('Kitchen tasks')
+      expect(req.journeyData.recordAttendanceJourney.sessionCancellationSingle.issuePayment).toEqual(true)
     })
 
     it('redirect and option is saved as expected when the issue pay option is no', async () => {
@@ -67,8 +67,8 @@ describe('Route Handlers - Cancel Single Session Payment', () => {
       }
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
-      expect(req.session.recordAttendanceJourney.sessionCancellationSingle.activityName).toEqual('Kitchen tasks')
-      expect(req.session.recordAttendanceJourney.sessionCancellationSingle.issuePayment).toEqual(false)
+      expect(req.journeyData.recordAttendanceJourney.sessionCancellationSingle.activityName).toEqual('Kitchen tasks')
+      expect(req.journeyData.recordAttendanceJourney.sessionCancellationSingle.issuePayment).toEqual(false)
     })
   })
 

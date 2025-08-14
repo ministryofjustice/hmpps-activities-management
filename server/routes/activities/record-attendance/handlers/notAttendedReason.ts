@@ -99,7 +99,7 @@ export default class NotAttendedReasonRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { selectedPrisoners } = req.session.recordAttendanceJourney.notAttended
+    const { selectedPrisoners } = req.journeyData.recordAttendanceJourney.notAttended
 
     const notAttendedReasons = (await this.activitiesService.getAttendanceReasons(user))
       .filter(r => r.displayInAbsence)
@@ -139,7 +139,7 @@ export default class NotAttendedReasonRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
-    const { selectedPrisoners } = req.session.recordAttendanceJourney.notAttended
+    const { selectedPrisoners } = req.journeyData.recordAttendanceJourney.notAttended
 
     const instances = await Promise.all(
       _.uniq(selectedPrisoners.map(prisoner => prisoner.instanceId)).map(async instanceId =>
@@ -179,7 +179,7 @@ export default class NotAttendedReasonRoutes {
         : `${selectedPrisoners.length} attendees`
     }`
 
-    const returnUrl = req.session.recordAttendanceJourney.singleInstanceSelected
+    const returnUrl = req.journeyData.recordAttendanceJourney.singleInstanceSelected
       ? `${selectedPrisoners[0].instanceId}/attendance-list`
       : 'attendance-list'
 

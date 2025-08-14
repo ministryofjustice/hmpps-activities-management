@@ -23,7 +23,7 @@ export default class PaidOrNotRoutes {
   GET = async (req: Request, res: Response) => {
     const { user } = res.locals
     const instanceId = +req.params.id
-    const { selectedPrisoners } = req.session.recordAttendanceJourney.notRequiredOrExcused
+    const { selectedPrisoners } = req.journeyData.recordAttendanceJourney.notRequiredOrExcused
     const instance: ScheduledActivity = await this.activitiesService.getScheduledActivity(instanceId, user)
 
     res.render('pages/activities/record-attendance/not-required-or-excused/paid-or-not', {
@@ -33,7 +33,7 @@ export default class PaidOrNotRoutes {
   }
 
   POST = async (req: Request, res: Response) => {
-    req.session.recordAttendanceJourney.notRequiredOrExcused.isPaid = req.body.paidOrNot === 'yes'
+    req.journeyData.recordAttendanceJourney.notRequiredOrExcused.isPaid = req.body.paidOrNot === 'yes'
     res.redirect('check-and-confirm')
   }
 }
