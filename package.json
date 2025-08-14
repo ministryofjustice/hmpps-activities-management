@@ -109,7 +109,7 @@
     "multer": "^2.0.2",
     "nocache": "^4.0.0",
     "nunjucks": "^3.2.4",
-    "openapi-typescript": "^7.8.0",
+    "openapi-typescript": "^7.9.0",
     "passport": "^0.7.0",
     "passport-oauth2": "^1.8.0",
     "redis": "^5.8.0",
