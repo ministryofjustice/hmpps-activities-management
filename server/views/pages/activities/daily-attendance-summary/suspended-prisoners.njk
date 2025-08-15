@@ -18,7 +18,7 @@
     {% set filterOptionsHtml %}
     {% set categoryFilters = [] %}
     {% for category in uniqueCategories %}
-        {% set categoryFilters = (categoryFilters.push({value: category.name, text: category.name, checked: category.name in session.attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
+        {% set categoryFilters = (categoryFilters.push({value: category.name, text: category.name, checked: category.name in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
     {% endfor %}
 
     {{ govukCheckboxes({
@@ -53,17 +53,17 @@
                 {
                     value: "SUSPENDED",
                     text: "Suspended",
-                    checked: "SUSPENDED" == session.attendanceSummaryJourney.reasonFilter
+                    checked: "SUSPENDED" == attendanceSummaryJourney.reasonFilter
                 },
                 {
                     value: "AUTO_SUSPENDED",
                     text: "Temporarily released or transferred",
-                    checked: "AUTO_SUSPENDED" == session.attendanceSummaryJourney.reasonFilter
+                    checked: "AUTO_SUSPENDED" == attendanceSummaryJourney.reasonFilter
                 },
                 {
                     value: "BOTH",
                     text: "Both",
-                    checked: "BOTH" == session.attendanceSummaryJourney.reasonFilter or not session.attendanceSummaryJourney.reasonFilter
+                    checked: "BOTH" == attendanceSummaryJourney.reasonFilter or not attendanceSummaryJourney.reasonFilter
                 }
             ]
         }) }}
@@ -90,7 +90,7 @@
                             text: 'Search by name or prison number',
                             classes: 'govuk-label--s'
                         },
-                        value: session.attendanceSummaryJourney.searchTerm,
+                        value: attendanceSummaryJourney.searchTerm,
                         attributes: {
                             form: 'filter-form'
                         }

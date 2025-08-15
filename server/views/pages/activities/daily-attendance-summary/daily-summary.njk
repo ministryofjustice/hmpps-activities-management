@@ -15,7 +15,7 @@
     {% set filterOptionsHtml %}
     {% set categoryFilters = [] %}
     {% for category in uniqueCategories %}
-        {% set categoryFilters = (categoryFilters.push({value: category, text: category, checked: category in session.attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
+        {% set categoryFilters = (categoryFilters.push({value: category, text: category, checked: category in attendanceSummaryJourney.categoryFilters}), categoryFilters) %}
     {% endfor %}
 
     {{ govukCheckboxes({

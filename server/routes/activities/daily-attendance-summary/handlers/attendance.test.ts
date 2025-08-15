@@ -37,7 +37,7 @@ describe('Route Handlers - Daily Attendance List', () => {
 
     req = {
       query: {},
-      session: {
+      journeyData: {
         attendanceSummaryJourney: {},
       },
     } as unknown as Request
@@ -148,7 +148,7 @@ describe('Route Handlers - Daily Attendance List', () => {
           date: dateString,
           status: 'NotAttended',
         },
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       when(activitiesService.getAllAttendance)
@@ -227,7 +227,7 @@ describe('Route Handlers - Daily Attendance List', () => {
           date: dateString,
           status: 'NotAttended',
         },
-        session: {
+        journeyData: {
           attendanceSummaryJourney: {
             searchTerm: 'BloG',
           },
@@ -287,7 +287,7 @@ describe('Route Handlers - Daily Attendance List', () => {
           date: dateString,
           status: 'NotAttended',
         },
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       mockApiResponse[1].attendanceRequired = false
@@ -346,7 +346,7 @@ describe('Route Handlers - Daily Attendance List', () => {
           date: dateString,
           status: 'Attended',
         },
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       when(activitiesService.getAllAttendance)
@@ -419,7 +419,7 @@ describe('Route Handlers - Daily Attendance List', () => {
           date: dateString,
           status: 'NotAttended',
         },
-        session: {
+        journeyData: {
           attendanceSummaryJourney: {
             categoryFilters: ['Prison Jobs'],
           },
@@ -550,7 +550,7 @@ describe('Route Handlers - Daily Attendance List', () => {
           date: dateString,
           status: 'Absences',
         },
-        session: {
+        journeyData: {
           attendanceSummaryJourney: {
             absenceReasonFilters: [AttendanceReason.CANCELLED, AttendanceReason.REFUSED],
           },
@@ -669,7 +669,7 @@ describe('Route Handlers - Daily Attendance List', () => {
           date: dateString,
           status: 'Absences',
         },
-        session: {
+        journeyData: {
           attendanceSummaryJourney: {
             payFilters: PayNoPay.PAID,
           },

@@ -11,14 +11,20 @@ import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier
 import emptyJourneyHandler from '../../../middleware/emptyJourneyHandler'
 import SuspendedPrisonersRoutes from './handlers/suspendedPrisoners'
 import RefusedSessionsRoutes from './handlers/refusals'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
-export default function Index({ activitiesService, prisonService }: Services): Router {
+export default function Index({ activitiesService, prisonService, tokenStore }: Services): Router {
   const router = Router()
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('attendanceSummaryJourney', stepRequiresSession), handler)
+    router.get(
+      path,
+      setUpJourneyData(tokenStore),
+      emptyJourneyHandler('attendanceSummaryJourney', stepRequiresSession),
+      handler,
+    )
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), handler)
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
   const selectPeriodHandler = new SelectPeriodRoutes()
   const applyFiltersHandler = new ApplyFiltersRoutes()

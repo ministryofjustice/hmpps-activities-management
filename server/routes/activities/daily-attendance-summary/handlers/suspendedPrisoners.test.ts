@@ -32,7 +32,7 @@ describe('Route Handlers - Suspended prisoners list', () => {
 
     req = {
       query: {},
-      session: {
+      journeyData: {
         attendanceSummaryJourney: {},
       },
     } as unknown as Request
@@ -90,7 +90,7 @@ describe('Route Handlers - Suspended prisoners list', () => {
         query: {
           date: dateString,
         },
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       when(activitiesService.getSuspendedPrisonersActivityAttendance).mockResolvedValue(mockSuspendedPrisonerAttendance)

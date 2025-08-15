@@ -235,7 +235,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
 
       req = {
         query: { date: dateString },
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       when(activitiesService.getAllAttendance)
@@ -454,7 +454,7 @@ describe('Route Handlers - Daily Attendance Summary', () => {
 
       req = {
         query: { date: dateString },
-        session: {
+        journeyData: {
           attendanceSummaryJourney: {
             categoryFilters: ['Education'],
           },

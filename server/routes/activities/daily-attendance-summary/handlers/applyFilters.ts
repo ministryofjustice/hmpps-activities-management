@@ -37,16 +37,16 @@ export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
     const { categoryFilters, reasonFilter, searchTerm, absenceReasonFilters, payFilters, isAbsencesFilter } = req.body
 
-    req.session.attendanceSummaryJourney.categoryFilters = categoryFilters ?? []
-    req.session.attendanceSummaryJourney.reasonFilter = reasonFilter ?? 'BOTH'
-    req.session.attendanceSummaryJourney.searchTerm = searchTerm ?? null
+    req.journeyData.attendanceSummaryJourney.categoryFilters = categoryFilters ?? []
+    req.journeyData.attendanceSummaryJourney.reasonFilter = reasonFilter ?? 'BOTH'
+    req.journeyData.attendanceSummaryJourney.searchTerm = searchTerm ?? null
 
     if (isAbsencesFilter) {
-      req.session.attendanceSummaryJourney.absenceReasonFilters = absenceReasonFilters ?? []
-      req.session.attendanceSummaryJourney.payFilters = payFilters ?? []
+      req.journeyData.attendanceSummaryJourney.absenceReasonFilters = absenceReasonFilters ?? []
+      req.journeyData.attendanceSummaryJourney.payFilters = payFilters ?? []
     } else {
-      req.session.attendanceSummaryJourney.absenceReasonFilters = undefined
-      req.session.attendanceSummaryJourney.payFilters = undefined
+      req.journeyData.attendanceSummaryJourney.absenceReasonFilters = undefined
+      req.journeyData.attendanceSummaryJourney.payFilters = undefined
     }
 
     res.redirect(req.get('Referrer') || '/')

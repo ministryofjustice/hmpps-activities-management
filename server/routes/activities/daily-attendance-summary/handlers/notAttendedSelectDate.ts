@@ -32,7 +32,7 @@ export default class SelectDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.attendanceSummaryJourney = null
+    req.journeyData.attendanceSummaryJourney = null
     const selectedDate = getSelectedDate(req.body)
     res.redirect(`attendance?date=${formatIsoDate(selectedDate)}&status=NotAttended&preserveHistory=true`)
   }

@@ -20,11 +20,11 @@ export default class SuspendedPrisonersRoutes {
     const categories = await this.activitiesService.getActivityCategories(user)
 
     // Set the default filter values if they are not set
-    req.session.attendanceSummaryJourney ??= {}
-    req.session.attendanceSummaryJourney.categoryFilters ??= null
-    req.session.attendanceSummaryJourney.reasonFilter ??= 'BOTH'
+    req.journeyData.attendanceSummaryJourney ??= {}
+    req.journeyData.attendanceSummaryJourney.categoryFilters ??= null
+    req.journeyData.attendanceSummaryJourney.reasonFilter ??= 'BOTH'
 
-    const { categoryFilters, reasonFilter, searchTerm } = req.session.attendanceSummaryJourney
+    const { categoryFilters, reasonFilter, searchTerm } = req.journeyData.attendanceSummaryJourney
 
     if (!date) {
       return res.redirect('select-period')
@@ -41,7 +41,7 @@ export default class SuspendedPrisonersRoutes {
       reason,
     )
 
-    req.session.attendanceSummaryJourney.categoryFilters = categories.map(c => c.name)
+    req.journeyData.attendanceSummaryJourney.categoryFilters = categories.map(c => c.name)
 
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(
       _.uniq(suspendedPrisonerAttendance.map(a => a.prisonerNumber)),

@@ -39,7 +39,7 @@ export default class SelectPeriodRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.attendanceSummaryJourney = null
+    req.journeyData.attendanceSummaryJourney = null
 
     const selectedDate = getSelectedDate(req.body)
     return res.redirect(`summary?date=${formatIsoDate(selectedDate)}`)

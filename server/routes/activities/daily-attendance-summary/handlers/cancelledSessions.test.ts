@@ -82,6 +82,12 @@ describe('Route Handlers - Cancelled Sessions List', () => {
     ] as ScheduledActivity[]
 
     it('should redirect to the select period page if date is not provided', async () => {
+      req = {
+        query: {},
+        session: {},
+        journeyData: {},
+      } as unknown as Request
+
       await handler.GET(req, res)
       expect(res.redirect).toHaveBeenCalledWith('select-period')
     })
@@ -94,7 +100,8 @@ describe('Route Handlers - Cancelled Sessions List', () => {
         query: {
           date: dateString,
         },
-        session: {
+        session: {},
+        journeyData: {
           attendanceSummaryJourney: {
             searchTerm: '',
           },
@@ -150,7 +157,8 @@ describe('Route Handlers - Cancelled Sessions List', () => {
 
       req = {
         query: { date: dateString },
-        session: {
+        session: {},
+        journeyData: {
           attendanceSummaryJourney: {
             searchTerm: 'math',
           },
