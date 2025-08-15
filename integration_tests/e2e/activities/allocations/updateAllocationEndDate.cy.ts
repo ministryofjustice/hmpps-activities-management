@@ -13,6 +13,7 @@ import ExclusionsPage from '../../../pages/allocateToActivity/exclusions'
 import CheckAnswersPage from '../../../pages/allocateToActivity/checkAnswers'
 import ConfirmationPage from '../../../pages/allocateToActivity/confirmation'
 // import ConfirmDeallocateExistingPage from '../../../pages/allocateToActivity/confirmDeallocateExistingPage'
+import getActivity from '../../../fixtures/activitiesApi/getActivity.json'
 
 import resetActivityAndScheduleStubs from './allocationsStubHelper'
 import getActivities from '../../../fixtures/activitiesApi/getActivities.json'
@@ -59,6 +60,7 @@ context(' End activity after an allocation', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
+    cy.stubEndpoint('GET', '/activities/2/filtered', getActivity)
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
     cy.stubEndpoint('GET', '/activities/(\\d)*/schedules', getSchedulesInActivity)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A5015DY', getCandidateSuitability)
