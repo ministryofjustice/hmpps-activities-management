@@ -3,7 +3,8 @@ import express from 'express'
 
 import flash from 'connect-flash'
 import createHttpError from 'http-errors'
-import dpsComponents from '@ministryofjustice/hmpps-connect-dps-components'
+import { getFrontendComponents, retrieveCaseLoadData } from '@ministryofjustice/hmpps-connect-dps-components'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import nunjucksSetup from './nunjucks/nunjucksSetup'
 import errorHandler from './errorHandler'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
@@ -41,7 +42,7 @@ export default function createApp(services: Services): express.Application {
   app.use(flash())
   app.use(setUpWebRequestParsing())
   app.use(setUpStaticResources())
-  app.use(setUpAuthentication())
+  app.use(setUpAuthentication(services))
   app.use(authorisationMiddleware())
   app.use(setUpSuccessMessages())
   app.use(setUpChangeLinks())
@@ -49,10 +50,24 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCurrentUser(services))
   app.use(trimRequestBody())
   app.use(setUpValidationExtensions())
-  app.get('*dpsComponents', dpsComponents.getPageComponents({ includeSharedData: true, dpsUrl: config.dpsUrl, logger }))
-  app.use(dpsComponents.retrieveCaseLoadData({ logger }))
+  app.get(
+    '*dpsComponents',
+    getFrontendComponents({
+      authenticationClient: new AuthenticationClient(config.apis.hmppsAuth, logger, services.tokenStore),
+      componentApiConfig: config.apis.componentApi,
+      requestOptions: { includeSharedData: true },
+      dpsUrl: config.dpsUrl,
+      logger,
+    }),
+  )
+  app.use(
+    retrieveCaseLoadData({
+      logger,
+      authenticationClient: new AuthenticationClient(config.apis.hmppsAuth, logger, services.tokenStore),
+      prisonApiConfig: config.apis.prisonApi,
+    }),
+  )
   app.use(populateJourney())
-
   app.use(routes(services))
   app.use(formValidationErrorHandler)
   app.use((req, res, next) => next(createHttpError.NotFound()))
