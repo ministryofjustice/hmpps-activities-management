@@ -66,7 +66,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
 
       const inmates = prisoners.map(p => {
         const activityPay = activity.pay.filter(pay => pay.incentiveLevel === p.currentIncentive?.level?.description)
-        const payBand = allocations.find(a => a.prisonerNumber === p.prisonerNumber).prisonPayBand
+        const payBand = allocations.find(a => a.prisonerNumber === p.prisonerNumber)?.prisonPayBand
 
         return {
           prisonerName: convertToTitleCase(`${p.firstName} ${p.lastName}`),
@@ -79,7 +79,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
             ? {
                 id: payBand.id,
                 alias: payBand.alias,
-                rate: activityPay?.find(pay => pay.prisonPayBand.id === payBand.id)?.rate,
+                rate: activityPay?.find(pay => pay?.prisonPayBand?.id === payBand.id)?.rate,
               }
             : null,
         }
