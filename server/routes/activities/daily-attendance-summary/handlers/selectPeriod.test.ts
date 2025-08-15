@@ -47,20 +47,29 @@ describe('Route Handlers - Select period', () => {
 
   describe('POST', () => {
     it('sets attendanceSummaryJourney to null', async () => {
-      req.session.attendanceSummaryJourney = {}
-      req.body = {
-        datePresetOption: 'today',
-      }
+      req = {
+        journeyData: {
+          attendanceSummaryJourney: {},
+        },
+        body: {
+          datePresetOption: 'today',
+        },
+      } as unknown as Request
 
       await handler.POST(req, res)
 
-      expect(req.session.attendanceSummaryJourney).toEqual(null)
+      expect(req.journeyData.attendanceSummaryJourney).toEqual(null)
     })
 
     it("redirect with the expected query params for when today's date is selected", async () => {
-      req.body = {
-        datePresetOption: 'today',
-      }
+      req = {
+        journeyData: {
+          attendanceSummaryJourney: {},
+        },
+        body: {
+          datePresetOption: 'today',
+        },
+      } as unknown as Request
 
       const todaysDate = format(new Date(), 'yyyy-MM-dd')
 
@@ -69,9 +78,14 @@ describe('Route Handlers - Select period', () => {
     })
 
     it("redirect with the expected query params for when yesterday's date is selected", async () => {
-      req.body = {
-        datePresetOption: 'yesterday',
-      }
+      req = {
+        journeyData: {
+          attendanceSummaryJourney: {},
+        },
+        body: {
+          datePresetOption: 'yesterday',
+        },
+      } as unknown as Request
 
       const yesterdaysDate = format(subDays(new Date(), 1), 'yyyy-MM-dd')
 
@@ -80,10 +94,15 @@ describe('Route Handlers - Select period', () => {
     })
 
     it('redirect with the expected query params for when a custom date is selected', async () => {
-      req.body = {
-        datePresetOption: 'other',
-        date: new Date('2022-12-01'),
-      }
+      req = {
+        journeyData: {
+          attendanceSummaryJourney: {},
+        },
+        body: {
+          datePresetOption: 'other',
+          date: new Date('2022-12-01'),
+        },
+      } as unknown as Request
 
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`summary?date=2022-12-01`)
