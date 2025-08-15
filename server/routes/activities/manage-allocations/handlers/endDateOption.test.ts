@@ -3,7 +3,6 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import EndDateOptionRoutes, { EndDateOption } from './endDateOption'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
-import config from '../../../../config'
 
 describe('Route Handlers - Allocation - End Date option', () => {
   const handler = new EndDateOptionRoutes()
@@ -74,7 +73,6 @@ describe('Route Handlers - Allocation - End Date option', () => {
       req.body.endDateOption = 'no'
       req.journeyData.allocateJourney.activity.paid = false
       req.journeyData.allocateJourney.allocateMultipleInmatesMode = true
-      config.multiplePrisonerActivityAllocationEnabled = true
 
       await handler.POST(req, res)
 
