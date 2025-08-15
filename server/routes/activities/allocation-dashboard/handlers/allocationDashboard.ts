@@ -196,7 +196,7 @@ export default class AllocationDashboardRoutes {
     if (selectedAllocations.length > 1) {
       res.validationFailed('selectedAllocations', 'You can only select one allocation to edit')
     } else {
-      res.redirect(`/activities/allocations/view/${selectedAllocations[0]}?activityAllocationsBtn=true`)
+      res.redirect(`/activities/allocations/view/${selectedAllocations[0]}`)
     }
   }
 
