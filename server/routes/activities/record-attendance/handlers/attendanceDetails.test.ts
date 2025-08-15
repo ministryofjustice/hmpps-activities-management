@@ -37,7 +37,7 @@ describe('Route Handlers - View and Edit Attendance', () => {
 
     req = {
       params: { id: 1, attendanceId: 1 },
-      session: {
+      journeyData: {
         recordAttendanceJourney: {},
       },
     } as unknown as Request
@@ -55,7 +55,7 @@ describe('Route Handlers - View and Edit Attendance', () => {
       'should render with the expected view when journey session is %s',
       async (_: string, sessionIsAvailable: boolean) => {
         if (sessionIsAvailable) {
-          req.session.recordAttendanceJourney.singleInstanceSelected = true
+          req.journeyData.recordAttendanceJourney.singleInstanceSelected = true
         }
 
         when(userService.getUserMap)

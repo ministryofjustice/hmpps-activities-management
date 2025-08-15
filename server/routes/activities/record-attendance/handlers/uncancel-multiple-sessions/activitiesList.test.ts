@@ -137,7 +137,7 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
     } as unknown as Response
 
     req = {
-      query: {},
+      journeyData: {},
     } as unknown as Request
   })
 
@@ -162,7 +162,7 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
 
     beforeEach(() => {
       req = {
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       when(activitiesService.getActivityCategories).calledWith(res.locals.user).mockResolvedValue(mockCategories)
@@ -275,12 +275,12 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
           categoryFilters: 'SAA_EDUCATION,SAA_INDUSTRIES',
           locationType: LocationType.IN_CELL,
         },
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAttendanceJourney).toEqual({})
+      expect(req.journeyData.recordAttendanceJourney).toEqual({})
     })
   })
 
@@ -315,12 +315,12 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
           activityDate: '2024-03-24',
           sessionFilters: ['AM', 'PM'],
         },
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       await handler.POST_UNCANCEL(req, res)
 
-      expect(req.session.recordAttendanceJourney).toEqual({
+      expect(req.journeyData.recordAttendanceJourney).toEqual({
         selectedInstanceIds: [789, 567],
         activityDate: '2024-03-24',
         sessionFilters: ['AM', 'PM'],
@@ -336,12 +336,12 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
           activityDate: '2024-03-24',
           sessionFilters: 'AM',
         },
-        session: {},
+        journeyData: {},
       } as unknown as Request
 
       await handler.POST_UNCANCEL(req, res)
 
-      expect(req.session.recordAttendanceJourney).toEqual({
+      expect(req.journeyData.recordAttendanceJourney).toEqual({
         selectedInstanceIds: [789, 567],
         activityDate: '2024-03-24',
         sessionFilters: ['AM'],

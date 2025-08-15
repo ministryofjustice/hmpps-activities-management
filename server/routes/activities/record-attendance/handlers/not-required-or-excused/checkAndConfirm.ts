@@ -8,7 +8,7 @@ export default class CheckAndConfirmRoutes {
   GET = async (req: Request, res: Response) => {
     const { user } = res.locals
     const instanceId = +req.params.id
-    const { selectedPrisoners, isPaid } = req.session.recordAttendanceJourney.notRequiredOrExcused
+    const { selectedPrisoners, isPaid } = req.journeyData.recordAttendanceJourney.notRequiredOrExcused
 
     const instance: ScheduledActivity = await this.activitiesService.getScheduledActivity(instanceId, user)
 
@@ -22,7 +22,7 @@ export default class CheckAndConfirmRoutes {
   POST = async (req: Request, res: Response) => {
     const { user } = res.locals
     const instanceId = +req.params.id
-    const { selectedPrisoners } = req.session.recordAttendanceJourney.notRequiredOrExcused
+    const { selectedPrisoners } = req.journeyData.recordAttendanceJourney.notRequiredOrExcused
 
     await Promise.all(
       selectedPrisoners.map(prisoner =>
@@ -30,7 +30,7 @@ export default class CheckAndConfirmRoutes {
           {
             scheduleInstanceId: instanceId,
             prisonerNumber: prisoner.prisonerNumber,
-            issuePayment: req.session.recordAttendanceJourney.notRequiredOrExcused.isPaid,
+            issuePayment: req.journeyData.recordAttendanceJourney.notRequiredOrExcused.isPaid,
           },
           user,
         ),

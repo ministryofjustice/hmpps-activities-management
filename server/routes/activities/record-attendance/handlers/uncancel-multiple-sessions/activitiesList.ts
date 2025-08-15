@@ -31,7 +31,7 @@ export default class UncancelMultipleSessionsRoutes {
 
     const locationTypeFilter = locationType !== undefined ? asString(locationType) : 'ALL'
 
-    req.session.recordAttendanceJourney = req.session.recordAttendanceJourney ?? {}
+    req.journeyData.recordAttendanceJourney = req.journeyData.recordAttendanceJourney ?? {}
 
     const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'locationId')
@@ -75,7 +75,7 @@ export default class UncancelMultipleSessionsRoutes {
     const { selectedInstanceIds, activityDate, sessionFilters } = req.body
     const selectedInstanceIdsArr = selectedInstanceIds ? convertToArray(selectedInstanceIds) : []
     const sessionFiltersArr = sessionFilters ? convertToArray(sessionFilters) : []
-    req.session.recordAttendanceJourney = {
+    req.journeyData.recordAttendanceJourney = {
       selectedInstanceIds: selectedInstanceIdsArr,
       activityDate,
       sessionFilters: sessionFiltersArr,

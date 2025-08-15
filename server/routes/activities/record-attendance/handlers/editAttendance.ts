@@ -62,7 +62,7 @@ export default class EditAttendanceRoutes {
       ]
       await this.activitiesService.updateAttendances(attendances, user)
 
-      const returnUrl = req.session.recordAttendanceJourney.singleInstanceSelected
+      const returnUrl = req.journeyData.recordAttendanceJourney.singleInstanceSelected
         ? '../../attendance-list'
         : '../../../attendance-list'
 
@@ -91,7 +91,7 @@ export default class EditAttendanceRoutes {
         lastName: i.lastName,
         otherEvents: otherScheduledEvents.filter(e => e.prisonerNumber === i.prisonerNumber),
       }))
-      req.session.recordAttendanceJourney.notAttended = {
+      req.journeyData.recordAttendanceJourney.notAttended = {
         selectedPrisoners: [
           {
             instanceId: +id,

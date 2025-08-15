@@ -21,7 +21,7 @@ export default class UncancelMultipleSessionsConfirmRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response) => {
-    const selectedInstanceIds = convertToNumberArray(req.session.recordAttendanceJourney.selectedInstanceIds)
+    const selectedInstanceIds = convertToNumberArray(req.journeyData.recordAttendanceJourney.selectedInstanceIds)
 
     if (selectedInstanceIds.length === 1) {
       const activity = await this.activitiesService.getScheduledActivity(selectedInstanceIds[0], res.locals.user)
@@ -37,7 +37,7 @@ export default class UncancelMultipleSessionsConfirmRoutes {
   }
 
   POST = async (req: Request, res: Response) => {
-    const { activityDate, sessionFilters, selectedInstanceIds } = req.session.recordAttendanceJourney
+    const { activityDate, sessionFilters, selectedInstanceIds } = req.journeyData.recordAttendanceJourney
     const { user } = res.locals
     const { confirm }: UncancelConfirmForm = req.body
 

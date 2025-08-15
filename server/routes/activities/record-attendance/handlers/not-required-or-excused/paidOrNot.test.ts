@@ -80,7 +80,7 @@ describe('Route Handlers - Not Required or Excused - Paid or Not', () => {
       params: {
         id: '1',
       },
-      session: {
+      journeyData: {
         recordAttendanceJourney: {
           notRequiredOrExcused: {
             selectedPrisoners: ['A1234BC', 'A2345CD'],

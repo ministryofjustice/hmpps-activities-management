@@ -107,15 +107,15 @@ export default class AttendanceListRoutes {
 
     const userMap = await this.userService.getUserMap([instance.cancelledBy], user)
 
-    if (!req.session.recordAttendanceJourney) {
-      req.session.recordAttendanceJourney = {}
+    if (!req.journeyData.recordAttendanceJourney) {
+      req.journeyData.recordAttendanceJourney = {}
     }
 
-    const selectedSessions = req.session.recordAttendanceJourney?.sessionFilters
-      ? Object.values(TimeSlot).filter(t => req.session.recordAttendanceJourney.sessionFilters.includes(t))
+    const selectedSessions = req.journeyData.recordAttendanceJourney?.sessionFilters
+      ? Object.values(TimeSlot).filter(t => req.journeyData.recordAttendanceJourney.sessionFilters.includes(t))
       : []
 
-    req.session.recordAttendanceJourney.singleInstanceSelected = true
+    req.journeyData.recordAttendanceJourney.singleInstanceSelected = true
 
     const summary = instance.isInFuture
       ? getAdvancedAttendanceSummary(instance.attendances, instance.advanceAttendances, attendance.length)
@@ -134,7 +134,7 @@ export default class AttendanceListRoutes {
   GET_ATTENDANCES = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { searchTerm } = req.query
-    const { selectedInstanceIds } = req.session.recordAttendanceJourney
+    const { selectedInstanceIds } = req.journeyData.recordAttendanceJourney
 
     const instances = await this.activitiesService.getScheduledActivities(
       convertToNumberArray(selectedInstanceIds),
@@ -206,7 +206,7 @@ export default class AttendanceListRoutes {
       attendanceSummary: getAttendanceSummary(attendanceRows.flatMap(row => row.attendance)),
       selectedDate: instances[0].date,
       selectedSessions: Object.values(TimeSlot).filter(t =>
-        req.session.recordAttendanceJourney.sessionFilters.includes(t),
+        req.journeyData.recordAttendanceJourney.sessionFilters.includes(t),
       ),
     })
   }
@@ -303,7 +303,7 @@ export default class AttendanceListRoutes {
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { selectedAttendances }: { selectedAttendances: string[] } = req.body
-    const { recordAttendanceJourney } = req.session
+    const { recordAttendanceJourney } = req.journeyData
 
     const ids = selectedAttendances
       .map(id => id.split('-'))
@@ -357,7 +357,7 @@ export default class AttendanceListRoutes {
       })
     })
 
-    if (req.session.recordAttendanceJourney.singleInstanceSelected) {
+    if (req.journeyData.recordAttendanceJourney.singleInstanceSelected) {
       return res.redirect('../not-attended-reason')
     }
     return res.redirect('not-attended-reason')
@@ -368,7 +368,7 @@ export default class AttendanceListRoutes {
       return res.redirect('attendance-list')
     }
     const { user } = res.locals
-    const { recordAttendanceJourney } = req.session
+    const { recordAttendanceJourney } = req.journeyData
     const instanceId = +req.params.id
 
     const prisonerNumbers = req.body.selectedAttendances.map(id => id.split('-')).map(tokens => tokens[2])
@@ -385,7 +385,7 @@ export default class AttendanceListRoutes {
     }
 
     if (!instance.activitySchedule.activity.paid) {
-      req.session.recordAttendanceJourney.notRequiredOrExcused.isPaid = false
+      req.journeyData.recordAttendanceJourney.notRequiredOrExcused.isPaid = false
       return res.redirect('not-required-or-excused/check-and-confirm')
     }
 

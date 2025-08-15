@@ -35,14 +35,20 @@ import ChangePayRoutes from './handlers/not-required-or-excused/changePay'
 import CancelSingleSessionsReasonRoutes, { CancelReasonSingleForm } from './handlers/cancel-single-session/reason'
 import CancelSingleSessionPayRoutes, { SessionPaySingleForm } from './handlers/cancel-single-session/payment'
 import CancelSingleSessionsCheckAnswersRoutes from './handlers/cancel-single-session/checkAnswers'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
-export default function Index({ activitiesService, prisonService, userService }: Services): Router {
+export default function Index({ activitiesService, prisonService, userService, tokenStore }: Services): Router {
   const router = Router()
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('recordAttendanceJourney', stepRequiresSession), handler)
+    router.get(
+      path,
+      setUpJourneyData(tokenStore),
+      emptyJourneyHandler('recordAttendanceJourney', stepRequiresSession),
+      handler,
+    )
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), handler)
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
   const homeHandler = new HomeRoutes()
   const selectPeriodHandler = new SelectPeriodRoutes()

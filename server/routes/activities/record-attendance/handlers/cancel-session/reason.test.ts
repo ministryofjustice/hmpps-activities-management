@@ -77,13 +77,14 @@ describe('Route Handlers - Cancel Session Reason', () => {
           comment: 'A comment',
         },
         session: {},
+        journeyData: {},
       } as unknown as Request
     })
 
     it('should add cancel reason to session and redirect to confirmation page', async () => {
       await handler.POST(addReasonRequest, res)
 
-      expect(addReasonRequest.session.recordAttendanceJourney.sessionCancellation).toEqual({
+      expect(addReasonRequest.journeyData.recordAttendanceJourney.sessionCancellation).toEqual({
         reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',
       })

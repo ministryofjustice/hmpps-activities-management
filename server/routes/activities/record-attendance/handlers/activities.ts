@@ -31,7 +31,7 @@ export default class ActivitiesRoutes {
 
     const locationTypeFilter = locationType !== undefined ? asString(locationType) : 'ALL'
 
-    req.session.recordAttendanceJourney = {}
+    req.journeyData.recordAttendanceJourney = {}
 
     const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'locationId')
@@ -77,7 +77,7 @@ export default class ActivitiesRoutes {
   POST_ATTENDANCES = async (req: Request, res: Response): Promise<void> => {
     const { selectedInstanceIds, activityDate, sessionFilters } = req.body
     const selectedInstanceIdsArr = selectedInstanceIds ? convertToArray(selectedInstanceIds) : []
-    req.session.recordAttendanceJourney = {
+    req.journeyData.recordAttendanceJourney = {
       selectedInstanceIds: selectedInstanceIdsArr,
       activityDate,
       sessionFilters,
@@ -91,7 +91,7 @@ export default class ActivitiesRoutes {
   POST_CANCELLATIONS = async (req: Request, res: Response): Promise<void> => {
     const { selectedInstanceIds, activityDate, sessionFilters } = req.body
     const selectedInstanceIdsArr = selectedInstanceIds ? convertToArray(selectedInstanceIds) : []
-    req.session.recordAttendanceJourney = {
+    req.journeyData.recordAttendanceJourney = {
       selectedInstanceIds: selectedInstanceIdsArr,
       activityDate,
       sessionFilters,

@@ -34,7 +34,7 @@ describe('Route Handlers - Edit Attendance', () => {
     } as unknown as Response
 
     req = {
-      session: {},
+      journeyData: {},
       params: { id: 1, attendanceId: 1 },
     } as unknown as Request
   })
@@ -116,7 +116,7 @@ describe('Route Handlers - Edit Attendance', () => {
 
   describe('POST', () => {
     beforeEach(() => {
-      req.session.recordAttendanceJourney = {
+      req.journeyData.recordAttendanceJourney = {
         singleInstanceSelected: true,
       }
     })
@@ -135,7 +135,7 @@ describe('Route Handlers - Edit Attendance', () => {
       req.body = {
         attendanceOption: 'yes',
       }
-      req.session.recordAttendanceJourney.singleInstanceSelected = false
+      req.journeyData.recordAttendanceJourney.singleInstanceSelected = false
 
       await handler.POST(req, res)
 
@@ -249,7 +249,7 @@ describe('Route Handlers - Edit Attendance', () => {
 
       expect(res.redirect).toHaveBeenCalledWith('../../../not-attended-reason?preserveHistory=true')
 
-      expect(req.session.recordAttendanceJourney.notAttended.selectedPrisoners).toEqual([
+      expect(req.journeyData.recordAttendanceJourney.notAttended.selectedPrisoners).toEqual([
         {
           instanceId: 1,
           attendanceId: 1,

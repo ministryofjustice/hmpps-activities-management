@@ -27,7 +27,7 @@ export default class CancelMultipleSessionsReasonRoutes {
 
   POST = async (req: Request, res: Response) => {
     const { user } = res.locals
-    const { selectedInstanceIds } = req.session.recordAttendanceJourney
+    const { selectedInstanceIds } = req.journeyData.recordAttendanceJourney
 
     const instances = await this.activitiesService.getScheduledActivities(
       convertToNumberArray(selectedInstanceIds),
@@ -38,7 +38,7 @@ export default class CancelMultipleSessionsReasonRoutes {
     const { reason, comment }: CancelReasonMultipleForm = req.body
     const textReason = CancellationReasons[reason]
 
-    req.session.recordAttendanceJourney.sessionCancellationMultiple = {
+    req.journeyData.recordAttendanceJourney.sessionCancellationMultiple = {
       reason: textReason,
       comment,
       issuePayment: false,

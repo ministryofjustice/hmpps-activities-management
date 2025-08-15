@@ -53,7 +53,7 @@ describe('Route Handlers - Reset Attendance', () => {
     } as unknown as Response
 
     req = {
-      session: {},
+      journeyData: {},
       params: { id: 1, attendanceId: 1 },
       body: {},
     } as unknown as Request
@@ -87,7 +87,7 @@ describe('Route Handlers - Reset Attendance', () => {
 
     describe('Journey is from updating a single activity instance', () => {
       beforeEach(() => {
-        req.session.recordAttendanceJourney = {
+        req.journeyData.recordAttendanceJourney = {
           singleInstanceSelected: true,
         }
       })
@@ -98,7 +98,7 @@ describe('Route Handlers - Reset Attendance', () => {
       ])(
         'should reset attendance and display success message when reset has been confirmed and singleInstanceSelected = %s',
         async (singleInstanceSelected: boolean, url: string) => {
-          req.session.recordAttendanceJourney.singleInstanceSelected = singleInstanceSelected
+          req.journeyData.recordAttendanceJourney.singleInstanceSelected = singleInstanceSelected
 
           when(activitiesService.getAttendanceDetails).mockResolvedValue(attendance)
           when(prisonService.getInmateByPrisonerNumber)
@@ -134,7 +134,7 @@ describe('Route Handlers - Reset Attendance', () => {
         'should return back to attendance list page and not reset attendance if not confirmed and singleInstanceSelected = %s',
         async (singleInstanceSelected: boolean, url: string) => {
           req.body.confirm = YesNo.NO
-          req.session.recordAttendanceJourney.singleInstanceSelected = singleInstanceSelected
+          req.journeyData.recordAttendanceJourney.singleInstanceSelected = singleInstanceSelected
 
           await handler.POST(req, res)
 

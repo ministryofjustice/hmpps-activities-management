@@ -30,7 +30,7 @@ describe('Route Handlers - Cancel Multiple Sessions Check Answers', () => {
       params: {
         id: '1',
       },
-      session: {
+      journeyData: {
         recordAttendanceJourney: {
           activityDate: '2025-03-24',
           sessionFilters: 'PM',
