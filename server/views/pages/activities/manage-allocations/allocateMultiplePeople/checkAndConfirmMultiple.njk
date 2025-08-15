@@ -17,14 +17,14 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
-                <h1 class="govuk-heading-l">Check and confirm {{ session.allocateJourney.inmates | length }} allocation{% if session.allocateJourney.inmates | length > 1 %}s{% endif %}</h1>
+            <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
+                <h1 class="govuk-heading-l">Check and confirm {{ allocateJourney.inmates | length }} allocation{% if allocateJourney.inmates | length > 1 %}s{% endif %}</h1>
         </div>
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            {% set endDateOption = ('../remove-end-date-option' if session.allocateJourney.endDate else '../end-date') + '?preserveHistory=true' %}
+            {% set endDateOption = ('../remove-end-date-option' if allocateJourney.endDate else '../end-date') + '?preserveHistory=true' %}
 
             <h2 class="govuk-heading-m">Allocations details</h2>
 
@@ -32,16 +32,16 @@
                     rows: [
                         {
                             key: { text: "Activity" },
-                            value: { text: session.allocateJourney.activity.name }
+                            value: { text: allocateJourney.activity.name }
                         },
                         {
                             key: { text: "Location" },
-                            value: { text: showLocation(session.allocateJourney.activity) }
+                            value: { text: showLocation(allocateJourney.activity) }
                         },
                         {
                             key: { text: "Start of allocation" },
                             value: {
-                                text: session.allocateJourney.startDate | formatDate
+                                text: allocateJourney.startDate | formatDate
                                 },
                             actions: {
                                 items: [{
@@ -55,7 +55,7 @@
                         {
                             key: { text: "End of allocation" },
                             value: {
-                                text: session.allocateJourney.endDate | formatDate if session.allocateJourney.endDate else "No date set"
+                                text: allocateJourney.endDate | formatDate if allocateJourney.endDate else "No date set"
                             },
                             actions: {
                                 items: [{
@@ -68,7 +68,7 @@
                         },
                         {
                             key: { text: "Number of people you’re allocating" },
-                            value: { text: session.allocateJourney.inmates | length }
+                            value: { text: allocateJourney.inmates | length }
                         }
                     ]
                 }) }}
@@ -78,7 +78,7 @@
             <p class="govuk-body">You can only change the pay rate where there’s more than one pay band available for an incentive level.</p>
 
             {% set rows = [] %}
-            {% for inmate in session.allocateJourney.inmates %}
+            {% for inmate in allocateJourney.inmates %}
                 {% set rows = (rows.push([
                 {
                     html: showProfileLink({
@@ -118,7 +118,7 @@
             {% endif %}
 
 
-            {% set buttonText = "Confirm allocation" if session.allocateJourney.inmates | length === 1 else "Confirm " + session.allocateJourney.inmates | length + " allocations" %}
+            {% set buttonText = "Confirm allocation" if allocateJourney.inmates | length === 1 else "Confirm " + allocateJourney.inmates | length + " allocations" %}
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">

@@ -15,7 +15,7 @@ export default class CheckAnswersRoutes {
 
   GET = async (req: Request, res: Response) => {
     const { user } = res.locals
-    const { deallocationReason, activity, updatedExclusions } = req.session.allocateJourney
+    const { deallocationReason, activity, updatedExclusions } = req.journeyData.allocateJourney
     const deallocationReasons = await this.activitiesService.getDeallocationReasons(user)
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
@@ -44,7 +44,7 @@ export default class CheckAnswersRoutes {
       startDateOption,
       scheduledInstance,
       deallocateTodayOption,
-    } = req.session.allocateJourney
+    } = req.journeyData.allocateJourney
     const { user } = res.locals
 
     if (req.routeContext.mode === 'create') {

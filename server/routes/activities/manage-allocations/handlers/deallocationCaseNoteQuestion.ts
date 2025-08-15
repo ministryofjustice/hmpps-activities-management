@@ -18,7 +18,7 @@ export default class DeallocationCaseNoteQuestionRoutes {
       return res.redirect('case-note')
     }
 
-    req.session.allocateJourney.deallocationCaseNote = null
+    req.journeyData.allocateJourney.deallocationCaseNote = null
     return res.redirect('check-answers')
   }
 }

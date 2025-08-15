@@ -63,7 +63,7 @@ describe('Allocate multiple people - check and confirm answers', () => {
 
     req = {
       routeContext: { mode: 'create' },
-      session: {
+      journeyData: {
         allocateJourney,
       },
     } as unknown as Request
@@ -84,7 +84,7 @@ describe('Allocate multiple people - check and confirm answers', () => {
       )
     })
     it('Renders the page - hides pay rates section', async () => {
-      req.session.allocateJourney.inmates = [
+      req.journeyData.allocateJourney.inmates = [
         {
           prisonerName: 'Joe Bloggs',
           firstName: 'Joe',
@@ -112,7 +112,7 @@ describe('Allocate multiple people - check and confirm answers', () => {
   })
   describe('POST', () => {
     it('Start date next session', async () => {
-      req.session.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
+      req.journeyData.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
 
       await handler.POST(req, res)
       expect(activitiesService.allocateToSchedule).toHaveBeenCalledTimes(2)
@@ -139,7 +139,7 @@ describe('Allocate multiple people - check and confirm answers', () => {
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
     it('Start date in future', async () => {
-      req.session.allocateJourney.startDateOption = StartDateOption.START_DATE
+      req.journeyData.allocateJourney.startDateOption = StartDateOption.START_DATE
 
       await handler.POST(req, res)
       expect(activitiesService.allocateToSchedule).toHaveBeenCalledTimes(2)
@@ -166,8 +166,8 @@ describe('Allocate multiple people - check and confirm answers', () => {
       expect(res.redirect).toHaveBeenCalledWith('confirmation')
     })
     it('No end date', async () => {
-      req.session.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
-      req.session.allocateJourney.endDate = null
+      req.journeyData.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
+      req.journeyData.allocateJourney.endDate = null
 
       await handler.POST(req, res)
       expect(activitiesService.allocateToSchedule).toHaveBeenCalledTimes(2)
@@ -193,8 +193,8 @@ describe('Allocate multiple people - check and confirm answers', () => {
       )
     })
     it('No payband id', async () => {
-      req.session.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
-      req.session.allocateJourney.inmates = [
+      req.journeyData.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
+      req.journeyData.allocateJourney.inmates = [
         {
           prisonerName: 'Joe Bloggs',
           firstName: 'Joe',

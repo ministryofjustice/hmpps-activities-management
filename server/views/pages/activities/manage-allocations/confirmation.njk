@@ -32,21 +32,21 @@
                         <li><a href={{ deallocationHref }} class='govuk-link'>take {{ prisonerName }} off {{ deallocationText }}</li>
                     {% endif %}
                     {% if prisonerAllocationsEnabled %}<li><a href="/activities/prisoner-allocations/{{ prisonerNumber }}" class='govuk-link govuk-link--no-visited-state'>check and manage {{ prisonerName | possessive }} allocations</a></li>{% endif %}
-                    <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link'>review the allocations for {{ activityName }}</a> and continue allocating</li>
-                    <li><a href="/activities/allocation-dashboard" class='govuk-link'>find other activities with vacancies</a></li>
+                    <li><a href="/activities/allocation-dashboard/{{ activityId }}" class='govuk-link govuk-link--no-visited-state'>review the allocations for {{ activityName }}</a> and continue allocating</li>
+                    <li><a href="/activities/allocation-dashboard" class='govuk-link govuk-link--no-visited-state'>find other activities with vacancies</a></li>
                 </ul>
             {% endif %}
 
             {% if session.req.routeContext.mode == 'remove' %}
-                {% if session.allocateJourney.inmates | length > 1 %}
+                {% if allocateJourney.inmates | length > 1 %}
                     {{ govukPanel({
                         titleText: "Removal complete",
-                        text: session.allocateJourney.inmates | length + ' prisoners are now scheduled to be removed from ' + activityName + ' on ' + session.allocateJourney.endDate | formatDate
+                        text: allocateJourney.inmates | length + ' prisoners are now scheduled to be removed from ' + activityName + ' on ' + allocateJourney.endDate | formatDate
                     }) }}
                 {% else %}
                     {{ govukPanel({
                         titleText: "Removal complete",
-                        text: prisonerName + ' (' + prisonerNumber + ') is now scheduled to be removed from ' + activityName + ' on ' + session.allocateJourney.endDate | formatDate
+                        text: prisonerName + ' (' + prisonerNumber + ') is now scheduled to be removed from ' + activityName + ' on ' + allocateJourney.endDate | formatDate
                     }) }}
                 {% endif %}
 

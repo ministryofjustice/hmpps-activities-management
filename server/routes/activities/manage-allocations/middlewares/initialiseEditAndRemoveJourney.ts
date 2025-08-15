@@ -20,7 +20,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
       `mode: ${mode}, allocationId (route param): ${allocationId}, allocationIds (query): ${allocationIds}, scheduleId (query): ${scheduleId}, selectActivity: ${selectActivity}, otherAllocationIds: ${otherAllocationIds}`,
     )
 
-    if ((mode !== 'remove' && mode !== 'edit' && mode !== 'exclude') || req.session.allocateJourney) return next()
+    if ((mode !== 'remove' && mode !== 'edit' && mode !== 'exclude') || req.journeyData.allocateJourney) return next()
 
     if (!scheduleId && !allocationId && !selectActivity) return res.redirect(req.get('Referrer') || '/')
 
@@ -38,7 +38,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         status: inmate.status,
         cellLocation: inmate.cellLocation,
       }
-      req.session.allocateJourney = {
+      req.journeyData.allocateJourney = {
         inmate: inmateDetails,
         inmates: [inmateDetails],
         otherAllocations,
@@ -85,7 +85,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         }
       })
 
-      req.session.allocateJourney = {
+      req.journeyData.allocateJourney = {
         inmate: inmates[0],
         inmates,
         activity: {
@@ -107,10 +107,10 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
       }
 
       if (mode === 'edit' || mode === 'exclude') {
-        req.session.allocateJourney.startDate = allocations[0].startDate
-        req.session.allocateJourney.endDate = allocations[0].endDate
-        req.session.allocateJourney.deallocationReason = allocations[0].plannedDeallocation?.plannedReason?.code
-        req.session.allocateJourney.exclusions = allocations[0].exclusions
+        req.journeyData.allocateJourney.startDate = allocations[0].startDate
+        req.journeyData.allocateJourney.endDate = allocations[0].endDate
+        req.journeyData.allocateJourney.deallocationReason = allocations[0].plannedDeallocation?.plannedReason?.code
+        req.journeyData.allocateJourney.exclusions = allocations[0].exclusions
       }
 
       return next()

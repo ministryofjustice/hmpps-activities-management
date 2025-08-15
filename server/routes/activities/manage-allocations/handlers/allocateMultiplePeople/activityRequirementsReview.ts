@@ -6,7 +6,7 @@ export default class ActivityRequirementsReviewRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { inmates, activity } = req.session.allocateJourney
+    const { inmates, activity } = req.journeyData.allocateJourney
 
     if (inmates.length < 1)
       return res.render('pages/activities/manage-allocations/allocateMultiplePeople/activityRequirementsReview', {
@@ -41,7 +41,7 @@ export default class ActivityRequirementsReviewRoutes {
           prisoners: [],
         })
       // skip loading this page if there are no failures to meet requirements
-      req.session.allocateJourney.allocateMultipleInmatesMode = true
+      req.journeyData.allocateJourney.allocateMultipleInmatesMode = true
       return res.redirect('../start-date')
     }
 
@@ -51,14 +51,14 @@ export default class ActivityRequirementsReviewRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.allocateJourney.allocateMultipleInmatesMode = true
+    req.journeyData.allocateJourney.allocateMultipleInmatesMode = true
     return res.redirect('../start-date')
   }
 
   REMOVE = async (req: Request, res: Response): Promise<void> => {
     const { prisonerNumber } = req.params
 
-    req.session.allocateJourney.inmates = req.session.allocateJourney.inmates.filter(
+    req.journeyData.allocateJourney.inmates = req.journeyData.allocateJourney.inmates.filter(
       prisoner => prisoner.prisonerNumber !== prisonerNumber,
     )
 

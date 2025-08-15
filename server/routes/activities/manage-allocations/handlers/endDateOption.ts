@@ -18,14 +18,20 @@ export default class EndDateOptionRoutes {
       return res.redirectOrReturn(`end-date`)
     }
 
-    if (req.session.allocateJourney.activity.paid) {
-      if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
+    if (req.journeyData.allocateJourney.activity.paid) {
+      if (
+        req.journeyData.allocateJourney.allocateMultipleInmatesMode &&
+        config.multiplePrisonerActivityAllocationEnabled
+      ) {
         return res.redirectOrReturn('multiple/pay-band-multiple')
       }
       return res.redirectOrReturn(`pay-band`)
     }
 
-    if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
+    if (
+      req.journeyData.allocateJourney.allocateMultipleInmatesMode &&
+      config.multiplePrisonerActivityAllocationEnabled
+    ) {
       return res.redirectOrReturn('multiple/pay-band-multiple')
     }
     return res.redirectOrReturn('exclusions')

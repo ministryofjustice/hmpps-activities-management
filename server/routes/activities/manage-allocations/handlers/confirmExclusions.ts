@@ -13,13 +13,13 @@ export default class ConfirmExclusionsRoutes {
 
   GET = async (req: Request, res: Response) => {
     const { user } = res.locals
-    const { exclusions, updatedExclusions } = req.session.allocateJourney
+    const { exclusions, updatedExclusions } = req.journeyData.allocateJourney
 
     const excludedSlots = calculateExclusionSlots(updatedExclusions, exclusions)
     const addedSlots = calculateExclusionSlots(exclusions, updatedExclusions)
 
     const schedule = await this.activitiesService.getActivitySchedule(
-      req.session.allocateJourney.activity.scheduleId,
+      req.journeyData.allocateJourney.activity.scheduleId,
       user,
     )
 
@@ -33,7 +33,7 @@ export default class ConfirmExclusionsRoutes {
     const { user } = res.locals
     const { allocationId } = req.params
     const { mode } = req.routeContext
-    const { exclusions, updatedExclusions, activity, inmate } = req.session.allocateJourney
+    const { exclusions, updatedExclusions, activity, inmate } = req.journeyData.allocateJourney
 
     const newSlots = calculateUniqueSlots(updatedExclusions, exclusions)
     const removedSlots = calculateUniqueSlots(exclusions, updatedExclusions)

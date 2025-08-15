@@ -20,8 +20,8 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-xl">Take {{ session.allocateJourney.inmate.prisonerName }} off activities</span>
-            <h1 class="govuk-heading-l">Select the activities you want to take {{ session.allocateJourney.inmate.prisonerName }} off</h1>
+            <span class="govuk-caption-xl">Take {{ allocateJourney.inmate.prisonerName }} off activities</span>
+            <h1 class="govuk-heading-l">Select the activities you want to take {{ allocateJourney.inmate.prisonerName }} off</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
@@ -29,7 +29,7 @@
                 name: "selectedAllocations",
                 fieldset: {
                     legend: {
-                        text: "Select the activities you want to take "+ session.allocateJourney.inmate.prisonerName + " off",
+                        text: "Select the activities you want to take "+ allocateJourney.inmate.prisonerName + " off",
                         isPageHeading: false,
                         classes: "govuk-visually-hidden"
                         }

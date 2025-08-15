@@ -28,7 +28,7 @@ describe('Review the prisoners added individually', () => {
     req = {
       query: {},
       params: {},
-      session: {
+      journeyData: {
         allocateJourney: {
           inmates: [
             {
@@ -66,7 +66,7 @@ describe('Review the prisoners added individually', () => {
 
   describe('GET', () => {
     it('redirects back to the select prisoner page if there are no inmates on the session', async () => {
-      req.session.allocateJourney.inmates = []
+      req.journeyData.allocateJourney.inmates = []
       await handler.GET(req, res)
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
     })
@@ -115,7 +115,7 @@ describe('Review the prisoners added individually', () => {
       }
       await handler.REMOVE(req, res)
 
-      expect(req.session.allocateJourney.inmates).toEqual([
+      expect(req.journeyData.allocateJourney.inmates).toEqual([
         {
           prisonerName: 'Jane Blunt',
           prisonerNumber: 'T4530VC',

@@ -28,7 +28,7 @@ describe('Activity requirements review page', () => {
 
     req = {
       query: {},
-      session: {
+      journeyData: {
         allocateJourney: {
           inmates: [
             {
@@ -124,7 +124,7 @@ describe('Activity requirements review page', () => {
     })
     it('Loads the page with no prisoners if the user has removed all of the prisoners who do not meet requirements (but still some inmates left to allocate)', async () => {
       req.query.prisonerRemoved = 'true'
-      req.session.allocateJourney.inmates = [
+      req.journeyData.allocateJourney.inmates = [
         {
           prisonerName: 'Jane Blunt',
           prisonerNumber: 'ABC321',
@@ -158,7 +158,7 @@ describe('Activity requirements review page', () => {
       )
     })
     it('Loads the page with no prisoners if the inmates list is empty', async () => {
-      req.session.allocateJourney.inmates = []
+      req.journeyData.allocateJourney.inmates = []
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/manage-allocations/allocateMultiplePeople/activityRequirementsReview',
@@ -189,7 +189,7 @@ describe('Activity requirements review page', () => {
         .mockResolvedValue(allocationSuitability)
 
       await handler.GET(req, res)
-      expect(req.session.allocateJourney.allocateMultipleInmatesMode).toEqual(true)
+      expect(req.journeyData.allocateJourney.allocateMultipleInmatesMode).toEqual(true)
       expect(res.redirect).toHaveBeenCalledWith('../start-date')
     })
   })
@@ -197,7 +197,7 @@ describe('Activity requirements review page', () => {
     it('redirects to the start-date page', async () => {
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('../start-date')
-      expect(req.session.allocateJourney.allocateMultipleInmatesMode).toEqual(true)
+      expect(req.journeyData.allocateJourney.allocateMultipleInmatesMode).toEqual(true)
     })
   })
   describe('REMOVE', () => {
@@ -207,7 +207,7 @@ describe('Activity requirements review page', () => {
       }
       await handler.REMOVE(req, res)
 
-      expect(req.session.allocateJourney.inmates).toEqual([
+      expect(req.journeyData.allocateJourney.inmates).toEqual([
         {
           prisonerName: 'Jane Blunt',
           prisonerNumber: 'ABC321',

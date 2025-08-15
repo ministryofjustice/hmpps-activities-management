@@ -6,7 +6,7 @@ export default class CheckAndConfirmMultipleRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response) => {
-    const { inmates } = req.session.allocateJourney
+    const { inmates } = req.journeyData.allocateJourney
 
     const hasPayBand = inmates.some(inmate => inmate.payBand !== undefined)
     res.render('pages/activities/manage-allocations/allocateMultiplePeople/checkAndConfirmMultiple', {
@@ -15,7 +15,8 @@ export default class CheckAndConfirmMultipleRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { inmates, activity, scheduledInstance, startDate, endDate, startDateOption } = req.session.allocateJourney
+    const { inmates, activity, scheduledInstance, startDate, endDate, startDateOption } =
+      req.journeyData.allocateJourney
     const { user } = res.locals
 
     await Promise.all(

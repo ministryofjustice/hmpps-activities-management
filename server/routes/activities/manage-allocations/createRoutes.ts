@@ -28,18 +28,20 @@ import CheckAndConfirmMultipleRoutes from './handlers/allocateMultiplePeople/che
 import PayBandMultipleRoutes, { PayBandMultipleForm } from './handlers/allocateMultiplePeople/payBandMultiple'
 import ConfirmMultipleAllocationsRoutes from './handlers/allocateMultiplePeople/confirmation'
 import FromActivityListRoutes from './handlers/allocateMultiplePeople/fromActivityList'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
 export default function Index({
   activitiesService,
   prisonService,
   metricsService,
   nonAssociationsService,
+  tokenStore,
 }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('allocateJourney', stepRequiresSession), handler)
+    router.get(path, setUpJourneyData(tokenStore), emptyJourneyHandler('allocateJourney', stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), handler)
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
   const startJourneyHandler = new StartJourneyRoutes(prisonService, activitiesService, metricsService)
   const beforeYouAllocateHandler = new BeforeYouAllocateRoutes(activitiesService)
