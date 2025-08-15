@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import config from '../../../../config'
 
 enum Options {
   CHANGE = 'change',
@@ -43,11 +42,7 @@ export default class RemoveDateOptionRoutes {
       )
     }
 
-    if (
-      config.multiplePrisonerActivityAllocationEnabled &&
-      req.journeyData.allocateJourney.allocateMultipleInmatesMode &&
-      req.query.preserveHistory
-    )
+    if (req.journeyData.allocateJourney.allocateMultipleInmatesMode && req.query.preserveHistory)
       return res.redirect('multiple/check-answers')
     return res.redirect(`check-answers`)
   }

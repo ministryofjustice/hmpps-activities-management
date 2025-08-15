@@ -4,7 +4,6 @@ import { IsEnum, ValidateIf } from 'class-validator'
 import { isPast, isToday, startOfToday } from 'date-fns'
 import { DeallocateTodayOption } from '../journey'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
-import config from '../../../../config'
 import { parseDate } from '../../../../utils/utils'
 import Validator from '../../../../validators/validator'
 
@@ -57,20 +56,14 @@ export default class DeallocateTodayOptionRoutes {
     }
 
     if (req.journeyData.allocateJourney.activity.paid) {
-      if (
-        req.journeyData.allocateJourney.allocateMultipleInmatesMode &&
-        config.multiplePrisonerActivityAllocationEnabled
-      ) {
+      if (req.journeyData.allocateJourney.allocateMultipleInmatesMode) {
         if (req.query.preserveHistory) return res.redirect('multiple/check-answers')
         return res.redirectOrReturn('multiple/pay-band-multiple')
       }
       return res.redirectOrReturn('pay-band')
     }
 
-    if (
-      req.journeyData.allocateJourney.allocateMultipleInmatesMode &&
-      config.multiplePrisonerActivityAllocationEnabled
-    ) {
+    if (req.journeyData.allocateJourney.allocateMultipleInmatesMode) {
       return res.redirectOrReturn('multiple/pay-band-multiple')
     }
     return res.redirectOrReturn('exclusions')
