@@ -26,7 +26,7 @@ export default function setUpAuth(services: Services): Router {
     }),
     (req, res) => {
       res.status(401)
-      return res.render('autherror')
+      return res.render('pages/autherror')
     },
   )
 
