@@ -7,7 +7,6 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import EndDateRoutes, { EndDate } from './endDate'
 import { formatDatePickerDate, formatIsoDate, isoDateToDatePickerDate } from '../../../../utils/datePickerUtils'
 import { DeallocateTodayOption } from '../journey'
-import config from '../../../../config'
 
 describe('Route Handlers - Edit allocation - End date', () => {
   const handler = new EndDateRoutes()
@@ -181,7 +180,6 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
       req.journeyData.allocateJourney.activity.paid = false
       req.journeyData.allocateJourney.allocateMultipleInmatesMode = true
-      config.multiplePrisonerActivityAllocationEnabled = true
 
       const endDate = startOfToday()
       req.body = { endDate }
