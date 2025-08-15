@@ -59,7 +59,7 @@ export default class ExclusionRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { activity, exclusions, inmate } = req.session.allocateJourney
+    const { activity, exclusions, inmate } = req.journeyData.allocateJourney
 
     const activitySchedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
 
@@ -154,14 +154,14 @@ export default class ExclusionRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { activity } = req.session.allocateJourney
+    const { activity } = req.journeyData.allocateJourney
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
     const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
     const updatedSlots = this.mapBodyToSlots(req.body)
 
     const updatedExclusions = calculateUniqueSlots(slots, updatedSlots)
-    req.session.allocateJourney.updatedExclusions = updatedExclusions
+    req.journeyData.allocateJourney.updatedExclusions = updatedExclusions
 
     if (req.routeContext.mode === 'create') {
       return res.redirect('check-answers')

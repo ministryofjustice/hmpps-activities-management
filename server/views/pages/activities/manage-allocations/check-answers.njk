@@ -13,7 +13,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
             {% if session.req.routeContext.mode == 'create' %}
                 <h1 class="govuk-heading-xl">Check and confirm this allocation</h1>
             {% elseif session.req.routeContext.mode == 'remove' %}
@@ -24,15 +24,15 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {% set prisonerDetailsHtml %}
-                {% if session.allocateJourney.inmates | length == 1 %}
+                {% if allocateJourney.inmates | length == 1 %}
                     <ul class="govuk-list">
-                        <li>{{ session.allocateJourney.inmate.prisonerName }}</li>
-                        <li>{{ session.allocateJourney.inmate.prisonerNumber }}</li>
-                        <li>{{ statusBasedCellLocation(session.allocateJourney.inmate.cellLocation, session.allocateJourney.inmate.status, session.allocateJourney.inmate.prisonCode == user.activeCaseLoadId) }}</li>
+                        <li>{{ allocateJourney.inmate.prisonerName }}</li>
+                        <li>{{ allocateJourney.inmate.prisonerNumber }}</li>
+                        <li>{{ statusBasedCellLocation(allocateJourney.inmate.cellLocation, allocateJourney.inmate.status, allocateJourney.inmate.prisonCode == user.activeCaseLoadId) }}</li>
                     </ul>
                 {% else %}
                     <ul class="govuk-list">
-                        {% for inmate in session.allocateJourney.inmates %}
+                        {% for inmate in allocateJourney.inmates %}
                             <li>{{ inmate.prisonerName + ' (' + inmate.prisonerNumber + ')'}}</li>
                         {% endfor %}
                     </ul>
@@ -53,19 +53,19 @@
                 {% endfor %}
             {% endset %}
 
-            {% set endDateOption = ('remove-end-date-option' if session.allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
+            {% set endDateOption = ('remove-end-date-option' if allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
 
             {% if session.req.routeContext.mode == 'create' %}
-                {% if session.allocateJourney.scheduledInstance %}
-                    {% set nextSessionSlot = session.allocateJourney.scheduledInstance.timeSlot %}
-                    {% set nextSessionDate =  session.allocateJourney.scheduledInstance.date | toDate | formatDate %}
-                    {% if session.allocateJourney.startDateOption == 'NEXT_SESSION' and (now | formatDate) == nextSessionDate %}
+                {% if allocateJourney.scheduledInstance %}
+                    {% set nextSessionSlot = allocateJourney.scheduledInstance.timeSlot %}
+                    {% set nextSessionDate =  allocateJourney.scheduledInstance.date | toDate | formatDate %}
+                    {% if allocateJourney.startDateOption == 'NEXT_SESSION' and (now | formatDate) == nextSessionDate %}
                         {% set startDateText = "today's " + nextSessionSlot + " session" %}
                     {% else %}
-                        {% set startDateText = session.allocateJourney.startDate | formatDate %}
+                        {% set startDateText = allocateJourney.startDate | formatDate %}
                     {% endif %}
                 {% else %}
-                    {% set startDateText = session.allocateJourney.startDate | formatDate %}
+                    {% set startDateText = allocateJourney.startDate | formatDate %}
                 {% endif %}
 
                 {{ govukSummaryList({
@@ -76,11 +76,11 @@
                         },
                         {
                             key: { text: "Activity" },
-                            value: { text: session.allocateJourney.activity.name }
+                            value: { text: allocateJourney.activity.name }
                         },
                         {
                             key: { text: "Location" },
-                            value: { text: showLocation(session.allocateJourney.activity) }
+                            value: { text: showLocation(allocateJourney.activity) }
                         },
                         {
                             key: { text: "Start of allocation" },
@@ -99,7 +99,7 @@
                         {
                             key: { text: "End of allocation" },
                             value: {
-                                text: session.allocateJourney.endDate | formatDate if session.allocateJourney.endDate else "No date set"
+                                text: allocateJourney.endDate | formatDate if allocateJourney.endDate else "No date set"
                             },
                             actions: {
                                 items: [{
@@ -113,7 +113,7 @@
                         {
                             key: { text: "Pay rate" },
                             value: {
-                                html: payRate(session.allocateJourney.inmate.payBand, session.allocateJourney.inmate.incentiveLevel)
+                                html: payRate(allocateJourney.inmate.payBand, allocateJourney.inmate.incentiveLevel)
                             },
                             actions: {
                                 items: [{
@@ -122,7 +122,7 @@
                                     text: "Change",
                                     visuallyHiddenText: "change pay rate"
                                 }]
-                            } if session.allocateJourney.inmate.payBand
+                            } if allocateJourney.inmate.payBand
                         },
                         {
                             key: { text: "Schedule" },
@@ -145,7 +145,7 @@
             {% if session.req.routeContext.mode == 'remove' %}
                 {% set eligibleForCaseNote = true if
                     deallocationReason.code in ['WITHDRAWN_STAFF', 'DISMISSED', 'SECURITY', 'OTHER']
-                        and session.allocateJourney.inmates | length == 1
+                        and allocateJourney.inmates | length == 1
                 %}
 
                 {{ govukSummaryList({
@@ -156,12 +156,12 @@
                         },
                         {
                             key: { text: "Activity" },
-                            value: { text: session.allocateJourney.activity.name }
+                            value: { text: allocateJourney.activity.name }
                         },
                         {
                             key: { text: "End of allocation" },
                             value: {
-                                text: session.allocateJourney.endDate | formatDate if session.allocateJourney.endDate
+                                text: allocateJourney.endDate | formatDate if allocateJourney.endDate
                             },
                             actions: {
                                 items: [{
@@ -195,7 +195,7 @@
                                 text: "Do you want to add a case note?"
                             },
                             value: {
-                                text: "Yes" if session.allocateJourney.deallocationCaseNote else "No"
+                                text: "Yes" if allocateJourney.deallocationCaseNote else "No"
                             },
                             actions: {
                                 items: [
@@ -212,7 +212,7 @@
                                 text: "Case note type"
                             },
                             value: {
-                                text: "General" if session.allocateJourney.deallocationCaseNote.type == 'GEN' else "Negative"
+                                text: "General" if allocateJourney.deallocationCaseNote.type == 'GEN' else "Negative"
                             },
                             actions: {
                                 items: [
@@ -224,13 +224,13 @@
                                     }
                                 ]
                             }
-                        } if eligibleForCaseNote and session.allocateJourney.deallocationCaseNote,
+                        } if eligibleForCaseNote and allocateJourney.deallocationCaseNote,
                         {
                             key: {
                                 text: "Case note"
                             },
                             value: {
-                                text: session.allocateJourney.deallocationCaseNote.text
+                                text: allocateJourney.deallocationCaseNote.text
                             },
                             actions: {
                                 items: [
@@ -242,7 +242,7 @@
                                     }
                                 ]
                             }
-                        } if eligibleForCaseNote and session.allocateJourney.deallocationCaseNote
+                        } if eligibleForCaseNote and allocateJourney.deallocationCaseNote
                     ]
                 }) }}
             {% endif %}

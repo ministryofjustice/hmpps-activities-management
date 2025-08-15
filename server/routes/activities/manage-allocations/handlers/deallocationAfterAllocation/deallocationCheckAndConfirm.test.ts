@@ -38,7 +38,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
 
     req = {
       routeContext: { mode: 'remove' },
-      session: {
+      journeyData: {
         allocateJourney: {
           inmate,
           inmates: [inmate],
@@ -80,8 +80,8 @@ describe('Route Handlers - Allocate - Check answers', () => {
       )
     })
     it('should render page - "in work" activity', async () => {
-      req.session.allocateJourney.activity.notInWork = false
-      req.session.allocateJourney.deallocationReason = ReasonForDeallocation.HEALTH
+      req.journeyData.allocateJourney.activity.notInWork = false
+      req.journeyData.allocateJourney.deallocationReason = ReasonForDeallocation.HEALTH
 
       when(activitiesService.getDeallocationReasons).mockResolvedValue([
         { code: 'HEALTH', description: 'Health reasons' },
@@ -100,8 +100,8 @@ describe('Route Handlers - Allocate - Check answers', () => {
   describe('POST', () => {
     describe('Should call the remove allocation endpoint with the correct params and redirect', () => {
       it('should include instanceId and provided reason', async () => {
-        req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.NOW
-        req.session.allocateJourney.deallocationReason = ReasonForDeallocation.SECURITY
+        req.journeyData.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.NOW
+        req.journeyData.allocateJourney.deallocationReason = ReasonForDeallocation.SECURITY
         await handler.POST(req, res)
 
         expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(
@@ -132,7 +132,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
         expect(res.redirect).toHaveBeenCalledWith('confirmation')
       })
       it('should include instanceId', async () => {
-        req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.NOW
+        req.journeyData.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.NOW
         await handler.POST(req, res)
 
         expect(activitiesService.deallocateFromActivity).toHaveBeenCalledWith(

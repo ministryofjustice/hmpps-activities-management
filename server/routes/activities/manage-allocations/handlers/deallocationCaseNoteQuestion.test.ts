@@ -22,7 +22,7 @@ describe('Route Handlers - Deallocation case note question', () => {
 
     req = {
       params: { allocationId: 1 },
-      session: {
+      journeyData: {
         allocateJourney: {
           endDate: formatIsoDate(new Date()),
           inmate: {
@@ -56,7 +56,7 @@ describe('Route Handlers - Deallocation case note question', () => {
     })
 
     it('redirect to check-answers when `no` submitted', async () => {
-      req.session.allocateJourney.deallocationCaseNote = { type: 'GEN', text: 'test' }
+      req.journeyData.allocateJourney.deallocationCaseNote = { type: 'GEN', text: 'test' }
       req.body = {
         choice: 'no',
       }
@@ -64,7 +64,7 @@ describe('Route Handlers - Deallocation case note question', () => {
       await handler.POST(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
-      expect(req.session.allocateJourney.deallocationCaseNote).toBeNull()
+      expect(req.journeyData.allocateJourney.deallocationCaseNote).toBeNull()
     })
   })
 

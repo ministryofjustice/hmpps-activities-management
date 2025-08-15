@@ -20,7 +20,7 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
 
     req = {
       routeContext: { mode: 'remove' },
-      session: {
+      journeyData: {
         allocateJourney: {
           endDate: '2026-04-24',
         },
@@ -45,8 +45,8 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.deallocateTodayOption).toEqual(DeallocateTodayOption.TODAY)
-      expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(new Date()))
+      expect(req.journeyData.allocateJourney.deallocateTodayOption).toEqual(DeallocateTodayOption.TODAY)
+      expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(new Date()))
       expect(res.redirectOrReturn).toHaveBeenCalledWith('reason')
     })
 
@@ -58,8 +58,8 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.deallocateTodayOption).toEqual(DeallocateTodayOption.FUTURE_DATE)
-      expect(req.session.allocateJourney.endDate).toEqual('2026-04-24')
+      expect(req.journeyData.allocateJourney.deallocateTodayOption).toEqual(DeallocateTodayOption.FUTURE_DATE)
+      expect(req.journeyData.allocateJourney.endDate).toEqual('2026-04-24')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('reason')
     })
   })

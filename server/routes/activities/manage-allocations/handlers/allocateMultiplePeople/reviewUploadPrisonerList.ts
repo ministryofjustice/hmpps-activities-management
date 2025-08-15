@@ -20,7 +20,7 @@ export default class ReviewUploadPrisonerListRoutes {
       activity,
       notFoundPrisoners,
       unidentifiable,
-    } = req.session.allocateJourney
+    } = req.journeyData.allocateJourney
     const { scheduleId } = activity
     const { fromActivity, csv } = req.query
 
@@ -52,18 +52,18 @@ export default class ReviewUploadPrisonerListRoutes {
         // update for matching incentive levels
         unallocatedInmates = inmatesWithMatchingIncentiveLevel(unallocatedInmates, act)
 
-        req.session.allocateJourney.withoutMatchingIncentiveLevelInmates = withoutMatchingIncentiveLevel
+        req.journeyData.allocateJourney.withoutMatchingIncentiveLevelInmates = withoutMatchingIncentiveLevel
       } else {
-        req.session.allocateJourney.withoutMatchingIncentiveLevelInmates = []
+        req.journeyData.allocateJourney.withoutMatchingIncentiveLevelInmates = []
       }
-      req.session.allocateJourney.inmates = unallocatedInmates
-      req.session.allocateJourney.allocatedInmates = allocated
+      req.journeyData.allocateJourney.inmates = unallocatedInmates
+      req.journeyData.allocateJourney.allocatedInmates = allocated
     }
 
     let cannotAllocateMessage
     const cannotAllocate: number =
-      req.session.allocateJourney.withoutMatchingIncentiveLevelInmates.length +
-      req.session.allocateJourney.allocatedInmates.length
+      req.journeyData.allocateJourney.withoutMatchingIncentiveLevelInmates.length +
+      req.journeyData.allocateJourney.allocatedInmates.length
     if (cannotAllocate > 0) {
       if (cannotAllocate === 1) {
         cannotAllocateMessage = '1 person from '
@@ -76,14 +76,14 @@ export default class ReviewUploadPrisonerListRoutes {
     }
 
     let nobodyToAllocateTitle
-    if (req.session.allocateJourney.inmates.length < 1) {
+    if (req.journeyData.allocateJourney.inmates.length < 1) {
       nobodyToAllocateTitle = `No-one from ${activityCopied || `your CSV`} can be allocated`
     }
 
     return res.render('pages/activities/manage-allocations/allocateMultiplePeople/reviewUploadPrisonerList', {
-      unallocatedInmates: req.session.allocateJourney.inmates,
-      withoutMatchingIncentiveLevelInmates: req.session.allocateJourney.withoutMatchingIncentiveLevelInmates,
-      allocatedInmates: req.session.allocateJourney.allocatedInmates,
+      unallocatedInmates: req.journeyData.allocateJourney.inmates,
+      withoutMatchingIncentiveLevelInmates: req.journeyData.allocateJourney.withoutMatchingIncentiveLevelInmates,
+      allocatedInmates: req.journeyData.allocateJourney.allocatedInmates,
       cannotAllocateMessage,
       nobodyToAllocateTitle,
       notFoundPrisoners,
@@ -93,10 +93,10 @@ export default class ReviewUploadPrisonerListRoutes {
 
   REMOVE = async (req: Request, res: Response): Promise<void> => {
     const { prisonNumber } = req.params
-    const unallocatedInmates = req.session.allocateJourney.inmates.filter(
+    const unallocatedInmates = req.journeyData.allocateJourney.inmates.filter(
       prisoner => prisoner.prisonerNumber !== prisonNumber,
     )
-    req.session.allocateJourney.inmates = unallocatedInmates
+    req.journeyData.allocateJourney.inmates = unallocatedInmates
 
     res.redirect('../../review-upload-prisoner-list')
   }

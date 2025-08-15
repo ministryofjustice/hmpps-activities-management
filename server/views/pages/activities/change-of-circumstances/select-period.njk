@@ -54,7 +54,7 @@
                                     },
                                     classes: 'moj-datepicker--fixed-width',
                                     errorMessage: validationErrors | findError('date'),
-                                    value: formResponses.date or session.allocateJourney.date | isoDateToDatePickerDate
+                                    value: formResponses.date or allocateJourney.date | isoDateToDatePickerDate
                                 })
                             }
                         }

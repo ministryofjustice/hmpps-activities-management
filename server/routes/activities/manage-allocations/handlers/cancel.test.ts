@@ -24,7 +24,8 @@ describe('Route Handlers - Allocate - Cancel', () => {
     req = {
       get: jest.fn(),
       query: {},
-      session: {
+      session: {},
+      journeyData: {
         allocateJourney: {
           inmate: {
             prisonerName: 'Joe Bloggs',
@@ -60,7 +61,7 @@ describe('Route Handlers - Allocate - Cancel', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney).toBeNull()
+      expect(req.journeyData.allocateJourney).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('/activities/allocation-dashboard/1')
     })
 
@@ -73,7 +74,7 @@ describe('Route Handlers - Allocate - Cancel', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney).not.toBeNull()
+      expect(req.journeyData.allocateJourney).not.toBeNull()
       expect(req.session.returnTo).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })

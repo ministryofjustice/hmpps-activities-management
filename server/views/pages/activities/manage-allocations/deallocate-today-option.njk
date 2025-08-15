@@ -22,22 +22,22 @@
         text: 'Enter the date, for example ' + exampleDatePickerDate() + ', or click on the calendar to select.'
     },
     errorMessage: validationErrors | findError('endDate'),
-    value: formResponses.endDate or session.allocateJourney.endDate | isoDateToDatePickerDate if (formResponses.deallocateTodayOption == 'FUTURE_DATE' or session.allocateJourney.deallocateTodayOption == 'FUTURE_DATE')
+    value: formResponses.endDate or allocateJourney.endDate | isoDateToDatePickerDate if (formResponses.deallocateTodayOption == 'FUTURE_DATE' or allocateJourney.deallocateTodayOption == 'FUTURE_DATE')
 }) }}
 {% endset %}
 
 {% set pageHeading %}
-    {% if session.allocateJourney.inmates | length == 1 and session.allocateJourney.inmate %}
-        When do you want {{ session.allocateJourney.inmate.prisonerName | safe }}'s allocation to end?
+    {% if allocateJourney.inmates | length == 1 and allocateJourney.inmate %}
+        When do you want {{ allocateJourney.inmate.prisonerName | safe }}'s allocation to end?
     {% else %}
-        When do you want {{ session.allocateJourney.inmates | length }} {% if session.allocateJourney.inmates | length == 1 %}person{% else %}people{% endif %}'s allocations to end?
+        When do you want {{ allocateJourney.inmates | length }} {% if allocateJourney.inmates | length == 1 %}person{% else %}people{% endif %}'s allocations to end?
     {% endif %}
 {% endset %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 {{ govukRadios({
@@ -54,17 +54,17 @@
                         {
                             value: 'TODAY',
                             text: "Now - they'll be removed from any sessions later today",
-                            checked: formResponses.deallocateTodayOption == 'TODAY' or session.allocateJourney.deallocateTodayOption == 'TODAY'
+                            checked: formResponses.deallocateTodayOption == 'TODAY' or allocateJourney.deallocateTodayOption == 'TODAY'
                         } if nextAllocationToday,
                         {
                             value: 'EOD',
                             text: "At the end of today",
-                            checked: formResponses.deallocateTodayOption == 'EOD' or session.allocateJourney.deallocateTodayOption == 'EOD'
+                            checked: formResponses.deallocateTodayOption == 'EOD' or allocateJourney.deallocateTodayOption == 'EOD'
                         },
                         {
                             value: 'FUTURE_DATE',
                             text: "On a different date",
-                            checked: formResponses.deallocateTodayOption == 'FUTURE_DATE' or session.allocateJourney.deallocateTodayOption == 'FUTURE_DATE',
+                            checked: formResponses.deallocateTodayOption == 'FUTURE_DATE' or allocateJourney.deallocateTodayOption == 'FUTURE_DATE',
                             hint: {
                                 text: "They'll attend any sessions they're allocated to on this date, then be removed."
                             },

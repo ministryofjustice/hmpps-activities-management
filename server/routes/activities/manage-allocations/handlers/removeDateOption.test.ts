@@ -32,7 +32,7 @@ describe('Route Handlers - Allocation - Remove Date option', () => {
       params: { allocationId: 1 },
       routeContext: { mode: 'create' },
       query: { preserveHistory: true },
-      session: {
+      journeyData: {
         allocateJourney: {
           endDate: '2026-04-24',
           inmate: {
@@ -68,7 +68,7 @@ describe('Route Handlers - Allocation - Remove Date option', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.endDate).toBeNull()
+      expect(req.journeyData.allocateJourney.endDate).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
 

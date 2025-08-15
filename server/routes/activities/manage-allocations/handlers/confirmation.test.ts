@@ -53,9 +53,9 @@ describe('Route Handlers - Allocate - Confirmation', () => {
     req = {
       params: {},
       routeContext: { mode: 'create' },
-      session: {
+      session: { journeyMetrics: {} },
+      journeyData: {
         allocateJourney,
-        journeyMetrics: {},
       },
     } as unknown as Request
 
@@ -122,8 +122,8 @@ describe('Route Handlers - Allocate - Confirmation', () => {
     })
     it('should render page with data from session - multiple activities removed', async () => {
       req.routeContext = { mode: 'remove' }
-      req.session.allocateJourney.activity = null
-      req.session.allocateJourney.activitiesToDeallocate = [
+      req.journeyData.allocateJourney.activity = null
+      req.journeyData.allocateJourney.activitiesToDeallocate = [
         {
           activityId: 1,
           scheduleId: 1,

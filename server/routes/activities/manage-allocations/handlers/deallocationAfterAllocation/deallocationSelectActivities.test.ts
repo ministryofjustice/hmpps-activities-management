@@ -29,7 +29,7 @@ describe('Select activities page - deallocation after allocation', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         allocateJourney: {
           inmate: {
             prisonerName: 'Rebecca Miller',
@@ -181,7 +181,7 @@ describe('Select activities page - deallocation after allocation', () => {
       expect(activitiesService.getActivity).toHaveBeenCalledWith(1, {
         username: 'joebloggs',
       })
-      expect(req.session.allocateJourney).toEqual({
+      expect(req.journeyData.allocateJourney).toEqual({
         inmate: {
           prisonerName: 'Rebecca Miller',
         },
@@ -236,7 +236,7 @@ describe('Select activities page - deallocation after allocation', () => {
       expect(activitiesService.getActivity).toHaveBeenCalledWith(2, {
         username: 'joebloggs',
       })
-      expect(req.session.allocateJourney).toEqual({
+      expect(req.journeyData.allocateJourney).toEqual({
         inmate: {
           prisonerName: 'Rebecca Miller',
         },
@@ -366,7 +366,7 @@ describe('Select activities page - deallocation after allocation', () => {
       }
 
       const requestObject = plainToInstance(DeallocationSelect, {
-        allocateJourney: req.session.allocateJourney,
+        allocateJourney: req.journeyData.allocateJourney,
         ...body,
       })
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))

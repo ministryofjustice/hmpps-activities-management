@@ -33,7 +33,7 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         allocateJourney: {
           inmate: {
             prisonerName: 'Joe Bloggs',

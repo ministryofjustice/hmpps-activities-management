@@ -24,7 +24,7 @@ describe('Route Handlers - Allocation - End Date option', () => {
 
     req = {
       body: {},
-      session: {
+      journeyData: {
         allocateJourney: {
           inmate: {
             prisonerName: 'John Smith',
@@ -53,7 +53,7 @@ describe('Route Handlers - Allocation - End Date option', () => {
 
     it('should redirect to pay band page when selecting no and activity is paid', async () => {
       req.body.endDateOption = 'no'
-      req.session.allocateJourney.activity.paid = true
+      req.journeyData.allocateJourney.activity.paid = true
 
       await handler.POST(req, res)
 
@@ -62,8 +62,8 @@ describe('Route Handlers - Allocation - End Date option', () => {
 
     it('should redirect to exclusions page when selecting no and activity is unpaid (single allocation mode)', async () => {
       req.body.endDateOption = 'no'
-      req.session.allocateJourney.activity.paid = false
-      req.session.allocateJourney.allocateMultipleInmatesMode = false
+      req.journeyData.allocateJourney.activity.paid = false
+      req.journeyData.allocateJourney.allocateMultipleInmatesMode = false
 
       await handler.POST(req, res)
 
@@ -72,8 +72,8 @@ describe('Route Handlers - Allocation - End Date option', () => {
 
     it('should redirect to exclusions page when selecting no and activity is unpaid (multiple allocation mode)', async () => {
       req.body.endDateOption = 'no'
-      req.session.allocateJourney.activity.paid = false
-      req.session.allocateJourney.allocateMultipleInmatesMode = true
+      req.journeyData.allocateJourney.activity.paid = false
+      req.journeyData.allocateJourney.allocateMultipleInmatesMode = true
       config.multiplePrisonerActivityAllocationEnabled = true
 
       await handler.POST(req, res)

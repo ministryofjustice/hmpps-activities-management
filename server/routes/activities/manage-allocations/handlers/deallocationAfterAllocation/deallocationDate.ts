@@ -36,7 +36,7 @@ export default class DeallocationDateRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { allocateJourney } = req.session
+    const { allocateJourney } = req.journeyData
     const nextAvailableInstance = allocateJourney.scheduledInstance
 
     const nextSessionDateAndTime = parseDate(
@@ -57,7 +57,7 @@ export default class DeallocationDateRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { deallocationAfterAllocationDate, date } = req.body
-    const { activity, activitiesToDeallocate } = req.session.allocateJourney
+    const { activity, activitiesToDeallocate } = req.journeyData.allocateJourney
 
     let notInWork = null
     if (!activitiesToDeallocate?.length && activity) {
@@ -70,12 +70,12 @@ export default class DeallocationDateRoutes {
       deallocationAfterAllocationDate === DeallocateAfterAllocationDateOption.TODAY ||
       deallocationAfterAllocationDate === DeallocateAfterAllocationDateOption.NOW
     ) {
-      req.session.allocateJourney.endDate = formatIsoDate(new Date())
+      req.journeyData.allocateJourney.endDate = formatIsoDate(new Date())
     } else {
-      req.session.allocateJourney.endDate = formatIsoDate(date)
+      req.journeyData.allocateJourney.endDate = formatIsoDate(date)
     }
 
-    req.session.allocateJourney.deallocateAfterAllocationDateOption = deallocationAfterAllocationDate
+    req.journeyData.allocateJourney.deallocateAfterAllocationDateOption = deallocationAfterAllocationDate
     if (activity) activity.notInWork = notInWork
 
     if (notInWork) {

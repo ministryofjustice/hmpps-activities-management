@@ -29,7 +29,7 @@ export default class RemoveDateOptionRoutes {
       return res.redirect(`end-date${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
     }
 
-    req.session.allocateJourney.endDate = null
+    req.journeyData.allocateJourney.endDate = null
 
     if (req.routeContext.mode === 'edit') {
       const allocationUpdate = { removeEndDate: true }
@@ -45,7 +45,7 @@ export default class RemoveDateOptionRoutes {
 
     if (
       config.multiplePrisonerActivityAllocationEnabled &&
-      req.session.allocateJourney.allocateMultipleInmatesMode &&
+      req.journeyData.allocateJourney.allocateMultipleInmatesMode &&
       req.query.preserveHistory
     )
       return res.redirect('multiple/check-answers')

@@ -10,7 +10,7 @@ export default class EndDecisionRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { endDecision } = req.body
     if (endDecision === EndDecision.BEFORE_START) {
-      req.session.allocateJourney.endDate = formatIsoDate(new Date())
+      req.journeyData.allocateJourney.endDate = formatIsoDate(new Date())
       return res.redirect(`reason`)
     }
     return res.redirect(`end-date`)

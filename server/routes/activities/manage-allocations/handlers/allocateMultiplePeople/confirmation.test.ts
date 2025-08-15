@@ -63,9 +63,9 @@ describe('Allocate multiple people - confirmation page', () => {
     req = {
       params: {},
       routeContext: { mode: 'create' },
-      session: {
+      session: { journeyMetrics: {} },
+      journeyData: {
         allocateJourney,
-        journeyMetrics: {},
       },
     } as unknown as Request
   })

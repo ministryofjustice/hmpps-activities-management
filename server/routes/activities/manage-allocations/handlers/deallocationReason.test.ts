@@ -35,7 +35,7 @@ describe('Route Handlers - Deallocation reason', () => {
 
     req = {
       params: { allocationId: 1 },
-      session: {
+      journeyData: {
         allocateJourney: {
           endDate: formatIsoDate(new Date()),
           inmate: {
@@ -59,7 +59,7 @@ describe('Route Handlers - Deallocation reason', () => {
 
   describe('GET', () => {
     it('should render the expected view - one activity to remove', async () => {
-      req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
+      req.journeyData.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocation-reason', {
         deallocationReasons: [{ code: 'OTHER', description: 'Other reason' }],
@@ -68,10 +68,10 @@ describe('Route Handlers - Deallocation reason', () => {
       })
     })
     it('should render the expected view - multiple activities to remove', async () => {
-      req.session.allocateJourney.deallocationCaseNote = null
-      req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
-      req.session.allocateJourney.activity = null
-      req.session.allocateJourney.activitiesToDeallocate = [
+      req.journeyData.allocateJourney.deallocationCaseNote = null
+      req.journeyData.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
+      req.journeyData.allocateJourney.activity = null
+      req.journeyData.allocateJourney.activitiesToDeallocate = [
         {
           scheduleId: 1,
           name: 'activity 1',
@@ -100,7 +100,7 @@ describe('Route Handlers - Deallocation reason', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.deallocationReason).toEqual(ReasonForDeallocation.OTHER)
+      expect(req.journeyData.allocateJourney.deallocationReason).toEqual(ReasonForDeallocation.OTHER)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('case-note-question')
     })
 
@@ -110,20 +110,20 @@ describe('Route Handlers - Deallocation reason', () => {
       }
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.deallocationReason).toEqual(ReasonForDeallocation.HEALTH)
-      expect(req.session.allocateJourney.deallocationCaseNote).toBeNull()
+      expect(req.journeyData.allocateJourney.deallocationReason).toEqual(ReasonForDeallocation.HEALTH)
+      expect(req.journeyData.allocateJourney.deallocationCaseNote).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
 
     it('redirects to deallocate-check-and-confirm page when the user is on the deallocate-after-allocation flow', async () => {
-      req.session.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
+      req.journeyData.allocateJourney.deallocateAfterAllocationDateOption = DeallocateAfterAllocationDateOption.TODAY
       req.body = {
         deallocationReason: ReasonForDeallocation.OTHER,
       }
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.deallocationReason).toEqual(ReasonForDeallocation.OTHER)
-      expect(req.session.allocateJourney.deallocationCaseNote).toBeNull()
+      expect(req.journeyData.allocateJourney.deallocationReason).toEqual(ReasonForDeallocation.OTHER)
+      expect(req.journeyData.allocateJourney.deallocationCaseNote).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith('deallocation-check-and-confirm')
     })
   })
