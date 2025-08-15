@@ -12,4 +12,6 @@ export default class ConfirmationPage extends Page {
   deallocateLink = () => cy.get('li').contains('take Alfonso Cholak off').click()
 
   manageAllocationsLink = () => cy.get('li').contains(`check and manage`)
+
+  reviewAllocationsLink = () => cy.get('li').contains('review the allocations for')
 }
