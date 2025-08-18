@@ -28,7 +28,7 @@ import getCandidateSuitability from '../../../fixtures/activitiesApi/getCandidat
 import getDeallocationReasons from '../../../fixtures/activitiesApi/getDeallocationReasons.json'
 // import SelectActivitiesPage from '../../../pages/allocateToActivity/selectActivityDeallocation'
 // import DeallocationDatePage from '../../../pages/allocateToActivity/deallocationDate'
-import getAllocationsMaths from '../../../fixtures/activitiesApi/getAllocationsMaths.json'
+// import getAllocationsMaths from '../../../fixtures/activitiesApi/getAllocationsMaths.json'
 // import DeallocationReasonPage from '../../../pages/allocateToActivity/deallocationReason'
 // import DeallocationCheckAndConfirmPage from '../../../pages/allocateToActivity/deallocationCheckAndConfirm'
 // import { formatDate, toDateString } from '../../../../server/utils/utils'
@@ -94,7 +94,6 @@ context(' End activity after an allocation', () => {
     cy.stubEndpoint('GET', '/allocations/id/2', prisonerAllocations[0].allocations[1])
     cy.stubEndpoint('GET', '/allocations/id/1', prisonerAllocations[0].allocations[0])
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
-    cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true', getAllocationsMaths)
     cy.stubEndpoint('PUT', '/schedules/2/deallocate')
 
     const today = new Date()
