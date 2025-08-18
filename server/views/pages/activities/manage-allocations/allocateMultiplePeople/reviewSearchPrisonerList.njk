@@ -12,7 +12,7 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+      <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
       <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
       <p class="govuk-body">Add or remove people, or continue with the current {% if inmates | length > 1 %}people{% else %}person{% endif %} to allocate.</p>
 
@@ -47,7 +47,7 @@
         attributes: { id: 'prisoner-cell-location', "data-qa": "prisoner-cell-location" }
       },
       {
-        html: nonAssociationsHtml(inmate, inmate.prisonerNumber, session.allocateJourney.activity.activityId),
+        html: nonAssociationsHtml(inmate, inmate.prisonerNumber, allocateJourney.activity.activityId),
         attributes: {
             id: 'prisoner-non-associations',
             'data-qa': 'non-associations-link-'+inmate.prisonerNumber

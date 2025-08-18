@@ -39,7 +39,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
 
     req = {
       routeContext: { mode: 'create' },
-      session: {
+      journeyData: {
         allocateJourney: {
           inmate,
           inmates: [inmate],
@@ -166,7 +166,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
         { code: 'COMPLETED', description: 'Completed' },
       ])
 
-      req.session.allocateJourney.activity = {
+      req.journeyData.allocateJourney.activity = {
         activityId: 877,
         scheduleId: 876,
         name: 'EDUCATION COURSE ALBANY',
@@ -179,7 +179,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
         scheduleWeeks: 1,
         paid: true,
       }
-      req.session.allocateJourney.updatedExclusions = [
+      req.journeyData.allocateJourney.updatedExclusions = [
         {
           weekNumber: 1,
           timeSlot: 'AM',
@@ -289,7 +289,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
       })
 
       it('should pass correct details when there is no scheduled instance', async () => {
-        req.session.allocateJourney.scheduledInstance = null
+        req.journeyData.allocateJourney.scheduledInstance = null
         req.routeContext = { mode: 'create' }
         await handler.POST(req, res)
         expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
@@ -307,7 +307,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
 
       it('should redirect to confirmation page when with custom scheduled slots and exclusions', async () => {
         req.routeContext = { mode: 'create' }
-        req.session.allocateJourney.activity = {
+        req.journeyData.allocateJourney.activity = {
           activityId: 877,
           scheduleId: 876,
           name: 'EDUCATION COURSE ALBANY',
@@ -320,7 +320,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
           scheduleWeeks: 1,
           paid: true,
         }
-        req.session.allocateJourney.updatedExclusions = [
+        req.journeyData.allocateJourney.updatedExclusions = [
           {
             weekNumber: 1,
             timeSlot: 'AM',
@@ -399,7 +399,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
       })
 
       it('should redirect to confirmation page when start date is next session', async () => {
-        req.session.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
+        req.journeyData.allocateJourney.startDateOption = StartDateOption.NEXT_SESSION
         req.routeContext = { mode: 'create' }
         await handler.POST(req, res)
         expect(activitiesService.allocateToSchedule).toHaveBeenCalledWith(
@@ -436,7 +436,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
 
       it('should deallocate and redirect to confirmation page when deallocating sessions today', async () => {
         req.routeContext = { mode: 'remove' }
-        req.session.allocateJourney.deallocateTodayOption = DeallocateTodayOption.TODAY
+        req.journeyData.allocateJourney.deallocateTodayOption = DeallocateTodayOption.TODAY
 
         await handler.POST(req, res)
 

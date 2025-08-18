@@ -65,19 +65,19 @@ export default class StartDateRoutes {
     const { allocationId } = req.params
     const { startDateOption } = req.body
 
-    const nextAvailableInstance = req.session.allocateJourney.scheduledInstance || null
+    const nextAvailableInstance = req.journeyData.allocateJourney.scheduledInstance || null
 
     let startDate = null
     if (startDateOption === StartDateOption.NEXT_SESSION) {
       // if there are no available instances yet, the activity is in the future, and so we can just use the start date
-      startDate = nextAvailableInstance?.date || req.session.allocateJourney.activity.startDate
+      startDate = nextAvailableInstance?.date || req.journeyData.allocateJourney.activity.startDate
     } else {
       startDate = formatIsoDate(req.body.startDate)
     }
 
-    req.session.allocateJourney.startDateOption = startDateOption
-    req.session.allocateJourney.startDate = startDate
-    req.session.allocateJourney.latestAllocationStartDate = startDate
+    req.journeyData.allocateJourney.startDateOption = startDateOption
+    req.journeyData.allocateJourney.startDate = startDate
+    req.journeyData.allocateJourney.latestAllocationStartDate = startDate
 
     if (req.routeContext.mode === 'edit') {
       const allocationUpdate = {
@@ -94,7 +94,7 @@ export default class StartDateRoutes {
         successMessage,
       )
     }
-    if (req.session.allocateJourney.allocateMultipleInmatesMode && req.query.preserveHistory)
+    if (req.journeyData.allocateJourney.allocateMultipleInmatesMode && req.query.preserveHistory)
       return res.redirect('multiple/check-answers')
     return res.redirectOrReturn(`end-date-option`)
   }

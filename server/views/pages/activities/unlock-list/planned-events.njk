@@ -40,7 +40,7 @@
                                 <div class="search-input__form-inputs">
                                     <div class="govuk-form-group">
                                         <label class="govuk-label govuk-label--s" for="searchTerm">Search by name or prison number, or event name</label>
-                                        <input class="govuk-input" id="searchTerm" name="searchTerm" type="search" form="filter-form" value="{{ session.unlockListJourney.searchTerm }}">
+                                        <input class="govuk-input" id="searchTerm" name="searchTerm" type="search" form="filter-form" value="{{ unlockListJourney.searchTerm }}">
                                     </div>
                                     <button type="submit" class="govuk-button" data-module="govuk-button" form="filter-form">Search</button>
                                 </div>
@@ -112,7 +112,7 @@
                     {% endset %}
 
                     {% set alertsAccordionHtml %}
-                    {{ alertFilters(alertOptions, session.unlockListJourney.alertFilters, true) }}
+                    {{ alertFilters(alertOptions, unlockListJourney.alertFilters, true) }}
                     {% endset %}
 
                     {% set cancelledEventsHtml %}
@@ -222,7 +222,7 @@
                                     }
                                 ), row) %}
 
-                                    {% if session.unlockListJourney.alertFilters.length > 0 %}
+                                    {% if unlockListJourney.alertFilters.length > 0 %}
                                         {% set row = (row.push({
                                         html: alertsList({ alerts: item.alerts, category: item.category }),
                                         classes: 'govuk-table_cell govuk-table__cell--vertical-align-top'
@@ -257,7 +257,7 @@
                                 }
                             ] %}
 
-                                {% if session.unlockListJourney.alertFilters.length > 0 %}
+                                {% if unlockListJourney.alertFilters.length > 0 %}
                                     {% set headRows = (headRows.push(
                                     {
                                         text: "Relevant alerts",
@@ -270,12 +270,12 @@
                                 {
                                     html: "Event details",
                                     attributes: { "aria-sort": "none", colspan: 4 },
-                                    classes: 'govuk-table__header govuk-!-display-none-print ' + ('hmpps-width-40-percent' if session.unlockListJourney.alertFilters else 'hmpps-width-50-percent')
+                                    classes: 'govuk-table__header govuk-!-display-none-print ' + ('hmpps-width-40-percent' if unlockListJourney.alertFilters else 'hmpps-width-50-percent')
                                 },
                                 {
                                     html: "Event details",
                                     attributes: { "aria-sort": "none" },
-                                    classes: 'govuk-table__header print-only ' + ('hmpps-width-30-percent' if session.unlockListJourney.alertFilters else 'hmpps-width-40-percent')
+                                    classes: 'govuk-table__header print-only ' + ('hmpps-width-30-percent' if unlockListJourney.alertFilters else 'hmpps-width-40-percent')
                                 },
                                 {
                                     html: "<span><span class=\"text-underline\">R</span>efused</span>",
@@ -302,7 +302,7 @@
                                 head: headRows,
                                 rows: rows
                             }) }}
-                            {% elseif session.unlockListJourney.searchTerm %}
+                            {% elseif unlockListJourney.searchTerm %}
                                 {{ govukWarningText({
                                 text: "There are no matching search results.",
                                 iconFallbackText: "Warning",

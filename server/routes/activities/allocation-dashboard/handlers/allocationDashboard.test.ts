@@ -1005,7 +1005,7 @@ describe('Route Handlers - Allocation dashboard', () => {
 
       await handler.UPDATE(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocations/view/45654?activityAllocationsBtn=true`)
+      expect(res.redirect).toHaveBeenCalledWith(`/activities/allocations/view/45654`)
     })
 
     it('validation fails if multiple allocations are selected', async () => {

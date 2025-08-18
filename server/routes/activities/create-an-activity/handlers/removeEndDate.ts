@@ -18,21 +18,21 @@ export default class RemoveEndDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createJourney.hasAtLeastOneValidDay = true
+    req.journeyData.createJourney.hasAtLeastOneValidDay = true
 
     if (req.body.removeEndDate && req.body.removeEndDate === 'change') {
       if (req.routeContext.mode === 'edit') {
         return res.redirectOrReturn(
-          `/activities/edit/${req.session.createJourney.activityId}/end-date?preserveHistory=true`,
+          `/activities/edit/${req.journeyData.createJourney.activityId}/end-date?preserveHistory=true`,
         )
       }
       return res.redirectOrReturn('end-date?preserveHistory=true')
     }
 
-    req.session.createJourney.endDate = null
+    req.journeyData.createJourney.endDate = null
     if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
-      const { activityId, name, endDate } = req.session.createJourney
+      const { activityId, name, endDate } = req.journeyData.createJourney
       const activity = { endDate, removeEndDate: true } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)
 

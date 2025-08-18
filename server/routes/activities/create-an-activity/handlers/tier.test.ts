@@ -35,7 +35,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
     req = {
       params: {},
       query: {},
-      session: {
+      journeyData: {
         createJourney: {},
       },
     } as unknown as Request
@@ -64,7 +64,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.tierCode).toEqual(EventTier.TIER_1)
+      expect(req.journeyData.createJourney.tierCode).toEqual(EventTier.TIER_1)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('risk-level')
     })
 
@@ -76,7 +76,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.tierCode).toEqual(EventTier.TIER_2)
+      expect(req.journeyData.createJourney.tierCode).toEqual(EventTier.TIER_2)
       expect(res.redirect).toHaveBeenCalledWith('organiser')
     })
 
@@ -85,13 +85,13 @@ describe('Route Handlers - Create an activity - Tier', () => {
       req.body = {
         tier: EventTier.TIER_1,
       }
-      req.session.createJourney = {
+      req.journeyData.createJourney = {
         organiserCode: Organiser.PRISON_STAFF,
       }
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.organiserCode).toBeNull()
+      expect(req.journeyData.createJourney.organiserCode).toBeNull()
     })
 
     it('should update activity with selected activity tier', async () => {
@@ -99,7 +99,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
       req.body = {
         tier: EventTier.TIER_1,
       }
-      req.session.createJourney = {
+      req.journeyData.createJourney = {
         activityId: 1,
         name: 'English 1',
       }
@@ -130,7 +130,7 @@ describe('Route Handlers - Create an activity - Tier', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.attendanceRequired).toEqual(true)
+      expect(req.journeyData.createJourney.attendanceRequired).toEqual(true)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('risk-level')
     })
   })

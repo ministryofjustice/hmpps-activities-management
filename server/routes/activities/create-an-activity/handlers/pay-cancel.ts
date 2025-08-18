@@ -23,12 +23,12 @@ export default class PayCancelRoutes {
     const payBands = await this.activitiesService.getPayBandsForPrison(user)
 
     const rate =
-      req.session.createJourney?.pay?.find(
+      req.journeyData.createJourney?.pay?.find(
         p =>
           p.prisonPayBand.id === +bandId &&
           p.incentiveLevel === iep &&
           (p.startDate === paymentStartDate || p.startDate === undefined),
-      )?.rate || req.session.createJourney?.flat?.find(p => p.prisonPayBand.id === +bandId)?.rate
+      )?.rate || req.journeyData.createJourney?.flat?.find(p => p.prisonPayBand.id === +bandId)?.rate
 
     const band = payBands.find(p => p.id === +bandId)
 
@@ -45,32 +45,32 @@ export default class PayCancelRoutes {
     const { user } = res.locals
     const { preserveHistory } = req.query
     const { startDate, incentiveLevel } = req.body
-    const { activityId } = req.session.createJourney
+    const { activityId } = req.journeyData.createJourney
 
     const bandId = Number(req.body.bandId)
 
     if (req.body.cancelOption === YesNo.YES) {
-      const previousPay = req.session.createJourney.pay.find(
+      const previousPay = req.journeyData.createJourney.pay.find(
         p => p.prisonPayBand.id === bandId && p.incentiveLevel === incentiveLevel && p.startDate === startDate,
       )
 
       let singlePayIndex = -1
       if (startDate === undefined || parseIsoDate(startDate as string) > startOfToday()) {
-        singlePayIndex = req.session.createJourney.pay.findIndex(
+        singlePayIndex = req.journeyData.createJourney.pay.findIndex(
           p => p.prisonPayBand.id === bandId && p.incentiveLevel === incentiveLevel && p.startDate === startDate,
         )
       }
 
-      const activityPay = req.session.createJourney.pay ?? []
+      const activityPay = req.journeyData.createJourney.pay ?? []
 
       let payBandAlias
       if (singlePayIndex >= 0) {
-        payBandAlias = req.session.createJourney.pay[singlePayIndex].prisonPayBand.alias
-        req.session.createJourney.pay.splice(singlePayIndex, 1)
+        payBandAlias = req.journeyData.createJourney.pay[singlePayIndex].prisonPayBand.alias
+        req.journeyData.createJourney.pay.splice(singlePayIndex, 1)
       }
 
-      req.session.createJourney.payChange = []
-      req.session.createJourney.payChange.push({
+      req.journeyData.createJourney.payChange = []
+      req.journeyData.createJourney.payChange.push({
         incentiveNomisCode: previousPay.incentiveNomisCode,
         incentiveLevel: previousPay.incentiveLevel,
         prisonPayBand: previousPay.prisonPayBand,
@@ -87,7 +87,7 @@ export default class PayCancelRoutes {
         startDate: p.startDate,
       }))
 
-      const cancelledPayRates = req.session.createJourney.payChange.map(p => ({
+      const cancelledPayRates = req.journeyData.createJourney.payChange.map(p => ({
         incentiveNomisCode: p.incentiveNomisCode,
         incentiveLevel: p.incentiveLevel,
         payBandId: p.prisonPayBand.id,

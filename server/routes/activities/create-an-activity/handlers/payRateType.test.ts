@@ -29,7 +29,7 @@ describe('Route Handlers - Create an activity schedule - Pay Rate Type', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {},
       },
       query: {},

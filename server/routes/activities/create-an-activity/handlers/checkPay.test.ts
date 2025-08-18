@@ -50,7 +50,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       query: {},
       params: {},
       routeContext: {},
-      session: {
+      journeyData: {
         createJourney: {
           activityId: 1,
           name: 'Maths level 1',
@@ -109,7 +109,7 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       req.routeContext.mode = 'edit'
 
       when(activitiesService.getActivityPayHistory)
-        .calledWith(req.session.createJourney.activityId, res.locals.user)
+        .calledWith(req.journeyData.createJourney.activityId, res.locals.user)
         .mockResolvedValueOnce(activityPayHistory as unknown as ActivityPayHistory)
       await handler.GET(req, res)
 
@@ -170,8 +170,8 @@ describe('Route Handlers - Create an activity - Check pay', () => {
 
   describe('POST', () => {
     it('should add a validation message to flash if no pay bands are added', async () => {
-      req.session.createJourney.pay = []
-      req.session.createJourney.flat = []
+      req.journeyData.createJourney.pay = []
+      req.journeyData.createJourney.flat = []
 
       await handler.POST(req, res)
 

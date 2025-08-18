@@ -37,7 +37,7 @@ export default class SetUpPrisonerListMethodRoutes {
 
     const schedule = await this.activitiesService.getActivitySchedule(+scheduleId, user)
 
-    req.session.allocateJourney = {
+    req.journeyData.allocateJourney = {
       activity: {
         activityId: schedule.activity.id,
         scheduleId: schedule.id,

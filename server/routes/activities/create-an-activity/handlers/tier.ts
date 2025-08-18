@@ -21,29 +21,29 @@ export default class TierRoutes {
     const { tier }: TierForm = req.body
     const { preserveHistory } = req.query
 
-    req.session.createJourney.tierCode = tier
+    req.journeyData.createJourney.tierCode = tier
 
     if (EventTier.FOUNDATION !== tier) {
-      req.session.createJourney.attendanceRequired = true
+      req.journeyData.createJourney.attendanceRequired = true
     }
 
     if (EventTier.TIER_2 === tier) {
       return res.redirect(`organiser${preserveHistory ? '?preserveHistory=true' : ''}`)
     }
-    req.session.createJourney.organiserCode = null
+    req.journeyData.createJourney.organiserCode = null
 
     if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
-      const { activityId } = req.session.createJourney
+      const { activityId } = req.journeyData.createJourney
       const activity = {
-        tierCode: req.session.createJourney.tierCode,
-        attendanceRequired: req.session.createJourney.attendanceRequired,
+        tierCode: req.journeyData.createJourney.tierCode,
+        attendanceRequired: req.journeyData.createJourney.attendanceRequired,
       } as ActivityUpdateRequest
 
       await this.activitiesService.updateActivity(activityId, activity, user)
-      const successMessage = `We've updated the tier for ${req.session.createJourney.name}`
+      const successMessage = `We've updated the tier for ${req.journeyData.createJourney.name}`
 
-      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/view/${req.journeyData.createJourney.activityId}`
       return res.redirectWithSuccess(returnTo, 'Activity updated', successMessage)
     }
 

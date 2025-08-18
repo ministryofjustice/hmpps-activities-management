@@ -38,28 +38,28 @@ export default class ApplyFiltersRoutes {
     } = req.body
 
     if (locationFilters) {
-      req.session.unlockListJourney.subLocationFilters = locationFilters
+      req.journeyData.unlockListJourney.subLocationFilters = locationFilters
     }
 
     if (activityCategoriesFilters) {
-      req.session.unlockListJourney.activityCategoriesFilters = activityCategoriesFilters
+      req.journeyData.unlockListJourney.activityCategoriesFilters = activityCategoriesFilters
     }
 
     if (activityFilter) {
-      req.session.unlockListJourney.activityFilter = activityFilter
+      req.journeyData.unlockListJourney.activityFilter = activityFilter
     }
 
     if (stayingOrLeavingFilter) {
-      req.session.unlockListJourney.stayingOrLeavingFilter = stayingOrLeavingFilter
+      req.journeyData.unlockListJourney.stayingOrLeavingFilter = stayingOrLeavingFilter
     }
 
     if (cancelledEventsFilter) {
-      req.session.unlockListJourney.cancelledEventsFilter = cancelledEventsFilter
+      req.journeyData.unlockListJourney.cancelledEventsFilter = cancelledEventsFilter
     }
 
-    req.session.unlockListJourney.alertFilters = alertFilters ?? []
+    req.journeyData.unlockListJourney.alertFilters = alertFilters ?? []
 
-    req.session.unlockListJourney.searchTerm = asString(searchTerm)
+    req.journeyData.unlockListJourney.searchTerm = asString(searchTerm)
 
     res.redirect(req.get('Referrer') || '/')
   }

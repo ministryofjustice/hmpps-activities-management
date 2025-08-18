@@ -22,26 +22,26 @@ export default class PayOption {
     const { preserveHistory } = req.query
     const preserveHistoryString = preserveHistory ? '?preserveHistory=true' : ''
 
-    req.session.createJourney.paid = req.body.paid === YesNo.YES
+    req.journeyData.createJourney.paid = req.body.paid === YesNo.YES
 
     if (req.body.paid === YesNo.NO) {
-      req.session.createJourney.pay = []
-      req.session.createJourney.payChange = []
-      req.session.createJourney.flat = []
+      req.journeyData.createJourney.pay = []
+      req.journeyData.createJourney.payChange = []
+      req.journeyData.createJourney.flat = []
 
       if (req.routeContext.mode === 'edit') {
-        const { activityId } = req.session.createJourney
+        const { activityId } = req.journeyData.createJourney
 
         const activity = {
-          paid: req.session.createJourney.paid,
+          paid: req.journeyData.createJourney.paid,
           pay: [],
           payChange: [],
         } as ActivityUpdateRequest
 
         await this.activitiesService.updateActivity(activityId, activity, user)
-        const successMessage = `You've updated pay for ${req.session.createJourney.name}. People will now not be paid for attending.`
+        const successMessage = `You've updated pay for ${req.journeyData.createJourney.name}. People will now not be paid for attending.`
 
-        const returnTo = `/activities/view/${req.session.createJourney.activityId}`
+        const returnTo = `/activities/view/${req.journeyData.createJourney.activityId}`
         req.session.returnTo = returnTo
         return res.redirectWithSuccess(returnTo, 'Activity updated', successMessage)
       }
@@ -49,7 +49,7 @@ export default class PayOption {
       return res.redirectOrReturn('qualification')
     }
 
-    const { pay, flat } = req.session.createJourney
+    const { pay, flat } = req.journeyData.createJourney
     if (pay?.length > 0 || flat?.length > 0) return res.redirect(`check-pay${preserveHistoryString}`)
     return res.redirect(`pay-rate-type${preserveHistoryString}`)
   }

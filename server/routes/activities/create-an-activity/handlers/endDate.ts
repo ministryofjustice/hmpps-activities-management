@@ -72,18 +72,18 @@ export default class EndDateRoutes {
     const { user } = res.locals
     const updatedEndDate = req.body.endDate
 
-    req.session.createJourney.endDate = updatedEndDate ? formatIsoDate(updatedEndDate) : null
-    req.session.createJourney.hasAtLeastOneValidDay = await this.helper.hasAtLeastOneValidDay(
-      req.session.createJourney,
+    req.journeyData.createJourney.endDate = updatedEndDate ? formatIsoDate(updatedEndDate) : null
+    req.journeyData.createJourney.hasAtLeastOneValidDay = await this.helper.hasAtLeastOneValidDay(
+      req.journeyData.createJourney,
       user,
     )
 
-    if (!req.session.createJourney.hasAtLeastOneValidDay) {
-      req.session.createJourney.runsOnBankHoliday = true
+    if (!req.journeyData.createJourney.hasAtLeastOneValidDay) {
+      req.journeyData.createJourney.runsOnBankHoliday = true
     }
 
     if (req.routeContext.mode === 'edit') {
-      const { activityId, name, endDate } = req.session.createJourney
+      const { activityId, name, endDate } = req.journeyData.createJourney
       const activity = { endDate, removeEndDate: !endDate } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)
       const successMessage = `You've updated the end date for ${name}. Anyone allocated to the activity who was due to be taken off after this date will now finish on this date.`

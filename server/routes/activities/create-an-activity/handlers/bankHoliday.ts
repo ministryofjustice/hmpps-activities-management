@@ -18,22 +18,22 @@ export default class BankHolidayOptionRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createJourney.runsOnBankHoliday = req.body.runsOnBankHoliday === 'yes'
+    req.journeyData.createJourney.runsOnBankHoliday = req.body.runsOnBankHoliday === 'yes'
     if (req.routeContext.mode === 'edit') {
       const { user } = res.locals
-      const { activityId } = req.session.createJourney
+      const { activityId } = req.journeyData.createJourney
       const activity = {
-        runsOnBankHoliday: req.session.createJourney.runsOnBankHoliday,
+        runsOnBankHoliday: req.journeyData.createJourney.runsOnBankHoliday,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)
-      const successMessage = `You've updated the bank holiday option for ${req.session.createJourney.name}`
+      const successMessage = `You've updated the bank holiday option for ${req.journeyData.createJourney.name}`
 
-      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/view/${req.journeyData.createJourney.activityId}`
       req.session.returnTo = returnTo
       res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     }
     // If the location has already been set, skip the location page
-    else if (req.session.createJourney.inCell) res.redirectOrReturn('capacity')
+    else if (req.journeyData.createJourney.inCell) res.redirectOrReturn('capacity')
     else res.redirectOrReturn('location')
   }
 }

@@ -14,7 +14,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ activityJourneyCaption(session.createJourney) }}
+                {{ activityJourneyCaption(createJourney) }}
                 {{ characterCountInput({
                     label: {
                         text: "Enter the new name of the activity" if session.req.routeContext.mode == 'edit' else "What's the new activity called?",
@@ -30,7 +30,7 @@
                         classes: "form-group-with-bottom-hint"
                     },
                     errorMessage: validationErrors | findError('name'),
-                    value: formResponses.name or session.createJourney.name,
+                    value: formResponses.name or createJourney.name,
                     maxlength: "40"
                 }) }}
 

@@ -29,7 +29,7 @@ describe('Route Handlers - Edit an activity - Confirm capacity', () => {
     req = {
       query: {},
       body: {},
-      session: {
+      journeyData: {
         createJourney: {
           activityId: 1,
           name: 'Test activity',

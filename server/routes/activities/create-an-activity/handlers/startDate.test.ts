@@ -10,7 +10,7 @@ import atLeast from '../../../../../jest.setup'
 import activity from '../../../../services/fixtures/activity_1.json'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import { formatDatePickerDate, formatIsoDate } from '../../../../utils/datePickerUtils'
-import { isStartDateValid, getNearestInvalidStartDate } from '../../../../utils/helpers/activityScheduleValidator'
+import { getNearestInvalidStartDate, isStartDateValid } from '../../../../utils/helpers/activityScheduleValidator'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../utils/helpers/activityScheduleValidator')
@@ -40,7 +40,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
 
     req = {
       params: {},
-      session: {
+      journeyData: {
         createJourney: {},
       },
       routeContext: { mode: 'create ' },
@@ -64,7 +64,7 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.startDate).toEqual(formatIsoDate(today))
+      expect(req.journeyData.createJourney.startDate).toEqual(formatIsoDate(today))
       expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date-option')
     })
 
@@ -77,11 +77,10 @@ describe('Route Handlers - Create an activity schedule - Start date', () => {
         .calledWith(atLeast(updatedActivity))
         .mockResolvedValueOnce(activity as unknown as Activity)
 
-      const today = new Date()
-      const startDate = today
+      const startDate = new Date()
 
       req = {
-        session: {
+        journeyData: {
           createJourney: { activityId: 1, name: 'Maths level 1' },
         },
         routeContext: { mode: 'edit' },

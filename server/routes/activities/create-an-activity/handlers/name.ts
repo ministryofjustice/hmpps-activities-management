@@ -20,30 +20,31 @@ export default class NameRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { category } = req.session.createJourney
+    const { category } = req.journeyData.createJourney
     const editJourney = req.routeContext.mode === 'edit'
-    req.session.createJourney.name = req.body.name
+    req.journeyData.createJourney.name = req.body.name
 
     const activities = await this.activitiesService.getActivities(true, user)
     const activityNames = activities.map(activity => ({ name: activity.activityName, id: activity.id }))
     const duplicateEditName = activityNames.find(
       activity =>
-        activity.name === req.session.createJourney.name && activity.id !== req.session.createJourney.activityId,
+        activity.name === req.journeyData.createJourney.name &&
+        activity.id !== req.journeyData.createJourney.activityId,
     )
-    const duplicateCreateName = activityNames.find(activity => activity.name === req.session.createJourney.name)
+    const duplicateCreateName = activityNames.find(activity => activity.name === req.journeyData.createJourney.name)
 
     if (editJourney && duplicateEditName) {
       return res.validationFailed('name', 'Enter a different name. There is already an activity with this name')
     }
     if (editJourney) {
-      const { activityId } = req.session.createJourney
+      const { activityId } = req.journeyData.createJourney
       const activity = {
-        summary: req.session.createJourney.name,
+        summary: req.journeyData.createJourney.name,
       } as ActivityUpdateRequest
       await this.activitiesService.updateActivity(activityId, activity, user)
-      const successMessage = `You've updated the activity name for ${req.session.createJourney.name}`
+      const successMessage = `You've updated the activity name for ${req.journeyData.createJourney.name}`
 
-      const returnTo = `/activities/view/${req.session.createJourney.activityId}`
+      const returnTo = `/activities/view/${req.journeyData.createJourney.activityId}`
       req.session.returnTo = returnTo
       return res.redirectOrReturnWithSuccess(returnTo, 'Activity updated', successMessage)
     }

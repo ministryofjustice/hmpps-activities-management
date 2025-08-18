@@ -32,7 +32,7 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {},
       },
       params: {},
@@ -59,7 +59,8 @@ describe('Route Handlers - Create an activity schedule - Bank Holiday option', (
       const runsOnBankHoliday = true
 
       req = {
-        session: {
+        session: {},
+        journeyData: {
           createJourney: { activityId: 1, name: 'Maths level 1' },
         },
         routeContext: { mode: 'edit' },

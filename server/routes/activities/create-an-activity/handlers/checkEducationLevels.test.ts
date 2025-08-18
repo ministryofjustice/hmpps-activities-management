@@ -35,7 +35,7 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
     req = {
       query: {},
       params: {},
-      session: {
+      journeyData: {
         createJourney: {
           name: 'Maths level 1',
           category: {
@@ -113,7 +113,8 @@ describe('Route Handlers - Create an activity - Check education levels', () => {
       .mockResolvedValueOnce(activity as unknown as Activity)
 
     req = {
-      session: {
+      session: {},
+      journeyData: {
         createJourney: {
           activityId: '1',
           educationLevels: [

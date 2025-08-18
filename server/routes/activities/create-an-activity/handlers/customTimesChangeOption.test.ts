@@ -72,7 +72,7 @@ describe('Select what you want to change in this activity’s schedule page', ()
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {
           slots: {
             '1': {
@@ -122,8 +122,7 @@ describe('Select what you want to change in this activity’s schedule page', ()
     })
 
     it('redirects to the appropriate if the user selects to change the activity start and end times and they are using regime times', async () => {
-      const activity2 = activity
-      activity2.schedules[0].usePrisonRegimeTime = true
+      activity.schedules[0].usePrisonRegimeTime = true
       activitiesService.getActivity.mockReturnValue(Promise.resolve(activity))
       req.body = {
         selectWhatYouWantToChange: ScheduleChangeOption.START_END_TIMES,

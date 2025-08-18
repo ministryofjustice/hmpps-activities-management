@@ -33,7 +33,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {},
       },
       routeContext: { mode: 'create' },
@@ -53,7 +53,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
         removeEndDate: 'change',
       }
 
-      req.session.createJourney = {
+      req.journeyData.createJourney = {
         activityId: 1,
         name: 'Maths level 1',
         endDate: today,
@@ -63,8 +63,8 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.hasAtLeastOneValidDay).toEqual(true)
-      expect(req.session.createJourney.endDate).toEqual(today)
+      expect(req.journeyData.createJourney.hasAtLeastOneValidDay).toEqual(true)
+      expect(req.journeyData.createJourney.endDate).toEqual(today)
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`/activities/edit/1/end-date?preserveHistory=true`)
     })
 
@@ -73,7 +73,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
         removeEndDate: 'change',
       }
 
-      req.session.createJourney = {
+      req.journeyData.createJourney = {
         activityId: 1,
         name: 'Maths level 1',
         endDate: today,
@@ -83,8 +83,8 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.hasAtLeastOneValidDay).toEqual(true)
-      expect(req.session.createJourney.endDate).toEqual(today)
+      expect(req.journeyData.createJourney.hasAtLeastOneValidDay).toEqual(true)
+      expect(req.journeyData.createJourney.endDate).toEqual(today)
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`end-date?preserveHistory=true`)
     })
 
@@ -101,7 +101,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
         removeEndDate: 'remove',
       }
 
-      req.session.createJourney = {
+      req.journeyData.createJourney = {
         activityId: 1,
         name: 'Maths level 1',
         endDate: today,
@@ -111,8 +111,8 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.hasAtLeastOneValidDay).toEqual(true)
-      expect(req.session.createJourney.endDate).toEqual(null)
+      expect(req.journeyData.createJourney.hasAtLeastOneValidDay).toEqual(true)
+      expect(req.journeyData.createJourney.endDate).toEqual(null)
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/view/1',
         'Activity updated',
@@ -125,7 +125,7 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
         removeEndDate: 'remove',
       }
 
-      req.session.createJourney = {
+      req.journeyData.createJourney = {
         activityId: 1,
         name: 'Maths level 1',
         endDate: today,
@@ -135,8 +135,8 @@ describe('Route Handlers - Create an activity schedule - Remove end date', () =>
 
       await handler.POST(req, res)
 
-      expect(req.session.createJourney.hasAtLeastOneValidDay).toEqual(true)
-      expect(req.session.createJourney.endDate).toEqual(null)
+      expect(req.journeyData.createJourney.hasAtLeastOneValidDay).toEqual(true)
+      expect(req.journeyData.createJourney.endDate).toEqual(null)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('check-answers')
     })
   })

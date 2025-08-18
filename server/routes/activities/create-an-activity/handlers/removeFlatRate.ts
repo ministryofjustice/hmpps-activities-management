@@ -13,7 +13,7 @@ export default class RemoveFlatRateRoutes {
     const bandId = +req.query.bandId
     const { preserveHistory } = req.query
 
-    const flatRate = req.session.createJourney.flat.findIndex(f => f.prisonPayBand.id === bandId)
+    const flatRate = req.journeyData.createJourney.flat.findIndex(f => f.prisonPayBand.id === bandId)
     if (flatRate < 0) return res.redirect(`check-pay${preserveHistory ? '?preserveHistory=true' : ''}`)
 
     return res.render(`pages/activities/create-an-activity/remove-pay`, { bandId })
@@ -29,13 +29,13 @@ export default class RemoveFlatRateRoutes {
       return res.redirect(`check-pay${preserveHistoryString}`)
     }
 
-    const flatRateIndex = req.session.createJourney.flat.findIndex(f => f.prisonPayBand.id === bandId)
+    const flatRateIndex = req.journeyData.createJourney.flat.findIndex(f => f.prisonPayBand.id === bandId)
 
     // Not found, do nothing and redirect back
     if (flatRateIndex < 0) return res.redirect(`check-pay${preserveHistoryString}`)
 
-    const flatRateInfo = req.session.createJourney.flat[flatRateIndex]
-    req.session.createJourney.flat.splice(flatRateIndex, 1)
+    const flatRateInfo = req.journeyData.createJourney.flat[flatRateIndex]
+    req.journeyData.createJourney.flat.splice(flatRateIndex, 1)
 
     return res.redirectWithSuccess(
       `check-pay${preserveHistoryString}`,

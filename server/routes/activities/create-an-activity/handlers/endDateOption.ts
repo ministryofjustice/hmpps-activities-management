@@ -14,7 +14,7 @@ export default class EndDateOptionRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.createJourney.endDateOption = req.body.endDateOption
+    req.journeyData.createJourney.endDateOption = req.body.endDateOption
     if (req.body.endDateOption && req.body.endDateOption === 'yes') {
       res.redirectOrReturn(`end-date`)
     } else {

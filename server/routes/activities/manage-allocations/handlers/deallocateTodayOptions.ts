@@ -4,7 +4,6 @@ import { IsEnum, ValidateIf } from 'class-validator'
 import { isPast, isToday, startOfToday } from 'date-fns'
 import { DeallocateTodayOption } from '../journey'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
-import config from '../../../../config'
 import { parseDate } from '../../../../utils/utils'
 import Validator from '../../../../validators/validator'
 
@@ -25,7 +24,7 @@ export default class DeallocateTodayOptionRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     let nextAllocationToday = false
-    const nextAvailableInstance = req.session.allocateJourney.scheduledInstance || null
+    const nextAvailableInstance = req.journeyData.allocateJourney.scheduledInstance || null
     if (nextAvailableInstance) {
       const nextSessionDateAndTime = parseDate(
         `${nextAvailableInstance.date}T${nextAvailableInstance.startTime}`,
@@ -38,15 +37,15 @@ export default class DeallocateTodayOptionRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { deallocateTodayOption, endDate } = req.body
-    req.session.allocateJourney.deallocateTodayOption = deallocateTodayOption
+    req.journeyData.allocateJourney.deallocateTodayOption = deallocateTodayOption
 
     switch (deallocateTodayOption) {
       case DeallocateTodayOption.TODAY:
       case DeallocateTodayOption.EOD:
-        req.session.allocateJourney.endDate = formatIsoDate(new Date())
+        req.journeyData.allocateJourney.endDate = formatIsoDate(new Date())
         break
       case DeallocateTodayOption.FUTURE_DATE:
-        req.session.allocateJourney.endDate = formatIsoDate(endDate)
+        req.journeyData.allocateJourney.endDate = formatIsoDate(endDate)
         break
       default:
         break
@@ -56,15 +55,15 @@ export default class DeallocateTodayOptionRoutes {
       return res.redirectOrReturn(`reason`)
     }
 
-    if (req.session.allocateJourney.activity.paid) {
-      if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
+    if (req.journeyData.allocateJourney.activity.paid) {
+      if (req.journeyData.allocateJourney.allocateMultipleInmatesMode) {
         if (req.query.preserveHistory) return res.redirect('multiple/check-answers')
         return res.redirectOrReturn('multiple/pay-band-multiple')
       }
       return res.redirectOrReturn('pay-band')
     }
 
-    if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
+    if (req.journeyData.allocateJourney.allocateMultipleInmatesMode) {
       return res.redirectOrReturn('multiple/pay-band-multiple')
     }
     return res.redirectOrReturn('exclusions')

@@ -45,17 +45,17 @@ export default class PayAmountRoutes {
     const minimumPayRate = payProfile.minHalfDayRate * 100
     const maximumPayRate = payProfile.maxHalfDayRate * 100
 
-    req.session.createJourney.pay ??= []
-    req.session.createJourney.minimumPayRate = minimumPayRate
-    req.session.createJourney.maximumPayRate = maximumPayRate
+    req.journeyData.createJourney.pay ??= []
+    req.journeyData.createJourney.minimumPayRate = minimumPayRate
+    req.journeyData.createJourney.maximumPayRate = maximumPayRate
 
     const rate =
-      req.session.createJourney?.pay?.find(
+      req.journeyData.createJourney?.pay?.find(
         p =>
           p.prisonPayBand.id === +bandId &&
           p.incentiveLevel === iep &&
           (p.startDate === paymentStartDate || p.startDate === undefined),
-      )?.rate || req.session.createJourney?.flat?.find(p => p.prisonPayBand.id === +bandId)?.rate
+      )?.rate || req.journeyData.createJourney?.flat?.find(p => p.prisonPayBand.id === +bandId)?.rate
 
     const band = payBands.find(p => p.id === +bandId)
 

@@ -11,10 +11,10 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                <h1 class='govuk-heading-l'>Add a case note for {{ session.allocateJourney.inmate.prisonerName }}</h1>
+                <h1 class='govuk-heading-l'>Add a case note for {{ allocateJourney.inmate.prisonerName }}</h1>
 
                 {{ govukRadios({
                     name: "type",
@@ -29,12 +29,12 @@
                         {
                             value: "GEN",
                             text: "General",
-                            checked: formResponses.type == 'GEN' or session.allocateJourney.deallocationCaseNote.type == 'GEN'
+                            checked: formResponses.type == 'GEN' or allocateJourney.deallocationCaseNote.type == 'GEN'
                         },
                         {
                             value: "NEG",
                             text: "Negative",
-                            checked: formResponses.type == 'NEG' or session.allocateJourney.deallocationCaseNote.type == 'NEG'
+                            checked: formResponses.type == 'NEG' or allocateJourney.deallocationCaseNote.type == 'NEG'
                         }
                     ]
                 }) }}
@@ -47,7 +47,7 @@
                     name: "text",
                     maxlength: 3800,
                     errorMessage: validationErrors | findError("text"),
-                    value: formResponses.text or session.allocateJourney.deallocationCaseNote.text
+                    value: formResponses.text or allocateJourney.deallocationCaseNote.text
                 }) }}
 
                 <div class="govuk-button-group">

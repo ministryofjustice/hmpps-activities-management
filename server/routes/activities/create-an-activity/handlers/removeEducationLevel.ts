@@ -4,7 +4,7 @@ export default class RemoveEducationLevelRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { eduLevel, studyArea, preserveHistory } = req.query
 
-    req.session.createJourney.educationLevels = req.session.createJourney.educationLevels.filter(
+    req.journeyData.createJourney.educationLevels = req.journeyData.createJourney.educationLevels.filter(
       p => p.educationLevelCode !== eduLevel || p.studyAreaCode !== studyArea,
     )
 

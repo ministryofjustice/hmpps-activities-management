@@ -13,7 +13,7 @@
     {% set activityTierOptions = (activityTierOptions.push({
         value: tierKey,
         text: tierText,
-        checked: formResponses.tier == tierKey or session.createJourney.tierCode == tierKey
+        checked: formResponses.tier == tierKey or createJourney.tierCode == tierKey
     }), activityTierOptions) %}
 {% endfor %}
 
@@ -22,7 +22,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ activityJourneyCaption(session.createJourney) }}
+                {{ activityJourneyCaption(createJourney) }}
                 {{ govukRadios({
                     fieldset: {
                         legend: {
@@ -45,7 +45,7 @@
                         text: "Update tier",
                         preventDoubleClick: true
                       }) }}
-                        <a class="govuk-link js-backlink" href="/activities/view/{{ session.createJourney.activityId }}">Cancel</a>
+                        <a class="govuk-link js-backlink" href="/activities/view/{{ createJourney.activityId }}">Cancel</a>
                     </div>
                 {% else %}
                     {{ govukButton({

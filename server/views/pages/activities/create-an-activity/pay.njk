@@ -17,12 +17,12 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(session.createJourney) }}
+            {{ activityJourneyCaption(createJourney) }}
             {% if editMode %}
                 <h1 class="govuk-heading-l">Change {{ iep }} incentive level: {{ band.alias }}</h1>
             {% else %}
                 {% if payRateType === "single" %}
-                    <h1 class="govuk-heading-l">Enter pay amount and pay band name for the {{ session.createJourney.incentiveLevel }} incentive level pay rate</h1>
+                    <h1 class="govuk-heading-l">Enter pay amount and pay band name for the {{ createJourney.incentiveLevel }} incentive level pay rate</h1>
                 {% else %}
                     <h1 class="govuk-heading-l">Enter pay amount and pay band name for the flat-rate incentive level pay rate</h1>
                 {% endif %}
@@ -100,8 +100,8 @@
                 }) }}
 
                 {% if payRateType === "single" %}
-                    {% if session.req.routeContext.mode == 'create' and session.createJourney.incentiveLevel !== null %}
-                        <input type='hidden' name='incentiveLevel' value='{{ session.createJourney.incentiveLevel }}' >
+                    {% if session.req.routeContext.mode == 'create' and createJourney.incentiveLevel !== null %}
+                        <input type='hidden' name='incentiveLevel' value='{{ createJourney.incentiveLevel }}' >
                     {% elseif session.req.routeContext.mode == 'edit' and (hasAllocations or iep) %}
                         <input type='hidden' name='incentiveLevel' value='{{ iep }}' >
                     {% else %}
@@ -129,7 +129,7 @@
                             items: incentiveLevelOptions,
                             errorMessage: validationErrors | findError('incentiveLevel'),
                             attributes: {"data-qa": "incentiveLevelRadios"}
-                            
+
                         }) }}
                     {% endif %}
                 {% endif %}

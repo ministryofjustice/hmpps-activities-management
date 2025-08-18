@@ -5,6 +5,7 @@ import createRoutes from './createRoutes'
 import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 import initialiseEditJourney from './middlewares/initialiseEditJourney'
 import insertRouteContext from '../../../middleware/routeContext'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
 export default function Index(services: Services): Router {
   const { activitiesService } = services
@@ -18,6 +19,7 @@ export default function Index(services: Services): Router {
   router.use(
     '/edit/:activityId/:journeyId',
     insertRouteContext('edit'),
+    setUpJourneyData(services.tokenStore),
     initialiseEditJourney(activitiesService),
     createAndEditRoutes(services),
   )

@@ -38,7 +38,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(session.createJourney) }}
+            {{ activityJourneyCaption(createJourney) }}
             <h1 class="govuk-heading-l">Review pay rates</h1>
 
             {{ govukButton({
@@ -138,7 +138,7 @@
                 {{
                     govukButton({
                         text: "Return to edit activity page",
-                        href: '/activities/view/' + session.createJourney.activityId,
+                        href: '/activities/view/' + createJourney.activityId,
                         classes: "govuk-button--secondary"
                     })
                 }}

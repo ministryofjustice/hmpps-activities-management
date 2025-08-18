@@ -123,7 +123,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {
           endDateOption: 'yes',
           slots: {
@@ -186,13 +186,13 @@ describe('Route Handlers - Create an activity schedule - activity times option',
         req.body = {
           usePrisonRegimeTime: 'true',
         }
-        req.session.createJourney.startDate = '2025-05-08'
-        req.session.createJourney.endDateOption = 'yes'
-        req.session.createJourney.endDate = '2025-06-08'
-        req.session.createJourney.scheduleWeeks = 1
+        req.journeyData.createJourney.startDate = '2025-05-08'
+        req.journeyData.createJourney.endDateOption = 'yes'
+        req.journeyData.createJourney.endDate = '2025-06-08'
+        req.journeyData.createJourney.scheduleWeeks = 1
         await handler.POST(req, res)
 
-        expect(req.session.createJourney.customSlots).toEqual(undefined)
+        expect(req.journeyData.createJourney.customSlots).toEqual(undefined)
         expect(res.redirectOrReturn).toHaveBeenCalledWith('../bank-holiday-option')
       })
 
@@ -216,12 +216,12 @@ describe('Route Handlers - Create an activity schedule - activity times option',
         req.body = {
           usePrisonRegimeTime: 'true',
         }
-        req.session.createJourney.startDate = '2025-05-08'
-        req.session.createJourney.endDateOption = 'no'
-        req.session.createJourney.scheduleWeeks = 1
+        req.journeyData.createJourney.startDate = '2025-05-08'
+        req.journeyData.createJourney.endDateOption = 'no'
+        req.journeyData.createJourney.scheduleWeeks = 1
         await handler.POST(req, res)
 
-        expect(req.session.createJourney.customSlots).toEqual(undefined)
+        expect(req.journeyData.createJourney.customSlots).toEqual(undefined)
         expect(res.redirectOrReturn).toHaveBeenCalledWith('../bank-holiday-option')
       })
 
@@ -229,11 +229,11 @@ describe('Route Handlers - Create an activity schedule - activity times option',
         req.body = {
           usePrisonRegimeTime: 'true',
         }
-        req.session.createJourney.endDateOption = 'no'
-        req.session.createJourney.inCell = true
+        req.journeyData.createJourney.endDateOption = 'no'
+        req.journeyData.createJourney.inCell = true
         await handler.POST(req, res)
 
-        expect(req.session.createJourney.customSlots).toEqual(undefined)
+        expect(req.journeyData.createJourney.customSlots).toEqual(undefined)
         expect(res.redirectOrReturn).toHaveBeenCalledWith('../capacity')
       })
 
@@ -241,11 +241,11 @@ describe('Route Handlers - Create an activity schedule - activity times option',
         req.body = {
           usePrisonRegimeTime: 'true',
         }
-        req.session.createJourney.endDateOption = 'no'
-        req.session.createJourney.inCell = false
+        req.journeyData.createJourney.endDateOption = 'no'
+        req.journeyData.createJourney.inCell = false
         await handler.POST(req, res)
 
-        expect(req.session.createJourney.customSlots).toEqual(undefined)
+        expect(req.journeyData.createJourney.customSlots).toEqual(undefined)
         expect(res.redirectOrReturn).toHaveBeenCalledWith('../location')
       })
 

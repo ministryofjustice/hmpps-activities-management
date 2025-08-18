@@ -12,7 +12,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name | safe }}</span>
+            <span class="govuk-caption-xl">{{ allocateJourney.activity.name | safe }}</span>
             <h1 class="govuk-heading-l">Change when {{ prisonerName | safe }} should attend this activity</h1>
 
             {% if session.req.routeContext.mode == 'create' %}

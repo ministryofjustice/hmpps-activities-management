@@ -16,7 +16,7 @@ export default class CheckPayRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { createJourney } = req.session
+    const { createJourney } = req.journeyData
     const activityName = createJourney.name
     const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(
       createJourney.pay,
@@ -24,11 +24,11 @@ export default class CheckPayRoutes {
       user,
     )
     const displayPays = groupPayBand(incentiveLevelPays)
-    const flatPay = req.session.createJourney.flat
+    const flatPay = req.journeyData.createJourney.flat
 
     if (req.routeContext.mode === 'edit') {
       const activityPayHistory = await this.activitiesService.getActivityPayHistory(
-        req.session.createJourney.activityId,
+        req.journeyData.createJourney.activityId,
         user,
       )
       res.render(`pages/activities/create-an-activity/edit-pay`, {
@@ -49,7 +49,7 @@ export default class CheckPayRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { pay, flat } = req.session.createJourney
+    const { pay, flat } = req.journeyData.createJourney
 
     if (pay.length === 0 && flat.length === 0) {
       return res.validationFailed('', `Add at least one pay rate`)

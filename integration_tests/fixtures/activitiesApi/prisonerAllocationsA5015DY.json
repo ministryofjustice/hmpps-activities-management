@@ -17,7 +17,17 @@
         "allocatedBy": "MR BLOGS",
         "deallocatedTime": null,
         "deallocatedBy": null,
-        "deallocatedReason": null
+        "deallocatedReason": null,
+        "plannedDeallocation": {
+          "id": 11,
+          "plannedDate": "2025-08-17",
+          "plannedBy": "DHOUSTON_GEN",
+          "plannedReason": {
+            "code": "OTHER",
+            "description": "Other"
+          },
+          "plannedAt": "2025-08-25T12:07:54.761622"
+        }
       },
       {
         "id": 2,

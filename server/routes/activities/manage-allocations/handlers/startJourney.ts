@@ -40,7 +40,7 @@ export default class StartJourneyRoutes {
       },
     ]
 
-    req.session.allocateJourney = {
+    req.journeyData.allocateJourney = {
       inmate: inmates[0],
       inmates,
       activity: {

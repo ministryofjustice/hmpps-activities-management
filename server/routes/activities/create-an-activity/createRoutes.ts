@@ -5,13 +5,14 @@ import StartJourneyRoutes from './handlers/startJourney'
 import { Services } from '../../../services'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
-export default function Index({ activitiesService, prisonService, metricsService }: Services): Router {
+export default function Index({ activitiesService, prisonService, metricsService, tokenStore }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyJourneyHandler('createJourney', stepRequiresSession), handler)
+    router.get(path, setUpJourneyData(tokenStore), emptyJourneyHandler('createJourney', stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), handler)
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
   const startHandler = new StartJourneyRoutes(metricsService)
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService, prisonService, metricsService)

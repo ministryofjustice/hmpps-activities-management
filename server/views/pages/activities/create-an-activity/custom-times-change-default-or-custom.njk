@@ -8,8 +8,8 @@
 {% set pageTitle = applicationName + " - Create a schedule - Activity session times" %}
 {% set pageId = 'custom-times-change-default-or-custom-page' %}
 
-{% if session.createJourney.scheduleWeeks > 1 %}
-    {% set pageHeading = "Week "+session.req.params.weekNumber+" of "+session.createJourney.scheduleWeeks+": Select how to change the activity start and end times" %}
+{% if createJourney.scheduleWeeks > 1 %}
+    {% set pageHeading = "Week "+session.req.params.weekNumber+" of "+createJourney.scheduleWeeks+": Select how to change the activity start and end times" %}
 {% else %}
     {% set pageHeading = "Select how to change the activity start and end times" %}
 {% endif %}
@@ -23,7 +23,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ activityJourneyCaption(session.createJourney) }}
+            {{ activityJourneyCaption(createJourney) }}
             <form method="POST">
             {{ govukRadios({
             name: "selectHowToChangeTimes",

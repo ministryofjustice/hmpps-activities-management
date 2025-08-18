@@ -18,7 +18,7 @@ describe('Route Handlers - Create an activity - Confirmation', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {},
         journeyMetrics: {},
       },
@@ -36,7 +36,7 @@ describe('Route Handlers - Create an activity - Confirmation', () => {
     it('should render the expected page', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/confirmation', { activityId: '1' })
-      expect(req.session.createJourney).toBeNull()
+      expect(req.journeyData.createJourney).toBeNull()
     })
   })
 })

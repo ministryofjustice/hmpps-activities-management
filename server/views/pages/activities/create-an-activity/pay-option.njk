@@ -14,7 +14,7 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {{ activityJourneyCaption(session.createJourney) }}
+                {{ activityJourneyCaption(createJourney) }}
                 {{ govukRadios({
                     classes: "govuk-radios--inline",
                     name: "paid",
@@ -29,12 +29,12 @@
                         {
                             value: "YES",
                             text: "Yes",
-                            checked: formResponses.paid == 'YES' or session.createJourney.paid
+                            checked: formResponses.paid == 'YES' or createJourney.paid
                         },
                         {
                             value: "NO",
                             text: "No",
-                            checked: formResponses.paid == 'NO' or session.createJourney.paid == false
+                            checked: formResponses.paid == 'NO' or createJourney.paid == false
                         }
                     ],
                     errorMessage: validationErrors | findError('paid')

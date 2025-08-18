@@ -22,7 +22,7 @@ describe('Route Handlers - Deallocation case note', () => {
 
     req = {
       params: { allocationId: 1 },
-      session: {
+      journeyData: {
         allocateJourney: {
           endDate: formatIsoDate(new Date()),
           deallocationReason: 'SECURITY',
@@ -54,8 +54,8 @@ describe('Route Handlers - Deallocation case note', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.deallocationCaseNote.type).toEqual('GEN')
-      expect(req.session.allocateJourney.deallocationCaseNote.text).toEqual('Test case note')
+      expect(req.journeyData.allocateJourney.deallocationCaseNote.type).toEqual('GEN')
+      expect(req.journeyData.allocateJourney.deallocationCaseNote.text).toEqual('Test case note')
       expect(res.redirect).toHaveBeenCalledWith('check-answers')
     })
   })

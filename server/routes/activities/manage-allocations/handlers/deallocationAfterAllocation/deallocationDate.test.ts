@@ -31,7 +31,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
     req = {
       routeContext: { mode: 'remove' },
-      session: {
+      journeyData: {
         allocateJourney: {
           startDate: formatIsoDate(subDays(new Date(), 1)),
           activity: {
@@ -69,7 +69,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
         status: '',
       }
 
-      req.session.allocateJourney = {
+      req.journeyData.allocateJourney = {
         inmate,
         inmates: [inmate],
         activity: {
@@ -94,7 +94,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
 
     it('when next session is later today', async () => {
-      req.session.allocateJourney.scheduledInstance.date = formatIsoDate(addMinutes(now, 60))
+      req.journeyData.allocateJourney.scheduledInstance.date = formatIsoDate(addMinutes(now, 60))
 
       await handler.GET(req, res)
 
@@ -106,7 +106,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       )
     })
     it('when the next session is tomorrow', async () => {
-      req.session.allocateJourney.scheduledInstance.date = formatIsoDate(addDays(now, 1))
+      req.journeyData.allocateJourney.scheduledInstance.date = formatIsoDate(addDays(now, 1))
 
       await handler.GET(req, res)
 
@@ -119,7 +119,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
     })
 
     it('when there are no sessions later today', async () => {
-      req.session.allocateJourney.scheduledInstance.startTime = formatDate(subMinutes(now, 1), 'HH:mm')
+      req.journeyData.allocateJourney.scheduledInstance.startTime = formatDate(subMinutes(now, 1), 'HH:mm')
 
       await handler.GET(req, res)
 
@@ -140,9 +140,9 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
         await handler.POST(req, res)
 
-        expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(startOfToday()))
-        expect(req.session.allocateJourney.activity.notInWork).toEqual(true)
-        expect(req.session.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
+        expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(startOfToday()))
+        expect(req.journeyData.allocateJourney.activity.notInWork).toEqual(true)
+        expect(req.journeyData.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
           DeallocateAfterAllocationDateOption.TODAY,
         )
         expect(res.redirect).toHaveBeenCalledWith('deallocation-check-and-confirm')
@@ -153,9 +153,9 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
         await handler.POST(req, res)
 
-        expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(startOfToday()))
-        expect(req.session.allocateJourney.activity.notInWork).toEqual(true)
-        expect(req.session.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
+        expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(startOfToday()))
+        expect(req.journeyData.allocateJourney.activity.notInWork).toEqual(true)
+        expect(req.journeyData.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
           DeallocateAfterAllocationDateOption.NOW,
         )
         expect(res.redirect).toHaveBeenCalledWith('deallocation-check-and-confirm')
@@ -167,9 +167,9 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
         await handler.POST(req, res)
 
-        expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(date))
-        expect(req.session.allocateJourney.activity.notInWork).toEqual(true)
-        expect(req.session.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
+        expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(date))
+        expect(req.journeyData.allocateJourney.activity.notInWork).toEqual(true)
+        expect(req.journeyData.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
           DeallocateAfterAllocationDateOption.FUTURE_DATE,
         )
         expect(res.redirect).toHaveBeenCalledWith('deallocation-check-and-confirm')
@@ -195,9 +195,9 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
         await handler.POST(req, res)
 
-        expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(date))
-        expect(req.session.allocateJourney.activity.notInWork).toEqual(false)
-        expect(req.session.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
+        expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(date))
+        expect(req.journeyData.allocateJourney.activity.notInWork).toEqual(false)
+        expect(req.journeyData.allocateJourney.deallocateAfterAllocationDateOption).toEqual(
           DeallocateAfterAllocationDateOption.FUTURE_DATE,
         )
         expect(res.redirect).toHaveBeenCalledWith('reason')

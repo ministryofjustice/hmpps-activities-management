@@ -13,7 +13,7 @@
     {% set organiserOptions = (organiserOptions.push({
         value: organiserKey,
         text: organiserText,
-        checked: formResponses.organiser == organiserKey or session.createJourney.organiserCode == organiserKey
+        checked: formResponses.organiser == organiserKey or createJourney.organiserCode == organiserKey
     }), organiserOptions) %}
 {% endfor %}
 
@@ -22,7 +22,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ activityJourneyCaption(session.createJourney) }}
+                {{ activityJourneyCaption(createJourney) }}
                 {{ govukRadios({
                     fieldset: {
                         legend: {
@@ -42,7 +42,7 @@
                             text: "Update organiser",
                             preventDoubleClick: true
                         }) }}
-                        <a class="govuk-link js-backlink" href="/activities/view/{{ session.createJourney.activityId }}">Cancel</a>
+                        <a class="govuk-link js-backlink" href="/activities/view/{{ createJourney.activityId }}">Cancel</a>
                     </div>
                 {% else %}
                     {{ govukButton({

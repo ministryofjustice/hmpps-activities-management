@@ -11,14 +11,14 @@ export default class ConfirmCapacityRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { activityId, capacity } = req.session.createJourney
+    const { activityId, capacity } = req.journeyData.createJourney
     const activity = { capacity } as ActivityUpdateRequest
     await this.activitiesService.updateActivity(activityId, activity, user)
 
     res.redirectWithSuccess(
-      `/activities/view/${req.session.createJourney.activityId}`,
+      `/activities/view/${req.journeyData.createJourney.activityId}`,
       'Activity updated',
-      `You've updated the capacity for ${req.session.createJourney.name}`,
+      `You've updated the capacity for ${req.journeyData.createJourney.name}`,
     )
   }
 }

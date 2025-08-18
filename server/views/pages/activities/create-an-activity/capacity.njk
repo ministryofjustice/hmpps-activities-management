@@ -14,7 +14,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-                {{ activityJourneyCaption(session.createJourney) }}
+                {{ activityJourneyCaption(createJourney) }}
                 {{ govukInput({
                     label: {
                         text: "Change the capacity" if session.req.routeContext.mode == 'edit' else "How many people can be allocated to this activity?",
@@ -33,11 +33,11 @@
                     spellcheck: false,
                     classes: "govuk-input--width-5",
                     errorMessage: validationErrors | findError('capacity'),
-                    value: formResponses.capacity or session.createJourney.capacity
+                    value: formResponses.capacity or createJourney.capacity
                 }) }}
                 {% if session.req.routeContext.mode == 'edit' %}
                     {{ govukInsetText({
-                      text: (session.createJourney.allocations | length) + " people are currently allocated to this activity."
+                      text: (createJourney.allocations | length) + " people are currently allocated to this activity."
                     }) }}
                     <div class="govuk-button-group">
                       {{ govukButton({

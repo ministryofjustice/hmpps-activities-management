@@ -18,7 +18,7 @@ describe('initialiseEditJourney', () => {
   } as ServiceUser
 
   const req = {
-    session: {
+    journeyData: {
       createJourney: {},
     },
     params: {
@@ -123,7 +123,7 @@ describe('initialiseEditJourney', () => {
 
     await middleware(req, res, next)
 
-    expect(req.session.createJourney).toEqual({
+    expect(req.journeyData.createJourney).toEqual({
       activityId: activity.id,
       scheduleId: schedule.id,
       category: activity.category,
@@ -157,13 +157,13 @@ describe('initialiseEditJourney', () => {
   })
 
   it('it should skip initialisation if session object already set', async () => {
-    req.session.createJourney = { activityId: 1 }
+    req.journeyData.createJourney = { activityId: 1 }
 
     await middleware(req, res, next)
 
     expect(activitiesService.getActivity).toHaveBeenCalledTimes(0)
 
-    expect(req.session.createJourney).toEqual({
+    expect(req.journeyData.createJourney).toEqual({
       activityId: 1,
     })
 

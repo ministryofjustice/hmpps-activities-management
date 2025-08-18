@@ -28,7 +28,7 @@ export default class PayBandMultipleRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { inmates } = req.session.allocateJourney
+    const { inmates } = req.journeyData.allocateJourney
     const allPayBandsForActivity: PayBandDetail[] = await this.getActivityPayRates(req, res)
 
     // If the activity is unpaid then there will not be any paybands and we dont need to render this page
@@ -53,7 +53,7 @@ export default class PayBandMultipleRoutes {
       })
 
       addPayBand(inmates, payBandsForInmates)
-      req.session.allocateJourney.inmates = inmates
+      req.journeyData.allocateJourney.inmates = inmates
       return res.redirect('check-answers')
     }
 
@@ -65,7 +65,7 @@ export default class PayBandMultipleRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { inmatePayData } = req.body
-    const { inmates } = req.session.allocateJourney
+    const { inmates } = req.journeyData.allocateJourney
 
     const activityPayBands = await this.getActivityPayRates(req, res)
     const paybandsAvailablePerInmate = getApplicablePayBandsForInmates(inmates, activityPayBands)
@@ -100,12 +100,12 @@ export default class PayBandMultipleRoutes {
     })
 
     addPayBand(inmates, allInmatesWithPayBands)
-    req.session.allocateJourney.inmates = inmates
+    req.journeyData.allocateJourney.inmates = inmates
     return res.redirect('check-answers')
   }
 
   private async getActivityPayRates(req: Request, res: Response): Promise<PayBandDetail[]> {
-    const { activity } = req.session.allocateJourney
+    const { activity } = req.journeyData.allocateJourney
 
     const payRates = (await this.activitiesService.getActivity(activity.activityId, res.locals.user))?.pay
 

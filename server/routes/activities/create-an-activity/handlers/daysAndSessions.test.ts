@@ -43,7 +43,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         createJourney: {
           startDate: formatIsoDate(startDate),
           endDate: formatIsoDate(endDate),
@@ -62,7 +62,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
   describe('GET', () => {
     it('should render the expected view if week number is valid', async () => {
-      req.session.createJourney.scheduleWeeks = 1
+      req.journeyData.createJourney.scheduleWeeks = 1
       req.params = {
         weekNumber: '1',
       }
@@ -83,7 +83,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         ['a decimal', '1.1'],
         ['not a valid number', 'invalid'],
       ])('should render 404 error if week number is %s', async (desc: string, weekNumber: string) => {
-        req.session.createJourney.scheduleWeeks = 2
+        req.journeyData.createJourney.scheduleWeeks = 2
         req.params.weekNumber = weekNumber
 
         await handler.GET(req, res, next)
@@ -96,7 +96,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         ['a decimal', '1.1'],
         ['not a valid number', 'invalid'],
       ])('should render 404 error if week number is %s', async (desc: string, weekNumber: string) => {
-        req.session.createJourney.scheduleWeeks = 2
+        req.journeyData.createJourney.scheduleWeeks = 2
         req.params.weekNumber = weekNumber
 
         await handler.GET(req, res, next)
@@ -122,29 +122,29 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       })
 
       it('should save slots in session and redirect to set activity times page', async () => {
-        req.session.createJourney.scheduleWeeks = 1
+        req.journeyData.createJourney.scheduleWeeks = 1
 
         await handler.POST(req, res, next)
 
-        expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-        expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-        expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+        expect(req.journeyData.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+        expect(req.journeyData.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+        expect(req.journeyData.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
         expect(res.redirect).toHaveBeenCalledWith('../session-times-option/1')
       })
       it('should add the preserveHistory flag', async () => {
-        req.session.createJourney.scheduleWeeks = 1
+        req.journeyData.createJourney.scheduleWeeks = 1
         req.query.preserveHistory = 'true'
 
         await handler.POST(req, res, next)
 
-        expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-        expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-        expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+        expect(req.journeyData.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+        expect(req.journeyData.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+        expect(req.journeyData.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
         expect(res.redirect).toHaveBeenCalledWith('../session-times-option/1?preserveHistory=true')
       })
 
       it('should save slots in session and redirect to set activity times page for a single session', async () => {
-        req.session.createJourney.scheduleWeeks = 1
+        req.journeyData.createJourney.scheduleWeeks = 1
         req.body = {
           days: ['friday'],
           timeSlotsFriday: 'PM',
@@ -152,19 +152,19 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         await handler.POST(req, res, next)
 
-        expect(req.session.createJourney.slots['1'].days).toEqual(['friday'])
-        expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM'])
+        expect(req.journeyData.createJourney.slots['1'].days).toEqual(['friday'])
+        expect(req.journeyData.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM'])
         expect(res.redirect).toHaveBeenCalledWith('../session-times-option/1')
       })
 
       it('should save slots in session and redirect to days and times page (#2) if first week of bi-weekly schedule', async () => {
-        req.session.createJourney.scheduleWeeks = 2
+        req.journeyData.createJourney.scheduleWeeks = 2
 
         await handler.POST(req, res, next)
 
-        expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-        expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-        expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+        expect(req.journeyData.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+        expect(req.journeyData.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+        expect(req.journeyData.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
         expect(res.redirect).toHaveBeenCalledWith('2')
       })
       it('should save slots in session and redirect to session times option page if second week of bi-weekly schedule', async () => {
@@ -172,8 +172,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
           preserveHistory: 'true',
         }
         req.params.weekNumber = '2'
-        req.session.createJourney.scheduleWeeks = 2
-        req.session.createJourney.slots = {
+        req.journeyData.createJourney.scheduleWeeks = 2
+        req.journeyData.createJourney.slots = {
           '1': {
             days: ['tuesday', 'friday'],
             timeSlotsTuesday: ['AM'],
@@ -188,8 +188,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         await handler.POST(req, res, next)
 
-        expect(req.session.createJourney.slots['2'].days).toEqual(['monday'])
-        expect(req.session.createJourney.slots['2'].timeSlotsMonday).toEqual(['AM'])
+        expect(req.journeyData.createJourney.slots['2'].days).toEqual(['monday'])
+        expect(req.journeyData.createJourney.slots['2'].timeSlotsMonday).toEqual(['AM'])
         expect(res.redirect).toHaveBeenCalledWith(`../session-times-option/2?preserveHistory=true`)
       })
 
@@ -253,15 +253,15 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
               },
             ]
 
-            req.session.createJourney.scheduleWeeks = 1
-            req.session.createJourney.customSlots = customSlots
+            req.journeyData.createJourney.scheduleWeeks = 1
+            req.journeyData.createJourney.customSlots = customSlots
 
             await handler.POST(req, res, next)
 
-            expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-            expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-            expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-            expect(req.session.createJourney.customSlots).toEqual(customSlots)
+            expect(req.journeyData.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+            expect(req.journeyData.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+            expect(req.journeyData.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+            expect(req.journeyData.createJourney.customSlots).toEqual(customSlots)
             expect(res.redirect).toHaveBeenCalledWith('../session-times-option/1?preserveHistory=true')
           })
           it('should save slots in session and redirect to the second weeks schedule if first week of bi-weekly schedule and using custom times', async () => {
@@ -310,15 +310,15 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
               },
             ]
 
-            req.session.createJourney.scheduleWeeks = 2
-            req.session.createJourney.customSlots = customSlots
+            req.journeyData.createJourney.scheduleWeeks = 2
+            req.journeyData.createJourney.customSlots = customSlots
 
             await handler.POST(req, res, next)
 
-            expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-            expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-            expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
-            expect(req.session.createJourney.customSlots).toEqual(customSlots)
+            expect(req.journeyData.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+            expect(req.journeyData.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+            expect(req.journeyData.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+            expect(req.journeyData.createJourney.customSlots).toEqual(customSlots)
             expect(res.redirect).toHaveBeenCalledWith('2?preserveHistory=true')
           })
           it('should save slots in session and redirect to session times option page if second week of bi-weekly schedule and using custom times', async () => {
@@ -368,22 +368,22 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
               },
             ]
 
-            req.session.createJourney.scheduleWeeks = 2
-            req.session.createJourney.customSlots = customSlots
+            req.journeyData.createJourney.scheduleWeeks = 2
+            req.journeyData.createJourney.customSlots = customSlots
 
             await handler.POST(req, res, next)
 
-            expect(req.session.createJourney.slots['2'].days).toEqual(['tuesday', 'friday'])
-            expect(req.session.createJourney.slots['2'].timeSlotsTuesday).toEqual(['AM'])
-            expect(req.session.createJourney.slots['2'].timeSlotsFriday).toEqual(['PM', 'ED'])
-            expect(req.session.createJourney.customSlots).toEqual(customSlots)
+            expect(req.journeyData.createJourney.slots['2'].days).toEqual(['tuesday', 'friday'])
+            expect(req.journeyData.createJourney.slots['2'].timeSlotsTuesday).toEqual(['AM'])
+            expect(req.journeyData.createJourney.slots['2'].timeSlotsFriday).toEqual(['PM', 'ED'])
+            expect(req.journeyData.createJourney.customSlots).toEqual(customSlots)
             expect(res.redirect).toHaveBeenCalledWith('../session-times-option/2?preserveHistory=true')
           })
         })
 
         describe('Change to weekly schedule frequency', () => {
           beforeEach(() => {
-            req.session.createJourney.scheduleWeeks = 1
+            req.journeyData.createJourney.scheduleWeeks = 1
 
             req.query = {
               preserveHistory: 'true',
@@ -398,15 +398,15 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
             await handler.POST(req, res, next)
 
-            expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-            expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-            expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+            expect(req.journeyData.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+            expect(req.journeyData.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+            expect(req.journeyData.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
             expect(res.redirect).toHaveBeenCalledWith('../session-times-option/1?preserveHistory=true')
           })
 
           it('should move to the second week of two weeks when changed to no days selected', async () => {
-            req.session.createJourney.scheduleWeeks = 2
-            req.session.createJourney.slots = {
+            req.journeyData.createJourney.scheduleWeeks = 2
+            req.journeyData.createJourney.slots = {
               '1': {
                 days: ['tuesday', 'friday'],
                 timeSlotsTuesday: ['AM'],
@@ -421,7 +421,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
             await handler.POST(req, res, next)
 
-            expect(req.session.createJourney.slots).toEqual({
+            expect(req.journeyData.createJourney.slots).toEqual({
               '1': {
                 days: [],
               },
@@ -432,7 +432,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
         describe('Change to bi-weekly schedule frequency', () => {
           beforeEach(() => {
-            req.session.createJourney.scheduleWeeks = 2
+            req.journeyData.createJourney.scheduleWeeks = 2
             req.routeContext = {
               mode: 'create',
             }
@@ -450,9 +450,9 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
             await handler.POST(req, res, next)
 
-            expect(req.session.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
-            expect(req.session.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
-            expect(req.session.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
+            expect(req.journeyData.createJourney.slots['1'].days).toEqual(['tuesday', 'friday'])
+            expect(req.journeyData.createJourney.slots['1'].timeSlotsTuesday).toEqual(['AM'])
+            expect(req.journeyData.createJourney.slots['1'].timeSlotsFriday).toEqual(['PM', 'ED'])
             expect(res.redirect).toHaveBeenCalledWith('2?preserveHistory=true&fromScheduleFrequency=true')
           })
 
@@ -463,9 +463,9 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
             await handler.POST(req, res, next)
 
-            expect(req.session.createJourney.slots['2'].days).toEqual(['tuesday', 'friday'])
-            expect(req.session.createJourney.slots['2'].timeSlotsTuesday).toEqual(['AM'])
-            expect(req.session.createJourney.slots['2'].timeSlotsFriday).toEqual(['PM', 'ED'])
+            expect(req.journeyData.createJourney.slots['2'].days).toEqual(['tuesday', 'friday'])
+            expect(req.journeyData.createJourney.slots['2'].timeSlotsTuesday).toEqual(['AM'])
+            expect(req.journeyData.createJourney.slots['2'].timeSlotsFriday).toEqual(['PM', 'ED'])
             expect(res.redirect).toHaveBeenCalledWith(
               '../session-times-option/2?preserveHistory=true&fromScheduleFrequency=true',
             )
@@ -477,7 +477,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
     describe("Edit a week's slots from activity details page", () => {
       it('should save slots when editing existing activity - using regime times - week 1 of 2', async () => {
         req = {
-          session: {
+          session: {},
+          journeyData: {
             createJourney: {
               activityId: 1,
               name: 'Maths level 1',
@@ -539,7 +540,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         }
 
         expect(activitiesService.updateActivity).toHaveBeenCalledWith(
-          req.session.createJourney.activityId,
+          req.journeyData.createJourney.activityId,
           expectedActivityUpdate,
           res.locals.user,
         )
@@ -552,7 +553,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       })
       it('should save slots when editing existing activity - using regime times - week 2 of 2', async () => {
         req = {
-          session: {
+          session: {},
+          journeyData: {
             createJourney: {
               activityId: 1,
               name: 'Maths level 1',
@@ -614,7 +616,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         }
 
         expect(activitiesService.updateActivity).toHaveBeenCalledWith(
-          req.session.createJourney.activityId,
+          req.journeyData.createJourney.activityId,
           expectedActivityUpdate,
           res.locals.user,
         )
@@ -655,7 +657,8 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         activitiesService.getActivity.mockReturnValue(Promise.resolve(activityFromApi))
 
         req = {
-          session: {
+          session: {},
+          journeyData: {
             createJourney: {
               activityId: 1,
               name: 'Maths level 1',
@@ -728,7 +731,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         activitiesService.getActivity.mockReturnValue(Promise.resolve(activityFromApi))
 
         req = {
-          session: {
+          journeyData: {
             createJourney: {
               activityId: 1,
               name: 'Maths level 1',
@@ -784,7 +787,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         activitiesService.getActivity.mockReturnValue(Promise.resolve(activityFromApi))
 
         req = {
-          session: {
+          journeyData: {
             createJourney: {
               activityId: 1,
               name: 'Maths level 1',
@@ -841,7 +844,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         activitiesService.getActivity.mockReturnValue(Promise.resolve(activityFromApi))
 
         req = {
-          session: {
+          journeyData: {
             createJourney: {
               activityId: 1,
               name: 'Maths level 1',
@@ -875,7 +878,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
         ['a decimal', '1.1'],
         ['not a valid number', 'invalid'],
       ])('should render 404 error if week number is %s', async (desc: string, weekNumber: string) => {
-        req.session.createJourney.scheduleWeeks = 2
+        req.journeyData.createJourney.scheduleWeeks = 2
         req.params.weekNumber = weekNumber
 
         await handler.POST(req, res, next)
@@ -899,7 +902,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
 
     describe('slots validation', () => {
       it('validation fails if any slots are outside date range', async () => {
-        req.session.createJourney.scheduleWeeks = 1
+        req.journeyData.createJourney.scheduleWeeks = 1
         req.params = {
           weekNumber: '1',
         }
@@ -924,7 +927,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       })
 
       it('validation fails if any slots are outside date range second week', async () => {
-        req.session.createJourney.scheduleWeeks = 2
+        req.journeyData.createJourney.scheduleWeeks = 2
         req.params = {
           weekNumber: '2',
         }
@@ -949,7 +952,7 @@ describe('Route Handlers - Create an activity schedule - Days and times', () => 
       })
 
       it('validation fails if no slots are selected', async () => {
-        req.session.createJourney.scheduleWeeks = 1
+        req.journeyData.createJourney.scheduleWeeks = 1
         req.params = {
           weekNumber: '1',
         }

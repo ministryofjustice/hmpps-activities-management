@@ -41,6 +41,7 @@ describe('Route Handlers - Allocate - Start', () => {
       query: { scheduleId: '1' },
       params: { prisonerNumber: 'ABC123' },
       session: {},
+      journeyData: {},
     } as unknown as Request
   })
 
@@ -90,7 +91,7 @@ describe('Route Handlers - Allocate - Start', () => {
 
       await handler.GET(req, res)
 
-      expect(req.session.allocateJourney).toEqual({
+      expect(req.journeyData.allocateJourney).toEqual({
         exclusions: [],
         updatedExclusions: [],
         inmates: [

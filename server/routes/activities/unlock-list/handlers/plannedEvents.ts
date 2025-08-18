@@ -18,7 +18,7 @@ export default class PlannedEventsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { date } = req.query
-    const { locationKey, timeSlot } = req.session.unlockListJourney
+    const { locationKey, timeSlot } = req.journeyData.unlockListJourney
 
     const location = await this.activitiesService
       .getLocationGroups(user)
@@ -29,19 +29,19 @@ export default class PlannedEventsRoutes {
     const alertOptions = this.alertsFilterService.getAllAlertFilterOptions()
 
     // Set the default filter values if they are not set
-    req.session.unlockListJourney.stayingOrLeavingFilter ??= 'Both'
-    req.session.unlockListJourney.activityFilter ??= 'With'
-    req.session.unlockListJourney.activityCategoriesFilters ??= activityCategories.map(c => c.code)
-    req.session.unlockListJourney.subLocationFilters ??= location.children.map(c => c.key)
-    req.session.unlockListJourney.alertFilters ??= alertOptions.map(a => a.key)
-    req.session.unlockListJourney.searchTerm ??= ''
-    req.session.unlockListJourney.cancelledEventsFilter ??= YesNo.YES
+    req.journeyData.unlockListJourney.stayingOrLeavingFilter ??= 'Both'
+    req.journeyData.unlockListJourney.activityFilter ??= 'With'
+    req.journeyData.unlockListJourney.activityCategoriesFilters ??= activityCategories.map(c => c.code)
+    req.journeyData.unlockListJourney.subLocationFilters ??= location.children.map(c => c.key)
+    req.journeyData.unlockListJourney.alertFilters ??= alertOptions.map(a => a.key)
+    req.journeyData.unlockListJourney.searchTerm ??= ''
+    req.journeyData.unlockListJourney.cancelledEventsFilter ??= YesNo.YES
 
     const unlockDate = date ? toDate(asString(date)) : new Date()
 
     // we need to know if the user is filtering on activity category, if they are we will only return activities and ignore other event types
     const activityCategoryFilterBeingUsed =
-      req.session.unlockListJourney.activityCategoriesFilters.length !== activityCategories.length
+      req.journeyData.unlockListJourney.activityCategoriesFilters.length !== activityCategories.length
 
     const {
       subLocationFilters,
@@ -51,7 +51,7 @@ export default class PlannedEventsRoutes {
       alertFilters,
       searchTerm,
       cancelledEventsFilter,
-    } = req.session.unlockListJourney
+    } = req.journeyData.unlockListJourney
 
     const unlockListItems = await this.unlockListService.getFilteredUnlockList(
       unlockDate,

@@ -25,7 +25,7 @@ export default class DeallocationSelectActivities {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { otherAllocations } = req.session.allocateJourney
+    const { otherAllocations } = req.journeyData.allocateJourney
     res.render('pages/activities/manage-allocations/deallocationAfterAllocation/deallocation-select-activities', {
       otherAllocations,
     })
@@ -37,12 +37,12 @@ export default class DeallocationSelectActivities {
     const selectedAllocationIds = selectedAllocations.toString().split(',')
 
     if (selectedAllocationIds.length === 1) {
-      const [allocation] = req.session.allocateJourney.otherAllocations.filter(
+      const [allocation] = req.journeyData.allocateJourney.otherAllocations.filter(
         all => all.id === +selectedAllocationIds[0],
       )
       const activity = await this.activitiesService.getActivity(allocation.activityId, user)
 
-      req.session.allocateJourney.activity = {
+      req.journeyData.allocateJourney.activity = {
         activityId: activity.id,
         scheduleId: getScheduleIdFromActivity(activity),
         name: activity.summary,
@@ -54,15 +54,15 @@ export default class DeallocationSelectActivities {
         onWing: activity.onWing,
         offWing: activity.offWing,
       }
-      req.session.allocateJourney.scheduledInstance = findNextSchedulesInstance(activity.schedules[0])
+      req.journeyData.allocateJourney.scheduledInstance = findNextSchedulesInstance(activity.schedules[0])
     } else {
-      const selectedOtherAllocations = req.session.allocateJourney.otherAllocations.filter(all =>
+      const selectedOtherAllocations = req.journeyData.allocateJourney.otherAllocations.filter(all =>
         selectedAllocationIds.includes(all.id.toString()),
       )
       const activities = await Promise.all(
         selectedOtherAllocations.map(all => this.activitiesService.getActivity(all.activityId, user)),
       )
-      req.session.allocateJourney.activitiesToDeallocate = activities.map(act => ({
+      req.journeyData.allocateJourney.activitiesToDeallocate = activities.map(act => ({
         activityId: act.id,
         scheduleId: getScheduleIdFromActivity(act),
         name: act.summary,
@@ -75,7 +75,7 @@ export default class DeallocationSelectActivities {
         offWing: act.offWing,
         schedule: act.schedules[0],
       }))
-      req.session.allocateJourney.scheduledInstance = findEarliestNextInstanceFromListOfActivities(
+      req.journeyData.allocateJourney.scheduledInstance = findEarliestNextInstanceFromListOfActivities(
         activities.map(act => findNextSchedulesInstance(act.schedules[0])),
       )
     }
