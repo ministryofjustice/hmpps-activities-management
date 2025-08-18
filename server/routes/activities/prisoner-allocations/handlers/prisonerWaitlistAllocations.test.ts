@@ -184,8 +184,8 @@ describe('Route Handlers - Prisoner Allocations', () => {
       expect(mockApprovedPendingWaitlist).toHaveLength(2)
       expect(res.render).toHaveBeenCalledWith('pages/activities/prisoner-allocations/waitlist-options', {
         activities: mockActivities,
-        prisoner: mockPrisoner,
         approvedPendingWaitlist: mockApprovedPendingWaitlist,
+        prisonerName: 'Joe Bloggs',
       })
     })
   })
