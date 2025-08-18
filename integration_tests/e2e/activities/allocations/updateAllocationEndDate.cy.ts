@@ -19,7 +19,7 @@ import resetActivityAndScheduleStubs from './allocationsStubHelper'
 import getActivities from '../../../fixtures/activitiesApi/getActivities.json'
 import moorlandIncentiveLevels from '../../../fixtures/incentivesApi/getMdiPrisonIncentiveLevels.json'
 import getSchedulesInActivity from '../../../fixtures/activitiesApi/getSchedulesInActivity.json'
-import getAllocations from '../../../fixtures/activitiesApi/getAllocations.json'
+// import getAllocations from '../../../fixtures/activitiesApi/getAllocations.json'
 import prisonerAllocations from '../../../fixtures/activitiesApi/prisonerAllocationsA5015DY.json'
 import getCandidates from '../../../fixtures/activitiesApi/getCandidates.json'
 import getPrisonerIepSummary from '../../../fixtures/incentivesApi/getPrisonerIepSummary.json'
@@ -35,14 +35,14 @@ import getAllocationsMaths from '../../../fixtures/activitiesApi/getAllocationsM
 
 const allocations1 = [
   {
-    id: 1,
-    activityId: 1,
+    id: 2,
+    activityId: 2,
     prisonerNumber: 'A5015DY',
     activitySummary: 'Maths level 1',
     scheduleDescription: 'Entry level Maths 1',
     payBand: 'A',
     startDate: '2022-10-10',
-    endDate: '2025-10-10',
+    endDate: '2025-08-18',
     allocatedTime: '2022-10-10T09:30:00',
     allocatedBy: 'MR BLOGS',
     deallocatedTime: null,
@@ -54,6 +54,16 @@ const allocations1 = [
     cellLocation: '2-1-007',
     releaseDate: '2040-06-23',
     nonAssociations: true,
+    plannedDeallocation: {
+      id: 2,
+      plannedDate: '2025-08-17',
+      plannedBy: 'DHOUSTON_GEN',
+      plannedReason: {
+        code: 'OTHER',
+        description: 'Other',
+      },
+      plannedAt: '2025-08-25T12:07:54.761622',
+    },
   },
 ]
 context(' End activity after an allocation', () => {
@@ -66,8 +76,10 @@ context(' End activity after an allocation', () => {
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A5015DY', getCandidateSuitability)
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', [])
-    cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', getAllocations)
-    cy.stubEndpoint('GET', '/schedules/1/allocations\\?activeOnly=true', allocations1)
+    // cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', getAllocations)
+    cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', allocations1)
+
+    cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true', allocations1)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint(
       'GET',
@@ -146,6 +158,6 @@ context(' End activity after an allocation', () => {
     Page.verifyOnPage(AllocationDashboard)
     allocatePage.selectAllocatedPrisonerByName('Bloggs, Jo')
     allocatePage.getButton('End allocation').click()
-    //  const existingAllocations = Page.verifyOnPage(ConfirmDeallocateExistingPage)
+    // const existingAllocations = Page.verifyOnPage(ConfirmDeallocateExistingPage)
   })
 })
