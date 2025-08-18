@@ -34,7 +34,7 @@ describe('Route Handlers - Non Attendance', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         recordAttendanceJourney: {
           notAttended: {
             selectedPrisoners: [
@@ -119,7 +119,7 @@ describe('Route Handlers - Non Attendance', () => {
   describe('GET', () => {
     it('should render with the expected single view', async () => {
       req = {
-        session: {
+        journeyData: {
           recordAttendanceJourney: {
             notAttended: {
               selectedPrisoners: [
@@ -350,7 +350,7 @@ describe('Route Handlers - Non Attendance', () => {
     ])(
       'non-attendance should be redirected to the non-attendance reason page and singleInstanceSelected = %s',
       async (singleInstanceSelected: boolean, url: string) => {
-        req.session.recordAttendanceJourney.singleInstanceSelected = singleInstanceSelected
+        req.journeyData.recordAttendanceJourney.singleInstanceSelected = singleInstanceSelected
 
         when(activitiesService.getScheduledActivity)
           .calledWith(1, res.locals.user)
