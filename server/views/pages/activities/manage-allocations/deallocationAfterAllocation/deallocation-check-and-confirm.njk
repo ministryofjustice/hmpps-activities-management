@@ -6,31 +6,31 @@
 
 {% set pageTitle = applicationName + " - Deallocate from an activity - Check and confirm" %}
 {% set pageId = 'deallocation-check-and-confirm-page' %}
-{% set activityNumber = session.allocateJourney.activitiesToDeallocate | length %}
-{% set deallocateActivityCaptionText = session.allocateJourney.activity.name if session.allocateJourney.activity else "activities" %}
-{% set deallocateActivityHeadingText = session.allocateJourney.activity.name if session.allocateJourney.activity else activityNumber + " activities" %}
+{% set activityNumber = allocateJourney.activitiesToDeallocate | length %}
+{% set deallocateActivityCaptionText = allocateJourney.activity.name if allocateJourney.activity else "activities" %}
+{% set deallocateActivityHeadingText = allocateJourney.activity.name if allocateJourney.activity else activityNumber + " activities" %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">Take {{ session.allocateJourney.inmate.prisonerName }} off {{ deallocateActivityCaptionText }}</span>
-            <h1 class="govuk-heading-l">Check and confirm taking {{ session.allocateJourney.inmate.prisonerName }} off {{ deallocateActivityHeadingText }}</h1>
+            <span class="govuk-caption-xl">Take {{ allocateJourney.inmate.prisonerName }} off {{ deallocateActivityCaptionText }}</span>
+            <h1 class="govuk-heading-l">Check and confirm taking {{ allocateJourney.inmate.prisonerName }} off {{ deallocateActivityHeadingText }}</h1>
         </div>
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {% set prisonerDetailsHtml %}
                 <ul class="govuk-list">
-                    <li>{{ session.allocateJourney.inmate.prisonerName }}</li>
-                    <li>{{ session.allocateJourney.inmate.prisonerNumber }}</li>
-                    <li>{{ statusBasedCellLocation(session.allocateJourney.inmate.cellLocation, session.allocateJourney.inmate.status, session.allocateJourney.inmate.prisonCode == user.activeCaseLoadId) }}</li>
+                    <li>{{ allocateJourney.inmate.prisonerName }}</li>
+                    <li>{{ allocateJourney.inmate.prisonerNumber }}</li>
+                    <li>{{ statusBasedCellLocation(allocateJourney.inmate.cellLocation, allocateJourney.inmate.status, allocateJourney.inmate.prisonCode == user.activeCaseLoadId) }}</li>
                 </ul>
             {% endset %}
 
 
-            {% set endDateOption = ('remove-end-date-option' if session.allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
-            {% set activityNamesIfMultiple = session.allocateJourney.activitiesToDeallocate | flatMap('name') | join('<br>') %}
-            {% set activityValue = { text: session.allocateJourney.activity.name } if session.allocateJourney.activity else { html: activityNamesIfMultiple } %}
+            {% set endDateOption = ('remove-end-date-option' if allocateJourney.endDate else 'end-date') + '?preserveHistory=true' %}
+            {% set activityNamesIfMultiple = allocateJourney.activitiesToDeallocate | flatMap('name') | join('<br>') %}
+            {% set activityValue = { text: allocateJourney.activity.name } if allocateJourney.activity else { html: activityNamesIfMultiple } %}
 
                 {{ govukSummaryList({
                     attributes: {
@@ -48,7 +48,7 @@
                         {
                             key: { text: "End of allocation" },
                             value: {
-                                text: session.allocateJourney.endDate | formatDate if session.allocateJourney.endDate
+                                text: allocateJourney.endDate | formatDate if allocateJourney.endDate
                             },
                             actions: {
                                 items: [{

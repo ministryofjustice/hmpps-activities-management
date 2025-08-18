@@ -11,8 +11,8 @@
 {% set pageId = 'deallocation-reason-page' %}
 {% set jsBackLink = true %}
 
-{% set activityName = session.allocateJourney.activity.name if not multipleActivitiesToRemove else " activities" %}
-{% set caption = session.allocateJourney.activity.name if not deallocateAfterAllocationPath else "Take " + session.allocateJourney.inmate.prisonerName + " off " + activityName %}
+{% set activityName = allocateJourney.activity.name if not multipleActivitiesToRemove else " activities" %}
+{% set caption = allocateJourney.activity.name if not deallocateAfterAllocationPath else "Take " + allocateJourney.inmate.prisonerName + " off " + activityName %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -20,15 +20,15 @@
             <span class="govuk-caption-xl">{{ caption }}</span>
             {% if deallocateAfterAllocationPath %}
                 {% if multipleActivitiesToRemove %}
-                    <h1 class="govuk-heading-l">Why are you taking them off {{ session.allocateJourney.activitiesToDeallocate | length }} activities?</h1>
+                    <h1 class="govuk-heading-l">Why are you taking them off {{ allocateJourney.activitiesToDeallocate | length }} activities?</h1>
                 {% else %}
                     <h1 class="govuk-heading-l">Why are you taking them off this activity?</h1>
                 {% endif %}
             {% else %}
-                {% if session.allocateJourney.inmates | length == 1 %}
-                    <h1 class="govuk-heading-l">Why are you taking {{ session.allocateJourney.inmate.prisonerName }} off this activity?</h1>
+                {% if allocateJourney.inmates | length == 1 %}
+                    <h1 class="govuk-heading-l">Why are you taking {{ allocateJourney.inmate.prisonerName }} off this activity?</h1>
                 {% else %}
-                    <h1 class="govuk-heading-l">Why are you taking {{ session.allocateJourney.inmates | length }} people off this activity?</h1>
+                    <h1 class="govuk-heading-l">Why are you taking {{ allocateJourney.inmates | length }} people off this activity?</h1>
                 {% endif %}
             {% endif %}
 
@@ -36,12 +36,12 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {% if deallocateAfterAllocationPath and multipleActivitiesToRemove %}
-                    {% set activityNamesIfMultiple = session.allocateJourney.activitiesToDeallocate | flatMap('name') %}
+                    {% set activityNamesIfMultiple = allocateJourney.activitiesToDeallocate | flatMap('name') %}
                     {% set last_item = activityNamesIfMultiple | last %}
                     {% set other_items = activityNamesIfMultiple | sliceArray(0, -1) %} 
                     {% set list = other_items | join(', ') +" and "+ last_item %}
                     {{ govukInsetText({
-                        text: "You’re removing " + session.allocateJourney.inmate.prisonerName +" from " + list
+                        text: "You’re removing " + allocateJourney.inmate.prisonerName +" from " + list
                     }) }}
                 {% endif %}
 
@@ -51,7 +51,7 @@
                         {
                             value: reason.code,
                             text: reason.description,
-                            checked: formResponses.deallocationReason == reason.code or session.allocateJourney.deallocationReason == reason.code
+                            checked: formResponses.deallocationReason == reason.code or allocateJourney.deallocationReason == reason.code
                         }
                     ), options) %}
                 {% endfor %}
@@ -78,9 +78,9 @@
                     {% endif %}
                 </div>
 
-                {% if session.req.routeContext.mode == 'remove' and session.allocateJourney.inmates | length > 1 %}
+                {% if session.req.routeContext.mode == 'remove' and allocateJourney.inmates | length > 1 %}
                     {% set rows = [] %}
-                    {% for inmate in session.allocateJourney.inmates %}
+                    {% for inmate in allocateJourney.inmates %}
                         {% set rows = (rows.push([
                             {
                                 text: inmate.prisonerName
@@ -95,9 +95,9 @@
                     {% endfor %}
 
                     {{ govukDetails({
-                        summaryText: "People you are taking off " + session.allocateJourney.activity.name,
+                        summaryText: "People you are taking off " + allocateJourney.activity.name,
                         html: govukTable({
-                            caption: "People you are taking off " + session.allocateJourney.activity.name,
+                            caption: "People you are taking off " + allocateJourney.activity.name,
                             captionClasses: "govuk-visually-hidden",
                             classes: 'govuk-!-width-two-thirds',
                             rows: rows

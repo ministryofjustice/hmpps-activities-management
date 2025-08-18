@@ -33,7 +33,7 @@ describe('Pay band page', () => {
     req = {
       params: { allocationId: 1 },
       routeContext: { mode: 'create' },
-      session: {
+      journeyData: {
         allocateJourney: {
           inmates: [
             {
@@ -76,7 +76,7 @@ describe('Pay band page', () => {
           paid: false,
         } as Activity)
       await handler.GET(req, res)
-      expect(req.session.allocateJourney.inmates).toStrictEqual([
+      expect(req.journeyData.allocateJourney.inmates).toStrictEqual([
         {
           prisonerName: 'Joe Bloggs',
           firstName: 'Joe',
@@ -118,7 +118,7 @@ describe('Pay band page', () => {
           ],
         } as Activity)
       await handler.GET(req, res)
-      expect(req.session.allocateJourney.inmates).toStrictEqual([
+      expect(req.journeyData.allocateJourney.inmates).toStrictEqual([
         {
           prisonerName: 'Joe Bloggs',
           firstName: 'Joe',
@@ -381,7 +381,7 @@ describe('Pay band page', () => {
         },
       ]
       await handler.POST(req, res)
-      expect(req.session.allocateJourney.inmates).toStrictEqual([
+      expect(req.journeyData.allocateJourney.inmates).toStrictEqual([
         {
           prisonerName: 'Joe Bloggs',
           firstName: 'Joe',

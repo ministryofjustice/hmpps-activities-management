@@ -14,12 +14,12 @@
     {
         value: DeallocateAfterAllocationDateOption.TODAY,
         text: "At the end of today",
-        checked: session.allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.TODAY
+        checked: allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.TODAY
     },
     {
         value: DeallocateAfterAllocationDateOption.FUTURE_DATE,
         text: "At the end of a different day - they'll attend sessions that day, then be removed",
-        checked: session.allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.FUTURE_DATE,
+        checked: allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.FUTURE_DATE,
         conditional: {
             html: mojDatePicker({
                 id: 'date',
@@ -34,7 +34,7 @@
                 },
                 classes: 'moj-datepicker--fixed-width',
                 errorMessage: validationErrors | findError('date'),
-                value: session.allocateJourney.endDate | isoDateToDatePickerDate
+                value: allocateJourney.endDate | isoDateToDatePickerDate
             })
         }
     }
@@ -45,27 +45,27 @@
         {
             value: DeallocateAfterAllocationDateOption.NOW,
             text: "Now - they'll be removed from any sessions later today",
-            checked: session.allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.NOW
+            checked: allocateJourney.deallocateAfterAllocationDateOption == DeallocateAfterAllocationDateOption.NOW
         }
     ), dateOptions) %}
 {% endif %}
 
-{% set activityName = session.allocateJourney.activity.name if not multipleActivitiesToRemove else " activities" %}
+{% set activityName = allocateJourney.activity.name if not multipleActivitiesToRemove else " activities" %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
-            <span class="govuk-caption-xl">Take {{ session.allocateJourney.inmate.prisonerName }} off {{ activityName }}</span>
-            <h1 class="govuk-heading-l">When do you want them to be taken off {% if multipleActivitiesToRemove %} {{session.allocateJourney.activitiesToDeallocate | length }} activities {% endif %}?</h1>
+            <span class="govuk-caption-xl">Take {{ allocateJourney.inmate.prisonerName }} off {{ activityName }}</span>
+            <h1 class="govuk-heading-l">When do you want them to be taken off {% if multipleActivitiesToRemove %} {{allocateJourney.activitiesToDeallocate | length }} activities {% endif %}?</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 {% if multipleActivitiesToRemove %}
-                    {% set activityNamesIfMultiple = session.allocateJourney.activitiesToDeallocate | flatMap('name') %}
+                    {% set activityNamesIfMultiple = allocateJourney.activitiesToDeallocate | flatMap('name') %}
                     {% set last_item = activityNamesIfMultiple | last %}
                     {% set other_items = activityNamesIfMultiple | sliceArray(0, -1) %}
                     {% set list = other_items | join(', ') +" and "+ last_item %}
                     {{ govukInsetText({
-                        text: "You’re removing " + session.allocateJourney.inmate.prisonerName +" from " + list
+                        text: "You’re removing " + allocateJourney.inmate.prisonerName +" from " + list
                     }) }}
                 {% endif %}
                 {{ govukRadios({

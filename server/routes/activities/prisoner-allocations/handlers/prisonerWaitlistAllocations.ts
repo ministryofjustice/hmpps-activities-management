@@ -6,7 +6,8 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { ActivitySummary } from '../../../../@types/activitiesAPI/types'
-import { getScheduleIdFromActivity } from '../../../../utils/utils'
+import { formatName, getScheduleIdFromActivity } from '../../../../utils/utils'
+import { NameFormatStyle } from '../../../../utils/helpers/nameFormatStyle'
 
 export class SelectWailistOptions {
   @Expose()
@@ -46,8 +47,14 @@ export default class PrisonerWaitlistHandler {
 
     return res.render('pages/activities/prisoner-allocations/waitlist-options', {
       activities,
-      prisoner,
       approvedPendingWaitlist,
+      prisonerName: formatName(
+        prisoner.firstName,
+        prisoner.middleNames,
+        prisoner.lastName,
+        NameFormatStyle.firstLast,
+        false,
+      ),
     })
   }
 

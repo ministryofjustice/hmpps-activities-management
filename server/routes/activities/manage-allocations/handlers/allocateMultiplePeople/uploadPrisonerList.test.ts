@@ -132,7 +132,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         allocateJourney: {
           inmates: [],
           activity: {
@@ -223,7 +223,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
         },
       ]
 
-      expect(req.session.allocateJourney.inmates).toEqual(expectedInmates)
+      expect(req.journeyData.allocateJourney.inmates).toEqual(expectedInmates)
       expect(res.redirect).toHaveBeenCalledWith('review-upload-prisoner-list?csv=true')
     })
 
@@ -296,9 +296,9 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
           nonAssociations: false,
         },
       ]
-      expect(req.session.allocateJourney.notFoundPrisoners).toEqual(['A12gvv34BC'])
-      expect(req.session.allocateJourney.unidentifiable).toEqual(false)
-      expect(req.session.allocateJourney.inmates).toEqual(expectedInmates)
+      expect(req.journeyData.allocateJourney.notFoundPrisoners).toEqual(['A12gvv34BC'])
+      expect(req.journeyData.allocateJourney.unidentifiable).toEqual(false)
+      expect(req.journeyData.allocateJourney.inmates).toEqual(expectedInmates)
       expect(res.redirect).toHaveBeenCalledWith('review-upload-prisoner-list?csv=true')
     })
 
@@ -317,8 +317,8 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.unidentifiable).toEqual(true)
-      expect(req.session.allocateJourney.inmates).toEqual([])
+      expect(req.journeyData.allocateJourney.unidentifiable).toEqual(true)
+      expect(req.journeyData.allocateJourney.inmates).toEqual([])
       expect(res.redirect).toHaveBeenCalledWith('review-upload-prisoner-list')
     })
   })

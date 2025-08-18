@@ -94,7 +94,7 @@ describe('initialiseEditAndRemoveJourney', () => {
     jest.resetAllMocks()
     req = {
       get: jest.fn(),
-      session: {},
+      journeyData: {},
       params: {
         allocationId: '6543',
       },
@@ -124,7 +124,7 @@ describe('initialiseEditAndRemoveJourney', () => {
   })
 
   it('it should skip initialisation if session object already set', async () => {
-    req.session.allocateJourney = { inmate: { prisonerNumber: 'ABC1234' } } as AllocateToActivityJourney
+    req.journeyData.allocateJourney = { inmate: { prisonerNumber: 'ABC1234' } } as AllocateToActivityJourney
 
     await middleware(req, res, next)
 
@@ -217,7 +217,7 @@ describe('initialiseEditAndRemoveJourney', () => {
 
     await middleware(req, res, next)
 
-    expect(req.session.allocateJourney).toEqual({
+    expect(req.journeyData.allocateJourney).toEqual({
       inmate: {
         prisonerName: 'John Smith',
         prisonerNumber: 'ABC1234',
@@ -289,7 +289,7 @@ describe('initialiseEditAndRemoveJourney', () => {
 
     await middleware(req, res, next)
 
-    expect(req.session.allocateJourney).toEqual({
+    expect(req.journeyData.allocateJourney).toEqual({
       inmate: {
         prisonerName: 'John Smith',
         prisonerNumber: 'ABC1234',

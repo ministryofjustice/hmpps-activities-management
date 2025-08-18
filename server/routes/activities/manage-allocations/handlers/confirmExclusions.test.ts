@@ -32,7 +32,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
     req = {
       params: {},
       routeContext: { mode: 'create' },
-      session: {
+      journeyData: {
         allocateJourney: {
           inmate: {
             prisonerName: 'John Smith',
@@ -200,7 +200,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
       req.routeContext = { mode: 'edit' }
       req.params.allocationId = '1'
 
-      req.session.allocateJourney.exclusions = [
+      req.journeyData.allocateJourney.exclusions = [
         {
           weekNumber: 2,
           timeSlot: 'AM',
@@ -214,7 +214,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
           daysOfWeek: ['MONDAY', 'THURSDAY'],
         },
       ]
-      req.session.allocateJourney.updatedExclusions = [
+      req.journeyData.allocateJourney.updatedExclusions = [
         {
           weekNumber: 2,
           timeSlot: 'AM',
@@ -240,7 +240,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
       req.routeContext = { mode: 'exclude' }
       req.params.allocationId = '1'
 
-      req.session.allocateJourney.exclusions = [
+      req.journeyData.allocateJourney.exclusions = [
         {
           weekNumber: 2,
           timeSlot: 'AM',
@@ -254,7 +254,7 @@ describe('Route Handlers - Allocation - Confirm exclusions', () => {
           daysOfWeek: ['MONDAY', 'THURSDAY'],
         },
       ]
-      req.session.allocateJourney.updatedExclusions = [
+      req.journeyData.allocateJourney.updatedExclusions = [
         {
           weekNumber: 2,
           timeSlot: 'AM',

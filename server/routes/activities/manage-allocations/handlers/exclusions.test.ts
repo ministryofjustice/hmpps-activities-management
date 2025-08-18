@@ -32,7 +32,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
     req = {
       params: {},
       routeContext: { mode: 'create' },
-      session: {
+      journeyData: {
         allocateJourney: {
           inmate: {
             prisonerName: 'John Smith',
@@ -203,7 +203,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         },
       }
       await handler.POST(req, res)
-      expect(req.session.allocateJourney.updatedExclusions).toEqual([
+      expect(req.journeyData.allocateJourney.updatedExclusions).toEqual([
         {
           weekNumber: 1,
           timeSlot: 'PM',
@@ -254,11 +254,11 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         },
       }
 
-      expect(req.session.allocateJourney.updatedExclusions).toHaveLength(0)
+      expect(req.journeyData.allocateJourney.updatedExclusions).toHaveLength(0)
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.updatedExclusions).toEqual([
+      expect(req.journeyData.allocateJourney.updatedExclusions).toEqual([
         {
           weekNumber: 1,
           timeSlot: 'PM',
@@ -306,11 +306,11 @@ describe('Route Handlers - Allocation - Exclusions', () => {
 
       req.body = {}
 
-      expect(req.session.allocateJourney.updatedExclusions).toHaveLength(0)
+      expect(req.journeyData.allocateJourney.updatedExclusions).toHaveLength(0)
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.updatedExclusions).toEqual([
+      expect(req.journeyData.allocateJourney.updatedExclusions).toEqual([
         {
           weekNumber: 1,
           timeSlot: 'PM',

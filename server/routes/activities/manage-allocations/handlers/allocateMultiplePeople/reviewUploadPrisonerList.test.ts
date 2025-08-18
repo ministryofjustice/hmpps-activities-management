@@ -139,7 +139,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         allocateJourney: {
           inmates: [inmateWithBasic, inmateWithStandard, inmateWithEnhanced],
           activity: {
@@ -157,7 +157,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
   describe('GET', () => {
     it('should redirect to the review page if there are no identifiable  prison numbers', async () => {
       req = {
-        session: {
+        journeyData: {
           allocateJourney: {
             inmates: [],
             activity: {
@@ -415,7 +415,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
       req.params.prisonNumber = 'A1234BC'
       await handler.REMOVE(req, res)
       expect(res.redirect).toHaveBeenCalledWith('../../review-upload-prisoner-list')
-      expect(req.session.allocateJourney.inmates).toEqual([inmateWithStandard, inmateWithEnhanced])
+      expect(req.journeyData.allocateJourney.inmates).toEqual([inmateWithStandard, inmateWithEnhanced])
     })
   })
 

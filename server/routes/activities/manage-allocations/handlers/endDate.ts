@@ -11,7 +11,6 @@ import {
 import IsValidDate from '../../../../validators/isValidDate'
 import Validator from '../../../../validators/validator'
 import { parseDate } from '../../../../utils/utils'
-import config from '../../../../config'
 
 export class EndDate {
   @Expose()
@@ -54,7 +53,7 @@ export class EndDate {
 
 export default class EndDateRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { allocateJourney } = req.session
+    const { allocateJourney } = req.journeyData
     const nextAvailableInstance = allocateJourney.scheduledInstance || null
 
     if (nextAvailableInstance) {
@@ -78,20 +77,20 @@ export default class EndDateRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.allocateJourney.endDate = formatIsoDate(req.body.endDate)
+    req.journeyData.allocateJourney.endDate = formatIsoDate(req.body.endDate)
     if (req.routeContext.mode === 'remove') {
       return res.redirectOrReturn(`reason`)
     }
 
-    if (req.session.allocateJourney.activity.paid) {
-      if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
+    if (req.journeyData.allocateJourney.activity.paid) {
+      if (req.journeyData.allocateJourney.allocateMultipleInmatesMode) {
         if (req.query.preserveHistory) return res.redirect('multiple/check-answers')
         return res.redirectOrReturn('multiple/pay-band-multiple')
       }
       return res.redirectOrReturn('pay-band')
     }
 
-    if (req.session.allocateJourney.allocateMultipleInmatesMode && config.multiplePrisonerActivityAllocationEnabled) {
+    if (req.journeyData.allocateJourney.allocateMultipleInmatesMode) {
       return res.redirectOrReturn('multiple/pay-band-multiple')
     }
     return res.redirectOrReturn('exclusions')

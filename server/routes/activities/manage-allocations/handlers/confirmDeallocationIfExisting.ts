@@ -18,14 +18,14 @@ export default class ConfirmDeallocationIfExistingRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const selectedAllocationIds = req.query.allocationIds.toString().split(',')
-    const scheduleId = +req.session.allocateJourney.activity.scheduleId
+    const scheduleId = +req.journeyData.allocateJourney.activity.scheduleId
     const allocations = (await this.activitiesService.getAllocations(scheduleId, user)).filter(
       a => selectedAllocationIds.includes(a.id.toString()) && a.plannedDeallocation,
     )
     const selectedPrisonerIds = allocations
       .filter(a => selectedAllocationIds.includes(a.id.toString()))
       .map(a => a.prisonerNumber)
-    const selectedPrisoners = req.session.allocateJourney.inmates
+    const selectedPrisoners = req.journeyData.allocateJourney.inmates
       .filter(i => selectedPrisonerIds.includes(i.prisonerNumber))
       .map(i => ({
         prisonerName: i.prisonerName,
@@ -37,14 +37,14 @@ export default class ConfirmDeallocationIfExistingRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { choice } = req.body
-    const { activityId, scheduleId } = req.session.allocateJourney.activity
+    const { activityId, scheduleId } = req.journeyData.allocateJourney.activity
     const { deallocationAfterAllocation } = req.query
     const selectedAllocationIds = req.query.allocationIds.toString().split(',')
     const activity = await this.activitiesService.getActivity(+activityId, res.locals.user)
     req.session.returnTo = null
 
     if (choice === 'no') {
-      req.session.allocateJourney = null
+      req.journeyData.allocateJourney = null
       if (deallocationAfterAllocation || !activity) return res.redirect(`/activities/allocation-dashboard`)
       return res.redirect(`/activities/allocation-dashboard/${activity.id}`)
     }

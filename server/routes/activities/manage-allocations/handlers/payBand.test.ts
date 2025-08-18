@@ -43,7 +43,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
     req = {
       params: { allocationId: 1 },
       routeContext: { mode: 'create' },
-      session: {
+      journeyData: {
         allocateJourney: {
           inmate: {
             prisonerName: 'Joe Bloggs',
@@ -139,7 +139,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.inmate.payBand).toEqual({
+      expect(req.journeyData.allocateJourney.inmate.payBand).toEqual({
         id: 2,
         alias: 'Enhanced rate 2',
         rate: 175,

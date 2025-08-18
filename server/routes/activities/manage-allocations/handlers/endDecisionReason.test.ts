@@ -23,7 +23,7 @@ describe('Route Handlers - Edit allocation - End decision reason', () => {
 
     req = {
       routeContext: { mode: 'remove' },
-      session: {
+      journeyData: {
         allocateJourney: {
           activity: {
             name: 'Maths Level 1',
@@ -48,7 +48,7 @@ describe('Route Handlers - Edit allocation - End decision reason', () => {
       req.body = { endDecision: EndDecision.BEFORE_START }
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(startOfToday()))
+      expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(startOfToday()))
       expect(res.redirect).toHaveBeenCalledWith('reason')
     })
 
@@ -56,7 +56,7 @@ describe('Route Handlers - Edit allocation - End decision reason', () => {
       req.body = { endDecision: EndDecision.AFTER_START }
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.endDate).toEqual(undefined)
+      expect(req.journeyData.allocateJourney.endDate).toEqual(undefined)
       expect(res.redirect).toHaveBeenCalledWith('end-date')
     })
   })

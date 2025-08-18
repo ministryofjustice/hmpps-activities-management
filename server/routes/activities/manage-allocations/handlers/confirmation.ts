@@ -11,11 +11,11 @@ export default class ConfirmationRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { inmate, activity, activitiesToDeallocate } = req.session.allocateJourney
+    const { inmate, activity, activitiesToDeallocate } = req.journeyData.allocateJourney
 
     if (req.routeContext.mode === 'create') {
       const allocationEvent = MetricsEvent.CREATE_ALLOCATION_JOURNEY_COMPLETED(
-        req.session.allocateJourney,
+        req.journeyData.allocateJourney,
         res.locals.user,
       ).addJourneyCompletedMetrics(req)
       this.metricsService.trackEvent(allocationEvent)
@@ -29,7 +29,7 @@ export default class ConfirmationRoutes {
       )
       const { allocations } = prisonerAllocationsList
       if (allocations.length) {
-        otherAllocations = allocations.filter(a => a.scheduleId !== req.session.allocateJourney.activity.scheduleId)
+        otherAllocations = allocations.filter(a => a.scheduleId !== req.journeyData.allocateJourney.activity.scheduleId)
       }
     }
     const deallocateMultipleActivitiesMode = req.routeContext.mode === 'remove' && activitiesToDeallocate?.length > 0

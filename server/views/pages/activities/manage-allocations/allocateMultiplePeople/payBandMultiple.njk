@@ -10,12 +10,12 @@
 {% set pageTitle = applicationName + " - Allocate to an activity - Pay band" %}
 {% set pageId = 'pay-band-multiple-page' %}
 {% set jsBackLink = true %}
-{% set inmateCount = session.allocateJourney.inmates | length %}
+{% set inmateCount = allocateJourney.inmates | length %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
             <h1 class="govuk-heading-l">Select the pay rate for {{ payBandsRequiringManualAssign | length | numberToWord }} {% if payBandsRequiringManualAssign | length > 1 %}people {% else %}person{% endif %}</h1>
             {% if payBandsRequiringManualAssign | length %}
                 <p class="govuk-body">You need to select a pay rate for {{ payBandsRequiringManualAssign | length | numberToWord }} of the {{ inmateCount }} people you're allocating. Where there was only one pay rate option for a person, they’ll be put on it automatically.</p>

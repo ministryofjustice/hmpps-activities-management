@@ -86,6 +86,14 @@ export default {
       agent: new AgentConfig(Number(get('TOKEN_VERIFICATION_API_TIMEOUT_RESPONSE', 5000))),
       enabled: get('TOKEN_VERIFICATION_ENABLED', 'false') === 'true',
     },
+    componentApi: {
+      url: get('COMPONENT_API_URL', 'http://localhost:8099', requiredInProduction),
+      timeout: {
+        response: Number(get('COMPONENT_TIMEOUT_RESPONSE', 10000)),
+        deadline: Number(get('COMPONENT_TIMEOUT_DEADLINE', 10000)),
+      },
+      agent: new AgentConfig(Number(get('COMPONENT_TIMEOUT_DEADLINE', 10000))),
+    },
     manageUsersApi: {
       url: get('MANAGE_USERS_API_URL', 'http://localhost:8088', requiredInProduction),
       timeout: {
@@ -255,7 +263,6 @@ export default {
     get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),
   ),
   inServiceReportingEnabled: toBoolean(get('IN_SERVICE_REPORTING_ENABLED', 'false')),
-  multiplePrisonerActivityAllocationEnabled: toBoolean(get('MULTIPLE_PRISONER_ALLOCATION_ENABLED', 'false')),
   notRequiredInAdvanceEnabled: toBoolean(get('NOT_REQUIRED_IN_ADVANCE_ENABLED', 'false')),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),

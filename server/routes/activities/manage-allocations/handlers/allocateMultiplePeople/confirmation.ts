@@ -7,7 +7,7 @@ export default class ConfirmMultipleAllocationsRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const allocationEvent = MetricsEvent.CREATE_MULTIPLE_ALLOCATION_JOURNEY_COMPLETED(
-      req.session.allocateJourney,
+      req.journeyData.allocateJourney,
       res.locals.user,
     ).addJourneyCompletedMetrics(req)
     this.metricsService.trackEvent(allocationEvent)

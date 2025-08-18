@@ -34,9 +34,10 @@ describe('Allocate multiple people to an activity - method for adding list', () 
     } as unknown as Response
 
     req = {
-      session: {},
+      journeyData: {},
       query: {},
       params: {},
+      session: {},
     } as unknown as Request
   })
   describe('GET', () => {
@@ -100,7 +101,7 @@ describe('Allocate multiple people to an activity - method for adding list', () 
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('select-prisoner')
 
-      expect(req.session.allocateJourney).toEqual({
+      expect(req.journeyData.allocateJourney).toEqual({
         inmates: [],
         activity: {
           activityId: 100,

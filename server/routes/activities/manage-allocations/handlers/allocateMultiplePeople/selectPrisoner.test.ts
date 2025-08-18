@@ -38,7 +38,7 @@ describe('Select prisoner - alllocate multiple people to an activity', () => {
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         allocateJourney: {
           inmates: [],
           activity: {
@@ -216,7 +216,7 @@ describe('Select prisoner - alllocate multiple people to an activity', () => {
         .calledWith(['G9566GQ'], res.locals.user)
         .mockResolvedValue(['G9566GQ', 'H4623WP'])
       await handler.SELECT_PRISONER(req, res)
-      expect(req.session.allocateJourney.inmates).toEqual([
+      expect(req.journeyData.allocateJourney.inmates).toEqual([
         {
           prisonerName: `Daphne Doe`,
           firstName: 'Daphne',
@@ -305,7 +305,7 @@ describe('Select prisoner - alllocate multiple people to an activity', () => {
         .calledWith(['G9566GQ'], res.locals.user)
         .mockResolvedValue(['G9566GQ', 'H4623WP'])
       await handler.SELECT_PRISONER(req, res)
-      expect(req.session.allocateJourney.inmates).toEqual([
+      expect(req.journeyData.allocateJourney.inmates).toEqual([
         {
           prisonerName: `Daphne Doe`,
           firstName: 'Daphne',
