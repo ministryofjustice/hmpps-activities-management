@@ -77,7 +77,7 @@
                 {{ govukRadios({
                     name: "waitlistScheduleId",
                     hint: {
-                        text: prisonerName + " has applications logged for " + approvedPendingWaitlist.length + " activities" if approvedPendingWaitlist.length > 1 else prisonerName + " has an application logged for an activity"
+                        text: prisonerName + " has applications logged for " + approvedPendingWaitlist.length + " activities." if approvedPendingWaitlist.length > 1 else prisonerName + " has an application logged for an activity."
                     },
                     fieldset: {
                         legend: {
