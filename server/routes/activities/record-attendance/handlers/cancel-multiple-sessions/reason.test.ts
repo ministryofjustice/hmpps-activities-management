@@ -32,7 +32,7 @@ describe('Route Handlers - Cancel Multiple Sessions Reason', () => {
       params: {
         id: '1',
       },
-      session: {
+      journeyData: {
         recordAttendanceJourney: {
           selectedInstanceIds: [1, 2],
         },
@@ -96,7 +96,7 @@ describe('Route Handlers - Cancel Multiple Sessions Reason', () => {
 
       await handler.POST(addReasonRequest, res)
 
-      expect(addReasonRequest.session.recordAttendanceJourney.sessionCancellationMultiple).toEqual({
+      expect(addReasonRequest.journeyData.recordAttendanceJourney.sessionCancellationMultiple).toEqual({
         reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',
         issuePayment: false,
@@ -133,7 +133,7 @@ describe('Route Handlers - Cancel Multiple Sessions Reason', () => {
 
       await handler.POST(addReasonRequest, res)
 
-      expect(addReasonRequest.session.recordAttendanceJourney.sessionCancellationMultiple).toEqual({
+      expect(addReasonRequest.journeyData.recordAttendanceJourney.sessionCancellationMultiple).toEqual({
         reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',
         issuePayment: false,

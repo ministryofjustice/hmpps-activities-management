@@ -20,7 +20,7 @@ export default class CancelSessionRoutes {
     const { confirm }: CancelConfirmForm = req.body
 
     if (confirm === 'yes') {
-      const sessionCancellationRequest = req.session.recordAttendanceJourney.sessionCancellation
+      const sessionCancellationRequest = req.journeyData.recordAttendanceJourney.sessionCancellation
       // if the reason isn't present on the request, send the user back to recollect the data
       if (!sessionCancellationRequest?.reason) return res.redirect(`../../${instanceId}/cancel`)
       await this.activitiesService.cancelScheduledActivity(instanceId, sessionCancellationRequest, user)

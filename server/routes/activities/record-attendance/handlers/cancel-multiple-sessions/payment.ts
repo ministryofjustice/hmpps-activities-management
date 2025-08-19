@@ -22,7 +22,7 @@ export default class CancelMultipleSessionsPayRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.recordAttendanceJourney.sessionCancellationMultiple.issuePayment = req.body.issuePayOption === 'yes'
+    req.journeyData.recordAttendanceJourney.sessionCancellationMultiple.issuePayment = req.body.issuePayOption === 'yes'
     return res.redirect(`check-answers`)
   }
 }

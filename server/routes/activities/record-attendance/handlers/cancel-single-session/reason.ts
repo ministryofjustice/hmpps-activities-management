@@ -20,7 +20,7 @@ export default class CancelSingleSessionsReasonRoutes {
 
   GET = async (req: Request, res: Response) => {
     const { user } = res.locals
-    const instanceId = +req.session.recordAttendanceJourney.selectedInstanceIds[0]
+    const instanceId = +req.journeyData.recordAttendanceJourney.selectedInstanceIds[0]
     const instance = await this.activitiesService.getScheduledActivity(instanceId, user)
     const activityName = instance.activitySchedule.activity.summary
 
@@ -34,14 +34,14 @@ export default class CancelSingleSessionsReasonRoutes {
     const { user } = res.locals
     const { reason, comment }: CancelReasonSingleForm = req.body
 
-    const instanceId = +req.session.recordAttendanceJourney.selectedInstanceIds[0]
+    const instanceId = +req.journeyData.recordAttendanceJourney.selectedInstanceIds[0]
     const instance = await this.activitiesService.getScheduledActivity(instanceId, user)
 
     const activityName = instance.activitySchedule.activity.summary
     const isPayable = instance.activitySchedule.activity.paid
     const textReason = CancellationReasons[reason]
 
-    req.session.recordAttendanceJourney.sessionCancellationSingle = {
+    req.journeyData.recordAttendanceJourney.sessionCancellationSingle = {
       activityName,
       reason: textReason,
       comment,

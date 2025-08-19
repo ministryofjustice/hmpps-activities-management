@@ -20,12 +20,12 @@ export default class CancelSingleSessionPayRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     res.render('pages/activities/record-attendance/cancel-single-session/payment', {
-      activityName: req.session.recordAttendanceJourney.sessionCancellationSingle.activityName,
+      activityName: req.journeyData.recordAttendanceJourney.sessionCancellationSingle.activityName,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    req.session.recordAttendanceJourney.sessionCancellationSingle.issuePayment = req.body.issuePayOption === 'yes'
+    req.journeyData.recordAttendanceJourney.sessionCancellationSingle.issuePayment = req.body.issuePayOption === 'yes'
     return res.redirect(`check-answers`)
   }
 }

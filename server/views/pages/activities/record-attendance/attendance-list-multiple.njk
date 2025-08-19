@@ -13,9 +13,9 @@
 
 {% set pageTitle = applicationName %}
 {% set pageId = 'attendance-list-page' %}
-{% set activityDate = session.recordAttendanceJourney.activityDate | toDate | formatDate %}
+{% set activityDate = recordAttendanceJourney.activityDate | toDate | formatDate %}
 {% set hardBackLinkText = 'Go back to activities for ' + activityDate + ' - ' + formatSessions(selectedSessions) %}
-{% set hardBackLinkHref = '/activities/attendance/activities?date=' + session.recordAttendanceJourney.activityDate + '&sessionFilters=' + selectedSessions | join(",") %}
+{% set hardBackLinkHref = '/activities/attendance/activities?date=' + recordAttendanceJourney.activityDate + '&sessionFilters=' + selectedSessions | join(",") %}
 
 {% block content %}
     <div class="govuk-grid-row">

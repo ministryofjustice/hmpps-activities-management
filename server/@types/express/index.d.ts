@@ -37,7 +37,6 @@ declare module 'express-session' {
     bookACourtHearingJourney: BookACourtHearingJourney
     bookAProbationMeetingJourney: BookAProbationMeetingJourney
     attendanceSummaryJourney: AttendanceSummaryJourney
-    recordAttendanceJourney: RecordAttendanceJourney
     recordAppointmentAttendanceJourney: RecordAppointmentAttendanceJourney
     journeyMetrics: JourneyMetrics
     // Map containing per journey session data. See comment above, the startNewJourney and populateJourney
@@ -91,6 +90,7 @@ export type JourneyData = {
   waitListApplicationJourney?: WaitListApplicationJourney
   prisonerAllocationsJourney?: PrisonerAllocationsJourney
   unlockListJourney?: UnlockListJourney
+  recordAttendanceJourney?: RecordAttendanceJourney
   allocateJourney?: AllocateToActivityJourney
 }
 

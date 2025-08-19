@@ -54,8 +54,8 @@ export default class CancelSessionRoutes {
       return res.redirectOrReturnWithSuccess(returnTo, 'Session updated', successMessage)
     }
 
-    req.session.recordAttendanceJourney = {
-      ...req.session.recordAttendanceJourney,
+    req.journeyData.recordAttendanceJourney = {
+      ...req.journeyData.recordAttendanceJourney,
       sessionCancellation: { reason: textReason, comment },
     }
     return res.redirect('cancel/confirm')
