@@ -7,7 +7,7 @@ export default function profileImageRoutes({ prisonService }: { prisonService: P
 
   router.get('/:prisonerNumber/image', async (req, res, next) => {
     prisonService
-      .getPrisonerImage(req.params.prisonerNumber, res.locals.user)
+      .getPrisonerImage(req.params.prisonerNumber)
       .then(data => {
         res.type('image/jpeg')
         data.pipe(res)
