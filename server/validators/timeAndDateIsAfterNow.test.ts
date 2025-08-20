@@ -72,4 +72,12 @@ describe('timeAndDateIsAfter', () => {
 
     expect(errors).toHaveLength(0)
   })
+
+  it('should pass validation if the date and time are undefined', async () => {
+    const body = {}
+    const requestObject = plainToInstance(DummyForm, body)
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+    expect(errors).toHaveLength(0)
+  })
 })
