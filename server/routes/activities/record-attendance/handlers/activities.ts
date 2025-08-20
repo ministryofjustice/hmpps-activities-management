@@ -65,7 +65,7 @@ export default class ActivitiesRoutes {
 
     const redirectUrl =
       `activities?date=${activityDate}` +
-      `&searchTerm=${encodeURIComponent(searchTerm) ?? ''}` +
+      `&searchTerm=${encodeURIComponent(searchTerm ?? '')}` +
       `&sessionFilters=${sessionFiltersString}` +
       `&categoryFilters=${categoryFiltersString}` +
       `&locationId=${locationId ?? ''}` +

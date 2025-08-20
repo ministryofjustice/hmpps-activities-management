@@ -100,7 +100,7 @@ export default class AttendeesRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { searchTerm } = req.body
 
-    const redirectUrl = `attendees?searchTerm=${encodeURIComponent(searchTerm) ?? ''}`
+    const redirectUrl = `attendees?searchTerm=${encodeURIComponent(searchTerm ?? '')}`
 
     res.redirect(redirectUrl)
   }
