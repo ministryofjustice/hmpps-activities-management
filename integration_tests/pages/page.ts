@@ -69,6 +69,10 @@ export default abstract class Page {
 
   assertNoBackLink = () => cy.get('.govuk-back-link').should('not.exist')
 
+  getRadioByValue = (name: string, value: string): Cypress.Chainable => {
+    return cy.get(`input[name="${name}"][value="${value}"]`)
+  }
+
   assertSummaryListValue = (listIdentifier: string, heading: string, expectedValue: string) =>
     cy
       .get(`[data-qa=${listIdentifier}] > .govuk-summary-list__row > .govuk-summary-list__key`)
