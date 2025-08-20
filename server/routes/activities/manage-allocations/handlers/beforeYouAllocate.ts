@@ -15,8 +15,8 @@ export default class BeforeYouAllocateRoutes {
   GET = async (req: Request, res: Response) => {
     const { user } = res.locals
 
-    const { prisonerNumber } = req.session.allocateJourney.inmate
-    const { scheduleId } = req.session.allocateJourney.activity
+    const { prisonerNumber } = req.journeyData.allocateJourney.inmate
+    const { scheduleId } = req.journeyData.allocateJourney.activity
 
     const [allocationSuitability, nonAssociations] = await Promise.all([
       this.activitiesService.allocationSuitability(scheduleId, prisonerNumber, user),
@@ -32,7 +32,7 @@ export default class BeforeYouAllocateRoutes {
 
   POST = async (req: Request, res: Response) => {
     const { confirm } = req.body
-    const { activityId } = req.session.allocateJourney.activity
+    const { activityId } = req.journeyData.allocateJourney.activity
 
     if (confirm === 'yes') return res.redirect('start-date')
     return res.redirect(`/activities/allocation-dashboard/${activityId}#candidates-tab`)

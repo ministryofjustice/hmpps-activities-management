@@ -7,7 +7,6 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 import EndDateRoutes, { EndDate } from './endDate'
 import { formatDatePickerDate, formatIsoDate, isoDateToDatePickerDate } from '../../../../utils/datePickerUtils'
 import { DeallocateTodayOption } from '../journey'
-import config from '../../../../config'
 
 describe('Route Handlers - Edit allocation - End date', () => {
   const handler = new EndDateRoutes()
@@ -28,7 +27,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
     req = {
       routeContext: { mode: 'create' },
-      session: {
+      journeyData: {
         allocateJourney: {
           startDate: formatIsoDate(new Date()),
           activity: {
@@ -53,7 +52,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
         status: '',
       }
 
-      req.session.allocateJourney = {
+      req.journeyData.allocateJourney = {
         inmate,
         inmates: [inmate],
         activity: {
@@ -92,7 +91,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       })
 
       it('when multiple inmates are being deallocated', async () => {
-        req.session.allocateJourney.inmates = [
+        req.journeyData.allocateJourney.inmates = [
           {
             prisonerNumber: 'ABC123',
             prisonerName: '',
@@ -113,7 +112,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       })
 
       it('should operate normally when there is no scheduled instance available', async () => {
-        req.session.allocateJourney.scheduledInstance = null
+        req.journeyData.allocateJourney.scheduledInstance = null
 
         await handler.GET(req, res)
 
@@ -121,7 +120,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       })
 
       it('when next session is tomorrow', async () => {
-        req.session.allocateJourney.scheduledInstance.date = formatIsoDate(addDays(now, 1))
+        req.journeyData.allocateJourney.scheduledInstance.date = formatIsoDate(addDays(now, 1))
 
         await handler.GET(req, res)
 
@@ -129,7 +128,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       })
 
       it('when there are no sessions later today', async () => {
-        req.session.allocateJourney.scheduledInstance.startTime = formatDate(subMinutes(now, 1), 'HH:mm')
+        req.journeyData.allocateJourney.scheduledInstance.startTime = formatDate(subMinutes(now, 1), 'HH:mm')
 
         await handler.GET(req, res)
 
@@ -137,7 +136,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
       })
 
       it('when there option has already been set', async () => {
-        req.session.allocateJourney.deallocateTodayOption = DeallocateTodayOption.TODAY
+        req.journeyData.allocateJourney.deallocateTodayOption = DeallocateTodayOption.TODAY
 
         await handler.GET(req, res)
 
@@ -150,45 +149,44 @@ describe('Route Handlers - Edit allocation - End date', () => {
     it('should redirect to the pay band page if in create mode and activity is paid', async () => {
       req.routeContext = { mode: 'create' }
 
-      req.session.allocateJourney.activity.paid = true
+      req.journeyData.allocateJourney.activity.paid = true
 
       const endDate = startOfToday()
       req.body = { endDate }
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
+      expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
       expect(res.redirectOrReturn).toHaveBeenCalledWith('pay-band')
     })
 
     it('should redirect to the exclusions page if in create mode, activity is unpaid and not allocating multiple people', async () => {
       req.routeContext = { mode: 'create' }
 
-      req.session.allocateJourney.activity.paid = false
-      req.session.allocateJourney.allocateMultipleInmatesMode = false
+      req.journeyData.allocateJourney.activity.paid = false
+      req.journeyData.allocateJourney.allocateMultipleInmatesMode = false
 
       const endDate = startOfToday()
       req.body = { endDate }
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
+      expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
       expect(res.redirectOrReturn).toHaveBeenCalledWith('exclusions')
     })
 
     it('should redirect to the pay band (mulitple) page if in create mode, activity is unpaid and user is allocating multiple people', async () => {
       req.routeContext = { mode: 'create' }
 
-      req.session.allocateJourney.activity.paid = false
-      req.session.allocateJourney.allocateMultipleInmatesMode = true
-      config.multiplePrisonerActivityAllocationEnabled = true
+      req.journeyData.allocateJourney.activity.paid = false
+      req.journeyData.allocateJourney.allocateMultipleInmatesMode = true
 
       const endDate = startOfToday()
       req.body = { endDate }
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
+      expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
       expect(res.redirectOrReturn).toHaveBeenCalledWith('multiple/pay-band-multiple')
     })
 
@@ -200,7 +198,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
+      expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(req.body.endDate))
       expect(res.redirectOrReturn).toHaveBeenCalledWith('reason')
     })
   })

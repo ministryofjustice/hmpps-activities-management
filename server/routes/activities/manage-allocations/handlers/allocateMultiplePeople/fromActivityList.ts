@@ -34,7 +34,7 @@ export default class FromActivityListRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { activityId } = req.body
-    const { activity } = req.session.allocateJourney
+    const { activity } = req.journeyData.allocateJourney
 
     const activityToCopy: Activity = await this.activitiesService.getActivity(+activityId, user)
     const prisonerNumbers: string[] = activityToCopy.schedules[0].allocations
@@ -77,9 +77,9 @@ export default class FromActivityListRoutes {
     )
     addNonAssociations(inmates, nonAssociations)
 
-    req.session.allocateJourney.inmates = inmates
-    req.session.allocateJourney.allocatedInmates = undefined
-    req.session.allocateJourney.withoutMatchingIncentiveLevelInmates = undefined
+    req.journeyData.allocateJourney.inmates = inmates
+    req.journeyData.allocateJourney.allocatedInmates = undefined
+    req.journeyData.allocateJourney.withoutMatchingIncentiveLevelInmates = undefined
 
     return res.redirect(`review-upload-prisoner-list?fromActivity=${activityToCopy.description}`)
   }

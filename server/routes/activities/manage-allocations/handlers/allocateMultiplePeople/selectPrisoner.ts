@@ -39,7 +39,7 @@ export default class SelectPrisonerRoutes {
     const { user } = res.locals
     let { query } = req.query
     const { preserveHistory } = req.query
-    const { activity } = req.session.allocateJourney
+    const { activity } = req.journeyData.allocateJourney
     if (res.locals.formResponses?.query !== undefined) {
       query = res.locals.formResponses.query
     }
@@ -85,7 +85,7 @@ export default class SelectPrisonerRoutes {
   SELECT_PRISONER = async (req: Request, res: Response): Promise<void> => {
     const { selectedPrisoner } = req.body
     const { user } = res.locals
-    const { activity } = req.session.allocateJourney
+    const { activity } = req.journeyData.allocateJourney
 
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(selectedPrisoner, user).catch(_ => null)
     if (!prisoner) return res.validationFailed('selectedPrisoner', 'You must select one option')
@@ -114,7 +114,7 @@ export default class SelectPrisonerRoutes {
     }
     return res.validationFailed(
       'selectedPrisoner',
-      `This person is already allocated to ${req.session.allocateJourney.activity.name}`,
+      `This person is already allocated to ${req.journeyData.allocateJourney.activity.name}`,
     )
   }
 
@@ -137,9 +137,9 @@ export default class SelectPrisonerRoutes {
   }
 
   private addPrisonersToSession = async (req: Request, inmate: Inmate, user: ServiceUser) => {
-    const { scheduleId } = req.session.allocateJourney.activity
+    const { scheduleId } = req.journeyData.allocateJourney.activity
     // check that the prisoner isn't already in there to stop duplication if the user goes back
-    const duplicate = req.session.allocateJourney.inmates.filter(
+    const duplicate = req.journeyData.allocateJourney.inmates.filter(
       prisoner => inmate.prisonerNumber === prisoner.prisonerNumber,
     )
     if (duplicate.length) return false
@@ -152,7 +152,7 @@ export default class SelectPrisonerRoutes {
     addOtherAllocations([inmate], prisonerAllocationsList, scheduleId)
     addNonAssociations([inmate], nonAssociations)
 
-    req.session.allocateJourney.inmates.push(inmate)
+    req.journeyData.allocateJourney.inmates.push(inmate)
     return true
   }
 }

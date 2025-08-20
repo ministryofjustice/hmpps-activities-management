@@ -52,7 +52,7 @@ describe('Route Handlers - Cancel Session Confirmation', () => {
         body: {
           confirm: 'yes',
         },
-        session: {
+        journeyData: {
           recordAttendanceJourney: {
             sessionCancellation: {
               reason: 'Staff unavailable',
@@ -93,7 +93,7 @@ describe('Route Handlers - Cancel Session Confirmation', () => {
         body: {
           confirm: 'yes',
         },
-        session: {
+        journeyData: {
           recordAttendanceJourney: {
             sessionCancellation: {},
           },

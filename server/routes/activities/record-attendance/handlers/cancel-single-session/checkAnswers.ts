@@ -6,7 +6,7 @@ export default class CancelSingleSessionsCheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { activityDate, sessionFilters, sessionCancellationSingle } = req.session.recordAttendanceJourney
+    const { activityDate, sessionFilters, sessionCancellationSingle } = req.journeyData.recordAttendanceJourney
 
     const sessionFiltersString = sessionFilters ? convertToArray(sessionFilters).join(',') : ''
     const activitiesRedirectUrl = `../../activities?date=${activityDate}&sessionFilters=${sessionFiltersString}&preserveHistory=true`
@@ -22,7 +22,7 @@ export default class CancelSingleSessionsCheckAnswersRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { activityDate, sessionFilters, selectedInstanceIds, sessionCancellationSingle } =
-      req.session.recordAttendanceJourney
+      req.journeyData.recordAttendanceJourney
 
     await this.activitiesService.cancelScheduledActivity(+selectedInstanceIds[0], sessionCancellationSingle, user)
 

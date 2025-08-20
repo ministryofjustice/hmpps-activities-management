@@ -19,6 +19,15 @@
             <span class="govuk-caption-xl">{{ allocation.activitySummary }}</span>
             <h1 class="govuk-heading-l">Change allocation details for {{ prisonerName }} ({{ allocation.prisonerNumber }})</h1>
         </div>
+        <div class="govuk-grid-column-two-thirds">
+        {% if not allocation.plannedSuspension %}
+            {{ govukButton({
+                text: "Suspend from this activity",
+                href: "/activities/suspensions/suspend/" + allocation.prisonerNumber + "/suspend-from?allocationIds=" + allocation.id,
+                classes: "govuk-button--secondary"
+            }) }}
+        {% endif %}
+        </div>
     </div>
 
     {% if allocation.status == 'AUTO_SUSPENDED' %}
@@ -163,31 +172,15 @@
                     </dd>
                 </div>
             </dl>
-            <div class="govuk-button-group">
-                {% if activityAllocationsBtn === 'true' %}
-                    {{ govukButton({
-                        text: "Return to currently allocated",
-                        href: "/activities/allocation-dashboard/" + allocation.activityId
-                    }) }}
-                {% elif activityAllocationsBtn === 'false' %}
-                    {{ govukButton({
-                        text: "Return to " + prisonerName | possessive + " allocations",
-                        href: "/activities/prisoner-allocations/" + allocation.prisonerNumber
-                    }) }}
-                {% else %}
-                    {{ govukButton({
-                        text: "Return to currently allocated",
-                        href: "/activities/allocation-dashboard/" + allocation.activityId
-                    }) }}
-                {% endif %}
-
-                {% if not allocation.plannedSuspension %}
-                    {{ govukButton({
-                        text: "Suspend from this activity",
-                        href: "/activities/suspensions/suspend/" + allocation.prisonerNumber + "/suspend-from?allocationIds=" + allocation.id,
-                        classes: "govuk-button--warning"
-                    }) }}
-                {% endif %}
+            <div class="govuk-body">
+                <a href="/activities/allocation-dashboard/{{ allocation.activityId }}" class="govuk-link--no-visited-state">
+                    Go to current allocations for {{ allocation.activitySummary }}
+                </a>   
+            </div>
+            <div class="govuk-body">
+                <a href="/activities/prisoner-allocations/{{ allocation.prisonerNumber }}" class="govuk-link--no-visited-state">
+                    Go to {{ prisonerName | possessive }} allocations
+                </a>   
             </div>
         </div>
     </div>

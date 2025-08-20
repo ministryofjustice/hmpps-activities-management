@@ -227,7 +227,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
     } as unknown as Response
 
     req = {
-      session: {
+      journeyData: {
         allocateJourney: {
           inmates: [],
           activity: {
@@ -331,7 +331,7 @@ describe('Allocate multiple people to an activity - upload a prisoner list', () 
         },
       ]
 
-      expect(req.session.allocateJourney.inmates).toEqual(expectedInmates)
+      expect(req.journeyData.allocateJourney.inmates).toEqual(expectedInmates)
       expect(res.redirect).toHaveBeenCalledWith('review-upload-prisoner-list?fromActivity=Writing')
     })
 

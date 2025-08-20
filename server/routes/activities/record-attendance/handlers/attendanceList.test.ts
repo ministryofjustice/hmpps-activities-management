@@ -260,7 +260,7 @@ describe('Route Handlers - Attendance List', () => {
 
     req = {
       params: { id: 1 },
-      session: {
+      journeyData: {
         recordAttendanceJourney: {},
       },
       body: {},
@@ -333,7 +333,7 @@ describe('Route Handlers - Attendance List', () => {
     })
 
     it('should render with the expected view when there are time sessions saved', async () => {
-      req.session.recordAttendanceJourney.sessionFilters = ['AM', 'ED']
+      req.journeyData.recordAttendanceJourney.sessionFilters = ['AM', 'ED']
 
       await handler.GET(req, res)
 
@@ -378,11 +378,11 @@ describe('Route Handlers - Attendance List', () => {
 
     it('Should not clear session data', async () => {
       req.query.mode = 'unknown'
-      req.session.recordAttendanceJourney.sessionFilters = ['AM']
+      req.journeyData.recordAttendanceJourney.sessionFilters = ['AM']
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAttendanceJourney.sessionFilters).toEqual(['AM'])
+      expect(req.journeyData.recordAttendanceJourney.sessionFilters).toEqual(['AM'])
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/attendance-list-single', {
         instance: {
@@ -529,7 +529,7 @@ describe('Route Handlers - Attendance List', () => {
     ]
 
     beforeEach(() => {
-      req.session.recordAttendanceJourney = {
+      req.journeyData.recordAttendanceJourney = {
         selectedInstanceIds: ['1', '2'],
         sessionFilters: ['AM', 'PM'],
       }
@@ -800,7 +800,7 @@ describe('Route Handlers - Attendance List', () => {
           body: {
             selectedAttendances: ['1-111-ABC123', '2-333-XYZ345'],
           },
-          session: {
+          journeyData: {
             recordAttendanceJourney: {
               singleInstanceSelected,
             },
@@ -895,7 +895,7 @@ describe('Route Handlers - Attendance List', () => {
 
         await handler.NOT_ATTENDED(req, res)
 
-        expect(req.session.recordAttendanceJourney.notAttended.selectedPrisoners).toEqual([
+        expect(req.journeyData.recordAttendanceJourney.notAttended.selectedPrisoners).toEqual([
           {
             instanceId: 1,
             attendanceId: 1001,

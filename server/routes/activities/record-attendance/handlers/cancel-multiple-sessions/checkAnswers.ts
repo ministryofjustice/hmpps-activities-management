@@ -9,7 +9,7 @@ export default class CancelMultipleSessionsCheckAnswersRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { activityDate, sessionFilters, selectedInstanceIds, sessionCancellationMultiple } =
-      req.session.recordAttendanceJourney
+      req.journeyData.recordAttendanceJourney
 
     const instances = await this.activitiesService.getScheduledActivities(
       convertToNumberArray(selectedInstanceIds),
@@ -46,7 +46,7 @@ export default class CancelMultipleSessionsCheckAnswersRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { activityDate, sessionFilters, selectedInstanceIds, sessionCancellationMultiple } =
-      req.session.recordAttendanceJourney
+      req.journeyData.recordAttendanceJourney
 
     await this.activitiesService.cancelMultipleActivities(
       convertToNumberArray(selectedInstanceIds),

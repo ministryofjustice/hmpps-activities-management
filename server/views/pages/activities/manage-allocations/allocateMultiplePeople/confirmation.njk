@@ -3,13 +3,13 @@
 
 {% set pageTitle = applicationName + " - Allocate to an activity - Confirmation" %}
 {% set pageId = 'multiple-allocation-confirmation-page' %}
-{% set activityId = session.allocateJourney.activity.activityId %}
-{% set activityName = session.allocateJourney.activity.name %}
+{% set activityId = allocateJourney.activity.activityId %}
+{% set activityName = allocateJourney.activity.name %}
 
-{% if session.allocateJourney.inmates | length > 1 %}
-    {% set panelText = session.allocateJourney.inmates | length + ' people are now allocated to ' + activityName %}
+{% if allocateJourney.inmates | length > 1 %}
+    {% set panelText = allocateJourney.inmates | length + ' people are now allocated to ' + activityName %}
 {% else %}
-    {% set panelText = session.allocateJourney.inmates[0] | formatName(NameFormatStyle.firstLast, false) + ' is now allocated to ' + activityName %}
+    {% set panelText = allocateJourney.inmates[0] | formatName(NameFormatStyle.firstLast, false) + ' is now allocated to ' + activityName %}
 {% endif %}
 
 {% block content %}

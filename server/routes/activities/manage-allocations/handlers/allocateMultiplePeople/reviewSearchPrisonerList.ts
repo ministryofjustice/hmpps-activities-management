@@ -9,7 +9,7 @@ export default class ReviewSearchPrisonerListRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { inmates } = req.session.allocateJourney
+    const { inmates } = req.journeyData.allocateJourney
     const { preserveHistory } = req.query
 
     if (!inmates.length) return res.redirect('select-prisoner')
@@ -29,7 +29,7 @@ export default class ReviewSearchPrisonerListRoutes {
     const { prisonerNumber } = req.params
     const { preserveHistory } = req.query
 
-    req.session.allocateJourney.inmates = req.session.allocateJourney.inmates.filter(
+    req.journeyData.allocateJourney.inmates = req.journeyData.allocateJourney.inmates.filter(
       prisoner => prisoner.prisonerNumber !== prisonerNumber,
     )
 

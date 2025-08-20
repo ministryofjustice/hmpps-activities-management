@@ -8,6 +8,7 @@ import removeRoutes from './removeRoutes'
 import ViewAllocationRoutes from './handlers/viewAllocation'
 import initialiseEditAndRemoveJourney from './middlewares/initialiseEditAndRemoveJourney'
 import insertRouteContext from '../../../middleware/routeContext'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -28,22 +29,30 @@ export default function Index(services: Services): Router {
   router.use('/exclude/:allocationId', insertJourneyIdentifier())
   router.use('/remove', insertJourneyIdentifier())
 
-  router.use('/create/:journeyId', insertRouteContext('create'), createRoutes(services))
+  router.use(
+    '/create/:journeyId',
+    insertRouteContext('create'),
+    setUpJourneyData(services.tokenStore),
+    createRoutes(services),
+  )
   router.use(
     '/remove/:journeyId',
     insertRouteContext('remove'),
+    setUpJourneyData(services.tokenStore),
     initialiseEditAndRemoveJourney(services.prisonService, services.activitiesService),
     removeRoutes(services),
   )
   router.use(
     '/edit/:allocationId/:journeyId',
     insertRouteContext('edit'),
+    setUpJourneyData(services.tokenStore),
     initialiseEditAndRemoveJourney(services.prisonService, services.activitiesService),
     editRoutes(services),
   )
   router.use(
     '/exclude/:allocationId/:journeyId',
     insertRouteContext('exclude'),
+    setUpJourneyData(services.tokenStore),
     initialiseEditAndRemoveJourney(services.prisonService, services.activitiesService),
     excludeRoutes(services),
   )

@@ -30,14 +30,12 @@ declare module 'express-session' {
     // That middleware redirects the getter and setter to use the sessionDataMap below. As a result,
     // these properties are virtual and are not directly set. They exist to allow pre-existing access
     // as if there was only one journey per session e.g. req.session.appointmentJourney
-    allocateJourney: AllocateToActivityJourney
     suspendJourney: SuspendJourney
     appointmentJourney: AppointmentJourney
     appointmentSetJourney: AppointmentSetJourney
     editAppointmentJourney: EditAppointmentJourney
     bookACourtHearingJourney: BookACourtHearingJourney
     bookAProbationMeetingJourney: BookAProbationMeetingJourney
-    recordAttendanceJourney: RecordAttendanceJourney
     recordAppointmentAttendanceJourney: RecordAppointmentAttendanceJourney
     journeyMetrics: JourneyMetrics
     // Map containing per journey session data. See comment above, the startNewJourney and populateJourney
@@ -92,6 +90,8 @@ export type JourneyData = {
   waitListApplicationJourney?: WaitListApplicationJourney
   prisonerAllocationsJourney?: PrisonerAllocationsJourney
   unlockListJourney?: UnlockListJourney
+  recordAttendanceJourney?: RecordAttendanceJourney
+  allocateJourney?: AllocateToActivityJourney
 }
 
 export type ServiceUser = Express.User &

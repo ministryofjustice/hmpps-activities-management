@@ -9,7 +9,7 @@ export default class DeallocationCheckAndConfirmRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { deallocationReason, activity } = req.session.allocateJourney
+    const { deallocationReason, activity } = req.journeyData.allocateJourney
     const notInWorkActivity = activity?.notInWork || false
 
     const deallocationReasons = await this.activitiesService.getDeallocationReasons(user)
@@ -30,7 +30,7 @@ export default class DeallocationCheckAndConfirmRoutes {
       scheduledInstance,
       deallocateAfterAllocationDateOption,
       activitiesToDeallocate,
-    } = req.session.allocateJourney
+    } = req.journeyData.allocateJourney
     const { user } = res.locals
 
     const { prisonerNumber } = inmates[0]

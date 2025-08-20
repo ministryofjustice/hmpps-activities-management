@@ -64,7 +64,7 @@
       attributes: { id: 'unallocated-inmate-cell-location', "data-qa": "unallocated-inmate-cell-location" }
     },
     {
-      html: nonAssociationsHtml(unallocatedInmate, unallocatedInmate.prisonerNumber, session.allocateJourney.activity.activityId),
+      html: nonAssociationsHtml(unallocatedInmate, unallocatedInmate.prisonerNumber, allocateJourney.activity.activityId),
       classes: 'govuk-!-display-none-print',
       attributes: { id: 'unallocated-inmate-non-associations', "data-qa": "unallocated-inmate-non-associations" }
     },
@@ -108,7 +108,7 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <span class="govuk-caption-l">{{ session.allocateJourney.activity.name }}</span>
+      <span class="govuk-caption-l">{{ allocateJourney.activity.name }}</span>
       {% if unidentifiable === true %}
         <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
         <h2 class="govuk-heading-m">No prison numbers in your CSV file could be used</h2>
@@ -116,7 +116,7 @@
         {{ govukButton({
             text: "Return to the activity",
             classes: "govuk-!-margin-top-5",
-            href: '/activities/allocation-dashboard/'+session.allocateJourney.activity.activityId
+            href: '/activities/allocation-dashboard/'+allocateJourney.activity.activityId
         }) }}
       {% elif allocationsAvailable %}
         <h1 class="govuk-heading-l govuk-!-margin-bottom-7">Review who you're allocating</h1>
@@ -159,11 +159,11 @@
           }
         }) }}
 
-        {% if session.allocateJourney.notFoundPrisoners.length > 0 %}
+        {% if allocateJourney.notFoundPrisoners.length > 0 %}
           <h1 class="govuk-heading-m govuk-!-margin-bottom-7">Some prison numbers in your CSV file could not be used</h1>
             <p class="govuk-body">These numbers did not match anyone in your prison:</p>
               <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-4">
-                {% for prisonNumber in session.allocateJourney.notFoundPrisoners %}
+                {% for prisonNumber in allocateJourney.notFoundPrisoners %}
                   <li>{{ prisonNumber }}</li>
                 {% endfor %}
               </ul>
@@ -181,7 +181,7 @@
         {{ govukButton({
             text: "Return to the activity",
             classes: "govuk-!-margin-top-5",
-            href: '/activities/allocation-dashboard/'+session.allocateJourney.activity.activityId
+            href: '/activities/allocation-dashboard/'+allocateJourney.activity.activityId
         }) }}
       {% endif %}
 
@@ -201,7 +201,7 @@
           {% else %}
             There are {{ withoutMatchingIncentiveLevelInmates | length }} people with an incentive level that does not match a pay rate for this activity.
           {% endif %}
-          <a href='/activities/view/{{ session.allocateJourney.activity.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>You can edit the activity to change pay rates</a>
+          <a href='/activities/view/{{ allocateJourney.activity.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>You can edit the activity to change pay rates</a>
         </p>
 
         {{ govukTable({
@@ -228,9 +228,9 @@
       {% if allocatedInmates.length > 0 %}
         <p class="govuk-body govuk-!-margin-top-3" data-qa="already-allocated-text">
           {% if allocatedInmates.length == 1 %}
-            There is 1 person already allocated to {{ session.allocateJourney.activity.name }}
+            There is 1 person already allocated to {{ allocateJourney.activity.name }}
           {% else %}
-            There are {{ allocatedInmates | length }} people already allocated to {{ session.allocateJourney.activity.name }}
+            There are {{ allocatedInmates | length }} people already allocated to {{ allocateJourney.activity.name }}
           {% endif %}
         </p>
 
@@ -242,7 +242,7 @@
               attributes: { "aria-sort": "ascending", "data-qa": "allocated-inmate-name" }
             },
             {
-              text: "Start date on " + session.allocateJourney.activity.name,
+              text: "Start date on " + allocateJourney.activity.name,
               classes: "govuk-!-display-none-print",
               attributes: { "aria-sort": "none", "data-qa": "allocated-inmate-start-date"}
             }

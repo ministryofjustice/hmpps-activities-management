@@ -77,11 +77,11 @@
                 {{ govukRadios({
                     name: "waitlistScheduleId",
                     hint: {
-                        text: prisoner.firstName | title + ' ' + prisoner.lastName | title + " has " + approvedPendingWaitlist.length + " applications logged for " + approvedPendingWaitlist.length + " activities"
+                        text: prisonerName + " has applications logged for " + approvedPendingWaitlist.length + " activities." if approvedPendingWaitlist.length > 1 else prisonerName + " has an application logged for an activity."
                     },
                     fieldset: {
                         legend: {
-                            text: "Select an activity to allocate " + prisoner.firstName | title + ' ' + prisoner.lastName | title,
+                            text: "Select an activity to allocate " + prisonerName,
                             isPageHeading: true,
                             classes: "govuk-fieldset__legend--l"
                         }

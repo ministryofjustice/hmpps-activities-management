@@ -15,14 +15,14 @@ export default class CancelRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { activity } = req.session.allocateJourney
+    const { activity } = req.journeyData.allocateJourney
     const { choice } = req.body
     const { deallocationAfterAllocation } = req.query
     const { returnTo } = req.session
     req.session.returnTo = null
 
     if (choice === 'yes') {
-      req.session.allocateJourney = null
+      req.journeyData.allocateJourney = null
       if (deallocationAfterAllocation || !activity) return res.redirect(`/activities/allocation-dashboard`)
       return res.redirect(`/activities/allocation-dashboard/${activity.activityId}`)
     }

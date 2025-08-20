@@ -32,7 +32,7 @@ describe('Route Handlers - Cancel Single Session Reason', () => {
       params: {
         id: '1',
       },
-      session: {
+      journeyData: {
         recordAttendanceJourney: {
           selectedInstanceIds: [1, 2],
         },
@@ -101,7 +101,7 @@ describe('Route Handlers - Cancel Single Session Reason', () => {
 
       await handler.POST(addReasonRequest, res)
 
-      expect(addReasonRequest.session.recordAttendanceJourney.sessionCancellationSingle).toEqual({
+      expect(addReasonRequest.journeyData.recordAttendanceJourney.sessionCancellationSingle).toEqual({
         activityName: 'Kitchen tasks',
         reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',
@@ -128,7 +128,7 @@ describe('Route Handlers - Cancel Single Session Reason', () => {
 
       await handler.POST(addReasonRequest, res)
 
-      expect(addReasonRequest.session.recordAttendanceJourney.sessionCancellationSingle).toEqual({
+      expect(addReasonRequest.journeyData.recordAttendanceJourney.sessionCancellationSingle).toEqual({
         activityName: 'Kitchen tasks',
         reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',

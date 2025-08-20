@@ -20,7 +20,7 @@ export default class PayBandRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { inmate } = req.session.allocateJourney
+    const { inmate } = req.journeyData.allocateJourney
 
     const allPayBands: PayBandDetail[] = await this.getActivityPayRates(req, res)
 
@@ -58,7 +58,7 @@ export default class PayBandRoutes {
     const selectedPayBand: PayBandDetail[] = payBandWithDescription(allPayBands)
 
     if (selectedPayBand.length > 0) {
-      req.session.allocateJourney.inmate.payBand = {
+      req.journeyData.allocateJourney.inmate.payBand = {
         id: selectedPayBand[0].bandId,
         alias: selectedPayBand[0].bandAlias,
         rate: selectedPayBand[0].rate,
@@ -69,7 +69,7 @@ export default class PayBandRoutes {
   }
 
   private async getActivityPayRates(req: Request, res: Response): Promise<PayBandDetail[]> {
-    const { inmate, activity } = req.session.allocateJourney
+    const { inmate, activity } = req.journeyData.allocateJourney
 
     const payRates = (await this.activitiesService.getActivity(activity.activityId, res.locals.user)).pay
     return _.sortBy(payRates, 'prisonPayBand.displaySequence')

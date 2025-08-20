@@ -14,7 +14,7 @@
         {
             value: pay.bandId,
             text: pay.bandAlias + ' - ' + pay.rate | toMoney if pay.description === undefined else pay.bandAlias + ' - ' + pay.rate | toMoney + pay.description,
-            checked: formResponses.payBand == pay.bandId or session.allocateJourney.inmate.payBand.id == pay.bandId
+            checked: formResponses.payBand == pay.bandId or allocateJourney.inmate.payBand.id == pay.bandId
         }
     ), bandOptions) %}
 {% endfor %}
@@ -22,7 +22,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ session.allocateJourney.activity.name }}</span>
+            <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
             <h1 class="govuk-heading-xl">Select {{ prisonerName }}'s pay rate</h1>
             {{ govukInsetText ({
                 html: prisonerName + ' is currently on <span class="govuk-!-font-weight-bold">' + incentiveLevel | lower + '</span> incentive level.'

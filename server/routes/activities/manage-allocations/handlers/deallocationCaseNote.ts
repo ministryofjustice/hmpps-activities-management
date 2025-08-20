@@ -20,7 +20,7 @@ export default class DeallocationCaseNoteRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { type, text } = req.body
 
-    req.session.allocateJourney.deallocationCaseNote = { type, text }
+    req.journeyData.allocateJourney.deallocationCaseNote = { type, text }
     return res.redirect('check-answers')
   }
 }

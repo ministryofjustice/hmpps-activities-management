@@ -33,7 +33,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
     req = {
       params: { allocationId: 1 },
       routeContext: { mode: 'create' },
-      session: {
+      journeyData: {
         allocateJourney: {
           inmate: {
             prisonerName: 'John Smith',
@@ -64,13 +64,13 @@ describe('Route Handlers - Edit allocation - Start date', () => {
         await handler.POST(req, res)
 
         expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date-option')
-        expect(req.session.allocateJourney.startDateOption).toEqual(StartDateOption.START_DATE)
-        expect(req.session.allocateJourney.startDate).toEqual('2024-04-23')
-        expect(req.session.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
+        expect(req.journeyData.allocateJourney.startDateOption).toEqual(StartDateOption.START_DATE)
+        expect(req.journeyData.allocateJourney.startDate).toEqual('2024-04-23')
+        expect(req.journeyData.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
       })
 
       it('should save next session start date in session and redirect if user selected the next session', async () => {
-        req.session.allocateJourney.scheduledInstance = {
+        req.journeyData.allocateJourney.scheduledInstance = {
           attendances: [],
           advanceAttendances: [],
           cancelled: false,
@@ -89,9 +89,9 @@ describe('Route Handlers - Edit allocation - Start date', () => {
         await handler.POST(req, res)
 
         expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date-option')
-        expect(req.session.allocateJourney.startDateOption).toEqual(StartDateOption.NEXT_SESSION)
-        expect(req.session.allocateJourney.startDate).toEqual('2024-04-23')
-        expect(req.session.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
+        expect(req.journeyData.allocateJourney.startDateOption).toEqual(StartDateOption.NEXT_SESSION)
+        expect(req.journeyData.allocateJourney.startDate).toEqual('2024-04-23')
+        expect(req.journeyData.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
       })
       it('should save the activity start date in session if there is no scheduled instance, and redirect if user selected the next session', async () => {
         req.body = {
@@ -101,9 +101,9 @@ describe('Route Handlers - Edit allocation - Start date', () => {
         await handler.POST(req, res)
 
         expect(res.redirectOrReturn).toHaveBeenCalledWith('end-date-option')
-        expect(req.session.allocateJourney.startDateOption).toEqual(StartDateOption.NEXT_SESSION)
-        expect(req.session.allocateJourney.startDate).toEqual('2024-04-25')
-        expect(req.session.allocateJourney.latestAllocationStartDate).toEqual('2024-04-25')
+        expect(req.journeyData.allocateJourney.startDateOption).toEqual(StartDateOption.NEXT_SESSION)
+        expect(req.journeyData.allocateJourney.startDate).toEqual('2024-04-25')
+        expect(req.journeyData.allocateJourney.latestAllocationStartDate).toEqual('2024-04-25')
       })
     })
 
@@ -117,8 +117,8 @@ describe('Route Handlers - Edit allocation - Start date', () => {
 
         await handler.POST(req, res)
 
-        expect(req.session.allocateJourney.startDate).toEqual('2024-04-23')
-        expect(req.session.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
+        expect(req.journeyData.allocateJourney.startDate).toEqual('2024-04-23')
+        expect(req.journeyData.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
 
         expect(activitiesService.updateAllocation).toHaveBeenCalledWith(
           1,
@@ -136,7 +136,7 @@ describe('Route Handlers - Edit allocation - Start date', () => {
       })
 
       it('should update the allocation and redirect with success if user selected the next session', async () => {
-        req.session.allocateJourney.scheduledInstance = {
+        req.journeyData.allocateJourney.scheduledInstance = {
           attendances: [],
           advanceAttendances: [],
           cancelled: false,
@@ -153,8 +153,8 @@ describe('Route Handlers - Edit allocation - Start date', () => {
 
         await handler.POST(req, res)
 
-        expect(req.session.allocateJourney.startDate).toEqual('2024-04-23')
-        expect(req.session.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
+        expect(req.journeyData.allocateJourney.startDate).toEqual('2024-04-23')
+        expect(req.journeyData.allocateJourney.latestAllocationStartDate).toEqual('2024-04-23')
 
         expect(activitiesService.updateAllocation).toHaveBeenCalledWith(
           1,

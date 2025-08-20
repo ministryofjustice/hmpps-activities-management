@@ -35,7 +35,7 @@ export default class UploadPrisonerListRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const prisonerListCsvFile = req.file
     const { user } = res.locals
-    const { activity } = req.session.allocateJourney
+    const { activity } = req.journeyData.allocateJourney
 
     const prisonerNumbers: string[] = await this.prisonerListCsvParser.getPrisonNumbers(prisonerListCsvFile)
     const prisoners: Prisoner[] = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
@@ -82,15 +82,15 @@ export default class UploadPrisonerListRoutes {
         prisonerNumber => !prisonerNumbersFound.includes(prisonerNumber),
       )
 
-      req.session.allocateJourney.notFoundPrisoners = prisonerNumbersNotFound
-      req.session.allocateJourney.inmates = inmates
-      req.session.allocateJourney.allocatedInmates = undefined
-      req.session.allocateJourney.withoutMatchingIncentiveLevelInmates = undefined
-      req.session.allocateJourney.unidentifiable = false
+      req.journeyData.allocateJourney.notFoundPrisoners = prisonerNumbersNotFound
+      req.journeyData.allocateJourney.inmates = inmates
+      req.journeyData.allocateJourney.allocatedInmates = undefined
+      req.journeyData.allocateJourney.withoutMatchingIncentiveLevelInmates = undefined
+      req.journeyData.allocateJourney.unidentifiable = false
 
       return res.redirect('review-upload-prisoner-list?csv=true')
     }
-    req.session.allocateJourney.unidentifiable = true
+    req.journeyData.allocateJourney.unidentifiable = true
 
     return res.redirect('review-upload-prisoner-list')
   }
