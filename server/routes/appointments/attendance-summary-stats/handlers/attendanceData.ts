@@ -96,12 +96,12 @@ export default class AttendanceDataRoutes {
 
     return res.redirect(
       `?date=${datePickerDateToIsoDate(date)}` +
-        `&appointmentName=${encodeURIComponent(appointmentName) ?? ''}` +
-        `&customAppointmentName=${encodeURIComponent(customAppointmentName) ?? ''}` +
+        `&appointmentName=${encodeURIComponent(appointmentName ?? '')}` +
+        `&customAppointmentName=${encodeURIComponent(customAppointmentName ?? '')}` +
         `&attendanceState=${attendanceState ?? ''}` +
         `&eventTier=${eventTier ?? ''}` +
         `&organiserCode=${organiserCode ?? ''}` +
-        `&searchTerm=${encodeURIComponent(searchTerm) ?? ''}`,
+        `&searchTerm=${encodeURIComponent(searchTerm ?? '')}`,
     )
   }
 }
