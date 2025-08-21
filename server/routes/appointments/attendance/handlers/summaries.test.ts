@@ -48,7 +48,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
     } as unknown as Response
 
     req = {
-      session: {},
+      journeyData: {},
     } as unknown as Request
 
     req.query = {}
@@ -87,7 +87,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAppointmentAttendanceJourney).toEqual({ date: toDateString(new Date()) })
+      expect(req.journeyData.recordAppointmentAttendanceJourney).toEqual({ date: toDateString(new Date()) })
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries', {
         date: today,
@@ -153,7 +153,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAppointmentAttendanceJourney).toEqual({ date: toDateString(subDays(new Date(), 1)) })
+      expect(req.journeyData.recordAppointmentAttendanceJourney).toEqual({ date: toDateString(subDays(new Date(), 1)) })
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries', {
         date: yesterday,
@@ -221,7 +221,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAppointmentAttendanceJourney).toEqual({ date: '2023-10-16' })
+      expect(req.journeyData.recordAppointmentAttendanceJourney).toEqual({ date: '2023-10-16' })
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries', {
         date: parseIsoDate('2023-10-16'),
@@ -312,7 +312,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
       // Call the GET method
       await handler.GET(req, res)
 
-      expect(req.session.recordAppointmentAttendanceJourney).toEqual({ date: '2023-10-17' })
+      expect(req.journeyData.recordAppointmentAttendanceJourney).toEqual({ date: '2023-10-17' })
 
       // Define the expected summaries without cancelled appointments
       const expectedSummaries = [
@@ -415,7 +415,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAppointmentAttendanceJourney).toEqual({ date: toDateString(subDays(new Date(), 1)) })
+      expect(req.journeyData.recordAppointmentAttendanceJourney).toEqual({ date: toDateString(subDays(new Date(), 1)) })
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/attendance/summaries', {
         date: yesterday,
@@ -601,7 +601,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
       req.query = {
         dateOption,
       }
-      req.session.recordAppointmentAttendanceJourney = {
+      req.journeyData.recordAppointmentAttendanceJourney = {
         appointmentIds: [4, 5],
       }
 
@@ -614,7 +614,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
       await handler.GET(req, res)
 
-      expect(req.session.recordAppointmentAttendanceJourney).toEqual({
+      expect(req.journeyData.recordAppointmentAttendanceJourney).toEqual({
         date: toDateString(new Date()),
         appointmentIds: [4, 5],
       })
@@ -646,7 +646,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
 
   describe('SELECT_APPOINTMENTS', () => {
     it('redirects to attendees', async () => {
-      req.session.recordAppointmentAttendanceJourney = {}
+      req.journeyData.recordAppointmentAttendanceJourney = {}
 
       req.body = {
         appointmentIds: ['1', '2'],
@@ -655,13 +655,13 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
       await handler.SELECT_APPOINTMENTS(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('../attendees')
-      expect(req.session.recordAppointmentAttendanceJourney.appointmentIds).toEqual([1, 2])
+      expect(req.journeyData.recordAppointmentAttendanceJourney.appointmentIds).toEqual([1, 2])
     })
   })
 
   describe('SELECT_APPOINTMENT', () => {
     it('redirects to attendees', async () => {
-      req.session.recordAppointmentAttendanceJourney = null
+      req.journeyData.recordAppointmentAttendanceJourney = null
 
       req.params = {
         appointmentId: '33',
@@ -670,7 +670,7 @@ describe('Route Handlers - Appointment Attendance Summaries', () => {
       await handler.SELECT_APPOINTMENT(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('../attendees')
-      expect(req.session.recordAppointmentAttendanceJourney.appointmentIds).toEqual([33])
+      expect(req.journeyData.recordAppointmentAttendanceJourney.appointmentIds).toEqual([33])
     })
   })
 

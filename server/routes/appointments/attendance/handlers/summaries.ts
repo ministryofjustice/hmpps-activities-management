@@ -59,11 +59,11 @@ export default class SummariesRoutes {
 
     const attendanceSummary = getAttendanceSummaryFromAttendanceSummaries(summaries)
 
-    if (!req.session.recordAppointmentAttendanceJourney) {
-      req.session.recordAppointmentAttendanceJourney = {}
+    if (!req.journeyData.recordAppointmentAttendanceJourney) {
+      req.journeyData.recordAppointmentAttendanceJourney = {}
     }
 
-    req.session.recordAppointmentAttendanceJourney.date = toDateString(dateOptionDate)
+    req.journeyData.recordAppointmentAttendanceJourney.date = toDateString(dateOptionDate)
 
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
@@ -79,14 +79,14 @@ export default class SummariesRoutes {
 
   SELECT_APPOINTMENT = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId } = req.params
-    req.session.recordAppointmentAttendanceJourney = {
+    req.journeyData.recordAppointmentAttendanceJourney = {
       appointmentIds: [+appointmentId],
     }
     return res.redirect('../attendees')
   }
 
   SELECT_APPOINTMENTS = async (req: Request, res: Response): Promise<void> => {
-    req.session.recordAppointmentAttendanceJourney.appointmentIds = convertToNumberArray(req.body.appointmentIds)
+    req.journeyData.recordAppointmentAttendanceJourney.appointmentIds = convertToNumberArray(req.body.appointmentIds)
     return res.redirect('../attendees')
   }
 
