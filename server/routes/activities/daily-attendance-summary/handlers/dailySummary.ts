@@ -45,6 +45,7 @@ export default class DailySummaryRoutes {
     )
     const attendancesForFilters = allAttendances.filter(a => categoryFilters.includes(a.categoryName))
 
+    res.locals.attendanceSummaryJourney = req.journeyData.attendanceSummaryJourney
     return res.render('pages/activities/daily-attendance-summary/daily-summary', {
       activityDate,
       uniqueCategories,

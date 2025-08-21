@@ -84,6 +84,7 @@ export default class DailyAttendanceRoutes {
       status === 'Absences' &&
       attendees.filter(attendee => attendee.attendance.attendanceReasonCode === AttendanceReason.REFUSED).length > 0
 
+    res.locals.attendanceSummaryJourney = req.journeyData.attendanceSummaryJourney
     return res.render('pages/activities/daily-attendance-summary/attendances', {
       activityDate,
       uniqueCategories,
