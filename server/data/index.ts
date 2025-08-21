@@ -44,7 +44,7 @@ export default function dataAccess() {
     caseNotesApiClient: new CaseNotesApiClient(),
     prisonApiClient: new PrisonApiClient(hmppsAuthClient),
     prisonerSearchApiClient: new PrisonerSearchApiClient(),
-    prisonRegisterApiClient: new PrisonRegisterApiClient(),
+    prisonRegisterApiClient: new PrisonRegisterApiClient(hmppsAuthClient),
     incentivesApiClient: new IncentivesApiClient(),
     activitiesApiClient: new ActivitiesApiClient(),
     bookAVideoLinkApiClient: new BookAVideoLinkApiClient(),

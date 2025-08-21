@@ -3,7 +3,6 @@ import nock from 'nock'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
 import PrisonApiClient from './prisonApiClient'
-import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
 
 const user = { token: 'token' } as ServiceUser
@@ -22,8 +21,6 @@ describe('prisonApiClient', () => {
 
     fakePrisonApi = nock(config.apis.prisonApi.url)
     prisonApiClient = new PrisonApiClient(mockAuthenticationClient)
-
-    jest.spyOn(TokenStore.prototype, 'getToken').mockResolvedValue('accessToken')
   })
 
   afterEach(() => {

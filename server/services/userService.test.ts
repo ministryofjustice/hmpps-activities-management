@@ -1,5 +1,6 @@
 import { when } from 'jest-when'
 import createHttpError from 'http-errors'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import UserService from './userService'
 import ManageUsersApiClient from '../data/manageUsersApiClient'
 import ActivitiesApiClient from '../data/activitiesApiClient'
@@ -25,10 +26,16 @@ describe('User service', () => {
   let prisonRegisterApiClient: jest.Mocked<PrisonRegisterApiClient>
   let activitiesApiClient: jest.Mocked<ActivitiesApiClient>
   let userService: UserService
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('test-system-token'),
+    } as unknown as jest.Mocked<AuthenticationClient>
     manageUsersApiClient = new ManageUsersApiClient() as jest.Mocked<ManageUsersApiClient>
-    prisonRegisterApiClient = new PrisonRegisterApiClient() as jest.Mocked<PrisonRegisterApiClient>
+    prisonRegisterApiClient = new PrisonRegisterApiClient(
+      mockAuthenticationClient,
+    ) as jest.Mocked<PrisonRegisterApiClient>
     activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
     userService = new UserService(manageUsersApiClient, prisonRegisterApiClient, activitiesApiClient)
 
