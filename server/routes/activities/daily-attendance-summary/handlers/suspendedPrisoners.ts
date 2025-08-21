@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
-import { convertToTitleCase, toDate } from '../../../../utils/utils'
+import { formatFirstLastName, toDate } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import AttendanceReason from '../../../../enum/attendanceReason'
 import PrisonService from '../../../../services/prisonService'
@@ -54,7 +54,7 @@ export default class SuspendedPrisonersRoutes {
 
         return {
           prisonerNumber: prisoner.prisonerNumber,
-          prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
+          prisonerName: formatFirstLastName(prisoner.firstName, prisoner.lastName),
           firstName: prisoner.firstName,
           lastName: prisoner.lastName,
           status: prisoner.status,

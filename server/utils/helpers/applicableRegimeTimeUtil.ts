@@ -1,4 +1,4 @@
-import { convertToTitleCase } from '../utils'
+import { formatFirstLastName } from '../utils'
 import { Slots } from '../../routes/activities/create-an-activity/journey'
 import { PrisonRegime } from '../../@types/activitiesAPI/types'
 
@@ -23,7 +23,7 @@ export default function getApplicableDaysAndSlotsInRegime(
   return daysAndSlots.days
     .map((day: string) => {
       const dayUpper: string = day.toUpperCase()
-      const dayTitle: string = convertToTitleCase(day)
+      const dayTitle: string = formatFirstLastName(day, undefined)
       const daySchedule = regimeTimes.find(schedule => schedule.dayOfWeek === dayUpper)
 
       if (!daySchedule) return null

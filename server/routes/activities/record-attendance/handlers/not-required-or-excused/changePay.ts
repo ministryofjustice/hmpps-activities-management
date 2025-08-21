@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { Attendance, ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
-import { convertToTitleCase } from '../../../../../utils/utils'
+import { formatFirstLastName } from '../../../../../utils/utils'
 import config from '../../../../../config'
 import AttendanceStatus from '../../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../../enum/attendanceReason'
@@ -58,7 +58,7 @@ export default class ChangePayRoutes {
     ]
 
     await this.activitiesService.updateAttendances(attendances, user)
-    const successMessage = `${convertToTitleCase(`${attendee.firstName} ${attendee.lastName}`)} will now${newIssuePayment ? ' ' : ' not '}be paid for this session.`
+    const successMessage = `${formatFirstLastName(attendee.firstName, attendee.lastName)} will now${newIssuePayment ? ' ' : ' not '}be paid for this session.`
     return res.redirectWithSuccess('../../attendance-list', 'Pay updated', successMessage)
   }
 }

@@ -10,7 +10,6 @@ import fs from 'fs'
 import {
   buildErrorSummaryList,
   concatArrays,
-  convertToTitleCase,
   dateInList,
   excludeArrayObject,
   filterNot,
@@ -172,7 +171,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addFilter('toFixed', toFixed)
   njkEnv.addFilter('padNumber', padNumber)
   njkEnv.addFilter('toMoney', toMoney)
-  njkEnv.addFilter('toTitleCase', convertToTitleCase)
   njkEnv.addFilter('toDate', toDate)
   njkEnv.addFilter('parseDate', parseDate)
   njkEnv.addFilter('parseISODate', parseISODate)

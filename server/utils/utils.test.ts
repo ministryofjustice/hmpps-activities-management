@@ -1,7 +1,6 @@
 import { addDays, subDays } from 'date-fns'
 import {
   compareStrings,
-  convertToTitleCase,
   getAttendanceSummary,
   initialiseName,
   fullName,
@@ -20,25 +19,28 @@ import {
   getSortableItemForAttendee,
   eventClashes,
   getAdvancedAttendanceSummary,
+  formatFirstLastName,
 } from './utils'
 import { AdvanceAttendance, Attendance, ScheduledEvent } from '../@types/activitiesAPI/types'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
 import config from '../config'
 
 describe('utils', () => {
-  describe('convert to title case', () => {
+  fdescribe('format first & lastName', () => {
     it.each([
-      [null, null, ''],
-      ['empty string', '', ''],
-      ['Lower case', 'robert', 'Robert'],
-      ['Upper case', 'ROBERT', 'Robert'],
-      ['Mixed case', 'RoBErT', 'Robert'],
-      ['Multiple words', 'RobeRT SMiTH', 'Robert Smith'],
-      ['Leading spaces', '  RobeRT', '  Robert'],
-      ['Trailing spaces', 'RobeRT  ', 'Robert  '],
-      ['Hyphenated', 'Robert-John SmiTH-jONes-WILSON', 'Robert-John Smith-Jones-Wilson'],
-    ])('%s convertToTitleCase(%s, %s)', (_: string, a: string, expected: string) => {
-      expect(convertToTitleCase(a)).toEqual(expected)
+      [null, { firstName: null, lastName: null }, ''],
+      ['empty string', { firstName: '', lastName: '' }, ''],
+      ['Lower case', { firstName: 'robert', lastName: 'smith' }, 'Robert Smith'],
+      ['Upper case', { firstName: 'ROBERT', lastName: 'SMITH' }, 'Robert Smith'],
+      ['Mixed case', { firstName: 'RoBErT', lastName: 'sMItH' }, 'Robert Smith'],
+      ['Multiple words', { firstName: 'RobeRT JOhN', lastName: 'sMItH' }, 'Robert John Smith'],
+      ['Leading spaces', { firstName: '  RobeRT', lastName: '  smiTH' }, 'Robert Smith'],
+      ['Trailing spaces', { firstName: 'RobeRT  ', lastName: 'SmItH ' }, 'Robert Smith'],
+      ['Single value', { firstName: 'robert', lastName: undefined }, 'Robert'],
+      ['Single value full name', { firstName: 'robert smith', lastName: undefined }, 'Robert Smith'],
+      ['Hyphenated', { firstName: 'Robert-John', lastName: 'SmiTH-jONes-WILSON' }, 'Robert-John Smith-Jones-Wilson'],
+    ])('%s formatFirstLastName(%s, %s)', (_: string, a: Parameters<typeof fullName>[0], expected: string) => {
+      expect(formatFirstLastName(a.firstName, a.lastName)).toEqual(expected)
     })
   })
 

@@ -44,21 +44,7 @@ export const DAYS_OF_WEEK_UPPERCASE: DaysOfWeek[] = [
   'SUNDAY',
 ]
 
-const properCase = (word: string): string =>
-  word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
-
 export const isBlank = (str: string): boolean => !str || /^\s*$/.test(str)
-
-/**
- * Converts a name (first name, last name, middle name, etc.) to proper case equivalent, handling double-barreled names
- * correctly (i.e. each part in a double-barreled is converted to proper case).
- * @param name name to be converted.
- * @returns name converted to proper case.
- */
-const properCaseName = (name: string): string => (isBlank(name) ? '' : name.split('-').map(properCase).join('-'))
-
-export const convertToTitleCase = (sentence: string): string =>
-  isBlank(sentence) ? '' : sentence.split(' ').map(properCaseName).join(' ')
 
 /**
  * Converts an unformatted name string to the format, 'J. Bloggs'.
@@ -127,7 +113,7 @@ export const formatName = (
   }
   const namesOrdered = names
     .filter(s => s)
-    .map(s => s.toLowerCase())
+    .map(s => s.toLowerCase().trim())
     .join(' ')
     .replace(/(^\w)|([\s'-]+\w)/g, letter => letter.toUpperCase())
 
@@ -141,6 +127,18 @@ export const formatName = (
 
   return namesOrdered
 }
+
+/**
+ * Clean wrapper for formatName that formats a name as "First Last" (i.e. first name and last name only).
+ *
+ * Correctly handles names with apostrophes, hyphens and spaces
+ *
+ * @param firstName - first name
+ * @param lastName - last name
+ * @returns formatted name string
+ */
+export const formatFirstLastName = (firstName: string, lastName: string): string =>
+  formatName(firstName, undefined, lastName, NameFormatStyle.firstLast, false)
 
 export const parseDate = (date: string, fromFormat = 'yyyy-MM-dd') => {
   if (!date) return null

@@ -5,7 +5,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { YesNo } from '../../../../@types/activities'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
-import { convertToTitleCase } from '../../../../utils/utils'
+import { formatFirstLastName } from '../../../../utils/utils'
 
 export class ResetAttendance {
   @Expose()
@@ -51,7 +51,7 @@ export default class ResetAttendanceRoutes {
 
       const attendance = await this.activitiesService.getAttendanceDetails(+attendanceId)
       const attendee = await this.prisonService.getInmateByPrisonerNumber(attendance.prisonerNumber, user)
-      const attendeeName = convertToTitleCase(`${attendee.firstName} ${attendee.lastName}`)
+      const attendeeName = formatFirstLastName(attendee.firstName, attendee.lastName)
 
       // TODO: SAA-1737 Add activity name?
       const successMessage = `Attendance for ${attendeeName} has been reset`

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
-import { asString, convertToTitleCase, getScheduleIdFromActivity, parseDate } from '../../../../../utils/utils'
+import { asString, formatFirstLastName, getScheduleIdFromActivity, parseDate } from '../../../../../utils/utils'
 import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import WaitlistRequester from '../../../../../enum/waitlistRequester'
@@ -41,7 +41,7 @@ export default class ViewApplicationRoutes {
     req.journeyData.waitListApplicationJourney = {
       prisoner: {
         prisonerNumber: prisoner.prisonerNumber,
-        name: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
+        name: formatFirstLastName(prisoner.firstName, prisoner.lastName),
       },
       requestDate: application.requestedDate,
       activity: {

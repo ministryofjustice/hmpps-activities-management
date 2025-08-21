@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
-import { convertToTitleCase, parseDate } from '../../../../utils/utils'
+import { formatFirstLastName, parseDate } from '../../../../utils/utils'
 import { activitySlotsMinusExclusions, sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSlotMappers'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 
@@ -40,7 +40,7 @@ export default class ViewAllocationsRoutes {
     })
 
     res.render('pages/activities/exclusions/view-allocations', {
-      prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
+      prisonerName: formatFirstLastName(prisoner.firstName, prisoner.lastName),
       prisonerNumber,
       activities,
     })

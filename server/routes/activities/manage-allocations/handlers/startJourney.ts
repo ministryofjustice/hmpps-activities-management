@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import PrisonService from '../../../../services/prisonService'
-import { asString, convertToTitleCase } from '../../../../utils/utils'
+import { asString, formatFirstLastName } from '../../../../utils/utils'
 import ActivitiesService from '../../../../services/activitiesService'
 import MetricsEvent from '../../../../data/metricsEvent'
 import { initJourneyMetrics } from '../../../../utils/metricsUtils'
@@ -32,7 +32,7 @@ export default class StartJourneyRoutes {
     const inmates = [
       {
         prisonerNumber: inmate.prisonerNumber,
-        prisonerName: convertToTitleCase(`${inmate.firstName} ${inmate.lastName}`),
+        prisonerName: formatFirstLastName(inmate.firstName, inmate.lastName),
         prisonCode: inmate.prisonId,
         status: inmate.status,
         cellLocation: inmate.cellLocation,

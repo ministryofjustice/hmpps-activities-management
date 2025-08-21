@@ -3,7 +3,7 @@ import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
 import AttendanceAction from '../../../../enum/attendanceAction'
-import { convertToTitleCase } from '../../../../utils/utils'
+import { formatFirstLastName } from '../../../../utils/utils'
 
 enum EditAttendanceOptions {
   YES = 'yes',
@@ -48,7 +48,7 @@ export default class EditAttendanceRoutes {
 
     const attendee = appointment.attendees.find(a => a.prisoner.prisonerNumber === prisonerNumber)
 
-    const prisonerName = convertToTitleCase(`${attendee.prisoner.firstName} ${attendee.prisoner.lastName}`)
+    const prisonerName = formatFirstLastName(attendee.prisoner.firstName, attendee.prisoner.lastName)
 
     let successHeader = 'Attendance recorded'
     let successMessage = `You've saved details for ${prisonerName}.`
