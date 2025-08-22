@@ -23,7 +23,7 @@ describe('Route Handlers - Select Date', () => {
 
     req = {
       date: new Date().toISOString(),
-      dateOption: 'today',
+      dateOption: DateOption.TODAY,
     } as unknown as Request
   })
 

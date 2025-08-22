@@ -18,7 +18,7 @@ describe('Route Handlers - applyFilters', () => {
 
     req = {
       get: jest.fn(),
-      session: {
+      journeyData: {
         attendanceSummaryJourney: {
           categoryFilters: ['Original category'],
           reasonFilter: 'Original reason',
@@ -30,7 +30,7 @@ describe('Route Handlers - applyFilters', () => {
 
   describe('APPLY', () => {
     beforeEach(() => {
-      req.session.attendanceSummaryJourney = {
+      req.journeyData.attendanceSummaryJourney = {
         categoryFilters: ['Education'],
         reasonFilter: 'BOTH',
         searchTerm: undefined,
@@ -52,7 +52,7 @@ describe('Route Handlers - applyFilters', () => {
 
         await handler.APPLY(req, res)
 
-        expect(req.session.attendanceSummaryJourney).toStrictEqual({
+        expect(req.journeyData.attendanceSummaryJourney).toStrictEqual({
           categoryFilters: ['Prison Jobs'],
           reasonFilter: 'SUSPENDED',
           searchTerm: 'search',
@@ -72,7 +72,7 @@ describe('Route Handlers - applyFilters', () => {
         }
         await handler.APPLY(req, res)
 
-        expect(req.session.attendanceSummaryJourney).toStrictEqual({
+        expect(req.journeyData.attendanceSummaryJourney).toStrictEqual({
           categoryFilters: [],
           reasonFilter: '',
           searchTerm: '',
@@ -95,7 +95,7 @@ describe('Route Handlers - applyFilters', () => {
 
         await handler.APPLY(req, res)
 
-        expect(req.session.attendanceSummaryJourney).toStrictEqual({
+        expect(req.journeyData.attendanceSummaryJourney).toStrictEqual({
           categoryFilters: ['Prison Jobs'],
           reasonFilter: 'SUSPENDED',
           searchTerm: 'search',
@@ -115,7 +115,7 @@ describe('Route Handlers - applyFilters', () => {
         }
         await handler.APPLY(req, res)
 
-        expect(req.session.attendanceSummaryJourney).toStrictEqual({
+        expect(req.journeyData.attendanceSummaryJourney).toStrictEqual({
           categoryFilters: [],
           reasonFilter: '',
           searchTerm: '',

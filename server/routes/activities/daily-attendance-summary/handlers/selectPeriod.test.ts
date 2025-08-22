@@ -5,6 +5,7 @@ import { validate } from 'class-validator'
 import SelectPeriodRoutes, { TimePeriod } from './selectPeriod'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import { formatDatePickerDate } from '../../../../utils/datePickerUtils'
+import DateOption from '../../../../enum/dateOption'
 
 describe('Route Handlers - Select period', () => {
   const handler = new SelectPeriodRoutes()
@@ -40,27 +41,36 @@ describe('Route Handlers - Select period', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/daily-attendance-summary/select-period', {
         title: 'What date do you want to see the daily attendance summary for?',
         date: '03/01/2025',
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
       })
     })
   })
 
   describe('POST', () => {
     it('sets attendanceSummaryJourney to null', async () => {
-      req.session.attendanceSummaryJourney = {}
-      req.body = {
-        datePresetOption: 'today',
-      }
+      req = {
+        journeyData: {
+          attendanceSummaryJourney: {},
+        },
+        body: {
+          datePresetOption: DateOption.TODAY,
+        },
+      } as unknown as Request
 
       await handler.POST(req, res)
 
-      expect(req.session.attendanceSummaryJourney).toEqual(null)
+      expect(req.journeyData.attendanceSummaryJourney).toEqual(null)
     })
 
     it("redirect with the expected query params for when today's date is selected", async () => {
-      req.body = {
-        datePresetOption: 'today',
-      }
+      req = {
+        journeyData: {
+          attendanceSummaryJourney: {},
+        },
+        body: {
+          datePresetOption: DateOption.TODAY,
+        },
+      } as unknown as Request
 
       const todaysDate = format(new Date(), 'yyyy-MM-dd')
 
@@ -69,9 +79,14 @@ describe('Route Handlers - Select period', () => {
     })
 
     it("redirect with the expected query params for when yesterday's date is selected", async () => {
-      req.body = {
-        datePresetOption: 'yesterday',
-      }
+      req = {
+        journeyData: {
+          attendanceSummaryJourney: {},
+        },
+        body: {
+          datePresetOption: DateOption.YESTERDAY,
+        },
+      } as unknown as Request
 
       const yesterdaysDate = format(subDays(new Date(), 1), 'yyyy-MM-dd')
 
@@ -80,10 +95,15 @@ describe('Route Handlers - Select period', () => {
     })
 
     it('redirect with the expected query params for when a custom date is selected', async () => {
-      req.body = {
-        datePresetOption: 'other',
-        date: new Date('2022-12-01'),
-      }
+      req = {
+        journeyData: {
+          attendanceSummaryJourney: {},
+        },
+        body: {
+          datePresetOption: DateOption.OTHER,
+          date: new Date('2022-12-01'),
+        },
+      } as unknown as Request
 
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`summary?date=2022-12-01`)
@@ -113,7 +133,7 @@ describe('Route Handlers - Select period', () => {
 
     it('validation fails if preset option is other and a date is not provided', async () => {
       const body = {
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
         date: {},
       }
 
@@ -127,7 +147,7 @@ describe('Route Handlers - Select period', () => {
 
     it('validation fails if preset option is other and a bad date is provided', async () => {
       const body = {
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
         date: 'a/2/2022',
       }
 
@@ -142,7 +162,7 @@ describe('Route Handlers - Select period', () => {
     it('validation fails if preset option is other and a date more than 14 days in the past is entered', async () => {
       const date15DaysAgo = addDays(new Date(), -15)
       const body = {
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
         date: formatDatePickerDate(date15DaysAgo),
       }
 
@@ -155,7 +175,7 @@ describe('Route Handlers - Select period', () => {
     it('validation fails if preset option is other and a date more than 60 days in the future is entered', async () => {
       const dateIn61Days = addDays(new Date(), 61)
       const body = {
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
         date: formatDatePickerDate(dateIn61Days),
       }
 
@@ -167,7 +187,7 @@ describe('Route Handlers - Select period', () => {
 
     it('passes validation', async () => {
       const body = {
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
         date: formatDatePickerDate(addMonths(new Date(), 1)),
       }
 

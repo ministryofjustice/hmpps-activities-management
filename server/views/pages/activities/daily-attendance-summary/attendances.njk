@@ -23,25 +23,25 @@
     {% set categoryFilters = [] %}
     {% for category in uniqueCategories %}
         {% set categoryFilters = (categoryFilters.push({
-            value: category, 
-            text: category, 
-            checked: category in session.attendanceSummaryJourney.categoryFilters
+            value: category,
+            text: category,
+            checked: category in attendanceSummaryJourney.categoryFilters
         }), categoryFilters) %}
     {% endfor %}
 
     {% set absenceReasonFilters = [] %}
     {% for reason in absenceReasons %}
         {% set absenceReasonFilters = (absenceReasonFilters.push({
-        value: reason, 
-        text: reason | absenceReasonDisplayConverter, 
-        checked: reason | absenceReasonCheckboxMatch(session.attendanceSummaryJourney.absenceReasonFilters)
+        value: reason,
+        text: reason | absenceReasonDisplayConverter,
+        checked: reason | absenceReasonCheckboxMatch(attendanceSummaryJourney.absenceReasonFilters)
     }), absenceReasonFilters) %}
     {% endfor %}
 
     {% if status == 'Absences' %}
         {% include "../../../partials/activities/absencesCheckboxes.njk" %}
     {% endif %}
-    
+
     {{ govukCheckboxes({
         idPrefix: 'categoryFilters',
         name: 'categoryFilters',
@@ -79,7 +79,7 @@
         {% set h1Title = "All absences" %}
     {% elif status == 'NotAttended' %}
         {% set h1Title = "All not attended yet" %}
-    {% else %} 
+    {% else %}
         {# default #}
         {% set h1Title = "Attendance summary" %}
     {% endif %}
@@ -103,7 +103,7 @@
                             text: 'Search by name or prison number',
                             classes: 'govuk-label--s'
                         },
-                        value: session.attendanceSummaryJourney.searchTerm,
+                        value: attendanceSummaryJourney.searchTerm,
                         attributes: {
                             form: 'filter-form'
                         }
