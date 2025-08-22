@@ -11,7 +11,7 @@ import {
 } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { AppointmentSetJourney } from '../../../../routes/appointments/create-and-edit/appointmentSetJourney'
 import { EventSource, EventType } from '../../../../@types/activities'
-import { convertToTitleCase, formatDate, padNumber } from '../../../../utils/utils'
+import { formatDate, formatFirstLastName, padNumber } from '../../../../utils/utils'
 import { EditAppointmentJourney } from '../../../../routes/appointments/create-and-edit/editAppointmentJourney'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
@@ -544,7 +544,9 @@ describe('Views - Appointments Management - Schedule', () => {
       viewContext.prisonerSchedules.forEach(prisonerSchedule => {
         expect(
           $(`[data-qa=schedule-card-title-prison-number-${prisonerSchedule.prisoner.number}]`).text().trim(),
-        ).toEqual(`${convertToTitleCase(prisonerSchedule.prisoner.name)}, ${prisonerSchedule.prisoner.number}`)
+        ).toEqual(
+          `${formatFirstLastName(prisonerSchedule.prisoner.firstName, prisonerSchedule.prisoner.lastName)}, ${prisonerSchedule.prisoner.number}`,
+        )
       })
     })
 
@@ -930,7 +932,9 @@ describe('Views - Appointments Management - Schedule', () => {
           $(`[data-qa=schedule-card-title-prison-number-${prisonerSchedule.prisoner.number}] > ul > li:eq(1)`)
             .text()
             .trim(),
-        ).toEqual(`${convertToTitleCase(prisonerSchedule.prisoner.name)}, ${prisonerSchedule.prisoner.number}`)
+        ).toEqual(
+          `${formatFirstLastName(prisonerSchedule.prisoner.firstName, prisonerSchedule.prisoner.lastName)}, ${prisonerSchedule.prisoner.number}`,
+        )
       })
     })
 

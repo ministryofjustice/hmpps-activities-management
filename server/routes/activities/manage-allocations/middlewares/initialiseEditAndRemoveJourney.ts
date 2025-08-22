@@ -3,7 +3,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { Activity } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { asString, convertToTitleCase, getScheduleIdFromActivity } from '../../../../utils/utils'
+import { asString, formatFirstLastName, getScheduleIdFromActivity } from '../../../../utils/utils'
 import findNextSchedulesInstance from '../../../../utils/helpers/nextScheduledInstanceCalculator'
 import { AllocateToActivityJourney } from '../journey'
 import logger from '../../../../../logger'
@@ -33,7 +33,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
       const inmate = await prisonService.getInmateByPrisonerNumber(otherAllocations[0].prisonerNumber, user)
       const inmateDetails = {
         prisonerNumber: inmate.prisonerNumber,
-        prisonerName: convertToTitleCase(`${inmate.firstName} ${inmate.lastName}`),
+        prisonerName: formatFirstLastName(inmate.firstName, inmate.lastName),
         prisonCode: inmate.prisonId,
         status: inmate.status,
         cellLocation: inmate.cellLocation,
@@ -68,7 +68,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
         const activityPay = activity.pay.filter(pay => pay.incentiveLevel === p.currentIncentive?.level?.description)
         const payBand = allocations.find(a => a.prisonerNumber === p.prisonerNumber)?.prisonPayBand
         return {
-          prisonerName: convertToTitleCase(`${p.firstName} ${p.lastName}`),
+          prisonerName: formatFirstLastName(p.firstName, p.lastName),
           prisonerNumber: p.prisonerNumber,
           prisonCode: p.prisonId,
           status: p.status,

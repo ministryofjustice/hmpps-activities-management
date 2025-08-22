@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
-import { convertToTitleCase } from '../../../../utils/utils'
+import { formatFirstLastName } from '../../../../utils/utils'
 import { Allocation } from '../../../../@types/activitiesAPI/types'
 import { ServiceUser } from '../../../../@types/express'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -37,7 +37,7 @@ export default class ViewAllocationsRoutes {
 
     res.render('pages/activities/suspensions/view-allocations', {
       prisonerNumber,
-      prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
+      prisonerName: formatFirstLastName(prisoner.firstName, prisoner.lastName),
       allocationCount: allocations?.length,
       suspendedAllocations,
       activeAllocations: sortedActiveAllocations,

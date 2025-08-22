@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import PrisonService from '../../../../../services/prisonService'
-import { convertToTitleCase } from '../../../../../utils/utils'
+import { formatFirstLastName } from '../../../../../utils/utils'
 import { initJourneyMetrics } from '../../../../../utils/metricsUtils'
 import MetricsService from '../../../../../services/metricsService'
 import MetricsEvent from '../../../../../data/metricsEvent'
@@ -25,7 +25,7 @@ export default class StartJourneyRoutes {
     req.journeyData.waitListApplicationJourney = {
       prisoner: {
         prisonerNumber,
-        name: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
+        name: formatFirstLastName(prisoner.firstName, prisoner.lastName),
       },
     }
     initJourneyMetrics(req)
