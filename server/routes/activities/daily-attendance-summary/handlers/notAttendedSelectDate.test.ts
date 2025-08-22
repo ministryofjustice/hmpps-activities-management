@@ -39,22 +39,31 @@ describe('Not attended routes - select date', () => {
 
   describe('POST', () => {
     it('sets attendanceSummaryJourney to null', async () => {
-      req.session.attendanceSummaryJourney = {}
-      req.body = {
-        datePresetOption: 'today',
-      }
+      req = {
+        journeyData: {
+          attendanceSummaryJourney: {},
+        },
+        body: {
+          datePresetOption: DateOption.TODAY,
+        },
+      } as unknown as Request
 
       await handler.POST(req, res)
 
-      expect(req.session.attendanceSummaryJourney).toEqual(null)
+      expect(req.journeyData.attendanceSummaryJourney).toEqual(null)
     })
 
     it("redirects to not attended list with today's date", async () => {
       const today = new Date()
 
-      req.body = {
-        datePresetOption: DateOption.TODAY,
-      }
+      req = {
+        journeyData: {
+          attendanceSummaryJourney: {},
+        },
+        body: {
+          datePresetOption: DateOption.TODAY,
+        },
+      } as unknown as Request
 
       await handler.POST(req, res)
 
@@ -66,9 +75,14 @@ describe('Not attended routes - select date', () => {
     it("redirects to not attended list with yesterdays's date", async () => {
       const yesterday = addDays(new Date(), -1)
 
-      req.body = {
-        datePresetOption: DateOption.YESTERDAY,
-      }
+      req = {
+        journeyData: {
+          attendanceSummaryJourney: {},
+        },
+        body: {
+          datePresetOption: DateOption.YESTERDAY,
+        },
+      } as unknown as Request
 
       await handler.POST(req, res)
 
@@ -80,10 +94,15 @@ describe('Not attended routes - select date', () => {
     it('redirects to not attended list with correct date', async () => {
       const selectedDate = addDays(new Date(), 2)
 
-      req.body = {
-        datePresetOption: DateOption.OTHER,
-        date: selectedDate,
-      }
+      req = {
+        journeyData: {
+          attendanceSummaryJourney: {},
+        },
+        body: {
+          datePresetOption: DateOption.OTHER,
+          date: selectedDate,
+        },
+      } as unknown as Request
 
       await handler.POST(req, res)
 
