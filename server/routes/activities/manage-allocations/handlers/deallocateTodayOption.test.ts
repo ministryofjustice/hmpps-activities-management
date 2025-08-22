@@ -38,7 +38,7 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
   })
 
   describe('POST', () => {
-    it('should redirect to reason if deallocate today option is is TODAY', async () => {
+    it('should redirect to reason if deallocate today option is TODAY', async () => {
       req.body = {
         deallocateTodayOption: 'TODAY',
       }
@@ -50,7 +50,19 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
       expect(res.redirectOrReturn).toHaveBeenCalledWith('reason')
     })
 
-    it('should redirect to reason if deallocate today option is is FUTURE_DATE', async () => {
+    it('should redirect to reason if deallocate today option is is EOD', async () => {
+      req.body = {
+        deallocateTodayOption: 'EOD',
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.journeyData.allocateJourney.deallocateTodayOption).toEqual(DeallocateTodayOption.EOD)
+      expect(req.journeyData.allocateJourney.endDate).toEqual(formatIsoDate(new Date()))
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('reason')
+    })
+
+    it('should redirect to reason if deallocate today option is FUTURE_DATE', async () => {
       req.body = {
         deallocateTodayOption: 'FUTURE_DATE',
         endDate: parseDatePickerDate('24/04/2026'),
