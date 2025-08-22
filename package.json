@@ -75,7 +75,7 @@
     "@ministryofjustice/frontend": "^5.1.5",
     "@ministryofjustice/hmpps-auth-clients": "^0.0.1",
     "@ministryofjustice/hmpps-connect-dps-components": "^3.0.0",
-    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^4.11.2",
+    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^4.11.3",
     "@ministryofjustice/hmpps-rest-client": "^0.0.1",
     "@types/express-serve-static-core": "^5.0.7",
     "@types/lodash": "^4.17.20",
