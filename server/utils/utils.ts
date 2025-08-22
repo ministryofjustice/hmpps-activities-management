@@ -140,6 +140,15 @@ export const formatName = (
 export const formatFirstLastName = (firstName: string, lastName: string): string =>
   formatName(firstName, undefined, lastName, NameFormatStyle.firstLast, false)
 
+/**
+ * Clean wrapper for formatName that formats a string to title case
+ *
+ * @param input - string to be formatted
+ * @returns formatted string
+ */
+export const formatStringToTitleCase = (input: string): string =>
+  formatName(input, undefined, undefined, NameFormatStyle.firstLast, false)
+
 export const parseDate = (date: string, fromFormat = 'yyyy-MM-dd') => {
   if (!date) return null
   return parse(date, fromFormat, new Date())

@@ -18,6 +18,7 @@ import {
   firstNameLastName,
   formatDate,
   formatName,
+  formatStringToTitleCase,
   fullName,
   getSortableItemForAttendee,
   getSplitTime,
@@ -171,6 +172,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addFilter('toFixed', toFixed)
   njkEnv.addFilter('padNumber', padNumber)
   njkEnv.addFilter('toMoney', toMoney)
+  njkEnv.addFilter('toTitleCase', formatStringToTitleCase)
   njkEnv.addFilter('toDate', toDate)
   njkEnv.addFilter('parseDate', parseDate)
   njkEnv.addFilter('parseISODate', parseISODate)

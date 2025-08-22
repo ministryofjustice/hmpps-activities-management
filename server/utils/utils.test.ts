@@ -39,6 +39,7 @@ describe('utils', () => {
       ['Single value', { firstName: 'robert', lastName: undefined }, 'Robert'],
       ['Single value full name', { firstName: 'robert smith', lastName: undefined }, 'Robert Smith'],
       ['Hyphenated', { firstName: 'Robert-John', lastName: 'SmiTH-jONes-WILSON' }, 'Robert-John Smith-Jones-Wilson'],
+      ['Sentende', { firstName: 'John smith is here', lastName: undefined }, 'John Smith Is Here'],
     ])('%s formatFirstLastName(%s, %s)', (_: string, a: Parameters<typeof fullName>[0], expected: string) => {
       expect(formatFirstLastName(a.firstName, a.lastName)).toEqual(expected)
     })
