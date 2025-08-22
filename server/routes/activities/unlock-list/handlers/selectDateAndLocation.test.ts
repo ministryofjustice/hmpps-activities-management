@@ -9,6 +9,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { LocationGroup } from '../../../../@types/activitiesAPI/types'
 import atLeast from '../../../../../jest.setup'
 import { formatDatePickerDate } from '../../../../utils/datePickerUtils'
+import DateOption from '../../../../enum/dateOption'
 
 jest.mock('../../../../services/activitiesService')
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
@@ -79,7 +80,7 @@ describe('Unlock list routes - select date and location', () => {
         locationGroups: mockedLocationGroups,
         activitySlot: 'AM',
         date: '01/01/2025',
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
         locationKey: 'A-wing',
       })
       expect(activitiesService.getLocationGroups).toHaveBeenCalledTimes(1)
@@ -99,7 +100,7 @@ describe('Unlock list routes - select date and location', () => {
 
     it("redirect with the expected query params for when today's date is selected", async () => {
       req.body = {
-        datePresetOption: 'today',
+        datePresetOption: DateOption.TODAY,
         activitySlot: 'AM',
         locationKey: 'here',
       }
@@ -114,7 +115,7 @@ describe('Unlock list routes - select date and location', () => {
 
     it("redirect with the expected query params for when tomorrow's date is selected", async () => {
       req.body = {
-        datePresetOption: 'tomorrow',
+        datePresetOption: DateOption.TOMORROW,
         activitySlot: 'AM',
         locationKey: 'here',
       }
@@ -129,7 +130,7 @@ describe('Unlock list routes - select date and location', () => {
 
     it('redirects with the expected query params for when a custom date is selected', async () => {
       req.body = {
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
         date: new Date('2022-12-01'),
         activitySlot: 'AM',
         locationKey: 'here',
@@ -175,7 +176,7 @@ describe('Unlock list routes - select date and location', () => {
 
     it('validation fails if preset option is other and a date is not provided', async () => {
       const body = {
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
         date: {},
         activitySlot: 'AM',
         locationKey: 'some location',
@@ -191,7 +192,7 @@ describe('Unlock list routes - select date and location', () => {
 
     it('validation fails if preset option is other and a bad date is provided', async () => {
       const body = {
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
         date: '2022/2/31',
         activitySlot: 'AM',
         locationKey: 'here',
@@ -208,7 +209,7 @@ describe('Unlock list routes - select date and location', () => {
     it('passes validation if date under 60 days into the future', async () => {
       const dateIn59Days = addDays(new Date(), 59)
       const body = {
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
         date: formatDatePickerDate(dateIn59Days),
         activitySlot: 'AM',
         locationKey: 'here',
@@ -223,7 +224,7 @@ describe('Unlock list routes - select date and location', () => {
     it('passes validation if date equal to 60 days in the future', async () => {
       const dateIn60Days = addDays(new Date(), 60)
       const body = {
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
         date: formatDatePickerDate(dateIn60Days),
         activitySlot: 'AM',
         locationKey: 'here',
@@ -238,7 +239,7 @@ describe('Unlock list routes - select date and location', () => {
     it('validation fails if date is more than 60 days into the future', async () => {
       const dateIn61Days = addDays(new Date(), 61)
       const body = {
-        datePresetOption: 'other',
+        datePresetOption: DateOption.OTHER,
         date: formatDatePickerDate(dateIn61Days),
         activitySlot: 'AM',
         locationKey: 'some location',
