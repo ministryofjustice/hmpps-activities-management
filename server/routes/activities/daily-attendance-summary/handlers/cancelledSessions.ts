@@ -8,7 +8,7 @@ export default class CancelledSessionsRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { date } = req.query
-    const { attendanceSummaryJourney } = req.session
+    const { attendanceSummaryJourney } = req.journeyData
 
     if (!date) {
       return res.redirect('select-period')

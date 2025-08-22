@@ -39,12 +39,12 @@ export default class DailyAttendanceRoutes {
     const absenceReasons = Object.keys(AttendanceReason).filter(reason => reason !== AttendanceReason.ATTENDED)
 
     // Set the default filter values if they are not set
-    req.session.attendanceSummaryJourney ??= {}
-    req.session.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
-    req.session.attendanceSummaryJourney.absenceReasonFilters ??= absenceReasons
-    req.session.attendanceSummaryJourney.payFilters ??= [PayNoPay.PAID, PayNoPay.NO_PAY]
+    req.journeyData.attendanceSummaryJourney ??= {}
+    req.journeyData.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
+    req.journeyData.attendanceSummaryJourney.absenceReasonFilters ??= absenceReasons
+    req.journeyData.attendanceSummaryJourney.payFilters ??= [PayNoPay.PAID, PayNoPay.NO_PAY]
 
-    const { categoryFilters, searchTerm, absenceReasonFilters, payFilters } = req.session.attendanceSummaryJourney
+    const { categoryFilters, searchTerm, absenceReasonFilters, payFilters } = req.journeyData.attendanceSummaryJourney
 
     const attendancesMatchingFilter = this.filterAttendances(
       attendancesForStatus,
@@ -84,6 +84,7 @@ export default class DailyAttendanceRoutes {
       status === 'Absences' &&
       attendees.filter(attendee => attendee.attendance.attendanceReasonCode === AttendanceReason.REFUSED).length > 0
 
+    res.locals.attendanceSummaryJourney = req.journeyData.attendanceSummaryJourney
     return res.render('pages/activities/daily-attendance-summary/attendances', {
       activityDate,
       uniqueCategories,
