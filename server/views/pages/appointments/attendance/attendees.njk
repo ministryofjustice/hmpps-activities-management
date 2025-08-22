@@ -23,9 +23,9 @@
 {% endif %}
 {% set pageId = 'appointment-attendees-page' %}
 
-{% if session.recordAppointmentAttendanceJourney.date %}
-    {% set hardBackLinkText = 'Go back to appointments on ' + session.recordAppointmentAttendanceJourney.date | toDate | formatDate  %}
-    {% set hardBackLinkHref = 'summaries?date=' + session.recordAppointmentAttendanceJourney.date %}
+{% if recordAppointmentAttendanceJourney.date %}
+    {% set hardBackLinkText = 'Go back to appointments on ' + recordAppointmentAttendanceJourney.date | toDate | formatDate  %}
+    {% set hardBackLinkHref = 'summaries?date=' + recordAppointmentAttendanceJourney.date %}
 {% endif %}
 
 {% macro attendanceTag(attendee) %}
@@ -76,7 +76,7 @@
                     <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="location">{{ showLocation(singleAppointment) }}</span>
                 {% else %}
                     <h1 class="govuk-heading-l govuk-!-margin-0">Record attendance at {{ numAppointments }} appointments</h1>
-                    <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="date-caption">{{ session.recordAppointmentAttendanceJourney.date | toDate | formatDate }}</span>
+                    <span class="govuk-caption-l govuk-!-margin-bottom-4" data-qa="date-caption">{{ recordAppointmentAttendanceJourney.date | toDate | formatDate }}</span>
                 {% endif %}
 
                 <h2 class="govuk-heading-m">{{ attendanceSummary.attendeeCount }} attendee{{ "s" if attendanceSummary.attendeeCount != 1 }}</h2>

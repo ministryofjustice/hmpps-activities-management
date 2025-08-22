@@ -17,7 +17,7 @@ export default class AttendeesRoutes {
   ) {}
 
   GET_MULTIPLE = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentIds } = req.session.recordAppointmentAttendanceJourney
+    const { appointmentIds } = req.journeyData.recordAppointmentAttendanceJourney
     const { user } = res.locals
     const { searchTerm } = req.query
 
@@ -83,7 +83,7 @@ export default class AttendeesRoutes {
   }
 
   GET_SINGLE = async (req: Request, res: Response): Promise<void> => {
-    req.session.recordAppointmentAttendanceJourney = {
+    req.journeyData.recordAppointmentAttendanceJourney = {
       appointmentIds: [+req.params.appointmentId],
     }
     return res.redirect('../attendees')

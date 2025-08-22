@@ -92,6 +92,7 @@
     <form id="filter-form" method="POST" novalidate>
 
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+        <input type="hidden" name="date" value="{{ date | formatDate }}"/>
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">

@@ -25,7 +25,7 @@ describe('Appointment attendance routes - select date', () => {
     } as unknown as Response
 
     req = {
-      session: {},
+      journeyData: {},
     } as unknown as Request
   })
 
@@ -43,7 +43,7 @@ describe('Appointment attendance routes - select date', () => {
 
   describe('POST', () => {
     afterEach(() => {
-      expect(req.session.recordAppointmentAttendanceJourney).toEqual({})
+      expect(req.journeyData.recordAppointmentAttendanceJourney).toEqual({})
     })
 
     it('redirects with today date option', async () => {

@@ -25,7 +25,7 @@ export default class SelectDateRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { dateOption, date }: SelectDate = req.body
 
-    req.session.recordAppointmentAttendanceJourney = {}
+    req.journeyData.recordAppointmentAttendanceJourney = {}
 
     const dateQuery = dateOption === DateOption.OTHER ? `&date=${formatIsoDate(date)}` : ''
 
