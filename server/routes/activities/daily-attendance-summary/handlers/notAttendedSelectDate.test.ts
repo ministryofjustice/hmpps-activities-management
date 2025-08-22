@@ -44,7 +44,7 @@ describe('Not attended routes - select date', () => {
           attendanceSummaryJourney: {},
         },
         body: {
-          datePresetOption: 'today',
+          datePresetOption: DateOption.TODAY,
         },
       } as unknown as Request
 
