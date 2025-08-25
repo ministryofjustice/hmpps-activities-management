@@ -1,23 +1,21 @@
 import nock from 'nock'
-
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
-import TokenStore from './tokenStore'
 import PrisonRegisterApiClient from './prisonRegisterApiClient'
-import { ServiceUser } from '../@types/express'
-
-const user = {} as ServiceUser
 
 jest.mock('./tokenStore')
 
 describe('prisonRegisterApiClient', () => {
   let fakePrisonRegisterApi: nock.Scope
   let prisonRegisterApiClient: PrisonRegisterApiClient
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('accessToken'),
+    } as unknown as jest.Mocked<AuthenticationClient>
     fakePrisonRegisterApi = nock(config.apis.prisonRegisterApi.url)
-    prisonRegisterApiClient = new PrisonRegisterApiClient()
-
-    jest.spyOn(TokenStore.prototype, 'getToken').mockResolvedValue('accessToken')
+    prisonRegisterApiClient = new PrisonRegisterApiClient(mockAuthenticationClient)
   })
 
   afterEach(() => {
@@ -34,7 +32,7 @@ describe('prisonRegisterApiClient', () => {
         .matchHeader('authorization', `Bearer accessToken`)
         .reply(200, response)
 
-      const output = await prisonRegisterApiClient.getPrisonInformation('BMI', user)
+      const output = await prisonRegisterApiClient.getPrisonInformation('BMI')
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)

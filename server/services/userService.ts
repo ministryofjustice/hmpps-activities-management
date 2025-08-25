@@ -65,9 +65,8 @@ export default class UserService {
   private fetchActiveCaseLoadInformation = async (user: UserDetails) => {
     const [rolloutPlan, activePrisonInformation]: [RolloutPrisonPlan, Prison] = await Promise.all([
       this.activitiesApiClient.getPrisonRolloutPlan(user.activeCaseLoadId),
-      this.prisonRegisterApiClient.getPrisonInformation(user.activeCaseLoadId, user as ServiceUser),
+      this.prisonRegisterApiClient.getPrisonInformation(user.activeCaseLoadId),
     ])
-
     return {
       activeCaseLoadDescription: activePrisonInformation.prisonName,
       isActivitiesRolledOut: rolloutPlan.activitiesRolledOut,
