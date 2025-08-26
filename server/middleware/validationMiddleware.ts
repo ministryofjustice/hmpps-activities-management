@@ -28,7 +28,7 @@ function validationMiddleware(type: new () => object): RequestHandler {
       bookACourtHearingJourney: req.session.bookACourtHearingJourney,
       bookAProbationMeetingJourney: req.session.bookAProbationMeetingJourney,
       recordAttendanceJourney: req.journeyData?.recordAttendanceJourney,
-      recordAppointmentAttendanceJourney: req.session.recordAppointmentAttendanceJourney,
+      recordAppointmentAttendanceJourney: req.journeyData?.recordAppointmentAttendanceJourney,
     })
 
     const errors: ValidationError[] = await validate(requestObject, {

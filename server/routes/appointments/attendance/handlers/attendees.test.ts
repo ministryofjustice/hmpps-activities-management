@@ -39,7 +39,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
 
     req = {
       query: {},
-      session: {},
+      journeyData: {},
     } as unknown as Request
   })
 
@@ -63,7 +63,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
     })
 
     it('should render the attendance page with appointments', async () => {
-      req.session.recordAppointmentAttendanceJourney = {
+      req.journeyData.recordAppointmentAttendanceJourney = {
         appointmentIds: [1, 2],
       }
 
@@ -121,7 +121,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
     })
 
     it('should render the attendance page with appointments that have marked attendances', async () => {
-      req.session.recordAppointmentAttendanceJourney = {
+      req.journeyData.recordAppointmentAttendanceJourney = {
         appointmentIds: [1, 2, 3, 4, 5, 6],
       }
 
@@ -211,7 +211,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
     })
 
     it('should render the attendance page with appointments', async () => {
-      req.session.recordAppointmentAttendanceJourney = {
+      req.journeyData.recordAppointmentAttendanceJourney = {
         appointmentIds: [1, 2],
       }
 
@@ -389,7 +389,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
         searchTerm: 'jO',
       }
 
-      req.session.recordAppointmentAttendanceJourney = {
+      req.journeyData.recordAppointmentAttendanceJourney = {
         appointmentIds: [1, 2],
       }
 
@@ -490,7 +490,7 @@ describe('Route Handlers - Record Appointment Attendance', () => {
       await handler.GET_SINGLE(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('../attendees')
-      expect(req.session.recordAppointmentAttendanceJourney.appointmentIds).toEqual([33])
+      expect(req.journeyData.recordAppointmentAttendanceJourney.appointmentIds).toEqual([33])
     })
   })
 

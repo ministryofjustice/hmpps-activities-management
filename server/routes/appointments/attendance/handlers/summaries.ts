@@ -4,7 +4,7 @@ import { isValid } from 'date-fns'
 import DateOption from '../../../../enum/dateOption'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
-import { dateFromDateOption } from '../../../../utils/datePickerUtils'
+import { dateFromDateOption, formatIsoDate } from '../../../../utils/datePickerUtils'
 import { getAttendanceSummaryFromAttendanceSummaries } from '../../utils/attendanceUtils'
 import { asString, convertToNumberArray, toDateString } from '../../../../utils/utils'
 import LocationType from '../../../../enum/locationType'
@@ -59,11 +59,11 @@ export default class SummariesRoutes {
 
     const attendanceSummary = getAttendanceSummaryFromAttendanceSummaries(summaries)
 
-    if (!req.session.recordAppointmentAttendanceJourney) {
-      req.session.recordAppointmentAttendanceJourney = {}
+    if (!req.journeyData.recordAppointmentAttendanceJourney) {
+      req.journeyData.recordAppointmentAttendanceJourney = {}
     }
 
-    req.session.recordAppointmentAttendanceJourney.date = toDateString(dateOptionDate)
+    req.journeyData.recordAppointmentAttendanceJourney.date = toDateString(dateOptionDate)
 
     const locations = await this.activitiesService.getAppointmentLocations(user.activeCaseLoadId, user)
 
@@ -78,15 +78,19 @@ export default class SummariesRoutes {
   }
 
   SELECT_APPOINTMENT = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentId } = req.params
-    req.session.recordAppointmentAttendanceJourney = {
+    const { date, appointmentId } = req.params
+    req.journeyData.recordAppointmentAttendanceJourney = {
       appointmentIds: [+appointmentId],
+      date: formatIsoDate(new Date(date)),
     }
     return res.redirect('../attendees')
   }
 
   SELECT_APPOINTMENTS = async (req: Request, res: Response): Promise<void> => {
-    req.session.recordAppointmentAttendanceJourney.appointmentIds = convertToNumberArray(req.body.appointmentIds)
+    req.journeyData.recordAppointmentAttendanceJourney = {
+      appointmentIds: convertToNumberArray(req.body.appointmentIds),
+      date: formatIsoDate(new Date(req.body.date)),
+    }
     return res.redirect('../attendees')
   }
 
