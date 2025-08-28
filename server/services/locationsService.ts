@@ -5,6 +5,21 @@ import { Location } from '../@types/locationsInsidePrisonApi/types'
 export default class LocationsService {
   constructor(private readonly locationInsidePrisonApiClient: LocationsInsidePrisonApiClient) {}
 
+  public async fetchNonResidentialActivityLocations(
+    prisonCode: string,
+    user: ServiceUser,
+  ): Promise<LocationWithDescription[]> {
+    return this.locationInsidePrisonApiClient
+      .fetchNonResidentialLocationsByUsageType(prisonCode, user)
+      .then(locations => {
+        return locations
+          .map(location => {
+            return { ...location, description: location.localName || location.code }
+          })
+          .sort((a, b) => a.description.localeCompare(b.description))
+      })
+  }
+
   public async fetchActivityLocations(prisonCode: string, user: ServiceUser): Promise<LocationWithDescription[]> {
     return this.locationInsidePrisonApiClient
       .fetchLocationsByNonResidentialUsageType(prisonCode, 'PROGRAMMES_ACTIVITIES', user)

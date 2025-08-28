@@ -13,7 +13,7 @@ import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
 import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceDashboard'
 import ActivitiesIndexPage from '../../../pages/activities'
-import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
+import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 
 context('Record non attendance', () => {
   beforeEach(() => {
@@ -33,7 +33,11 @@ context('Record non attendance', () => {
     cy.stubEndpoint('PUT', '/attendances')
     cy.stubEndpoint('GET', '/attendance-reasons', getAttendanceReasons)
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
-    cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/non-residential-usage-type\\?formatLocalName=true',
+      getNonResidentialActivityLocations,
+    )
   })
 
   it('should click through record non attendance journey', () => {
