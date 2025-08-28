@@ -87,19 +87,6 @@ describe('Prison Service', () => {
     })
   })
 
-  describe('getEventLocations', () => {
-    it('should get the prisons event locations from the prisons API', async () => {
-      const expectedResult = [{ data: 'response' }] as unknown as LocationLenient[]
-
-      when(prisonApiClient.getEventLocations).calledWith(atLeast('MDI')).mockResolvedValue(expectedResult)
-
-      const actualResult = await prisonService.getEventLocations('MDI', user)
-
-      expect(actualResult).toEqual(expectedResult)
-      expect(prisonApiClient.getEventLocations).toHaveBeenCalledWith('MDI', user)
-    })
-  })
-
   describe('getInternalLocationByKey', () => {
     it('should get the location data based on the provided location key from the prisons API', async () => {
       const locationKey = 'XYZ123'

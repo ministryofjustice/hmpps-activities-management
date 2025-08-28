@@ -11,14 +11,6 @@ export default class PrisonApiClient extends AbstractHmppsRestClient {
     super('Prison API', config.apis.prisonApi as ApiConfig)
   }
 
-  // TODO: SAA-2303 - remove when possible
-  async getEventLocations(prisonCode: string, user: ServiceUser): Promise<LocationLenient[]> {
-    return this.get({
-      path: `/api/agencies/${prisonCode}/eventLocations`,
-      authToken: user.token,
-    })
-  }
-
   async getReferenceCodes(domain: string, user: ServiceUser): Promise<ReferenceCode[]> {
     return this.get({
       path: `/api/reference-domains/domains/${domain}/codes`,

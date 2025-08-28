@@ -16,7 +16,7 @@ import getInmateDetails from '../../../fixtures/prisonerSearchApi/getInmateDetai
 import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
 import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceDashboard'
 import ActivitiesIndexPage from '../../../pages/activities'
-import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
+import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 
 context('Record attendance', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -42,7 +42,11 @@ context('Record attendance', () => {
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
     cy.stubEndpoint('PUT', '/scheduled-instances/93/cancel')
     cy.stubEndpoint('PUT', '/scheduled-instances/93/uncancel')
-    cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/non-residential-usage-type\\?formatLocalName=true',
+      getNonResidentialActivityLocations,
+    )
   })
 
   it('should click through record attendance journey', () => {
