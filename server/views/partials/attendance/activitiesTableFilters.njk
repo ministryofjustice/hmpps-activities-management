@@ -9,7 +9,7 @@
 
     {% set locationOptions = [{ value: '-', text: '' }] %}
     {% for location in locations %}
-      {% set options = (locationOptions.push( { value: location.locationId, text: location.userDescription }), locationOptions) %}
+      {% set options = (locationOptions.push( { value: location.dpsLocationId, text: location.userDescription }), locationOptions) %}
     {% endfor %}
 
     {{ govukRadios({

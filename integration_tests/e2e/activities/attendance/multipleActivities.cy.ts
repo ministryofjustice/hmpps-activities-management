@@ -16,8 +16,8 @@ import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceD
 import ActivitiesIndexPage from '../../../pages/activities'
 import getAttendanceReasons from '../../../fixtures/activitiesApi/getAttendanceReasons.json'
 import NotAttendedReasonPage from '../../../pages/recordAttendance/notAttendedReason'
-import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
 import { formatDate } from '../../../../server/utils/utils'
+import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 
 context('Record attendance', () => {
   const today = startOfToday()
@@ -57,7 +57,11 @@ context('Record attendance', () => {
     cy.stubEndpoint('PUT', '/attendances')
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
     cy.stubEndpoint('GET', '/attendance-reasons', getAttendanceReasons)
-    cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/non-residential-usage-type\\?formatLocalName=true',
+      getNonResidentialActivityLocations,
+    )
   })
 
   it('Mark attendances for multiple activities', () => {

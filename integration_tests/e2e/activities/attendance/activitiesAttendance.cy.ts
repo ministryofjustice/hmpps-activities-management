@@ -10,8 +10,8 @@ import AttendancePage from '../../../pages/activities/attendanceSummary/attendan
 import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceDashboard'
 import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary.json'
-import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
 import RefusalsPage from '../../../pages/activities/attendanceSummary/refusals'
+import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 
 const today = format(startOfToday(), 'yyyy-MM-dd')
 
@@ -49,7 +49,11 @@ context('Daily Attendance', () => {
       `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`,
       getAttendanceSummary,
     )
-    cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/non-residential-usage-type\\?formatLocalName=true',
+      getNonResidentialActivityLocations,
+    )
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', inmateDetails)
   })
 
