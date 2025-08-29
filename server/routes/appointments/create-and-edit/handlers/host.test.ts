@@ -34,6 +34,8 @@ describe('Route Handlers - Create Appointment - Host', () => {
       params: {},
       session: {
         appointmentJourney: {},
+      },
+      journeyData: {
         editAppointmentJourney: {},
       },
     } as unknown as Request
@@ -93,7 +95,7 @@ describe('Route Handlers - Create Appointment - Host', () => {
 
       await handler.EDIT(req, res)
 
-      expect(req.session.editAppointmentJourney.organiserCode).toEqual(Organiser.PRISONER)
+      expect(req.journeyData.editAppointmentJourney.organiserCode).toEqual(Organiser.PRISONER)
       expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'host')
     })
   })

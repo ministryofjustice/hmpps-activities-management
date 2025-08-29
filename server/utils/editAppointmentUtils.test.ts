@@ -63,6 +63,8 @@ describe('Edit Appointment Utils', () => {
             date: weekTomorrow.setHours(13, 0),
           },
         } as unknown as AppointmentJourney,
+      },
+      journeyData: {
         editAppointmentJourney: {
           numberOfAppointments: 4,
           location: {
@@ -103,48 +105,48 @@ describe('Edit Appointment Utils', () => {
 
   describe('is apply to question required', () => {
     it('change future non repeating appointment', () => {
-      req.session.editAppointmentJourney.appointments = [
+      req.journeyData.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 1,
           startDate: '2023-01-01',
           cancelled: false,
         },
       ]
-      req.session.editAppointmentJourney.sequenceNumber = 1
+      req.journeyData.editAppointmentJourney.sequenceNumber = 1
 
-      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
+      expect(isApplyToQuestionRequired(req.journeyData.editAppointmentJourney)).toEqual(false)
     })
 
     it('change past non repeating appointment', () => {
-      req.session.editAppointmentJourney.numberOfAppointments = 1
-      req.session.editAppointmentJourney.appointments = []
-      req.session.editAppointmentJourney.sequenceNumber = 1
+      req.journeyData.editAppointmentJourney.numberOfAppointments = 1
+      req.journeyData.editAppointmentJourney.appointments = []
+      req.journeyData.editAppointmentJourney.sequenceNumber = 1
 
-      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
+      expect(isApplyToQuestionRequired(req.journeyData.editAppointmentJourney)).toEqual(false)
     })
 
     it('repeating appointment change single remaining appointment', () => {
-      req.session.editAppointmentJourney.appointments = [
+      req.journeyData.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 4,
           startDate: '2023-01-01',
           cancelled: false,
         },
       ]
-      req.session.editAppointmentJourney.sequenceNumber = 4
+      req.journeyData.editAppointmentJourney.sequenceNumber = 4
 
-      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
+      expect(isApplyToQuestionRequired(req.journeyData.editAppointmentJourney)).toEqual(false)
     })
 
     it('repeating appointment no remaining appointments change past appointment', () => {
-      req.session.editAppointmentJourney.appointments = []
-      req.session.editAppointmentJourney.sequenceNumber = 3
+      req.journeyData.editAppointmentJourney.appointments = []
+      req.journeyData.editAppointmentJourney.sequenceNumber = 3
 
-      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(false)
+      expect(isApplyToQuestionRequired(req.journeyData.editAppointmentJourney)).toEqual(false)
     })
 
     it('repeating appointment two remaining appointments change first appointment', () => {
-      req.session.editAppointmentJourney.appointments = [
+      req.journeyData.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 3,
           startDate: '2023-01-01',
@@ -156,147 +158,147 @@ describe('Edit Appointment Utils', () => {
           cancelled: false,
         },
       ]
-      req.session.editAppointmentJourney.sequenceNumber = 3
+      req.journeyData.editAppointmentJourney.sequenceNumber = 3
 
-      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(true)
+      expect(isApplyToQuestionRequired(req.journeyData.editAppointmentJourney)).toEqual(true)
     })
 
     it('repeating appointment change appointment', () => {
-      expect(isApplyToQuestionRequired(req.session.editAppointmentJourney)).toEqual(true)
+      expect(isApplyToQuestionRequired(req.journeyData.editAppointmentJourney)).toEqual(true)
     })
   })
 
   describe('get appointment edit message', () => {
     it('when cancelling an appointment', () => {
-      req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
+      req.journeyData.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'cancel',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'There are 4 appointments left in this series. They run from 2 January 2023 to 4 January 2023.',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('There are 4 appointments left in this series. They run from 2 January 2023 to 4 January 2023.')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('This appointment is in a series: select which appointments you want to cancel?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Confirm',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Confirm',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Confirm')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Confirm')
     })
 
     it('when deleting an appointment', () => {
-      req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
+      req.journeyData.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'delete',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'There are 4 appointments left in this series. They run from 2 January 2023 to 4 January 2023.',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('There are 4 appointments left in this series. They run from 2 January 2023 to 4 January 2023.')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('This appointment is in a series: select which appointments you want to delete?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Delete appointment',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Confirm',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Delete appointment')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Confirm')
     })
 
     it('when changing the tier', () => {
-      req.session.editAppointmentJourney.tierCode = EventTier.FOUNDATION
+      req.journeyData.editAppointmentJourney.tierCode = EventTier.FOUNDATION
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the tier for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the tier for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update tier',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update tier',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update tier')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update tier')
     })
 
     it('when changing the host', () => {
-      req.session.editAppointmentJourney.organiserCode = EventOrganiser.PRISONER
+      req.journeyData.editAppointmentJourney.organiserCode = EventOrganiser.PRISONER
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the host for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the host for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update host',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update host',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update host')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update host')
     })
 
     it('when changing the tier and host', () => {
-      req.session.editAppointmentJourney.tierCode = EventTier.TIER_2
-      req.session.editAppointmentJourney.organiserCode = EventOrganiser.PRISONER
+      req.journeyData.editAppointmentJourney.tierCode = EventTier.TIER_2
+      req.journeyData.editAppointmentJourney.organiserCode = EventOrganiser.PRISONER
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the tier and host for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the tier and host for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update tier and host',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update tier and host',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update tier and host')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update tier and host')
     })
 
     describe('when changing for location messages', () => {
       beforeEach(() => {
-        req.session.editAppointmentJourney.location = {
+        req.journeyData.editAppointmentJourney.location = {
           id: 2,
           description: 'Updated location',
         }
       })
 
       it('then the appointment edit message contains the location change ', () => {
-        expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-          'change the location for',
-        )
         expect(
-          getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+          getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+        ).toEqual('change the location for')
+        expect(
+          getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
         ).toEqual('')
         expect(
-          getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+          getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
         ).toEqual('Which appointments do you want to change the location for?')
       })
 
       it('then the confirm appointment edit cta contains the location change ', () => {
         expect(
-          getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney),
+          getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
         ).toEqual('Update location')
       })
 
       it('then the get appointment edit apply to cta contains the location change ', () => {
         expect(
-          getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney),
+          getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
         ).toEqual('Update location')
       })
     })
@@ -310,260 +312,260 @@ describe('Edit Appointment Utils', () => {
         ['location remains unchanged', undefined, undefined, undefined, undefined, false],
       ])('%s', (_, oldLocation, newLocation, oldInCell, newInCell, expected) => {
         req.session.appointmentJourney.location = !oldLocation ? undefined : { ...oldLocation, description: '' }
-        req.session.editAppointmentJourney.location = !newLocation ? undefined : { ...newLocation, description: '' }
+        req.journeyData.editAppointmentJourney.location = !newLocation ? undefined : { ...newLocation, description: '' }
         req.session.appointmentJourney.inCell = oldInCell
-        req.session.editAppointmentJourney.inCell = newInCell
+        req.journeyData.editAppointmentJourney.inCell = newInCell
 
-        expect(hasAppointmentLocationChanged(req.session.appointmentJourney, req.session.editAppointmentJourney)).toBe(
-          expected,
-        )
+        expect(
+          hasAppointmentLocationChanged(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+        ).toBe(expected)
       })
     })
 
     it('when changing the start date', () => {
-      req.session.editAppointmentJourney.startDate = '2023-05-16'
+      req.journeyData.editAppointmentJourney.startDate = '2023-05-16'
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the date for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the date for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update date',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update date',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update date')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update date')
     })
 
     it('when changing the start time', () => {
-      req.session.editAppointmentJourney.startTime = {
+      req.journeyData.editAppointmentJourney.startTime = {
         hour: 10,
         minute: 0,
         date: parseDate('2023-05-15T10:00', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the time for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the time for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update time',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update time',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update time')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update time')
     })
 
     it('when changing the end time', () => {
-      req.session.editAppointmentJourney.endTime = {
+      req.journeyData.editAppointmentJourney.endTime = {
         hour: 14,
         minute: 30,
         date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the time for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the time for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update time',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update time',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update time')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update time')
     })
 
     it('when changing the end time from null', () => {
       req.session.appointmentJourney.endTime = null
-      req.session.editAppointmentJourney.endTime = {
+      req.journeyData.editAppointmentJourney.endTime = {
         hour: 14,
         minute: 30,
         date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the time for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the time for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update time',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update time',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update time')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update time')
     })
 
     it('when changing the start time and end time', () => {
-      req.session.editAppointmentJourney.startTime = {
+      req.journeyData.editAppointmentJourney.startTime = {
         hour: 10,
         minute: 0,
         date: parseDate('2023-05-15T10:00', "yyyy-MM-dd'T'HH:mm"),
       }
-      req.session.editAppointmentJourney.endTime = {
+      req.journeyData.editAppointmentJourney.endTime = {
         hour: 14,
         minute: 30,
         date: parseDate('2023-05-15T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the time for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the time for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update time',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update time',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update time')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update time')
     })
 
     it('when changing the start date and start time', () => {
-      req.session.editAppointmentJourney.startDate = '2023-05-16'
-      req.session.editAppointmentJourney.startTime = {
+      req.journeyData.editAppointmentJourney.startDate = '2023-05-16'
+      req.journeyData.editAppointmentJourney.startTime = {
         hour: 10,
         minute: 0,
         date: parseDate('2023-05-16T10:00', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the date and time for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the date and time for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update date and time',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update date and time',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update date and time')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update date and time')
     })
 
     it('when changing the start date and end time', () => {
-      req.session.editAppointmentJourney.startDate = '2023-05-16'
-      req.session.editAppointmentJourney.endTime = {
+      req.journeyData.editAppointmentJourney.startDate = '2023-05-16'
+      req.journeyData.editAppointmentJourney.endTime = {
         hour: 14,
         minute: 30,
         date: parseDate('2023-05-16T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the date and time for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the date and time for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update date and time',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update date and time',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update date and time')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update date and time')
     })
 
     it('when changing the start date, start time and end time', () => {
-      req.session.editAppointmentJourney.startDate = '2023-05-16'
-      req.session.editAppointmentJourney.startTime = {
+      req.journeyData.editAppointmentJourney.startDate = '2023-05-16'
+      req.journeyData.editAppointmentJourney.startTime = {
         hour: 10,
         minute: 0,
         date: parseDate('2023-05-16T10:00', "yyyy-MM-dd'T'HH:mm"),
       }
-      req.session.editAppointmentJourney.endTime = {
+      req.journeyData.editAppointmentJourney.endTime = {
         hour: 14,
         minute: 30,
         date: parseDate('2023-05-16T14:30', "yyyy-MM-dd'T'HH:mm"),
       }
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the date and time for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the date and time for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update date and time',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update date and time',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update date and time')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update date and time')
     })
 
     it('when changing the comment', () => {
-      req.session.editAppointmentJourney.extraInformation = 'Updated comment'
+      req.journeyData.editAppointmentJourney.extraInformation = 'Updated comment'
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the extra information for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the extra information for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update extra information',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update extra information',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update extra information')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update extra information')
     })
 
     it('when removing the comment', () => {
-      req.session.editAppointmentJourney.extraInformation = ''
+      req.journeyData.editAppointmentJourney.extraInformation = ''
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'change the extra information for',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to change the extra information for?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update extra information',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Update extra information',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update extra information')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Update extra information')
     })
 
     it('when adding one person', () => {
-      req.session.editAppointmentJourney.addPrisoners = [
+      req.journeyData.editAppointmentJourney.addPrisoners = [
         {
           number: 'A1234BC',
           name: 'TEST PRISONER',
@@ -575,25 +577,25 @@ describe('Edit Appointment Utils', () => {
         },
       ]
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'add Test Prisoner to',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to add Test Prisoner to?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Confirm',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Confirm',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Confirm')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Confirm')
     })
 
     it('when adding two people', () => {
-      req.session.editAppointmentJourney.addPrisoners = [
+      req.journeyData.editAppointmentJourney.addPrisoners = [
         {
           number: 'A1234BC',
           name: 'TEST PRISONER1',
@@ -610,19 +612,19 @@ describe('Edit Appointment Utils', () => {
         },
       ]
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'add these people to',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to add these people to?')
     })
 
     it('when removing a person', () => {
-      req.session.editAppointmentJourney.removePrisoner = {
+      req.journeyData.editAppointmentJourney.removePrisoner = {
         prisonerNumber: 'A1234BC',
         bookingId: 1,
         firstName: 'TEST',
@@ -633,34 +635,34 @@ describe('Edit Appointment Utils', () => {
         category: 'H',
       }
 
-      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
+      expect(getAppointmentEditMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)).toEqual(
         'remove Test Prisoner from',
       )
-      expect(getAppointmentEditHintMessage(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        '',
-      )
       expect(
-        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.session.editAppointmentJourney),
+        getAppointmentEditHintMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('')
+      expect(
+        getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Which appointments do you want to remove Test Prisoner from?')
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Confirm removal',
-      )
-      expect(getAppointmentEditApplyToCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Confirm',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Confirm removal')
+      expect(
+        getAppointmentEditApplyToCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Confirm')
     })
   })
 
   describe('get appointment apply to options', () => {
     it('change future non repeating appointment', () => {
-      req.session.editAppointmentJourney.appointments = [
+      req.journeyData.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 1,
           startDate: '2023-01-01',
           cancelled: false,
         },
       ]
-      req.session.editAppointmentJourney.sequenceNumber = 1
+      req.journeyData.editAppointmentJourney.sequenceNumber = 1
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
@@ -671,14 +673,14 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment change single remaining appointment', () => {
-      req.session.editAppointmentJourney.appointments = [
+      req.journeyData.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 4,
           startDate: '2023-01-01',
           cancelled: false,
         },
       ]
-      req.session.editAppointmentJourney.sequenceNumber = 4
+      req.journeyData.editAppointmentJourney.sequenceNumber = 4
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
@@ -689,7 +691,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment change first appointment', () => {
-      req.session.editAppointmentJourney.sequenceNumber = 1
+      req.journeyData.editAppointmentJourney.sequenceNumber = 1
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
@@ -706,7 +708,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment two remaining appointments change first appointment', () => {
-      req.session.editAppointmentJourney.appointments = [
+      req.journeyData.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 3,
           startDate: '2023-01-03',
@@ -718,7 +720,7 @@ describe('Edit Appointment Utils', () => {
           cancelled: false,
         },
       ]
-      req.session.editAppointmentJourney.sequenceNumber = 3
+      req.journeyData.editAppointmentJourney.sequenceNumber = 3
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
@@ -735,7 +737,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment deleted appointment change first appointment', () => {
-      req.session.editAppointmentJourney.appointments = [
+      req.journeyData.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 1,
           startDate: '2023-01-01',
@@ -752,7 +754,7 @@ describe('Edit Appointment Utils', () => {
           cancelled: false,
         },
       ]
-      req.session.editAppointmentJourney.sequenceNumber = 1
+      req.journeyData.editAppointmentJourney.sequenceNumber = 1
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
@@ -769,7 +771,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment change second appointment', () => {
-      req.session.editAppointmentJourney.sequenceNumber = 2
+      req.journeyData.editAppointmentJourney.sequenceNumber = 2
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
@@ -792,7 +794,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment change second to last appointment', () => {
-      req.session.editAppointmentJourney.sequenceNumber = 3
+      req.journeyData.editAppointmentJourney.sequenceNumber = 3
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
@@ -815,7 +817,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('repeating appointment change last appointment', () => {
-      req.session.editAppointmentJourney.sequenceNumber = 4
+      req.journeyData.editAppointmentJourney.sequenceNumber = 4
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
@@ -832,7 +834,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('cancel appointment', () => {
-      req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
+      req.journeyData.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CANCELLED
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
@@ -852,7 +854,7 @@ describe('Edit Appointment Utils', () => {
 
     it('uncancel standalone appointment', () => {
       req.session.appointmentJourney.startDate = toDateString(addDays(Date(), 1))
-      req.session.editAppointmentJourney = {
+      req.journeyData.editAppointmentJourney = {
         numberOfAppointments: 1,
         appointments: [
           {
@@ -866,14 +868,14 @@ describe('Edit Appointment Utils', () => {
         uncancel: true,
       }
 
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Confirm',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Confirm')
     })
 
     it('uncancel appointment where all future appointments are cancelled', () => {
       req.session.appointmentJourney.startDate = toDateString(addDays(Date(), 2))
-      req.session.editAppointmentJourney = {
+      req.journeyData.editAppointmentJourney = {
         numberOfAppointments: 3,
         appointments: [
           {
@@ -921,14 +923,14 @@ describe('Edit Appointment Utils', () => {
         },
       ] as AppointmentApplyToOption[])
 
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Continue',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Continue')
     })
 
     it('uncancel appointment where all future appointments are not cancelled', () => {
       req.session.appointmentJourney.startDate = toDateString(addDays(Date(), 2))
-      req.session.editAppointmentJourney = {
+      req.journeyData.editAppointmentJourney = {
         numberOfAppointments: 3,
         appointments: [
           {
@@ -977,13 +979,13 @@ describe('Edit Appointment Utils', () => {
         },
       ] as AppointmentApplyToOption[])
 
-      expect(getConfirmAppointmentEditCta(req.session.appointmentJourney, req.session.editAppointmentJourney)).toEqual(
-        'Confirm',
-      )
+      expect(
+        getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
+      ).toEqual('Confirm')
     })
 
     it('delete appointment', () => {
-      req.session.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
+      req.journeyData.editAppointmentJourney.cancellationReason = AppointmentCancellationReason.CREATED_IN_ERROR
 
       expect(getAppointmentApplyToOptions(req)).toEqual([
         {
@@ -1002,7 +1004,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('add one person to the appointment', () => {
-      req.session.editAppointmentJourney.addPrisoners = [
+      req.journeyData.editAppointmentJourney.addPrisoners = [
         {
           number: 'A1234BC',
           name: 'TEST PRISONER',
@@ -1033,7 +1035,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('add two people to the appointment', () => {
-      req.session.editAppointmentJourney.addPrisoners = [
+      req.journeyData.editAppointmentJourney.addPrisoners = [
         {
           number: 'A1234BC',
           name: 'TEST PRISONER1',
@@ -1071,7 +1073,7 @@ describe('Edit Appointment Utils', () => {
     })
 
     it('remove a person from the appointment', () => {
-      req.session.editAppointmentJourney.removePrisoner = {
+      req.journeyData.editAppointmentJourney.removePrisoner = {
         prisonerNumber: 'A1234BC',
         bookingId: 1,
         firstName: 'TEST',

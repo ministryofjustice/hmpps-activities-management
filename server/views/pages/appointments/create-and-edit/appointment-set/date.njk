@@ -31,7 +31,7 @@
                     },
                     errorMessage: validationErrors | findError('startDate'),
                     classes: 'moj-datepicker--fixed-width',
-                    value: formResponses.startDate or ((session.editAppointmentJourney.startDate or session.appointmentJourney.startDate) | isoDateToDatePickerDate)
+                    value: formResponses.startDate or ((editAppointmentJourney.startDate or session.appointmentJourney.startDate) | isoDateToDatePickerDate)
                 }) }}
                 {{ govukButton({
                     text: "Confirm and save" if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT else "Continue",

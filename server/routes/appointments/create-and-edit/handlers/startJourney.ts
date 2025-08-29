@@ -133,11 +133,11 @@ export default class StartJourneyRoutes {
 
     this.populateEditSession(req, 'remove-prisoner')
 
-    req.session.editAppointmentJourney.removePrisoner = attendee.prisoner
+    req.journeyData.editAppointmentJourney.removePrisoner = attendee.prisoner
 
     this.metricsService.trackEvent(MetricsEvent.EDIT_APPOINTMENT_JOURNEY_STARTED(appointment, req, res.locals.user))
 
-    if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
+    if (isApplyToQuestionRequired(req.journeyData.editAppointmentJourney)) {
       return res.redirect('../remove/apply-to')
     }
 
@@ -148,7 +148,7 @@ export default class StartJourneyRoutes {
     const { appointment } = req
 
     this.populateEditSession(req, 'add-prisoners')
-    req.session.editAppointmentJourney.addPrisoners = []
+    req.journeyData.editAppointmentJourney.addPrisoners = []
 
     this.metricsService.trackEvent(MetricsEvent.EDIT_APPOINTMENT_JOURNEY_STARTED(appointment, req, res.locals.user))
 
@@ -233,7 +233,7 @@ export default class StartJourneyRoutes {
 
     const { appointmentSeries, appointment } = req
 
-    req.session.editAppointmentJourney = {
+    req.journeyData.editAppointmentJourney = {
       numberOfAppointments: appointment.appointmentSeries?.schedule?.numberOfAppointments ?? 1,
       appointments: appointmentSeries?.appointments.map(a => ({
         sequenceNumber: a.sequenceNumber,

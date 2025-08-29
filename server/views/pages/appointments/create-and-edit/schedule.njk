@@ -109,13 +109,13 @@
                         ), appointmentSummary) %}
                     {% endif %}
 
-                    {% if session.editAppointmentJourney.addPrisoners | length %}
+                    {% if editAppointmentJourney.addPrisoners | length %}
                         {% set appointmentSummary = (appointmentSummary.push({
                             key: {
                                 text: "Attendees you are adding"
                             },
                             value: {
-                                text: session.editAppointmentJourney.addPrisoners | length
+                                text: editAppointmentJourney.addPrisoners | length
                             },
                             actions: {
                                 items: [
@@ -132,11 +132,11 @@
                     {% endif %}
 
                     {% set showTime = (session.appointmentJourney.startTime and session.appointmentJourney.endTime) or
-                        (session.editAppointmentJourney.startTime and session.editAppointmentJourney.endTime) %}
+                        (editAppointmentJourney.startTime and editAppointmentJourney.endTime) %}
 
                     {% set isDateTimeEditable = session.appointmentJourney.mode != AppointmentJourneyMode.EDIT or
-                        session.editAppointmentJourney.startDate or
-                        (session.editAppointmentJourney.startTime and session.editAppointmentJourney.endTime) %}
+                        editAppointmentJourney.startDate or
+                        (editAppointmentJourney.startTime and editAppointmentJourney.endTime) %}
                     {% set appointmentSummary = (appointmentSummary.push(
                         {
                             key: {
@@ -182,7 +182,7 @@
                     }) }}
 
                     {{ govukButton({
-                        text: getAppointmentEditApplyToCta(session.appointmentJourney, session.editAppointmentJourney) if isCtaAcceptAndSave else "Continue",
+                        text: getAppointmentEditApplyToCta(session.appointmentJourney, editAppointmentJourney) if isCtaAcceptAndSave else "Continue",
                         preventDoubleClick: true,
                         attributes: { 'data-qa': 'top-cta' }
                     }) if prisonerSchedules.length > 10 }}
@@ -221,7 +221,7 @@
                                                     Remove appointment<span class="govuk-visually-hidden"> for prison number {{ prisoner.number }}</span>
                                                 </a>
                                             </li>
-                                        {% elseif session.appointmentJourney.mode != AppointmentJourneyMode.EDIT or session.editAppointmentJourney.addPrisoners %}
+                                        {% elseif session.appointmentJourney.mode != AppointmentJourneyMode.EDIT or editAppointmentJourney.addPrisoners %}
                                             <li class="govuk-summary-card__action">
                                                 <a class="govuk-link govuk-link--no-visited-state" href="{{ "schedule/" + prisoner.number + "/remove" + ("?preserveHistory=true" if preserveHistory else "") }}" data-qa="remove-prison-number-{{ prisoner.number }}">
                                                     Remove attendee<span class="govuk-visually-hidden"> with prison number {{ prisoner.number }}</span>
@@ -290,7 +290,7 @@
                     {{ govukButton({
                         attributes: { 'data-qa': 'bottom-cta' },
                         preventDoubleClick: true,
-                        text: getAppointmentEditApplyToCta(session.appointmentJourney, session.editAppointmentJourney) if isCtaAcceptAndSave else "Continue"
+                        text: getAppointmentEditApplyToCta(session.appointmentJourney, editAppointmentJourney) if isCtaAcceptAndSave else "Continue"
                     }) }}
                 </form>
             {% endif %}
@@ -374,12 +374,12 @@
 {% endmacro %}
 
 {% macro appointmentDate() %}
-    {%- set startDate = session.editAppointmentJourney.startDate or session.appointmentJourney.startDate -%}
+    {%- set startDate = editAppointmentJourney.startDate or session.appointmentJourney.startDate -%}
     {{ startDate | parseIsoDate | formatDate }}
 {% endmacro %}
 
 {% macro appointmentTime() %}
-    {% set startTime = session.editAppointmentJourney.startTime.date or session.appointmentJourney.startTime.date %}
-    {% set endTime = session.editAppointmentJourney.endTime.date or session.appointmentJourney.endTime.date %}
+    {% set startTime = editAppointmentJourney.startTime.date or session.appointmentJourney.startTime.date %}
+    {% set endTime = editAppointmentJourney.endTime.date or session.appointmentJourney.endTime.date %}
     {{ (startTime | parseISODate | formatDate('HH:mm') + ' to ' + endTime | parseISODate | formatDate('HH:mm')) }}
 {% endmacro %}

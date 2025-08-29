@@ -59,6 +59,8 @@ describe('Route Handlers - Uncancel an Appointment', () => {
           repeat: 'NO',
           extraInformation: null,
         },
+      },
+      journeyData: {
         editAppointmentJourney: {
           numberOfAppointments: 1,
           appointments: [
@@ -151,6 +153,8 @@ describe('Route Handlers - Uncancel an Appointment', () => {
             numberOfAppointments: 5,
             extraInformation: null,
           },
+        },
+        journeyData: {
           editAppointmentJourney: {
             numberOfAppointments: 5,
             appointments: [
@@ -249,6 +253,8 @@ describe('Route Handlers - Uncancel an Appointment', () => {
             numberOfAppointments: 5,
             extraInformation: null,
           },
+        },
+        journeyData: {
           editAppointmentJourney: {
             numberOfAppointments: 5,
             appointments: [
@@ -347,6 +353,8 @@ describe('Route Handlers - Uncancel an Appointment', () => {
             numberOfAppointments: 5,
             extraInformation: null,
           },
+        },
+        journeyData: {
           editAppointmentJourney: {
             numberOfAppointments: 5,
             appointments: [
@@ -443,6 +451,8 @@ describe('Route Handlers - Uncancel an Appointment', () => {
             repeat: 'NO',
             extraInformation: null,
           },
+        },
+        journeyData: {
           editAppointmentJourney: {
             numberOfAppointments: 1,
             appointments: [

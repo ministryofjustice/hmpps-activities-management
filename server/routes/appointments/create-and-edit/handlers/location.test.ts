@@ -56,6 +56,8 @@ describe('Route Handlers - Create Appointment - Location', () => {
     req = {
       session: {
         appointmentJourney: {},
+      },
+      journeyData: {
         editAppointmentJourney: {},
       },
       flash: jest.fn(),
@@ -167,7 +169,7 @@ describe('Route Handlers - Create Appointment - Location', () => {
         },
       } as unknown as AppointmentJourney
 
-      req.session.editAppointmentJourney = {} as unknown as EditAppointmentJourney
+      req.journeyData.editAppointmentJourney = {} as unknown as EditAppointmentJourney
 
       when(activitiesService.getAppointmentLocations).mockResolvedValue(locations)
 

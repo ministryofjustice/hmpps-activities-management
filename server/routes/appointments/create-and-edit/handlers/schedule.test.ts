@@ -50,6 +50,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         appointmentSetJourney: {
           appointments: [],
         },
+      },
+      journeyData: {
         editAppointmentJourney: {},
       },
       query: {},
@@ -121,7 +123,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     it('should render the schedule view with prisoner schedule for new prisoners', async () => {
       req.session.appointmentJourney.type = AppointmentType.GROUP
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-      req.session.editAppointmentJourney.addPrisoners = [
+      req.journeyData.editAppointmentJourney.addPrisoners = [
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
@@ -371,7 +373,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
     })
 
     it('should call redirect and edit with prisoners/add property', async () => {
-      req.session.editAppointmentJourney.addPrisoners = [
+      req.journeyData.editAppointmentJourney.addPrisoners = [
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
@@ -466,7 +468,7 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
 
     it('should remove prisoners when editing appointment and redirect back to GET', async () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-      req.session.editAppointmentJourney.addPrisoners = [
+      req.journeyData.editAppointmentJourney.addPrisoners = [
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',
@@ -494,8 +496,8 @@ describe('Route Handlers - Create Appointment - Schedule', () => {
         ),
       )
 
-      expect(req.session.editAppointmentJourney.addPrisoners.length).toEqual(1)
-      expect(req.session.editAppointmentJourney.addPrisoners).toEqual([
+      expect(req.journeyData.editAppointmentJourney.addPrisoners.length).toEqual(1)
+      expect(req.journeyData.editAppointmentJourney.addPrisoners).toEqual([
         {
           number: 'A1234BC',
           name: 'TEST01 PRISONER01',

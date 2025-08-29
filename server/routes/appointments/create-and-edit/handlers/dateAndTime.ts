@@ -76,18 +76,18 @@ export default class DateAndTimeRoutes {
 
     this.setTimeAndDate(req, 'editAppointmentJourney')
 
-    if (hasAnyAppointmentPropertyChanged(req.session.appointmentJourney, req.session.editAppointmentJourney)) {
+    if (hasAnyAppointmentPropertyChanged(req.session.appointmentJourney, req.journeyData.editAppointmentJourney)) {
       return res.redirect('schedule')
     }
 
     req.session.appointmentJourney = null
-    req.session.editAppointmentJourney = null
+    req.journeyData.editAppointmentJourney = null
 
     return res.redirect(`/appointments/${appointmentId}`)
   }
 
   private setTimeAndDate(req: Request, journeyName: string) {
-    const appointmentJourney = req.session[journeyName]
+    const appointmentJourney = req.session[journeyName] || req.journeyData[journeyName]
     const { startDate, startTime, endTime } = req.body
 
     appointmentJourney.startDate = formatIsoDate(startDate)

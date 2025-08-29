@@ -37,11 +37,13 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         appointmentJourney: {
           prisoners: [],
         },
-        editAppointmentJourney: {
-          addPrisoners: [],
-        },
         appointmentSetJourney: {
           appointments: [],
+        },
+      },
+      journeyData: {
+        editAppointmentJourney: {
+          addPrisoners: [],
         },
       },
       params: {},
@@ -225,7 +227,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
     it('should render the review prisoners view - edit appointment - some prisoners not found', async () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
       req.session.appointmentJourney.type = AppointmentType.GROUP
-      req.session.editAppointmentJourney.addPrisoners = [
+      req.journeyData.editAppointmentJourney.addPrisoners = [
         {
           number: 'A1234BC',
           name: '',
@@ -280,7 +282,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         appointmentId,
       }
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-      req.session.editAppointmentJourney.addPrisoners = prisoners
+      req.journeyData.editAppointmentJourney.addPrisoners = prisoners
       await handler.GET(req, res)
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.APPOINTMENT_CHANGE_FROM_SCHEDULE(
@@ -378,7 +380,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     beforeEach(() => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-      req.session.editAppointmentJourney.addPrisoners = prisoners
+      req.journeyData.editAppointmentJourney.addPrisoners = prisoners
     })
 
     it('should redirect or return to review alerts page if there are any alerts', async () => {

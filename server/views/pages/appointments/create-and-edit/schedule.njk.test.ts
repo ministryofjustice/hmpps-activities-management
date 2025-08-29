@@ -116,8 +116,8 @@ describe('Views - Appointments Management - Schedule', () => {
     session: {
       appointmentJourney: {} as AppointmentJourney,
       appointmentSetJourney: {} as AppointmentSetJourney,
-      editAppointmentJourney: {} as EditAppointmentJourney,
     },
+    editAppointmentJourney: {} as EditAppointmentJourney,
     prisonerSchedules: [] as {
       prisoner: { number: string; name: string; firstName?: string; lastName?: string; cellLocation: string }
       startTime?: { hour: number; minute: number }
@@ -148,8 +148,8 @@ describe('Views - Appointments Management - Schedule', () => {
           startDate: formatIsoDate(tomorrow),
         } as unknown as AppointmentJourney,
         appointmentSetJourney: {} as AppointmentSetJourney,
-        editAppointmentJourney: {} as EditAppointmentJourney,
       },
+      editAppointmentJourney: {} as EditAppointmentJourney,
       prisonerSchedules: [],
       formResponses: {},
       isCtaAcceptAndSave: false,
@@ -1202,13 +1202,13 @@ describe('Views - Appointments Management - Schedule', () => {
         prisoner,
         scheduledEvents: getScheduledEventsForPrisoner(prisoner),
       }))
-      viewContext.session.editAppointmentJourney = {} as EditAppointmentJourney
+      viewContext.editAppointmentJourney = {} as EditAppointmentJourney
     })
 
     describe('Add prisoners', () => {
       beforeEach(() => {
         viewContext.isCtaAcceptAndSave = true
-        viewContext.session.editAppointmentJourney.addPrisoners = [
+        viewContext.editAppointmentJourney.addPrisoners = [
           {
             number: 'A1234BC',
             name: 'TEST01 PRISONER01',
@@ -1219,7 +1219,7 @@ describe('Views - Appointments Management - Schedule', () => {
             prisonCode: 'MDI',
           },
         ]
-        viewContext.prisonerSchedules = viewContext.session.editAppointmentJourney.addPrisoners.map(prisoner => ({
+        viewContext.prisonerSchedules = viewContext.editAppointmentJourney.addPrisoners.map(prisoner => ({
           prisoner,
           scheduledEvents: getScheduledEventsForPrisoner(prisoner),
         }))
@@ -1256,14 +1256,14 @@ describe('Views - Appointments Management - Schedule', () => {
       })
 
       it('should display "Confirm" top call to action when adding eleven attendees', () => {
-        viewContext.session.editAppointmentJourney.addPrisoners = Array(11).map((v, i) => ({
+        viewContext.editAppointmentJourney.addPrisoners = Array(11).map((v, i) => ({
           number: `A1234BC${i}`,
           name: `TEST PRISONER${i}`,
           cellLocation: '1-1-1',
           status: 'ACTIVE IN',
           prisonCode: 'MDI',
         }))
-        viewContext.prisonerSchedules = viewContext.session.editAppointmentJourney.addPrisoners.map(v => ({
+        viewContext.prisonerSchedules = viewContext.editAppointmentJourney.addPrisoners.map(v => ({
           prisoner: v,
           scheduledEvents: getScheduledEventsForPrisoner(v),
         }))
@@ -1281,7 +1281,7 @@ describe('Views - Appointments Management - Schedule', () => {
     describe('Edit date', () => {
       beforeEach(() => {
         viewContext.isCtaAcceptAndSave = true
-        viewContext.session.editAppointmentJourney = {
+        viewContext.editAppointmentJourney = {
           startDate: formatIsoDate(nextWeek),
         } as unknown as EditAppointmentJourney
         viewContext.session.appointmentJourney.prisoners.push({
@@ -1338,7 +1338,7 @@ describe('Views - Appointments Management - Schedule', () => {
     describe('Edit time', () => {
       beforeEach(() => {
         viewContext.isCtaAcceptAndSave = true
-        viewContext.session.editAppointmentJourney = {
+        viewContext.editAppointmentJourney = {
           startTime: {
             hour: 12,
             minute: 30,
@@ -1404,7 +1404,7 @@ describe('Views - Appointments Management - Schedule', () => {
     describe('Edit date and time', () => {
       beforeEach(() => {
         viewContext.isCtaAcceptAndSave = true
-        viewContext.session.editAppointmentJourney = {
+        viewContext.editAppointmentJourney = {
           startDate: formatIsoDate(nextWeek),
           startTime: {
             hour: 12,

@@ -312,7 +312,8 @@ export const getAppointmentEditHeadingMessage = (
 }
 
 export const getAppointmentApplyToOptions = (req: Request) => {
-  const { appointmentJourney, editAppointmentJourney } = req.session
+  const { appointmentJourney } = req.session
+  const { editAppointmentJourney } = req.journeyData
   const currentAppointment = getAppointment(editAppointmentJourney.sequenceNumber, editAppointmentJourney)
   const firstAppointment = getFirstAppointment(editAppointmentJourney)
   const lastAppointment = getLastAppointment(editAppointmentJourney)

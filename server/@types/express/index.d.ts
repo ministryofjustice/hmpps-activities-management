@@ -33,7 +33,6 @@ declare module 'express-session' {
     suspendJourney: SuspendJourney
     appointmentJourney: AppointmentJourney
     appointmentSetJourney: AppointmentSetJourney
-    editAppointmentJourney: EditAppointmentJourney
     bookACourtHearingJourney: BookACourtHearingJourney
     bookAProbationMeetingJourney: BookAProbationMeetingJourney
     journeyMetrics: JourneyMetrics
@@ -47,7 +46,6 @@ export type SessionDatum = {
   instanceUnixEpoch: number
   appointmentJourney: AppointmentJourney
   appointmentSetJourney: AppointmentSetJourney
-  editAppointmentJourney: EditAppointmentJourney
   journeyMetrics: JourneyMetrics
 }
 
@@ -92,6 +90,7 @@ export type JourneyData = {
   recordAttendanceJourney?: RecordAttendanceJourney
   allocateJourney?: AllocateToActivityJourney
   recordAppointmentAttendanceJourney?: RecordAppointmentAttendanceJourney
+  editAppointmentJourney?: EditAppointmentJourney
 }
 
 export type ServiceUser = Express.User &

@@ -8,7 +8,8 @@ export default class ReviewPrisonersAlertsRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId } = req.params
-    const { appointmentJourney, appointmentSetJourney, editAppointmentJourney } = req.session
+    const { appointmentJourney, appointmentSetJourney } = req.session
+    const { editAppointmentJourney } = req.journeyData
     const { preserveHistory } = req.query
 
     let backLinkHref =
@@ -72,7 +73,7 @@ export default class ReviewPrisonersAlertsRoutes {
   EDIT_REMOVE = async (req: Request, res: Response): Promise<void> => {
     const { prisonNumber } = req.params
 
-    req.session.editAppointmentJourney.addPrisoners = req.session.editAppointmentJourney.addPrisoners.filter(
+    req.journeyData.editAppointmentJourney.addPrisoners = req.journeyData.editAppointmentJourney.addPrisoners.filter(
       prisoner => prisoner.number !== prisonNumber,
     )
 

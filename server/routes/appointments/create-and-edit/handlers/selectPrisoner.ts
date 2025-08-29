@@ -86,8 +86,8 @@ export default class SelectPrisonerRoutes {
     }
 
     if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {
-      if (req.session.editAppointmentJourney.addPrisoners.find(p => p.number === prisonerData.number)) return true
-      req.session.editAppointmentJourney.addPrisoners.push(prisonerData)
+      if (req.journeyData.editAppointmentJourney.addPrisoners.find(p => p.number === prisonerData.number)) return true
+      req.journeyData.editAppointmentJourney.addPrisoners.push(prisonerData)
     } else if (req.session.appointmentJourney.type === AppointmentType.GROUP) {
       if (req.session.appointmentJourney.prisoners.find(p => p.number === prisonerData.number)) return true
       req.session.appointmentJourney.prisoners.push(prisonerData)

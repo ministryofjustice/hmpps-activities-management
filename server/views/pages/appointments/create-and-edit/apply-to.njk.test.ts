@@ -38,8 +38,8 @@ describe('Views - Appointments Management - Apply to', () => {
   let viewContext = {
     session: {
       appointmentJourney: {} as unknown as AppointmentJourney,
-      editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     },
+    editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     appointmentId,
     property: '',
     frequencyText: null as string,
@@ -66,28 +66,28 @@ describe('Views - Appointments Management - Apply to', () => {
           startDate: formatIsoDate(weekTomorrow),
           frequency: AppointmentFrequency.DAILY,
         },
-        editAppointmentJourney: {
-          location: {
-            id: 123,
-            description: 'Original location',
-          },
-          numberOfAppointments: 3,
-          appointments: [
-            {
-              sequenceNumber: 1,
-              startDate: format(weekTomorrow, 'yyyy-MM-dd'),
-            },
-            {
-              sequenceNumber: 2,
-              startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
-            },
-            {
-              sequenceNumber: 3,
-              startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
-            },
-          ],
-        } as EditAppointmentJourney,
       },
+      editAppointmentJourney: {
+        location: {
+          id: 123,
+          description: 'Original location',
+        },
+        numberOfAppointments: 3,
+        appointments: [
+          {
+            sequenceNumber: 1,
+            startDate: format(weekTomorrow, 'yyyy-MM-dd'),
+          },
+          {
+            sequenceNumber: 2,
+            startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
+          },
+          {
+            sequenceNumber: 3,
+            startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
+          },
+        ],
+      } as EditAppointmentJourney,
       appointmentId,
       property: 'location',
       frequencyText: 'This appointment repeats every day',
@@ -96,7 +96,7 @@ describe('Views - Appointments Management - Apply to', () => {
   })
 
   it('prisoner list is not shown when adding one prisoner', () => {
-    viewContext.session.editAppointmentJourney.addPrisoners = [
+    viewContext.editAppointmentJourney.addPrisoners = [
       {
         number: 'A1234BC',
         name: 'TEST PRISONER',
@@ -114,7 +114,7 @@ describe('Views - Appointments Management - Apply to', () => {
   })
 
   it('prisoner list is shown when adding two prisoners', () => {
-    viewContext.session.editAppointmentJourney.addPrisoners = [
+    viewContext.editAppointmentJourney.addPrisoners = [
       {
         number: 'A1234BC',
         name: 'TEST PRISONER1',
@@ -154,7 +154,7 @@ describe('Views - Appointments Management - Apply to', () => {
   })
 
   it('call to action is add attendee when adding prisoners', () => {
-    viewContext.session.editAppointmentJourney.addPrisoners = [
+    viewContext.editAppointmentJourney.addPrisoners = [
       {
         number: 'A1234BC',
         name: 'TEST PRISONER',
@@ -170,7 +170,7 @@ describe('Views - Appointments Management - Apply to', () => {
   })
 
   it('call to action is remove attendee when removing a prisoner', () => {
-    viewContext.session.editAppointmentJourney.removePrisoner = {
+    viewContext.editAppointmentJourney.removePrisoner = {
       prisonerNumber: 'A1234BC',
       bookingId: 1,
       firstName: 'TEST',
@@ -187,7 +187,7 @@ describe('Views - Appointments Management - Apply to', () => {
   })
 
   it('call to action is confirm and save when changing a property', () => {
-    viewContext.session.editAppointmentJourney.location = {
+    viewContext.editAppointmentJourney.location = {
       id: 456,
       description: 'Updated location',
     }

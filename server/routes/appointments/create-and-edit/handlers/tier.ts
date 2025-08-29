@@ -20,7 +20,7 @@ export default class TierRoutes {
       eventTierDescriptions,
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !isApplyToQuestionRequired(req.session.editAppointmentJourney),
+        !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
     })
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
@@ -41,7 +41,7 @@ export default class TierRoutes {
     const { tier }: TierForm = req.body
     const { preserveHistory } = req.query
 
-    req.session.editAppointmentJourney.tierCode = EventTier[tier]
+    req.journeyData.editAppointmentJourney.tierCode = EventTier[tier]
 
     if (EventTier.TIER_2 === tier) {
       return res.redirect(`host${preserveHistory ? '?preserveHistory=true' : ''}`)
