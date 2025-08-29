@@ -29,7 +29,7 @@ export default function setUpJourneyData(store: TokenStoreInterface) {
         await store.setToken(
           journeyTokenKey,
           JSON.stringify(req.journeyData ?? {}),
-          config.journeyDataTokenDuration * 60 * 60,
+          config.journeyDataTokenDurationHours * 60 * 60,
         )
       }
     })
