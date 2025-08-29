@@ -3,7 +3,7 @@ import _ from 'lodash'
 import createHttpError from 'http-errors'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
-import { convertToTitleCase } from '../../../../utils/utils'
+import { formatFirstLastName } from '../../../../utils/utils'
 import logger from '../../../../../logger'
 
 export default (prisonService: PrisonService, activitiesService: ActivitiesService): RequestHandler => {
@@ -40,7 +40,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
           payBand: a.prisonPayBand,
         })),
       inmate: {
-        prisonerName: convertToTitleCase(`${prisoner.firstName} ${prisoner.lastName}`),
+        prisonerName: formatFirstLastName(prisoner.firstName, prisoner.lastName),
         prisonerNumber,
       },
       earliestAllocationEndDate: _.minBy(allocations, 'endDate')?.endDate,

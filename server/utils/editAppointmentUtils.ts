@@ -6,7 +6,7 @@ import {
   AppointmentCancellationReason,
   AppointmentFrequency,
 } from '../@types/appointments'
-import { convertToTitleCase, formatDate, fullName, parseDate, toDate } from './utils'
+import { formatDate, formatFirstLastName, parseDate, toDate } from './utils'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
 import { parseIsoDate } from './datePickerUtils'
@@ -76,7 +76,7 @@ export const getAppointmentEditMessage = (
   }
 
   if (editAppointmentJourney.addPrisoners?.length === 1) {
-    return `add ${convertToTitleCase(editAppointmentJourney.addPrisoners[0].name)} to`
+    return `add ${formatFirstLastName(editAppointmentJourney.addPrisoners[0].firstName, editAppointmentJourney.addPrisoners[0].lastName)} to`
   }
 
   if (editAppointmentJourney.addPrisoners?.length > 1) {
@@ -84,7 +84,7 @@ export const getAppointmentEditMessage = (
   }
 
   if (editAppointmentJourney.removePrisoner) {
-    return `remove ${convertToTitleCase(fullName(editAppointmentJourney.removePrisoner))} from`
+    return `remove ${formatFirstLastName(editAppointmentJourney.removePrisoner.firstName, editAppointmentJourney.removePrisoner.lastName)} from`
   }
 
   return ''
@@ -297,7 +297,7 @@ export const getAppointmentEditHeadingMessage = (
   }
 
   if (editAppointmentJourney.addPrisoners?.length === 1) {
-    return `Which appointments do you want to add ${convertToTitleCase(editAppointmentJourney.addPrisoners[0].name)} to?`
+    return `Which appointments do you want to add ${formatFirstLastName(editAppointmentJourney.addPrisoners[0].firstName, editAppointmentJourney.addPrisoners[0].lastName)} to?`
   }
 
   if (editAppointmentJourney.addPrisoners?.length > 1) {
@@ -305,7 +305,7 @@ export const getAppointmentEditHeadingMessage = (
   }
 
   if (editAppointmentJourney.removePrisoner) {
-    return `Which appointments do you want to remove ${convertToTitleCase(fullName(editAppointmentJourney.removePrisoner))} from?`
+    return `Which appointments do you want to remove ${formatFirstLastName(editAppointmentJourney.removePrisoner.firstName, editAppointmentJourney.removePrisoner.lastName)} from?`
   }
 
   return ''

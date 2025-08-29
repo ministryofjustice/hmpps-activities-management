@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { AdvanceAttendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
-import { convertToTitleCase } from '../../../../utils/utils'
+import { formatFirstLastName } from '../../../../utils/utils'
 import config from '../../../../config'
 
 export default class ResetAdvanceAttendanceRoutes {
@@ -45,7 +45,7 @@ export default class ResetAdvanceAttendanceRoutes {
     const attendee = await this.prisonService.getInmateByPrisonerNumber(advanceAttendance.prisonerNumber, user)
 
     await this.activitiesService.deleteAdvanceAttendance(+advanceAttendanceId, user)
-    const successMessage = `The attendance record for ${convertToTitleCase(`${attendee.firstName} ${attendee.lastName}`)} has been reset.`
+    const successMessage = `The attendance record for ${formatFirstLastName(attendee.firstName, attendee.lastName)} has been reset.`
     return res.redirectWithSuccess('../../attendance-list', 'Attendance reset', successMessage)
   }
 }

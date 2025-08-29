@@ -36,8 +36,6 @@ declare module 'express-session' {
     editAppointmentJourney: EditAppointmentJourney
     bookACourtHearingJourney: BookACourtHearingJourney
     bookAProbationMeetingJourney: BookAProbationMeetingJourney
-    attendanceSummaryJourney: AttendanceSummaryJourney
-    recordAppointmentAttendanceJourney: RecordAppointmentAttendanceJourney
     journeyMetrics: JourneyMetrics
     // Map containing per journey session data. See comment above, the startNewJourney and populateJourney
     // middlewares and the appointment routes in index.ts
@@ -86,12 +84,14 @@ export declare global {
 
 export type JourneyData = {
   createJourney?: CreateAnActivityJourney
+  attendanceSummaryJourney?: AttendanceSummaryJourney
   movementListJourney?: MovementListJourney
   waitListApplicationJourney?: WaitListApplicationJourney
   prisonerAllocationsJourney?: PrisonerAllocationsJourney
   unlockListJourney?: UnlockListJourney
   recordAttendanceJourney?: RecordAttendanceJourney
   allocateJourney?: AllocateToActivityJourney
+  recordAppointmentAttendanceJourney?: RecordAppointmentAttendanceJourney
 }
 
 export type ServiceUser = Express.User &

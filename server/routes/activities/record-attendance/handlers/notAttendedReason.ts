@@ -14,7 +14,7 @@ import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import AttendanceStatus from '../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../enum/attendanceReason'
-import { convertToTitleCase } from '../../../../utils/utils'
+import { formatFirstLastName } from '../../../../utils/utils'
 import { YesNo } from '../../../../@types/activities'
 
 const getPrisonerName = (args: ValidationArguments) => (args.object as NotAttendedData)?.prisonerName
@@ -175,7 +175,7 @@ export default class NotAttendedReasonRoutes {
 
     const successMessage = `You've saved attendance details for ${
       selectedPrisoners.length === 1
-        ? convertToTitleCase(selectedPrisoners[0].prisonerName)
+        ? formatFirstLastName(selectedPrisoners[0].firstName, selectedPrisoners[0].lastName)
         : `${selectedPrisoners.length} attendees`
     }`
 

@@ -567,6 +567,8 @@ describe('Edit Appointment Utils', () => {
         {
           number: 'A1234BC',
           name: 'TEST PRISONER',
+          firstName: 'TEST',
+          lastName: 'PRISONER',
           cellLocation: '1-1-1',
           status: 'ACTIVE IN',
           prisonCode: 'MDI',

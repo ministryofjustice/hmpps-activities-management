@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode'
 import _ from 'lodash'
-import { convertToTitleCase } from '../utils/utils'
+import { formatFirstLastName } from '../utils/utils'
 import ManageUsersApiClient from '../data/manageUsersApiClient'
 import { ServiceUser } from '../@types/express'
 import ActivitiesApiClient from '../data/activitiesApiClient'
@@ -33,7 +33,7 @@ export default class UserService {
       ...userDetails,
       ...updatedActiveCaseLoadInformation,
       roles,
-      displayName: convertToTitleCase(userDetails.name),
+      displayName: formatFirstLastName(userDetails.name.split(' ')[0], userDetails.name.split(' ')[1]),
     }
   }
 

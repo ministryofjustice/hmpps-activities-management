@@ -35,16 +35,17 @@ export default class DailySummaryRoutes {
     const uniqueCategories = _.uniq(allAttendances.map(c => c.categoryName))
 
     // Set the default filter values if they are not set
-    req.session.attendanceSummaryJourney ??= {}
-    req.session.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
+    req.journeyData.attendanceSummaryJourney ??= {}
+    req.journeyData.attendanceSummaryJourney.categoryFilters ??= uniqueCategories
 
-    const { categoryFilters } = req.session.attendanceSummaryJourney
+    const { categoryFilters } = req.journeyData.attendanceSummaryJourney
 
     const cancelledSessionsForFilters = await this.getCancelledActivitiesAtPrison(activityDate, user).then(r =>
       r.filter(a => categoryFilters.includes(a.category)),
     )
     const attendancesForFilters = allAttendances.filter(a => categoryFilters.includes(a.categoryName))
 
+    res.locals.attendanceSummaryJourney = req.journeyData.attendanceSummaryJourney
     return res.render('pages/activities/daily-attendance-summary/daily-summary', {
       activityDate,
       uniqueCategories,

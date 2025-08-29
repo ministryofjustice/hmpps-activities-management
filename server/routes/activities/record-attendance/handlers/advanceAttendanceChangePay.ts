@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { AdvanceAttendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
-import { convertToTitleCase } from '../../../../utils/utils'
+import { formatFirstLastName } from '../../../../utils/utils'
 import config from '../../../../config'
 
 export default class AdvanceAttendanceChangePayRoutes {
@@ -50,7 +50,7 @@ export default class AdvanceAttendanceChangePayRoutes {
     const attendee = await this.prisonService.getInmateByPrisonerNumber(advanceAttendance.prisonerNumber, user)
 
     await this.activitiesService.putAdvanceAttendance(+advanceAttendanceId, newIssuePayment, user)
-    const successMessage = `${convertToTitleCase(`${attendee.firstName} ${attendee.lastName}`)} will now${newIssuePayment ? ' ' : ' not '}be paid for this session.`
+    const successMessage = `${formatFirstLastName(attendee.firstName, attendee.lastName)} will now${newIssuePayment ? ' ' : ' not '}be paid for this session.`
     return res.redirectWithSuccess('../../attendance-list', 'Pay updated', successMessage)
   }
 }
