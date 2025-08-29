@@ -9,11 +9,11 @@ import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceD
 import ActivitiesIndexPage from '../../../pages/activities'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary-11-93-94.json'
 import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
-import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
 import getAttendanceReasons from '../../../fixtures/activitiesApi/getAttendanceReasons.json'
 import CancelSingleReasonPage from '../../../pages/recordAttendance/cancelSingleReason'
 import CancelSinglePaymentPage from '../../../pages/recordAttendance/cancelSinglePayment'
 import CancelSingleCheckAnswersPage from '../../../pages/recordAttendance/cancelSingleCheckAnswers'
+import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 
 context('Cancel Single Session', () => {
   const today = startOfToday()
@@ -34,7 +34,11 @@ context('Cancel Single Session', () => {
     )
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
     cy.stubEndpoint('GET', '/attendance-reasons', getAttendanceReasons)
-    cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/non-residential-usage-type\\?formatLocalName=true',
+      getNonResidentialActivityLocations,
+    )
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstanceEnglishLevel1)
     cy.stubEndpoint('GET', '/scheduled-instances/11', getScheduledInstanceEnglishLevel2)
     cy.stubEndpoint('PUT', '/scheduled-instances/93/cancel')

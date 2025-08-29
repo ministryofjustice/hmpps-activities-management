@@ -3,13 +3,13 @@ import { addDays, startOfDay } from 'date-fns'
 import _ from 'lodash'
 import ActivitiesService from '../../../../services/activitiesService'
 import { asString, convertToArray, formatDate, toDate } from '../../../../utils/utils'
-import PrisonService from '../../../../services/prisonService'
 import { activityRows, filterItems } from '../utils/activitiesPageUtils'
+import LocationsService from '../../../../services/locationsService'
 
 export default class ActivitiesRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
-    private readonly prisonService: PrisonService,
+    private readonly locationsService: LocationsService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -33,7 +33,7 @@ export default class ActivitiesRoutes {
 
     req.journeyData.recordAttendanceJourney = {}
 
-    const locations = await this.prisonService.getEventLocations(user.activeCaseLoadId, user)
+    const locations = await this.locationsService.fetchNonResidentialActivityLocations(user.activeCaseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'locationId')
 
     const activities = activityRows(

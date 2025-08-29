@@ -13,11 +13,6 @@ export default class PrisonApiClient extends RestClient {
     super('Prison API', config.apis.prisonApi, logger, authenticationClient)
   }
 
-  // TODO: SAA-2303 - remove when possible
-  async getEventLocations(prisonCode: string, user: ServiceUser): Promise<LocationLenient[]> {
-    return this.get({ path: `/api/agencies/${prisonCode}/eventLocations` }, asUser(user.token))
-  }
-
   async getReferenceCodes(domain: string, user: ServiceUser): Promise<ReferenceCode[]> {
     return this.get({ path: `/api/reference-domains/domains/${domain}/codes` }, asUser(user.token))
   }
