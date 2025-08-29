@@ -37,7 +37,13 @@ import CancelSingleSessionPayRoutes, { SessionPaySingleForm } from './handlers/c
 import CancelSingleSessionsCheckAnswersRoutes from './handlers/cancel-single-session/checkAnswers'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
-export default function Index({ activitiesService, prisonService, userService, tokenStore }: Services): Router {
+export default function Index({
+  activitiesService,
+  prisonService,
+  userService,
+  locationsService,
+  tokenStore,
+}: Services): Router {
   const router = Router()
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
@@ -52,7 +58,7 @@ export default function Index({ activitiesService, prisonService, userService, t
 
   const homeHandler = new HomeRoutes()
   const selectPeriodHandler = new SelectPeriodRoutes()
-  const activitiesHandler = new ActivitiesRoutes(activitiesService, prisonService)
+  const activitiesHandler = new ActivitiesRoutes(activitiesService, locationsService)
   const attendanceListHandler = new AttendanceListRoutes(activitiesService, prisonService, userService)
   const paidOrNotRoutes = new PaidOrNotRoutes(activitiesService)
   const checkAndConfirmRoutes = new CheckAndConfirmRoutes(activitiesService)
@@ -79,7 +85,7 @@ export default function Index({ activitiesService, prisonService, userService, t
   const cancelMultipleSessionsReasonRoutes = new CancelMultipleSessionsReasonRoutes(activitiesService)
   const cancelMultipleSessionsPayRoutes = new CancelMultipleSessionsPayRoutes()
   const cancelMultipleSessionsCheckAnswersRoutes = new CancelMultipleSessionsCheckAnswersRoutes(activitiesService)
-  const uncancelMultipleSessionsRoutes = new UncancelMultipleSessionsRoutes(activitiesService, prisonService)
+  const uncancelMultipleSessionsRoutes = new UncancelMultipleSessionsRoutes(activitiesService, locationsService)
   const uncancelMultipleSessionsConfirmRoutes = new UncancelMultipleSessionsConfirmRoutes(activitiesService)
   const cancelMultipleSessionsViewEditDetailsRoutes = new CancelMultipleSessionsViewEditDetailsRoutes(
     activitiesService,

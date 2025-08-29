@@ -1,46 +1,42 @@
 import { Readable } from 'stream'
-import config, { ApiConfig } from '../config'
+import { RestClient, asSystem, asUser } from '@ministryofjustice/hmpps-rest-client'
+import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
+import logger from '../../logger'
+import config from '../config'
 
-import AbstractHmppsRestClient from './abstractHmppsRestClient'
 import { ReferenceCode, AgencyPrisonerPayProfile } from '../@types/prisonApiImport/types'
 import { ServiceUser } from '../@types/express'
 import { LocationLenient } from '../@types/prisonApiImportCustom'
 
-export default class PrisonApiClient extends AbstractHmppsRestClient {
-  constructor() {
-    super('Prison API', config.apis.prisonApi as ApiConfig)
-  }
-
-  // TODO: SAA-2303 - remove when possible
-  async getEventLocations(prisonCode: string, user: ServiceUser): Promise<LocationLenient[]> {
-    return this.get({
-      path: `/api/agencies/${prisonCode}/eventLocations`,
-      authToken: user.token,
-    })
+export default class PrisonApiClient extends RestClient {
+  constructor(authenticationClient: AuthenticationClient) {
+    super('Prison API', config.apis.prisonApi, logger, authenticationClient)
   }
 
   async getReferenceCodes(domain: string, user: ServiceUser): Promise<ReferenceCode[]> {
-    return this.get({
-      path: `/api/reference-domains/domains/${domain}/codes`,
-      authToken: user.token,
-    })
+    return this.get({ path: `/api/reference-domains/domains/${domain}/codes` }, asUser(user.token))
   }
 
   async getPayProfile(prisonCode: string): Promise<AgencyPrisonerPayProfile> {
-    return this.get({
-      path: `/api/agencies/${prisonCode}/pay-profile`,
-    })
+    return this.get(
+      {
+        path: `/api/agencies/${prisonCode}/pay-profile`,
+      },
+      asSystem(),
+    )
   }
 
   // TODO: SAA-2388 - remove when complete
   async getInternalLocationByKey(key: string, user: ServiceUser): Promise<LocationLenient> {
-    return this.get({ path: `/api/locations/code/${key}`, authToken: user.token })
+    return this.get({ path: `/api/locations/code/${key}` }, asUser(user.token))
   }
 
-  getPrisonerImage(prisonerNumber: string, user: ServiceUser): Promise<Readable> {
-    return this.stream({
-      path: `/api/bookings/offenderNo/${prisonerNumber}/image/data`,
-      authToken: user.token,
-    }) as Promise<Readable>
+  getPrisonerImage(prisonerNumber: string): Promise<Readable> {
+    return this.stream(
+      {
+        path: `/api/bookings/offenderNo/${prisonerNumber}/image/data`,
+      },
+      asSystem(),
+    ) as Promise<Readable>
   }
 }
