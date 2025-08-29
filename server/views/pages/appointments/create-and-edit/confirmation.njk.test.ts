@@ -4,9 +4,8 @@ import fs from 'fs'
 import { addDays, format, subDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentJourney, AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
-import { AppointmentSetJourney } from '../../../../routes/appointments/create-and-edit/appointmentSetJourney'
 import { AppointmentFrequency } from '../../../../@types/appointments'
-import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
+import { AppointmentDetails, AppointmentSetDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 import { YesNo } from '../../../../@types/activities'
 
@@ -20,7 +19,7 @@ describe('Views - Create Appointment - Confirmation', () => {
     session: {
       appointmentJourney: {} as AppointmentJourney,
     },
-    appointmentSet: null as AppointmentSetJourney,
+    appointmentSet: null as AppointmentSetDetails,
   }
 
   const njkEnv = registerNunjucks()
@@ -32,7 +31,7 @@ describe('Views - Create Appointment - Confirmation', () => {
       session: {
         appointmentJourney: {} as AppointmentJourney,
       },
-      appointmentSet: null as AppointmentSetJourney,
+      appointmentSet: null as AppointmentSetDetails,
     }
   })
 
@@ -85,23 +84,82 @@ describe('Views - Create Appointment - Confirmation', () => {
 
   it('should display create message for single person in the appointment set', () => {
     viewContext.appointmentSet = {
+      id: 114,
+      prisonCode: 'RSI',
+      appointmentName: 'test (Activities)',
+      category: {
+        code: 'ACTI',
+        description: 'Activities',
+      },
+      customName: 'test',
+      internalLocation: null,
+      inCell: true,
       startDate: '2025-04-22',
       appointments: [
         {
-          startTime: { hour: 9, minute: 0 },
-          endTime: { hour: 9, minute: 15 },
-          prisoner: {
-            number: 'A1234BC',
-            name: 'TEST01 PRISONER01',
-            firstName: 'TEST01',
-            lastName: 'PRISONER01',
-            cellLocation: '1-1-1',
-            status: 'ACTIVE IN',
-            prisonCode: 'MDI',
+          id: 37993,
+          appointmentSeries: null,
+          appointmentSet: {
+            id: 114,
+            appointmentCount: 1,
+            scheduledAppointmentCount: 1,
           },
+          appointmentType: 'INDIVIDUAL',
+          sequenceNumber: 1,
+          prisonCode: 'RSI',
+          appointmentName: 'test (Activities)',
+          attendees: [
+            {
+              id: 231459,
+              prisoner: {
+                prisonerNumber: 'G6532UD',
+                bookingId: 1154508,
+                firstName: 'Test01',
+                lastName: 'Prisoner01',
+                status: 'ACTIVE IN',
+                prisonCode: 'RSI',
+                cellLocation: 'D-N-1-028',
+                category: 'C',
+              },
+              attended: null,
+              attendanceRecordedTime: null,
+              attendanceRecordedBy: null,
+            },
+          ],
+          category: {
+            code: 'ACTI',
+            description: 'Activities',
+          },
+          tier: {
+            id: 1,
+            code: 'TIER_1',
+            description: 'Tier 1',
+          },
+          organiser: null,
+          customName: 'test',
+          internalLocation: null,
+          inCell: true,
+          startDate: '2025-08-29',
+          startTime: '11:00',
+          endTime: '12:00',
+          isExpired: false,
+          extraInformation: null,
+          createdTime: '2025-08-28T17:32:48',
+          createdBy: 'testuser',
+          isEdited: false,
+          updatedTime: null,
+          updatedBy: null,
+          isCancelled: false,
+          isDeleted: false,
+          cancelledTime: null,
+          cancelledBy: null,
         },
       ],
-    } as AppointmentSetJourney
+      createdTime: '2025-08-28T17:32:48',
+      createdBy: 'testuser',
+      updatedTime: null,
+      updatedBy: null,
+    } as AppointmentSetDetails
 
     viewContext.session.appointmentJourney.retrospective = YesNo.YES
     const $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -113,23 +171,82 @@ describe('Views - Create Appointment - Confirmation', () => {
 
   it('should display scheduled message for single person in the appointment set', () => {
     viewContext.appointmentSet = {
+      id: 114,
+      prisonCode: 'RSI',
+      appointmentName: 'test (Activities)',
+      category: {
+        code: 'ACTI',
+        description: 'Activities',
+      },
+      customName: 'test',
+      internalLocation: null,
+      inCell: true,
       startDate: '2025-04-22',
       appointments: [
         {
-          startTime: { hour: 9, minute: 0 },
-          endTime: { hour: 9, minute: 15 },
-          prisoner: {
-            number: 'A1234BC',
-            name: 'TEST01 PRISONER01',
-            firstName: 'TEST01',
-            lastName: 'PRISONER01',
-            cellLocation: '1-1-1',
-            status: 'ACTIVE IN',
-            prisonCode: 'MDI',
+          id: 37993,
+          appointmentSeries: null,
+          appointmentSet: {
+            id: 114,
+            appointmentCount: 1,
+            scheduledAppointmentCount: 1,
           },
+          appointmentType: 'INDIVIDUAL',
+          sequenceNumber: 1,
+          prisonCode: 'RSI',
+          appointmentName: 'test (Activities)',
+          attendees: [
+            {
+              id: 231459,
+              prisoner: {
+                prisonerNumber: 'G6532UD',
+                bookingId: 1154508,
+                firstName: 'Test01',
+                lastName: 'Prisoner01',
+                status: 'ACTIVE IN',
+                prisonCode: 'RSI',
+                cellLocation: 'D-N-1-028',
+                category: 'C',
+              },
+              attended: null,
+              attendanceRecordedTime: null,
+              attendanceRecordedBy: null,
+            },
+          ],
+          category: {
+            code: 'ACTI',
+            description: 'Activities',
+          },
+          tier: {
+            id: 1,
+            code: 'TIER_1',
+            description: 'Tier 1',
+          },
+          organiser: null,
+          customName: 'test',
+          internalLocation: null,
+          inCell: true,
+          startDate: '2025-08-29',
+          startTime: '11:00',
+          endTime: '12:00',
+          isExpired: false,
+          extraInformation: null,
+          createdTime: '2025-08-28T17:32:48',
+          createdBy: 'testuser',
+          isEdited: false,
+          updatedTime: null,
+          updatedBy: null,
+          isCancelled: false,
+          isDeleted: false,
+          cancelledTime: null,
+          cancelledBy: null,
         },
       ],
-    } as AppointmentSetJourney
+      createdTime: '2025-08-28T17:32:48',
+      createdBy: 'testuser',
+      updatedTime: null,
+      updatedBy: null,
+    } as AppointmentSetDetails
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
@@ -238,36 +355,140 @@ describe('Views - Create Appointment - Confirmation', () => {
 
     it('should display number of prisoners added to appointment from appointment set', () => {
       viewContext.appointmentSet = {
+        id: 115,
+        prisonCode: 'RSI',
+        appointmentName: 'test (Activities)',
+        category: {
+          code: 'ACTI',
+          description: 'Activities',
+        },
+        customName: 'test',
+        internalLocation: null,
+        inCell: true,
         startDate: '2025-04-22',
         appointments: [
           {
-            startTime: { hour: 9, minute: 0 },
-            endTime: { hour: 9, minute: 15 },
-            prisoner: {
-              number: 'A1234BC',
-              name: 'TEST01 PRISONER01',
-              firstName: 'TEST01',
-              lastName: 'PRISONER01',
-              cellLocation: '1-1-1',
-              status: 'ACTIVE IN',
-              prisonCode: 'MDI',
+            id: 37994,
+            appointmentSeries: null,
+            appointmentSet: {
+              id: 115,
+              appointmentCount: 2,
+              scheduledAppointmentCount: 2,
             },
+            appointmentType: 'INDIVIDUAL',
+            sequenceNumber: 1,
+            prisonCode: 'RSI',
+            appointmentName: 'test (Activities)',
+            attendees: [
+              {
+                id: 231460,
+                prisoner: {
+                  prisonerNumber: 'G6532UD',
+                  bookingId: 1154508,
+                  firstName: 'ABOMINPHER',
+                  lastName: 'PETIO',
+                  status: 'ACTIVE IN',
+                  prisonCode: 'RSI',
+                  cellLocation: 'D-N-1-028',
+                  category: 'C',
+                },
+                attended: null,
+                attendanceRecordedTime: null,
+                attendanceRecordedBy: null,
+              },
+            ],
+            category: {
+              code: 'ACTI',
+              description: 'Activities',
+            },
+            tier: {
+              id: 1,
+              code: 'TIER_1',
+              description: 'Tier 1',
+            },
+            organiser: null,
+            customName: 'test',
+            internalLocation: null,
+            inCell: true,
+            startDate: '2025-04-22',
+            startTime: '11:00',
+            endTime: '12:00',
+            isExpired: false,
+            extraInformation: null,
+            createdTime: '2025-08-29T09:50:48',
+            createdBy: 'testuser',
+            isEdited: false,
+            updatedTime: null,
+            updatedBy: null,
+            isCancelled: false,
+            isDeleted: false,
+            cancelledTime: null,
+            cancelledBy: null,
           },
           {
-            startTime: { hour: 9, minute: 15 },
-            endTime: { hour: 9, minute: 30 },
-            prisoner: {
-              number: 'B2345CD',
-              name: 'TEST02 PRISONER02',
-              firstName: 'TEST02',
-              lastName: 'PRISONER02',
-              cellLocation: '1-1-2',
-              status: 'ACTIVE IN',
-              prisonCode: 'MDI',
+            id: 37995,
+            appointmentSeries: null,
+            appointmentSet: {
+              id: 115,
+              appointmentCount: 2,
+              scheduledAppointmentCount: 2,
             },
+            appointmentType: 'INDIVIDUAL',
+            sequenceNumber: 1,
+            prisonCode: 'RSI',
+            appointmentName: 'test (Activities)',
+            attendees: [
+              {
+                id: 231461,
+                prisoner: {
+                  prisonerNumber: 'G8634UD',
+                  bookingId: 1136879,
+                  firstName: 'EGURZTOF',
+                  lastName: 'ANNOLE',
+                  status: 'ACTIVE IN',
+                  prisonCode: 'RSI',
+                  cellLocation: 'E-S-2-014',
+                  category: 'C',
+                },
+                attended: null,
+                attendanceRecordedTime: null,
+                attendanceRecordedBy: null,
+              },
+            ],
+            category: {
+              code: 'ACTI',
+              description: 'Activities',
+            },
+            tier: {
+              id: 1,
+              code: 'TIER_1',
+              description: 'Tier 1',
+            },
+            organiser: null,
+            customName: 'test',
+            internalLocation: null,
+            inCell: true,
+            startDate: '2025-04-22',
+            startTime: '10:00',
+            endTime: '12:00',
+            isExpired: false,
+            extraInformation: null,
+            createdTime: '2025-08-29T09:50:48',
+            createdBy: 'testuser',
+            isEdited: false,
+            updatedTime: null,
+            updatedBy: null,
+            isCancelled: false,
+            isDeleted: false,
+            cancelledTime: null,
+            cancelledBy: null,
           },
         ],
-      } as AppointmentSetJourney
+        createdTime: '2025-08-29T09:50:48',
+        createdBy: 'testuser',
+        updatedTime: null,
+        updatedBy: null,
+      } as AppointmentSetDetails
 
       viewContext.session.appointmentJourney.retrospective = YesNo.YES
       const $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -279,36 +500,140 @@ describe('Views - Create Appointment - Confirmation', () => {
 
     it('should display number of prisoners scheduled to appointment from appointment set', () => {
       viewContext.appointmentSet = {
+        id: 115,
+        prisonCode: 'RSI',
+        appointmentName: 'test (Activities)',
+        category: {
+          code: 'ACTI',
+          description: 'Activities',
+        },
+        customName: 'test',
+        internalLocation: null,
+        inCell: true,
         startDate: '2025-04-22',
         appointments: [
           {
-            startTime: { hour: 9, minute: 0 },
-            endTime: { hour: 9, minute: 15 },
-            prisoner: {
-              number: 'A1234BC',
-              name: 'TEST01 PRISONER01',
-              firstName: 'TEST01',
-              lastName: 'PRISONER01',
-              cellLocation: '1-1-1',
-              status: 'ACTIVE IN',
-              prisonCode: 'MDI',
+            id: 37994,
+            appointmentSeries: null,
+            appointmentSet: {
+              id: 115,
+              appointmentCount: 2,
+              scheduledAppointmentCount: 2,
             },
+            appointmentType: 'INDIVIDUAL',
+            sequenceNumber: 1,
+            prisonCode: 'RSI',
+            appointmentName: 'test (Activities)',
+            attendees: [
+              {
+                id: 231460,
+                prisoner: {
+                  prisonerNumber: 'G6532UD',
+                  bookingId: 1154508,
+                  firstName: 'ABOMINPHER',
+                  lastName: 'PETIO',
+                  status: 'ACTIVE IN',
+                  prisonCode: 'RSI',
+                  cellLocation: 'D-N-1-028',
+                  category: 'C',
+                },
+                attended: null,
+                attendanceRecordedTime: null,
+                attendanceRecordedBy: null,
+              },
+            ],
+            category: {
+              code: 'ACTI',
+              description: 'Activities',
+            },
+            tier: {
+              id: 1,
+              code: 'TIER_1',
+              description: 'Tier 1',
+            },
+            organiser: null,
+            customName: 'test',
+            internalLocation: null,
+            inCell: true,
+            startDate: '2025-04-22',
+            startTime: '11:00',
+            endTime: '12:00',
+            isExpired: false,
+            extraInformation: null,
+            createdTime: '2025-08-29T09:50:48',
+            createdBy: 'testuser',
+            isEdited: false,
+            updatedTime: null,
+            updatedBy: null,
+            isCancelled: false,
+            isDeleted: false,
+            cancelledTime: null,
+            cancelledBy: null,
           },
           {
-            startTime: { hour: 9, minute: 15 },
-            endTime: { hour: 9, minute: 30 },
-            prisoner: {
-              number: 'B2345CD',
-              name: 'TEST02 PRISONER02',
-              firstName: 'TEST02',
-              lastName: 'PRISONER02',
-              cellLocation: '1-1-2',
-              status: 'ACTIVE IN',
-              prisonCode: 'MDI',
+            id: 37995,
+            appointmentSeries: null,
+            appointmentSet: {
+              id: 115,
+              appointmentCount: 2,
+              scheduledAppointmentCount: 2,
             },
+            appointmentType: 'INDIVIDUAL',
+            sequenceNumber: 1,
+            prisonCode: 'RSI',
+            appointmentName: 'test (Activities)',
+            attendees: [
+              {
+                id: 231461,
+                prisoner: {
+                  prisonerNumber: 'G8634UD',
+                  bookingId: 1136879,
+                  firstName: 'EGURZTOF',
+                  lastName: 'ANNOLE',
+                  status: 'ACTIVE IN',
+                  prisonCode: 'RSI',
+                  cellLocation: 'E-S-2-014',
+                  category: 'C',
+                },
+                attended: null,
+                attendanceRecordedTime: null,
+                attendanceRecordedBy: null,
+              },
+            ],
+            category: {
+              code: 'ACTI',
+              description: 'Activities',
+            },
+            tier: {
+              id: 1,
+              code: 'TIER_1',
+              description: 'Tier 1',
+            },
+            organiser: null,
+            customName: 'test',
+            internalLocation: null,
+            inCell: true,
+            startDate: '2025-04-22',
+            startTime: '10:00',
+            endTime: '12:00',
+            isExpired: false,
+            extraInformation: null,
+            createdTime: '2025-08-29T09:50:48',
+            createdBy: 'testuser',
+            isEdited: false,
+            updatedTime: null,
+            updatedBy: null,
+            isCancelled: false,
+            isDeleted: false,
+            cancelledTime: null,
+            cancelledBy: null,
           },
         ],
-      } as AppointmentSetJourney
+        createdTime: '2025-08-29T09:50:48',
+        createdBy: 'testuser',
+        updatedTime: null,
+        updatedBy: null,
+      } as AppointmentSetDetails
 
       const $ = cheerio.load(compiledTemplate.render(viewContext))
 
