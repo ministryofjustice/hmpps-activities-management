@@ -1,5 +1,4 @@
 import { ScheduledEvent } from './activitiesAPI/types'
-// import { Alert } from './prisonApiImport/types'
 import { Alert } from './alertsAPI/types'
 import { PrisonerAlert } from './prisonerOffenderSearchImport/types'
 
