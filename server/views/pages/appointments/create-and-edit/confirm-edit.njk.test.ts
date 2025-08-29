@@ -21,8 +21,8 @@ describe('Views - Appointments Management - Confirm Edit', () => {
     user: {},
     session: {
       appointmentJourney: {} as unknown as AppointmentJourney,
-      editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     },
+    editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     appointmentId,
     startDate: weekTomorrow,
   }
@@ -41,32 +41,32 @@ describe('Views - Appointments Management - Confirm Edit', () => {
           type: AppointmentType.GROUP,
           startDate: formatIsoDate(weekTomorrow),
         },
-        editAppointmentJourney: {
-          numberOfAppointments: 3,
-          appointments: [
-            {
-              sequenceNumber: 1,
-              startDate: format(weekTomorrow, 'yyyy-MM-dd'),
-            },
-            {
-              sequenceNumber: 2,
-              startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
-            },
-            {
-              sequenceNumber: 3,
-              startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
-            },
-          ],
-          sequenceNumber: 2,
-        } as EditAppointmentJourney,
       },
+      editAppointmentJourney: {
+        numberOfAppointments: 3,
+        appointments: [
+          {
+            sequenceNumber: 1,
+            startDate: format(weekTomorrow, 'yyyy-MM-dd'),
+          },
+          {
+            sequenceNumber: 2,
+            startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
+          },
+          {
+            sequenceNumber: 3,
+            startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
+          },
+        ],
+        sequenceNumber: 2,
+      } as EditAppointmentJourney,
       appointmentId,
       startDate: weekTomorrow,
     }
   })
 
   it('prisoner list is not shown when adding one prisoner', () => {
-    viewContext.session.editAppointmentJourney.addPrisoners = [
+    viewContext.editAppointmentJourney.addPrisoners = [
       {
         number: 'A1234BC',
         name: 'TEST PRISONER',
@@ -84,7 +84,7 @@ describe('Views - Appointments Management - Confirm Edit', () => {
   })
 
   it('prisoner list is shown when adding two prisoners', () => {
-    viewContext.session.editAppointmentJourney.addPrisoners = [
+    viewContext.editAppointmentJourney.addPrisoners = [
       {
         number: 'A1234BC',
         name: 'TEST PRISONER1',

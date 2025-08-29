@@ -22,9 +22,9 @@ export default class CancellationReasonRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { reason } = req.body
 
-    req.session.editAppointmentJourney.cancellationReason = reason
+    req.journeyData.editAppointmentJourney.cancellationReason = reason
 
-    if (isApplyToQuestionRequired(req.session.editAppointmentJourney)) {
+    if (isApplyToQuestionRequired(req.journeyData.editAppointmentJourney)) {
       return res.redirect('apply-to')
     }
 

@@ -34,11 +34,13 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
         appointmentJourney: {
           prisoners: [],
         },
-        editAppointmentJourney: {
-          addPrisoners: [],
-        },
         appointmentSetJourney: {
           appointments: [],
+        },
+      },
+      journeyData: {
+        editAppointmentJourney: {
+          addPrisoners: [],
         },
       },
       params: {

@@ -16,6 +16,8 @@ describe('Views - Appointments Management - Review Prisoners', () => {
   let viewContext = {
     session: {
       appointmentJourney: {} as unknown as AppointmentJourney,
+    },
+    journeyData: {
       editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     },
   }
@@ -30,6 +32,8 @@ describe('Views - Appointments Management - Review Prisoners', () => {
           mode: AppointmentJourneyMode.CREATE,
           type: AppointmentType.INDIVIDUAL,
         } as AppointmentJourney,
+      },
+      journeyData: {
         editAppointmentJourney: {} as EditAppointmentJourney,
       },
     }

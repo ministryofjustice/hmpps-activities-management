@@ -35,7 +35,7 @@ export default class LocationRoutes {
       locations,
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !isApplyToQuestionRequired(req.session.editAppointmentJourney),
+        !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
     })
   }
 
@@ -71,15 +71,15 @@ export default class LocationRoutes {
       const location = await this.getLocation(req, res)
       if (!location) return
 
-      req.session.editAppointmentJourney.location = {
+      req.journeyData.editAppointmentJourney.location = {
         id: location.id,
         description: location.description,
       }
     } else {
-      req.session.editAppointmentJourney.location = null
+      req.journeyData.editAppointmentJourney.location = null
     }
 
-    req.session.editAppointmentJourney.inCell = locationType === LocationType.IN_CELL
+    req.journeyData.editAppointmentJourney.inCell = locationType === LocationType.IN_CELL
 
     await this.editAppointmentService.redirectOrEdit(req, res, 'location')
   }

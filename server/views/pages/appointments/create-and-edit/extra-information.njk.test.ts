@@ -19,6 +19,8 @@ describe('Views - Appointments Management - Extra Information', () => {
   let viewContext = {
     session: {
       appointmentJourney: {} as unknown as AppointmentJourney,
+    },
+    journeyData: {
       editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     },
     backLinkHref: '',
@@ -36,6 +38,8 @@ describe('Views - Appointments Management - Extra Information', () => {
           type: AppointmentType.GROUP,
           startDate: formatIsoDate(weekTomorrow),
         },
+      },
+      journeyData: {
         editAppointmentJourney: {
           numberOfAppointments: 3,
           appointments: [
