@@ -1,4 +1,5 @@
 import { when } from 'jest-when'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import atLeast from '../../jest.setup'
 import PrisonApiClient from '../data/prisonApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
@@ -14,8 +15,12 @@ jest.mock('../data/prisonApiClient')
 jest.mock('../data/prisonerSearchApiClient')
 jest.mock('../data/incentivesApiClient')
 
+const mockAuthenticationClient = {
+  getToken: jest.fn().mockResolvedValue('test-system-token'),
+} as unknown as jest.Mocked<AuthenticationClient>
+
 describe('Prison Service', () => {
-  const prisonApiClient = new PrisonApiClient()
+  const prisonApiClient = new PrisonApiClient(mockAuthenticationClient)
   const prisonerSearchApiClient = new PrisonerSearchApiClient()
   const incentivesApiClient = new IncentivesApiClient() as jest.Mocked<IncentivesApiClient>
   const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient)
