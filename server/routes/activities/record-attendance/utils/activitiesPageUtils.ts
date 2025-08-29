@@ -1,6 +1,5 @@
 import { ActivityCategory, ScheduledInstanceAttendanceSummary } from '../../../../@types/activitiesAPI/types'
 import LocationType from '../../../../enum/locationType'
-import { asString } from '../../../../utils/utils'
 import TimeSlot from '../../../../enum/timeSlot'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 
@@ -51,7 +50,7 @@ export const activityRows = (
     .filter(a => {
       switch (locationType) {
         case LocationType.OUT_OF_CELL:
-          return a.internalLocation?.id === +asString(locationId)
+          return a.dpsLocationId === locationId
         case LocationType.IN_CELL:
           return a.inCell
         case LocationType.ON_WING:

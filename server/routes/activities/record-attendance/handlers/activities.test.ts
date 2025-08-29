@@ -3,16 +3,16 @@ import { when } from 'jest-when'
 import { addDays, format, parse } from 'date-fns'
 import ActivitiesRoutes from './activities'
 import ActivitiesService from '../../../../services/activitiesService'
-import PrisonService from '../../../../services/prisonService'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import LocationType from '../../../../enum/locationType'
+import LocationsService from '../../../../services/locationsService'
 
 jest.mock('../../../../services/activitiesService')
-jest.mock('../../../../services/prisonService')
+jest.mock('../../../../services/locationsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
+const locationsService = new LocationsService(null) as jest.Mocked<LocationsService>
 
 const attendanceSummaryResponse = [
   {
@@ -119,7 +119,7 @@ const attendanceSummaryResponse = [
 ]
 
 describe('Route Handlers - Activities', () => {
-  const handler = new ActivitiesRoutes(activitiesService, prisonService)
+  const handler = new ActivitiesRoutes(activitiesService, locationsService)
 
   let req: Request
   let res: Response
