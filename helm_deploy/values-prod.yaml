@@ -47,6 +47,7 @@ generic-service:
     PLANNED_DOWNTIME_START_TIME: "9am"
     PLANNED_DOWNTIME_END_TIME: "11am"
     PRISONER_ALLOCATIONS_ENABLED: "true"
+    JOURNEY_DATA_TOKEN_DURATION_HOURS: 24
 
   allowlist:
     groups:
