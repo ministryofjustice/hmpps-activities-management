@@ -34,7 +34,7 @@ export default class ActivitiesRoutes {
     req.journeyData.recordAttendanceJourney = {}
 
     const locations = await this.locationsService.fetchNonResidentialActivityLocations(user.activeCaseLoadId, user)
-    const uniqueLocations = _.uniqBy(locations, 'locationId')
+    const uniqueLocations = _.uniqBy(locations, 'id')
 
     const activities = activityRows(
       activityDate,
