@@ -76,6 +76,7 @@ export default function Edit({
   const uncancelRoutes = new UncancelRoutes(editAppointmentService)
   router.get(
     '/start/uncancel',
+    setUpJourneyData(tokenStore),
     fetchAppointment(activitiesService),
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.UNCANCEL,
