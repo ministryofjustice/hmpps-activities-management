@@ -114,6 +114,7 @@ export default function Edit({
   // Remove prisoner routes
   router.get(
     '/start/:prisonNumber/remove',
+    setUpJourneyData(tokenStore),
     fetchAppointment(activitiesService),
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.REMOVE_PRISONER,
@@ -132,6 +133,7 @@ export default function Edit({
 
   router.get(
     '/start/prisoners/add',
+    setUpJourneyData(tokenStore),
     fetchAppointment(activitiesService),
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.ADD_PRISONERS,
