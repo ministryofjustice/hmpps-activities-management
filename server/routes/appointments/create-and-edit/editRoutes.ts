@@ -60,6 +60,7 @@ export default function Edit({
 
   router.get(
     '/start/cancel',
+    setUpJourneyData(tokenStore),
     fetchAppointment(activitiesService),
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.CANCEL,
@@ -87,6 +88,7 @@ export default function Edit({
   // Edit property routes
   router.get(
     '/start/:property',
+    setUpJourneyData(tokenStore),
     fetchAppointment(activitiesService),
     fetchAppointmentSeries(activitiesService),
     startJourneyRoutes.EDIT,
