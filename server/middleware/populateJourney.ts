@@ -1,22 +1,18 @@
 import { RequestHandler } from 'express'
 import { SessionDatum } from '../@types/express'
 
+// Journeys are to be removed from here when they have been migrated to use journeyData
+// and the session data map can be removed when all journeys have been migrated
+// The journeyData object is populated by the setUpJourneyData middleware
+
 const journeys = [
   'appointmentJourney',
   'appointmentSetJourney',
   'bookACourtHearingJourney',
   'bookAProbationMeetingJourney',
   'attendanceSummaryJourney',
-  'createJourney',
-  'allocateJourney',
   'suspendJourney',
-  'editAppointmentJourney',
   'journeyMetrics',
-  'unlockListJourney',
-  'movementListJourney',
-  'waitListApplicationJourney',
-  'recordAttendanceJourney',
-  'recordAppointmentAttendanceJourney',
 ]
 const MAX_CONCURRENT_JOURNEYS = 100
 

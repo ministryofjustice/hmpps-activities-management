@@ -10,7 +10,7 @@ export default class UncancelRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId } = req.params
 
-    req.session.editAppointmentJourney.uncancel = true
+    req.journeyData.editAppointmentJourney.uncancel = true
 
     res.render('pages/appointments/create-and-edit/confirm-edit', {
       appointmentId,
@@ -19,7 +19,8 @@ export default class UncancelRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { appointmentJourney, editAppointmentJourney } = req.session
+    const { appointmentJourney } = req.session
+    const { editAppointmentJourney } = req.journeyData
 
     if (
       isApplyToQuestionRequired(editAppointmentJourney) &&

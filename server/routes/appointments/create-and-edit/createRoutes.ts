@@ -37,6 +37,7 @@ import ReviewNonAssociationsRoutes from './handlers/reviewNonAssociations'
 import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppointmentSeries'
 import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
 import ConfirmNonAssociationRoutes from './handlers/confirmNonAssociations'
+import setUpJourneyData from '../../../middleware/setUpJourneyData'
 
 export default function Create({
   prisonService,
@@ -44,13 +45,14 @@ export default function Create({
   metricsService,
   nonAssociationsService,
   alertsService,
+  tokenStore,
 }: Services): Router {
   const router = Router({ mergeParams: true })
 
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, emptyAppointmentJourneyHandler(stepRequiresSession), handler)
+    router.get(path, setUpJourneyData(tokenStore), emptyAppointmentJourneyHandler(stepRequiresSession), handler)
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
-    router.post(path, validationMiddleware(type), handler)
+    router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
   const editAppointmentService = new EditAppointmentService(activitiesService, metricsService)
   const appointeeAttendeeService = new AppointeeAttendeeService(prisonService)

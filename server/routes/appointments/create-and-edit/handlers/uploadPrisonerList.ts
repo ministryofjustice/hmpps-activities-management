@@ -36,10 +36,10 @@ export default class UploadPrisonerListRoutes {
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    const prisonerList = await this.getPrisonerList(req, res, req.session.editAppointmentJourney.addPrisoners)
+    const prisonerList = await this.getPrisonerList(req, res, req.journeyData.editAppointmentJourney.addPrisoners)
     if (!prisonerList) return
 
-    req.session.editAppointmentJourney.addPrisoners = prisonerList
+    req.journeyData.editAppointmentJourney.addPrisoners = prisonerList
 
     res.redirect('review-prisoners')
   }

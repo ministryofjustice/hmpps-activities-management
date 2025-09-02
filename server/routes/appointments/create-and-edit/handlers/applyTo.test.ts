@@ -32,6 +32,8 @@ describe('Route Handlers - Edit Appointment - Apply To', () => {
           repeatFrequency: AppointmentFrequency.DAILY,
           startDate: formatIsoDate(weekTomorrow),
         },
+      },
+      journeyData: {
         editAppointmentJourney: {
           numberOfAppointments: 4,
           appointments: [

@@ -14,7 +14,8 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
 
   beforeEach(() => {
     req = {
-      session: {
+      session: {},
+      journeyData: {
         editAppointmentJourney: {
           numberOfAppointments: 4,
           appointments: [
@@ -70,12 +71,12 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.editAppointmentJourney.cancellationReason).toEqual(AppointmentCancellationReason.CANCELLED)
+      expect(req.journeyData.editAppointmentJourney.cancellationReason).toEqual(AppointmentCancellationReason.CANCELLED)
       expect(res.redirect).toHaveBeenCalledWith('apply-to')
     })
 
     it('should save apply to in session and redirect to confirm', async () => {
-      req.session.editAppointmentJourney.appointments = [
+      req.journeyData.editAppointmentJourney.appointments = [
         {
           sequenceNumber: 2,
           startDate: '2023-01-02',
@@ -88,7 +89,7 @@ describe('Route Handlers - Edit Appointment - Cancellation Reasons', () => {
 
       await handler.POST(req, res)
 
-      expect(req.session.editAppointmentJourney.cancellationReason).toEqual(
+      expect(req.journeyData.editAppointmentJourney.cancellationReason).toEqual(
         AppointmentCancellationReason.CREATED_IN_ERROR,
       )
       expect(res.redirect).toHaveBeenCalledWith('confirm')
