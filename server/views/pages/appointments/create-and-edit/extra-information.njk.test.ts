@@ -20,9 +20,7 @@ describe('Views - Appointments Management - Extra Information', () => {
     session: {
       appointmentJourney: {} as unknown as AppointmentJourney,
     },
-    journeyData: {
-      editAppointmentJourney: {} as unknown as EditAppointmentJourney,
-    },
+    editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     backLinkHref: '',
     isCtaAcceptAndSave: false,
   }
@@ -39,26 +37,24 @@ describe('Views - Appointments Management - Extra Information', () => {
           startDate: formatIsoDate(weekTomorrow),
         },
       },
-      journeyData: {
-        editAppointmentJourney: {
-          numberOfAppointments: 3,
-          appointments: [
-            {
-              sequenceNumber: 1,
-              startDate: format(weekTomorrow, 'yyyy-MM-dd'),
-            },
-            {
-              sequenceNumber: 2,
-              startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
-            },
-            {
-              sequenceNumber: 3,
-              startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
-            },
-          ],
-          sequenceNumber: 2,
-        } as EditAppointmentJourney,
-      },
+      editAppointmentJourney: {
+        numberOfAppointments: 3,
+        appointments: [
+          {
+            sequenceNumber: 1,
+            startDate: format(weekTomorrow, 'yyyy-MM-dd'),
+          },
+          {
+            sequenceNumber: 2,
+            startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
+          },
+          {
+            sequenceNumber: 3,
+            startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
+          },
+        ],
+        sequenceNumber: 2,
+      } as EditAppointmentJourney,
       backLinkHref: 'repeat',
       isCtaAcceptAndSave: false,
     }

@@ -17,9 +17,7 @@ describe('Views - Appointments Management - Review Prisoners', () => {
     session: {
       appointmentJourney: {} as unknown as AppointmentJourney,
     },
-    journeyData: {
-      editAppointmentJourney: {} as unknown as EditAppointmentJourney,
-    },
+    editAppointmentJourney: {} as unknown as EditAppointmentJourney,
   }
 
   const njkEnv = registerNunjucks()
@@ -33,9 +31,7 @@ describe('Views - Appointments Management - Review Prisoners', () => {
           type: AppointmentType.INDIVIDUAL,
         } as AppointmentJourney,
       },
-      journeyData: {
-        editAppointmentJourney: {} as EditAppointmentJourney,
-      },
+      editAppointmentJourney: {} as EditAppointmentJourney,
     }
   })
 
