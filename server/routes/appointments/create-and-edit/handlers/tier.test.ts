@@ -37,6 +37,8 @@ describe('Route Handlers - Create Appointment - Tier', () => {
       query: {},
       session: {
         appointmentJourney: {},
+      },
+      journeyData: {
         editAppointmentJourney: {},
       },
     } as unknown as Request
@@ -118,7 +120,7 @@ describe('Route Handlers - Create Appointment - Tier', () => {
 
       await handler.EDIT(req, res)
 
-      expect(req.session.editAppointmentJourney.tierCode).toEqual(EventTier.TIER_1)
+      expect(req.journeyData.editAppointmentJourney.tierCode).toEqual(EventTier.TIER_1)
       expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'tier')
     })
 
@@ -133,7 +135,7 @@ describe('Route Handlers - Create Appointment - Tier', () => {
 
       await handler.EDIT(req, res)
 
-      expect(req.session.editAppointmentJourney.tierCode).toEqual(EventTier.TIER_2)
+      expect(req.journeyData.editAppointmentJourney.tierCode).toEqual(EventTier.TIER_2)
       expect(res.redirect).toHaveBeenCalledWith('host')
     })
   })

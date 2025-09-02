@@ -12,6 +12,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
   beforeEach(() => {
     req = {
       session: {},
+      journeyData: {},
       params: {
         appointmentSeriesId,
         appointmentId,
@@ -32,7 +33,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
 
     it('should redirect back to appointment details page when the appointment journey data is not in session', async () => {
       req.session.appointmentJourney = null
-      req.session.editAppointmentJourney = {
+      req.journeyData.editAppointmentJourney = {
         numberOfAppointments: 1,
         appointments: [
           {
@@ -54,7 +55,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
         type: AppointmentType.GROUP,
         appointmentName: 'appointment name',
       }
-      req.session.editAppointmentJourney = null
+      req.journeyData.editAppointmentJourney = null
       await middleware(req, res, next)
 
       expect(res.redirect).toHaveBeenCalledWith(`/appointments/${appointmentId}`)
@@ -66,7 +67,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
         type: AppointmentType.GROUP,
         appointmentName: 'appointment name',
       }
-      req.session.editAppointmentJourney = {
+      req.journeyData.editAppointmentJourney = {
         numberOfAppointments: 1,
         appointments: [
           {
@@ -88,7 +89,7 @@ describe('emptyEditAppointmentJourneyHandler', () => {
     const middleware = emptyEditAppointmentJourneyHandler(false)
 
     it('should continue when the journey data is not in session', async () => {
-      req.session.editAppointmentJourney = null
+      req.journeyData.editAppointmentJourney = null
       await middleware(req, res, next)
 
       expect(res.redirect).not.toHaveBeenCalled()

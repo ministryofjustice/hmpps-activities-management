@@ -34,6 +34,8 @@ describe('Route Handlers - Create Appointment - Extra Information', () => {
     req = {
       session: {
         appointmentJourney: {},
+      },
+      journeyData: {
         editAppointmentJourney: {},
       },
       flash: jest.fn(),
@@ -83,7 +85,9 @@ describe('Route Handlers - Create Appointment - Extra Information', () => {
 
       await handler.EDIT(req, res)
 
-      expect(req.session.editAppointmentJourney.extraInformation).toEqual('Updated appointment level extra information')
+      expect(req.journeyData.editAppointmentJourney.extraInformation).toEqual(
+        'Updated appointment level extra information',
+      )
       expect(editAppointmentService.redirectOrEdit).toHaveBeenCalledWith(req, res, 'extra-information')
     })
   })

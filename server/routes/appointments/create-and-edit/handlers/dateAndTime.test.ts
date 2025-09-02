@@ -37,6 +37,8 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
     req = {
       session: {
         appointmentJourney: {},
+      },
+      journeyData: {
         editAppointmentJourney: {},
       },
       query: {},
@@ -231,7 +233,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
         }),
       } as unknown as AppointmentJourney
 
-      req.session.editAppointmentJourney = {} as unknown as EditAppointmentJourney
+      req.journeyData.editAppointmentJourney = {} as unknown as EditAppointmentJourney
 
       req.body = {
         startDate: formatDatePickerDate(tomorrow),
@@ -251,7 +253,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
 
       await handler.EDIT(req, res)
 
-      expect(req.session.editAppointmentJourney.startDate).toEqual(formatIsoDate(fiveDaysAgo))
+      expect(req.journeyData.editAppointmentJourney.startDate).toEqual(formatIsoDate(fiveDaysAgo))
       expect(res.redirect).toHaveBeenCalledWith('schedule')
     })
 
@@ -261,7 +263,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
 
       await handler.EDIT(req, res)
 
-      expect(req.session.editAppointmentJourney.startDate).toEqual(formatIsoDate(nextWeek))
+      expect(req.journeyData.editAppointmentJourney.startDate).toEqual(formatIsoDate(nextWeek))
       expect(res.redirect).toHaveBeenCalledWith('schedule')
     })
 
@@ -281,12 +283,12 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
 
       await handler.EDIT(req, res)
 
-      expect(req.session.editAppointmentJourney.startTime).toEqual({
+      expect(req.journeyData.editAppointmentJourney.startTime).toEqual({
         hour: startTime.hour,
         minute: startTime.minute,
         date: startTime.toDate(tomorrow),
       })
-      expect(req.session.editAppointmentJourney.endTime).toEqual({
+      expect(req.journeyData.editAppointmentJourney.endTime).toEqual({
         hour: endTime.hour,
         minute: endTime.minute,
         date: endTime.toDate(tomorrow),
@@ -311,13 +313,13 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
 
       await handler.EDIT(req, res)
 
-      expect(req.session.editAppointmentJourney.startDate).toEqual(formatIsoDate(nextWeek))
-      expect(req.session.editAppointmentJourney.startTime).toEqual({
+      expect(req.journeyData.editAppointmentJourney.startDate).toEqual(formatIsoDate(nextWeek))
+      expect(req.journeyData.editAppointmentJourney.startTime).toEqual({
         hour: startTime.hour,
         minute: startTime.minute,
         date: startTime.toDate(nextWeek),
       })
-      expect(req.session.editAppointmentJourney.endTime).toEqual({
+      expect(req.journeyData.editAppointmentJourney.endTime).toEqual({
         hour: endTime.hour,
         minute: endTime.minute,
         date: endTime.toDate(nextWeek),
@@ -356,7 +358,7 @@ describe('Route Handlers - Appointment Journey - Date and Time', () => {
 
       await handler.EDIT(req, res)
 
-      expect(req.session.editAppointmentJourney).toBeNull()
+      expect(req.journeyData.editAppointmentJourney).toBeNull()
       expect(req.session.appointmentJourney).toBeNull()
       expect(res.redirect).toHaveBeenCalledWith(`/appointments/12`)
     })
