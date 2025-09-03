@@ -213,6 +213,7 @@ describe('Select activities page - deallocation after allocation', () => {
             startDate: '2025-02-05',
           },
         ],
+        activitiesToDeallocate: null,
         scheduledInstance: {
           attendances: [],
           cancelled: false,
@@ -356,6 +357,7 @@ describe('Select activities page - deallocation after allocation', () => {
           startTime: '17:00',
           timeSlot: 'ED',
         },
+        activity: null,
       })
     })
   })
