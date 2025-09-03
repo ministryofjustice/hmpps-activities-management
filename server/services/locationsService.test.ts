@@ -22,7 +22,7 @@ describe('Locations Service', () => {
     jest.resetAllMocks()
   })
 
-  describe('return ', () => {
+  describe('return fetchLocationsByNonResidentialUsageType', () => {
     it('should return locations', async () => {
       const locations = [
         { id: '123', code: 'AWING', localName: 'A Wing' },
@@ -77,6 +77,64 @@ describe('Locations Service', () => {
       ] as LocationWithDescription[]
 
       expect(await locationsService.fetchActivityLocations('RSI', user)).toEqual(expectedLocations)
+    })
+  })
+
+  describe('return fetchNonResidentialLocationsByUsageType', () => {
+    it('should return locations', async () => {
+      const locations = [
+        { id: '123', code: 'AWING', localName: 'A Wing' },
+        { id: '456', code: 'BWING', localName: 'B Wing' },
+      ] as Location[]
+
+      when(locationInsidePrisonApiClient.fetchNonResidentialLocationsByUsageType)
+        .calledWith(atLeast('RSI'))
+        .mockResolvedValue(locations)
+
+      const expectedLocations = [
+        { id: '123', code: 'AWING', localName: 'A Wing', description: 'A Wing' },
+        { id: '456', code: 'BWING', localName: 'B Wing', description: 'B Wing' },
+      ] as LocationWithDescription[]
+
+      expect(await locationsService.fetchNonResidentialActivityLocations('RSI', user)).toEqual(expectedLocations)
+    })
+
+    it('should return locations including those without a local name', async () => {
+      const locations = [
+        { id: '123', code: 'AWING', localName: 'A Wing' },
+        { id: '456', code: 'BWING' },
+      ] as Location[]
+
+      when(locationInsidePrisonApiClient.fetchNonResidentialLocationsByUsageType)
+        .calledWith(atLeast('RSI'))
+        .mockResolvedValue(locations)
+
+      const expectedLocations = [
+        { id: '123', code: 'AWING', localName: 'A Wing', description: 'A Wing' },
+        { id: '456', code: 'BWING', description: 'BWING' },
+      ] as LocationWithDescription[]
+
+      expect(await locationsService.fetchNonResidentialActivityLocations('RSI', user)).toEqual(expectedLocations)
+    })
+
+    it('should sort locations', async () => {
+      const locations = [
+        { id: '789', code: 'CWING', localName: 'C Wing' },
+        { id: '123', code: 'AWING', localName: 'A Wing' },
+        { id: '456', code: 'BWING' },
+      ] as Location[]
+
+      when(locationInsidePrisonApiClient.fetchNonResidentialLocationsByUsageType)
+        .calledWith(atLeast('RSI'))
+        .mockResolvedValue(locations)
+
+      const expectedLocations = [
+        { id: '123', code: 'AWING', localName: 'A Wing', description: 'A Wing' },
+        { id: '456', code: 'BWING', description: 'BWING' },
+        { id: '789', code: 'CWING', localName: 'C Wing', description: 'C Wing' },
+      ] as LocationWithDescription[]
+
+      expect(await locationsService.fetchNonResidentialActivityLocations('RSI', user)).toEqual(expectedLocations)
     })
   })
 })

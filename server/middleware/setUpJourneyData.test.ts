@@ -80,7 +80,7 @@ describe('setUpJourneyData', () => {
     expect(tokenStore.setToken).toHaveBeenCalledWith(
       `journey.tester.${journeyId}`,
       '{"movementListJourney":{"date":"2025-02-24"}}',
-      68 * 60 * 60,
+      24 * 60 * 60,
     )
   })
 })

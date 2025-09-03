@@ -46,6 +46,7 @@ const attendanceSummaryResponse = [
       code: 'MDI-WORK-1',
       description: 'WORKSHOP 1',
     },
+    dpsLocationId: '100',
     cancelled: false,
     attendanceSummary: {
       allocations: 2,

@@ -60,6 +60,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
 
     req = {
       session: {},
+      journeyData: {},
       params: { journeyId },
     } as unknown as Request
 
@@ -130,7 +131,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         createJourneyComplete: false,
         prisoners: [],
       })
-      expect(req.session.editAppointmentJourney).toBeUndefined()
+      expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toBeUndefined()
 
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
@@ -155,7 +156,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         type: AppointmentType.SET,
         createJourneyComplete: false,
       })
-      expect(req.session.editAppointmentJourney).toBeUndefined()
+      expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toEqual({
         appointments: [],
       })
@@ -298,7 +299,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         createJourneyComplete: false,
         prisoners: [],
       })
-      expect(req.session.editAppointmentJourney).toBeUndefined()
+      expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toBeUndefined()
 
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
@@ -341,7 +342,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
         ],
         fromPrisonNumberProfile: 'A1234BC',
       })
-      expect(req.session.editAppointmentJourney).toBeUndefined()
+      expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toBeUndefined()
 
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
@@ -426,6 +427,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       req = {
         get: jest.fn(),
         session: {},
+        journeyData: {},
         params: { journeyId },
         appointmentSeries,
         appointment,
@@ -438,7 +440,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       await handler.EDIT(req, res)
 
       expect(req.session.appointmentJourney).toBeUndefined()
-      expect(req.session.editAppointmentJourney).toBeUndefined()
+      expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(req.session.journeyMetrics).toBeUndefined()
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
@@ -453,7 +455,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       await handler.EDIT(req, res)
 
       expect(req.session.appointmentJourney).toBeUndefined()
-      expect(req.session.editAppointmentJourney).toBeUndefined()
+      expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(req.session.journeyMetrics).toBeUndefined()
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
@@ -488,7 +490,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       await handler.EDIT(req, res)
 
       expect(req.session.appointmentJourney).toEqual(appointmentJourneySession)
-      expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
+      expect(req.journeyData.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.appointmentSetJourney).toBeUndefined()
 
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
@@ -522,6 +524,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       req = {
         get: jest.fn(),
         session: {},
+        journeyData: {},
         params: { journeyId },
         appointmentSeries,
         appointment,
@@ -536,7 +539,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       await handler.REMOVE_PRISONER(req, res)
 
       expect(req.session.appointmentJourney).toBeUndefined()
-      expect(req.session.editAppointmentJourney).toBeUndefined()
+      expect(req.journeyData.editAppointmentJourney).toBeUndefined()
       expect(req.session.appointmentSetJourney).toBeUndefined()
       expect(req.session.journeyMetrics).toBeUndefined()
       expect(metricsService.trackEvent).not.toHaveBeenCalled()
@@ -577,7 +580,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       await handler.REMOVE_PRISONER(req, res)
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
-      expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
+      expect(req.journeyData.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.appointmentSetJourney).toBeUndefined()
 
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
@@ -634,7 +637,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       await handler.REMOVE_PRISONER(req, res)
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
-      expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
+      expect(req.journeyData.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.appointmentSetJourney).toBeUndefined()
 
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
@@ -656,6 +659,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
     beforeEach(() => {
       req = {
         session: {},
+        journeyData: {},
         params: { journeyId },
         appointmentSeries,
         appointment,
@@ -684,7 +688,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       await handler.ADD_PRISONERS(req, res)
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
-      expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
+      expect(req.journeyData.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.appointmentSetJourney).toBeUndefined()
 
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
@@ -706,6 +710,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
     beforeEach(() => {
       req = {
         session: {},
+        journeyData: {},
         params: { journeyId },
         appointmentSeries,
         appointment,
@@ -732,7 +737,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       await handler.CANCEL(req, res)
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
-      expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
+      expect(req.journeyData.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.appointmentSetJourney).toBeUndefined()
 
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)
@@ -753,6 +758,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
     beforeEach(() => {
       req = {
         session: {},
+        journeyData: {},
         params: { journeyId },
         appointmentSeries,
         appointment,
@@ -779,7 +785,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
       await handler.UNCANCEL(req, res)
 
       expect(req.session.appointmentJourney).not.toBeUndefined()
-      expect(req.session.editAppointmentJourney).toEqual(editAppointmentJourneySession)
+      expect(req.journeyData.editAppointmentJourney).toEqual(editAppointmentJourneySession)
       expect(req.session.appointmentSetJourney).toBeUndefined()
 
       expect(Date.now() - req.session.journeyMetrics.journeyStartTime).toBeLessThanOrEqual(1000)

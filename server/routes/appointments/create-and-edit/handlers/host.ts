@@ -20,7 +20,7 @@ export default class HostRoutes {
       organiserDescriptions,
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !isApplyToQuestionRequired(req.session.editAppointmentJourney),
+        !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
     })
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
@@ -34,7 +34,7 @@ export default class HostRoutes {
   EDIT = async (req: Request, res: Response): Promise<void> => {
     const { host }: HostForm = req.body
 
-    req.session.editAppointmentJourney.organiserCode = Organiser[host]
+    req.journeyData.editAppointmentJourney.organiserCode = Organiser[host]
 
     await this.editAppointmentService.redirectOrEdit(req, res, 'host')
   }

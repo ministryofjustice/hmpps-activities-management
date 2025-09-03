@@ -43,7 +43,7 @@
                     },
                     errorMessage: validationErrors | findError('startDate'),
                     classes: 'moj-datepicker--fixed-width',
-                    value: formResponses.startDate or ((session.editAppointmentJourney.startDate or session.appointmentJourney.startDate) | isoDateToDatePickerDate)
+                    value: formResponses.startDate or ((editAppointmentJourney.startDate or session.appointmentJourney.startDate) | isoDateToDatePickerDate)
                 }) }}
                 {% if session.appointmentJourney.mode != AppointmentJourneyMode.COPY %}
                     {{ timePicker({
@@ -55,7 +55,7 @@
                         },
                         renderedErrorMessage: validationErrors | findError('startTime'),
                         validationErrors: validationErrors,
-                        formResponses: formResponses.startTime or session.editAppointmentJourney.startTime or session.appointmentJourney.startTime
+                        formResponses: formResponses.startTime or editAppointmentJourney.startTime or session.appointmentJourney.startTime
                     }) }}
                     {{ timePicker({
                         id: 'endTime',
@@ -66,7 +66,7 @@
                         },
                         renderedErrorMessage: validationErrors | findError('endTime'),
                         validationErrors: validationErrors,
-                        formResponses: formResponses.endTime or session.editAppointmentJourney.endTime or session.appointmentJourney.endTime
+                        formResponses: formResponses.endTime or editAppointmentJourney.endTime or session.appointmentJourney.endTime
                     }) }}
                 {%  endif %}
                 {{ govukButton({

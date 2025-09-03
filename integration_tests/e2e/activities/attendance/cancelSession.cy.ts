@@ -9,13 +9,13 @@ import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceD
 import ActivitiesIndexPage from '../../../pages/activities'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary-11-93-94.json'
 import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
-import getEventLocations from '../../../fixtures/prisonApi/getEventLocations.json'
 import getAttendeesForScheduledInstance from '../../../fixtures/activitiesApi/getAttendeesScheduledInstance93.json'
 import getInmateDetails from '../../../fixtures/prisonerSearchApi/getInmateDetailsForAttendance.json'
 import getScheduledEvents from '../../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import AttendanceListPage from '../../../pages/recordAttendance/attendanceList'
 import CancelSessionPage from '../../../pages/recordAttendance/cancelSessionReason'
 import CancelSessionConfirmPage from '../../../pages/recordAttendance/cancelSessionConfirm'
+import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 
 context('Cancel an activity session (single)', () => {
   const today = startOfToday()
@@ -34,7 +34,11 @@ context('Cancel an activity session (single)', () => {
       getAttendanceSummary,
     )
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
-    cy.stubEndpoint('GET', '/api/agencies/MDI/eventLocations', getEventLocations)
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/non-residential-usage-type\\?formatLocalName=true',
+      getNonResidentialActivityLocations,
+    )
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstanceEnglishLevel1 as unknown as JSON)
     cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendeesForScheduledInstance)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails as unknown as JSON)

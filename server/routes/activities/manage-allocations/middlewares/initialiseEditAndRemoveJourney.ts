@@ -24,6 +24,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
 
     if (!scheduleId && !allocationId && !selectActivity) return res.redirect(req.get('Referrer') || '/')
 
+    // Required for the deallocate after allocation journey - when you have just allocated a prisoner to something who already has multiple other allocations
     if (selectActivity) {
       const otherAllocationIdsList = otherAllocationIds.toString().split(',')
       const otherAllocations = await Promise.all(

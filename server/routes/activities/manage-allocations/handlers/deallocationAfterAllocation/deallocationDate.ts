@@ -8,6 +8,7 @@ import { parseDate } from '../../../../../utils/utils'
 import IsValidDate from '../../../../../validators/isValidDate'
 import Validator from '../../../../../validators/validator'
 import ActivitiesService from '../../../../../services/activitiesService'
+import logger from '../../../../../../logger'
 
 export class DeallocateDate {
   @Expose()
@@ -37,6 +38,20 @@ export default class DeallocationDateRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { allocateJourney } = req.journeyData
+    if (allocateJourney.activitiesToDeallocate) {
+      // multiple
+      const ids = allocateJourney.activitiesToDeallocate.map(act => act.activityId)
+      const schIds = allocateJourney.activitiesToDeallocate.map(act => act.scheduleId)
+      logger.info(
+        `Deallocation date page for ${allocateJourney.inmate.prisonerNumber}. Activities to deallocate: ${ids}, scheduleIds: ${schIds}, next scheduled instance: ${allocateJourney.scheduledInstance.id}, ${allocateJourney.scheduledInstance.date}, ${allocateJourney.scheduledInstance.timeSlot}`,
+      )
+    } else {
+      // single
+      logger.info(
+        `Deallocation date page for ${allocateJourney.inmate.prisonerNumber}. Activity to deallocate: ${allocateJourney.activity.activityId}, scheduleId: ${allocateJourney.activity.scheduleId}, next scheduled instance: ${allocateJourney.scheduledInstance.id}, ${allocateJourney.scheduledInstance.date}, ${allocateJourney.scheduledInstance.timeSlot}`,
+      )
+    }
+
     const nextAvailableInstance = allocateJourney.scheduledInstance
 
     const nextSessionDateAndTime = parseDate(

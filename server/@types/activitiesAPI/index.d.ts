@@ -8433,6 +8433,12 @@ export interface components {
       /** @description The NOMIS internal location for this schedule */
       internalLocation?: components['schemas']['InternalLocation']
       /**
+       * Format: uuid
+       * @description The optional DPS location UUID for the location
+       * @example b7602cc8-e769-4cbb-8194-62d8e655992a
+       */
+      dpsLocationId?: string
+      /**
        * @description Flag to indicate if the scheduled instance has been cancelled
        * @example false
        */

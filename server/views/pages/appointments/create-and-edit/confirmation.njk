@@ -23,7 +23,7 @@
                 {% endif %}
 
                 {% if appointmentSet %}
-                    You have successfully {{"created" if session.appointmentJourney.retrospective == YesNo.YES else "scheduled" }} {{ "an appointment for " + appointmentSet.appointments[0].prisoner | formatName(NameFormatStyle.firstLast, false) if appointmentSet.appointments | length == 1 else "appointments for " + appointmentSet.appointments | length + " people starting" }} on {{ (appointment.startDate or appointmentSet.startDate) | toDate | formatDate }}.
+                    You have successfully {{"created" if session.appointmentJourney.retrospective == YesNo.YES else "scheduled" }} {{ "an appointment for " + appointmentSet.appointments[0].attendees[0].prisoner | formatName(NameFormatStyle.firstLast, false) if appointmentSet.appointments | length == 1 else "appointments for " + appointmentSet.appointments | length + " people starting" }} on {{ (appointment.startDate or appointmentSet.startDate) | toDate | formatDate }}.
                 {% elseif not appointment.appointmentSeries.schedule %}
                     on {{ (appointment.startDate or appointmentSet.startDate) | toDate | formatDate }}.
                 {% else %}

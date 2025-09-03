@@ -2,17 +2,17 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { addDays, format, parse } from 'date-fns'
 import ActivitiesService from '../../../../../services/activitiesService'
-import PrisonService from '../../../../../services/prisonService'
 import { ActivityCategory } from '../../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../../enum/timeSlot'
 import LocationType from '../../../../../enum/locationType'
 import UncancelMultipleSessionsRoutes from './activitiesList'
+import LocationsService from '../../../../../services/locationsService'
 
 jest.mock('../../../../../services/activitiesService')
-jest.mock('../../../../../services/prisonService')
+jest.mock('../../../../../services/locationsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
+const locationsService = new LocationsService(null) as jest.Mocked<LocationsService>
 
 const attendanceSummaryResponse = [
   {
@@ -119,7 +119,7 @@ const attendanceSummaryResponse = [
 ]
 
 describe('Route Handlers - Uncancel Multiple Sessions', () => {
-  const handler = new UncancelMultipleSessionsRoutes(activitiesService, prisonService)
+  const handler = new UncancelMultipleSessionsRoutes(activitiesService, locationsService)
 
   let req: Request
   let res: Response

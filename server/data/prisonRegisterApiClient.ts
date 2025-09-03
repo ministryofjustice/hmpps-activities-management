@@ -1,20 +1,20 @@
+import { asSystem, RestClient } from '@ministryofjustice/hmpps-rest-client'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config, { ApiConfig } from '../config'
-
-import AbstractHmppsRestClient from './abstractHmppsRestClient'
 import { Prison } from '../@types/prisonRegisterApiImport/types'
-import { ServiceUser } from '../@types/express'
+import logger from '../../logger'
 
-export default class PrisonRegisterApiClient extends AbstractHmppsRestClient {
-  constructor() {
-    super('Prison register API', config.apis.prisonRegisterApi as ApiConfig)
+export default class PrisonRegisterApiClient extends RestClient {
+  constructor(authenticationClient: AuthenticationClient) {
+    super('Prison register API', config.apis.prisonRegisterApi as ApiConfig, logger, authenticationClient)
   }
 
-  async getPrisonInformation(prisonId: string, user: ServiceUser): Promise<Prison> {
+  async getPrisonInformation(prisonId: string): Promise<Prison> {
     return this.get(
       {
         path: `/prisons/id/${prisonId}`,
       },
-      user,
+      asSystem(),
     )
   }
 }

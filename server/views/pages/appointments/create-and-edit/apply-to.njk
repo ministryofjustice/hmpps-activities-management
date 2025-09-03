@@ -6,10 +6,11 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/add-prisoner-list.njk" import addPrisonerList %}
 
-{% set editMessage = getAppointmentEditMessage(session.appointmentJourney, session.editAppointmentJourney) %}
-{% set editHintMessage = getAppointmentEditHintMessage(session.appointmentJourney, session.editAppointmentJourney) %}
-{% set editHeadingMessage = getAppointmentEditHeadingMessage(session.appointmentJourney, session.editAppointmentJourney) %}
+{% set editMessage = getAppointmentEditMessage(session.appointmentJourney, editAppointmentJourney) %}
+{% set editHintMessage = getAppointmentEditHintMessage(session.appointmentJourney, editAppointmentJourney) %}
+{% set editHeadingMessage = getAppointmentEditHeadingMessage(session.appointmentJourney, editAppointmentJourney) %}
 {% set pageTitle = appointmentJourneyTitle(editMessage + ' which appointments - Appointments - DPS', session.appointmentJourney) %}
+
 {% set pageId = 'appointment-apply-to-page' %}
 {% set jsBackLink = true %}
 
@@ -31,7 +32,7 @@
             <h1 class="govuk-heading-l">{{ editHeadingMessage }}</h1>
             <p class="govuk-hint">{{ editHintMessage }}</p>
 
-            {{ addPrisonerList(session.editAppointmentJourney.addPrisoners, user) }}
+            {{ addPrisonerList(editAppointmentJourney.addPrisoners, user) }}
 
             <form method="POST" data-module="form-spinner" data-loading-text="Preparing your appointments" >
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -51,7 +52,7 @@
                 {% endif %}
 
                 {{ govukButton({
-                    text: getAppointmentEditApplyToCta(session.appointmentJourney, session.editAppointmentJourney),
+                    text: getAppointmentEditApplyToCta(session.appointmentJourney, editAppointmentJourney),
                     preventDoubleClick: true
                 }) }}
             </form>

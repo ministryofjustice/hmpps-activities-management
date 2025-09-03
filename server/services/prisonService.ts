@@ -50,10 +50,6 @@ export default class PrisonService {
     return this.prisonerSearchApiClient.getByPrisonerNumber(prisonerNumber, user)
   }
 
-  async getEventLocations(prisonCode: string, user: ServiceUser): Promise<LocationLenient[]> {
-    return this.prisonApiClient.getEventLocations(prisonCode, user)
-  }
-
   async getInternalLocationByKey(key: string, user: ServiceUser): Promise<LocationLenient> {
     return this.prisonApiClient.getInternalLocationByKey(key, user)
   }
@@ -66,7 +62,7 @@ export default class PrisonService {
     return this.prisonApiClient.getPayProfile(prisonCode)
   }
 
-  async getPrisonerImage(prisonerNumber: string, user: ServiceUser): Promise<Readable> {
-    return this.prisonApiClient.getPrisonerImage(prisonerNumber, user)
+  async getPrisonerImage(prisonerNumber: string): Promise<Readable> {
+    return this.prisonApiClient.getPrisonerImage(prisonerNumber)
   }
 }

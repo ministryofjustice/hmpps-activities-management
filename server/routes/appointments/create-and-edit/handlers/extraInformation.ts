@@ -18,7 +18,7 @@ export default class ExtraInformationRoutes {
     res.render('pages/appointments/create-and-edit/extra-information', {
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !isApplyToQuestionRequired(req.session.editAppointmentJourney),
+        !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
     })
   }
 
@@ -33,7 +33,7 @@ export default class ExtraInformationRoutes {
   EDIT = async (req: Request, res: Response): Promise<void> => {
     const { extraInformation } = req.body
 
-    req.session.editAppointmentJourney.extraInformation = extraInformation
+    req.journeyData.editAppointmentJourney.extraInformation = extraInformation
 
     await this.editAppointmentService.redirectOrEdit(req, res, 'extra-information')
   }
