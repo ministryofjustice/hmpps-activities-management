@@ -36,6 +36,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
       session: {
         appointmentJourney: {},
       },
+      journeyData: {},
       body: {},
       query: {},
       flash: jest.fn(),
@@ -235,7 +236,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
         mode: AppointmentJourneyMode.EDIT,
         type: AppointmentType.GROUP,
       }
-      req.session.editAppointmentJourney = {
+      req.journeyData.editAppointmentJourney = {
         addPrisoners: [
           {
             number: 'X9876YZ',
@@ -262,7 +263,7 @@ describe('Route Handlers - Appointments - Select Prisoner', () => {
 
       await handler.SELECT_PRISONER(req, res)
 
-      expect(req.session.editAppointmentJourney.addPrisoners).toEqual([
+      expect(req.journeyData.editAppointmentJourney.addPrisoners).toEqual([
         {
           number: 'X9876YZ',
           name: 'James Johnson',

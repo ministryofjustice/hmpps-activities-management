@@ -171,8 +171,8 @@ export default class MetricsEvent {
       .addJourneyStartedMetrics(req)
       .addProperties({
         appointmentId: appointment.id,
-        property: req.session.editAppointmentJourney.property,
-        isApplyToQuestionRequired: isApplyToQuestionRequired(req.session.editAppointmentJourney).toString(),
+        property: req.journeyData.editAppointmentJourney.property,
+        isApplyToQuestionRequired: isApplyToQuestionRequired(req.journeyData.editAppointmentJourney).toString(),
       })
   }
 
@@ -188,9 +188,9 @@ export default class MetricsEvent {
       .addJourneyCompletedMetrics(req)
       .addProperties({
         appointmentId,
-        property: req.session.editAppointmentJourney.property,
+        property: req.journeyData.editAppointmentJourney.property,
         propertyChanged: propertyChanged.toString(),
-        isApplyToQuestionRequired: isApplyToQuestionRequired(req.session.editAppointmentJourney).toString(),
+        isApplyToQuestionRequired: isApplyToQuestionRequired(req.journeyData.editAppointmentJourney).toString(),
         applyTo: propertyChanged ? applyTo : 'NA',
       })
   }
@@ -200,7 +200,7 @@ export default class MetricsEvent {
       .addJourneyStartedMetrics(req)
       .addProperties({
         appointmentId: appointment.id,
-        isApplyToQuestionRequired: isApplyToQuestionRequired(req.session.editAppointmentJourney).toString(),
+        isApplyToQuestionRequired: isApplyToQuestionRequired(req.journeyData.editAppointmentJourney).toString(),
       })
   }
 
@@ -216,9 +216,9 @@ export default class MetricsEvent {
       .addProperties({
         appointmentId,
         isDelete: (
-          req.session.editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR
+          req.journeyData.editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR
         ).toString(),
-        isApplyToQuestionRequired: isApplyToQuestionRequired(req.session.editAppointmentJourney).toString(),
+        isApplyToQuestionRequired: isApplyToQuestionRequired(req.journeyData.editAppointmentJourney).toString(),
         applyTo,
       })
   }
@@ -228,7 +228,7 @@ export default class MetricsEvent {
       .addJourneyStartedMetrics(req)
       .addProperties({
         appointmentId: appointment.id,
-        isApplyToQuestionRequired: isApplyToQuestionRequired(req.session.editAppointmentJourney).toString(),
+        isApplyToQuestionRequired: isApplyToQuestionRequired(req.journeyData.editAppointmentJourney).toString(),
       })
   }
 
@@ -244,9 +244,9 @@ export default class MetricsEvent {
       .addProperties({
         appointmentId,
         isDelete: (
-          req.session.editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR
+          req.journeyData.editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR
         ).toString(),
-        isApplyToQuestionRequired: isApplyToQuestionRequired(req.session.editAppointmentJourney).toString(),
+        isApplyToQuestionRequired: isApplyToQuestionRequired(req.journeyData.editAppointmentJourney).toString(),
         applyTo,
       })
   }

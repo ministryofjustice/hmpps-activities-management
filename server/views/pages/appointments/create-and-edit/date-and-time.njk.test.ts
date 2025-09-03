@@ -19,8 +19,8 @@ describe('Views - Appointments Management - Date and Time', () => {
   let viewContext = {
     session: {
       appointmentJourney: {} as unknown as AppointmentJourney,
-      editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     },
+    editAppointmentJourney: {} as unknown as EditAppointmentJourney,
     backLinkHref: '',
     isCtaAcceptAndSave: false,
   }
@@ -36,25 +36,25 @@ describe('Views - Appointments Management - Date and Time', () => {
           type: AppointmentType.GROUP,
           startDate: formatIsoDate(weekTomorrow),
         },
-        editAppointmentJourney: {
-          numberOfAppointments: 3,
-          appointments: [
-            {
-              sequenceNumber: 1,
-              startDate: format(weekTomorrow, 'yyyy-MM-dd'),
-            },
-            {
-              sequenceNumber: 2,
-              startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
-            },
-            {
-              sequenceNumber: 3,
-              startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
-            },
-          ],
-          sequenceNumber: 2,
-        } as EditAppointmentJourney,
       },
+      editAppointmentJourney: {
+        numberOfAppointments: 3,
+        appointments: [
+          {
+            sequenceNumber: 1,
+            startDate: format(weekTomorrow, 'yyyy-MM-dd'),
+          },
+          {
+            sequenceNumber: 2,
+            startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
+          },
+          {
+            sequenceNumber: 3,
+            startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
+          },
+        ],
+        sequenceNumber: 2,
+      } as EditAppointmentJourney,
       backLinkHref: 'name',
       isCtaAcceptAndSave: false,
     }

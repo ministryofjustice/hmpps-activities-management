@@ -19,7 +19,8 @@ export default class ScheduleRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { appointmentId } = req.params
-    const { appointmentJourney, appointmentSetJourney, editAppointmentJourney } = req.session
+    const { appointmentJourney, appointmentSetJourney } = req.session
+    const { editAppointmentJourney } = req.journeyData
     const { preserveHistory } = req.query
 
     let prisonNumbers
@@ -91,7 +92,7 @@ export default class ScheduleRoutes {
       appointmentId,
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-        !isApplyToQuestionRequired(req.session.editAppointmentJourney),
+        !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
     })
   }
 
@@ -117,7 +118,7 @@ export default class ScheduleRoutes {
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
     let property = 'date-and-time'
-    if (req.session.editAppointmentJourney.addPrisoners) {
+    if (req.journeyData.editAppointmentJourney.addPrisoners) {
       property = 'prisoners/add'
     }
 
@@ -135,9 +136,9 @@ export default class ScheduleRoutes {
       )
     } else if (
       req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
-      req.session.editAppointmentJourney?.addPrisoners
+      req.journeyData.editAppointmentJourney?.addPrisoners
     ) {
-      req.session.editAppointmentJourney.addPrisoners = req.session.editAppointmentJourney.addPrisoners.filter(
+      req.journeyData.editAppointmentJourney.addPrisoners = req.journeyData.editAppointmentJourney.addPrisoners.filter(
         p => p.number !== prisonNumber,
       )
     } else {

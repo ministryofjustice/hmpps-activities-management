@@ -30,6 +30,8 @@ describe('Route Handlers - Edit Appointment - Confirm', () => {
           type: AppointmentType.GROUP,
           startDate: formatIsoDate(weekTomorrow),
         },
+      },
+      journeyData: {
         editAppointmentJourney: {
           numberOfAppointments: 4,
           appointments: [
