@@ -233,6 +233,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('appointmentMultipleAttendanceToggleEnabled', config.appointmentMultipleAttendanceToggleEnabled)
   njkEnv.addGlobal('inServiceReportingEnabled', config.inServiceReportingEnabled)
   njkEnv.addGlobal('notRequiredInAdvanceEnabled', config.notRequiredInAdvanceEnabled)
+  njkEnv.addGlobal('attendAllEnabled', config.attendAllEnabled)
   njkEnv.addGlobal('liveIssueOutageBannerEnabled', config.liveIssueOutageBannerEnabled)
   njkEnv.addGlobal('plannedDowntimeOutageBannerEnabled', config.plannedDowntimeOutageBannerEnabled)
   njkEnv.addGlobal('plannedDowntimeDate', config.plannedDowntimeDate)
