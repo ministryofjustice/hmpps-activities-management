@@ -1,4 +1,18 @@
+import { Expose } from 'class-transformer'
+import { IsIn } from 'class-validator'
 import { Request, Response } from 'express'
+
+enum AttendanceRecordingMethod {
+  ACTIVITY,
+  ACTIVITY_LOCATION,
+  RESIDENTIAL_LOCATION,
+}
+
+export class HowToRecordAttendanceForm {
+  @Expose()
+  @IsIn(Object.values(AttendanceRecordingMethod), { message: 'Select how to record attendance' })
+  howToRecord: string
+}
 
 export default class HowToRecordAttendanceRoutes {
   constructor() {}
