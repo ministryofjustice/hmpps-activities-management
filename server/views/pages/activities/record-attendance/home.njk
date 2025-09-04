@@ -13,14 +13,25 @@
 {% block content %}
     <div class="card-group govuk-grid-row">
         <div class="govuk-grid-column-one-third card-group__item">
-            {{ card({
-                "id": "RecordAttendance",
-                "href": "/activities/attendance/select-period",
-                "clickable": "true",
-                "heading": "Record attendance and cancel activity sessions",
-                "description": "Mark and update attendance. Cancel individual activity sessions.",
-                "data-qa": "record-attendance"
-            }) }}
+            {% if 'ROLE_ACTIVITY_HUB' in user.roles or not attendAllEnabled %}
+                {{ card({
+                    "id": "RecordAttendance",
+                    "href": "/activities/attendance/select-period",
+                    "clickable": "true",
+                    "heading": "Record attendance and cancel activity sessions",
+                    "description": "Mark and update attendance. Cancel individual activity sessions.",
+                    "data-qa": "record-attendance"
+                }) }}
+            {% else %}
+                {{ card({
+                    "id": "RecordAttendanceSpecific",
+                    "href": "/activities/attendance/tbc",
+                    "clickable": "true",
+                    "heading": "Record attendance and cancel activity sessions",
+                    "description": "Mark and update attendance. Cancel individual activity sessions.",
+                    "data-qa": "record-attendance-specific"
+                }) }}
+            {% endif %}
         </div>
         <div class="govuk-grid-column-one-third card-group__item">
             {{ card({
