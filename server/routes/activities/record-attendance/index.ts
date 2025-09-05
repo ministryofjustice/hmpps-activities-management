@@ -36,6 +36,7 @@ import CancelSingleSessionsReasonRoutes, { CancelReasonSingleForm } from './hand
 import CancelSingleSessionPayRoutes, { SessionPaySingleForm } from './handlers/cancel-single-session/payment'
 import CancelSingleSessionsCheckAnswersRoutes from './handlers/cancel-single-session/checkAnswers'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
+import HowToRecordAttendanceRoutes, { HowToRecordAttendanceForm } from './handlers/attend-all/howToRecordAttendance'
 
 export default function Index({
   activitiesService,
@@ -91,6 +92,7 @@ export default function Index({
     activitiesService,
     userService,
   )
+  const howToRecordAttendanceRoutes = new HowToRecordAttendanceRoutes()
 
   get('/', homeHandler.GET)
 
@@ -218,6 +220,10 @@ export default function Index({
     cancelMultipleSessionsViewEditDetailsRoutes.GET,
     true,
   )
+
+  // Attend all routes
+  get('/:journeyId/attend-all/how-to-record-attendance', howToRecordAttendanceRoutes.GET)
+  post('/:journeyId/attend-all/how-to-record-attendance', howToRecordAttendanceRoutes.POST, HowToRecordAttendanceForm)
 
   return router
 }
