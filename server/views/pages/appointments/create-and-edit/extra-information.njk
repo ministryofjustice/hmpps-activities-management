@@ -6,9 +6,9 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("change extra information", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("change extra information - Appointments - DPS", session.appointmentJourney) %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Add extra information", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("Add extra information - Appointments - DPS", session.appointmentJourney) %}
 {% endif %}
 
 {% set pageId = 'appointment-extra-information-page' %}

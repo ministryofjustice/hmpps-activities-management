@@ -5,7 +5,7 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-confirmation-title.njk" import appointmentConfirmationTitle %}
 
-{% set pageTitle = appointmentJourneyTitle("Set scheduled" if session.appointmentJourney.type == AppointmentType.SET else "Appointment scheduled", session.appointmentJourney, session.appointmentJourney.retrospective == YesNo.YES) %}
+{% set pageTitle = appointmentJourneyTitle("Set scheduled - Appointments - DPS" if session.appointmentJourney.type == AppointmentType.SET else "Appointment scheduled - Appointments - DPS", session.appointmentJourney, session.appointmentJourney.retrospective == YesNo.YES) %}
 
 {% set pageId = 'appointment-scheduled-confirmation-page' %}
 

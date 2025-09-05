@@ -5,7 +5,7 @@
 {% from "partials/attendance/activitiesTable.njk" import activitiesTable %}
 {% from "partials/attendance/activitiesTableFilters.njk" import activitiesTableFilters %}
 
-{% set pageTitle = applicationName + " - Record attendance" %}
+{% set pageTitle = "Find an activity to record attendance - Activities - DPS" %}
 {% set pageId = 'activities-page' %}
 {% set hardBackLinkHref = "/activities/attendance/select-period?date="+(activityDate | toDateString or '')+"&sessions="+(session.req.query.sessionFilters or '') %}
 {% set hardBackLinkText = "Back" %}

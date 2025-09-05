@@ -9,7 +9,8 @@
 {% set editMessage = getAppointmentEditMessage(session.appointmentJourney, editAppointmentJourney) %}
 {% set editHintMessage = getAppointmentEditHintMessage(session.appointmentJourney, editAppointmentJourney) %}
 {% set editHeadingMessage = getAppointmentEditHeadingMessage(session.appointmentJourney, editAppointmentJourney) %}
-{% set pageTitle = appointmentJourneyTitle(editMessage + ' which appointments', session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle(editMessage + ' which appointments - Appointments - DPS', session.appointmentJourney) %}
+
 {% set pageId = 'appointment-apply-to-page' %}
 {% set jsBackLink = true %}
 

@@ -7,7 +7,8 @@
 {% from "pages/appointments/partials/add-prisoner-list.njk" import addPrisonerList %}
 
 {% set editMessage = getAppointmentEditMessage(session.appointmentJourney, editAppointmentJourney) %}
-{% set pageTitle = appointmentJourneyTitle(editMessage + ' this appointment', session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle(editMessage + ' this appointment - Appointments - DPS', session.appointmentJourney) %}
+
 {% set pageId = 'appointment-confirm-edit-page' %}
 {% set jsBackLink = true %}
 

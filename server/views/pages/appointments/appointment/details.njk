@@ -10,7 +10,7 @@
 {% from "partials/service-user-name.njk" import serviceUserName %}
 {% from "partials/showLocation.njk" import showLocation %}
 
-{% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) %}
+{% set pageTitle = appointment.appointmentName + " - " + appointment.startDate | toDate | formatDate + " " + appointment.startTime + (" to " + appointment.endTime if appointment.endTime) + " - Appointments - DPS" %}
 {% set pageId = 'appointment-details-page' %}
 {% set jsBackLink = true %}
 

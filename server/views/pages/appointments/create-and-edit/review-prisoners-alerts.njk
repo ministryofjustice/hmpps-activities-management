@@ -14,14 +14,15 @@
 
 {% set prisoners = alertsDetails.prisoners %}
 {% set numPrisonersWithAlerts = alertsDetails.numPrisonersWithAlerts %}
+{% set serviceTitle = ' - Appointments - DPS' %}
 
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("no attendees added" if prisoners.length == 0 else "Review additional attendee" + ("s" if prisoners.length > 1), session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("no attendees added" + serviceTitle if prisoners.length == 0 else "Review additional attendee" + ("s" if prisoners.length > 1) + serviceTitle, session.appointmentJourney) %}
 {% else %}
     {% if session.appointmentJourney.type == AppointmentType.SET %}
-        {% set pageTitle = appointmentJourneyTitle("No attendees for set" if prisoners.length == 0 else "Review back-to-backs list", session.appointmentJourney) %}
+        {% set pageTitle = appointmentJourneyTitle("No attendees for set" + serviceTitle if prisoners.length == 0 else "Review back-to-backs list" + serviceTitle, session.appointmentJourney) %}
     {% else %}
-        {% set pageTitle = appointmentJourneyTitle("No attendees" if prisoners.length == 0 else "Review attendee list", session.appointmentJourney) %}
+        {% set pageTitle = appointmentJourneyTitle("No attendees" + serviceTitle if prisoners.length == 0 else "Review attendee list" + serviceTitle, session.appointmentJourney) %}
     {% endif %}
 {% endif %}
 

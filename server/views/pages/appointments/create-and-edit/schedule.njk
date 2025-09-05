@@ -9,9 +9,9 @@
 {% from "partials/showLocation.njk" import showLocation %}
 
 {% if session.appointmentJourney.type == AppointmentType.SET %}
-    {% set pageTitle = appointmentJourneyTitle("No attendees for set" if prisoners.length == 0 else "Avoid clashes", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("No attendees for set - Appointments - DPS" if prisoners.length == 0 else "Avoid clashes - Appointments - DPS", session.appointmentJourney) %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("No attendees" if prisoners.length == 0 else "Avoid clashes", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("No attendees - Appointments - DPS" if prisoners.length == 0 else "Avoid clashes - Appointments - DPS", session.appointmentJourney) %}
 {% endif %}
 {% set pageId = 'appointment-schedule-page' %}
 {% set jsBackLink = true %}

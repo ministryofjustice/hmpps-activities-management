@@ -7,7 +7,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/showLocation.njk" import showLocation %}
 
-{% set pageTitle = appointmentJourneyTitle("Check and confirm set" if session.appointmentJourney.type == AppointmentType.SET else "Check and confirm appointment details", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Check and confirm set - Appointments - DPS" if session.appointmentJourney.type == AppointmentType.SET else "Check and confirm appointment details - Appointments - DPS", session.appointmentJourney) %}
 {% set pageId = 'appointment-check-answers-page' %}
 
 {% set appointmentDetailsRows = [

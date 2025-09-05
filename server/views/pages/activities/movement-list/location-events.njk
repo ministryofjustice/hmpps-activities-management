@@ -9,7 +9,7 @@
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
-{% set pageTitle = (locations[0].description + " - movement list" if locations | length == 1 else "Movement lists for " + locations | length + " locations") + " - " + date | toDate | formatDate + " " + timeSlot + " session" %}
+{% set pageTitle = (locations[0].description + " - movement list - Activities - DPS" if locations | length == 1 else "Movement lists for " + locations | length + " locations - Activities - DPS") %}
 {% set pageId = 'movement-list-location-events-page' %}
 {% set hardBackLinkText = 'Back' %}
 {% set hardBackLinkHref = "locations?dateOption=" + movementListJourney.dateOption + "&date=" + movementListJourney.date + "&timeSlot=" + movementListJourney.timeSlot %}
