@@ -159,7 +159,7 @@
     "jest-junit": "^16.0.0",
     "jest-when": "^3.7.0",
     "jsonwebtoken": "^9.0.2",
-    "lint-staged": "^16.1.5",
+    "lint-staged": "^16.1.6",
     "nock": "^13.5.6",
     "prettier": "^3.6.2",
     "prettier-plugin-jinja-template": "^2.1.0",
