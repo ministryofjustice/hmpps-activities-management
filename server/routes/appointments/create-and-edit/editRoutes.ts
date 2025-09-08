@@ -146,6 +146,7 @@ export default function Edit({
   get('/prisoners/add/upload-prisoner-list', uploadPrisonerListRoutes.GET, true)
   router.post(
     '/prisoners/add/upload-prisoner-list',
+    setUpJourneyData(tokenStore),
     setUpMultipartFormDataParsing(),
     validationMiddleware(PrisonerList),
     uploadPrisonerListRoutes.EDIT,
