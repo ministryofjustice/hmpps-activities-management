@@ -258,10 +258,6 @@ export default {
       route: '/activities/change-of-circumstances',
       roles: [Roles.ACTIVITY_HUB],
     },
-    {
-      route: '/activities/attendance/select-period',
-      roles: [Roles.ACTIVITY_HUB],
-    },
   ] as RouteAuth[],
   spikesFeatureToggleEnabled: toBoolean(get('SPIKES_FEATURE_TOGGLE_ENABLED', 'false')),
   appointmentMultipleAttendanceToggleEnabled: toBoolean(
