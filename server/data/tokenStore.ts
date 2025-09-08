@@ -23,6 +23,21 @@ export default class TokenStore implements TokenStoreInterface {
     await this.client.set(`${this.prefix}${key}`, token, { EX: durationSeconds })
   }
 
+  public setTokenSync(key: string, token: string, durationSeconds: number) {
+    this.ensureConnected()
+      .then(() => {
+        this.client
+          .set(`${this.prefix}${key}`, token, { EX: durationSeconds })
+          .then(() => {})
+          .catch(error => {
+            logger.error(error, `Redis set error`)
+          })
+      })
+      .catch(error => {
+        logger.error(error, `Redis connection error`)
+      })
+  }
+
   public async getToken(key: string): Promise<string> {
     await this.ensureConnected()
 
@@ -33,5 +48,20 @@ export default class TokenStore implements TokenStoreInterface {
   public async delToken(key: string): Promise<void> {
     await this.ensureConnected()
     await this.client.del(`${this.prefix}${key}`)
+  }
+
+  public delTokenSync(key: string) {
+    this.ensureConnected()
+      .then(() => {
+        this.client
+          .del(`${this.prefix}${key}`)
+          .then(() => {})
+          .catch(error => {
+            logger.error(error, `Redis del error`)
+          })
+      })
+      .catch(error => {
+        logger.error(error, `Redis connection error`)
+      })
   }
 }

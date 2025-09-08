@@ -90,6 +90,8 @@ describe('Bank Holiday service', () => {
       getToken: async () => null,
       setToken: jest.fn(),
       delToken: jest.fn(),
+      delTokenSync: jest.fn(),
+      setTokenSync: jest.fn(),
     }
     bankHolidaysClient = new BankHolidaysClient() as jest.Mocked<BankHolidaysClient>
     bankHolidaysService = new BankHolidayService(bankHolidaysClient, tokenStore)

@@ -24,14 +24,14 @@ export default function setUpJourneyData(store: TokenStoreInterface) {
       })
     }
 
-    res.prependOnceListener('close', async () => {
+    res.prependOnceListener('close', () => {
       if (!req.journeyData) {
-        await store.delToken(journeyTokenKey)
+        store.delTokenSync(journeyTokenKey)
       } else {
         const start = performance.now()
 
         try {
-          await store.setToken(
+          store.setTokenSync(
             journeyTokenKey,
             JSON.stringify(req.journeyData ?? {}),
             config.journeyDataTokenDurationHours * 60 * 60,
