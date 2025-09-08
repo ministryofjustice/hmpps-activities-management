@@ -14,8 +14,11 @@ import getScheduledInstanceEnglishLevel2 from '../../../fixtures/activitiesApi/g
 import getAttendanceList11 from '../../../fixtures/activitiesApi/getAttendanceList.json'
 import getScheduledEvents from '../../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getInmateDetails from '../../../fixtures/prisonerSearchApi/getInmateDetailsForAttendance.json'
+import NotRequiredOrExcusedPaidOrNotPage from '../../../pages/recordAttendance/notRequiredOrExcusedPaidOrNot'
+import NotRequiredOrExcusedCheckAndConfirmPage from '../../../pages/recordAttendance/notRequiredOrExcusedCheckAndConfirm'
+import getAdvanceListExcused from '../../../fixtures/activitiesApi/getAdvanceListExcused.json'
 
-context('Exclude multiple prisoners', () => {
+context('Exclude multiple prisoners from an activity', () => {
   const date3DaysFromNow = format(addDays(new Date(), 3), 'yyyy-MM-dd')
 
   beforeEach(() => {
@@ -23,11 +26,10 @@ context('Exclude multiple prisoners', () => {
     cy.task('stubSignIn')
     cy.signIn()
 
-    // Update fixture date
     getScheduledInstanceEnglishLevel2.date = date3DaysFromNow
 
-    // Stub endpoints
     cy.stubEndpoint('GET', '/activity-categories', getActivityCategories)
+
     cy.stubEndpoint(
       'GET',
       `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${date3DaysFromNow}`,
@@ -40,18 +42,28 @@ context('Exclude multiple prisoners', () => {
     )
     cy.stubEndpoint(
       'GET',
-      `/activities/attendance/.+/activities\\?date=${date3DaysFromNow}&sessionFilters=AM`,
+      `/activities/attendance/.*/activities\\?date=${date3DaysFromNow}&sessionFilters=AM`,
       getAllAttendances,
     )
-    cy.stubEndpoint('GET', '/scheduled-instances/11.*', getScheduledInstanceEnglishLevel2)
 
-    cy.stubEndpoint('GET', '/activities/attendance/.*/activities/.*/attendance-list.*', getAttendanceList11)
+    cy.stubEndpoint('GET', '/scheduled-instances/11/scheduled-attendees', getAttendanceList11)
 
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${date3DaysFromNow}`, getScheduledEvents)
+    // Specific scheduled instance details
+    cy.stubEndpoint('GET', '/scheduled-instances/11', getScheduledInstanceEnglishLevel2)
+
+    // Scheduled events
+    cy.stubEndpoint(
+      'POST',
+      `/scheduled-events/prison/MDI\\?date=${date3DaysFromNow}(&timeSlot=.*)?`,
+      getScheduledEvents,
+    )
+
+    // Prisoner search
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
+    cy.stubEndpoint('POST', '/advance-attendances', getAdvanceListExcused)
   })
 
-  it('should select English level 2 and mark multiple prisoners as not required', () => {
+  it('should select English level 2 and mark multiple prisoners as not required (paid)', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -73,8 +85,68 @@ context('Exclude multiple prisoners', () => {
 
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
     attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Attended')
-    attendanceListPage.checkAttendanceStatuses('Aborah, Cudmastarie', 'Attended')
-    attendanceListPage.checkAttendanceStatuses('Aisho, Egurztof', 'Not recorded')
-    attendanceListPage.checkAttendanceStatuses('Alejoy, Thaddorah', 'Not recorded')
+    attendanceListPage.checkAttendanceStatuses('Aborah, Cudmastarie', 'Not recorded')
+    attendanceListPage.checkAttendanceStatuses('Aisho, Egurztof', 'Attended')
+    attendanceListPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Not recorded')
+    attendanceListPage.markSelectedPrisonersNotRequired([
+      'Andy, Booking',
+      'Aborah, Cudmastarie',
+      'Aisho, Egurztof',
+      'Arianniver, Eeteljan',
+    ])
+
+    const notRequiredOrExcusedPaidOrNotPage = Page.verifyOnPage(NotRequiredOrExcusedPaidOrNotPage)
+    notRequiredOrExcusedPaidOrNotPage.getRadioByValue('paidOrNot', 'yes').check({ force: true })
+    notRequiredOrExcusedPaidOrNotPage.continue()
+    const notRequiredOrExcusedCheckAndConfirmPage = Page.verifyOnPage(NotRequiredOrExcusedCheckAndConfirmPage)
+    notRequiredOrExcusedCheckAndConfirmPage.confirm()
+    Page.verifyOnPage(AttendanceListPage)
+    attendanceListPage.assertNotificationContents(
+      'Attendee list updated',
+      `You've marked 4 people as not required for this session.`,
+    )
+  })
+
+  it('should select English level 2 and mark multiple prisoners as not required (unpaid)', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.recordAttendanceCard().click()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.selectADifferentDate()
+    selectPeriodPage.pickDateFromToday(3)
+    selectPeriodPage.selectAM()
+    selectPeriodPage.continue()
+
+    const activitiesPage = Page.verifyOnPage(ActivitiesPage)
+    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1')
+    activitiesPage.selectActivityWithName('English level 2')
+
+    const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
+    attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Attended')
+    attendanceListPage.checkAttendanceStatuses('Aborah, Cudmastarie', 'Not recorded')
+    attendanceListPage.checkAttendanceStatuses('Aisho, Egurztof', 'Attended')
+    attendanceListPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Not recorded')
+    attendanceListPage.markSelectedPrisonersNotRequired([
+      'Andy, Booking',
+      'Aborah, Cudmastarie',
+      'Aisho, Egurztof',
+      'Arianniver, Eeteljan',
+    ])
+    const notRequiredOrExcusedPaidOrNotPage = Page.verifyOnPage(NotRequiredOrExcusedPaidOrNotPage)
+    notRequiredOrExcusedPaidOrNotPage.getRadioByValue('paidOrNot', 'no').check({ force: true })
+    notRequiredOrExcusedPaidOrNotPage.continue()
+    const notRequiredOrExcusedCheckAndConfirmPage = Page.verifyOnPage(NotRequiredOrExcusedCheckAndConfirmPage)
+    notRequiredOrExcusedCheckAndConfirmPage.confirm()
+    Page.verifyOnPage(AttendanceListPage)
+    attendanceListPage.assertNotificationContents(
+      'Attendee list updated',
+      `You've marked 4 people as not required for this session.`,
+    )
   })
 })

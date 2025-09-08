@@ -1,25 +1,9 @@
 [
   {
     "scheduledInstanceId": 11,
-    "allocationId": 1,
-    "prisonerNumber": "A7789DY",
-    "bookingId": 100001,
-    "suspended": false,
-    "autoSuspended": false
-  },
-  {
-    "scheduledInstanceId": 11,
     "allocationId": 2,
     "prisonerNumber": "G4572UO",
     "bookingId": 200002,
-    "suspended": false,
-    "autoSuspended": false
-  },
-  {
-    "scheduledInstanceId": 11,
-    "allocationId": 3,
-    "prisonerNumber": "G5897GP",
-    "bookingId": 300003,
     "suspended": false,
     "autoSuspended": false
   },

@@ -40,4 +40,9 @@ export default class AttendanceListPage extends Page {
   cancelSessionButton = () => cy.get('a').contains('Cancel this session')
 
   backLink = (): Cypress.Chainable => cy.get('.govuk-back-link')
+
+  markSelectedPrisonersNotRequired = (names: string[]) => {
+    names.forEach(name => this.selectPrisoner(name))
+    cy.get('button').contains('Mark as not required or excused').click({ force: true })
+  }
 }
