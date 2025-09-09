@@ -26,41 +26,6 @@
     "node": "^22",
     "npm": "^11"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "collectCoverageFrom": [
-      "server/**/*.{ts,js,jsx,mjs}"
-    ],
-    "testMatch": [
-      "<rootDir>/(server|frontend|job)/**/?(*.)(cy|test).{ts,js,jsx,mjs}"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>jest.setup.ts"
-    ],
-    "testEnvironment": "node",
-    "transform": {
-      "^.+\\.[tj]sx?$": [
-        "ts-jest"
-      ]
-    },
-    "reporters": [
-      "default",
-      [
-        "jest-junit",
-        {
-          "outputDirectory": "test_results/jest/"
-        }
-      ]
-    ],
-    "moduleFileExtensions": [
-      "web.js",
-      "mjs",
-      "js",
-      "json",
-      "node",
-      "ts"
-    ]
-  },
   "lint-staged": {
     "*.{ts,js,css}": [
       "prettier --write",
