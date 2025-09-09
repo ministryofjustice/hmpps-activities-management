@@ -24,7 +24,7 @@ export default function setUpJourneyData(store: TokenStoreInterface) {
       })
     }
 
-    res.prependOnceListener('close', async () => {
+    res.prependOnceListener('finish', async () => {
       if (!req.journeyData) {
         await store.delToken(journeyTokenKey)
       } else {
