@@ -1,0 +1,127 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
+{% from 'govuk/components/checkboxes/macro.njk' import govukCheckboxes %}
+{% from 'govuk/components/select/macro.njk' import govukSelect %}
+
+{% set pageTitle = applicationName + " - How to record attendance" %}
+{% set pageId = 'how-to-record-attendance-page' %}
+{% set hardBackLinkText = 'Back' %}
+{% set hardBackLinkHref = "/activities/attendance" %}
+
+{% set options = [{ value: '', text: '' }] %}
+{% for activity in activities %}
+  {% set options = (options.push( { value: activity.id, text: activity.activityName }), options) %}
+{% endfor %}
+
+{% block meta %}
+  <meta name="autocompleteElements" content="activityId"/>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <span class="govuk-caption-l">Record activity attendance</span>
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Choose details to record attendance</h1>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{ govukRadios({
+                    name: "attendanceDate",
+                    fieldset: {
+                        legend: {
+                            text: "Unlock date",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    hint: {
+                        text: "You can get unlock lists for dates from up to 60 days from today."
+                    },
+                    errorMessage: validationErrors | findError('attendanceDate'),
+                    items: [
+                        {
+                            value: "today",
+                            text: "Today - " + now | formatDate('d MMMM yyyy', false),
+                            checked: formResponses.attendanceDate == 'today' or attendanceDate == 'today'
+                        },
+                        {
+                            value: "tomorrow",
+                            text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
+                            checked: formResponses.attendanceDate == 'tomorrow' or attendanceDate == 'tomorrow'
+                        },
+                        {
+                            value: "other",
+                            text: "A different date",
+                            label: { text: "Unlock date "},
+                            checked: formResponses.attendanceDate == 'other' or attendanceDate == 'other',
+                            conditional: { html:
+                              mojDatePicker({
+                                id: 'date',
+                                name: 'date',
+                                leadingZeros: 'true',
+                                label: {
+                                    text: 'Other date',
+                                    classes: 'govuk-visually-hidden'
+                                },
+                                classes: 'moj-datepicker--fixed-width',
+                                hint: { html: otherDateHintHtml },
+                                errorMessage: validationErrors | findError('date'),
+                                value: formResponses.date or date
+                              })
+                           }
+                        }
+                    ]
+                }) }}
+
+                {{ govukCheckboxes({
+                    name: "timePeriod",
+                    fieldset: {
+                        legend: {
+                            text: "Time period",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('timePeriod'),
+                    items: [
+                        {
+                            value: "AM",
+                            text: "AM (morning)",
+                            checked: formResponses.timePeriod == "AM" or timePeriod == "AM"
+                        },
+                        {
+                            value: "PM",
+                            text: "PM (afternoon)",
+                            checked: formResponses.timePeriod == "PM" or timePeriod == "PM"
+                        },
+                        {
+                            value: "ED",
+                            text: "ED (evening)",
+                            checked: formResponses.timePeriod == "ED" or timePeriod == "ED"
+                        }
+                    ]
+                }) }}
+
+                {{ govukSelect({
+                  id: "activityId",
+                  name: "activityId",
+                  label: {
+                    text: "Start typing the activity name and select it from the list."
+                  },
+                  errorMessage: validationErrors | findError('activityId'),
+                  value: formResponses.activityId,
+                  items: options
+                })
+              }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue",
+                        type: "submit",
+                        attributes: { 'data-qa': 'view-selection' }
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

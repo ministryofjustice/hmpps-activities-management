@@ -22,6 +22,15 @@ export default class HowToRecordAttendanceRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    return res.redirect('')
+    switch (req.body.howToRecord) {
+      case 'ACTIVITY':
+        return res.redirect('choose-details-to-record-attendance')
+      case 'ACTIVITY_LOCATION':
+        return res.redirect('')
+      case 'RESIDENTIAL_LOCATION':
+        return res.redirect('')
+      default:
+        return res.redirect('')
+    }
   }
 }
