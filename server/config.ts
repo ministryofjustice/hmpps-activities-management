@@ -265,6 +265,7 @@ export default {
   ),
   inServiceReportingEnabled: toBoolean(get('IN_SERVICE_REPORTING_ENABLED', 'false')),
   notRequiredInAdvanceEnabled: toBoolean(get('NOT_REQUIRED_IN_ADVANCE_ENABLED', 'false')),
+  attendAllEnabled: toBoolean(get('ATTEND_ALL_ENABLED', 'false')),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
   },
