@@ -5,7 +5,7 @@
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "partials/activities/allocation-dashboard/nonAssociationsHtml.njk" import nonAssociationsHtml %}
 
-{% set pageTitle = applicationName + " - Allocate to an activity - who do you want to allocate?" %}
+{% set pageTitle = "Who to allocate  - Activities - DPS" %}
 {% set pageId = 'activities-allocate-multiple-select-prisoner-page' %}
 {% set jsBackLink = true %}
 {% set defaultPrisonerNumber = formResponses.query if formResponses.query != undefined else query %}

@@ -8,10 +8,10 @@
 {% from "partials/searchInput.njk" import searchInput %}
 
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("add someone", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("add someone - Appointments - DPS", session.appointmentJourney) %}
     {% set pageHeading = "Who do you want to add?" %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Add person", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("Add person - Appointments - DPS", session.appointmentJourney) %}
     {% set pageHeading = "Who is the appointment for?" %}
 {% endif %}
 

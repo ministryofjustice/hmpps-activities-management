@@ -17,9 +17,9 @@
 {% endif %}
 
 {% if singleAppointment %}
-    {% set pageTitle = applicationName + " - Record attendance for " + singleAppointment.appointmentName + " - " + singleAppointment.startDate | toDate | formatDate + " " +  singleAppointment.startTime + (" to " + singleAppointment.endTime if singleAppointment.endTime) %}
+    {% set pageTitle = "Record attendance for " + singleAppointment.appointmentName + " - " + singleAppointment.startDate | toDate | formatDate + " " +  singleAppointment.startTime + (" to " + singleAppointment.endTime if singleAppointment.endTime) + " - Appointments - DPS" %}
 {% else %}
-    {% set pageTitle = applicationName + " - Record attendance for " + numAppointments + " appointments" %}
+    {% set pageTitle = "Record attendance for " + numAppointments + " appointments - Appointments - DPS" %}
 {% endif %}
 {% set pageId = 'appointment-attendees-page' %}
 

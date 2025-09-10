@@ -6,7 +6,7 @@
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "partials/characterCountInput.njk" import characterCountInput %}
 
-{% set pageTitle = appointmentJourneyTitle("Appointment name set" if session.appointmentJourney.type == AppointmentType.SET else "Appointment name", session.appointmentJourney) %}
+{% set pageTitle = appointmentJourneyTitle("Appointment name set - Appointments - DPS" if session.appointmentJourney.type == AppointmentType.SET else "Appointment name - Appointments - DPS", session.appointmentJourney) %}
 {% set pageId = 'appointment-name-page' %}
 {% set jsBackLink = true %}
 
