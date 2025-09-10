@@ -1,0 +1,134 @@
+[
+  {
+    "instance": {
+      "id": 11,
+      "startTime": "2025-09-07T09:00:00",
+      "endTime": "2025-09-07T11:00:00",
+      "activitySchedule": {
+        "activity": {
+          "summary": "English level 2",
+          "attendanceRequired": true,
+          "paid": true
+        }
+      },
+      "attendances": [
+        {
+          "id": 101,
+          "prisonerNumber": "A1234BC",
+          "status": "COMPLETED",
+          "attendanceReason": { "code": "ATT" },
+          "issuePayment": true,
+          "editable": false
+        }
+      ]
+    },
+    "prisoner": {
+      "firstName": "Andy",
+      "lastName": "Booking",
+      "prisonerNumber": "A1234BC",
+      "cellLocation": "1-1-001",
+      "status": "ACTIVE",
+      "prisonId": "MDI"
+    },
+    "otherEvents": []
+  },
+  {
+    "instance": {
+      "id": 11,
+      "startTime": "2025-09-07T09:00:00",
+      "endTime": "2025-09-07T11:00:00",
+      "activitySchedule": {
+        "activity": {
+          "summary": "English level 2",
+          "attendanceRequired": true,
+          "paid": true
+        }
+      },
+      "attendances": [
+        {
+          "id": 102,
+          "prisonerNumber": "B2345CD",
+          "status": "COMPLETED",
+          "attendanceReason": { "code": "ATT" },
+          "issuePayment": true,
+          "editable": false
+        }
+      ]
+    },
+    "prisoner": {
+      "firstName": "Aborah",
+      "lastName": "Cudmastarie",
+      "prisonerNumber": "B2345CD",
+      "cellLocation": "1-1-002",
+      "status": "ACTIVE",
+      "prisonId": "MDI"
+    },
+    "otherEvents": []
+  },
+  {
+    "instance": {
+      "id": 11,
+      "startTime": "2025-09-07T09:00:00",
+      "endTime": "2025-09-07T11:00:00",
+      "activitySchedule": {
+        "activity": {
+          "summary": "English level 2",
+          "attendanceRequired": true,
+          "paid": true
+        }
+      },
+      "attendances": [
+        {
+          "id": 103,
+          "prisonerNumber": "C3456DE",
+          "status": "WAITING",
+          "attendanceReason": { "code": "NREC" },
+          "issuePayment": false,
+          "editable": true
+        }
+      ]
+    },
+    "prisoner": {
+      "firstName": "Aisho",
+      "lastName": "Egurztof",
+      "prisonerNumber": "C3456DE",
+      "cellLocation": "1-1-003",
+      "status": "ACTIVE",
+      "prisonId": "MDI"
+    },
+    "otherEvents": []
+  },
+  {
+    "instance": {
+      "id": 11,
+      "startTime": "2025-09-07T09:00:00",
+      "endTime": "2025-09-07T11:00:00",
+      "activitySchedule": {
+        "activity": {
+          "summary": "English level 2",
+          "attendanceRequired": true,
+          "paid": true
+        }
+      },
+      "attendances": [
+        {
+          "id": 104,
+          "prisonerNumber": "D4567EF",
+          "status": "WAITING",
+          "attendanceReason": { "code": "NREC" },
+          "issuePayment": false,
+          "editable": true
+        }
+      ]
+    },
+    "prisoner": {
+      "firstName": "Alejoy",
+      "lastName": "Thaddorah",
+      "prisonerNumber": "D4567EF",
+      "cellLocation": "1-1-004",
+      "status": "ACTIVE",
+      "prisonId": "MDI"
+    },
+    "otherEvents": []
+  }
+]
