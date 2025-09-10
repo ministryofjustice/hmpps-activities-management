@@ -24,23 +24,24 @@ export default function setUpJourneyData(store: TokenStoreInterface) {
       })
     }
 
-    res.prependOnceListener('close', async () => {
+    res.prependOnceListener('finish', async () => {
       if (!req.journeyData) {
         await store.delToken(journeyTokenKey)
       } else {
         const start = performance.now()
 
+        let size = 0
+
         try {
-          await store.setToken(
-            journeyTokenKey,
-            JSON.stringify(req.journeyData ?? {}),
-            config.journeyDataTokenDurationHours * 60 * 60,
-          )
+          const json = JSON.stringify(req.journeyData ?? {})
+          size = json.length
+
+          await store.setToken(journeyTokenKey, json, config.journeyDataTokenDurationHours * 60 * 60)
         } catch (err) {
           logger.warn(`Redis save failed: ${err}`)
         } finally {
           const end = performance.now()
-          logger.info(`Redis save took ${(end - start).toFixed(2)}ms`)
+          logger.info(`Redis save took ${(end - start).toFixed(2)}ms for size ${size}`)
         }
       }
     })
