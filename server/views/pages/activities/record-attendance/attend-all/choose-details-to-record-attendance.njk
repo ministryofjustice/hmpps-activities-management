@@ -11,32 +11,34 @@
 {% set hardBackLinkText = 'Back' %}
 {% set hardBackLinkHref = "/activities/attendance" %}
 
-{% set options = [{ value: '', text: '' }] %}
+{% set options = [
+    {
+        value: '',
+        text: ''
+    }
+] %}
 {% for activity in activities %}
-  {% set options = (options.push( { value: activity.id, text: activity.activityName }), options) %}
+    {% set options = (options.push({value: activity.id, text: activity.activityName}), options) %}
 {% endfor %}
 
 {% block meta %}
-  <meta name="autocompleteElements" content="activityId"/>
+    <meta name="autocompleteElements" content="activityId"/>
 {% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
             <span class="govuk-caption-l">Record activity attendance</span>
-            <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Choose details to record attendance</h1>
+            <h1 class="govuk-heading-l">Choose details to record attendance</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 {{ govukRadios({
                     name: "attendanceDate",
                     fieldset: {
                         legend: {
-                            text: "Unlock date",
+                            text: "Attendance date",
                             classes: "govuk-fieldset__legend--m"
                         }
-                    },
-                    hint: {
-                        text: "You can get unlock lists for dates from up to 60 days from today."
                     },
                     errorMessage: validationErrors | findError('attendanceDate'),
                     items: [
@@ -106,6 +108,10 @@
                   id: "activityId",
                   name: "activityId",
                   label: {
+                    text: "Activity",
+                    classes: "govuk-fieldset__legend--m"
+                  },
+                  hint: {
                     text: "Start typing the activity name and select it from the list."
                   },
                   errorMessage: validationErrors | findError('activityId'),
