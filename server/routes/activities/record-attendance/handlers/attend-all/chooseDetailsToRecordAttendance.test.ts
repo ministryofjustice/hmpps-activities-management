@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { addDays, format } from 'date-fns'
 import ChooseDetailsToRecordAttendanceRoutes, {
   ChooseDetailsToRecordAttendanceForm,
 } from './chooseDetailsToRecordAttendance'
@@ -69,6 +70,20 @@ describe('Route Handlers - Choose details to record attendance', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
+    })
+
+    it('validation fails for future date values', async () => {
+      const body = {
+        attendanceDate: 'other',
+        date: format(addDays(new Date(), 61), 'dd/MM/yyyy'),
+        timePeriod: 'PM',
+        activityId: '1',
+      }
+
+      const requestObject = plainToInstance(ChooseDetailsToRecordAttendanceForm, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'date', error: 'Enter a date up to 60 days in the future' }])
     })
 
     it('passes validation', async () => {
