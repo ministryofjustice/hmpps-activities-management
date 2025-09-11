@@ -25,7 +25,7 @@ export class ChooseDetailsToRecordAttendanceForm {
   date: Date
 
   @Expose()
-  @IsIn(Object.values(TimeSlot), { message: 'Select a time' })
+  @IsIn(Object.values(TimeSlot), { message: 'Select at least one time period' })
   timePeriod: string
 
   @Expose()
