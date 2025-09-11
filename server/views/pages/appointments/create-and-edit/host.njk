@@ -7,9 +7,9 @@
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("Change appointment host", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("Change appointment host - Appointments - DPS", session.appointmentJourney) %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Appointment host", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("Appointment host - Appointments - DPS", session.appointmentJourney) %}
 {% endif %}
 
 {% set pageId = 'appointment-host-page' %}
