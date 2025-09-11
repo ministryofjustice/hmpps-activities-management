@@ -6,7 +6,7 @@
 {% from "partials/attendance/activitiesTable.njk" import activitiesTable %}
 {% from "partials/attendance/activitiesTableFilters.njk" import activitiesTableFilters %}
 
-{% set pageTitle = applicationName + " - Uncancel sessions" %}
+{% set pageTitle = "Cancelled sessions - Activities - DPS" %}
 {% set pageId = 'uncancel-sessions-page' %}
 {% set activitiesListLink = "../activities?date="+(activityDate | toDateString or '')+"&sessions="+(session.req.query.sessionFilters or '') %}
 

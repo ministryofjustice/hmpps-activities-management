@@ -7,14 +7,16 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
+{% set serviceTitle = ' - Appointments - DPS' %}
+
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("change date and time", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("change date and time" + serviceTitle, session.appointmentJourney) %}
     {% set pageHeading = "Enter the new date and time" %}
 {% elif session.appointmentJourney.mode == AppointmentJourneyMode.COPY %}
-    {% set pageTitle = appointmentJourneyTitle("change date", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("change date" + serviceTitle, session.appointmentJourney) %}
     {% set pageHeading = "Enter date of the appointment" %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Date and time of appointment", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("Date and time of appointment" + serviceTitle, session.appointmentJourney) %}
     {% set pageHeading = "Enter the date and time of the appointment" %}
 {% endif %}
 

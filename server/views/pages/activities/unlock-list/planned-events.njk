@@ -12,7 +12,7 @@
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "govuk/components/accordion/macro.njk" import govukAccordion %}
 
-{% set pageTitle = applicationName + " - Planned events" %}
+{% set pageTitle = location.name + " unlock list - Activities - DPS" %}
 {% set pageId = "planned-events-page" %}
 {% set hardBackLinkText = 'Back' %}
 {% set hardBackLinkHref = 'select-date-and-location?date='+date+'&locationKey='+location.key+'&activitySlot='+timeSlot %}

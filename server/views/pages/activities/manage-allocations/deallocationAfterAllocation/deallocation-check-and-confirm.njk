@@ -4,7 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
-{% set pageTitle = applicationName + " - Deallocate from an activity - Check and confirm" %}
+{% set pageTitle = "Check and confirm deallocation  - Activities - DPS" %}
 {% set pageId = 'deallocation-check-and-confirm-page' %}
 {% set activityNumber = allocateJourney.activitiesToDeallocate | length %}
 {% set deallocateActivityCaptionText = allocateJourney.activity.name if allocateJourney.activity else "activities" %}
