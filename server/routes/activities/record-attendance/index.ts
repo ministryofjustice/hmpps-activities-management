@@ -36,6 +36,10 @@ import CancelSingleSessionsReasonRoutes, { CancelReasonSingleForm } from './hand
 import CancelSingleSessionPayRoutes, { SessionPaySingleForm } from './handlers/cancel-single-session/payment'
 import CancelSingleSessionsCheckAnswersRoutes from './handlers/cancel-single-session/checkAnswers'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
+import HowToRecordAttendanceRoutes, { HowToRecordAttendanceForm } from './handlers/attend-all/howToRecordAttendance'
+import ChooseDetailsToRecordAttendanceRoutes, {
+  ChooseDetailsToRecordAttendanceForm,
+} from './handlers/attend-all/chooseDetailsToRecordAttendance'
 
 export default function Index({
   activitiesService,
@@ -91,6 +95,8 @@ export default function Index({
     activitiesService,
     userService,
   )
+  const howToRecordAttendanceRoutes = new HowToRecordAttendanceRoutes()
+  const chooseDetailsToRecordAttendanceRoutes = new ChooseDetailsToRecordAttendanceRoutes(activitiesService)
 
   get('/', homeHandler.GET)
 
@@ -217,6 +223,16 @@ export default function Index({
     '/:journeyId/activities/cancel-multiple/view-edit-details/:id',
     cancelMultipleSessionsViewEditDetailsRoutes.GET,
     true,
+  )
+
+  // Attend all routes
+  get('/:journeyId/attend-all/how-to-record-attendance', howToRecordAttendanceRoutes.GET)
+  post('/:journeyId/attend-all/how-to-record-attendance', howToRecordAttendanceRoutes.POST, HowToRecordAttendanceForm)
+  get('/:journeyId/attend-all/choose-details-to-record-attendance', chooseDetailsToRecordAttendanceRoutes.GET)
+  post(
+    '/:journeyId/attend-all/choose-details-to-record-attendance',
+    chooseDetailsToRecordAttendanceRoutes.POST,
+    ChooseDetailsToRecordAttendanceForm,
   )
 
   return router

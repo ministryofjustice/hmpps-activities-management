@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
+import { performance } from 'perf_hooks'
 import { JourneyData } from '../@types/express'
 import TokenStoreInterface from '../data/tokenStoreInterface'
 import config from '../config'
+import logger from '../../logger'
 
 // Off by default for cypress tests to enable the many isolated page tests to work without mocking
 // Enable this in test explicitly by injecting journeyData with stateGuard set to true
@@ -22,15 +24,25 @@ export default function setUpJourneyData(store: TokenStoreInterface) {
       })
     }
 
-    res.prependOnceListener('close', async () => {
+    res.prependOnceListener('finish', async () => {
       if (!req.journeyData) {
         await store.delToken(journeyTokenKey)
       } else {
-        await store.setToken(
-          journeyTokenKey,
-          JSON.stringify(req.journeyData ?? {}),
-          config.journeyDataTokenDurationHours * 60 * 60,
-        )
+        const start = performance.now()
+
+        let size = 0
+
+        try {
+          const json = JSON.stringify(req.journeyData ?? {})
+          size = json.length
+
+          await store.setToken(journeyTokenKey, json, config.journeyDataTokenDurationHours * 60 * 60)
+        } catch (err) {
+          logger.warn(`Redis save failed: ${err}`)
+        } finally {
+          const end = performance.now()
+          logger.info(`Redis save took ${(end - start).toFixed(2)}ms for size ${size}`)
+        }
       }
     })
     next()
