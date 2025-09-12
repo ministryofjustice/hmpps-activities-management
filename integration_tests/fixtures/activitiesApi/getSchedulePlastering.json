@@ -1,0 +1,232 @@
+{
+  "id": 3,
+  "scheduleWeeks": 1,
+  "instances": [
+    {
+      "id": 45,
+      "date": "2022-10-11",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 46,
+      "date": "2022-10-18",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 47,
+      "date": "2022-10-25",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 48,
+      "date": "2022-11-01",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 49,
+      "date": "2022-11-08",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 50,
+      "date": "2022-11-15",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 51,
+      "date": "2022-11-22",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 52,
+      "date": "2022-11-29",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 53,
+      "date": "2022-12-06",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 54,
+      "date": "2022-12-13",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 55,
+      "date": "2022-12-20",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 104,
+      "date": "2023-02-07",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 123,
+      "date": "2023-02-14",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    }
+  ],
+  "allocations": [
+    {
+      "id": 3,
+      "prisonerNumber": "A5015DY",
+      "bookingId": 1200993,
+      "activitySummary": "CIT Plastering",
+      "scheduleDescription": "CIT Plastering",
+      "payBandId": 1,
+      "startDate": "2022-10-10",
+      "endDate": null,
+      "status": "ACTIVE",
+      "allocatedTime": "2022-10-10T09:30:00",
+      "allocatedBy": "MR BLOGS",
+      "deallocatedTime": null,
+      "deallocatedBy": null,
+      "deallocatedReason": null
+    }
+  ],
+  "description": "CIT Plastering",
+  "suspensions": [],
+  "internalLocation": {
+    "id": 1,
+    "code": "CIT Plastering",
+    "description": "CIT Plastering"
+  },
+  "capacity": 10,
+  "activity": {
+    "id": 3,
+    "prisonCode": "MDI",
+    "attendanceRequired": true,
+    "inCell": false,
+    "pieceWork": false,
+    "outsideWork": false,
+    "paid": true,
+    "payPerSession": "H",
+    "summary": "CIT Plastering",
+    "description": "Trade skills",
+    "category": {
+      "id": 1,
+      "code": "CIT Plastering",
+      "name": "CIT Plastering",
+      "description": "Trade skills"
+    },
+    "riskLevel": "Medium"
+  },
+  "slots": [
+    {
+      "id": 1,
+      "weekNumber": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "tuesdayFlag": true,
+      "daysOfWeek": ["Mon"],
+      "timeSlot": "PM"
+    },
+    {
+      "id": 2,
+      "weekNumber": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "tuesdayFlag": true,
+      "daysOfWeek": ["Tue"],
+      "timeSlot": "PM"
+    },
+    {
+      "id": 3,
+      "weekNumber": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "tuesdayFlag": true,
+      "daysOfWeek": ["Wed"],
+      "timeSlot": "PM"
+    },
+    {
+      "id": 4,
+      "weekNumber": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "tuesdayFlag": true,
+      "daysOfWeek": ["Thu"],
+      "timeSlot": "PM"
+    },
+    {
+      "id": 5,
+      "weekNumber": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "tuesdayFlag": true,
+      "daysOfWeek": ["Fri"],
+      "timeSlot": "PM"
+    }
+  ],
+  "startDate": "2022-10-10",
+  "endDate": null,
+  "runsOnBankHoliday": false,
+  "usePrisonRegimeTime": true
+}

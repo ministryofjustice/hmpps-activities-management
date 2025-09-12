@@ -1,0 +1,62 @@
+[
+  {
+    "prisonerNumber": "A5015DY",
+    "allocations": [
+      {
+        "id": 1,
+        "activitySummary": "Gym",
+        "activityId": 1,
+        "scheduleId": 1,
+        "scheduleDescription": "Gym",
+        "status": "SUSPENDED_WITH_PAY",
+        "plannedSuspension": {
+          "plannedStartDate": "2024-12-13",
+          "plannedEndDate": null,
+          "caseNoteId": null,
+          "dpsCaseNoteId": null,
+          "plannedBy": "USER1",
+          "plannedAt": "2024-12-13T14:40:02.594376",
+          "paid": true
+        },
+        "exclusions": [{ "weekNumber": 1, "timeSlot": "AM", "monday": true, "daysOfWeek": ["MONDAY"] }]
+      }
+    ]
+  },
+  {
+    "prisonerNumber": "A5015DY",
+    "allocations": [
+      {
+        "id": 2,
+        "activitySummary": "Entry level Maths 1",
+        "activityId": 2,
+        "scheduleId": 2,
+        "scheduleDescription": "Entry level Maths 1",
+        "status": "SUSPENDED",
+        "plannedSuspension": {
+          "plannedStartDate": "2024-12-13",
+          "plannedEndDate": null,
+          "caseNoteId": null,
+          "dpsCaseNoteId": null,
+          "plannedBy": "USER1",
+          "plannedAt": "2024-12-13T14:40:02.594376",
+          "paid": true
+        },
+        "exclusions": []
+      }
+    ]
+  },
+  {
+    "prisonerNumber": "A5015DY",
+    "allocations": [
+      {
+        "id": 3,
+        "activitySummary": "CIT Plastering",
+        "activityId": 3,
+        "scheduleId": 3,
+        "scheduleDescription": "CIT Plastering",
+        "status": "ACTIVE",
+        "exclusions": [{ "weekNumber": 1, "timeSlot": "AM", "monday": true, "daysOfWeek": ["SUNDAY"] }]
+      }
+    ]
+  }
+]

@@ -1,0 +1,232 @@
+{
+  "id": 1,
+  "scheduleWeeks": 1,
+  "instances": [
+    {
+      "id": 45,
+      "date": "2022-10-11",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 46,
+      "date": "2022-10-18",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 47,
+      "date": "2022-10-25",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 48,
+      "date": "2022-11-01",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 49,
+      "date": "2022-11-08",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 50,
+      "date": "2022-11-15",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 51,
+      "date": "2022-11-22",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 52,
+      "date": "2022-11-29",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 53,
+      "date": "2022-12-06",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 54,
+      "date": "2022-12-13",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 55,
+      "date": "2022-12-20",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 104,
+      "date": "2023-02-07",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    },
+    {
+      "id": 123,
+      "date": "2023-02-14",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "cancelled": false,
+      "cancelledTime": null,
+      "cancelledBy": null,
+      "attendances": []
+    }
+  ],
+  "allocations": [
+    {
+      "id": 1,
+      "prisonerNumber": "A5015DY",
+      "bookingId": 1200993,
+      "activitySummary": "Gym",
+      "scheduleDescription": "Gym",
+      "payBandId": 1,
+      "startDate": "2022-10-10",
+      "endDate": null,
+      "status": "SUSPENDED_WITH_PAY",
+      "allocatedTime": "2022-10-10T09:30:00",
+      "allocatedBy": "MR BLOGS",
+      "deallocatedTime": null,
+      "deallocatedBy": null,
+      "deallocatedReason": null
+    }
+  ],
+  "description": "Gym",
+  "suspensions": [],
+  "internalLocation": {
+    "id": 1,
+    "code": "Gym",
+    "description": "Gym"
+  },
+  "capacity": 10,
+  "activity": {
+    "id": 2,
+    "prisonCode": "MDI",
+    "attendanceRequired": true,
+    "inCell": false,
+    "pieceWork": false,
+    "outsideWork": false,
+    "paid": true,
+    "payPerSession": "H",
+    "summary": "Gym",
+    "description": "Physical Exercise",
+    "category": {
+      "id": 1,
+      "code": "GYM",
+      "name": "Gym",
+      "description": "Working out, yoga, exercise"
+    },
+    "riskLevel": "low"
+  },
+  "slots": [
+    {
+      "id": 1,
+      "weekNumber": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "tuesdayFlag": true,
+      "daysOfWeek": ["Mon"],
+      "timeSlot": "AM"
+    },
+    {
+      "id": 2,
+      "weekNumber": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "tuesdayFlag": true,
+      "daysOfWeek": ["Tue"],
+      "timeSlot": "AM"
+    },
+    {
+      "id": 3,
+      "weekNumber": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "tuesdayFlag": true,
+      "daysOfWeek": ["Wed"],
+      "timeSlot": "AM"
+    },
+    {
+      "id": 4,
+      "weekNumber": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "tuesdayFlag": true,
+      "daysOfWeek": ["Thu"],
+      "timeSlot": "AM"
+    },
+    {
+      "id": 5,
+      "weekNumber": 1,
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "tuesdayFlag": true,
+      "daysOfWeek": ["Fri"],
+      "timeSlot": "AM"
+    }
+  ],
+  "startDate": "2022-10-10",
+  "endDate": null,
+  "runsOnBankHoliday": false,
+  "usePrisonRegimeTime": true
+}
