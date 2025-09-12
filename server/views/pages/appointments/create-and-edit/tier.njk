@@ -7,9 +7,9 @@
 {% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("Change appointment tier", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("Change appointment tier - Appointments - DPS", session.appointmentJourney) %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Appointment tier", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("Appointment tier - Appointments - DPS", session.appointmentJourney) %}
 {% endif %}
 
 {% set pageId = 'appointment-tier-page' %}

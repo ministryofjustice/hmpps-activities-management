@@ -73,10 +73,10 @@
   "dependencies": {
     "@microsoft/applicationinsights-web": "^3.3.9",
     "@ministryofjustice/frontend": "^5.1.5",
-    "@ministryofjustice/hmpps-auth-clients": "^0.0.1",
+    "@ministryofjustice/hmpps-auth-clients": "^0.0.3",
     "@ministryofjustice/hmpps-connect-dps-components": "^3.0.0",
     "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^4.13.0",
-    "@ministryofjustice/hmpps-rest-client": "^0.0.1",
+    "@ministryofjustice/hmpps-rest-client": "^0.0.3",
     "@types/express-serve-static-core": "^5.0.7",
     "@types/lodash": "^4.17.20",
     "accessible-autocomplete": "^3.0.1",
@@ -118,7 +118,7 @@
   },
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
-    "@ministryofjustice/eslint-config-hmpps": "^0.0.3",
+    "@ministryofjustice/eslint-config-hmpps": "^0.0.4",
     "@tsconfig/node22": "^22.0.2",
     "@types/bunyan": "^1.8.11",
     "@types/bunyan-format": "^0.2.9",
@@ -170,8 +170,8 @@
   "overrides": {
     "undici": "~6.21.3",
     "serialize-javascript": "~6.0.2",
-    "@babel/runtime": "~7.28.3",
-    "@babel/helpers": "~7.28.3",
+    "@babel/runtime": "~7.28.4",
+    "@babel/helpers": "~7.28.4",
     "@jgoz/esbuild-plugin-typecheck": {
       "esbuild": "$esbuild"
     }

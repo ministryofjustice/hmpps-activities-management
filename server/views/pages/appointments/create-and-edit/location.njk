@@ -6,11 +6,13 @@
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 
+{% set serviceTitle = ' - Appointments - DPS' %}
+
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-    {% set pageTitle = appointmentJourneyTitle("change location", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("change location" + serviceTitle, session.appointmentJourney) %}
     {% set pageHeading = "Enter the new location" %}
 {% else %}
-    {% set pageTitle = appointmentJourneyTitle("Appointment set location" if session.appointmentJourney.type == AppointmentType.SET else "Appointment location", session.appointmentJourney) %}
+    {% set pageTitle = appointmentJourneyTitle("Appointment set location" + serviceTitle if session.appointmentJourney.type == AppointmentType.SET else "Appointment location" + serviceTitle, session.appointmentJourney) %}
     {% set pageHeading = ("Where will the appointments take place?" if session.appointmentJourney.type == AppointmentType.SET else "Where will the appointment take place?") %}
 {% endif %}
 
