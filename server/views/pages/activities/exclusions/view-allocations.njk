@@ -46,8 +46,8 @@
                         {
                             key: {
                                 html: '<div class="govuk-!-margin-bottom-3">' + activity.activityName + '</div>' +
-                                '<div class="govuk-!-margin-bottom-3">' + suspensionBadge(activity.allocation.status, activity.allocation.plannedSuspension, now) + '</div>' + 
-                                ('<a class="govuk-body govuk-link--no-visited-state" target=_blank href=/activities/suspensions/prisoner/' + prisonerNumber + '/view-suspensions?allocationId=' + activity.allocation.id+'>View suspension details (opens in new tab)
+                                '<div class="govuk-!-margin-bottom-3" data-qa="suspension-badge">' + suspensionBadge(activity.allocation.status, activity.allocation.plannedSuspension, now) + '</div>' + 
+                                ('<a  class="govuk-body govuk-link--no-visited-state" data-qa="suspension-link" target=_blank href=/activities/suspensions/prisoner/' + prisonerNumber + '/view-suspensions?allocationId=' + activity.allocation.id+'>View suspension details (opens in new tab)
                                 <span class="govuk-visually-hidden">for ' + activity.activityName +'</span> </a>'
                                 if activity.allocation.status == PrisonerSuspensionStatus.SUSPENDED or activity.allocation.status == PrisonerSuspensionStatus.SUSPENDED_WITH_PAY) 
                             },
