@@ -5,7 +5,8 @@
         <hr class="mid-grey-tint-20-hr dash-border">
         {{ govukTag({
             text: "Prisoner suspended",
-            classes: "govuk-tag--red"
+            classes: "govuk-tag--red",
+            attributes: { "data-qa": "suspension-badge" }
         }) }}
     {% elseif allocationStatus == 'AUTO_SUSPENDED' %}
         <hr class="mid-grey-tint-20-hr dash-border">
