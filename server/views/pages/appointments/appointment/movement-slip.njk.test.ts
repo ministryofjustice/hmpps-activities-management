@@ -101,7 +101,7 @@ describe('Views - Appointments Management - Appointment Movement Slip', () => {
     expect($('[data-qa=extra-information]').length).toBe(0)
   })
 
-  it('should display extra information for appointment category VLB - video link court hearing', () => {
+  it('should display extra information for appointment category VLB - Video Link Court Hearing', () => {
     viewContext.appointment.extraInformation = 'This should be shown on the movement slip'
     viewContext.appointment.category = { code: 'VLB', description: 'Video Link - Court Hearing' }
 
@@ -110,7 +110,7 @@ describe('Views - Appointments Management - Appointment Movement Slip', () => {
     expect($('[data-qa=extra-information]').text().trim()).toEqual('This should be shown on the movement slip')
   })
 
-  it('should display extra information for appointment category VLPM - video link probation meeting', () => {
+  it('should display extra information for appointment category VLPM - Video Link Probation Meeting', () => {
     viewContext.appointment.extraInformation = 'This should be shown on the movement slip'
     viewContext.appointment.category = { code: 'VLPM', description: 'Video Link - Probation Meeting' }
 
@@ -119,12 +119,39 @@ describe('Views - Appointments Management - Appointment Movement Slip', () => {
     expect($('[data-qa=extra-information]').text().trim()).toEqual('This should be shown on the movement slip')
   })
 
-  it('should display extra information for appointment category VLOO', () => {
-    viewContext.appointment.extraInformation = 'This should be shown on the movement slip'
-    viewContext.appointment.category = { code: 'VLOO', description: 'Video Link - Probation Meeting' }
+  it('should not display extra information for appointment category VLPA - Video Link Parole Hearing', () => {
+    viewContext.appointment.extraInformation = 'This should not be shown on the movement slip'
+    viewContext.appointment.category = { code: 'VLPA', description: 'Video Link - Parole Hearing' }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('[data-qa=extra-information]').text().trim()).toEqual('This should be shown on the movement slip')
+    expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+  })
+
+  it('should not display extra information for appointment category VLAP - Video Link Another Prison', () => {
+    viewContext.appointment.extraInformation = 'This should not be shown on the movement slip'
+    viewContext.appointment.category = { code: 'VLAP', description: 'Video Link - Another Prison' }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+  })
+
+  it('should not display extra information for appointment category VLOO - Video Link Official Other', () => {
+    viewContext.appointment.extraInformation = 'This should not be shown on the movement slip'
+    viewContext.appointment.category = { code: 'VLOO', description: 'Video Link - Official Other' }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+  })
+
+  it('should not display extra information for appointment category VLLA - Video Link Legal Appointment', () => {
+    viewContext.appointment.extraInformation = 'This should be shown on the movement slip'
+    viewContext.appointment.category = { code: 'VLLA', description: 'Video Link - Legal Appointment' }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=extra-information]').text().trim()).toEqual('')
   })
 })
