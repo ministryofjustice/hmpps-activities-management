@@ -110,52 +110,45 @@
         ] %}
     {% endif %}
 
-    <div class="govuk-grid-column-full">
-        <form method='POST' data-module="form-spinner" data-loading-text="Marking attendance">
-            <p>notRequiredInAdvanceEnabled: {{ notRequiredInAdvanceEnabled }}</p>
-            <p>instance.isInFuture: {{ instance.isInFuture }}</p>
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-            {{ stickySelect({
-                type: 'check',
-                id: "attendanceList",
-                caption: "Attendance list",
-                captionClasses: "govuk-visually-hidden",
-                classes: 'sticky-header',
-                name: 'selectedAttendances',
-                head: [
-                    {
-                        text: "Name",
-                        attributes: { "aria-sort": "none" }
-                    },
-                    {
-                        text: "Cell location",
-                        attributes: { "aria-sort": "none" }
-                    },
-                    {
-                        text: "Activity",
-                        attributes: { "aria-sort": "ascending" },
-                        classes: 'hmpps-max-width-240'
-                    } if includeActivityColumn,
-                    {
-                        text: "Time",
-                        attributes: { "aria-sort": "ascending" }
-                    },
-                    {
-                        text: "Clashing events"
-                    },
-                    {
-                        text: "Attendance and pay",
-                        colspan: 2,
-                        attributes: { "aria-sort": "none" }
-                    }
-                ],
-                rows: rows,
-                actions: formActions,
-                itemsDescription: 'attendee',
-                itemsDescriptionPlural: 'attendees'
-            }) }}
-        </form>
-    </div>
+    {{ stickySelect({
+        type: 'check',
+        id: "attendanceList",
+        caption: "Attendance list",
+        captionClasses: "govuk-visually-hidden",
+        classes: 'sticky-header',
+        name: 'selectedAttendances',
+        head: [
+            {
+                text: "Name",
+                attributes: { "aria-sort": "none" }
+            },
+            {
+                text: "Cell location",
+                attributes: { "aria-sort": "none" }
+            },
+            {
+                text: "Activity",
+                attributes: { "aria-sort": "ascending" },
+                classes: 'hmpps-max-width-240'
+            } if includeActivityColumn,
+            {
+                text: "Time",
+                attributes: { "aria-sort": "ascending" }
+            },
+            {
+                text: "Clashing events"
+            },
+            {
+                text: "Attendance and pay",
+                colspan: 2,
+                attributes: { "aria-sort": "none" }
+            }
+        ],
+        rows: rows,
+        actions: formActions,
+        itemsDescription: 'attendee',
+        itemsDescriptionPlural: 'attendees'
+    }) }}
 {% endmacro %}
 
 {% macro renderOtherEvents(otherEvents) %}

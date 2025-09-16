@@ -1,11 +1,17 @@
 import { addDays, startOfDay, startOfToday, toDate } from 'date-fns'
 import { Request, Response } from 'express'
-import { asString, eventClashes, getAttendanceSummary } from '../../../../../utils/utils'
+import _ from 'lodash'
+import { asString, eventClashes, formatName, getAttendanceSummary } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { EventType } from '../../../../../@types/activities'
 import applyCancellationDisplayRule from '../../../../../utils/applyCancellationDisplayRule'
 import config from '../../../../../config'
+import { AttendanceUpdateRequest } from '../../../../../@types/activitiesAPI/types'
+import AttendanceStatus from '../../../../../enum/attendanceStatus'
+import AttendanceReason from '../../../../../enum/attendanceReason'
+import { NameFormatStyle } from '../../../../../utils/helpers/nameFormatStyle'
+import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 
 export default class SelectPeopleToRecordAttendanceForRoutes {
   constructor(
@@ -83,7 +89,53 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
   }
 
   ATTENDED = async (req: Request, res: Response): Promise<void> => {
-    return res.redirectWithSuccess('attendance-list', 'Attendance recorded')
+    const { selectedAttendances }: { selectedAttendances: string[] } = req.body
+    const { user } = res.locals
+    let prisonerName
+
+    const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
+
+    const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
+
+    const attendances: AttendanceUpdateRequest[] = selectedAttendances.flatMap(selectedAttendance => {
+      const [instanceId, attendanceId] = selectedAttendance.split('-')
+
+      const instance = instances.find(i => i.id === +instanceId)
+
+      return {
+        id: +attendanceId,
+        prisonCode: user.activeCaseLoadId,
+        status: AttendanceStatus.COMPLETED,
+        attendanceReason: AttendanceReason.ATTENDED,
+        issuePayment: instance.activitySchedule.activity.paid,
+      }
+    })
+
+    await this.activitiesService.updateAttendances(attendances, user)
+
+    if (selectedAttendances.length === 1) {
+      const selectedPrisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(
+        selectedAttendances[0].split('-')[2],
+        user,
+      )
+      prisonerName = formatName(
+        selectedPrisoner.firstName,
+        undefined,
+        selectedPrisoner.lastName,
+        NameFormatStyle.firstLast,
+        false,
+      )
+    }
+
+    const successMessage = `You've saved attendance details for ${
+      selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`
+    }`
+
+    return res.redirectWithSuccess(
+      'select-people-to-record-attendance-for?date=2025-09-12&timePeriods=AM,PM,ED&activityId=539',
+      'Attendance recorded',
+      successMessage,
+    )
   }
 
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
