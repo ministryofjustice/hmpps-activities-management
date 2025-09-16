@@ -84,7 +84,7 @@
                                 text: "Court hearing link"
                             },
                             value: {
-                                text: formatCvpLink(session.bookACourtHearingJourney.hmctsNumber, session.bookACourtHearingJourney.videoLinkUrl, bvlsHmctsLinkGuestPinEnabled)
+                                text: formatCvpLink(session.bookACourtHearingJourney.hmctsNumber, session.bookACourtHearingJourney.videoLinkUrl)
                             },
                             actions: {
                                 items: [
@@ -114,7 +114,7 @@
                                     }
                                 ]
                             }
-                        } if bvlsHmctsLinkGuestPinEnabled
+                        }
                     ],
                     attributes: { 'data-qa': 'appointment-details' }
                 }) }}

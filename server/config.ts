@@ -275,6 +275,5 @@ export default {
   plannedDowntimeStartTime: get('PLANNED_DOWNTIME_START_TIME', '9am'),
   plannedDowntimeEndTime: get('PLANNED_DOWNTIME_END_TIME', '5pm'),
   prisonerAllocationsEnabled: toBoolean(get('PRISONER_ALLOCATIONS_ENABLED', 'false')),
-  bvlsHmctsLinkGuestPinEnabled: toBoolean(get('BVLS_FEATURE_HMCTS_LINK_GUEST_PIN', 'false', requiredInProduction)),
   defaultCourtVideoUrl: get('DEFAULT_COURT_VIDEO_URL', 'meet.video.justice.gov.uk'),
 }

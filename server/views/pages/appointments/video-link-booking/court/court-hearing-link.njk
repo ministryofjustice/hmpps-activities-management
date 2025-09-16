@@ -8,7 +8,7 @@
 
 {% set pageId = 'court-hearing-link-page' %}
 {% set jsBackLink = true %}
-{% set pageHeading = "Enter link details" if bvlsHmctsLinkGuestPinEnabled else "Do you know the video link for this hearing?" %}
+{% set pageHeading = "Enter link details" %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -23,7 +23,6 @@
             <form method='POST' {% if session.req.routeContext.mode == 'amend' %} data-module="form-spinner" data-loading-text="{{ 'Changing court hearing link' }}" {% endif %}>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-                {% if bvlsHmctsLinkGuestPinEnabled %}
                 {% set courtHearingLinkHtml %}
                     {{ govukInput({
                         name: "hmctsNumber",
@@ -41,7 +40,7 @@
                         },
                         classes: "govuk-input--width-5",
                         inputmode: "numeric",
-                        value: formResponses.hmctsNumber or session.bookACourtHearingJourney.hmctsNumber,
+                        value: formResponses.hmctsNumber if (formResponses.cvpRequired == 'yes') else session.bookACourtHearingJourney.hmctsNumber,
                         errorMessage: validationErrors | findError("hmctsNumber")
                     }) }}
                     <p class="govuk-body">Or</p>
@@ -55,7 +54,7 @@
                         hint: {
                             text: "This should start with https://"
                         },
-                        value: formResponses.videoLinkUrl or session.bookACourtHearingJourney.videoLinkUrl,
+                        value: formResponses.videoLinkUrl if (formResponses.cvpRequired == 'yes') else session.bookACourtHearingJourney.videoLinkUrl,
                         errorMessage: validationErrors | findError("videoLinkUrl")
                     }) }}
                 {% endset %}
@@ -129,46 +128,6 @@
                         }
                     ]
                 }) }}
-                {% else %}
-                {% set courtHearingLinkHtml %}
-                    {{ govukInput({
-                        name: "videoLinkUrl",
-                        id: "videoLinkUrl",
-                        label: {
-                            text: "Court hearing link"
-                        },
-                        value: formResponses.videoLinkUrl or session.bookACourtHearingJourney.videoLinkUrl,
-                        errorMessage: validationErrors | findError("videoLinkUrl")
-                    }) }}
-                {% endset %}
-
-                {{ govukRadios({
-                    idPrefix: "cvpRequired",
-                    name: "cvpRequired",
-                    errorMessage: validationErrors | findError('cvpRequired'),
-                    fieldset: {
-                        legend: {
-                            text: "Do you know the video link for this hearing?",
-                            classes: "govuk-visually-hidden"
-                        }
-                    },
-                    items: [
-                        {
-                            value: 'yes',
-                            text: "Yes",
-                            checked: formResponses.cvpRequired == 'yes' or session.bookACourtHearingJourney.videoLinkUrl,
-                            conditional: {
-                                html: courtHearingLinkHtml
-                            }
-                        },
-                        {
-                            value: 'no',
-                            text: "No",
-                            checked: formResponses.cvpRequired == 'no' or (session.bookACourtHearingJourney.cvpRequired == false and not formResponses)
-                        }
-                    ]
-                }) }}
-                {% endif %}
 
                 {{ govukButton({
                     text: "Continue"
