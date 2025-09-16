@@ -1,0 +1,49 @@
+{% macro attendanceSummaryList(attendanceSummary, instance) %}
+    {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
+        <ul class="govuk-list">
+            <li>
+                <span>Attended: </span>
+                <span class="govuk-!-font-weight-bold">-</span>
+            </li>
+            <li>
+                <span>Absent:</span>
+                {% if attendanceSummary.notAttended == 0 %}
+                    <span class="govuk-!-font-weight-bold">-</span>
+                {% else %}
+                    <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
+                {% endif %}
+            </li>
+            <li>
+                <span>Not recorded: </span>
+                <span class="govuk-!-font-weight-bold">-</span>
+            </li>
+        </ul>
+    {% else %}
+        <ul class="govuk-list">
+            <li>
+                <span>Attended:</span>
+                {% if attendanceSummary.attendanceCount == 0 %}
+                    -
+                {% else %}
+                    <span class="govuk-!-font-weight-bold">{{ attendanceSummary.attended }}</span> ({{ attendanceSummary.attendedPercentage }}%)
+                {% endif %}
+            </li>
+            <li>
+                <span>Absent:</span>
+                {% if attendanceSummary.attendanceCount == 0 %}
+                    -
+                {% else %}
+                    <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notAttended }}</span> ({{ attendanceSummary.notAttendedPercentage }}%)
+                {% endif %}
+            </li>
+            <li>
+                <span>Not recorded:</span>
+                {% if attendanceSummary.attendanceCount == 0 %}
+                    -
+                {% else %}
+                    <span class="govuk-!-font-weight-bold">{{ attendanceSummary.notRecorded }}</span> ({{ attendanceSummary.notRecordedPercentage }}%)
+                {% endif %}
+            </li>
+        </ul>
+    {% endif %}
+{% endmacro %}

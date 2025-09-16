@@ -1,0 +1,88 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "components/sticky-select.njk" import stickySelect %}
+{% from "partials/formatSessions.njk" import formatSessions %}
+{% from "partials/attendance/attendanceSummary.njk" import attendanceSummaryList %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
+{% from "partials/payStatus.njk" import payStatus %}
+{% from "partials/attendance/incentiveLevelWarningTag.njk" import incentiveLevelWarningTag %}
+{% from "partials/attendance/otherEvent.njk" import otherEvent %}
+{% from "partials/attendance/attendanceRowsTableWithStickySelect.njk" import attendanceRowsTableWithStickySelect %}
+
+
+{% set pageTitle = applicationName + " - Select people to record attendance for" %}
+{% set pageId = 'select-people-to-record-attendance-for-page' %}
+{% set hardBackLinkText = 'Back' %}
+{% set hardBackLinkHref = "choose-details-to-record-attendance" %}
+
+{% set activityDate = instance.date | toDate | formatDate %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
+                <span class="govuk-caption-l">Record activity attendance <span class="govuk-visually-hidden">for</span></span>
+                {{ instance.activitySchedule.activity.summary }}
+                <span class="govuk-caption-l">
+                    {% if singleInstance %}
+                        {{ instance.startTime }} to {{ instance.endTime }} ({{ instance.timeSlot }})
+                    {% else %}
+                        {{ formatSessions(selectedSessions) }} sessions
+                    {% endif %}
+                </span>
+                <span class="govuk-caption-l">{{ activityDate }}</span>
+            </h1>
+            {% if singleInstance %}
+                <div class="govuk-button-group govuk-!-display-none-print">
+                    {{ govukButton({
+                        text: "Print attendance list",
+                        classes: "govuk-button--blue js-print no-js-hidden"
+                    }) }}
+                    {% if instance.isAmendable %}
+                        {% if instance.cancelled %}
+                            <a href="uncancel" class="govuk-link govuk-link--no-visited-state govuk-!-font-size-19">Uncancel this session</a>
+                        {% else %}
+                            {{ govukButton({
+                            text: "Cancel this session",
+                            classes: "govuk-button--secondary",
+                            href: 'cancel'
+                        }) }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <div class="govuk-grid-row govuk-!-margin-bottom-4">
+                <div class="govuk-grid-column-two-thirds">
+                    <h2 class="govuk-heading-m">{{ attendanceRows | length }}
+                        {{ "person" if attendanceRows | length == 1 else "people" }} allocated</h2>
+                    {{ attendanceSummaryList(attendanceSummary, instance) }}
+                </div>
+            </div>
+        </div>
+
+        {{ attendanceRowsTableWithStickySelect(attendanceRows, instance, user.activeCaseLoadId, false) }}
+    </div>
+{% endblock %}
+
+{% macro renderOtherEvents(otherEvents) %}
+    {% for event in otherEvents %}
+        {{ otherEvent(event, true) }}
+        {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro renderViewLink(attendee) %}
+    {% if attendee.attendance.status === 'COMPLETED' or attendee.attendance.attendanceHistory | length %}
+        <a href="{{ attendee.instance.id }}/attendance-details/{{ attendee.attendance.id }}" class="govuk-link govuk-link--no-visited-state">
+            {% if attendee.attendance.editable and attendee.instance.activitySchedule.activity.attendanceRequired %}
+                View or Edit
+            {% else %}
+                View
+            {% endif %}
+        </a>
+    {% endif %}
+{% endmacro %}
