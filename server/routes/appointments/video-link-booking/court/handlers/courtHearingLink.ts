@@ -10,19 +10,15 @@ import {
   ValidationArguments,
 } from 'class-validator'
 import CourtBookingService from '../../../../../services/courtBookingService'
-import config from '../../../../../config'
 import CvpLinkOneOrTheOther from '../../../../../validators/cvpLinkOneOrTheOther'
 
 @Expose()
 export class CourtHearingLink {
   @IsIn(['yes', 'no'], { message: 'Select yes if you know the court hearing link' })
-  @CvpLinkOneOrTheOther('videoLinkUrl', 'hmctsNumber', config.bvlsHmctsLinkGuestPinEnabled, {
+  @CvpLinkOneOrTheOther('videoLinkUrl', 'hmctsNumber', {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     message: (args: ValidationArguments) => {
-      if (config.bvlsHmctsLinkGuestPinEnabled) {
-        return 'Enter number from CVP address or enter full web address (URL)'
-      }
-      return 'Enter court hearing link'
+      return 'Enter number from CVP address or enter full web address (URL)'
     },
   })
   cvpRequired: string
@@ -33,17 +29,16 @@ export class CourtHearingLink {
   videoLinkUrl: string
 
   @Transform(({ value, obj }) => (obj.cvpRequired === 'yes' ? value : undefined))
-  @ValidateIf(o => o.cvpRequired === 'yes' && config.bvlsHmctsLinkGuestPinEnabled && isNotEmpty(o.hmctsNumber))
+  @ValidateIf(o => o.cvpRequired === 'yes' && isNotEmpty(o.hmctsNumber))
   @MaxLength(8, { message: 'Number from CVP address must be $constraint1 characters or less' })
   @IsNumberString({ no_symbols: true }, { message: 'Number from CVP address must be a number, like 3457' })
   hmctsNumber: string
 
-  @ValidateIf(() => config.bvlsHmctsLinkGuestPinEnabled)
   @IsIn(['yes', 'no'], { message: 'Select yes if you know the guest pin' })
   guestPinRequired: string
 
   @Transform(({ value, obj }) => (obj.guestPinRequired === 'yes' ? value : undefined))
-  @ValidateIf(o => config.bvlsHmctsLinkGuestPinEnabled && o.guestPinRequired === 'yes')
+  @ValidateIf(o => o.guestPinRequired === 'yes')
   @IsNotEmpty({ message: 'Enter guest pin' })
   @MaxLength(8, { message: 'Guest pin must be $constraint1 characters or less' })
   @IsNumberString({ no_symbols: true }, { message: 'Guest pin must be a number' })
@@ -66,9 +61,9 @@ export default class CourtHearingLinkRoutes {
       ...req.session.bookACourtHearingJourney,
       cvpRequired: cvpRequired === 'yes',
       videoLinkUrl: isNotEmpty(videoLinkUrl) ? videoLinkUrl : null,
-      hmctsNumber: config.bvlsHmctsLinkGuestPinEnabled && isNotEmpty(hmctsNumber) ? hmctsNumber : null,
-      guestPinRequired: config.bvlsHmctsLinkGuestPinEnabled && guestPinRequired === 'yes',
-      guestPin: config.bvlsHmctsLinkGuestPinEnabled && isNotEmpty(guestPin) ? guestPin : null,
+      hmctsNumber: isNotEmpty(hmctsNumber) ? hmctsNumber : null,
+      guestPinRequired: guestPinRequired === 'yes',
+      guestPin: isNotEmpty(guestPin) ? guestPin : null,
     }
 
     if (mode === 'amend') {
