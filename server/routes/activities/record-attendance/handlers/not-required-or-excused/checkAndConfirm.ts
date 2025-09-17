@@ -21,14 +21,13 @@ export default class CheckAndConfirmRoutes {
 
   POST = async (req: Request, res: Response) => {
     const { user } = res.locals
-    const instanceId = +req.params.id
     const { selectedPrisoners } = req.journeyData.recordAttendanceJourney.notRequiredOrExcused
 
     await Promise.all(
       selectedPrisoners.map(prisoner =>
         this.activitiesService.postAdvanceAttendances(
           {
-            scheduleInstanceId: instanceId,
+            scheduleInstanceId: prisoner.instanceId,
             prisonerNumber: prisoner.prisonerNumber,
             issuePayment: req.journeyData.recordAttendanceJourney.notRequiredOrExcused.isPaid,
           },
@@ -37,6 +36,7 @@ export default class CheckAndConfirmRoutes {
       ),
     )
     const successMessage = `You've marked ${selectedPrisoners.length === 1 ? '1 person' : `${selectedPrisoners.length} people`} as not required for this session.`
-    return res.redirectWithSuccess('../attendance-list', 'Attendee list updated', successMessage)
+    const redirectUrl = req.journeyData.recordAttendanceJourney.returnUrl || '../attendance-list'
+    return res.redirectWithSuccess(redirectUrl, 'Attendee list updated', successMessage)
   }
 }
