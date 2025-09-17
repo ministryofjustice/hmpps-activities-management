@@ -20,6 +20,11 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
+    if (req.journeyData.recordAttendanceJourney === undefined) {
+      req.journeyData.recordAttendanceJourney = {}
+    }
+    req.journeyData.recordAttendanceJourney.returnUrl = req.originalUrl
+
     const { user } = res.locals
     const { date, timePeriods } = req.query
     const { notRequiredInAdvanceEnabled } = config
@@ -94,7 +99,6 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
     let prisonerName
 
     const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
-
     const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
 
     const attendances: AttendanceUpdateRequest[] = selectedAttendances.flatMap(selectedAttendance => {
@@ -127,19 +131,68 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
       )
     }
 
-    const successMessage = `You've saved attendance details for ${
-      selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`
-    }`
-
     return res.redirectWithSuccess(
       'select-people-to-record-attendance-for?date=2025-09-12&timePeriods=AM,PM,ED&activityId=539',
       'Attendance recorded',
-      successMessage,
+      `You've saved attendance details for ${selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`}`,
     )
   }
 
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
-    return res.redirect('not-attended-reason')
+    const { user } = res.locals
+    let { selectedAttendances }: { selectedAttendances: string[] } = req.body
+    if (typeof selectedAttendances === 'string') {
+      selectedAttendances = [selectedAttendances]
+    }
+
+    const { recordAttendanceJourney } = req.journeyData
+    const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
+    const prisonerNumbers = _.uniq(selectedAttendances.map(selectedAttendance => selectedAttendance.split('-')[2]))
+
+    const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
+
+    const allEvents = await this.activitiesService
+      .getScheduledEventsForPrisoners(toDate(instances[0].date), prisonerNumbers, user)
+      .then(response => [
+        ...response.activities,
+        ...response.appointments,
+        ...response.courtHearings,
+        ...response.visits,
+        ...response.adjudications,
+      ])
+      .then(events => events.filter(e => !e.cancelled))
+
+    const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
+
+    recordAttendanceJourney.notAttended = {
+      selectedPrisoners: [],
+    }
+
+    selectedAttendances.forEach(selectedAttendance => {
+      const [instanceId, attendanceId, prisonerNumber] = selectedAttendance.split('-')
+
+      const instance = instances.find(inst => inst.id === +instanceId)
+      const prisoner = prisoners.find(pris => pris.prisonerNumber === prisonerNumber)
+
+      const otherEvents = allEvents.filter(
+        event =>
+          event.prisonerNumber === prisoner.prisonerNumber &&
+          event.scheduledInstanceId !== +instanceId &&
+          eventClashes(event, instance),
+      )
+
+      recordAttendanceJourney.notAttended.selectedPrisoners.push({
+        instanceId: +instanceId,
+        attendanceId: +attendanceId,
+        prisonerNumber,
+        prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+        firstName: prisoner.firstName,
+        lastName: prisoner.lastName,
+        otherEvents,
+      })
+    })
+
+    return res.redirect('../activities/not-attended-reason')
   }
 
   NOT_REQUIRED_OR_EXCUSED = async (req: Request, res: Response): Promise<void> => {
