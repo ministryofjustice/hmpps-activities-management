@@ -87,6 +87,9 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
           prisoner: prisoners.find(p => p.prisonerNumber === att.prisonerNumber),
           instance,
           attendance: instance.attendances.find(a => a.prisonerNumber === att.prisonerNumber),
+          advancedAttendance: instance.isInFuture
+            ? instance.advanceAttendances.find(a => a.prisonerNumber === att.prisonerNumber)
+            : undefined,
           otherEvents: prisonerEvents,
         }
       })

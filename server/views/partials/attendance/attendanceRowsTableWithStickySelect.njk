@@ -26,6 +26,31 @@
             {% set isSelectable = false %}
         {% endif %}
 
+        {% set attendanceTagDetails %}
+            {% if attendee.advancedAttendance %}
+                {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', instance.activitySchedule.activity.attendanceRequired) }}
+                {{ payStatus( 
+                    { 
+                        dataPresentCheck: attendee.advancedAttendance,
+                        status: 'COMPLETED',
+                        payable: isPayable,
+                        issuePayment: attendee.advancedAttendance.issuePayment,
+                        marginTagClass: true
+                    }) }}
+            {% else %}
+                {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) }}
+                {{ payStatus( 
+                    { 
+                        dataPresentCheck: attendee.attendance,
+                        status: attendee.attendance.status,
+                        payable: isPayable,
+                        issuePayment: attendee.attendance.issuePayment,
+                        marginTagClass: true
+                    }) }}
+                {{ incentiveLevelWarningTag(attendee.attendance) }}
+            {% endif %}
+        {% endset %}
+
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
             value: attendee.instance.id + '-' + attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
@@ -70,15 +95,7 @@
                     }
                 },
                 {
-                    html: attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) + ' ' +
-                    payStatus({
-                        dataPresentCheck: attendee.attendance,
-                        status: attendee.attendance.status,
-                        issuePayment: attendee.attendance.issuePayment,
-                        payable: attendee.instance.activitySchedule.activity.paid,
-                        marginTagClass: true
-                    }) + ' ' +
-                    incentiveLevelWarningTag(attendee.attendance),
+                    html: attendanceTagDetails,
                     attributes: {
                         "data-qa": "attendance"
                     }
