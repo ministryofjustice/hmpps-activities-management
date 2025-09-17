@@ -4,7 +4,6 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import CourtHearingLinkRoutes, { CourtHearingLink } from './courtHearingLink'
 import CourtBookingService from '../../../../../services/courtBookingService'
-import config from '../../../../../config'
 
 jest.mock('../../../../../services/courtBookingService')
 
@@ -37,7 +36,6 @@ describe('CourtHearingLinkRoutes', () => {
     next = jest.fn()
     courtBookingService = new CourtBookingService(null) as jest.Mocked<CourtBookingService>
     courtHearingLinkRoutes = new CourtHearingLinkRoutes(courtBookingService)
-    config.bvlsHmctsLinkGuestPinEnabled = true
   })
 
   describe('GET', () => {
@@ -49,9 +47,7 @@ describe('CourtHearingLinkRoutes', () => {
   })
 
   describe('POST', () => {
-    it.each(['true', 'false'])(`redirects with success message when mode is amend and toggle %s`, async toggle => {
-      config.bvlsHmctsLinkGuestPinEnabled = toggle === 'true'
-
+    it(`redirects with success message when mode is amend`, async () => {
       req.body.videoLinkUrl = 'URL'
       req.routeContext = { mode: 'amend' }
       req.session.bookACourtHearingJourney.bookingId = 1
@@ -68,9 +64,7 @@ describe('CourtHearingLinkRoutes', () => {
       )
     })
 
-    it.each(['true', 'false'])('redirects to location when mode is not amend and toggle %s', async toggle => {
-      config.bvlsHmctsLinkGuestPinEnabled = toggle === 'true'
-
+    it('redirects to location when mode is not amend', async () => {
       req.body.videoLinkUrl = 'URL'
       req.routeContext = { mode: 'create' }
 
@@ -81,11 +75,7 @@ describe('CourtHearingLinkRoutes', () => {
   })
 })
 
-describe('CourtHearingLink with toggle on', () => {
-  beforeEach(() => {
-    config.bvlsHmctsLinkGuestPinEnabled = true
-  })
-
+describe('CourtHearingLink', () => {
   it('should validate a valid CourtHearingLink instance - required', async () => {
     const courtHearingLink = plainToInstance(CourtHearingLink, {
       cvpRequired: 'yes',
@@ -252,76 +242,6 @@ describe('CourtHearingLink with toggle on', () => {
         {
           error: 'Guest pin must be a number',
           property: 'guestPin',
-        },
-      ]),
-    )
-  })
-})
-
-describe('CourtHearingLink with toggle off', () => {
-  beforeEach(() => {
-    config.bvlsHmctsLinkGuestPinEnabled = false
-  })
-
-  it('should validate a valid CourtHearingLink instance - required', async () => {
-    const courtHearingLink = plainToInstance(CourtHearingLink, {
-      cvpRequired: 'yes',
-      videoLinkUrl: 'valid court link',
-    })
-
-    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toHaveLength(0)
-  })
-
-  it('should validate a valid CourtHearingLink instance - not required', async () => {
-    const courtHearingLink = plainToInstance(CourtHearingLink, {
-      cvpRequired: 'no',
-    })
-
-    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toHaveLength(0)
-  })
-
-  it('should validate an invalid enum', async () => {
-    const courtHearingLink = plainToInstance(CourtHearingLink, {
-      cvpRequired: 'invalid',
-    })
-
-    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toEqual(
-      expect.arrayContaining([{ error: 'Select yes if you know the court hearing link', property: 'cvpRequired' }]),
-    )
-  })
-
-  it('should validate a blank video link where it is required', async () => {
-    const courtHearingLink = plainToInstance(CourtHearingLink, {
-      cvpRequired: 'yes',
-      videoLinkUrl: '',
-    })
-
-    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toEqual(
-      expect.arrayContaining([
-        {
-          error: 'Enter court hearing link',
-          property: 'cvpRequired',
-        },
-      ]),
-    )
-  })
-
-  it('should validate a court link which is too long', async () => {
-    const courtHearingLink = plainToInstance(CourtHearingLink, {
-      cvpRequired: 'yes',
-      videoLinkUrl: '1'.repeat(1210),
-    })
-
-    const errors = await validate(courtHearingLink).then(errs => errs.flatMap(associateErrorsWithProperty))
-    expect(errors).toEqual(
-      expect.arrayContaining([
-        {
-          error: 'Court hearing link must be 120 characters or less',
-          property: 'videoLinkUrl',
         },
       ]),
     )
