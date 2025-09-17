@@ -62,7 +62,9 @@ describe('locationsInsidePrisonApiClient', () => {
       const response = { data: 'data' }
 
       fakeLocationsInsidePrisonApi
-        .get('/locations/prison/RSI/non-residential-usage-type/PROGRAMMES_ACTIVITIES?formatLocalName=true')
+        .get(
+          '/locations/prison/RSI/non-residential-usage-type/PROGRAMMES_ACTIVITIES?formatLocalName=true&filterParents=false',
+        )
         .matchHeader('authorization', `Bearer accessToken`)
         .reply(200, response)
 
