@@ -1,3 +1,4 @@
+import EventEmitter from 'node:events'
 import type { RedisClient } from './redisClient'
 
 import logger from '../../logger'
@@ -20,7 +21,17 @@ export default class TokenStore implements TokenStoreInterface {
 
   public async setToken(key: string, token: string, durationSeconds: number): Promise<void> {
     await this.ensureConnected()
+    logger.info(`Setting Redis value for ${this.prefix}${key}`)
     await this.client.set(`${this.prefix}${key}`, token, { EX: durationSeconds })
+    logger.info(`Finished setting Redis value for ${this.prefix}${key}`)
+  }
+
+  public async setTokenAndEmit(key: string, token: string, durationSeconds: number, bus: EventEmitter): Promise<void> {
+    try {
+      await this.setToken(key, token, durationSeconds)
+    } finally {
+      bus.emit(key)
+    }
   }
 
   public async getToken(key: string): Promise<string> {

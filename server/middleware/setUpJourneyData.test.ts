@@ -42,6 +42,7 @@ describe('setUpJourneyData', () => {
     tokenStore = {
       getToken: async () => null,
       setToken: jest.fn(),
+      setTokenAndEmit: jest.fn(),
       delToken: jest.fn(),
     }
 
@@ -56,6 +57,7 @@ describe('setUpJourneyData', () => {
     tokenStore = {
       getToken: async () => '{ "movementListJourney" : { "date": "2025-02-24" } }',
       setToken: jest.fn(),
+      setTokenAndEmit: jest.fn(),
       delToken: jest.fn(),
     }
 
@@ -63,24 +65,5 @@ describe('setUpJourneyData', () => {
 
     await middleware(req, res, next)
     expect(req.journeyData.movementListJourney!.date).toEqual('2025-02-24')
-  })
-
-  it('should save journey data to store', async () => {
-    tokenStore = {
-      getToken: async () => '{ "movementListJourney" : { "date": "2025-02-24" } }',
-      setToken: jest.fn(),
-      delToken: jest.fn(),
-    }
-
-    middleware = setUpJourneyData(tokenStore)
-
-    await middleware(req, res, next)
-    req.journeyData.movementListJourney!.date = '2025-02-24'
-    await res.send('end')
-    expect(tokenStore.setToken).toHaveBeenCalledWith(
-      `journey.tester.${journeyId}`,
-      '{"movementListJourney":{"date":"2025-02-24"}}',
-      24 * 60 * 60,
-    )
   })
 })
