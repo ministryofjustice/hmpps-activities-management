@@ -15,25 +15,25 @@ export default function redirectInterceptor(store: TokenStoreInterface): Router 
       if (!req.journeyData) {
         logger.info('redirectInterceptor - No journey data - not saving data to Redis')
         originalRedirect.call(this, url)
-      } else {
-        logger.info('redirectInterceptor - Journey data exists - will be saved to Redis')
-        const journeyId = req.params.journeyId ?? 'default'
-        const journeyTokenKey = `journey.${req.user?.username}.${journeyId}`
-        const json = JSON.stringify(req.journeyData ?? {})
-        const size = json.length
-        const start = performance.now()
+        return
+      }
+      logger.info('redirectInterceptor - Journey data exists - will be saved to Redis')
+      const journeyId = req.params.journeyId ?? 'default'
+      const journeyTokenKey = `journey.${req.user?.username}.${journeyId}`
+      const json = JSON.stringify(req.journeyData ?? {})
+      const size = json.length
+      const start = performance.now()
 
-        try {
-          redisBus.once(journeyTokenKey, () => {
-            const end = performance.now()
-            logger.info(`redirectInterceptor - Redis save took ${(end - start).toFixed(2)}ms for size ${size}`)
-            originalRedirect.call(this, url)
-          })
+      try {
+        redisBus.once(journeyTokenKey, () => {
+          const end = performance.now()
+          logger.info(`redirectInterceptor - Redis save took ${(end - start).toFixed(2)}ms for size ${size}`)
+          originalRedirect.call(this, url)
+        })
 
-          store.setTokenAndEmit(journeyTokenKey, json, config.journeyDataTokenDurationHours * 60 * 60, redisBus)
-        } catch (err) {
-          logger.warn(`redirectInterceptor - Redis save failed: ${err}`)
-        }
+        store.setTokenAndEmit(journeyTokenKey, json, config.journeyDataTokenDurationHours * 60 * 60, redisBus)
+      } catch (err) {
+        logger.warn(`redirectInterceptor - Redis save failed: ${err}`)
       }
     }
     next()
