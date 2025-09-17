@@ -47,6 +47,16 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
         isInFuture: notRequiredInAdvanceEnabled && startOfDay(toDate(i.date)) > startOfToday(),
       }))
 
+    if (instances.length === 0) {
+      const activity = await this.activitiesService.getActivity(activityId, user)
+      return res.render('pages/activities/record-attendance/attend-all/no-activities-for-selection', {
+        activity,
+        isInFuture: startOfDay(activityDate) > startOfToday(),
+        activityDate,
+        timePeriods: timePeriodFilter,
+      })
+    }
+
     const attendees = (await Promise.all(instances.map(a => this.activitiesService.getAttendees(a.id, user)))).flat()
 
     const prisonerNumbers = Array.from(new Set(attendees.map(a => a.prisonerNumber)))
