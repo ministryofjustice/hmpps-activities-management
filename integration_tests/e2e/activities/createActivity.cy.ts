@@ -50,7 +50,7 @@ context('Create activity', () => {
     cy.stubEndpoint('GET', '/api/reference-domains/domains/STUDY_AREA/codes', studyAreas)
     cy.stubEndpoint(
       'GET',
-      '/locations/prison/MDI/non-residential-usage-type/PROGRAMMES_ACTIVITIES\\?formatLocalName=true',
+      '/locations/prison/MDI/non-residential-usage-type/PROGRAMMES_ACTIVITIES\\?formatLocalName=true&filterParents=false',
       getNonResidentialActivityLocations,
     )
     cy.stubEndpoint('GET', '/api/agencies/MDI/pay-profile', getPayProfile)

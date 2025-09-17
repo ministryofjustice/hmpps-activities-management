@@ -26,7 +26,9 @@ export default class LocationsInsidePrisonApiClient extends AbstractHmppsRestCli
     user: ServiceUser,
   ): Promise<Location[]> {
     return this.get(
-      { path: `/locations/prison/${prisonCode}/non-residential-usage-type/${usageType}?formatLocalName=true` },
+      {
+        path: `/locations/prison/${prisonCode}/non-residential-usage-type/${usageType}?formatLocalName=true&filterParents=false`,
+      },
       user,
     )
   }
