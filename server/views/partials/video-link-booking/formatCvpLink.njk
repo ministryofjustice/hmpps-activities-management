@@ -1,8 +1,8 @@
 {# Macro to format the CVP link based on known information and the feature switch value #}
 
-{% macro formatCvpLink(hmctsNumber, videoLinkUrl, feature) %}
+{% macro formatCvpLink(hmctsNumber, videoLinkUrl) %}
     {% set cvpLinkUrl %}
-        {% if feature and hmctsNumber %}
+        {% if hmctsNumber %}
             {{ (hmctsNumber | toFullCourtLink) }}
         {% elseif videoLinkUrl %}
             {{ videoLinkUrl }}

@@ -97,4 +97,132 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     expect($('button').text().trim()).toEqual('Update extra information')
   })
+
+  it('create content - VLPA (Video Link - Parole Hearing)', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    viewContext.session.appointmentJourney.category = {
+      code: 'VLPA',
+      description: 'Video Link - Parole Hearing',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Add extra information')
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for some video link appointments.',
+    )
+  })
+
+  it('create content - VLAP (Video Link - Another Prison)', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    viewContext.session.appointmentJourney.category = {
+      code: 'VLAP',
+      description: 'Video Link - Another Prison',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Add extra information')
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for some video link appointments.',
+    )
+  })
+
+  it('create content - VLLA (Video Link - Legal Appointment)', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    viewContext.session.appointmentJourney.category = {
+      code: 'VLLA',
+      description: 'Video Link - Legal Appointment',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Add extra information')
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for some video link appointments.',
+    )
+  })
+
+  it('create content - VLOO (Video Link - Official Other)', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+    viewContext.session.appointmentJourney.category = {
+      code: 'VLOO',
+      description: 'Video Link - Official Other',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Add extra information')
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for some video link appointments.',
+    )
+  })
+
+  it('edit content - VLPA (Video Link - Parole Hearing)', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+
+    viewContext.session.appointmentJourney.category = {
+      code: 'VLPA',
+      description: 'Video Link - Parole Hearing',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Change the extra information')
+
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for some video link appointments.',
+    )
+  })
+
+  it('edit content - VLAP (Video Link - Another Prison)', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+
+    viewContext.session.appointmentJourney.category = {
+      code: 'VLAP',
+      description: 'Video Link - Another Prison',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Change the extra information')
+
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for some video link appointments.',
+    )
+  })
+
+  it('edit content - VLLA (Video Link - Legal Appointment)', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+
+    viewContext.session.appointmentJourney.category = {
+      code: 'VLLA',
+      description: 'Video Link - Legal Appointment',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Change the extra information')
+
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for some video link appointments.',
+    )
+  })
+
+  it('edit content - VLOO (Video Link - Official Other)', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+
+    viewContext.session.appointmentJourney.category = {
+      code: 'VLOO',
+      description: 'Video Link - Official Other',
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Change the extra information')
+
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for some video link appointments.',
+    )
+  })
 })
