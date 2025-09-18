@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { v4 as uuidv4 } from 'uuid'
+import { randomUUID } from 'crypto'
 import populateJourney from './populateJourney'
 import { SessionDatum } from '../@types/express'
 import { AppointmentJourney } from '../routes/appointments/create-and-edit/appointmentJourney'
@@ -44,7 +44,7 @@ beforeEach(() => {
     appointmentSetJourney,
   } as SessionDatum
 
-  journeyId = uuidv4()
+  journeyId = randomUUID()
 })
 
 describe('populateJourney', () => {
@@ -119,7 +119,7 @@ describe('populateJourney', () => {
     })
 
     it('should return null session data with unmapped journey id', async () => {
-      req.params.journeyId = uuidv4()
+      req.params.journeyId = randomUUID()
 
       middleware(req, res, next)
 
@@ -249,7 +249,7 @@ describe('populateJourney', () => {
         .fill({} as SessionDatum)
         .reduce((map, obj, i) => {
           // eslint-disable-next-line no-param-reassign
-          map[uuidv4()] = { ...obj, instanceUnixEpoch: epoch + i }
+          map[randomUUID()] = { ...obj, instanceUnixEpoch: epoch + i }
           return map
         }, {})
 

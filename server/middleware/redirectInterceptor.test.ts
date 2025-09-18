@@ -1,10 +1,10 @@
 import express, { NextFunction, Request, Response } from 'express'
-import { v4 as uuidV4 } from 'uuid'
+import { randomUUID } from 'crypto'
 import request from 'supertest'
 import EventEmitter from 'node:events'
 import redirectInterceptor from './redirectInterceptor'
 
-const journeyId = uuidV4()
+const journeyId = randomUUID()
 const username = 'BLOGGSJ'
 
 describe('redirectInterceptor', () => {

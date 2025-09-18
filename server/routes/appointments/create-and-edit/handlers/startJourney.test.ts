@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { v4 as uuidv4 } from 'uuid'
+import { randomUUID } from 'crypto'
 import { when } from 'jest-when'
 import { AppointmentJourney, AppointmentJourneyMode, AppointmentType } from '../appointmentJourney'
 import StartJourneyRoutes from './startJourney'
@@ -28,7 +28,7 @@ describe('Route Handlers - Create Appointment - Start', () => {
   const handler = new StartJourneyRoutes(prisonService, metricsService, appointeeAttendeeService)
   let req: Request
   let res: Response
-  const journeyId = uuidv4()
+  const journeyId = randomUUID()
   const appointmentSeries = {
     appointmentName: 'Appointment name (Chaplaincy)',
     appointments: [

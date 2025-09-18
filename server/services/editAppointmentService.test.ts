@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { addDays } from 'date-fns'
-import { v4 as uuidv4 } from 'uuid'
+import { randomUUID } from 'crypto'
 import ActivitiesService from './activitiesService'
 import EditAppointmentService from './editAppointmentService'
 import MetricsService from './metricsService'
@@ -10,14 +10,14 @@ import {
   AppointmentType,
 } from '../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../routes/appointments/create-and-edit/editAppointmentJourney'
-import { AppointmentCancellationReason, AppointmentApplyTo } from '../@types/appointments'
+import { AppointmentApplyTo, AppointmentCancellationReason } from '../@types/appointments'
 import { formatDate, parseDate } from '../utils/utils'
 import {
   AppointmentCancelRequest,
-  AppointmentUpdateRequest,
   AppointmentSeriesSummary,
   AppointmentSetSummary,
   AppointmentUncancelRequest,
+  AppointmentUpdateRequest,
 } from '../@types/activitiesAPI/types'
 import { YesNo } from '../@types/activities'
 import config from '../config'
@@ -36,7 +36,7 @@ describe('Edit Appointment Service', () => {
   const weekTomorrow = addDays(new Date(), 8)
   let req: Request
   let res: Response
-  const journeyId = uuidv4()
+  const journeyId = randomUUID()
   const appointmentId = 2
 
   beforeEach(() => {
