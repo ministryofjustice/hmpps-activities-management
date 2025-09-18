@@ -1,5 +1,5 @@
 import { Request, RequestHandler, Response } from 'express'
-import { v4 as uuidV4 } from 'uuid'
+import { randomUUID } from 'crypto'
 import setUpJourneyData from './setUpJourneyData'
 import TokenStoreInterface from '../data/tokenStoreInterface'
 
@@ -14,7 +14,7 @@ let journeyId: string
 const next = jest.fn()
 
 beforeEach(() => {
-  journeyId = uuidV4()
+  journeyId = randomUUID()
 
   res = {
     callback: () => null,
