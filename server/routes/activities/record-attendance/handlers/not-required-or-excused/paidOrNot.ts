@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
+import _ from 'lodash'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
 
@@ -24,11 +25,22 @@ export default class PaidOrNotRoutes {
     const { user } = res.locals
     const instanceId = +req.params.id
     const { selectedPrisoners } = req.journeyData.recordAttendanceJourney.notRequiredOrExcused
-    const instance: ScheduledActivity = await this.activitiesService.getScheduledActivity(instanceId, user)
+    const instanceIds = _.uniq(selectedPrisoners.map(p => p.instanceId))
+    let instances: ScheduledActivity[] = []
+
+    if (instanceIds.length > 1) {
+      instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
+    } else {
+      instances = [await this.activitiesService.getScheduledActivity(instanceId, user)]
+    }
+
+    const instance: ScheduledActivity = instances.find(i => i.id === instanceId)
 
     res.render('pages/activities/record-attendance/not-required-or-excused/paid-or-not', {
       selectedPrisoners,
       instance,
+      instances,
+      timePeriods: instances.map(i => i.timeSlot),
     })
   }
 
