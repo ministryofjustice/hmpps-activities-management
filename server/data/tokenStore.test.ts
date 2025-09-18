@@ -1,3 +1,4 @@
+import EventEmitter from 'node:events'
 import { RedisClient } from './redisClient'
 import TokenStore from './tokenStore'
 
@@ -20,7 +21,7 @@ describe('tokenStore', () => {
     jest.resetAllMocks()
   })
 
-  describe('get token', () => {
+  describe('getToken', () => {
     it('Can retrieve token', async () => {
       redisClient.get.mockResolvedValue('token-1')
 
@@ -38,7 +39,7 @@ describe('tokenStore', () => {
     })
   })
 
-  describe('set token', () => {
+  describe('setToken', () => {
     it('Can set token', async () => {
       await tokenStore.setToken('user-1', 'token-1', 10)
 
@@ -54,7 +55,28 @@ describe('tokenStore', () => {
     })
   })
 
-  describe('del token', () => {
+  describe('setTokenAndEmit', () => {
+    const redisBus = new EventEmitter()
+    redisBus.emit = jest.fn()
+
+    it('Can set token and emit event', async () => {
+      await tokenStore.setTokenAndEmit('key123', 'token456', 10, redisBus)
+
+      expect(redisClient.set).toHaveBeenCalledWith('systemToken:key123', 'token456', { EX: 10 })
+      expect(redisBus.emit).toHaveBeenCalledWith('key123')
+    })
+
+    it('Connects when no connection calling set token', async () => {
+      ;(redisClient as unknown as Record<string, boolean>).isOpen = false
+
+      await tokenStore.setTokenAndEmit('key123', 'token456', 10, redisBus)
+
+      expect(redisClient.set).toHaveBeenCalledWith('systemToken:key123', 'token456', { EX: 10 })
+      expect(redisBus.emit).toHaveBeenCalledWith('key123')
+    })
+  })
+
+  describe('delToken', () => {
     it('Can delete token', async () => {
       await tokenStore.setToken('user-1', 'token-1', 10)
 
