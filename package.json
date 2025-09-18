@@ -94,7 +94,7 @@
     "@types/jest-when": "^3.5.5",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
-    "@types/node": "^22.18.3",
+    "@types/node": "^22.18.4",
     "@types/nunjucks": "^3.2.6",
     "@types/passport": "^1.0.17",
     "@types/passport-oauth2": "^1.8.0",
@@ -129,7 +129,7 @@
     "prettier-plugin-jinja-template": "^2.1.0",
     "sinon": "^21.0.0",
     "supertest": "^7.1.4",
-    "ts-jest": "^29.4.1",
+    "ts-jest": "^29.4.2",
     "typescript": "^5.9.2"
   },
   "overrides": {
