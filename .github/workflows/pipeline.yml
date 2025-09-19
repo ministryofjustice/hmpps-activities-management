@@ -90,7 +90,7 @@ jobs:
     uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_save_timings.yml@v1
     needs:
       - get-timings
-      - e2e-test
+      - node_integration_tests
     with:
       initial-timings: ${{ needs.get-timings.outputs.timings }}
       updated-timings: ${{ toJSON(needs.e2e-test.outputs) }}
