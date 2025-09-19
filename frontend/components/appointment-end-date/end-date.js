@@ -28,6 +28,8 @@ function AppointmentEndDate(container) {
     }
 
     endDateContainer.innerHTML = '<div class="secondary-text-colour">Last appointment on</div>'
+
+    // @ts-ignore
     endDateContainer.innerHTML += `<b>${endDate.toLocaleString('en-GB', dateOptions)}</b>`
   }
 
