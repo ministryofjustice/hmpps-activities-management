@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - '**'
-  workflow_dispatch:
+  workflow_call:
     inputs:
       additional_docker_tag:
         description: Additional docker tag that can be used to specify stable or testing tags
