@@ -15,7 +15,7 @@ on:
         default: ".nvmrc"
       spec-file-patterns:
         type: string
-        default: 'integration_tests/integration/features/**/*.feature'
+        default: 'integration_tests/e2e/**/*.cy.ts'
 
 jobs:
   get-timings:
