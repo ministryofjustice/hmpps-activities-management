@@ -54,9 +54,6 @@ jobs:
           timings: ${{ needs.get-timings.outputs.timings }}
           path: e2e-test-ui
 
-      - name: Stand up a test environment
-        run: make up
-
       - name: Run the end-to-end tests
         uses: cypress-io/github-action@v6.10.2
         with:
@@ -75,10 +72,6 @@ jobs:
         run: |
           cat e2e-test-ui/timings.json
           echo "t${{ matrix.container }}=$(jq -c . < e2e-test-ui/timings.json)" >> $GITHUB_OUTPUT
-
-      - name: Export container logs
-        if: failure()
-        run: make save-logs OUTPUT_LOGS_DIR=${{ runner.temp }}/docker-logs
 
       - name: Upload test results
         if: success() || failure()
