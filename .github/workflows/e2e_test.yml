@@ -15,6 +15,12 @@ on:
 jobs:
   e2e-test:
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:8,2
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=5
     env:
       APP_VERSION: ${{ inputs.app_version }}
     strategy:
