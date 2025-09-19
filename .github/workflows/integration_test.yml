@@ -121,4 +121,4 @@ jobs:
       - cypress-test
     with:
       initial-timings: ${{ needs.get-timings.outputs.timings }}
-      updated-timings: ${{ toJSON(needs.e2e-test.outputs) }}
+      updated-timings: ${{ toJSON(needs.cypress-test.outputs) }}
