@@ -20,13 +20,14 @@ import {
   eventClashes,
   getAdvancedAttendanceSummary,
   formatFirstLastName,
+  validateUuid,
 } from './utils'
 import { AdvanceAttendance, Attendance, ScheduledEvent } from '../@types/activitiesAPI/types'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
 import config from '../config'
 
 describe('utils', () => {
-  fdescribe('format first & lastName', () => {
+  describe('format first & lastName', () => {
     it.each([
       [null, { firstName: null, lastName: null }, ''],
       ['empty string', { firstName: '', lastName: '' }, ''],
@@ -519,5 +520,20 @@ describe('eventClashes', () => {
     const thisEvent = { startTime: thisStartTime, endTime: thisEndTime }
     const otherEvent = { startTime: otherStartTime, endTime: otherEndTime } as ScheduledEvent
     expect(eventClashes(otherEvent, thisEvent)).toEqual(false)
+  })
+
+  describe('validateUuid', () => {
+    it('should return true for a valid UUID', () => {
+      expect(validateUuid('123e4567-e89b-12d3-a456-426614174000')).toEqual(true)
+    })
+    it('should return false for an invalid UUID', () => {
+      expect(validateUuid('123e4567-e89b-12d3-a456-42661417400g')).toEqual(false)
+    })
+    it('should return false for a null UUID', () => {
+      expect(validateUuid(null)).toEqual(false)
+    })
+    it('should return false for an undefined UUID', () => {
+      expect(validateUuid(undefined)).toEqual(false)
+    })
   })
 })

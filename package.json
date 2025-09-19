@@ -26,41 +26,6 @@
     "node": "^22",
     "npm": "^11"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "collectCoverageFrom": [
-      "server/**/*.{ts,js,jsx,mjs}"
-    ],
-    "testMatch": [
-      "<rootDir>/(server|frontend|job)/**/?(*.)(cy|test).{ts,js,jsx,mjs}"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>jest.setup.ts"
-    ],
-    "testEnvironment": "node",
-    "transform": {
-      "^.+\\.[tj]sx?$": [
-        "ts-jest"
-      ]
-    },
-    "reporters": [
-      "default",
-      [
-        "jest-junit",
-        {
-          "outputDirectory": "test_results/jest/"
-        }
-      ]
-    ],
-    "moduleFileExtensions": [
-      "web.js",
-      "mjs",
-      "js",
-      "json",
-      "node",
-      "ts"
-    ]
-  },
   "lint-staged": {
     "*.{ts,js,css}": [
       "prettier --write",
@@ -113,8 +78,7 @@
     "passport-oauth2": "^1.8.0",
     "redis": "^5.8.2",
     "reflect-metadata": "^0.2.2",
-    "superagent": "^10.2.3",
-    "uuid": "^11.1.0"
+    "superagent": "^10.2.3"
   },
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
@@ -155,6 +119,7 @@
     "husky": "^9.1.7",
     "jest": "^30.1.3",
     "jest-date": "^1.1.6",
+    "jest-html-reporter": "^4.3.0",
     "jest-junit": "^16.0.0",
     "jest-when": "^3.7.0",
     "jsonwebtoken": "^9.0.2",

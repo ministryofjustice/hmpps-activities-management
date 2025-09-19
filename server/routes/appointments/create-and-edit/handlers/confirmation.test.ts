@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { v4 as uuidv4 } from 'uuid'
+import { randomUUID } from 'crypto'
 import ConfirmationRoutes from './confirmation'
 import { AppointmentDetails, AppointmentSetDetails } from '../../../../@types/activitiesAPI/types'
 import MetricsService from '../../../../services/metricsService'
@@ -14,7 +14,7 @@ describe('Route Handlers - Create Appointment - Confirmation', () => {
   const handler = new ConfirmationRoutes(metricsService)
   let req: Request
   let res: Response
-  const journeyId = uuidv4()
+  const journeyId = randomUUID()
 
   beforeEach(() => {
     res = {
