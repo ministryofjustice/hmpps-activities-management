@@ -21,6 +21,7 @@ on:
 permissions:
   contents: read
   packages: write
+  actions: write
 
 concurrency:
   # Only cancel in progress when on a branch - use SHA on main to ensure uniqueness.
