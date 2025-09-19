@@ -19,11 +19,13 @@ on:
 
 jobs:
   get-timings:
+    name: Get timings
     uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_get_timings.yml@v1
     with:
       spec-file-patterns: ${{ inputs.spec-file-patterns }}
 
   cypress-test:
+    name: Run Cypress tests
     runs-on: ubuntu-latest
     services:
       redis:
@@ -114,6 +116,7 @@ jobs:
             coverage/
 
   save-timings:
+    name: Save timings
     uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_save_timings.yml@v1
     if: success() || failure()
     needs:
