@@ -54,6 +54,14 @@ jobs:
           timings: ${{ needs.get-timings.outputs.timings }}
           path: e2e-test-ui
 
+      - name: Prepare and run integration tests
+        id: integration-tests
+        shell: bash
+        run: |
+          nohup java -jar wiremock.jar --port 9091 &
+          nohup npm run start-feature &
+          sleep 5
+
       - name: Run the end-to-end tests
         uses: cypress-io/github-action@v6.10.2
         with:
