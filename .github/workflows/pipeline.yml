@@ -79,7 +79,6 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           publish-summary: false
-          working-directory: ${{ env.working-directory }}
         env:
           SPEC: ${{ inputs.spec-file-patterns }}
           SPLIT: ${{ strategy.job-total }}
