@@ -54,7 +54,7 @@ jobs:
 #    secrets: inherit
 
   e2e_test:
-    needs: build
+    needs: build_docker
     uses: ./.github/workflows/e2e_test.yml
     with:
       app_version: ${{ needs.build_docker.outputs.app_version }}
