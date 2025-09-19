@@ -15,7 +15,7 @@ on:
         default: ".nvmrc"
 
 jobs:
-  e2e-test:
+  cypress-test:
     runs-on: ubuntu-latest
     services:
       redis:
