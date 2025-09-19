@@ -22,11 +22,9 @@ jobs:
       matrix:
         container: [ 1, 2 ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Use Node.js ${{ inputs.node_version_file }}
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ${{ inputs.node_version_file }}
+        uses: actions/setup-node@v5
       - name: download artifacts
         uses: actions/download-artifact@v4
         with:
