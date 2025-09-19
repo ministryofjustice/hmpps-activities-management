@@ -9,7 +9,9 @@ export class Filters {
 
 export default class ApplyFiltersRoutes {
   APPLY = async (req: Request, res: Response): Promise<void> => {
-    const { alertFilters } = req.body
+    const { alertFilters, cancelledEventsFilter } = req.body
+
+    req.journeyData.movementListJourney.cancelledEventsFilter = cancelledEventsFilter
 
     req.journeyData.movementListJourney.alertFilters = alertFilters ?? []
 

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import ApplyFiltersRoutes from './applyFilters'
+import { YesNo } from '../../../../@types/activities'
 
 describe('Route Handlers - Apply Filters', () => {
   const handler = new ApplyFiltersRoutes()
@@ -18,10 +19,12 @@ describe('Route Handlers - Apply Filters', () => {
       get: jest.fn(),
       body: {
         alertFilters: ['ALERT_PEEP', 'CAT_A_PROVISIONAL'],
+        cancelledEventsFilter: YesNo.YES,
       },
       journeyData: {
         movementListJourney: {
           alertFilters: null,
+          cancelledEventsFilter: null,
         },
       },
     } as unknown as Request
@@ -32,6 +35,7 @@ describe('Route Handlers - Apply Filters', () => {
       await handler.APPLY(req, res)
       expect(req.journeyData.movementListJourney).toStrictEqual({
         alertFilters: ['ALERT_PEEP', 'CAT_A_PROVISIONAL'],
+        cancelledEventsFilter: 'YES',
       })
     })
 
@@ -40,6 +44,7 @@ describe('Route Handlers - Apply Filters', () => {
       await handler.APPLY(req, res)
       expect(req.journeyData.movementListJourney).toStrictEqual({
         alertFilters: [],
+        cancelledEventsFilter: 'YES',
       })
     })
   })

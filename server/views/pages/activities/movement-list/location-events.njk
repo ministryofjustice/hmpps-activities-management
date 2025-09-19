@@ -2,6 +2,7 @@
 
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "moj/components/filter/macro.njk" import mojFilter %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "components/alertsList.njk" import alertsList %}
@@ -45,7 +46,7 @@
                 {% endif %}
 
                 {% if event.cancelled %}
-                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
+                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red', attributes: { "data-qa": "cancelled-badge" } }) }}</div>
                 {% endif %}
 
                 {% if event.suspended %}
@@ -94,7 +95,7 @@
             {% endif %}
 
             {% if event.cancelled %}
-                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red' }) }}</div>
+                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Cancelled', classes: 'govuk-tag--small govuk-tag--red', attributes: { "data-qa": "cancelled-badge" } }) }}</div>
             {% endif %}
 
             {% if event.suspended %}
@@ -121,8 +122,32 @@
 {% block content %}
 
     {% set filterOptionsHtml %}
-
         {{ alertFilters(alertOptions, movementListJourney.alertFilters) }}
+
+        {{ govukRadios({
+            idPrefix: 'cancelledEventsFilter',
+            name: 'cancelledEventsFilter',
+            classes: "govuk-radios--small",
+            fieldset: {
+                legend: {
+                    text: 'Show cancelled events',
+                    isPageHeading: true,
+                    classes: "govuk-fieldset__legend--m"
+                }
+            },
+            items:[
+                {
+                    value: YesNo.YES,
+                    text: 'Yes',
+                    checked: movementListJourney.cancelledEventsFilter == YesNo.YES
+                },
+                {
+                    value: YesNo.NO,
+                    text: 'No',
+                    checked: movementListJourney.cancelledEventsFilter == YesNo.NO
+                }
+            ]
+        }) }}   
 
         <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
             Apply filters

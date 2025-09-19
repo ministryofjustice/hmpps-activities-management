@@ -44,6 +44,7 @@ export type MovementListPrisonerEvents = {
   alerts?: PrisonerAlert[]
   events?: ScheduledEvent[]
   clashingEvents?: ScheduledEvent[]
+  cancelledEvents?: ScheduledEvent[]
 }
 
 export type SubLocationCellPattern = {

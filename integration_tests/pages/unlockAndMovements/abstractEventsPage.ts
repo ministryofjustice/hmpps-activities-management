@@ -40,5 +40,11 @@ export default abstract class AbstractEventsPage extends Page {
 
   selectAllAlerts = () => cy.get('a[data-checkbox-name="alertFilters"]')
 
+  selectNoCancelledEvents = () => cy.get(`[name="cancelledEventsFilter"][value="NO"]`)
+
   relevantAlertColumn = () => cy.get('th').contains('Relevant alerts')
+
+  cancelledBadge = (): Cypress.Chainable => cy.get('[data-qa=cancelled-badge]')
+
+  cancelledFilter = () => cy.get(`[name="cancelledEventsFilter"][value="YES"]`)
 }

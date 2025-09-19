@@ -55,6 +55,7 @@ context('Create activity', () => {
     const locationEventsPage = Page.verifyOnPage(LocationEventsPage)
     locationEventsPage.assertBadges(0, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE)
     locationEventsPage.assertBadges(1, CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE)
+    locationEventsPage.cancelledBadge().should('have.lengthOf', 1)
 
     locationEventsPage.getButton('Show filter').click()
     locationEventsPage.acctAlertCheckbox().should('be.checked')
@@ -71,6 +72,7 @@ context('Create activity', () => {
 
     locationEventsPage.assertBadges(0, PEEP_BADGE)
     locationEventsPage.assertBadges(1, CAT_A_BADGE)
+    locationEventsPage.cancelledBadge().should('have.lengthOf', 1)
 
     locationEventsPage.getButton('Show filter').click()
     locationEventsPage.acctAlertCheckbox().should('be.checked')
@@ -81,11 +83,13 @@ context('Create activity', () => {
     locationEventsPage.catAAlertCheckbox().should('be.checked')
     locationEventsPage.catAHigherAlertCheckbox().should('be.checked')
     locationEventsPage.catAProvisionalAlertCheckbox().should('be.checked')
+    locationEventsPage.cancelledFilter().should('be.checked')
 
     locationEventsPage.selectAllAlerts().click()
     locationEventsPage.getButton('Apply filters').eq(0).click()
     locationEventsPage.assertBadges(0, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE)
     locationEventsPage.assertBadges(1, CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE)
+    locationEventsPage.cancelledBadge().should('have.lengthOf', 1)
 
     locationEventsPage.getButton('Show filter').click()
     locationEventsPage.selectAllAlerts().click()
@@ -97,9 +101,45 @@ context('Create activity', () => {
     locationEventsPage.catAAlertCheckbox().should('not.be.checked')
     locationEventsPage.catAHigherAlertCheckbox().should('not.be.checked')
     locationEventsPage.catAProvisionalAlertCheckbox().should('not.be.checked')
-
     locationEventsPage.getButton('Apply filters').eq(0).click()
-
     locationEventsPage.relevantAlertColumn().should('not.exist')
+  })
+
+  it('should filter out cancelled sessions', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.unlockAndMovementCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
+    manageActivitiesPage.createMovementListsCard().should('contain.text', 'Create movement lists')
+    manageActivitiesPage.createMovementListsCard().click()
+
+    const chooseMovementListDetailsPage = Page.verifyOnPage(ChooseDetailsPage)
+    chooseMovementListDetailsPage.selectToday()
+    chooseMovementListDetailsPage.selectAM()
+    chooseMovementListDetailsPage.continue()
+
+    const locationsPage = Page.verifyOnPage(LocationsPage)
+    locationsPage.selectLocation('Workshop 1').click()
+
+    const locationEventsPage = Page.verifyOnPage(LocationEventsPage)
+    locationEventsPage.assertBadges(0, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE)
+    locationEventsPage.assertBadges(1, CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE)
+    locationEventsPage.cancelledBadge().should('have.lengthOf', 1)
+
+    locationEventsPage.getButton('Show filter').click()
+    locationEventsPage.acctAlertCheckbox().should('be.checked')
+    locationEventsPage.controlledUnlockAlertCheckbox().should('be.checked')
+    locationEventsPage.eListAlertCheckbox().should('be.checked')
+    locationEventsPage.peepAlertCheckbox().should('be.checked')
+    locationEventsPage.tactAlertCheckbox().should('be.checked')
+    locationEventsPage.catAAlertCheckbox().should('be.checked')
+    locationEventsPage.catAHigherAlertCheckbox().should('be.checked')
+    locationEventsPage.catAProvisionalAlertCheckbox().should('be.checked')
+    locationEventsPage.selectNoCancelledEvents().click()
+    locationEventsPage.getButton('Apply filters').eq(0).click()
+    cy.get('tbody>tr').should('have.length', 1)
   })
 })
