@@ -53,8 +53,7 @@ jobs:
 #    needs: [node_build]
 #    secrets: inherit
 
-  e2e_test:
-    needs: build_docker
+  node_integration_tests:
     uses: ./.github/workflows/e2e_test.yml
     with:
       app_version: ${{ needs.build_docker.outputs.app_version }}
@@ -69,43 +68,24 @@ jobs:
     with:
       environment: ${{ matrix.environments }}
 
-  build_docker:
+  build:
     name: Build docker image from hmpps-github-actions
+    if: github.ref == 'refs/heads/main'
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2 # WORKFLOW_VERSION
-#    needs:
-#      - e2e_test
-#      - node_unit_tests
-    with:
-      docker_registry: 'ghcr.io'
-      registry_org: 'ministryofjustice'
-      tag_latest: false
-#      additional_docker_tag: ${{ inputs.additional_docker_tag }}
-      push: false
-      load: true
-      docker_multiplatform: false
-      upload_image_artifact: true
-      image_artifact_retention_days: 2
-
-  publish_docker:
-    name: Publish docker image
     needs:
-      - node_build
+      - node_integration_tests
       - node_unit_tests
-      - build_docker
-      - e2e_test
-      - helm_lint
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_push.yml@v2
     with:
       docker_registry: 'ghcr.io'
       registry_org: 'ministryofjustice'
-      app_version: ${{ needs.build_docker.outputs.app_version }}
-      tag_latest: true
+      additional_docker_tag: ${{ inputs.additional_docker_tag }}
+      push: ${{ inputs.push || true }}
+      docker_multiplatform: false
 
   deploy_dev:
     name: Deploy to the development environment
     needs:
-      - build_docker
-      - publish_docker
+      - build
 #      - helm_lint
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
