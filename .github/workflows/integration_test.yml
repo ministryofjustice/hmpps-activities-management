@@ -64,6 +64,10 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           browser: chrome
+          # pass the machine index and the total number
+        env:
+          SPLIT: ${{ strategy.job-total }}
+          SPLIT_INDEX: ${{ strategy.job-index }}
       - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
