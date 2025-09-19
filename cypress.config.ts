@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { defineConfig } from 'cypress'
+import cypressSplit from 'cypress-split'
 import { resetStubs } from './integration_tests/mockApis/wiremock'
 import stubs from './integration_tests/mockApis/stubs'
 
@@ -15,7 +16,7 @@ export default defineConfig({
   e2e: {
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
-    setupNodeEvents(on) {
+    setupNodeEvents(on, config) {
       on('task', {
         reset: resetStubs,
         ...stubs,
@@ -30,6 +31,8 @@ export default defineConfig({
           return null
         },
       })
+      cypressSplit(on, config)
+      return config
     },
     baseUrl: 'http://localhost:3007',
     excludeSpecPattern: '**/!(*.cy).ts',
