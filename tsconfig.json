@@ -14,7 +14,8 @@
     "noImplicitAny": false,
     "experimentalDecorators": true,
     "typeRoots": ["./server/@types", "./node_modules/@types"],
-    "ignoreDeprecations": "5.0"
+    "ignoreDeprecations": "5.0",
+    "lib": ["dom"]
   },
   "exclude": [
     "node_modules",
