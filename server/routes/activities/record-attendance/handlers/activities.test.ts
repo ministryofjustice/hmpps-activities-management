@@ -6,7 +6,7 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { ActivityCategory } from '../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../enum/timeSlot'
 import LocationType from '../../../../enum/locationType'
-import LocationsService from '../../../../services/locationsService'
+import LocationsService, { LocationWithDescription } from '../../../../services/locationsService'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/locationsService')
@@ -120,6 +120,14 @@ const attendanceSummaryResponse = [
 
 describe('Route Handlers - Activities', () => {
   const handler = new ActivitiesRoutes(activitiesService, locationsService)
+
+  const workshop = {
+    id: '22222222-2222-2222-2222-222222222222',
+    prisonId: 'RSI',
+    code: 'MDI-WORK-1',
+    locationType: 'LOCATION',
+    description: 'WORKSHOP 1',
+  }
 
   let req: Request
   let res: Response
@@ -255,6 +263,127 @@ describe('Route Handlers - Activities', () => {
           },
         ],
         locations: [],
+        hasCancelledSessions: true,
+      })
+    })
+
+    it('should render without BOX locations when multiple sessions are returned', async () => {
+      req.query = {
+        date: dateString,
+        sessionFilters: 'AM,PM',
+        categoryFilters: 'SAA_EDUCATION,SAA_INDUSTRIES',
+      }
+
+      const box1 = {
+        id: '33333333-3333-3333-3333-333333333333',
+        prisonId: 'RSI',
+        code: 'Box1',
+        locationType: 'BOX',
+        description: 'Box 1',
+      }
+
+      when(locationsService.fetchNonResidentialActivityLocations).mockResolvedValue([
+        box1,
+        workshop,
+      ] as LocationWithDescription[])
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
+        filterItems: {
+          categoryFilters: [
+            { value: 'SAA_EDUCATION', text: 'Education', checked: true },
+            { value: 'SAA_INDUSTRIES', text: 'Packing', checked: true },
+          ],
+          sessionFilters: [
+            { value: 'AM', text: 'Morning (AM)', checked: true },
+            { value: 'PM', text: 'Afternoon (PM)', checked: true },
+            { value: 'ED', text: 'Evening (ED)', checked: false },
+          ],
+          locationType: 'ALL',
+          locationId: null,
+        },
+        activityDate: date,
+        selectedSessions: ['AM', 'PM'],
+        activityRows: [
+          {
+            ...attendanceSummaryResponse[1],
+            session: 'AM',
+            allowSelection: false,
+          },
+          {
+            ...attendanceSummaryResponse[0],
+            session: 'PM',
+            allowSelection: true,
+          },
+          {
+            ...attendanceSummaryResponse[2],
+            session: 'PM',
+            allowSelection: false,
+          },
+        ],
+        locations: [workshop],
+        hasCancelledSessions: true,
+      })
+    })
+
+    it('should render only with activity locations when multiple sessions are returned', async () => {
+      req.query = {
+        date: dateString,
+        sessionFilters: 'AM,PM',
+        categoryFilters: 'SAA_EDUCATION,SAA_INDUSTRIES',
+      }
+
+      const aWing = {
+        id: '11111111-1111-1111-1111-111111111111',
+        prisonId: 'RSI',
+        code: 'AWING',
+        locationType: 'RESIDENTIAL_UNIT',
+        localName: 'A Wing',
+        description: 'A Wing',
+      }
+
+      when(locationsService.fetchNonResidentialActivityLocations).mockResolvedValue([
+        workshop,
+        aWing,
+      ] as LocationWithDescription[])
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/activities', {
+        filterItems: {
+          categoryFilters: [
+            { value: 'SAA_EDUCATION', text: 'Education', checked: true },
+            { value: 'SAA_INDUSTRIES', text: 'Packing', checked: true },
+          ],
+          sessionFilters: [
+            { value: 'AM', text: 'Morning (AM)', checked: true },
+            { value: 'PM', text: 'Afternoon (PM)', checked: true },
+            { value: 'ED', text: 'Evening (ED)', checked: false },
+          ],
+          locationType: 'ALL',
+          locationId: null,
+        },
+        activityDate: date,
+        selectedSessions: ['AM', 'PM'],
+        activityRows: [
+          {
+            ...attendanceSummaryResponse[1],
+            session: 'AM',
+            allowSelection: false,
+          },
+          {
+            ...attendanceSummaryResponse[0],
+            session: 'PM',
+            allowSelection: true,
+          },
+          {
+            ...attendanceSummaryResponse[2],
+            session: 'PM',
+            allowSelection: false,
+          },
+        ],
+        locations: [workshop],
         hasCancelledSessions: true,
       })
     })

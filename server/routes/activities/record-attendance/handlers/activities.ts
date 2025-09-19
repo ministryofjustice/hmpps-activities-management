@@ -46,12 +46,16 @@ export default class ActivitiesRoutes {
       asString(searchTerm),
     )
 
+    const activitiesLocationList = activities.map(a => a.internalLocation?.code)
+
     return res.render('pages/activities/record-attendance/activities', {
       activityDate,
       filterItems: filterItems(categories, filterValues, asString(locationId), locationTypeFilter),
       selectedSessions: filterValues.sessionFilters,
       activityRows: activities,
-      locations: uniqueLocations.filter(l => l.locationType !== 'BOX'),
+      locations: uniqueLocations
+        .filter(l => l.locationType !== 'BOX')
+        .filter(l => activitiesLocationList.includes(l.code)),
       hasCancelledSessions: !!activities.find(a => a.cancelled),
     })
   }
