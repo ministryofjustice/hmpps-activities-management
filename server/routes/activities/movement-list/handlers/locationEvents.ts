@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { isValid } from 'date-fns'
 import DateOption from '../../../../enum/dateOption'
-import { EventType, MovementListLocation, MovementListPrisonerEvents } from '../../../../@types/activities'
+import { EventType, MovementListLocation, MovementListPrisonerEvents, YesNo } from '../../../../@types/activities'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { eventClashes, scheduledEventSort } from '../../../../utils/utils'
@@ -64,6 +64,8 @@ export default class LocationEventsRoutes {
 
     movementListJourney.alertFilters ??= alertOptions.map(a => a.key)
 
+    movementListJourney.cancelledEventsFilter ??= YesNo.YES
+
     const selectedAlerts = movementListJourney.alertFilters
 
     const locations = internalLocationEvents.map(
@@ -122,11 +124,16 @@ export default class LocationEventsRoutes {
                 e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e),
               )
 
+              const pageFilterCheck =
+                movementListJourney.cancelledEventsFilter === YesNo.NO
+                  ? filteredEvents.filter(event => !event.cancelled)
+                  : filteredEvents
+
               return {
                 ...p,
                 alerts: this.alertsFilterService.getFilteredAlerts(selectedAlerts, p?.alerts),
                 category: this.alertsFilterService.getFilteredCategory(selectedAlerts, p?.category),
-                events: filteredEvents,
+                events: pageFilterCheck,
                 clashingEvents,
               } as MovementListPrisonerEvents
             })

@@ -61,7 +61,7 @@
         "onWing": false,
         "offWing": false,
         "outsidePrison": false,
-        "cancelled": false,
+        "cancelled": true,
         "suspended": false,
         "autoSuspended": false,
         "prisonerNumber": "G4572UO",
