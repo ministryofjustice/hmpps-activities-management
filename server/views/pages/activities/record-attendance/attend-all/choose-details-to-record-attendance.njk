@@ -9,7 +9,7 @@
 {% set pageTitle = applicationName + " - Choose details to record attendance" %}
 {% set pageId = 'choose-details-to-record-attendance-page' %}
 {% set hardBackLinkText = 'Back' %}
-{% set hardBackLinkHref = "/activities/attendance" %}
+{% set hardBackLinkHref = "how-to-record-attendance" %}
 
 {% set options = [
     {
@@ -33,30 +33,30 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 {{ govukRadios({
-                    name: "attendanceDate",
+                    name: "datePresetOption",
                     fieldset: {
                         legend: {
                             text: "Attendance date",
                             classes: "govuk-fieldset__legend--m"
                         }
                     },
-                    errorMessage: validationErrors | findError('attendanceDate'),
+                    errorMessage: validationErrors | findError('datePresetOption'),
                     items: [
                         {
                             value: "today",
                             text: "Today - " + now | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.attendanceDate == 'today' or attendanceDate == 'today'
+                            checked: formResponses.datePresetOption == 'today' or datePresetOption == 'today'
                         },
                         {
                             value: "tomorrow",
                             text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.attendanceDate == 'tomorrow' or attendanceDate == 'tomorrow'
+                            checked: formResponses.datePresetOption == 'tomorrow' or datePresetOption == 'tomorrow'
                         },
                         {
                             value: "other",
                             text: "A different date",
                             label: { text: "Unlock date "},
-                            checked: formResponses.attendanceDate == 'other' or attendanceDate == 'other',
+                            checked: formResponses.datePresetOption == 'other' or datePresetOption == 'other',
                             conditional: { html:
                               mojDatePicker({
                                 id: 'date',
@@ -115,7 +115,7 @@
                     text: "Start typing the activity name and select it from the list."
                   },
                   errorMessage: validationErrors | findError('activityId'),
-                  value: formResponses.activityId,
+                  value: formResponses.activityId or activityId,
                   items: options
                 })
               }}

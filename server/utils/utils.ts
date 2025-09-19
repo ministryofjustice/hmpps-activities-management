@@ -458,6 +458,7 @@ export const getSplitTime = (time: string) => {
 
 export const getSelectedDate = form => {
   if (form.datePresetOption === DateOption.TODAY) return new Date()
+  if (form.datePresetOption === DateOption.TOMORROW) return addDays(new Date(), 1)
   if (form.datePresetOption === DateOption.YESTERDAY) return subDays(new Date(), 1)
   return form.date
 }

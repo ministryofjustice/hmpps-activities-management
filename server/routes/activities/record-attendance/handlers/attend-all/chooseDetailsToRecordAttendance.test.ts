@@ -44,7 +44,7 @@ describe('Route Handlers - Choose details to record attendance', () => {
   describe('type validation', () => {
     it('validation fails if values are not entered', async () => {
       const body = {
-        attendanceDate: '',
+        datePresetOption: '',
         timePeriod: '',
         activityId: '',
       }
@@ -53,15 +53,15 @@ describe('Route Handlers - Choose details to record attendance', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'attendanceDate', error: 'Select a date' },
-        { property: 'timePeriod', error: 'Select at least one time period' },
+        { property: 'datePresetOption', error: 'Select a date' },
+        { property: 'timePeriod', error: 'Select a time period' },
         { property: 'activityId', error: 'Enter an activity name and select it from the list' },
       ])
     })
 
     it('validation fails for conditional values', async () => {
       const body = {
-        attendanceDate: 'other',
+        datePresetOption: 'other',
         timePeriod: 'PM',
         activityId: '1',
       }
@@ -74,7 +74,7 @@ describe('Route Handlers - Choose details to record attendance', () => {
 
     it('validation fails for future date values', async () => {
       const body = {
-        attendanceDate: 'other',
+        datePresetOption: 'other',
         date: format(addDays(new Date(), 61), 'dd/MM/yyyy'),
         timePeriod: 'PM',
         activityId: '1',
@@ -88,7 +88,7 @@ describe('Route Handlers - Choose details to record attendance', () => {
 
     it('passes validation', async () => {
       const body = {
-        attendanceDate: 'today',
+        datePresetOption: 'today',
         timePeriod: 'AM',
         activityId: '1',
       }

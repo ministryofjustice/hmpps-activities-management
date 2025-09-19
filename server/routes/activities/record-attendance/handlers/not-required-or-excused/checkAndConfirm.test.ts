@@ -75,12 +75,21 @@ describe('Route Handlers - Not Required or Excused - Check and Confirm', () => {
 
     req = {
       params: {
-        id: '1',
+        id: '123456',
       },
       journeyData: {
         recordAttendanceJourney: {
           notRequiredOrExcused: {
-            selectedPrisoners: ['A1234BC', 'A2345CD'],
+            selectedPrisoners: [
+              {
+                prisonerNumber: 'A1234BC',
+                instanceId: 123456,
+              },
+              {
+                prisonerNumber: 'A2345CD',
+                instanceId: 123456,
+              },
+            ],
           },
         },
       },
@@ -93,13 +102,24 @@ describe('Route Handlers - Not Required or Excused - Check and Confirm', () => {
 
   describe('GET', () => {
     it('should render with the expected view', async () => {
-      when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(mockInstance)
+      when(activitiesService.getScheduledActivity).calledWith(123456, res.locals.user).mockResolvedValue(mockInstance)
+
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/record-attendance/not-required-or-excused/check-and-confirm',
         {
-          selectedPrisoners: ['A1234BC', 'A2345CD'],
+          selectedPrisoners: [
+            {
+              prisonerNumber: 'A1234BC',
+              instanceId: 123456,
+            },
+            {
+              prisonerNumber: 'A2345CD',
+              instanceId: 123456,
+            },
+          ],
           instance: mockInstance,
+          instances: [mockInstance],
         },
       )
     })

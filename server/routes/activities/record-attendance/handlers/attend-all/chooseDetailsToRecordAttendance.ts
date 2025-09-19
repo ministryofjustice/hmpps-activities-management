@@ -5,18 +5,19 @@ import { addDays, startOfToday } from 'date-fns'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { ActivitySummary } from '../../../../../@types/activitiesAPI/types'
 import DateOption from '../../../../../enum/dateOption'
-import { parseDatePickerDate } from '../../../../../utils/datePickerUtils'
+import { formatIsoDate, parseDatePickerDate } from '../../../../../utils/datePickerUtils'
 import Validator from '../../../../../validators/validator'
 import IsValidDate from '../../../../../validators/isValidDate'
 import TimeSlot from '../../../../../enum/timeSlot'
+import { getSelectedDate } from '../../../../../utils/utils'
 
 export class ChooseDetailsToRecordAttendanceForm {
   @Expose()
   @IsIn(Object.values(DateOption), { message: 'Select a date' })
-  attendanceDate: string
+  datePresetOption: string
 
   @Expose()
-  @ValidateIf(o => o.attendanceDate === DateOption.OTHER)
+  @ValidateIf(o => o.datePresetOption === DateOption.OTHER)
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(thisDate => thisDate <= addDays(startOfToday(), 60), {
     message: 'Enter a date up to 60 days in the future',
@@ -25,8 +26,8 @@ export class ChooseDetailsToRecordAttendanceForm {
   date: Date
 
   @Expose()
-  @IsIn(Object.values(TimeSlot), { message: 'Select at least one time period' })
-  timePeriod: string
+  @IsNotEmpty({ message: 'Select a time period' })
+  timePeriod: TimeSlot[]
 
   @Expose()
   @IsNotEmpty({ message: 'Enter an activity name and select it from the list' })
@@ -46,6 +47,10 @@ export default class ChooseDetailsToRecordAttendanceRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    return res.redirect('')
+    const { timePeriod, activityId } = req.body
+    const selectedDate = getSelectedDate(req.body)
+    return res.redirect(
+      `select-people-to-record-attendance-for?date=${formatIsoDate(selectedDate)}&timePeriods=${timePeriod}&activityId=${activityId}`,
+    )
   }
 }

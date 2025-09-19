@@ -179,9 +179,13 @@ export default class NotAttendedReasonRoutes {
         : `${selectedPrisoners.length} attendees`
     }`
 
-    const returnUrl = req.journeyData.recordAttendanceJourney.singleInstanceSelected
+    let returnUrl = req.journeyData.recordAttendanceJourney.singleInstanceSelected
       ? `${selectedPrisoners[0].instanceId}/attendance-list`
       : 'attendance-list'
+
+    if (req.journeyData.recordAttendanceJourney.returnUrl) {
+      returnUrl = req.journeyData.recordAttendanceJourney.returnUrl
+    }
 
     res.redirectWithSuccess(returnUrl, 'Attendance recorded', successMessage)
   }
