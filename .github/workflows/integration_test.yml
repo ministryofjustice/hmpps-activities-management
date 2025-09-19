@@ -21,7 +21,6 @@ jobs:
   get-timings:
     uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/workflows/cypress_get_timings.yml@v1
     with:
-      repository: ministryofjustice/hmpps-risk-assessment-ui
       spec-file-patterns: ${{ inputs.spec-file-patterns }}
 
   cypress-test:
@@ -121,6 +120,5 @@ jobs:
       - get-timings
       - cypress-test
     with:
-      repository: ministryofjustice/hmpps-risk-assessment-ui
       initial-timings: ${{ needs.get-timings.outputs.timings }}
       updated-timings: ${{ toJSON(needs.e2e-test.outputs) }}
