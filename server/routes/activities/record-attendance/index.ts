@@ -101,6 +101,7 @@ export default function Index({
   const selectPeopleToRecordattendanceForRoutes = new SelectPeopleToRecordAttendanceForRoutes(
     activitiesService,
     prisonService,
+    userService,
   )
 
   get('/', homeHandler.GET)

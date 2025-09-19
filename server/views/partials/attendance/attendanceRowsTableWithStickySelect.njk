@@ -14,13 +14,13 @@
     {% set rows = [] %}
     {% for attendee in attendanceRows | sort(false, false, 'location') %}
 
-        {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
+        {% if notRequiredInAdvanceEnabled and attendee.instance.isInFuture %}
             {% if attendee.advancedAttendance %}
                 {% set isSelectable = false %}
             {% else %}
                 {% set isSelectable = true %}
             {% endif %}
-        {% elif attendee.attendance.status === "WAITING" and attendee.attendance.editable and instance.activitySchedule.activity.attendanceRequired === true %}
+        {% elif attendee.attendance.status === "WAITING" and attendee.attendance.editable and attendee.instance.activitySchedule.activity.attendanceRequired === true %}
             {% set isSelectable = true %}
         {% else %}
             {% set isSelectable = false %}
@@ -28,7 +28,7 @@
 
         {% set attendanceTagDetails %}
             {% if attendee.advancedAttendance %}
-                {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', instance.activitySchedule.activity.attendanceRequired) }}
+                {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', attendee.instance.activitySchedule.activity.attendanceRequired) }}
                 {{ payStatus( 
                     { 
                         dataPresentCheck: attendee.advancedAttendance,
@@ -38,7 +38,7 @@
                         marginTagClass: true
                     }) }}
             {% else %}
-                {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, instance.activitySchedule.activity.attendanceRequired) }}
+                {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, attendee.instance.activitySchedule.activity.attendanceRequired) }}
                 {{ payStatus( 
                     { 
                         dataPresentCheck: attendee.attendance,

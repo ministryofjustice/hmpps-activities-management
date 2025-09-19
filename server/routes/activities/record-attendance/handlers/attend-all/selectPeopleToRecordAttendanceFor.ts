@@ -12,11 +12,13 @@ import AttendanceStatus from '../../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../../enum/attendanceReason'
 import { NameFormatStyle } from '../../../../../utils/helpers/nameFormatStyle'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
+import UserService from '../../../../../services/userService'
 
 export default class SelectPeopleToRecordAttendanceForRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
+    private readonly userService: UserService,
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
@@ -95,14 +97,23 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
       })
     }
 
+    const cancelledBy = instances.filter(i => i.cancelledBy).map(i => i.cancelledBy)
+    let userMap
+    if (cancelledBy.length > 0) {
+      userMap = await this.userService.getUserMap(cancelledBy, user)
+    }
+
     return res.render('pages/activities/record-attendance/attend-all/select-people-to-record-attendance-for', {
       attendanceRows,
       singleInstance: instances.length === 1,
       instance: instances.length > 0 ? instances[0] : null,
+      instances,
       selectedSessions: instances.map(a => a.timeSlot),
       attendanceSummary: getAttendanceSummary(
         attendanceRows.flatMap(row => row.attendance).filter(a => a !== undefined),
       ),
+      isCancelled: instances.some(i => i.cancelled),
+      userMap,
     })
   }
 

@@ -26,6 +26,8 @@ export default class CancelSessionRoutes {
       await this.activitiesService.cancelScheduledActivity(instanceId, sessionCancellationRequest, user)
     }
 
-    return res.redirect(`../../${instanceId}/attendance-list`)
+    const redirectUrl = req.journeyData.recordAttendanceJourney.returnUrl || `../../${instanceId}/attendance-list`
+
+    return res.redirect(redirectUrl)
   }
 }
