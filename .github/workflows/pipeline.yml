@@ -37,27 +37,23 @@ concurrency:
 jobs:
   # main node build workflow
   node_build:
-    name: node build
+    name: Build the application
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
-  # generic node unit tests - feel free to override with local tests if required
+
   node_unit_tests:
-    name: node unit tests
+    name: Run the unit tests
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_unit_tests.yml@v2 # WORKFLOW_VERSION
     needs: [node_build]
     secrets: inherit
-  # generic node integration tests using wiremock - feel free to override with local tests if required
-#  e2e_test:
-#    name: node integration tests
-#    uses: ministryofjustice/hmpps-github-actions/.github/workflows/e2e_test_redis.yml@v2 # WORKFLOW_VERSION
-#    needs: [node_build]
-#    secrets: inherit
 
   node_integration_tests:
+    name: Run the integration tests
     uses: ./.github/workflows/e2e_test.yml
     needs: [node_build]
     with:
       app_version: ${{ needs.build_docker.outputs.app_version }}
+
   helm_lint:
     strategy:
       matrix:

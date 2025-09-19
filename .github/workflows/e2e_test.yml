@@ -28,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container: [ 1, 2, 3, 4, 5 ]
+        container: [ 1, 2, 3, 4, 5, 6, 7 ]
     steps:
       - uses: actions/checkout@v5
       - name: Use Node.js ${{ inputs.node_version_file }}
@@ -62,7 +62,10 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           browser: chrome
-        # pass the machine index and the total number
-        env:
-          SPLIT: ${{ strategy.job-total }}
-          SPLIT_INDEX: ${{ strategy.job-index }}
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm_integration_test_artifacts
+          path: |
+            coverage/
