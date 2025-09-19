@@ -17,14 +17,10 @@ on:
         required: true
         default: false
         type: boolean
-      spec-file-patterns:
-        type: string
-        default: 'integration_tests/e2e/**/*.cy.ts'
 
 permissions:
   contents: read
   packages: write
-  actions: write
 
 concurrency:
   # Only cancel in progress when on a branch - use SHA on main to ensure uniqueness.
@@ -41,15 +37,15 @@ jobs:
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
 
-  node_unit_tests:
+  unit_tests:
     name: Run the unit tests
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_unit_tests.yml@v2 # WORKFLOW_VERSION
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/unit_tests.yml@v2 # WORKFLOW_VERSION
     needs: [node_build]
     secrets: inherit
 
-  node_integration_tests:
+  integration_tests:
     name: Run the integration tests
-    uses: ./.github/workflows/e2e_test.yml
+    uses: ./.github/workflows/integration_test.yml
     needs: [node_build]
     with:
       app_version: ${{ needs.build_docker.outputs.app_version }}
@@ -58,7 +54,7 @@ jobs:
     strategy:
       matrix:
         environments: ['dev', 'preprod', 'prod']
-    name: helm lint
+    name: Helm lint
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
     with:
@@ -69,8 +65,8 @@ jobs:
     if: github.ref == 'refs/heads/main'
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2 # WORKFLOW_VERSION
     needs:
-      - node_integration_tests
-      - node_unit_tests
+      - integration_tests
+      - unit_tests
     with:
       docker_registry: 'ghcr.io'
       registry_org: 'ministryofjustice'
