@@ -39,7 +39,7 @@ jobs:
 
   unit_tests:
     name: Run the unit tests
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/unit_tests.yml@v2 # WORKFLOW_VERSION
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_unit_tests.yml@v2 # WORKFLOW_VERSION
     needs: [node_build]
     secrets: inherit
 
