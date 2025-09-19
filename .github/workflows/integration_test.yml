@@ -102,7 +102,7 @@ jobs:
         if: success() || failure()
         id: timings
         run: |
-          cat e2e-test-ui/timings.json
+          cat timings.json
           echo "t${{ matrix.container }}=$(jq -c . < e2e-test-ui/timings.json)" >> $GITHUB_OUTPUT
 
       - name: Upload results
