@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { defineConfig } from 'cypress'
+import cypressSplit from 'cypress-split'
 import { resetStubs } from './integration_tests/mockApis/wiremock'
 import stubs from './integration_tests/mockApis/stubs'
-import cypressSplit from 'cypress-split'
 
 export default defineConfig({
   fixturesFolder: 'integration_tests/fixtures',
