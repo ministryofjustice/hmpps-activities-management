@@ -107,7 +107,7 @@ export default class ActivityDateValidator {
 function findAllowedSlotDays(slots: Slots): number[] {
   const slotDays: number[] = []
 
-  slots.days.forEach(day => {
+  slots?.days?.forEach(day => {
     slotDays.push(SUNDAY_FIRST_DAYS_OF_WEEK.findIndex(d => d.toLowerCase() === day))
   })
 
