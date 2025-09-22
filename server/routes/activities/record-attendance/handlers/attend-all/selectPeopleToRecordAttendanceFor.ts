@@ -223,9 +223,6 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
   }
 
   NOT_REQUIRED_OR_EXCUSED = async (req: Request, res: Response): Promise<void> => {
-    if (!config.notRequiredInAdvanceEnabled) {
-      return res.redirect('attendance-list')
-    }
     let { selectedAttendances }: { selectedAttendances: string[] } = req.body
     if (typeof selectedAttendances === 'string') {
       selectedAttendances = [selectedAttendances]
