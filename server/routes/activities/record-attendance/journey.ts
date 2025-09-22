@@ -8,6 +8,7 @@ export type RecordAttendanceJourney = {
   singleInstanceSelected?: boolean
   notAttended?: NotAttendedJourney
   notRequiredOrExcused?: NotRequiredOrExcusedJourney
+  returnUrl?: string
 }
 
 type NotAttendedJourney = {

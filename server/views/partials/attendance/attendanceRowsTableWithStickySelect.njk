@@ -1,0 +1,188 @@
+{% from "components/sticky-select.njk" import stickySelect %}
+{% from "partials/showProfileLink.njk" import showProfileLink %}
+{% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
+{% from "partials/attendance/attendanceTag.njk" import attendanceTag %}
+{% from "partials/payStatus.njk" import payStatus %}
+{% from "partials/attendance/incentiveLevelWarningTag.njk" import incentiveLevelWarningTag %}
+{% from "partials/attendance/otherEvent.njk" import otherEvent %}
+
+{# Required prisoner details: firstName, middleNames, lastName, prisonerNumber, prisonId, cellLocation, status #}
+{# Required instance details: isInFuture, activitySchedule #}
+{# Required attendanceRows details: advancedAttendance, attendance, prisoner, instance #}
+
+{% macro attendanceRowsTableWithStickySelect(attendanceRows, instance, activeCaseLoadId, includeActivityColumn) %}
+    {% set rows = [] %}
+    {% for attendee in attendanceRows | sort(false, false, 'location') %}
+
+        {% if notRequiredInAdvanceEnabled and attendee.instance.isInFuture %}
+            {% if attendee.advancedAttendance %}
+                {% set isSelectable = false %}
+            {% else %}
+                {% set isSelectable = true %}
+            {% endif %}
+        {% elif attendee.attendance.status === "WAITING" and attendee.attendance.editable and attendee.instance.activitySchedule.activity.attendanceRequired === true %}
+            {% set isSelectable = true %}
+        {% else %}
+            {% set isSelectable = false %}
+        {% endif %}
+
+        {% set attendanceTagDetails %}
+            {% if attendee.advancedAttendance %}
+                {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', attendee.instance.activitySchedule.activity.attendanceRequired) }}
+                {{ payStatus( 
+                    { 
+                        dataPresentCheck: attendee.advancedAttendance,
+                        status: 'COMPLETED',
+                        payable: isPayable,
+                        issuePayment: attendee.advancedAttendance.issuePayment,
+                        marginTagClass: true
+                    }) }}
+            {% else %}
+                {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, attendee.instance.activitySchedule.activity.attendanceRequired) }}
+                {{ payStatus( 
+                    { 
+                        dataPresentCheck: attendee.attendance,
+                        status: attendee.attendance.status,
+                        payable: isPayable,
+                        issuePayment: attendee.attendance.issuePayment,
+                        marginTagClass: true
+                    }) }}
+                {{ incentiveLevelWarningTag(attendee.attendance) }}
+            {% endif %}
+        {% endset %}
+
+        {% set rows = (rows.push({
+            visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
+            value: attendee.instance.id + '-' + attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
+            selectable: isSelectable,
+            items: [
+                {
+                    html: showProfileLink({
+                        firstName: attendee.prisoner.firstName,
+                        middleNames: attendee.prisoner.middleNames,
+                        lastName: attendee.prisoner.lastName,
+                        prisonerNumber: attendee.prisoner.prisonerNumber,
+                        inCaseLoad: attendee.prisoner.prisonId == activeCaseLoadId
+                    }),
+                    attributes: {
+                        "data-qa": "prisoner-details",
+                        "data-sort-value": attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false)
+                    }
+                },
+                {
+                    text: statusBasedCellLocation(attendee.prisoner.cellLocation, attendee.prisoner.status, attendee.prisoner.prisonId == activeCaseLoadId),
+                    attributes: {
+                        "data-qa": "location"
+                    }
+                },
+                {
+                    text: attendee.instance.activitySchedule.activity.summary,
+                    attributes: {
+                        "data-qa": "activity"
+                    }
+                } if includeActivityColumn,
+                {
+                    text: attendee.instance.startTime + ' to ' + attendee.instance.endTime,
+                    attributes: {
+                        "data-qa": "time",
+                        "data-sort-value": attendee.instance.startTime + ' to ' + attendee.instance.endTime
+                    }
+                },
+                {
+                    html: renderOtherEvents(attendee.otherEvents),
+                    attributes: {
+                        "data-qa": "other-events"
+                    }
+                },
+                {
+                    html: attendanceTagDetails,
+                    attributes: {
+                        "data-qa": "attendance"
+                    }
+                },
+                {
+                    html: renderViewLink(attendee)
+                }
+            ]
+        }), rows) %}
+    {% endfor %}
+
+    {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
+        {% set formActions = [
+            {
+                text: 'Mark as not required or excused',
+                formAction: 'not-required-or-excused'
+            }
+        ] %}
+    {% else %}
+        {% set formActions = [
+            {
+                text: 'Mark as attended',
+                formAction: 'attended'
+            },
+            {
+                text: 'Mark as not attended',
+                formAction: 'not-attended'
+            }
+        ] %}
+    {% endif %}
+
+    {{ stickySelect({
+        type: 'check',
+        id: "attendanceList",
+        caption: "Attendance list",
+        captionClasses: "govuk-visually-hidden",
+        classes: 'sticky-header',
+        name: 'selectedAttendances',
+        head: [
+            {
+                text: "Name",
+                attributes: { "aria-sort": "none" }
+            },
+            {
+                text: "Cell location",
+                attributes: { "aria-sort": "none" }
+            },
+            {
+                text: "Activity",
+                attributes: { "aria-sort": "ascending" },
+                classes: 'hmpps-max-width-240'
+            } if includeActivityColumn,
+            {
+                text: "Time",
+                attributes: { "aria-sort": "ascending" }
+            },
+            {
+                text: "Clashing events"
+            },
+            {
+                text: "Attendance and pay",
+                colspan: 2,
+                attributes: { "aria-sort": "none" }
+            }
+        ],
+        rows: rows,
+        actions: formActions,
+        itemsDescription: 'attendee',
+        itemsDescriptionPlural: 'attendees'
+    }) }}
+{% endmacro %}
+
+{% macro renderOtherEvents(otherEvents) %}
+    {% for event in otherEvents %}
+        {{ otherEvent(event, true) }}
+        {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro renderViewLink(attendee) %}
+    {% if attendee.attendance.status === 'COMPLETED' or attendee.attendance.attendanceHistory | length %}
+        <a href="{{ attendee.instance.id }}/attendance-details/{{ attendee.attendance.id }}" class="govuk-link govuk-link--no-visited-state">
+            {% if attendee.attendance.editable and attendee.instance.activitySchedule.activity.attendanceRequired %}
+                View or Edit
+            {% else %}
+                View
+            {% endif %}
+        </a>
+    {% endif %}
+{% endmacro %}

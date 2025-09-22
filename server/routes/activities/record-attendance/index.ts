@@ -40,6 +40,7 @@ import HowToRecordAttendanceRoutes, { HowToRecordAttendanceForm } from './handle
 import ChooseDetailsToRecordAttendanceRoutes, {
   ChooseDetailsToRecordAttendanceForm,
 } from './handlers/attend-all/chooseDetailsToRecordAttendance'
+import SelectPeopleToRecordAttendanceForRoutes from './handlers/attend-all/selectPeopleToRecordAttendanceFor'
 
 export default function Index({
   activitiesService,
@@ -97,6 +98,11 @@ export default function Index({
   )
   const howToRecordAttendanceRoutes = new HowToRecordAttendanceRoutes()
   const chooseDetailsToRecordAttendanceRoutes = new ChooseDetailsToRecordAttendanceRoutes(activitiesService)
+  const selectPeopleToRecordattendanceForRoutes = new SelectPeopleToRecordAttendanceForRoutes(
+    activitiesService,
+    prisonService,
+    userService,
+  )
 
   get('/', homeHandler.GET)
 
@@ -233,6 +239,15 @@ export default function Index({
     '/:journeyId/attend-all/choose-details-to-record-attendance',
     chooseDetailsToRecordAttendanceRoutes.POST,
     ChooseDetailsToRecordAttendanceForm,
+  )
+
+  get('/:journeyId/attend-all/select-people-to-record-attendance-for', selectPeopleToRecordattendanceForRoutes.GET)
+
+  post('/:journeyId/attend-all/attended', selectPeopleToRecordattendanceForRoutes.ATTENDED)
+  post('/:journeyId/attend-all/not-attended', selectPeopleToRecordattendanceForRoutes.NOT_ATTENDED)
+  post(
+    '/:journeyId/attend-all/not-required-or-excused',
+    selectPeopleToRecordattendanceForRoutes.NOT_REQUIRED_OR_EXCUSED,
   )
 
   return router
