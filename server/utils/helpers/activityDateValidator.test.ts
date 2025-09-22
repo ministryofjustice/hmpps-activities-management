@@ -108,6 +108,34 @@ describe('Activity Date Validator', () => {
 
         expect(await handler.hasAtLeastOneValidDay(createJourney, user)).toEqual(true)
       })
+
+      it('should be valid if the activity occurs at least on one non-bank holiday and no schedules in slot 1', async () => {
+        createJourney.endDate = '2025-05-11'
+        createJourney.slots['1'] = null
+
+        expect(await handler.hasAtLeastOneValidDay(createJourney, user)).toEqual(true)
+      })
+
+      it('should be valid if the activity occurs at least on one non-bank holiday and no schedule days in slot 1', async () => {
+        createJourney.endDate = '2025-05-11'
+        createJourney.slots['1'] = { days: null }
+
+        expect(await handler.hasAtLeastOneValidDay(createJourney, user)).toEqual(true)
+      })
+
+      it('should be valid if the activity occurs at least on one non-bank holiday and no schedules in slot 2', async () => {
+        createJourney.endDate = '2025-05-11'
+        createJourney.slots['2'] = null
+
+        expect(await handler.hasAtLeastOneValidDay(createJourney, user)).toEqual(true)
+      })
+
+      it('should be valid if the activity occurs at least on one non-bank holiday and no schedule days in slot 2', async () => {
+        createJourney.endDate = '2025-05-11'
+        createJourney.slots['2'] = { days: null }
+
+        expect(await handler.hasAtLeastOneValidDay(createJourney, user)).toEqual(true)
+      })
     })
   })
 
