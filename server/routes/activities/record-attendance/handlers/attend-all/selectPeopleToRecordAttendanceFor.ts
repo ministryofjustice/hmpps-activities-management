@@ -118,7 +118,10 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
   }
 
   ATTENDED = async (req: Request, res: Response): Promise<void> => {
-    const { selectedAttendances }: { selectedAttendances: string[] } = req.body
+    let { selectedAttendances }: { selectedAttendances: string[] } = req.body
+    if (typeof selectedAttendances === 'string') {
+      selectedAttendances = [selectedAttendances]
+    }
     const { user } = res.locals
     let prisonerName
 
@@ -156,7 +159,7 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
     }
 
     return res.redirectWithSuccess(
-      'select-people-to-record-attendance-for?date=2025-09-12&timePeriods=AM,PM,ED&activityId=539',
+      req.journeyData.recordAttendanceJourney.returnUrl || '../choose-details-to-record-attendance',
       'Attendance recorded',
       `You've saved attendance details for ${selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`}`,
     )
