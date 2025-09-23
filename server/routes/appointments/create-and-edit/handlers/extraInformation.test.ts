@@ -54,6 +54,7 @@ describe('Route Handlers - Create Appointment - Extra Information', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/create-and-edit/extra-information', {
         isCtaAcceptAndSave: false,
+        prisoners: req.session.appointmentJourney.prisoners,
       })
     })
   })

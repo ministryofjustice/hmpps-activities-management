@@ -65,9 +65,15 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toContain('Add extra information')
+    expect($('h1').text()).toContain('Add extra information to movement slips (optional)')
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'Add any important information for who’s attending about how to prepare for their appointment. It will be printed on their movement slip.',
+      'Add any information that will help attendees prepare for their appointment, like something they need to bring, or do beforehand.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'Do not add anything that should not be seen by or shared with a prisoner. For example, contact details of someone else at the appointment.',
+    )
+    expect($('[data-qa=third-paragraph]').text().trim()).toEqual(
+      'For confidentiality, the information you enter is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
     )
   })
 
@@ -76,9 +82,15 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toContain('Change the extra information')
+    expect($('h1').text()).toContain('Change the extra information on movement slips (optional)')
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'Add or edit any important information for who’s attending about how to prepare for their appointment. Note that changes will not appear on any movement slips that have already been printed.',
+      'Add or edit information that will help attendees prepare for the appointment, like something they need to bring, or do beforehand.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'Do not add anything that should not be seen by or shared with a prisoner. For example, contact details of someone else at the appointment.',
+    )
+    expect($('[data-qa=third-paragraph]').text().trim()).toEqual(
+      'Changes will not appear on movement slips that have already been printed. For confidentiality, the information you enter is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
     )
   })
 
@@ -107,9 +119,12 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toContain('Add extra information')
+    expect($('h1').text()).toContain('Add extra information (optional)')
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
       'This information will not appear on movement slips for some video link appointments.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
     )
   })
 
@@ -122,9 +137,12 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toContain('Add extra information')
+    expect($('h1').text()).toContain('Add extra information (optional)')
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
       'This information will not appear on movement slips for some video link appointments.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
     )
   })
 
@@ -137,9 +155,12 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toContain('Add extra information')
+    expect($('h1').text()).toContain('Add extra information (optional)')
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
       'This information will not appear on movement slips for some video link appointments.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
     )
   })
 
@@ -152,9 +173,12 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toContain('Add extra information')
+    expect($('h1').text()).toContain('Add extra information (optional)')
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
       'This information will not appear on movement slips for some video link appointments.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
     )
   })
 
@@ -168,10 +192,13 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toContain('Change the extra information')
+    expect($('h1').text()).toContain('Change the extra information (optional)')
 
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
       'This information will not appear on movement slips for some video link appointments.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
     )
   })
 
@@ -185,10 +212,13 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toContain('Change the extra information')
+    expect($('h1').text()).toContain('Change the extra information (optional)')
 
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
       'This information will not appear on movement slips for some video link appointments.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
     )
   })
 
@@ -202,10 +232,13 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toContain('Change the extra information')
+    expect($('h1').text()).toContain('Change the extra information (optional)')
 
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
       'This information will not appear on movement slips for some video link appointments.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
     )
   })
 
@@ -219,10 +252,13 @@ describe('Views - Appointments Management - Extra Information', () => {
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toContain('Change the extra information')
+    expect($('h1').text()).toContain('Change the extra information (optional)')
 
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
       'This information will not appear on movement slips for some video link appointments.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
     )
   })
 })
