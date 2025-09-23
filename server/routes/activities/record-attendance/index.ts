@@ -41,6 +41,9 @@ import ChooseDetailsToRecordAttendanceRoutes, {
   ChooseDetailsToRecordAttendanceForm,
 } from './handlers/attend-all/chooseDetailsToRecordAttendance'
 import SelectPeopleToRecordAttendanceForRoutes from './handlers/attend-all/selectPeopleToRecordAttendanceFor'
+import ChooseDetailsByActivityLocationRoutes, {
+  ChooseDetailsByActivityLocationForm,
+} from './handlers/attend-all/chooseDetailsByActivityLocation'
 
 export default function Index({
   activitiesService,
@@ -98,6 +101,10 @@ export default function Index({
   )
   const howToRecordAttendanceRoutes = new HowToRecordAttendanceRoutes()
   const chooseDetailsToRecordAttendanceRoutes = new ChooseDetailsToRecordAttendanceRoutes(activitiesService)
+  const chooseDetailsByActivityLocationRoutes = new ChooseDetailsByActivityLocationRoutes(
+    activitiesService,
+    locationsService,
+  )
   const selectPeopleToRecordattendanceForRoutes = new SelectPeopleToRecordAttendanceForRoutes(
     activitiesService,
     prisonService,
@@ -239,6 +246,12 @@ export default function Index({
     '/:journeyId/attend-all/choose-details-to-record-attendance',
     chooseDetailsToRecordAttendanceRoutes.POST,
     ChooseDetailsToRecordAttendanceForm,
+  )
+  get('/:journeyId/attend-all/choose-details-by-activity-location', chooseDetailsByActivityLocationRoutes.GET)
+  post(
+    '/:journeyId/attend-all/choose-details-by-activity-location',
+    chooseDetailsByActivityLocationRoutes.POST,
+    ChooseDetailsByActivityLocationForm,
   )
 
   get('/:journeyId/attend-all/select-people-to-record-attendance-for', selectPeopleToRecordattendanceForRoutes.GET)
