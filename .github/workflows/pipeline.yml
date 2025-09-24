@@ -1,5 +1,5 @@
 
-name: Pipeline [test -> docker_build -> deploy]
+name: Pipeline [test -> build -> deploy]
 
 on:
   push:
@@ -32,7 +32,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
-  # main node docker_build workflow
+  # main node build workflow
   node_build:
     name: Build the application
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@v2 # WORKFLOW_VERSION
@@ -61,7 +61,7 @@ jobs:
     with:
       environment: ${{ matrix.environments }}
 
-  docker_build:
+  build:
     name: Build docker image from hmpps-github-actions
     if: github.ref == 'refs/heads/main'
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2 # WORKFLOW_VERSION
@@ -78,33 +78,33 @@ jobs:
   deploy_dev:
     name: Deploy to the development environment
     needs:
-      - docker_build
+      - build
       - helm_lint
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
     with:
       environment: 'dev'
-      app_version: '${{ needs.docker_build.outputs.app_version }}'
+      app_version: '${{ needs.build.outputs.app_version }}'
 
   deploy_preprod:
     name: Deploy to pre-production environment
     needs:
-      - docker_build
+      - build
       - deploy_dev
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
     with:
       environment: 'preprod'
-      app_version: '${{ needs.docker_build.outputs.app_version }}'
+      app_version: '${{ needs.build.outputs.app_version }}'
 
   deploy_prod:
     name: Deploy to production environment
     needs:
-      - docker_build
+      - build
       - deploy_preprod
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
     with:
       environment: 'prod'
-      app_version: '${{ needs.docker_build.outputs.app_version }}'
+      app_version: '${{ needs.build.outputs.app_version }}'
       slack_notification: true
