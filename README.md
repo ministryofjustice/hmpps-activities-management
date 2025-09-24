@@ -1,3 +1,6 @@
+[![repo standards badge](https://img.shields.io/badge/endpoint.svg?&style=flat&logo=github&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fhmpps-activities-management)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-report/hmpps-activities-management "Link to report")
+[![Docker Repository on ghcr](https://img.shields.io/badge/ghcr.io-repository-2496ED.svg?logo=docker)](https://ghcr.io/ministryofjustice/hmpps-activities-management)
+
 # hmpps-activities-management
 This application is the frontend client for the activities management service. It is used to manage activities and appointments in prisons.
 
@@ -39,7 +42,7 @@ There are various services which should have their types regenerated:
 
 Ensure you have the appropriate tools locally:
 
-Note: Using `nvm` (or [fnm](https://github.com/Schniz/fnm)), run `nvm install --latest-npm` within the repository folder to use the correct version of node, and the latest version of npm. This matches the `engines` config in `package.json` and the CircleCI build config.
+Note: Using `nvm` (or [fnm](https://github.com/Schniz/fnm)), run `nvm install --latest-npm` within the repository folder to use the correct version of node, and the latest version of npm. This matches the `engines` config in `package.json` and the github pipeline build config.
 
 `node - v22.x`
 
@@ -140,10 +143,6 @@ This will setup essential environment variables - local DB credentials, API URLs
 
 Start a local `hmpps-activities-management` service with `$ npm run start`, which will use you `.env` file to set
 up its environment to reference the DEV APIs, local activities API and local containers.
-
-## Ensuring slack notifications are raised correctly
-
-To ensure notifications are routed to the correct slack channels, update the `alerts-slack-channel` and `releases-slack-channel` parameters in `.circle/config.yml` to an appropriate channel.
 
 ## Digital Prison Reporting (DPR)
 
