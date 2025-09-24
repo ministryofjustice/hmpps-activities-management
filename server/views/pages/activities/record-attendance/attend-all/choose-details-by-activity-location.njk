@@ -1,0 +1,189 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
+{% from 'govuk/components/checkboxes/macro.njk' import govukCheckboxes %}
+{% from 'govuk/components/select/macro.njk' import govukSelect %}
+
+{% set pageTitle = applicationName + " - Choose details by activity location" %}
+{% set pageId = 'choose-details-by-activity-location-page' %}
+{% set hardBackLinkText = 'Back' %}
+{% set hardBackLinkHref = "how-to-record-attendance" %}
+
+{% set searchLocations = [{ value: '-', text: '' }] %}
+{% for location in locations %}
+    {% set searchLocations = (searchLocations.push({value: location.id, text: location.description}), searchLocations) %}
+{% endfor %}
+
+{% set onWingLocations = [] %}
+{% for location in locationGroups %}
+    {% set onWingLocations = (onWingLocations.push({
+        value: location.key,
+        text: location.name,
+        checked: formResponses.onWingLocation == location.key or locationKey == location.key
+    }), onWingLocations) %}
+{% endfor %}
+{% set onWingLocations = (onWingLocations.push({
+    divider: "or"
+}), onWingLocations) %}
+{% set onWingLocations = (onWingLocations.push({
+    value: 'all',
+    text: 'All residential locations',
+    checked: formResponses.onWingLocation == 'all' or locationKey == 'all'
+}), onWingLocations) %}
+
+{% block meta %}
+    <meta name="autocompleteElements" content="location"/>
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <span class="govuk-caption-l">Record activity attendance</span>
+            <h1 class="govuk-heading-l">Choose details to record attendance</h1>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{formResponses.location}}
+                {{ govukRadios({
+                    name: "datePresetOption",
+                    fieldset: {
+                        legend: {
+                            text: "Attendance date",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('datePresetOption'),
+                    items: [
+                        {
+                            value: "today",
+                            text: "Today - " + now | formatDate('d MMMM yyyy', false),
+                            checked: formResponses.datePresetOption == 'today' or datePresetOption == 'today'
+                        },
+                        {
+                            value: "tomorrow",
+                            text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
+                            checked: formResponses.datePresetOption == 'tomorrow' or datePresetOption == 'tomorrow'
+                        },
+                        {
+                            value: "other",
+                            text: "A different date",
+                            label: { text: "Unlock date "},
+                            checked: formResponses.datePresetOption == 'other' or datePresetOption == 'other',
+                            conditional: { html:
+                              mojDatePicker({
+                                id: 'date',
+                                name: 'date',
+                                leadingZeros: 'true',
+                                label: {
+                                    text: 'Other date',
+                                    classes: 'govuk-visually-hidden'
+                                },
+                                classes: 'moj-datepicker--fixed-width',
+                                hint: { html: otherDateHintHtml },
+                                errorMessage: validationErrors | findError('date'),
+                                value: formResponses.date or date
+                              })
+                           }
+                        }
+                    ]
+                }) }}
+
+                {{ govukCheckboxes({
+                    name: "timePeriod",
+                    fieldset: {
+                        legend: {
+                            text: "Time period",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    errorMessage: validationErrors | findError('timePeriod'),
+                    items: [
+                        {
+                            value: "AM",
+                            text: "AM (morning)",
+                            checked: formResponses.timePeriod == "AM" or timePeriod == "AM"
+                        },
+                        {
+                            value: "PM",
+                            text: "PM (afternoon)",
+                            checked: formResponses.timePeriod == "PM" or timePeriod == "PM"
+                        },
+                        {
+                            value: "ED",
+                            text: "ED (evening)",
+                            checked: formResponses.timePeriod == "ED" or timePeriod == "ED"
+                        }
+                    ]
+                }) }}
+
+                {{ govukRadios({
+                    name: "locationType",
+                    fieldset: {
+                        legend: {
+                            text: "Activity location",
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    items: [
+                        {
+                            value: LocationType.OUT_OF_CELL,
+                            text: "Search for a location",
+                            checked: formResponses.locationType == 'OUT_OF_CELL' or createJourney.location.id,
+                            conditional: {
+                                html: govukSelect({
+                                    id: "location",
+                                    name: "location",
+                                    label: {
+                                        text: "Start typing a location and select it from the list."
+                                    },
+                                    errorMessage: validationErrors | findError('location'),
+                                    value: formResponses.location or createJourney.location.id,
+                                    items: searchLocations
+                                })
+                            }
+                        },
+                        {
+                            value: LocationType.IN_CELL,
+                            text: "In cell",
+                            checked: formResponses.locationType == 'IN_CELL'
+                        },
+                        {
+                            value: LocationType.OFF_WING,
+                            text: "Off wing - not listed",
+                            checked: formResponses.locationType == 'OFF_WING'
+                        },
+                        {
+                            value: LocationType.ON_WING,
+                            text: "On wing",
+                            checked: formResponses.locationType == 'ON_WING',
+                            conditional: {
+                                html: govukRadios({
+                                    id: "onWingLocation",
+                                    name: "onWingLocation",
+                                     fieldset: {
+                                        legend: {
+                                            text: "Select which residential location you're recording attendance for."
+                                        }
+                                    },
+                                    errorMessage: validationErrors | findError('onWingLocation'),
+                                    value: formResponses.onWingLocation or createJourney.onWingLocation.id,
+                                    items: onWingLocations
+                                })
+                            }
+                        }
+                    ],
+                    errorMessage: validationErrors | findError('locationType')
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue",
+                        type: "submit",
+                        attributes: { 'data-qa': 'view-selection' }
+                    }) }}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
