@@ -41,6 +41,12 @@ describe('Views - Create Appointment Set - Add Extra Information', () => {
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toEqual('Add extra information for John Smith, A1234AA (optional)')
+    expect($('h1').text()).toEqual("Add extra information to John Smith's movement slip (optional)")
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      "For example, 'You need to bring all your documents about your case to this meeting with your solicitor.'",
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'Do not add anything that should not be seen by or shared with a prisoner. For example, contact details of someone else at the appointment.',
+    )
   })
 })
