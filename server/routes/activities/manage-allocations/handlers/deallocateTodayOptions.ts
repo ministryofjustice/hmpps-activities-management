@@ -32,6 +32,8 @@ export default class DeallocateTodayOptionRoutes {
       )
       nextAllocationToday = isToday(nextSessionDateAndTime) && !isPast(nextSessionDateAndTime)
     }
+
+    res.locals.allocateJourney = req.journeyData.allocateJourney
     res.render('pages/activities/manage-allocations/deallocate-today-option', { nextAllocationToday })
   }
 

@@ -13,6 +13,11 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
 
   beforeEach(() => {
     res = {
+      locals: {
+        user: {
+          username: 'joebloggs',
+        },
+      },
       render: jest.fn(),
       redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
@@ -31,6 +36,8 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
+
+      expect(res.locals.allocateJourney).toBe(req.journeyData.allocateJourney)
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocate-today-option', {
         nextAllocationToday: false,
       })
