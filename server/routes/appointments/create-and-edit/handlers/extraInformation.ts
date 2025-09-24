@@ -19,6 +19,7 @@ export default class ExtraInformationRoutes {
       isCtaAcceptAndSave:
         req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT &&
         !isApplyToQuestionRequired(req.journeyData.editAppointmentJourney),
+      prisoners: req.session.appointmentJourney.prisoners,
     })
   }
 

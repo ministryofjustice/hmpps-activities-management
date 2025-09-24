@@ -62,6 +62,14 @@ describe('Views - Create Appointment Set - Add Extra Information', () => {
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
+    expect($('h1').text()).toContain('Add extra information to movement slips (optional)')
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'Add any important information for who’s attending about how to prepare for their appointment, like something they need to bring, or do beforehand.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'For confidentiality, the information you enter is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
+    )
+
     expect($('[data-qa="extra-information-table"] tr').length).toEqual(4)
 
     expect(getPrisonerExtraInformationTableCell('A1234AA', 'extra-information-cell').text()).toEqual(
