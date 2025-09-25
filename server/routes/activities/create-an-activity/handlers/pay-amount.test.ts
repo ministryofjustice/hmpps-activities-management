@@ -118,7 +118,6 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/pay-amount', {
-        rate: 50,
         iep: 'Basic',
         paymentStartDate: '2024-07-26',
         band: { id: 17, alias: 'Low', displaySequence: 1 },
@@ -149,7 +148,6 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
 
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/pay-amount', {
-        rate: 65,
         iep: 'Basic',
         paymentStartDate: 'undefined',
         band: { id: 18, alias: 'High', displaySequence: 2 },
@@ -267,6 +265,31 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
       expect(errors).toEqual([
         {
           error: 'Enter a pay amount that is at least £0.7 (minimum pay) and no more than £1 (maximum pay)',
+          property: 'rate',
+        },
+      ])
+    })
+
+    it('fails validation if the entered rate is equal to the previous rate for the prison', async () => {
+      createJourney = { pay: [], flat: [], minimumPayRate: 70, maximumPayRate: 100, previousPayRate: 90 }
+      const pathParams = { payRateType: 'single' }
+      const queryParams = {}
+      const body = {
+        rate: 0.9,
+        bandId: 1,
+      }
+
+      const requestObject = plainToInstance(PayAmount, {
+        createJourney,
+        pathParams,
+        queryParams,
+        ...body,
+      })
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([
+        {
+          error: 'The pay amount must be different to the previous amount',
           property: 'rate',
         },
       ])
