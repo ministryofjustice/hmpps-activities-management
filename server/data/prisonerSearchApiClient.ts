@@ -14,16 +14,6 @@ export default class PrisonerSearchApiClient extends AbstractHmppsRestClient {
     super('Prisoner search API', config.apis.prisonerSearchApi as ApiConfig)
   }
 
-  async getInmates(prisonCode: string, page: number, size: number, user: ServiceUser): Promise<PagePrisoner> {
-    return this.get(
-      {
-        path: `/prison/${prisonCode}/prisoners`,
-        query: { page: page.toString(), size: size.toString() },
-      },
-      user,
-    )
-  }
-
   async searchByPrisonerNumbers(prisonerNumbers: PrisonerNumbers, user: ServiceUser): Promise<Prisoner[]> {
     return this.post(
       {
