@@ -124,7 +124,7 @@ export default class LocationEventsRoutes {
                 e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e),
               )
 
-              const pageFilterCheck =
+              const visibleEvents =
                 movementListJourney.cancelledEventsFilter === YesNo.NO
                   ? filteredEvents.filter(event => !event.cancelled)
                   : filteredEvents
@@ -133,11 +133,11 @@ export default class LocationEventsRoutes {
                 ...p,
                 alerts: this.alertsFilterService.getFilteredAlerts(selectedAlerts, p?.alerts),
                 category: this.alertsFilterService.getFilteredCategory(selectedAlerts, p?.category),
-                events: pageFilterCheck,
+                events: visibleEvents,
                 clashingEvents,
               } as MovementListPrisonerEvents
             })
-            .filter(pe => pe),
+            .filter(pe => pe && pe.events.length > 0),
         }) as MovementListLocation,
     )
 
