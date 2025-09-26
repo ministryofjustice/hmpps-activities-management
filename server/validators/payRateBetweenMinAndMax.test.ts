@@ -77,7 +77,7 @@ describe('payRateBetweenMinAndMax', () => {
 
   it('should pass validation if the pay rate is undefined', async () => {
     const body = {
-      payRate: null,
+      payRate: undefined,
     }
 
     const session = {
@@ -94,6 +94,24 @@ describe('payRateBetweenMinAndMax', () => {
   })
 
   it('should pass validation if the pay rate is null', async () => {
+    const body = {
+      payRate: null,
+    }
+
+    const session = {
+      createJourney: {
+        minimumPayRate: 100,
+        maximumPayRate: 200,
+      },
+    }
+
+    const requestObject = plainToInstance(DummyForm, { ...body, ...session })
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+    expect(errors).toHaveLength(0)
+  })
+
+  it('should pass validation if the pay rate is unavailable', async () => {
     const body = {}
 
     const session = {
