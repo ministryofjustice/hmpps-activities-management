@@ -1,26 +1,26 @@
 import { Expose, plainToInstance, Transform } from 'class-transformer'
 import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../utils/utils'
-import PayRateBetweenMinAndMax from './payRateBetweenMinAndMax'
+import CurrentPayRateSameAsPreviousRate from './currentPayRateSameAsPreviousRate'
 
-describe('payRateBetweenMinAndMax', () => {
+describe('currentPayRateSameAsPreviousRate', () => {
   class DummyForm {
     @Expose()
     @Transform(({ value }) => value * 100) // Transform to pence
-    @PayRateBetweenMinAndMax({
-      message: 'Enter a pay amount that is at least the minimum pay and no more than maximum pay',
+    @CurrentPayRateSameAsPreviousRate({
+      message: 'The pay amount must be different to the previous amount',
     })
     payRate: number
   }
 
-  it('should fail validation if rate entered is less than the minimum', async () => {
+  it('should fail validation if rate entered is equal to the previous rate', async () => {
     const body = {
-      payRate: '1',
+      payRate: '2.5',
     }
 
     const session = {
       createJourney: {
-        minimumPayRate: 150,
+        previousPayRate: 250,
       },
     }
 
@@ -30,42 +30,19 @@ describe('payRateBetweenMinAndMax', () => {
     expect(errors).toEqual([
       {
         property: 'payRate',
-        error: 'Enter a pay amount that is at least the minimum pay and no more than maximum pay',
+        error: 'The pay amount must be different to the previous amount',
       },
     ])
   })
 
-  it('should fail validation if rate entered is more than the maximum', async () => {
-    const body = {
-      payRate: '3',
-    }
-
-    const session = {
-      createJourney: {
-        maximumPayRate: 250,
-      },
-    }
-
-    const requestObject = plainToInstance(DummyForm, { ...body, ...session })
-    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-    expect(errors).toEqual([
-      {
-        property: 'payRate',
-        error: 'Enter a pay amount that is at least the minimum pay and no more than maximum pay',
-      },
-    ])
-  })
-
-  it('should pass validation if the pay rate is between the min and max values', async () => {
+  it('should pass validation if the pay rate is not equal to the previous rate', async () => {
     const body = {
       payRate: '1.50',
     }
 
     const session = {
       createJourney: {
-        minimumPayRate: 100,
-        maximumPayRate: 200,
+        previousPayRate: 100,
       },
     }
 
@@ -82,8 +59,7 @@ describe('payRateBetweenMinAndMax', () => {
 
     const session = {
       createJourney: {
-        minimumPayRate: 100,
-        maximumPayRate: 200,
+        previousPayRate: 100,
       },
     }
 
@@ -100,8 +76,7 @@ describe('payRateBetweenMinAndMax', () => {
 
     const session = {
       createJourney: {
-        minimumPayRate: 100,
-        maximumPayRate: 200,
+        previousPayRate: 100,
       },
     }
 
@@ -116,8 +91,7 @@ describe('payRateBetweenMinAndMax', () => {
 
     const session = {
       createJourney: {
-        minimumPayRate: 100,
-        maximumPayRate: 200,
+        previousPayRate: 200,
       },
     }
 

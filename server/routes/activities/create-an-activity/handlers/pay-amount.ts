@@ -4,9 +4,11 @@ import { IsNumber, Min, ValidationArguments } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
 import PayRateBetweenMinAndMax from '../../../../validators/payRateBetweenMinAndMax'
-import { PrisonPayBand } from '../../../../@types/activitiesAPI/types'
+import { ActivityPay, PrisonPayBand } from '../../../../@types/activitiesAPI/types'
 import { CreateAnActivityJourney } from '../journey'
 import { AgencyPrisonerPayProfile } from '../../../../@types/prisonApiImport/types'
+import CurrentPayRateSameAsPreviousRate from '../../../../validators/currentPayRateSameAsPreviousRate'
+import { parseIsoDate } from '../../../../utils/datePickerUtils'
 
 export class PayAmount {
   @Expose()
@@ -22,6 +24,9 @@ export class PayAmount {
         maximumPayRate / 100
       } (maximum pay)`
     },
+  })
+  @CurrentPayRateSameAsPreviousRate({
+    message: 'The pay amount must be different to the previous amount',
   })
   rate: number
 }
@@ -49,18 +54,21 @@ export default class PayAmountRoutes {
     req.journeyData.createJourney.minimumPayRate = minimumPayRate
     req.journeyData.createJourney.maximumPayRate = maximumPayRate
 
-    const rate =
-      req.journeyData.createJourney?.pay?.find(
-        p =>
-          p.prisonPayBand.id === +bandId &&
-          p.incentiveLevel === iep &&
-          (p.startDate === paymentStartDate || p.startDate === undefined),
-      )?.rate || req.journeyData.createJourney?.flat?.find(p => p.prisonPayBand.id === +bandId)?.rate
+    const sortedActivityPayList: ActivityPay[] = req.journeyData.createJourney?.pay
+      ?.filter(p => p.prisonPayBand.id === +bandId && p.incentiveLevel === iep)
+      .sort(
+        (a, b) =>
+          (a.startDate != null ? parseIsoDate(a.startDate).getTime() : 0) -
+          (b.startDate != null ? parseIsoDate(b.startDate).getTime() : 0),
+      )
+
+    req.journeyData.createJourney.previousPayRate =
+      sortedActivityPayList?.at(sortedActivityPayList.length - 1).rate ||
+      req.journeyData.createJourney?.flat?.find(p => p.prisonPayBand.id === +bandId)?.rate
 
     const band = payBands.find(p => p.id === +bandId)
 
     res.render(`pages/activities/create-an-activity/pay-amount`, {
-      rate,
       iep,
       paymentStartDate,
       band,
