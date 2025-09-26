@@ -25,23 +25,6 @@ describe('prisonerSearchApiClient', () => {
     nock.cleanAll()
   })
 
-  describe('getInmates', () => {
-    it('should return data from api', async () => {
-      const response = { data: 'data' }
-
-      fakePrisonerSearchApi
-        .get('/prison/MDI/prisoners')
-        .query({ page: '1', size: '10' })
-        .matchHeader('authorization', `Bearer accessToken`)
-        .reply(200, response)
-
-      const output = await prisonerSearchApiClient.getInmates('MDI', 1, 10, user)
-
-      expect(output).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
   describe('searchByPrisonerNumbers', () => {
     it('should return data from api', async () => {
       const prisonerNumbers = { prisonerNumbers: ['G10', 'G11'] } as PrisonerNumbers
