@@ -16,6 +16,7 @@ export default class PrisonService {
     private readonly prisonerSearchApiClient: PrisonerSearchApiClient,
     private readonly incentivesApiClient: IncentivesApiClient,
   ) {}
+
   getIncentiveLevels(prisonId: string, user: ServiceUser): Promise<IncentiveLevel[]> {
     return this.incentivesApiClient.getIncentiveLevels(prisonId, user)
   }
