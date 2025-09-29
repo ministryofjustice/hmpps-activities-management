@@ -1,4 +1,4 @@
-import { addDays, format } from 'date-fns'
+import { format, startOfTomorrow } from 'date-fns'
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
 import ActivitiesIndexPage from '../../../pages/activities'
@@ -19,20 +19,21 @@ import NotRequiredOrExcusedCheckAndConfirmPage from '../../../pages/recordAttend
 import getAdvanceListExcused from '../../../fixtures/activitiesApi/getAdvanceListExcused.json'
 
 context('Exclude multiple prisoners from an activity', () => {
-  const date3DaysFromNow = format(addDays(new Date(), 3), 'yyyy-MM-dd')
+  const tomorrow = startOfTomorrow()
+  const tomorrowStr = format(tomorrow, 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.signIn()
 
-    getScheduledInstanceEnglishLevel2.date = date3DaysFromNow
+    getScheduledInstanceEnglishLevel2.date = tomorrowStr
 
     cy.stubEndpoint('GET', '/activity-categories', getActivityCategories)
 
     cy.stubEndpoint(
       'GET',
-      `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${date3DaysFromNow}`,
+      `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${tomorrowStr}`,
       getAttendanceSummary,
     )
     cy.stubEndpoint(
@@ -42,7 +43,7 @@ context('Exclude multiple prisoners from an activity', () => {
     )
     cy.stubEndpoint(
       'GET',
-      `/activities/attendance/.*/activities\\?date=${date3DaysFromNow}&sessionFilters=AM`,
+      `/activities/attendance/.*/activities\\?date=${tomorrowStr}&sessionFilters=AM`,
       getAllAttendances,
     )
 
@@ -52,11 +53,7 @@ context('Exclude multiple prisoners from an activity', () => {
     cy.stubEndpoint('GET', '/scheduled-instances/11', getScheduledInstanceEnglishLevel2)
 
     // Scheduled events
-    cy.stubEndpoint(
-      'POST',
-      `/scheduled-events/prison/MDI\\?date=${date3DaysFromNow}(&timeSlot=.*)?`,
-      getScheduledEvents,
-    )
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrowStr}(&timeSlot=.*)?`, getScheduledEvents)
 
     // Prisoner search
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
@@ -75,7 +72,7 @@ context('Exclude multiple prisoners from an activity', () => {
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.selectADifferentDate()
-    selectPeriodPage.pickDateFromToday(3)
+    selectPeriodPage.pickDateFromToday(1)
     selectPeriodPage.selectAM()
     selectPeriodPage.continue()
 
@@ -119,7 +116,7 @@ context('Exclude multiple prisoners from an activity', () => {
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.selectADifferentDate()
-    selectPeriodPage.pickDateFromToday(3)
+    selectPeriodPage.pickDateFromToday(1)
     selectPeriodPage.selectAM()
     selectPeriodPage.continue()
 
