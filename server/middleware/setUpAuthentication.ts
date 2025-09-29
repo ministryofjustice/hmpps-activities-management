@@ -2,15 +2,13 @@ import type { Router } from 'express'
 import express from 'express'
 import passport from 'passport'
 import { getFrontendComponents } from '@ministryofjustice/hmpps-connect-dps-components'
-import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
 import auth from '../authentication/auth'
 import logger from '../../logger'
-import { Services } from '../services'
 
 const router = express.Router()
 
-export default function setUpAuth(services: Services): Router {
+export default function setUpAuth(): Router {
   auth.init()
 
   router.use(passport.initialize())
@@ -20,7 +18,6 @@ export default function setUpAuth(services: Services): Router {
     '/autherror',
     getFrontendComponents({
       logger,
-      authenticationClient: new AuthenticationClient(config.apis.hmppsAuth, logger, services.tokenStore),
       componentApiConfig: config.apis.componentApi,
       dpsUrl: config.dpsUrl,
     }),
