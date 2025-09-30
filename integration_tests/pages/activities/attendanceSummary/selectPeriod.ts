@@ -1,3 +1,4 @@
+import { getDate, getMonth, getYear, parse } from 'date-fns'
 import Page from '../../page'
 
 export default class SelectPeriodPage extends Page {
@@ -14,14 +15,32 @@ export default class SelectPeriodPage extends Page {
     cy.log('Opened the datepicker.')
   }
 
-  pickDateFromToday = (days: number) => {
-    const target = new Date()
-    target.setDate(target.getDate() + days)
-    const targetDay = target.getDate().toString()
+  pickDateFromToday = (date: Date) => {
+    // Select month and year
+    const month = getMonth(date)
+    const year = getYear(date)
+    cy.get('.moj-datepicker__dialog-title').then($datePickerTitle => {
+      const datePickerTitle = $datePickerTitle.text().trim()
 
+      const selectedYear = +datePickerTitle.split(' ')[1]
+      const yearDelta = Math.abs(selectedYear - year)
+      for (let i = 0; i < yearDelta; i += 1) {
+        cy.get(`.moj-js-datepicker-${year > selectedYear ? 'next' : 'prev'}-year`).click()
+      }
+
+      const selectedMonth = getMonth(parse(datePickerTitle.split(' ')[0], 'MMMM', new Date()))
+      const monthDelta = Math.abs(selectedMonth - month)
+      for (let i = 0; i < monthDelta; i += 1) {
+        cy.get(`.moj-js-datepicker-${month > selectedMonth ? 'next' : 'prev'}-month`).click()
+      }
+    })
+
+    cy.checkA11y(null, null, this.terminalLog)
+
+    // Select day
     cy.get('.moj-datepicker__calendar').should('be.visible')
     cy.get('.moj-datepicker__calendar button')
-      .contains(new RegExp(`^${targetDay}$`))
+      .contains(new RegExp(`^${getDate(date).toString()}$`))
       .click()
 
     cy.get('.moj-datepicker__dialog').should('not.be.visible')
