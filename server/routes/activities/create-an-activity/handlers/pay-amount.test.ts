@@ -239,7 +239,7 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
 
       expect(errors).toEqual([
         {
-          error: 'Enter a pay amount that is at least £0.7 (minimum pay) and no more than £1 (maximum pay)',
+          error: 'Enter a pay amount that is at least £0.70 (minimum pay) and no more than £1.00 (maximum pay)',
           property: 'rate',
         },
       ])
@@ -264,7 +264,7 @@ describe('Route Handlers - Create an activity - Pay amount', () => {
 
       expect(errors).toEqual([
         {
-          error: 'Enter a pay amount that is at least £0.7 (minimum pay) and no more than £1 (maximum pay)',
+          error: 'Enter a pay amount that is at least £0.70 (minimum pay) and no more than £1.00 (maximum pay)',
           property: 'rate',
         },
       ])

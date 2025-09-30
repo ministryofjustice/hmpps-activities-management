@@ -9,6 +9,7 @@ import { CreateAnActivityJourney } from '../journey'
 import { AgencyPrisonerPayProfile } from '../../../../@types/prisonApiImport/types'
 import CurrentPayRateSameAsPreviousRate from '../../../../validators/currentPayRateSameAsPreviousRate'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
+import { toFixed } from '../../../../utils/utils'
 
 export class PayAmount {
   @Expose()
@@ -20,9 +21,9 @@ export class PayAmount {
     message: (args: ValidationArguments) => {
       const { createJourney } = args.object as { createJourney: CreateAnActivityJourney }
       const { minimumPayRate, maximumPayRate } = createJourney
-      return `Enter a pay amount that is at least £${minimumPayRate / 100} (minimum pay) and no more than £${
-        maximumPayRate / 100
-      } (maximum pay)`
+      return `Enter a pay amount that is at least £${toFixed(minimumPayRate / 100)} (minimum pay) and no more than £${toFixed(
+        maximumPayRate / 100,
+      )} (maximum pay)`
     },
   })
   @CurrentPayRateSameAsPreviousRate({

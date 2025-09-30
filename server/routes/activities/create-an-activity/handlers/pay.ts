@@ -10,7 +10,7 @@ import { CreateAnActivityJourney } from '../journey'
 import { IncentiveLevel } from '../../../../@types/incentivesApi/types'
 import { AgencyPrisonerPayProfile } from '../../../../@types/prisonApiImport/types'
 import IncentiveLevelPayMappingUtil from '../../../../utils/helpers/incentiveLevelPayMappingUtil'
-import { toMoney } from '../../../../utils/utils'
+import { toFixed, toMoney } from '../../../../utils/utils'
 
 export class Pay {
   @Expose()
@@ -22,9 +22,9 @@ export class Pay {
     message: (args: ValidationArguments) => {
       const { createJourney } = args.object as { createJourney: CreateAnActivityJourney }
       const { minimumPayRate, maximumPayRate } = createJourney
-      return `Enter a pay amount that is at least £${minimumPayRate / 100} (minimum pay) and no more than £${
-        maximumPayRate / 100
-      } (maximum pay)`
+      return `Enter a pay amount that is at least £${toFixed(minimumPayRate / 100)} (minimum pay) and no more than £${toFixed(
+        maximumPayRate / 100,
+      )} (maximum pay)`
     },
   })
   rate: number
