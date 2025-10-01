@@ -56,20 +56,33 @@ export default class ChooseDetailsByActivityLocationRoutes {
     const { user } = res.locals
     const locations = await this.locationsService.fetchNonResidentialActivityLocations(user.activeCaseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'id').filter(l => l.locationType !== 'BOX')
-    const locationGroups = await this.activitiesService.getLocationGroups(user)
+    const residentialLocations = uniqueLocations.filter(l => l.locationType === 'RESIDENTIAL_UNIT')
 
     res.render('pages/activities/record-attendance/attend-all/choose-details-by-activity-location', {
       locations: uniqueLocations,
-      locationGroups,
+      locationGroups: residentialLocations,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    // TODO
-    const { timePeriod, activityId } = req.body
+    const { timePeriod, location, locationType, onWingLocation } = req.body
     const selectedDate = getSelectedDate(req.body)
-    return res.redirect(
-      `list-activities?date=${formatIsoDate(selectedDate)}&timePeriods=${timePeriod}&activityId=${activityId}`,
-    )
+
+    let locationId: string
+    if (location && location !== '-') {
+      locationId = location
+    } else if (onWingLocation) {
+      locationId = onWingLocation
+    } else {
+      locationId = ''
+    }
+
+    const redirectUrl =
+      `list-activities?date=${formatIsoDate(selectedDate)}` +
+      `&sessionFilters=${timePeriod}` +
+      `&locationId=${locationId}` +
+      `&locationType=${locationType ?? ''}`
+
+    return res.redirect(redirectUrl)
   }
 }

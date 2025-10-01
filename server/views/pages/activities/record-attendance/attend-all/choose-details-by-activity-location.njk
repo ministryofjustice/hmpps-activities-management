@@ -19,9 +19,9 @@
 {% set onWingLocations = [] %}
 {% for location in locationGroups %}
     {% set onWingLocations = (onWingLocations.push({
-        value: location.key,
-        text: location.name,
-        checked: formResponses.onWingLocation == location.key or locationKey == location.key
+        value: location.id,
+        text: location.localName,
+        checked: formResponses.onWingLocation == location.id or locationKey == location.id
     }), onWingLocations) %}
 {% endfor %}
 {% set onWingLocations = (onWingLocations.push({
@@ -44,7 +44,6 @@
             <h1 class="govuk-heading-l">Choose details to record attendance</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                {{formResponses.location}}
                 {{ govukRadios({
                     name: "datePresetOption",
                     fieldset: {
@@ -154,9 +153,9 @@
                             checked: formResponses.locationType == 'OFF_WING'
                         },
                         {
-                            value: LocationType.ON_WING,
+                            value: LocationType.OUT_OF_CELL,
                             text: "On wing",
-                            checked: formResponses.locationType == 'ON_WING',
+                            checked: formResponses.locationType == 'OUT_OF_CELL',
                             conditional: {
                                 html: govukRadios({
                                     id: "onWingLocation",

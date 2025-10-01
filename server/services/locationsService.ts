@@ -31,6 +31,10 @@ export default class LocationsService {
           .sort((a, b) => a.description.localeCompare(b.description))
       })
   }
+
+  public async getLocationById(id: string, user: ServiceUser): Promise<Location> {
+    return this.locationInsidePrisonApiClient.fetchLocationById(id, user)
+  }
 }
 
 export type LocationWithDescription = Location & { description: string }

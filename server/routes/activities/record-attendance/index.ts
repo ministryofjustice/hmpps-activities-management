@@ -44,6 +44,7 @@ import SelectPeopleToRecordAttendanceForRoutes from './handlers/attend-all/selec
 import ChooseDetailsByActivityLocationRoutes, {
   ChooseDetailsByActivityLocationForm,
 } from './handlers/attend-all/chooseDetailsByActivityLocation'
+import ListActivitiesRoutes from './handlers/attend-all/listActivities'
 
 export default function Index({
   activitiesService,
@@ -110,6 +111,7 @@ export default function Index({
     prisonService,
     userService,
   )
+  const attendAllListActivitiesRoutes = new ListActivitiesRoutes(activitiesService, locationsService)
 
   get('/', homeHandler.GET)
 
@@ -262,6 +264,9 @@ export default function Index({
     '/:journeyId/attend-all/not-required-or-excused',
     selectPeopleToRecordattendanceForRoutes.NOT_REQUIRED_OR_EXCUSED,
   )
+
+  get('/:journeyId/attend-all/list-activities', attendAllListActivitiesRoutes.GET)
+  post('/:journeyId/attend-all/list-activities', attendAllListActivitiesRoutes.POST)
 
   return router
 }

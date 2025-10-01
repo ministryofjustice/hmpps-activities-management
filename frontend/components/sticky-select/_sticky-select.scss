@@ -16,6 +16,10 @@
 
   .govuk-checkboxes__item, .govuk-radios__item {
     margin-left: 10px;
+
+    .govuk-label.govuk-checkboxes__label {
+      padding: 0;
+    }
   }
 
   .moj-multi-select__radio {
