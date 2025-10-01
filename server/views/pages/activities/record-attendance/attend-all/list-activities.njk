@@ -11,9 +11,9 @@
 {% from "partials/formatSessions.njk" import formatSessions %}
 {% from "partials/showLocation.njk" import showLocation %}
 
-{% set pageTitle = "Find an activity to record attendance - Activities - DPS" %}
-{% set pageId = 'activities-page' %}
-{% set hardBackLinkHref = "/activities/attendance/select-period?date="+(activityDate | toDateString or '')+"&sessions="+(session.req.query.sessionFilters or '') %}
+{% set pageTitle = applicationName + " - Activities List" %}
+{% set pageId = 'list-activities-page' %}
+{% set hardBackLinkHref = "../attend-all/choose-details-by-activity-location" %}
 {% set hardBackLinkText = "Back" %}
 
 {% set filterParams = (('&searchTerm=' + session.req.query.searchTerm | urlencode)if session.req.query.searchTerm else 
@@ -72,7 +72,7 @@
                 </span>
                 <ul class="govuk-list govuk-!-margin-bottom-4">
                     <li>
-                        <a href="select-period" class="govuk-link govuk-!-font-size-19">View a different day or time period</a>
+                        <a href="../attend-all/choose-details-by-activity-location" class="govuk-link govuk-!-font-size-19">Select a different day, time period or location</a>
                     </li>
                     <li>
                         <a href="/activities/attendance-summary/summary?date={{ activityDate | toDateString }}{{ filterParams }}" class="govuk-link govuk-!-font-size-19">Go to daily attendance summary</a>
