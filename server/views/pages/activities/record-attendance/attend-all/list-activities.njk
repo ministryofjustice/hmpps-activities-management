@@ -51,6 +51,16 @@
 
 {% endset %}
 
+{% if filterItems.locationType == "IN_CELL" %}
+    {% set titleLocation = "In cell" %}
+{% elseif filterItems.locationType == "ON_WING" %}
+    {% set titleLocation = "On wing" %}
+{% elseif filterItems.locationType == "OFF_WING" %}
+    {% set titleLocation = "Off wing - not listed" %}
+{% elseif selectedLocation %}
+    {% set titleLocation = selectedLocation.localName | toTitleCase %}
+{% endif %}
+
 {% block content %}
     <form id="filter-form" method="POST" novalidate>
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
@@ -60,13 +70,9 @@
         <input type="hidden" name="sessionFilters" value="{{ selectedSessions }}">
 
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-grid-column-full">
                 <span class="govuk-caption-l">Record activity attendance</span>
-                {% if selectedLocation %}
-                    <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ selectedLocation.localName | toTitleCase }} activities - record or edit attendance</h1>
-                {% else %}
-                    <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Find an activity to record or edit attendance</h1>
-                {% endif %}
+                <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ titleLocation }} activities - record or edit attendance</h1>
                 <span class="govuk-caption-m govuk-!-margin-bottom-4">
                     {{ activityDate | formatDate }} - {{ formatSessions(selectedSessions) }}
                 </span>
@@ -101,9 +107,6 @@
                     <div class="moj-action-bar govuk-!-display-none-print">
                         <div class="moj-action-bar__filter"></div>
                     </div>
-
-                    {# {{ activitiesTable(activityRows, activityDate, filterParams, now, false) }} #}
-
 
                     {% set rows = [] %}
                     {% for activity in activityRows %}
@@ -188,22 +191,26 @@
                             {
                                 text: "Allocated",
                                 attributes: { "aria-sort": "none" },
-                                classes: "numeric-col-width"
+                                classes: "numeric-col-width",
+                                format: "numeric"
                             },
                             {
                                 text: "Attended",
                                 attributes: { "aria-sort": "none" },
-                                classes: "numeric-col-width"
+                                classes: "numeric-col-width",
+                                format: "numeric"
                             },
                             {
                                 text: "Not recorded",
                                 attributes: { "aria-sort": "none" },
-                                classes: "numeric-col-width"
+                                classes: "numeric-col-width",
+                                format: "numeric"
                             },
                             {
                                 text: "Absent",
                                 attributes: { "aria-sort": "none" },
-                                classes: "numeric-col-width"
+                                classes: "numeric-col-width",
+                                format: "numeric"
                             }
                         ],
                         rows: rows,
