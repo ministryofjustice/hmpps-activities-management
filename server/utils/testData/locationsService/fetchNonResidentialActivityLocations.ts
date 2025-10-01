@@ -17,6 +17,15 @@ export const aWing: LocationWithDescription = {
   description: 'A Wing',
 } as LocationWithDescription
 
+export const bWing: LocationWithDescription = {
+  id: '11111111-1111-1111-1111-111111111112',
+  prisonId: 'RSI',
+  code: 'BWING',
+  locationType: 'RESIDENTIAL_UNIT',
+  localName: 'B Wing',
+  description: 'B Wing',
+} as LocationWithDescription
+
 export const box1: LocationWithDescription = {
   id: '33333333-3333-3333-3333-333333333333',
   prisonId: 'RSI',
@@ -25,4 +34,4 @@ export const box1: LocationWithDescription = {
   description: 'Box 1',
 } as LocationWithDescription
 
-export const nonResidentialActivityLocations: LocationWithDescription[] = [workshop, aWing, box1]
+export const nonResidentialActivityLocations: LocationWithDescription[] = [workshop, aWing, bWing, box1]

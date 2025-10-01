@@ -1,0 +1,241 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from 'govuk/components/checkboxes/macro.njk' import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "moj/components/filter/macro.njk" import mojFilter %}
+{% from "components/sticky-select.njk" import stickySelect %}
+{% from "partials/attendance/activitiesTable.njk" import activitiesTable %}
+{% from "partials/attendance/activitiesTableFilters.njk" import activitiesTableFilters %}
+{% from "partials/formatSessions.njk" import formatSessions %}
+{% from "partials/showLocation.njk" import showLocation %}
+
+{% set pageTitle = "Find an activity to record attendance - Activities - DPS" %}
+{% set pageId = 'activities-page' %}
+{% set hardBackLinkHref = "/activities/attendance/select-period?date="+(activityDate | toDateString or '')+"&sessions="+(session.req.query.sessionFilters or '') %}
+{% set hardBackLinkText = "Back" %}
+
+{% set filterParams = (('&searchTerm=' + session.req.query.searchTerm | urlencode)if session.req.query.searchTerm else 
+    '') + (('&sessionFilters=' + session.req.query.sessionFilters)if session.req.query.sessionFilters else 
+        '') + (('&categoryFilters=' + session.req.query.categoryFilters)if session.req.query.categoryFilters else 
+            '') + (('&locationId=' + session.req.query.locationId)if session.req.query.locationId else 
+                '') + (('&locationType=' + session.req.query.locationType)if session.req.query.locationType else 
+                    ''
+                ) %}
+
+{% set filterOptionsHtml %}
+
+{{ govukCheckboxes({
+    idPrefix: 'categoryFilters',
+    name: 'categoryFilters',
+    classes: "govuk-checkboxes--small",
+    fieldset: {
+        legend: {
+            text: 'Categories',
+            classes: 'govuk-fieldset__legend--m'
+        }
+    },
+    formGroup: {
+        classes: 'govuk-!-margin-bottom-0'
+    },
+    items: filterItems.categoryFilters
+}) }}
+<div class="govuk-!-margin-bottom-4">
+    <a href="#" class="govuk-link govuk-link--no-visited-state" data-module="select-all-link" data-checkbox-name="categoryFilters"></a>
+</div>
+
+{{ govukButton({
+    text: 'Apply filters'
+}) }}
+
+{% endset %}
+
+{% block content %}
+    <form id="filter-form" method="POST" novalidate>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+        <input type="hidden" name="activityDate" value="{{ activityDate | formatDate('yyyy-MM-dd') }}">
+        <input type="hidden" name="locationId" value="{{ selectedLocation.id }}">
+        <input type="hidden" name="locationType" value="{{ filterItems.locationType }}">
+        <input type="hidden" name="sessionFilters" value="{{ selectedSessions }}">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <span class="govuk-caption-l">Record activity attendance</span>
+                {% if selectedLocation %}
+                    <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ selectedLocation.localName | toTitleCase }} activities - record or edit attendance</h1>
+                {% else %}
+                    <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Find an activity to record or edit attendance</h1>
+                {% endif %}
+                <span class="govuk-caption-m govuk-!-margin-bottom-4">
+                    {{ activityDate | formatDate }} - {{ formatSessions(selectedSessions) }}
+                </span>
+                <ul class="govuk-list govuk-!-margin-bottom-4">
+                    <li>
+                        <a href="select-period" class="govuk-link govuk-!-font-size-19">View a different day or time period</a>
+                    </li>
+                    <li>
+                        <a href="/activities/attendance-summary/summary?date={{ activityDate | toDateString }}{{ filterParams }}" class="govuk-link govuk-!-font-size-19">Go to daily attendance summary</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row attendance-activities">
+            <div class="moj-filter-layout moj-filter-layout__flex govuk-grid-column-full govuk-!-padding-0" data-module="activities-list-filter">
+
+                <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
+                    {{ mojFilter({
+                        heading: {
+                            text: 'Filters'
+                        },
+                        attributes: {
+                            'data-filter-start-shown': false
+                        },
+                        optionsHtml: filterOptionsHtml
+                    }) }}
+                </div>
+
+                <hr class="print-only"/>
+                <div class="moj-filter-layout__content govuk-grid-column-full">
+                    <div class="moj-action-bar govuk-!-display-none-print">
+                        <div class="moj-action-bar__filter"></div>
+                    </div>
+
+                    {# {{ activitiesTable(activityRows, activityDate, filterParams, now, false) }} #}
+
+
+                    {% set rows = [] %}
+                    {% for activity in activityRows %}
+                        {% set activityLocation = showLocation(activity, makeCapitals = true) %}
+                        {% set rows = (rows.push({
+                            visuallyHiddenText: 'Select ' + activity.summary + ' ' + (activity.session),
+                            value: activity.scheduledInstanceId,
+                            selectable: activity.allowSelection,
+                            items: [
+                                {
+                                    attributes: {
+                                        id: 'activity-' + loop.index,
+                                        "data-sort-value": activity.summary
+                                    },
+                                    classes: 'attendance-activities govuk-table__cell--alpha',
+                                    html: '
+                                        <p class="govuk-heading-s govuk-!-margin-bottom-0">
+                                            <a href="../activities/' + activity.scheduledInstanceId + '/attendance-list" class="govuk-link govuk-link--no-visited-state" target="_blank">' + (activity.summary | escape) + '<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
+                                        </p>
+                                        <div>' + activityCancelledTag(activity.cancelled) + '</div>'
+                                },
+                                {
+                                    attributes: {
+                                        id: 'time-' + loop.index,
+                                        "data-sort-value": activity.startTime + ' to ' + activity.endTime
+                                    },
+                                    classes: 'govuk-table__cell--alpha',
+                                    text: activity.startTime + ' to ' + activity.endTime
+                                },
+                                {
+                                    attributes: {
+                                        id: 'scheduled-' + loop.index,
+                                        "data-sort-value": activity.attendanceSummary.attendees if (activityDate | toDateString == now | toDateString) else activity.attendanceSummary.allocations
+                                    },
+                                    classes: 'govuk-table__cell--numeric',
+                                    text: activity.attendanceSummary.attendees or 0 if (activityDate | toDateString == now | toDateString) else activity.attendanceSummary.allocations or 0
+                                },
+                                {
+                                    attributes: {
+                                        id: 'attended-' + loop.index,
+                                        "data-sort-value": activity.attendanceSummary.attended or 0
+                                    },
+                                    classes: 'govuk-table__cell--numeric',
+                                    text: attendanceStat(activity.attendanceSummary.attended, activity.attendanceRequired)
+                                },
+                                {
+                                    attributes: {
+                                        id: 'notRecorded-' + loop.index,
+                                        "data-sort-value": activity.attendanceSummary.notRecorded or 0
+                                    },
+                                    classes: 'govuk-table__cell--numeric',
+                                    text: attendanceStat(activity.attendanceSummary.notRecorded, activity.attendanceRequired)
+                                },
+                                {
+                                    attributes: {
+                                        id: 'notAttended-' + loop.index,
+                                        "data-sort-value": activity.attendanceSummary.absences or 0
+                                    },
+                                    classes: 'govuk-table__cell--numeric',
+                                    text: attendanceStat(activity.attendanceSummary.absences, activity.attendanceRequired)
+                                }
+                            ]
+                        }), rows) %}
+                    {% endfor %}
+
+                    {{ stickySelect({
+                        idPrefix: 'activities',
+                        type: 'check',
+                        caption: "(" + activities.length + ") sessions",
+                        captionClasses: "govuk-visually-hidden",
+                        name: 'selectedInstanceIds',
+                        tableClasses: '',
+                        head: [
+                            {
+                                text: "Activity",
+                                attributes: { "aria-sort": "ascending" }
+                            },
+                            {
+                                text: "Time",
+                                attributes: { "aria-sort": "ascending" }
+                            },
+                            {
+                                text: "Allocated",
+                                attributes: { "aria-sort": "none" },
+                                classes: "numeric-col-width"
+                            },
+                            {
+                                text: "Attended",
+                                attributes: { "aria-sort": "none" },
+                                classes: "numeric-col-width"
+                            },
+                            {
+                                text: "Not recorded",
+                                attributes: { "aria-sort": "none" },
+                                classes: "numeric-col-width"
+                            },
+                            {
+                                text: "Absent",
+                                attributes: { "aria-sort": "none" },
+                                classes: "numeric-col-width"
+                            }
+                        ],
+                        rows: rows,
+                        actions: {
+                            text: 'Record or edit attendance',
+                            formAction: 'activities/attendance-list'
+                        },
+                        itemsDescription: 'session',
+                        itemsDescriptionPlural: 'sessions'
+                    }) }}
+
+                    {% if activitiesBySession['AM'].length == 0 and activitiesBySession['PM'].length == 0 and activitiesBySession['ED'].length == 0 %}
+                        {{ govukWarningText({
+                            text: "There are no matching activities.",
+                            iconFallbackText: "Warning"
+                        }) }}
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% macro activityCancelledTag(cancelled) %}
+    {% if cancelled %}
+        {{ govukTag({
+            text: "Cancelled",
+            classes: "govuk-tag--red govuk-!-margin-top-1"
+        }) }}
+    {% endif %}
+{% endmacro %}
+{% macro attendanceStat(stat, attendanceRequired=true) %}
+    {{ stat if stat !== null and attendanceRequired === true else '-' }}
+{% endmacro %}

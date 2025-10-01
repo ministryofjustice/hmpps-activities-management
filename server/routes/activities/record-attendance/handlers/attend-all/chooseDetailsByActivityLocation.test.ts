@@ -9,7 +9,6 @@ import ChooseDetailsByActivityLocationRoutes, {
   ChooseDetailsByActivityLocationForm,
 } from './chooseDetailsByActivityLocation'
 import LocationsService from '../../../../../services/locationsService'
-import locationGroups from '../../../../../utils/testData/activitiesService/getLocationGroups'
 import { nonResidentialActivityLocations } from '../../../../../utils/testData/locationsService/fetchNonResidentialActivityLocations'
 import LocationType from '../../../../../enum/locationType'
 
@@ -42,7 +41,6 @@ describe('Route Handlers - Choose details by activity location', () => {
     when(locationService.fetchNonResidentialActivityLocations)
       .calledWith('RSI', res.locals.user)
       .mockResolvedValue(nonResidentialActivityLocations)
-    when(activitiesService.getLocationGroups).calledWith(res.locals.user).mockResolvedValue(locationGroups)
   })
 
   describe('GET', () => {
@@ -52,7 +50,7 @@ describe('Route Handlers - Choose details by activity location', () => {
         'pages/activities/record-attendance/attend-all/choose-details-by-activity-location',
         {
           locations: nonResidentialActivityLocations.filter(l => l.locationType !== 'BOX'),
-          locationGroups,
+          locationGroups: nonResidentialActivityLocations.filter(l => l.locationType === 'RESIDENTIAL_UNIT'),
         },
       )
     })
