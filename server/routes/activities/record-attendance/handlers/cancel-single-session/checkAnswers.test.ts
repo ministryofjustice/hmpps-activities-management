@@ -75,6 +75,7 @@ describe('Route Handlers - Cancel Single Session Check Answers', () => {
         'pages/activities/record-attendance/cancel-single-session/check-answers',
         {
           activityName: 'Kitchen tasks',
+          comment: 'Resume tomorrow',
           reason: 'Staff unavailable',
           issuePayment: true,
           activitiesRedirectUrl,
@@ -119,6 +120,7 @@ describe('Route Handlers - Cancel Single Session Check Answers', () => {
         'pages/activities/record-attendance/cancel-single-session/check-answers',
         {
           activityName: 'Kitchen tasks',
+          comment: 'Resume tomorrow',
           reason: 'Staff unavailable',
           issuePayment: true,
           activitiesRedirectUrl,
@@ -174,6 +176,7 @@ describe('Route Handlers - Cancel Single Session Check Answers', () => {
         'pages/activities/record-attendance/cancel-single-session/check-answers',
         {
           activityName: 'Kitchen tasks',
+          comment: 'Resume tomorrow',
           reason: 'Staff unavailable',
           issuePayment: true,
           activitiesRedirectUrl,

@@ -76,6 +76,7 @@ describe('Route Handlers - Cancel Multiple Sessions Check Answers', () => {
         {
           instances: activityInstances,
           isPayable: true,
+          comment: 'Resume tomorrow',
           reason: 'Staff unavailable',
           issuePayment: 'Yes',
           activitiesRedirectUrl,
@@ -123,6 +124,7 @@ describe('Route Handlers - Cancel Multiple Sessions Check Answers', () => {
         {
           instances: activityInstances,
           isPayable: true,
+          comment: 'Resume tomorrow',
           reason: 'Staff unavailable',
           issuePayment: 'Yes',
           activitiesRedirectUrl,
@@ -181,6 +183,7 @@ describe('Route Handlers - Cancel Multiple Sessions Check Answers', () => {
         {
           instances: activityInstances,
           isPayable: true,
+          comment: 'Resume tomorrow',
           reason: 'Staff unavailable',
           issuePayment: 'Yes',
           activitiesRedirectUrl,

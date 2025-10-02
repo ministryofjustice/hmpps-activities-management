@@ -23,10 +23,13 @@ export default class CancelSingleSessionsReasonRoutes {
     const instanceId = +req.journeyData.recordAttendanceJourney.selectedInstanceIds[0]
     const instance = await this.activitiesService.getScheduledActivity(instanceId, user)
     const activityName = instance.activitySchedule.activity.summary
+    const { comment, reason } = req.journeyData.recordAttendanceJourney.sessionCancellationSingle || {}
 
     res.render('pages/activities/record-attendance/cancel-single-session/cancel-reason', {
       activityName,
       cancellationReasons: CancellationReasons,
+      comment,
+      reason,
     })
   }
 

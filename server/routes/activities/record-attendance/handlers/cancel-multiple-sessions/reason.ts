@@ -20,8 +20,12 @@ export default class CancelMultipleSessionsReasonRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response) => {
+    const { comment, reason } = req.journeyData.recordAttendanceJourney.sessionCancellationMultiple || {}
+
     res.render('pages/activities/record-attendance/cancel-multiple-sessions/cancel-reason', {
       cancellationReasons: CancellationReasons,
+      comment,
+      reason,
     })
   }
 

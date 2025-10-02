@@ -13,6 +13,7 @@ export default class CancelSingleSessionsCheckAnswersRoutes {
 
     res.render('pages/activities/record-attendance/cancel-single-session/check-answers', {
       activityName: sessionCancellationSingle.activityName,
+      comment: sessionCancellationSingle.comment,
       reason: sessionCancellationSingle.reason,
       issuePayment: sessionCancellationSingle.issuePayment,
       activitiesRedirectUrl,
