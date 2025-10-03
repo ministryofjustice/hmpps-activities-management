@@ -36,6 +36,7 @@ export default class CancelMultipleSessionsCheckAnswersRoutes {
     res.render('pages/activities/record-attendance/cancel-multiple-sessions/check-answers', {
       instances,
       isPayable,
+      comment: sessionCancellationMultiple.comment,
       reason: sessionCancellationMultiple.reason,
       issuePayment: sessionCancellationMultiple.issuePayment ? 'Yes' : 'No',
       activitiesRedirectUrl,
