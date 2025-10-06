@@ -39,11 +39,6 @@ export class ChooseDetailsByActivityLocationForm {
   @ValidateIf(o => o.locationType === LocationType.OUT_OF_CELL)
   @IsNotEmpty({ message: 'Enter a location and select it from the list' })
   location: string
-
-  @Expose()
-  @ValidateIf(o => o.locationType === LocationType.ON_WING)
-  @IsNotEmpty({ message: 'Select a residential location or to view all on wing activities' })
-  onWingLocation: string
 }
 
 export default class ChooseDetailsByActivityLocationRoutes {
@@ -56,23 +51,19 @@ export default class ChooseDetailsByActivityLocationRoutes {
     const { user } = res.locals
     const locations = await this.locationsService.fetchNonResidentialActivityLocations(user.activeCaseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'id').filter(l => l.locationType !== 'BOX')
-    const residentialLocations = uniqueLocations.filter(l => l.locationType === 'RESIDENTIAL_UNIT')
 
     res.render('pages/activities/record-attendance/attend-all/choose-details-by-activity-location', {
       locations: uniqueLocations,
-      locationGroups: residentialLocations,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { timePeriod, location, locationType, onWingLocation } = req.body
+    const { timePeriod, location, locationType } = req.body
     const selectedDate = getSelectedDate(req.body)
 
     let locationId: string
     if (location && location !== '-') {
       locationId = location
-    } else if (onWingLocation) {
-      locationId = onWingLocation
     } else {
       locationId = ''
     }

@@ -50,7 +50,6 @@ describe('Route Handlers - Choose details by activity location', () => {
         'pages/activities/record-attendance/attend-all/choose-details-by-activity-location',
         {
           locations: nonResidentialActivityLocations.filter(l => l.locationType !== 'BOX'),
-          locationGroups: nonResidentialActivityLocations.filter(l => l.locationType === 'RESIDENTIAL_UNIT'),
         },
       )
     })
@@ -98,21 +97,6 @@ describe('Route Handlers - Choose details by activity location', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'location', error: 'Enter a location and select it from the list' }])
-    })
-
-    it('validation fails for conditional onWingLocation', async () => {
-      const body = {
-        datePresetOption: 'today',
-        timePeriod: 'PM',
-        locationType: LocationType.ON_WING,
-      }
-
-      const requestObject = plainToInstance(ChooseDetailsByActivityLocationForm, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual([
-        { property: 'onWingLocation', error: 'Select a residential location or to view all on wing activities' },
-      ])
     })
 
     it('validation fails for future date values', async () => {
