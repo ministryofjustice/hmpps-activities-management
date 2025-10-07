@@ -8,8 +8,8 @@ import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import ChooseDetailsByActivityLocationRoutes, {
   ChooseDetailsByActivityLocationForm,
 } from './chooseDetailsByActivityLocation'
-import LocationsService from '../../../../../services/locationsService'
-import { nonResidentialActivityLocations } from '../../../../../utils/testData/locationsService/fetchNonResidentialActivityLocations'
+import LocationsService, { LocationWithDescription } from '../../../../../services/locationsService'
+import nonResidentialActivityLocations from '../../../../../services/fixtures/nonResidentialActivityLocations.json'
 import LocationType from '../../../../../enum/locationType'
 
 jest.mock('../../../../../services/activitiesService')
@@ -40,7 +40,7 @@ describe('Route Handlers - Choose details by activity location', () => {
 
     when(locationService.fetchNonResidentialActivityLocations)
       .calledWith('RSI', res.locals.user)
-      .mockResolvedValue(nonResidentialActivityLocations)
+      .mockResolvedValue(nonResidentialActivityLocations as unknown as LocationWithDescription[])
   })
 
   describe('GET', () => {

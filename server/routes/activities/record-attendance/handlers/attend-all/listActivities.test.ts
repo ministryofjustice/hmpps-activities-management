@@ -2,18 +2,26 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { parse } from 'date-fns'
 import ActivitiesService from '../../../../../services/activitiesService'
-import LocationsService from '../../../../../services/locationsService'
+import LocationsService, { LocationWithDescription } from '../../../../../services/locationsService'
 import ListActivitiesRoutes from './listActivities'
 import LocationType from '../../../../../enum/locationType'
 import { ActivityCategory } from '../../../../../@types/activitiesAPI/types'
 import TimeSlot from '../../../../../enum/timeSlot'
-import { aWing } from '../../../../../utils/testData/locationsService/fetchNonResidentialActivityLocations'
 
 jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../services/locationsService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const locationsService = new LocationsService(null) as jest.Mocked<LocationsService>
+
+const aWing: LocationWithDescription = {
+  id: '11111111-1111-1111-1111-111111111111',
+  prisonId: 'RSI',
+  code: 'AWING',
+  locationType: 'RESIDENTIAL_UNIT',
+  localName: 'A Wing',
+  description: 'A Wing',
+} as LocationWithDescription
 
 const attendanceSummaryResponse = [
   {
