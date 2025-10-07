@@ -16,23 +16,6 @@
     {% set searchLocations = (searchLocations.push({value: location.id, text: location.description}), searchLocations) %}
 {% endfor %}
 
-{% set onWingLocations = [] %}
-{% for location in locationGroups %}
-    {% set onWingLocations = (onWingLocations.push({
-        value: location.key,
-        text: location.name,
-        checked: formResponses.onWingLocation == location.key or locationKey == location.key
-    }), onWingLocations) %}
-{% endfor %}
-{% set onWingLocations = (onWingLocations.push({
-    divider: "or"
-}), onWingLocations) %}
-{% set onWingLocations = (onWingLocations.push({
-    value: 'all',
-    text: 'All residential locations',
-    checked: formResponses.onWingLocation == 'all' or locationKey == 'all'
-}), onWingLocations) %}
-
 {% block meta %}
     <meta name="autocompleteElements" content="location"/>
 {% endblock %}
@@ -44,7 +27,6 @@
             <h1 class="govuk-heading-l">Choose details to record attendance</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                {{formResponses.location}}
                 {{ govukRadios({
                     name: "datePresetOption",
                     fieldset: {
@@ -156,21 +138,7 @@
                         {
                             value: LocationType.ON_WING,
                             text: "On wing",
-                            checked: formResponses.locationType == 'ON_WING',
-                            conditional: {
-                                html: govukRadios({
-                                    id: "onWingLocation",
-                                    name: "onWingLocation",
-                                     fieldset: {
-                                        legend: {
-                                            text: "Select which residential location you're recording attendance for."
-                                        }
-                                    },
-                                    errorMessage: validationErrors | findError('onWingLocation'),
-                                    value: formResponses.onWingLocation or createJourney.onWingLocation.id,
-                                    items: onWingLocations
-                                })
-                            }
+                            checked: formResponses.locationType == 'ON_WING'
                         }
                     ],
                     errorMessage: validationErrors | findError('locationType')

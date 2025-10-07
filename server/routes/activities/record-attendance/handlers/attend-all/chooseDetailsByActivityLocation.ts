@@ -39,11 +39,6 @@ export class ChooseDetailsByActivityLocationForm {
   @ValidateIf(o => o.locationType === LocationType.OUT_OF_CELL)
   @IsNotEmpty({ message: 'Enter a location and select it from the list' })
   location: string
-
-  @Expose()
-  @ValidateIf(o => o.locationType === LocationType.ON_WING)
-  @IsNotEmpty({ message: 'Select a residential location or to view all on wing activities' })
-  onWingLocation: string
 }
 
 export default class ChooseDetailsByActivityLocationRoutes {
@@ -56,20 +51,29 @@ export default class ChooseDetailsByActivityLocationRoutes {
     const { user } = res.locals
     const locations = await this.locationsService.fetchNonResidentialActivityLocations(user.activeCaseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'id').filter(l => l.locationType !== 'BOX')
-    const locationGroups = await this.activitiesService.getLocationGroups(user)
 
     res.render('pages/activities/record-attendance/attend-all/choose-details-by-activity-location', {
       locations: uniqueLocations,
-      locationGroups,
     })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    // TODO
-    const { timePeriod, activityId } = req.body
+    const { timePeriod, location, locationType } = req.body
     const selectedDate = getSelectedDate(req.body)
-    return res.redirect(
-      `list-activities?date=${formatIsoDate(selectedDate)}&timePeriods=${timePeriod}&activityId=${activityId}`,
-    )
+
+    let locationId: string
+    if (location && location !== '-') {
+      locationId = location
+    } else {
+      locationId = ''
+    }
+
+    const redirectUrl =
+      `list-activities?date=${formatIsoDate(selectedDate)}` +
+      `&sessionFilters=${timePeriod}` +
+      `&locationId=${locationId}` +
+      `&locationType=${locationType ?? ''}`
+
+    return res.redirect(redirectUrl)
   }
 }

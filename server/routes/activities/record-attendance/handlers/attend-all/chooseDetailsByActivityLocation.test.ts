@@ -8,9 +8,8 @@ import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import ChooseDetailsByActivityLocationRoutes, {
   ChooseDetailsByActivityLocationForm,
 } from './chooseDetailsByActivityLocation'
-import LocationsService from '../../../../../services/locationsService'
-import locationGroups from '../../../../../utils/testData/activitiesService/getLocationGroups'
-import { nonResidentialActivityLocations } from '../../../../../utils/testData/locationsService/fetchNonResidentialActivityLocations'
+import LocationsService, { LocationWithDescription } from '../../../../../services/locationsService'
+import nonResidentialActivityLocations from '../../../../../services/fixtures/nonResidentialActivityLocations.json'
 import LocationType from '../../../../../enum/locationType'
 
 jest.mock('../../../../../services/activitiesService')
@@ -41,8 +40,7 @@ describe('Route Handlers - Choose details by activity location', () => {
 
     when(locationService.fetchNonResidentialActivityLocations)
       .calledWith('RSI', res.locals.user)
-      .mockResolvedValue(nonResidentialActivityLocations)
-    when(activitiesService.getLocationGroups).calledWith(res.locals.user).mockResolvedValue(locationGroups)
+      .mockResolvedValue(nonResidentialActivityLocations as unknown as LocationWithDescription[])
   })
 
   describe('GET', () => {
@@ -52,7 +50,6 @@ describe('Route Handlers - Choose details by activity location', () => {
         'pages/activities/record-attendance/attend-all/choose-details-by-activity-location',
         {
           locations: nonResidentialActivityLocations.filter(l => l.locationType !== 'BOX'),
-          locationGroups,
         },
       )
     })
@@ -100,21 +97,6 @@ describe('Route Handlers - Choose details by activity location', () => {
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'location', error: 'Enter a location and select it from the list' }])
-    })
-
-    it('validation fails for conditional onWingLocation', async () => {
-      const body = {
-        datePresetOption: 'today',
-        timePeriod: 'PM',
-        locationType: LocationType.ON_WING,
-      }
-
-      const requestObject = plainToInstance(ChooseDetailsByActivityLocationForm, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual([
-        { property: 'onWingLocation', error: 'Select a residential location or to view all on wing activities' },
-      ])
     })
 
     it('validation fails for future date values', async () => {
