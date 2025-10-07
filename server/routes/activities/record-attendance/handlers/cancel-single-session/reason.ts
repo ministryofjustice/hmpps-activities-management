@@ -51,7 +51,7 @@ export default class CancelSingleSessionsReasonRoutes {
       issuePayment: false,
     }
 
-    if (isPayable) {
+    if (isPayable && !req.query.preserveHistory) {
       res.redirect('payment')
     } else {
       res.redirect('check-answers')
