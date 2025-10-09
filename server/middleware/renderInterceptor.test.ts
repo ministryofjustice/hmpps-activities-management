@@ -59,7 +59,7 @@ describe('renderInterceptor', () => {
     expect(tokenStore.setTokenAndEmit).toHaveBeenCalledWith(
       `journey.${username}.${journeyId}`,
       '{"createJourney":{"activityId":123}}',
-      86400,
+      28800,
       expect.any(EventEmitter),
     )
   })
@@ -95,7 +95,7 @@ describe('renderInterceptor', () => {
     expect(tokenStore.setTokenAndEmit).toHaveBeenCalledWith(
       `journey.${username}.${journeyId}`,
       '{"createJourney":{"activityId":123}}',
-      86400,
+      28800,
       expect.any(EventEmitter),
     )
   })
