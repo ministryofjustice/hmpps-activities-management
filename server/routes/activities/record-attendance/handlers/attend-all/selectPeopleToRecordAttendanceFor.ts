@@ -13,6 +13,7 @@ import AttendanceReason from '../../../../../enum/attendanceReason'
 import { NameFormatStyle } from '../../../../../utils/helpers/nameFormatStyle'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import UserService from '../../../../../services/userService'
+import { flattenPrisonerScheduledEvents } from '../../utils/recordAttendanceUtils'
 
 export default class SelectPeopleToRecordAttendanceForRoutes {
   constructor(
@@ -69,13 +70,7 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
         this.activitiesService.getScheduledEventsForPrisoners(activityDate, prisonerNumbers, user),
       ])
 
-      const allEvents = [
-        ...otherEvents.activities,
-        ...otherEvents.appointments,
-        ...otherEvents.courtHearings,
-        ...otherEvents.visits,
-        ...otherEvents.adjudications,
-      ]
+      const allEvents = flattenPrisonerScheduledEvents(otherEvents)
 
       attendanceRows = attendees.map(att => {
         const instance = instances.find(a => a.id === att.scheduledInstanceId)
