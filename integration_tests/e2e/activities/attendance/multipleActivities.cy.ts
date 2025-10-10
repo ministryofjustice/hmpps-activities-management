@@ -169,7 +169,7 @@ context('Record attendance', () => {
     )
 
     attendanceListPage
-      .getLinkByText(`Go back to activities for ${formatDate(today, 'EEEE, d MMMM yyyy')} - AM and PM`)
+      .getLinkByText(`Go back to activities on ${formatDate(today, 'EEEE, d MMMM yyyy')} - AM and PM`)
       .click()
     Page.verifyOnPage(ActivitiesPage)
   })
@@ -287,7 +287,7 @@ context('Record attendance', () => {
     attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Attended', 'Pay')
     attendanceListPage
       .backLink()
-      .contains(`Go back to activities for ${formatDate(today, 'EEEE, d MMMM yyyy')} - AM`)
+      .contains(`Go back to activities on ${formatDate(today, 'EEEE, d MMMM yyyy')} - AM`)
       .click()
 
     Page.verifyOnPage(ActivitiesPage)

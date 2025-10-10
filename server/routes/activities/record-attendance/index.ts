@@ -267,6 +267,7 @@ export default function Index({
 
   get('/:journeyId/attend-all/list-activities', attendAllListActivitiesRoutes.GET)
   post('/:journeyId/attend-all/list-activities', attendAllListActivitiesRoutes.POST)
+  post('/:journeyId/attend-all/list-activities/record-or-edit', attendAllListActivitiesRoutes.RECORD_OR_EDIT_ATTENDANCE)
 
   return router
 }

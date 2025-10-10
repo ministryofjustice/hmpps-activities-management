@@ -33,7 +33,10 @@ export default class ListActivitiesRoutes {
 
     const locationTypeFilter = locationType !== undefined ? asString(locationType) : 'ALL'
 
-    req.journeyData.recordAttendanceJourney = {}
+    req.journeyData.recordAttendanceJourney = {
+      locationTypeFilter,
+      returnUrl: req.originalUrl,
+    }
 
     const locations = await this.locationsService.fetchNonResidentialActivityLocations(user.activeCaseLoadId, user)
     const uniqueLocations = _.uniqBy(locations, 'id')
@@ -78,5 +81,18 @@ export default class ListActivitiesRoutes {
       `&locationType=${locationType ?? ''}`
 
     res.redirect(redirectUrl)
+  }
+
+  RECORD_OR_EDIT_ATTENDANCE = async (req: Request, res: Response): Promise<void> => {
+    const { selectedInstanceIds, activityDate, sessionFilters, locationType } = req.body
+    const selectedInstanceIdsArr = selectedInstanceIds ? convertToArray(selectedInstanceIds) : []
+    req.journeyData.recordAttendanceJourney = {
+      returnUrl: req.journeyData.recordAttendanceJourney?.returnUrl,
+      selectedInstanceIds: selectedInstanceIdsArr,
+      activityDate,
+      sessionFilters,
+      locationTypeFilter: locationType,
+    }
+    return res.redirect('../../activities/attendance-list')
   }
 }
