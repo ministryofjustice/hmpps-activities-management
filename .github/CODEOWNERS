@@ -1,0 +1,6 @@
+* @ministryofjustice/activities-and-appointments
+package.json
+package-lock.json
+.github/actions
+.github/workflows
+**/Dockerfile
