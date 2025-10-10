@@ -8,13 +8,21 @@ The client is backed by, [hmpps-activities-management-api](https://github.com/mi
 
 ## Dependencies
 
-This service requires the following dependent services:
+This service is dependent the following services:
 
-* `hmpps-auth` - authorisation and authentication
-* `redis` - session store and token caching
-* `hmpps-activities-management-api` - activities data
-* `prisoner-offender-search` - prisoner search API
-* `prison-api` - prisoner detail API
+* [Auth API](https://sign-in-dev.hmpps.service.justice.gov.uk/auth/swagger-ui/index.html) - authorisation and authentication
+* [Activities Management API](https://activities-api-dev.prison.service.justice.gov.uk/swagger-ui/index.html#/) - activities management api
+* [Alerts API](https://alerts-api-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html#/) - alerts api
+* [Book A Video Link API](https://book-a-video-link-api-dev.prison.service.justice.gov.uk/swagger-ui/index.html#/) - book a video link api
+* [Case Notes API](https://dev.offender-case-notes.service.justice.gov.uk/swagger-ui/index.html#/) - case notes api
+* [Incentives API](https://incentives-api-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html#/) - incentives api
+* [Locations Inside Prison API](https://locations-inside-prison-api-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html#/) - locations inside prison api
+* [Nomis Mapping API](https://nomis-sync-prisoner-mapping-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html#/) - nomis mapping api
+* [Non-Associations API](https://non-associations-api-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html#/) - non-associations api
+* [Prison API](https://prison-api-dev.prison.service.justice.gov.uk/swagger-ui/index.html#/) - prison api
+* [Prison Register API](https://prison-register-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html#/) - prison register api
+* [Prisoner Search API](https://prisoner-search-dev.prison.service.justice.gov.uk/swagger-ui/index.html#/) - prisoner search api
+* [Redis](https://redis.io/)/[Elasticache](https://aws.amazon.com/elasticache/) - journey, session store and token caching
 
 ## Generating Open API Types
 
