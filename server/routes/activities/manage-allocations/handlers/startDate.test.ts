@@ -49,7 +49,9 @@ describe('Route Handlers - Edit allocation - Start date', () => {
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/start-date')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/start-date', {
+        allocateJourney: req.journeyData.allocateJourney,
+      })
     })
   })
 
