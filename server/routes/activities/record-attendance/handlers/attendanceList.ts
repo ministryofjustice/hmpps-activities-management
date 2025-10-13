@@ -29,6 +29,10 @@ import applyCancellationDisplayRule from '../../../../utils/applyCancellationDis
 import UserService from '../../../../services/userService'
 import TimeSlot from '../../../../enum/timeSlot'
 import config from '../../../../config'
+import {
+  flattenPrisonerScheduledEvents,
+  getPrisonerNumbersFromScheduledActivities,
+} from '../utils/recordAttendanceUtils'
 
 export class AttendanceList {
   @Expose()
@@ -134,48 +138,39 @@ export default class AttendanceListRoutes {
   GET_ATTENDANCES = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { searchTerm } = req.query
-    const { selectedInstanceIds } = req.journeyData.recordAttendanceJourney
+    const { selectedInstanceIds, locationTypeFilter, returnUrl } = req.journeyData.recordAttendanceJourney
+    let locationName
 
     const instances = await this.activitiesService.getScheduledActivities(
       convertToNumberArray(selectedInstanceIds),
       user,
     )
 
-    const prisonerNumbers = _.uniq(instances.flatMap(instance => instance.attendances.map(att => att.prisonerNumber)))
+    const prisonerNumbers = getPrisonerNumbersFromScheduledActivities(instances)
 
     const [allAttendees, otherEvents] = await Promise.all([
       this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user),
       this.activitiesService.getScheduledEventsForPrisoners(toDate(instances[0].date), prisonerNumbers, user),
     ])
 
+    const allEvents = flattenPrisonerScheduledEvents(otherEvents)
+
+    if (locationTypeFilter === 'OUT_OF_CELL') {
+      const locations = _.uniq(instances.map(i => i.activitySchedule.internalLocation?.description))
+      locationName = locations.length === 1 ? locations[0] : undefined
+    }
+
     const attendanceRows = (
       await Promise.all(
         instances.map(async instance => {
           const session = instance.timeSlot
-
-          const allEvents = [
-            ...otherEvents.activities,
-            ...otherEvents.appointments,
-            ...otherEvents.courtHearings,
-            ...otherEvents.visits,
-            ...otherEvents.adjudications,
-          ]
-
           const userMap = await this.userService.getUserMap([instance.cancelledBy], user)
-
-          return allAttendees
-            .filter(att => {
-              if (!searchTerm) {
-                return true
-              }
-              const term = asString(searchTerm).toLowerCase()
-
-              return (
-                att.firstName.toLowerCase().includes(term) ||
-                att.lastName.toLowerCase().includes(term) ||
-                att.prisonerNumber.toLowerCase().includes(term)
-              )
-            })
+          let searchedAttendees = allAttendees
+          if (searchTerm) {
+            const term = asString(searchTerm).toLowerCase()
+            searchedAttendees = allAttendees.filter(att => this.filterForTerm(att, term))
+          }
+          return searchedAttendees
             .filter(att => instance.attendances.map(a => a.prisonerNumber).includes(att.prisonerNumber))
             .map(att => {
               const prisonerEvents = allEvents
@@ -208,6 +203,8 @@ export default class AttendanceListRoutes {
       selectedSessions: Object.values(TimeSlot).filter(t =>
         req.journeyData.recordAttendanceJourney.sessionFilters.includes(t),
       ),
+      locationName,
+      returnUrl,
     })
   }
 
@@ -296,8 +293,8 @@ export default class AttendanceListRoutes {
     const successMessage = `You've saved attendance details for ${
       selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`
     }`
-
-    return res.redirectWithSuccess('attendance-list', 'Attendance recorded', successMessage)
+    const returnUrl = req.journeyData.recordAttendanceJourney?.returnUrl ?? 'attendance-list'
+    return res.redirectWithSuccess(returnUrl, 'Attendance recorded', successMessage)
   }
 
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
@@ -396,4 +393,9 @@ export default class AttendanceListRoutes {
     const attendance = attendances.find(a => a.prisonerNumber === prisonerNumber)
     return attendance.id
   }
+
+  private filterForTerm = (att, term) =>
+    att.firstName.toLowerCase().includes(term) ||
+    att.lastName.toLowerCase().includes(term) ||
+    att.prisonerNumber.toLowerCase().includes(term)
 }
