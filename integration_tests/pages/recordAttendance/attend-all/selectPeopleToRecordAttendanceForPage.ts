@@ -39,7 +39,10 @@ export default class SelectPeopleToRecordAttendanceForPage extends Page {
 
   markAsNotRequiredOrExcused = () => cy.get('button').contains('Mark as not required or excused').click()
 
-  cancelSessionButton = () => cy.get('a').contains('Cancel this session')
+  noActivities = (activityName, session, date) =>
+    cy.get('h1').contains(`${activityName} did not run in the ${session} session on ${date}`)
+
+  selectDifferentDetails = () => cy.get('a').contains('Select a different activity, date or time period').click()
 
   backLink = (): Cypress.Chainable => cy.get('.govuk-back-link')
 }
