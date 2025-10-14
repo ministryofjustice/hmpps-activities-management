@@ -3,7 +3,6 @@ import { IsIn, IsNotEmpty, ValidateIf } from 'class-validator'
 import { Request, Response } from 'express'
 import { addDays, startOfToday } from 'date-fns'
 import _ from 'lodash'
-import ActivitiesService from '../../../../../services/activitiesService'
 import DateOption from '../../../../../enum/dateOption'
 import { formatIsoDate, parseDatePickerDate } from '../../../../../utils/datePickerUtils'
 import Validator from '../../../../../validators/validator'
@@ -42,10 +41,7 @@ export class ChooseDetailsByActivityLocationForm {
 }
 
 export default class ChooseDetailsByActivityLocationRoutes {
-  constructor(
-    private readonly activitiesService: ActivitiesService,
-    private readonly locationsService: LocationsService,
-  ) {}
+  constructor(private readonly locationsService: LocationsService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals

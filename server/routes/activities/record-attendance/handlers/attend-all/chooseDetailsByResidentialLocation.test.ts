@@ -4,19 +4,36 @@ import { validate } from 'class-validator'
 import { addDays, format } from 'date-fns'
 import { when } from 'jest-when'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
-import ChooseDetailsByActivityLocationRoutes, {
-  ChooseDetailsByActivityLocationForm,
-} from './chooseDetailsByActivityLocation'
-import LocationsService, { LocationWithDescription } from '../../../../../services/locationsService'
-import nonResidentialActivityLocations from '../../../../../services/fixtures/nonResidentialActivityLocations.json'
-import LocationType from '../../../../../enum/locationType'
+import ChooseDetailsByResidentialLocationRoutes, {
+  ChooseDetailsByResidentialLocationForm,
+} from './chooseDetailsByResidentialLocation'
+import ActivitiesService from '../../../../../services/activitiesService'
+import { LocationGroup } from '../../../../../@types/activitiesAPI/types'
 
-jest.mock('../../../../../services/locationsService')
+jest.mock('../../../../../services/activitiesService')
 
-const locationService = new LocationsService(null) as jest.Mocked<LocationsService>
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
+
+const mockLocations = [
+  {
+    name: 'A-Wing',
+    key: 'A-Wing',
+    children: [],
+  },
+  {
+    name: 'B-Wing',
+    key: 'B-Wing',
+    children: [],
+  },
+  {
+    name: 'C-Wing',
+    key: 'C-Wing',
+    children: [],
+  },
+]
 
 describe('Route Handlers - Choose details by activity location', () => {
-  const handler = new ChooseDetailsByActivityLocationRoutes(locationService)
+  const handler = new ChooseDetailsByResidentialLocationRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -35,18 +52,18 @@ describe('Route Handlers - Choose details by activity location', () => {
       query: {},
     } as unknown as Request
 
-    when(locationService.fetchNonResidentialActivityLocations)
-      .calledWith('RSI', res.locals.user)
-      .mockResolvedValue(nonResidentialActivityLocations as unknown as LocationWithDescription[])
+    when(activitiesService.getLocationGroups)
+      .calledWith(res.locals.user)
+      .mockResolvedValue(mockLocations as unknown as LocationGroup[])
   })
 
   describe('GET', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/record-attendance/attend-all/choose-details-by-activity-location',
+        'pages/activities/record-attendance/attend-all/choose-details-by-residential-location',
         {
-          locations: nonResidentialActivityLocations.filter(l => l.locationType !== 'BOX'),
+          locationGroups: mockLocations,
         },
       )
     })
@@ -57,16 +74,16 @@ describe('Route Handlers - Choose details by activity location', () => {
       const body = {
         datePresetOption: '',
         timePeriod: '',
-        locationType: '',
+        locationKey: '',
       }
 
-      const requestObject = plainToInstance(ChooseDetailsByActivityLocationForm, body)
+      const requestObject = plainToInstance(ChooseDetailsByResidentialLocationForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
         { property: 'datePresetOption', error: 'Select a date' },
         { property: 'timePeriod', error: 'Select a time period' },
-        { property: 'locationType', error: 'Search for a specific location, or select a location option' },
+        { property: 'locationKey', error: 'Select a residential location' },
       ])
     })
 
@@ -74,26 +91,13 @@ describe('Route Handlers - Choose details by activity location', () => {
       const body = {
         datePresetOption: 'other',
         timePeriod: 'PM',
-        locationType: LocationType.IN_CELL,
+        locationKey: 'A',
       }
 
-      const requestObject = plainToInstance(ChooseDetailsByActivityLocationForm, body)
+      const requestObject = plainToInstance(ChooseDetailsByResidentialLocationForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
-    })
-
-    it('validation fails for conditional location', async () => {
-      const body = {
-        datePresetOption: 'today',
-        timePeriod: 'PM',
-        locationType: LocationType.OUT_OF_CELL,
-      }
-
-      const requestObject = plainToInstance(ChooseDetailsByActivityLocationForm, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
-
-      expect(errors).toEqual([{ property: 'location', error: 'Enter a location and select it from the list' }])
     })
 
     it('validation fails for future date values', async () => {
@@ -101,10 +105,10 @@ describe('Route Handlers - Choose details by activity location', () => {
         datePresetOption: 'other',
         date: format(addDays(new Date(), 61), 'dd/MM/yyyy'),
         timePeriod: 'PM',
-        locationType: LocationType.IN_CELL,
+        locationKey: 'A',
       }
 
-      const requestObject = plainToInstance(ChooseDetailsByActivityLocationForm, body)
+      const requestObject = plainToInstance(ChooseDetailsByResidentialLocationForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'date', error: 'Enter a date up to 60 days in the future' }])
@@ -114,10 +118,10 @@ describe('Route Handlers - Choose details by activity location', () => {
       const body = {
         datePresetOption: 'today',
         timePeriod: 'AM',
-        locationType: LocationType.IN_CELL,
+        locationKey: 'A',
       }
 
-      const requestObject = plainToInstance(ChooseDetailsByActivityLocationForm, body)
+      const requestObject = plainToInstance(ChooseDetailsByResidentialLocationForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
