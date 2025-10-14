@@ -3,22 +3,20 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from 'moj/components/date-picker/macro.njk' import mojDatePicker %}
-{% from 'govuk/components/checkboxes/macro.njk' import govukCheckboxes %}
-{% from 'govuk/components/select/macro.njk' import govukSelect %}
 
 {% set pageTitle = applicationName + " - Choose details by residential location" %}
 {% set pageId = 'choose-details-by-residential-location-page' %}
 {% set hardBackLinkText = 'Back' %}
 {% set hardBackLinkHref = "how-to-record-attendance" %}
 
-{% set searchLocations = [{ value: '-', text: '' }] %}
-{% for location in locations %}
-    {% set searchLocations = (searchLocations.push({value: location.id, text: location.description}), searchLocations) %}
+{% set items = [] %}
+{% for location in locationGroups %}
+    {% set items = (items.push({
+        value: location.key,
+        text: location.name,
+        checked: formResponses.location == location.key or locationKey == location.key
+    }), items) %}
 {% endfor %}
-
-{% block meta %}
-    <meta name="autocompleteElements" content="location"/>
-{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -98,15 +96,6 @@
                         }
                     ]
                 }) }}
-                
-                {% set items = [] %}
-                {% for location in locationGroups %}
-                    {% set items = (items.push({
-                        value: location.key,
-                        text: location.name,
-                        checked: formResponses.location == location.key or locationKey == location.key
-                    }), items) %}
-                {% endfor %}
 
                 {{ govukRadios({
                     idPrefix: "locationKey",
@@ -120,50 +109,6 @@
                     errorMessage: validationErrors | findError('locationKey'),
                     items: items
                 }) }}
-                {# {{ govukRadios({
-                    name: "locationType",
-                    fieldset: {
-                        legend: {
-                            text: "Activity location",
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
-                    items: [
-                        {
-                            value: LocationType.OUT_OF_CELL,
-                            text: "Search for a location",
-                            checked: formResponses.locationType == 'OUT_OF_CELL' or createJourney.location.id,
-                            conditional: {
-                                html: govukSelect({
-                                    id: "location",
-                                    name: "location",
-                                    label: {
-                                        text: "Start typing a location and select it from the list."
-                                    },
-                                    errorMessage: validationErrors | findError('location'),
-                                    value: formResponses.location or createJourney.location.id,
-                                    items: searchLocations
-                                })
-                            }
-                        },
-                        {
-                            value: LocationType.IN_CELL,
-                            text: "In cell",
-                            checked: formResponses.locationType == 'IN_CELL'
-                        },
-                        {
-                            value: LocationType.OFF_WING,
-                            text: "Off wing - not listed",
-                            checked: formResponses.locationType == 'OFF_WING'
-                        },
-                        {
-                            value: LocationType.ON_WING,
-                            text: "On wing",
-                            checked: formResponses.locationType == 'ON_WING'
-                        }
-                    ],
-                    errorMessage: validationErrors | findError('locationType')
-                }) }} #}
 
                 <div class="govuk-button-group">
                     {{ govukButton({
