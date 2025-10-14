@@ -8,7 +8,7 @@ export default class SelectPeopleToRecordAttendanceForPage extends Page {
   selectPrisoner = name =>
     cy
       .get('#attendanceList')
-      .find('td:nth-child(3)')
+      .find('td:nth-child(2)')
       .contains(name)
       .parents('tr')
       .find('td:nth-child(1) input')
