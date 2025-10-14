@@ -33,7 +33,11 @@ export default class CancelMultipleSessionsCheckAnswersRoutes {
       }
     })
 
-    res.render('pages/activities/record-attendance/cancel-multiple-sessions/check-answers', {
+    if (!req.journeyData.recordAttendanceJourney.sessionCancellationMultiple) {
+      return res.redirect('/activities/attendance')
+    }
+
+    return res.render('pages/activities/record-attendance/cancel-multiple-sessions/check-answers', {
       instances,
       isPayable,
       comment: sessionCancellationMultiple.comment,

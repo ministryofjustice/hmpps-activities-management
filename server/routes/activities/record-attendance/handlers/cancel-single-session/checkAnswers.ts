@@ -11,7 +11,10 @@ export default class CancelSingleSessionsCheckAnswersRoutes {
     const sessionFiltersString = sessionFilters ? convertToArray(sessionFilters).join(',') : ''
     const activitiesRedirectUrl = `../../activities?date=${activityDate}&sessionFilters=${sessionFiltersString}&preserveHistory=true`
 
-    res.render('pages/activities/record-attendance/cancel-single-session/check-answers', {
+    if (!req.journeyData.recordAttendanceJourney.sessionCancellationSingle) {
+      return res.redirect('/activities/attendance')
+    }
+    return res.render('pages/activities/record-attendance/cancel-single-session/check-answers', {
       activityName: sessionCancellationSingle.activityName,
       comment: sessionCancellationSingle.comment,
       reason: sessionCancellationSingle.reason,

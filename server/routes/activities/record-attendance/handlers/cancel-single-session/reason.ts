@@ -25,7 +25,11 @@ export default class CancelSingleSessionsReasonRoutes {
     const activityName = instance.activitySchedule.activity.summary
     const { comment, reason } = req.journeyData.recordAttendanceJourney.sessionCancellationSingle || {}
 
-    res.render('pages/activities/record-attendance/cancel-single-session/cancel-reason', {
+    if (!req.journeyData.recordAttendanceJourney.selectedInstanceIds) {
+      return res.redirect('/activities/attendance')
+    }
+
+    return res.render('pages/activities/record-attendance/cancel-single-session/cancel-reason', {
       activityName,
       cancellationReasons: CancellationReasons,
       comment,
