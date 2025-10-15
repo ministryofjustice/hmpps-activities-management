@@ -91,7 +91,7 @@
         }) }}
     {% elseif reason.code === 'NOT_REQUIRED' %}
         <span class="govuk-label">
-            {{ row | formatName(NameFormatStyle.firstLast, false) + ("will be paid and their" if row.isPayable else "'s") + ' attendance will be recorded as an acceptable absence.' }}
+            {{ row | formatName(NameFormatStyle.firstLast, false) + (" will be paid and their" if row.isPayable else "'s") + ' attendance will be recorded as an acceptable absence.' }}
         </span>
     {% elseif reason.code === "REST" %}
        {{ govukRadios({
