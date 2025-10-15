@@ -8,7 +8,7 @@ export default class SelectPeopleToRecordAttendanceForPage extends Page {
   selectPrisoner = name =>
     cy
       .get('#attendanceList')
-      .find('td:nth-child(3)')
+      .find('td:nth-child(2)')
       .contains(name)
       .parents('tr')
       .find('td:nth-child(1) input')
@@ -40,6 +40,13 @@ export default class SelectPeopleToRecordAttendanceForPage extends Page {
   markAsNotRequiredOrExcused = () => cy.get('button').contains('Mark as not required or excused').click()
 
   cancelSessionButton = () => cy.get('a').contains('Cancel this session')
+
+  noActivities = (activityName, session, date) =>
+    cy.get('h1').contains(`${activityName} did not run in the ${session} session on ${date}`)
+
+  selectDifferentDetails = () => cy.get('a').contains('Select a different activity, date or time period').click()
+
+  checkSuccessBanner = (text: string) => cy.get('.govuk-notification-banner__content').contains(text)
 
   backLink = (): Cypress.Chainable => cy.get('.govuk-back-link')
 }
