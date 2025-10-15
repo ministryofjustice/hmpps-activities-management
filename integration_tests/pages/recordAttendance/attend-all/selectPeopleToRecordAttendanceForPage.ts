@@ -44,5 +44,7 @@ export default class SelectPeopleToRecordAttendanceForPage extends Page {
 
   selectDifferentDetails = () => cy.get('a').contains('Select a different activity, date or time period').click()
 
+  checkSuccessBanner = (text: string) => cy.get('.govuk-notification-banner__content').contains(text)
+
   backLink = (): Cypress.Chainable => cy.get('.govuk-back-link')
 }
