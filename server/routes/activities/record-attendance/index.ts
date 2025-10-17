@@ -48,6 +48,7 @@ import ListActivitiesRoutes from './handlers/attend-all/listActivities'
 import ChooseDetailsByResidentialLocationRoutes, {
   ChooseDetailsByResidentialLocationForm,
 } from './handlers/attend-all/chooseDetailsByResidentialLocation'
+import SelectPeopleByResidentialLocationRoutes from './handlers/attend-all/selectPeopleByResidentialLocation'
 
 export default function Index({
   activitiesService,
@@ -108,6 +109,11 @@ export default function Index({
   const chooseDetailsByActivityLocationRoutes = new ChooseDetailsByActivityLocationRoutes(locationsService)
   const chooseDetailsByResidentialLocationRoutes = new ChooseDetailsByResidentialLocationRoutes(activitiesService)
   const selectPeopleToRecordattendanceForRoutes = new SelectPeopleToRecordAttendanceForRoutes(
+    activitiesService,
+    prisonService,
+    userService,
+  )
+  const selectPeopleByResidentialLocationRoutes = new SelectPeopleByResidentialLocationRoutes(
     activitiesService,
     prisonService,
     userService,
@@ -264,6 +270,7 @@ export default function Index({
   )
 
   get('/:journeyId/attend-all/select-people-to-record-attendance-for', selectPeopleToRecordattendanceForRoutes.GET)
+  get('/:journeyId/attend-all/select-people-by-residential-location', selectPeopleByResidentialLocationRoutes.GET)
 
   post('/:journeyId/attend-all/attended', selectPeopleToRecordattendanceForRoutes.ATTENDED)
   post('/:journeyId/attend-all/not-attended', selectPeopleToRecordattendanceForRoutes.NOT_ATTENDED)
