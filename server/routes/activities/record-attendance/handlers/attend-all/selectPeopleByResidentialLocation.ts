@@ -71,7 +71,20 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
     const attendees = (
       await Promise.all(instancesForDateAndSlot.map(a => this.activitiesService.getAttendees(a.id, user)))
-    ).flat()
+    )
+      .flat()
+      .reduce((accumulator, currentValue) => {
+        const existingIndex = accumulator.findIndex(a => a.prisonerNumber === currentValue.prisonerNumber)
+        if (existingIndex !== -1) {
+          accumulator[existingIndex].scheduledInstanceIds.push(currentValue.scheduledInstanceId)
+        } else {
+          accumulator.push({
+            prisonerNumber: currentValue.prisonerNumber,
+            scheduledInstanceIds: [currentValue.scheduledInstanceId],
+          })
+        }
+        return accumulator
+      }, [])
 
     const attendingPrisonerNumbers = Array.from(new Set(attendees.map(a => a.prisonerNumber)))
 
@@ -91,8 +104,8 @@ export default class SelectPeopleByResidentialLocationRoutes {
     const prisonersWithActivities = results?.content?.reduce((result, prisoner) => {
       if (attendingPrisonerNumbers.includes(prisoner.prisonerNumber)) {
         const activitiesForPrisoner = attendees
-          .filter(a => a.prisonerNumber === prisoner.prisonerNumber)
-          .map(a => instancesForDateAndSlot.find(i => i.id === a.scheduledInstanceId))
+          .find(a => a.prisonerNumber === prisoner.prisonerNumber)
+          .scheduledInstanceIds.map(a => instancesForDateAndSlot.find(i => i.id === a))
 
         const clashes = activitiesForPrisoner.map(instance => {
           return allEvents
