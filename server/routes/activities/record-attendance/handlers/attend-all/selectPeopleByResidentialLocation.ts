@@ -69,9 +69,11 @@ export default class SelectPeopleByResidentialLocationRoutes {
       user,
     )
 
-    const attendingPrisonerNumbers = _.uniq(
-      instancesForDateAndSlot.flatMap(i => i.attendances.map(a => a.prisonerNumber)),
-    )
+    const attendees = (
+      await Promise.all(instancesForDateAndSlot.map(a => this.activitiesService.getAttendees(a.id, user)))
+    ).flat()
+
+    const attendingPrisonerNumbers = Array.from(new Set(attendees.map(a => a.prisonerNumber)))
 
     const otherEvents = await this.activitiesService.getScheduledEventsForPrisoners(
       activityDate,
@@ -88,9 +90,9 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
     const prisonersWithActivities = results?.content?.reduce((result, prisoner) => {
       if (attendingPrisonerNumbers.includes(prisoner.prisonerNumber)) {
-        const activitiesForPrisoner = instancesForDateAndSlot.filter(instance =>
-          instance.attendances.some(att => att.prisonerNumber === prisoner.prisonerNumber),
-        )
+        const activitiesForPrisoner = attendees
+          .filter(a => a.prisonerNumber === prisoner.prisonerNumber)
+          .map(a => instancesForDateAndSlot.find(i => i.id === a.scheduledInstanceId))
 
         const clashes = activitiesForPrisoner.map(instance => {
           return allEvents
