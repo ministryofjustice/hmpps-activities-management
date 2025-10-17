@@ -139,6 +139,10 @@ export default class NotAttendedReasonRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { notAttendedData }: { notAttendedData: NotAttendedData[] } = req.body
+
+    if (!req.journeyData.recordAttendanceJourney.notAttended) {
+      return res.redirect('/activities/attendance')
+    }
     const { selectedPrisoners } = req.journeyData.recordAttendanceJourney.notAttended
 
     const instances = await Promise.all(
@@ -187,6 +191,6 @@ export default class NotAttendedReasonRoutes {
       returnUrl = req.journeyData.recordAttendanceJourney.returnUrl
     }
 
-    res.redirectWithSuccess(returnUrl, 'Attendance recorded', successMessage)
+    return res.redirectWithSuccess(returnUrl, 'Attendance recorded', successMessage)
   }
 }
