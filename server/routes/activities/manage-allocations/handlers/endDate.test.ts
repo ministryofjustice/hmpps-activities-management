@@ -87,6 +87,7 @@ describe('Route Handlers - Edit allocation - End date', () => {
 
         await handler.GET(req, res)
 
+        expect(res.locals.allocateJourney).toBe(req.journeyData.allocateJourney)
         expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/end-date')
       })
 
