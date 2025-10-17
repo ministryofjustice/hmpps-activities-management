@@ -20,14 +20,14 @@ export default class CancelSingleSessionsReasonRoutes {
 
   GET = async (req: Request, res: Response) => {
     const { user } = res.locals
+
+    if (!req.journeyData.recordAttendanceJourney) {
+      return res.redirect('/activities/attendance')
+    }
     const instanceId = +req.journeyData.recordAttendanceJourney.selectedInstanceIds[0]
     const instance = await this.activitiesService.getScheduledActivity(instanceId, user)
     const activityName = instance.activitySchedule.activity.summary
     const { comment, reason } = req.journeyData.recordAttendanceJourney.sessionCancellationSingle || {}
-
-    if (!req.journeyData.recordAttendanceJourney.selectedInstanceIds) {
-      return res.redirect('/activities/attendance')
-    }
 
     return res.render('pages/activities/record-attendance/cancel-single-session/cancel-reason', {
       activityName,

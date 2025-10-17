@@ -6,14 +6,13 @@ export default class CancelSingleSessionsCheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { activityDate, sessionFilters, sessionCancellationSingle } = req.journeyData.recordAttendanceJourney
-
-    const sessionFiltersString = sessionFilters ? convertToArray(sessionFilters).join(',') : ''
-    const activitiesRedirectUrl = `../../activities?date=${activityDate}&sessionFilters=${sessionFiltersString}&preserveHistory=true`
-
     if (!req.journeyData.recordAttendanceJourney.sessionCancellationSingle) {
       return res.redirect('/activities/attendance')
     }
+    const { activityDate, sessionFilters, sessionCancellationSingle } = req.journeyData.recordAttendanceJourney
+    const sessionFiltersString = sessionFilters ? convertToArray(sessionFilters).join(',') : ''
+    const activitiesRedirectUrl = `../../activities?date=${activityDate}&sessionFilters=${sessionFiltersString}&preserveHistory=true`
+
     return res.render('pages/activities/record-attendance/cancel-single-session/check-answers', {
       activityName: sessionCancellationSingle.activityName,
       comment: sessionCancellationSingle.comment,

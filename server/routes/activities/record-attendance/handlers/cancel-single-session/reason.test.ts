@@ -68,6 +68,21 @@ describe('Route Handlers - Cancel Single Session Reason', () => {
         },
       )
     })
+
+    it('should redirect to record attendance dashboard when record attendance journey data is not available', async () => {
+      req = {
+        query: {},
+        params: {
+          id: '1',
+        },
+        journeyData: {
+          recordAttendanceJourney: undefined,
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance')
+    })
   })
 
   describe('POST', () => {
