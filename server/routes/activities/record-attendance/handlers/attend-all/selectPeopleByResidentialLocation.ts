@@ -91,6 +91,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
         const activitiesForPrisoner = instancesForDateAndSlot.filter(instance =>
           instance.attendances.some(att => att.prisonerNumber === prisoner.prisonerNumber),
         )
+
         const clashes = activitiesForPrisoner.map(instance => {
           return allEvents
             .filter(e => e.prisonerNumber === prisoner.prisonerNumber)
@@ -98,6 +99,30 @@ export default class SelectPeopleByResidentialLocationRoutes {
             .filter(e => eventClashes(e, instance))
             .filter(e => e.eventType !== EventType.APPOINTMENT || applyCancellationDisplayRule(e))
         })
+
+        const attendancesForPrisoner = activitiesForPrisoner.flatMap(a =>
+          a.attendances.filter(att => att.prisonerNumber === prisoner.prisonerNumber),
+        )
+
+        const advanceAttendancesForPrisoner = activitiesForPrisoner.flatMap(a =>
+          a.advanceAttendances.filter(att => att.prisonerNumber === prisoner.prisonerNumber),
+        )
+
+        let isSelectable = false
+        if (notRequiredInAdvanceEnabled && activitiesForPrisoner.some(i => i.isInFuture)) {
+          if (advanceAttendancesForPrisoner.length > 0) {
+            isSelectable = false
+          } else {
+            isSelectable = true
+          }
+        } else if (
+          attendancesForPrisoner.some(a => a.status === AttendanceStatus.WAITING && a.editable) &&
+          activitiesForPrisoner.some(i => i.activitySchedule.activity.attendanceRequired === true)
+        ) {
+          isSelectable = true
+        } else {
+          isSelectable = false
+        }
 
         return result.concat({
           prisoner: {
@@ -109,9 +134,9 @@ export default class SelectPeopleByResidentialLocationRoutes {
             prisonId: prisoner?.prisonId,
           },
           instances: activitiesForPrisoner,
-          attendances: activitiesForPrisoner.flatMap(a =>
-            a.attendances.filter(att => att.prisonerNumber === prisoner.prisonerNumber),
-          ),
+          attendances: attendancesForPrisoner,
+          advanceAttendances: advanceAttendancesForPrisoner,
+          someSelectable: isSelectable,
           otherEventsPerInstance: clashes,
         })
       }

@@ -16,16 +16,20 @@
     {% for attendee in attendanceRows | sort(false, false, 'location') %}
 
         {# IS PRISONER SELECTABLE #}
-        {% if notRequiredInAdvanceEnabled and attendee.instance.isInFuture %}
-            {% if attendee.advancedAttendance %}
-                {% set isSelectable = false %}
-            {% else %}
-                {% set isSelectable = true %}
-            {% endif %}
-        {% elif attendee.attendance.status === "WAITING" and attendee.attendance.editable and attendee.instance.activitySchedule.activity.attendanceRequired === true %}
-            {% set isSelectable = true %}
+        {% if attendee.attendances %}
+            {% set isSelectable = attendee.someSelectable %}
         {% else %}
-            {% set isSelectable = false %}
+            {% if notRequiredInAdvanceEnabled and attendee.instance.isInFuture %}
+                {% if attendee.advancedAttendance %}
+                    {% set isSelectable = false %}
+                {% else %}
+                    {% set isSelectable = true %}
+                {% endif %}
+            {% elif attendee.attendance.status === "WAITING" and attendee.attendance.editable and attendee.instance.activitySchedule.activity.attendanceRequired === true %}
+                {% set isSelectable = true %}
+            {% else %}
+                {% set isSelectable = false %}
+            {% endif %}
         {% endif %}
 
         {# ACTIVITY DETAILS #}
@@ -118,63 +122,65 @@
             {% endif %}
         {% endset %}
 
+        {% set items = [
+            {
+                html: showProfileLink({
+                    firstName: attendee.prisoner.firstName,
+                    middleNames: attendee.prisoner.middleNames,
+                    lastName: attendee.prisoner.lastName,
+                    prisonerNumber: attendee.prisoner.prisonerNumber,
+                    inCaseLoad: attendee.prisoner.prisonId == activeCaseLoadId
+                }),
+                attributes: {
+                    "data-qa": "prisoner-details",
+                    "data-sort-value": attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false)
+                }
+            },
+            {
+                text: statusBasedCellLocation(attendee.prisoner.cellLocation, attendee.prisoner.status, attendee.prisoner.prisonId == activeCaseLoadId),
+                attributes: {
+                    "data-qa": "location"
+                }
+            }
+        ] %}
+        {% if includeActivityColumn %}
+            {% set items = (items.push({
+                html: activityDetails,
+                classes: "multi-row--cell",
+                attributes: {
+                    "data-qa": "activity"
+                }
+            }), items) %}
+        {% endif %}
+        {% if includeTimeColumn %}
+            {% set items = (items.push({   
+                text: attendee.instance.startTime + ' to ' + attendee.instance.endTime,
+                attributes: {
+                    "data-qa": "time",
+                    "data-sort-value": attendee.instance.startTime + ' to ' + attendee.instance.endTime
+                }
+            }), items) %}
+        {% endif %}
+        {% set items = (items.push({
+            html: clashesHtml,
+            classes: "multi-row--cell",
+            attributes: {
+                "data-qa": "other-events"
+            }
+        },
+        {
+            html: attendanceTagDetails,
+            classes: "multi-row--cell",
+            attributes: {
+                "data-qa": "attendance"
+            }
+        }), items) %}
 
         {% set rows = (rows.push({
             visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
             value: attendee.instance.id + '-' + attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
             selectable: isSelectable,
-            items: [
-                {
-                    html: showProfileLink({
-                        firstName: attendee.prisoner.firstName,
-                        middleNames: attendee.prisoner.middleNames,
-                        lastName: attendee.prisoner.lastName,
-                        prisonerNumber: attendee.prisoner.prisonerNumber,
-                        inCaseLoad: attendee.prisoner.prisonId == activeCaseLoadId
-                    }),
-                    attributes: {
-                        "data-qa": "prisoner-details",
-                        "data-sort-value": attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false)
-                    }
-                },
-                {
-                    text: statusBasedCellLocation(attendee.prisoner.cellLocation, attendee.prisoner.status, attendee.prisoner.prisonId == activeCaseLoadId),
-                    attributes: {
-                        "data-qa": "location"
-                    }
-                },
-                {
-                    html: activityDetails,
-                    classes: "multi-row--cell",
-                    attributes: {
-                        "data-qa": "activity"
-                    }
-                } if includeActivityColumn,
-                {   
-                    text: attendee.instance.startTime + ' to ' + attendee.instance.endTime,
-                    attributes: {
-                        "data-qa": "time",
-                        "data-sort-value": attendee.instance.startTime + ' to ' + attendee.instance.endTime
-                    }
-                } if includeTimeColumn,
-                {
-                    html: clashesHtml,
-                    classes: "multi-row--cell",
-                    attributes: {
-                        "data-qa": "other-events"
-                    }
-                },
-                {
-                    html: attendanceTagDetails,
-                    classes: "multi-row--cell",
-                    attributes: {
-                        "data-qa": "attendance"
-                    }
-                },
-                {
-                    html: renderViewLink(attendee)
-                }
-            ]
+            items: items
         }), rows) %}
     {% endfor %}
 
@@ -198,6 +204,39 @@
         ] %}
     {% endif %}
 
+    {% set headers = [
+        {
+            text: "Name",
+            attributes: { "aria-sort": "none" }
+        },
+        {
+            text: "Cell location",
+            attributes: { "aria-sort": "none" }
+        }
+    ] %}
+    {% if includeActivityColumn %}
+        {% set headers = (headers.push({
+            text: "Activity",
+            attributes: { "aria-sort": "ascending" },
+            classes: 'hmpps-max-width-240'
+        }), headers) %}
+    {% endif %}
+    {% if includeTimeColumn %}
+        {% set headers = (headers.push({
+            text: "Time",
+            attributes: { "aria-sort": "ascending" }
+        }), headers) %}
+    {% endif %}
+    {% set headers = (headers.push({
+            text: "Clashing events"
+        },
+        {
+            text: "Attendance and pay",
+            colspan: 2,
+            attributes: { "aria-sort": "none" }
+        }
+    ), headers) %}
+
     {{ stickySelect({
         type: 'check',
         id: "attendanceList",
@@ -205,33 +244,7 @@
         captionClasses: "govuk-visually-hidden",
         classes: 'sticky-header',
         name: 'selectedAttendances',
-        head: [
-            {
-                text: "Name",
-                attributes: { "aria-sort": "none" }
-            },
-            {
-                text: "Cell location",
-                attributes: { "aria-sort": "none" }
-            },
-            {
-                text: "Activity",
-                attributes: { "aria-sort": "ascending" },
-                classes: 'hmpps-max-width-240'
-            } if includeActivityColumn,
-            {
-                text: "Time",
-                attributes: { "aria-sort": "ascending" }
-            } if includeTimeColumn,
-            {
-                text: "Clashing events"
-            },
-            {
-                text: "Attendance and pay",
-                colspan: 2,
-                attributes: { "aria-sort": "none" }
-            }
-        ],
+        head: headers,
         rows: rows,
         actions: formActions,
         itemsDescription: 'attendee',
