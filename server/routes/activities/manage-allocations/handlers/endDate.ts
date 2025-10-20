@@ -55,7 +55,7 @@ export default class EndDateRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { allocateJourney } = req.journeyData
     const nextAvailableInstance = allocateJourney.scheduledInstance || null
-    res.locals.allocateJourney = req.journeyData.allocateJourney
+    // res.locals.allocateJourney = req.journeyData.allocateJourney
 
     if (nextAvailableInstance) {
       const nextSessionDateAndTime = parseDate(
