@@ -268,7 +268,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
         },
       })
     })
-    it("doesn't fail with runtime error if updatedExclusions is undefined", async () => {
+    it('should redirect to exclusions page if updatedExclusions is undefined', async () => {
       when(activitiesService.getActivitySchedule)
         .calledWith(atLeast(876))
         .mockResolvedValue(activitySchedule2 as unknown as ActivitySchedule)
@@ -293,7 +293,7 @@ describe('Route Handlers - Allocate - Check answers', () => {
       req.journeyData.allocateJourney.updatedExclusions = undefined
 
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalled()
+      expect(res.redirect).toHaveBeenCalledWith('exclusions')
     })
   })
 
