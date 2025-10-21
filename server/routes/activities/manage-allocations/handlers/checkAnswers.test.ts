@@ -268,6 +268,13 @@ describe('Route Handlers - Allocate - Check answers', () => {
         },
       })
     })
+
+    it('should redirect to allocations dashboard when allocate journey data is not available', async () => {
+      req.journeyData.allocateJourney = undefined
+      req.routeContext = { mode: 'create' }
+      await handler.GET(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('/activities/allocations')
+    })
   })
 
   describe('POST', () => {
