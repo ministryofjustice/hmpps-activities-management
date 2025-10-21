@@ -15,8 +15,8 @@
 {% from "partials/showLocation.njk" import showLocation %}
 {% from "partials/service-user-name.njk" import serviceUserName %}
 
-{% set pageTitle = applicationName + " - Select people to record attendance for" %}
-{% set pageId = 'select-people-to-record-attendance-for-page' %}
+{% set pageTitle = applicationName + " - Select people by residential location" %}
+{% set pageId = 'select-people-by-residential-location-page' %}
 {% set hardBackLinkText = 'Back' %}
 {% set hardBackLinkHref = "choose-details-by-residential-location" %}
 
@@ -48,22 +48,4 @@
     </div>
 {% endblock %}
 
-    {% macro renderOtherEvents(otherEvents) %}
-        {% for event in otherEvents %}
-            {{ otherEvent(event, true) }}
-            {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border">{% endif %}
-        {% endfor %}
-    {% endmacro %}
-
-    {% macro renderViewLink(attendee) %}
-        {% if attendee.attendance.status === 'COMPLETED' or attendee.attendance.attendanceHistory | length %}
-            <a href="{{ attendee.instance.id }}/attendance-details/{{ attendee.attendance.id }}" class="govuk-link govuk-link--no-visited-state">
-                {% if attendee.attendance.editable and attendee.instance.activitySchedule.activity.attendanceRequired %}
-                View or Edit
-            {% else %}
-                View
-            {% endif %}
-            </a>
-        {% endif %}
-    {% endmacro %}
     

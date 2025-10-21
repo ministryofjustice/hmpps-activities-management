@@ -128,5 +128,9 @@
     flex-direction: column;
     justify-content: space-evenly;
     height: 100%;
+
+    .govuk-tag {
+      margin-bottom: 0 !important;
+    }
   }
 }

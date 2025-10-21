@@ -1,4 +1,4 @@
-import { startOfDay, startOfToday, toDate } from 'date-fns'
+import { addDays, startOfDay, startOfToday, toDate } from 'date-fns'
 import { Request, Response } from 'express'
 import _ from 'lodash'
 import { asString, eventClashes, formatName, getAttendanceSummary } from '../../../../../utils/utils'
@@ -36,8 +36,9 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
     const activityDate = date ? toDate(asString(date)) : new Date()
 
-    // if (startOfDay(activityDate) > startOfDay(addDays(new Date(), 60)))
-    //   return res.redirect('choose-details-to-record-attendance')
+    if (startOfDay(activityDate) > startOfDay(addDays(new Date(), 60)))
+      return res.redirect('choose-details-by-residential-location')
+
     const location = await this.activitiesService
       .getLocationGroups(user)
       .then(locations => locations.find(loc => loc.key === locationKey))
@@ -60,8 +61,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
       user,
     )
 
-    // Get all prisoners located in the main location by cell prefix e.g. MDI-1-.+
-    const results = await this.prisonService.searchPrisonersByLocationPrefix(
+    const prisonersForLocation = await this.prisonService.searchPrisonersByLocationPrefix(
       user.activeCaseLoadId,
       locationPrefix.replaceAll('.', '').replaceAll('+', ''),
       0,
@@ -69,22 +69,24 @@ export default class SelectPeopleByResidentialLocationRoutes {
       user,
     )
 
-    const attendees = (
-      await Promise.all(instancesForDateAndSlot.map(a => this.activitiesService.getAttendees(a.id, user)))
-    )
-      .flat()
-      .reduce((accumulator, currentValue) => {
-        const existingIndex = accumulator.findIndex(a => a.prisonerNumber === currentValue.prisonerNumber)
-        if (existingIndex !== -1) {
-          accumulator[existingIndex].scheduledInstanceIds.push(currentValue.scheduledInstanceId)
-        } else {
-          accumulator.push({
-            prisonerNumber: currentValue.prisonerNumber,
-            scheduledInstanceIds: [currentValue.scheduledInstanceId],
-          })
-        }
-        return accumulator
-      }, [])
+    const attendanceList =
+      instancesForDateAndSlot[0].attendances.length > 0
+        ? instancesForDateAndSlot.map(a => a.attendances)
+        : await Promise.all(instancesForDateAndSlot.map(a => this.activitiesService.getAttendees(a.id, user)))
+    const selector = instancesForDateAndSlot[0].attendances.length > 0 ? 'scheduleInstanceId' : 'scheduledInstanceId'
+
+    const attendees = attendanceList.flat().reduce((accumulator, currentValue) => {
+      const existingIndex = accumulator.findIndex(a => a.prisonerNumber === currentValue.prisonerNumber)
+      if (existingIndex !== -1) {
+        accumulator[existingIndex].scheduledInstanceIds.push(currentValue[selector])
+      } else {
+        accumulator.push({
+          prisonerNumber: currentValue.prisonerNumber,
+          scheduledInstanceIds: [currentValue[selector]],
+        })
+      }
+      return accumulator
+    }, [])
 
     const attendingPrisonerNumbers = Array.from(new Set(attendees.map(a => a.prisonerNumber)))
 
@@ -101,7 +103,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
       ...otherEvents.adjudications,
     ]
 
-    const prisonersWithActivities = results?.content?.reduce((result, prisoner) => {
+    const prisonersWithActivities = prisonersForLocation?.content?.reduce((result, prisoner) => {
       if (attendingPrisonerNumbers.includes(prisoner.prisonerNumber)) {
         const activitiesForPrisoner = attendees
           .find(a => a.prisonerNumber === prisoner.prisonerNumber)
@@ -149,7 +151,9 @@ export default class SelectPeopleByResidentialLocationRoutes {
             prisonId: prisoner?.prisonId,
           },
           instances: activitiesForPrisoner,
+          instanceIds: activitiesForPrisoner.map(i => i.id),
           attendances: attendancesForPrisoner,
+          attendanceIds: attendancesForPrisoner.map(a => a.id),
           advanceAttendances: advanceAttendancesForPrisoner,
           someSelectable: isSelectable,
           otherEventsPerInstance: clashes,

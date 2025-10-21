@@ -175,13 +175,21 @@
                 "data-qa": "attendance"
             }
         }), items) %}
-
-        {% set rows = (rows.push({
-            visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
-            value: attendee.instance.id + '-' + attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
-            selectable: isSelectable,
-            items: items
-        }), rows) %}
+        {% if attendee.instances %}
+            {% set rows = (rows.push({
+                visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
+                value: attendee.instanceIds + '-' + attendee.attendanceIds + '-' + attendee.prisoner.prisonerNumber,
+                selectable: isSelectable,
+                items: items
+            }), rows) %}
+        {% else %}
+            {% set rows = (rows.push({
+                visuallyHiddenText: 'Select ' + attendee.prisoner | formatName(NameFormatStyle.lastCommaFirst, false),
+                value: attendee.instance.id + '-' + attendee.attendance.id + '-' + attendee.prisoner.prisonerNumber,
+                selectable: isSelectable,
+                items: items
+            }), rows) %}
+        {% endif %}
     {% endfor %}
 
     {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
