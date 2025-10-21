@@ -45,6 +45,9 @@ import ChooseDetailsByActivityLocationRoutes, {
   ChooseDetailsByActivityLocationForm,
 } from './handlers/attend-all/chooseDetailsByActivityLocation'
 import ListActivitiesRoutes from './handlers/attend-all/listActivities'
+import ChooseDetailsByResidentialLocationRoutes, {
+  ChooseDetailsByResidentialLocationForm,
+} from './handlers/attend-all/chooseDetailsByResidentialLocation'
 
 export default function Index({
   activitiesService,
@@ -102,10 +105,8 @@ export default function Index({
   )
   const howToRecordAttendanceRoutes = new HowToRecordAttendanceRoutes()
   const chooseDetailsToRecordAttendanceRoutes = new ChooseDetailsToRecordAttendanceRoutes(activitiesService)
-  const chooseDetailsByActivityLocationRoutes = new ChooseDetailsByActivityLocationRoutes(
-    activitiesService,
-    locationsService,
-  )
+  const chooseDetailsByActivityLocationRoutes = new ChooseDetailsByActivityLocationRoutes(locationsService)
+  const chooseDetailsByResidentialLocationRoutes = new ChooseDetailsByResidentialLocationRoutes(activitiesService)
   const selectPeopleToRecordattendanceForRoutes = new SelectPeopleToRecordAttendanceForRoutes(
     activitiesService,
     prisonService,
@@ -254,6 +255,12 @@ export default function Index({
     '/:journeyId/attend-all/choose-details-by-activity-location',
     chooseDetailsByActivityLocationRoutes.POST,
     ChooseDetailsByActivityLocationForm,
+  )
+  get('/:journeyId/attend-all/choose-details-by-residential-location', chooseDetailsByResidentialLocationRoutes.GET)
+  post(
+    '/:journeyId/attend-all/choose-details-by-residential-location',
+    chooseDetailsByResidentialLocationRoutes.POST,
+    ChooseDetailsByResidentialLocationForm,
   )
 
   get('/:journeyId/attend-all/select-people-to-record-attendance-for', selectPeopleToRecordattendanceForRoutes.GET)

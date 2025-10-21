@@ -18,7 +18,7 @@ import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceD
 import ActivitiesIndexPage from '../../../pages/activities'
 import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 
-context('Record attendance', () => {
+context('Record attendance for activity hub users', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
 
   beforeEach(() => {

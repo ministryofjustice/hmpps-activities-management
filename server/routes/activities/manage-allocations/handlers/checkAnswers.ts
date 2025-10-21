@@ -24,7 +24,11 @@ export default class CheckAnswersRoutes {
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
 
-    const allocationSlots = activitySlotsMinusExclusions(mergeExclusionSlots(updatedExclusions), schedule.slots)
+    if (!updatedExclusions) {
+      return res.redirect('exclusions')
+    }
+
+    const allocationSlots = activitySlotsMinusExclusions(mergeExclusionSlots(updatedExclusions ?? []), schedule.slots)
     const dailySlots = sessionSlotsToSchedule(schedule.scheduleWeeks, allocationSlots)
     const currentWeek = calcCurrentWeek(parseDate(activity.startDate), schedule.scheduleWeeks)
 

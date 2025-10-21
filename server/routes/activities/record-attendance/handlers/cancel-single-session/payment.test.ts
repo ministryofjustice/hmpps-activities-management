@@ -48,6 +48,23 @@ describe('Route Handlers - Cancel Single Session Payment', () => {
         activityName: 'Kitchen tasks',
       })
     })
+
+    it('should redirect to record attendance dashboard when cancel single session data is not available', async () => {
+      req = {
+        query: {},
+        params: {
+          id: '1',
+        },
+        journeyData: {
+          recordAttendanceJourney: {
+            sessionCancellationSingle: undefined,
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance')
+    })
   })
 
   describe('POST', () => {

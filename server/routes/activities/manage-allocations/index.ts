@@ -9,6 +9,7 @@ import ViewAllocationRoutes from './handlers/viewAllocation'
 import initialiseEditAndRemoveJourney from './middlewares/initialiseEditAndRemoveJourney'
 import insertRouteContext from '../../../middleware/routeContext'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
+import syncJourneyDataToLocals from '../../../middleware/syncJourneyDataToLocals'
 
 export default function Index(services: Services): Router {
   const router = Router({ mergeParams: true })
@@ -40,6 +41,7 @@ export default function Index(services: Services): Router {
     insertRouteContext('remove'),
     setUpJourneyData(services.tokenStore),
     initialiseEditAndRemoveJourney(services.prisonService, services.activitiesService),
+    syncJourneyDataToLocals(),
     removeRoutes(services),
   )
   router.use(
@@ -47,6 +49,7 @@ export default function Index(services: Services): Router {
     insertRouteContext('edit'),
     setUpJourneyData(services.tokenStore),
     initialiseEditAndRemoveJourney(services.prisonService, services.activitiesService),
+    syncJourneyDataToLocals(),
     editRoutes(services),
   )
   router.use(
@@ -54,6 +57,7 @@ export default function Index(services: Services): Router {
     insertRouteContext('exclude'),
     setUpJourneyData(services.tokenStore),
     initialiseEditAndRemoveJourney(services.prisonService, services.activitiesService),
+    syncJourneyDataToLocals(),
     excludeRoutes(services),
   )
 

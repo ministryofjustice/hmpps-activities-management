@@ -191,6 +191,23 @@ describe('Route Handlers - Cancel Multiple Sessions Check Answers', () => {
         },
       )
     })
+
+    it('should redirect to record attendance dashboard when cancel multiple session data is not available', async () => {
+      req = {
+        query: {},
+        params: {
+          id: '1',
+        },
+        journeyData: {
+          recordAttendanceJourney: {
+            sessionCancellationMultiple: undefined,
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance')
+    })
   })
 
   describe('POST', () => {

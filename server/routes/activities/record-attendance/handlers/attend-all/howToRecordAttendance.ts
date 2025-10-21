@@ -28,7 +28,7 @@ export default class HowToRecordAttendanceRoutes {
       case 'ACTIVITY_LOCATION':
         return res.redirect('choose-details-by-activity-location')
       case 'RESIDENTIAL_LOCATION':
-        return res.redirect('')
+        return res.redirect('choose-details-by-residential-location')
       default:
         return res.redirect('')
     }

@@ -274,6 +274,32 @@ describe('Route Handlers - Allocate - Check answers', () => {
       req.routeContext = { mode: 'create' }
       await handler.GET(req, res)
       expect(res.redirect).toHaveBeenCalledWith('/activities/allocations')
+    it('should redirect to exclusions page if updatedExclusions is undefined', async () => {
+      when(activitiesService.getActivitySchedule)
+        .calledWith(atLeast(876))
+        .mockResolvedValue(activitySchedule2 as unknown as ActivitySchedule)
+
+      when(activitiesService.getDeallocationReasons).mockResolvedValue([
+        { code: 'COMPLETED', description: 'Completed' },
+      ])
+
+      req.journeyData.allocateJourney.activity = {
+        activityId: 877,
+        scheduleId: 876,
+        name: 'EDUCATION COURSE ALBANY',
+        location: 'SITE 2',
+        inCell: false,
+        onWing: false,
+        offWing: false,
+        startDate: '2024-09-24',
+        endDate: null,
+        scheduleWeeks: 1,
+        paid: true,
+      }
+      req.journeyData.allocateJourney.updatedExclusions = undefined
+
+      await handler.GET(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('exclusions')
     })
   })
 
