@@ -62,6 +62,28 @@ describe('Route Handlers - Cancel Single Session Check Answers', () => {
             },
           },
         },
+        {
+          id: 3,
+          timeSlot: 'ED',
+          activitySchedule: {
+            id: 4,
+            activity: {
+              id: 4,
+              paid: true,
+            },
+          },
+        },
+        {
+          id: 2,
+          timeSlot: 'PM',
+          activitySchedule: {
+            id: 3,
+            activity: {
+              id: 3,
+              paid: true,
+            },
+          },
+        },
       ] as ScheduledActivity[]
 
       when(activitiesService.getScheduledActivities)
@@ -182,6 +204,23 @@ describe('Route Handlers - Cancel Single Session Check Answers', () => {
           activitiesRedirectUrl,
         },
       )
+    })
+
+    it('should redirect to record attendance dashboard when cancel single session data is not available', async () => {
+      req = {
+        query: {},
+        params: {
+          id: '1',
+        },
+        journeyData: {
+          recordAttendanceJourney: {
+            sessionCancellationSingle: undefined,
+          },
+        },
+      } as unknown as Request
+
+      await handler.GET(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance')
     })
   })
 

@@ -8,6 +8,11 @@ export default class CancelMultipleSessionsCheckAnswersRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+
+    if (!req.journeyData.recordAttendanceJourney.sessionCancellationMultiple) {
+      return res.redirect('/activities/attendance')
+    }
+
     const { activityDate, sessionFilters, selectedInstanceIds, sessionCancellationMultiple } =
       req.journeyData.recordAttendanceJourney
 
@@ -33,7 +38,7 @@ export default class CancelMultipleSessionsCheckAnswersRoutes {
       }
     })
 
-    res.render('pages/activities/record-attendance/cancel-multiple-sessions/check-answers', {
+    return res.render('pages/activities/record-attendance/cancel-multiple-sessions/check-answers', {
       instances,
       isPayable,
       comment: sessionCancellationMultiple.comment,
