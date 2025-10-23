@@ -11,7 +11,9 @@
 {# Required instance details: isInFuture, activitySchedule #}
 {# Required attendanceRows details: advancedAttendance, attendance, prisoner, instance #}
 
-{% macro attendanceRowsTableWithStickySelect(attendanceRows, instance, activeCaseLoadId, includeActivityColumn, includeTimeColumn) %}
+{% macro attendanceRowsTableWithStickySelect(attendanceRows, instance, activeCaseLoadId, includeActivityColumn, includeTimeColumn, formActionPrefix) %}
+    {% set actionPrefix = formActionPrefix | default('') %}
+
     {% set rows = [] %}
     {% for attendee in attendanceRows | sort(false, false, 'location') %}
 
@@ -196,18 +198,18 @@
         {% set formActions = [
             {
                 text: 'Mark as not required or excused',
-                formAction: 'not-required-or-excused'
+                formAction: actionPrefix + 'not-required-or-excused'
             }
         ] %}
     {% else %}
         {% set formActions = [
             {
                 text: 'Mark as attended',
-                formAction: 'attended'
+                formAction: actionPrefix + 'attended'
             },
             {
                 text: 'Mark as not attended',
-                formAction: 'not-attended'
+                formAction: actionPrefix + 'not-attended'
             }
         ] %}
     {% endif %}

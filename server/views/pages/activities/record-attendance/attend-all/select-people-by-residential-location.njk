@@ -42,7 +42,7 @@
         <div class="govuk-grid-column-full">
             <form method='POST' data-module="form-spinner" data-loading-text="Marking attendance">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-                {{ attendanceRowsTableWithStickySelect(attendanceRows, instance, user.activeCaseLoadId, true, false) }}
+                {{ attendanceRowsTableWithStickySelect(attendanceRows, instance, user.activeCaseLoadId, true, false, 'select-people-by-residential-location/') }}
             </form>
         </div>
     </div>

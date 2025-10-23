@@ -167,10 +167,8 @@ export default class SelectPeopleByResidentialLocationRoutes {
       location,
       activityDate,
       timePeriodFilter,
-      singleInstance: instancesForDateAndSlot.length === 1,
       instance: instancesForDateAndSlot.length > 0 ? instancesForDateAndSlot[0] : null,
       instancesForDateAndSlot,
-      selectedSessions: instancesForDateAndSlot.map(a => a.timeSlot),
       attendanceSummary: getAttendanceSummary(
         prisonersWithActivities.flatMap(row => row.attendances).filter(a => a !== undefined),
       ),
@@ -182,6 +180,11 @@ export default class SelectPeopleByResidentialLocationRoutes {
     if (typeof selectedAttendances === 'string') {
       selectedAttendances = [selectedAttendances]
     }
+
+    if (selectedAttendances.some(attendance => attendance.includes(','))) {
+      return res.redirect('attendance-reason')
+    }
+
     const { user } = res.locals
     let prisonerName
 
