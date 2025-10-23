@@ -30,6 +30,7 @@ describe('Route Handlers - Non Attendance', () => {
         },
       },
       render: jest.fn(),
+      redirect: jest.fn(),
       redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
@@ -344,6 +345,11 @@ describe('Route Handlers - Non Attendance', () => {
   })
 
   describe('POST_MULTIPLE', () => {
+    it('should redirect to attendance dashboard when not attended journey data is not available', async () => {
+      req.journeyData.recordAttendanceJourney.notAttended = undefined
+      await handler.POST(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance')
+    })
     it.each([
       [true, '1/attendance-list'],
       [false, 'attendance-list'],

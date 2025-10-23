@@ -59,6 +59,11 @@ export default class ExclusionRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
+
+    if (!req.journeyData.allocateJourney) {
+      return res.redirect('/activities/allocations')
+    }
+
     const { activity, exclusions, inmate } = req.journeyData.allocateJourney
 
     const activitySchedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
@@ -108,7 +113,7 @@ export default class ExclusionRoutes {
       })
     }
 
-    res.render('pages/activities/manage-allocations/exclusions', {
+    return res.render('pages/activities/manage-allocations/exclusions', {
       prisonerName: inmate.prisonerName,
       weeks,
       disabledSlotsExist: disabledSlots.length > 0,

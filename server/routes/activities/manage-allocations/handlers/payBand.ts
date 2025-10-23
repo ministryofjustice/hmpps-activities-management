@@ -20,13 +20,17 @@ export default class PayBandRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
+    if (!req.journeyData.allocateJourney) {
+      return res.redirect('/activities/allocations')
+    }
+
     const { inmate } = req.journeyData.allocateJourney
 
     const allPayBands: PayBandDetail[] = await this.getActivityPayRates(req, res)
 
     const payBands: PayBandDetail[] = payBandWithDescription(allPayBands)
 
-    res.render('pages/activities/manage-allocations/pay-band', {
+    return res.render('pages/activities/manage-allocations/pay-band', {
       prisonerName: inmate.prisonerName,
       prisonerNumber: inmate.prisonerNumber,
       incentiveLevel: inmate.incentiveLevel,

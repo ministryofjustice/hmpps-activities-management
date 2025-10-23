@@ -15,6 +15,10 @@ export default class CheckAnswersRoutes {
 
   GET = async (req: Request, res: Response) => {
     const { user } = res.locals
+
+    if (!req.journeyData.allocateJourney) {
+      return res.redirect('/activities/allocations')
+    }
     const { deallocationReason, activity, updatedExclusions } = req.journeyData.allocateJourney
     const deallocationReasons = await this.activitiesService.getDeallocationReasons(user)
 

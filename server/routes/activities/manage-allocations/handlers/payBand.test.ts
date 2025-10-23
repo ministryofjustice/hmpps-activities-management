@@ -36,6 +36,7 @@ describe('Route Handlers - Allocate - Pay band', () => {
         },
       },
       render: jest.fn(),
+      redirect: jest.fn(),
       redirectOrReturn: jest.fn(),
       redirectWithSuccess: jest.fn(),
     } as unknown as Response
@@ -128,6 +129,12 @@ describe('Route Handlers - Allocate - Pay band', () => {
           },
         ],
       })
+    })
+
+    it('should redirect to allocations dashboard when allocate journey data is not available', async () => {
+      req.journeyData.allocateJourney = undefined
+      await handler.GET(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('/activities/allocations')
     })
   })
 

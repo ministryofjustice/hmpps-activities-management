@@ -192,6 +192,12 @@ describe('Route Handlers - Allocation - Exclusions', () => {
         ],
       })
     })
+
+    it('should redirect to allocations dashboard when allocate journey data is not available', async () => {
+      req.journeyData.allocateJourney = undefined
+      await handler.GET(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('/activities/allocations')
+    })
   })
 
   describe('POST', () => {
