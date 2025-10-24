@@ -61,4 +61,14 @@ export default class PrisonService {
   async getPrisonerImage(prisonerNumber: string): Promise<Readable> {
     return this.prisonApiClient.getPrisonerImage(prisonerNumber)
   }
+
+  async searchPrisonersByLocationPrefix(
+    prisonCode: string,
+    locationPrefix: string,
+    page: number,
+    size: number,
+    user: ServiceUser,
+  ): Promise<PagePrisoner> {
+    return this.prisonerSearchApiClient.searchPrisonersByLocationPrefix(prisonCode, locationPrefix, page, size, user)
+  }
 }

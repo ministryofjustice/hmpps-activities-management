@@ -49,8 +49,7 @@ export default class ChooseDetailsByResidentialLocationRoutes {
     const { timePeriod, locationKey } = req.body
     const selectedDate = getSelectedDate(req.body)
 
-    const redirectUrl = `tbc?date=${formatIsoDate(selectedDate)}&sessionFilters=${timePeriod}&locationKey=${locationKey}`
-
+    const redirectUrl = `select-people-by-residential-location?date=${formatIsoDate(selectedDate)}&sessionFilters=${timePeriod}&locationKey=${locationKey}`
     return res.redirect(redirectUrl)
   }
 }
