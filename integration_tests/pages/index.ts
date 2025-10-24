@@ -15,7 +15,7 @@ export default class IndexPage extends Page {
   appointmentsManagementCard = (): Cypress.Chainable =>
     cy.cardIsDisplayed(
       '[data-qa=appointments-card]',
-      'Appointments scheduling and attendance',
+      'Appointments',
       'Create, manage and edit appointments. Print movement slips. Record appointment attendance.',
     )
 }

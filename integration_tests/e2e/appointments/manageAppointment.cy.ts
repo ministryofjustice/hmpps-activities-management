@@ -24,7 +24,7 @@ context('Manage appointment', () => {
 
   it('Should be able to view appointments', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.appointmentsManagementCard().should('contain.text', 'Appointments scheduling and attendance')
+    indexPage.appointmentsManagementCard().should('contain.text', 'Appointments')
     indexPage.appointmentsManagementCard().click()
 
     const searchAppointmentsPage = Page.verifyOnPage(AppointmentsManagementPage)
