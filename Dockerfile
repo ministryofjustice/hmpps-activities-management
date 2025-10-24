@@ -24,6 +24,9 @@ RUN test -n "$BUILD_NUMBER" || (echo "BUILD_NUMBER not set" && false)
 RUN test -n "$GIT_REF" || (echo "GIT_REF not set" && false)
 RUN test -n "$GIT_BRANCH" || (echo "GIT_BRANCH not set" && false)
 
+# Ensure npm v11.0.0 is used
+RUN npm install -g npm@11.0.0
+
 # Define env variables for runtime health / info
 ENV BUILD_NUMBER=${BUILD_NUMBER}
 ENV GIT_REF=${GIT_REF}
