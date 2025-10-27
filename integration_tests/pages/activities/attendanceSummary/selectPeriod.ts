@@ -38,8 +38,8 @@ export default class SelectPeriodPage extends Page {
     cy.checkA11y(null, null, this.terminalLog)
 
     // Select day
-    cy.get('.moj-datepicker__calendar').should('be.visible')
-    cy.get('.moj-datepicker__calendar button')
+    cy.get('.moj-datepicker__calendar')
+      .find('button:visible')
       .contains(new RegExp(`^${getDate(date).toString()}$`))
       .click()
 
