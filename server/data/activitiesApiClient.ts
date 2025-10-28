@@ -323,6 +323,18 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
     })
   }
 
+  async getAttendeesForScheduledInstances(
+    scheduledInstanceIds: number[],
+    user: ServiceUser,
+  ): Promise<ScheduledAttendee[]> {
+    return this.post({
+      path: `/scheduled-instances/scheduled-attendees`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+      data: scheduledInstanceIds,
+    })
+  }
+
   async updateAttendances(attendanceUpdates: AttendanceUpdateRequest[], user: ServiceUser): Promise<void> {
     return this.put({
       path: '/attendances',

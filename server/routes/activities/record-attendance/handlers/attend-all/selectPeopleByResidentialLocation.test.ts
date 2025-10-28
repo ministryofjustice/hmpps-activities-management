@@ -198,12 +198,12 @@ describe('Route Handlers - Select people by residential location', () => {
       .calledWith(expect.any(Date), res.locals.user, TimeSlot.AM)
       .mockResolvedValue([scheduledActivity1, scheduledActivity2])
 
-    when(activitiesService.getAttendees)
-      .calledWith(123456, res.locals.user)
+    when(activitiesService.getAttendeesForScheduledInstances)
+      .calledWith([123456], res.locals.user)
       .mockResolvedValue([{ prisonerNumber: 'ABC123', scheduledInstanceId: 123456 }] as ScheduledAttendee[])
 
-    when(activitiesService.getAttendees)
-      .calledWith(123457, res.locals.user)
+    when(activitiesService.getAttendeesForScheduledInstances)
+      .calledWith([123457], res.locals.user)
       .mockResolvedValue([] as ScheduledAttendee[])
 
     when(activitiesService.getScheduledEventsForPrisoners)

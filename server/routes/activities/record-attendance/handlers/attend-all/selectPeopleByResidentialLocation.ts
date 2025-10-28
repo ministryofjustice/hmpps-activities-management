@@ -69,10 +69,12 @@ export default class SelectPeopleByResidentialLocationRoutes {
       user,
     )
 
+    const instancesIds = instancesForDateAndSlot.map(i => i.id)
+
     const attendanceList =
       instancesForDateAndSlot[0].attendances.length > 0
         ? instancesForDateAndSlot.map(a => a.attendances)
-        : await Promise.all(instancesForDateAndSlot.map(a => this.activitiesService.getAttendees(a.id, user)))
+        : await this.activitiesService.getAttendeesForScheduledInstances(instancesIds, user)
     const selector = instancesForDateAndSlot[0].attendances.length > 0 ? 'scheduleInstanceId' : 'scheduledInstanceId'
 
     const attendees = attendanceList.flat().reduce((accumulator, currentValue) => {

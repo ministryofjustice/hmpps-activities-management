@@ -346,6 +346,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.getAttendees(scheduledInstanceId, user)
   }
 
+  async getAttendeesForScheduledInstances(scheduledInstanceIds: number[], user: ServiceUser) {
+    return this.activitiesApiClient.getAttendeesForScheduledInstances(scheduledInstanceIds, user)
+  }
+
   async getScheduledInstanceAttendanceSummary(prisonCode: string, sessionDate: Date, user: ServiceUser) {
     return this.activitiesApiClient.getScheduledInstanceAttendanceSummary(prisonCode, sessionDate, user)
   }
