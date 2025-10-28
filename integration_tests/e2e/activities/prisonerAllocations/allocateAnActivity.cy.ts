@@ -128,7 +128,7 @@ const commonSetup = (waitlistStatus: 'APPROVED' | 'PENDING' | 'ALLOCATED') => {
   cy.stubEndpoint('GET', `/activities/prisoner-allocations/${prisonerNumber}`, prisonerAllocations)
   cy.stubEndpoint('GET', `/rollout/${prisonCode}`, rolloutPlan)
   cy.stubEndpoint('POST', `/waiting-list-applications/${prisonCode}/search`, waitlistResults)
-  cy.stubEndpoint('GET', `/prison/${prisonCode}/activities\\?excludeArchived=true`, getActivities)
+  cy.stubEndpoint('GET', `/prison/${prisonCode}/activities\\?excludeArchived=false`, getActivities)
   cy.stubEndpoint('GET', '/activities/539/filtered', mockActivity)
   cy.stubEndpoint('GET', '/schedules/518', allocationJourney.scheduledInstance.schedule)
   cy.stubEndpoint('GET', `/schedules/518/non-associations\\?prisonerNumber=${prisonerNumber}`, prisonerNonAssociations)
@@ -164,6 +164,8 @@ context('Waitlist - Prisoner Allocations Page', () => {
     prisonerAllocationsPage.getLinkByText('Suspend all allocations').should('be.visible')
     prisonerAllocationsPage.getLinkByText("Aeticake Potta's schedule (opens in new tab)").should('be.visible')
 
+    cy.stubEndpoint('GET', `/prison/${prisonCode}/activities\\?excludeArchived=true`, getActivities)
+
     prisonerAllocationsPage.getLinkByText('Allocate to an activity').should('be.visible').click()
     const waitlistAllocationPage = Page.verifyOnPage(WaitListAllocationPage)
     waitlistAllocationPage.getAllocateToActivityCaption().should('be.visible')
@@ -198,7 +200,10 @@ context('Waitlist - Prisoner Allocations Page', () => {
     prisonerAllocationsPage.getLinkByText('Suspend all allocations').should('be.visible')
     prisonerAllocationsPage.getLinkByText("Aeticake Potta's schedule (opens in new tab)").should('be.visible')
 
+    cy.stubEndpoint('GET', `/prison/${prisonCode}/activities\\?excludeArchived=true`, getActivities)
+
     prisonerAllocationsPage.getLinkByText('Allocate to an activity').should('be.visible').click()
+
     const waitlistAllocationPage = Page.verifyOnPage(WaitListAllocationPage)
     waitlistAllocationPage.getAllocateToActivityCaption().should('be.visible')
     waitlistAllocationPage.selectRadioByLabel('Maths level 1')
@@ -234,6 +239,8 @@ context('Waitlist - Prisoner Allocations Page', () => {
     prisonerAllocationsPage.getLinkByText('Allocate to an activity').should('be.visible')
     prisonerAllocationsPage.getLinkByText('Suspend all allocations').should('be.visible')
     prisonerAllocationsPage.getLinkByText("Aeticake Potta's schedule (opens in new tab)").should('be.visible')
+
+    cy.stubEndpoint('GET', `/prison/${prisonCode}/activities\\?excludeArchived=true`, getActivities)
     prisonerAllocationsPage.getLinkByText('Allocate to an activity').should('be.visible').click()
 
     const searchForActivityPage = Page.verifyOnPage(AllocateActivitySearchPage)

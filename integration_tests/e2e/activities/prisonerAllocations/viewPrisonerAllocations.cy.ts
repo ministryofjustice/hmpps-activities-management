@@ -1,12 +1,16 @@
 import prisonerAllocations from '../../../fixtures/prisonerAllocations/getPrisonerAllocations-60995GW.json'
 import prisonerDetails from '../../../fixtures/prisonerSearchApi/getPrisonerDetails-G0995GW.json'
 import prisonerNonAssociations from '../../../fixtures/nonAssociationsApi/getNonAssociations-G0995GW.json'
+import getActivities from '../../../fixtures/prisonerAllocations/getPrisonerWaitlistActivities.json'
 import getActivity from '../../../fixtures/activitiesApi/getActivity.json'
 import rolloutPlan from '../../../fixtures/activitiesApi/rollout.json'
 import PrisonerAllocationsDashboardPage from '../../../pages/activities/prisonerAllocations/PrisonerAllocationsDashboardPage'
 import NonAssociationsPage from '../../../pages/activities/prisonerAllocations/NonAssociationsPage'
 import Page from '../../../pages/page'
+import RequestDatePage from '../../../pages/activities/waitlist/requestDatePage'
 import { WaitingListApplicationPaged } from '../../../../server/@types/activitiesAPI/types'
+
+const prisonCode = 'MDI'
 
 context('Prisoner Allocations Page', () => {
   beforeEach(() => {
@@ -21,46 +25,42 @@ context('Prisoner Allocations Page', () => {
     // waitlist applications data
     const mockWaitlistApplications = [
       {
-        id: 213,
+        id: 1,
         activityId: 539,
-        scheduleId: 518,
+        scheduleId: 1,
         allocationId: null,
-        prisonCode: 'MDI',
-        prisonerNumber: '60995GW2',
-        bookingId: 1136879,
-        status: 'APPROVED',
-        statusUpdatedTime: '2025-07-16T15:20:10',
+        prisonerNumber: 'G0995GW',
+        status: 'DECLINED',
         requestedDate: '2025-06-24',
         requestedBy: 'PRISONER',
-        comments: 'Test',
-        declinedReason: null,
-        creationTime: '2025-06-24T08:34:22',
-        createdBy: 'SCH_ACTIVITY',
-        updatedTime: '2025-07-16T15:20:10',
-        updatedBy: 'DTHOMAS_GEN',
-        earliestReleaseDate: {
-          releaseDate: '2018-01-26',
-          isTariffDate: false,
-          isIndeterminateSentence: false,
-          isImmigrationDetainee: false,
-          isConvictedUnsentenced: false,
-          isRemand: false,
-        },
-        nonAssociations: false,
         activity: {
           id: 539,
-          activityName: 'A Wing Cleaner 2',
+          activityName: 'Maths level 1',
           category: {
-            id: 3,
-            code: 'SAA_PRISON_JOBS',
-            name: 'Prison jobs',
-            description:
-              'Such as kitchen, cleaning, gardens or other maintenance and services to keep the prison running',
+            id: 1,
+            code: 'EDU',
+            name: 'Education',
           },
-          capacity: 8,
-          allocated: 4,
-          waitlisted: 3,
-          createdTime: '2023-10-23T09:59:24',
+          activityState: 'LIVE',
+        },
+      },
+      {
+        id: 2,
+        activityId: 2,
+        scheduleId: 2,
+        allocationId: null,
+        prisonerNumber: 'G0995GW',
+        status: 'APPROVED',
+        requestedDate: '2025-04-01',
+        requestedBy: 'STAFF',
+        activity: {
+          id: 2,
+          activityName: 'English level 1',
+          category: {
+            id: 1,
+            code: 'EDU',
+            name: 'Education',
+          },
           activityState: 'LIVE',
         },
       },
@@ -80,6 +80,7 @@ context('Prisoner Allocations Page', () => {
     cy.stubEndpoint('GET', '/prisoner/G0995GW/non-associations', prisonerNonAssociations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('GET', '/activities/prisoner-allocations/G0995GW', prisonerAllocations)
+    cy.stubEndpoint('GET', `/prison/${prisonCode}/activities\\?excludeArchived=false`, getActivities)
     cy.stubEndpoint('GET', '/rollout/MDI', rolloutPlan)
     cy.stubEndpoint('GET', '/activities/2/filtered', getActivity2)
     cy.stubEndpoint('GET', '/activities/45/filtered', getActivity45)
@@ -105,6 +106,30 @@ context('Prisoner Allocations Page', () => {
     prisonerAllocationsPage.getLinkByText('Allocate to an activity').should('be.visible')
     prisonerAllocationsPage.getLinkByText('Suspend all allocations').should('be.visible')
     prisonerAllocationsPage.getLinkByText("Aeticake Potta's schedule (opens in new tab)").should('be.visible')
+  })
+
+  it('Should display prisoner waitlist tab correctly', () => {
+    cy.visit('/activities/prisoner-allocations/G0995GW')
+    const prisonerAllocationsPage = Page.verifyOnPage(PrisonerAllocationsDashboardPage)
+
+    const expectedDetails = [
+      { label: 'Location', value: 'A-N-3-30N' },
+      { label: 'Incentive level', value: 'Standard' },
+      { label: 'Earliest release date', value: '30 November 2019' },
+      { label: 'Workplace risk assessment', value: 'None' },
+    ]
+    const linkLabels = ['Location', 'Incentive level', 'Earliest release date']
+    prisonerAllocationsPage.getPrisonerName('Aeticake Potta').should('be.visible')
+    prisonerAllocationsPage.verifyMiniProfileDetails(expectedDetails)
+    prisonerAllocationsPage.verifyMiniProfileLinks(linkLabels)
+    prisonerAllocationsPage.getLinkByText('Waitlists and Applications').click()
+    prisonerAllocationsPage.rows('approved-applications').should('have.length', 1)
+    prisonerAllocationsPage.checkTableCell('approved-applications', 0, 'English level 1')
+    cy.get('#pendingApplications').contains('reviewed or are still pending')
+    prisonerAllocationsPage.rows('rejected-applications').should('have.length', 1)
+    prisonerAllocationsPage.checkTableCell('rejected-applications', 0, 'Maths level 1')
+    prisonerAllocationsPage.getLinkByText('Log an activity application').should('be.visible').click()
+    Page.verifyOnPage(RequestDatePage)
   })
 
   it('Should display non-associations page correctly', () => {

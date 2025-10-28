@@ -8,7 +8,11 @@ import config from '../../../../config'
 import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { PrisonerNonAssociations } from '../../../../@types/nonAssociationsApi/types'
-import { PrisonerAllocations, WaitingListApplicationPaged } from '../../../../@types/activitiesAPI/types'
+import {
+  ActivitySummary,
+  PrisonerAllocations,
+  WaitingListApplicationPaged,
+} from '../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -30,6 +34,24 @@ const mockPrisoner: Prisoner = {
   releaseDate: '2019-11-30',
   alerts: [{ alertType: 'R', alertCode: 'RLO', active: true, expired: false }],
 } as Prisoner
+
+const mockActivities = [
+  {
+    id: 539,
+    activityName: 'A Wing Cleaner 2',
+    activityState: 'LIVE',
+  },
+  {
+    id: 110,
+    activityName: 'A Wing Orderly',
+    activityState: 'LIVE',
+  },
+  {
+    id: 310,
+    activityName: 'B Wing Orderly',
+    activityState: 'LIVE',
+  },
+] as ActivitySummary[]
 
 const mockNonAssociations = {
   nonAssociations: [],
@@ -54,31 +76,25 @@ const mockAllocationsIds = [1234, 5678]
 
 const mockWaitlistApplications = [
   {
-    id: 213,
+    id: 1,
     prisonerNumber: 'ABC123',
     status: 'APPROVED',
-    activity: {
-      id: 539,
-      activityName: 'A Wing Cleaner 2',
-    },
+    activityId: 539,
+    activityName: 'A Wing Cleaner 2',
   },
   {
-    id: 213,
+    id: 2,
     prisonerNumber: 'ABC123',
     status: 'ALLOCATED',
-    activity: {
-      id: 110,
-      activityName: 'A Wing Orderly',
-    },
+    activityId: 110,
+    activityName: 'A Wing Orderly',
   },
   {
-    id: 213,
+    id: 3,
     prisonerNumber: 'ABC123',
     status: 'PENDING',
-    activity: {
-      id: 310,
-      activityName: 'B Wing Orderly',
-    },
+    activityId: 310,
+    activityName: 'B Wing Orderly',
   },
 ]
 
@@ -91,24 +107,33 @@ const mockWaitingListSearchResults = {
   last: false,
 } as unknown as WaitingListApplicationPaged
 
-const mockApprovedPendingWaitlist = [
+const mockApprovedWaitlist = [
   {
-    id: 213,
+    activity: {
+      activityName: 'A Wing Cleaner 2',
+      activityState: 'LIVE',
+      id: 539,
+    },
+    id: 1,
+    activityId: 539,
     prisonerNumber: 'ABC123',
     status: 'APPROVED',
-    activity: {
-      id: 539,
-      activityName: 'A Wing Cleaner 2',
-    },
+    activityName: 'A Wing Cleaner 2',
   },
+]
+
+const mockPendingWaitlist = [
   {
-    id: 213,
+    activity: {
+      activityName: 'B Wing Orderly',
+      activityState: 'LIVE',
+      id: 310,
+    },
+    id: 3,
+    activityId: 310,
     prisonerNumber: 'ABC123',
     status: 'PENDING',
-    activity: {
-      id: 310,
-      activityName: 'B Wing Orderly',
-    },
+    activityName: 'B Wing Orderly',
   },
 ]
 
@@ -148,6 +173,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
       req.params.prisonerNumber = 'ABC123'
 
       when(prisonService.getInmateByPrisonerNumber).calledWith(atLeast('ABC123')).mockResolvedValue(mockPrisoner)
+      when(activitiesService.getActivities).calledWith(false, res.locals.user).mockResolvedValue(mockActivities)
       when(activitiesService.getActivePrisonPrisonerAllocations)
         .calledWith(atLeast(['ABC123']))
         .mockResolvedValue(mockPrisonerAllocations)
@@ -166,7 +192,10 @@ describe('Route Handlers - Prisoner Allocations', () => {
         allocationsData: mockAllocationsData,
         activeAllocationIdsForSuspending: mockAllocationsIds,
         locationStatus: 'Temporarily out from Leicester Prison',
-        approvedPendingWaitlist: mockApprovedPendingWaitlist,
+        approvedApplications: mockApprovedWaitlist,
+        pendingApplications: mockPendingWaitlist,
+        rejectedApplications: [],
+        withdrawnApplications: [],
       })
     })
   })

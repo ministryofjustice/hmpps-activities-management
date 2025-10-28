@@ -7,6 +7,21 @@ export default class PrisonerAllocationsDashboardPage extends Page {
 
   getPrisonerName = (name: string): Cypress.Chainable => cy.contains(name)
 
+  rows = (applicationId: string): Cypress.Chainable =>
+    cy
+      .get(`[data-qa="${applicationId}"]`)
+      .find('.govuk-table__body')
+      .find('tr')
+      .then($el => {
+        return Cypress.$.makeArray($el)
+      })
+
+  checkTableCell = (table, cellNumber, contents) => {
+    cy.get(`[data-qa=${table}]`)
+      .find('td')
+      .then($data => expect($data.get(cellNumber).innerText).to.contain(contents))
+  }
+
   verifyMiniProfileDetails = (expectedDetails: { label: string; value: string }[]) => {
     cy.get('.mini-profile__details').within(() => {
       expectedDetails.forEach(({ label, value }) => {

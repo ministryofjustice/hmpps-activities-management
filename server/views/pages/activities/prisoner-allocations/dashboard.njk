@@ -37,6 +37,10 @@
     {% include 'partials/activities/allocation-dashboard/allocationsHtml.njk' %}
     {% endset %}
 
+    {% set prisonerWaitlistHtml %}
+    {% include 'partials/activities/allocation-dashboard/prisonerWaitlistHtml.njk' %}
+    {% endset %}
+
     {{ govukTabs({
         classes: "govuk-tabs--borderless",
         items: [
@@ -45,6 +49,13 @@
                 id: "allocations-tab",
                 panel: {
                     html: allocationsHtml
+                }
+            },
+               {
+                label: "Waitlists and Applications",
+                id: "prisoner-waitlist-tab",
+                panel: {
+                    html: prisonerWaitlistHtml
                 }
             }
         ]

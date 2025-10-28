@@ -4,6 +4,7 @@ import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import NonAssociationsService from '../../../../services/nonAssociationsService'
 import ActivitiesService from '../../../../services/activitiesService'
+import { ActivitySummary } from '../../../../@types/activitiesAPI/types'
 
 export default class PrisonerAllocationsHandler {
   constructor(
@@ -22,16 +23,24 @@ export default class PrisonerAllocationsHandler {
     const prisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
     const prisonerAllocations = await this.activitiesService.getActivePrisonPrisonerAllocations([prisonerNumber], user)
     const allocationsData = prisonerAllocations[0]?.allocations.flat(1)
-    const approvedPendingWaitlist = await this.activitiesService
+    const activities: ActivitySummary[] = await this.activitiesService.getActivities(false, user)
+
+    const waitlistApplications = await this.activitiesService
       .getWaitlistApplicationsForPrisoner(user.activeCaseLoadId, prisonerNumber, user)
       .then(searchResults =>
         searchResults.content.map(applications => ({
           ...applications,
+          activity: activities.find(act => act.id === applications.activityId),
         })),
       )
-      .then(applications =>
-        applications.filter(waitlist => waitlist.status === 'PENDING' || waitlist.status === 'APPROVED'),
-      )
+
+    const filterByStatus = status =>
+      waitlistApplications.filter(app => app.activity.activityState === 'LIVE' && app.status === status)
+
+    const pendingApplications = filterByStatus('PENDING')
+    const approvedApplications = filterByStatus('APPROVED')
+    const rejectedApplications = filterByStatus('DECLINED')
+    const withdrawnApplications = filterByStatus('WITHDRAWN')
 
     const activeAllocations = allocationsData?.filter(all => !all.plannedSuspension)
 
@@ -47,7 +56,10 @@ export default class PrisonerAllocationsHandler {
       allocationsData,
       activeAllocationIdsForSuspending: activeAllocations?.map(allocation => allocation.id),
       locationStatus: getLocationStatus(prisoner),
-      approvedPendingWaitlist,
+      pendingApplications,
+      approvedApplications,
+      rejectedApplications,
+      withdrawnApplications,
     })
   }
 

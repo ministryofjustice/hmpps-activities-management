@@ -107,7 +107,7 @@
         <div class="govuk-button-group">
                 {{ govukButton({
                             text: "Allocate to an activity",
-                            href:'/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/waitlist-allocation' if approvedPendingWaitlist.length else '/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/select-activity',
+                            href:'/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/waitlist-allocation' if pendingApplications.length or approvedApplications.length else '/activities/prisoner-allocations/' + session.req.params.prisonerNumber +  '/select-activity',
                             attributes: {
                                 "data-qa": ""
                             }
