@@ -60,6 +60,7 @@ import {
   AdvanceAttendanceCreateRequest,
   AdvanceAttendance,
   ActivityPayHistory,
+  LocationPrefix,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import {
@@ -71,6 +72,7 @@ import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
 import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocations/journey'
 import AttendanceAction from '../enum/attendanceAction'
+import TimeSlot from '../enum/timeSlot'
 
 export default class ActivitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
@@ -89,6 +91,14 @@ export default class ActivitiesService {
 
   async getActivities(excludeArchived: boolean, user: ServiceUser): Promise<ActivitySummary[]> {
     return this.activitiesApiClient.getActivities(user.activeCaseLoadId, excludeArchived, user)
+  }
+
+  async getScheduledActivitiesAtPrisonByDateAndSlot(
+    date: Date,
+    user: ServiceUser,
+    slot: TimeSlot,
+  ): Promise<ScheduledActivity[]> {
+    return this.activitiesApiClient.getScheduledActivitiesAtPrison(user.activeCaseLoadId, date, date, user, slot)
   }
 
   getScheduledActivitiesAtPrison(date: Date, user: ServiceUser): Promise<ScheduledActivity[]> {
@@ -334,6 +344,10 @@ export default class ActivitiesService {
 
   async getAttendees(scheduledInstanceId: number, user: ServiceUser) {
     return this.activitiesApiClient.getAttendees(scheduledInstanceId, user)
+  }
+
+  async getAttendeesForScheduledInstances(scheduledInstanceIds: number[], user: ServiceUser) {
+    return this.activitiesApiClient.getAttendeesForScheduledInstances(scheduledInstanceIds, user)
   }
 
   async getScheduledInstanceAttendanceSummary(prisonCode: string, sessionDate: Date, user: ServiceUser) {
@@ -614,5 +628,13 @@ export default class ActivitiesService {
     user: ServiceUser,
   ): Promise<AdvanceAttendance> {
     return this.activitiesApiClient.putAdvanceAttendance(attendanceId, issuePayment, user)
+  }
+
+  async getPrisonLocationPrefixByGroup(
+    prisonCode: string,
+    locationGroup: string,
+    user: ServiceUser,
+  ): Promise<LocationPrefix> {
+    return this.activitiesApiClient.getPrisonLocationPrefixByGroup(prisonCode, locationGroup, user)
   }
 }

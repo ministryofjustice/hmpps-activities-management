@@ -119,3 +119,18 @@
 .moj-filter__content {
   margin-bottom: 30px;
 }
+
+.multi-row--cell {
+  height: 100px;
+
+  .multi-row--container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 100%;
+
+    .govuk-tag {
+      margin-bottom: 0 !important;
+    }
+  }
+}

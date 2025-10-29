@@ -86,6 +86,39 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('getAttendeesForScheduledInstances', () => {
+    it('should return attendees for scheduled instances from api', async () => {
+      const response = [
+        {
+          scheduledInstanceId: 1,
+          allocationId: 1,
+          prisonerNumber: 'GF10101',
+          bookingId: 10001,
+          suspended: false,
+          autoSuspended: false,
+        },
+        {
+          scheduledInstanceId: 2,
+          allocationId: 2,
+          prisonerNumber: 'GF10102',
+          bookingId: 10002,
+          suspended: false,
+          autoSuspended: false,
+        },
+      ]
+
+      fakeActivitiesApi
+        .post('/scheduled-instances/scheduled-attendees', [1, 2])
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200, response)
+
+      const output = await activitiesApiClient.getAttendeesForScheduledInstances([1, 2], user)
+      expect(output).toEqual(response)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('getActivities', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
