@@ -38,7 +38,7 @@ context('Create activity', () => {
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
     cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
-    cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
+    cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=false', getActivities)
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/api/reference-domains/domains/STUDY_AREA/codes', studyAreas)
     cy.stubEndpoint(
