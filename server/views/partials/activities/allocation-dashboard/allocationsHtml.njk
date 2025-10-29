@@ -91,9 +91,8 @@
     {% endfor %}
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
+    <div class="govuk-grid-column-full govuk-!-margin-bottom-5">
+            <div class="govuk-!-margin-bottom-5">
                 <h2 class="govuk-heading-m">Activities {{ prisonerName }} is allocated to</h2>
                     {% if not allocationsData %}
                         <p>{{ prisonerName }} is not allocated to any activities.</p>
@@ -102,7 +101,6 @@
                     {% else %}
                     {% endif %}
             </div>
-        </div>
 
         <div class="govuk-button-group">
                 {{ govukButton({
@@ -162,7 +160,7 @@
         {% endif %}
 
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
+            <div class="govuk-grid-column-full govuk-!-margin-bottom-3">
                 {% if suspendedAllocationRows | length %}
                     <h1 class="govuk-heading-m">Suspensions from activities</h1>
                 {% endif %}

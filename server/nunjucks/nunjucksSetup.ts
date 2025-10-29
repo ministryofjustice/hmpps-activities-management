@@ -82,6 +82,7 @@ import logger from '../../logger'
 import LocationType from '../enum/locationType'
 import HowToAddOptions from '../enum/allocations'
 import { toFullCourtLink } from '../routes/appointments/video-link-booking/utils/utils'
+import requesterReasonDisplayConverter from '../utils/helpers/waitlistRequesterConverter'
 
 export default function nunjucksSetup(app: express.Express, { applicationInfo }: Services): Router {
   const router = express.Router()
@@ -196,6 +197,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addFilter('absenceReasonCheckboxMatch', absenceReasonCheckboxMatch)
   njkEnv.addFilter('numberToWord', number => (number === 1 ? 'one' : number))
   njkEnv.addFilter('getSortableItemForAttendee', getSortableItemForAttendee)
+  njkEnv.addFilter('requesterReasonDisplayConverter', requesterReasonDisplayConverter)
 
   njkEnv.addGlobal('ServiceAsUsername', SERVICE_AS_USERNAME)
   njkEnv.addGlobal('ServiceName', ServiceName)

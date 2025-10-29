@@ -14,7 +14,7 @@
             {% endset %}
             {% set requesterHtml%}
                 <ul class='govuk-list'>
-                    <li>{{ application.requestedBy | toTitleCase }}</li>
+                    <li>{{ application.requestedBy | requesterReasonDisplayConverter(prisonerName) }}</li>
                 </ul>
             {% endset %}
             {% set viewWaitlistHtml %}
@@ -48,7 +48,7 @@
                     {
                         html: requesterHtml,
                         attributes: {
-                            "data-sort-value": application.requestedBy
+                            "data-sort-value": application.requestedBy | requesterReasonDisplayConverter
                         }
                     },
                     {
@@ -77,7 +77,7 @@
             {% endset %}
             {% set requesterHtml%}
                 <ul class='govuk-list'>
-                    <li>{{ application.requestedBy | toTitleCase }}</li>
+                    <li>{{ application.requestedBy | requesterReasonDisplayConverter(prisonerName) }}</li>
                 </ul>
             {% endset %}
             {% set viewWaitlistHtml %}
@@ -106,7 +106,7 @@
                     {
                         html: requesterHtml,
                         attributes: {
-                            "data-sort-value": application.requestedBy
+                            "data-sort-value": application.requestedBy | requesterReasonDisplayConverter
                         }
                     },
                     {
@@ -135,7 +135,7 @@
             {% endset %}
             {% set requesterHtml%}
                 <ul class='govuk-list'>
-                    <li>{{ application.requestedBy| toTitleCase }}</li>
+                    <li>{{ application.requestedBy | requesterReasonDisplayConverter(prisonerName) }}</li>
                 </ul>
             {% endset %}
             {% set viewWaitlistHtml %}
@@ -164,7 +164,7 @@
                     {
                         html: requesterHtml,
                         attributes: {
-                            "data-sort-value": application.requestedBy
+                            "data-sort-value": application.requestedBy | requesterReasonDisplayConverter
                         }
                     },
                     {
@@ -190,7 +190,7 @@
             {% endset %}
             {% set requesterHtml%}
                 <ul class='govuk-list'>
-                    <li>{{ application.requestedBy | toTitleCase }} </li>
+                    <li>{{ application.requestedBy | requesterReasonDisplayConverter(prisonerName) }} </li>
                 </ul>
             {% endset %}
             {% set viewWaitlistHtml %}
@@ -220,7 +220,7 @@
                     {
                         html: requesterHtml,
                         attributes: {
-                            "data-sort-value": application.requestedBy
+                            "data-sort-value": application.requestedBy | requesterReasonDisplayConverter
                         }
                     },
                     {
@@ -233,12 +233,10 @@
     {% endfor %}
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
+    <div class="govuk-grid-column-full govuk-!-margin-bottom-5">
+            <div class="govuk-!-margin-bottom-5">
                 <h2 class="govuk-heading-m">Waitlist and applications</h2>
             </div>
-        </div>
 
         <div class="govuk-button-group">
             {{ govukButton({
@@ -255,7 +253,7 @@
         </div>
 
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
+            <div class="govuk-grid-column-full govuk-!-margin-bottom-3">
                 <h3 class="govuk-heading-s">Waitlists {{ prisonerName }} is on</h3>
                     {% if approvedApplicationRows | length < 1 %}
                         <p class="govuk-body">{{ prisonerName }} is not on any waitlists.</p>
@@ -301,7 +299,7 @@
         {% endif %}
 
         <div class="govuk-grid-row" id="pendingApplications">
-            <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
+            <div class="govuk-grid-column-full govuk-!-margin-bottom-3">
                 <h3 class="govuk-heading-s">Pending Applications</h3>
                     {% if pendingApplicationRows | length < 1 %}
                         <p class="govuk-body">{{ prisonerName }} does not have any applications that need to be reviewed or are still pending.</p>
@@ -343,7 +341,7 @@
         {% endif %}
 
         <div class="govuk-grid-row" id="rejectedApplications">
-            <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
+            <div class="govuk-grid-column-full govuk-!-margin-bottom-3">
                 <h3 class="govuk-heading-s">Rejected Applications</h3>
                     {% if rejectedApplicationRows | length < 1 %}
                         <p class="govuk-body">No activity applications for {{ prisonerName }} have been rejected</p>
@@ -386,7 +384,7 @@
         {% endif %}
 
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full govuk-!-margin-bottom-7">
+            <div class="govuk-grid-column-full govuk-!-margin-bottom-3">
                 <h3 class="govuk-heading-s">Withdrawn Applications</h3>
                     {% if withdrawnApplicationRows | length < 1 %}
                         <p class="govuk-body">No withdrawn applications for {{ prisonerName }}</p>
