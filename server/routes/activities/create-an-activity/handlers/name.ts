@@ -24,7 +24,7 @@ export default class NameRoutes {
     const editJourney = req.routeContext.mode === 'edit'
     req.journeyData.createJourney.name = req.body.name
 
-    const activities = await this.activitiesService.getActivities(true, user)
+    const activities = await this.activitiesService.getActivities(false, user)
     const activityNames = activities.map(activity => ({ name: activity.activityName, id: activity.id }))
     const duplicateEditName = activityNames.find(
       activity =>
