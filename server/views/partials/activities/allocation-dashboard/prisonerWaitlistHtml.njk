@@ -1,0 +1,430 @@
+
+{% set prisonerName = prisoner | firstNameLastName | toTitleCase %}
+{% set approvedApplicationRows = [] %}
+    {% for application in approvedApplications %}
+            {% set activityNameHtml%}
+                <ul class='govuk-list'>
+                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></li>
+                </ul>
+            {% endset %}
+            {% set requestDateHtml%}
+                <ul class='govuk-list'>
+                    <li>{{ application.requestedDate | formatDate('d MMMM yyyy') }}</li>
+                </ul>
+            {% endset %}
+            {% set requesterHtml%}
+                <ul class='govuk-list'>
+                    <li>{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</li>
+                </ul>
+            {% endset %}
+            {% set viewWaitlistHtml %}
+                <ul class='govuk-list govuk-!-text-align-right'>
+                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></li>
+                </ul>
+            {% endset %}
+            {% set viewEditHtml %}
+                <ul class='govuk-list govuk-!-text-align-right'>
+                     <li><a href='/activities/waitlist/view-and-edit/{{application.id}}/view' class='govuk-link govuk-link--no-visited-state' target='_blank'>View or Edit application</a></li>
+                </ul>
+            {% endset %}
+            {% set allocateHtml %}
+                <ul class='govuk-list govuk-!-text-align-right'>
+                     <li><a href='/activities/allocations/create/prisoner/{{ session.req.params.prisonerNumber }}?scheduleId={{ application.scheduleId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>Allocate</a></li>
+                </ul>
+            {% endset %}
+            {% set approvedApplicationRows = (approvedApplicationRows.push([
+                    {
+                        html: activityNameHtml,
+                        attributes: {
+                            "data-sort-value": application.activity.activityName
+                        }
+                    },
+                    {
+                        html: requestDateHtml,
+                        attributes: {
+                            "data-sort-value": application.requestedDate | getUnixTime
+                        }
+                    },
+                    {
+                        html: requesterHtml,
+                        attributes: {
+                            "data-sort-value": application.requestedBy | waitlistRequesterConverter
+                        }
+                    },
+                    {
+                        html: viewWaitlistHtml
+                    },
+                    {
+                        html: viewEditHtml
+                    },
+                    {
+                        html: allocateHtml
+                    }                
+            ]), approvedApplicationRows) %}
+    {% endfor %}
+
+{% set pendingApplicationRows = [] %}
+    {% for application in pendingApplications %}
+            {% set activityNameHtml%}
+                <ul class='govuk-list'>
+                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></li>
+                </ul>
+            {% endset %}
+            {% set requestDateHtml%}
+                <ul class='govuk-list'>
+                    <li>{{ application.requestedDate | formatDate('d MMMM yyyy') }}</li>
+                </ul>
+            {% endset %}
+            {% set requesterHtml%}
+                <ul class='govuk-list'>
+                    <li>{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</li>
+                </ul>
+            {% endset %}
+            {% set viewWaitlistHtml %}
+                <ul class='govuk-list govuk-!-text-align-right'>
+                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></li>
+                </ul>
+            {% endset %}
+            {% set viewEditHtml %}
+                <ul class='govuk-list govuk-!-text-align-right'>
+                     <li><a href='/activities/waitlist/view-and-edit/{{application.id}}/view' class='govuk-link govuk-link--no-visited-state' target='_blank'>View or Edit application</a></li>
+                </ul>
+            {% endset %}
+            {% set pendingApplicationRows = (pendingApplicationRows.push([
+                    {
+                        html: activityNameHtml,
+                        attributes: {
+                            "data-sort-value": application.activity.activityName
+                        }
+                    },
+                    {
+                        html: requestDateHtml,
+                        attributes: {
+                            "data-sort-value": application.requestedDate | getUnixTime
+                        }
+                    },
+                    {
+                        html: requesterHtml,
+                        attributes: {
+                            "data-sort-value": application.requestedBy | waitlistRequesterConverter
+                        }
+                    },
+                    {
+                        html: viewWaitlistHtml
+                    },
+                    {
+                        html: viewEditHtml
+                    },
+                    {
+                        html: allocateHtml
+                    }                
+            ]), pendingApplicationRows) %}
+    {% endfor %}
+
+{% set rejectedApplicationRows = [] %}
+    {% for application in rejectedApplications %}
+            {% set activityNameHtml%}
+                <ul class='govuk-list'>
+                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></li>
+                </ul>
+            {% endset %}
+            {% set requestDateHtml%}
+                <ul class='govuk-list'>
+                    <li>{{ application.requestedDate | formatDate('d MMMM yyyy') }}</li>
+                </ul>
+            {% endset %}
+            {% set requesterHtml%}
+                <ul class='govuk-list'>
+                    <li>{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</li>
+                </ul>
+            {% endset %}
+            {% set viewWaitlistHtml %}
+                <ul class='govuk-list govuk-!-text-align-right'>
+                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></li>
+                </ul>
+            {% endset %}
+            {% set viewEditHtml %}
+                <ul class='govuk-list govuk-!-text-align-right'>
+                     <li><a href='/activities/waitlist/view-and-edit/{{application.id}}/view' class='govuk-link govuk-link--no-visited-state' target='_blank'>View or Edit application</a></li>
+                </ul>
+            {% endset %}
+            {% set rejectedApplicationRows = (rejectedApplicationRows.push([
+                    {
+                        html: activityNameHtml,
+                        attributes: {
+                            "data-sort-value": application.activity.activityName
+                        }
+                    },
+                    {
+                        html: requestDateHtml,
+                        attributes: {
+                            "data-sort-value": application.requestedDate | getUnixTime
+                        }
+                    },
+                    {
+                        html: requesterHtml,
+                        attributes: {
+                            "data-sort-value": application.requestedBy | waitlistRequesterConverter
+                        }
+                    },
+                    {
+                        html: viewWaitlistHtml
+                    },
+                    {
+                        html: viewEditHtml
+                    }              
+            ]), rejectedApplicationRows) %}
+    {% endfor %}
+
+{% set withdrawnApplicationRows = [] %}
+    {% for application in withdrawnApplications %}
+            {% set activityNameHtml%}
+                <ul class='govuk-list'>
+                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></li>
+                </ul>
+            {% endset %}
+            {% set requestDateHtml%}
+                <ul class='govuk-list'>
+                    <li>{{ application.requestedDate | formatDate('d MMMM yyyy') }}</li>
+                </ul>
+            {% endset %}
+            {% set requesterHtml%}
+                <ul class='govuk-list'>
+                    <li>{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }} </li>
+                </ul>
+            {% endset %}
+            {% set viewWaitlistHtml %}
+                <ul class='govuk-list govuk-!-text-align-right'>
+                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></li>
+                </ul>
+            {% endset %}
+            {% set viewEditHtml %}
+                <ul class='govuk-list govuk-!-text-align-right'>
+                     <li><a href='/activities/waitlist/view-and-edit/{{application.id}}/view' class='govuk-link govuk-link--no-visited-state' target='_blank'>View or Edit application</a></li>
+                </ul>
+            {% endset %}
+
+            {% set withdrawnApplicationRows = (withdrawnApplicationRows.push([
+                    {
+                        html: activityNameHtml,
+                        attributes: {
+                            "data-sort-value": application.activity.activityName
+                        }
+                    },
+                    {
+                        html: requestDateHtml,
+                        attributes: {
+                            "data-sort-value": application.requestedDate | getUnixTime
+                        }
+                    },
+                    {
+                        html: requesterHtml,
+                        attributes: {
+                            "data-sort-value": application.requestedBy | waitlistRequesterConverter
+                        }
+                    },
+                    {
+                        html: viewWaitlistHtml
+                    },
+                    {
+                        html: viewEditHtml
+                    }               
+            ]), withdrawnApplicationRows) %}
+    {% endfor %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full govuk-!-margin-bottom-5">
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-7">Waitlist and applications</h2>
+
+        <div class="govuk-button-group">
+            {{ govukButton({
+                text: "Log an activity application",
+                href: '/activities/waitlist/' + session.req.params.prisonerNumber + '/apply',
+                attributes: {
+                    "data-qa": ""
+                }
+            }) }}
+
+            <p class="govuk-body">
+                <a class="govuk-link govuk-link--no-visited-state" href="{{ prisonerUrl }}/prisoner/{{ session.req.params.prisonerNumber }}/schedule" class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ prisonerName }}'s schedule (opens in new tab)</a>
+            </p>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h3 class="govuk-heading-s">Waitlists {{ prisonerName }} is on</h3>
+                    {% if approvedApplicationRows | length < 1 %}
+                        <p class="govuk-body">{{ prisonerName }} is not on any waitlists.</p>
+                    {% endif %}
+            </div>
+        </div>
+
+        {% if approvedApplicationRows | length %}
+            {{ govukTable({
+                 attributes: {
+                    'data-module': 'moj-sortable-table',
+                    'data-table-fixed-rows': 'true',
+                    'data-qa': 'approved-applications'
+                },
+                idPrefix: 'approved',
+                caption: "Approved waitlist applications",
+                captionClasses: "govuk-visually-hidden",
+                name: 'approvedApplications',
+                head: [
+                    {
+                        text: "Activity",
+                        attributes: { "aria-sort": "ascending" }
+                    },
+                    {
+                        text: "Request date",
+                        attributes: { "aria-sort": "none" }
+                    },
+                    {
+                        text: "Requester"
+                    },
+                    {
+                        text: ''
+                    },
+                    {
+                        text: ''
+                    },
+                    {
+                        text: ''
+                    }
+                ],
+                rows: approvedApplicationRows
+            }) }}
+        {% endif %}
+
+        <div class="govuk-grid-row" id="pendingApplications">
+            <div class="govuk-grid-column-full">
+                <h3 class="govuk-heading-s">Pending Applications</h3>
+                    {% if pendingApplicationRows | length < 1 %}
+                        <p class="govuk-body">{{ prisonerName }} does not have any applications that need to be reviewed or are still pending.</p>
+                    {% endif %}
+            </div>
+        </div>
+
+        {% if pendingApplicationRows | length %}
+            {{ govukTable({
+                attributes: {
+                    'data-module': 'moj-sortable-table',
+                    'data-table-fixed-rows': 'true'
+                },
+                idPrefix: 'pending',
+                caption: "Pending waitlist applications",
+                captionClasses: "govuk-visually-hidden",
+                name: 'pendingApplications',
+                head: [
+                    {
+                        text: "Activity",
+                        attributes: { "aria-sort": "ascending" }
+                    },
+                    {
+                        text: "Request date",
+                        attributes: { "aria-sort": "none" }
+                    },
+                    {
+                        text: "Requester"
+                    },
+                    {
+                        text: ''
+                    },
+                    {
+                        text: ''
+                    }
+                ],
+                rows: pendingApplicationRows
+            }) }}
+        {% endif %}
+
+        <div class="govuk-grid-row" id="rejectedApplications">
+            <div class="govuk-grid-column-full">
+                <h3 class="govuk-heading-s">Rejected Applications</h3>
+                    {% if rejectedApplicationRows | length < 1 %}
+                        <p class="govuk-body">No activity applications for {{ prisonerName }} have been rejected</p>
+                    {% endif %}
+            </div>
+        </div>
+
+        {% if rejectedApplicationRows | length %}
+            {{ govukTable({
+                attributes: {
+                    'data-module': 'moj-sortable-table',
+                    'data-table-fixed-rows': 'true',
+                    'data-qa': 'rejected-applications'
+                },
+                idPrefix: 'rejected',
+                caption: "Rejected waitlist applications",
+                captionClasses: "govuk-visually-hidden",
+                name: 'rejectedApplications',
+                head: [
+                    {
+                        text: "Activity",
+                        attributes: { "aria-sort": "ascending" }
+                    },
+                    {
+                        text: "Request date",
+                        attributes: { "aria-sort": "none" }
+                    },
+                    {
+                        text: "Requester"
+                    },
+                    {
+                        text: ''
+                    },
+                    {
+                        text: ''
+                    }
+                ],
+                rows: rejectedApplicationRows
+            }) }}
+        {% endif %}
+
+        {% if showWithdrawnApplicationsSection %}
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h3 class="govuk-heading-s">Withdrawn Applications</h3>
+                    {% if withdrawnApplicationRows | length < 1 %}
+                        <p class="govuk-body">No withdrawn applications for {{ prisonerName }}</p>
+                    {% endif %}
+            </div>
+        </div>
+
+        {% if withdrawnApplicationRows | length %}
+            {{ govukTable({
+                attributes: {
+                    'data-module': 'moj-sortable-table',
+                    'data-table-fixed-rows': 'true'
+                },
+                idPrefix: 'withdrawn',
+                caption: "Withdrawn waitlist applications",
+                captionClasses: "govuk-visually-hidden",
+                name: 'withdrawnApplications',
+                head: [
+                    {
+                        text: "Activity",
+                        attributes: { "aria-sort": "ascending" }
+                    },
+                    {
+                        text: "Request date",
+                        attributes: { "aria-sort": "none" }
+                    },
+                    {
+                        text: "Requester"
+                    },
+                    {
+                        text: ''
+                    },
+                    {
+                        text: ''
+                    }
+                ],
+                rows: withdrawnApplicationRows
+            }) }}
+        {% endif %}
+
+        {% endif %}
+    </div>
+</div>
