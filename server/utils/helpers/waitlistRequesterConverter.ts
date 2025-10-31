@@ -1,6 +1,6 @@
 import WaitlistRequester from '../../enum/waitlistRequester'
 
-export default function requesterReasonDisplayConverter(requester: string, prisonerName: string) {
+export default function waitlistRequesterConverter(requester: string, prisonerName: string) {
   switch (requester) {
     case WaitlistRequester.ACTIVITY_LEADER.code:
       return 'Activity leader'
