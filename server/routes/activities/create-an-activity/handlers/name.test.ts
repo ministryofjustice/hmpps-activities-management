@@ -50,7 +50,7 @@ describe('Route Handlers - Create an activity - Name', () => {
   describe('POST', () => {
     beforeEach(() => {
       when(activitiesService.getActivities)
-        .calledWith(atLeast(true))
+        .calledWith(atLeast(false))
         .mockResolvedValue([
           {
             id: 6,
@@ -66,6 +66,21 @@ describe('Route Handlers - Create an activity - Name', () => {
             waitlisted: 1,
             createdTime: '2023-07-20T16:05:16',
             activityState: 'LIVE',
+          },
+          {
+            id: 7,
+            activityName: 'Art Therapy',
+            category: {
+              id: 5,
+              code: '',
+              name: '',
+              description: '',
+            },
+            capacity: 10,
+            allocated: 6,
+            waitlisted: 0,
+            createdTime: '2025-10-15T16:00:00',
+            activityState: 'ARCHIVED',
           },
         ])
     })
@@ -143,6 +158,28 @@ describe('Route Handlers - Create an activity - Name', () => {
       await handler.POST(req, res)
 
       expect(req.journeyData.createJourney.name).toEqual('Gym Induction')
+      expect(res.validationFailed).toHaveBeenCalledWith(
+        'name',
+        'Enter a different name. There is already an activity with this name',
+      )
+    })
+
+    it('should call duplicate activity name validation upon creating new activity name that matches an archived activity', async () => {
+      req = {
+        journeyData: {
+          createJourney: {
+            activityId: undefined,
+          },
+        },
+        routeContext: { mode: 'create' },
+        body: {
+          name: 'Art Therapy',
+        },
+      } as unknown as Request
+
+      await handler.POST(req, res)
+
+      expect(req.journeyData.createJourney.name).toEqual('Art Therapy')
       expect(res.validationFailed).toHaveBeenCalledWith(
         'name',
         'Enter a different name. There is already an activity with this name',
