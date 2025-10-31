@@ -55,35 +55,50 @@
                 {% endif %}
 
                 {% set items = [] %}
-                {% for meetingType in meetingTypes %}
-                    {% if meetingType.code != 'OTHER' %}
-                        {% set items = (items.push({
-                          value: meetingType.code,
-                          text: meetingType.description,
-                          checked: formResponses.meetingTypeCode == meetingType.code or session.bookAProbationMeetingJourney.meetingTypeCode == meetingType.code
+                {%  if meetingTypes.length > 3 %}
+                  {% set items = [{ text: "", value: "" }] %}
+                  {% for meetingType in meetingTypes %}
+                    {% set items = (items.push({
+                      value: meetingType.code,
+                      text: meetingType.description,
+                      selected: formResponses.meetingTypeCode == meetingType.code or session.bookAProbationMeetingJourney.meetingTypeCode == meetingType.code
+                    }), items) %}
+                  {% endfor %}
 
-                        }), items) %}
-                    {% endif %}
-                {% endfor %}
-                {% set items = (items.push({
-                    value: 'OTHER',
-                    text: 'Other',
-                    checked: formResponses.meetingTypeCode == 'OTHER' or session.bookAProbationMeetingJourney.meetingTypeCode == 'OTHER'
-                }), items) %}
-
-                {{ govukRadios({
+                  {{ govukSelect({
                     idPrefix: "meetingTypeCode",
                     name: "meetingTypeCode",
-                    fieldset: {
-                        legend: {
-                          text: "Select meeting type",
-                          classes: "govuk-fieldset__legend--s"
-                        }
+                    label: {
+                      text: "Select meeting type",
+                      classes: 'govuk-label--s'
                     },
                     items: items,
                     errorMessage: validationErrors | findError("meetingTypeCode"),
                     classes: "govuk-!-width-one-third"
-                }) }}
+                  }) }}
+                {% else %}
+                  {% for meetingType in meetingTypes %}
+                      {% set items = (items.push({
+                        value: meetingType.code,
+                        text: meetingType.description,
+                        checked: formResponses.meetingTypeCode == meetingType.code or session.bookAProbationMeetingJourney.meetingTypeCode == meetingType.code
+                      }), items) %}
+                  {% endfor %}
+
+                  {{ govukRadios({
+                      idPrefix: "meetingTypeCode",
+                      name: "meetingTypeCode",
+                      fieldset: {
+                          legend: {
+                            text: "Select meeting type",
+                            classes: "govuk-fieldset__legend--s"
+                          }
+                      },
+                      items: items,
+                      errorMessage: validationErrors | findError("meetingTypeCode"),
+                      classes: "govuk-!-width-one-third"
+                  }) }}
+                {% endif %}
 
                 <div class="govuk-form-group {{ 'govuk-form-group--error' if validationErrors | findError("officerDetailsOrUnknown") }}">
                     <fieldset class="govuk-fieldset">
