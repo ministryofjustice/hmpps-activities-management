@@ -56,7 +56,7 @@
 
                 {% set items = [] %}
                 {%  if meetingTypes.length > 3 %}
-                  {% set items = [{ text: "", value: "" }] %}
+                  {% set items = [{ text: "Select meeting type", value: "" }] %}
                   {% for meetingType in meetingTypes %}
                     {% set items = (items.push({
                       value: meetingType.code,
