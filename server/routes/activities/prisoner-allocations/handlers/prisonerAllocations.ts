@@ -60,6 +60,7 @@ export default class PrisonerAllocationsHandler {
       approvedApplications,
       rejectedApplications,
       withdrawnApplications,
+      showWithdrawnApplicationsSection: false,
     })
   }
 

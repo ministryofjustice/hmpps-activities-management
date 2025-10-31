@@ -197,7 +197,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addFilter('absenceReasonCheckboxMatch', absenceReasonCheckboxMatch)
   njkEnv.addFilter('numberToWord', number => (number === 1 ? 'one' : number))
   njkEnv.addFilter('getSortableItemForAttendee', getSortableItemForAttendee)
-  njkEnv.addFilter('requesterReasonConverter', waitlistRequesterConverter)
+  njkEnv.addFilter('waitlistRequesterConverter', waitlistRequesterConverter)
 
   njkEnv.addGlobal('ServiceAsUsername', SERVICE_AS_USERNAME)
   njkEnv.addGlobal('ServiceName', ServiceName)

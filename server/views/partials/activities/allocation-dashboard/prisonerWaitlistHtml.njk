@@ -14,7 +14,7 @@
             {% endset %}
             {% set requesterHtml%}
                 <ul class='govuk-list'>
-                    <li>{{ application.requestedBy | requesterReasonConverter(prisonerName) }}</li>
+                    <li>{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</li>
                 </ul>
             {% endset %}
             {% set viewWaitlistHtml %}
@@ -48,7 +48,7 @@
                     {
                         html: requesterHtml,
                         attributes: {
-                            "data-sort-value": application.requestedBy | requesterReasonConverter
+                            "data-sort-value": application.requestedBy | waitlistRequesterConverter
                         }
                     },
                     {
@@ -77,7 +77,7 @@
             {% endset %}
             {% set requesterHtml%}
                 <ul class='govuk-list'>
-                    <li>{{ application.requestedBy | requesterReasonConverter(prisonerName) }}</li>
+                    <li>{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</li>
                 </ul>
             {% endset %}
             {% set viewWaitlistHtml %}
@@ -106,7 +106,7 @@
                     {
                         html: requesterHtml,
                         attributes: {
-                            "data-sort-value": application.requestedBy | requesterReasonConverter
+                            "data-sort-value": application.requestedBy | waitlistRequesterConverter
                         }
                     },
                     {
@@ -135,7 +135,7 @@
             {% endset %}
             {% set requesterHtml%}
                 <ul class='govuk-list'>
-                    <li>{{ application.requestedBy | requesterReasonConverter(prisonerName) }}</li>
+                    <li>{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</li>
                 </ul>
             {% endset %}
             {% set viewWaitlistHtml %}
@@ -164,7 +164,7 @@
                     {
                         html: requesterHtml,
                         attributes: {
-                            "data-sort-value": application.requestedBy | requesterReasonConverter
+                            "data-sort-value": application.requestedBy | waitlistRequesterConverter
                         }
                     },
                     {
@@ -190,7 +190,7 @@
             {% endset %}
             {% set requesterHtml%}
                 <ul class='govuk-list'>
-                    <li>{{ application.requestedBy | requesterReasonConverter(prisonerName) }} </li>
+                    <li>{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }} </li>
                 </ul>
             {% endset %}
             {% set viewWaitlistHtml %}
@@ -220,7 +220,7 @@
                     {
                         html: requesterHtml,
                         attributes: {
-                            "data-sort-value": application.requestedBy | requesterReasonConverter
+                            "data-sort-value": application.requestedBy | waitlistRequesterConverter
                         }
                     },
                     {
@@ -233,7 +233,7 @@
     {% endfor %}
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
+    <div class="govuk-grid-column-full govuk-!-margin-bottom-5">
         <h2 class="govuk-heading-m govuk-!-margin-bottom-7">Waitlist and applications</h2>
 
         <div class="govuk-button-group">
@@ -381,6 +381,8 @@
             }) }}
         {% endif %}
 
+        {% if showWithdrawnApplicationsSection %}
+
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h3 class="govuk-heading-s">Withdrawn Applications</h3>
@@ -421,6 +423,8 @@
                 ],
                 rows: withdrawnApplicationRows
             }) }}
+        {% endif %}
+
         {% endif %}
     </div>
 </div>
