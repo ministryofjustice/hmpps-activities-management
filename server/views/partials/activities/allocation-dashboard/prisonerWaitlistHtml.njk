@@ -1,36 +1,26 @@
 
 {% set prisonerName = prisoner | firstNameLastName | toTitleCase %}
+{% set returnLink = session.req.originalUrl + "#prisoner-waitlist-tab" %}
+
 {% set approvedApplicationRows = [] %}
     {% for application in approvedApplications %}
             {% set activityNameHtml%}
-                <ul class='govuk-list'>
-                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></li>
-                </ul>
+                 <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></p>
             {% endset %}
             {% set requestDateHtml%}
-                <ul class='govuk-list'>
-                    <li>{{ application.requestedDate | formatDate('d MMMM yyyy') }}</li>
-                </ul>
+                 <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedDate | formatDate('d MMMM yyyy') }}</p>
             {% endset %}
             {% set requesterHtml%}
-                <ul class='govuk-list'>
-                    <li>{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</li>
-                </ul>
+                 <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</p>
             {% endset %}
             {% set viewWaitlistHtml %}
-                <ul class='govuk-list govuk-!-text-align-right'>
-                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></li>
-                </ul>
+                 <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></p>
             {% endset %}
             {% set viewEditHtml %}
-                <ul class='govuk-list govuk-!-text-align-right'>
-                     <li><a href='/activities/waitlist/view-and-edit/{{application.id}}/view' class='govuk-link govuk-link--no-visited-state' target='_blank'>View or edit application</a></li>
-                </ul>
+                 <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/waitlist/view-and-edit/{{application.id}}/view?journeyEntry={{returnLink}}' class='govuk-link govuk-link--no-visited-state'>View or edit application</a></p>
             {% endset %}
             {% set allocateHtml %}
-                <ul class='govuk-list govuk-!-text-align-right'>
-                     <li><a href='/activities/allocations/create/prisoner/{{ session.req.params.prisonerNumber }}?scheduleId={{ application.scheduleId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>Allocate</a></li>
-                </ul>
+                 <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocations/create/prisoner/{{ session.req.params.prisonerNumber }}?scheduleId={{ application.scheduleId }}' class='govuk-link govuk-link--no-visited-state'>Allocate</a></p>
             {% endset %}
             {% set approvedApplicationRows = (approvedApplicationRows.push([
                     {
@@ -40,6 +30,7 @@
                         }
                     },
                     {
+                        
                         html: requestDateHtml,
                         attributes: {
                             "data-sort-value": application.requestedDate | getUnixTime
@@ -66,29 +57,19 @@
 {% set pendingApplicationRows = [] %}
     {% for application in pendingApplications %}
             {% set activityNameHtml%}
-                <ul class='govuk-list'>
-                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></p>
             {% endset %}
             {% set requestDateHtml%}
-                <ul class='govuk-list'>
-                    <li>{{ application.requestedDate | formatDate('d MMMM yyyy') }}</li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedDate | formatDate('d MMMM yyyy') }}</p>
             {% endset %}
             {% set requesterHtml%}
-                <ul class='govuk-list'>
-                    <li>{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</p>
             {% endset %}
             {% set viewWaitlistHtml %}
-                <ul class='govuk-list govuk-!-text-align-right'>
-                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></p>
             {% endset %}
             {% set viewEditHtml %}
-                <ul class='govuk-list govuk-!-text-align-right'>
-                     <li><a href='/activities/waitlist/view-and-edit/{{application.id}}/view' class='govuk-link govuk-link--no-visited-state' target='_blank'>View or edit application</a></li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/waitlist/view-and-edit/{{application.id}}/view?journeyEntry={{returnLink}}' class='govuk-link govuk-link--no-visited-state'>View or edit application</a></p>
             {% endset %}
             {% set pendingApplicationRows = (pendingApplicationRows.push([
                     {
@@ -124,29 +105,19 @@
 {% set rejectedApplicationRows = [] %}
     {% for application in rejectedApplications %}
             {% set activityNameHtml%}
-                <ul class='govuk-list'>
-                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></p>
             {% endset %}
             {% set requestDateHtml%}
-                <ul class='govuk-list'>
-                    <li>{{ application.requestedDate | formatDate('d MMMM yyyy') }}</li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedDate | formatDate('d MMMM yyyy') }}</p>
             {% endset %}
             {% set requesterHtml%}
-                <ul class='govuk-list'>
-                    <li>{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</p>
             {% endset %}
             {% set viewWaitlistHtml %}
-                <ul class='govuk-list govuk-!-text-align-right'>
-                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></p>
             {% endset %}
             {% set viewEditHtml %}
-                <ul class='govuk-list govuk-!-text-align-right'>
-                     <li><a href='/activities/waitlist/view-and-edit/{{application.id}}/view' class='govuk-link govuk-link--no-visited-state' target='_blank'>View or edit application</a></li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/waitlist/view-and-edit/{{application.id}}/view?journeyEntry={{returnLink}}' class='govuk-link govuk-link--no-visited-state'>View or edit application</a></p>
             {% endset %}
             {% set rejectedApplicationRows = (rejectedApplicationRows.push([
                     {
@@ -179,29 +150,19 @@
 {% set withdrawnApplicationRows = [] %}
     {% for application in withdrawnApplications %}
             {% set activityNameHtml%}
-                <ul class='govuk-list'>
-                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}' class='govuk-link govuk-link--no-visited-state' target='_blank'>{{ application.activity.activityName }}</a></p>
             {% endset %}
             {% set requestDateHtml%}
-                <ul class='govuk-list'>
-                    <li>{{ application.requestedDate | formatDate('d MMMM yyyy') }}</li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedDate | formatDate('d MMMM yyyy') }}</p>
             {% endset %}
             {% set requesterHtml%}
-                <ul class='govuk-list'>
-                    <li>{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }} </li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0">{{ application.requestedBy | waitlistRequesterConverter(prisonerName) }}</p>
             {% endset %}
             {% set viewWaitlistHtml %}
-                <ul class='govuk-list govuk-!-text-align-right'>
-                    <li><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/allocation-dashboard/{{ application.activityId }}#waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>View waitlist</a></p>
             {% endset %}
             {% set viewEditHtml %}
-                <ul class='govuk-list govuk-!-text-align-right'>
-                     <li><a href='/activities/waitlist/view-and-edit/{{application.id}}/view' class='govuk-link govuk-link--no-visited-state' target='_blank'>View or edit application</a></li>
-                </ul>
+                <p class="govuk-body govuk-!-margin-bottom-0"><a href='/activities/waitlist/view-and-edit/{{application.id}}/view?journeyEntry={{returnLink}}' class='govuk-link govuk-link--no-visited-state'>View or edit application</a></p>
             {% endset %}
 
             {% set withdrawnApplicationRows = (withdrawnApplicationRows.push([
@@ -273,14 +234,17 @@
                 head: [
                     {
                         text: "Activity",
-                        attributes: { "aria-sort": "ascending" }
+                        attributes: { "aria-sort": "ascending" },
+                        classes: "govuk-table__header prisoner-waitlist-activity-column-width"
                     },
                     {
                         text: "Request date",
-                        attributes: { "aria-sort": "none" }
+                        attributes: { "aria-sort": "none" },
+                        classes: "govuk-table__header prisoner-waitlist-date-column-width"
                     },
                     {
-                        text: "Requester"
+                        text: "Requester",
+                        classes: "govuk-table__header govuk-!-width-one-quarter"
                     },
                     {
                         text: ''
@@ -318,20 +282,25 @@
                 head: [
                     {
                         text: "Activity",
-                        attributes: { "aria-sort": "ascending" }
+                        attributes: { "aria-sort": "ascending" },
+                        classes: "govuk-table__header prisoner-waitlist-activity-column-width"
                     },
                     {
                         text: "Request date",
-                        attributes: { "aria-sort": "none" }
+                        attributes: { "aria-sort": "none" },
+                        classes: "govuk-table__header prisoner-waitlist-date-column-width"
                     },
                     {
-                        text: "Requester"
+                        text: "Requester",
+                        classes: "govuk-table__header govuk-!-width-one-quarter"
                     },
                     {
-                        text: ''
+                        text: '',
+                        classes: "govuk-table__header"
                     },
                     {
-                        text: ''
+                        text: '',
+                        classes: "govuk-table__header"
                     }
                 ],
                 rows: pendingApplicationRows
@@ -361,20 +330,25 @@
                 head: [
                     {
                         text: "Activity",
-                        attributes: { "aria-sort": "ascending" }
+                        attributes: { "aria-sort": "ascending" },
+                        classes: "govuk-table__header prisoner-waitlist-activity-column-width"
                     },
                     {
                         text: "Request date",
-                        attributes: { "aria-sort": "none" }
+                        attributes: { "aria-sort": "none" },
+                        classes: "govuk-table__header prisoner-waitlist-date-column-width"
                     },
                     {
-                        text: "Requester"
+                        text: "Requester",
+                        classes: "govuk-table__header govuk-!-width-one-quarter"
                     },
                     {
-                        text: ''
+                        text: '',
+                        classes: "govuk-table__header"
                     },
                     {
-                        text: ''
+                        text: '',
+                        classes: "govuk-table__header"
                     }
                 ],
                 rows: rejectedApplicationRows
@@ -405,20 +379,25 @@
                 head: [
                     {
                         text: "Activity",
-                        attributes: { "aria-sort": "ascending" }
+                        attributes: { "aria-sort": "ascending" },
+                        classes: "govuk-table__header prisoner-waitlist-activity-column-width"
                     },
                     {
                         text: "Request date",
-                        attributes: { "aria-sort": "none" }
+                        attributes: { "aria-sort": "none" },
+                        classes: "govuk-table__header prisoner-waitlist-date-column-width"
                     },
                     {
-                        text: "Requester"
+                        text: "Requester",
+                        classes: "govuk-table__header govuk-!-width-one-quarter"
                     },
                     {
-                        text: ''
+                        text: '',
+                        classes: "govuk-table__header"
                     },
                     {
-                        text: ''
+                        text: '',
+                        classes: "govuk-table__header"
                     }
                 ],
                 rows: withdrawnApplicationRows
