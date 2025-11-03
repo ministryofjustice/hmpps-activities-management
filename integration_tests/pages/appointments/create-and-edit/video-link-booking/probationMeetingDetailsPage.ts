@@ -7,7 +7,9 @@ export default class ProbationMeetingDetailsPage extends Page {
 
   selectProbationTeam = (team: string) => this.getInputById('probationTeamCode').clear().type(team)
 
-  selectFirstMeetingType = () => cy.get('[type="radio"]').first().check()
+  selectMeetingType = (type: string) => this.getInputByLabel('Select meeting type').select(type)
+
+  selectRadioFirstMeetingType = () => cy.get('[type="radio"]').first().check()
 
   checkOfficerDetailsNotKnown = () => this.getInputByName('officerDetailsNotKnown').check()
 }
