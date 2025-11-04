@@ -8,6 +8,7 @@ import PrisonerWaitlistHandler, { SelectWailistOptions } from './handlers/prison
 import ActivityAllocationHandler, { FromActivityList } from './handlers/prisonerActivityAllocations'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
 import PendingWaitlistHandler, { allocateOption } from './handlers/pendingWaitlistAllocations'
+import insertJourneyIdentifier from '../../../middleware/insertJourneyIdentifier'
 
 export default function Index({
   activitiesService,
@@ -42,10 +43,14 @@ export default function Index({
   getWithProfile('/:prisonerNumber/non-associations', prisonerNonAssociationsHandler.GET)
   get('/:prisonerNumber/select-activity', activityAllocationHandler.GET)
   post('/:prisonerNumber/select-activity', activityAllocationHandler.POST, FromActivityList)
-  get('/:prisonerNumber/waitlist-allocation', prisonerWaitlistHandler.GET)
-  post('/:prisonerNumber/waitlist-allocation', prisonerWaitlistHandler.POST, SelectWailistOptions)
-  get('/:prisonerNumber/pending-application', pendingWaitlistHandler.GET)
-  post('/:prisonerNumber/pending-application', pendingWaitlistHandler.POST, allocateOption)
+
+  router.use('/allocate/:prisonerNumber', insertJourneyIdentifier())
+
+  get('/allocate/:prisonerNumber/:journeyId/waitlist-allocation', prisonerWaitlistHandler.GET)
+  post('/allocate/:prisonerNumber/:journeyId/waitlist-allocation', prisonerWaitlistHandler.POST, SelectWailistOptions)
+
+  get('/allocate/:prisonerNumber/:journeyId/pending-application', pendingWaitlistHandler.GET)
+  post('/allocate/:prisonerNumber/:journeyId/pending-application', pendingWaitlistHandler.POST, allocateOption)
 
   return router
 }
