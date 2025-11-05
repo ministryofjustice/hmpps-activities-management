@@ -1,17 +1,17 @@
 import { addDays, startOfDay, startOfToday, toDate } from 'date-fns'
 import { Request, Response } from 'express'
 import _ from 'lodash'
-import { asString, eventClashes, formatName, getAttendanceSummary } from '../../../../../utils/utils'
+import { asString, eventClashes, getAttendanceSummary } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { EventType } from '../../../../../@types/activities'
 import applyCancellationDisplayRule from '../../../../../utils/applyCancellationDisplayRule'
 import config from '../../../../../config'
-import { AttendanceUpdateRequest } from '../../../../../@types/activitiesAPI/types'
+// import { AttendanceUpdateRequest } from '../../../../../@types/activitiesAPI/types'
 import AttendanceStatus from '../../../../../enum/attendanceStatus'
-import AttendanceReason from '../../../../../enum/attendanceReason'
-import { NameFormatStyle } from '../../../../../utils/helpers/nameFormatStyle'
-import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
+// import AttendanceReason from '../../../../../enum/attendanceReason'
+// import { NameFormatStyle } from '../../../../../utils/helpers/nameFormatStyle'
+// import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import UserService from '../../../../../services/userService'
 import TimeSlot from '../../../../../enum/timeSlot'
 
@@ -177,64 +177,69 @@ export default class SelectPeopleByResidentialLocationRoutes {
     })
   }
 
-  ATTENDED = async (req: Request, res: Response): Promise<void> => {
-    let { selectedAttendances }: { selectedAttendances: string[] } = req.body
-    if (typeof selectedAttendances === 'string') {
-      selectedAttendances = [selectedAttendances]
-    }
+  // ATTENDED = async (req: Request, res: Response): Promise<void> => {
+  //   let { selectedAttendances }: { selectedAttendances: string[] } = req.body
+  //   if (typeof selectedAttendances === 'string') {
+  //     selectedAttendances = [selectedAttendances]
+  //   }
 
-    if (selectedAttendances.some(attendance => attendance.includes(','))) {
-      return res.redirect('attendance-reason')
-    }
+  //   if (selectedAttendances.some(attendance => attendance.includes(','))) {
+  //     return res.redirect('attendance-reason')
+  //   }
 
-    const { user } = res.locals
-    let prisonerName
+  //   const { user } = res.locals
+  //   let prisonerName
 
-    const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
-    const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
+  //   const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
+  //   const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
 
-    const attendances: AttendanceUpdateRequest[] = selectedAttendances.flatMap(selectedAttendance => {
-      const [instanceId, attendanceId] = selectedAttendance.split('-')
+  //   const attendances: AttendanceUpdateRequest[] = selectedAttendances.flatMap(selectedAttendance => {
+  //     const [instanceId, attendanceId] = selectedAttendance.split('-')
 
-      const instance = instances.find(i => i.id === +instanceId)
+  //     const instance = instances.find(i => i.id === +instanceId)
 
-      return {
-        id: +attendanceId,
-        prisonCode: user.activeCaseLoadId,
-        status: AttendanceStatus.COMPLETED,
-        attendanceReason: AttendanceReason.ATTENDED,
-        issuePayment: instance.activitySchedule.activity.paid,
-      }
-    })
+  //     return {
+  //       id: +attendanceId,
+  //       prisonCode: user.activeCaseLoadId,
+  //       status: AttendanceStatus.COMPLETED,
+  //       attendanceReason: AttendanceReason.ATTENDED,
+  //       issuePayment: instance.activitySchedule.activity.paid,
+  //     }
+  //   })
 
-    await this.activitiesService.updateAttendances(attendances, user)
+  //   await this.activitiesService.updateAttendances(attendances, user)
 
-    if (selectedAttendances.length === 1) {
-      const selectedPrisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(
-        selectedAttendances[0].split('-')[2],
-        user,
-      )
-      prisonerName = formatName(
-        selectedPrisoner.firstName,
-        undefined,
-        selectedPrisoner.lastName,
-        NameFormatStyle.firstLast,
-        false,
-      )
-    }
+  //   if (selectedAttendances.length === 1) {
+  //     const selectedPrisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(
+  //       selectedAttendances[0].split('-')[2],
+  //       user,
+  //     )
+  //     prisonerName = formatName(
+  //       selectedPrisoner.firstName,
+  //       undefined,
+  //       selectedPrisoner.lastName,
+  //       NameFormatStyle.firstLast,
+  //       false,
+  //     )
+  //   }
 
-    return res.redirectWithSuccess(
-      req.journeyData.recordAttendanceJourney.returnUrl || '../choose-details-to-record-attendance',
-      'Attendance recorded',
-      `You've saved attendance details for ${selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`}`,
-    )
-  }
+  //   return res.redirectWithSuccess(
+  //     req.journeyData.recordAttendanceJourney.returnUrl || '../choose-details-to-record-attendance',
+  //     'Attendance recorded',
+  //     `You've saved attendance details for ${selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`}`,
+  //   )
+  // }
 
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     let { selectedAttendances }: { selectedAttendances: string[] } = req.body
     if (typeof selectedAttendances === 'string') {
       selectedAttendances = [selectedAttendances]
+    }
+
+    if (selectedAttendances.some(attendance => attendance.includes(','))) {
+      req.journeyData.recordAttendanceJourney.selectedInstanceIds = selectedAttendances
+      return res.redirect('../multiple-not-attended-reason')
     }
 
     const { recordAttendanceJourney } = req.journeyData
@@ -287,43 +292,43 @@ export default class SelectPeopleByResidentialLocationRoutes {
     return res.redirect('../activities/not-attended-reason')
   }
 
-  NOT_REQUIRED_OR_EXCUSED = async (req: Request, res: Response): Promise<void> => {
-    let { selectedAttendances }: { selectedAttendances: string[] } = req.body
-    if (typeof selectedAttendances === 'string') {
-      selectedAttendances = [selectedAttendances]
-    }
-    const { user } = res.locals
-    const { recordAttendanceJourney } = req.journeyData
-    const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
-    const prisonerNumbers = _.uniq(selectedAttendances.map(selectedAttendance => selectedAttendance.split('-')[2]))
+  // NOT_REQUIRED_OR_EXCUSED = async (req: Request, res: Response): Promise<void> => {
+  //   let { selectedAttendances }: { selectedAttendances: string[] } = req.body
+  //   if (typeof selectedAttendances === 'string') {
+  //     selectedAttendances = [selectedAttendances]
+  //   }
+  //   const { user } = res.locals
+  //   const { recordAttendanceJourney } = req.journeyData
+  //   const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
+  //   const prisonerNumbers = _.uniq(selectedAttendances.map(selectedAttendance => selectedAttendance.split('-')[2]))
 
-    const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
+  //   const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
 
-    const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
+  //   const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 
-    recordAttendanceJourney.notRequiredOrExcused = {
-      selectedPrisoners: [],
-    }
+  //   recordAttendanceJourney.notRequiredOrExcused = {
+  //     selectedPrisoners: [],
+  //   }
 
-    selectedAttendances.forEach(selectedAttendance => {
-      const instanceId = selectedAttendance.split('-')[0]
-      const prisonerNumber = selectedAttendance.split('-')[2]
+  //   selectedAttendances.forEach(selectedAttendance => {
+  //     const instanceId = selectedAttendance.split('-')[0]
+  //     const prisonerNumber = selectedAttendance.split('-')[2]
 
-      const instance = instances.find(inst => inst.id === +instanceId)
-      const prisoner = prisoners.find(pris => pris.prisonerNumber === prisonerNumber)
+  //     const instance = instances.find(inst => inst.id === +instanceId)
+  //     const prisoner = prisoners.find(pris => pris.prisonerNumber === prisonerNumber)
 
-      recordAttendanceJourney.notRequiredOrExcused.selectedPrisoners.push({
-        instanceId: instance.id,
-        prisonerNumber: prisoner.prisonerNumber,
-        prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
-      })
-    })
+  //     recordAttendanceJourney.notRequiredOrExcused.selectedPrisoners.push({
+  //       instanceId: instance.id,
+  //       prisonerNumber: prisoner.prisonerNumber,
+  //       prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
+  //     })
+  //   })
 
-    if (!instances[0].activitySchedule.activity.paid) {
-      req.journeyData.recordAttendanceJourney.notRequiredOrExcused.isPaid = false
-      return res.redirect(`../activities/${instances[0].id}/not-required-or-excused/check-and-confirm`)
-    }
+  //   if (!instances[0].activitySchedule.activity.paid) {
+  //     req.journeyData.recordAttendanceJourney.notRequiredOrExcused.isPaid = false
+  //     return res.redirect(`../activities/${instances[0].id}/not-required-or-excused/check-and-confirm`)
+  //   }
 
-    return res.redirect(`../activities/${instances[0].id}/not-required-or-excused/paid-or-not`)
-  }
+  //   return res.redirect(`../activities/${instances[0].id}/not-required-or-excused/paid-or-not`)
+  // }
 }
