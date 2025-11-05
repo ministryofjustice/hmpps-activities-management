@@ -1,6 +1,5 @@
 import { addDays, startOfDay, startOfToday, toDate } from 'date-fns'
 import { Request, Response } from 'express'
-import _ from 'lodash'
 import { asString, eventClashes, getAttendanceSummary } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
@@ -231,65 +230,13 @@ export default class SelectPeopleByResidentialLocationRoutes {
   // }
 
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
     let { selectedAttendances }: { selectedAttendances: string[] } = req.body
     if (typeof selectedAttendances === 'string') {
       selectedAttendances = [selectedAttendances]
     }
 
-    if (selectedAttendances.some(attendance => attendance.includes(','))) {
-      req.journeyData.recordAttendanceJourney.selectedInstanceIds = selectedAttendances
-      return res.redirect('../multiple-not-attended-reason')
-    }
-
-    const { recordAttendanceJourney } = req.journeyData
-    const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
-    const prisonerNumbers = _.uniq(selectedAttendances.map(selectedAttendance => selectedAttendance.split('-')[2]))
-
-    const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
-
-    const allEvents = await this.activitiesService
-      .getScheduledEventsForPrisoners(toDate(instances[0].date), prisonerNumbers, user)
-      .then(response => [
-        ...response.activities,
-        ...response.appointments,
-        ...response.courtHearings,
-        ...response.visits,
-        ...response.adjudications,
-      ])
-      .then(events => events.filter(e => !e.cancelled))
-
-    const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
-
-    recordAttendanceJourney.notAttended = {
-      selectedPrisoners: [],
-    }
-
-    selectedAttendances.forEach(selectedAttendance => {
-      const [instanceId, attendanceId, prisonerNumber] = selectedAttendance.split('-')
-
-      const instance = instances.find(inst => inst.id === +instanceId)
-      const prisoner = prisoners.find(pris => pris.prisonerNumber === prisonerNumber)
-
-      const otherEvents = allEvents.filter(
-        event =>
-          event.prisonerNumber === prisoner.prisonerNumber &&
-          event.scheduledInstanceId !== +instanceId &&
-          eventClashes(event, instance),
-      )
-
-      recordAttendanceJourney.notAttended.selectedPrisoners.push({
-        instanceId: +instanceId,
-        attendanceId: +attendanceId,
-        prisonerNumber,
-        prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
-        firstName: prisoner.firstName,
-        lastName: prisoner.lastName,
-        otherEvents,
-      })
-    })
-
-    return res.redirect('../activities/not-attended-reason')
+    req.journeyData.recordAttendanceJourney.selectedInstanceIds = selectedAttendances
+    return res.redirect('../multiple-not-attended-reason')
   }
 
   // NOT_REQUIRED_OR_EXCUSED = async (req: Request, res: Response): Promise<void> => {
