@@ -17,6 +17,9 @@ import getAttendanceReasons from '../../../fixtures/activitiesApi/getAttendanceR
 import NotAttendedReasonPage from '../../../pages/recordAttendance/notAttendedReason'
 import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 import ChooseDetailsByActivityLocationPage from '../../../pages/recordAttendance/attend-all/chooseDetailsByActivityLocationPage'
+import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
+import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary-different-locations.json'
+import ListActivitiesPage from '../../../pages/recordAttendance/attend-all/listActivitiesPage'
 
 context('Recording attendance for non-activity hub users', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -55,6 +58,12 @@ context('Recording attendance for non-activity hub users', () => {
       'GET',
       '/locations/prison/MDI/non-residential-usage-type\\?formatLocalName=true',
       getNonResidentialActivityLocations,
+    )
+    cy.stubEndpoint('GET', '/activity-categories', getCategories)
+    cy.stubEndpoint(
+      'GET',
+      `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`,
+      getAttendanceSummary,
     )
   })
 
@@ -196,7 +205,7 @@ context('Recording attendance for non-activity hub users', () => {
     selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Sick', 'Pay')
     selectPeopleToRecordAttendanceForPage.checkSuccessBanner(`You've saved attendance details for 2 attendees`)
   })
-  it.only('should record attendance by activity location', () => {
+  it('should record attendance by activity location', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -213,8 +222,19 @@ context('Recording attendance for non-activity hub users', () => {
     const chooseDetailsToRecordAttendanceActivityLocationPage = Page.verifyOnPage(ChooseDetailsByActivityLocationPage)
 
     chooseDetailsToRecordAttendanceActivityLocationPage.radioTodayClick()
-    chooseDetailsToRecordAttendanceActivityLocationPage.checkboxPMClick()
+    chooseDetailsToRecordAttendanceActivityLocationPage.checkboxAMClick()
+    chooseDetailsToRecordAttendanceActivityLocationPage.radioOffWingClick()
+    chooseDetailsToRecordAttendanceActivityLocationPage.continue()
+
+    const listActivitiesPage = Page.verifyOnPage(ListActivitiesPage)
+    listActivitiesPage.containsActivities('Football')
+    listActivitiesPage.back()
+
+    Page.verifyOnPage(ChooseDetailsByActivityLocationPage)
+    chooseDetailsToRecordAttendanceActivityLocationPage.radioTodayClick()
+    chooseDetailsToRecordAttendanceActivityLocationPage.checkboxAMClick()
     chooseDetailsToRecordAttendanceActivityLocationPage.radioInCellClick()
-    howToRecordAttendancePage.continue()
+    chooseDetailsToRecordAttendanceActivityLocationPage.continue()
+    listActivitiesPage.containsActivities('English level 1')
   })
 })
