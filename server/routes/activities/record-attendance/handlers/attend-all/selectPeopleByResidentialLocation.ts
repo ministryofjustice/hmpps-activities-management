@@ -156,7 +156,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
           instanceIds: activitiesForPrisoner.map(i => i.id),
           attendances: attendancesForPrisoner,
           attendanceIds: attendancesForPrisoner.map(a => a.id),
-          advanceAttendances: advanceAttendancesForPrisoner,
+          advancedAttendances: advanceAttendancesForPrisoner,
           someSelectable: isSelectable,
           otherEventsPerInstance: clashes,
         })

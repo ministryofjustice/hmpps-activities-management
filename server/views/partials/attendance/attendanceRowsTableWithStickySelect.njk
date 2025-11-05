@@ -90,37 +90,52 @@
                         issuePayment: attendee.advancedAttendance.issuePayment,
                         marginTagClass: true
                     }) }}
+            {% elif attendee.advancedAttendances | length %}
+                <div class="multi-row--container">
+                    {% for advancedAttendance in attendee.advancedAttendances %}
+                        <div>
+                            {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', attendee.instance.activitySchedule.activity.attendanceRequired) }}
+                            {{ payStatus( 
+                                { 
+                                    dataPresentCheck: advancedAttendance,
+                                    status: 'COMPLETED',
+                                    payable: isPayable,
+                                    issuePayment: advancedAttendance.issuePayment,
+                                    marginTagClass: true
+                                }) }}
+                        </div>
+                        {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border govuk-grid-column-full">{% endif %}
+                    {% endfor %}
+                </div>
+            {% elif attendee.attendances | length %}
+                <div class="multi-row--container">
+                    {% for attendance in attendee.attendances %}
+                        <div>
+                            {{ attendanceTag(attendance.status, attendance.attendanceReason.code, attendee.instance.activitySchedule.activity.attendanceRequired) }}
+                            {{ payStatus( 
+                                { 
+                                    dataPresentCheck: attendance,
+                                    status: attendance.status,
+                                    payable: isPayable,
+                                    issuePayment: attendance.issuePayment,
+                                    marginTagClass: true
+                                }) }}
+                            {{ incentiveLevelWarningTag(attendance) }}
+                        </div>
+                        {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border govuk-grid-column-full">{% endif %}
+                    {% endfor %}
+                </div>
             {% else %}
-                {% if attendee.attendances %}
-                    <div class="multi-row--container">
-                        {% for attendance in attendee.attendances %}
-                            <div>
-                                {{ attendanceTag(attendance.status, attendance.attendanceReason.code, attendee.instance.activitySchedule.activity.attendanceRequired) }}
-                                {{ payStatus( 
-                                    { 
-                                        dataPresentCheck: attendance,
-                                        status: attendance.status,
-                                        payable: isPayable,
-                                        issuePayment: attendance.issuePayment,
-                                        marginTagClass: true
-                                    }) }}
-                                {{ incentiveLevelWarningTag(attendance) }}
-                            </div>
-                            {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border govuk-grid-column-full">{% endif %}
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, attendee.instance.activitySchedule.activity.attendanceRequired) }}
-                    {{ payStatus( 
-                        { 
-                            dataPresentCheck: attendee.attendance,
-                            status: attendee.attendance.status,
-                            payable: isPayable,
-                            issuePayment: attendee.attendance.issuePayment,
-                            marginTagClass: true
-                        }) }}
-                    {{ incentiveLevelWarningTag(attendee.attendance) }}
-                {% endif %}
+                {{ attendanceTag(attendee.attendance.status, attendee.attendance.attendanceReason.code, attendee.instance.activitySchedule.activity.attendanceRequired) }}
+                {{ payStatus( 
+                    { 
+                        dataPresentCheck: attendee.attendance,
+                        status: attendee.attendance.status,
+                        payable: isPayable,
+                        issuePayment: attendee.attendance.issuePayment,
+                        marginTagClass: true
+                    }) }}
+                {{ incentiveLevelWarningTag(attendee.attendance) }}
             {% endif %}
         {% endset %}
 
