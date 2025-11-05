@@ -110,7 +110,7 @@
     "cypress-file-upload": "^5.0.8",
     "cypress-multi-reporters": "^2.0.5",
     "cypress-split": "^1.24.25",
-    "esbuild": "^0.25.11",
+    "esbuild": "^0.25.12",
     "esbuild-plugin-clean": "^1.0.1",
     "esbuild-plugin-copy": "^2.1.1",
     "esbuild-plugin-manifest": "^1.0.5",
