@@ -15,6 +15,8 @@ import getScheduledEvents from '../../../fixtures/activitiesApi/getScheduledEven
 import getInmateDetails from '../../../fixtures/prisonerSearchApi/getInmateDetailsForAttendance.json'
 import getAttendanceReasons from '../../../fixtures/activitiesApi/getAttendanceReasons.json'
 import NotAttendedReasonPage from '../../../pages/recordAttendance/notAttendedReason'
+import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
+import ChooseDetailsByActivityLocationPage from '../../../pages/recordAttendance/attend-all/chooseDetailsByActivityLocationPage'
 
 context('Recording attendance for non-activity hub users', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -48,6 +50,12 @@ context('Recording attendance for non-activity hub users', () => {
     cy.stubEndpoint('PUT', '/attendances')
     cy.stubEndpoint('GET', '/attendance-reasons', getAttendanceReasons)
     cy.stubEndpoint('GET', '/scheduled-instances/11', getInstances)
+
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/non-residential-usage-type\\?formatLocalName=true',
+      getNonResidentialActivityLocations,
+    )
   })
 
   it('should record attendance by activity - no activities available', () => {
@@ -187,5 +195,26 @@ context('Recording attendance for non-activity hub users', () => {
     selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Aborah, Cudmastarie Hallone', 'Sick', 'Pay')
     selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Sick', 'Pay')
     selectPeopleToRecordAttendanceForPage.checkSuccessBanner(`You've saved attendance details for 2 attendees`)
+  })
+  it.only('should record attendance by activity location', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityLocationClick().click()
+    howToRecordAttendancePage.continue()
+
+    const chooseDetailsToRecordAttendanceActivityLocationPage = Page.verifyOnPage(ChooseDetailsByActivityLocationPage)
+
+    chooseDetailsToRecordAttendanceActivityLocationPage.radioTodayClick()
+    chooseDetailsToRecordAttendanceActivityLocationPage.checkboxPMClick()
+    chooseDetailsToRecordAttendanceActivityLocationPage.radioInCellClick()
+    howToRecordAttendancePage.continue()
   })
 })
