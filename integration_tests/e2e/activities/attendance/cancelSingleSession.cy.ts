@@ -41,8 +41,7 @@ context('Cancel Single Session', () => {
     )
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstanceEnglishLevel1)
     cy.stubEndpoint('GET', '/scheduled-instances/11', getScheduledInstanceEnglishLevel2)
-    cy.stubEndpoint('PUT', '/scheduled-instances/93/cancel')
-    cy.stubEndpoint('PUT', '/scheduled-instances/11/cancel')
+    cy.stubEndpoint('PUT', '/scheduled-instances/cancel')
   })
 
   it('Should cancel single paid activity with pay', () => {

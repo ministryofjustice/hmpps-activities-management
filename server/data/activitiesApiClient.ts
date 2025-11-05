@@ -55,7 +55,6 @@ import {
   ScheduledActivity,
   ScheduledAttendee,
   ScheduledInstanceAttendanceSummary,
-  ScheduleInstanceCancelRequest,
   ScheduleInstancesCancelRequest,
   ScheduleInstancesUncancelRequest,
   ScheduledInstancedUpdateRequest,
@@ -471,19 +470,6 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
       path: `/appointment-set/${appointmentSetId}/details`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
-    })
-  }
-
-  async putCancelScheduledActivity(
-    scheduleInstanceId: number,
-    cancelRequest: ScheduleInstanceCancelRequest,
-    user: ServiceUser,
-  ): Promise<void> {
-    return this.put({
-      path: `/scheduled-instances/${scheduleInstanceId}/cancel`,
-      authToken: user.token,
-      headers: CASELOAD_HEADER(user.activeCaseLoadId),
-      data: cancelRequest,
     })
   }
 

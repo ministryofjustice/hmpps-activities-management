@@ -81,15 +81,36 @@ describe('Route Handlers - Cancel Session Reason', () => {
       } as unknown as Request
     })
 
-    it('should add cancel reason to session and redirect to confirmation page', async () => {
+    it('should add cancel reason to session and redirect to confirmation page when activity is not payable', async () => {
+      const instance = { activitySchedule: { activity: { paid: false } } } as ScheduledActivity
+
+      when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(instance)
+
       await handler.POST(addReasonRequest, res)
 
       expect(addReasonRequest.journeyData.recordAttendanceJourney.sessionCancellation).toEqual({
         reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',
+        issuePayment: false,
       })
 
       expect(res.redirect).toHaveBeenCalledWith('cancel/confirm')
+    })
+
+    it('should add cancel reason to session and redirect to payment page when activity is payable', async () => {
+      const instance = { activitySchedule: { activity: { paid: true } } } as ScheduledActivity
+
+      when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(instance)
+
+      await handler.POST(addReasonRequest, res)
+
+      expect(addReasonRequest.journeyData.recordAttendanceJourney.sessionCancellation).toEqual({
+        reason: CancellationReasons.LOCATION_UNAVAILABLE,
+        comment: 'A comment',
+        issuePayment: false,
+      })
+
+      expect(res.redirect).toHaveBeenCalledWith('cancel/payment')
     })
 
     it('should update the reason and redirect back to the view/edit page if in edit mode', async () => {
