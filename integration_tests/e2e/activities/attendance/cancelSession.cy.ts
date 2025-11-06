@@ -15,6 +15,7 @@ import getScheduledEvents from '../../../fixtures/activitiesApi/getScheduledEven
 import AttendanceListPage from '../../../pages/recordAttendance/attendanceList'
 import CancelSessionPage from '../../../pages/recordAttendance/cancelSessionReason'
 import CancelSessionConfirmPage from '../../../pages/recordAttendance/cancelSessionConfirm'
+import CancelSessionPaymentPage from '../../../pages/recordAttendance/cancelSessionPayment'
 import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 
 context('Cancel an activity session (single)', () => {
@@ -43,7 +44,7 @@ context('Cancel an activity session (single)', () => {
     cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendeesForScheduledInstance)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails as unknown as JSON)
     cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${todayStr}`, getScheduledEvents as unknown as JSON)
-    cy.stubEndpoint('PUT', '/scheduled-instances/93/cancel')
+    cy.stubEndpoint('PUT', '/scheduled-instances/cancel')
   })
 
   it('should cancel a session', () => {
@@ -73,6 +74,10 @@ context('Cancel an activity session (single)', () => {
     cancelSessionPage.selectReason('Staff unavailable')
     cancelSessionPage.continue()
 
+    const cancelPaymentPage = Page.verifyOnPage(CancelSessionPaymentPage)
+    cancelPaymentPage.issuePayment('Yes')
+    cancelPaymentPage.continue()
+
     const cancelSessionConfirmPage = Page.verifyOnPage(CancelSessionConfirmPage)
     cancelSessionConfirmPage.title()
     cancelSessionConfirmPage
@@ -89,6 +94,9 @@ context('Cancel an activity session (single)', () => {
     cancelSessionPage.moreDetailsInput().type('All the staff are busy with mandatory learning modules.')
     cancelSessionPage.continue()
 
+    cancelPaymentPage.issuePayment('No')
+    cancelPaymentPage.continue()
+
     cancelSessionConfirmPage.title()
     cancelSessionConfirmPage.caption()
     cancelSessionConfirmPage.selectConfirmation('Yes')
@@ -96,6 +104,7 @@ context('Cancel an activity session (single)', () => {
 
     Page.verifyOnPage(AttendanceListPage)
   })
+
   it('should show the correct details in the cancelled banner at the top of the page', () => {
     getScheduledInstanceEnglishLevel1Cancelled.cancelledIssuePayment = null
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstanceEnglishLevel1Cancelled as unknown as JSON)

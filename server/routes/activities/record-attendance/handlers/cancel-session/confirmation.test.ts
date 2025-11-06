@@ -4,6 +4,7 @@ import { validate } from 'class-validator'
 import ConfirmationRoutes, { CancelConfirmForm } from './confirmation'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
+import { ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../../services/activitiesService')
 
@@ -61,20 +62,27 @@ describe('Route Handlers - Cancel Session Confirmation', () => {
           },
         },
       } as unknown as Request
+
+      const scheduledActivity = {
+        activitySchedule: {
+          activity: {
+            paid: true,
+          },
+        },
+      } as ScheduledActivity
+
+      activitiesService.getScheduledActivity.mockReturnValue(Promise.resolve(scheduledActivity))
     })
 
     it('should cancel scheduled activity', async () => {
       await handler.POST(confirmRequest, res)
 
-      expect(activitiesService.cancelScheduledActivity).toHaveBeenCalledWith(
-        1,
-        {
-          reason: 'Staff unavailable',
-          comment: 'Resume tomorrow',
-        },
-        {
-          username: 'joebloggs',
-        },
+      expect(activitiesService.cancelScheduledActivities).toHaveBeenCalledWith(
+        [1],
+        'Staff unavailable',
+        true,
+        { username: 'joebloggs' },
+        'Resume tomorrow',
       )
       expect(res.redirect).toHaveBeenCalledWith('../../1/attendance-list')
     })
@@ -83,7 +91,7 @@ describe('Route Handlers - Cancel Session Confirmation', () => {
       confirmRequest.body.confirm = 'no'
       await handler.POST(confirmRequest, res)
 
-      expect(activitiesService.cancelScheduledActivity).toHaveBeenCalledTimes(0)
+      expect(activitiesService.cancelScheduledActivities).not.toHaveBeenCalled()
       expect(res.redirect).toHaveBeenCalledWith('../../1/attendance-list')
     })
 
@@ -102,7 +110,7 @@ describe('Route Handlers - Cancel Session Confirmation', () => {
 
       await handler.POST(confirmRequest, res)
 
-      expect(activitiesService.cancelScheduledActivity).not.toHaveBeenCalledWith()
+      expect(activitiesService.cancelScheduledActivities).not.toHaveBeenCalledWith()
       expect(res.redirect).toHaveBeenCalledWith('../../1/cancel')
     })
   })

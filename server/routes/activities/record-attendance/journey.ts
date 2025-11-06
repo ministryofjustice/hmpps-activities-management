@@ -39,6 +39,7 @@ type NotRequiredOrExcusedJourney = {
 export type SessionCancellationRequest = {
   reason: string
   comment?: string
+  issuePayment: boolean
 }
 
 export type MultipleSessionCancellationRequest = {
