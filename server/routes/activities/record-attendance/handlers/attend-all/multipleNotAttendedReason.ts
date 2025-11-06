@@ -40,6 +40,7 @@ export default class MultipleNotAttendedReasonRoutes {
         firstName: prisoner.firstName,
         lastName: prisoner.lastName,
         instances: filteredInstances,
+        isPayable: instances.some(i => i.activitySchedule.activity.paid),
       }
     })
 
