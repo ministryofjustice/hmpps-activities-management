@@ -24,17 +24,24 @@ export class NotAttendedData {
 
   prisonerName: string
 
+  @IsNotEmpty({ message: args => `Select the activities that ${getPrisonerName(args)} did not attend` })
   selectedInstanceIds: string[]
 
   @Transform(({ value }) => value !== 'false')
   isPayable: boolean
 
+  @ValidateIf(o => o.selectedInstanceIds && o.selectedInstanceIds.length > 0)
   @IsEnum(AttendanceReason, { message: args => `Select an absence reason for ${getPrisonerName(args)}` })
   notAttendedReason: AttendanceReason
 
   @ValidateIf(o => AttendanceReason.SICK === o.notAttendedReason && o.isPayable)
   @IsEnum(YesNo, { message: (args: ValidationArguments) => `Select if ${getPrisonerName(args)} should be paid` })
   sickPay?: YesNo
+
+  @ValidateIf(o => AttendanceReason.SICK === o.notAttendedReason)
+  @IsOptional()
+  @MaxLength(100, { message: 'Additional details must be $constraint1 characters or less' })
+  moreDetail?: string
 
   @ValidateIf(o => AttendanceReason.REST === o.notAttendedReason && o.isPayable)
   @IsEnum(YesNo, { message: (args: ValidationArguments) => `Select if ${getPrisonerName(args)} should be paid` })
@@ -51,11 +58,6 @@ export class NotAttendedData {
       `Select if this is an acceptable absence for ${getPrisonerName(args)} and they should be paid`,
   })
   otherAbsencePay?: YesNo
-
-  @ValidateIf(o => AttendanceReason.SICK === o.notAttendedReason)
-  @IsOptional()
-  @MaxLength(100, { message: 'Additional details must be $constraint1 characters or less' })
-  moreDetail?: string
 
   @ValidateIf(o => AttendanceReason.REFUSED === o.notAttendedReason)
   @IsNotEmpty({ message: args => `Enter a case note for ${getPrisonerName(args)}` })

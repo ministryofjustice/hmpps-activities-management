@@ -191,6 +191,7 @@
                     {% set hasActivityClash = false %}
                     <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerNumber]" }}" value="{{ prisoner.prisonerNumber }}"/>
                     <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][prisonerName]" }}" value="{{ prisoner | formatName(NameFormatStyle.firstLast, false) }}"/>
+                    <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][isPayable]" }}" value="{{ row.isPayable }}" />
 
                     {% set notAttendedReasonOptions = [] %}
                     {% for notAttendedReason in notAttendedReasons %}
@@ -222,7 +223,8 @@
                         {% for instance in prisoner.instances %}
                             {% set instanceCheckboxes = (instanceCheckboxes.push({
                                 value: instance.id,
-                                text: instance.activitySchedule.description
+                                text: instance.activitySchedule.description,
+                                checked: formResponses.notAttendedData[prisonerIndex].selectedInstanceIds and instance.id | string in formResponses.notAttendedData[prisonerIndex].selectedInstanceIds
                             }), instanceCheckboxes) %}
                         {% endfor %}
 
@@ -233,7 +235,8 @@
                                     text: "Select the activities that " + prisoner | formatName(NameFormatStyle.firstLast, false) + " did not attend"
                                 }
                             },
-                            items: instanceCheckboxes
+                            items: instanceCheckboxes,
+                            errorMessage: validationErrors | findError("notAttendedData-"  + prisonerIndex + "-selectedInstanceIds")
                         }) }}
                     {% else %}
                         <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][selectedInstanceIds]" }}" value="{{ prisoner.instances[0].id }}" />
