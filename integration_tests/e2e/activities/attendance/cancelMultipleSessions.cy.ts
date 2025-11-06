@@ -22,7 +22,7 @@ import CancelMultipleCheckAnswersPage from '../../../pages/recordAttendance/canc
 import AttendanceListPage from '../../../pages/recordAttendance/attendanceList'
 import ViewOrEditCancellationDetailsPage from '../../../pages/recordAttendance/viewOrEditCancellationDetails'
 import CancelSessionPage from '../../../pages/recordAttendance/cancelSessionReason'
-import UpdateCancelledSessionPayPage from '../../../pages/recordAttendance/cancelSessionPay'
+import CancelledSessionUpdatePayPage from '../../../pages/recordAttendance/cancelSessionUpdatePay'
 import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 
 context('Cancel Multiple Sessions', () => {
@@ -419,7 +419,7 @@ context('Updating cancellation details', () => {
 
     attendanceListPage.getLinkByText('Change pay').click()
 
-    const updateCancelledSessionPayPage = Page.verifyOnPage(UpdateCancelledSessionPayPage)
+    const updateCancelledSessionPayPage = Page.verifyOnPage(CancelledSessionUpdatePayPage)
     updateCancelledSessionPayPage.title().contains('Change if people should be paid for this cancelled session')
     updateCancelledSessionPayPage.getLinkByText('Do not change pay for this session').click()
 

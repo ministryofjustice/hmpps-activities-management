@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import ActivitiesService from '../../../../../services/activitiesService'
-import { convertToArray } from '../../../../../utils/utils'
+import { convertToArray, convertToNumberArray } from '../../../../../utils/utils'
 
 export default class CancelSingleSessionsCheckAnswersRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
@@ -27,7 +27,15 @@ export default class CancelSingleSessionsCheckAnswersRoutes {
     const { activityDate, sessionFilters, selectedInstanceIds, sessionCancellationSingle } =
       req.journeyData.recordAttendanceJourney
 
-    await this.activitiesService.cancelScheduledActivity(+selectedInstanceIds[0], sessionCancellationSingle, user)
+    const { reason, issuePayment, comment } = sessionCancellationSingle
+
+    await this.activitiesService.cancelScheduledActivities(
+      convertToNumberArray(selectedInstanceIds),
+      reason,
+      issuePayment,
+      user,
+      comment,
+    )
 
     const sessionFiltersString = sessionFilters ? convertToArray(sessionFilters).join(',') : ''
     res.redirect(`../../activities?date=${activityDate}&sessionFilters=${sessionFiltersString}`)

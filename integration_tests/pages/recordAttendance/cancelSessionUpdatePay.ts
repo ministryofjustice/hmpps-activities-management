@@ -1,8 +1,8 @@
 import Page from '../page'
 
-export default class UpdateCancelledSessionPayPage extends Page {
+export default class CancelledSessionUpdatePayPage extends Page {
   constructor() {
-    super('update-cancelled-session-payment-page')
+    super('cancelled-session-update-payment-page')
   }
 
   title = () => cy.get('.govuk-heading-l')

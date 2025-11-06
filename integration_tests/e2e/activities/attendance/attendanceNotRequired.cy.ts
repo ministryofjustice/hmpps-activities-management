@@ -40,7 +40,7 @@ context('Attendance not required', () => {
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('PUT', '/attendances')
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
-    cy.stubEndpoint('PUT', '/scheduled-instances/94/cancel')
+    cy.stubEndpoint('PUT', '/scheduled-instances/cancel')
     cy.stubEndpoint('PUT', '/scheduled-instances/94/uncancel')
     cy.stubEndpoint(
       'GET',
