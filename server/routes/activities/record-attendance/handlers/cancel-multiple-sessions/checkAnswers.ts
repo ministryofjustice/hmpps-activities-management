@@ -54,10 +54,14 @@ export default class CancelMultipleSessionsCheckAnswersRoutes {
     const { activityDate, sessionFilters, selectedInstanceIds, sessionCancellationMultiple } =
       req.journeyData.recordAttendanceJourney
 
-    await this.activitiesService.cancelMultipleActivities(
+    const { reason, comment, issuePayment } = sessionCancellationMultiple
+
+    await this.activitiesService.cancelScheduledActivities(
       convertToNumberArray(selectedInstanceIds),
-      sessionCancellationMultiple,
+      reason,
+      issuePayment,
       user,
+      comment,
     )
 
     const sessionFiltersString = sessionFilters ? convertToArray(sessionFilters).join(',') : ''

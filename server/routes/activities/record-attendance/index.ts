@@ -25,7 +25,7 @@ import UncancelMultipleSessionsConfirmRoutes, {
 } from './handlers/uncancel-multiple-sessions/confirmation'
 import UncancelMultipleSessionsRoutes from './handlers/uncancel-multiple-sessions/activitiesList'
 import CancelMultipleSessionsViewEditDetailsRoutes from './handlers/cancel-multiple-sessions/viewOrEditDetails'
-import UpdateCancelledSessionPayRoutes, { SessionPayForm } from './handlers/cancel-session/updatePayment'
+import UpdateCancelledSessionPayRoutes, { CancelledSessionUpdatePayForm } from './handlers/cancel-session/updatePayment'
 import PaidOrNotRoutes, { PayNotRequiredOrExcusedForm } from './handlers/not-required-or-excused/paidOrNot'
 import CheckAndConfirmRoutes from './handlers/not-required-or-excused/checkAndConfirm'
 import AdvanceAttendanceDetailsRoutes from './handlers/advanceAttendanceDetails'
@@ -49,6 +49,7 @@ import ChooseDetailsByResidentialLocationRoutes, {
   ChooseDetailsByResidentialLocationForm,
 } from './handlers/attend-all/chooseDetailsByResidentialLocation'
 import SelectPeopleByResidentialLocationRoutes from './handlers/attend-all/selectPeopleByResidentialLocation'
+import CancelSessionPayRoutes, { CancelSessionPayForm } from './handlers/cancel-session/payment'
 
 export default function Index({
   activitiesService,
@@ -77,6 +78,7 @@ export default function Index({
   const checkAndConfirmRoutes = new CheckAndConfirmRoutes(activitiesService)
   const notAttendedReasonHandler = new NotAttendedReasonRoutes(activitiesService)
   const cancelSessionReasonRoutes = new CancelSessionReasonRoutes(activitiesService)
+  const cancelledSessionPayRoutes = new CancelSessionPayRoutes()
   const updateCancelledSessionPayRoutes = new UpdateCancelledSessionPayRoutes(activitiesService)
   const cancelSessionConfirmationRoutes = new CancelSessionConfirmationRoutes(activitiesService)
   const uncancelSessionConfirmationRoutes = new UncancelSessionConfirmationRoutes(activitiesService)
@@ -182,8 +184,14 @@ export default function Index({
 
   get('/:journeyId/activities/:id/cancel', cancelSessionReasonRoutes.GET, true)
   post('/:journeyId/activities/:id/cancel', cancelSessionReasonRoutes.POST, CancelReasonForm)
-  get('/:journeyId/activities/:id/cancel/payment', updateCancelledSessionPayRoutes.GET, true)
-  post('/:journeyId/activities/:id/cancel/payment', updateCancelledSessionPayRoutes.POST, SessionPayForm)
+  get('/:journeyId/activities/:id/cancel/payment', cancelledSessionPayRoutes.GET, true)
+  post('/:journeyId/activities/:id/cancel/payment', cancelledSessionPayRoutes.POST, CancelSessionPayForm)
+  get('/:journeyId/activities/:id/cancel/update-payment', updateCancelledSessionPayRoutes.GET, true)
+  post(
+    '/:journeyId/activities/:id/cancel/update-payment',
+    updateCancelledSessionPayRoutes.POST,
+    CancelledSessionUpdatePayForm,
+  )
   get('/:journeyId/activities/:id/cancel/confirm', cancelSessionConfirmationRoutes.GET, true)
   post('/:journeyId/activities/:id/cancel/confirm', cancelSessionConfirmationRoutes.POST, CancelConfirmForm)
   get('/:journeyId/activities/:id/uncancel', uncancelSessionConfirmationRoutes.GET, true)

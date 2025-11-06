@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
-import UpdateCancelledSessionPayRoutes, { SessionPayForm } from './updatePayment'
+import UpdateCancelledSessionPayRoutes, { CancelledSessionUpdatePayForm } from './updatePayment'
 
 jest.mock('../../../../../services/activitiesService')
 
@@ -40,7 +40,7 @@ describe('Route Handlers - Update payment for cancelled session', () => {
   describe('GET', () => {
     it('should render the update payment page', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/cancel-session/payment')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/cancel-session/update-payment')
     })
   })
 
@@ -89,7 +89,7 @@ describe('Route Handlers - Update payment for cancelled session', () => {
         issuePayOption: 'no',
       }
 
-      const requestObject = plainToInstance(SessionPayForm, body)
+      const requestObject = plainToInstance(CancelledSessionUpdatePayForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([])
@@ -100,7 +100,7 @@ describe('Route Handlers - Update payment for cancelled session', () => {
         issuePayOption: 'yes',
       }
 
-      const requestObject = plainToInstance(SessionPayForm, body)
+      const requestObject = plainToInstance(CancelledSessionUpdatePayForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([])
@@ -109,7 +109,7 @@ describe('Route Handlers - Update payment for cancelled session', () => {
     it('should fail validation when issue pay option not provided', async () => {
       const body = {}
 
-      const requestObject = plainToInstance(SessionPayForm, body)
+      const requestObject = plainToInstance(CancelledSessionUpdatePayForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual(

@@ -214,16 +214,14 @@ describe('Route Handlers - Cancel Multiple Sessions Check Answers', () => {
     it('should call the activity cancel instances endpoint with the correct data', async () => {
       await handler.POST(req, res)
 
-      expect(activitiesService.cancelMultipleActivities).toHaveBeenCalledWith(
+      expect(activitiesService.cancelScheduledActivities).toHaveBeenCalledWith(
         [1],
-        {
-          reason: 'Staff unavailable',
-          comment: 'Resume tomorrow',
-          issuePayment: true,
-        },
+        'Staff unavailable',
+        true,
         {
           username: 'joebloggs',
         },
+        'Resume tomorrow',
       )
       expect(res.redirect).toHaveBeenCalledWith('../../activities?date=2025-03-24&sessionFilters=PM')
     })

@@ -45,7 +45,6 @@ import {
   PrisonPayBandUpdateRequest,
   PrisonRegime,
   ScheduledActivity,
-  ScheduleInstanceCancelRequest,
   ScheduleInstancesCancelRequest,
   ScheduleInstancesUncancelRequest,
   Slot,
@@ -63,10 +62,6 @@ import {
   LocationPrefix,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
-import {
-  MultipleSessionCancellationRequest,
-  SessionCancellationRequest,
-} from '../routes/activities/record-attendance/journey'
 import { AttendanceStatus } from '../@types/appointments'
 import EventTier from '../enum/eventTiers'
 import EventOrganiser from '../enum/eventOrganisers'
@@ -274,18 +269,6 @@ export default class ActivitiesService {
 
   createAppointmentSeries(request: AppointmentSeriesCreateRequest, user: ServiceUser): Promise<AppointmentSeries> {
     return this.activitiesApiClient.postCreateAppointmentSeries(request, user)
-  }
-
-  async cancelScheduledActivity(
-    scheduleInstanceId: number,
-    cancelRequest: SessionCancellationRequest,
-    user: ServiceUser,
-  ) {
-    const scheduleInstanceCancelRequest: ScheduleInstanceCancelRequest = {
-      ...cancelRequest,
-      username: user.username,
-    }
-    return this.activitiesApiClient.putCancelScheduledActivity(scheduleInstanceId, scheduleInstanceCancelRequest, user)
   }
 
   async uncancelScheduledActivity(scheduleInstanceId: number, user: ServiceUser) {
@@ -579,14 +562,18 @@ export default class ActivitiesService {
     return this.activitiesApiClient.patchPrisonPayBand(prisonCode, prisonPayBandId, request, user)
   }
 
-  async cancelMultipleActivities(
+  async cancelScheduledActivities(
     scheduledInstanceIds: number[],
-    cancelRequest: MultipleSessionCancellationRequest,
+    reason: string,
+    issuePayment: boolean,
     user: ServiceUser,
+    comment?: string,
   ) {
     const scheduleInstancesCancelRequest: ScheduleInstancesCancelRequest = {
-      ...cancelRequest,
       scheduleInstanceIds: scheduledInstanceIds,
+      reason,
+      comment,
+      issuePayment,
       username: user.username,
     }
     return this.activitiesApiClient.putCancelMultipleActivities(scheduleInstancesCancelRequest, user)
