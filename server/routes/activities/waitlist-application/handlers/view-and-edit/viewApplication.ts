@@ -15,8 +15,12 @@ export default class ViewApplicationRoutes {
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { applicationId } = req.params
     const { user } = res.locals
+
     let journeyEntry = req.query.journeyEntry ? asString(req.query.journeyEntry) : null
     journeyEntry ??= req.journeyData?.waitListApplicationJourney?.journeyEntry
+
+    // Ensure link back to waitlist tab on prisoner allocations page - anything after the # is not sent in query params
+    if (journeyEntry && journeyEntry.includes('prisoner-allocations')) journeyEntry += '#prisoner-waitlist-tab'
 
     const application = await this.activitiesService.fetchWaitlistApplication(+applicationId, user)
 

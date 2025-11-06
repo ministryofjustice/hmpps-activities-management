@@ -7,6 +7,7 @@
 
 {% set pageTitle = "View waitlist application - Activities - DPS" %}
 {% set pageId = 'view-application-page' %}
+{% set jsBackLink = true %}
 
 {% set editable = 'ROLE_ACTIVITY_HUB' in user.roles and isMostRecent and isNotAlreadyAllocated %}
 
@@ -130,14 +131,25 @@
             }) }}
 
         <div class="govuk-button-group">
-            {{ govukButton({
-                text: "Return to waitlist",
-                href: journeyEntry or '/activities/allocation-dashboard/' + activityId + '#waitlist-tab',
-                classes: "govuk-button--secondary"
-            }) }}
+          {% if journeyEntry and journeyEntry.includes('prisoner-allocations') %}
+            {% set buttonText = "Return to " + prisoner.name | possessive + " applications" %}
+            {% set href = journeyEntry %}
+          {% elseif journeyEntry and journeyEntry.includes('waitlist-dashboard') %}
+            {% set buttonText = "Return to applications" %}
+            {% set href = '/activities/waitlist-dashboard' %}
+          {% else %}
+            {% set buttonText = "Return to waitlist" %}
+            {% set href = '/activities/allocation-dashboard/' + activityId + '#waitlist-tab' %}
+          {% endif %}
+        
+          {{ govukButton({
+            text: buttonText,
+            href: href,
+            classes: "govuk-button--secondary"
+          }) }}
 
             <p class="govuk-body">
-                <a class="govuk-link govuk-link--no-visited-state" href='/activities/prisoner-allocations/{{ prisoner.prisonerNumber }}/#prisoner-waitlist-tab' class='govuk-link govuk-link--no-visited-state' target='_blank'>Manage {{ prisoner.name }} waitlist applications.</a>
+                <a class="govuk-link govuk-link--no-visited-state" href='/activities/prisoner-allocations/{{ prisoner.prisonerNumber }}#prisoner-waitlist-tab'>Manage {{ prisoner.name }} waitlist applications.</a>
             </p>
         </div>
     </div>
