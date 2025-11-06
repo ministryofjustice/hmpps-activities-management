@@ -49,7 +49,9 @@ import ChooseDetailsByResidentialLocationRoutes, {
   ChooseDetailsByResidentialLocationForm,
 } from './handlers/attend-all/chooseDetailsByResidentialLocation'
 import SelectPeopleByResidentialLocationRoutes from './handlers/attend-all/selectPeopleByResidentialLocation'
-import MultipleNotAttendedReasonRoutes from './handlers/attend-all/multipleNotAttendedReason'
+import MultipleNotAttendedReasonRoutes, {
+  MultipleNotAttendedReasonForm,
+} from './handlers/attend-all/multipleNotAttendedReason'
 
 export default function Index({
   activitiesService,
@@ -286,7 +288,11 @@ export default function Index({
   //   selectPeopleByResidentialLocationRoutes.NOT_REQUIRED_OR_EXCUSED,
   // )
   get('/:journeyId/attend-all/multiple-not-attended-reason', multipleNotAttendedReasonRoutes.GET)
-  post('/:journeyId/attend-all/multiple-not-attended-reason', multipleNotAttendedReasonRoutes.POST)
+  post(
+    '/:journeyId/attend-all/multiple-not-attended-reason',
+    multipleNotAttendedReasonRoutes.POST,
+    MultipleNotAttendedReasonForm,
+  )
 
   post('/:journeyId/attend-all/attended', selectPeopleToRecordattendanceForRoutes.ATTENDED)
   post('/:journeyId/attend-all/not-attended', selectPeopleToRecordattendanceForRoutes.NOT_ATTENDED)

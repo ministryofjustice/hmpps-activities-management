@@ -236,7 +236,7 @@
                             items: instanceCheckboxes
                         }) }}
                     {% else %}
-                        <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][instanceId]" }}" value="{{ prisoner.instances[0].id }}" />
+                        <input type="hidden" name="{{ "notAttendedData[" + prisonerIndex + "][selectedInstanceIds]" }}" value="{{ prisoner.instances[0].id }}" />
                     {% endif %}
 
                     {{ govukRadios({
