@@ -135,10 +135,7 @@
     "typescript": "^5.9.3"
   },
   "overrides": {
-    "undici": "~6.22.0",
     "serialize-javascript": "~7.0.0",
-    "@babel/runtime": "~7.28.4",
-    "@babel/helpers": "~7.28.4",
     "@jgoz/esbuild-plugin-typecheck": {
       "esbuild": "$esbuild"
     },
