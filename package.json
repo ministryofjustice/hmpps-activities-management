@@ -41,7 +41,7 @@
     "@ministryofjustice/frontend": "^7.1.0",
     "@ministryofjustice/hmpps-auth-clients": "^1.0.0",
     "@ministryofjustice/hmpps-connect-dps-components": "^5.1.1",
-    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^4.15.3",
+    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^4.16.1",
     "@ministryofjustice/hmpps-rest-client": "^1.0.0",
     "@types/express-serve-static-core": "^5.1.0",
     "@types/lodash": "^4.17.20",
@@ -50,8 +50,6 @@
     "applicationinsights": "^2.9.8",
     "bunyan": "^1.8.15",
     "bunyan-format": "^0.2.1",
-    "chart.js": "^4.5.1",
-    "chartjs-plugin-datalabels": "^2.2.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "compression": "^1.8.1",
@@ -60,7 +58,6 @@
     "csrf-sync": "^4.2.1",
     "csv-parse": "^6.1.0",
     "date-fns": "^4.1.0",
-    "dayjs": "^1.11.19",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
@@ -105,7 +102,7 @@
     "cheerio": "^1.1.2",
     "chokidar": "^3.6.0",
     "concurrently": "^9.2.1",
-    "cypress": "^15.5.0",
+    "cypress": "^15.6.0",
     "cypress-axe": "^1.7.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-multi-reporters": "^2.0.5",
@@ -135,10 +132,7 @@
     "typescript": "^5.9.3"
   },
   "overrides": {
-    "undici": "~6.22.0",
     "serialize-javascript": "~7.0.0",
-    "@babel/runtime": "~7.28.4",
-    "@babel/helpers": "~7.28.4",
     "@jgoz/esbuild-plugin-typecheck": {
       "esbuild": "$esbuild"
     },

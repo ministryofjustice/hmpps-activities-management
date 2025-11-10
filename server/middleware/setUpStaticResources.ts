@@ -27,21 +27,12 @@ export default function setUpStaticResources(): Router {
     '/node_modules/govuk-frontend/dist',
     '/node_modules/@ministryofjustice/frontend/moj/assets',
     '/node_modules/@ministryofjustice/frontend',
+    '/node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/assets',
     '/node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend',
   ).forEach(dir => staticRoute('/assets', dir))
 
   // set favicon redirect
   staticRoute('/favicon.ico', '/node_modules/govuk-frontend/dist/govuk/assets/favicon.ico')
-
-  // // Third-party plugins that DPR does not automatically bundle - day.js and chart.js
-  staticRoute('/assets/ext/chart.js', '/node_modules/chart.js/dist/chart.umd.js')
-  staticRoute('/assets/ext/chart.umd.js.map', '/node_modules/chart.js/dist/chart.umd.js.map')
-  staticRoute(
-    '/assets/ext/chartjs-datalabels.js',
-    '/node_modules/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.min.js',
-  )
-  staticRoute('/assets/ext/day.js', '/node_modules/dayjs/dayjs.min.js')
-  staticRoute('/assets/ext/dayjs/plugin/customParseFormat.js', '/node_modules/dayjs/plugin/customParseFormat.js')
 
   // Don't cache dynamic resources
   router.use(noCache())
