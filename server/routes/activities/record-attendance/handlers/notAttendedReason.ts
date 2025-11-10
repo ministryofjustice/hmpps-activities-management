@@ -176,6 +176,8 @@ export default class NotAttendedReasonRoutes {
       }
     })
 
+    if (attendanceUpdates.some(update => !update)) return res.redirect('/activities/attendance')
+
     await this.activitiesService.updateAttendances(attendanceUpdates, user)
 
     const successMessage = `You've saved attendance details for ${

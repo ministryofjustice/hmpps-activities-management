@@ -350,6 +350,15 @@ describe('Route Handlers - Non Attendance', () => {
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('/activities/attendance')
     })
+
+    it('should redirect to attendance dashboard when prisoner not found in form data', async () => {
+      req.body = plainToInstance(NotAttendedForm, { notAttendedData: [] })
+
+      await handler.POST(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/activities/attendance')
+    })
+
     it.each([
       [true, '1/attendance-list'],
       [false, 'attendance-list'],
