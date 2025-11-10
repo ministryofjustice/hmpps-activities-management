@@ -49,6 +49,9 @@ import ChooseDetailsByResidentialLocationRoutes, {
   ChooseDetailsByResidentialLocationForm,
 } from './handlers/attend-all/chooseDetailsByResidentialLocation'
 import SelectPeopleByResidentialLocationRoutes from './handlers/attend-all/selectPeopleByResidentialLocation'
+import MultipleNotAttendedReasonRoutes, {
+  MultipleNotAttendedReasonForm,
+} from './handlers/attend-all/multipleNotAttendedReason'
 import CancelSessionPayRoutes, { CancelSessionPayForm } from './handlers/cancel-session/payment'
 
 export default function Index({
@@ -120,6 +123,7 @@ export default function Index({
     prisonService,
     userService,
   )
+  const multipleNotAttendedReasonRoutes = new MultipleNotAttendedReasonRoutes(activitiesService, prisonService)
   const attendAllListActivitiesRoutes = new ListActivitiesRoutes(activitiesService, locationsService)
 
   get('/', homeHandler.GET)
@@ -279,17 +283,23 @@ export default function Index({
 
   get('/:journeyId/attend-all/select-people-to-record-attendance-for', selectPeopleToRecordattendanceForRoutes.GET)
   get('/:journeyId/attend-all/select-people-by-residential-location', selectPeopleByResidentialLocationRoutes.GET)
-  post(
-    '/:journeyId/attend-all/select-people-by-residential-location/attend',
-    selectPeopleByResidentialLocationRoutes.ATTENDED,
-  )
+  // post(
+  //   '/:journeyId/attend-all/select-people-by-residential-location/attended',
+  //   selectPeopleByResidentialLocationRoutes.ATTENDED,
+  // )
   post(
     '/:journeyId/attend-all/select-people-by-residential-location/not-attended',
     selectPeopleByResidentialLocationRoutes.NOT_ATTENDED,
   )
+  // post(
+  //   '/:journeyId/attend-all/select-people-by-residential-location/not-required-or-excused',
+  //   selectPeopleByResidentialLocationRoutes.NOT_REQUIRED_OR_EXCUSED,
+  // )
+  get('/:journeyId/attend-all/multiple-not-attended-reason', multipleNotAttendedReasonRoutes.GET)
   post(
-    '/:journeyId/attend-all/select-people-by-residential-location/not-required-or-excused',
-    selectPeopleByResidentialLocationRoutes.NOT_REQUIRED_OR_EXCUSED,
+    '/:journeyId/attend-all/multiple-not-attended-reason',
+    multipleNotAttendedReasonRoutes.POST,
+    MultipleNotAttendedReasonForm,
   )
 
   post('/:journeyId/attend-all/attended', selectPeopleToRecordattendanceForRoutes.ATTENDED)
