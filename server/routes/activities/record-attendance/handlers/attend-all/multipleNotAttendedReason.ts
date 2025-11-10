@@ -126,6 +126,7 @@ export default class MultipleNotAttendedReasonRoutes {
         const attendance = instance.attendances.find(a => a.prisonerNumber === prisonerNumber)
         return !instance.cancelled && attendance && attendance.status === 'WAITING'
       })
+
       return {
         prisonerNumber,
         firstName: prisoner.firstName,
