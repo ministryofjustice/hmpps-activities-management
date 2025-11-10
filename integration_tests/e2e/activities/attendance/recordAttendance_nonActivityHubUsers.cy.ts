@@ -20,6 +20,7 @@ import ChooseDetailsByActivityLocationPage from '../../../pages/recordAttendance
 import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary-different-locations.json'
 import ListActivitiesPage from '../../../pages/recordAttendance/attend-all/listActivitiesPage'
+import AttendanceListPage from '../../../pages/recordAttendance/attendanceList'
 
 context('Recording attendance for non-activity hub users', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -65,6 +66,8 @@ context('Recording attendance for non-activity hub users', () => {
       `/scheduled-instances/attendance-summary\\?prisonCode=MDI&date=${today}`,
       getAttendanceSummary,
     )
+    cy.stubEndpoint('GET', `/scheduled-instances/93`, getInstances)
+    cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendanceList)
   })
 
   it('should record attendance by activity - no activities available', () => {
@@ -236,5 +239,19 @@ context('Recording attendance for non-activity hub users', () => {
     chooseDetailsToRecordAttendanceActivityLocationPage.radioInCellClick()
     chooseDetailsToRecordAttendanceActivityLocationPage.continue()
     listActivitiesPage.containsActivities('English level 1')
+    listActivitiesPage.selectActivityWithName('English level 1')
+
+    const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
+    attendanceListPage.checkAttendanceStatuses('Aborah, Cudmastarie Hallone', 'Not recorded')
+    attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Attended', 'No pay')
+    attendanceListPage.checkAttendanceStatuses('Aisho, Egurztof', 'Attended', 'No pay')
+    attendanceListPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Not recorded')
+
+    attendanceListPage.selectPrisoner('Aborah, Cudmastarie Hallone')
+    attendanceListPage.selectPrisoner('Arianniver, Eeteljan')
+    attendanceListPage.markAsAttended()
+
+    attendanceListPage.notificationHeading().should('contain.text', 'Attendance recorded')
+    attendanceListPage.notificationBody().should('contain.text', "You've saved details for 2 attendees")
   })
 })
