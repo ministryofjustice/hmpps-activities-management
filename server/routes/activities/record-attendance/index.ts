@@ -283,10 +283,10 @@ export default function Index({
 
   get('/:journeyId/attend-all/select-people-to-record-attendance-for', selectPeopleToRecordattendanceForRoutes.GET)
   get('/:journeyId/attend-all/select-people-by-residential-location', selectPeopleByResidentialLocationRoutes.GET)
-  // post(
-  //   '/:journeyId/attend-all/select-people-by-residential-location/attended',
-  //   selectPeopleByResidentialLocationRoutes.ATTENDED,
-  // )
+  post(
+    '/:journeyId/attend-all/select-people-by-residential-location/attended',
+    selectPeopleByResidentialLocationRoutes.ATTENDED,
+  )
   post(
     '/:journeyId/attend-all/select-people-by-residential-location/not-attended',
     selectPeopleByResidentialLocationRoutes.NOT_ATTENDED,
