@@ -24,6 +24,8 @@ jobs:
     with:
       repository: ministryofjustice/hmpps-activities-management
       spec-file-patterns: ${{ inputs.spec-file-patterns }}
+    permissions:
+      contents: read
 
   cypress-test:
     name: Run Cypress tests
