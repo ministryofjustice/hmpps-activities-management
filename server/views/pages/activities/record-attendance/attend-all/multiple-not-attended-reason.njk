@@ -179,7 +179,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <span class="govuk-caption-l">Record activity attendance <span class="govuk-visually-hidden">for</span></span>
-            {% if prisoner.instances | length > 1 %}
+            {% if attendanceDetails | length > 1 %}
                 <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Select the reasons why {{ attendanceDetails | length }} people did not attend</h1>
             {% else %}
                 <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Select the reason why {{ attendanceDetails[0] | formatName(NameFormatStyle.firstLast, false) }} did not attend</h1>
