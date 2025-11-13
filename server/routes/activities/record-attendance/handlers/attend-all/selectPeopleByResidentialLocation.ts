@@ -207,7 +207,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
       if (multipleRecords) {
         req.journeyData.recordAttendanceJourney.selectedInstanceIds = selectedAttendances
 
-        return res.redirect('attended-selection')
+        return res.redirect('../select-attended')
       }
     }
 

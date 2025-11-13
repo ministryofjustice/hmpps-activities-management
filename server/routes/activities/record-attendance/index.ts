@@ -53,6 +53,7 @@ import MultipleNotAttendedReasonRoutes, {
   MultipleNotAttendedReasonForm,
 } from './handlers/attend-all/multipleNotAttendedReason'
 import CancelSessionPayRoutes, { CancelSessionPayForm } from './handlers/cancel-session/payment'
+import SelectAttendedRoutes, { SelectAttendedForm } from './handlers/attend-all/selectAttended'
 
 export default function Index({
   activitiesService,
@@ -124,6 +125,7 @@ export default function Index({
     userService,
   )
   const multipleNotAttendedReasonRoutes = new MultipleNotAttendedReasonRoutes(activitiesService, prisonService)
+  const selectAttendedRoutes = new SelectAttendedRoutes(activitiesService, prisonService)
   const attendAllListActivitiesRoutes = new ListActivitiesRoutes(activitiesService, locationsService)
 
   get('/', homeHandler.GET)
@@ -301,6 +303,8 @@ export default function Index({
     multipleNotAttendedReasonRoutes.POST,
     MultipleNotAttendedReasonForm,
   )
+  get('/:journeyId/attend-all/select-attended', selectAttendedRoutes.GET)
+  post('/:journeyId/attend-all/select-attended', selectAttendedRoutes.POST, SelectAttendedForm)
 
   post('/:journeyId/attend-all/attended', selectPeopleToRecordattendanceForRoutes.ATTENDED)
   post('/:journeyId/attend-all/not-attended', selectPeopleToRecordattendanceForRoutes.NOT_ATTENDED)
