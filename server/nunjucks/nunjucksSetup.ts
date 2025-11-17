@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import nunjucks, { Environment } from 'nunjucks'
+import { configure, Environment } from 'nunjucks'
 import express, { Router } from 'express'
 import path from 'path'
 import { addDays, addMonths, addWeeks, addYears, getUnixTime, startOfDay, subDays, subMonths, subWeeks } from 'date-fns'
@@ -120,7 +120,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
     }
   }
 
-  const njkEnv = nunjucks.configure(
+  const njkEnv = configure(
     [
       path.join(__dirname, '../views'),
       'node_modules/govuk-frontend/dist',

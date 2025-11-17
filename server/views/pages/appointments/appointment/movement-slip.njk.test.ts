@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import nunjucks, { Template } from 'nunjucks'
+import { compile, Template } from 'nunjucks'
 import fs from 'fs'
 import { addDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
@@ -63,7 +63,7 @@ describe('Views - Appointments Management - Appointment Movement Slip', () => {
       updatedBy: null,
     } as AppointmentDetails
 
-    compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
+    compiledTemplate = compile(view.toString(), njkEnv)
   })
 
   it('should display individual appointment details when internal location', () => {
