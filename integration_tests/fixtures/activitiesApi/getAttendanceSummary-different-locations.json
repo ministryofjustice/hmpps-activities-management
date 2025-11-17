@@ -1,0 +1,143 @@
+[
+  {
+    "scheduledInstanceId": 93,
+    "activityId": 1,
+    "activityScheduleId": 2,
+    "summary": "English level 1",
+    "categoryId": 2,
+    "sessionDate": "2025-11-05",
+    "startTime": "09:00",
+    "endTime": "10:00",
+    "timeSlot": "AM",
+    "inCell": true,
+    "onWing": false,
+    "offWing": false,
+    "attendanceRequired": true,
+    "internalLocation": {
+      "id": 999555,
+      "code": "ED2",
+      "description": "EDUCATION 2"
+    },
+    "cancelled": false,
+    "attendanceSummary": {
+      "allocations": 5,
+      "attendees": 4,
+      "notRecorded": 1,
+      "attended": 2,
+      "absences": 1,
+      "paid": 2
+    }
+  },
+  {
+    "scheduledInstanceId": 94,
+    "activityId": 1,
+    "activityScheduleId": 2,
+    "summary": "Football",
+    "categoryId": 2,
+    "sessionDate": "2025-11-05",
+    "startTime": "09:00",
+    "endTime": "09:45",
+    "timeSlot": "AM",
+    "inCell": false,
+    "onWing": false,
+    "offWing": true,
+    "attendanceRequired": false,
+    "internalLocation": null,
+    "cancelled": false,
+    "attendanceSummary": {
+      "allocations": 20,
+      "attendees": 16,
+      "notRecorded": 3,
+      "attended": 10,
+      "absences": 3,
+      "paid": false
+    }
+  },
+  {
+    "scheduledInstanceId": 11,
+    "activityId": 2,
+    "activityScheduleId": 3,
+    "summary": "English level 2",
+    "categoryId": 2,
+    "sessionDate": "2025-11-05",
+    "startTime": "09:00",
+    "endTime": "10:00",
+    "timeSlot": "AM",
+    "inCell": false,
+    "onWing": false,
+    "offWing": false,
+    "attendanceRequired": true,
+    "internalLocation": {
+      "id": 777888,
+      "code": "ED1",
+      "description": "EDUCATION 1"
+    },
+    "cancelled": false,
+    "attendanceSummary": {
+      "allocations": 10,
+      "attendees": 7,
+      "notRecorded": 2,
+      "attended": 5,
+      "absences": 1,
+      "paid": 2
+    }
+  },
+  {
+    "scheduledInstanceId": 12,
+    "activityId": 3,
+    "activityScheduleId": 4,
+    "summary": "Maths level 1",
+    "categoryId": 2,
+    "sessionDate": "2025-11-05",
+    "startTime": "09:20",
+    "endTime": "10:20",
+    "timeSlot": "AM",
+    "inCell": false,
+    "onWing": false,
+    "offWing": false,
+    "attendanceRequired": true,
+    "internalLocation": {
+      "id": 444555,
+      "code": "BWING",
+      "description": "B WING"
+    },
+    "cancelled": false,
+    "attendanceSummary": {
+      "allocations": 18,
+      "attendees": 16,
+      "notRecorded": 2,
+      "attended": 14,
+      "absences": 0,
+      "paid": 2
+    }
+  },
+  {
+    "scheduledInstanceId": 13,
+    "activityId": 4,
+    "activityScheduleId": 5,
+    "summary": "Gym",
+    "categoryId": 2,
+    "sessionDate": "2025-11-05",
+    "startTime": "14:30",
+    "endTime": "17:00",
+    "timeSlot": "PM",
+    "inCell": false,
+    "onWing": false,
+    "offWing": false,
+    "attendanceRequired": false,
+    "internalLocation": {
+      "id": 12345,
+      "code": "GYM",
+      "description": "GYM"
+    },
+    "cancelled": false,
+    "attendanceSummary": {
+      "allocations": 16,
+      "attendees": 8,
+      "notRecorded": 4,
+      "attended": 3,
+      "absences": 1,
+      "paid": 2
+    }
+  }
+]
