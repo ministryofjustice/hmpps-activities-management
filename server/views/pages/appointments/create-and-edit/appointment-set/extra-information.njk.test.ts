@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
 import { CheerioAPI } from 'cheerio'
-import nunjucks, { Template } from 'nunjucks'
+import { compile, Template } from 'nunjucks'
 import fs from 'fs'
 import { registerNunjucks } from '../../../../../nunjucks/nunjucksSetup'
 import {
@@ -25,7 +25,7 @@ describe('Views - Create Appointment Set - Add Extra Information', () => {
   const njkEnv = registerNunjucks()
 
   beforeEach(() => {
-    compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
+    compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
       session: {
         appointmentJourney: {

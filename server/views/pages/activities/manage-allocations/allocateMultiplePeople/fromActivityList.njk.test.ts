@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import nunjucks, { Template } from 'nunjucks'
+import { compile, Template } from 'nunjucks'
 import fs from 'fs'
 import { registerNunjucks } from '../../../../../nunjucks/nunjucksSetup'
 
@@ -14,7 +14,7 @@ describe('Views - Search for an activity', () => {
   const njkEnv = registerNunjucks()
 
   beforeEach(() => {
-    compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
+    compiledTemplate = compile(view.toString(), njkEnv)
   })
 
   it('search for an activity', () => {
