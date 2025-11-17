@@ -45,4 +45,8 @@ export default class AttendanceListPage extends Page {
     names.forEach(name => this.selectPrisoner(name))
     cy.get('button').contains('Mark as not required or excused').click({ force: true })
   }
+
+  notificationHeading = (): Cypress.Chainable => cy.get('.govuk-notification-banner__content h3')
+
+  notificationBody = (): Cypress.Chainable => cy.get('.govuk-notification-banner__content p')
 }

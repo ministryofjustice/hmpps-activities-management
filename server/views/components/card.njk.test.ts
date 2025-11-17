@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import nunjucks, { Template } from 'nunjucks'
+import { compile, Template } from 'nunjucks'
 import { registerNunjucks } from '../../nunjucks/nunjucksSetup'
 
 describe('View Components - Card', () => {
@@ -15,7 +15,7 @@ describe('View Components - Card', () => {
       },
     }
     const nunjucksString = '{% from "components/card.njk" import card %}{{ card(options)}}'
-    compiledTemplate = nunjucks.compile(nunjucksString, njkEnv)
+    compiledTemplate = compile(nunjucksString, njkEnv)
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('.card--clickable').length).toBe(1)
@@ -28,7 +28,7 @@ describe('View Components - Card', () => {
       },
     }
     const nunjucksString = '{% from "components/card.njk" import card %}{{ card(options)}}'
-    compiledTemplate = nunjucks.compile(nunjucksString, njkEnv)
+    compiledTemplate = compile(nunjucksString, njkEnv)
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('.card--clickable').length).toBe(0)
@@ -42,7 +42,7 @@ describe('View Components - Card', () => {
       },
     }
     const nunjucksString = '{% from "components/card.njk" import card %}{{ card(options)}}'
-    compiledTemplate = nunjucks.compile(nunjucksString, njkEnv)
+    compiledTemplate = compile(nunjucksString, njkEnv)
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('h2 > a').attr('href')).toBe('link')
@@ -56,7 +56,7 @@ describe('View Components - Card', () => {
       },
     }
     const nunjucksString = '{% from "components/card.njk" import card %}{{ card(options)}}'
-    compiledTemplate = nunjucks.compile(nunjucksString, njkEnv)
+    compiledTemplate = compile(nunjucksString, njkEnv)
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('h2 > a').length).toBe(0)

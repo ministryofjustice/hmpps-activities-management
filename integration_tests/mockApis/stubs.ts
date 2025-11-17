@@ -1,7 +1,7 @@
-import jwt from 'jsonwebtoken'
 import fs from 'fs'
 import path from 'path'
 
+import { sign } from 'jsonwebtoken'
 import { stubFor, getMatchingRequests, stubHealthPing } from './wiremock'
 
 const createToken = () => {
@@ -14,7 +14,7 @@ const createToken = () => {
     client_id: 'clientid',
   }
 
-  return jwt.sign(payload, 'secret', { expiresIn: '1h' })
+  return sign(payload, 'secret', { expiresIn: '1h' })
 }
 
 const createTokenNoRoles = () => {
@@ -27,7 +27,7 @@ const createTokenNoRoles = () => {
     client_id: 'clientid',
   }
 
-  return jwt.sign(payload, 'secret', { expiresIn: '1h' })
+  return sign(payload, 'secret', { expiresIn: '1h' })
 }
 
 const getSignInUrl = (): Promise<string> =>

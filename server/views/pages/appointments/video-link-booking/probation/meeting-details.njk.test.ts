@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import nunjucks, { Template } from 'nunjucks'
+import { compile, Template } from 'nunjucks'
 import fs from 'fs'
 import { registerNunjucks } from '../../../../../nunjucks/nunjucksSetup'
 import { VideoLinkBooking } from '../../../../../@types/bookAVideoLinkApi/types'
@@ -14,7 +14,7 @@ describe('Video link booking - Probation - meeting details page', () => {
   const njkEnv = registerNunjucks()
 
   beforeEach(() => {
-    compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
+    compiledTemplate = compile(view.toString(), njkEnv)
   })
 
   const viewContext = {

@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import nunjucks, { Template } from 'nunjucks'
+import { compile, Template } from 'nunjucks'
 import fs from 'fs'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 
@@ -28,7 +28,7 @@ describe('Views - Non Associations for an activity', () => {
         description: 'Kitchen Cleaning',
       },
     }
-    compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
+    compiledTemplate = compile(view.toString(), njkEnv)
   })
 
   it('look for non associations', () => {

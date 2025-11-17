@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import nunjucks, { Template } from 'nunjucks'
+import { compile, Template } from 'nunjucks'
 import fs from 'fs'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 
@@ -12,7 +12,7 @@ describe('Views - Allocation dashboard', () => {
   const njkEnv = registerNunjucks()
 
   beforeEach(() => {
-    compiledTemplate = nunjucks.compile(snippet.toString(), njkEnv)
+    compiledTemplate = compile(snippet.toString(), njkEnv)
   })
 
   it('should generate the incentive levels filter dropdown correctly', () => {
