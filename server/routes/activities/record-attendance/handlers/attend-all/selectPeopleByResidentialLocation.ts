@@ -1,6 +1,7 @@
 import { addDays, startOfDay, startOfToday, toDate } from 'date-fns'
 import { Request, Response } from 'express'
-import { asString, eventClashes, getAttendanceSummary } from '../../../../../utils/utils'
+import _ from 'lodash'
+import { asString, eventClashes, formatName, getAttendanceSummary } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { EventType } from '../../../../../@types/activities'
@@ -9,6 +10,10 @@ import config from '../../../../../config'
 import AttendanceStatus from '../../../../../enum/attendanceStatus'
 import UserService from '../../../../../services/userService'
 import TimeSlot from '../../../../../enum/timeSlot'
+import AttendanceReason from '../../../../../enum/attendanceReason'
+import { AttendanceUpdateRequest } from '../../../../../@types/activitiesAPI/types'
+import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
+import { NameFormatStyle } from '../../../../../utils/helpers/nameFormatStyle'
 
 export default class SelectPeopleByResidentialLocationRoutes {
   constructor(
@@ -172,58 +177,85 @@ export default class SelectPeopleByResidentialLocationRoutes {
     })
   }
 
-  // ATTENDED = async (req: Request, res: Response): Promise<void> => {
-  //   let { selectedAttendances }: { selectedAttendances: string[] } = req.body
-  //   if (typeof selectedAttendances === 'string') {
-  //     selectedAttendances = [selectedAttendances]
-  //   }
+  ATTENDED = async (req: Request, res: Response): Promise<void> => {
+    const { user } = res.locals
+    let prisonerName
+    let { selectedAttendances }: { selectedAttendances: string[] } = req.body
+    if (typeof selectedAttendances === 'string') {
+      selectedAttendances = [selectedAttendances]
+    }
+    const instanceIds = _.uniq(
+      selectedAttendances.flatMap(selectedAttendance => selectedAttendance.split('-')[0].split(',')),
+    ).map(Number)
 
-  //   if (selectedAttendances.some(attendance => attendance.includes(','))) {
-  //     return res.redirect('attendance-reason')
-  //   }
+    const allInstances = await this.activitiesService.getScheduledActivities(instanceIds, user)
 
-  //   const { user } = res.locals
-  //   let prisonerName
+    if (selectedAttendances.some(attendance => attendance.includes(','))) {
+      const multipleRecords = selectedAttendances.some(selectedAttendance => {
+        const prisonerInstanceIds = selectedAttendance.split('-')[0].split(',').map(Number)
+        const prisonerNumber = selectedAttendance.split('-')[2]
+        const instances = allInstances.filter(i => prisonerInstanceIds.includes(i.id))
 
-  //   const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
-  //   const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
+        const filteredInstances = instances.filter(instance => {
+          const attendance = instance.attendances.find(a => a.prisonerNumber === prisonerNumber)
+          return !instance.cancelled && attendance && attendance.status === 'WAITING'
+        })
 
-  //   const attendances: AttendanceUpdateRequest[] = selectedAttendances.flatMap(selectedAttendance => {
-  //     const [instanceId, attendanceId] = selectedAttendance.split('-')
+        return filteredInstances.length > 1
+      })
 
-  //     const instance = instances.find(i => i.id === +instanceId)
+      if (multipleRecords) {
+        req.journeyData.recordAttendanceJourney.selectedInstanceIds = selectedAttendances
 
-  //     return {
-  //       id: +attendanceId,
-  //       prisonCode: user.activeCaseLoadId,
-  //       status: AttendanceStatus.COMPLETED,
-  //       attendanceReason: AttendanceReason.ATTENDED,
-  //       issuePayment: instance.activitySchedule.activity.paid,
-  //     }
-  //   })
+        return res.redirect('../select-attended')
+      }
+    }
 
-  //   await this.activitiesService.updateAttendances(attendances, user)
+    const attendanceUpdates: AttendanceUpdateRequest[] = selectedAttendances.flatMap(prisonerAttendance => {
+      return prisonerAttendance
+        .split('-')[0]
+        .split(',')
+        .map(selectedInstanceId => {
+          const prisonerNumber = prisonerAttendance.split('-')[2]
+          const instance = allInstances.find(inst => inst.id === +selectedInstanceId)
+          const attendance = instance.attendances.find(a => a.prisonerNumber === prisonerNumber)
+          if (!instance.cancelled && attendance && attendance.status === 'WAITING') {
+            return {
+              id: attendance.id,
+              prisonCode: user.activeCaseLoadId,
+              status: AttendanceStatus.COMPLETED,
+              attendanceReason: AttendanceReason.ATTENDED,
+              issuePayment: instance.activitySchedule.activity.paid,
+            }
+          }
+          return null
+        })
+    })
 
-  //   if (selectedAttendances.length === 1) {
-  //     const selectedPrisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(
-  //       selectedAttendances[0].split('-')[2],
-  //       user,
-  //     )
-  //     prisonerName = formatName(
-  //       selectedPrisoner.firstName,
-  //       undefined,
-  //       selectedPrisoner.lastName,
-  //       NameFormatStyle.firstLast,
-  //       false,
-  //     )
-  //   }
+    attendanceUpdates.filter(update => update !== null)
 
-  //   return res.redirectWithSuccess(
-  //     req.journeyData.recordAttendanceJourney.returnUrl || '../choose-details-to-record-attendance',
-  //     'Attendance recorded',
-  //     `You've saved attendance details for ${selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`}`,
-  //   )
-  // }
+    await this.activitiesService.updateAttendances(attendanceUpdates, user)
+
+    if (selectedAttendances.length === 1) {
+      const selectedPrisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(
+        selectedAttendances[0].split('-')[2],
+        user,
+      )
+      prisonerName = formatName(
+        selectedPrisoner.firstName,
+        undefined,
+        selectedPrisoner.lastName,
+        NameFormatStyle.firstLast,
+        false,
+      )
+    }
+
+    return res.redirectWithSuccess(
+      req.journeyData.recordAttendanceJourney.returnUrl || '../choose-details-to-record-attendance',
+      'Attendance recorded',
+      `You've saved attendance details for ${selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`}`,
+    )
+  }
 
   NOT_ATTENDED = async (req: Request, res: Response): Promise<void> => {
     let { selectedAttendances }: { selectedAttendances: string[] } = req.body
