@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import nunjucks, { Template } from 'nunjucks'
+import { compile, Template } from 'nunjucks'
 import fs from 'fs'
 import { addDays, format, subDays } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
@@ -25,7 +25,7 @@ describe('Views - Create Appointment - Confirmation', () => {
   const njkEnv = registerNunjucks()
 
   beforeEach(() => {
-    compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
+    compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
       appointment: {} as AppointmentDetails,
       session: {

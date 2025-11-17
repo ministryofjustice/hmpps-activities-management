@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import nunjucks, { Template } from 'nunjucks'
+import { compile, Template } from 'nunjucks'
 import fs from 'fs'
 import { format, startOfToday } from 'date-fns'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
@@ -20,7 +20,7 @@ describe('Views - Attendance list', () => {
   beforeEach(() => {
     attendanceListContext.instance.date = today
     attendanceListCancelledContext.instance.date = today
-    compiledTemplate = nunjucks.compile(snippet.toString(), njkEnv)
+    compiledTemplate = compile(snippet.toString(), njkEnv)
   })
 
   it('should be able to mark attendance of session', () => {

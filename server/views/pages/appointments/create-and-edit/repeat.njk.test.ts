@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio'
-import nunjucks, { Template } from 'nunjucks'
+import { compile, Template } from 'nunjucks'
 import fs from 'fs'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { YesNo } from '../../../../@types/activities'
@@ -19,7 +19,7 @@ describe('Views - Create Appointment - Repeat', () => {
   const njkEnv = registerNunjucks()
 
   beforeEach(() => {
-    compiledTemplate = nunjucks.compile(view.toString(), njkEnv)
+    compiledTemplate = compile(view.toString(), njkEnv)
     viewContext = {
       session: {
         appointmentJourney: { type: AppointmentType.GROUP } as AppointmentJourney,

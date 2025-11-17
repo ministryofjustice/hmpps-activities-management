@@ -17,6 +17,7 @@ import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
 import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceDashboard'
 import ActivitiesIndexPage from '../../../pages/activities'
 import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
+import CancelSessionPaymentPage from '../../../pages/recordAttendance/cancelSessionPayment'
 
 context('Record attendance for activity hub users', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -40,7 +41,7 @@ context('Record attendance for activity hub users', () => {
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
     cy.stubEndpoint('PUT', '/attendances')
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
-    cy.stubEndpoint('PUT', '/scheduled-instances/93/cancel')
+    cy.stubEndpoint('PUT', '/scheduled-instances/cancel')
     cy.stubEndpoint('PUT', '/scheduled-instances/93/uncancel')
     cy.stubEndpoint(
       'GET',
@@ -92,6 +93,10 @@ context('Record attendance for activity hub users', () => {
     cancelSessionReasonPage.selectReason('Location unavailable')
     cancelSessionReasonPage.moreDetailsInput().type('Location in use')
     cancelSessionReasonPage.continue()
+
+    const cancelPaymentPage = Page.verifyOnPage(CancelSessionPaymentPage)
+    cancelPaymentPage.issuePayment('Yes')
+    cancelPaymentPage.continue()
 
     const cancelSessionConfirmPage = Page.verifyOnPage(CancelSessionConfirm)
     cancelSessionConfirmPage.selectConfirmation('Yes')

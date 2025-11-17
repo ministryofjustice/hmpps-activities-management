@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
 import { CheerioAPI } from 'cheerio'
-import nunjucks, { Template } from 'nunjucks'
+import { compile, Template } from 'nunjucks'
 import { registerNunjucks } from '../../nunjucks/nunjucksSetup'
 
 let $: CheerioAPI
@@ -13,11 +13,11 @@ describe('Show Location Macro', () => {
   beforeEach(() => {
     const view = `
       {% from "partials/showLocation.njk" import showLocation %}
-  
+
       {{ showLocation(event) }}
     `
 
-    compiledTemplate = nunjucks.compile(view, njkEnv)
+    compiledTemplate = compile(view, njkEnv)
   })
 
   describe('Single Value', () => {
@@ -252,10 +252,10 @@ describe('Show Location Macro', () => {
     beforeEach(() => {
       const view = `
         {% from "partials/showLocation.njk" import showLocation %}
-    
+
         {{ showLocation(event, 'F Wing') }}
       `
-      compiledTemplate = nunjucks.compile(view, njkEnv)
+      compiledTemplate = compile(view, njkEnv)
     })
 
     it("should display 'In cell'", () => {
@@ -303,10 +303,10 @@ describe('Show Location Macro', () => {
     it('should capitalize', () => {
       const view = `
         {% from "partials/showLocation.njk" import showLocation %}
-    
+
         {{ showLocation(event, makeCapitals = true) }}
       `
-      compiledTemplate = nunjucks.compile(view, njkEnv)
+      compiledTemplate = compile(view, njkEnv)
 
       const viewContext = {
         event: {
@@ -330,10 +330,10 @@ describe('Show Location Macro', () => {
     it('should succeed if location is empty', () => {
       const view = `
         {% from "partials/showLocation.njk" import showLocation %}
-    
+
         test {{ showLocation(event, ' ', true) }}
       `
-      compiledTemplate = nunjucks.compile(view, njkEnv)
+      compiledTemplate = compile(view, njkEnv)
 
       const viewContext = {
         event: {

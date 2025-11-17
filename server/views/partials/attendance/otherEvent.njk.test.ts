@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio'
 import { CheerioAPI } from 'cheerio'
-import nunjucks, { Template } from 'nunjucks'
+import { compile, Template } from 'nunjucks'
 import { registerNunjucks } from '../../../nunjucks/nunjucksSetup'
 
 let $: CheerioAPI
@@ -14,7 +14,7 @@ describe('show otherEvent macro', () => {
     const view = `
       {% from "partials/attendance/otherEvent.njk" import otherEvent %}
       {{ otherEvent(event, attendanceListDesign) }}`
-    compiledTemplate = nunjucks.compile(view, njkEnv)
+    compiledTemplate = compile(view, njkEnv)
   })
 
   describe('', () => {

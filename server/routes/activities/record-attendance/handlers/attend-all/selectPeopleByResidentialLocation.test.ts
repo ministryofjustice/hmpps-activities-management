@@ -192,6 +192,7 @@ describe('Route Handlers - Select people by residential location', () => {
       journeyData: {
         recordAttendanceJourney: {},
       },
+      body: {},
     } as unknown as Request
 
     when(activitiesService.getScheduledActivitiesAtPrisonByDateAndSlot)
@@ -229,7 +230,7 @@ describe('Route Handlers - Select people by residential location', () => {
         {
           prisoner: mapPrisonerDetails(prisoners.content[0]),
           attendances: [scheduledActivity1.attendances[0]],
-          advanceAttendances: [],
+          advancedAttendances: [],
           attendanceIds: [1001],
           instanceIds: [123456],
           instances: [updatedInstance1],
@@ -239,7 +240,7 @@ describe('Route Handlers - Select people by residential location', () => {
         {
           prisoner: mapPrisonerDetails(prisoners.content[1]),
           attendances: [scheduledActivity2.attendances[0]],
-          advanceAttendances: [],
+          advancedAttendances: [],
           attendanceIds: [1002],
           instanceIds: [123457],
           instances: [updatedInstance2],
@@ -261,76 +262,18 @@ describe('Route Handlers - Select people by residential location', () => {
         },
       )
     })
+  })
 
-    //   it('should render the expected view for multiple time periods', async () => {
-    //     when(activitiesService.getScheduledActivitiesAtPrison)
-    //       .calledWith(expect.any(Date), res.locals.user)
-    //       .mockResolvedValue([scheduledActivity1, scheduledActivity2])
-
-    //     when(userService.getUserMap)
-    //       .calledWith(atLeast([null]))
-    //       .mockResolvedValue(new Map([]) as Map<string, UserDetails>)
-
-    //     when(activitiesService.getAttendees)
-    //       .calledWith(123456, res.locals.user)
-    //       .mockResolvedValue([{ prisonerNumber: 'ABC123', scheduledInstanceId: 123456 }] as ScheduledAttendee[])
-
-    //     when(activitiesService.getAttendees)
-    //       .calledWith(123457, res.locals.user)
-    //       .mockResolvedValue([{ prisonerNumber: 'ABC321', scheduledInstanceId: 123457 }] as ScheduledAttendee[])
-
-    //     when(activitiesService.getScheduledEventsForPrisoners)
-    //       .calledWith(expect.any(Date), ['ABC123', 'ABC321'], res.locals.user)
-    //       .mockResolvedValue(scheduledEvents)
-
-    //     when(prisonService.searchInmatesByPrisonerNumbers)
-    //       .calledWith(['ABC123', 'ABC321'], res.locals.user)
-    //       .mockResolvedValue(prisoners)
-
-    //     const attendanceRows = [
-    //       {
-    //         prisoner: prisoners[0],
-    //         attendance: { id: 1001, prisonerNumber: 'ABC123', status: 'WAITING' },
-    //         advancedAttendance: undefined,
-    //         instance: updatedInstance1,
-    //         otherEvents: [],
-    //       },
-    //       {
-    //         prisoner: prisoners[1],
-    //         attendance: {
-    //           id: 1002,
-    //           prisonerNumber: 'ABC321',
-    //           status: 'COMPLETED',
-    //           attendanceReason: { code: 'ATTENDED' },
-    //         },
-    //         advancedAttendance: undefined,
-    //         instance: updatedInstance2,
-    //         otherEvents: [],
-    //       },
-    //     ] as unknown as ScheduledInstanceAttendance[]
-    //     await handler.GET(req, res)
-    //     expect(res.render).toHaveBeenCalledWith(
-    //       'pages/activities/record-attendance/attend-all/select-people-to-record-attendance-for',
-    //       {
-    //         attendanceRows,
-    //         attendanceSummary: {
-    //           attendanceCount: 2,
-    //           attended: 1,
-    //           attendedPercentage: '50',
-    //           notAttended: 0,
-    //           notAttendedPercentage: '0',
-    //           notRecorded: 1,
-    //           notRecordedPercentage: '50',
-    //         },
-    //         singleInstance: false,
-    //         instance: updatedInstance1,
-    //         instances: [updatedInstance1, updatedInstance2],
-    //         selectedSessions: ['AM', 'PM'],
-    //         userMap: undefined,
-    //         isCancelled: false,
-    //       },
-    //     )
-    //   })
+  describe('NOT_ATTENDED', () => {
+    it('should redirect to the correct location', async () => {
+      req.body.selectedAttendances = ['123456,123457-2025-09-19-AM-ABC123', '123457-2025-09-19-AM-ABC321']
+      await handler.NOT_ATTENDED(req, res)
+      expect(res.redirect).toHaveBeenCalledWith('../multiple-not-attended-reason')
+      expect(req.journeyData.recordAttendanceJourney.selectedInstanceIds).toEqual([
+        '123456,123457-2025-09-19-AM-ABC123',
+        '123457-2025-09-19-AM-ABC321',
+      ])
+    })
   })
 })
 

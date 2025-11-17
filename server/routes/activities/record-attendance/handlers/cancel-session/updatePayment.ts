@@ -8,7 +8,7 @@ enum IssuePayOptions {
   NO = 'no',
 }
 
-export class SessionPayForm {
+export class CancelledSessionUpdatePayForm {
   @Expose()
   @IsIn(Object.values(IssuePayOptions), {
     message: 'Select if people should be paid for this cancelled session',
@@ -19,7 +19,7 @@ export default class UpdateCancelledSessionPayRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    res.render('pages/activities/record-attendance/cancel-session/payment')
+    res.render('pages/activities/record-attendance/cancel-session/update-payment')
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {

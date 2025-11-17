@@ -56,7 +56,14 @@ export default class CancelSessionRoutes {
 
     req.journeyData.recordAttendanceJourney = {
       ...req.journeyData.recordAttendanceJourney,
-      sessionCancellation: { reason: textReason, comment },
+      sessionCancellation: { reason: textReason, comment, issuePayment: false },
+    }
+
+    const instance = await this.activitiesService.getScheduledActivity(instanceId, user)
+
+    const isPayable = instance.activitySchedule.activity.paid
+    if (isPayable) {
+      return res.redirect('cancel/payment')
     }
     return res.redirect('cancel/confirm')
   }

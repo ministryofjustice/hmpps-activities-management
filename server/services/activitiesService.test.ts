@@ -434,22 +434,19 @@ describe('Activities Service', () => {
     })
   })
 
-  describe('cancelScheduledActivity', () => {
+  describe('cancelScheduledInstances', () => {
     it('should cancel scheduled activity', async () => {
-      const serviceRequest = {
-        reason: 'Cancel reason',
-        comment: 'Cancel comment',
-      }
+      await activitiesService.cancelScheduledActivities([1, 4], 'Cancel reason', false, user, 'Cancel comment')
 
       const apiRequest = {
+        scheduleInstanceIds: [1, 4],
+        issuePayment: false,
         reason: 'Cancel reason',
         comment: 'Cancel comment',
         username: user.username,
       }
 
-      await activitiesService.cancelScheduledActivity(1, serviceRequest, user)
-
-      expect(activitiesApiClient.putCancelScheduledActivity).toHaveBeenCalledWith(1, apiRequest, user)
+      expect(activitiesApiClient.putCancelMultipleActivities).toHaveBeenCalledWith(apiRequest, user)
     })
   })
 
@@ -1079,28 +1076,6 @@ describe('Activities Service', () => {
         eventTier,
         null,
       )
-    })
-  })
-
-  describe('cancelMultipleActivities', () => {
-    it('should cancel multiple activities', async () => {
-      const serviceRequest = {
-        reason: 'Cancel reason',
-        comment: 'Cancel comment',
-        issuePayment: true,
-      }
-
-      const apiRequest = {
-        reason: 'Cancel reason',
-        comment: 'Cancel comment',
-        issuePayment: true,
-        scheduleInstanceIds: [1, 2],
-        username: user.username,
-      }
-
-      await activitiesService.cancelMultipleActivities([1, 2], serviceRequest, user)
-
-      expect(activitiesApiClient.putCancelMultipleActivities).toHaveBeenCalledWith(apiRequest, user)
     })
   })
 

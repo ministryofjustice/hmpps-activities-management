@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken'
 import type { Request, Response } from 'express'
 
+import { sign } from 'jsonwebtoken'
 import authorisationMiddleware from './authorisationMiddleware'
 
 function createToken(authorities: string[]) {
@@ -13,7 +13,7 @@ function createToken(authorities: string[]) {
     client_id: 'clientid',
   }
 
-  return jwt.sign(payload, 'secret', { expiresIn: '1h' })
+  return sign(payload, 'secret', { expiresIn: '1h' })
 }
 
 describe('authorisationMiddleware', () => {
