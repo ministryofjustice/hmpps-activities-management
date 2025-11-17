@@ -11,14 +11,13 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            {{ requiredSelections | length }} of the {{ attendanceDetails | length }}
             <span class="govuk-caption-l">Record activity attendance <span class="govuk-visually-hidden">for</span></span>
             {% if attendanceDetails | length > 1 %}
                 {% if requiredSelections | length == 1 %}
                     <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Select the activities that {{ requiredSelections[0] | formatName(NameFormatStyle.firstLast, false) }} attended</h1>
                     <p class="govuk-body">One of the people you're recording attendance for was allocated to more than one activity. Confirm which activity they attended</p>
                 {% else %}
-                    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Select the activities that {{ attendanceDetails | length }} people attended</h1>
+                    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Select the activities that {{ requiredSelections | length }} people attended</h1>
                     <p class="govuk-body">{{ requiredSelections | length }} of the {{ attendanceDetails | length }} people you're recording attendance for were allocated to more than one activity. Confirm which activity they attended</p>
                 {% endif %}
             {% else %}
@@ -35,12 +34,12 @@
                     <input type="hidden" name="{{ "attendedData[" + prisonerIndex + "][prisonerName]" }}" value="{{ prisoner | formatName(NameFormatStyle.firstLast, false) }}"/>
 
                     {% if prisoner.instances | length > 1 %}
-                        {% if requiredSelections > 1 %}
+                        {% if requiredSelections | length > 1 %}
+                            {% if not loop.first %}<hr class="govuk-!-margin-bottom-6"/>{% endif %}
                             <h2 class="govuk-heading-m govuk-!-margin-bottom-0">{{ prisoner | formatName(NameFormatStyle.lastCommaFirst, false) }}</h2>
                             <div class="govuk-hint">{{ prisoner.prisonerNumber }}</div>                            
                         {% endif %}
 
-                        {% if not loop.first %}<hr class="govuk-!-margin-bottom-6"/>{% endif %}
                         {% set instanceCheckboxes = [] %}
                         {% for instance in prisoner.instances %}
                             {% set instanceCheckboxes = (instanceCheckboxes.push({

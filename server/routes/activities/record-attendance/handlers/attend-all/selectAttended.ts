@@ -75,7 +75,8 @@ export default class SelectAttendedRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const attendedFormData: AttendedData[] = req.body.notAttendedData
+    const attendedFormData: AttendedData[] = req.body.attendedData
+
     const attendedData: AttendedData[] = [...attendedFormData]
     attendedData.forEach(data => {
       data.selectedInstanceIds =
