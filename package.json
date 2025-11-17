@@ -41,7 +41,7 @@
     "@ministryofjustice/frontend": "^7.1.0",
     "@ministryofjustice/hmpps-auth-clients": "^1.0.0",
     "@ministryofjustice/hmpps-connect-dps-components": "^5.1.1",
-    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^4.16.1",
+    "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "^4.17.1",
     "@ministryofjustice/hmpps-rest-client": "^1.0.0",
     "@types/express-serve-static-core": "^5.1.0",
     "@types/lodash": "^4.17.20",
@@ -95,7 +95,7 @@
     "@types/nunjucks": "^3.2.6",
     "@types/passport": "^1.0.17",
     "@types/passport-oauth2": "^1.8.0",
-    "@types/sinon": "^17.0.4",
+    "@types/sinon": "^20.0.0",
     "@types/superagent": "^8.1.9",
     "axe-core": "^4.11.0",
     "better-npm-audit": "^3.11.0",
@@ -136,7 +136,7 @@
     "@jgoz/esbuild-plugin-typecheck": {
       "esbuild": "$esbuild"
     },
-    "validator": "~13.15.22",
+    "validator": "~13.15.23",
     "@types/validator": "~13.15.4"
   }
 }
