@@ -208,7 +208,7 @@ context('Recording attendance for non-activity hub users', () => {
     selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Sick', 'Pay')
     selectPeopleToRecordAttendanceForPage.checkSuccessBanner(`You've saved attendance details for 2 attendees`)
   })
-  it('should record attendance by activity location', () => {
+  it('should record attendance by activity location - 2 people, attended', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -241,6 +241,25 @@ context('Recording attendance for non-activity hub users', () => {
     listActivitiesPage.containsActivities('English level 1')
     listActivitiesPage.selectActivityWithName('English level 1')
 
+    const updatedInstance2 = JSON.parse(JSON.stringify(getScheduledInstanceEnglishLevel2))
+    updatedInstance2.id = 93
+    updatedInstance2.date = today
+    updatedInstance2.attendances[2].status = 'COMPLETED'
+    updatedInstance2.attendances[2].attendanceReason = {
+      code: 'ATTENDED',
+      description: 'Attended',
+    }
+    updatedInstance2.attendances[2].issuePayment = true
+    updatedInstance2.attendances[3].status = 'COMPLETED'
+    updatedInstance2.attendances[3].attendanceReason = {
+      code: 'ATTENDED',
+      description: 'Attended',
+    }
+    updatedInstance2.attendances[3].issuePayment = true
+
+    cy.stubEndpoint('GET', `/scheduled-instances/93`, updatedInstance2)
+    cy.stubEndpoint('POST', '/scheduled-instances', [updatedInstance2])
+
     const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
     attendanceListPage.checkAttendanceStatuses('Aborah, Cudmastarie Hallone', 'Not recorded')
     attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Attended', 'No pay')
@@ -252,6 +271,60 @@ context('Recording attendance for non-activity hub users', () => {
     attendanceListPage.markAsAttended()
 
     attendanceListPage.notificationHeading().should('contain.text', 'Attendance recorded')
-    attendanceListPage.notificationBody().should('contain.text', "You've saved details for 2 attendees")
+    attendanceListPage.notificationBody().should('contain.text', "You've saved attendance details for 2 attendees")
+  })
+  it('should record attendance by activity location - 1 person did not attend', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityLocationClick().click()
+    howToRecordAttendancePage.continue()
+
+    const chooseDetailsToRecordAttendanceActivityLocationPage = Page.verifyOnPage(ChooseDetailsByActivityLocationPage)
+    chooseDetailsToRecordAttendanceActivityLocationPage.radioTodayClick()
+    chooseDetailsToRecordAttendanceActivityLocationPage.checkboxAMClick()
+    chooseDetailsToRecordAttendanceActivityLocationPage.radioInCellClick()
+    chooseDetailsToRecordAttendanceActivityLocationPage.continue()
+
+    const listActivitiesPage = Page.verifyOnPage(ListActivitiesPage)
+    listActivitiesPage.containsActivities('English level 1')
+    listActivitiesPage.selectActivityWithName('English level 1')
+
+    const updatedInstance3 = JSON.parse(JSON.stringify(getScheduledInstanceEnglishLevel2))
+    updatedInstance3.id = 93
+    updatedInstance3.date = today
+    updatedInstance3.attendances[3].status = 'COMPLETED'
+    updatedInstance3.attendances[3].attendanceReason = { code: 'REFUSED', description: 'Refused' }
+    updatedInstance3.attendances[3].issuePayment = false
+
+    cy.stubEndpoint('GET', `/scheduled-instances/93`, updatedInstance3)
+    cy.stubEndpoint('POST', '/scheduled-instances', [updatedInstance3])
+
+    const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
+    attendanceListPage.checkAttendanceStatuses('Aborah, Cudmastarie Hallone', 'Not recorded')
+    attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Attended', 'No pay')
+    attendanceListPage.checkAttendanceStatuses('Aisho, Egurztof', 'Attended', 'No pay')
+    attendanceListPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Not recorded')
+
+    attendanceListPage.selectPrisoner('Arianniver, Eeteljan')
+    attendanceListPage.markAsNotAttended()
+
+    const notAttendedReasonPage = Page.verifyOnPage(NotAttendedReasonPage)
+    notAttendedReasonPage.selectRadioById('notAttendedData-0-notAttendedReason-2')
+    notAttendedReasonPage.comment('notAttendedData[0][caseNote]').type('Did not want to attend')
+    notAttendedReasonPage.selectRadio('notAttendedData[0][incentiveLevelWarningIssued]')
+    notAttendedReasonPage.submit()
+
+    attendanceListPage.notificationHeading().should('contain.text', 'Attendance recorded')
+    attendanceListPage
+      .notificationBody()
+      .should('contain.text', "You've saved attendance details for Eeteljan Arianniver")
   })
 })
