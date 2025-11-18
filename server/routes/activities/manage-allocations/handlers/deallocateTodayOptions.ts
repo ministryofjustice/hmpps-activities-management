@@ -56,6 +56,10 @@ export default class DeallocateTodayOptionRoutes {
       return res.redirectOrReturn(`reason`)
     }
 
+    if (req.routeContext.mode === 'edit') {
+      return res.redirectOrReturn(`reason-option`)
+    }
+
     if (req.journeyData.allocateJourney.activity.paid) {
       if (req.journeyData.allocateJourney.allocateMultipleInmatesMode) {
         if (req.query.preserveHistory) return res.redirect('multiple/check-answers')
