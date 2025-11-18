@@ -53,22 +53,22 @@
     }
 
     .govuk-body {
-      font-size: 8pt;
+      font-size: 10pt;
     }
 
     .govuk-body-s {
-      font-size: 6pt;
+      font-size: 9pt;
     }
 
     .govuk-table {
-      font-size: 8pt;
+      font-size: 9pt;
 
       .govuk-table__header {
         font-size: 10pt;
       }
 
       .govuk-table__cell {
-        padding: 3px 6px 3px 0;
+        padding: 2px 6px 2px 0;
       }
     }
 
@@ -82,7 +82,7 @@
 
     .alerts-list > li {
       border: 2px solid govuk-colour("mid-grey") !important;
-      font-size: 6pt;
+      font-size: 7pt;
       align-items: center;
       justify-content: center;
       display: inline-flex;
