@@ -14,7 +14,7 @@ describe('Views - Appointments Management - Appointment Movement Slip', () => {
   const viewContext = {
     user: {
       activeCaseLoad: {
-        description: 'Moorland (HMP & YOI)'
+        description: 'Moorland (HMP & YOI)',
       },
     },
     appointment: {} as AppointmentDetails,
