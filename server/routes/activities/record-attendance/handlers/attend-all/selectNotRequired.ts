@@ -109,7 +109,7 @@ export default class SelectNotRequiredRoutes {
       ),
     )
 
-    const successMessage = `You've marked ${selectedPrisoners.length === 1 ? '1 person' : `${selectedPrisoners.length} people`} as not required.`
+    const successMessage = `You've marked ${notRequiredData.length === 1 ? '1 person' : `${notRequiredData.length} people`} as not required.`
     const redirectUrl = req.journeyData.recordAttendanceJourney.returnUrl || 'choose-details-by-residential-location'
 
     return res.redirectWithSuccess(redirectUrl, 'Not required recorded', successMessage)
