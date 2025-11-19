@@ -1,6 +1,6 @@
 import { serviceCheckFactory } from '../data/healthCheck'
-import config from '../config'
 import type { AgentConfig } from '../config'
+import config from '../config'
 import { ApplicationInfo } from '../applicationInfo'
 
 interface HealthCheckStatus {
@@ -49,7 +49,6 @@ const apiChecks = [
   service('prisonApi', `${config.apis.prisonApi.url}/health/ping`, config.apis.prisonApi.agent),
   service('prisonerSearchApi', `${config.apis.prisonerSearchApi.url}/health/ping`, config.apis.prisonerSearchApi.agent),
   service('incentivesApi', `${config.apis.incentivesApi.url}/health/ping`, config.apis.incentivesApi.agent),
-  service('prisonRegisterApi', `${config.apis.prisonRegisterApi.url}/health/ping`, config.apis.prisonRegisterApi.agent),
   service('manageUsersApi', `${config.apis.manageUsersApi.url}/health/ping`, config.apis.manageUsersApi.agent),
   service(
     'nonAssociationsApi',

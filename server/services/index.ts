@@ -20,7 +20,6 @@ export default function services() {
     applicationInfo,
     manageUsersApiClient,
     prisonApiClient,
-    prisonRegisterApiClient,
     prisonerSearchApiClient,
     incentivesApiClient,
     activitiesApiClient,

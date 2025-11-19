@@ -35,7 +35,9 @@ export default function setUpCurrentUser(activitiesService: ActivitiesService) {
       }
 
       if (res.locals.user.activeCaseLoad.caseLoadId !== req.session.user?.activeCaseLoadId) {
-        logger.debug(`Refreshed prison rollout plan for ${res.locals.user.username} as caseload switched from ${req.session.user?.activeCaseLoadId} to ${res.locals.user.activeCaseLoad.caseLoadId}`)
+        logger.debug(
+          `Refreshed prison rollout plan for ${res.locals.user.username} as caseload switched from ${req.session.user?.activeCaseLoadId} to ${res.locals.user.activeCaseLoad.caseLoadId}`,
+        )
         const rolloutPlan = await activitiesService.getPrisonRolloutPlan(res.locals.user.activeCaseLoad.caseLoadId)
         res.locals.user.isActivitiesRolledOut = rolloutPlan.activitiesRolledOut
         res.locals.user.isAppointmentsRolledOut = rolloutPlan.activitiesRolledOut
