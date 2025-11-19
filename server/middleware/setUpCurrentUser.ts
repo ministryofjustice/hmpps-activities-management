@@ -1,12 +1,15 @@
+import { Router } from 'express'
 import { jwtDecode } from 'jwt-decode'
-import express from 'express'
 import createHttpError from 'http-errors'
+import auth from '../authentication/auth'
+import tokenVerifier from '../data/tokenVerification'
 import { convertToTitleCase } from '../utils/utils'
 import logger from '../../logger'
 import ActivitiesService from '../services/activitiesService'
 
 export default function setUpCurrentUser(activitiesService: ActivitiesService) {
-  const router = express.Router()
+  const router = Router({ mergeParams: true })
+  router.use(auth.authenticationMiddleware(tokenVerifier))
 
   router.use(async (req, res, next) => {
     try {
