@@ -15,7 +15,7 @@ jest.mock('../../../../services/userService')
 jest.mock('../../../../services/caseNotesService')
 jest.mock('../../../../services/activitiesService')
 
-const userService = new UserService(null, null, null) as jest.Mocked<UserService>
+const userService = new UserService(null) as jest.Mocked<UserService>
 const caseNotesService = new CaseNotesService(null) as jest.Mocked<CaseNotesService>
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
