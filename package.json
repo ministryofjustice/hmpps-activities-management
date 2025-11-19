@@ -137,6 +137,6 @@
       "esbuild": "$esbuild"
     },
     "validator": "~13.15.23",
-    "@types/validator": "~13.15.8"
+    "@types/validator": "~13.15.9"
   }
 }
