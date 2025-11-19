@@ -267,43 +267,13 @@ export default class SelectPeopleByResidentialLocationRoutes {
     return res.redirect('../multiple-not-attended-reason')
   }
 
-  // NOT_REQUIRED_OR_EXCUSED = async (req: Request, res: Response): Promise<void> => {
-  //   let { selectedAttendances }: { selectedAttendances: string[] } = req.body
-  //   if (typeof selectedAttendances === 'string') {
-  //     selectedAttendances = [selectedAttendances]
-  //   }
-  //   const { user } = res.locals
-  //   const { recordAttendanceJourney } = req.journeyData
-  //   const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
-  //   const prisonerNumbers = _.uniq(selectedAttendances.map(selectedAttendance => selectedAttendance.split('-')[2]))
+  NOT_REQUIRED = async (req: Request, res: Response): Promise<void> => {
+    let { selectedAttendances }: { selectedAttendances: string[] } = req.body
+    if (typeof selectedAttendances === 'string') {
+      selectedAttendances = [selectedAttendances]
+    }
 
-  //   const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
-
-  //   const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
-
-  //   recordAttendanceJourney.notRequiredOrExcused = {
-  //     selectedPrisoners: [],
-  //   }
-
-  //   selectedAttendances.forEach(selectedAttendance => {
-  //     const instanceId = selectedAttendance.split('-')[0]
-  //     const prisonerNumber = selectedAttendance.split('-')[2]
-
-  //     const instance = instances.find(inst => inst.id === +instanceId)
-  //     const prisoner = prisoners.find(pris => pris.prisonerNumber === prisonerNumber)
-
-  //     recordAttendanceJourney.notRequiredOrExcused.selectedPrisoners.push({
-  //       instanceId: instance.id,
-  //       prisonerNumber: prisoner.prisonerNumber,
-  //       prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
-  //     })
-  //   })
-
-  //   if (!instances[0].activitySchedule.activity.paid) {
-  //     req.journeyData.recordAttendanceJourney.notRequiredOrExcused.isPaid = false
-  //     return res.redirect(`../activities/${instances[0].id}/not-required-or-excused/check-and-confirm`)
-  //   }
-
-  //   return res.redirect(`../activities/${instances[0].id}/not-required-or-excused/paid-or-not`)
-  // }
+    req.journeyData.recordAttendanceJourney.selectedInstanceIds = selectedAttendances
+    return res.redirect('../select-not-required')
+  }
 }

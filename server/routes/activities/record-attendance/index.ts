@@ -54,6 +54,7 @@ import MultipleNotAttendedReasonRoutes, {
 } from './handlers/attend-all/multipleNotAttendedReason'
 import CancelSessionPayRoutes, { CancelSessionPayForm } from './handlers/cancel-session/payment'
 import SelectAttendedRoutes, { SelectAttendedForm } from './handlers/attend-all/selectAttended'
+import SelectNotRequiredRoutes, { SelectNotRequiredForm } from './handlers/attend-all/selectNotRequired'
 
 export default function Index({
   activitiesService,
@@ -126,6 +127,7 @@ export default function Index({
   )
   const multipleNotAttendedReasonRoutes = new MultipleNotAttendedReasonRoutes(activitiesService, prisonService)
   const selectAttendedRoutes = new SelectAttendedRoutes(activitiesService, prisonService)
+  const selectNotRequiredRoutes = new SelectNotRequiredRoutes(activitiesService, prisonService)
   const attendAllListActivitiesRoutes = new ListActivitiesRoutes(activitiesService, locationsService)
 
   get('/', homeHandler.GET)
@@ -293,10 +295,10 @@ export default function Index({
     '/:journeyId/attend-all/select-people-by-residential-location/not-attended',
     selectPeopleByResidentialLocationRoutes.NOT_ATTENDED,
   )
-  // post(
-  //   '/:journeyId/attend-all/select-people-by-residential-location/not-required-or-excused',
-  //   selectPeopleByResidentialLocationRoutes.NOT_REQUIRED_OR_EXCUSED,
-  // )
+  post(
+    '/:journeyId/attend-all/select-people-by-residential-location/not-required-or-excused',
+    selectPeopleByResidentialLocationRoutes.NOT_REQUIRED,
+  )
   get('/:journeyId/attend-all/multiple-not-attended-reason', multipleNotAttendedReasonRoutes.GET)
   post(
     '/:journeyId/attend-all/multiple-not-attended-reason',
@@ -305,6 +307,9 @@ export default function Index({
   )
   get('/:journeyId/attend-all/select-attended', selectAttendedRoutes.GET)
   post('/:journeyId/attend-all/select-attended', selectAttendedRoutes.POST, SelectAttendedForm)
+
+  get('/:journeyId/attend-all/select-not-required', selectNotRequiredRoutes.GET)
+  post('/:journeyId/attend-all/select-not-required', selectNotRequiredRoutes.POST, SelectNotRequiredForm)
 
   post('/:journeyId/attend-all/attended', selectPeopleToRecordattendanceForRoutes.ATTENDED)
   post('/:journeyId/attend-all/not-attended', selectPeopleToRecordattendanceForRoutes.NOT_ATTENDED)
