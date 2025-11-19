@@ -48,6 +48,20 @@ export default class UncancelMultipleSessionsConfirmRoutes {
       await this.activitiesService.uncancelMultipleActivities(instanceIds, user)
     }
 
+    const successMessage =
+      instanceIds.length > 1
+        ? `You’ve uncancelled ${instanceIds.length} activity sessions.`
+        : `You’ve uncancelled one activity session.`
+
+    const successHeading = instanceIds.length > 1 ? `Sessions uncancelled` : `Session uncancelled`
+
+    if (confirm === 'yes') {
+      return res.redirectWithSuccess(
+        `../uncancel-multiple?date=${activityDate}&sessionFilters=${sessionFiltersString}`,
+        successHeading,
+        successMessage,
+      )
+    }
     return res.redirect(`../uncancel-multiple?date=${activityDate}&sessionFilters=${sessionFiltersString}`)
   }
 }

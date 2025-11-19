@@ -28,6 +28,7 @@ describe('Route Handlers - Uncancel Multiple Sessions Confirmation', () => {
         },
       },
       render: jest.fn(),
+      redirectWithSuccess: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
 
@@ -107,7 +108,47 @@ describe('Route Handlers - Uncancel Multiple Sessions Confirmation', () => {
         lastName: 'Bloggs',
       })
 
-      expect(res.redirect).toHaveBeenCalledWith('../uncancel-multiple?date=2021-01-01&sessionFilters=AM,PM')
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '../uncancel-multiple?date=2021-01-01&sessionFilters=AM,PM',
+        'Session uncancelled',
+        'You’ve uncancelled one activity session.',
+      )
+    })
+
+    it('should uncancel scheduled activity - multiple activities', async () => {
+      const reqMultiple = {
+        query: {},
+        params: {
+          id: '1',
+        },
+        journeyData: {
+          recordAttendanceJourney: {
+            activityDate: '2021-01-01',
+            selectedInstanceIds: ['1', '2', '3'],
+            sessionFilters: ['AM', 'PM'],
+          },
+        },
+      } as unknown as Request
+      const confirmRequestMultipleActivities = {
+        ...reqMultiple,
+        body: {
+          confirm: 'yes',
+        },
+      } as unknown as Request
+
+      await handler.POST(confirmRequestMultipleActivities, res)
+
+      expect(activitiesService.uncancelMultipleActivities).toHaveBeenCalledWith([1, 2, 3], {
+        username: 'joebloggs',
+        firstName: 'Joe',
+        lastName: 'Bloggs',
+      })
+
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        '../uncancel-multiple?date=2021-01-01&sessionFilters=AM,PM',
+        'Sessions uncancelled',
+        'You’ve uncancelled 3 activity sessions.',
+      )
     })
 
     it('should redirect back to uncancel activities list page if not confirmed', async () => {
