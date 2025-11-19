@@ -176,7 +176,7 @@ context('Waitlist - Prisoner Allocations Page', () => {
     beforeYouAllocatePage
       .nonAssociationsCountPara()
       .contains(
-        'Review Aeticake Potta’s 1 open non-association in Moorland to check that they can be safely allocated.',
+        'Review Aeticake Potta’s 1 open non-association in Moorland (HMP) to check that they can be safely allocated.',
       )
   })
 
@@ -217,7 +217,7 @@ context('Waitlist - Prisoner Allocations Page', () => {
     beforeYouAllocatePage
       .nonAssociationsCountPara()
       .contains(
-        'Review Aeticake Potta’s 1 open non-association in Moorland to check that they can be safely allocated.',
+        'Review Aeticake Potta’s 1 open non-association in Moorland (HMP) to check that they can be safely allocated.',
       )
   })
 
