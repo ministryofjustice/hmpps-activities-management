@@ -129,7 +129,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
         let isSelectable = false
         if (notRequiredInAdvanceEnabled && activitiesForPrisoner.some(i => i.isInFuture)) {
-          if (advanceAttendancesForPrisoner.length > 0) {
+          if (advanceAttendancesForPrisoner.length > 0 && advanceAttendancesForPrisoner.every(a => a !== undefined)) {
             isSelectable = false
           } else {
             isSelectable = true
