@@ -123,8 +123,8 @@ export default class SelectPeopleByResidentialLocationRoutes {
           a.attendances.filter(att => att.prisonerNumber === prisoner.prisonerNumber),
         )
 
-        const advanceAttendancesForPrisoner = activitiesForPrisoner.flatMap(a =>
-          a.advanceAttendances.filter(att => att.prisonerNumber === prisoner.prisonerNumber),
+        const advanceAttendancesForPrisoner = activitiesForPrisoner.map(a =>
+          a.advanceAttendances.find(att => att.prisonerNumber === prisoner.prisonerNumber),
         )
 
         let isSelectable = false
