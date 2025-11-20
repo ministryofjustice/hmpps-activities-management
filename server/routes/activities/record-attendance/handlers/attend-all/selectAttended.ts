@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { Request, Response } from 'express'
 import _ from 'lodash'
-import { Transform, Type } from 'class-transformer'
+import { Type } from 'class-transformer'
 import { IsNotEmpty, ValidateNested, ValidationArguments } from 'class-validator'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
@@ -15,17 +15,14 @@ export class AttendedData {
 
   prisonerName: string
 
-  @IsNotEmpty({ message: args => `Select the activities that ${getPrisonerName(args)} did not attend` })
+  @IsNotEmpty({ message: args => `Select the activities that ${getPrisonerName(args)} attended` })
   selectedInstanceIds: string[]
-
-  @Transform(({ value }) => value !== 'false')
-  isPayable: boolean
 }
 
 export class SelectAttendedForm {
   @Type(() => AttendedData)
   @ValidateNested({ each: true })
-  notAttendedData: AttendedData[]
+  attendedData: AttendedData[]
 }
 
 export default class SelectAttendedRoutes {

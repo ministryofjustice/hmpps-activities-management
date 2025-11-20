@@ -305,6 +305,7 @@ export default function Index({
     multipleNotAttendedReasonRoutes.POST,
     MultipleNotAttendedReasonForm,
   )
+
   get('/:journeyId/attend-all/select-attended', selectAttendedRoutes.GET)
   post('/:journeyId/attend-all/select-attended', selectAttendedRoutes.POST, SelectAttendedForm)
 

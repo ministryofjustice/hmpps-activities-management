@@ -2,9 +2,10 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
 import { Transform, Type } from 'class-transformer'
-import { IsNotEmpty, ValidateNested, ValidationArguments } from 'class-validator'
+import { IsEnum, IsNotEmpty, ValidateIf, ValidateNested, ValidationArguments } from 'class-validator'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
+import { YesNo } from '../../../../../@types/activities'
 
 const getPrisonerName = (args: ValidationArguments) => (args.object as NotRequiredData)?.prisonerName
 
@@ -16,17 +17,16 @@ export class NotRequiredData {
   @IsNotEmpty({ message: args => `Select the activities that ${getPrisonerName(args)} did not attend` })
   selectedInstanceIds: string[]
 
+  @ValidateIf(o => o.selectedInstanceIds && o.selectedInstanceIds.length > 0)
   @Transform(({ value }) => value !== 'false')
-  isPayable: boolean
-
-  @Transform(({ value }) => value !== 'false')
+  @IsEnum(YesNo, { message: (args: ValidationArguments) => `Select if ${getPrisonerName(args)} should be paid` })
   shouldBePaid: boolean
 }
 
 export class SelectNotRequiredForm {
   @Type(() => NotRequiredData)
   @ValidateNested({ each: true })
-  notAttendedData: NotRequiredData[]
+  notRequiredData: NotRequiredData[]
 }
 
 export default class SelectNotRequiredRoutes {
