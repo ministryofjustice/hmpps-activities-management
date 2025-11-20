@@ -198,8 +198,8 @@ describe('Route Handlers - Select not required sessions', () => {
       expect(activitiesService.postAdvanceAttendances).toHaveBeenCalledTimes(2)
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/activities/attendance/activities',
-        'Not required recorded',
-        "You've marked 1 person as not required.",
+        'Not required status recorded',
+        "You've marked 1 person as not required at activities.",
       )
     })
   })
