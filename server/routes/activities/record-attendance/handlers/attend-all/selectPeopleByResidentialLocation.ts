@@ -1,7 +1,7 @@
 import { addDays, startOfDay, startOfToday, toDate } from 'date-fns'
 import { Request, Response } from 'express'
 import _ from 'lodash'
-import { asString, eventClashes, formatName, getAttendanceSummary } from '../../../../../utils/utils'
+import { asString, eventClashes, formatName } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { EventType } from '../../../../../@types/activities'
@@ -171,9 +171,6 @@ export default class SelectPeopleByResidentialLocationRoutes {
       timePeriodFilter,
       instance: instancesForDateAndSlot.length > 0 ? instancesForDateAndSlot[0] : null,
       instancesForDateAndSlot,
-      attendanceSummary: getAttendanceSummary(
-        prisonersWithActivities.flatMap(row => row.attendances).filter(a => a !== undefined),
-      ),
     })
   }
 

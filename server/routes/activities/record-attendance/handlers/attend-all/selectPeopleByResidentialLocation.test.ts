@@ -98,16 +98,6 @@ const updatedInstance2 = {
   isInFuture: false,
 }
 
-const attendanceSummary = {
-  attendanceCount: 2,
-  attended: 1,
-  attendedPercentage: '50',
-  notAttended: 0,
-  notAttendedPercentage: '0',
-  notRecorded: 1,
-  notRecordedPercentage: '50',
-}
-
 const mockLocations = [
   {
     name: 'A-Wing',
@@ -254,7 +244,6 @@ describe('Route Handlers - Select people by residential location', () => {
         {
           activityDate: date,
           attendanceRows,
-          attendanceSummary,
           instance: updatedInstance1,
           instancesForDateAndSlot: [updatedInstance1, updatedInstance2],
           timePeriodFilter: 'AM',
