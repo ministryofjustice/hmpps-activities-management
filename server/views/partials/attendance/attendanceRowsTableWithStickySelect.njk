@@ -94,15 +94,19 @@
                 <div class="multi-row--container">
                     {% for advancedAttendance in attendee.advancedAttendances %}
                         <div>
-                            {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', attendee.instance.activitySchedule.activity.attendanceRequired) }}
-                            {{ payStatus( 
-                                { 
-                                    dataPresentCheck: advancedAttendance,
-                                    status: 'COMPLETED',
-                                    payable: isPayable,
-                                    issuePayment: advancedAttendance.issuePayment,
-                                    marginTagClass: true
-                                }) }}
+                            {% if advancedAttendance is not undefined %}
+                                {{ attendanceTag('COMPLETED', 'NOT_REQUIRED', attendee.instance.activitySchedule.activity.attendanceRequired) }}
+                                {{ payStatus( 
+                                    { 
+                                        dataPresentCheck: advancedAttendance,
+                                        status: 'COMPLETED',
+                                        payable: isPayable,
+                                        issuePayment: advancedAttendance.issuePayment,
+                                        marginTagClass: true
+                                    }) }}
+                            {% else %}
+                                -
+                            {% endif %}
                         </div>
                         {% if not loop.last %}<hr class="mid-grey-tint-20-hr dash-border govuk-grid-column-full">{% endif %}
                     {% endfor %}

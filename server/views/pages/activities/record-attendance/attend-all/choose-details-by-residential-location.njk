@@ -41,9 +41,9 @@
                             checked: formResponses.datePresetOption == 'today' or datePresetOption == 'today'
                         },
                         {
-                            value: "tomorrow",
-                            text: "Tomorrow - " + now | addDays(1) | formatDate('d MMMM yyyy', false),
-                            checked: formResponses.datePresetOption == 'tomorrow' or datePresetOption == 'tomorrow'
+                            value: "yesterday",
+                            text: "Yesterday - " + now | addDays(-1) | formatDate('d MMMM yyyy', false),
+                            checked: formResponses.datePresetOption == 'yesterday' or datePresetOption == 'yesterday'
                         },
                         {
                             value: "other",
