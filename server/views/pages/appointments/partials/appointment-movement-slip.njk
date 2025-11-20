@@ -39,7 +39,11 @@
                 {% if appointment.category.code in ['VLPA', 'VLAP', 'VLLA', 'VLOO'] %}
                     {{ labelAndValue('Extra information', '', 'movement-slip__row--no-border', 'preserve-line-breaks') }}
                 {% else %}
+                  {% if not prisonerExtraInformationEnabled %}
                     {{ labelAndValue('Extra information', appointment.extraInformation | escape, 'movement-slip__row--no-border', 'preserve-line-breaks') if appointment.extraInformation }}
+                  {% else %}
+                    {{ labelAndValue('Extra information', appointment.prisonerExtraInformation | escape, 'movement-slip__row--no-border', 'preserve-line-breaks') if appointment.prisonerExtraInformation }}
+                  {% endif %}
                 {% endif %}
             </dl>
 

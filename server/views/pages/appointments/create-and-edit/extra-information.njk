@@ -19,86 +19,156 @@
         <div class="govuk-grid-column-two-thirds">
           {{ appointmentTypeCaption(session) }}
 
-          {# For some video link appointments explain that movement slips will not show extra info (potentially sensitive content) #}
-          {% if session.appointmentJourney.category.code in ['VLPA', 'VLAP', 'VLLA', 'VLOO'] %}
-            {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-              <h1 class="govuk-heading-l">
-                <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information (optional)</label>
-              </h1>
+          {% if not prisonerExtraInformationEnabled %}
+            {# For some video link appointments explain that movement slips will not show extra info (potentially sensitive content) #}
+            {% if session.appointmentJourney.category.code in ['VLPA', 'VLAP', 'VLLA', 'VLOO'] %}
+              {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+                <h1 class="govuk-heading-l">
+                  <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information (optional)</label>
+                </h1>
+              {% else %}
+                <h1 class="govuk-heading-l">
+                  <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information (optional)</label>
+                </h1>
+              {% endif %}
+              <p class="govuk-body" data-qa="first-paragraph">
+                This information will not appear on movement slips for some video link appointments.
+              </p>
+              <p class="govuk-body" data-qa="second-paragraph">
+                For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.
+              </p>
             {% else %}
-              <h1 class="govuk-heading-l">
-                <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information (optional)</label>
-              </h1>
+              {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
+                {% if prisoners.length == 1 %}
+                  <h1 class="govuk-heading-l">
+                    <label class="govuk-label govuk-label--l" for="extraInformation">
+                      Change the extra information on {{ prisoners[0].name | toTitleCase }}'s movement slip (optional)
+                    </label>
+                  </h1>
+                {% else %}
+                  <h1 class="govuk-heading-l">
+                    <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information on movement slips (optional)</label>
+                  </h1>
+                {% endif %}
+
+                <p class="govuk-body" data-qa="first-paragraph">
+                  Add or edit information that will help{% if prisoners.length == 1 %} them {% else %} attendees {% endif %}prepare for the appointment, like something they need to bring, or do beforehand.
+                </p>
+                <p class="govuk-body" data-qa="second-paragraph">
+                  Do not add anything that should not be seen by or shared with a prisoner. For example, contact details of someone else at the appointment.
+                </p>
+                <p class="govuk-body" data-qa="third-paragraph">
+                  Changes will not appear on movement slips that have already been printed. For confidentiality, the information you enter is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.
+                </p>
+              {% else %}
+                {% if prisoners.length == 1 %}
+                  <h1 class="govuk-heading-l">
+                    <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information to {{ prisoners[0].name | toTitleCase }}'s movement slip (optional)</label>
+                  </h1>
+                {% else %}
+                  <h1 class="govuk-heading-l">
+                    <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information to movement slips (optional)</label>
+                  </h1>
+                {% endif %}
+
+                <p class="govuk-body" data-qa="first-paragraph">
+                  Add any information that will help{% if prisoners.length == 1 %} them {% else %} attendees {% endif %}prepare for their appointment, like something they need to bring, or do beforehand.
+                </p>
+                <p class="govuk-body" data-qa="second-paragraph">
+                  Do not add anything that should not be seen by or shared with a prisoner. For example, contact details of someone else at the appointment.
+                </p>
+                <p class="govuk-body" data-qa="third-paragraph">
+                  For confidentiality, the information you enter is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.
+                </p>
+              {% endif %}
             {% endif %}
-            <p class="govuk-body" data-qa="first-paragraph">
-              This information will not appear on movement slips for some video link appointments.
-            </p>
-            <p class="govuk-body" data-qa="second-paragraph">
-              For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.
-            </p>
           {% else %}
             {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
-              {% if prisoners.length == 1 %}
-                <h1 class="govuk-heading-l">
-                  <label class="govuk-label govuk-label--l" for="extraInformation">
-                    Change the extra information on {{ prisoners[0].name | toTitleCase }}'s movement slip (optional)
-                  </label>
-                </h1>
-              {% else %}
-                <h1 class="govuk-heading-l">
-                  <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information on movement slips (optional)</label>
-                </h1>
-              {% endif %}
-
-              <p class="govuk-body" data-qa="first-paragraph">
-                Add or edit information that will help{% if prisoners.length == 1 %} them {% else %} attendees {% endif %}prepare for the appointment, like something they need to bring, or do beforehand.
-              </p>
-              <p class="govuk-body" data-qa="second-paragraph">
-                Do not add anything that should not be seen by or shared with a prisoner. For example, contact details of someone else at the appointment.
-              </p>
-              <p class="govuk-body" data-qa="third-paragraph">
-                Changes will not appear on movement slips that have already been printed. For confidentiality, the information you enter is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.
-              </p>
+              <h1 class="govuk-heading-l">
+                <label class="govuk-label govuk-label--l" for="extraInformation">Change the extra information</label>
+              </h1>
             {% else %}
-              {% if prisoners.length == 1 %}
-                <h1 class="govuk-heading-l">
-                  <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information to {{ prisoners[0].name | toTitleCase }}'s movement slip (optional)</label>
-                </h1>
-              {% else %}
-                <h1 class="govuk-heading-l">
-                  <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information to movement slips (optional)</label>
-                </h1>
-              {% endif %}
-
-              <p class="govuk-body" data-qa="first-paragraph">
-                Add any information that will help{% if prisoners.length == 1 %} them {% else %} attendees {% endif %}prepare for their appointment, like something they need to bring, or do beforehand.
-              </p>
-              <p class="govuk-body" data-qa="second-paragraph">
-                Do not add anything that should not be seen by or shared with a prisoner. For example, contact details of someone else at the appointment.
-              </p>
-              <p class="govuk-body" data-qa="third-paragraph">
-                For confidentiality, the information you enter is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.
-              </p>
-            {% endif %}
+              <h1 class="govuk-heading-l">
+                <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information</label>
+              </h1>
+            {%  endif %}
           {% endif %}
 
           <form method="POST">
-              <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+            {% if not prisonerExtraInformationEnabled %}
               <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="4000">
-                  <div class="govuk-form-group">
+                <div class="govuk-form-group">
                   {{ govukCharacterCount({
-                      id: "extraInformation",
-                      name: "extraInformation",
-                      errorMessage: validationErrors | findError("extraInformation"),
-                      value: formResponses.extraInformation or session.appointmentJourney.extraInformation,
-                      maxlength: "4000"
+                    id: "extraInformation",
+                    name: "extraInformation",
+                    errorMessage: validationErrors | findError("extraInformation"),
+                    value: formResponses.extraInformation or session.appointmentJourney.extraInformation,
+                    maxlength: "4000"
                   }) }}
-                  </div>
+                </div>
               </div>
-              {{ govukButton({
-                  text: "Update extra information" if isCtaAcceptAndSave else "Continue",
-                  preventDoubleClick: true
-              }) }}
+            {% else %}
+              <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="4000">
+                <div class="govuk-form-group">
+                  {% set extraInformationHtml %}
+                    <p class="govuk-body" data-qa="first-paragraph">
+                      This could include details about who will be attending, or other relevant appointment information. This won't appear on movement slips or the printed unlock list. Unlock lists will just show 'Extra information'. Staff can view fill details in this service.
+                    </p>
+                  {% endset %}
+
+                  {{ govukCharacterCount({
+                    id: "extraInformation",
+                    name: "extraInformation",
+                    errorMessage: validationErrors | findError("extraInformation"),
+                    value: formResponses.extraInformation or session.appointmentJourney.extraInformation,
+                    label: {
+                      text: "Notes for prison staff (optional)",
+                      classes: 'govuk-fieldset__legend--s'
+                    },
+                    hint: { html: extraInformationHtml },
+                    maxlength: "4000"
+                  }) }}
+                </div>
+              </div>
+
+              <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="400">
+                <div class="govuk-form-group">
+                  {% set prisonerExtraInformationHtml %}
+                    {% if prisoners.length == 1 %}
+                      <p class="govuk-body" data-qa="first-paragraph">
+                        Add {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}or edit {% endif %}information the prisoner needs to know about their appointment, like something they need to bring, or do beforehand. This will appear on movement slips and will be seen by the prisoner.
+                      </p>
+                    {% else %}
+                      <p class="govuk-body" data-qa="first-paragraph">
+                        Add {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}or edit {% endif %}information the attendees need to know about their appointment, like something they need to bring, or do beforehand. This will appear on movement slips and will be seen by the attendees.
+                      </p>
+                    {% endif %}
+                    <p class="govuk-body" data-qa="second-paragraph">
+                      Do not add anything that should not be seen by or shared with a prisoner.
+                    </p>
+                  {% endset %}
+
+                  {{ govukCharacterCount({
+                    id: "prisonerExtraInformation",
+                    name: "prisonerExtraInformation",
+                    errorMessage: validationErrors | findError("prisonerExtraInformation"),
+                    value: formResponses.prisonerExtraInformation or session.appointmentJourney.prisonerExtraInformation,
+                    label: {
+                      text: "Notes for prisoner (optional)",
+                      classes: 'govuk-fieldset__legend--s'
+                    },
+                    hint: { html: prisonerExtraInformationHtml },
+                    maxlength: "400"
+                  }) }}
+                </div>
+              </div>
+            {% endif %}
+
+            {{ govukButton({
+              text: "Update extra information" if isCtaAcceptAndSave else "Continue",
+              preventDoubleClick: true
+            }) }}
           </form>
         </div>
     </div>
