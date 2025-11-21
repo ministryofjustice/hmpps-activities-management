@@ -41,7 +41,7 @@ export default class ChooseDetailsToRecordAttendanceRoutes {
     const { user } = res.locals
     const activities: ActivitySummary[] = await this.activitiesService.getActivities(true, user)
 
-    res.render('pages/activities/record-attendance/attend-all/choose-details-to-record-attendance', {
+    res.render('pages/activities/record-attendance/attend-all/choose-details-by-activity', {
       activities,
     })
   }

@@ -16,7 +16,7 @@
 {% set pageTitle = applicationName + " - Select people to record attendance for" %}
 {% set pageId = 'select-people-to-record-attendance-for-page' %}
 {% set hardBackLinkText = 'Back' %}
-{% set hardBackLinkHref = "choose-details-to-record-attendance" %}
+{% set hardBackLinkHref = "choose-details-by-activity" %}
 
 {% set activityDate = activityDate | formatDate %}
 
@@ -26,7 +26,7 @@
             <h1 class="govuk-heading-l">
                 {{ activity.summary }} {% if isInFuture %}does{% else %}did{% endif %} not run {% if timePeriods | length !== 3 %}in the {{ formatSessions(timePeriods) }} {{' session' if timePeriods | length == 1 else ' sessions' }}{% endif %} on {{ activityDate }}
             </h1>
-            <a class="govuk-link govuk-link--no-visited-state" href="choose-details-to-record-attendance">Select a different activity, date or time period</a>
+            <a class="govuk-link govuk-link--no-visited-state" href="choose-details-by-activity">Select a different activity, date or time period</a>
         </div>
     </div>
 {% endblock %}

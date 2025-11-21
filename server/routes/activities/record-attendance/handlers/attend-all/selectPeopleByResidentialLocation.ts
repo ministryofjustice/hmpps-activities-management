@@ -284,7 +284,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
     }
 
     return res.redirectWithSuccess(
-      req.journeyData.recordAttendanceJourney.returnUrl || '../choose-details-to-record-attendance',
+      req.journeyData.recordAttendanceJourney.returnUrl || '../choose-details-by-activity',
       'Attendance recorded',
       `You've saved attendance details for ${selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`}`,
     )

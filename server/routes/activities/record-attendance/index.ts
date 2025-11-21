@@ -268,9 +268,9 @@ export default function Index({
   // Attend all routes
   get('/:journeyId/attend-all/how-to-record-attendance', howToRecordAttendanceRoutes.GET)
   post('/:journeyId/attend-all/how-to-record-attendance', howToRecordAttendanceRoutes.POST, HowToRecordAttendanceForm)
-  get('/:journeyId/attend-all/choose-details-to-record-attendance', chooseDetailsToRecordAttendanceRoutes.GET)
+  get('/:journeyId/attend-all/choose-details-by-activity', chooseDetailsToRecordAttendanceRoutes.GET)
   post(
-    '/:journeyId/attend-all/choose-details-to-record-attendance',
+    '/:journeyId/attend-all/choose-details-by-activity',
     chooseDetailsToRecordAttendanceRoutes.POST,
     ChooseDetailsToRecordAttendanceForm,
   )
