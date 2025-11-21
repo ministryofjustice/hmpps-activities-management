@@ -573,8 +573,10 @@ export const hasAppointmentCommentChanged = (
   appointmentJourney: AppointmentJourney,
   editAppointmentJourney: EditAppointmentJourney,
 ) =>
-  editAppointmentJourney.extraInformation !== undefined &&
-  appointmentJourney.extraInformation !== editAppointmentJourney.extraInformation
+  (editAppointmentJourney.extraInformation !== undefined &&
+    appointmentJourney.extraInformation !== editAppointmentJourney.extraInformation) ||
+  (editAppointmentJourney.prisonerExtraInformation !== undefined &&
+    appointmentJourney.prisonerExtraInformation !== editAppointmentJourney.prisonerExtraInformation)
 
 export const hasAppointmentAttendeesChanged = (editAppointmentJourney: EditAppointmentJourney) =>
   editAppointmentJourney.addPrisoners || editAppointmentJourney.removePrisoner

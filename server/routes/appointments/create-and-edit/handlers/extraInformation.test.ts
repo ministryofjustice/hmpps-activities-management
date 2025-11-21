@@ -93,12 +93,13 @@ describe('Route Handlers - Create Appointment - Extra Information', () => {
     })
   })
 })
+
 describe('Validation', () => {
   it.each([
     { extraInformation: '', isValid: true },
     { extraInformation: Array(4001).fill('a').join(''), isValid: false },
-    { extraInformation: Array(4000).fill('a').join(''), isValid: true },
-    { extraInformation: Array(3999).fill('a').join(''), isValid: true },
+    { extraInformation: Array(4000).fill('b').join(''), isValid: true },
+    { extraInformation: Array(3999).fill('c').join(''), isValid: true },
   ])('should validate extra information character length', async ({ extraInformation, isValid }) => {
     const body = {
       extraInformation,
@@ -121,5 +122,26 @@ describe('Validation', () => {
         },
       ])
     }
+  })
+
+  it('should validate extra information character length with toggle off', async () => {
+    const body = {
+      extraInformation: Array(4001).fill('a').join(''),
+      appointmentJourney: {
+        category: {
+          code: 'ABC',
+        },
+      },
+    }
+
+    const requestObject = plainToInstance(ExtraInformation, body)
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+    expect(errors).toEqual([
+      {
+        property: 'extraInformation',
+        error: 'You must enter extra information which has no more than 4,000 characters',
+      },
+    ])
   })
 })

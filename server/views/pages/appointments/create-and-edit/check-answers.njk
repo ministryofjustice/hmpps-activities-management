@@ -214,6 +214,7 @@
 
 {% set extraInfoRows = [] %}
 {% if session.appointmentJourney.type !== AppointmentType.SET %}
+  {% if not prisonerExtraInformationEnabled %}
     {% set extraInfoRows = (extraInfoRows.push(
         {
             key: {
@@ -235,6 +236,48 @@
             }
         }
     ), extraInfoRows) %}
+  {% else %}
+    {% set extraInfoRows = (extraInfoRows.push(
+      {
+        key: {
+        text: "Notes for prison staff"
+      },
+        value: {
+        html: '<span class="preserve-line-breaks">' + (session.appointmentJourney.extraInformation | escape) + '</span>'
+      },
+        actions: {
+          items: [
+            {
+              href: "extra-information?preserveHistory=true",
+              text: "Change",
+              visuallyHiddenText: "change extra information",
+              classes: "govuk-link--no-visited-state",
+              attributes: { 'data-qa': 'change-extra-information' }
+            }
+          ] if session.appointmentJourney.retrospective == YesNo.NO
+        }
+      },
+      {
+        key: {
+        text: "Notes for prisoner"
+      },
+        value: {
+        html: '<span class="preserve-line-breaks">' + (session.appointmentJourney.prisonerExtraInformation | escape) + '</span>'
+      },
+        actions: {
+          items: [
+            {
+              href: "extra-information?preserveHistory=true",
+              text: "Change",
+              visuallyHiddenText: "change prisoner extra information",
+              classes: "govuk-link--no-visited-state",
+              attributes: { 'data-qa': 'change-prisoner-extra-information' }
+            }
+          ] if session.appointmentJourney.retrospective == YesNo.NO
+        }
+      }
+    ), extraInfoRows) %}
+  {% endif %}
 {% endif %}
 {% if session.appointmentJourney.type == AppointmentType.SET %}
     {% set schedulingInformationRows = (schedulingInformationRows.push(

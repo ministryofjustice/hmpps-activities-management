@@ -244,6 +244,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
               cellLocation: '1-2-4',
             },
             extraInformation: 'Extra information for B2345CD',
+            prisonerExtraInformation: 'Prisoner extra information for B2345CD',
           },
         ],
       } as AppointmentSetJourney
@@ -261,6 +262,7 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
             startTime: '14:00',
             endTime: '14:30',
             extraInformation: 'Extra information for B2345CD',
+            prisonerExtraInformation: 'Prisoner extra information for B2345CD',
           } as AppointmentSetAppointment,
         ],
         tierCode: 'TIER_2',
@@ -285,7 +287,8 @@ describe('Route Handlers - Create Appointment - Check answers', () => {
             startDate: '2023-04-23',
             startTime: '13:30',
             endTime: '14:00',
-            extraInformation: '',
+            extraInformation: 'Extra information for B2345CD',
+            prisonerExtraInformation: 'Prisoner extra information for B2345CD',
             createdTime: '2023-02-07T15:37:59.266Z',
             createdBy: 'test.user',
             attendees: [

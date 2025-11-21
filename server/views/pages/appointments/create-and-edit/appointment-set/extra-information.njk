@@ -2,6 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "partials/showProfileLink.njk" import showProfileLink %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
@@ -43,13 +44,13 @@
                                 'data-qa': 'prisoner-info-cell'
                             }
                         }, {
-                            html: '<span class="preserve-line-breaks">' + appointment.extraInformation | escape + '</span>',
+                            html: extraInformationHtml(appointment),
                             classes: 'govuk-table__cell--vertical-align-top',
                             attributes: {
                                 'data-qa': 'extra-information-cell'
                             }
                         }, {
-                            html: '<a href="appointment-set-extra-information/' + appointment.prisoner.number + '" class="govuk-link govuk-link--no-visited-state">' + ('Edit' if appointment.extraInformation else 'Add') + ' extra information</a>',
+                            html: '<a href="appointment-set-extra-information/' + appointment.prisoner.number + '" class="govuk-link govuk-link--no-visited-state">' + ('Edit' if (appointment.extraInformation or (prisonerExtraInformationEnabled and appointment.prisonerExtraInformation)) else 'Add') + ' extra information</a>',
                             classes: 'govuk-!-text-align-right govuk-table__cell--vertical-align-top',
                             attributes: {
                                 'data-qa': 'actions-cell'
@@ -85,3 +86,13 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro extraInformationHtml(appointment) %}
+  {% if not prisonerExtraInformationEnabled %}
+    <span class="preserve-line-breaks">{{ appointment.extraInformation | escape }}</span>
+  {% else %}
+    {% if appointment.extraInformation or appointment.prisonerExtraInformation %}
+      {{ govukTag({ text: 'Extra information', classes: 'govuk-tag--medium govuk-tag--yellow' }) }}
+    {% endif %}
+  {% endif %}
+{% endmacro %}

@@ -34,6 +34,7 @@ export type EditAppointmentJourney = {
     date: Date
   }
   extraInformation?: string
+  prisonerExtraInformation?: string
   addPrisoners?: AppointmentPrisonerDetails[]
   removePrisoner?: PrisonerSummary
   cancellationReason?: AppointmentCancellationReason

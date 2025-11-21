@@ -760,6 +760,40 @@ describe('Edit Appointment Service', () => {
       })
     })
 
+    it('when changing the prisoner extra information', async () => {
+      req.journeyData.editAppointmentJourney.property = 'extra-information'
+      req.journeyData.editAppointmentJourney.prisonerExtraInformation = 'Updated prisoner extra information'
+
+      await service.edit(req, res, AppointmentApplyTo.THIS_APPOINTMENT)
+
+      expect(activitiesService.cancelAppointment).not.toHaveBeenCalled()
+      expect(activitiesService.editAppointment).toHaveBeenCalledWith(
+        2,
+        {
+          prisonerExtraInformation: 'Updated prisoner extra information',
+          applyTo: AppointmentApplyTo.THIS_APPOINTMENT,
+        } as AppointmentUpdateRequest,
+        res.locals.user,
+      )
+      expect(metricsService.trackEvent).toHaveBeenCalledWith(
+        new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, res.locals.user)
+          .addProperty('journeyId', journeyId)
+          .addProperty('appointmentId', appointmentId)
+          .addProperty('property', 'extra-information')
+          .addProperty('propertyChanged', 'true')
+          .addProperty('isApplyToQuestionRequired', 'true')
+          .addProperty('applyTo', AppointmentApplyTo.THIS_APPOINTMENT)
+          .addMeasurement('journeyTimeSec', 60),
+      )
+      expect(req.session.appointmentJourney).toBeNull()
+      expect(req.journeyData.editAppointmentJourney).toBeNull()
+      expect(req.session.journeyMetrics).toBeNull()
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        `/appointments/${appointmentId}`,
+        "You've changed the extra information for this appointment",
+      )
+    })
+
     describe('apply to this and all future appointments', () => {
       beforeEach(() => {
         req.session.appointmentJourney.repeat = YesNo.YES
