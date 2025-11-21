@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { asString, eventClashes, formatName } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
-import { EventType } from '../../../../../@types/activities'
+import { EventType, SubLocationCellPattern } from '../../../../../@types/activities'
 import applyCancellationDisplayRule from '../../../../../utils/applyCancellationDisplayRule'
 import config from '../../../../../config'
 import AttendanceStatus from '../../../../../enum/attendanceStatus'
@@ -42,6 +42,9 @@ export default class SelectPeopleByResidentialLocationRoutes {
     const location = await this.activitiesService
       .getLocationGroups(user)
       .then(locations => locations.find(loc => loc.key === locationKey))
+
+    req.journeyData.recordAttendanceJourney.searchTerm ??= ''
+    req.journeyData.recordAttendanceJourney.subLocationFilters ??= location.children.map(c => c.key)
 
     const instancesForDateAndSlot = (
       await this.activitiesService.getScheduledActivitiesAtPrisonByDateAndSlot(
@@ -105,8 +108,40 @@ export default class SelectPeopleByResidentialLocationRoutes {
       ...otherEvents.adjudications,
     ]
 
+    const searchTerm = req.journeyData.recordAttendanceJourney.searchTerm?.toLowerCase() || ''
+    const { subLocationFilters } = req.journeyData.recordAttendanceJourney
+
+    const subLocationCellPatterns = await Promise.all(
+      subLocationFilters.map(async sub => {
+        const locGroup = `${location.key}_${sub}`
+        const prefix = await this.activitiesService.getPrisonLocationPrefixByGroup(
+          user.activeCaseLoadId,
+          locGroup,
+          user,
+        )
+        return { subLocation: sub, locationPrefix: prefix.locationPrefix } as SubLocationCellPattern
+      }),
+    )
+
     const prisonersWithActivities = prisonersForLocation?.content?.reduce((result, prisoner) => {
       if (attendingPrisonerNumbers.includes(prisoner.prisonerNumber)) {
+        if (
+          searchTerm &&
+          !prisoner.prisonerNumber.toLowerCase().includes(searchTerm) &&
+          !`${prisoner.firstName} ${prisoner.lastName}`.toLowerCase().includes(searchTerm)
+        ) {
+          return result
+        }
+
+        if (
+          !subLocationFilters.includes(
+            this.getSubLocationFromCell(user.activeCaseLoadId, subLocationCellPatterns, prisoner.cellLocation),
+          ) &&
+          subLocationFilters.length > 0
+        ) {
+          return result
+        }
+
         const activitiesForPrisoner = attendees
           .find(a => a.prisonerNumber === prisoner.prisonerNumber)
           .scheduledInstanceIds.map(a => instancesForDateAndSlot.find(i => i.id === a))
@@ -171,6 +206,8 @@ export default class SelectPeopleByResidentialLocationRoutes {
       timePeriodFilter,
       instance: instancesForDateAndSlot.length > 0 ? instancesForDateAndSlot[0] : null,
       instancesForDateAndSlot,
+      searchTerm: req.journeyData.recordAttendanceJourney.searchTerm || '',
+      subLocationFilters: req.journeyData.recordAttendanceJourney.subLocationFilters,
     })
   }
 
@@ -272,5 +309,24 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
     req.journeyData.recordAttendanceJourney.selectedInstanceIds = selectedAttendances
     return res.redirect('../select-not-required')
+  }
+
+  private getSubLocationFromCell = (
+    prison: string,
+    cellPatterns: SubLocationCellPattern[],
+    cellLocation: string,
+  ): string => {
+    for (const cellPattern of cellPatterns) {
+      const splitPatterns = cellPattern.locationPrefix.split(',')
+
+      for (const pattern of splitPatterns) {
+        const regex = new RegExp(pattern)
+        if (regex.test(`${prison}-${cellLocation}`)) {
+          return cellPattern.subLocation
+        }
+      }
+    }
+    // Where a location has no sub-locations e.g. Segregation unit, there will be no cell-patterns to match against.
+    return ''
   }
 }

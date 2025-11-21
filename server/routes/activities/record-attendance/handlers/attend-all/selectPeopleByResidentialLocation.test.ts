@@ -220,7 +220,7 @@ describe('Route Handlers - Select people by residential location', () => {
         {
           prisoner: mapPrisonerDetails(prisoners.content[0]),
           attendances: [scheduledActivity1.attendances[0]],
-          advancedAttendances: [],
+          advancedAttendances: [undefined],
           attendanceIds: [1001],
           instanceIds: [123456],
           instances: [updatedInstance1],
@@ -230,7 +230,7 @@ describe('Route Handlers - Select people by residential location', () => {
         {
           prisoner: mapPrisonerDetails(prisoners.content[1]),
           attendances: [scheduledActivity2.attendances[0]],
-          advancedAttendances: [],
+          advancedAttendances: [undefined],
           attendanceIds: [1002],
           instanceIds: [123457],
           instances: [updatedInstance2],
@@ -248,6 +248,8 @@ describe('Route Handlers - Select people by residential location', () => {
           instancesForDateAndSlot: [updatedInstance1, updatedInstance2],
           timePeriodFilter: 'AM',
           location: mockLocations[0],
+          searchTerm: '',
+          subLocationFilters: [],
         },
       )
     })
