@@ -37,7 +37,7 @@ describe('Route Handlers - How to record attendance', () => {
     it('should redirect for ACTIVITY selection', async () => {
       req.body = { howToRecord: 'ACTIVITY' }
       await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`choose-details-to-record-attendance`)
+      expect(res.redirect).toHaveBeenCalledWith(`choose-details-by-activity`)
     })
   })
 

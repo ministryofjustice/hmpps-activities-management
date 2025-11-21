@@ -35,7 +35,7 @@ describe('Route Handlers - Choose details to record attendance', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/record-attendance/attend-all/choose-details-to-record-attendance',
+        'pages/activities/record-attendance/attend-all/choose-details-by-activity',
         {},
       )
     })

@@ -16,6 +16,11 @@ import PrisonService from '../../../../../services/prisonService'
 import AttendanceReason from '../../../../../enum/attendanceReason'
 import { YesNo } from '../../../../../@types/activities'
 import AttendanceStatus from '../../../../../enum/attendanceStatus'
+import {
+  parseSelectedAttendances,
+  getPrisonerNumberFromAttendance,
+  getInstanceIdsFromAttendance,
+} from './attendanceParsingUtils'
 
 const getPrisonerName = (args: ValidationArguments) => (args.object as NotAttendedData)?.prisonerName
 
@@ -104,10 +109,7 @@ export default class MultipleNotAttendedReasonRoutes {
     const { user } = res.locals
     const selectedAttendances = req.journeyData.recordAttendanceJourney.selectedInstanceIds as string[]
 
-    const instanceIds = _.uniq(
-      selectedAttendances.flatMap(selectedAttendance => selectedAttendance.split('-')[0].split(',')),
-    ).map(Number)
-    const prisonerNumbers = _.uniq(selectedAttendances.map(selectedAttendance => selectedAttendance.split('-')[2]))
+    const { instanceIds, prisonerNumbers } = parseSelectedAttendances(selectedAttendances)
 
     const allInstances = await this.activitiesService.getScheduledActivities(instanceIds, user)
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
@@ -116,8 +118,8 @@ export default class MultipleNotAttendedReasonRoutes {
       .sort((r1, r2) => r1.displaySequence - r2.displaySequence)
 
     const attendanceDetails = selectedAttendances.map(selectedAttendance => {
-      const prisonerInstanceIds = selectedAttendance.split('-')[0].split(',').map(Number)
-      const prisonerNumber = selectedAttendance.split('-')[2]
+      const prisonerInstanceIds = getInstanceIdsFromAttendance(selectedAttendance)
+      const prisonerNumber = getPrisonerNumberFromAttendance(selectedAttendance)
 
       const prisoner = prisoners.find(p => p.prisonerNumber === prisonerNumber)
       const instances = allInstances.filter(i => prisonerInstanceIds.includes(i.id))

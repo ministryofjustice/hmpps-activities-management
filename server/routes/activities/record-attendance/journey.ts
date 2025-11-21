@@ -10,6 +10,8 @@ export type RecordAttendanceJourney = {
   notRequiredOrExcused?: NotRequiredOrExcusedJourney
   returnUrl?: string
   locationTypeFilter?: string
+  searchTerm?: string
+  subLocationFilters?: string[]
 }
 
 type NotAttendedJourney = {

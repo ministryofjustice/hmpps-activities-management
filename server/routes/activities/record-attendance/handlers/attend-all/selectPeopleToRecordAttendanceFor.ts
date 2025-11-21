@@ -37,7 +37,7 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
 
     const activityDate = date ? toDate(asString(date)) : new Date()
     if (startOfDay(activityDate) > startOfDay(addDays(new Date(), 60)))
-      return res.redirect('choose-details-to-record-attendance')
+      return res.redirect('choose-details-by-activity')
 
     const instances = (await this.activitiesService.getScheduledActivitiesAtPrison(activityDate, user))
       .filter(
@@ -154,7 +154,7 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
     }
 
     return res.redirectWithSuccess(
-      req.journeyData.recordAttendanceJourney.returnUrl || '../choose-details-to-record-attendance',
+      req.journeyData.recordAttendanceJourney.returnUrl || '../choose-details-by-activity',
       'Attendance recorded',
       `You've saved attendance details for ${selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`}`,
     )
