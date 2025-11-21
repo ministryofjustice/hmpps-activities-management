@@ -20,7 +20,6 @@ This service is dependent the following services:
 * [Nomis Mapping API](https://nomis-sync-prisoner-mapping-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html#/) - nomis mapping api
 * [Non-Associations API](https://non-associations-api-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html#/) - non-associations api
 * [Prison API](https://prison-api-dev.prison.service.justice.gov.uk/swagger-ui/index.html#/) - prison api
-* [Prison Register API](https://prison-register-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html#/) - prison register api
 * [Prisoner Search API](https://prisoner-search-dev.prison.service.justice.gov.uk/swagger-ui/index.html#/) - prisoner search api
 * [Redis](https://redis.io/)/[Elasticache](https://aws.amazon.com/elasticache/) - journey, session store and token caching
 
@@ -38,7 +37,6 @@ There are various services which should have their types regenerated:
 ./generate-nomis-user-api-types.sh
 ./generate-non-associations-types.sh
 ./generate-prison-api-types.sh
-./generate-prison-register-types.sh
 ./generate-prisoner-offender-search-types.sh
 ```
 
@@ -122,7 +120,6 @@ ACTIVITIES_API_URL=https://activities-api-dev.prison.service.justice.gov.uk
 CASE_NOTES_API_URL=https://dev.offender-case-notes.service.justice.gov.uk
 PRISON_API_URL=https://prison-api-dev.prison.service.justice.gov.uk
 PRISONER_SEARCH_API_URL=https://prisoner-search-dev.prison.service.justice.gov.uk
-PRISON_REGISTER_API_URL=https://prison-register-dev.hmpps.service.justice.gov.uk
 INCENTIVES_API_URL=https://incentives-api-dev.hmpps.service.justice.gov.uk
 COMPONENT_API_URL=https://frontend-components-dev.hmpps.service.justice.gov.uk
 MANAGE_USERS_API_URL=https://manage-users-api-dev.hmpps.service.justice.gov.uk

@@ -12,7 +12,7 @@ jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../services/userService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
-const userService = new UserService(null, null, null) as jest.Mocked<UserService>
+const userService = new UserService(null) as jest.Mocked<UserService>
 
 describe('Route Handlers - Cancelled sessions - view or edit', () => {
   const handler = new CancelMultipleSessionsViewEditDetailsRoutes(activitiesService, userService)

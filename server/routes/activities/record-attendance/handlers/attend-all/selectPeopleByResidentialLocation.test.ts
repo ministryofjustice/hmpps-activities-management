@@ -23,7 +23,7 @@ jest.mock('../../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
-const userService = new UserService(null, null, null)
+const userService = new UserService(null)
 
 const today = format(new Date(), 'yyyy-MM-dd')
 

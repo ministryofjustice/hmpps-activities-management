@@ -1,20 +1,13 @@
-/* eslint-disable import/first */
 /*
  * Do appinsights first as it does some magic instrumentation work, i.e. it affects other 'require's
  * In particular, applicationinsights automatically collects bunyan logs
  */
 import { AuthenticationClient, RedisTokenStore } from '@ministryofjustice/hmpps-auth-clients'
-import { initialiseAppInsights, buildAppInsightsClient } from '../utils/azureAppInsights'
+import { buildAppInsightsClient, initialiseAppInsights } from '../utils/azureAppInsights'
 import applicationInfoSupplier from '../applicationInfo'
-
-const applicationInfo = applicationInfoSupplier()
-initialiseAppInsights()
-const appInsightsClient = buildAppInsightsClient(applicationInfo)
-
 import ManageUsersApiClient from './manageUsersApiClient'
 import PrisonApiClient from './prisonApiClient'
 import PrisonerSearchApiClient from './prisonerSearchApiClient'
-import PrisonRegisterApiClient from './prisonRegisterApiClient'
 import ActivitiesApiClient from './activitiesApiClient'
 import IncentivesApiClient from './incentivesApiClient'
 import CaseNotesApiClient from './caseNotesApiClient'
@@ -28,6 +21,10 @@ import { createRedisClient } from './redisClient'
 import TokenStore from './tokenStore'
 import config from '../config'
 import logger from '../../logger'
+
+const applicationInfo = applicationInfoSupplier()
+initialiseAppInsights()
+const appInsightsClient = buildAppInsightsClient(applicationInfo)
 
 const tokenStore = new TokenStore(createRedisClient())
 
@@ -44,7 +41,6 @@ export default function dataAccess() {
     caseNotesApiClient: new CaseNotesApiClient(),
     prisonApiClient: new PrisonApiClient(hmppsAuthClient),
     prisonerSearchApiClient: new PrisonerSearchApiClient(),
-    prisonRegisterApiClient: new PrisonRegisterApiClient(hmppsAuthClient),
     incentivesApiClient: new IncentivesApiClient(),
     activitiesApiClient: new ActivitiesApiClient(),
     bookAVideoLinkApiClient: new BookAVideoLinkApiClient(),
