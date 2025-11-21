@@ -1,6 +1,5 @@
 import { addDays, startOfDay, startOfToday, toDate } from 'date-fns'
 import { Request, Response } from 'express'
-import _ from 'lodash'
 import { asString, eventClashes, formatName } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
@@ -14,6 +13,11 @@ import AttendanceReason from '../../../../../enum/attendanceReason'
 import { AttendanceUpdateRequest } from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import { NameFormatStyle } from '../../../../../utils/helpers/nameFormatStyle'
+import {
+  parseSelectedAttendances,
+  getPrisonerNumberFromAttendance,
+  getInstanceIdsFromAttendance,
+} from './attendanceParsingUtils'
 
 export default class SelectPeopleByResidentialLocationRoutes {
   constructor(
@@ -218,16 +222,14 @@ export default class SelectPeopleByResidentialLocationRoutes {
     if (typeof selectedAttendances === 'string') {
       selectedAttendances = [selectedAttendances]
     }
-    const instanceIds = _.uniq(
-      selectedAttendances.flatMap(selectedAttendance => selectedAttendance.split('-')[0].split(',')),
-    ).map(Number)
+    const { instanceIds } = parseSelectedAttendances(selectedAttendances)
 
     const allInstances = await this.activitiesService.getScheduledActivities(instanceIds, user)
 
     if (selectedAttendances.some(attendance => attendance.includes(','))) {
       const multipleRecords = selectedAttendances.some(selectedAttendance => {
-        const prisonerInstanceIds = selectedAttendance.split('-')[0].split(',').map(Number)
-        const prisonerNumber = selectedAttendance.split('-')[2]
+        const prisonerInstanceIds = getInstanceIdsFromAttendance(selectedAttendance)
+        const prisonerNumber = getPrisonerNumberFromAttendance(selectedAttendance)
         const instances = allInstances.filter(i => prisonerInstanceIds.includes(i.id))
 
         const filteredInstances = instances.filter(instance => {
@@ -246,24 +248,21 @@ export default class SelectPeopleByResidentialLocationRoutes {
     }
 
     const attendanceUpdates: AttendanceUpdateRequest[] = selectedAttendances.flatMap(prisonerAttendance => {
-      return prisonerAttendance
-        .split('-')[0]
-        .split(',')
-        .map(selectedInstanceId => {
-          const prisonerNumber = prisonerAttendance.split('-')[2]
-          const instance = allInstances.find(inst => inst.id === +selectedInstanceId)
-          const attendance = instance.attendances.find(a => a.prisonerNumber === prisonerNumber)
-          if (!instance.cancelled && attendance && attendance.status === 'WAITING') {
-            return {
-              id: attendance.id,
-              prisonCode: user.activeCaseLoadId,
-              status: AttendanceStatus.COMPLETED,
-              attendanceReason: AttendanceReason.ATTENDED,
-              issuePayment: instance.activitySchedule.activity.paid,
-            }
+      return getInstanceIdsFromAttendance(prisonerAttendance).map(selectedInstanceId => {
+        const prisonerNumber = getPrisonerNumberFromAttendance(prisonerAttendance)
+        const instance = allInstances.find(inst => inst.id === +selectedInstanceId)
+        const attendance = instance.attendances.find(a => a.prisonerNumber === prisonerNumber)
+        if (!instance.cancelled && attendance && attendance.status === 'WAITING') {
+          return {
+            id: attendance.id,
+            prisonCode: user.activeCaseLoadId,
+            status: AttendanceStatus.COMPLETED,
+            attendanceReason: AttendanceReason.ATTENDED,
+            issuePayment: instance.activitySchedule.activity.paid,
           }
-          return null
-        })
+        }
+        return null
+      })
     })
 
     attendanceUpdates.filter(update => update !== null)
@@ -272,7 +271,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
     if (selectedAttendances.length === 1) {
       const selectedPrisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(
-        selectedAttendances[0].split('-')[2],
+        getPrisonerNumberFromAttendance(selectedAttendances[0]),
         user,
       )
       prisonerName = formatName(
