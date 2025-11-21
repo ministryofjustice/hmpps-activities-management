@@ -1,41 +1,12 @@
-import { jwtDecode } from 'jwt-decode'
 import _ from 'lodash'
-import { formatFirstLastName } from '../utils/utils'
 import ManageUsersApiClient from '../data/manageUsersApiClient'
 import { ServiceUser } from '../@types/express'
-import ActivitiesApiClient from '../data/activitiesApiClient'
-import PrisonRegisterApiClient from '../data/prisonRegisterApiClient'
-import { RolloutPrisonPlan } from '../@types/activitiesAPI/types'
-import { Prison } from '../@types/prisonRegisterApiImport/types'
 import { UserDetails } from '../@types/manageUsersApiImport/types'
 
 export const SERVICE_AS_USERNAME = 'Activities Management Service'
 
 export default class UserService {
-  constructor(
-    private readonly manageUsersApiClient: ManageUsersApiClient,
-    private readonly prisonRegisterApiClient: PrisonRegisterApiClient,
-    private readonly activitiesApiClient: ActivitiesApiClient,
-  ) {}
-
-  async getUser(user: Express.User, userInSession: ServiceUser): Promise<ServiceUser> {
-    const userDetails = await this.manageUsersApiClient.getUser(user)
-    const { authorities: roles = [] } = jwtDecode(user.token) as { authorities?: string[] }
-
-    const updatedActiveCaseLoadInformation =
-      userDetails.activeCaseLoadId !== userInSession?.activeCaseLoadId
-        ? await this.fetchActiveCaseLoadInformation(userDetails)
-        : undefined
-
-    return {
-      ...userInSession,
-      ...user,
-      ...userDetails,
-      ...updatedActiveCaseLoadInformation,
-      roles,
-      displayName: formatFirstLastName(userDetails.name.split(' ')[0], userDetails.name.split(' ')[1]),
-    }
-  }
+  constructor(private readonly manageUsersApiClient: ManageUsersApiClient) {}
 
   async getUserMap(usernames: string[], user: ServiceUser): Promise<Map<string, UserDetails>> {
     const users = await Promise.all(
@@ -60,17 +31,5 @@ export default class UserService {
         }),
     )
     return new Map(users.map(u => [u.username, u]))
-  }
-
-  private fetchActiveCaseLoadInformation = async (user: UserDetails) => {
-    const [rolloutPlan, activePrisonInformation]: [RolloutPrisonPlan, Prison] = await Promise.all([
-      this.activitiesApiClient.getPrisonRolloutPlan(user.activeCaseLoadId),
-      this.prisonRegisterApiClient.getPrisonInformation(user.activeCaseLoadId),
-    ])
-    return {
-      activeCaseLoadDescription: activePrisonInformation.prisonName,
-      isActivitiesRolledOut: rolloutPlan.activitiesRolledOut,
-      isAppointmentsRolledOut: rolloutPlan.appointmentsRolledOut,
-    }
   }
 }

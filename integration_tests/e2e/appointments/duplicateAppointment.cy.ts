@@ -314,7 +314,7 @@ context('Duplicate appointment', () => {
 
       const noAttendeesPage = Page.verifyOnPage(NoAttendeesPage)
       noAttendeesPage.summaryText(
-        `Attendees from ${getGroupAppointmentDetails.appointmentName} on ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')} have left Moorland.`,
+        `Attendees from ${getGroupAppointmentDetails.appointmentName} on ${formatDate(tomorrow, 'EEEE, d MMMM yyyy')} have left Moorland (HMP).`,
       )
       noAttendeesPage.addSomeoneToTheListButton().click()
 

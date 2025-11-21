@@ -22,19 +22,6 @@ describe('manageUsersApiClient', () => {
     nock.cleanAll()
   })
 
-  describe('getUser', () => {
-    it('should return data from api', async () => {
-      const response = { data: 'data' }
-
-      fakeManageUsersApi.get('/users/jbloggs').matchHeader('authorization', `Bearer accessToken`).reply(200, response)
-
-      const output = await manageUsersApiClient.getUser(user)
-
-      expect(output).toEqual(response)
-      expect(nock.isDone()).toBe(true)
-    })
-  })
-
   describe('getUserByUsername', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }

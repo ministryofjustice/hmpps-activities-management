@@ -154,10 +154,10 @@
                 {% set nonAssociationsNumber %}
                     {% if nonAssociations.length === 1 %}one{% else %}{{ nonAssociations | length }}{% endif %}
                 {% endset %}
-                <p class="govuk-body" data-qa="non-association-count-para">Review {{ prisonerName | possessive }} {{ nonAssociationsNumber }} open non-association{% if nonAssociations.length > 1 %}s{% endif %} in {{ caseload }} to check that they can be safely allocated.</p>
+                <p class="govuk-body" data-qa="non-association-count-para">Review {{ prisonerName | possessive }} {{ nonAssociationsNumber }} open non-association{% if nonAssociations.length > 1 %}s{% endif %} in {{ user.activeCaseLoad.description }} to check that they can be safely allocated.</p>
                 <p class="govuk-body"><a data-qa="non-association-link" href="/activities/non-associations/{{ allocateJourney.activity.activityId }}/{{allocateJourney.inmate.prisonerNumber}}" target="_blank">View {{ prisonerName | possessive }} non-associations</a></p>
             {% else %}
-                <p class="govuk-body" data-qa="no-non-associations-para">{{ prisonerName }} has no open non-associations with anyone in {{ caseload }}.</p>
+                <p class="govuk-body" data-qa="no-non-associations-para">{{ prisonerName }} has no open non-associations with anyone in {{ user.activeCaseLoad.description }}.</p>
             {% endif %}
 
             {% if allocationSuitability.allocations | length %}

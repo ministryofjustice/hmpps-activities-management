@@ -8,7 +8,7 @@ import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 
 jest.mock('../../../../services/userService')
 
-const userService = new UserService(null, null, null) as jest.Mocked<UserService>
+const userService = new UserService(null) as jest.Mocked<UserService>
 
 describe('Route Handlers - Appointment Set Details', () => {
   const handler = new AppointmentSetDetailsRoutes(userService)

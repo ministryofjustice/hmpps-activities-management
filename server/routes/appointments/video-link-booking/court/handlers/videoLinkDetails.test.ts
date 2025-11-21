@@ -40,7 +40,7 @@ describe('VideoLinkDetailsRoutes', () => {
     bookAVideoLinkService = new BookAVideoLinkService(null) as jest.Mocked<BookAVideoLinkService>
     activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
     prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
-    userService = new UserService(null, null, null) as jest.Mocked<UserService>
+    userService = new UserService(null) as jest.Mocked<UserService>
     locationMappingService = new LocationMappingService(null, null) as jest.Mocked<LocationMappingService>
 
     videoLinkDetailsRoutes = new VideoLinkDetailsRoutes(
