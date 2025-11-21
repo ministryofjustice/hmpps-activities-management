@@ -55,6 +55,24 @@ export default class CheckAnswersRoutes {
     } = req.journeyData.allocateJourney
     const { user } = res.locals
 
+    if (req.routeContext.mode === 'edit') {
+      await this.activitiesService.deallocateFromActivity(
+        activity.scheduleId,
+        inmates.map(p => p.prisonerNumber),
+        deallocationReason as DeallocationReasonCode,
+        deallocationCaseNote as AddCaseNoteRequest,
+        endDate,
+        user,
+        deallocateTodayOption === DeallocateTodayOption.TODAY ? scheduledInstance?.id : null,
+      )
+
+      return res.redirectOrReturnWithSuccess(
+        `/activities/allocations/view/${req.params.allocationId}`,
+        'Allocation updated',
+        'You have changed the end date for this allocation',
+      )
+    }
+
     if (req.routeContext.mode === 'create') {
       await this.activitiesService.allocateToSchedule(
         activity.scheduleId,
@@ -80,6 +98,6 @@ export default class CheckAnswersRoutes {
       )
     }
 
-    res.redirect('confirmation')
+    return res.redirect('confirmation')
   }
 }

@@ -16,7 +16,7 @@
             <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
             {% if session.req.routeContext.mode == 'create' %}
                 <h1 class="govuk-heading-xl">Check and confirm this allocation</h1>
-            {% elseif session.req.routeContext.mode == 'remove' %}
+            {% elseif session.req.routeContext.mode == 'remove' or session.req.routeContext.mode == 'edit' %}
                 <h1 class="govuk-heading-l">Check and confirm who you're taking off the activity</h1>
             {% endif %}
         </div>
@@ -142,7 +142,7 @@
                 }) }}
             {% endif %}
 
-            {% if session.req.routeContext.mode == 'remove' %}
+            {% if session.req.routeContext.mode == 'remove' or session.req.routeContext.mode == 'edit' %}
                 {% set eligibleForCaseNote = true if
                     deallocationReason.code in ['WITHDRAWN_STAFF', 'DISMISSED', 'SECURITY', 'OTHER']
                         and allocateJourney.inmates | length == 1
@@ -247,7 +247,7 @@
                 }) }}
             {% endif %}
 
-            <form method="POST" data-module="form-spinner" data-loading-text="{{ 'Removing prisoner' if session.req.routeContext.mode == 'remove' else 'Allocating prisoner' }}">
+            <form method="POST" data-module="form-spinner" data-loading-text="{{ 'Removing prisoner' if session.req.routeContext.mode == 'remove' or session.req.routeContext.mode == 'edit' else 'Allocating prisoner' }}">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <div class="govuk-button-group">
                     {{ govukButton({ 
