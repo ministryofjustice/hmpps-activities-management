@@ -43,7 +43,7 @@ export default function setUpCurrentUser(activitiesService: ActivitiesService) {
         )
         const rolloutPlan = await activitiesService.getPrisonRolloutPlan(res.locals.user.activeCaseLoad.caseLoadId)
         res.locals.user.isActivitiesRolledOut = rolloutPlan.activitiesRolledOut
-        res.locals.user.isAppointmentsRolledOut = rolloutPlan.activitiesRolledOut
+        res.locals.user.isAppointmentsRolledOut = rolloutPlan.appointmentsRolledOut
       }
 
       if (res.locals.user.authSource === 'nomis') {
