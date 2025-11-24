@@ -6,6 +6,7 @@ import { AppointmentJourneyMode } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
 import config from '../../../../config'
 
+// TODO - this ExtraInformation should be removed when the feature toggle code is removed
 export class ExtraInformation {
   @Expose()
   @MaxLength(4000, { message: 'You must enter extra information which has no more than 4,000 characters' })
@@ -14,11 +15,11 @@ export class ExtraInformation {
 
 export class StaffPrisonerExtraInformation {
   @Expose()
-  @MaxLength(4000, { message: `'You must enter notes for staff which has no more than 4,000 characters'` })
+  @MaxLength(4000, { message: 'You must enter notes for staff which has no more than 4,000 characters' })
   extraInformation: string
 
   @Expose()
-  @MaxLength(800, { message: 'You must enter prisoner extra information which has no more than 800 characters' })
+  @MaxLength(800, { message: 'You must enter notes for prisoner which has no more than 800 characters' })
   prisonerExtraInformation: string
 }
 

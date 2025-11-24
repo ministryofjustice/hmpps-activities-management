@@ -3,6 +3,7 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import config from '../../../../../config'
 
+// TODO - this AppointmentSetAppointmentExtraInformation should be removed when the feature toggle code is removed
 export class AppointmentSetAppointmentExtraInformation {
   @MaxLength(4000, { message: 'You must enter extra information which has no more than 4,000 characters' })
   extraInformation: string
