@@ -37,9 +37,9 @@ import CancelSingleSessionPayRoutes, { SessionPaySingleForm } from './handlers/c
 import CancelSingleSessionsCheckAnswersRoutes from './handlers/cancel-single-session/checkAnswers'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
 import HowToRecordAttendanceRoutes, { HowToRecordAttendanceForm } from './handlers/attend-all/howToRecordAttendance'
-import ChooseDetailsToRecordAttendanceRoutes, {
-  ChooseDetailsToRecordAttendanceForm,
-} from './handlers/attend-all/chooseDetailsToRecordAttendance'
+import ChooseDetailsByActivityRoutes, {
+  ChooseDetailsByActivityForm,
+} from './handlers/attend-all/chooseDetailsByActivity'
 import SelectPeopleToRecordAttendanceForRoutes from './handlers/attend-all/selectPeopleToRecordAttendanceFor'
 import ChooseDetailsByActivityLocationRoutes, {
   ChooseDetailsByActivityLocationForm,
@@ -113,7 +113,7 @@ export default function Index({
     userService,
   )
   const howToRecordAttendanceRoutes = new HowToRecordAttendanceRoutes()
-  const chooseDetailsToRecordAttendanceRoutes = new ChooseDetailsToRecordAttendanceRoutes(activitiesService)
+  const chooseDetailsByActivityRoutes = new ChooseDetailsByActivityRoutes(activitiesService)
   const chooseDetailsByActivityLocationRoutes = new ChooseDetailsByActivityLocationRoutes(locationsService)
   const chooseDetailsByResidentialLocationRoutes = new ChooseDetailsByResidentialLocationRoutes(activitiesService)
   const selectPeopleToRecordattendanceForRoutes = new SelectPeopleToRecordAttendanceForRoutes(
@@ -268,11 +268,11 @@ export default function Index({
   // Attend all routes
   get('/:journeyId/attend-all/how-to-record-attendance', howToRecordAttendanceRoutes.GET)
   post('/:journeyId/attend-all/how-to-record-attendance', howToRecordAttendanceRoutes.POST, HowToRecordAttendanceForm)
-  get('/:journeyId/attend-all/choose-details-by-activity', chooseDetailsToRecordAttendanceRoutes.GET)
+  get('/:journeyId/attend-all/choose-details-by-activity', chooseDetailsByActivityRoutes.GET)
   post(
     '/:journeyId/attend-all/choose-details-by-activity',
-    chooseDetailsToRecordAttendanceRoutes.POST,
-    ChooseDetailsToRecordAttendanceForm,
+    chooseDetailsByActivityRoutes.POST,
+    ChooseDetailsByActivityForm,
   )
   get('/:journeyId/attend-all/choose-details-by-activity-location', chooseDetailsByActivityLocationRoutes.GET)
   post(
