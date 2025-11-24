@@ -20,7 +20,6 @@ export default function services() {
     applicationInfo,
     manageUsersApiClient,
     prisonApiClient,
-    prisonRegisterApiClient,
     prisonerSearchApiClient,
     incentivesApiClient,
     activitiesApiClient,
@@ -41,7 +40,7 @@ export default function services() {
 
   return {
     applicationInfo,
-    userService: new UserService(manageUsersApiClient, prisonRegisterApiClient, activitiesApiClient),
+    userService: new UserService(manageUsersApiClient),
     prisonService,
     activitiesService: new ActivitiesService(activitiesApiClient),
     bookAVideoLinkService: new BookAVideoLinkService(bookAVideoLinkApiClient),

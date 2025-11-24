@@ -14,7 +14,7 @@
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-l" data-qa="caption">Schedule an Appointment</span>
             <h1 class="govuk-heading-l">{{  pageHeading }}</h1>
-            <p>Attendees from {{ appointmentJourney.appointmentName }} on {{ appointmentJourney.startDate | toDate | formatDate }} have left {{ user.activeCaseLoadDescription }}.</p>
+            <p>Attendees from {{ appointmentJourney.appointmentName }} on {{ appointmentJourney.startDate | toDate | formatDate }} have left {{ user.activeCaseLoad.description }}.</p>
             <p>If you want to continue copying the appointment, you must add someone.</p>
 
             <form method="POST" action="no-attendees">

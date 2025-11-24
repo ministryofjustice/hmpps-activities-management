@@ -48,11 +48,8 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpSuccessMessages())
   app.use(setUpChangeLinks())
   app.use(setUpCsrf())
-  app.use(setUpCurrentUser(services))
-  app.use(trimRequestBody())
-  app.use(setUpValidationExtensions())
   app.get(
-    '*dpsComponents',
+    '*any',
     getFrontendComponents({
       componentApiConfig: config.apis.componentApi,
       requestOptions: { includeSharedData: true },
@@ -66,6 +63,9 @@ export default function createApp(services: Services): express.Application {
       prisonApiConfig: config.apis.prisonApi,
     }),
   )
+  app.use(setUpCurrentUser(services.activitiesService))
+  app.use(trimRequestBody())
+  app.use(setUpValidationExtensions())
   app.use(populateJourney())
   app.use(renderInterceptor(services.tokenStore))
   app.use(redirectInterceptor(services.tokenStore))

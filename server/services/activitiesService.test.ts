@@ -272,6 +272,22 @@ describe('Activities Service', () => {
     })
   })
 
+  describe('getPrisonRolloutPlan', () => {
+    it('should fetch the prisons rollout plan by prison code using the activities API', async () => {
+      const expectedRolloutPlan = {
+        prisonCode: 'MDI',
+        activitiesRolledOut: true,
+        appointmentsRolledOut: true,
+        maxDaysToExpiry: 21,
+        prisonLive: true,
+      }
+      when(activitiesApiClient.getPrisonRolloutPlan).calledWith('MDI').mockResolvedValueOnce(expectedRolloutPlan)
+      const result = await activitiesService.getPrisonRolloutPlan('MDI')
+      expect(activitiesApiClient.getPrisonRolloutPlan).toHaveBeenCalledWith('MDI')
+      expect(result).toEqual(expectedRolloutPlan)
+    })
+  })
+
   describe('getActivitySchedule', () => {
     it('should fetch activity schedule by id using the activities API', async () => {
       when(activitiesApiClient.getActivitySchedule)
