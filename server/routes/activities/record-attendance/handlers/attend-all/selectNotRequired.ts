@@ -1,11 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { Request, Response } from 'express'
-import _ from 'lodash'
 import { Transform, Type } from 'class-transformer'
 import { IsEnum, IsNotEmpty, ValidateIf, ValidateNested, ValidationArguments } from 'class-validator'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { YesNo } from '../../../../../@types/activities'
+import {
+  parseSelectedAttendances,
+  getPrisonerNumberFromAttendance,
+  getInstanceIdsFromAttendance,
+} from './attendanceParsingUtils'
 
 const getPrisonerName = (args: ValidationArguments) => (args.object as NotRequiredData)?.prisonerName
 
@@ -39,17 +43,14 @@ export default class SelectNotRequiredRoutes {
     const { user } = res.locals
     const selectedAttendances = req.journeyData.recordAttendanceJourney.selectedInstanceIds as string[]
 
-    const instanceIds = _.uniq(
-      selectedAttendances.flatMap(selectedAttendance => selectedAttendance.split('-')[0].split(',')),
-    ).map(Number)
-    const prisonerNumbers = _.uniq(selectedAttendances.map(selectedAttendance => selectedAttendance.split('-')[2]))
+    const { instanceIds, prisonerNumbers } = parseSelectedAttendances(selectedAttendances)
 
     const allInstances = await this.activitiesService.getScheduledActivities(instanceIds, user)
     const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
 
     const attendanceDetails = selectedAttendances.map(selectedAttendance => {
-      const prisonerInstanceIds = selectedAttendance.split('-')[0].split(',').map(Number)
-      const prisonerNumber = selectedAttendance.split('-')[2]
+      const prisonerInstanceIds = getInstanceIdsFromAttendance(selectedAttendance)
+      const prisonerNumber = getPrisonerNumberFromAttendance(selectedAttendance)
 
       const prisoner = prisoners.find(p => p.prisonerNumber === prisonerNumber)
       const instances = allInstances.filter(i => {
