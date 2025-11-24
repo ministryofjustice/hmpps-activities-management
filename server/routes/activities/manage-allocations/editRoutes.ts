@@ -32,7 +32,7 @@ export default function Index({ activitiesService }: Services): Router {
   const confirmExclusionsHandler = new ConfirmExclusionsRoutes(activitiesService)
   const chooseEndDateOptionHandler = new ChooseEndDateOptionRoutes()
   const endTodayOptionHandler = new DeallocateTodayOptionRoutes()
-  const deallocationReasonOptionHandler = new DeallocationReasonOptionRoutes()
+  const deallocationReasonOptionHandler = new DeallocationReasonOptionRoutes(activitiesService)
   const deallocationReasonHandler = new DeallocationReasonRoutes(activitiesService)
   const caseNoteHandler = new DeallocationCaseNoteRoutes()
   const caseNoteQuestionHandler = new DeallocationCaseNoteQuestionRoutes()

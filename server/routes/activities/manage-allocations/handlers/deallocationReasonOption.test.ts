@@ -1,11 +1,17 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { when } from 'jest-when'
 import DeallocationReasonOptionRoutes, { DeallocationReasonOption } from './deallocationReasonOption'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import ActivitiesService from '../../../../services/activitiesService'
+
+jest.mock('../../../../services/activitiesService')
+
+const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
 describe('Route Handlers - Allocation - Deallocation reason option', () => {
-  const handler = new DeallocationReasonOptionRoutes()
+  const handler = new DeallocationReasonOptionRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -34,15 +40,22 @@ describe('Route Handlers - Allocation - Deallocation reason option', () => {
           activity: {
             scheduleId: 2,
           },
+          deallocationReason: 'WITHDRAWN_STAFF',
         },
       },
     } as unknown as Request
   })
 
   describe('GET', () => {
-    it('should render the expected view', async () => {
+    it('should render the expected view - Including current deallocation reason', async () => {
+      when(activitiesService.getDeallocationReasons).mockResolvedValue([
+        { code: 'WITHDRAWN_STAFF', description: 'Withdrawn by staff' },
+      ])
+
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocation-reason-option')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/deallocation-reason-option', {
+        currentDeallocationReason: 'Withdrawn by staff',
+      })
     })
   })
 

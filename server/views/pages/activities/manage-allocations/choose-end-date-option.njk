@@ -3,14 +3,14 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 
-{% set pageTitle = "Allocation choose end date option - Activities - DPS" %}
-{% set pageId = 'allocation-choose-end-date-option-page' %}
+{% set pageTitle = "Deallocation choose end date option - Activities - DPS" %}
+{% set pageId = 'deallocation-choose-end-date-option-page' %}
 {% set jsBackLink = true %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
+            <span class="govuk-caption-l">{{ allocateJourney.activity.name }}</span>
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
