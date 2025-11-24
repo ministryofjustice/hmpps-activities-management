@@ -92,7 +92,7 @@
     <span class="preserve-line-breaks">{{ appointment.extraInformation | escape }}</span>
   {% else %}
     {% if appointment.extraInformation or appointment.prisonerExtraInformation %}
-      {{ govukTag({ text: 'Extra information', classes: 'govuk-tag--medium govuk-tag--yellow' }) }}
+      {{ govukTag({ text: 'Extra information', classes: 'govuk-tag--medium govuk-tag--yellow', attributes: { 'data-qa': 'extra-information-tag' } }) }}
     {% endif %}
   {% endif %}
 {% endmacro %}

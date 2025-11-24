@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
-import { MaxLength, ValidateIf } from 'class-validator'
+import { MaxLength } from 'class-validator'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
@@ -8,14 +8,17 @@ import config from '../../../../config'
 
 export class ExtraInformation {
   @Expose()
-  @MaxLength(4000, {
-    message: `${config.prisonerExtraInformationEnabled ? 'You must enter notes for staff which has no more than 4,000 characters' : 'You must enter extra information which has no more than 4,000 characters'}`,
-  })
+  @MaxLength(4000, { message: 'You must enter extra information which has no more than 4,000 characters' })
+  extraInformation: string
+}
+
+export class StaffPrisonerExtraInformation {
+  @Expose()
+  @MaxLength(4000, { message: `'You must enter notes for staff which has no more than 4,000 characters'` })
   extraInformation: string
 
   @Expose()
-  @ValidateIf(_ => config.prisonerExtraInformationEnabled)
-  @MaxLength(400, { message: 'You must enter prisoner extra information which has no more than 400 characters' })
+  @MaxLength(800, { message: 'You must enter prisoner extra information which has no more than 800 characters' })
   prisonerExtraInformation: string
 }
 

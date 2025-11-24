@@ -1,17 +1,19 @@
-import { MaxLength, ValidateIf } from 'class-validator'
+import { MaxLength } from 'class-validator'
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import config from '../../../../../config'
 
 export class AppointmentSetAppointmentExtraInformation {
-  @MaxLength(4000, {
-    message: `${config.prisonerExtraInformationEnabled ? 'You must enter notes for staff which has no more than 4,000 characters' : 'You must enter extra information which has no more than 4,000 characters'}`,
-  })
+  @MaxLength(4000, { message: 'You must enter extra information which has no more than 4,000 characters' })
+  extraInformation: string
+}
+
+export class AppointmentSetStaffPrisonerExtraInformation {
+  @MaxLength(4000, { message: 'You must enter notes for staff which has no more than 4,000 characters' })
   extraInformation: string
 
   @Expose()
-  @ValidateIf(_ => config.prisonerExtraInformationEnabled)
-  @MaxLength(400, { message: 'You must enter notes for prisoner which has no more than 400 characters' })
+  @MaxLength(800, { message: 'You must enter notes for prisoner which has no more than 800 characters' })
   prisonerExtraInformation: string
 }
 
