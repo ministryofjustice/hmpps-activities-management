@@ -186,7 +186,7 @@ context('Create activity', () => {
         expect(data.get(4).innerText).to.not.contain('Not required')
       })
   })
-  it.only('shows the not required tag if a prisoner has been marked as not required for unlock tomorrow', () => {
+  it('shows the not required tag if a prisoner has been marked as not required for unlock tomorrow', () => {
     const getScheduledEventsWithNotRequired = [...getScheduledEventLocations]
     getScheduledEventsWithNotRequired[0].events[0].date = tomorrow
     getScheduledEventsWithNotRequired[0].events[0].attendanceStatus = null
