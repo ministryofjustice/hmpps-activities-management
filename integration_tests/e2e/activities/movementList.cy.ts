@@ -142,4 +142,47 @@ context('Create activity', () => {
     locationEventsPage.getButton('Apply filters').eq(0).click()
     cy.get('tbody>tr').should('have.length', 1)
   })
+  it('shows the not required tag if a prisoner has been marked as not required for unlock today, but not if the prisoner is already suspended', () => {
+    const getScheduledEventsWithNotRequired = [...getScheduledEventLocations]
+    getScheduledEventsWithNotRequired[0].events[0].attendanceStatus = 'COMPLETED'
+    getScheduledEventsWithNotRequired[0].events[0].attendanceReasonCode = 'NOT_REQUIRED'
+    getScheduledEventsWithNotRequired[0].events[1].attendanceStatus = 'COMPLETED'
+    getScheduledEventsWithNotRequired[0].events[1].attendanceReasonCode = 'NOT_REQUIRED'
+    getScheduledEventsWithNotRequired[0].events[1].suspended = true
+    cy.stubEndpoint(
+      'POST',
+      `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM`,
+      getScheduledEventsWithNotRequired,
+    )
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.unlockAndMovementCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
+    manageActivitiesPage.createMovementListsCard().should('contain.text', 'Create movement lists')
+    manageActivitiesPage.createMovementListsCard().click()
+
+    const chooseMovementListDetailsPage = Page.verifyOnPage(ChooseDetailsPage)
+    chooseMovementListDetailsPage.selectToday()
+    chooseMovementListDetailsPage.selectAM()
+    chooseMovementListDetailsPage.continue()
+
+    const locationsPage = Page.verifyOnPage(LocationsPage)
+    locationsPage.selectLocation('Workshop 1').click()
+
+    const locationEventsPage = Page.verifyOnPage(LocationEventsPage)
+
+    locationEventsPage
+      .table()
+      .find('td')
+      .then(data => {
+        expect(data.get(11).innerText).to.contain('Woodworking')
+        expect(data.get(11).innerText).to.contain('Not required')
+        expect(data.get(4).innerText).to.contain('Pottery')
+        expect(data.get(4).innerText).to.contain('Prisoner suspended')
+        expect(data.get(4).innerText).to.not.contain('Not required')
+      })
+  })
 })

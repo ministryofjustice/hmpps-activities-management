@@ -2,9 +2,7 @@ import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { addDays, format } from 'date-fns'
-import ChooseDetailsToRecordAttendanceRoutes, {
-  ChooseDetailsToRecordAttendanceForm,
-} from './chooseDetailsToRecordAttendance'
+import ChooseDetailsByActivityRoutes, { ChooseDetailsByActivityForm } from './chooseDetailsByActivity'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 
@@ -12,8 +10,8 @@ jest.mock('../../../../../services/activitiesService')
 
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 
-describe('Route Handlers - Choose details to record attendance', () => {
-  const handler = new ChooseDetailsToRecordAttendanceRoutes(activitiesService)
+describe('Route Handlers - Choose details by activity', () => {
+  const handler = new ChooseDetailsByActivityRoutes(activitiesService)
   let req: Request
   let res: Response
 
@@ -35,7 +33,7 @@ describe('Route Handlers - Choose details to record attendance', () => {
     it('should render the expected view', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(
-        'pages/activities/record-attendance/attend-all/choose-details-to-record-attendance',
+        'pages/activities/record-attendance/attend-all/choose-details-by-activity',
         {},
       )
     })
@@ -49,7 +47,7 @@ describe('Route Handlers - Choose details to record attendance', () => {
         activityId: '',
       }
 
-      const requestObject = plainToInstance(ChooseDetailsToRecordAttendanceForm, body)
+      const requestObject = plainToInstance(ChooseDetailsByActivityForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
@@ -66,7 +64,7 @@ describe('Route Handlers - Choose details to record attendance', () => {
         activityId: '1',
       }
 
-      const requestObject = plainToInstance(ChooseDetailsToRecordAttendanceForm, body)
+      const requestObject = plainToInstance(ChooseDetailsByActivityForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'date', error: 'Enter a valid date' }])
@@ -80,7 +78,7 @@ describe('Route Handlers - Choose details to record attendance', () => {
         activityId: '1',
       }
 
-      const requestObject = plainToInstance(ChooseDetailsToRecordAttendanceForm, body)
+      const requestObject = plainToInstance(ChooseDetailsByActivityForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'date', error: 'Enter a date up to 60 days in the future' }])
@@ -93,7 +91,7 @@ describe('Route Handlers - Choose details to record attendance', () => {
         activityId: '1',
       }
 
-      const requestObject = plainToInstance(ChooseDetailsToRecordAttendanceForm, body)
+      const requestObject = plainToInstance(ChooseDetailsByActivityForm, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toHaveLength(0)
