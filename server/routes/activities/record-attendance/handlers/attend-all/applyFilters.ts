@@ -18,7 +18,9 @@ export default class ApplyFiltersRoutes {
     }
 
     if (locationFilters) {
-      req.journeyData.recordAttendanceJourney.subLocationFilters = locationFilters
+      req.journeyData.recordAttendanceJourney.subLocationFilters = Array.isArray(locationFilters)
+        ? locationFilters
+        : [locationFilters]
     }
 
     // Redirect back to the referrer or a default location
