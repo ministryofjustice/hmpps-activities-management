@@ -35,9 +35,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
     const { user } = res.locals
     const { date, sessionFilters, locationKey } = req.query
     const { notRequiredInAdvanceEnabled } = config
-
     const timePeriodFilter = sessionFilters !== undefined ? asString(sessionFilters) : null
-
     const activityDate = date ? toDate(asString(date)) : new Date()
 
     if (startOfDay(activityDate) > startOfDay(addDays(new Date(), 60)))
@@ -234,7 +232,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
         const filteredInstances = instances.filter(instance => {
           const attendance = instance.attendances.find(a => a.prisonerNumber === prisonerNumber)
-          return !instance.cancelled && attendance && attendance.status === 'WAITING'
+          return !instance.cancelled && attendance && attendance.status === AttendanceStatus.WAITING
         })
 
         return filteredInstances.length > 1
@@ -252,7 +250,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
         const prisonerNumber = getPrisonerNumberFromAttendance(prisonerAttendance)
         const instance = allInstances.find(inst => inst.id === +selectedInstanceId)
         const attendance = instance.attendances.find(a => a.prisonerNumber === prisonerNumber)
-        if (!instance.cancelled && attendance && attendance.status === 'WAITING') {
+        if (!instance.cancelled && attendance && attendance.status === AttendanceStatus.WAITING) {
           return {
             id: attendance.id,
             prisonCode: user.activeCaseLoadId,
@@ -274,13 +272,15 @@ export default class SelectPeopleByResidentialLocationRoutes {
         getPrisonerNumberFromAttendance(selectedAttendances[0]),
         user,
       )
-      prisonerName = formatName(
-        selectedPrisoner.firstName,
-        undefined,
-        selectedPrisoner.lastName,
-        NameFormatStyle.firstLast,
-        false,
-      )
+      if (selectedPrisoner) {
+        prisonerName = formatName(
+          selectedPrisoner.firstName,
+          undefined,
+          selectedPrisoner.lastName,
+          NameFormatStyle.firstLast,
+          false,
+        )
+      }
     }
 
     return res.redirectWithSuccess(

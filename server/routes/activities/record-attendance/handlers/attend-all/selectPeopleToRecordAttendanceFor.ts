@@ -144,13 +144,15 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
         selectedAttendances[0].split('-')[2],
         user,
       )
-      prisonerName = formatName(
-        selectedPrisoner.firstName,
-        undefined,
-        selectedPrisoner.lastName,
-        NameFormatStyle.firstLast,
-        false,
-      )
+      if (selectedPrisoner) {
+        prisonerName = formatName(
+          selectedPrisoner.firstName,
+          undefined,
+          selectedPrisoner.lastName,
+          NameFormatStyle.firstLast,
+          false,
+        )
+      }
     }
 
     return res.redirectWithSuccess(

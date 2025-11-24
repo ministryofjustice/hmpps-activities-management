@@ -54,7 +54,7 @@ export default class SelectAttendedRoutes {
 
       const filteredInstances = instances.filter(instance => {
         const attendance = instance.attendances.find(a => a.prisonerNumber === prisonerNumber)
-        return !instance.cancelled && attendance && attendance.status === 'WAITING'
+        return !instance.cancelled && attendance && attendance.status === AttendanceStatus.WAITING
       })
 
       return {
