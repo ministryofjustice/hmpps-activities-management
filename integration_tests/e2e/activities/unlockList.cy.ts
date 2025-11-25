@@ -1,4 +1,4 @@
-import { format, startOfToday } from 'date-fns'
+import { addDays, format, startOfToday } from 'date-fns'
 import IndexPage from '../../pages'
 import Page from '../../pages/page'
 import getLocationGroups from '../../fixtures/activitiesApi/getLocationGroups.json'
@@ -13,6 +13,7 @@ import { CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE } from '../../pages/un
 
 context('Create activity', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
+  const tomorrow = format(addDays(startOfToday(), 1), 'yyyy-MM-dd')
   const locPrefixBlock1 = 'MDI-1-.+'
   const locPrefixBlock2AWing = 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-3-0(0[1-9]|1[0-2])'
   const locPrefixBlock2BWing = 'MDI-1-1-0(1[3-9]|2[0-6]),MDI-1-2-0(1[3-9]|2[0-6]),MDI-1-3-0(1[3-9]|2[0-6])'
@@ -244,6 +245,44 @@ context('Create activity', () => {
         expect(data.get(3).innerText).to.contain('Tailors AM')
         expect(data.get(3).innerText).to.contain('Prisoner suspended')
         expect(data.get(3).innerText).to.not.contain('Not required')
+      })
+  })
+  it('shows the not required tag if a prisoner has been marked as not required for unlock tomorrow', () => {
+    const getScheduledEventsWithNotRequired = { ...getScheduledEvents }
+    getScheduledEventsWithNotRequired.startDate = tomorrow
+    getScheduledEventsWithNotRequired.endDate = tomorrow
+    getScheduledEventsWithNotRequired.activities[2].date = tomorrow
+    getScheduledEventsWithNotRequired.activities[2].attendanceStatus = null
+    getScheduledEventsWithNotRequired.activities[2].attendanceReasonCode = 'NOT_REQUIRED'
+
+    cy.stubEndpoint(
+      'POST',
+      `/scheduled-events/prison/MDI\\?date=${tomorrow}&timeSlot=AM`,
+      getScheduledEventsWithNotRequired,
+    )
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.unlockAndMovementCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
+    manageActivitiesPage.createUnlockListsCard().should('contain.text', 'Create unlock lists')
+    manageActivitiesPage.createUnlockListsCard().click()
+
+    const chooseDateAndLocationPage = Page.verifyOnPage(ChooseDateAndLocationPage)
+    chooseDateAndLocationPage.selectTomorrow()
+    chooseDateAndLocationPage.selectAM()
+    chooseDateAndLocationPage.selectLocation('Houseblock 1')
+    chooseDateAndLocationPage.continue()
+
+    const plannedEventsPage = Page.verifyOnPage(PlannedEventsPage)
+    plannedEventsPage
+      .table()
+      .find('td')
+      .then(data => {
+        expect(data.get(7).innerText).to.contain('Pottery AM')
+        expect(data.get(7).innerText).to.contain('Not required')
       })
   })
 })
