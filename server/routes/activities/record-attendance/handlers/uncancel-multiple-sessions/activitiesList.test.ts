@@ -125,11 +125,15 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
   let res: Response
 
   beforeEach(() => {
+    jest.clearAllMocks()
+
     res = {
       locals: {
         user: {
           username: 'joebloggs',
           activeCaseLoadId: 'MDI',
+          token: 'token',
+          authSource: 'nomis',
         },
       },
       render: jest.fn(),
@@ -139,6 +143,10 @@ describe('Route Handlers - Uncancel Multiple Sessions', () => {
     req = {
       journeyData: {},
     } as unknown as Request
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
   describe('GET', () => {
