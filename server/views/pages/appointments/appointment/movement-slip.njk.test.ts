@@ -13,7 +13,7 @@ const view = fs.readFileSync('server/views/pages/appointments/appointment/moveme
 
 let $: CheerioAPI
 
-describe('Views - Appointments Management - Appointment Movement Slip with toggle off', () => {
+describe('Views - Appointments Management - Appointment Movement Slip with toggle on/off', () => {
   let compiledTemplate: Template
   const viewContext = {
     user: {
@@ -205,10 +205,8 @@ describe('Views - Appointments Management - Appointment Movement Slip with toggl
   }
 
   const checkExtraInformation = (enabled: boolean) => {
-    if (enabled) {
-      expect($('[data-qa=extra-information]').text().trim()).toEqual('Prisoner level extra information')
-    } else {
-      expect($('[data-qa=extra-information]').text().trim()).toEqual('Appointment level extra information')
-    }
+    expect($('[data-qa=extra-information]').text().trim()).toEqual(
+      enabled ? 'Prisoner level extra information' : 'Appointment level extra information',
+    )
   }
 })

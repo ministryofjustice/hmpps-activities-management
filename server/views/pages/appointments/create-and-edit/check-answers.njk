@@ -221,7 +221,7 @@
                 text: "Extra information"
             },
             value: {
-                html: '<span class="preserve-line-breaks">' + (session.appointmentJourney.extraInformation | escape) + '</span>'
+                html: '<span class="preserve-line-breaks" data-qa="extra-information">' + (session.appointmentJourney.extraInformation | escape) + '</span>'
             },
             actions: {
                 items: [
@@ -243,7 +243,7 @@
         text: "Notes for prison staff"
       },
         value: {
-        html: '<span class="preserve-line-breaks">' + (session.appointmentJourney.extraInformation | escape) + '</span>'
+        html: '<span class="preserve-line-breaks" data-qa="staff-notes">' + (session.appointmentJourney.extraInformation | escape) + '</span>'
       },
         actions: {
           items: [
@@ -262,7 +262,7 @@
         text: "Notes for prisoner"
       },
         value: {
-        html: '<span class="preserve-line-breaks">' + (session.appointmentJourney.prisonerExtraInformation | escape) + '</span>'
+        html: '<span class="preserve-line-breaks" data-qa="prisoner-notes">' + (session.appointmentJourney.prisonerExtraInformation | escape) + '</span>'
       },
         actions: {
           items: [
@@ -449,7 +449,7 @@
                     text: "Extra information"
                 },
                 value: {
-                    html: '<span class="preserve-line-breaks">' + appointment.extraInformation | escape + '</span>'
+                    html: '<span class="preserve-line-breaks data-qa="extra-info-' + appointment.prisoner.number + '"">' + appointment.extraInformation | escape + '</span>'
                 },
                 actions: {
                     items: [
@@ -461,7 +461,49 @@
                         }
                     ]
                 }
-            }]
+            } if not prisonerExtraInformationEnabled, {
+            key: {
+              text: "Extra information"
+            },
+            value: {
+              text: ''
+            },
+            classes: 'govuk-summary-list__row--no-border'
+          } if prisonerExtraInformationEnabled, {
+            key: {
+              text: "Notes for prison staff"
+            },
+            value: {
+              html: '<span class="preserve-line-breaks" data-qa="staff-info-' + appointment.prisoner.number + '">' + appointment.extraInformation | escape + '</span>'
+            },
+            actions: {
+              items: [
+                {
+                  href: "appointment-set-extra-information/" + appointment.prisoner.number + "?preserveHistory=true",
+                  text: "Change",
+                  visuallyHiddenText: "change extra information",
+                  classes: "govuk-link--no-visited-state"
+                }
+              ]
+            }
+          } if prisonerExtraInformationEnabled, {
+            key: {
+              text: "Notes for prisoner"
+            },
+            value: {
+              html: '<span class="preserve-line-breaks" data-qa="prisoner-info-' + appointment.prisoner.number + '">' + appointment.prisonerExtraInformation | escape + '</span>'
+            },
+            actions: {
+              items: [
+                {
+                  href: "appointment-set-extra-information/" + appointment.prisoner.number + "?preserveHistory=true",
+                  text: "Change",
+                  visuallyHiddenText: "change extra information",
+                  classes: "govuk-link--no-visited-state"
+                }
+              ]
+            }
+          } if prisonerExtraInformationEnabled ]
         }) }}
     {% endfor %}
 {% endmacro %}
