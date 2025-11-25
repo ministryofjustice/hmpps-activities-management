@@ -129,6 +129,8 @@ export default abstract class Page {
 
   selectToday = () => cy.get('[value=today]').click()
 
+  selectTomorrow = () => cy.get('[value=tomorrow]').click()
+
   selectYesterday = () => cy.get('[value=yesterday]').click()
 
   selectAM = () => cy.get('[value=AM]').click()
