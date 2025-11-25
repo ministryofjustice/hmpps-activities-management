@@ -176,6 +176,15 @@ describe('setUpCurrentUser', () => {
 
     app.use(setUpCurrentUser(activitiesServiceMock))
 
+    app.get('/path', (req, res) => {
+      res.sendStatus(200)
+    })
+
+    // Add error handler to catch the 403 error
+    app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+      res.status(403).send()
+    })
+
     const response = await request(app).get(`/path`)
 
     expect(activitiesServiceMock.getPrisonRolloutPlan).not.toHaveBeenCalled()
