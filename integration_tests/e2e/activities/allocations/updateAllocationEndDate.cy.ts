@@ -1,4 +1,4 @@
-import { addHours, subWeeks } from 'date-fns'
+import { addDays, addHours, subWeeks } from 'date-fns'
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
 import ActivitiesIndexPage from '../../../pages/activities'
@@ -26,6 +26,13 @@ import getPrisonerIepSummary from '../../../fixtures/incentivesApi/getPrisonerIe
 import getInmateDetails from '../../../fixtures/prisonerSearchApi/getPrisoner-MDI-A5015DY.json'
 import getCandidateSuitability from '../../../fixtures/activitiesApi/getCandidateSuitability.json'
 import getDeallocationReasons from '../../../fixtures/activitiesApi/getDeallocationReasons.json'
+import moorlandPayBands from '../../../fixtures/activitiesApi/getMdiPrisonPayBands.json'
+import EndDatePage from '../../../pages/allocateToActivity/endDate'
+import CheckAllocationPage from '../../../pages/allocateToActivity/checkAllocationPage'
+import DeallocationReasonOptionPage from '../../../pages/allocateToActivity/deallocationReasonOption'
+import ChooseEndDateOptionPage from '../../../pages/allocateToActivity/chooseEndDateOptionPage'
+import DeallocateTodayOptionPage from '../../../pages/allocateToActivity/deallocateTodayOption'
+import DeallocationReasonPage from '../../../pages/allocateToActivity/deallocationReason'
 
 const allocations1 = [
   {
@@ -38,7 +45,7 @@ const allocations1 = [
     startDate: '2022-10-10',
     endDate: '2026-08-18',
     allocatedTime: '2022-10-10T09:30:00',
-    allocatedBy: 'MR BLOGS',
+    allocatedBy: 'USER1',
     deallocatedTime: null,
     deallocatedBy: null,
     deallocatedReason: null,
@@ -62,11 +69,14 @@ const allocations1 = [
 ]
 
 context('Update an allocation end as needed', () => {
+  const tomorrow = addDays(new Date(), 1)
+
   beforeEach(() => {
     // Required stubs
     cy.task('reset')
     cy.task('stubSignIn')
     cy.stubEndpoint('GET', '/activities/2/filtered', getActivity)
+    cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
     cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=true', getActivities)
     cy.stubEndpoint('GET', '/activities/(\\d)*/schedules', getSchedulesInActivity)
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A5015DY', getCandidateSuitability)
@@ -74,16 +84,17 @@ context('Update an allocation end as needed', () => {
     cy.stubEndpoint('GET', '/schedules/2/non-associations\\?prisonerNumber=A5015DY', [])
     cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', allocations1)
     cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true', allocations1)
-    cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications\\?includeNonAssociationsCheck=true', [])
     cy.stubEndpoint('GET', '/schedules/2/candidates(.)*', getCandidates)
     cy.stubEndpoint('GET', '/prisoner/A5015DY', getInmateDetails)
     cy.stubEndpoint('GET', '/incentive-reviews/prisoner/A5015DY', getPrisonerIepSummary)
     cy.stubEndpoint('GET', '/allocations/deallocation-reasons', getDeallocationReasons)
-    cy.stubEndpoint('POST', '/schedules/2/allocations')
     cy.stubEndpoint('GET', '/allocations/id/2', prisonerAllocations[0].allocations[1])
     cy.stubEndpoint('GET', '/allocations/id/1', prisonerAllocations[0].allocations[0])
+
+    cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', getInmateDetails)
+    cy.stubEndpoint('POST', '/schedules/2/allocations')
     cy.stubEndpoint('PUT', '/schedules/2/deallocate')
 
     const today = new Date()
@@ -97,7 +108,7 @@ context('Update an allocation end as needed', () => {
     cy.signIn()
   })
 
-  const goToConfirmEndDate = () => {
+  const goToAllocationDashboard = () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -127,8 +138,13 @@ context('Update an allocation end as needed', () => {
     startDatePage.continue()
 
     const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)
-    endDateOptionPage.addEndDate('No')
+    endDateOptionPage.addEndDate('Yes')
     endDateOptionPage.continue()
+
+    const endDatePage = Page.verifyOnPage(EndDatePage)
+
+    endDatePage.selectEndDate(tomorrow)
+    endDatePage.continue()
 
     const payBandPage = Page.verifyOnPage(PayBandPage)
     payBandPage.selectPayBand('Medium - £1.75')
@@ -143,36 +159,102 @@ context('Update an allocation end as needed', () => {
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.reviewAllocationsLink().click()
 
-    const allocatePageAgain = Page.verifyOnPage(AllocationDashboard)
-    allocatePageAgain.selectAllocatedPrisonerByName('Bloggs, Jo')
-    allocatePageAgain.getButton('End allocation').click()
-
-    return Page.verifyOnPage(ConfirmDeallocateExistingPage)
+    return Page.verifyOnPage(AllocationDashboard)
   }
 
   it('should allow user to change the end date (Yes path)', () => {
-    const confirmEndDate = goToConfirmEndDate()
-    confirmEndDate.panelHeader().should('contain.text', 'Do you want to change the end date for this allocation?')
+    const allocationDashboard = goToAllocationDashboard()
+    allocationDashboard.selectAllocatedPrisonerByName('Bloggs, Jo')
+    allocationDashboard.getButton('End allocation').click()
+
+    const confirmDeallocateExistingPage = Page.verifyOnPage(ConfirmDeallocateExistingPage)
+
+    confirmDeallocateExistingPage
+      .panelHeader()
+      .should('contain.text', 'Do you want to change the end date for this allocation?')
 
     // Assert validation appears if nothing selected
-    confirmEndDate.continue()
-    confirmEndDate.assertValidationError('choice', 'Select if you want to change the end date or leave it as it is')
+    confirmDeallocateExistingPage.continue()
+    confirmDeallocateExistingPage.assertValidationError(
+      'choice',
+      'Select if you want to change the end date or leave it as it is',
+    )
 
     // Select Yes and proceed
-    confirmEndDate.getRadioByValue('choice', 'yes').check()
-    confirmEndDate.continue()
+    confirmDeallocateExistingPage.getRadioByValue('choice', 'yes').check()
+    confirmDeallocateExistingPage.continue()
 
     Page.verifyOnPage(EndDecisionPage)
   })
 
   it('should allow user to keep the same end date (No path)', () => {
-    const confirmEndDate = goToConfirmEndDate()
-    confirmEndDate.panelHeader().should('contain.text', 'Do you want to change the end date for this allocation?')
+    const allocationDashboard = goToAllocationDashboard()
+
+    allocationDashboard.selectAllocatedPrisonerByName('Bloggs, Jo')
+    allocationDashboard.getButton('End allocation').click()
+
+    const confirmDeallocateExistingPage = Page.verifyOnPage(ConfirmDeallocateExistingPage)
+    confirmDeallocateExistingPage
+      .panelHeader()
+      .should('contain.text', 'Do you want to change the end date for this allocation?')
 
     // Select No and proceed
-    confirmEndDate.getRadioByValue('choice', 'no').check()
-    confirmEndDate.continue()
+    confirmDeallocateExistingPage.getRadioByValue('choice', 'no').check()
+    confirmDeallocateExistingPage.continue()
 
     Page.verifyOnPage(AllocationDashboard)
+  })
+
+  it('should allow user to amend end date through manage allocations path', () => {
+    const allocationDashboard = goToAllocationDashboard()
+
+    allocationDashboard.selectAllocatedPrisonerByName('Bloggs, Jo')
+    allocationDashboard.getButton('Manage allocation').click()
+
+    const checkAllocationPage = Page.verifyOnPage(CheckAllocationPage)
+
+    checkAllocationPage.changeEndDateLink()
+
+    const chooseEndDateOptionPage = Page.verifyOnPage(ChooseEndDateOptionPage)
+
+    chooseEndDateOptionPage
+      .panelHeader()
+      .should('contain.text', 'Do you want to change or remove the end date of Alfonso')
+
+    chooseEndDateOptionPage.continue()
+    chooseEndDateOptionPage.assertValidationError(
+      'chooseEndDateOption',
+      'Select if you want to change the date or remove it',
+    )
+
+    chooseEndDateOptionPage.selectEndDateOption('Change')
+    chooseEndDateOptionPage.continue()
+
+    const deallocateTodayOptionPage = Page.verifyOnPage(DeallocateTodayOptionPage)
+
+    deallocateTodayOptionPage.selectDeallocateToday()
+    deallocateTodayOptionPage.continue()
+
+    const deallocateReasonOptionPage = Page.verifyOnPage(DeallocationReasonOptionPage)
+
+    deallocateReasonOptionPage.panelHeader().should('contain.text', 'Do you want to change the reason for Alfonso')
+
+    deallocateReasonOptionPage.continue()
+    deallocateReasonOptionPage.assertValidationError(
+      'deallocationReasonOption',
+      'Select if you want to change the reason',
+    )
+
+    deallocateReasonOptionPage.changeDeallocationReason('Yes')
+    deallocateReasonOptionPage.continue()
+
+    const deallocationReasonPage = Page.verifyOnPage(DeallocationReasonPage)
+    deallocationReasonPage.selectDeallocationReason('Health')
+    deallocationReasonPage.continue()
+
+    const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
+    checkAnswersPage.confirmDeallocation()
+
+    Page.verifyOnPage(CheckAllocationPage)
   })
 })
