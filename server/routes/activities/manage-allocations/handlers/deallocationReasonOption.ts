@@ -20,7 +20,7 @@ export default class DeallocationReasonOptionRoutes {
 
     const reason = deallocationReasons.find(({ code }) => code === deallocationReason)
 
-    const currentDeallocationReason = reason ? reason.description : 'Planned'
+    const currentDeallocationReason = reason.description
 
     res.render('pages/activities/manage-allocations/deallocation-reason-option', { currentDeallocationReason })
   }
