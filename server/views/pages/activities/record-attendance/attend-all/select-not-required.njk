@@ -1,0 +1,92 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/attendance/otherEvent.njk" import otherEvent %}
+
+{% set pageTitle = applicationName + " - Not Required Reason" %}
+{% set pageId = 'not-required-reason-page' %}
+{% set hardBackLinkText = 'Back' %}
+{% set hardBackLinkHref = backLink %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-l">Record activity attendance <span class="govuk-visually-hidden">for</span></span>
+            {% if attendanceDetails | length > 1 %}
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Confirm details for {{ attendanceDetails | length }} people who are not required</h1>
+            {% else %}
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Confirm details for {{ attendanceDetails[0] | formatName(NameFormatStyle.firstLast, false) }} who is not required</h1>
+            {% endif %}
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                {% for prisoner in attendanceDetails %}
+                    {% set prisonerIndex = loop.index0 %}
+                    <input type="hidden" name="{{ "notRequiredData[" + prisonerIndex + "][prisonerNumber]" }}" value="{{ prisoner.prisonerNumber }}"/>
+                    <input type="hidden" name="{{ "notRequiredData[" + prisonerIndex + "][prisonerName]" }}" value="{{ prisoner | formatName(NameFormatStyle.firstLast, false) }}"/>
+
+                    {% if attendanceDetails.length > 1 %}
+                        {% if not loop.first %}<hr class="govuk-!-margin-bottom-6"/>{% endif %}
+                        <h2 class="govuk-heading-m govuk-!-margin-bottom-0">{{ prisoner | formatName(NameFormatStyle.lastCommaFirst, false) }}</h2>
+                        <div class="govuk-hint">{{ prisoner.prisonerNumber }}</div>
+                    {% endif %}
+
+                    {% if prisoner.instances | length > 1 %}
+                        {% set instanceCheckboxes = [] %}
+                        {% for instance in prisoner.instances %}
+                            {% set instanceCheckboxes = (instanceCheckboxes.push({
+                                value: instance.id,
+                                text: instance.activitySchedule.description,
+                                checked: formResponses.notRequiredData[prisonerIndex].selectedInstanceIds and instance.id | string in formResponses.notRequiredData[prisonerIndex].selectedInstanceIds
+                            }), instanceCheckboxes) %}
+                        {% endfor %}
+
+                        {{ govukCheckboxes({
+                            name: "notRequiredData[" + prisonerIndex + "][selectedInstanceIds]",
+                            fieldset: {
+                                legend: {
+                                    text: "Select the activities that " + prisoner | formatName(NameFormatStyle.firstLast, false) + " is not required for"
+                                }
+                            },
+                            items: instanceCheckboxes,
+                            errorMessage: validationErrors | findError("notRequiredData-"  + prisonerIndex + "-selectedInstanceIds")
+                        }) }}
+                    {% else %}
+                        <input type="hidden" name="{{ "notRequiredData[" + prisonerIndex + "][selectedInstanceIds]" }}" value="{{ prisoner.instances[0].id }}" />
+                        <p class="govuk-body">{{ prisoner | formatName(NameFormatStyle.firstLast, false) }} will not be required for {{ prisoner.instances[0].activitySchedule.description }}.</p>
+                    {% endif %}
+
+                    {% if prisoner.isPayable %}
+                        {{ govukRadios({
+                            classes: "govuk-radios--inline",
+                            hint: {
+                                text: "Should they be paid?"
+                            },
+                            idPrefix: "notRequiredData-" + prisonerIndex + "-shouldBePaid",
+                            name: "notRequiredData[" + prisonerIndex + "][shouldBePaid]",
+                            errorMessage: validationErrors | findError("notRequiredData-" + prisonerIndex + "-shouldBePaid"),
+                            items: [
+                                {
+                                    value: "true",
+                                    text: "Yes",
+                                    checked: formResponses.notRequiredData[prisonerIndex].shouldBePaid == "true"
+                                },
+                                {
+                                    value: "false",
+                                    text: "No",
+                                    checked: formResponses.notRequiredData[prisonerIndex].shouldBePaid == "false"
+                                }
+                            ]
+                        }) }}
+                    {% endif %}
+                {% endfor %}
+
+                {{ govukButton({
+                    text: "Confirm as not required",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

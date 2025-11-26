@@ -1,10 +1,9 @@
 import { addDays, startOfDay, startOfToday, toDate } from 'date-fns'
 import { Request, Response } from 'express'
-import _ from 'lodash'
-import { asString, eventClashes, formatName, getAttendanceSummary } from '../../../../../utils/utils'
+import { asString, eventClashes, formatName } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
-import { EventType } from '../../../../../@types/activities'
+import { EventType, SubLocationCellPattern } from '../../../../../@types/activities'
 import applyCancellationDisplayRule from '../../../../../utils/applyCancellationDisplayRule'
 import config from '../../../../../config'
 import AttendanceStatus from '../../../../../enum/attendanceStatus'
@@ -14,6 +13,11 @@ import AttendanceReason from '../../../../../enum/attendanceReason'
 import { AttendanceUpdateRequest } from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import { NameFormatStyle } from '../../../../../utils/helpers/nameFormatStyle'
+import {
+  parseSelectedAttendances,
+  getPrisonerNumberFromAttendance,
+  getInstanceIdsFromAttendance,
+} from './attendanceParsingUtils'
 
 export default class SelectPeopleByResidentialLocationRoutes {
   constructor(
@@ -31,9 +35,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
     const { user } = res.locals
     const { date, sessionFilters, locationKey } = req.query
     const { notRequiredInAdvanceEnabled } = config
-
     const timePeriodFilter = sessionFilters !== undefined ? asString(sessionFilters) : null
-
     const activityDate = date ? toDate(asString(date)) : new Date()
 
     if (startOfDay(activityDate) > startOfDay(addDays(new Date(), 60)))
@@ -42,6 +44,9 @@ export default class SelectPeopleByResidentialLocationRoutes {
     const location = await this.activitiesService
       .getLocationGroups(user)
       .then(locations => locations.find(loc => loc.key === locationKey))
+
+    req.journeyData.recordAttendanceJourney.searchTerm ??= ''
+    req.journeyData.recordAttendanceJourney.subLocationFilters ??= location.children.map(c => c.key)
 
     const instancesForDateAndSlot = (
       await this.activitiesService.getScheduledActivitiesAtPrisonByDateAndSlot(
@@ -105,8 +110,40 @@ export default class SelectPeopleByResidentialLocationRoutes {
       ...otherEvents.adjudications,
     ]
 
+    const searchTerm = req.journeyData.recordAttendanceJourney.searchTerm?.toLowerCase() || ''
+    const { subLocationFilters } = req.journeyData.recordAttendanceJourney
+
+    const subLocationCellPatterns = await Promise.all(
+      subLocationFilters.map(async sub => {
+        const locGroup = `${location.key}_${sub}`
+        const prefix = await this.activitiesService.getPrisonLocationPrefixByGroup(
+          user.activeCaseLoadId,
+          locGroup,
+          user,
+        )
+        return { subLocation: sub, locationPrefix: prefix.locationPrefix } as SubLocationCellPattern
+      }),
+    )
+
     const prisonersWithActivities = prisonersForLocation?.content?.reduce((result, prisoner) => {
       if (attendingPrisonerNumbers.includes(prisoner.prisonerNumber)) {
+        if (
+          searchTerm &&
+          !prisoner.prisonerNumber.toLowerCase().includes(searchTerm) &&
+          !`${prisoner.firstName} ${prisoner.lastName}`.toLowerCase().includes(searchTerm)
+        ) {
+          return result
+        }
+
+        if (
+          !subLocationFilters.includes(
+            this.getSubLocationFromCell(user.activeCaseLoadId, subLocationCellPatterns, prisoner.cellLocation),
+          ) &&
+          subLocationFilters.length > 0
+        ) {
+          return result
+        }
+
         const activitiesForPrisoner = attendees
           .find(a => a.prisonerNumber === prisoner.prisonerNumber)
           .scheduledInstanceIds.map(a => instancesForDateAndSlot.find(i => i.id === a))
@@ -123,13 +160,13 @@ export default class SelectPeopleByResidentialLocationRoutes {
           a.attendances.filter(att => att.prisonerNumber === prisoner.prisonerNumber),
         )
 
-        const advanceAttendancesForPrisoner = activitiesForPrisoner.flatMap(a =>
-          a.advanceAttendances.filter(att => att.prisonerNumber === prisoner.prisonerNumber),
+        const advanceAttendancesForPrisoner = activitiesForPrisoner.map(a =>
+          a.advanceAttendances.find(att => att.prisonerNumber === prisoner.prisonerNumber),
         )
 
         let isSelectable = false
         if (notRequiredInAdvanceEnabled && activitiesForPrisoner.some(i => i.isInFuture)) {
-          if (advanceAttendancesForPrisoner.length > 0) {
+          if (advanceAttendancesForPrisoner.length > 0 && advanceAttendancesForPrisoner.every(a => a !== undefined)) {
             isSelectable = false
           } else {
             isSelectable = true
@@ -171,9 +208,8 @@ export default class SelectPeopleByResidentialLocationRoutes {
       timePeriodFilter,
       instance: instancesForDateAndSlot.length > 0 ? instancesForDateAndSlot[0] : null,
       instancesForDateAndSlot,
-      attendanceSummary: getAttendanceSummary(
-        prisonersWithActivities.flatMap(row => row.attendances).filter(a => a !== undefined),
-      ),
+      searchTerm: req.journeyData.recordAttendanceJourney.searchTerm || '',
+      subLocationFilters: req.journeyData.recordAttendanceJourney.subLocationFilters,
     })
   }
 
@@ -184,21 +220,19 @@ export default class SelectPeopleByResidentialLocationRoutes {
     if (typeof selectedAttendances === 'string') {
       selectedAttendances = [selectedAttendances]
     }
-    const instanceIds = _.uniq(
-      selectedAttendances.flatMap(selectedAttendance => selectedAttendance.split('-')[0].split(',')),
-    ).map(Number)
+    const { instanceIds } = parseSelectedAttendances(selectedAttendances)
 
     const allInstances = await this.activitiesService.getScheduledActivities(instanceIds, user)
 
     if (selectedAttendances.some(attendance => attendance.includes(','))) {
       const multipleRecords = selectedAttendances.some(selectedAttendance => {
-        const prisonerInstanceIds = selectedAttendance.split('-')[0].split(',').map(Number)
-        const prisonerNumber = selectedAttendance.split('-')[2]
+        const prisonerInstanceIds = getInstanceIdsFromAttendance(selectedAttendance)
+        const prisonerNumber = getPrisonerNumberFromAttendance(selectedAttendance)
         const instances = allInstances.filter(i => prisonerInstanceIds.includes(i.id))
 
         const filteredInstances = instances.filter(instance => {
           const attendance = instance.attendances.find(a => a.prisonerNumber === prisonerNumber)
-          return !instance.cancelled && attendance && attendance.status === 'WAITING'
+          return !instance.cancelled && attendance && attendance.status === AttendanceStatus.WAITING
         })
 
         return filteredInstances.length > 1
@@ -212,24 +246,21 @@ export default class SelectPeopleByResidentialLocationRoutes {
     }
 
     const attendanceUpdates: AttendanceUpdateRequest[] = selectedAttendances.flatMap(prisonerAttendance => {
-      return prisonerAttendance
-        .split('-')[0]
-        .split(',')
-        .map(selectedInstanceId => {
-          const prisonerNumber = prisonerAttendance.split('-')[2]
-          const instance = allInstances.find(inst => inst.id === +selectedInstanceId)
-          const attendance = instance.attendances.find(a => a.prisonerNumber === prisonerNumber)
-          if (!instance.cancelled && attendance && attendance.status === 'WAITING') {
-            return {
-              id: attendance.id,
-              prisonCode: user.activeCaseLoadId,
-              status: AttendanceStatus.COMPLETED,
-              attendanceReason: AttendanceReason.ATTENDED,
-              issuePayment: instance.activitySchedule.activity.paid,
-            }
+      return getInstanceIdsFromAttendance(prisonerAttendance).map(selectedInstanceId => {
+        const prisonerNumber = getPrisonerNumberFromAttendance(prisonerAttendance)
+        const instance = allInstances.find(inst => inst.id === +selectedInstanceId)
+        const attendance = instance.attendances.find(a => a.prisonerNumber === prisonerNumber)
+        if (!instance.cancelled && attendance && attendance.status === AttendanceStatus.WAITING) {
+          return {
+            id: attendance.id,
+            prisonCode: user.activeCaseLoadId,
+            status: AttendanceStatus.COMPLETED,
+            attendanceReason: AttendanceReason.ATTENDED,
+            issuePayment: instance.activitySchedule.activity.paid,
           }
-          return null
-        })
+        }
+        return null
+      })
     })
 
     attendanceUpdates.filter(update => update !== null)
@@ -238,20 +269,22 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
     if (selectedAttendances.length === 1) {
       const selectedPrisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(
-        selectedAttendances[0].split('-')[2],
+        getPrisonerNumberFromAttendance(selectedAttendances[0]),
         user,
       )
-      prisonerName = formatName(
-        selectedPrisoner.firstName,
-        undefined,
-        selectedPrisoner.lastName,
-        NameFormatStyle.firstLast,
-        false,
-      )
+      if (selectedPrisoner) {
+        prisonerName = formatName(
+          selectedPrisoner.firstName,
+          undefined,
+          selectedPrisoner.lastName,
+          NameFormatStyle.firstLast,
+          false,
+        )
+      }
     }
 
     return res.redirectWithSuccess(
-      req.journeyData.recordAttendanceJourney.returnUrl || '../choose-details-to-record-attendance',
+      req.journeyData.recordAttendanceJourney.returnUrl || '../choose-details-by-activity',
       'Attendance recorded',
       `You've saved attendance details for ${selectedAttendances.length === 1 ? prisonerName : `${selectedAttendances.length} attendees`}`,
     )
@@ -267,43 +300,32 @@ export default class SelectPeopleByResidentialLocationRoutes {
     return res.redirect('../multiple-not-attended-reason')
   }
 
-  // NOT_REQUIRED_OR_EXCUSED = async (req: Request, res: Response): Promise<void> => {
-  //   let { selectedAttendances }: { selectedAttendances: string[] } = req.body
-  //   if (typeof selectedAttendances === 'string') {
-  //     selectedAttendances = [selectedAttendances]
-  //   }
-  //   const { user } = res.locals
-  //   const { recordAttendanceJourney } = req.journeyData
-  //   const instanceIds = _.uniq(selectedAttendances.map(selectedAttendance => +selectedAttendance.split('-')[0]))
-  //   const prisonerNumbers = _.uniq(selectedAttendances.map(selectedAttendance => selectedAttendance.split('-')[2]))
+  NOT_REQUIRED = async (req: Request, res: Response): Promise<void> => {
+    let { selectedAttendances }: { selectedAttendances: string[] } = req.body
+    if (typeof selectedAttendances === 'string') {
+      selectedAttendances = [selectedAttendances]
+    }
 
-  //   const instances = await this.activitiesService.getScheduledActivities(instanceIds, user)
+    req.journeyData.recordAttendanceJourney.selectedInstanceIds = selectedAttendances
+    return res.redirect('../select-not-required')
+  }
 
-  //   const prisoners = await this.prisonService.searchInmatesByPrisonerNumbers(prisonerNumbers, user)
+  private getSubLocationFromCell = (
+    prison: string,
+    cellPatterns: SubLocationCellPattern[],
+    cellLocation: string,
+  ): string => {
+    for (const cellPattern of cellPatterns) {
+      const splitPatterns = cellPattern.locationPrefix.split(',')
 
-  //   recordAttendanceJourney.notRequiredOrExcused = {
-  //     selectedPrisoners: [],
-  //   }
-
-  //   selectedAttendances.forEach(selectedAttendance => {
-  //     const instanceId = selectedAttendance.split('-')[0]
-  //     const prisonerNumber = selectedAttendance.split('-')[2]
-
-  //     const instance = instances.find(inst => inst.id === +instanceId)
-  //     const prisoner = prisoners.find(pris => pris.prisonerNumber === prisonerNumber)
-
-  //     recordAttendanceJourney.notRequiredOrExcused.selectedPrisoners.push({
-  //       instanceId: instance.id,
-  //       prisonerNumber: prisoner.prisonerNumber,
-  //       prisonerName: `${prisoner.firstName} ${prisoner.lastName}`,
-  //     })
-  //   })
-
-  //   if (!instances[0].activitySchedule.activity.paid) {
-  //     req.journeyData.recordAttendanceJourney.notRequiredOrExcused.isPaid = false
-  //     return res.redirect(`../activities/${instances[0].id}/not-required-or-excused/check-and-confirm`)
-  //   }
-
-  //   return res.redirect(`../activities/${instances[0].id}/not-required-or-excused/paid-or-not`)
-  // }
+      for (const pattern of splitPatterns) {
+        const regex = new RegExp(pattern)
+        if (regex.test(`${prison}-${cellLocation}`)) {
+          return cellPattern.subLocation
+        }
+      }
+    }
+    // Where a location has no sub-locations e.g. Segregation unit, there will be no cell-patterns to match against.
+    return ''
+  }
 }

@@ -11,7 +11,7 @@ import IsValidDate from '../../../../../validators/isValidDate'
 import TimeSlot from '../../../../../enum/timeSlot'
 import { getSelectedDate } from '../../../../../utils/utils'
 
-export class ChooseDetailsToRecordAttendanceForm {
+export class ChooseDetailsByActivityForm {
   @Expose()
   @IsIn(Object.values(DateOption), { message: 'Select a date' })
   datePresetOption: string
@@ -34,14 +34,14 @@ export class ChooseDetailsToRecordAttendanceForm {
   activityId: string
 }
 
-export default class ChooseDetailsToRecordAttendanceRoutes {
+export default class ChooseDetailsByActivityRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const activities: ActivitySummary[] = await this.activitiesService.getActivities(true, user)
 
-    res.render('pages/activities/record-attendance/attend-all/choose-details-to-record-attendance', {
+    res.render('pages/activities/record-attendance/attend-all/choose-details-by-activity', {
       activities,
     })
   }

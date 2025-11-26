@@ -25,7 +25,7 @@ jest.mock('../../../../services/userService')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
-const userService = new UserService(null, null, null)
+const userService = new UserService(null)
 
 describe('Route Handlers - Attendance List', () => {
   const handler = new AttendanceListRoutes(activitiesService, prisonService, userService)

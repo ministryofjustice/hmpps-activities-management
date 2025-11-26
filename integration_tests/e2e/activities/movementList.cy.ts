@@ -1,4 +1,4 @@
-import { format, startOfToday } from 'date-fns'
+import { addDays, format, startOfToday } from 'date-fns'
 import IndexPage from '../../pages'
 import Page from '../../pages/page'
 import getInteralLocationEvents from '../../fixtures/activitiesApi/getInteralLocationEvents.json'
@@ -14,6 +14,7 @@ import { CAT_A_BADGE, CONTROLLED_UNLOCK_BADGE, PEEP_BADGE } from '../../pages/un
 
 context('Create activity', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
+  const tomorrow = format(addDays(startOfToday(), 1), 'yyyy-MM-dd')
 
   beforeEach(() => {
     cy.task('reset')
@@ -141,5 +142,92 @@ context('Create activity', () => {
     locationEventsPage.selectNoCancelledEvents().click()
     locationEventsPage.getButton('Apply filters').eq(0).click()
     cy.get('tbody>tr').should('have.length', 1)
+  })
+  it('shows the not required tag if a prisoner has been marked as not required for unlock today, but not if the prisoner is already suspended', () => {
+    const getScheduledEventsWithNotRequired = [...getScheduledEventLocations]
+    getScheduledEventsWithNotRequired[0].events[0].attendanceStatus = 'COMPLETED'
+    getScheduledEventsWithNotRequired[0].events[0].attendanceReasonCode = 'NOT_REQUIRED'
+    getScheduledEventsWithNotRequired[0].events[1].attendanceStatus = 'COMPLETED'
+    getScheduledEventsWithNotRequired[0].events[1].attendanceReasonCode = 'NOT_REQUIRED'
+    getScheduledEventsWithNotRequired[0].events[1].suspended = true
+    cy.stubEndpoint(
+      'POST',
+      `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM`,
+      getScheduledEventsWithNotRequired,
+    )
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.unlockAndMovementCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
+    manageActivitiesPage.createMovementListsCard().should('contain.text', 'Create movement lists')
+    manageActivitiesPage.createMovementListsCard().click()
+
+    const chooseMovementListDetailsPage = Page.verifyOnPage(ChooseDetailsPage)
+    chooseMovementListDetailsPage.selectToday()
+    chooseMovementListDetailsPage.selectAM()
+    chooseMovementListDetailsPage.continue()
+
+    const locationsPage = Page.verifyOnPage(LocationsPage)
+    locationsPage.selectLocation('Workshop 1').click()
+
+    const locationEventsPage = Page.verifyOnPage(LocationEventsPage)
+
+    locationEventsPage
+      .table()
+      .find('td')
+      .then(data => {
+        expect(data.get(11).innerText).to.contain('Woodworking')
+        expect(data.get(11).innerText).to.contain('Not required')
+        expect(data.get(4).innerText).to.contain('Pottery')
+        expect(data.get(4).innerText).to.contain('Prisoner suspended')
+        expect(data.get(4).innerText).to.not.contain('Not required')
+      })
+  })
+  it('shows the not required tag if a prisoner has been marked as not required for unlock tomorrow', () => {
+    const getScheduledEventsWithNotRequired = [...getScheduledEventLocations]
+    getScheduledEventsWithNotRequired[0].events[0].date = tomorrow
+    getScheduledEventsWithNotRequired[0].events[0].attendanceStatus = null
+    getScheduledEventsWithNotRequired[0].events[0].attendanceReasonCode = 'NOT_REQUIRED'
+    cy.stubEndpoint(
+      'GET',
+      `/locations/prison/MDI/events-summaries\\?date=${tomorrow}&timeSlot=AM`,
+      getInteralLocationEvents,
+    )
+    cy.stubEndpoint(
+      'POST',
+      `/scheduled-events/prison/MDI/location-events\\?date=${tomorrow}&timeSlot=AM`,
+      getScheduledEventsWithNotRequired,
+    )
+    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${tomorrow}`, getScheduledEvents)
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.unlockAndMovementCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
+    manageActivitiesPage.createMovementListsCard().should('contain.text', 'Create movement lists')
+    manageActivitiesPage.createMovementListsCard().click()
+
+    const chooseMovementListDetailsPage = Page.verifyOnPage(ChooseDetailsPage)
+    chooseMovementListDetailsPage.selectTomorrow()
+    chooseMovementListDetailsPage.selectAM()
+    chooseMovementListDetailsPage.continue()
+
+    const locationsPage = Page.verifyOnPage(LocationsPage)
+    locationsPage.selectLocation('Workshop 1').click()
+
+    const locationEventsPage = Page.verifyOnPage(LocationEventsPage)
+
+    locationEventsPage
+      .table()
+      .find('td')
+      .then(data => {
+        expect(data.get(11).innerText).to.contain('Woodworking')
+        expect(data.get(11).innerText).to.contain('Not required')
+      })
   })
 })

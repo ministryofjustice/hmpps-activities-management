@@ -22,7 +22,7 @@ jest.mock('../../../../services/userService')
 const prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
 const activitiesService = new ActivitiesService(null) as jest.Mocked<ActivitiesService>
 const caseNotesService = new CaseNotesService(null) as jest.Mocked<CaseNotesService>
-const userService = new UserService(null, null, null) as jest.Mocked<UserService>
+const userService = new UserService(null) as jest.Mocked<UserService>
 
 describe('Route Handlers - Allocation dashboard', () => {
   const handler = new ViewAllocationRoutes(activitiesService, prisonService, caseNotesService, userService)

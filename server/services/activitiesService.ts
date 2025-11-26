@@ -60,6 +60,7 @@ import {
   AdvanceAttendance,
   ActivityPayHistory,
   LocationPrefix,
+  RolloutPrisonPlan,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { AttendanceStatus } from '../@types/appointments'
@@ -315,6 +316,10 @@ export default class ActivitiesService {
 
   getRolledOutPrisons() {
     return this.activitiesApiClient.getRolledOutPrisons()
+  }
+
+  getPrisonRolloutPlan(prisonCode: string): Promise<RolloutPrisonPlan> {
+    return this.activitiesApiClient.getPrisonRolloutPlan(prisonCode)
   }
 
   async getAllAttendance(sessionDate: Date, user: ServiceUser, eventTier?: EventTier): Promise<AllAttendance[]> {

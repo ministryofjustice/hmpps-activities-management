@@ -21,7 +21,7 @@ jest.mock('../../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
-const userService = new UserService(null, null, null)
+const userService = new UserService(null)
 
 const today = format(new Date(), 'yyyy-MM-dd')
 
@@ -269,7 +269,7 @@ describe('Route Handlers - Select people to record attendance for', () => {
   describe('ATTENDED', () => {
     it('should redirect with success', async () => {
       req.journeyData.recordAttendanceJourney.returnUrl =
-        '/activities/record-attendance/attend-all/choose-details-to-record-attendance?date=2025-01-01&timePeriods=AM%2CPM%2CED&activityId=539'
+        '/activities/record-attendance/attend-all/choose-details-by-activity?date=2025-01-01&timePeriods=AM%2CPM%2CED&activityId=539'
       req.body = {
         selectedAttendances: ['123456-1001-ABC123', '123457-1002-ABC321'],
       }
@@ -278,7 +278,7 @@ describe('Route Handlers - Select people to record attendance for', () => {
         .mockResolvedValue([scheduledActivity1, scheduledActivity2])
       await handler.ATTENDED(req, res)
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
-        '/activities/record-attendance/attend-all/choose-details-to-record-attendance?date=2025-01-01&timePeriods=AM%2CPM%2CED&activityId=539',
+        '/activities/record-attendance/attend-all/choose-details-by-activity?date=2025-01-01&timePeriods=AM%2CPM%2CED&activityId=539',
         'Attendance recorded',
         "You've saved attendance details for 2 attendees",
       )

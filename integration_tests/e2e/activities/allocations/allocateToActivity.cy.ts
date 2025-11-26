@@ -93,7 +93,7 @@ context('Allocate to activity', () => {
     beforeYouAllocatePage
       .nonAssociationsCountPara()
       .contains(
-        'Review Alfonso Cholak’s 2 open non-associations in Moorland to check that they can be safely allocated.',
+        'Review Alfonso Cholak’s 2 open non-associations in Moorland (HMP) to check that they can be safely allocated.',
       )
     beforeYouAllocatePage.nonAssociationsLink().contains('View Alfonso Cholak’s non-associations')
     beforeYouAllocatePage.getButton('Continue').click()
@@ -166,7 +166,7 @@ context('Allocate to activity', () => {
     beforeYouAllocatePage.nonAssociationsLink().should('not.exist')
     beforeYouAllocatePage
       .noNonAssociationsPara()
-      .contains('Alfonso Cholak has no open non-associations with anyone in Moorland')
+      .contains('Alfonso Cholak has no open non-associations with anyone in Moorland (HMP)')
     beforeYouAllocatePage.getButton('Continue').click()
 
     const startDatePage = Page.verifyOnPage(StartDatePage)

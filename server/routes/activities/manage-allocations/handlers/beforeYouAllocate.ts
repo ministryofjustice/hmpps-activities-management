@@ -25,7 +25,6 @@ export default class BeforeYouAllocateRoutes {
 
     res.render('pages/activities/manage-allocations/before-you-allocate', {
       allocationSuitability,
-      caseload: user.activeCaseLoadDescription,
       nonAssociations,
     })
   }

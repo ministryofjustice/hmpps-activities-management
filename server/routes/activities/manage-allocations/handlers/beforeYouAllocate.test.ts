@@ -25,7 +25,6 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
       locals: {
         user: {
           username: 'USER1',
-          activeCaseLoadDescription: 'Moorland (HMP & YOI)',
         },
       },
       render: jest.fn(),
@@ -148,7 +147,6 @@ describe('Route Handlers - Allocate - Before you allocate', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/before-you-allocate', {
         allocationSuitability,
-        caseload: 'Moorland (HMP & YOI)',
         nonAssociations,
       })
     })

@@ -57,6 +57,10 @@
                     <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Temporarily absent', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
                 {% endif %}
 
+                {% if event.attendanceReasonCode === 'NOT_REQUIRED' and not event.suspended and not event.autoSuspended %}
+                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Not required', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
+                {% endif %}
+
                 {% if event.eventType != EventType.EXTERNAL_TRANSFER and event.eventType != EventType.COURT_HEARING %}
                     <div class="movement-list__location-events__secondary-information govuk-body-s govuk-!-margin-bottom-0">{{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}</div>
 
@@ -74,10 +78,10 @@
         <div>
             {% if event.eventType == EventType.ACTIVITY and event.eventSource =='SAA' %}
                 <div>
-                    <a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list"
+                    <p class="govuk-body govuk-!-margin-bottom-0"><a href="/activities/attendance/activities/{{ event.scheduledInstanceId }}/attendance-list"
                         class="govuk-link govuk-link--no-visited-state" target="_blank">
                         {{ event.summary | trim }}
-                    </a>
+                    </a></p>
                 </div>
             {% elseif event.eventType == EventType.APPOINTMENT and event.eventSource =='SAA' %}
                 <div>
@@ -106,6 +110,10 @@
                 <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Temporarily absent', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
             {% endif %}
 
+            {% if event.attendanceReasonCode === 'NOT_REQUIRED' and not event.suspended and not event.autoSuspended %}
+                <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Not required', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
+            {% endif %}
+
             {% if event.eventType != EventType.EXTERNAL_TRANSFER and event.eventType != EventType.COURT_HEARING %}
                 <div class="movement-list__location-events__secondary-information govuk-body-s govuk-!-margin-0">{{ event.internalLocationUserDescription or event.internalLocationDescription }}</div>
             {% endif %}
@@ -115,7 +123,7 @@
 
 {% macro showEventTime(event) %}
     {% if event.eventType != EventType.EXTERNAL_TRANSFER and event.eventType != EventType.COURT_HEARING %}
-       {{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}
+       <p class="govuk-body govuk-!-margin-bottom-0">{{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}</p>
     {% endif %}
 {% endmacro %}
 
@@ -155,7 +163,7 @@
     {% endset %}
 
     <div class="moj-filter-layout moj-filter-layout__flex govuk-!-margin-0 unlock-list" data-module="activities-list-filter">
-            <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
+        <div class="moj-filter-layout__filter moj-filter-layout__flex govuk-!-display-none-print">
         <form id="filter-form" method="POST" action="update-filters" novalidate>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ mojFilter({

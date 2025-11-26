@@ -23,7 +23,7 @@ jest.mock('../../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
-const userService = new UserService(null, null, null)
+const userService = new UserService(null)
 
 const today = format(new Date(), 'yyyy-MM-dd')
 
@@ -96,16 +96,6 @@ const updatedInstance2 = {
   ...scheduledActivity2,
   isAmendable: true,
   isInFuture: false,
-}
-
-const attendanceSummary = {
-  attendanceCount: 2,
-  attended: 1,
-  attendedPercentage: '50',
-  notAttended: 0,
-  notAttendedPercentage: '0',
-  notRecorded: 1,
-  notRecordedPercentage: '50',
 }
 
 const mockLocations = [
@@ -230,7 +220,7 @@ describe('Route Handlers - Select people by residential location', () => {
         {
           prisoner: mapPrisonerDetails(prisoners.content[0]),
           attendances: [scheduledActivity1.attendances[0]],
-          advancedAttendances: [],
+          advancedAttendances: [undefined],
           attendanceIds: [1001],
           instanceIds: [123456],
           instances: [updatedInstance1],
@@ -240,7 +230,7 @@ describe('Route Handlers - Select people by residential location', () => {
         {
           prisoner: mapPrisonerDetails(prisoners.content[1]),
           attendances: [scheduledActivity2.attendances[0]],
-          advancedAttendances: [],
+          advancedAttendances: [undefined],
           attendanceIds: [1002],
           instanceIds: [123457],
           instances: [updatedInstance2],
@@ -254,11 +244,12 @@ describe('Route Handlers - Select people by residential location', () => {
         {
           activityDate: date,
           attendanceRows,
-          attendanceSummary,
           instance: updatedInstance1,
           instancesForDateAndSlot: [updatedInstance1, updatedInstance2],
           timePeriodFilter: 'AM',
           location: mockLocations[0],
+          searchTerm: '',
+          subLocationFilters: [],
         },
       )
     })

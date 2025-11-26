@@ -39,6 +39,10 @@
                     <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Temporarily absent', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
                 {% endif %}
 
+                {% if event.attendanceReasonCode === 'NOT_REQUIRED' and not event.suspended and not event.autoSuspended %}
+                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Not required', classes: 'govuk-tag--red govuk-tag--small' }) }}</div>
+                {% endif %}
+
                 {% if event.eventType != 'EXTERNAL_TRANSFER' and event.eventType != 'COURT_HEARING' %}
                     <div>{{ event.startTime }}{% if event.endTime %} - {{ event.endTime }}{% endif %}</div>
                     <div>{{ showLocation(event) }}</div>

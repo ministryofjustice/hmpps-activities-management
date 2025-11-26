@@ -2,7 +2,7 @@ import Page from '../../page'
 
 export default class ChooseDetailsToRecordAttendancePage extends Page {
   constructor() {
-    super('choose-details-to-record-attendance-page')
+    super('choose-details-by-activity-page')
   }
 
   radioTodayClick = (): Cypress.Chainable => cy.get('#datePresetOption').click()

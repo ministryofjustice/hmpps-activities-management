@@ -37,9 +37,9 @@ import CancelSingleSessionPayRoutes, { SessionPaySingleForm } from './handlers/c
 import CancelSingleSessionsCheckAnswersRoutes from './handlers/cancel-single-session/checkAnswers'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
 import HowToRecordAttendanceRoutes, { HowToRecordAttendanceForm } from './handlers/attend-all/howToRecordAttendance'
-import ChooseDetailsToRecordAttendanceRoutes, {
-  ChooseDetailsToRecordAttendanceForm,
-} from './handlers/attend-all/chooseDetailsToRecordAttendance'
+import ChooseDetailsByActivityRoutes, {
+  ChooseDetailsByActivityForm,
+} from './handlers/attend-all/chooseDetailsByActivity'
 import SelectPeopleToRecordAttendanceForRoutes from './handlers/attend-all/selectPeopleToRecordAttendanceFor'
 import ChooseDetailsByActivityLocationRoutes, {
   ChooseDetailsByActivityLocationForm,
@@ -54,6 +54,8 @@ import MultipleNotAttendedReasonRoutes, {
 } from './handlers/attend-all/multipleNotAttendedReason'
 import CancelSessionPayRoutes, { CancelSessionPayForm } from './handlers/cancel-session/payment'
 import SelectAttendedRoutes, { SelectAttendedForm } from './handlers/attend-all/selectAttended'
+import SelectNotRequiredRoutes, { SelectNotRequiredForm } from './handlers/attend-all/selectNotRequired'
+import ApplyFiltersRoutes, { Filters } from './handlers/attend-all/applyFilters'
 
 export default function Index({
   activitiesService,
@@ -111,7 +113,7 @@ export default function Index({
     userService,
   )
   const howToRecordAttendanceRoutes = new HowToRecordAttendanceRoutes()
-  const chooseDetailsToRecordAttendanceRoutes = new ChooseDetailsToRecordAttendanceRoutes(activitiesService)
+  const chooseDetailsByActivityRoutes = new ChooseDetailsByActivityRoutes(activitiesService)
   const chooseDetailsByActivityLocationRoutes = new ChooseDetailsByActivityLocationRoutes(locationsService)
   const chooseDetailsByResidentialLocationRoutes = new ChooseDetailsByResidentialLocationRoutes(activitiesService)
   const selectPeopleToRecordattendanceForRoutes = new SelectPeopleToRecordAttendanceForRoutes(
@@ -126,7 +128,9 @@ export default function Index({
   )
   const multipleNotAttendedReasonRoutes = new MultipleNotAttendedReasonRoutes(activitiesService, prisonService)
   const selectAttendedRoutes = new SelectAttendedRoutes(activitiesService, prisonService)
+  const selectNotRequiredRoutes = new SelectNotRequiredRoutes(activitiesService, prisonService)
   const attendAllListActivitiesRoutes = new ListActivitiesRoutes(activitiesService, locationsService)
+  const applyFiltersRoutes = new ApplyFiltersRoutes()
 
   get('/', homeHandler.GET)
 
@@ -264,11 +268,11 @@ export default function Index({
   // Attend all routes
   get('/:journeyId/attend-all/how-to-record-attendance', howToRecordAttendanceRoutes.GET)
   post('/:journeyId/attend-all/how-to-record-attendance', howToRecordAttendanceRoutes.POST, HowToRecordAttendanceForm)
-  get('/:journeyId/attend-all/choose-details-to-record-attendance', chooseDetailsToRecordAttendanceRoutes.GET)
+  get('/:journeyId/attend-all/choose-details-by-activity', chooseDetailsByActivityRoutes.GET)
   post(
-    '/:journeyId/attend-all/choose-details-to-record-attendance',
-    chooseDetailsToRecordAttendanceRoutes.POST,
-    ChooseDetailsToRecordAttendanceForm,
+    '/:journeyId/attend-all/choose-details-by-activity',
+    chooseDetailsByActivityRoutes.POST,
+    ChooseDetailsByActivityForm,
   )
   get('/:journeyId/attend-all/choose-details-by-activity-location', chooseDetailsByActivityLocationRoutes.GET)
   post(
@@ -293,18 +297,24 @@ export default function Index({
     '/:journeyId/attend-all/select-people-by-residential-location/not-attended',
     selectPeopleByResidentialLocationRoutes.NOT_ATTENDED,
   )
-  // post(
-  //   '/:journeyId/attend-all/select-people-by-residential-location/not-required-or-excused',
-  //   selectPeopleByResidentialLocationRoutes.NOT_REQUIRED_OR_EXCUSED,
-  // )
+  post(
+    '/:journeyId/attend-all/select-people-by-residential-location/not-required-or-excused',
+    selectPeopleByResidentialLocationRoutes.NOT_REQUIRED,
+  )
   get('/:journeyId/attend-all/multiple-not-attended-reason', multipleNotAttendedReasonRoutes.GET)
   post(
     '/:journeyId/attend-all/multiple-not-attended-reason',
     multipleNotAttendedReasonRoutes.POST,
     MultipleNotAttendedReasonForm,
   )
+
   get('/:journeyId/attend-all/select-attended', selectAttendedRoutes.GET)
   post('/:journeyId/attend-all/select-attended', selectAttendedRoutes.POST, SelectAttendedForm)
+
+  post('/:journeyId/attend-all/update-filters', applyFiltersRoutes.APPLY, Filters)
+
+  get('/:journeyId/attend-all/select-not-required', selectNotRequiredRoutes.GET)
+  post('/:journeyId/attend-all/select-not-required', selectNotRequiredRoutes.POST, SelectNotRequiredForm)
 
   post('/:journeyId/attend-all/attended', selectPeopleToRecordattendanceForRoutes.ATTENDED)
   post('/:journeyId/attend-all/not-attended', selectPeopleToRecordattendanceForRoutes.NOT_ATTENDED)
