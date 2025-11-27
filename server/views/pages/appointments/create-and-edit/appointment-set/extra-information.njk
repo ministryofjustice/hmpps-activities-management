@@ -19,7 +19,11 @@
               Add extra information to movement slips (optional)
             </h1>
             <p class="govuk-body" data-qa="first-paragraph">
-              Add any important information for who’s attending about how to prepare for their appointment, like something they need to bring, or do beforehand.
+              {% if not prisonerExtraInformationEnabled %}
+                Add any important information for who’s attending about how to prepare for their appointment, like something they need to bring, or do beforehand.
+              {% else %}
+                Add details about who will be attending, or other relevant appointment information which will not be shared with the attendees. Or add information the attendees need to know about their appointment, like something then need to bring or do beforehand.
+              {% endif %}
             </p>
             <p class="govuk-body" data-qa="second-paragraph">
               For confidentiality, the information you enter is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.

@@ -91,7 +91,7 @@ describe('Views - Create Appointment Set - Add Extra Information - with feature 
       "This could include details about who will be attending, or other relevant appointment information. This won't appear on movement slips or the printed unlock list. Unlock lists will just show 'Extra information'. Staff can view fill details in the service.",
     )
     expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
-      'Add or edit information the prisoner needs to know about their appointment, like something they need to, or do beforehand. This will appear on movement slips and will be seen by the prisoner. Changes will not appear on movement slips that have already been printed.',
+      'Add information the prisoner needs to know about their appointment, like something they need to, or do beforehand. This will appear on movement slips and will be seen by the prisoner.',
     )
     expect($('[data-qa=third-paragraph]').text().trim()).toEqual(
       'Do not add anything that should not be seen by or shared with a prisoner.',

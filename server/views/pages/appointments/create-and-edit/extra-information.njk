@@ -137,11 +137,11 @@
                   {% set prisonerExtraInformationHtml %}
                     {% if prisoners.length == 1 %}
                       <p class="govuk-body" data-qa="first-paragraph">
-                        Add {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}or edit {% endif %}information the prisoner needs to know about their appointment, like something they need to bring, or do beforehand. This will appear on movement slips and will be seen by the prisoner. Changes will not appear on slips that have already been printed.
+                        Add information the prisoner needs to know about their appointment, like something they need to bring, or do beforehand. This will appear on movement slips and will be seen by the prisoner.
                       </p>
                     {% else %}
                       <p class="govuk-body" data-qa="first-paragraph">
-                        Add {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}or edit {% endif %}information the attendees need to know about their appointment, like something they need to bring, or do beforehand. This will appear on movement slips and will be seen by the attendees. Changes will not appear on slips that have already been printed.
+                        Add information the attendees need to know about their appointment, like something they need to bring, or do beforehand. This will appear on movement slips and will be seen by the prisoner.
                       </p>
                     {% endif %}
                     <p class="govuk-body" data-qa="second-paragraph">

@@ -142,7 +142,7 @@ describe('Views - Create Appointment Set - Add Extra Information - feature toggl
 
     expect($('h1').text()).toContain('Add extra information to movement slips (optional)')
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'Add any important information for who’s attending about how to prepare for their appointment, like something they need to bring, or do beforehand.',
+      'Add details about who will be attending, or other relevant appointment information which will not be shared with the attendees. Or add information the attendees need to know about their appointment, like something then need to bring or do beforehand.',
     )
     expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
       'For confidentiality, the information you enter is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
