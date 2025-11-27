@@ -52,8 +52,12 @@ export default class DeallocateTodayOptionRoutes {
         break
     }
 
-    if (req.routeContext.mode === 'remove') {
+    if (req.routeContext.mode === 'remove' || req.journeyData.allocateJourney.deallocationReason === 'PLANNED') {
       return res.redirectOrReturn(`reason`)
+    }
+
+    if (req.routeContext.mode === 'edit') {
+      return res.redirectOrReturn(`reason-option`)
     }
 
     if (req.journeyData.allocateJourney.activity.paid) {

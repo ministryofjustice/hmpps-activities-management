@@ -1,0 +1,54 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% set pageTitle = "Deallocation change reason option - Activities - DPS" %}
+{% set pageId = 'deallocation-change-reason-option-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l">{{ allocateJourney.activity.name }}</span>
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    classes: "govuk-radios",
+                    name: "deallocationReasonOption",
+                    hint: { html: govukInsetText({ text: "The reason is  currently: " + currentDeallocationReason }) },
+                    fieldset: {
+                        legend: {
+                            text: 'Do you want to change the reason for ' + allocateJourney.inmate.prisonerName | possessive + ' allocation ending?',
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--xl"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "yes",
+                            text: "Yes",
+                            checked: deallocationReasonOption == "yes"
+                        },
+                        {
+                            value: "no",
+                            text: "No",
+                            checked: deallocationReasonOption == "no"
+                        }
+                    ],
+                    errorMessage: validationErrors | findError('deallocationReasonOption')
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                    <a class="govuk-link" href="cancel">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

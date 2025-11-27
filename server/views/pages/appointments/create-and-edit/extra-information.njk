@@ -89,7 +89,7 @@
               </h1>
             {% else %}
               <h1 class="govuk-heading-l">
-                <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information</label>
+                <label class="govuk-label govuk-label--l" for="extraInformation">Add extra information to {{ prisoners[0].name | toTitleCase }}'s appointment (optional)</label>
               </h1>
             {%  endif %}
           {% endif %}

@@ -1,0 +1,53 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = "Deallocation choose end date option - Activities - DPS" %}
+{% set pageId = 'deallocation-choose-end-date-option-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l">{{ allocateJourney.activity.name }}</span>
+
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukRadios({
+                    classes: "govuk-radios",
+                    name: "chooseEndDateOption",
+                    fieldset: {
+                        legend: {
+                            text: 'Do you want to change or remove the end date of ' + allocateJourney.inmate.prisonerName | possessive + ' allocation?',
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--xl"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "change",
+                            text: "Change the date",
+                            checked: chooseEndDateOption == "change"
+                        },
+                        {
+                            value: "remove",
+                            text: "Remove the date, they will stay on the activity",
+                            checked: chooseEndDateOption == "remove"
+                        }
+                    ],
+                    errorMessage: validationErrors | findError('chooseEndDateOption')
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Continue"
+                    }) }}
+                    <a class="govuk-link" href="cancel">Cancel</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -10,6 +10,7 @@
         "scheduleDescription": "Entry level Maths 1",
         "scheduleId": 1,
         "payBand": "A",
+        "prisonPayBand": { "id": 1 },
         "isUnemployment": false,
         "startDate": "2022-10-10",
         "endDate": null,
@@ -37,14 +38,26 @@
         "scheduleId": 2,
         "activityId": 2,
         "payBand": "A",
+        "prisonPayBand": { "id": 12 },
         "isUnemployment": false,
         "startDate": "2022-10-10",
-        "endDate": null,
+        "endDate": "2022-10-30",
         "allocatedTime": "2022-10-10T09:30:00",
-        "allocatedBy": "MR BLOGS",
+        "allocatedBy": "USER1",
         "deallocatedTime": null,
         "deallocatedBy": null,
-        "deallocatedReason": null
+        "deallocatedReason": null,
+        "exclusions": [],
+        "plannedDeallocation": {
+          "id": 11,
+          "plannedDate": "2022-10-30",
+          "plannedBy": "DHOUSTON_GEN",
+          "plannedReason": {
+            "code": "OTHER",
+            "description": "Other"
+          },
+          "plannedAt": "2022-10-25T12:07:54.761622"
+        }
       }
     ]
   }

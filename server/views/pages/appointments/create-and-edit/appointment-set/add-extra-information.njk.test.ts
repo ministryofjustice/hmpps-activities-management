@@ -86,7 +86,7 @@ describe('Views - Create Appointment Set - Add Extra Information - with feature 
 
     $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toEqual("Add extra information to John Smith's movement slip (optional)")
+    expect($('h1').text()).toEqual("Add extra information to John Smith's appointment (optional)")
     expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
       "This could include details about who will be attending, or other relevant appointment information. This won't appear on movement slips or the printed unlock list. Unlock lists will just show 'Extra information'. Staff can view fill details in the service.",
     )

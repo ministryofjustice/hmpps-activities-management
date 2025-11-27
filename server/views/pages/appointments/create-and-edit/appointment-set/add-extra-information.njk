@@ -15,8 +15,8 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ appointmentTypeCaption(session) }}
-                <h1 class="govuk-heading-l"><label for="extraInformation">Add extra information to {{ prisoner.name | toTitleCase }}'s movement slip (optional)</label></h1>
                 {% if not prisonerExtraInformationEnabled %}
+                  <h1 class="govuk-heading-l"><label for="extraInformation">Add extra information to {{ prisoner.name | toTitleCase }}'s movement slip (optional)</label></h1>
                   <p class="govuk-body" data-qa="first-paragraph">
                     For example, 'You need to bring all your documents about your case to this meeting with your solicitor.'
                   </p>
@@ -36,6 +36,7 @@
                     </div>
                   </div>
                 {% else %}
+                  <h1 class="govuk-heading-l"><label for="extraInformation">Add extra information to {{ prisoner.name | toTitleCase }}'s appointment (optional)</label></h1>
                   <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="4000">
                     <div class="govuk-form-group">
                       {% set extraInformationHtml %}
