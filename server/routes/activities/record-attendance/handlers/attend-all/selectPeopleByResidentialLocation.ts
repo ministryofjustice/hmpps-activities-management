@@ -201,6 +201,8 @@ export default class SelectPeopleByResidentialLocationRoutes {
       return result
     }, [])
 
+    res.locals.recordAttendanceJourney = req.journeyData.recordAttendanceJourney
+
     return res.render('pages/activities/record-attendance/attend-all/select-people-by-residential-location', {
       attendanceRows: prisonersWithActivities,
       location,
