@@ -2,8 +2,13 @@ import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsEnum, ValidateIf } from 'class-validator'
 import { isPast, isToday, startOfToday } from 'date-fns'
-import { DeallocateTodayOption } from '../journey'
-import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import { AllocateToActivityJourney, DeallocateTodayOption } from '../journey'
+import {
+  formatIsoDate,
+  isoDateToDatePickerDate,
+  parseDatePickerDate,
+  parseIsoDate,
+} from '../../../../utils/datePickerUtils'
 import { parseDate } from '../../../../utils/utils'
 import Validator from '../../../../validators/validator'
 
@@ -16,6 +21,13 @@ export class DeallocateToday {
   @ValidateIf(o => o.deallocateTodayOption === 'FUTURE_DATE')
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(date => date >= startOfToday(), { message: "Enter a date on or after today's date" })
+  @Validator((date, { allocateJourney }) => date >= parseIsoDate(allocateJourney.latestAllocationStartDate), {
+    message: args => {
+      const { allocateJourney } = args.object as { allocateJourney: AllocateToActivityJourney }
+      const { latestAllocationStartDate } = allocateJourney
+      return `Enter a date on or after the allocation start date, ${isoDateToDatePickerDate(latestAllocationStartDate)}`
+    },
+  })
   endDate: Date
 }
 
