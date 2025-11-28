@@ -4,7 +4,7 @@ import StartJourneyRoutes from './handlers/startJourney'
 import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import ScheduleRoutes from './handlers/schedule'
-import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
+import ExtraInformationRoutes, { ExtraInformation, StaffPrisonerExtraInformation } from './handlers/extraInformation'
 import ApplyToRoutes, { ApplyTo } from './handlers/applyTo'
 import ConfirmEditRoutes, { ConfirmEdit } from './handlers/confirmEdit'
 import HowToAddPrisoners, { HowToAddPrisonersForm } from './handlers/howToAddPrisoners'
@@ -26,6 +26,7 @@ import AppointeeAttendeeService from '../../../services/appointeeAttendeeService
 import UncancelRoutes from './handlers/uncancel'
 import ReviewNonAssociationRoutes from './handlers/reviewNonAssociations'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
+import config from '../../../config'
 
 export default function Edit({
   prisonService,
@@ -107,7 +108,13 @@ export default function Edit({
   get('/schedule/:prisonNumber/remove', scheduleRoutes.REMOVE, true)
   get('/schedule/change', scheduleRoutes.CHANGE)
   get('/extra-information', extraInformationRoutes.GET, true)
-  post('/extra-information', extraInformationRoutes.EDIT, ExtraInformation)
+
+  if (config.prisonerExtraInformationEnabled) {
+    post('/extra-information', extraInformationRoutes.EDIT, StaffPrisonerExtraInformation)
+  } else {
+    post('/extra-information', extraInformationRoutes.EDIT, ExtraInformation)
+  }
+
   get('/:property/apply-to', applyToRoutes.GET, true)
   post('/:property/apply-to', applyToRoutes.POST, ApplyTo)
 

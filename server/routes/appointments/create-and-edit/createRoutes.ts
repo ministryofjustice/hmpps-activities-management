@@ -9,10 +9,11 @@ import LocationRoutes, { Location } from './handlers/location'
 import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import RepeatRoutes, { Repeat } from './handlers/repeat'
 import RepeatFrequencyAndCountRoutes, { RepeatFrequencyAndCount } from './handlers/repeatFrequencyAndCount'
-import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
+import ExtraInformationRoutes, { ExtraInformation, StaffPrisonerExtraInformation } from './handlers/extraInformation'
 import AppointmentSetExtraInformationRoutes from './handlers/appointment-set/appointmentSetExtraInformation'
 import AppointmentSetAddExtraInformationRoutes, {
   AppointmentSetAppointmentExtraInformation,
+  AppointmentSetStaffPrisonerExtraInformation,
 } from './handlers/appointment-set/appointmentSetAddExtraInformation'
 import CheckAnswersRoutes from './handlers/checkAnswers'
 import ConfirmationRoutes from './handlers/confirmation'
@@ -38,6 +39,7 @@ import fetchAppointmentSeries from '../../../middleware/appointments/fetchAppoin
 import AppointeeAttendeeService from '../../../services/appointeeAttendeeService'
 import ConfirmNonAssociationRoutes from './handlers/confirmNonAssociations'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
+import config from '../../../config'
 
 export default function Create({
   prisonService,
@@ -125,12 +127,22 @@ export default function Create({
   get('/appointment-set-extra-information', appointmentSetExtraInformationRoutes.GET, true)
   post('/appointment-set-extra-information', appointmentSetExtraInformationRoutes.POST)
   get('/appointment-set-extra-information/:prisonerNumber', appointmentSetAddExtraInformationRoutes.GET, true)
-  post(
-    '/appointment-set-extra-information/:prisonerNumber',
-    appointmentSetAddExtraInformationRoutes.POST,
-    AppointmentSetAppointmentExtraInformation,
-  )
-  post('/extra-information', extraInformationRoutes.CREATE, ExtraInformation)
+  if (config.prisonerExtraInformationEnabled) {
+    post(
+      '/appointment-set-extra-information/:prisonerNumber',
+      appointmentSetAddExtraInformationRoutes.POST,
+      AppointmentSetStaffPrisonerExtraInformation,
+    )
+    post('/extra-information', extraInformationRoutes.CREATE, StaffPrisonerExtraInformation)
+  } else {
+    post(
+      '/appointment-set-extra-information/:prisonerNumber',
+      appointmentSetAddExtraInformationRoutes.POST,
+      AppointmentSetAppointmentExtraInformation,
+    )
+    post('/extra-information', extraInformationRoutes.CREATE, ExtraInformation)
+  }
+
   get('/check-answers', checkAnswersRoutes.GET, true)
   post('/check-answers', checkAnswersRoutes.POST)
   router.get(

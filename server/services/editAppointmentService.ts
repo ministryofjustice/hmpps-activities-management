@@ -135,6 +135,7 @@ export default class EditAppointmentService {
 
     if (hasAppointmentCommentChanged(appointmentJourney, editAppointmentJourney)) {
       request.extraInformation = editAppointmentJourney.extraInformation
+      request.prisonerExtraInformation = editAppointmentJourney.prisonerExtraInformation
     }
 
     if (editAppointmentJourney.addPrisoners?.length > 0) {

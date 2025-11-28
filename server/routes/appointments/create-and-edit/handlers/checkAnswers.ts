@@ -60,6 +60,7 @@ export default class CheckAnswersRoutes {
       startTime: plainToInstance(SimpleTime, appointmentJourney.startTime).toIsoString(),
       endTime: plainToInstance(SimpleTime, appointmentJourney.endTime).toIsoString(),
       extraInformation: appointmentJourney.extraInformation,
+      prisonerExtraInformation: appointmentJourney.prisonerExtraInformation,
       originalAppointmentId: appointmentJourney.originalAppointmentId,
     } as AppointmentSeriesCreateRequest
 
@@ -91,6 +92,7 @@ export default class CheckAnswersRoutes {
         startTime: plainToInstance(SimpleTime, appointment.startTime).toIsoString(),
         endTime: plainToInstance(SimpleTime, appointment.endTime).toIsoString(),
         extraInformation: appointment.extraInformation,
+        prisonerExtraInformation: appointment.prisonerExtraInformation,
       })),
     } as AppointmentSetCreateRequest
   }

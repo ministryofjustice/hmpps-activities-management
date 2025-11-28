@@ -114,6 +114,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
           },
         },
       ],
+      extraInformation: 'extra information',
+      prisonerExtraInformation: 'prisoner extra information',
     } as AppointmentDetails
   })
 
@@ -396,7 +398,8 @@ describe('Route Handlers - Create Appointment - Start', () => {
         code: 'CHAP',
         description: 'Chaplaincy',
       },
-      extraInformation: undefined,
+      extraInformation: 'extra information',
+      prisonerExtraInformation: 'prisoner extra information',
       tierCode: EventTier.TIER_2,
       organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
       location: {

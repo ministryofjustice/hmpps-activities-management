@@ -14,6 +14,7 @@ import { AppointmentFrequency } from '../../../../@types/appointments'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import EventTier, { eventTierDescriptions } from '../../../../enum/eventTiers'
 import EventOrganiser, { organiserDescriptions } from '../../../../enum/eventOrganisers'
+import config from '../../../../config'
 
 let $: CheerioAPI
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/check-answers.njk')
@@ -38,7 +39,9 @@ const getNumberOfAppointmentsValueElement = () => getSchedulingInformationValueE
 const getPrisonerListValueElement = (qaAttr: string, index: number) =>
   $(getPrisonerDetailsValueElement('Name of attendee').find(`[data-qa="${qaAttr}"]`).get(index))
 
-describe('Views - Create Appointment - Check Answers', () => {
+describe('Views - Create Appointment - Check Answers - with extra information toggle off', () => {
+  config.prisonerExtraInformationEnabled = false
+
   let compiledTemplate: Template
   const tomorrow = addDays(new Date(), 1)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,6 +78,7 @@ describe('Views - Create Appointment - Check Answers', () => {
           },
           tierCode: EventTier.TIER_2,
           organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
+          extraInformation: 'Some extra information',
         } as AppointmentJourney,
       },
     }
@@ -151,6 +155,7 @@ describe('Views - Create Appointment - Check Answers', () => {
 
     expect($('[data-qa=change-repeat]').attr('href')).toEqual('repeat?preserveHistory=true')
     expect($('[data-qa=change-extra-information]').attr('href')).toEqual('extra-information?preserveHistory=true')
+    expect($('span[data-qa=extra-information]').text().trim()).toEqual('Some extra information')
   })
 
   it('should not display repeats and extra information change links for a retrospective appointment', () => {
@@ -161,6 +166,169 @@ describe('Views - Create Appointment - Check Answers', () => {
 
     expect($('[data-qa=change-repeat]').attr('href')).toBeUndefined()
     expect($('[data-qa=change-extra-information]').attr('href')).toBeUndefined()
+    expect($('span[data-qa=extra-information]').text().trim()).toEqual('Some extra information')
+  })
+
+  describe('Group Appointment', () => {
+    beforeEach(() => {
+      viewContext.session.appointmentJourney.type = AppointmentType.GROUP
+      viewContext.session.appointmentJourney.prisoners = [
+        {
+          name: 'Lee Jacobson',
+          firstName: 'Lee',
+          lastName: 'Jacobson',
+          number: 'A1351DZ',
+          cellLocation: '1-3-004',
+        },
+        {
+          name: 'David Winchurch',
+          firstName: 'David',
+          lastName: 'Winchurch',
+          number: 'A1350DZ',
+          cellLocation: '2-2-024',
+        },
+      ]
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+    })
+
+    it('should display prisoners details', () => {
+      expect(getPrisonerListValueElement('prisoner-name', 0).text().trim()).toEqual('Jacobson, Lee')
+      expect(getPrisonerListValueElement('prisoner-name', 1).text().trim()).toEqual('Winchurch, David')
+    })
+  })
+})
+
+describe('Views - Create Appointment - Check Answers - with extra information toggle on', () => {
+  config.prisonerExtraInformationEnabled = true
+
+  let compiledTemplate: Template
+  const tomorrow = addDays(new Date(), 1)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let viewContext: any = {}
+
+  const njkEnv = registerNunjucks()
+
+  beforeEach(() => {
+    compiledTemplate = compile(view.toString(), njkEnv)
+    viewContext = {
+      tier: eventTierDescriptions[EventTier.TIER_2],
+      organiser: organiserDescriptions[EventOrganiser.EXTERNAL_PROVIDER],
+      session: {
+        appointmentJourney: {
+          mode: AppointmentJourneyMode.CREATE,
+          type: AppointmentType.GROUP,
+          prisoners: [
+            {
+              name: 'Lee Jacobson',
+              firstName: 'Lee',
+              lastName: 'Jacobson',
+              number: 'A1351DZ',
+              cellLocation: '1-3-004',
+            },
+          ],
+          startDate: formatIsoDate(tomorrow),
+          startTime: {
+            hour: 9,
+            minute: 30,
+          },
+          endTime: {
+            hour: 10,
+            minute: 0,
+          },
+          tierCode: EventTier.TIER_2,
+          organiserCode: EventOrganiser.EXTERNAL_PROVIDER,
+          extraInformation: 'Some extra information',
+          prisonerExtraInformation: 'Some prisoner extra information',
+        } as AppointmentJourney,
+      },
+    }
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+  })
+
+  it('should display appointment name', () => {
+    viewContext.session.appointmentJourney.appointmentName = 'Bible studies (Chaplaincy)'
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getAppointmentDetailsValueElement('Appointment name').text().trim()).toBe('Bible studies (Chaplaincy)')
+  })
+
+  it('should display location as in cell', () => {
+    viewContext.session.appointmentJourney.inCell = true
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getSchedulingInformationValueElement('Location').text().trim()).toBe('In cell')
+  })
+
+  it('should display location as internal location', () => {
+    viewContext.session.appointmentJourney.location = { id: 123, description: 'Wing A' }
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getSchedulingInformationValueElement('Location').text().trim()).toBe('Wing A')
+  })
+
+  it('should display appointment tier & organiser information', () => {
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getAppointmentDetailsValueElement('Tier').text().trim()).toBe('Tier 2')
+    expect(getAppointmentDetailsValueElement('Host').text().trim()).toBe('An external provider')
+  })
+
+  it('should not display repeat frequency or number of appointments when repeat = NO', () => {
+    viewContext.session.appointmentJourney.repeat = YesNo.NO
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getFrequencyValueElement().length).toBe(0)
+    expect(getNumberOfAppointmentsValueElement().length).toBe(0)
+  })
+
+  it.each([
+    { frequency: AppointmentFrequency.WEEKDAY, expectedText: 'Every weekday (Monday to Friday)' },
+    { frequency: AppointmentFrequency.DAILY, expectedText: 'Daily (includes weekends)' },
+    { frequency: AppointmentFrequency.WEEKLY, expectedText: 'Weekly' },
+    { frequency: AppointmentFrequency.FORTNIGHTLY, expectedText: 'Fortnightly' },
+    { frequency: AppointmentFrequency.MONTHLY, expectedText: 'Monthly' },
+  ])('should display frequency $frequency as $expectedText when repeat = YES', ({ frequency, expectedText }) => {
+    viewContext.session.appointmentJourney.repeat = YesNo.YES
+    viewContext.session.appointmentJourney.frequency = frequency
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getFrequencyValueElement().text().trim()).toEqual(expectedText)
+  })
+
+  it('should display repeat number of appointments when repeat = YES', () => {
+    viewContext.session.appointmentJourney.repeat = YesNo.YES
+    viewContext.session.appointmentJourney.numberOfAppointments = 6
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect(getNumberOfAppointmentsValueElement().text().trim()).toEqual('6')
+  })
+
+  it('should display repeats and extra information change links for an appointment in the future', () => {
+    viewContext.session.appointmentJourney.retrospective = YesNo.NO
+    viewContext.session.appointmentJourney.repeat = YesNo.NO
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=change-repeat]').attr('href')).toEqual('repeat?preserveHistory=true')
+    expect($('[data-qa=change-extra-information]').attr('href')).toEqual('extra-information?preserveHistory=true')
+    expect($('span[data-qa=staff-notes]').text().trim()).toEqual('Some extra information')
+    expect($('span[data-qa=prisoner-notes]').text().trim()).toEqual('Some prisoner extra information')
+  })
+
+  it('should not display repeats and extra information change links for a retrospective appointment', () => {
+    viewContext.session.appointmentJourney.retrospective = YesNo.YES
+    viewContext.session.appointmentJourney.repeat = YesNo.NO
+
+    $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('[data-qa=change-repeat]').attr('href')).toBeUndefined()
+    expect($('[data-qa=change-extra-information]').attr('href')).toBeUndefined()
+    expect($('span[data-qa=staff-notes]').text().trim()).toEqual('Some extra information')
+    expect($('span[data-qa=prisoner-notes]').text().trim()).toEqual('Some prisoner extra information')
   })
 
   describe('Group Appointment', () => {
