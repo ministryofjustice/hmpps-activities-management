@@ -10,7 +10,7 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-l">{{ allocateJourney.activity.name }}</span>
+            <span class="govuk-caption-xl">{{ allocateJourney.activity.name }}</span>
 
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -22,7 +22,7 @@
                         legend: {
                             text: 'Do you want to change or remove the end date of ' + allocateJourney.inmate.prisonerName | possessive + ' allocation?',
                             isPageHeading: true,
-                            classes: "govuk-fieldset__legend--xl"
+                            classes: "govuk-fieldset__legend--l"
                         }
                     },
                     items: [
