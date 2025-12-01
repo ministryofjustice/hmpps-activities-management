@@ -262,5 +262,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addFilter('isoDateToTimePicker', isoDateToTimePicker)
   njkEnv.addGlobal('exampleDatePickerDate', () => `29/9/${formatDate(addYears(new Date(), 1), 'yyyy')}`)
 
+  njkEnv.addGlobal('prisonerExtraInformationEnabled', config.prisonerExtraInformationEnabled)
+
   return njkEnv
 }

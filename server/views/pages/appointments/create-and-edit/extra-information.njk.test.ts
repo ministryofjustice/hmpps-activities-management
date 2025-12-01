@@ -10,10 +10,13 @@ import {
 } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
 import { EditAppointmentJourney } from '../../../../routes/appointments/create-and-edit/editAppointmentJourney'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
+import config from '../../../../config'
 
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/extra-information.njk')
 
 describe('Views - Appointments Management - Extra Information', () => {
+  config.prisonerExtraInformationEnabled = false
+
   const weekTomorrow = addDays(new Date(), 8)
   let compiledTemplate: Template
   let viewContext = {
