@@ -10,4 +10,6 @@ export default class PlannedEventsPage extends AbstractEventsPage {
   selectAllCategories = () => cy.get('a[data-checkbox-name="activityCategoriesFilters"]')
 
   table = (): Cypress.Chainable => cy.get('#unlock-list-table')
+
+  linkToAttendance = () => cy.get('a').contains('Record activity attendance for people on')
 }
