@@ -12,4 +12,11 @@ export default class PlannedEventsPage extends AbstractEventsPage {
   table = (): Cypress.Chainable => cy.get('#unlock-list-table')
 
   linkToAttendance = () => cy.get('a').contains('Record activity attendance for people on')
+
+  appointmentLinkIsPresent = (identifier: string) =>
+    cy.get(`a[href="/appointments/${identifier}?preserveHistory=true"]`).should('exist')
+
+  extraInfoTagIsPresent = (identifier: string) => cy.get(`[data-qa="extra-info-tag-${identifier}"]`).should('exist')
+
+  extraInfoTagIsAbsent = (identifier: string) => cy.get(`[data-qa="extra-info-tag-${identifier}"]`).should('not.exist')
 }
