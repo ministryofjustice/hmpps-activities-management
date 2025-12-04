@@ -136,6 +136,21 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
       ])
     })
 
+    it("fails if the date is before today's date", async () => {
+      const body = {
+        deallocateTodayOption: 'FUTURE_DATE',
+        endDate: parseDatePickerDate('05/08/2025'),
+        allocateJourney: {
+          latestAllocationStartDate: formatIsoDate(addDays(new Date(), 2)),
+        },
+      }
+
+      const requestObject = plainToInstance(DeallocateToday, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'endDate', error: "Enter a date on or after today's date" }])
+    })
+
     it('validation fails if a bad value is entered', async () => {
       const body = {
         endDate: 'a/1/2023',
