@@ -147,7 +147,7 @@ describe('Views - Appointments Management - Appointment Movement Slip with toggl
   )
 
   it.each([{ enabled: true }, { enabled: false }])(
-    'should not display extra information for appointment category VLPA - Video Link Parole Hearing',
+    'should only display extra information for appointment category VLPA - Video Link Parole Hearing when toggle enabled',
     async ({ enabled }) => {
       setupNunjucks(enabled)
 
@@ -155,12 +155,16 @@ describe('Views - Appointments Management - Appointment Movement Slip with toggl
 
       $ = cheerio.load(compiledTemplate.render(viewContext))
 
-      expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+      if (enabled) {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('Prisoner level extra information')
+      } else {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+      }
     },
   )
 
   it.each([{ enabled: true }, { enabled: false }])(
-    'should not display extra information for appointment category VLAP - Video Link Another Prison',
+    'should only display extra information for appointment category VLAP - Video Link Another Prison when toggle enabled',
     async ({ enabled }) => {
       setupNunjucks(enabled)
 
@@ -168,12 +172,16 @@ describe('Views - Appointments Management - Appointment Movement Slip with toggl
 
       $ = cheerio.load(compiledTemplate.render(viewContext))
 
-      expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+      if (enabled) {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('Prisoner level extra information')
+      } else {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+      }
     },
   )
 
   it.each([{ enabled: true }, { enabled: false }])(
-    'should not display extra information for appointment category VLOO - Video Link Official Other',
+    'should only display extra information for appointment category VLOO - Video Link Official Other when toggle enabled',
     async ({ enabled }) => {
       setupNunjucks(enabled)
 
@@ -181,12 +189,16 @@ describe('Views - Appointments Management - Appointment Movement Slip with toggl
 
       $ = cheerio.load(compiledTemplate.render(viewContext))
 
-      expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+      if (enabled) {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('Prisoner level extra information')
+      } else {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+      }
     },
   )
 
   it.each([{ enabled: true }, { enabled: false }])(
-    'should not display extra information for appointment category VLLA - Video Link Legal Appointment',
+    'should only display extra information for appointment category VLLA - Video Link Legal Appointment when toggle enabled',
     async ({ enabled }) => {
       setupNunjucks(enabled)
 
@@ -194,7 +206,11 @@ describe('Views - Appointments Management - Appointment Movement Slip with toggl
 
       $ = cheerio.load(compiledTemplate.render(viewContext))
 
-      expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+      if (enabled) {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('Prisoner level extra information')
+      } else {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+      }
     },
   )
 

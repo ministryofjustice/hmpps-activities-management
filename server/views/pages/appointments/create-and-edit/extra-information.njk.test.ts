@@ -11,10 +11,12 @@ import {
 import { EditAppointmentJourney } from '../../../../routes/appointments/create-and-edit/editAppointmentJourney'
 import { formatIsoDate } from '../../../../utils/datePickerUtils'
 import config from '../../../../config'
+import { AppointmentPrisonerDetails } from '../../../../routes/appointments/create-and-edit/appointmentPrisonerDetails'
 
 const view = fs.readFileSync('server/views/pages/appointments/create-and-edit/extra-information.njk')
 
-describe('Views - Appointments Management - Extra Information', () => {
+// TODO test can be removed when feature toggle is removed
+describe('Views - Appointments Management - Extra Information, with toggle off', () => {
   config.prisonerExtraInformationEnabled = false
 
   const weekTomorrow = addDays(new Date(), 8)
@@ -113,11 +115,16 @@ describe('Views - Appointments Management - Extra Information', () => {
     expect($('button').text().trim()).toEqual('Update extra information')
   })
 
-  it('create content - VLPA (Video Link - Parole Hearing)', () => {
+  it.each([
+    { code: 'VLPA', description: 'Video Link - Parole Hearing' },
+    { code: 'VLAP', description: 'Video Link - Another Prison' },
+    { code: 'VLLA', description: 'Video Link - Legal Appointment' },
+    { code: 'VLOO', description: 'Video Link - Official Other' },
+  ])('create content - $code - $description', ({ code, description }) => {
     viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
     viewContext.session.appointmentJourney.category = {
-      code: 'VLPA',
-      description: 'Video Link - Parole Hearing',
+      code,
+      description,
     }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
@@ -131,137 +138,185 @@ describe('Views - Appointments Management - Extra Information', () => {
     )
   })
 
-  it('create content - VLAP (Video Link - Another Prison)', () => {
+  it.each([
+    { code: 'VLPA', description: 'Video Link - Parole Hearing' },
+    { code: 'VLAP', description: 'Video Link - Another Prison' },
+    { code: 'VLLA', description: 'Video Link - Legal Appointment' },
+    { code: 'VLOO', description: 'Video Link - Official Other' },
+  ])('edit content - $code - $description', ({ code, description }) => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+
+    viewContext.session.appointmentJourney.category = {
+      code,
+      description,
+    }
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text()).toContain('Change the extra information (optional)')
+
+    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
+      'This information will not appear on movement slips for some video link appointments.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
+    )
+  })
+})
+
+describe('Views - Appointments Management - Extra Information, with toggle on', () => {
+  config.prisonerExtraInformationEnabled = true
+
+  const weekTomorrow = addDays(new Date(), 8)
+  let compiledTemplate: Template
+  let viewContext = {
+    session: {
+      appointmentJourney: {} as unknown as AppointmentJourney,
+    },
+    editAppointmentJourney: {} as unknown as EditAppointmentJourney,
+    backLinkHref: '',
+    isCtaAcceptAndSave: false,
+    prisoners: [] as AppointmentPrisonerDetails[],
+  }
+
+  const njkEnv = registerNunjucks()
+
+  beforeEach(() => {
+    compiledTemplate = compile(view.toString(), njkEnv)
+    viewContext = {
+      session: {
+        appointmentJourney: {
+          mode: AppointmentJourneyMode.CREATE,
+          type: AppointmentType.GROUP,
+          startDate: formatIsoDate(weekTomorrow),
+        },
+      },
+      editAppointmentJourney: {
+        numberOfAppointments: 3,
+        appointments: [
+          {
+            sequenceNumber: 1,
+            startDate: format(weekTomorrow, 'yyyy-MM-dd'),
+          },
+          {
+            sequenceNumber: 2,
+            startDate: format(addDays(weekTomorrow, 1), 'yyyy-MM-dd'),
+          },
+          {
+            sequenceNumber: 3,
+            startDate: format(addDays(weekTomorrow, 2), 'yyyy-MM-dd'),
+          },
+        ],
+        sequenceNumber: 2,
+      } as EditAppointmentJourney,
+      backLinkHref: 'repeat',
+      isCtaAcceptAndSave: false,
+      prisoners: [
+        {
+          name: 'Fred',
+          number: '123456',
+          prisonCode: 'MDI',
+          status: 'ACTIVE',
+          cellLocation: '',
+        },
+      ] as AppointmentPrisonerDetails[],
+    }
+  })
+
+  it('create content', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text().trim()).toContain(`Add extra information to Fred's appointment (optional)`)
+
+    expect($('[data-qa=first-paragraph]').text().trim()).toContain(
+      'Add information the prisoner needs to know about their appointment, like something they need to bring, or do beforehand. This will appear on movement slips and will be seen by the prisoner.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'Do not add anything that should not be seen by or shared with a prisoner.',
+    )
+  })
+
+  it('edit content', () => {
+    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('h1').text().trim()).toContain(`Change the extra information`)
+
+    expect($('[data-qa=first-paragraph]').text().trim()).toContain(
+      'Add information the prisoner needs to know about their appointment, like something they need to bring, or do beforehand. This will appear on movement slips and will be seen by the prisoner.',
+    )
+    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
+      'Do not add anything that should not be seen by or shared with a prisoner.',
+    )
+  })
+
+  it('call to action is continue when creating', () => {
+    viewContext.isCtaAcceptAndSave = false
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('button').text().trim()).toEqual('Continue')
+  })
+
+  it('call to action is confirm and save when editing', () => {
+    viewContext.isCtaAcceptAndSave = true
+
+    const $ = cheerio.load(compiledTemplate.render(viewContext))
+
+    expect($('button').text().trim()).toEqual('Update extra information')
+  })
+
+  // TODO test can be removed when feature toggle is removed
+  it.each([
+    { code: 'VLPA', description: 'Video Link - Parole Hearing' },
+    { code: 'VLAP', description: 'Video Link - Another Prison' },
+    { code: 'VLLA', description: 'Video Link - Legal Appointment' },
+    { code: 'VLOO', description: 'Video Link - Official Other' },
+  ])('create content - $code - $description', ({ code, description }) => {
     viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
     viewContext.session.appointmentJourney.category = {
-      code: 'VLAP',
-      description: 'Video Link - Another Prison',
+      code,
+      description,
     }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toContain('Add extra information (optional)')
-    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'This information will not appear on movement slips for some video link appointments.',
+    expect($('h1').text().trim()).toContain(`Add extra information to Fred's appointment (optional)`)
+
+    expect($('[data-qa=first-paragraph]').text().trim()).toContain(
+      'Add information the prisoner needs to know about their appointment, like something they need to bring, or do beforehand. This will appear on movement slips and will be seen by the prisoner.',
     )
     expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
-      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
+      'Do not add anything that should not be seen by or shared with a prisoner.',
     )
   })
 
-  it('create content - VLLA (Video Link - Legal Appointment)', () => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
-    viewContext.session.appointmentJourney.category = {
-      code: 'VLLA',
-      description: 'Video Link - Legal Appointment',
-    }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('h1').text()).toContain('Add extra information (optional)')
-    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'This information will not appear on movement slips for some video link appointments.',
-    )
-    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
-      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
-    )
-  })
-
-  it('create content - VLOO (Video Link - Official Other)', () => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.CREATE
-    viewContext.session.appointmentJourney.category = {
-      code: 'VLOO',
-      description: 'Video Link - Official Other',
-    }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('h1').text()).toContain('Add extra information (optional)')
-    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'This information will not appear on movement slips for some video link appointments.',
-    )
-    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
-      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
-    )
-  })
-
-  it('edit content - VLPA (Video Link - Parole Hearing)', () => {
+  // TODO test can be removed when feature toggle is removed
+  it.each([
+    { code: 'VLPA', description: 'Video Link - Parole Hearing' },
+    { code: 'VLAP', description: 'Video Link - Another Prison' },
+    { code: 'VLLA', description: 'Video Link - Legal Appointment' },
+    { code: 'VLOO', description: 'Video Link - Official Other' },
+  ])('edit content - $code - $description', ({ code, description }) => {
     viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
 
     viewContext.session.appointmentJourney.category = {
-      code: 'VLPA',
-      description: 'Video Link - Parole Hearing',
+      code,
+      description,
     }
 
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
-    expect($('h1').text()).toContain('Change the extra information (optional)')
+    expect($('h1').text().trim()).toContain(`Change the extra information`)
 
-    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'This information will not appear on movement slips for some video link appointments.',
+    expect($('[data-qa=first-paragraph]').text().trim()).toContain(
+      'Add information the prisoner needs to know about their appointment, like something they need to bring, or do beforehand. This will appear on movement slips and will be seen by the prisoner.',
     )
     expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
-      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
-    )
-  })
-
-  it('edit content - VLAP (Video Link - Another Prison)', () => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-
-    viewContext.session.appointmentJourney.category = {
-      code: 'VLAP',
-      description: 'Video Link - Another Prison',
-    }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('h1').text()).toContain('Change the extra information (optional)')
-
-    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'This information will not appear on movement slips for some video link appointments.',
-    )
-    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
-      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
-    )
-  })
-
-  it('edit content - VLLA (Video Link - Legal Appointment)', () => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-
-    viewContext.session.appointmentJourney.category = {
-      code: 'VLLA',
-      description: 'Video Link - Legal Appointment',
-    }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('h1').text()).toContain('Change the extra information (optional)')
-
-    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'This information will not appear on movement slips for some video link appointments.',
-    )
-    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
-      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
-    )
-  })
-
-  it('edit content - VLOO (Video Link - Official Other)', () => {
-    viewContext.session.appointmentJourney.mode = AppointmentJourneyMode.EDIT
-
-    viewContext.session.appointmentJourney.category = {
-      code: 'VLOO',
-      description: 'Video Link - Official Other',
-    }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('h1').text()).toContain('Change the extra information (optional)')
-
-    expect($('[data-qa=first-paragraph]').text().trim()).toEqual(
-      'This information will not appear on movement slips for some video link appointments.',
-    )
-    expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
-      'For confidentiality, the information itself is not shown on the printed unlock list. The list will say ‘Extra information’. Staff can check appointment details in this service to read it in full.',
+      'Do not add anything that should not be seen by or shared with a prisoner.',
     )
   })
 })
