@@ -122,7 +122,7 @@ context('Prisoner Allocations Page', () => {
     prisonerAllocationsPage.getPrisonerName('Aeticake Potta').should('be.visible')
     prisonerAllocationsPage.verifyMiniProfileDetails(expectedDetails)
     prisonerAllocationsPage.verifyMiniProfileLinks(linkLabels)
-    prisonerAllocationsPage.getLinkByText('Waitlist and applications').click()
+    prisonerAllocationsPage.getLinkByText('Waitlists and applications').click()
     prisonerAllocationsPage.rows('approved-applications').should('have.length', 1)
     prisonerAllocationsPage.checkTableCell('approved-applications', 0, 'English level 1')
     cy.get('#pendingApplications').contains('reviewed or are still pending')
