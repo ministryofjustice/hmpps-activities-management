@@ -21,6 +21,8 @@ import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary-different-locations.json'
 import ListActivitiesPage from '../../../pages/recordAttendance/attend-all/listActivitiesPage'
 import AttendanceListPage from '../../../pages/recordAttendance/attendanceList'
+import SelectPeriodPage from '../../../pages/recordAttendance/selectPeriod'
+import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
 
 // Some tests currently skipped as the attendance by activity and activity location options are hidden as per SAA-3870
 
@@ -328,5 +330,27 @@ context('Recording attendance for non-activity hub users', () => {
     attendanceListPage
       .notificationBody()
       .should('contain.text', "You've saved attendance details for Eeteljan Arianniver")
+  })
+  it('should go to the activities list page', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.fullListClick()
+    howToRecordAttendancePage.continue()
+
+    const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
+    selectPeriodPage.enterDate(new Date(today))
+    selectPeriodPage.selectAM()
+    selectPeriodPage.continue()
+
+    Page.verifyOnPage(ActivitiesPage)
+    // The rest of the journey is tested in recordAttendance_activityHubUsers.cy.ts
   })
 })
