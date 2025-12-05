@@ -83,7 +83,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full govuk-!-margin-bottom-5">
             <div class="govuk-!-margin-bottom-5">
-                <h2 class="govuk-heading-m">Activities {{ prisonerName }} is allocated to</h2>
+                <h2 class="govuk-heading-m">Allocations</h2>
                     {% if not allocationsData %}
                         <p class="govuk-body">{{ prisonerName }} is not allocated to any activities.</p>
                     {% elif allocationsData | length == suspendedAllocationRows | length %}
@@ -121,6 +121,10 @@
 
         {% if allocationsData | length != suspendedAllocationRows | length %}
             {{ govukTable({
+                attributes: {
+                    'data-module': 'moj-sortable-table',
+                    'data-table-fixed-rows': 'true'
+                },
                 idPrefix: 'allocations',
                 caption: "Current allocations",
                 captionClasses: "govuk-visually-hidden",
@@ -131,11 +135,11 @@
                         attributes: { "aria-sort": "ascending" }
                     },
                     {
-                        text: "Start date",
+                        text: "Allocation start date",
                         attributes: { "aria-sort": "none" }
                     },
                     {
-                        text: "End date",
+                        text: "Allocation end date",
                         attributes: { "aria-sort": "none" }
                     },
                     {
@@ -152,27 +156,33 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full govuk-!-margin-bottom-3">
                 {% if suspendedAllocationRows | length %}
-                    <h2 class="govuk-heading-m">Suspensions from activities</h2>
+                    <h2 class="govuk-heading-m">Suspended allocations</h2>
                 {% endif %}
             </div>
         </div>
 
         {% if suspendedAllocationRows | length %}
             {{ govukTable({
+                attributes: {
+                    'data-module': 'moj-sortable-table',
+                    'data-table-fixed-rows': 'true',
+                    "data-qa": 'suspended-allocations'
+                },
                 caption: "Activities " + prisonerName + " is suspended from",
                 captionClasses: "govuk-visually-hidden",
                 firstCellIsHeader: false,
-                attributes: { "data-qa": "suspended-allocations" },
                 head: [
                     {
-                    text: "Activity"
-                    },
-                    {
-                    text: "First day of suspension",
+                    text: "Activity",
                     attributes: { "aria-sort": "ascending" }
                     },
                     {
-                    text: "Last day of suspension"
+                    text: "First day of suspension",
+                    attributes: { "aria-sort": "none" }
+                    },
+                    {
+                    text: "Last day of suspension",
+                    attributes: { "aria-sort": "none" }
                     },
                     {
                     text: "Paid while suspended?"
