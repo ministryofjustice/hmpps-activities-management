@@ -1,10 +1,17 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { addDays } from 'date-fns'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
 import DeallocateTodayOptionRoutes, { DeallocateToday } from './deallocateTodayOptions'
 import { DeallocateTodayOption } from '../journey'
-import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
+import {
+  formatDatePickerDate,
+  formatIsoDate,
+  isoDateToDatePickerDate,
+  parseDatePickerDate,
+} from '../../../../utils/datePickerUtils'
+import { EndDate } from './endDate'
 
 describe('Route Handlers - Allocation - Deallocate Today option', () => {
   const handler = new DeallocateTodayOptionRoutes()
@@ -95,16 +102,66 @@ describe('Route Handlers - Allocation - Deallocate Today option', () => {
         { property: 'deallocateTodayOption', error: 'Select when you want this allocation to end' },
       ])
     })
+
+    it('validation fails if end date is not same or after latest allocation start date', async () => {
+      const endDate = formatDatePickerDate(addDays(new Date(), 1))
+
+      const request = {
+        endDate,
+        startDate: '2023-08-25',
+        allocationId: 1,
+        scheduleId: 1,
+        prisonerNumber: 'ABC123',
+        allocateJourney: {
+          latestAllocationStartDate: formatIsoDate(addDays(new Date(), 2)),
+          inmate: {
+            prisonerNumber: 'ABC123',
+          },
+          activity: {
+            scheduleId: 1,
+          },
+        },
+      }
+
+      const requestObject = plainToInstance(EndDate, request)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([
+        {
+          property: 'endDate',
+          error: `Enter a date on or after the allocation start date, ${isoDateToDatePickerDate(
+            request.allocateJourney.latestAllocationStartDate,
+          )}`,
+        },
+      ])
+    })
+
     it("fails if the date is before today's date", async () => {
       const body = {
         deallocateTodayOption: 'FUTURE_DATE',
         endDate: parseDatePickerDate('05/08/2025'),
+        allocateJourney: {
+          latestAllocationStartDate: formatIsoDate(addDays(new Date(), 2)),
+        },
       }
 
       const requestObject = plainToInstance(DeallocateToday, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([{ property: 'endDate', error: "Enter a date on or after today's date" }])
+    })
+
+    it('validation fails if a bad value is entered', async () => {
+      const body = {
+        endDate: 'a/1/2023',
+      }
+
+      const requestObject = plainToInstance(EndDate, body)
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
+
+      expect(errors).toEqual([{ property: 'endDate', error: 'Enter a valid end date' }])
     })
   })
 })
