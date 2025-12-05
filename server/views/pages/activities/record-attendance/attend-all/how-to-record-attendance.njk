@@ -27,17 +27,9 @@
                     errorMessage: validationErrors | findError('howToRecord'),
                     items: [
                         {
-                            value: "ACTIVITY",
-                            text: "By activity",
-                            checked: formResponses.howToRecord == 'ACTIVITY' or howToRecord == 'ACTIVITY'
-                        },
-                        {
-                            value: "ACTIVITY_LOCATION",
-                            text: "By activity location",
-                            checked: formResponses.howToRecord == 'ACTIVITY_LOCATION' or howToRecord == 'ACTIVITY_LOCATION',
-                            hint: {
-                              text: "Select to record attendance for activities that happen in the same place."
-                            }
+                            value: "FULL_LIST",
+                            text: "Select activities from the full list",
+                            checked: formResponses.howToRecord == 'FULL_LIST' or howToRecord == 'FULL_LIST'
                         },
                         {
                             value: "RESIDENTIAL_LOCATION",
@@ -61,3 +53,19 @@
         </div>
     </div>
 {% endblock %}
+
+{# Previous options available, might be required again in future:
+{
+    value: "ACTIVITY",
+    text: "By activity",
+    checked: formResponses.howToRecord == 'ACTIVITY' or howToRecord == 'ACTIVITY'
+},
+{
+    value: "ACTIVITY_LOCATION",
+    text: "By activity location",
+    checked: formResponses.howToRecord == 'ACTIVITY_LOCATION' or howToRecord == 'ACTIVITY_LOCATION',
+    hint: {
+        text: "Select to record attendance for activities that happen in the same place."
+    }
+},
+#}
