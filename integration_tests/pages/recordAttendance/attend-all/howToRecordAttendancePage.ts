@@ -5,9 +5,11 @@ export default class HowToRecordAttendancePage extends Page {
     super('how-to-record-attendance-page')
   }
 
-  radioActivityClick = (): Cypress.Chainable => cy.get('#howToRecord').click()
+  radioActivityClick = (): Cypress.Chainable => cy.get('#howToRecord').click() // would need changing if we reintroduced activity option
 
-  radioActivityLocationClick = (): Cypress.Chainable => cy.get('#howToRecord-2').click()
+  radioActivityLocationClick = (): Cypress.Chainable => cy.get('#howToRecord-2').click() // would need changing if we reintroduced activity location option
 
-  radioResidentialLocationClick = (): Cypress.Chainable => cy.get('howToRecord-3').click()
+  fullListClick = (): Cypress.Chainable => cy.get('#howToRecord').click()
+
+  radioResidentialLocationClick = (): Cypress.Chainable => cy.get('#howToRecord-2').click()
 }

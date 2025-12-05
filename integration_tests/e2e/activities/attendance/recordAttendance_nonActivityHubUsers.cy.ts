@@ -22,6 +22,8 @@ import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceS
 import ListActivitiesPage from '../../../pages/recordAttendance/attend-all/listActivitiesPage'
 import AttendanceListPage from '../../../pages/recordAttendance/attendanceList'
 
+// Some tests currently skipped as the attendance by activity and activity location options are hidden as per SAA-3870
+
 context('Recording attendance for non-activity hub users', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
   const getActivity1 = { ...getActivity }
@@ -70,7 +72,7 @@ context('Recording attendance for non-activity hub users', () => {
     cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendanceList)
   })
 
-  it('should record attendance by activity - no activities available', () => {
+  it.skip('should record attendance by activity - no activities available', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -99,7 +101,7 @@ context('Recording attendance for non-activity hub users', () => {
     selectPeopleToRecordAttendanceForPage.selectDifferentDetails()
     Page.verifyOnPage(ChooseDetailsToRecordAttendancePage)
   })
-  it('should record attendance by activity - 1 person - attended', () => {
+  it.skip('should record attendance by activity - 1 person - attended', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -153,7 +155,7 @@ context('Recording attendance for non-activity hub users', () => {
     selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Aborah, Cudmastarie Hallone', 'Attended', 'Unpaid')
     selectPeopleToRecordAttendanceForPage.checkSuccessBanner(`You've saved attendance details for Cudmastarie Aborah`)
   })
-  it('should record attendance by activity - 2 people - not attended', () => {
+  it.skip('should record attendance by activity - 2 people - not attended', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -208,7 +210,7 @@ context('Recording attendance for non-activity hub users', () => {
     selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Sick', 'Pay')
     selectPeopleToRecordAttendanceForPage.checkSuccessBanner(`You've saved attendance details for 2 attendees`)
   })
-  it('should record attendance by activity location - 2 people, attended', () => {
+  it.skip('should record attendance by activity location - 2 people, attended', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -273,7 +275,7 @@ context('Recording attendance for non-activity hub users', () => {
     attendanceListPage.notificationHeading().should('contain.text', 'Attendance recorded')
     attendanceListPage.notificationBody().should('contain.text', "You've saved attendance details for 2 attendees")
   })
-  it('should record attendance by activity location - 1 person did not attend', () => {
+  it.skip('should record attendance by activity location - 1 person did not attend', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 

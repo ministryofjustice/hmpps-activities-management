@@ -3,9 +3,10 @@ import { IsIn } from 'class-validator'
 import { Request, Response } from 'express'
 
 enum AttendanceRecordingMethod {
-  ACTIVITY,
-  ACTIVITY_LOCATION,
+  // ACTIVITY,
+  // ACTIVITY_LOCATION,
   RESIDENTIAL_LOCATION,
+  FULL_LIST,
 }
 
 export class HowToRecordAttendanceForm {
@@ -23,12 +24,15 @@ export default class HowToRecordAttendanceRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     switch (req.body.howToRecord) {
-      case 'ACTIVITY':
-        return res.redirect('choose-details-by-activity')
-      case 'ACTIVITY_LOCATION':
-        return res.redirect('choose-details-by-activity-location')
+      // Hidden as per ticket SAA-3870
+      // case 'ACTIVITY':
+      //   return res.redirect('choose-details-by-activity')
+      // case 'ACTIVITY_LOCATION':
+      //   return res.redirect('choose-details-by-activity-location')
       case 'RESIDENTIAL_LOCATION':
         return res.redirect('choose-details-by-residential-location')
+      case 'FULL_LIST':
+        return res.redirect('../select-period')
       default:
         return res.redirect('')
     }

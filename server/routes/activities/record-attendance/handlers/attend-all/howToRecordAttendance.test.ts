@@ -34,7 +34,7 @@ describe('Route Handlers - How to record attendance', () => {
   })
 
   describe('POST', () => {
-    it('should redirect for ACTIVITY selection', async () => {
+    it.skip('should redirect for ACTIVITY selection', async () => {
       req.body = { howToRecord: 'ACTIVITY' }
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`choose-details-by-activity`)
@@ -53,7 +53,7 @@ describe('Route Handlers - How to record attendance', () => {
 
     it('passes validation', async () => {
       const body = {
-        howToRecord: 'ACTIVITY',
+        howToRecord: 'RESIDENTIAL_LOCATION',
       }
 
       const requestObject = plainToInstance(HowToRecordAttendanceForm, body)
