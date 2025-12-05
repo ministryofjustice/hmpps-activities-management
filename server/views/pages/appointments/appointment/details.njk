@@ -269,10 +269,48 @@
                                 }
                             ]
                         } if editable
-                    }
+                    } if not prisonerExtraInformationEnabled
                 ],
                 attributes: { 'data-qa': 'appointment-details' }
             }) }}
+            {% if prisonerExtraInformationEnabled %}
+              {{ govukSummaryList({
+              card: {
+                title: {
+                  text: "Extra Information"
+                },
+                actions: {
+                  items: [
+                    {
+                      href: appointmentLink + "/edit/start/extra-information",
+                      text: "Change",
+                      visuallyHiddenText: "extra information",
+                      classes: "govuk-link--no-visited-state",
+                      attributes: { 'data-qa': 'change-extra-information' }
+                    }
+                  ]
+                } if editable
+              },
+              rows: [
+                {
+                  key: {
+                    text: "Notes for prison staff"
+                  },
+                  value: {
+                    html: '<span class="preserve-line-breaks">' + ((appointment.extraInformation or "None provided" ) | escape) + '</span>'
+                  }
+                },
+                {
+                  key: {
+                    text: "Notes for prisoner"
+                  },
+                  value: {
+                    html: '<span class="preserve-line-breaks">' + ((appointment.prisonerExtraInformation or "None provided" ) | escape) + '</span>'
+                  }
+                }
+              ]
+              }) }}
+            {% endif %}
         </div>
     </div>
 

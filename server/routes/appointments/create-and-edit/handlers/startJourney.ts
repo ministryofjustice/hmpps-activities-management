@@ -215,6 +215,7 @@ export default class StartJourneyRoutes {
       frequency: appointment.appointmentSeries?.schedule?.frequency as AppointmentFrequency,
       numberOfAppointments: appointment.appointmentSeries?.schedule?.numberOfAppointments,
       extraInformation: appointment.extraInformation,
+      prisonerExtraInformation: appointment.prisonerExtraInformation,
     }
 
     if (isValid(endTime)) {

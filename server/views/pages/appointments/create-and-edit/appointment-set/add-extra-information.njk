@@ -15,26 +15,77 @@
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ appointmentTypeCaption(session) }}
-                <h1 class="govuk-heading-l"><label for="extraInformation">Add extra information to {{ prisoner.name | toTitleCase }}'s movement slip (optional)</label></h1>
-
-                <p class="govuk-body" data-qa="first-paragraph">
+                {% if not prisonerExtraInformationEnabled %}
+                  <h1 class="govuk-heading-l"><label for="extraInformation">Add extra information to {{ prisoner.name | toTitleCase }}'s movement slip (optional)</label></h1>
+                  <p class="govuk-body" data-qa="first-paragraph">
                     For example, 'You need to bring all your documents about your case to this meeting with your solicitor.'
-                </p>
-                <p class="govuk-body" data-qa="second-paragraph">
+                  </p>
+                  <p class="govuk-body" data-qa="second-paragraph">
                     Do not add anything that should not be seen by or shared with a prisoner. For example, contact details of someone else at the appointment.
-                </p>
+                  </p>
 
-                <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="4000">
-                  <div class="govuk-form-group">
-                  {{ govukCharacterCount({
-                      id: "extraInformation",
-                      name: "extraInformation",
-                      errorMessage: validationErrors | findError("extraInformation"),
-                      value: formResponses.extraInformation or extraInformation,
-                      maxlength: "4000"
-                  }) }}
+                  <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="4000">
+                    <div class="govuk-form-group">
+                      {{ govukCharacterCount({
+                        id: "extraInformation",
+                        name: "extraInformation",
+                        errorMessage: validationErrors | findError("extraInformation"),
+                        value: formResponses.extraInformation or extraInformation,
+                        maxlength: "4000"
+                      }) }}
+                    </div>
                   </div>
-                </div>
+                {% else %}
+                  <h1 class="govuk-heading-l"><label for="extraInformation">Add extra information to {{ prisoner.name | toTitleCase }}'s appointment (optional)</label></h1>
+                  <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="4000">
+                    <div class="govuk-form-group">
+                      {% set extraInformationHtml %}
+                        <p class="govuk-body" data-qa="first-paragraph">
+                          This could include details about who will be attending, or other relevant appointment information. This won't appear on movement slips or the printed unlock list. Unlock lists will just show 'Extra information'. Staff can view fill details in the service.
+                        </p>
+                      {% endset %}
+
+                      {{ govukCharacterCount({
+                        id: "extraInformation",
+                        name: "extraInformation",
+                        errorMessage: validationErrors | findError("extraInformation"),
+                        value: formResponses.extraInformation or extraInformation,
+                        label: {
+                          text: "Notes for prison staff (optional)",
+                          classes: 'govuk-fieldset__legend--s'
+                        },
+                        hint: { html: extraInformationHtml },
+                        maxlength: "4000"
+                      }) }}
+                    </div>
+                  </div>
+
+                  <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="800">
+                    <div class="govuk-form-group">
+                      {% set prisonerExtraInformationHtml %}
+                        <p class="govuk-body" data-qa="second-paragraph">
+                          Add information the prisoner needs to know about their appointment, like something they need to, or do beforehand. This will appear on movement slips and will be seen by the prisoner.
+                        </p>
+                        <p class="govuk-body" data-qa="third-paragraph">
+                          Do not add anything that should not be seen by or shared with a prisoner.
+                        </p>
+                      {% endset %}
+
+                      {{ govukCharacterCount({
+                        id: "prisonerExtraInformation",
+                        name: "prisonerExtraInformation",
+                        errorMessage: validationErrors | findError("prisonerExtraInformation"),
+                        value: formResponses.prisonerExtraInformation or prisonerExtraInformation,
+                        label: {
+                          text: "Notes for prisoner (optional)",
+                          classes: 'govuk-fieldset__legend--s'
+                        },
+                        hint: { html: prisonerExtraInformationHtml },
+                        maxlength: "800"
+                      }) }}
+                    </div>
+                  </div>
+                {% endif %}
 
                 {{ govukButton({
                     text: "Continue",

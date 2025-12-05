@@ -49,6 +49,7 @@ export type AppointmentJourney = {
   frequency?: AppointmentFrequency
   numberOfAppointments?: number
   extraInformation?: string
+  prisonerExtraInformation?: string
   fromPrisonNumberProfile?: string
   retrospective?: YesNo
   originalAppointmentId?: number

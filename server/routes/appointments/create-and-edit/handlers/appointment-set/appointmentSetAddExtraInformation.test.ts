@@ -4,6 +4,7 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import AppointmentSetAddExtraInformationRoutes, {
   AppointmentSetAppointmentExtraInformation,
+  AppointmentSetStaffPrisonerExtraInformation,
 } from './appointmentSetAddExtraInformation'
 import { AppointmentSetJourney } from '../../appointmentSetJourney'
 
@@ -187,5 +188,51 @@ describe('Route Handlers - Create Appointment Set - Add Extra Information', () =
         ])
       }
     })
+  })
+})
+
+describe('Validation - staff and prisoner extra information', () => {
+  it.each([
+    { extraInformation: '', isValid: true },
+    { extraInformation: Array(4001).fill('a').join(''), isValid: false },
+    { extraInformation: Array(4000).fill('b').join(''), isValid: true },
+    { extraInformation: Array(3999).fill('c').join(''), isValid: true },
+  ])('should validate staff extra information character length', async ({ extraInformation, isValid }) => {
+    const body = { extraInformation, prisonerExtraInformation: '' }
+
+    const requestObject = plainToInstance(AppointmentSetStaffPrisonerExtraInformation, body)
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+    if (isValid) {
+      expect(errors).toHaveLength(0)
+    } else {
+      expect(errors).toEqual([
+        {
+          property: 'extraInformation',
+          error: 'You must enter notes for staff which has no more than 4,000 characters',
+        },
+      ])
+    }
+  })
+
+  it.each([
+    { prisonerExtraInformation: '', isValid: true },
+    { prisonerExtraInformation: Array(801).fill('a').join(''), isValid: false },
+    { prisonerExtraInformation: Array(800).fill('b').join(''), isValid: true },
+    { prisonerExtraInformation: Array(799).fill('c').join(''), isValid: true },
+  ])('should validate prisoner extra information character length', async ({ prisonerExtraInformation, isValid }) => {
+    const body = { extraInformation: '', prisonerExtraInformation }
+
+    const requestObject = plainToInstance(AppointmentSetStaffPrisonerExtraInformation, body)
+    const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+    if (isValid) {
+      expect(errors).toHaveLength(0)
+    } else {
+      expect(errors).toEqual([
+        {
+          property: 'prisonerExtraInformation',
+          error: 'You must enter notes for prisoner which has no more than 800 characters',
+        },
+      ])
+    }
   })
 })

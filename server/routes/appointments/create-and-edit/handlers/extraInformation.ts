@@ -4,11 +4,23 @@ import { MaxLength } from 'class-validator'
 import EditAppointmentService from '../../../../services/editAppointmentService'
 import { AppointmentJourneyMode } from '../appointmentJourney'
 import { isApplyToQuestionRequired } from '../../../../utils/editAppointmentUtils'
+import config from '../../../../config'
 
+// TODO - this ExtraInformation should be removed when the feature toggle code is removed
 export class ExtraInformation {
   @Expose()
   @MaxLength(4000, { message: 'You must enter extra information which has no more than 4,000 characters' })
   extraInformation: string
+}
+
+export class StaffPrisonerExtraInformation {
+  @Expose()
+  @MaxLength(4000, { message: 'You must enter notes for staff which has no more than 4,000 characters' })
+  extraInformation: string
+
+  @Expose()
+  @MaxLength(800, { message: 'You must enter notes for prisoner which has no more than 800 characters' })
+  prisonerExtraInformation: string
 }
 
 export default class ExtraInformationRoutes {
@@ -24,17 +36,25 @@ export default class ExtraInformationRoutes {
   }
 
   CREATE = async (req: Request, res: Response): Promise<void> => {
-    const { extraInformation } = req.body
+    const { extraInformation, prisonerExtraInformation } = req.body
 
     req.session.appointmentJourney.extraInformation = extraInformation
+
+    if (config.prisonerExtraInformationEnabled) {
+      req.session.appointmentJourney.prisonerExtraInformation = prisonerExtraInformation
+    }
 
     res.redirect(`check-answers`)
   }
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
-    const { extraInformation } = req.body
+    const { extraInformation, prisonerExtraInformation } = req.body
 
     req.journeyData.editAppointmentJourney.extraInformation = extraInformation
+
+    if (config.prisonerExtraInformationEnabled) {
+      req.journeyData.editAppointmentJourney.prisonerExtraInformation = prisonerExtraInformation
+    }
 
     await this.editAppointmentService.redirectOrEdit(req, res, 'extra-information')
   }

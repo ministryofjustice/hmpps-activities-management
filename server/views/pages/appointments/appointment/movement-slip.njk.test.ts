@@ -2,14 +2,18 @@ import * as cheerio from 'cheerio'
 import { compile, Template } from 'nunjucks'
 import fs from 'fs'
 import { addDays } from 'date-fns'
+import { CheerioAPI } from 'cheerio'
 import { registerNunjucks } from '../../../../nunjucks/nunjucksSetup'
 import { AppointmentDetails } from '../../../../@types/activitiesAPI/types'
 import { formatDate } from '../../../../utils/utils'
 import { AppointmentType } from '../../../../routes/appointments/create-and-edit/appointmentJourney'
+import config from '../../../../config'
 
 const view = fs.readFileSync('server/views/pages/appointments/appointment/movement-slip.njk')
 
-describe('Views - Appointments Management - Appointment Movement Slip', () => {
+let $: CheerioAPI
+
+describe('Views - Appointments Management - Appointment Movement Slip with toggle on/off', () => {
   let compiledTemplate: Template
   const viewContext = {
     user: {
@@ -21,8 +25,6 @@ describe('Views - Appointments Management - Appointment Movement Slip', () => {
     now: new Date(),
   }
   const tomorrow = addDays(new Date(), 1)
-
-  const njkEnv = registerNunjucks()
 
   beforeEach(() => {
     viewContext.appointment = {
@@ -57,6 +59,7 @@ describe('Views - Appointments Management - Appointment Movement Slip', () => {
       startTime: '13:00',
       endTime: '13:15',
       extraInformation: 'Appointment level extra information',
+      prisonerExtraInformation: 'Prisoner level extra information',
       isEdited: false,
       isCancelled: false,
       createdTime: '2023-02-17T10:22:04',
@@ -64,96 +67,162 @@ describe('Views - Appointments Management - Appointment Movement Slip', () => {
       updatedTime: null,
       updatedBy: null,
     } as AppointmentDetails
+  })
 
+  it.each([{ enabled: true }, { enabled: false }])(
+    'should display individual appointment details when internal location',
+    async ({ enabled }) => {
+      setupNunjucks(enabled)
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('.movement-slip-header').text().trim()).toEqual('Moorland (HMP & YOI) Movement authorisation slip')
+      expect($('[data-qa=prisoner-name-and-number]').text().trim()).toEqual('Test Prisoner, A1234BC')
+      expect($('[data-qa=cell-location]').text().trim()).toEqual('MDI-1-2-3')
+      expect($('[data-qa=appointment]').text().trim()).toEqual('Doctors appointment (Medical - Other)')
+      expect($('[data-qa=time]').text().trim()).toEqual(`13:00 to 13:15${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
+      expect($('[data-qa=location]').text().trim()).toEqual('HB1 Doctors')
+      checkExtraInformation(enabled)
+    },
+  )
+
+  it.each([{ enabled: true }, { enabled: false }])(
+    'should display individual appointment details when in cell',
+    async ({ enabled }) => {
+      setupNunjucks(enabled)
+
+      viewContext.appointment.internalLocation = null
+      viewContext.appointment.inCell = true
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('.movement-slip-header').text().trim()).toEqual('Moorland (HMP & YOI) Movement authorisation slip')
+      expect($('[data-qa=prisoner-name-and-number]').text().trim()).toEqual('Test Prisoner, A1234BC')
+      expect($('[data-qa=cell-location]').text().trim()).toEqual('MDI-1-2-3')
+      expect($('[data-qa=appointment]').text().trim()).toEqual('Doctors appointment (Medical - Other)')
+      expect($('[data-qa=time]').text().trim()).toEqual(`13:00 to 13:15${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
+      expect($('[data-qa=location]').text().trim()).toEqual('In cell')
+      checkExtraInformation(enabled)
+    },
+  )
+
+  it.each([{ enabled: true }, { enabled: false }])(
+    'should not display extra information when there is no extra information',
+    async ({ enabled }) => {
+      setupNunjucks(enabled)
+
+      viewContext.appointment.extraInformation = ''
+      viewContext.appointment.prisonerExtraInformation = ''
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      expect($('[data-qa=extra-information]').length).toBe(0)
+    },
+  )
+
+  it.each([{ enabled: true }, { enabled: false }])(
+    'should display extra information for appointment category VLB - Video Link Court Hearing',
+    async ({ enabled }) => {
+      setupNunjucks(enabled)
+
+      viewContext.appointment.category = { code: 'VLB', description: 'Video Link - Court Hearing' }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      checkExtraInformation(enabled)
+    },
+  )
+
+  it.each([{ enabled: true }, { enabled: false }])(
+    'should display extra information for appointment category VLPM - Video Link Probation Meeting',
+    async ({ enabled }) => {
+      setupNunjucks(enabled)
+
+      viewContext.appointment.category = { code: 'VLPM', description: 'Video Link - Probation Meeting' }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      checkExtraInformation(enabled)
+    },
+  )
+
+  it.each([{ enabled: true }, { enabled: false }])(
+    'should only display extra information for appointment category VLPA - Video Link Parole Hearing when toggle enabled',
+    async ({ enabled }) => {
+      setupNunjucks(enabled)
+
+      viewContext.appointment.category = { code: 'VLPA', description: 'Video Link - Parole Hearing' }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      if (enabled) {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('Prisoner level extra information')
+      } else {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+      }
+    },
+  )
+
+  it.each([{ enabled: true }, { enabled: false }])(
+    'should only display extra information for appointment category VLAP - Video Link Another Prison when toggle enabled',
+    async ({ enabled }) => {
+      setupNunjucks(enabled)
+
+      viewContext.appointment.category = { code: 'VLAP', description: 'Video Link - Another Prison' }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      if (enabled) {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('Prisoner level extra information')
+      } else {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+      }
+    },
+  )
+
+  it.each([{ enabled: true }, { enabled: false }])(
+    'should only display extra information for appointment category VLOO - Video Link Official Other when toggle enabled',
+    async ({ enabled }) => {
+      setupNunjucks(enabled)
+
+      viewContext.appointment.category = { code: 'VLOO', description: 'Video Link - Official Other' }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      if (enabled) {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('Prisoner level extra information')
+      } else {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+      }
+    },
+  )
+
+  it.each([{ enabled: true }, { enabled: false }])(
+    'should only display extra information for appointment category VLLA - Video Link Legal Appointment when toggle enabled',
+    async ({ enabled }) => {
+      setupNunjucks(enabled)
+
+      viewContext.appointment.category = { code: 'VLLA', description: 'Video Link - Legal Appointment' }
+
+      $ = cheerio.load(compiledTemplate.render(viewContext))
+
+      if (enabled) {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('Prisoner level extra information')
+      } else {
+        expect($('[data-qa=extra-information]').text().trim()).toEqual('')
+      }
+    },
+  )
+
+  function setupNunjucks(enabled: boolean) {
+    config.prisonerExtraInformationEnabled = enabled
+    const njkEnv = registerNunjucks()
     compiledTemplate = compile(view.toString(), njkEnv)
-  })
+  }
 
-  it('should display individual appointment details when internal location', () => {
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('.movement-slip-header').text().trim()).toEqual('Moorland (HMP & YOI) Movement authorisation slip')
-    expect($('[data-qa=prisoner-name-and-number]').text().trim()).toEqual('Test Prisoner, A1234BC')
-    expect($('[data-qa=cell-location]').text().trim()).toEqual('MDI-1-2-3')
-    expect($('[data-qa=appointment]').text().trim()).toEqual('Doctors appointment (Medical - Other)')
-    expect($('[data-qa=time]').text().trim()).toEqual(`13:00 to 13:15${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
-    expect($('[data-qa=location]').text().trim()).toEqual('HB1 Doctors')
-    expect($('[data-qa=extra-information]').text().trim()).toEqual('Appointment level extra information')
-  })
-
-  it('should display individual appointment details when in cell', () => {
-    viewContext.appointment.internalLocation = null
-    viewContext.appointment.inCell = true
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('.movement-slip-header').text().trim()).toEqual('Moorland (HMP & YOI) Movement authorisation slip')
-    expect($('[data-qa=prisoner-name-and-number]').text().trim()).toEqual('Test Prisoner, A1234BC')
-    expect($('[data-qa=cell-location]').text().trim()).toEqual('MDI-1-2-3')
-    expect($('[data-qa=appointment]').text().trim()).toEqual('Doctors appointment (Medical - Other)')
-    expect($('[data-qa=time]').text().trim()).toEqual(`13:00 to 13:15${formatDate(tomorrow, 'EEEE, d MMMM yyyy')}`)
-    expect($('[data-qa=location]').text().trim()).toEqual('In cell')
-    expect($('[data-qa=extra-information]').text().trim()).toEqual('Appointment level extra information')
-  })
-
-  it('should not display extra information when there is no extra information', () => {
-    viewContext.appointment.extraInformation = ''
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=extra-information]').length).toBe(0)
-  })
-
-  it('should display extra information for appointment category VLB - Video Link Court Hearing', () => {
-    viewContext.appointment.extraInformation = 'This should be shown on the movement slip'
-    viewContext.appointment.category = { code: 'VLB', description: 'Video Link - Court Hearing' }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=extra-information]').text().trim()).toEqual('This should be shown on the movement slip')
-  })
-
-  it('should display extra information for appointment category VLPM - Video Link Probation Meeting', () => {
-    viewContext.appointment.extraInformation = 'This should be shown on the movement slip'
-    viewContext.appointment.category = { code: 'VLPM', description: 'Video Link - Probation Meeting' }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=extra-information]').text().trim()).toEqual('This should be shown on the movement slip')
-  })
-
-  it('should not display extra information for appointment category VLPA - Video Link Parole Hearing', () => {
-    viewContext.appointment.extraInformation = 'This should not be shown on the movement slip'
-    viewContext.appointment.category = { code: 'VLPA', description: 'Video Link - Parole Hearing' }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=extra-information]').text().trim()).toEqual('')
-  })
-
-  it('should not display extra information for appointment category VLAP - Video Link Another Prison', () => {
-    viewContext.appointment.extraInformation = 'This should not be shown on the movement slip'
-    viewContext.appointment.category = { code: 'VLAP', description: 'Video Link - Another Prison' }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=extra-information]').text().trim()).toEqual('')
-  })
-
-  it('should not display extra information for appointment category VLOO - Video Link Official Other', () => {
-    viewContext.appointment.extraInformation = 'This should not be shown on the movement slip'
-    viewContext.appointment.category = { code: 'VLOO', description: 'Video Link - Official Other' }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=extra-information]').text().trim()).toEqual('')
-  })
-
-  it('should not display extra information for appointment category VLLA - Video Link Legal Appointment', () => {
-    viewContext.appointment.extraInformation = 'This should be shown on the movement slip'
-    viewContext.appointment.category = { code: 'VLLA', description: 'Video Link - Legal Appointment' }
-
-    const $ = cheerio.load(compiledTemplate.render(viewContext))
-
-    expect($('[data-qa=extra-information]').text().trim()).toEqual('')
-  })
+  const checkExtraInformation = (enabled: boolean) => {
+    expect($('[data-qa=extra-information]').text().trim()).toEqual(
+      enabled ? 'Prisoner level extra information' : 'Appointment level extra information',
+    )
+  }
 })
