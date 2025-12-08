@@ -481,6 +481,18 @@ describe('Route Handlers - Record Appointment Attendance', () => {
     })
   })
 
+  describe('GET_MULTIPLE', () => {
+    it('should redirect back if the appointmentId has been lost', async () => {
+      req.journeyData.recordAppointmentAttendanceJourney = {
+        appointmentIds: undefined,
+      }
+
+      await handler.GET_MULTIPLE(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('../select-date')
+    })
+  })
+
   describe('GET_SINGLE', () => {
     it('should update session and redirect', async () => {
       req.params = {

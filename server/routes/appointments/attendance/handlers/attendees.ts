@@ -21,6 +21,8 @@ export default class AttendeesRoutes {
     const { user } = res.locals
     const { searchTerm } = req.query
 
+    if (!appointmentIds) return res.redirect('../select-date')
+
     const appointments = await this.activitiesService.getAppointments(appointmentIds, user)
 
     const prisonerNumbers = _.uniq(
