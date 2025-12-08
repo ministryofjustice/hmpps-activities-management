@@ -12,5 +12,12 @@
     "prisonCode": "MDI",
     "code": "WORK_IND-WS2-WS2",
     "description": "Workshop 2"
+  },
+  {
+    "id": 3,
+    "dpsLocationId": "33333333-3333-3333-3333-333333333333",
+    "prisonCode": "MDI",
+    "code": "A_WING",
+    "description": "A Wing"
   }
 ]

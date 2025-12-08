@@ -91,8 +91,11 @@
                     </a>
                 </div>
                 <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Appointment', classes: 'govuk-tag--small' }) }}</div>
-                {% if event.comments %}
-                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow govuk-!-display-none-print' }) }}</div>
+
+                {% if prisonerExtraInformationEnabled and (event.comments or event.prisonerComments) %}
+                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow govuk-!-display-none-print', attributes: { 'data-qa': 'extra-info-tag-' + event.appointmentId } }) }}</div>
+                {% elseif event.comments %}
+                    <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ govukTag({ text: 'Extra information', classes: 'govuk-tag--small govuk-tag--yellow govuk-!-display-none-print', attributes: { 'data-qa': 'extra-info-tag-' + event.appointmentId } }) }}</div>
                 {% endif %}
             {% else %}
                 <div class='govuk-!-margin-top-1 govuk-!-margin-bottom-1'>{{ event.summary | trim }}</div>
@@ -155,7 +158,7 @@
                     checked: movementListJourney.cancelledEventsFilter == YesNo.NO
                 }
             ]
-        }) }}   
+        }) }}
 
         <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button">
             Apply filters
