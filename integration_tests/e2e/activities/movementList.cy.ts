@@ -7,6 +7,7 @@ import UnlockAndMovementIndexPage from '../../pages/unlockAndMovements/unlockAnd
 import ChooseDetailsPage from '../../pages/unlockAndMovements/movement/chooseDetails'
 import LocationsPage from '../../pages/unlockAndMovements/movement/locations'
 import getScheduledEventLocations from '../../fixtures/activitiesApi/getScheduledEventLocations.json'
+import getScheduledEventLocationsAWing from '../../fixtures/activitiesApi/getScheduledEventLocations-A-wing.json'
 import getInmateDetails from '../../fixtures/prisonerSearchApi/getInmateDetailsForMovementList.json'
 import getScheduledEvents from '../../fixtures/activitiesApi/getScheduleEvents-MDI-A1350DZ-A8644DY.json'
 import LocationEventsPage from '../../pages/unlockAndMovements/movement/locationEventsPage'
@@ -229,5 +230,37 @@ context('Create activity', () => {
         expect(data.get(11).innerText).to.contain('Woodworking')
         expect(data.get(11).innerText).to.contain('Not required')
       })
+  })
+
+  it('should show extra information tag for appointments with comments but not prisoner comments', () => {
+    cy.stubEndpoint(
+      'POST',
+      `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM`,
+      getScheduledEventLocationsAWing,
+    )
+
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.unlockAndMovementCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
+    manageActivitiesPage.createMovementListsCard().should('contain.text', 'Create movement lists')
+    manageActivitiesPage.createMovementListsCard().click()
+
+    const chooseMovementListDetailsPage = Page.verifyOnPage(ChooseDetailsPage)
+    chooseMovementListDetailsPage.selectToday()
+    chooseMovementListDetailsPage.selectAM()
+    chooseMovementListDetailsPage.continue()
+
+    const locationsPage = Page.verifyOnPage(LocationsPage)
+    locationsPage.selectLocation('A Wing').click()
+
+    const locationEventsPage = Page.verifyOnPage(LocationEventsPage)
+    locationEventsPage.appointmentLinkIsPresent('1')
+    locationEventsPage.extraInfoTagIsPresent('1')
+    locationEventsPage.appointmentLinkIsPresent('2')
+    locationEventsPage.extraInfoTagIsAbsent('2')
   })
 })
