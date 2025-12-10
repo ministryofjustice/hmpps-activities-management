@@ -139,7 +139,8 @@ context('Create group appointment - check answers change links', () => {
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
     checkAnswersPage.assertRepeat('No')
-    checkAnswersPage.assertExtraInformation('')
+    checkAnswersPage.assertStaffNotes('')
+    checkAnswersPage.assertPrisonerNotes('')
 
     // Change each answer
     checkAnswersPage.changePrisoners()
@@ -224,9 +225,11 @@ context('Create group appointment - check answers change links', () => {
 
     checkAnswersPage.changeExtraInformation()
     Page.verifyOnPage(ExtraInformationPage)
-    extraInformationPage.enterExtraInformation('Appointment extra information')
+    extraInformationPage.enterNotesForStaff('Notes for staff')
+    extraInformationPage.enterNotesForPrisoner('Notes for prisoner')
     extraInformationPage.continue()
-    checkAnswersPage.assertExtraInformation('Appointment extra information')
+    checkAnswersPage.assertStaffNotes('Notes for staff')
+    checkAnswersPage.assertPrisonerNotes('Notes for prisoner')
 
     checkAnswersPage.createAppointment()
 

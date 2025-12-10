@@ -5,8 +5,11 @@ export default class ExtraInformationPage extends Page {
     super('appointment-extra-information-page')
   }
 
-  enterExtraInformation = (extraInformation: string) =>
+  enterNotesForStaff = (extraInformation: string) =>
     this.getInputByName('extraInformation').clear().type(extraInformation)
+
+  enterNotesForPrisoner = (extraInformation: string) =>
+    this.getInputByName('prisonerExtraInformation').clear().type(extraInformation)
 
   // used by BVLS journeys only
   enterStaffNotes = (staffNotes: string) => this.getInputByName('notesForStaff').clear().type(staffNotes)

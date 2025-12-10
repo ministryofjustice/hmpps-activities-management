@@ -180,10 +180,10 @@ context('Edit appointment', () => {
     context('Extra information', () => {
       it('Should update the extra information of appointment', () => {
         let appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
-        appointmentDetailsPage.getChangeLink('Extra information').click()
+        appointmentDetailsPage.changeAppointmentDetailsLink().click()
 
         const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
-        extraInformationPage.enterExtraInformation('Updated appointment extra information')
+        extraInformationPage.enterNotesForStaff('Updated appointment extra information')
         extraInformationPage.getButton('Update extra information').click()
 
         appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
@@ -192,7 +192,7 @@ context('Edit appointment', () => {
 
       it('Returns to appointment details page if back link clicked', () => {
         const appointmentDetailsPage = Page.verifyOnPage(AppointmentDetailsPage)
-        appointmentDetailsPage.getChangeLink('Extra information').click()
+        appointmentDetailsPage.changeAppointmentDetailsLink().click()
 
         const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
         extraInformationPage.back()

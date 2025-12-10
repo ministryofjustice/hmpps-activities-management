@@ -195,6 +195,8 @@ context('Create group appointment', () => {
     schedulePage.continue()
 
     const extraInformationPage = Page.verifyOnPage(ExtraInformationPage)
+    extraInformationPage.enterNotesForStaff('Some staff notes')
+    extraInformationPage.enterNotesForPrisoner('Some prisoner notes')
     extraInformationPage.continue()
 
     const checkAnswersPage = Page.verifyOnPage(CheckAnswersPage)
@@ -209,6 +211,8 @@ context('Create group appointment', () => {
     checkAnswersPage.assertStartTime(14, 0)
     checkAnswersPage.assertEndTime(15, 30)
     checkAnswersPage.assertRepeat('No')
+    checkAnswersPage.assertStaffNotes('Some staff notes')
+    checkAnswersPage.assertPrisonerNotes('Some prisoner notes')
     checkAnswersPage.createAppointment()
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
