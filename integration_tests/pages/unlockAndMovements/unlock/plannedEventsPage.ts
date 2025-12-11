@@ -17,6 +17,4 @@ export default class PlannedEventsPage extends AbstractEventsPage {
     cy.get(`a[href="/appointments/${identifier}?preserveHistory=true"]`).should('exist')
 
   extraInfoTagIsPresent = (identifier: string) => cy.get(`[data-qa="extra-info-tag-${identifier}"]`).should('exist')
-
-  extraInfoTagIsAbsent = (identifier: string) => cy.get(`[data-qa="extra-info-tag-${identifier}"]`).should('not.exist')
 }

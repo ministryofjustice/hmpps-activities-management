@@ -366,7 +366,7 @@ context('User does not have activity hub role', () => {
     cy.url().should('contain', '/attend-all/select-people-by-residential-location')
   })
 
-  it('should show extra information tag for appointments with comments but not prisoner comments', () => {
+  it('should show extra information tag for appointments with comments', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -385,9 +385,11 @@ context('User does not have activity hub role', () => {
 
     const plannedEventsPage = Page.verifyOnPage(PlannedEventsPage)
 
+    // Prisoner notes
     plannedEventsPage.appointmentLinkIsPresent('38314')
-    plannedEventsPage.extraInfoTagIsAbsent('38314')
+    plannedEventsPage.extraInfoTagIsPresent('38314')
 
+    // Staff comments
     plannedEventsPage.appointmentLinkIsPresent('38315')
     plannedEventsPage.extraInfoTagIsPresent('38315')
   })

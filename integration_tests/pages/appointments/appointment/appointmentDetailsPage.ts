@@ -61,6 +61,8 @@ export default class AppointmentDetailsPage extends Page {
       .parent()
       .find(`.govuk-summary-list__actions a:contains(Change)`)
 
+  changeAppointmentDetailsLink = (): Cypress.Chainable => cy.get('[data-qa=change-extra-information]')
+
   copyAppointmentLink = (): Cypress.Chainable => cy.get('[data-qa=copy-appointment]')
 
   cancelAppointmentLink = (): Cypress.Chainable => cy.get('[data-qa=cancel-appointment]')
