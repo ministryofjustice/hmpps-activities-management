@@ -12,8 +12,6 @@ export default class CheckAnswersPage extends Page {
   assertScheduleDetail = (header: string, value: string) =>
     this.assertSummaryListValue('scheduling-information', header, value)
 
-  assertExtraDetail = (header: string, value: string) => this.assertSummaryListValue('extra-information', header, value)
-
   assertPrisonerSummary = (name: string, number: string, cellLocation: string) => {
     cy.get('[data-qa=prisoner-name]').contains(name)
     cy.get('[data-qa=prisoner-number]').contains(number)
@@ -51,8 +49,6 @@ export default class CheckAnswersPage extends Page {
 
   assertNumberOfAppointments = (option: string) => this.assertScheduleDetail('Number of appointments', option)
 
-  assertExtraInformation = (comment: string) => this.assertExtraDetail('Extra information', comment)
-
   changePrisoners = () => cy.get('[data-qa=change-prisoners]').click()
 
   changeName = () => cy.get('[data-qa=change-name]').click()
@@ -78,4 +74,10 @@ export default class CheckAnswersPage extends Page {
   changeExtraInformation = () => cy.get('[data-qa=change-extra-information]').click()
 
   createAppointment = () => cy.get('button').contains('Confirm').click()
+
+  assertStaffNotes = (notes: string) =>
+    cy.get('span[data-qa=staff-notes]').should($el => expect($el.text().trim()).to.equal(notes))
+
+  assertPrisonerNotes = (notes: string) =>
+    cy.get('span[data-qa=prisoner-notes]').should($el => expect($el.text().trim()).to.equal(notes))
 }
