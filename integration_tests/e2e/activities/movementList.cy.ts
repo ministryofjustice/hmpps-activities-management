@@ -232,7 +232,7 @@ context('Create activity', () => {
       })
   })
 
-  it('should show extra information tag for appointments with comments but not prisoner comments', () => {
+  it('should show extra information tag for appointments with comments', () => {
     cy.stubEndpoint(
       'POST',
       `/scheduled-events/prison/MDI/location-events\\?date=${today}&timeSlot=AM`,
@@ -258,9 +258,13 @@ context('Create activity', () => {
     locationsPage.selectLocation('A Wing').click()
 
     const locationEventsPage = Page.verifyOnPage(LocationEventsPage)
+
+    // Staff comments
     locationEventsPage.appointmentLinkIsPresent('1')
     locationEventsPage.extraInfoTagIsPresent('1')
+
+    // Prisoner comments
     locationEventsPage.appointmentLinkIsPresent('2')
-    locationEventsPage.extraInfoTagIsAbsent('2')
+    locationEventsPage.extraInfoTagIsPresent('2')
   })
 })
