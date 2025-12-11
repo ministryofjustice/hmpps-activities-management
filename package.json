@@ -21,7 +21,8 @@
     "int-test": "cypress run --config video=false",
     "int-test-ui": "cypress open --config watchForFileChanges=false",
     "clean": "rm -rf dist node_modules",
-    "rebuild": "npm run clean && npm i && npm run build"
+    "rebuild": "npm run clean && npm i && npm run build",
+    "setup": "npm ci && hmpps-npm-script-run-allowlist"
   },
   "engines": {
     "node": "^24",
@@ -80,6 +81,7 @@
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "^4.0.4",
     "@ministryofjustice/eslint-config-hmpps": "^1.0.1",
+    "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.3",
     "@tsconfig/node24": "^24.0.3",
     "@types/bunyan": "^1.8.11",
     "@types/bunyan-format": "^0.2.9",
