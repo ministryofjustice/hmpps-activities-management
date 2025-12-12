@@ -119,11 +119,14 @@ export default class DailySummaryRoutes {
     const totalNotRequired = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalPaidRest = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalClash = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalPaidSuspended = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalPaidOther = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnpaidSick = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnpaidSuspended = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalRefused = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnpaidRest = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalUnpaidNotRequired = { DAY: 0, AM: 0, PM: 0, ED: 0 }
+    const totalUnpaidCancelled = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnpaidOther = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnattendedActivities = { DAY: 0, AM: 0, PM: 0, ED: 0 }
     const totalUnattendedAllocated = { DAY: 0, AM: 0, PM: 0, ED: 0 }
@@ -185,6 +188,13 @@ export default class DailySummaryRoutes {
             totalClash.DAY += 1
             totalClash[attendance.timeSlot] += 1
           }
+          if (
+            attendance.attendanceReasonCode === AttendanceReason.SUSPENDED ||
+            attendance.attendanceReasonCode === AttendanceReason.AUTO_SUSPENDED
+          ) {
+            totalPaidSuspended.DAY += 1
+            totalPaidSuspended[attendance.timeSlot] += 1
+          }
           if (attendance.attendanceReasonCode === AttendanceReason.OTHER) {
             totalPaidOther.DAY += 1
             totalPaidOther[attendance.timeSlot] += 1
@@ -204,12 +214,20 @@ export default class DailySummaryRoutes {
             totalUnpaidRest.DAY += 1
             totalUnpaidRest[attendance.timeSlot] += 1
           }
+          if (attendance.attendanceReasonCode === AttendanceReason.NOT_REQUIRED) {
+            totalUnpaidNotRequired.DAY += 1
+            totalUnpaidNotRequired[attendance.timeSlot] += 1
+          }
           if (
             attendance.attendanceReasonCode === AttendanceReason.SUSPENDED ||
             attendance.attendanceReasonCode === AttendanceReason.AUTO_SUSPENDED
           ) {
             totalUnpaidSuspended.DAY += 1
             totalUnpaidSuspended[attendance.timeSlot] += 1
+          }
+          if (attendance.attendanceReasonCode === AttendanceReason.CANCELLED) {
+            totalUnpaidCancelled.DAY += 1
+            totalUnpaidCancelled[attendance.timeSlot] += 1
           }
           if (attendance.attendanceReasonCode === AttendanceReason.OTHER) {
             totalUnpaidOther.DAY += 1
@@ -246,11 +264,14 @@ export default class DailySummaryRoutes {
       totalNotRequired,
       totalPaidRest,
       totalClash,
+      totalPaidSuspended,
       totalPaidOther,
       totalUnpaidSick,
       totalUnpaidSuspended,
       totalRefused,
       totalUnpaidRest,
+      totalUnpaidNotRequired,
+      totalUnpaidCancelled,
       totalUnpaidOther,
       totalUnattendedActivities,
       totalUnattendedAllocated,
