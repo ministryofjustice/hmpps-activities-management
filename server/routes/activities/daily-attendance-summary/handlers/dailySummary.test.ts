@@ -329,6 +329,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           ED: 0,
           PM: 0,
         },
+        totalPaidSuspended: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
         totalRefused: {
           AM: 0,
           DAY: 0,
@@ -338,6 +344,18 @@ describe('Route Handlers - Daily Attendance Summary', () => {
         totalUnPaidAbsences: {
           AM: 2,
           DAY: 2,
+          ED: 0,
+          PM: 0,
+        },
+        totalUnpaidCancelled: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalUnpaidNotRequired: {
+          AM: 0,
+          DAY: 0,
           ED: 0,
           PM: 0,
         },
@@ -544,6 +562,12 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           ED: 0,
           PM: 0,
         },
+        totalPaidSuspended: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
         totalRefused: {
           AM: 0,
           DAY: 0,
@@ -551,6 +575,18 @@ describe('Route Handlers - Daily Attendance Summary', () => {
           PM: 0,
         },
         totalUnPaidAbsences: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalUnpaidCancelled: {
+          AM: 0,
+          DAY: 0,
+          ED: 0,
+          PM: 0,
+        },
+        totalUnpaidNotRequired: {
           AM: 0,
           DAY: 0,
           ED: 0,
