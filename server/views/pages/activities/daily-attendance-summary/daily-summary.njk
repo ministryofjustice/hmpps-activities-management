@@ -212,83 +212,106 @@
         </div>
         <div class="govuk-grid-column-full">
             <h3 class="govuk-heading-m">{{ totalPaidAbsences[timeSlot] }} paid {{ "absence" if totalPaidAbsences[timeSlot] == 1 else "absences" }}</h3>
+
+        <div class="stat-component">
+            {{ stat({
+                heading: 'Activity cancelled',
+                number: totalCancelled[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
+
+            {{ stat({
+                heading: 'Sick',
+                number: totalPaidSick[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
+
+            {{ stat({
+                heading: 'Not required',
+                number: totalNotRequired[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
+
+            {{ stat({
+                heading: 'Rest day',
+                number: totalPaidRest[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
+
+            {{ stat({
+                heading: 'Clash',
+                number: totalClash[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
+            
+            {{ stat({
+                heading: 'Prisoner suspended',
+                number: totalPaidSuspended[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
+
+            {{ stat({
+                heading: 'Other',
+                number: totalPaidOther[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
         </div>
-
-        {{ stat({
-            heading: 'People with cancelled sessions',
-            number: totalCancelled[timeSlot],
-            visuallyHiddenText: 'prisoners'
-        }) }}
-
-        {{ stat({
-            heading: 'Sick',
-            number: totalPaidSick[timeSlot],
-            visuallyHiddenText: 'prisoners'
-        }) }}
-
-        {{ stat({
-            heading: 'Not required',
-            number: totalNotRequired[timeSlot],
-            visuallyHiddenText: 'prisoners'
-        }) }}
-
-        {{ stat({
-            heading: 'Rest day',
-            number: totalPaidRest[timeSlot],
-            visuallyHiddenText: 'prisoners'
-        }) }}
-
-        {{ stat({
-            heading: 'Clash',
-            number: totalClash[timeSlot],
-            visuallyHiddenText: 'prisoners'
-        }) }}
-
-        {{ stat({
-            heading: 'Other',
-            number: totalPaidOther[timeSlot],
-            visuallyHiddenText: 'prisoners'
-        }) }}
+        </div>
 
         <div class="govuk-grid-column-full govuk-!-margin-top-3">
             <h3 class="govuk-heading-m">{{ totalUnPaidAbsences[timeSlot] }} unpaid {{ "absence" if totalUnPaidAbsences[timeSlot] == 1 else "absences" }}</h3>
+        {# </div> #}
+
+        <div class="stat-component">
+            {{ stat({
+                heading: 'Sick',
+                number: totalUnpaidSick[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
+
+            {{ stat({
+                heading: 'Refused',
+                number: totalRefused[timeSlot],
+                visuallyHiddenText: 'prisoners',
+                dataQa: 'refused',
+                link: {
+                    href: 'refusals?date=' + activityDate | formatDate('yyyy-MM-dd') + '#' + timeSlot | lower + '-tab',
+                    text: 'All refused',
+                    dataQa: 'refused-link'
+                }
+            }) }}
+
+            {{ stat({
+                heading: 'Rest day',
+                number: totalUnpaidRest[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
+
+            {{ stat({
+                heading: 'Prisoner suspended or temporarily absent',
+                number: totalUnpaidSuspended[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
+
+            {{ stat({
+                heading: 'Not required',
+                number: totalUnpaidNotRequired[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
+
+            {{ stat({
+                heading: 'Activity cancelled',
+                number: totalUnpaidCancelled[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
+
+            {{ stat({
+                heading: 'Other',
+                number: totalUnpaidOther[timeSlot],
+                visuallyHiddenText: 'prisoners'
+            }) }}
         </div>
-
-        {{ stat({
-            heading: 'Sick',
-            number: totalUnpaidSick[timeSlot],
-            visuallyHiddenText: 'prisoners'
-        }) }}
-
-        {{ stat({
-            heading: 'Refused',
-            number: totalRefused[timeSlot],
-            visuallyHiddenText: 'prisoners',
-            dataQa: 'refused',
-            link: {
-                href: 'refusals?date=' + activityDate | formatDate('yyyy-MM-dd') + '#' + timeSlot | lower + '-tab',
-                text: 'All refused',
-                dataQa: 'refused-link'
-            }
-        }) }}
-
-        {{ stat({
-            heading: 'Rest day',
-            number: totalUnpaidRest[timeSlot],
-            visuallyHiddenText: 'prisoners'
-        }) }}
-
-        {{ stat({
-            heading: 'Due to suspension',
-            number: totalUnpaidSuspended[timeSlot],
-            visuallyHiddenText: 'prisoners'
-        }) }}
-
-        {{ stat({
-            heading: 'Other',
-            number: totalUnpaidOther[timeSlot],
-            visuallyHiddenText: 'prisoners'
-        }) }}
+        </div>
     </div>
 
     {% if totalCancelledSessions[timeSlot] > 0 %}
