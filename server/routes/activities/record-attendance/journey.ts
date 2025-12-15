@@ -38,21 +38,15 @@ type NotRequiredOrExcusedJourney = {
   isPaid?: boolean
 }
 
-export type SessionCancellationRequest = {
-  reason: string
-  comment?: string
-  issuePayment: boolean
-}
-
-export type MultipleSessionCancellationRequest = {
-  reason: string
-  comment?: string
-  issuePayment: boolean
-}
-
-export type SingleSessionCancellationRequest = {
+type CancellationRequest = {
   activityName: string
   reason: string
   comment?: string
   issuePayment: boolean
 }
+
+export type SessionCancellationRequest = CancellationRequest
+
+export type MultipleSessionCancellationRequest = Omit<CancellationRequest, 'activityName'>
+
+export type SingleSessionCancellationRequest = CancellationRequest

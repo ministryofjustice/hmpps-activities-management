@@ -25,17 +25,9 @@ export default class CancelSessionRoutes {
       // if the reason isn't present on the request, send the user back to recollect the data
       if (!sessionCancellationRequest?.reason) return res.redirect(`../../${instanceId}/cancel`)
 
-      const scheduledInstance = await this.activitiesService.getScheduledActivity(instanceId, user)
+      const { reason, comment, issuePayment } = sessionCancellationRequest
 
-      const { reason, comment } = sessionCancellationRequest
-
-      await this.activitiesService.cancelScheduledActivities(
-        [instanceId],
-        reason,
-        scheduledInstance.activitySchedule.activity.paid,
-        user,
-        comment,
-      )
+      await this.activitiesService.cancelScheduledActivities([instanceId], reason, issuePayment, user, comment)
     }
 
     const redirectUrl = req.journeyData.recordAttendanceJourney.returnUrl || `../../${instanceId}/attendance-list`
