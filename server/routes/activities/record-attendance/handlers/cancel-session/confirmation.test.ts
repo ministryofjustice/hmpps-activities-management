@@ -4,7 +4,6 @@ import { validate } from 'class-validator'
 import ConfirmationRoutes, { CancelConfirmForm } from './confirmation'
 import ActivitiesService from '../../../../../services/activitiesService'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
-import { ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
 
 jest.mock('../../../../../services/activitiesService')
 
@@ -58,20 +57,11 @@ describe('Route Handlers - Cancel Session Confirmation', () => {
             sessionCancellation: {
               reason: 'Staff unavailable',
               comment: 'Resume tomorrow',
+              issuePayment: true,
             },
           },
         },
       } as unknown as Request
-
-      const scheduledActivity = {
-        activitySchedule: {
-          activity: {
-            paid: true,
-          },
-        },
-      } as ScheduledActivity
-
-      activitiesService.getScheduledActivity.mockReturnValue(Promise.resolve(scheduledActivity))
     })
 
     it('should cancel scheduled activity', async () => {

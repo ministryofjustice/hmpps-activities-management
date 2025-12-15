@@ -19,7 +19,9 @@ export default class CancelSessionPayRoutes {
   constructor() {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    return res.render('pages/activities/record-attendance/cancel-session/payment')
+    return res.render('pages/activities/record-attendance/cancel-session/payment', {
+      activityName: req.journeyData.recordAttendanceJourney.sessionCancellation.activityName,
+    })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
