@@ -82,13 +82,21 @@ describe('Route Handlers - Cancel Session Reason', () => {
     })
 
     it('should add cancel reason to session and redirect to confirmation page when activity is not payable', async () => {
-      const instance = { activitySchedule: { activity: { paid: false } } } as ScheduledActivity
+      const instance = {
+        activitySchedule: {
+          activity: {
+            summary: 'Maths Level 1',
+            paid: false,
+          },
+        },
+      } as ScheduledActivity
 
       when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(instance)
 
       await handler.POST(addReasonRequest, res)
 
       expect(addReasonRequest.journeyData.recordAttendanceJourney.sessionCancellation).toEqual({
+        activityName: 'Maths Level 1',
         reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',
         issuePayment: false,
@@ -98,13 +106,21 @@ describe('Route Handlers - Cancel Session Reason', () => {
     })
 
     it('should add cancel reason to session and redirect to payment page when activity is payable', async () => {
-      const instance = { activitySchedule: { activity: { paid: true } } } as ScheduledActivity
+      const instance = {
+        activitySchedule: {
+          activity: {
+            summary: 'Maths Level 1',
+            paid: true,
+          },
+        },
+      } as ScheduledActivity
 
       when(activitiesService.getScheduledActivity).calledWith(1, res.locals.user).mockResolvedValue(instance)
 
       await handler.POST(addReasonRequest, res)
 
       expect(addReasonRequest.journeyData.recordAttendanceJourney.sessionCancellation).toEqual({
+        activityName: 'Maths Level 1',
         reason: CancellationReasons.LOCATION_UNAVAILABLE,
         comment: 'A comment',
         issuePayment: false,

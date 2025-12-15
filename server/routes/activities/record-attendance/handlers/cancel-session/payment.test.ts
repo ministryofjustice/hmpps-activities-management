@@ -25,7 +25,9 @@ describe('Route Handlers - Cancel Session Payment', () => {
     req = {
       journeyData: {
         recordAttendanceJourney: {
-          sessionCancellation: {},
+          sessionCancellation: {
+            activityName: 'Maths level 1',
+          },
         },
       },
     } as unknown as Request
@@ -38,7 +40,9 @@ describe('Route Handlers - Cancel Session Payment', () => {
   describe('GET', () => {
     it('should render with the expected view', async () => {
       await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/cancel-session/payment')
+      expect(res.render).toHaveBeenCalledWith('pages/activities/record-attendance/cancel-session/payment', {
+        activityName: 'Maths level 1',
+      })
     })
   })
 
