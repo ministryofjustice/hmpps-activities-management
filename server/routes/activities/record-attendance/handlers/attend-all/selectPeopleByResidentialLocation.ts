@@ -193,7 +193,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
           instanceIds: activitiesForPrisoner.map(i => i.id),
           attendances: attendancesForPrisoner,
           attendanceIds: attendancesForPrisoner.map(a => a.id),
-          advancedAttendances: advanceAttendancesForPrisoner,
+          advancedAttendances: advanceAttendancesForPrisoner.filter(a => a !== undefined),
           someSelectable: isSelectable,
           otherEventsPerInstance: clashes,
         })
@@ -247,7 +247,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
       }
     }
 
-    const attendanceUpdates: AttendanceUpdateRequest[] = selectedAttendances.flatMap(prisonerAttendance => {
+    let attendanceUpdates: AttendanceUpdateRequest[] = selectedAttendances.flatMap(prisonerAttendance => {
       return getInstanceIdsFromAttendance(prisonerAttendance).map(selectedInstanceId => {
         const prisonerNumber = getPrisonerNumberFromAttendance(prisonerAttendance)
         const instance = allInstances.find(inst => inst.id === +selectedInstanceId)
@@ -265,7 +265,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
       })
     })
 
-    attendanceUpdates.filter(update => update !== null)
+    attendanceUpdates = attendanceUpdates.filter(update => update !== null)
 
     await this.activitiesService.updateAttendances(attendanceUpdates, user)
 
