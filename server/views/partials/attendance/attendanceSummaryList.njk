@@ -1,5 +1,5 @@
 {% macro attendanceSummaryList(attendanceSummary, instance) %}
-    {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
+    {% if instance.isInFuture %}
         <ul class="govuk-list">
             <li>
                 <span>Attended: </span>

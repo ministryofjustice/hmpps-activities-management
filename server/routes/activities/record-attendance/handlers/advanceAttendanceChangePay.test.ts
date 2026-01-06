@@ -5,7 +5,6 @@ import ActivitiesService from '../../../../services/activitiesService'
 import { AdvanceAttendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import config from '../../../../config'
 import AdvanceAttendanceChangePayRoutes from './advanceAttendanceChangePay'
 
 jest.mock('../../../../services/activitiesService')
@@ -31,8 +30,6 @@ const instance = {
 } as ScheduledActivity
 
 describe('Route Handlers - Advance Attendance change pay', () => {
-  config.notRequiredInAdvanceEnabled = true
-
   const handler = new AdvanceAttendanceChangePayRoutes(activitiesService, prisonService)
 
   let req: Request

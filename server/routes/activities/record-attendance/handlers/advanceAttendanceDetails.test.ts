@@ -8,7 +8,6 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import UserService from '../../../../services/userService'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 import AdvanceAttendanceDetailsRoutes from './advanceAttendanceDetails'
-import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -19,8 +18,6 @@ const prisonService = new PrisonService(null, null, null)
 const userService = new UserService(null) as jest.Mocked<UserService>
 
 describe('Route Handlers - View and Edit Advance Attendance', () => {
-  config.notRequiredInAdvanceEnabled = true
-
   const handler = new AdvanceAttendanceDetailsRoutes(activitiesService, prisonService, userService)
 
   let req: Request

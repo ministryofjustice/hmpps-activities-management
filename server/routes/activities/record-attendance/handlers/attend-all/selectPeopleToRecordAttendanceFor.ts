@@ -6,7 +6,6 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { EventType } from '../../../../../@types/activities'
 import applyCancellationDisplayRule from '../../../../../utils/applyCancellationDisplayRule'
-import config from '../../../../../config'
 import { AttendanceUpdateRequest } from '../../../../../@types/activitiesAPI/types'
 import AttendanceStatus from '../../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../../enum/attendanceReason'
@@ -30,7 +29,6 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
 
     const { user } = res.locals
     const { date, timePeriods } = req.query
-    const { notRequiredInAdvanceEnabled } = config
     const activityId: number = parseInt(req.query.activityId as string, 10)
     const timePeriodFilter = timePeriods !== undefined ? asString(timePeriods).split(',') : null
     let attendanceRows = []
@@ -47,7 +45,7 @@ export default class SelectPeopleToRecordAttendanceForRoutes {
       .map(i => ({
         ...i,
         isAmendable: startOfDay(toDate(i.date)) >= startOfToday(),
-        isInFuture: notRequiredInAdvanceEnabled && startOfDay(toDate(i.date)) > startOfToday(),
+        isInFuture: startOfDay(toDate(i.date)) > startOfToday(),
       }))
 
     if (instances.length === 0) {

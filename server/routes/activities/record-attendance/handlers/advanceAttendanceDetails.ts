@@ -5,7 +5,6 @@ import UserService from '../../../../services/userService'
 import { AdvanceAttendance, ScheduledActivity } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
-import config from '../../../../config'
 
 export default class AdvanceAttendanceDetailsRoutes {
   constructor(
@@ -15,9 +14,6 @@ export default class AdvanceAttendanceDetailsRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    if (!config.notRequiredInAdvanceEnabled) {
-      return res.redirect('attendance-list')
-    }
     const { user } = res.locals
     const { id } = req.params
     const { advanceAttendanceId } = req.params
@@ -41,9 +37,6 @@ export default class AdvanceAttendanceDetailsRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    if (!config.notRequiredInAdvanceEnabled) {
-      return res.redirect('attendance-list')
-    }
     const { advanceAttendanceId } = req.params
     return res.redirect(`${advanceAttendanceId}/reset`)
   }

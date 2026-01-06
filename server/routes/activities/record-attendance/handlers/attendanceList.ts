@@ -28,7 +28,6 @@ import { NameFormatStyle } from '../../../../utils/helpers/nameFormatStyle'
 import applyCancellationDisplayRule from '../../../../utils/applyCancellationDisplayRule'
 import UserService from '../../../../services/userService'
 import TimeSlot from '../../../../enum/timeSlot'
-import config from '../../../../config'
 import {
   flattenPrisonerScheduledEvents,
   getPrisonerNumbersFromScheduledActivities,
@@ -60,14 +59,13 @@ export default class AttendanceListRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const instanceId = +req.params.id
     const { user } = res.locals
-    const { notRequiredInAdvanceEnabled } = config
 
     let attendance: ScheduledInstanceAttendance[] = []
 
     const instance = await this.activitiesService.getScheduledActivity(instanceId, user).then(i => ({
       ...i,
       isAmendable: startOfDay(toDate(i.date)) >= startOfToday(),
-      isInFuture: notRequiredInAdvanceEnabled && startOfDay(toDate(i.date)) > startOfToday(),
+      isInFuture: startOfDay(toDate(i.date)) > startOfToday(),
     }))
 
     const prisonerNumbers = (await this.activitiesService.getAttendees(instanceId, user)).map(a => a.prisonerNumber)
@@ -361,9 +359,6 @@ export default class AttendanceListRoutes {
   }
 
   NOT_REQUIRED_OR_EXCUSED = async (req: Request, res: Response): Promise<void> => {
-    if (!config.notRequiredInAdvanceEnabled) {
-      return res.redirect('attendance-list')
-    }
     const { user } = res.locals
     const { recordAttendanceJourney } = req.journeyData
     const instanceId = +req.params.id

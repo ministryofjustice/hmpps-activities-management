@@ -17,7 +17,6 @@ import UserService from '../../../../services/userService'
 import atLeast from '../../../../../jest.setup'
 import { UserDetails } from '../../../../@types/manageUsersApiImport/types'
 import TimeSlot from '../../../../enum/timeSlot'
-import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -939,7 +938,6 @@ describe('Route Handlers - Attendance List', () => {
 
   describe('Not required or excused', () => {
     it('should redirect to the paid or not page', async () => {
-      config.notRequiredInAdvanceEnabled = true
       req.body = {
         selectedAttendances: ['1-undefined-ABC123', '1-undefined-ABC321'],
       }

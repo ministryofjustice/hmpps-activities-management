@@ -24,7 +24,6 @@ import {
 } from './utils'
 import { AdvanceAttendance, Attendance, ScheduledEvent } from '../@types/activitiesAPI/types'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
-import config from '../config'
 
 describe('utils', () => {
   describe('format first & lastName', () => {
@@ -270,7 +269,6 @@ describe('utils', () => {
 
   describe('getAdvancedAttendanceSummary', () => {
     it('calculates the attendance summary', () => {
-      config.notRequiredInAdvanceEnabled = true
       const attendance = []
       const advanceAttendances = [
         {

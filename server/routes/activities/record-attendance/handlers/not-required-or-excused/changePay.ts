@@ -3,7 +3,6 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { Attendance, ScheduledActivity } from '../../../../../@types/activitiesAPI/types'
 import { formatFirstLastName } from '../../../../../utils/utils'
-import config from '../../../../../config'
 import AttendanceStatus from '../../../../../enum/attendanceStatus'
 import AttendanceReason from '../../../../../enum/attendanceReason'
 
@@ -14,9 +13,6 @@ export default class ChangePayRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    if (!config.notRequiredInAdvanceEnabled) {
-      return res.redirect('attendance-list')
-    }
     const { user } = res.locals
     const { id } = req.params
     const { attendanceId } = req.params

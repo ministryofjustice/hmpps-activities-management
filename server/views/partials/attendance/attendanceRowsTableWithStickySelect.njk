@@ -21,7 +21,7 @@
         {% if attendee.attendances %}
             {% set isSelectable = attendee.someSelectable %}
         {% else %}
-            {% if notRequiredInAdvanceEnabled and attendee.instance.isInFuture %}
+            {% if attendee.instance.isInFuture %}
                 {% if attendee.advancedAttendance %}
                     {% set isSelectable = false %}
                 {% else %}
@@ -213,7 +213,7 @@
         {% endif %}
     {% endfor %}
 
-    {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
+    {% if instance.isInFuture %}
         {% set formActions = [
             {
                 text: 'Mark as not required or excused',

@@ -97,7 +97,7 @@
             <h2 class="govuk-heading-m">{{ attendance | length }}
                 {{ "person" if attendance | length == 1 else "people" }} allocated</h2>
             {% if instance.activitySchedule.activity.attendanceRequired %}
-                {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
+                {% if instance.isInFuture %}
                     <ul class="govuk-list">
                         <li>
                             <span>Attended: </span>
@@ -146,7 +146,7 @@
                 {% endif %}
             {% endif %}
 
-            {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
+            {% if instance.isInFuture %}
                 {{ govukInsetText({
                     text: 'Before ' + instance.date | formatDate + ', you can only mark people as not required or excused. This will be recorded as an acceptable absence.'
                 }) }}
@@ -171,7 +171,7 @@
     {% set rows = [] %}
     {% for attendee in attendance | sort(false, false, 'location') %}
 
-        {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
+        {% if instance.isInFuture %}
             {% if attendee.advancedAttendance %}
                 {% set isSelectable = false %}
             {% else %}
@@ -279,7 +279,7 @@
         }), rows) %}
     {% endfor %}
 
-    {% if notRequiredInAdvanceEnabled and instance.isInFuture %}
+    {% if instance.isInFuture %}
         {% set formActions = [
             {
                 text: 'Mark as not required or excused',

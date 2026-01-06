@@ -5,7 +5,6 @@ import { AdvanceAttendance } from '../../../../@types/activitiesAPI/types'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import ResetAdvanceAttendanceRoutes from './resetAdvanceAttendance'
-import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
@@ -14,8 +13,6 @@ const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
 
 describe('Route Handlers - Reset Advance Attendance', () => {
-  config.notRequiredInAdvanceEnabled = true
-
   const handler = new ResetAdvanceAttendanceRoutes(activitiesService, prisonService)
 
   let req: Request
