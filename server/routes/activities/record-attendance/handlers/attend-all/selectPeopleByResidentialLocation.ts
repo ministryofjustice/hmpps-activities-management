@@ -5,7 +5,6 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { EventType, SubLocationCellPattern } from '../../../../../@types/activities'
 import applyCancellationDisplayRule from '../../../../../utils/applyCancellationDisplayRule'
-import config from '../../../../../config'
 import AttendanceStatus from '../../../../../enum/attendanceStatus'
 import UserService from '../../../../../services/userService'
 import TimeSlot from '../../../../../enum/timeSlot'
@@ -34,7 +33,6 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
     const { user } = res.locals
     const { date, sessionFilters, locationKey } = req.query
-    const { notRequiredInAdvanceEnabled } = config
     const timePeriodFilter = sessionFilters !== undefined ? asString(sessionFilters) : null
     const activityDate = date ? toDate(asString(date)) : new Date()
 
@@ -57,7 +55,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
     ).map(i => ({
       ...i,
       isAmendable: startOfDay(toDate(i.date)) >= startOfToday(),
-      isInFuture: notRequiredInAdvanceEnabled && startOfDay(toDate(i.date)) > startOfToday(),
+      isInFuture: startOfDay(toDate(i.date)) > startOfToday(),
     }))
 
     const { locationPrefix } = await this.activitiesService.getPrisonLocationPrefixByGroup(
@@ -165,7 +163,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
         )
 
         let isSelectable = false
-        if (notRequiredInAdvanceEnabled && activitiesForPrisoner.some(i => i.isInFuture)) {
+        if (activitiesForPrisoner.some(i => i.isInFuture)) {
           if (advanceAttendancesForPrisoner.length > 0 && advanceAttendancesForPrisoner.every(a => a !== undefined)) {
             isSelectable = false
           } else {

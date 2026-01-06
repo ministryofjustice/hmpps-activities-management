@@ -32,7 +32,6 @@ generic-service:
     VIDEO_CONFERENCE_SCHEDULE_URL: "https://video-conference-schedule-preprod.prison.service.justice.gov.uk"
     APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED: "true"
     IN_SERVICE_REPORTING_ENABLED: "false"
-    NOT_REQUIRED_IN_ADVANCE_ENABLED: "true"
     ATTEND_ALL_ENABLED: "true"
     LIVE_ISSUE_OUTAGE_BANNER_ENABLED: "false"
     PLANNED_DOWNTIME_OUTAGE_BANNER_ENABLED: "false"

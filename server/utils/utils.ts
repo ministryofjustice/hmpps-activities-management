@@ -30,7 +30,6 @@ import { CreateAnActivityJourney, Slots } from '../routes/activities/create-an-a
 import { NameFormatStyle } from './helpers/nameFormatStyle'
 import DateOption from '../enum/dateOption'
 import { Prisoner } from '../@types/activities'
-import config from '../config'
 
 export type DaysOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
 export const DAYS_OF_WEEK: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -264,9 +263,8 @@ export const getAdvancedAttendanceSummary = (
 
   const attended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason?.code === 'ATTENDED').length
   let notAttended = attendance.filter(a => a.status === 'COMPLETED' && a.attendanceReason?.code !== 'ATTENDED').length
-  if (config.notRequiredInAdvanceEnabled) {
-    notAttended += advanceAttendances.length
-  }
+  notAttended += advanceAttendances.length
+
   const notRecorded = attendanceCount - attended - notAttended
 
   const attendedPercentage = '-'
