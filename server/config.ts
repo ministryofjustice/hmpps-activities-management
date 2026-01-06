@@ -265,7 +265,6 @@ export default {
   plannedDowntimeDate: Date.parse(get('PLANNED_DOWNTIME_DATE', new Date().toLocaleDateString())),
   plannedDowntimeStartTime: get('PLANNED_DOWNTIME_START_TIME', '9am'),
   plannedDowntimeEndTime: get('PLANNED_DOWNTIME_END_TIME', '5pm'),
-  prisonerAllocationsEnabled: toBoolean(get('PRISONER_ALLOCATIONS_ENABLED', 'false')),
   defaultCourtVideoUrl: get('DEFAULT_COURT_VIDEO_URL', 'meet.video.justice.gov.uk'),
   prisonerExtraInformationEnabled: toBoolean(get('PRISONER_EXTRA_INFORMATION_ENABLED', 'false')),
 }

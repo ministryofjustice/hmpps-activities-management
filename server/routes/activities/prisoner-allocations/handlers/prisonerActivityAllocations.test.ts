@@ -3,7 +3,6 @@ import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import ActivitiesService from '../../../../services/activitiesService'
-import config from '../../../../config'
 import ActivityAllocationHandler, { FromActivityList } from './prisonerActivityAllocations'
 import { Activity, ActivitySummary, PrisonerAllocations } from '../../../../@types/activitiesAPI/types'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
@@ -97,16 +96,7 @@ describe('Route Handlers - Prisoner Activity Allocations', () => {
   })
 
   describe('GET', () => {
-    it('should redirect if feature toggle disabled', async () => {
-      config.prisonerAllocationsEnabled = false
-      await handler.GET(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith('/activities')
-    })
-
     it('should render prisoner allocations activity search page', async () => {
-      config.prisonerAllocationsEnabled = true
-
       when(activitiesService.getActivities).calledWith(true, res.locals.user).mockResolvedValue(mockActivities)
 
       await handler.GET(req, res)
@@ -119,8 +109,6 @@ describe('Route Handlers - Prisoner Activity Allocations', () => {
 
   describe('POST', () => {
     it('should redirect to the allocate activity page, when an unallocated activity is selected from the activity search list', async () => {
-      config.prisonerAllocationsEnabled = true
-
       when(activitiesService.getActivity).calledWith(539, res.locals.user).mockResolvedValue(mockActivity)
       when(activitiesService.getActivePrisonPrisonerAllocations)
         .calledWith([req.params.prisonerNumber], res.locals.user)

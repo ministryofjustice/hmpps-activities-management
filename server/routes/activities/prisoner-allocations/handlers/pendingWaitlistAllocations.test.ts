@@ -4,7 +4,6 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
-import config from '../../../../config'
 import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import PendingWaitlistHandler, { allocateOption } from './pendingWaitlistAllocations'
@@ -64,16 +63,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
   })
 
   describe('GET', () => {
-    it('should redirect if feature toggle disabled', async () => {
-      config.prisonerAllocationsEnabled = false
-      await handler.GET(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith('/activities')
-    })
-
     it('should render prisoner pending waitlist allocation page', async () => {
-      config.prisonerAllocationsEnabled = true
-
       when(prisonService.getInmateByPrisonerNumber).calledWith(atLeast('ABC123')).mockResolvedValue(mockPrisoner)
 
       await handler.GET(req, res)
@@ -86,7 +76,6 @@ describe('Route Handlers - Prisoner Allocations', () => {
 
   describe('POST', () => {
     it('should update waitlist application and redirect to allocate to activity page when YES is selected', async () => {
-      config.prisonerAllocationsEnabled = true
       req.body = {
         options: 'YES',
       }
@@ -101,7 +90,6 @@ describe('Route Handlers - Prisoner Allocations', () => {
     })
 
     it('should redirect back to prisoner allocation page when NO is selected', async () => {
-      config.prisonerAllocationsEnabled = true
       req.body = {
         options: 'NO',
       }

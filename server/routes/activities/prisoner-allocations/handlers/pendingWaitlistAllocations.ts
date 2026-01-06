@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsEnum } from 'class-validator'
-import config from '../../../../config'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -26,10 +25,6 @@ export default class PendingWaitlistHandler {
   ) {}
 
   GET = async (req: Request, res: Response) => {
-    if (!config.prisonerAllocationsEnabled) {
-      return res.redirect('/activities')
-    }
-
     const { prisonerNumber } = req.params
     const { user } = res.locals
 

@@ -4,7 +4,6 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import PrisonService from '../../../../services/prisonService'
 import ActivitiesService from '../../../../services/activitiesService'
-import config from '../../../../config'
 import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import {
@@ -161,16 +160,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
   })
 
   describe('GET', () => {
-    it('should redirect if feature toggle disabled', async () => {
-      config.prisonerAllocationsEnabled = false
-      await handler.GET(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith('/activities')
-    })
-
     it('should render a prisoners approved and pending waitlist applications on options page', async () => {
-      config.prisonerAllocationsEnabled = true
-
       when(activitiesService.getActivities).calledWith(true, res.locals.user).mockResolvedValue(mockActivities)
       when(prisonService.getInmateByPrisonerNumber)
         .calledWith(atLeast(req.params.prisonerNumber))
@@ -192,7 +182,6 @@ describe('Route Handlers - Prisoner Allocations', () => {
 
   describe('POST', () => {
     it('should redirect to allocate to activity page when approved app is selected', async () => {
-      config.prisonerAllocationsEnabled = true
       req.body = {
         waitlistScheduleId: 518,
         waitlistApplicationData: [
@@ -224,7 +213,6 @@ describe('Route Handlers - Prisoner Allocations', () => {
     })
 
     it('should redirect to the allocate activity page, when an unallocated activity or approved waitlist application is chosen from activity search list', async () => {
-      config.prisonerAllocationsEnabled = true
       req.body = {
         activityId: 1,
         waitlistScheduleId: '',
@@ -273,7 +261,6 @@ describe('Route Handlers - Prisoner Allocations', () => {
     })
 
     it('should redirect to pending waitlist page, when pending waitlist application is chosen from activity search list', async () => {
-      config.prisonerAllocationsEnabled = true
       req.body = {
         activityId: 1,
         waitlistScheduleId: undefined,

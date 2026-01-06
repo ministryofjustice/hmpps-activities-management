@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import ActivitiesService from '../../../../services/activitiesService'
-import config from '../../../../config'
 import PrisonService from '../../../../services/prisonService'
 import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
@@ -113,15 +112,7 @@ describe('Route Handlers - Prisoner Allocations - Non associations', () => {
   })
 
   describe('GET', () => {
-    it('should redirect if feature toggle disabled', async () => {
-      config.prisonerAllocationsEnabled = false
-      await handler.GET(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith('/activities')
-    })
-
     it('should render a prisoners non associations', async () => {
-      config.prisonerAllocationsEnabled = true
       req.params.prisonerNumber = 'ABC123'
       const expectedPrisoner = {
         ...mockPrisoner,
