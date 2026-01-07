@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import config from '../../../../config'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
@@ -16,9 +15,6 @@ export default class NonAssociationsHandler {
   ) {}
 
   GET = async (req: Request, res: Response) => {
-    if (!config.prisonerAllocationsEnabled) {
-      return res.redirect('/activities')
-    }
     const { prisonerNumber } = req.params
     const { user } = res.locals
 

@@ -240,7 +240,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('plannedDowntimeDate', config.plannedDowntimeDate)
   njkEnv.addGlobal('plannedDowntimeStartTime', config.plannedDowntimeStartTime)
   njkEnv.addGlobal('plannedDowntimeEndTime', config.plannedDowntimeEndTime)
-  njkEnv.addGlobal('prisonerAllocationsEnabled', config.prisonerAllocationsEnabled)
   njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
   njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
   njkEnv.addGlobal('NameFormatStyle', NameFormatStyle)

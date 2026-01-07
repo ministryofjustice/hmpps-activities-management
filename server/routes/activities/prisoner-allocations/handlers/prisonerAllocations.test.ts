@@ -4,7 +4,6 @@ import PrisonService from '../../../../services/prisonService'
 import NonAssociationsService from '../../../../services/nonAssociationsService'
 import PrisonerAllocationsHandler from './prisonerAllocations'
 import ActivitiesService from '../../../../services/activitiesService'
-import config from '../../../../config'
 import atLeast from '../../../../../jest.setup'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { PrisonerNonAssociations } from '../../../../@types/nonAssociationsApi/types'
@@ -161,15 +160,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
   })
 
   describe('GET', () => {
-    it('should redirect if feature toggle disabled', async () => {
-      config.prisonerAllocationsEnabled = false
-      await handler.GET(req, res)
-
-      expect(res.redirect).toHaveBeenCalledWith('/activities')
-    })
-
     it('should render a prisoners allocation details', async () => {
-      config.prisonerAllocationsEnabled = true
       req.params.prisonerNumber = 'ABC123'
 
       when(prisonService.getInmateByPrisonerNumber).calledWith(atLeast('ABC123')).mockResolvedValue(mockPrisoner)
