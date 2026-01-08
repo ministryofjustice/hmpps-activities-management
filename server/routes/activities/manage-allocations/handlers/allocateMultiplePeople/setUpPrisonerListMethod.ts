@@ -52,6 +52,8 @@ export default class SetUpPrisonerListMethodRoutes {
         paid: schedule.activity.paid,
       },
       inmates: [],
+      exclusions: [],
+      updatedExclusions: [],
       scheduledInstance: findNextSchedulesInstance(schedule),
     } as AllocateToActivityJourney
 
