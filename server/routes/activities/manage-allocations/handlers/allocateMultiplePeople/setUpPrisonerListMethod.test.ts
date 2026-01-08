@@ -128,6 +128,8 @@ describe('Allocate multiple people to an activity - method for adding list', () 
           attendances: [],
           startDateTime: `${format(tomorrow, 'yyyy-MM-dd')} 08:30`,
         },
+        exclusions: [],
+        updatedExclusions: [],
       })
     })
   })

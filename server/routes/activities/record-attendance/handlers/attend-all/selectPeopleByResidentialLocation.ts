@@ -43,6 +43,10 @@ export default class SelectPeopleByResidentialLocationRoutes {
       .getLocationGroups(user)
       .then(locations => locations.find(loc => loc.key === locationKey))
 
+    if (!location) {
+      return res.redirect('choose-details-by-residential-location')
+    }
+
     req.journeyData.recordAttendanceJourney.searchTerm ??= ''
     req.journeyData.recordAttendanceJourney.subLocationFilters ??= location.children.map(c => c.key)
 
