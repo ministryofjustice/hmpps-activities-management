@@ -313,7 +313,7 @@ describe('Views - Appointments Management - Extra Information, with toggle on', 
     expect($('h1').text().trim()).toContain(`Change the extra information`)
 
     expect($('[data-qa=first-paragraph]').text().trim()).toContain(
-      'Add or edit information the prisoner needs to know about their appointment, like something they need to bring, or do beforehand. This will appear on movement slips and will be seen by the prisoner.',
+      'Add or edit information the prisoner needs to know about their appointment, like something they need to bring, or do beforehand. This will appear on movement slips and will be seen by the prisoner. Changes will not appear on movement slips that have already been printed.',
     )
     expect($('[data-qa=second-paragraph]').text().trim()).toEqual(
       'Do not add anything that should not be seen by or shared with a prisoner.',
