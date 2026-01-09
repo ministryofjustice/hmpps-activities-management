@@ -7,11 +7,10 @@
 {% set pageTitle = "Waitlist Options" %}
 {% set pageId = 'Waitlist-Options' %}
 {% set jsBackLink = true %}
+{% set option = [{ value: '-', text: '' }] %}
 
-
-{% set options = [{ value: '-', text: '' }] %}
-{% for activity in activities %}
-  {% set options = (options.push( { value: activity.id, text: activity.activityName }), options) %}
+{% for activity in activitiesNotApprovedOrPending %}
+  {% set option = (option.push( { value: activity.id, text: activity.activityName }), option) %}
 {% endfor %}
 
 {% block meta %}
@@ -23,72 +22,74 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-            {% set waitlistOptions = [] %}
-            {% for application in approvedPendingWaitlist %}
-            {% set applicationIndex = loop.index0 %}
-                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][activityName]" }}" value="{{ application.activity.activityName }}"/>   
-                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][id]" }}" value="{{ application.id }}"/>
-                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][status]" }}" value="{{ application.status }}"/>
-                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][scheduleId]" }}" value="{{ application.scheduleId }}"/>
-                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][requestedDate]" }}" value="{{ application.requestedDate }}"/>
-                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][requestedBy]" }}" value="{{ application.requestedBy }}"/>
-                <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][comments]" }}" value="{{ application.comments }}"/>
-                {% if application.status == "APPROVED" and application.statusUpdatedTime %}
-                        {% set applicationStatus = application.status | title + " on " + application.statusUpdatedTime | toDateString | formatDate('d MMMM yyyy') %}
-                    {% elif application.status == "APPROVED" %}
-                        {% set applicationStatus = application.status | title + " on " + application.creationTime | toDateString | formatDate('d MMMM yyyy') %}
-                    {% else %}
-                        {% set applicationStatus = "Application not yet approved" %}
-                {% endif %}
 
-                {% set waitlistOptions = (waitlistOptions.push(
-                    {
-                        value: application.scheduleId,
-                        text: application.activity.activityName,
-                        hint: {
-                            text: applicationStatus
+                {% set waitlistOption = [] %}
+
+                {% for application in waitlistApprovedPendingApplications %}
+                    {% set applicationIndex = loop.index0 %}
+                        <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][activityName]" }}" value="{{ application.activity.activityName }}"/>   
+                        <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][id]" }}" value="{{ application.id }}"/>
+                        <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][status]" }}" value="{{ application.status }}"/>
+                        <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][scheduleId]" }}" value="{{ application.scheduleId }}"/>
+                        <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][requestedDate]" }}" value="{{ application.requestedDate }}"/>
+                        <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][requestedBy]" }}" value="{{ application.requestedBy }}"/>
+                        <input type="hidden" name="{{ "waitlistApplicationData[" + applicationIndex + "][comments]" }}" value="{{ application.comments }}"/>
+                        {% if application.status == "APPROVED" and application.statusUpdatedTime %}
+                                {% set applicationStatus = application.status | title + " on " + application.statusUpdatedTime | toDateString | formatDate('d MMMM yyyy') %}
+                            {% elif application.status == "APPROVED" %}
+                                {% set applicationStatus = application.status | title + " on " + application.creationTime | toDateString | formatDate('d MMMM yyyy') %}
+                            {% else %}
+                                {% set applicationStatus = "Application not yet approved" %}
+                        {% endif %}
+
+                    {% set waitlistOption = (waitlistOption.push(
+                        {
+                            value: application.scheduleId,
+                            text: application.activity.activityName,
+                            hint: {
+                                text: applicationStatus
+                            }
                         }
-                    }
-                ), waitlistOptions) %}
-            {% endfor %}
-                {% set waitlistOptions = (waitlistOptions.push(
-                    {
-                    divider: 'or'
-                    },
-                    {
-                    text: "A different activity",
-                    checked: false,
-                    conditional: {
-                    html: govukSelect({
-                            id: "activityId",
-                            name: "activityId",
-                            label: {
-                                text: "Start typing the activity name and select it from the list."
-                            },
-                            errorMessage: validationErrors | findError('activityId'),
-                            value: formResponses.activity.id,
-                            items: options
-                            })
+                    ), waitlistOption) %}
+                {% endfor %}
+                    {% set waitlistOption = (waitlistOption.push(
+                        {
+                        divider: 'or'
+                        },
+                        {
+                        text: "A different activity",
+                        checked: false,
+                        conditional: {
+                        html: govukSelect({
+                                id: "activityId",
+                                name: "activityId",
+                                label: {
+                                    text: "Start typing the activity name and select it from the list."
+                                },
+                                errorMessage: validationErrors | findError('activityId'),
+                                value: formResponses.activity.id,
+                                items: option
+                                })
+                            }
                         }
-                    }
-                ), waitlistOptions) %}
+                    ), waitlistOption) %}
 
                 <span class="govuk-caption-l">Allocate to an activity</span>
-                {{ govukRadios({
-                    name: "waitlistScheduleId",
-                    hint: {
-                        text: prisonerName + " has applications logged for " + approvedPendingWaitlist.length + " activities." if approvedPendingWaitlist.length > 1 else prisonerName + " has an application logged for an activity."
-                    },
-                    fieldset: {
-                        legend: {
-                            text: "Select an activity to allocate " + prisonerName,
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
-                    errorMessage: validationErrors | findError('waitlistOptions'),
-                    items: waitlistOptions
-                }) }}
+                    {{ govukRadios({
+                        name: "waitlistScheduleId",
+                        hint: {
+                            text: prisonerName + " has applications logged for " + waitlistApprovedPendingApplications.length + " activities." if waitlistApprovedPendingApplications.length > 1 else prisonerName + " has an application logged for an activity."
+                        },
+                        fieldset: {
+                            legend: {
+                                text: "Select an activity to allocate " + prisonerName,
+                                isPageHeading: true,
+                                classes: "govuk-fieldset__legend--l"
+                            }
+                        },
+                        errorMessage: validationErrors | findError('waitlistOption'),
+                        items: waitlistOption
+                    }) }}
 
                 <div class="govuk-button-group">
                     {{ govukButton({
