@@ -103,7 +103,7 @@ const mockWaitingListSearchResults = {
   last: false,
 } as unknown as WaitingListApplicationPaged
 
-const mockApprovedPendingWaitlist = [
+const mockWaitlistApprovedPendingApplications = [
   {
     id: 213,
     activityId: 1,
@@ -171,10 +171,16 @@ describe('Route Handlers - Prisoner Allocations', () => {
 
       await handler.GET(req, res)
 
-      expect(mockApprovedPendingWaitlist).toHaveLength(2)
+      expect(mockWaitlistApprovedPendingApplications).toHaveLength(2)
       expect(res.render).toHaveBeenCalledWith('pages/activities/prisoner-allocations/waitlist-options', {
-        activities: mockActivities,
-        approvedPendingWaitlist: mockApprovedPendingWaitlist,
+        activitiesNotApprovedOrPending: [
+          {
+            activityName: 'A Wing Orderly',
+            activityState: 'LIVE',
+            id: 110,
+          },
+        ],
+        waitlistApprovedPendingApplications: mockWaitlistApprovedPendingApplications,
         prisonerName: 'Joe Bloggs',
       })
     })
@@ -185,15 +191,6 @@ describe('Route Handlers - Prisoner Allocations', () => {
       req.body = {
         waitlistScheduleId: 518,
         waitlistApplicationData: [
-          {
-            activityName: 'Computer Skills',
-            id: '217',
-            status: 'PENDING',
-            scheduleId: 89,
-            requestedDate: '2025-07-03',
-            requestedBy: 'PRISONER',
-            comments: '',
-          },
           {
             activityName: 'A Wing Cleaner 2',
             id: '213',
@@ -212,7 +209,29 @@ describe('Route Handlers - Prisoner Allocations', () => {
       expect(res.redirect).toHaveBeenCalledWith('/activities/allocations/create/prisoner/ABC123?scheduleId=518')
     })
 
-    it('should redirect to the allocate activity page, when an unallocated activity or approved waitlist application is chosen from activity search list', async () => {
+    it('should redirect to pending allocation approval page when pending app is selected', async () => {
+      req.body = {
+        waitlistScheduleId: 518,
+        waitlistApplicationData: [
+          {
+            activityName: 'A Wing Cleaner 2',
+            id: '213',
+            status: 'PENDING',
+            scheduleId: 518,
+            requestedDate: '2025-06-24',
+            requestedBy: 'PRISONER',
+            comments: 'Test',
+          },
+        ],
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.journeyData.prisonerAllocationsJourney.status).toEqual('PENDING')
+      expect(res.redirect).toHaveBeenCalledWith('pending-application')
+    })
+
+    it('should redirect to the allocate activity page, when an unallocated activity is chosen from activity search list', async () => {
       req.body = {
         activityId: 1,
         waitlistScheduleId: '',
@@ -238,7 +257,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
         ],
       }
 
-      const mockActivity = {
+      const mockSelectedActivity = {
         id: 1,
         description: 'Admin Orderly',
         schedules: [
@@ -250,7 +269,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
 
       when(activitiesService.getActivity)
         .calledWith(req.body.activityId, res.locals.user)
-        .mockResolvedValue(mockActivity)
+        .mockResolvedValue(mockSelectedActivity)
 
       when(activitiesService.getActivePrisonPrisonerAllocations)
         .calledWith([req.params.prisonerNumber], res.locals.user)
@@ -258,51 +277,6 @@ describe('Route Handlers - Prisoner Allocations', () => {
 
       await handler.POST(req, res)
       expect(res.redirect).toHaveBeenCalledWith('/activities/allocations/create/prisoner/ABC123?scheduleId=385')
-    })
-
-    it('should redirect to pending waitlist page, when pending waitlist application is chosen from activity search list', async () => {
-      req.body = {
-        activityId: 1,
-        waitlistScheduleId: undefined,
-        waitlistApplicationData: [
-          {
-            activityName: 'Computer Skills',
-            id: '217',
-            status: 'PENDING',
-            scheduleId: '89',
-            requestedDate: '2025-07-03',
-            requestedBy: 'PRISONER',
-            comments: '',
-          },
-          {
-            activityName: 'A Wing Cleaner 2',
-            id: '213',
-            status: 'APPROVED',
-            scheduleId: '518',
-            requestedDate: '2025-06-24',
-            requestedBy: 'PRISONER',
-            comments: 'Test',
-          },
-        ],
-      }
-
-      const activity = {
-        id: 1,
-        description: 'Computer Skills',
-        schedules: [
-          {
-            id: 89,
-          },
-        ],
-      } as Activity
-
-      when(activitiesService.getActivity).calledWith(req.body.activityId, res.locals.user).mockResolvedValue(activity)
-      when(activitiesService.getActivePrisonPrisonerAllocations)
-        .calledWith([req.params.prisonerNumber], res.locals.user)
-        .mockResolvedValue([])
-
-      await handler.POST(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`pending-application`)
     })
   })
 
@@ -337,7 +311,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
         ],
       }
 
-      const activity = {
+      const selectedActivity = {
         id: 1,
         description: 'A Wing Cleaner 2',
         schedules: [
@@ -347,7 +321,7 @@ describe('Route Handlers - Prisoner Allocations', () => {
         ],
       } as Activity
 
-      when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(activity)
+      when(activitiesService.getActivity).calledWith(1, res.locals.user).mockResolvedValue(selectedActivity)
       when(activitiesService.getActivePrisonPrisonerAllocations)
         .calledWith([req.params.prisonerNumber], res.locals.user)
         .mockResolvedValue([{ allocations: [{ scheduleId: 89 }] }] as PrisonerAllocations[])
