@@ -2,7 +2,7 @@ import { ActivitySummary } from '../../../@types/activitiesAPI/types'
 
 export type PrisonerAllocationsJourney = {
   activityName?: string
-  status?: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED'
+  status?: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED' | 'WITHDRAWN'
   scheduleId?: number
   applicationId?: number
   applicationDate?: string
@@ -12,7 +12,7 @@ export type PrisonerAllocationsJourney = {
 
 export type WaitlistApplication = {
   activityId: number
-  status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED' | 'WITHDRAWN' | string
+  status: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED' | 'WITHDRAWN'
 }
 
 export type EnhancedWaitlistApplication = WaitlistApplication & {
