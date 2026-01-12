@@ -7,6 +7,7 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import { ActivitySummary } from '../../../../@types/activitiesAPI/types'
 import { formatName, getScheduleIdFromActivity } from '../../../../utils/utils'
 import { NameFormatStyle } from '../../../../utils/helpers/nameFormatStyle'
+import { EnhancedWaitlistApplication } from '../journey'
 
 export class SelectWailistOptions {
   @Expose()
@@ -25,25 +26,33 @@ export default class PrisonerWaitlistHandler {
     const { prisonerNumber } = req.params
     const { user } = res.locals
 
-    const activities: ActivitySummary[] = await this.activitiesService.getActivities(true, user)
+    const [activities, prisoner] = await Promise.all([
+      this.activitiesService.getActivities(true, user) as Promise<ActivitySummary[]>,
+      this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user) as Promise<Prisoner>,
+    ])
 
-    const prisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
+    const activityById = new Map<number, ActivitySummary>(activities.map(a => [a.id, a]))
 
-    const approvedPendingWaitlist = await this.activitiesService
-      .getWaitlistApplicationsForPrisoner(user.activeCaseLoadId, prisonerNumber, user)
-      .then(searchResults =>
-        searchResults.content.map(applications => ({
-          ...applications,
-          activity: activities.find(act => act.id === applications.activityId),
-        })),
-      )
-      .then(applications =>
-        applications.filter(waitlist => waitlist.status === 'PENDING' || waitlist.status === 'APPROVED'),
-      )
+    const waitlistApps = await this.activitiesService.getWaitlistApplicationsForPrisoner(
+      user.activeCaseLoadId,
+      prisonerNumber,
+      user,
+    )
+
+    const enhanced: EnhancedWaitlistApplication[] = waitlistApps.content.map(app => ({
+      ...app,
+      activity: activityById.get(app.activityId),
+    }))
+
+    const waitlistApprovedPendingApplications = enhanced.filter(app => ['PENDING', 'APPROVED'].includes(app.status))
+
+    const approvedPendingIds = new Set(waitlistApprovedPendingApplications.map(app => app.activityId))
+
+    const activitiesNotApprovedOrPending = activities.filter(act => !approvedPendingIds.has(act.id))
 
     return res.render('pages/activities/prisoner-allocations/waitlist-options', {
-      activities,
-      approvedPendingWaitlist,
+      waitlistApprovedPendingApplications,
+      activitiesNotApprovedOrPending,
       prisonerName: formatName(
         prisoner.firstName,
         prisoner.middleNames,
@@ -63,13 +72,6 @@ export default class PrisonerWaitlistHandler {
     if (waitlistScheduleId === '' || waitlistScheduleId === undefined) {
       const activity = await this.activitiesService.getActivity(activityId, user)
       const activityScheduleId = getScheduleIdFromActivity(activity)
-      const matchingWaitlistApplication = waitlistApplicationData.filter(
-        applications => applications.scheduleId === activityScheduleId.toString(),
-      )
-
-      if (matchingWaitlistApplication.length > 0 && matchingWaitlistApplication[0].status === 'PENDING') {
-        return res.redirect(`pending-application`)
-      }
 
       const alreadyAllocated = await this.activitiesService
         .getActivePrisonPrisonerAllocations([prisonerNumber], user)
