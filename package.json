@@ -65,7 +65,7 @@
     "govuk-frontend": "^5.13.0",
     "helmet": "^8.1.0",
     "http-errors": "^2.0.1",
-    "isbinaryfile": "^5.0.7",
+    "isbinaryfile": "^6.0.0",
     "jwt-decode": "^4.0.0",
     "libphonenumber-js": "^1.12.33",
     "lodash": "^4.17.21",
