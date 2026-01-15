@@ -285,7 +285,7 @@ context('Create activity', () => {
         expect(data.get(7).innerText).to.contain('Not required')
       })
   })
-  it('should not show the link to residential attendance page if the user does not have the activity hub role', () => {
+  it('should show the link to residential attendance page', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -303,7 +303,7 @@ context('Create activity', () => {
     chooseDateAndLocationPage.continue()
 
     const plannedEventsPage = Page.verifyOnPage(PlannedEventsPage)
-    plannedEventsPage.linkToAttendance().should('not.exist')
+    plannedEventsPage.linkToAttendance().should('exist')
   })
 })
 
