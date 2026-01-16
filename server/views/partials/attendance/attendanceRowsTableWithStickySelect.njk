@@ -11,7 +11,7 @@
 {# Required instance details: isInFuture, activitySchedule #}
 {# Required attendanceRows details: advancedAttendance, attendance, prisoner, instance #}
 
-{% macro attendanceRowsTableWithStickySelect(attendanceRows, instance, activeCaseLoadId, includeActivityColumn, includeTimeColumn, formActionPrefix) %}
+{% macro attendanceRowsTableWithStickySelect(attendanceRows, instance, activeCaseLoadId, includeActivityColumn, includeTimeColumn, roles, formActionPrefix) %}
     {% set actionPrefix = formActionPrefix | default('') %}
 
     {% set rows = [] %}
@@ -266,8 +266,11 @@
         }
     ), headers) %}
 
+    {% set selectAllAvailable = attendAllEnabled and 'ROLE_ACTIVITY_HUB' in roles %}
+
     {{ stickySelect({
         type: 'check',
+        selectAllAvailable: selectAllAvailable,
         id: "attendanceList",
         caption: "Attendance list",
         captionClasses: "govuk-visually-hidden",
