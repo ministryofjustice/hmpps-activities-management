@@ -2,7 +2,7 @@
 {% from "components/sticky-select.njk" import stickySelect %}
 {% from "partials/showLocation.njk" import showLocation %}
 
-{% macro activitiesTable(activities, activityDate, filterParams, now, isUncancelPage) %}
+{% macro activitiesTable(activities, activityDate, filterParams, now, isUncancelPage, roles) %}
     {% set formActions = [] %}
     {% if not ((activityDate | toDateString) < (now | toDateString)) %}
       {% set formActions = (formActions.push({
@@ -112,9 +112,16 @@
         }), rows) %}
     {% endfor %}
 
+    {% if isUncancelPage %}
+        {% set selectAllAvailable = true %}
+    {% else %}
+        {% set selectAllAvailable = attendAllEnabled and 'ROLE_ACTIVITY_HUB' in roles %}
+    {% endif %}
+
     {{ stickySelect({
         idPrefix: 'activities',
         type: 'check',
+        selectAllAvailable: selectAllAvailable,
         caption: "(" + activities.length + ") sessions",
         captionClasses: "govuk-visually-hidden",
         name: 'selectedInstanceIds',

@@ -48,7 +48,7 @@
                         </div>
                         
                         <div class="govuk-grid-column-one-third govuk-!-print-grid-column-one-half">
-                            {% if attendAllEnabled and not 'ROLE_ACTIVITY_HUB' in user.roles %}
+                            {% if attendAllEnabled %}
                             <div class='related-tasks govuk-!-display-none-print'>
                                 <ul class='govuk-list'>
                                     <li><a href="/activities/attendance/attend-all/select-people-by-residential-location?date={{date}}&sessionFilters={{timeSlot}}&locationKey={{location.name}}" class="govuk-link govuk-link--no-visited-state">Record activity attendance for people on {{ location.name }}</a></li>

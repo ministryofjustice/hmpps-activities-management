@@ -6,25 +6,20 @@ import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceD
 import HowToRecordAttendancePage from '../../../pages/recordAttendance/attend-all/howToRecordAttendancePage'
 import getActivities from '../../../fixtures/activitiesApi/getActivities.json'
 import getActivity from '../../../fixtures/activitiesApi/getActivity.json'
-import ChooseDetailsToRecordAttendancePage from '../../../pages/recordAttendance/attend-all/chooseDetailsToRecordAttendancePage'
 import { formatIsoDate } from '../../../../server/utils/datePickerUtils'
-import SelectPeopleToRecordAttendanceForPage from '../../../pages/recordAttendance/attend-all/selectPeopleToRecordAttendanceForPage'
 import getScheduledInstanceEnglishLevel2 from '../../../fixtures/activitiesApi/getScheduledInstance11.json'
 import getAttendanceList from '../../../fixtures/activitiesApi/getAttendanceList.json'
 import getScheduledEvents from '../../../fixtures/activitiesApi/getScheduledEventsMdi20230202.json'
 import getInmateDetails from '../../../fixtures/prisonerSearchApi/getInmateDetailsForAttendance.json'
 import getAttendanceReasons from '../../../fixtures/activitiesApi/getAttendanceReasons.json'
-import NotAttendedReasonPage from '../../../pages/recordAttendance/notAttendedReason'
 import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
-import ChooseDetailsByActivityLocationPage from '../../../pages/recordAttendance/attend-all/chooseDetailsByActivityLocationPage'
 import getCategories from '../../../fixtures/activitiesApi/getCategories.json'
 import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceSummary-different-locations.json'
-import ListActivitiesPage from '../../../pages/recordAttendance/attend-all/listActivitiesPage'
-import AttendanceListPage from '../../../pages/recordAttendance/attendanceList'
 import SelectPeriodPage from '../../../pages/recordAttendance/selectPeriod'
 import ActivitiesPage from '../../../pages/recordAttendance/activitiesPage'
-
-// Some tests currently skipped as the attendance by activity and activity location options are hidden as per SAA-3870
+import getLocationGroups from '../../../fixtures/activitiesApi/getLocationGroups.json'
+import ChooseDetailsByResidentialLocationPage from '../../../pages/recordAttendance/attend-all/chooseDetailsByResidentialLocationPage'
+import getPrisonPrisoners from '../../../fixtures/prisonerSearchApi/getPrisonPrisoners-MDI-A1350DZ-A8644DY.json'
 
 context('Recording attendance for non-activity hub users', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -34,6 +29,12 @@ context('Recording attendance for non-activity hub users', () => {
   getActivity1.description = 'Maths level 1'
   getActivity1.schedules[0].startDate = formatIsoDate(subDays(new Date(), 1))
   let getInstances
+
+  const toLocPrefix = (prefix: string) => JSON.parse(`{"locationPrefix": "${prefix}"}`)
+  const locPrefixBlock1 = 'MDI-1-.+'
+  const locPrefixBlock2AWing = 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-3-0(0[1-9]|1[0-2])'
+  const locPrefixBlock2BWing = 'MDI-1-1-0(1[3-9]|2[0-6]),MDI-1-2-0(1[3-9]|2[0-6]),MDI-1-3-0(1[3-9]|2[0-6])'
+  const locPrefixBlock2CWing = 'MDI-1-1-0(2[7-9]|3[0-8]),MDI-1-2-0(2[7-9]|3[0-8]),MDI-1-3-0(2[7-9]|3[0-8])'
 
   beforeEach(() => {
     cy.task('reset')
@@ -72,92 +73,43 @@ context('Recording attendance for non-activity hub users', () => {
     )
     cy.stubEndpoint('GET', `/scheduled-instances/93`, getInstances)
     cy.stubEndpoint('GET', '/scheduled-instances/93/scheduled-attendees', getAttendanceList)
-  })
-
-  it.skip('should record attendance by activity - no activities available', () => {
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.recordAttendanceCard().click()
-
-    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
-    recordAttendancePage.recordAttendanceCard().click()
-
-    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
-    howToRecordAttendancePage.radioActivityClick().click()
-    howToRecordAttendancePage.continue()
-
-    const chooseDetailsToRecordAttendancePage = Page.verifyOnPage(ChooseDetailsToRecordAttendancePage)
-    chooseDetailsToRecordAttendancePage.radioTodayClick()
-    chooseDetailsToRecordAttendancePage.checkboxAMClick()
-    chooseDetailsToRecordAttendancePage.searchBox().type('Maths level 1')
-    chooseDetailsToRecordAttendancePage.continue()
-
-    const selectPeopleToRecordAttendanceForPage = Page.verifyOnPage(SelectPeopleToRecordAttendanceForPage)
-    selectPeopleToRecordAttendanceForPage.noActivities(
-      'Maths level 1',
-      'AM',
-      format(new Date(today), 'EEEE, d MMMM yyyy'),
+    cy.stubEndpoint('GET', '/locations/prison/MDI/location-groups', getLocationGroups)
+    cy.stubEndpoint('GET', `/prisons/MDI/scheduled-instances\\?startDate=${today}&endDate=${today}&slot=AM`, [
+      getInstances,
+    ])
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201',
+      toLocPrefix(locPrefixBlock1),
     )
-    selectPeopleToRecordAttendanceForPage.selectDifferentDetails()
-    Page.verifyOnPage(ChooseDetailsToRecordAttendancePage)
-  })
-  it.skip('should record attendance by activity - 1 person - attended', () => {
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.recordAttendanceCard().click()
-
-    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
-    recordAttendancePage.recordAttendanceCard().click()
-
-    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
-    howToRecordAttendancePage.radioActivityClick().click()
-    howToRecordAttendancePage.continue()
-
-    const chooseDetailsToRecordAttendancePage = Page.verifyOnPage(ChooseDetailsToRecordAttendancePage)
-    chooseDetailsToRecordAttendancePage.radioTodayClick()
-    chooseDetailsToRecordAttendancePage.checkboxAMClick()
-    chooseDetailsToRecordAttendancePage.searchBox().type('Maths level 1')
-    chooseDetailsToRecordAttendancePage.continue()
-
-    const selectPeopleToRecordAttendanceForPage = Page.verifyOnPage(SelectPeopleToRecordAttendanceForPage)
-    selectPeopleToRecordAttendanceForPage.noActivities(
-      'Maths level 1',
-      'AM',
-      format(new Date(today), 'EEEE, d MMMM yyyy'),
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201',
+      toLocPrefix(locPrefixBlock1),
     )
-    selectPeopleToRecordAttendanceForPage.selectDifferentDetails()
-    Page.verifyOnPage(ChooseDetailsToRecordAttendancePage)
-
-    chooseDetailsToRecordAttendancePage.radioTodayClick()
-    chooseDetailsToRecordAttendancePage.checkboxPMClick()
-    chooseDetailsToRecordAttendancePage.searchBox().type('English level 1')
-    chooseDetailsToRecordAttendancePage.continue()
-
-    Page.verifyOnPage(SelectPeopleToRecordAttendanceForPage)
-    selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Andy, Booking', 'Attended', 'Unpaid')
-    selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Aisho, Egurztof', 'Attended', 'Unpaid')
-    selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Aborah, Cudmastarie Hallone', 'Not recorded')
-    selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Not recorded')
-
-    const updatedInstance = JSON.parse(JSON.stringify(getScheduledInstanceEnglishLevel2))
-    updatedInstance.date = today
-    updatedInstance.attendances[2].status = 'COMPLETED'
-    updatedInstance.attendances[2].attendanceReason = { code: 'ATTENDED', description: 'Attended' }
-    cy.stubEndpoint('POST', '/scheduled-instances', [updatedInstance])
-    cy.stubEndpoint('GET', `/prisons/MDI/scheduled-instances\\?startDate=${today}&endDate=${today}`, [updatedInstance])
-    selectPeopleToRecordAttendanceForPage.selectPrisoner('Aborah, Cudmastarie Hallone')
-
-    selectPeopleToRecordAttendanceForPage.markAsAttended()
-    Page.verifyOnPage(SelectPeopleToRecordAttendanceForPage)
-
-    selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Aborah, Cudmastarie Hallone', 'Attended', 'Unpaid')
-    selectPeopleToRecordAttendanceForPage.checkSuccessBanner(`You've saved attendance details for Cudmastarie Aborah`)
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201_A-Wing',
+      toLocPrefix(locPrefixBlock2AWing),
+    )
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201_B-Wing',
+      toLocPrefix(locPrefixBlock2BWing),
+    )
+    cy.stubEndpoint(
+      'GET',
+      '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201_C-Wing',
+      toLocPrefix(locPrefixBlock2CWing),
+    )
+    cy.stubEndpoint(
+      'GET',
+      '/prison/MDI/prisoners\\?page=0&size=1024&cellLocationPrefix=MDI-1-&sort=cellLocation',
+      getPrisonPrisoners,
+    )
   })
-  it.skip('should record attendance by activity - 2 people - not attended', () => {
+
+  it('should not show the checkbox to select all activities - attendance by activity', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -169,180 +121,6 @@ context('Recording attendance for non-activity hub users', () => {
 
     const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
     howToRecordAttendancePage.radioActivityClick().click()
-    howToRecordAttendancePage.continue()
-
-    const chooseDetailsToRecordAttendancePage = Page.verifyOnPage(ChooseDetailsToRecordAttendancePage)
-
-    chooseDetailsToRecordAttendancePage.radioTodayClick()
-    chooseDetailsToRecordAttendancePage.checkboxPMClick()
-    chooseDetailsToRecordAttendancePage.searchBox().type('English level 1')
-    chooseDetailsToRecordAttendancePage.continue()
-
-    const selectPeopleToRecordAttendanceForPage = Page.verifyOnPage(SelectPeopleToRecordAttendanceForPage)
-    selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Andy, Booking', 'Attended', 'Unpaid')
-    selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Aisho, Egurztof', 'Attended', 'Unpaid')
-    selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Aborah, Cudmastarie Hallone', 'Not recorded')
-    selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Not recorded')
-
-    const updatedInstance = JSON.parse(JSON.stringify(getScheduledInstanceEnglishLevel2))
-    updatedInstance.date = today
-    updatedInstance.attendances[2].status = 'COMPLETED'
-    updatedInstance.attendances[2].attendanceReason = { code: 'SICK', description: 'Sick' }
-    updatedInstance.attendances[2].issuePayment = true
-    updatedInstance.attendances[3].status = 'COMPLETED'
-    updatedInstance.attendances[3].attendanceReason = { code: 'SICK', description: 'Sick' }
-    updatedInstance.attendances[3].issuePayment = true
-    cy.stubEndpoint('POST', '/scheduled-instances', [updatedInstance])
-    cy.stubEndpoint('GET', `/prisons/MDI/scheduled-instances\\?startDate=${today}&endDate=${today}`, [updatedInstance])
-    selectPeopleToRecordAttendanceForPage.selectPrisoner('Aborah, Cudmastarie Hallone')
-    selectPeopleToRecordAttendanceForPage.selectPrisoner('Arianniver, Eeteljan')
-
-    selectPeopleToRecordAttendanceForPage.markAsNotAttended()
-
-    const notAttendedReasonPage = Page.verifyOnPage(NotAttendedReasonPage)
-    notAttendedReasonPage.selectRadio('notAttendedData[0][notAttendedReason]')
-    notAttendedReasonPage.selectRadio('notAttendedData[0][sickPay]')
-    notAttendedReasonPage.selectRadio('notAttendedData[1][notAttendedReason]')
-    notAttendedReasonPage.selectRadio('notAttendedData[1][sickPay]')
-    notAttendedReasonPage.submit()
-
-    Page.verifyOnPage(SelectPeopleToRecordAttendanceForPage)
-
-    selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Aborah, Cudmastarie Hallone', 'Sick', 'Pay')
-    selectPeopleToRecordAttendanceForPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Sick', 'Pay')
-    selectPeopleToRecordAttendanceForPage.checkSuccessBanner(`You've saved attendance details for 2 attendees`)
-  })
-  it.skip('should record attendance by activity location - 2 people, attended', () => {
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.recordAttendanceCard().click()
-
-    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
-    recordAttendancePage.recordAttendanceCard().click()
-
-    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
-    howToRecordAttendancePage.radioActivityLocationClick().click()
-    howToRecordAttendancePage.continue()
-
-    const chooseDetailsToRecordAttendanceActivityLocationPage = Page.verifyOnPage(ChooseDetailsByActivityLocationPage)
-
-    chooseDetailsToRecordAttendanceActivityLocationPage.radioTodayClick()
-    chooseDetailsToRecordAttendanceActivityLocationPage.checkboxAMClick()
-    chooseDetailsToRecordAttendanceActivityLocationPage.radioOffWingClick()
-    chooseDetailsToRecordAttendanceActivityLocationPage.continue()
-
-    const listActivitiesPage = Page.verifyOnPage(ListActivitiesPage)
-    listActivitiesPage.containsActivities('Football')
-    listActivitiesPage.back()
-
-    Page.verifyOnPage(ChooseDetailsByActivityLocationPage)
-    chooseDetailsToRecordAttendanceActivityLocationPage.radioTodayClick()
-    chooseDetailsToRecordAttendanceActivityLocationPage.checkboxAMClick()
-    chooseDetailsToRecordAttendanceActivityLocationPage.radioInCellClick()
-    chooseDetailsToRecordAttendanceActivityLocationPage.continue()
-    listActivitiesPage.containsActivities('English level 1')
-    listActivitiesPage.selectActivityWithName('English level 1')
-
-    const updatedInstance2 = JSON.parse(JSON.stringify(getScheduledInstanceEnglishLevel2))
-    updatedInstance2.id = 93
-    updatedInstance2.date = today
-    updatedInstance2.attendances[2].status = 'COMPLETED'
-    updatedInstance2.attendances[2].attendanceReason = {
-      code: 'ATTENDED',
-      description: 'Attended',
-    }
-    updatedInstance2.attendances[2].issuePayment = true
-    updatedInstance2.attendances[3].status = 'COMPLETED'
-    updatedInstance2.attendances[3].attendanceReason = {
-      code: 'ATTENDED',
-      description: 'Attended',
-    }
-    updatedInstance2.attendances[3].issuePayment = true
-
-    cy.stubEndpoint('GET', `/scheduled-instances/93`, updatedInstance2)
-    cy.stubEndpoint('POST', '/scheduled-instances', [updatedInstance2])
-
-    const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
-    attendanceListPage.checkAttendanceStatuses('Aborah, Cudmastarie Hallone', 'Not recorded')
-    attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Attended', 'No pay')
-    attendanceListPage.checkAttendanceStatuses('Aisho, Egurztof', 'Attended', 'No pay')
-    attendanceListPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Not recorded')
-
-    attendanceListPage.selectPrisoner('Aborah, Cudmastarie Hallone')
-    attendanceListPage.selectPrisoner('Arianniver, Eeteljan')
-    attendanceListPage.markAsAttended()
-
-    attendanceListPage.notificationHeading().should('contain.text', 'Attendance recorded')
-    attendanceListPage.notificationBody().should('contain.text', "You've saved attendance details for 2 attendees")
-  })
-  it.skip('should record attendance by activity location - 1 person did not attend', () => {
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.recordAttendanceCard().click()
-
-    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
-    recordAttendancePage.recordAttendanceCard().click()
-
-    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
-    howToRecordAttendancePage.radioActivityLocationClick().click()
-    howToRecordAttendancePage.continue()
-
-    const chooseDetailsToRecordAttendanceActivityLocationPage = Page.verifyOnPage(ChooseDetailsByActivityLocationPage)
-    chooseDetailsToRecordAttendanceActivityLocationPage.radioTodayClick()
-    chooseDetailsToRecordAttendanceActivityLocationPage.checkboxAMClick()
-    chooseDetailsToRecordAttendanceActivityLocationPage.radioInCellClick()
-    chooseDetailsToRecordAttendanceActivityLocationPage.continue()
-
-    const listActivitiesPage = Page.verifyOnPage(ListActivitiesPage)
-    listActivitiesPage.containsActivities('English level 1')
-    listActivitiesPage.selectActivityWithName('English level 1')
-
-    const updatedInstance3 = JSON.parse(JSON.stringify(getScheduledInstanceEnglishLevel2))
-    updatedInstance3.id = 93
-    updatedInstance3.date = today
-    updatedInstance3.attendances[3].status = 'COMPLETED'
-    updatedInstance3.attendances[3].attendanceReason = { code: 'REFUSED', description: 'Refused' }
-    updatedInstance3.attendances[3].issuePayment = false
-
-    cy.stubEndpoint('GET', `/scheduled-instances/93`, updatedInstance3)
-    cy.stubEndpoint('POST', '/scheduled-instances', [updatedInstance3])
-
-    const attendanceListPage = Page.verifyOnPage(AttendanceListPage)
-    attendanceListPage.checkAttendanceStatuses('Aborah, Cudmastarie Hallone', 'Not recorded')
-    attendanceListPage.checkAttendanceStatuses('Andy, Booking', 'Attended', 'No pay')
-    attendanceListPage.checkAttendanceStatuses('Aisho, Egurztof', 'Attended', 'No pay')
-    attendanceListPage.checkAttendanceStatuses('Arianniver, Eeteljan', 'Not recorded')
-
-    attendanceListPage.selectPrisoner('Arianniver, Eeteljan')
-    attendanceListPage.markAsNotAttended()
-
-    const notAttendedReasonPage = Page.verifyOnPage(NotAttendedReasonPage)
-    notAttendedReasonPage.selectRadioById('notAttendedData-0-notAttendedReason-2')
-    notAttendedReasonPage.comment('notAttendedData[0][caseNote]').type('Did not want to attend')
-    notAttendedReasonPage.selectRadio('notAttendedData[0][incentiveLevelWarningIssued]')
-    notAttendedReasonPage.submit()
-
-    attendanceListPage.notificationHeading().should('contain.text', 'Attendance recorded')
-    attendanceListPage
-      .notificationBody()
-      .should('contain.text', "You've saved attendance details for Eeteljan Arianniver")
-  })
-  it('should go to the activities list page', () => {
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.recordAttendanceCard().click()
-
-    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
-    recordAttendancePage.recordAttendanceCard().click()
-
-    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
-    howToRecordAttendancePage.fullListClick()
     howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
@@ -350,7 +128,32 @@ context('Recording attendance for non-activity hub users', () => {
     selectPeriodPage.selectAM()
     selectPeriodPage.continue()
 
-    Page.verifyOnPage(ActivitiesPage)
-    // The rest of the journey is tested in recordAttendance_activityHubUsers.cy.ts
+    const activitiesPage = Page.verifyOnPage(ActivitiesPage)
+    activitiesPage.containsActivities('English level 1', 'English level 2', 'Football', 'Maths level 1')
+
+    cy.get('#checkboxes-all').should('not.exist')
+  })
+  it('should not show the checkbox to select all - attendance by residential location', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.recordAttendanceCard().click()
+
+    const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
+    recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityLocationClick().click()
+    howToRecordAttendancePage.continue()
+
+    const chooseDetailsByResidentialLocationPage = Page.verifyOnPage(ChooseDetailsByResidentialLocationPage)
+
+    chooseDetailsByResidentialLocationPage.radioTodayClick()
+    chooseDetailsByResidentialLocationPage.radioAMClick()
+    chooseDetailsByResidentialLocationPage.selectLocation('Houseblock 1')
+    chooseDetailsByResidentialLocationPage.continue()
+
+    cy.get('#checkboxes-all').should('not.exist')
   })
 })
