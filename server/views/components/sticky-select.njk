@@ -11,7 +11,7 @@
             },
             classes: 'govuk-!-display-none-print'
         }
-    ] if params.type == 'check' else [{}] %}
+    ] if params.type == 'check' and params.selectAllAvailable else [{}] %}
     {% for column in params.head %}
         {% set head = (head.push(column), head) %}
     {% endfor %}

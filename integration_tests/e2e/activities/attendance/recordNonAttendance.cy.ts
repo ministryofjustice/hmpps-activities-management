@@ -14,6 +14,7 @@ import getAttendanceSummary from '../../../fixtures/activitiesApi/getAttendanceS
 import AttendanceDashboardPage from '../../../pages/recordAttendance/attendanceDashboard'
 import ActivitiesIndexPage from '../../../pages/activities'
 import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
+import HowToRecordAttendancePage from '../../../pages/recordAttendance/attend-all/howToRecordAttendancePage'
 
 context('Record non attendance', () => {
   beforeEach(() => {
@@ -49,6 +50,10 @@ context('Record non attendance', () => {
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(2023, 1, 2))

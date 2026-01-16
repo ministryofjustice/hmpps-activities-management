@@ -14,6 +14,7 @@ import UncancelActivitiesListPage from '../../../pages/recordAttendance/uncancel
 import UncancelConfirmMultiplePage from '../../../pages/recordAttendance/uncancelConfirmMultiple'
 import UncancelConfirmSinglePage from '../../../pages/recordAttendance/uncancelConfirmSingle'
 import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
+import HowToRecordAttendancePage from '../../../pages/recordAttendance/attend-all/howToRecordAttendancePage'
 
 context('Cancel Multiple Sessions', () => {
   const today = startOfToday()
@@ -58,6 +59,10 @@ context('Cancel Multiple Sessions', () => {
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
 
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
+
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))
     selectPeriodPage.selectAM()
@@ -100,6 +105,10 @@ context('Cancel Multiple Sessions', () => {
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(tomorrowStr))

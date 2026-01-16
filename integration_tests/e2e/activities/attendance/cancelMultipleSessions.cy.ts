@@ -24,6 +24,7 @@ import ViewOrEditCancellationDetailsPage from '../../../pages/recordAttendance/v
 import CancelSessionPage from '../../../pages/recordAttendance/cancelSessionReason'
 import CancelledSessionUpdatePayPage from '../../../pages/recordAttendance/cancelSessionUpdatePay'
 import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
+import HowToRecordAttendancePage from '../../../pages/recordAttendance/attend-all/howToRecordAttendancePage'
 
 context('Cancel Multiple Sessions', () => {
   const today = startOfToday()
@@ -66,6 +67,10 @@ context('Cancel Multiple Sessions', () => {
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))
@@ -122,6 +127,10 @@ context('Cancel Multiple Sessions', () => {
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))
@@ -181,6 +190,10 @@ context('Cancel Multiple Sessions', () => {
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))
@@ -273,6 +286,10 @@ context('Updating cancellation details', () => {
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
 
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
+
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))
     selectPeriodPage.selectAM()
@@ -328,6 +345,10 @@ context('Updating cancellation details', () => {
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
 
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
+
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))
     selectPeriodPage.selectAM()
@@ -363,6 +384,10 @@ context('Updating cancellation details', () => {
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
 
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
+
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))
     selectPeriodPage.selectAM()
@@ -394,6 +419,10 @@ context('Updating cancellation details', () => {
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))
@@ -447,6 +476,10 @@ context('Updating cancellation details', () => {
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))

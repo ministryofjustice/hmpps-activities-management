@@ -17,6 +17,7 @@ import CancelSessionPage from '../../../pages/recordAttendance/cancelSessionReas
 import CancelSessionConfirmPage from '../../../pages/recordAttendance/cancelSessionConfirm'
 import CancelSessionPaymentPage from '../../../pages/recordAttendance/cancelSessionPayment'
 import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
+import HowToRecordAttendancePage from '../../../pages/recordAttendance/attend-all/howToRecordAttendancePage'
 
 context('Cancel an activity session (single)', () => {
   const today = startOfToday()
@@ -56,6 +57,10 @@ context('Cancel an activity session (single)', () => {
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))
@@ -116,6 +121,10 @@ context('Cancel an activity session (single)', () => {
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))

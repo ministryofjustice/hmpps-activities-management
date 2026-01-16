@@ -18,6 +18,7 @@ import getAttendanceReasons from '../../../fixtures/activitiesApi/getAttendanceR
 import NotAttendedReasonPage from '../../../pages/recordAttendance/notAttendedReason'
 import { formatDate } from '../../../../server/utils/utils'
 import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
+import HowToRecordAttendancePage from '../../../pages/recordAttendance/attend-all/howToRecordAttendancePage'
 
 context('Record attendance', () => {
   const today = startOfToday()
@@ -73,6 +74,10 @@ context('Record attendance', () => {
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))
@@ -184,6 +189,10 @@ context('Record attendance', () => {
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
 
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
+
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))
     selectPeriodPage.selectAM()
@@ -272,6 +281,10 @@ context('Record attendance', () => {
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.enterDate(new Date(todayStr))

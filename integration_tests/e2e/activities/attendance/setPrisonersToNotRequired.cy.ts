@@ -17,6 +17,7 @@ import getInmateDetails from '../../../fixtures/prisonerSearchApi/getInmateDetai
 import NotRequiredOrExcusedPaidOrNotPage from '../../../pages/recordAttendance/notRequiredOrExcusedPaidOrNot'
 import NotRequiredOrExcusedCheckAndConfirmPage from '../../../pages/recordAttendance/notRequiredOrExcusedCheckAndConfirm'
 import getAdvanceListExcused from '../../../fixtures/activitiesApi/getAdvanceListExcused.json'
+import HowToRecordAttendancePage from '../../../pages/recordAttendance/attend-all/howToRecordAttendancePage'
 
 context('Exclude multiple prisoners from an activity', () => {
   const date3DaysFromNow = format(addDays(new Date(), 3), 'yyyy-MM-dd')
@@ -73,6 +74,10 @@ context('Exclude multiple prisoners from an activity', () => {
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
 
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
+
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.selectADifferentDate()
     selectPeriodPage.pickDateFromToday(addDays(new Date(), 3))
@@ -116,6 +121,10 @@ context('Exclude multiple prisoners from an activity', () => {
 
     const recordAttendancePage = Page.verifyOnPage(AttendanceDashboardPage)
     recordAttendancePage.recordAttendanceCard().click()
+
+    const howToRecordAttendancePage = Page.verifyOnPage(HowToRecordAttendancePage)
+    howToRecordAttendancePage.radioActivityClick().click()
+    howToRecordAttendancePage.continue()
 
     const selectPeriodPage = Page.verifyOnPage(SelectPeriodPage)
     selectPeriodPage.selectADifferentDate()
