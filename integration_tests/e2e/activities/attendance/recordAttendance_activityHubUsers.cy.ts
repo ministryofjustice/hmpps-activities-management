@@ -23,6 +23,7 @@ import getPrisonPrisoners from '../../../fixtures/prisonerSearchApi/getPrisonPri
 import getLocationGroups from '../../../fixtures/activitiesApi/getLocationGroups.json'
 import getScheduledInstanceEnglishLevel2 from '../../../fixtures/activitiesApi/getScheduledInstance11.json'
 import SelectPeopleByResidentialLocationPage from '../../../pages/recordAttendance/attend-all/selectPeopleByResidentialLocationPage'
+import getNonResidentialActivityLocations from '../../../fixtures/locationsinsideprison/non-residential-usage-activities.json'
 
 context('Record attendance for activity hub users', () => {
   const today = format(startOfToday(), 'yyyy-MM-dd')
@@ -238,7 +239,6 @@ context('Record attendance for activity hub users', () => {
     selectPeopleByResidentialLocationPage.markAsAttended()
 
     selectPeopleByResidentialLocationPage.assertNotificationContents(
-      'Success',
       'Attendance recorded',
       "You've saved attendance details for 2 attendees",
     )
