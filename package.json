@@ -102,7 +102,7 @@
     "axe-core": "^4.11.1",
     "better-npm-audit": "^3.11.0",
     "cheerio": "^1.1.2",
-    "cypress": "^15.8.2",
+    "cypress": "^15.9.0",
     "cypress-axe": "^1.7.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-multi-reporters": "^2.0.5",
