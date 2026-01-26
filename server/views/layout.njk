@@ -20,7 +20,7 @@
       </script>
   <!-- End Google Tag Manager -->
 
-  <link href="{{ '/assets/css/app.css' | assetMap }}" rel="stylesheet"/>
+  <link href="{{ '/assets/css/application.css' | assetMap }}" rel="stylesheet"/>
 
   {% for css in feComponents.cssIncludes %}
     <link href="{{ css }}" nonce="{{ cspNonce }}" rel="stylesheet" />
@@ -66,5 +66,5 @@
     <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
   {% endfor %}
 
-  <script type="module" src="{{ '/assets/js/app.js' | assetMap }}"></script>
+  <script type="module" src="{{ '/assets/js/index.js' | assetMap }}"></script>
 {% endblock %}
