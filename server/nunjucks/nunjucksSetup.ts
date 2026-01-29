@@ -132,6 +132,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
     {
       autoescape: true,
       express: app,
+      noCache: process.env.NODE_ENV !== 'production',
       watch: process.env.NODE_ENV === 'live-development',
     },
   )
