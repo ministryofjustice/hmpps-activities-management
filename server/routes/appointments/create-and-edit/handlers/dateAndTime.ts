@@ -17,7 +17,7 @@ export class DateAndTime {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(date => date > subDays(startOfToday(), MAX_RETROSPECTIVE_DAYS), {
-    message: `Enter a date that's after ${maximumRetrospectiveDate(new Date(), MAX_RETROSPECTIVE_DAYS)}`,
+    message: `Enter a date that's after ${maximumRetrospectiveDate(startOfToday(), MAX_RETROSPECTIVE_DAYS)}`,
   })
   @IsValidDate({ message: 'Enter a valid date for the appointment' })
   @IsNotEmpty({ message: 'Enter a date for the appointment' })
@@ -48,7 +48,6 @@ export default class DateAndTimeRoutes {
     const { appointmentJourney } = req.session
     this.setTimeAndDate(req, 'appointmentJourney')
     const retrospective = retrospectiveAppointment(appointmentJourney.startTime)
-
     if (req.query.preserveHistory && !retrospective) {
       req.session.returnTo = 'schedule?preserveHistory=true'
     }
