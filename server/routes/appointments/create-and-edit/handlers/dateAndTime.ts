@@ -48,6 +48,7 @@ export default class DateAndTimeRoutes {
     const { appointmentJourney } = req.session
     this.setTimeAndDate(req, 'appointmentJourney')
     const retrospective = retrospectiveAppointment(appointmentJourney.startTime)
+
     if (req.query.preserveHistory && !retrospective) {
       req.session.returnTo = 'schedule?preserveHistory=true'
     }
