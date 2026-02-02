@@ -2,7 +2,11 @@ import { NextFunction, Request, Response } from 'express'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { asString, formatFirstLastName, getScheduleIdFromActivity, parseDate } from '../../../../../utils/utils'
-import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
+import {
+  Activity,
+  WaitingListApplication,
+  WaitingListApplicationHistory,
+} from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import WaitlistRequester from '../../../../../enum/waitlistRequester'
 
@@ -11,6 +15,44 @@ export default class ViewApplicationRoutes {
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
   ) {}
+
+  private getHistoryWithChanges(
+    history: WaitingListApplicationHistory[],
+  ): (WaitingListApplicationHistory & { change: string })[] {
+    const sortedHistory = history.sort((a, b) => {
+      return new Date(b.updatedDateTime).getTime() - new Date(a.updatedDateTime).getTime()
+    })
+
+    return sortedHistory.map((item, index) => {
+      let change: string = ''
+      let note: string = ''
+
+      if (index < sortedHistory.length - 1) {
+        const previousItem = sortedHistory[index + 1]
+        if (item.status !== previousItem.status) {
+          change = 'Status changed'
+          note = `Changed from ${previousItem.status} to ${item.status}`
+        } else if (item.comments !== previousItem.comments) {
+          change = 'Comments changed'
+          note = `Previous comment: ${previousItem.comments}`
+        } else if (item.requestedBy !== previousItem.requestedBy) {
+          change = 'Requester changed'
+          note = `Changed from ${previousItem.requestedBy} to ${item.requestedBy}`
+        } else if (item.applicationDate !== previousItem.applicationDate) {
+          change = 'Date of request changed'
+          note = `Changed from ${previousItem.applicationDate} to ${item.applicationDate}`
+        }
+      } else {
+        change = 'Application logged'
+      }
+
+      return {
+        ...item,
+        change,
+        note,
+      }
+    })
+  }
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { applicationId } = req.params
@@ -23,12 +65,15 @@ export default class ViewApplicationRoutes {
     if (journeyEntry && journeyEntry.includes('prisoner-allocations')) journeyEntry += '#prisoner-waitlist-tab'
 
     const application = await this.activitiesService.fetchWaitlistApplication(+applicationId, user)
+    const history = await this.activitiesService.fetchWaitlistApplicationHistory(+applicationId, user)
 
     const [prisoner, activity, allApplications]: [Prisoner, Activity, WaitingListApplication[]] = await Promise.all([
       this.prisonService.getInmateByPrisonerNumber(application.prisonerNumber, user),
       this.activitiesService.getActivity(application.activityId, user),
       this.activitiesService.fetchActivityWaitlist(application.scheduleId, false, user),
     ])
+
+    const historyWithChanges = this.getHistoryWithChanges(history)
 
     const isMostRecent =
       allApplications.find(
@@ -72,6 +117,7 @@ export default class ViewApplicationRoutes {
       isMostRecent,
       isNotAlreadyAllocated,
       journeyEntry,
+      history: historyWithChanges,
     })
   }
 }

@@ -7,6 +7,7 @@ import { addDays, addMonths, addWeeks, addYears, getUnixTime, startOfDay, subDay
 import { flatMap, flatten, sortBy } from 'lodash'
 import setUpDprNunjucksFilters from '@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/setUpNunjucksFilters'
 import fs from 'fs'
+import mojFilters from '@ministryofjustice/frontend/moj/filters/all'
 import {
   buildErrorSummaryList,
   concatArrays,
@@ -262,6 +263,10 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('exampleDatePickerDate', () => `29/9/${formatDate(addYears(new Date(), 1), 'yyyy')}`)
 
   njkEnv.addGlobal('prisonerExtraInformationEnabled', config.prisonerExtraInformationEnabled)
+
+  for (const [name, filter] of Object.entries(mojFilters())) {
+    njkEnv.addFilter(name, filter as (...args: any[]) => any)
+  }
 
   return njkEnv
 }

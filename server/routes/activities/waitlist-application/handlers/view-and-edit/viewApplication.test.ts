@@ -7,6 +7,7 @@ import PrisonService from '../../../../../services/prisonService'
 import atLeast from '../../../../../../jest.setup'
 import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
+import ActivitiesTestData from '../../../../../utils/testData/activitiesTestData'
 
 jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../services/prisonService')
@@ -53,6 +54,10 @@ describe('Route Handlers - Waitlist application - View application', () => {
     } as unknown as Request
 
     next = jest.fn()
+
+    when(activitiesService.fetchWaitlistApplicationHistory)
+      .calledWith(atLeast(1))
+      .mockResolvedValue(ActivitiesTestData.WaitlistApplicationHistory)
   })
 
   afterEach(() => {
@@ -61,7 +66,6 @@ describe('Route Handlers - Waitlist application - View application', () => {
 
   describe('GET', () => {
     it('should render the activity template', async () => {
-      activitiesService.fetchWaitlistApplication = jest.fn()
       when(activitiesService.fetchWaitlistApplication)
         .calledWith(atLeast(1))
         .mockResolvedValue({
@@ -115,23 +119,14 @@ describe('Route Handlers - Waitlist application - View application', () => {
         isMostRecent: true,
         isNotAlreadyAllocated: true,
         journeyEntry: undefined,
+        history: expect.any(Array),
       })
     })
 
     it('should calculate if the application is the most recent for the prisoner', async () => {
-      activitiesService.fetchWaitlistApplication = jest.fn()
       when(activitiesService.fetchWaitlistApplication)
         .calledWith(atLeast(1))
-        .mockResolvedValue({
-          status: 'DECLINED',
-          activityId: 1,
-          scheduleId: 1,
-          prisonerNumber: 'ABC123',
-          creationTime: '2023-08-16',
-          requestedDate: '2023-07-31',
-          requestedBy: 'PRISONER',
-          comments: 'test comment',
-        } as WaitingListApplication)
+        .mockResolvedValue(ActivitiesTestData.DeclinedWaitlistApplication)
 
       prisonService.getInmateByPrisonerNumber = jest.fn()
       when(prisonService.getInmateByPrisonerNumber)
@@ -167,18 +162,9 @@ describe('Route Handlers - Waitlist application - View application', () => {
     })
 
     it('should calculate if the prisoner is already allocated', async () => {
-      activitiesService.fetchActivityWaitlist = jest.fn()
       when(activitiesService.fetchWaitlistApplication)
         .calledWith(atLeast(1))
-        .mockResolvedValue({
-          status: 'DECLINED',
-          scheduleId: 1,
-          prisonerNumber: 'ABC123',
-          creationTime: '2023-08-16',
-          requestedDate: '2023-07-31',
-          requestedBy: 'PRISONER',
-          comments: 'test comment',
-        } as WaitingListApplication)
+        .mockResolvedValue(ActivitiesTestData.DeclinedWaitlistApplication)
 
       prisonService.getInmateByPrisonerNumber = jest.fn()
       when(prisonService.getInmateByPrisonerNumber)

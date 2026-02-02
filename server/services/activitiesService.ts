@@ -406,6 +406,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.fetchWaitlistApplication(applicationId, user)
   }
 
+  async fetchWaitlistApplicationHistory(applicationId: number, user: ServiceUser) {
+    return this.activitiesApiClient.fetchWaitlistApplicationHistory(applicationId, user)
+  }
+
   async patchWaitlistApplication(
     applicationId: number,
     updateWaitlistRequest: WaitingListApplicationUpdateRequest,
