@@ -18,7 +18,8 @@ export default class ViewApplicationRoutes {
 
   private getHistoryWithChanges(
     history: WaitingListApplicationHistory[],
-  ): (WaitingListApplicationHistory & { change: string })[] {
+    application: WaitingListApplication,
+  ): (WaitingListApplicationHistory & { change: string; note: string })[] {
     const sortedHistory = history.sort((a, b) => {
       return new Date(b.updatedDateTime).getTime() - new Date(a.updatedDateTime).getTime()
     })
@@ -34,7 +35,7 @@ export default class ViewApplicationRoutes {
           note = `Changed from ${previousItem.status} to ${item.status}`
         } else if (item.comments !== previousItem.comments) {
           change = 'Comments changed'
-          note = `Previous comment: ${previousItem.comments}`
+          note = `Previous comment: "${previousItem.comments || ''}"`
         } else if (item.requestedBy !== previousItem.requestedBy) {
           change = 'Requester changed'
           note = `Changed from ${previousItem.requestedBy} to ${item.requestedBy}`
@@ -42,8 +43,10 @@ export default class ViewApplicationRoutes {
           change = 'Date of request changed'
           note = `Changed from ${previousItem.applicationDate} to ${item.applicationDate}`
         }
+      } else if (application.creationTime === item.updatedDateTime) {
+        change = 'Application Logged'
       } else {
-        change = 'Application logged'
+        change = 'Application Updated'
       }
 
       return {
@@ -73,7 +76,23 @@ export default class ViewApplicationRoutes {
       this.activitiesService.fetchActivityWaitlist(application.scheduleId, false, user),
     ])
 
-    const historyWithChanges = this.getHistoryWithChanges(history)
+    const historyWithChanges = this.getHistoryWithChanges(history, application)
+    if (
+      historyWithChanges.length === 0 ||
+      historyWithChanges[historyWithChanges.length - 1].updatedDateTime !== application.creationTime
+    ) {
+      historyWithChanges.push({
+        id: application.id,
+        status: application.status,
+        applicationDate: application.requestedDate,
+        requestedBy: application.requestedBy,
+        comments: application.comments || '',
+        updatedBy: application.createdBy,
+        updatedDateTime: application.creationTime,
+        note: '',
+        change: 'Application Logged',
+      })
+    }
 
     const isMostRecent =
       allApplications.find(
