@@ -17,7 +17,7 @@ export class DateAndTime {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(date => date > subDays(startOfToday(), MAX_RETROSPECTIVE_DAYS), {
-    message: `Enter a date that's after ${maximumRetrospectiveDate(new Date(), MAX_RETROSPECTIVE_DAYS)}`,
+    message: `Enter a date that's after ${maximumRetrospectiveDate(startOfToday(), MAX_RETROSPECTIVE_DAYS)}`,
   })
   @IsValidDate({ message: 'Enter a valid date for the appointment' })
   @IsNotEmpty({ message: 'Enter a date for the appointment' })
