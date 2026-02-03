@@ -51,7 +51,7 @@
             <h1 class='govuk-heading-l'>Request for {{ prisoner.name }}, {{ prisoner.prisonerNumber }}</h1>
 
             {% set applicationDetailsHtml %}
-                {{ govukSummaryList({
+            {{ govukSummaryList({
                     rows: [
                         {
                             key: {
@@ -133,55 +133,56 @@
                     ]
                 }) }}
 
-                <div class="govuk-button-group">
-                    {% if journeyEntry and journeyEntry.includes('prisoner-allocations') %}
-                        {% set buttonText = "Return to " + prisoner.name | possessive + " applications" %}
-                        {% set href = journeyEntry %}
-                    {% elseif journeyEntry and journeyEntry.includes('waitlist-dashboard') %}
-                        {% set buttonText = "Return to applications" %}
-                        {% set href = '/activities/waitlist-dashboard' %}
-                    {% else %}
-                        {% set buttonText = "Return to waitlist" %}
-                        {% set href = '/activities/allocation-dashboard/' + activityId + '#waitlist-tab' %}
-                    {% endif %}
+            <div class="govuk-button-group">
+                {% if journeyEntry and journeyEntry.includes('prisoner-allocations') %}
+                    {% set buttonText = "Return to " + prisoner.name | possessive + " applications" %}
+                    {% set href = journeyEntry %}
+                {% elseif journeyEntry and journeyEntry.includes('waitlist-dashboard') %}
+                    {% set buttonText = "Return to applications" %}
+                    {% set href = '/activities/waitlist-dashboard' %}
+                {% else %}
+                    {% set buttonText = "Return to waitlist" %}
+                    {% set href = '/activities/allocation-dashboard/' + activityId + '#waitlist-tab' %}
+                {% endif %}
 
-                    {{ govukButton({
+                {{ govukButton({
                             text: buttonText,
                             href: href,
                             classes: "govuk-button--secondary"
                         }) }}
 
-                    <p class="govuk-body">
-                        <a class="govuk-link govuk-link--no-visited-state" href='/activities/prisoner-allocations/{{ prisoner.prisonerNumber }}#prisoner-waitlist-tab'>Manage {{ prisoner.name }} waitlist applications.</a>
-                    </p>
-                </div>
+                <p class="govuk-body">
+                    <a class="govuk-link govuk-link--no-visited-state" href='/activities/prisoner-allocations/{{ prisoner.prisonerNumber }}#prisoner-waitlist-tab'>Manage {{ prisoner.name }} waitlist applications.</a>
+                </p>
+            </div>
             {% endset %}
 
-            {% set applicationHistoryHtml %}
+            {% if waitlistWithdrawnEnabled %}
+                {% set applicationHistoryHtml %}
                 {% if history.length == 0 %}
                     <p class="govuk-body">There is no history for this application.</p>
                 {% else %}
                     {% set rows = [] %}
                     {% for historyItem in history %}
-                        {% set rows = (rows.push(
-                            {
-                                label: { text: historyItem.change },
-                                text: historyItem.note,
-                                datetime: {
-                                    timestamp: historyItem.updatedDateTime,
-                                    type: 'datetime'
-                                },
-                                byLine: historyItem.updatedBy
-                            }
-                        ), rows) %}
+                        {% set rows = (rows.push({
+                            label: {
+                                text: historyItem.change
+                            },
+                            text: historyItem.note,
+                            datetime: {
+                                timestamp: historyItem.updatedDateTime,
+                                type: 'datetime'
+                            },
+                            byLine: historyItem.updatedBy
+                        }), rows) %}
                     {% endfor %}
                     {{ mojTimeline({
                         items: rows
                     }) }}
                 {% endif %}
-            {% endset %}
-            <div class="govuk-!-margin-bottom-6">
-                {{ govukTabs({
+                {% endset %}
+                <div class="govuk-!-margin-bottom-6">
+                    {{ govukTabs({
                     classes: "govuk-tabs--borderless",
                     items: [
                         {
@@ -200,6 +201,10 @@
                         }
                     ]
                 }) }}
-            </div>
+                </div>
+            {% else %}
+                {{ applicationDetailsHtml | safe }}
+            {% endif %}
+
         </div>
     {% endblock %}

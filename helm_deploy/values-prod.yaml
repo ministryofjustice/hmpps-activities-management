@@ -38,6 +38,7 @@ generic-service:
     NOMIS_MAPPING_API_URL: "https://nomis-sync-prisoner-mapping.hmpps.service.justice.gov.uk"
     VIDEO_CONFERENCE_SCHEDULE_URL: "https://video-conference-schedule.prison.service.justice.gov.uk"
     APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED: "true"
+    WAITLIST_WITHDRAWN_ENABLED: "false"
     IN_SERVICE_REPORTING_ENABLED: "false"
     ATTEND_ALL_ENABLED: "true"
     LIVE_ISSUE_OUTAGE_BANNER_ENABLED: "false"
