@@ -1,0 +1,91 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
+
+{% macro waitlistStatusBadgeWithHint(status, hint, waitlistWithdrawnEnabled) %}
+  {{ waitlistStatusBadge(status, waitlistWithdrawnEnabled) }}
+  <div class='govuk-hint govuk-!-margin-bottom-0 govuk-!-margin-top-2'>{{ hint }}</div>
+{% endmacro %}
+
+{% set pageTitle = "Change application status - Activities - DPS" %}
+{% set pageId = 'status-page' %}
+{% set jsBackLink = true %}
+
+{% set hintText %}
+  {% if waitListApplicationJourney.status == WaitingListStatusOptions.APPROVED %}
+    <p>You can change the status to pending if more checks are needed, reject it, or withdraw it to remove {{ prisonerName }} from the waitlist.</p>
+  {% elseif waitListApplicationJourney.status == WaitingListStatusOptions.PENDING %}
+    <p>You can approve this application, reject it, or withdraw it to remove {{ prisonerName }} from the waitlist.</p>
+  {% elseif waitListApplicationJourney.status == WaitingListStatusOptions.REJECTED %}
+    <p>You can approve this application, reject it, or withdraw it to remove {{ prisonerName }} from the waitlist.</p>
+  {% else %}
+    <p>If you decline the application, make sure you tell the person concerned.</p>
+  {% endif %}
+{% endset %}
+
+{% block content %}
+  {% set RadioOptions = [] %}
+  {% for key, value in WaitingListStatusOptions %}
+    {% if value !== waitListApplicationJourney.status and value !== WaitingListStatusOptions.WITHDRAWN %}
+      {% set RadioOptions = RadioOptions.concat([{
+        value: value,
+        html: waitlistStatusBadgeWithHint(value, WaitingListStatusDescriptions[value], waitlistWithdrawnEnabled)
+      }]) %}
+    {% endif %}
+  {% endfor %}
+
+  {% if waitListApplicationJourney.status !== WaitingListStatusOptions.WITHDRAWN %}
+    {% set RadioOptions = RadioOptions.concat([
+      { divider: "or" },
+      {
+        value: WaitingListStatusOptions.WITHDRAWN,
+        text: 'Withdrawn',
+        hint: {
+        html: prisonerName + ' ' + WaitingListStatusDescriptions.WITHDRAWN
+      }      }
+
+    ]) %}
+  {% endif %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <span class="govuk-caption-xl">{{ waitListApplicationJourney.activity.activityName }}</span>
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        {{ govukRadios({
+          name: "status",
+          fieldset: {
+            legend: {
+              text: "Change the status of " + prisonerName + "'s application",
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          hint: {
+            html: hintText + "<div class=\"govuk-inset-text govuk-!-margin-top-0\">Current Status: " + (waitListApplicationJourney.status | capitalize) + "</div>"
+          },
+          errorMessage: validationErrors | findError('status'),
+          items: RadioOptions
+        }) }}
+
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: "Update application status",
+            preventDoubleClick: true
+          }) }}
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+

@@ -4,11 +4,17 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import EditStatusRoutes, { EditStatus } from './editStatus'
+import config from '../../../../../config'
 
 jest.mock('../../../../../services/activitiesService')
+jest.mock('../../../../../config')
 
 const activitiesService = new ActivitiesService(null)
 const fakeWaitlistApplicationJourneyData = { prisoner: { name: 'Alan Key' } }
+
+const enableWaitlistWithdrawn = (enabled: boolean) => {
+  ;(config as jest.Mocked<typeof config>).waitlistWithdrawnEnabled = enabled
+}
 
 describe('Route Handlers - Waitlist application - Edit Status', () => {
   const handler = new EditStatusRoutes(activitiesService)
@@ -33,14 +39,51 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
   })
 
   describe('GET', () => {
-    it('should render the edit status template', async () => {
+    beforeEach(() => {
+      enableWaitlistWithdrawn(false)
+    })
+
+    it('should render the edit status page template when feature-flag is disabled', async () => {
+      enableWaitlistWithdrawn(false)
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-status`, {
-        WaitingListStatusOptions: {
+        WaitingListStatus: {
+          PENDING: 'PENDING',
           APPROVED: 'APPROVED',
           DECLINED: 'DECLINED',
-          PENDING: 'PENDING',
+          ALLOCATED: 'ALLOCATED',
         },
+        WaitingListStatusDescriptions: {
+          APPROVED: `Add the applicant to the waitlist. They're ready to be allocated.`,
+          DECLINED: `Reject the application and inform the person concerned.`,
+          PENDING: `Add the applicant to the waitlist as 'Pending'. Follow your usual procedure to check if they can be allocated.`,
+          WITHDRAWN: `will be removed from the waitlist.`,
+        },
+        prisonerName: 'Alan Key',
+        waitlistWithdrawnEnabled: false,
+      })
+    })
+
+    it('should render the edit status with withdrawn page template when the feature-flag is enabled', async () => {
+      enableWaitlistWithdrawn(true)
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-status-with-withdrawn`, {
+        WaitingListStatusWithWithdrawn: {
+          ALLOCATED: 'ALLOCATED',
+          APPROVED: 'APPROVED',
+          PENDING: 'PENDING',
+          DECLINED: 'DECLINED',
+          WITHDRAWN: 'WITHDRAWN',
+        },
+        WaitingListStatusDescriptions: {
+          APPROVED: `Add the applicant to the waitlist. They're ready to be allocated.`,
+          DECLINED: `Reject the application and inform the person concerned.`,
+          PENDING: `Add the applicant to the waitlist as 'Pending'. Follow your usual procedure to check if they can be allocated.`,
+          WITHDRAWN: `will be removed from the waitlist.`,
+        },
+        prisonerName: 'Alan Key',
+        waitlistWithdrawnEnabled: true,
       })
     })
   })
