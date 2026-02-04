@@ -6,6 +6,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% from "partials/activities/waitlist-status-badge.njk" import waitlistStatusBadge %}
+{% from "partials/activities/waitingListStatusDescription.njk" import waitingListStatusDescription %}
 
 {% macro waitlistStatusBadgeWithHint(status, hint, waitlistWithdrawnEnabled) %}
   {{ waitlistStatusBadge(status, waitlistWithdrawnEnabled) }}
@@ -71,7 +72,7 @@
             }
           },
           hint: {
-            html: hintText + "<div class=\"govuk-inset-text govuk-!-margin-top-0\">Current Status: " + (waitListApplicationJourney.status | capitalize) + "</div>"
+            html: hintText + "<div class=\"govuk-inset-text govuk-!-margin-top-0\">Current Status: " + waitingListStatusDescription(waitListApplicationJourney.status) + "</div>"
           },
           errorMessage: validationErrors | findError('status'),
           items: RadioOptions
