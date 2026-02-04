@@ -9,6 +9,7 @@ import {
 } from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import WaitlistRequester from '../../../../../enum/waitlistRequester'
+import config from '../../../../../config'
 
 export default class ViewApplicationRoutes {
   constructor(
@@ -60,6 +61,8 @@ export default class ViewApplicationRoutes {
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { applicationId } = req.params
     const { user } = res.locals
+    const { waitlistWithdrawnEnabled } = config
+    let historyWithChanges = []
 
     let journeyEntry = req.query.journeyEntry ? asString(req.query.journeyEntry) : null
     journeyEntry ??= req.journeyData?.waitListApplicationJourney?.journeyEntry
@@ -68,7 +71,6 @@ export default class ViewApplicationRoutes {
     if (journeyEntry && journeyEntry.includes('prisoner-allocations')) journeyEntry += '#prisoner-waitlist-tab'
 
     const application = await this.activitiesService.fetchWaitlistApplication(+applicationId, user)
-    const history = await this.activitiesService.fetchWaitlistApplicationHistory(+applicationId, user)
 
     const [prisoner, activity, allApplications]: [Prisoner, Activity, WaitingListApplication[]] = await Promise.all([
       this.prisonService.getInmateByPrisonerNumber(application.prisonerNumber, user),
@@ -76,22 +78,25 @@ export default class ViewApplicationRoutes {
       this.activitiesService.fetchActivityWaitlist(application.scheduleId, false, user),
     ])
 
-    const historyWithChanges = this.getHistoryWithChanges(history, application)
-    if (
-      historyWithChanges.length === 0 ||
-      historyWithChanges[historyWithChanges.length - 1].updatedDateTime !== application.creationTime
-    ) {
-      historyWithChanges.push({
-        id: application.id,
-        status: application.status,
-        applicationDate: application.requestedDate,
-        requestedBy: application.requestedBy,
-        comments: application.comments || '',
-        updatedBy: application.createdBy,
-        updatedDateTime: application.creationTime,
-        note: '',
-        change: 'Application Logged',
-      })
+    if (waitlistWithdrawnEnabled) {
+      const history = await this.activitiesService.fetchWaitlistApplicationHistory(+applicationId, user)
+      historyWithChanges = this.getHistoryWithChanges(history, application)
+      if (
+        historyWithChanges.length === 0 ||
+        historyWithChanges[historyWithChanges.length - 1].updatedDateTime !== application.creationTime
+      ) {
+        historyWithChanges.push({
+          id: application.id,
+          status: application.status,
+          applicationDate: application.requestedDate,
+          requestedBy: application.requestedBy,
+          comments: application.comments || '',
+          updatedBy: application.createdBy,
+          updatedDateTime: application.creationTime,
+          note: '',
+          change: 'Application Logged',
+        })
+      }
     }
 
     const isMostRecent =
