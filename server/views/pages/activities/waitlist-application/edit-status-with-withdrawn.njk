@@ -22,8 +22,8 @@
     <p>You can change the status to pending if more checks are needed, reject it, or withdraw it to remove {{ prisonerName }} from the waitlist.</p>
   {% elseif waitListApplicationJourney.status == WaitingListStatusOptions.PENDING %}
     <p>You can approve this application, reject it, or withdraw it to remove {{ prisonerName }} from the waitlist.</p>
-  {% elseif waitListApplicationJourney.status == WaitingListStatusOptions.REJECTED %}
-    <p>You can approve this application, reject it, or withdraw it to remove {{ prisonerName }} from the waitlist.</p>
+  {% elseif waitListApplicationJourney.status == WaitingListStatusOptions.DECLINED %}
+    <p>You can approve this application, change it to pending if more checks are needed, or withdraw it to remove {{ prisonerName }} from the waitlist.</p>
   {% else %}
     <p>If you decline the application, make sure you tell the person concerned.</p>
   {% endif %}
@@ -72,7 +72,7 @@
             }
           },
           hint: {
-            html: hintText + "<div class=\"govuk-inset-text govuk-!-margin-top-0\">Current Status: " + waitingListStatusDescription(waitListApplicationJourney.status) + "</div>"
+            html: hintText + "<div class=\"govuk-inset-text govuk-!-margin-top-0\">Current Status: " + waitingListStatusDescription(waitListApplicationJourney.status, waitlistWithdrawnEnabled) + "</div>"
           },
           errorMessage: validationErrors | findError('status'),
           items: RadioOptions

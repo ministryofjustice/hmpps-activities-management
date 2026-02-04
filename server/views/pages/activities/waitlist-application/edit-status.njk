@@ -52,7 +52,7 @@
                         },
                         {
                             value: WaitingListStatusOptions.PENDING,
-                            html: waitlistStatusBadgeWithHint(WaitingListStatusOptions.PENDING, 'Add the applicant to the waitlist as \'Pending\'. Follow your usual procedure to check if they can be allocated.', v),
+                            html: waitlistStatusBadgeWithHint(WaitingListStatusOptions.PENDING, 'Add the applicant to the waitlist as \'Pending\'. Follow your usual procedure to check if they can be allocated.', waitlistWithdrawnEnabled),
                             checked: waitListApplicationJourney.status == WaitingListStatusOptions.PENDING
                         }
                     ]

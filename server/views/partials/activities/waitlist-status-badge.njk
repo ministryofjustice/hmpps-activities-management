@@ -3,7 +3,6 @@
 
 {% macro waitlistStatusBadge(status, waitlistWithdrawnEnabled) %}
   {% set class =
-
     (('govuk-tag--green' if status == WaitingListStatus.APPROVED) or
     ('govuk-tag--red' if status == WaitingListStatus.DECLINED) or
     ('govuk-tag--yellow' if status == WaitingListStatus.PENDING) or

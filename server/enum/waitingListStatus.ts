@@ -1,3 +1,5 @@
+// TODO: Clean up redundant enums once waitlistWithdrawnEnabled flag is removed.
+
 export enum WaitingListStatusOptions {
   APPROVED = 'APPROVED',
   DECLINED = 'DECLINED',
