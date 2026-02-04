@@ -40,6 +40,9 @@
                 <ul class="govuk-list govuk-!-margin-bottom-4">
                     <li><a href="select-period" class="govuk-link govuk-!-font-size-19">View a different day or time period</a></li>
                     <li><a href="/activities/attendance-summary/summary?date={{ activityDate | toDateString }}{{ filterParams }}" class="govuk-link govuk-!-font-size-19">Go to daily attendance summary</a></li>
+                    {% if hasCancelledSessions and not ((activityDate | toDateString) < (now | toDateString)) %}
+                    <li><a href="activities/uncancel-multiple?date={{ activityDate | toDateString }}{{ filterParams }}" class="govuk-!-display-inline-block govuk-!-margin-bottom-3 govuk-link govuk-!-font-size-19">Uncancel sessions that have been cancelled</a></li>
+                    {% endif %}
                 </ul>
 
                 {{ searchBar({
@@ -70,10 +73,6 @@
                     <div class="moj-action-bar govuk-!-display-none-print">
                         <div class="moj-action-bar__filter"></div>
                     </div>
-
-                    {% if hasCancelledSessions and not ((activityDate | toDateString) < (now | toDateString)) %}
-                      <a href="activities/uncancel-multiple?date={{ activityDate | toDateString }}{{ filterParams }}" class="govuk-!-display-inline-block govuk-!-margin-bottom-3 govuk-link govuk-!-font-size-19">Uncancel activity sessions</a>
-                    {% endif %}
 
                     {{ activitiesTable(activityRows, activityDate, filterParams, now, false, user.roles) }}
 
