@@ -33,6 +33,7 @@ describe('Route Handlers - Waitlist application - Status', () => {
           APPROVED: 'APPROVED',
           DECLINED: 'DECLINED',
           PENDING: 'PENDING',
+          WITHDRAWN: 'WITHDRAWN',
         },
       })
     })
