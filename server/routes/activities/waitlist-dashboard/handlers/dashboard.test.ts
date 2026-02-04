@@ -14,14 +14,20 @@ import {
   WaitingListSearchRequest,
 } from '../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
-import { WaitingListStatus } from '../../../../enum/waitingListStatus'
+import { WaitingListStatus, WaitingListStatusWithWithdrawn } from '../../../../enum/waitingListStatus'
 import { associateErrorsWithProperty } from '../../../../utils/utils'
+import config from '../../../../config'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
+jest.mock('../../../../config')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
+
+const enableWaitlistWithdrawn = (enabled: boolean) => {
+  ;(config as jest.Mocked<typeof config>).waitlistWithdrawnEnabled = enabled
+}
 
 describe('Route Handlers - Waitlist application - Edit Status', () => {
   const handler = new DashboardRoutes(activitiesService, prisonService)
@@ -197,6 +203,61 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
             last: waitingListSearchResults.last,
           },
           WaitingListStatus,
+        }),
+      )
+    })
+
+    it('should use WaitingListStatusWithWithdrawn statuses when withdrawn feature flag is enabled', async () => {
+      enableWaitlistWithdrawn(true)
+
+      req.query = {}
+
+      const filters = {
+        applicationDateFrom: undefined,
+        applicationDateTo: undefined,
+        activityId: null,
+        status: [WaitingListStatusWithWithdrawn.PENDING, WaitingListStatusWithWithdrawn.APPROVED],
+        prisonerNumbers: undefined,
+      } as WaitingListSearchRequest
+
+      const pageOptions = {
+        page: 0,
+        pageSize: 20,
+      } as WaitingListSearchParams
+
+      when(activitiesService.searchWaitingListApplications)
+        .calledWith(user.activeCaseLoadId, filters, pageOptions, user)
+        .mockResolvedValueOnce(waitingListSearchResults)
+
+      when(activitiesService.getActivities).calledWith(false, user).mockResolvedValueOnce([activity])
+
+      when(prisonService.searchInmatesByPrisonerNumbers).calledWith(['ABC1234'], user).mockResolvedValueOnce([prisoner])
+
+      await handler.GET(req, res)
+
+      expect(prisonService.searchPrisonInmates).toHaveBeenCalledTimes(0)
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/waitlist-dashboard/dashboard',
+        expect.objectContaining({
+          applications: [
+            {
+              ...waitingListApplication,
+              requestedBy: 'Offender Management Unit',
+              prisoner,
+              activity,
+            },
+          ],
+          filters,
+          activities: [activity],
+          pageInfo: {
+            totalPages: waitingListSearchResults.totalPages,
+            pageNumber: waitingListSearchResults.number,
+            totalElements: waitingListSearchResults.totalElements,
+            first: waitingListSearchResults.first,
+            last: waitingListSearchResults.last,
+          },
+          WaitingListStatus: WaitingListStatusWithWithdrawn,
+          withdrawnFunctionalityEnabled: true,
         }),
       )
     })

@@ -142,6 +142,7 @@ export default class ViewApplicationRoutes {
       isNotAlreadyAllocated,
       journeyEntry,
       history: historyWithChanges,
+      waitlistWithdrawnEnabled,
     })
   }
 }
