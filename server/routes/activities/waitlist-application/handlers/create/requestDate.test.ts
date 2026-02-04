@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
-import { addDays, startOfToday } from 'date-fns'
+import { addDays, startOfToday, subDays } from 'date-fns'
 import RequestDateRoutes, { RequestDate } from './requestDate'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import { formatDatePickerDate, formatIsoDate } from '../../../../../utils/datePickerUtils'
@@ -55,7 +55,9 @@ describe('Route Handlers - Waitlist application - Request date', () => {
       const body = { requestDate }
 
       const requestObject = plainToInstance(RequestDate, body)
-      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+      const errors = await validate(requestObject, { stopAtFirstError: true }).then(errs =>
+        errs.flatMap(associateErrorsWithProperty),
+      )
 
       expect(errors).toEqual([{ property: 'requestDate', error: 'Enter a valid request date' }])
     })
@@ -71,6 +73,17 @@ describe('Route Handlers - Waitlist application - Request date', () => {
       )
 
       expect(errors).toEqual([{ property: 'requestDate', error: 'Enter a valid request date' }])
+    })
+
+    it('validation fails if date is more than 30 days into the past', async () => {
+      const thirtyOneDays = subDays(new Date(), 31)
+      const requestDate = formatDatePickerDate(thirtyOneDays)
+      const body = { requestDate }
+
+      const requestObject = plainToInstance(RequestDate, body)
+      const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
+
+      expect(errors).toEqual([{ property: 'requestDate', error: 'Enter a date within the last 30 days' }])
     })
 
     it('validation fails if request date is in the future', async () => {
