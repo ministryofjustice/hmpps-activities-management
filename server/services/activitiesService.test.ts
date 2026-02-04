@@ -56,6 +56,7 @@ import EventTier from '../enum/eventTiers'
 import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocations/journey'
 import AttendanceAction from '../enum/attendanceAction'
 import ReasonForDeallocation from '../enum/reasonForDeallocation'
+import ActivitiesTestData from '../utils/testData/activitiesTestData'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
@@ -788,6 +789,19 @@ describe('Activities Service', () => {
       const actualResult = await activitiesService.fetchWaitlistApplication(1, user)
 
       expect(actualResult).toEqual(response)
+    })
+  })
+
+  describe('fetchWaitlistApplicationHistory', () => {
+    it('should call the api client to fetch the history of a waitlist application', async () => {
+      const response = ActivitiesTestData.WaitlistApplicationHistory
+
+      when(activitiesApiClient.fetchWaitlistApplicationHistory).calledWith(12345, user).mockResolvedValue(response)
+
+      const actualResult = await activitiesService.fetchWaitlistApplicationHistory(12345, user)
+
+      expect(actualResult).toEqual(response)
+      expect(activitiesApiClient.fetchWaitlistApplicationHistory).toHaveBeenCalledWith(12345, user)
     })
   })
 
