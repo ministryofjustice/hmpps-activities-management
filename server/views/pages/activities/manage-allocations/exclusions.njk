@@ -24,7 +24,7 @@
 
             {% if disabledSlotsExist %}
                 {{ govukInsetText({
-                    text: "You cannot change if " + prisonerName | safe + " should attend a session where the activity runs in the same session in both week."
+                    text: "Sessions that run in both weeks cannot be edited."
                 }) }}
             {% endif %}
         </div>
