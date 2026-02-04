@@ -1,12 +1,16 @@
-{% macro waitingListStatusDescription(status) -%}
+{% macro waitingListStatusDescription(status, waitlistWithdrawnEnabled) -%}
   {% if status == WaitingListStatus.PENDING %}
     Pending
-  {% elseif status == WaitingListStatus.APPROVED %}
+  {% elseif status == WaitingListStatus.APPROVED and not waitlistWithdrawnEnabled %}
     Approved and on the waitlist
+  {% elseif status == WaitingListStatus.APPROVED and waitlistWithdrawnEnabled %}
+    Approved
   {% elseif status == WaitingListStatus.DECLINED %}
     Rejected
   {% elseif status == WaitingListStatus.ALLOCATED %}
     Allocated
+  {% elseif status == 'WITHDRAWN' and waitlistWithdrawnEnabled %}
+    Withdrawn
   {% else %}
     unknown ({{ status }})
   {% endif %}
