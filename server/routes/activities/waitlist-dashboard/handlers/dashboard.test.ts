@@ -92,6 +92,8 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
 
   describe('GET', () => {
     it('should display waiting list applications matching default filters', async () => {
+      enableWaitlistWithdrawn(false)
+
       req.query = {}
 
       const filters = {
@@ -139,11 +141,14 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
             last: waitingListSearchResults.last,
           },
           WaitingListStatus,
+          waitlistWithdrawnEnabled: false,
         }),
       )
     })
 
     it('should display waiting list applications matching filters', async () => {
+      enableWaitlistWithdrawn(false)
+
       req.query = {
         dateFrom: '2023-01-01',
         dateTo: '2023-02-01',
@@ -203,6 +208,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
             last: waitingListSearchResults.last,
           },
           WaitingListStatus,
+          waitlistWithdrawnEnabled: false,
         }),
       )
     })
@@ -257,7 +263,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
             last: waitingListSearchResults.last,
           },
           WaitingListStatus: WaitingListStatusWithWithdrawn,
-          withdrawnFunctionalityEnabled: true,
+          waitlistWithdrawnEnabled: true,
         }),
       )
     })
