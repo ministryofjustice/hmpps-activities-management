@@ -919,6 +919,18 @@ describe('activitiesApiClient', () => {
     })
   })
 
+  describe('fetchWaitlistApplicationHistory', () => {
+    it('should call endpoint to fetch the history of a waitlist application', async () => {
+      fakeActivitiesApi
+        .get('/waiting-list-applications/1/history')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.fetchWaitlistApplicationHistory(1, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
   describe('patchWaitlistApplication', () => {
     it('should call endpoint to patch the waitlist application', async () => {
       const request = { status: 'PENDING' } as WaitingListApplicationUpdateRequest

@@ -1436,6 +1436,30 @@ export interface paths {
     patch: operations['update_2']
     trace?: never
   }
+  '/waiting-list-applications/{waitingListId}/history': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get the audit history of a waiting list application by its ID.
+     * @description Returns a list of all changes made to the specified waiting list application.
+     *
+     *     Requires one of the following roles:
+     *     * ACTIVITY_ADMIN
+     *     * PRISON
+     */
+    get: operations['getWaitingListHistoryById']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/utility/invalid-activity-locations': {
     parameters: {
       query?: never
@@ -3623,10 +3647,10 @@ export interface components {
     PageableObject: {
       /** Format: int64 */
       offset?: number
+      paged?: boolean
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
       pageSize?: number
-      paged?: boolean
       /** Format: int32 */
       pageNumber?: number
       unpaged?: boolean
@@ -3643,10 +3667,10 @@ export interface components {
       number?: number
       first?: boolean
       last?: boolean
+      pageable?: components['schemas']['PageableObject']
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
@@ -7640,6 +7664,48 @@ export interface components {
        */
       paid?: boolean
     }
+    /** @description Represents a historical snapshot of a waiting list application for a given ID. */
+    WaitingListApplicationHistory: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this waiting list
+       * @example 111111
+       */
+      id?: number
+      /**
+       * @description The status of this waiting list
+       * @example PENDING
+       * @enum {string}
+       */
+      status?: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED' | 'WITHDRAWN'
+      /**
+       * Format: date
+       * @description The date of application for this waiting list
+       * @example 2023-06-23
+       */
+      applicationDate?: string
+      /**
+       * @description The person who made the request for this waiting list
+       * @example Fred Bloggs
+       */
+      requestedBy?: string
+      /**
+       * @description Any particular comments related to this waiting list
+       * @example The prisoner has specifically requested to attend this activity
+       */
+      comments?: string
+      /**
+       * @description The person who made the latest changes to the waiting list
+       * @example Jane Doe
+       */
+      updatedBy: string
+      /**
+       * Format: date-time
+       * @description The date and time the waiting list was last updated
+       * @example 2023-00-04T16:30:00
+       */
+      updatedDateTime: string
+    }
     /** @description A list of allocation counts for each booking in the prison */
     AllocationReconciliationResponse: {
       /**
@@ -8178,10 +8244,10 @@ export interface components {
       number?: number
       first?: boolean
       last?: boolean
+      pageable?: components['schemas']['PageableObject']
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
       numberOfElements?: number
-      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Attendance summary details */
@@ -12354,6 +12420,57 @@ export interface operations {
       }
     }
   }
+  getWaitingListHistoryById: {
+    parameters: {
+      query?: never
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        waitingListId: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Audit history for a specified waiting list application found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['WaitingListApplicationHistory']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The waiting list application for this ID was not found. */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   getInvalidActivityLocations: {
     parameters: {
       query?: never
@@ -14102,7 +14219,9 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['ActivityScheduleLite'][]
+          'application/json':
+            | components['schemas']['ActivityScheduleLite'][]
+            | components['schemas']['ActivityScheduleLite'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */
@@ -14959,7 +15078,9 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['ActivityScheduleLite'][]
+          'application/json':
+            | components['schemas']['ActivityScheduleLite'][]
+            | components['schemas']['ActivityScheduleLite'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */

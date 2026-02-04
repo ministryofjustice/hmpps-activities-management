@@ -2,9 +2,14 @@ import { NextFunction, Request, Response } from 'express'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { asString, formatFirstLastName, getScheduleIdFromActivity, parseDate } from '../../../../../utils/utils'
-import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
+import {
+  Activity,
+  WaitingListApplication,
+  WaitingListApplicationHistory,
+} from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import WaitlistRequester from '../../../../../enum/waitlistRequester'
+import config from '../../../../../config'
 
 export default class ViewApplicationRoutes {
   constructor(
@@ -12,9 +17,52 @@ export default class ViewApplicationRoutes {
     private readonly prisonService: PrisonService,
   ) {}
 
+  private getHistoryWithChanges(
+    history: WaitingListApplicationHistory[],
+    application: WaitingListApplication,
+  ): (WaitingListApplicationHistory & { change: string; note: string })[] {
+    const sortedHistory = history.sort((a, b) => {
+      return new Date(b.updatedDateTime).getTime() - new Date(a.updatedDateTime).getTime()
+    })
+
+    return sortedHistory.map((item, index) => {
+      let change: string = ''
+      let note: string = ''
+
+      if (index < sortedHistory.length - 1) {
+        const previousItem = sortedHistory[index + 1]
+        if (item.status !== previousItem.status) {
+          change = 'Status changed'
+          note = `Changed from ${previousItem.status} to ${item.status}`
+        } else if (item.comments !== previousItem.comments) {
+          change = 'Comments changed'
+          note = `Previous comment: "${previousItem.comments || ''}"`
+        } else if (item.requestedBy !== previousItem.requestedBy) {
+          change = 'Requester changed'
+          note = `Changed from ${previousItem.requestedBy} to ${item.requestedBy}`
+        } else if (item.applicationDate !== previousItem.applicationDate) {
+          change = 'Date of request changed'
+          note = `Changed from ${previousItem.applicationDate} to ${item.applicationDate}`
+        }
+      } else if (application.creationTime === item.updatedDateTime) {
+        change = 'Application Logged'
+      } else {
+        change = 'Application Updated'
+      }
+
+      return {
+        ...item,
+        change,
+        note,
+      }
+    })
+  }
+
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { applicationId } = req.params
     const { user } = res.locals
+    const { waitlistWithdrawnEnabled } = config
+    let historyWithChanges = []
 
     let journeyEntry = req.query.journeyEntry ? asString(req.query.journeyEntry) : null
     journeyEntry ??= req.journeyData?.waitListApplicationJourney?.journeyEntry
@@ -29,6 +77,27 @@ export default class ViewApplicationRoutes {
       this.activitiesService.getActivity(application.activityId, user),
       this.activitiesService.fetchActivityWaitlist(application.scheduleId, false, user),
     ])
+
+    if (waitlistWithdrawnEnabled) {
+      const history = await this.activitiesService.fetchWaitlistApplicationHistory(+applicationId, user)
+      historyWithChanges = this.getHistoryWithChanges(history, application)
+      if (
+        historyWithChanges.length === 0 ||
+        historyWithChanges[historyWithChanges.length - 1].updatedDateTime !== application.creationTime
+      ) {
+        historyWithChanges.push({
+          id: application.id,
+          status: application.status,
+          applicationDate: application.requestedDate,
+          requestedBy: application.requestedBy,
+          comments: application.comments || '',
+          updatedBy: application.createdBy,
+          updatedDateTime: application.creationTime,
+          note: '',
+          change: 'Application Logged',
+        })
+      }
+    }
 
     const isMostRecent =
       allApplications.find(
@@ -72,6 +141,7 @@ export default class ViewApplicationRoutes {
       isMostRecent,
       isNotAlreadyAllocated,
       journeyEntry,
+      history: historyWithChanges,
     })
   }
 }

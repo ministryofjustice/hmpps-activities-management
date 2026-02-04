@@ -72,6 +72,7 @@ import {
   AdvanceAttendanceCreateRequest,
   AdvanceAttendance,
   ActivityPayHistory,
+  WaitingListApplicationHistory,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -661,6 +662,17 @@ export default class ActivitiesApiClient extends AbstractHmppsRestClient {
   async fetchWaitlistApplication(applicationId: number, user: ServiceUser): Promise<WaitingListApplication> {
     return this.get({
       path: `/waiting-list-applications/${applicationId}`,
+      authToken: user.token,
+      headers: CASELOAD_HEADER(user.activeCaseLoadId),
+    })
+  }
+
+  async fetchWaitlistApplicationHistory(
+    applicationId: number,
+    user: ServiceUser,
+  ): Promise<WaitingListApplicationHistory[]> {
+    return this.get({
+      path: `/waiting-list-applications/${applicationId}/history`,
       authToken: user.token,
       headers: CASELOAD_HEADER(user.activeCaseLoadId),
     })
