@@ -8,7 +8,7 @@ import Validator from '../../../../../validators/validator'
 export class RequestDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
-  @Validator(thisDate => thisDate >= subDays(startOfToday(), 30), {
+  @Validator(thisDate => thisDate > subDays(startOfToday(), 30), {
     message: 'Enter a date within the last 30 days',
   })
   @Validator(date => date <= startOfToday(), { message: 'The request date cannot be in the future' })

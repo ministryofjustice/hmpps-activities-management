@@ -46,6 +46,15 @@ describe('Route Handlers - Waitlist application - Request date', () => {
       expect(req.journeyData.waitListApplicationJourney.requestDate).toEqual(formatIsoDate(today))
       expect(res.redirectOrReturn).toHaveBeenCalledWith(`activity`)
     })
+    it('allows a date exactly 30 days in the past', async () => {
+      const thirtyDays = subDays(startOfToday(), 30)
+      req.body = { requestDate: thirtyDays }
+
+      await handler.POST(req, res)
+
+      expect(req.journeyData.waitListApplicationJourney.requestDate).toEqual(formatIsoDate(thirtyDays))
+      expect(res.redirectOrReturn).toHaveBeenCalledWith(`activity`)
+    })
   })
 
   describe('type validation', () => {
