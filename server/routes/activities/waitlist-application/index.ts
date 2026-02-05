@@ -16,6 +16,7 @@ import EditRequesterRoutes from './handlers/view-and-edit/editRequester'
 import EditRequestDateRoutes, { EditRequestDate } from './handlers/view-and-edit/editRequestDate'
 import EditCommentRoutes, { Comment } from './handlers/view-and-edit/editComment'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
+import ReinstateRoutes, { ReinstateForm } from './handlers/view-and-edit/reinstate'
 
 export default function Index({ prisonService, activitiesService, metricsService, tokenStore }: Services): Router {
   const router = Router({ mergeParams: true })
@@ -42,6 +43,7 @@ export default function Index({ prisonService, activitiesService, metricsService
   const editRequesterHandler = new EditRequesterRoutes(activitiesService)
   const editRequestDateHandler = new EditRequestDateRoutes(activitiesService)
   const editCommentHandler = new EditCommentRoutes(activitiesService)
+  const reinstateHandler = new ReinstateRoutes()
 
   router.use(insertJourneyIdentifier())
   get('/:journeyId/:prisonerNumber/apply', startJourneyHandler.GET)
@@ -65,6 +67,8 @@ export default function Index({ prisonService, activitiesService, metricsService
   post('/:journeyId/view-and-edit/:applicationId/request-date', editRequestDateHandler.POST, EditRequestDate)
   get('/:journeyId/view-and-edit/:applicationId/comment', editCommentHandler.GET, true)
   post('/:journeyId/view-and-edit/:applicationId/comment', editCommentHandler.POST, Comment)
+  get('/:journeyId/view-and-edit/:applicationId/reinstate', reinstateHandler.GET, true)
+  post('/:journeyId/view-and-edit/:applicationId/reinstate', reinstateHandler.POST, ReinstateForm)
 
   return router
 }

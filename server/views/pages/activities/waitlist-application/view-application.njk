@@ -51,6 +51,19 @@
             <h1 class='govuk-heading-l'>Request for {{ prisoner.name }}, {{ prisoner.prisonerNumber }}</h1>
 
             {% set applicationDetailsHtml %}
+                {% if waitlistWithdrawnEnabled and status == 'WITHDRAWN' %}
+                    {% set applicationAction = {
+                        href: "reinstate?preserveHistory=true",
+                        text: "Reinstate",
+                        visuallyHiddenText: " application"
+                    } %}
+                {% else %}
+                    {% set applicationAction = {
+                        href: "status?preserveHistory=true",
+                        text: "Change",
+                        visuallyHiddenText: "status"
+                    } %}
+                {% endif %}
                 {{ govukSummaryList({
                     rows: [
                         {
@@ -63,11 +76,7 @@
                             },
                             actions: {
                                 items: [
-                                    {
-                                        href: "status?preserveHistory=true",
-                                        text: "Change",
-                                        visuallyHiddenText: "status"
-                                    }
+                                    applicationAction
                                 ]
                             } if editable
                         },
