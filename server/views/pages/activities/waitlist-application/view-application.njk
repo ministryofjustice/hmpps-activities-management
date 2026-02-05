@@ -51,7 +51,7 @@
             <h1 class='govuk-heading-l'>Request for {{ prisoner.name }}, {{ prisoner.prisonerNumber }}</h1>
 
             {% set applicationDetailsHtml %}
-            {{ govukSummaryList({
+                {{ govukSummaryList({
                     rows: [
                         {
                             key: {
@@ -133,23 +133,24 @@
                     ]
                 }) }}
 
-            <div class="govuk-button-group">
-                {% if journeyEntry and journeyEntry.includes('prisoner-allocations') %}
-                    {% set buttonText = "Return to " + prisoner.name | possessive + " applications" %}
-                    {% set href = journeyEntry %}
-                {% elseif journeyEntry and journeyEntry.includes('waitlist-dashboard') %}
-                    {% set buttonText = "Return to applications" %}
-                    {% set href = '/activities/waitlist-dashboard' %}
-                {% else %}
-                    {% set buttonText = "Return to waitlist" %}
-                    {% set href = '/activities/allocation-dashboard/' + activityId + '#waitlist-tab' %}
-                {% endif %}
+                <div class="govuk-button-group">
+                    {% if journeyEntry and journeyEntry.includes('prisoner-allocations') %}
+                        {% set buttonText = "Return to " + prisoner.name | possessive + " applications" %}
+                        {% set href = journeyEntry %}
+                    {% elseif journeyEntry and journeyEntry.includes('waitlist-dashboard') %}
+                        {% set buttonText = "Return to applications" %}
+                        {% set href = '/activities/waitlist-dashboard' %}
+                    {% else %}
+                        {% set buttonText = "Return to waitlist" %}
+                        {% set href = '/activities/allocation-dashboard/' + activityId + '#waitlist-tab' %}
+                    {% endif %}
 
-                {{ govukButton({
-                            text: buttonText,
-                            href: href,
-                            classes: "govuk-button--secondary"
-                        }) }}
+                    {{ govukButton({
+                        text: buttonText,
+                        href: href,
+                        classes: "govuk-button--secondary"
+                    }) }}
+                </div>
             {% endset %}
 
             {% if waitlistWithdrawnEnabled %}
