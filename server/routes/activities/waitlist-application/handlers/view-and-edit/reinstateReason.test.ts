@@ -24,6 +24,7 @@ describe('Route Handlers - Waitlist application - Reinstate Reason', () => {
       },
       render: jest.fn(),
       redirect: jest.fn(),
+      redirectWithSuccess: jest.fn(),
     } as unknown as Response
 
     req = {
@@ -48,7 +49,10 @@ describe('Route Handlers - Waitlist application - Reinstate Reason', () => {
 
       await handler.POST(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('./view')
+      expect(res.redirectWithSuccess).toHaveBeenCalledWith(
+        './view',
+        `You have updated the status of ${fakeWaitlistApplicationJourneyData.prisoner.name}'s application`,
+      )
     })
   })
 
