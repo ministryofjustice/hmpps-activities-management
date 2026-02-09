@@ -25,10 +25,6 @@ jest.mock('../../../../config')
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
 
-const enableWaitlistWithdrawn = (enabled: boolean) => {
-  ;(config as jest.Mocked<typeof config>).waitlistWithdrawnEnabled = enabled
-}
-
 describe('Route Handlers - Waitlist application - Edit Status', () => {
   const handler = new DashboardRoutes(activitiesService, prisonService)
   let req: Request
@@ -92,7 +88,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
 
   describe('GET', () => {
     it('should display waiting list applications matching default filters', async () => {
-      enableWaitlistWithdrawn(false)
+      config.waitlistWithdrawnEnabled = false
 
       req.query = {}
 
@@ -147,7 +143,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
     })
 
     it('should display waiting list applications matching filters', async () => {
-      enableWaitlistWithdrawn(false)
+      config.waitlistWithdrawnEnabled = false
 
       req.query = {
         dateFrom: '2023-01-01',
@@ -214,7 +210,7 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
     })
 
     it('should use WaitingListStatusWithWithdrawn statuses when withdrawn feature flag is enabled', async () => {
-      enableWaitlistWithdrawn(true)
+      config.waitlistWithdrawnEnabled = true
 
       req.query = {}
 
