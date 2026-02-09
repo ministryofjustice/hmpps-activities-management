@@ -1,0 +1,16 @@
+{
+  "id": 1,
+  "scheduleId": 2,
+  "prisonerNumber": "A1350DZ",
+  "prisonerStatus": "ACTIVE IN",
+  "requestedDate": "2026-01-27",
+  "createdTime": "2026-01-27T10:00:00",
+  "createdBy": "TEST_USER",
+  "status": "PENDING",
+  "statusUpdatedTime": "2026-01-27T10:00:00",
+  "statusUpdatedBy": "TEST_USER",
+  "comments": "Initial application",
+  "declinedReason": null,
+  "declinedReasonText": null
+}
+

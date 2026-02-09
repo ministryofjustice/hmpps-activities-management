@@ -6,6 +6,7 @@
   "pieceWork": false,
   "outsideWork": false,
   "payPerSession": "H",
+  "activityName": "English level 1",
   "summary": "English level 1",
   "paid": true,
   "description": "A basic english course suitable for introduction to the subject",
@@ -165,6 +166,7 @@
       "activity": {
         "id": 2,
         "prisonCode": "MDI",
+        "activityName": "English level 1",
         "attendanceRequired": true,
         "inCell": false,
         "pieceWork": false,
