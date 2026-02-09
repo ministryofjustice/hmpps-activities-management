@@ -115,7 +115,6 @@ describe('Route Handlers - Waitlist application - View application', () => {
         comment: 'test comment',
         status: 'PENDING',
         statusUpdatedTime: null,
-        waitlistWithdrawnEnabled: false,
         activityId: 1,
         isMostRecent: true,
         isNotAlreadyAllocated: true,
