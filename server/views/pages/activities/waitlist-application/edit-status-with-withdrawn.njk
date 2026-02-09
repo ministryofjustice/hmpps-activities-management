@@ -72,7 +72,7 @@
             }
           },
           hint: {
-            html: hintText + "<div class=\"govuk-inset-text govuk-!-margin-top-0\">Current Status: " + waitingListStatusDescription(waitListApplicationJourney.status, waitlistWithdrawnEnabled) + "</div>"
+            html: hintText + "<div class=\"govuk-inset-text govuk-!-margin-top-0\">Current status: " + waitingListStatusDescription(waitListApplicationJourney.status, waitlistWithdrawnEnabled) + "</div>"
           },
           errorMessage: validationErrors | findError('status'),
           items: RadioOptions
