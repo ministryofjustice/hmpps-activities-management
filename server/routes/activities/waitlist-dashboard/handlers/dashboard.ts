@@ -4,10 +4,11 @@ import ActivitiesService from '../../../../services/activitiesService'
 import PrisonService from '../../../../services/prisonService'
 import { asString } from '../../../../utils/utils'
 import { formatIsoDate, parseDatePickerDate } from '../../../../utils/datePickerUtils'
-import { WaitingListStatus } from '../../../../enum/waitingListStatus'
+import { WaitingListStatus, WaitingListStatusWithWithdrawn } from '../../../../enum/waitingListStatus'
 import WaitlistRequester from '../../../../enum/waitlistRequester'
 import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import IsBlankOrValidDate from '../../../../validators/isBlankOrValidDate'
+import config from '../../../../config'
 
 export class DashboardFrom {
   @Transform(({ value }) => parseDatePickerDate(value))
@@ -28,15 +29,21 @@ export default class DashboardRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { dateFrom, dateTo, activity, status, query, page } = req.query
+    const { waitlistWithdrawnEnabled } = config
 
     const startDateFilter = dateFrom ? asString(dateFrom) : undefined
     const endDateFilter = dateTo ? asString(dateTo) : undefined
     const activityFilter = activity ? +activity : null
-    let statusFilter: WaitingListStatus[] = [WaitingListStatus.PENDING, WaitingListStatus.APPROVED]
+
+    const statusEnum = waitlistWithdrawnEnabled ? WaitingListStatusWithWithdrawn : WaitingListStatus
+    let statusFilter = waitlistWithdrawnEnabled
+      ? [WaitingListStatusWithWithdrawn.PENDING, WaitingListStatusWithWithdrawn.APPROVED]
+      : [WaitingListStatus.PENDING, WaitingListStatus.APPROVED]
+
     if (status) {
       statusFilter = asString(status)
         .split(',')
-        .map(s => WaitingListStatus[s])
+        .map(s => statusEnum[s])
     }
 
     let prisoners: Prisoner[] = null
@@ -88,7 +95,8 @@ export default class DashboardRoutes {
       activities,
       query,
       pageInfo,
-      WaitingListStatus,
+      WaitingListStatus: statusEnum,
+      waitlistWithdrawnEnabled,
     })
   }
 

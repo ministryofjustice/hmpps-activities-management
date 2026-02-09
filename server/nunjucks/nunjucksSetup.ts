@@ -78,7 +78,12 @@ import {
   PrisonerSuspensionStatus,
 } from '../routes/activities/manage-allocations/journey'
 import { PaidType } from '../routes/activities/suspensions/handlers/viewSuspensions'
-import { WaitingListStatus } from '../enum/waitingListStatus'
+import {
+  WaitingListStatus,
+  WaitingListStatusDescriptions,
+  WaitingListStatusOptions,
+  WaitingListStatusWithWithdrawn,
+} from '../enum/waitingListStatus'
 import logger from '../../logger'
 import LocationType from '../enum/locationType'
 import HowToAddOptions from '../enum/allocations'
@@ -249,6 +254,9 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('PrisonerSuspensionStatus', PrisonerSuspensionStatus)
   njkEnv.addGlobal('PaidType', PaidType)
   njkEnv.addGlobal('WaitingListStatus', WaitingListStatus)
+  njkEnv.addGlobal('WaitingListStatusOptions', WaitingListStatusOptions)
+  njkEnv.addGlobal('WaitingListStatusWithWithdrawn', WaitingListStatusWithWithdrawn)
+  njkEnv.addGlobal('WaitingListStatusDescriptions', WaitingListStatusDescriptions)
   njkEnv.addGlobal('LocationType', LocationType)
   njkEnv.addGlobal('DeallocateAfterAllocationDateOption', DeallocateAfterAllocationDateOption)
   njkEnv.addGlobal('HowToAddOptions', HowToAddOptions)

@@ -51,14 +51,14 @@
             <h1 class='govuk-heading-l'>Request for {{ prisoner.name }}, {{ prisoner.prisonerNumber }}</h1>
 
             {% set applicationDetailsHtml %}
-            {{ govukSummaryList({
+                {{ govukSummaryList({
                     rows: [
                         {
                             key: {
                                 text: "Status"
                             },
                             value: {
-                                html:   waitlistStatusBadge(status) +
+                                html:   waitlistStatusBadge(status, waitlistWithdrawnEnabled) +
                                         (('<div class="govuk-!-font-size-16 govuk-hint govuk-!-margin-top-2">Last changed ' + statusUpdatedTime | parseISODate | formatDate('do MMMM yyyy HH:mm:ss') + '</div>') if statusUpdatedTime)
                             },
                             actions: {
@@ -133,23 +133,24 @@
                     ]
                 }) }}
 
-            <div class="govuk-button-group">
-                {% if journeyEntry and journeyEntry.includes('prisoner-allocations') %}
-                    {% set buttonText = "Return to " + prisoner.name | possessive + " applications" %}
-                    {% set href = journeyEntry %}
-                {% elseif journeyEntry and journeyEntry.includes('waitlist-dashboard') %}
-                    {% set buttonText = "Return to applications" %}
-                    {% set href = '/activities/waitlist-dashboard' %}
-                {% else %}
-                    {% set buttonText = "Return to waitlist" %}
-                    {% set href = '/activities/allocation-dashboard/' + activityId + '#waitlist-tab' %}
-                {% endif %}
+                <div class="govuk-button-group">
+                    {% if journeyEntry and journeyEntry.includes('prisoner-allocations') %}
+                        {% set buttonText = "Return to " + prisoner.name | possessive + " applications" %}
+                        {% set href = journeyEntry %}
+                    {% elseif journeyEntry and journeyEntry.includes('waitlist-dashboard') %}
+                        {% set buttonText = "Return to applications" %}
+                        {% set href = '/activities/waitlist-dashboard' %}
+                    {% else %}
+                        {% set buttonText = "Return to waitlist" %}
+                        {% set href = '/activities/allocation-dashboard/' + activityId + '#waitlist-tab' %}
+                    {% endif %}
 
-                {{ govukButton({
-                            text: buttonText,
-                            href: href,
-                            classes: "govuk-button--secondary"
-                        }) }}
+                    {{ govukButton({
+                        text: buttonText,
+                        href: href,
+                        classes: "govuk-button--secondary"
+                    }) }}
+                </div>
             {% endset %}
 
             {% if waitlistWithdrawnEnabled %}
@@ -202,4 +203,5 @@
             {% endif %}
 
         </div>
-    {% endblock %}
+    </div>
+{% endblock %}

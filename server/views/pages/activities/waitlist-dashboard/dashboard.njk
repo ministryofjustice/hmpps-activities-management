@@ -18,6 +18,7 @@
 {% from "partials/statusBasedCellLocation.njk" import statusBasedCellLocation %}
 
 {% set pageTitle = "Applications and waitlists - Activities - DPS" %}
+{% set pageId = 'applications-and-waitlists-page' %}s
 {% set jsBackLink = true %}
 
 {% set editable = 'ROLE_ACTIVITY_HUB' in user.roles %}
@@ -66,7 +67,7 @@
                 {% for name, status in WaitingListStatus %}
                     {% set statusFilters = (statusFilters.push({
                         value: status,
-                        text: waitingListStatusDescription(status),
+                        text: waitingListStatusDescription(status, waitlistWithdrawnEnabled),
                         checked: status in filters.status
                     }), statusFilters) %}
                 {% endfor %}
@@ -185,7 +186,7 @@
                                     html: earliestReleaseDate(application.earliestReleaseDate)
                                 },
                                 {
-                                    html: waitlistStatusBadge(application.status)
+                                    html: waitlistStatusBadge(application.status, waitlistWithdrawnEnabled)
                                 }
                             ]
                         }), rows) %}
