@@ -71,7 +71,7 @@ export default class ViewApplicationRoutes {
 
       return {
         ...item,
-        change: change.length > 1 ? 'Multiple changes' : change[0],
+        change: change.length > 1 ? 'Status and comments changed' : change[0],
         note: note.join('<br>'),
       }
     })
