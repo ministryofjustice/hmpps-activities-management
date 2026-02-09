@@ -5,6 +5,7 @@
 
 
 {% set pageTitle = applicationName + " - Reinstate application" %}
+{% set pageId = 'reinstate-reason-page' %}
 {% set mainClasses = "govuk-body" %}
 {% set hardBackLinkText = 'Back' %}
 {% set hardBackLinkHref = "./view" %}
@@ -32,7 +33,7 @@
 
                 <div class="govuk-button-group">
                     {{ govukButton({
-                        text: "Continue",
+                        text: "Confirm and reinstate application",
                         preventDoubleClick: true
                     }) }}
                     <a class="govuk-link " href="./view">Cancel</a>

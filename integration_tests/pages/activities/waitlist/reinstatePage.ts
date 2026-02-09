@@ -9,5 +9,7 @@ export default class ReinstatePage extends Page {
 
   noRadioClick = (): Cypress.Chainable => cy.get('#reinstate-2').click()
 
-  confirmButton = (): Cypress.Chainable => cy.get('button').contains('Confirm')
+  continueButton = (): Cypress.Chainable => cy.get('button').contains('Continue')
+
+  cancelLink = (): Cypress.Chainable => cy.get('a').contains('Cancel')
 }

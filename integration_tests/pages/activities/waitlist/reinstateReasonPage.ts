@@ -5,7 +5,7 @@ export default class ReinstateReasonPage extends Page {
     super('reinstate-reason-page')
   }
 
-  reinstateReasonTextArea = (): Cypress.Chainable => cy.get('#reinstateReason')
+  reinstateReasonTextArea = (): Cypress.Chainable => cy.get('#reinstate-reason')
 
-  submitButton = (): Cypress.Chainable => cy.get('button').contains('Submit')
+  confirmButton = (): Cypress.Chainable => cy.get('button').contains('Confirm')
 }
