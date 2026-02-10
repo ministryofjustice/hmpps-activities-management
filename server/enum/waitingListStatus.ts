@@ -1,9 +1,10 @@
 // TODO: Clean up redundant enums once waitlistWithdrawnEnabled flag is removed.
+// Allocation dashboard does not have allocated. Decide on either separate enums or combined with filter.
 
 export enum WaitingListStatusOptions {
   APPROVED = 'APPROVED',
-  DECLINED = 'DECLINED',
   PENDING = 'PENDING',
+  DECLINED = 'DECLINED',
   WITHDRAWN = 'WITHDRAWN',
 }
 

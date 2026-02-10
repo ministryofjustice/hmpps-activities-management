@@ -20,6 +20,8 @@ import { sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSl
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import WaitlistRequester from '../../../../enum/waitlistRequester'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
+import config from '../../../../config'
+import { WaitingListStatusOptions } from '../../../../enum/waitingListStatus'
 
 type Filters = {
   candidateQuery: string
@@ -59,6 +61,7 @@ export default class AllocationDashboardRoutes {
     const { user } = res.locals
     const { activityId } = req.params
     const filters = req.query as Filters
+    const { waitlistWithdrawnEnabled } = config
 
     const [activity, incentiveLevels]: [Activity, IncentiveLevel[]] = await Promise.all([
       this.activitiesService.getActivity(+activityId, user),
@@ -121,6 +124,8 @@ export default class AllocationDashboardRoutes {
       currentWeek,
       scheduleWeeks: activity.schedules[0].scheduleWeeks,
       activeAllocations,
+      WaitingListStatusOptions,
+      waitlistWithdrawnEnabled,
     })
   }
 
@@ -254,9 +259,13 @@ export default class AllocationDashboardRoutes {
   }
 
   private getWaitlistedPrisoners = async (scheduleId: number, filters: Filters, user: ServiceUser) => {
-    const waitlist = await this.activitiesService
-      .fetchActivityWaitlist(scheduleId, true, user)
-      .then(a => a.filter(w => w.status === 'PENDING' || w.status === 'APPROVED' || w.status === 'DECLINED'))
+    const { waitlistWithdrawnEnabled } = config
+    const waitlist = await this.activitiesService.fetchActivityWaitlist(scheduleId, true, user).then(a =>
+      a.filter(w => {
+        const baseStatuses = w.status === 'PENDING' || w.status === 'APPROVED' || w.status === 'DECLINED'
+        return waitlistWithdrawnEnabled ? baseStatuses || w.status === 'WITHDRAWN' : baseStatuses
+      }),
+    )
 
     const prisonerNumbers = waitlist.map(application => application.prisonerNumber)
     const [inmateDetails, prisonerAllocations]: [Prisoner[], PrisonerAllocations[]] = await Promise.all([
@@ -295,12 +304,19 @@ export default class AllocationDashboardRoutes {
           activityId: w.activityId,
         }))
       })
-      .filter(
-        inmate =>
+      .filter(inmate => {
+        if (waitlistWithdrawnEnabled) {
+          if (!filters.waitlistStatusFilter || filters.waitlistStatusFilter === 'Any') {
+            return inmate.status !== 'WITHDRAWN'
+          }
+          return inmate.status === filters.waitlistStatusFilter
+        }
+        return (
           !filters.waitlistStatusFilter ||
           filters.waitlistStatusFilter === 'Any' ||
-          inmate.status === filters.waitlistStatusFilter,
-      )
+          inmate.status === filters.waitlistStatusFilter
+        )
+      })
       .filter(
         inmate =>
           !filters.employmentFilter ||
