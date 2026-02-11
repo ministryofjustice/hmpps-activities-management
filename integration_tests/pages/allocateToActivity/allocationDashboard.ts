@@ -61,4 +61,6 @@ export default class AllocationDashboard extends Page {
   waitlistStatusFilter = () => cy.get('#waitlistStatusFilter')
 
   waitlistStatusFilterOption = () => cy.get('#waitlistStatusFilter option')
+
+  waitlistApplyFilterButton = () => cy.get('#waitlist-apply-filters')
 }

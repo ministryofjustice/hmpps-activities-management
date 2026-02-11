@@ -248,7 +248,7 @@ context('Allocate to activity', () => {
 
     // When 'Withdrawn' should render ONLY the Withdrawn ones
     allocatePage.waitlistStatusFilter().select('WITHDRAWN')
-    allocatePage.applyFilters()
+    allocatePage.waitlistApplyFilterButton().click()
     allocatePage.waitlistRows().should('have.length', 1)
     allocatePage.waitlistRows().eq(0).should('contain.text', 'Withdrawn')
   })
