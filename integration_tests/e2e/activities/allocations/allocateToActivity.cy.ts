@@ -11,6 +11,10 @@ import getMdiPrisonPayBands from '../../../fixtures/activitiesApi/getMdiPrisonPa
 import getCandidates from '../../../fixtures/activitiesApi/getCandidates.json'
 import getCandidateSuitability from '../../../fixtures/activitiesApi/getCandidateSuitability.json'
 import getNonAssociations from '../../../fixtures/activitiesApi/non_associations.json'
+import prisonerSearchResponse from '../../../fixtures/prisonerSearchApi/postPrisonerNumbers-A1350DZ-A8644DY-A1351DZ.json'
+import pendingApplication from '../../../fixtures/activitiesApi/waitlist/pendingApplication.json'
+import declinedApplication from '../../../fixtures/activitiesApi/waitlist/declinedApplication.json'
+import withdrawnApplication from '../../../fixtures/activitiesApi/waitlist/withdrawnApplication.json'
 
 import IndexPage from '../../../pages'
 import Page from '../../../pages/page'
@@ -38,7 +42,6 @@ context('Allocate to activity', () => {
     cy.stubEndpoint('GET', '/schedules/2/suitability\\?prisonerNumber=A5015DY', getCandidateSuitability)
     cy.stubEndpoint('GET', '/incentive/prison-levels/MDI', moorlandIncentiveLevels)
     cy.stubEndpoint('GET', '/schedules/2/allocations\\?activeOnly=true&includePrisonerSummary=true', getAllocations)
-    cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', prisonerAllocations)
     cy.stubEndpoint(
       'GET',
@@ -201,5 +204,52 @@ context('Allocate to activity', () => {
 
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
     confirmationPage.manageAllocationsLink().should('exist')
+  })
+
+  it('should display the waitlist status filter with all options', () => {
+    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications.*', [
+      pendingApplication,
+      declinedApplication,
+      withdrawnApplication,
+    ])
+    cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', prisonerSearchResponse)
+    cy.stubEndpoint('POST', '/prisons/MDI/prisoner-allocations', [
+      { prisonerNumber: 'A1350DZ', allocations: [] },
+      { prisonerNumber: 'A8644DY', allocations: [] },
+      { prisonerNumber: 'A1351DZ', allocations: [] },
+    ])
+
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.allocateToActivitiesCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
+    manageActivitiesPage.allocateToActivityCard().click()
+
+    const activitiesPage = Page.verifyOnPage(ActivitiesDashboardPage)
+    activitiesPage.selectActivityWithName('English level 1')
+
+    const allocatePage = Page.verifyOnPage(AllocationDashboard)
+    allocatePage.tabWithTitle('Waitlist').click()
+
+    allocatePage.waitlistStatusFilter().should('exist')
+    allocatePage.waitlistStatusFilterOption().eq(0).should('contain.text', 'Any')
+    allocatePage.waitlistStatusFilterOption().eq(1).should('contain.text', 'Approved')
+    allocatePage.waitlistStatusFilterOption().eq(2).should('contain.text', 'Pending')
+    allocatePage.waitlistStatusFilterOption().eq(3).should('contain.text', 'Rejected')
+    allocatePage.waitlistStatusFilterOption().eq(4).should('contain.text', 'Withdrawn')
+
+    // By default, 'all' should render all applications but NOT Withdrawn ones
+    allocatePage.waitlistRows().should('have.length', 2)
+    allocatePage.waitlistRows().eq(0).should('contain.text', 'Rejected')
+    allocatePage.waitlistRows().eq(1).should('contain.text', 'Pending')
+
+    // When 'Withdrawn' should render ONLY the Withdrawn ones
+    allocatePage.waitlistStatusFilter().select('WITHDRAWN')
+    allocatePage.waitlistApplyFilterButton().click()
+    allocatePage.waitlistRows().should('have.length', 1)
+    allocatePage.waitlistRows().eq(0).should('contain.text', 'Withdrawn')
   })
 })

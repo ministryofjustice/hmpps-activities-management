@@ -25,6 +25,15 @@ export default class AllocationDashboard extends Page {
         return Cypress.$.makeArray($el)
       })
 
+  waitlistRows = (): Cypress.Chainable =>
+    cy
+      .get('#waitlist-tab')
+      .find('.govuk-table__body')
+      .find('tr')
+      .then($el => {
+        return Cypress.$.makeArray($el)
+      })
+
   selectCandidateWithName = (name: string): void => {
     this.getInputByLabel(name).click({ force: true })
     cy.get('#candidates-tab').find('button').contains('Allocate').click()
@@ -48,4 +57,10 @@ export default class AllocationDashboard extends Page {
   nonAssociationsLink = (prn: string) => cy.get(`[data-qa=non-associations-link-${prn}]`)
 
   allocateGroupLink = () => cy.get('#candidates-tab').contains('allocate a group of people').click()
+
+  waitlistStatusFilter = () => cy.get('#waitlistStatusFilter')
+
+  waitlistStatusFilterOption = () => cy.get('#waitlistStatusFilter option')
+
+  waitlistApplyFilterButton = () => cy.get('#waitlist-apply-filters')
 }

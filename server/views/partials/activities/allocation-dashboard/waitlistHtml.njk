@@ -1,3 +1,5 @@
+{% from "partials/activities/waitingListStatusDescription.njk" import waitingListStatusDescription %}
+
 <div class='filter'>
     <form method='GET'>
         <div class="filter__items filter__items--quarters" id='waitlist-filter'>
@@ -103,6 +105,24 @@
                 items: incentiveLevelOptions
             }) }}
 
+          {% if waitlistWithdrawnEnabled%}
+            {% set waitlistStatusOptions = [
+              {
+                value: 'Any',
+                text: 'Any',
+                selected: filters.waitlistStatusFilter == 'Any'
+              }
+            ] %}
+            {% for statusKey, statusValue in WaitingListStatusOptions %}
+
+              {% set displayText = waitingListStatusDescription(statusValue, waitlistWithdrawnEnabled) %}
+              {% set waitlistStatusOptions = (waitlistStatusOptions.push({
+                value: statusValue,
+                text: displayText,
+                selected: filters.waitlistStatusFilter == statusValue
+              }), waitlistStatusOptions) %}
+            {% endfor %}
+          {% else %}
             {% set waitlistStatusOptions = [
               {
                 value: 'Any',
@@ -125,6 +145,8 @@
                 selected: filters.waitlistStatusFilter == WaitingListStatus.PENDING
               }
             ] %}
+          {% endif %}
+
             {{ govukSelect({
                 id: "waitlistStatusFilter",
                 name: "waitlistStatusFilter",
@@ -138,6 +160,7 @@
 
         {{ govukButton({
             text: "Apply filters",
+            id: "waitlist-apply-filters",
             name: 'filtersApplied',
             value: 'true'
         }) }}
@@ -198,7 +221,7 @@
                 html: currentAllocationsHtml
             },
             {
-                text: waitlistStatusBadge(row.status),
+                text: waitlistStatusBadge(row.status, waitlistWithdrawnEnabled),
                 attributes: {
                     "data-sort-value": row.status
                 }

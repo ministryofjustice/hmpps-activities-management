@@ -1,0 +1,22 @@
+{
+  "id": 2,
+  "activityId": 2,
+  "scheduleId": 2,
+  "prisonerNumber": "A8644DY",
+  "prisonerStatus": "ACTIVE IN",
+  "requestedDate": "2025-01-15",
+  "createdTime": "2025-01-15T10:00:00",
+  "createdBy": "PRISONER",
+  "requestedBy": "PRISONER",
+  "status": "DECLINED",
+  "statusUpdatedTime": "2025-01-16T14:00:00",
+  "statusUpdatedBy": "TEST_USER",
+  "comments": "Withdrawn due to lack of interest",
+  "declinedReason": "UNSUITABLE",
+  "earliestReleaseDate": {
+    "releaseDate": "2026-06-01"
+  },
+  "isIndeterminateSentence": false,
+  "nonAssociations": []
+}
+
