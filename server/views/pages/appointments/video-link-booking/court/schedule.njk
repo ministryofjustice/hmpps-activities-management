@@ -43,8 +43,8 @@
                                 middleNames: session.bookACourtHearingJourney.prisoner.middleNames,
                                 lastName: session.bookACourtHearingJourney.prisoner.lastName,
                                 prisonerNumber: session.bookACourtHearingJourney.prisoner.number,
-                                cellLocation: statusBasedCellLocation(session.bookACourtHearingJourney.prisoner.cellLocation, session.bookACourtHearingJourney.prisoner.status, session.bookACourtHearingJourney.prisoner.prisonId == user.activeCaseLoadId),
-                                inCaseLoad: session.bookACourtHearingJourney.prisoner.prisonId == user.activeCaseLoadId
+                                cellLocation: statusBasedCellLocation(session.bookACourtHearingJourney.prisoner.cellLocation, session.bookACourtHearingJourney.prisoner.status, session.bookACourtHearingJourney.prisoner.prisonCode == user.activeCaseLoadId),
+                                inCaseLoad: session.bookACourtHearingJourney.prisoner.prisonCode == user.activeCaseLoadId
                             })
                         }
                     },

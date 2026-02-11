@@ -156,6 +156,8 @@ context('Create video link court appointment', () => {
 
     // Review events for the prisoner page
     const schedulePage = Page.verifyOnPage(VideoLinkSchedulePage)
+    schedulePage.assertPrisonerProfileLink('A8644DY')
+    schedulePage.assertCellLocation('1-3')
     schedulePage.continue()
 
     // Enter the court hearing link page
