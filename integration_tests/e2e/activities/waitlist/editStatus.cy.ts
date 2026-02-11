@@ -145,6 +145,4 @@ context('Waitlist - Edit Status', () => {
     editStatusPage.pendingRadioButton().should('exist')
     editStatusPage.withdrawnRadioButton().should('exist')
   })
-
-  // TODO: Test for WITHDRAWN status as part of SAA-3663
 })
