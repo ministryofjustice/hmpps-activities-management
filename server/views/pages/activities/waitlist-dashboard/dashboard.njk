@@ -164,7 +164,7 @@
                             visuallyHiddenText: 'Select ' + application.prisoner | fullName,
                             value: application.id,
                             selectable: true,
-                            forbiddenActionId: 'waitlist-action-1' if application.status != 'APPROVED',
+                            forbiddenActionId: 'waitlist-action-1' if application.status != 'APPROVED' and application.status != 'PENDING',
                             items: [
                                 {
                                     html: showProfileLink({
