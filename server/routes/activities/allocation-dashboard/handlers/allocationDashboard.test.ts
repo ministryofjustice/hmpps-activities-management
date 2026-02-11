@@ -833,6 +833,30 @@ describe('Route Handlers - Allocation dashboard', () => {
         0,
       )
     })
+
+    it('should populate the status filter correctly', async () => {
+      req.params = { activityId: '1' }
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/allocation-dashboard/allocation-dashboard',
+        expect.objectContaining({
+          filters: expect.objectContaining({
+            employmentFilter: 'Everyone',
+            riskLevelFilter: 'Any Workplace Risk Assessment',
+            incentiveLevelFilter: 'All Incentive Levels',
+          }),
+          WaitingListStatusOptions: {
+            APPROVED: 'APPROVED',
+            DECLINED: 'DECLINED',
+            PENDING: 'PENDING',
+            WITHDRAWN: 'WITHDRAWN',
+          },
+          waitlistWithdrawnEnabled: false,
+        }),
+      )
+    })
   })
 
   describe('ALLOCATE', () => {

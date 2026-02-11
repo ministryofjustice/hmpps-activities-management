@@ -1,0 +1,22 @@
+{
+  "id": 1,
+  "activityId": 2,
+  "scheduleId": 2,
+  "prisonerNumber": "A1350DZ",
+  "prisonerStatus": "ACTIVE IN",
+  "requestedDate": "2025-01-20",
+  "createdTime": "2025-01-20T10:00:00",
+  "createdBy": "PRISONER",
+  "requestedBy": "PRISONER",
+  "status": "PENDING",
+  "statusUpdatedTime": "2025-01-20T10:00:00",
+  "statusUpdatedBy": "PRISONER",
+  "comments": "Initial application",
+  "declinedReason": null,
+  "earliestReleaseDate": {
+    "releaseDate": "2026-05-01"
+  },
+  "isIndeterminateSentence": false,
+  "nonAssociations": []
+}
+

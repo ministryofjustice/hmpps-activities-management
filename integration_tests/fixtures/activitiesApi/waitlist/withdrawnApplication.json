@@ -1,0 +1,21 @@
+{
+  "id": 3,
+  "activityId": 2,
+  "scheduleId": 2,
+  "prisonerNumber": "A1351DZ",
+  "prisonerStatus": "ACTIVE IN",
+  "requestedDate": "2025-01-10",
+  "createdTime": "2025-01-10T10:00:00",
+  "createdBy": "PRISONER",
+  "requestedBy": "PRISONER",
+  "status": "WITHDRAWN",
+  "statusUpdatedTime": "2025-01-17T11:00:00",
+  "statusUpdatedBy": "TEST_USER",
+  "comments": "Not interested anymore",
+  "earliestReleaseDate": {
+    "releaseDate": "2026-07-01"
+  },
+  "isIndeterminateSentence": false,
+  "nonAssociations": []
+}
+
