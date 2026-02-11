@@ -1,7 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
-import { asString, formatFirstLastName, getScheduleIdFromActivity, parseDate } from '../../../../../utils/utils'
+import {
+  asString,
+  formatFirstLastName,
+  formatStringToTitleCase,
+  getScheduleIdFromActivity,
+  parseDate,
+} from '../../../../../utils/utils'
 import {
   Activity,
   WaitingListApplication,
@@ -17,6 +23,13 @@ export default class ViewApplicationRoutes {
     private readonly prisonService: PrisonService,
   ) {}
 
+  private formatStatus(status: string): string {
+    if (status === 'DECLINED') {
+      return 'Rejected'
+    }
+    return formatStringToTitleCase(status)
+  }
+
   private getHistoryWithChanges(
     history: WaitingListApplicationHistory[],
     application: WaitingListApplication,
@@ -26,34 +39,40 @@ export default class ViewApplicationRoutes {
     })
 
     return sortedHistory.map((item, index) => {
-      let change: string = ''
-      let note: string = ''
+      const change: string[] = []
+      const note: string[] = []
 
       if (index < sortedHistory.length - 1) {
         const previousItem = sortedHistory[index + 1]
         if (item.status !== previousItem.status) {
-          change = 'Status changed'
-          note = `Changed from ${previousItem.status} to ${item.status}`
-        } else if (item.comments !== previousItem.comments) {
-          change = 'Comments changed'
-          note = `Previous comment: "${previousItem.comments || ''}"`
-        } else if (item.requestedBy !== previousItem.requestedBy) {
-          change = 'Requester changed'
-          note = `Changed from ${previousItem.requestedBy} to ${item.requestedBy}`
-        } else if (item.applicationDate !== previousItem.applicationDate) {
-          change = 'Date of request changed'
-          note = `Changed from ${previousItem.applicationDate} to ${item.applicationDate}`
+          change.push('Status changed')
+          note.push(`Changed from ${this.formatStatus(previousItem.status)} to ${this.formatStatus(item.status)}`)
+        }
+        if (item.comments !== previousItem.comments) {
+          change.push('Comments changed')
+          note.push(`Previous comment: "${previousItem.comments || ''}"`)
+        }
+        if (item.requestedBy !== previousItem.requestedBy) {
+          change.push('Requester changed')
+          note.push(`Changed from ${previousItem.requestedBy} to ${item.requestedBy}`)
+        }
+        if (item.applicationDate !== previousItem.applicationDate) {
+          change.push('Date of request changed')
+          note.push(`Changed from ${previousItem.applicationDate} to ${item.applicationDate}`)
         }
       } else if (application.creationTime === item.updatedDateTime) {
-        change = 'Application Logged'
+        change.push('Application Logged')
       } else {
-        change = 'Application Updated'
+        change.push('Application Updated')
+        note.push(
+          'Full details are not available for the first change after December 2025. You can check with who made the change.',
+        )
       }
 
       return {
         ...item,
-        change,
-        note,
+        change: change.length > 1 ? 'Status and comments changed' : change[0],
+        note: note.join('<br>'),
       }
     })
   }

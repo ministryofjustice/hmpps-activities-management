@@ -1,0 +1,44 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+
+{% set pageTitle = applicationName + " - Reinstate application" %}
+{% set pageId = 'reinstate-reason-page' %}
+{% set mainClasses = "govuk-body" %}
+{% set hardBackLinkText = 'Back' %}
+{% set hardBackLinkHref = "./view" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ waitListApplicationJourney.activity.activityName }}</span>
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+                {{ govukTextarea({
+                    name: "reinstateReason",
+                    id: "reinstate-reason",
+                    label: {
+                        text: "Enter the reason this application is being reinstated",
+                        classes: "govuk-fieldset__legend--l",
+                        isPageHeading: true
+                    },
+                    hint: {
+                        text: "This will be saved as the latest comment on this application. If there was an existing comment, it'll be shown in the application history."
+                    },
+                    errorMessage: validationErrors | findError('reinstateReason')
+                }) }}
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                        text: "Confirm and reinstate application",
+                        preventDoubleClick: true
+                    }) }}
+                    <a class="govuk-link " href="./view">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
