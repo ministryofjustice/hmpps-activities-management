@@ -28,4 +28,6 @@ export default class ViewApplicationPage extends Page {
   }
 
   changeStatusLink = (): Cypress.Chainable => cy.get('a').contains('Change').first()
+
+  reinstateLink = (): Cypress.Chainable => cy.get('a').contains('Reinstate').first()
 }
