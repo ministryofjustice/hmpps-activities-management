@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { addDays, startOfToday, subDays } from 'date-fns'
 import RequestDateRoutes, { RequestDate } from './requestDate'
-import { associateErrorsWithProperty } from '../../../../../utils/utils'
+import { associateErrorsWithProperty, formatDate } from '../../../../../utils/utils'
 import { formatDatePickerDate, formatIsoDate } from '../../../../../utils/datePickerUtils'
 
 describe('Route Handlers - Waitlist application - Request date', () => {
@@ -85,14 +85,17 @@ describe('Route Handlers - Waitlist application - Request date', () => {
     })
 
     it('validation fails if date is more than 30 days into the past', async () => {
-      const thirtyOneDays = subDays(new Date(), 31)
-      const requestDate = formatDatePickerDate(thirtyOneDays)
+      const thirtyDaysAgo = subDays(new Date(), 30)
+      const requestDate = formatDatePickerDate(thirtyDaysAgo)
+      const thirtyDaysAgoMessageDate = formatDate(subDays(startOfToday(), 30))
       const body = { requestDate }
 
       const requestObject = plainToInstance(RequestDate, body)
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
-      expect(errors).toEqual([{ property: 'requestDate', error: 'Enter a date within the last 30 days' }])
+      expect(errors).toEqual([
+        { property: 'requestDate', error: `The date must be between ${thirtyDaysAgoMessageDate} and today.` },
+      ])
     })
 
     it('validation fails if request date is in the future', async () => {
