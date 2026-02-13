@@ -1,8 +1,6 @@
 import { when } from 'jest-when'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import atLeast from '../../jest.setup'
-
-import { ServiceUser } from '../@types/express'
 import AlertsApiClient from '../data/alertsApiClient'
 import AlertsService, { PrisonerAlertDetails, PrisonerAlertResults, PrisonerDetails } from './alertsService'
 import { Alert } from '../@types/alertsAPI/types'
@@ -16,10 +14,6 @@ const mockAuthenticationClient = {
 describe('Alerts service', () => {
   let alertsApiClient: AlertsApiClient
   let alertsService: AlertsService
-
-  const user = {
-    activeCaseLoadId: 'MDI',
-  } as ServiceUser
 
   let prisonerMaggie: PrisonerDetails
   let prisonerDave: PrisonerDetails
@@ -147,10 +141,10 @@ describe('Alerts service', () => {
         .calledWith(atLeast(prisonerNumbers))
         .mockResolvedValue({ content: apiResponse })
 
-      const actualResult = await alertsService.getAlertsUsingPrisonerNumbers(prisonerNumbers, user)
+      const actualResult = await alertsService.getAlertsUsingPrisonerNumbers(prisonerNumbers)
 
       expect(actualResult).toEqual(apiResponse)
-      expect(alertsApiClient.getAlertsForPrisoners).toHaveBeenCalledWith(prisonerNumbers, user)
+      expect(alertsApiClient.getAlertsForPrisoners).toHaveBeenCalledWith(prisonerNumbers)
     })
   })
   describe('getAlertDetails', () => {
@@ -165,7 +159,7 @@ describe('Alerts service', () => {
         .calledWith(atLeast(expectedOffenderNumbers))
         .mockResolvedValue({ content: apiResponse })
 
-      const actualResults = await alertsService.getAlertDetails(prisoners, user)
+      const actualResults = await alertsService.getAlertDetails(prisoners)
 
       const expectedResults = {
         numPrisonersWithAlerts: 2,
@@ -185,7 +179,7 @@ describe('Alerts service', () => {
         .calledWith(atLeast(expectedOffenderNumbers))
         .mockResolvedValue({ content: apiResponse })
 
-      const actualResults = await alertsService.getAlertDetails(prisoners, user)
+      const actualResults = await alertsService.getAlertDetails(prisoners)
 
       maggieResult.alerts = [{ alertCode: xcuAlertForMaggie.alertCode.code }]
       maggieResult.alertDescriptions = [xcuAlertForMaggie.alertCode.description]
@@ -210,7 +204,7 @@ describe('Alerts service', () => {
         .calledWith(atLeast(expectedOffenderNumbers))
         .mockResolvedValue({ content: apiResponse })
 
-      const actualResults = await alertsService.getAlertDetails(prisoners, user)
+      const actualResults = await alertsService.getAlertDetails(prisoners)
 
       maggieResult.category = prisonerMaggie.category
       maggieResult.alerts = [{ alertCode: xcuAlertForMaggie.alertCode.code }]
@@ -238,7 +232,7 @@ describe('Alerts service', () => {
         .calledWith(atLeast(expectedOffenderNumbers))
         .mockResolvedValue({ content: apiResponse })
 
-      const actualResults = await alertsService.getAlertDetails(prisoners, user)
+      const actualResults = await alertsService.getAlertDetails(prisoners)
 
       maggieResult.category = prisonerMaggie.category
       maggieResult.alerts = [{ alertCode: tectAlertForMaggie.alertCode.code }]
@@ -267,7 +261,7 @@ describe('Alerts service', () => {
         .calledWith(atLeast(expectedOffenderNumbers))
         .mockResolvedValue({ content: apiResponse })
 
-      const actualResults = await alertsService.getAlertDetails(prisoners, user)
+      const actualResults = await alertsService.getAlertDetails(prisoners)
 
       daveResult.category = prisonerMaggie.category
       daveResult.alerts = []
@@ -348,7 +342,7 @@ describe('Alerts service', () => {
         .calledWith(atLeast(expectedOffenderNumbers))
         .mockResolvedValue({ content: apiResponse })
 
-      const actualResults = await alertsService.getAlertDetails(prisoners, user)
+      const actualResults = await alertsService.getAlertDetails(prisoners)
 
       const expectedResults = {
         numPrisonersWithAlerts: 3,
