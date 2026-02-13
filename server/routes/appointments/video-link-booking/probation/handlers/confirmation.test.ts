@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import BookAVideoLinkApiClient from '../../../../../data/bookAVideoLinkApiClient'
 import ConfirmationRoutes from './confirmation'
@@ -17,6 +18,9 @@ describe('ConfirmationRoutes', () => {
   let prisonService: jest.Mocked<PrisonService>
   let confirmationRoutes: ConfirmationRoutes
   let bookAVideoLinkApiClient: jest.Mocked<BookAVideoLinkApiClient>
+  const mockAuthenticationClient = {
+    getToken: jest.fn().mockResolvedValue('test-system-token'),
+  } as unknown as jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
     req = {
@@ -35,7 +39,9 @@ describe('ConfirmationRoutes', () => {
       render: jest.fn(),
       redirect: jest.fn(),
     }
-    bookAVideoLinkApiClient = new BookAVideoLinkApiClient() as jest.Mocked<BookAVideoLinkApiClient>
+    bookAVideoLinkApiClient = new BookAVideoLinkApiClient(
+      mockAuthenticationClient,
+    ) as jest.Mocked<BookAVideoLinkApiClient>
     bookAVideoLinkService = new BookAVideoLinkService(bookAVideoLinkApiClient) as jest.Mocked<BookAVideoLinkService>
     prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
     confirmationRoutes = new ConfirmationRoutes(bookAVideoLinkService, prisonService)
@@ -86,7 +92,7 @@ describe('ConfirmationRoutes', () => {
 
       await confirmationRoutes.GET(req as Request, res as Response)
 
-      expect(bookAVideoLinkService.getVideoLinkBookingById).toHaveBeenCalledWith(1, res.locals.user)
+      expect(bookAVideoLinkService.getVideoLinkBookingById).toHaveBeenCalledWith(1)
       expect(prisonService.getInmateByPrisonerNumber).toHaveBeenCalledWith('A1234BC', res.locals.user)
 
       expect(res.render).toHaveBeenCalledWith('pages/appointments/video-link-booking/probation/confirmation', {

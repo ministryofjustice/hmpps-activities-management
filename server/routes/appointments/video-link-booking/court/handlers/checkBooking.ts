@@ -9,21 +9,19 @@ export default class CheckBookingRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
     const { prisoner } = req.session.bookACourtHearingJourney
 
     const [rooms, courts, hearingTypes] = await Promise.all([
-      this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonCode, user),
-      this.bookAVideoLinkService.getAllCourts(user),
-      this.bookAVideoLinkService.getCourtHearingTypes(user),
+      this.bookAVideoLinkService.getAppointmentLocations(prisoner.prisonCode),
+      this.bookAVideoLinkService.getAllCourts(),
+      this.bookAVideoLinkService.getCourtHearingTypes(),
     ])
 
     return res.render('pages/appointments/video-link-booking/court/check-booking', { rooms, courts, hearingTypes })
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    const id = await this.courtBookingService.createVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+    const id = await this.courtBookingService.createVideoLinkBooking(req.session.bookACourtHearingJourney)
     return res.redirect(`confirmation/${id}`)
   }
 }

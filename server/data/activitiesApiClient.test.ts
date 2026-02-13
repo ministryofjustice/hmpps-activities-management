@@ -49,10 +49,10 @@ describe('activitiesApiClient', () => {
   let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
+    fakeActivitiesApi = nock(config.apis.activitiesApi.url)
     mockAuthenticationClient = {
       getToken: jest.fn().mockResolvedValue('test-system-token'),
     } as unknown as jest.Mocked<AuthenticationClient>
-    fakeActivitiesApi = nock(config.apis.activitiesApi.url)
     activitiesApiClient = new ActivitiesApiClient(mockAuthenticationClient)
     jest.spyOn(TokenStore.prototype, 'getToken').mockResolvedValue('accessToken')
   })

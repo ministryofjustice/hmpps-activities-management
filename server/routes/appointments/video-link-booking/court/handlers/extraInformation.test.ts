@@ -83,14 +83,11 @@ describe('ExtraInformationRoutes', () => {
 
       await extraInformationRoutes.POST(req as Request, res as Response)
 
-      expect(courtBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(
-        {
-          bookingId: 1,
-          notesForPrisoners: 'Notes for prisoners',
-          notesForStaff: 'Notes for staff',
-        } as BookACourtHearingJourney,
-        res.locals.user,
-      )
+      expect(courtBookingService.amendVideoLinkBooking).toHaveBeenCalledWith({
+        bookingId: 1,
+        notesForPrisoners: 'Notes for prisoners',
+        notesForStaff: 'Notes for staff',
+      } as BookACourtHearingJourney)
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/video-link-booking/court/1',
         "You've changed the extra information for this court hearing",

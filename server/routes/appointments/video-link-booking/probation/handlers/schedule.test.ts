@@ -139,7 +139,6 @@ describe('ScheduleRoutes', () => {
 
       expect(probationBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(
         req.session.bookAProbationMeetingJourney,
-        res.locals.user,
       )
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/video-link-booking/probation/1',

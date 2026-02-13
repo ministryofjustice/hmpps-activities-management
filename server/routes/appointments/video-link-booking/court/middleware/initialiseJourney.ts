@@ -17,7 +17,7 @@ export default ({
 
     if (bookingId === req.session.bookACourtHearingJourney?.bookingId?.toString()) return next()
 
-    const booking = await bookAVideoLinkService.getVideoLinkBookingById(Number(bookingId), user)
+    const booking = await bookAVideoLinkService.getVideoLinkBookingById(Number(bookingId))
 
     const getAppointment = (type: string) => booking.prisonAppointments.find(a => a.appointmentType === type)
     const parseTimeToISOString = (time: string) => (time ? parse(time, 'HH:mm', new Date(0)).toISOString() : undefined)

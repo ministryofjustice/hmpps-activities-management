@@ -64,10 +64,9 @@ export default class DateAndTimeRoutes {
   constructor(private readonly bookAVideoLinkService: BookAVideoLinkService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
     const { prisonCode } = req.session.bookACourtHearingJourney
 
-    const rooms = await this.bookAVideoLinkService.getAppointmentLocations(prisonCode, user)
+    const rooms = await this.bookAVideoLinkService.getAppointmentLocations(prisonCode)
 
     return res.render('pages/appointments/video-link-booking/court/date-and-time', { rooms })
   }

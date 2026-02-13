@@ -1,7 +1,6 @@
-import config, { ApiConfig } from '../config'
-
-import AbstractHmppsRestClient from './abstractHmppsRestClient'
-import { ServiceUser } from '../@types/express'
+import { asSystem, RestClient } from '@ministryofjustice/hmpps-rest-client'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
+import config from '../config'
 import {
   VideoLinkBooking,
   Location,
@@ -12,52 +11,46 @@ import {
   AmendVideoBookingRequest,
   ProbationTeam,
 } from '../@types/bookAVideoLinkApi/types'
+import logger from '../../logger'
 
-export default class BookAVideoLinkApiClient extends AbstractHmppsRestClient {
-  constructor() {
-    super('Book A Video Link API', config.apis.bookAVideoLinkApi as ApiConfig)
+export default class BookAVideoLinkApiClient extends RestClient {
+  constructor(authenticationClient: AuthenticationClient) {
+    super('Book A Video Link API', config.apis.bookAVideoLinkApi, logger, authenticationClient)
   }
 
-  public getVideoLinkBookingById(id: number, user: ServiceUser): Promise<VideoLinkBooking> {
-    return this.get({ path: `/video-link-booking/id/${id}` }, user)
+  async getVideoLinkBookingById(id: number): Promise<VideoLinkBooking> {
+    return this.get({ path: `/video-link-booking/id/${id}` }, asSystem())
   }
 
-  public matchAppointmentToVideoLinkBooking(
-    requestBody: VideoBookingSearchRequest,
-    user: ServiceUser,
-  ): Promise<VideoLinkBooking> {
-    return this.post({ path: `/video-link-booking/search`, data: requestBody }, user)
+  async matchAppointmentToVideoLinkBooking(requestBody: VideoBookingSearchRequest): Promise<VideoLinkBooking> {
+    return this.post({ path: `/video-link-booking/search`, data: requestBody }, asSystem())
   }
 
-  public getAppointmentLocations(prisonCode: string, user: ServiceUser): Promise<Location[]> {
-    return this.get({ path: `/prisons/${prisonCode}/locations`, query: { videoLinkOnly: false } }, user)
+  async getAppointmentLocations(prisonCode: string): Promise<Location[]> {
+    return this.get({ path: `/prisons/${prisonCode}/locations`, query: { videoLinkOnly: false } }, asSystem())
   }
 
-  public getAllCourts(user: ServiceUser): Promise<Court[]> {
-    return this.get({ path: '/courts', query: { enabledOnly: false } }, user)
+  async getAllCourts(): Promise<Court[]> {
+    return this.get({ path: '/courts', query: { enabledOnly: false } }, asSystem())
   }
 
-  public getAllProbationTeams(user: ServiceUser): Promise<ProbationTeam[]> {
-    return this.get({ path: '/probation-teams', query: { enabledOnly: false } }, user)
+  async getAllProbationTeams(): Promise<ProbationTeam[]> {
+    return this.get({ path: '/probation-teams', query: { enabledOnly: false } }, asSystem())
   }
 
-  public getReferenceCodesForGroup(groupCode: string, user: ServiceUser): Promise<ReferenceCode[]> {
-    return this.get({ path: `/reference-codes/group/${groupCode}` }, user)
+  async getReferenceCodesForGroup(groupCode: string): Promise<ReferenceCode[]> {
+    return this.get({ path: `/reference-codes/group/${groupCode}` }, asSystem())
   }
 
-  public createVideoLinkBooking(request: CreateVideoBookingRequest, user: ServiceUser): Promise<number> {
-    return this.post({ path: '/video-link-booking', data: request }, user)
+  async createVideoLinkBooking(request: CreateVideoBookingRequest): Promise<number> {
+    return this.post({ path: '/video-link-booking', data: request }, asSystem())
   }
 
-  public amendVideoLinkBooking(
-    videoBookingId: number,
-    request: AmendVideoBookingRequest,
-    user: ServiceUser,
-  ): Promise<number> {
-    return this.put({ path: `/video-link-booking/id/${videoBookingId}`, data: request }, user)
+  async amendVideoLinkBooking(videoBookingId: number, request: AmendVideoBookingRequest): Promise<number> {
+    return this.put({ path: `/video-link-booking/id/${videoBookingId}`, data: request }, asSystem())
   }
 
-  public cancelVideoLinkBooking(videoBookingId: number, user: ServiceUser): Promise<number> {
-    return this.delete({ path: `/video-link-booking/id/${videoBookingId}` }, user)
+  async cancelVideoLinkBooking(videoBookingId: number): Promise<number> {
+    return this.delete({ path: `/video-link-booking/id/${videoBookingId}` }, asSystem())
   }
 }

@@ -8,8 +8,7 @@ export default class ConfirmCancelRoutes {
     res.render('pages/appointments/video-link-booking/court/confirm-cancel')
 
   POST = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-    await this.courtBookingService.cancelVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+    await this.courtBookingService.cancelVideoLinkBooking(req.session.bookACourtHearingJourney)
 
     return res.redirectOrReturn('confirmation')
   }

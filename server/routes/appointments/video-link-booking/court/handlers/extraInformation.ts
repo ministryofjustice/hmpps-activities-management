@@ -26,7 +26,6 @@ export default class ExtraInformationRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { mode } = req.routeContext
-    const { user } = res.locals
     const { notesForStaff, notesForPrisoners } = req.body
 
     req.session.bookACourtHearingJourney = {
@@ -36,7 +35,7 @@ export default class ExtraInformationRoutes {
     }
 
     if (mode === 'amend') {
-      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney)
 
       const successHeading = "You've changed the extra information for this court hearing"
       return res.redirectWithSuccess(

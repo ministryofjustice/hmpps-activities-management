@@ -13,10 +13,10 @@ export default class ConfirmationRoutes {
     const { user } = res.locals
     req.session.bookAProbationMeetingJourney = null
 
-    const vlb = await this.bookAVideoLinkService.getVideoLinkBookingById(+vlbId, user)
+    const vlb = await this.bookAVideoLinkService.getVideoLinkBookingById(+vlbId)
     const [probationTeam, prisoner] = await Promise.all([
       this.bookAVideoLinkService
-        .getAllProbationTeams(user)
+        .getAllProbationTeams()
         .then(probationTeams => probationTeams.find(p => p.code === vlb.probationTeamCode)),
       this.prisonService.getInmateByPrisonerNumber(vlb.prisonAppointments[0].prisonerNumber, user),
     ])

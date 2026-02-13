@@ -54,10 +54,7 @@ describe('CourtHearingLinkRoutes', () => {
 
       await courtHearingLinkRoutes.POST(req as Request, res as Response)
 
-      expect(courtBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(
-        req.session.bookACourtHearingJourney,
-        res.locals.user,
-      )
+      expect(courtBookingService.amendVideoLinkBooking).toHaveBeenCalledWith(req.session.bookACourtHearingJourney)
       expect(res.redirectWithSuccess).toHaveBeenCalledWith(
         '/appointments/video-link-booking/court/1',
         "You've changed the hearing link for this court hearing",

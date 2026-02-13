@@ -21,10 +21,8 @@ export default class HearingDetailsRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-
-    const courts = await this.bookAVideoLinkService.getAllCourts(user)
-    const hearingTypes = await this.bookAVideoLinkService.getCourtHearingTypes(user)
+    const courts = await this.bookAVideoLinkService.getAllCourts()
+    const hearingTypes = await this.bookAVideoLinkService.getCourtHearingTypes()
 
     return res.render('pages/appointments/video-link-booking/court/hearing-details', { courts, hearingTypes })
   }
@@ -32,13 +30,12 @@ export default class HearingDetailsRoutes {
   POST = async (req: Request, res: Response): Promise<void> => {
     const { courtCode, hearingTypeCode } = req.body
     const { mode } = req.routeContext
-    const { user } = res.locals
 
     req.session.bookACourtHearingJourney.courtCode = courtCode
     req.session.bookACourtHearingJourney.hearingTypeCode = hearingTypeCode
 
     if (mode === 'amend') {
-      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney)
 
       const successHeading = "You've changed the hearing type for this court hearing"
       return res.redirectWithSuccess(

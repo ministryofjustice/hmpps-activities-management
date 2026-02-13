@@ -13,9 +13,9 @@ export default class ConfirmationRoutes {
     const { user } = res.locals
     req.session.bookACourtHearingJourney = null
 
-    const vlb = await this.bookAVideoLinkService.getVideoLinkBookingById(+vlbId, user)
+    const vlb = await this.bookAVideoLinkService.getVideoLinkBookingById(+vlbId)
     const [court, prisoner] = await Promise.all([
-      this.bookAVideoLinkService.getAllCourts(user).then(courts => courts.find(c => c.code === vlb.courtCode)),
+      this.bookAVideoLinkService.getAllCourts().then(courts => courts.find(c => c.code === vlb.courtCode)),
       this.prisonService.getInmateByPrisonerNumber(vlb.prisonAppointments[0].prisonerNumber, user),
     ])
 

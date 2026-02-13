@@ -1,5 +1,4 @@
 import BookAVideoLinkApiClient from '../data/bookAVideoLinkApiClient'
-import { ServiceUser } from '../@types/express'
 import { BookAProbationMeetingJourney } from '../routes/appointments/video-link-booking/probation/journey'
 import { AmendVideoBookingRequest, CreateVideoBookingRequest } from '../@types/bookAVideoLinkApi/types'
 import { formatDate, parseISODate } from '../utils/utils'
@@ -9,18 +8,18 @@ type VideoBookingRequest = CreateVideoBookingRequest | AmendVideoBookingRequest
 export default class ProbationBookingService {
   constructor(private readonly bookAVideoLinkApiClient: BookAVideoLinkApiClient) {}
 
-  public createVideoLinkBooking(journey: BookAProbationMeetingJourney, user: ServiceUser) {
+  public createVideoLinkBooking(journey: BookAProbationMeetingJourney) {
     const request = this.buildBookingRequest<CreateVideoBookingRequest>(journey)
-    return this.bookAVideoLinkApiClient.createVideoLinkBooking(request, user)
+    return this.bookAVideoLinkApiClient.createVideoLinkBooking(request)
   }
 
-  public amendVideoLinkBooking(journey: BookAProbationMeetingJourney, user: ServiceUser) {
+  public amendVideoLinkBooking(journey: BookAProbationMeetingJourney) {
     const request = this.buildBookingRequest<AmendVideoBookingRequest>(journey)
-    return this.bookAVideoLinkApiClient.amendVideoLinkBooking(journey.bookingId, request, user)
+    return this.bookAVideoLinkApiClient.amendVideoLinkBooking(journey.bookingId, request)
   }
 
-  public cancelVideoLinkBooking(journey: BookAProbationMeetingJourney, user: ServiceUser) {
-    return this.bookAVideoLinkApiClient.cancelVideoLinkBooking(journey.bookingId, user)
+  public cancelVideoLinkBooking(journey: BookAProbationMeetingJourney) {
+    return this.bookAVideoLinkApiClient.cancelVideoLinkBooking(journey.bookingId)
   }
 
   private buildBookingRequest<T extends VideoBookingRequest>(journey: BookAProbationMeetingJourney): T {

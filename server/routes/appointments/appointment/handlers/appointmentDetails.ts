@@ -29,7 +29,6 @@ export default class AppointmentDetailsRoutes {
           appointment.startTime,
           appointment.endTime,
           appointment.isCancelled ? 'CANCELLED' : 'ACTIVE',
-          user,
         )
         .catch(e => {
           if (e.status === 404) return null

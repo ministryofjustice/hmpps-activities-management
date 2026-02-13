@@ -1,20 +1,22 @@
 import sinon from 'sinon'
 import { when } from 'jest-when'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import BookAVideoLinkApiClient from '../data/bookAVideoLinkApiClient'
 import BookAVideoLinkService from './bookAVideoLinkService'
 import { Location, ReferenceCode, VideoLinkBooking } from '../@types/bookAVideoLinkApi/types'
-import { ServiceUser } from '../@types/express'
 
 jest.mock('../data/bookAVideoLinkApiClient')
 
 describe('Book A Video link service', () => {
   let bookAVideoLinkClient: jest.Mocked<BookAVideoLinkApiClient>
   let bookAVideoLinkService: BookAVideoLinkService
-
-  const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
-    bookAVideoLinkClient = new BookAVideoLinkApiClient() as jest.Mocked<BookAVideoLinkApiClient>
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('test-system-token'),
+    } as unknown as jest.Mocked<AuthenticationClient>
+    bookAVideoLinkClient = new BookAVideoLinkApiClient(mockAuthenticationClient) as jest.Mocked<BookAVideoLinkApiClient>
     bookAVideoLinkService = new BookAVideoLinkService(bookAVideoLinkClient)
   })
 
@@ -28,10 +30,10 @@ describe('Book A Video link service', () => {
 
       when(bookAVideoLinkClient.getVideoLinkBookingById).mockResolvedValue(expectedResult)
 
-      const actualResult = await bookAVideoLinkService.getVideoLinkBookingById(1, user)
+      const actualResult = await bookAVideoLinkService.getVideoLinkBookingById(1)
 
       expect(actualResult).toEqual(expectedResult)
-      expect(bookAVideoLinkClient.getVideoLinkBookingById).toHaveBeenCalledWith(1, user)
+      expect(bookAVideoLinkClient.getVideoLinkBookingById).toHaveBeenCalledWith(1)
     })
   })
 
@@ -55,21 +57,17 @@ describe('Book A Video link service', () => {
         startTime,
         endTime,
         statusCode,
-        user,
       )
 
       expect(actualResult).toEqual(expectedResult)
-      expect(bookAVideoLinkClient.matchAppointmentToVideoLinkBooking).toHaveBeenCalledWith(
-        {
-          prisonerNumber,
-          locationKey,
-          date,
-          startTime,
-          statusCode,
-          endTime,
-        },
-        user,
-      )
+      expect(bookAVideoLinkClient.matchAppointmentToVideoLinkBooking).toHaveBeenCalledWith({
+        prisonerNumber,
+        locationKey,
+        date,
+        startTime,
+        statusCode,
+        endTime,
+      })
     })
   })
 
@@ -79,10 +77,10 @@ describe('Book A Video link service', () => {
 
       when(bookAVideoLinkClient.getAppointmentLocations).mockResolvedValue(expectedResult)
 
-      const actualResult = await bookAVideoLinkService.getAppointmentLocations('MDI', user)
+      const actualResult = await bookAVideoLinkService.getAppointmentLocations('MDI')
 
       expect(actualResult).toEqual(expectedResult)
-      expect(bookAVideoLinkClient.getAppointmentLocations).toHaveBeenCalledWith('MDI', user)
+      expect(bookAVideoLinkClient.getAppointmentLocations).toHaveBeenCalledWith('MDI')
     })
   })
 
@@ -130,9 +128,9 @@ describe('Book A Video link service', () => {
     it('should call getAllCourts on the api client', async () => {
       bookAVideoLinkClient.getAllCourts.mockResolvedValue([])
 
-      const result = await bookAVideoLinkService.getAllCourts(user)
+      const result = await bookAVideoLinkService.getAllCourts()
 
-      expect(bookAVideoLinkClient.getAllCourts).toHaveBeenCalledWith(user)
+      expect(bookAVideoLinkClient.getAllCourts).toHaveBeenCalled()
       expect(result).toEqual([])
     })
   })
@@ -141,9 +139,9 @@ describe('Book A Video link service', () => {
     it('should call getAllProbationTeams on the api client', async () => {
       bookAVideoLinkClient.getAllProbationTeams.mockResolvedValue([])
 
-      const result = await bookAVideoLinkService.getAllProbationTeams(user)
+      const result = await bookAVideoLinkService.getAllProbationTeams()
 
-      expect(bookAVideoLinkClient.getAllProbationTeams).toHaveBeenCalledWith(user)
+      expect(bookAVideoLinkClient.getAllProbationTeams).toHaveBeenCalledWith()
       expect(result).toEqual([])
     })
   })
@@ -153,9 +151,9 @@ describe('Book A Video link service', () => {
       const expectedResult = [{ code: 'TYPE1', description: 'Type 1' }] as ReferenceCode[]
       bookAVideoLinkClient.getReferenceCodesForGroup.mockResolvedValue(expectedResult)
 
-      const result = await bookAVideoLinkService.getCourtHearingTypes(user)
+      const result = await bookAVideoLinkService.getCourtHearingTypes()
 
-      expect(bookAVideoLinkClient.getReferenceCodesForGroup).toHaveBeenCalledWith('COURT_HEARING_TYPE', user)
+      expect(bookAVideoLinkClient.getReferenceCodesForGroup).toHaveBeenCalledWith('COURT_HEARING_TYPE')
       expect(result).toEqual(expectedResult)
     })
   })
@@ -165,9 +163,9 @@ describe('Book A Video link service', () => {
       const expectedResult = [{ code: 'TYPE1', description: 'Type 1' }] as ReferenceCode[]
       bookAVideoLinkClient.getReferenceCodesForGroup.mockResolvedValue(expectedResult)
 
-      const result = await bookAVideoLinkService.getProbationMeetingTypes(user)
+      const result = await bookAVideoLinkService.getProbationMeetingTypes()
 
-      expect(bookAVideoLinkClient.getReferenceCodesForGroup).toHaveBeenCalledWith('PROBATION_MEETING_TYPE', user)
+      expect(bookAVideoLinkClient.getReferenceCodesForGroup).toHaveBeenCalledWith('PROBATION_MEETING_TYPE')
       expect(result).toEqual(expectedResult)
     })
   })

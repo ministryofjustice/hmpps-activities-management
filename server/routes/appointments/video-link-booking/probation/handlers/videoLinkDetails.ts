@@ -23,7 +23,7 @@ export default class VideoLinkDetailsRoutes {
     const { vlbId } = req.params
     const { user } = res.locals
 
-    const videoBooking = await this.bookAVideoLinkService.getVideoLinkBookingById(+vlbId, user)
+    const videoBooking = await this.bookAVideoLinkService.getVideoLinkBookingById(+vlbId)
     const mainAppointment = this.fetchMainAppointment(videoBooking)
 
     if (!mainAppointment) {
@@ -33,7 +33,7 @@ export default class VideoLinkDetailsRoutes {
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(mainAppointment.prisonerNumber, user)
 
     const [rooms, userMap, mainAppointmentId] = await Promise.all([
-      this.bookAVideoLinkService.getAppointmentLocations(mainAppointment.prisonCode, user),
+      this.bookAVideoLinkService.getAppointmentLocations(mainAppointment.prisonCode),
       this.userService.getUserMap([videoBooking.createdBy, videoBooking.amendedBy], user),
       this.fetchMainAppointmentFromActivitiesAPI(mainAppointment, user).then(a => a?.appointmentId),
     ])

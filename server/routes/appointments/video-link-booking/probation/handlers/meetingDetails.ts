@@ -54,10 +54,8 @@ export default class MeetingDetailsRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { user } = res.locals
-
-    const probationTeams = await this.bookAVideoLinkService.getAllProbationTeams(user)
-    const meetingTypes = await this.bookAVideoLinkService.getProbationMeetingTypes(user)
+    const probationTeams = await this.bookAVideoLinkService.getAllProbationTeams()
+    const meetingTypes = await this.bookAVideoLinkService.getProbationMeetingTypes()
 
     return res.render('pages/appointments/video-link-booking/probation/meeting-details', {
       probationTeams,
@@ -75,7 +73,6 @@ export default class MeetingDetailsRoutes {
       officerTelephone,
     } = req.body
     const { mode } = req.routeContext
-    const { user } = res.locals
 
     req.session.bookAProbationMeetingJourney = {
       ...req.session.bookAProbationMeetingJourney,
@@ -94,7 +91,7 @@ export default class MeetingDetailsRoutes {
     }
 
     if (mode === 'amend') {
-      await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney, user)
+      await this.probationBookingService.amendVideoLinkBooking(req.session.bookAProbationMeetingJourney)
 
       const successHeading = "You've changed the details for this probation meeting"
       return res.redirectWithSuccess(

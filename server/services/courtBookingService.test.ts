@@ -1,5 +1,5 @@
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import BookAVideoLinkApiClient from '../data/bookAVideoLinkApiClient'
-import { ServiceUser } from '../@types/express'
 import CourtBookingService from './courtBookingService'
 import { BookACourtHearingJourney } from '../routes/appointments/video-link-booking/court/journey'
 
@@ -8,11 +8,12 @@ jest.mock('../data/bookAVideoLinkApiClient')
 describe('Court booking service', () => {
   let bookAVideoLinkClient: jest.Mocked<BookAVideoLinkApiClient>
   let courtBookingService: CourtBookingService
-
-  const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
+  const mockAuthenticationClient = {
+    getToken: jest.fn().mockResolvedValue('test-system-token'),
+  } as unknown as jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
-    bookAVideoLinkClient = new BookAVideoLinkApiClient() as jest.Mocked<BookAVideoLinkApiClient>
+    bookAVideoLinkClient = new BookAVideoLinkApiClient(mockAuthenticationClient) as jest.Mocked<BookAVideoLinkApiClient>
     courtBookingService = new CourtBookingService(bookAVideoLinkClient)
   })
 
@@ -69,9 +70,9 @@ describe('Court booking service', () => {
         guestPin: 'A9A476',
       }
 
-      const result = await courtBookingService.createVideoLinkBooking(journey, user)
+      const result = await courtBookingService.createVideoLinkBooking(journey)
 
-      expect(bookAVideoLinkClient.createVideoLinkBooking).toHaveBeenCalledWith(expectedBody, user)
+      expect(bookAVideoLinkClient.createVideoLinkBooking).toHaveBeenCalledWith(expectedBody)
       expect(result).toEqual(1)
     })
 
@@ -137,9 +138,9 @@ describe('Court booking service', () => {
         notesForPrisoners: 'notes for prisoners',
       }
 
-      await courtBookingService.createVideoLinkBooking(journey, user)
+      await courtBookingService.createVideoLinkBooking(journey)
 
-      expect(bookAVideoLinkClient.createVideoLinkBooking).toHaveBeenCalledWith(expectedBody, user)
+      expect(bookAVideoLinkClient.createVideoLinkBooking).toHaveBeenCalledWith(expectedBody)
     })
   })
 
@@ -184,17 +185,17 @@ describe('Court booking service', () => {
         videoLinkUrl: 'videoLinkUrl',
       }
 
-      const result = await courtBookingService.amendVideoLinkBooking({ ...journey, bookingId: 1 }, user)
+      const result = await courtBookingService.amendVideoLinkBooking({ ...journey, bookingId: 1 })
 
-      expect(bookAVideoLinkClient.amendVideoLinkBooking).toHaveBeenCalledWith(1, expectedBody, user)
+      expect(bookAVideoLinkClient.amendVideoLinkBooking).toHaveBeenCalledWith(1, expectedBody)
       expect(result).toEqual(1)
     })
   })
 
   describe('cancelVideoLinkBooking', () => {
     it('calls the cancel booking endpoint', async () => {
-      await courtBookingService.cancelVideoLinkBooking({ bookingId: 1 }, user)
-      expect(bookAVideoLinkClient.cancelVideoLinkBooking).toHaveBeenCalledWith(1, user)
+      await courtBookingService.cancelVideoLinkBooking({ bookingId: 1 })
+      expect(bookAVideoLinkClient.cancelVideoLinkBooking).toHaveBeenCalledWith(1)
     })
   })
 })

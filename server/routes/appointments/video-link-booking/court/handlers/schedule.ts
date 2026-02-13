@@ -52,7 +52,7 @@ export default class ScheduleRoutes {
             ),
           })),
         ),
-      this.bookAVideoLinkService.getAppointmentLocations(prisonCode, user),
+      this.bookAVideoLinkService.getAppointmentLocations(prisonCode),
     ])
 
     return res.render('pages/appointments/video-link-booking/court/schedule', {
@@ -64,10 +64,9 @@ export default class ScheduleRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { mode } = req.routeContext
-    const { user } = res.locals
 
     if (mode === 'amend') {
-      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney, user)
+      await this.courtBookingService.amendVideoLinkBooking(req.session.bookACourtHearingJourney)
 
       const successHeading = "You've changed the schedule for this court hearing"
       return res.redirectWithSuccess(
