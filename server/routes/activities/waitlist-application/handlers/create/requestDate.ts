@@ -11,7 +11,7 @@ export class RequestDate {
   @Transform(({ value }) => parseDatePickerDate(value))
   @Validator(thisDate => thisDate > subDays(startOfToday(), 30), {
     message: () => {
-      const thirtyDaysInPast = formatDate(subDays(startOfToday(), 30))
+      const thirtyDaysInPast = formatDate(subDays(startOfToday(), 29))
       return `The date must be between ${thirtyDaysInPast} and today.`
     },
   })

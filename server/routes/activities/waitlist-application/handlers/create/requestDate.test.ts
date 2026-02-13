@@ -87,7 +87,7 @@ describe('Route Handlers - Waitlist application - Request date', () => {
     it('validation fails if date is more than 30 days into the past', async () => {
       const thirtyDaysAgo = subDays(new Date(), 30)
       const requestDate = formatDatePickerDate(thirtyDaysAgo)
-      const thirtyDaysAgoMessageDate = formatDate(subDays(startOfToday(), 30))
+      const thirtyDaysAgoMessageDate = formatDate(subDays(startOfToday(), 29))
       const body = { requestDate }
 
       const requestObject = plainToInstance(RequestDate, body)
