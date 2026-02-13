@@ -46,7 +46,7 @@ export default function dataAccess() {
     bookAVideoLinkApiClient: new BookAVideoLinkApiClient(),
     applicationInsightsClient: appInsightsClient,
     nonAssociationsApiClient: new NonAssociationsApiClient(),
-    alertsApiClient: new AlertsApiClient(),
+    alertsApiClient: new AlertsApiClient(hmppsAuthClient),
     locationsInsidePrisonApiClient: new LocationsInsidePrisonApiClient(),
     nomisMappingClient: new NomisMappingClient(),
     bankHolidaysClient: new BankHolidaysClient(),
