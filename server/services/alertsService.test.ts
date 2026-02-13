@@ -1,4 +1,5 @@
 import { when } from 'jest-when'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import atLeast from '../../jest.setup'
 
 import { ServiceUser } from '../@types/express'
@@ -7,6 +8,10 @@ import AlertsService, { PrisonerAlertDetails, PrisonerAlertResults, PrisonerDeta
 import { Alert } from '../@types/alertsAPI/types'
 
 jest.mock('../data/alertsApiClient')
+
+const mockAuthenticationClient = {
+  getToken: jest.fn().mockResolvedValue('test-system-token'),
+} as unknown as jest.Mocked<AuthenticationClient>
 
 describe('Alerts service', () => {
   let alertsApiClient: AlertsApiClient
@@ -27,7 +32,7 @@ describe('Alerts service', () => {
   let daveResult: PrisonerAlertDetails
 
   beforeEach(() => {
-    alertsApiClient = new AlertsApiClient()
+    alertsApiClient = new AlertsApiClient(mockAuthenticationClient)
     alertsService = new AlertsService(alertsApiClient)
 
     prisonerMaggie = {
