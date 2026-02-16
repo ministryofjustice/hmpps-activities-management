@@ -28,7 +28,7 @@ export default class ReviewPrisonersAlertsRoutes {
       prisoners = appointmentJourney.prisoners
     }
 
-    const alertsDetails = prisoners.length ? await this.alertsService.getAlertDetails(prisoners, res.locals.user) : {}
+    const alertsDetails = prisoners.length ? await this.alertsService.getAlertDetails(prisoners) : {}
 
     res.render('pages/appointments/create-and-edit/review-prisoners-alerts', {
       appointmentId,

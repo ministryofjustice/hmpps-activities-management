@@ -57,7 +57,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners Alerts', () => 
 
     beforeEach(() => {
       when(alertsService.getAlertDetails)
-        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user)
+        .calledWith(req.session.appointmentJourney.prisoners)
         .mockReturnValue(Promise.resolve(alertsDetails))
     })
 

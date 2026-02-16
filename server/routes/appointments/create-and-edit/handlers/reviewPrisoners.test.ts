@@ -325,7 +325,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
         req.session.appointmentJourney.mode = mode
 
         when(alertsService.getAlertDetails)
-          .calledWith(req.session.appointmentJourney.prisoners, res.locals.user)
+          .calledWith(req.session.appointmentJourney.prisoners)
           .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 1 } as PrisonerAlertResults))
 
         await handler.POST(req, res)
@@ -335,7 +335,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     it('should redirect or return to review alerts page there are no alerts when mode is CREATE', async () => {
       when(alertsService.getAlertDetails)
-        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user)
+        .calledWith(req.session.appointmentJourney.prisoners)
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
 
       await handler.POST(req, res)
@@ -346,7 +346,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
       req.session.appointmentJourney.mode = AppointmentJourneyMode.COPY
 
       when(alertsService.getAlertDetails)
-        .calledWith(req.session.appointmentJourney.prisoners, res.locals.user)
+        .calledWith(req.session.appointmentJourney.prisoners)
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
 
       await handler.POST(req, res)
@@ -385,7 +385,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     it('should redirect or return to review alerts page if there are any alerts', async () => {
       when(alertsService.getAlertDetails)
-        .calledWith(prisoners, res.locals.user)
+        .calledWith(prisoners)
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 1 } as PrisonerAlertResults))
 
       await handler.EDIT(req, res)
@@ -395,7 +395,7 @@ describe('Route Handlers - Create Appointment - Review Prisoners', () => {
 
     it('should redirect to the alerts page if there are no alerts', async () => {
       when(alertsService.getAlertDetails)
-        .calledWith(prisoners, res.locals.user)
+        .calledWith(prisoners)
         .mockReturnValue(Promise.resolve({ numPrisonersWithAlerts: 0 } as PrisonerAlertResults))
 
       await handler.EDIT(req, res)
