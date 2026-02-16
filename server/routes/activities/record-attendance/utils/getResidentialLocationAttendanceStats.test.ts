@@ -50,15 +50,16 @@ describe('getAttendanceNumbers', () => {
         {
           prisoner: { prisonerNumber: 'AA11AA' },
           instanceIds: [1, 2],
+
           attendances: [
-            { attendanceReason: { code: AttendanceReason.ATTENDED } },
-            { attendanceReason: { code: AttendanceReason.ATTENDED } },
+            { attendanceReason: { code: AttendanceReason.ATTENDED }, status: 'COMPLETED' },
+            { attendanceReason: { code: AttendanceReason.ATTENDED }, status: 'COMPLETED' },
           ],
         },
         {
           prisoner: { prisonerNumber: 'BB22BB' },
           instanceIds: [3],
-          attendances: [{ attendanceReason: { code: AttendanceReason.ATTENDED } }],
+          attendances: [{ attendanceReason: { code: AttendanceReason.ATTENDED }, status: 'COMPLETED' }],
         },
       ] as PrisonerWithAttendanceRecord[]
 
@@ -73,8 +74,8 @@ describe('getAttendanceNumbers', () => {
           prisoner: { prisonerNumber: 'AA11AA' },
           instanceIds: [1, 2, 3],
           attendances: [
-            { attendanceReason: { code: AttendanceReason.ATTENDED } },
-            { attendanceReason: { code: AttendanceReason.SICK } },
+            { attendanceReason: { code: AttendanceReason.ATTENDED }, status: 'COMPLETED' },
+            { attendanceReason: { code: AttendanceReason.SICK }, status: 'COMPLETED' },
             { attendanceReason: null },
           ],
         },
@@ -107,9 +108,9 @@ describe('getAttendanceNumbers', () => {
           prisoner: { prisonerNumber: 'AA11AA' },
           instanceIds: [1, 2, 3],
           attendances: [
-            { attendanceReason: { code: AttendanceReason.ATTENDED } },
-            { attendanceReason: { code: AttendanceReason.SICK } },
-            { attendanceReason: { code: AttendanceReason.SUSPENDED } },
+            { attendanceReason: { code: AttendanceReason.ATTENDED }, status: 'COMPLETED' },
+            { attendanceReason: { code: AttendanceReason.SICK }, status: 'COMPLETED' },
+            { attendanceReason: { code: AttendanceReason.SUSPENDED }, status: 'COMPLETED' },
           ],
         },
       ] as PrisonerWithAttendanceRecord[]
@@ -174,14 +175,17 @@ describe('getAttendanceNumbers', () => {
         {
           prisoner: { prisonerNumber: 'AA11AA' },
           instanceIds: [1, 2],
-          attendances: [{ attendanceReason: { code: AttendanceReason.ATTENDED } }, { attendanceReason: null }],
+          attendances: [
+            { attendanceReason: { code: AttendanceReason.ATTENDED }, status: 'COMPLETED' },
+            { attendanceReason: null },
+          ],
         },
         {
           prisoner: { prisonerNumber: 'BB22BB' },
           instanceIds: [3, 4, 5],
           attendances: [
-            { attendanceReason: { code: AttendanceReason.ATTENDED } },
-            { attendanceReason: { code: AttendanceReason.SICK } },
+            { attendanceReason: { code: AttendanceReason.ATTENDED }, status: 'COMPLETED' },
+            { attendanceReason: { code: AttendanceReason.SICK }, status: 'COMPLETED' },
             { attendanceReason: null },
           ],
         },
