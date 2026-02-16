@@ -5,7 +5,8 @@
         {% if options.lastName and (true if options.inCaseLoad == undefined else options.inCaseLoad) %}
           <a href="{{ dpsUrl }}/prisoner/{{ options.prisonerNumber }}"
             target="_blank"
-            class="govuk-link govuk-link--no-visited-state">
+            class="govuk-link govuk-link--no-visited-state"
+            data-qa="prisoner-profile-link">
             {{ name  }}
           </a>
         {% else %}
