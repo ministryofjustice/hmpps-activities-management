@@ -1,3 +1,4 @@
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import BookAVideoLinkApiClient from '../data/bookAVideoLinkApiClient'
 import { ServiceUser } from '../@types/express'
 import { BookAProbationMeetingJourney } from '../routes/appointments/video-link-booking/probation/journey'
@@ -8,6 +9,7 @@ jest.mock('../data/bookAVideoLinkApiClient')
 describe('Probation booking service', () => {
   let bookAVideoLinkClient: jest.Mocked<BookAVideoLinkApiClient>
   let probationBookingService: ProbationBookingService
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
 
@@ -28,7 +30,10 @@ describe('Probation booking service', () => {
   } as BookAProbationMeetingJourney
 
   beforeEach(() => {
-    bookAVideoLinkClient = new BookAVideoLinkApiClient() as jest.Mocked<BookAVideoLinkApiClient>
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('test-system-token'),
+    } as unknown as jest.Mocked<AuthenticationClient>
+    bookAVideoLinkClient = new BookAVideoLinkApiClient(mockAuthenticationClient) as jest.Mocked<BookAVideoLinkApiClient>
     probationBookingService = new ProbationBookingService(bookAVideoLinkClient)
   })
 
