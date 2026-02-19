@@ -18,10 +18,14 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">Edit activity details</h1>
-            <h2 class="govuk-heading-m">Activity details</h2>
 
             {{ govukSummaryList({
-                  rows: [
+                card: {
+                    title: {
+                        text: "Activity details"
+                    }
+                },
+                rows: [
                     {
                         key: {
                             text: "Activity category"
@@ -106,8 +110,12 @@
                 ]
             }) }}
 
-            <h2 class="govuk-heading-m">Location and capacity</h2>
             {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Location and capacity"
+                    }
+                },
                 rows: [
                     {
                         key: {
@@ -148,8 +156,12 @@
                 ]
             }) }}
 
-            <h2 class="govuk-heading-m">Requirements and suitability</h2>
             {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Requirements and suitability"
+                    }
+                },
                 rows: [
                     {
                         key: {
@@ -189,8 +201,24 @@
                     }
                 ]
             }) }}
-            <h2 class="govuk-heading-m">Pay rates</h2>
+
             {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Pay rates"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "/activities/edit/" + activity.id + "/" + ("check-pay" if schedule.activity.paid else "pay-option") + "?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: " pay",
+                                classes: "govuk-link--no-visited-state",
+                                attributes: { "data-qa": "change-pay-link" }
+                            }
+                        ]
+                    } if not activityEnded and payEditable
+                },
                 rows: [
                     {
                         key: {
@@ -198,23 +226,11 @@
                         },
                         value: {
                             html: displayPaySummary(schedule.activity.paid, displayPays, payEditable)
-                    },
-                        actions: {
-                            items: [
-                                {
-                                    href: "/activities/edit/" + activity.id + "/" + ("check-pay" if schedule.activity.paid else "pay-option") + "?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: " pay",
-                                    classes: "govuk-link--no-visited-state",
-					                attributes: { "data-qa": "change-pay-link" }
-                                }
-                            ]
-                        } if not activityEnded and payEditable
+                        }
                     }
                 ]
             }) }}
 
-            <h2 class="govuk-heading-m">Schedule and dates</h2>
             {{ govukInsetText({
                 text: 'The current week is: Week ' + currentWeek,
                 classes: 'govuk-!-margin-top-0 govuk-!-margin-bottom-0'
@@ -313,6 +329,11 @@
             ), dateAndScheduleRows) %}
 
             {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Schedule"
+                    }
+                },
                 rows: dateAndScheduleRows
             }) }}
 
