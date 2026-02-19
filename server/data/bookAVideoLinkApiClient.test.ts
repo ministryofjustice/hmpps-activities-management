@@ -1,7 +1,6 @@
 import nock from 'nock'
-
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
-import TokenStore from './tokenStore'
 import { ServiceUser } from '../@types/express'
 import BookAVideoLinkApiClient from './bookAVideoLinkApiClient'
 import {
@@ -17,12 +16,14 @@ jest.mock('./tokenStore')
 describe('bookAVideoLinkApiClient', () => {
   let fakeBookAVideoLinkApi: nock.Scope
   let bookAVideoLinkApiClient: BookAVideoLinkApiClient
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
     fakeBookAVideoLinkApi = nock(config.apis.bookAVideoLinkApi.url)
-    bookAVideoLinkApiClient = new BookAVideoLinkApiClient()
-
-    jest.spyOn(TokenStore.prototype, 'getToken').mockResolvedValue('accessToken')
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('test-system-token'),
+    } as unknown as jest.Mocked<AuthenticationClient>
+    bookAVideoLinkApiClient = new BookAVideoLinkApiClient(mockAuthenticationClient)
   })
 
   afterEach(() => {
@@ -36,7 +37,7 @@ describe('bookAVideoLinkApiClient', () => {
 
       fakeBookAVideoLinkApi
         .get('/video-link-booking/id/1')
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await bookAVideoLinkApiClient.getVideoLinkBookingById(1, user)
@@ -59,7 +60,7 @@ describe('bookAVideoLinkApiClient', () => {
 
       fakeBookAVideoLinkApi
         .post('/video-link-booking/search', requestBody)
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await bookAVideoLinkApiClient.matchAppointmentToVideoLinkBooking(requestBody, user)
@@ -75,7 +76,7 @@ describe('bookAVideoLinkApiClient', () => {
 
       fakeBookAVideoLinkApi
         .get(`/prisons/MDI/locations?videoLinkOnly=false`)
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await bookAVideoLinkApiClient.getAppointmentLocations('MDI', user)
@@ -91,7 +92,7 @@ describe('bookAVideoLinkApiClient', () => {
 
       fakeBookAVideoLinkApi
         .get(`/courts?enabledOnly=false`)
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await bookAVideoLinkApiClient.getAllCourts(user)
@@ -107,7 +108,7 @@ describe('bookAVideoLinkApiClient', () => {
 
       fakeBookAVideoLinkApi
         .get(`/probation-teams?enabledOnly=false`)
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await bookAVideoLinkApiClient.getAllProbationTeams(user)
@@ -123,7 +124,7 @@ describe('bookAVideoLinkApiClient', () => {
 
       fakeBookAVideoLinkApi
         .get(`/reference-codes/group/GROUP`)
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await bookAVideoLinkApiClient.getReferenceCodesForGroup('GROUP', user)
@@ -139,7 +140,7 @@ describe('bookAVideoLinkApiClient', () => {
 
       fakeBookAVideoLinkApi
         .post('/video-link-booking', { bookingType: 'COURT' })
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(201, response)
 
       const output = await bookAVideoLinkApiClient.createVideoLinkBooking(
@@ -156,7 +157,7 @@ describe('bookAVideoLinkApiClient', () => {
 
       fakeBookAVideoLinkApi
         .put(`/video-link-booking/id/1`, { bookingType: 'COURT' })
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
       const output = await bookAVideoLinkApiClient.amendVideoLinkBooking(
@@ -172,7 +173,7 @@ describe('bookAVideoLinkApiClient', () => {
     it('should delete', async () => {
       fakeBookAVideoLinkApi
         .delete(`/video-link-booking/id/1`)
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200)
 
       await bookAVideoLinkApiClient.cancelVideoLinkBooking(1, user)
