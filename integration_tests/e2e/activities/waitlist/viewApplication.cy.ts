@@ -22,6 +22,7 @@ const getWaitlistApplication = {
   earliestReleaseDate: { releaseDate: '2023-12-25' },
   isIndeterminateSentence: true,
   activity: getMathsActivity,
+  statusUpdatedTime: '2025-06-20T14:22:00',
 }
 
 const waitlistSearchResponse = {
@@ -66,7 +67,6 @@ context('Waitlist - Edit Status', () => {
     waitlistDashboardPage.checkRequestData('20 June 2025')
     waitlistDashboardPage.checkRequestData('Self-requested')
     waitlistDashboardPage.checkEarliestReleaseDate('25 December 2023')
-
     waitlistDashboardPage.checkApplicationStatus('Pending')
 
     waitlistDashboardPage.selectFirstApplication()
@@ -74,10 +74,15 @@ context('Waitlist - Edit Status', () => {
 
     const viewApplicationPage = Page.verifyOnPage(ViewApplicationPage)
     viewApplicationPage.checkApplicationStatus('Pending')
+    viewApplicationPage.checkLastChangedData('Last changed 20th June 2025 14:22')
     viewApplicationPage.checkActivityRequested('A basic english course suitable for introduction to the subject')
     viewApplicationPage.checkRequester('Self-requested')
     viewApplicationPage.checkDateOfRequest('20th June 2025')
     viewApplicationPage.checkComments('None')
+
+    viewApplicationPage.selectApplicationHistoryTab()
+
+    viewApplicationPage.checkApplicationHistory('Application Logged')
   })
 
   it('Should be able to view an approved application', () => {
