@@ -72,7 +72,7 @@
                             },
                             value: {
                                 html:   waitlistStatusBadge(status, waitlistWithdrawnEnabled) +
-                                        (('<div class="govuk-!-font-size-16 govuk-hint govuk-!-margin-top-2">Last changed ' + statusUpdatedTime | parseISODate | formatDate('do MMMM yyyy HH:mm:ss') + '</div>') if statusUpdatedTime)
+                                        (('<div class="govuk-!-font-size-16 govuk-hint govuk-!-margin-top-2">Last changed ' + statusUpdatedTime | parseISODate | formatDate('do MMMM yyyy HH:mm') + '</div>') if statusUpdatedTime)
                             },
                             actions: {
                                 items: [
@@ -176,7 +176,7 @@
                             html: historyItem.note,
                             datetime: {
                                 timestamp: historyItem.updatedDateTime,
-                                type: 'datetime'
+                                format: 'DD MMMM YYYY HH:mm'
                             },
                             byLine: historyItem.updatedBy
                         }), rows) %}

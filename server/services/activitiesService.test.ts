@@ -1,5 +1,6 @@
 import { when } from 'jest-when'
 import { addDays, subDays } from 'date-fns'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import atLeast from '../../jest.setup'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import ActivitiesService from './activitiesService'
@@ -61,8 +62,12 @@ import ActivitiesTestData from '../utils/testData/activitiesTestData'
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
 
+const mockAuthenticationClient = {
+  getToken: jest.fn().mockResolvedValue('test-system-token'),
+} as unknown as jest.Mocked<AuthenticationClient>
+
 describe('Activities Service', () => {
-  const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
+  const activitiesApiClient = new ActivitiesApiClient(mockAuthenticationClient) as jest.Mocked<ActivitiesApiClient>
   const activitiesService = new ActivitiesService(activitiesApiClient)
 
   const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser

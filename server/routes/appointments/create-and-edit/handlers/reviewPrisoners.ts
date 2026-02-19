@@ -81,7 +81,7 @@ export default class ReviewPrisonerRoutes {
 
   private async getNextPageInJourney(req: Request, res: Response): Promise<string> {
     const prisoners = ReviewPrisonerRoutes.getPrisoners(req)
-    const alertsDetails = await this.alertsService.getAlertDetails(prisoners, res.locals.user)
+    const alertsDetails = await this.alertsService.getAlertDetails(prisoners)
 
     if (alertsDetails.numPrisonersWithAlerts === 0) {
       if (req.session.appointmentJourney.mode === AppointmentJourneyMode.EDIT) {

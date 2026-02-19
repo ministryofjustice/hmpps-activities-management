@@ -1,5 +1,6 @@
 import sinon from 'sinon'
 import { when } from 'jest-when'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import BookAVideoLinkApiClient from '../data/bookAVideoLinkApiClient'
 import BookAVideoLinkService from './bookAVideoLinkService'
 import { Location, ReferenceCode, VideoLinkBooking } from '../@types/bookAVideoLinkApi/types'
@@ -10,11 +11,14 @@ jest.mock('../data/bookAVideoLinkApiClient')
 describe('Book A Video link service', () => {
   let bookAVideoLinkClient: jest.Mocked<BookAVideoLinkApiClient>
   let bookAVideoLinkService: BookAVideoLinkService
-
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
   const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
 
   beforeEach(() => {
-    bookAVideoLinkClient = new BookAVideoLinkApiClient() as jest.Mocked<BookAVideoLinkApiClient>
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('test-system-token'),
+    } as unknown as jest.Mocked<AuthenticationClient>
+    bookAVideoLinkClient = new BookAVideoLinkApiClient(mockAuthenticationClient) as jest.Mocked<BookAVideoLinkApiClient>
     bookAVideoLinkService = new BookAVideoLinkService(bookAVideoLinkClient)
   })
 
