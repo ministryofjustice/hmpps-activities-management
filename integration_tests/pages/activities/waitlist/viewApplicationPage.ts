@@ -11,6 +11,10 @@ export default class ViewApplicationPage extends Page {
     cy.get('.govuk-summary-list__value').eq(0).should('contain.text', status)
   }
 
+  checkLastChangedData = (data: string) => {
+    cy.get('.govuk-summary-list__value div').eq(0).should('contain.text', data)
+  }
+
   checkActivityRequested = (activity: string) => {
     cy.get('.govuk-summary-list__value').eq(1).should('contain.text', activity)
   }
@@ -25,6 +29,14 @@ export default class ViewApplicationPage extends Page {
 
   checkComments = (comments: string) => {
     cy.get('.govuk-summary-list__value').eq(4).should('contain.text', comments)
+  }
+
+  selectApplicationHistoryTab = () => {
+    cy.get('.govuk-tabs__tab').eq(1).click()
+  }
+
+  checkApplicationHistory = (title: string) => {
+    cy.get('.moj-timeline__title').eq(0).should('contain.text', title)
   }
 
   changeStatusLink = (): Cypress.Chainable => cy.get('a').contains('Change').first()
