@@ -19,38 +19,34 @@ export const getResidentialLocationAttendanceStats = (
 ): AttendanceStats => {
   const totalAttendees = prisonersWithActivities.length
 
-  const totalAttendanceRecords = prisonersWithActivities.reduce(
-    (total: number, attendee: PrisonerWithAttendanceRecord) => total + attendee.instanceIds.length,
-    0,
+  const residentialLocationAttendanceStats = prisonersWithActivities.reduce(
+    (acc, attendee) => {
+      acc.totalAttendanceRecords += attendee.instanceIds.length
+
+      attendee.attendances.forEach(attendance => {
+        if (attendance.attendanceReason) {
+          if (attendance.attendanceReason.code === AttendanceReason.ATTENDED) {
+            acc.totalAttended += 1
+          } else {
+            acc.totalAbsences += 1
+          }
+        } else if (!attendance.attendanceReason) {
+          acc.totalNotRecorded += 1
+        }
+      })
+
+      return acc
+    },
+    {
+      totalAttendanceRecords: 0,
+      totalAttended: 0,
+      totalAbsences: 0,
+      totalNotRecorded: 0,
+    },
   )
-
-  const totalAttended = prisonersWithActivities.reduce((total: number, attendee: PrisonerWithAttendanceRecord) => {
-    return (
-      total +
-      attendee.attendances.filter(
-        a => a.status === 'COMPLETED' && a.attendanceReason && a.attendanceReason?.code === AttendanceReason.ATTENDED,
-      ).length
-    )
-  }, 0)
-
-  const totalAbsences = prisonersWithActivities.reduce((total: number, attendee: PrisonerWithAttendanceRecord) => {
-    return (
-      total +
-      attendee.attendances.filter(
-        a => a.status === 'COMPLETED' && a.attendanceReason && a.attendanceReason?.code !== AttendanceReason.ATTENDED,
-      ).length
-    )
-  }, 0)
-
-  const totalNotRecorded = prisonersWithActivities.reduce((total: number, attendee: PrisonerWithAttendanceRecord) => {
-    return total + attendee.attendances.filter(a => !a.attendanceReason).length
-  }, 0)
 
   return {
     totalAttendees,
-    totalAttendanceRecords,
-    totalAttended,
-    totalAbsences,
-    totalNotRecorded,
+    ...residentialLocationAttendanceStats,
   }
 }
