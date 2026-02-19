@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import BookAVideoLinkService from '../../../../../services/bookAVideoLinkService'
 import BookAVideoLinkApiClient from '../../../../../data/bookAVideoLinkApiClient'
 import ConfirmationRoutes from './confirmation'
@@ -17,6 +18,7 @@ describe('ConfirmationRoutes', () => {
   let prisonService: jest.Mocked<PrisonService>
   let confirmationRoutes: ConfirmationRoutes
   let bookAVideoLinkApiClient: jest.Mocked<BookAVideoLinkApiClient>
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
     req = {
@@ -35,7 +37,12 @@ describe('ConfirmationRoutes', () => {
       render: jest.fn(),
       redirect: jest.fn(),
     }
-    bookAVideoLinkApiClient = new BookAVideoLinkApiClient() as jest.Mocked<BookAVideoLinkApiClient>
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('test-system-token'),
+    } as unknown as jest.Mocked<AuthenticationClient>
+    bookAVideoLinkApiClient = new BookAVideoLinkApiClient(
+      mockAuthenticationClient,
+    ) as jest.Mocked<BookAVideoLinkApiClient>
     bookAVideoLinkService = new BookAVideoLinkService(bookAVideoLinkApiClient) as jest.Mocked<BookAVideoLinkService>
     prisonService = new PrisonService(null, null, null) as jest.Mocked<PrisonService>
     confirmationRoutes = new ConfirmationRoutes(bookAVideoLinkService, prisonService)
