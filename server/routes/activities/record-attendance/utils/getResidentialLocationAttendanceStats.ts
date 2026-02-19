@@ -24,13 +24,11 @@ export const getResidentialLocationAttendanceStats = (
       acc.totalAttendanceRecords += attendee.instanceIds.length
 
       attendee.attendances.forEach(attendance => {
-        if (attendance.attendanceReason) {
-          if (attendance.attendanceReason.code === AttendanceReason.ATTENDED) {
-            acc.totalAttended += 1
-          } else {
-            acc.totalAbsences += 1
-          }
-        } else if (!attendance.attendanceReason) {
+        if (attendance.attendanceReason && attendance.attendanceReason.code === AttendanceReason.ATTENDED) {
+          acc.totalAttended += 1
+        } else if (attendance.attendanceReason) {
+          acc.totalAbsences += 1
+        } else {
           acc.totalNotRecorded += 1
         }
       })
