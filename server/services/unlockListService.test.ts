@@ -1,6 +1,7 @@
 import { when } from 'jest-when'
 import _, { cloneDeep } from 'lodash'
 import { subDays } from 'date-fns'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
@@ -18,7 +19,11 @@ jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
 jest.mock('../services/alertsFilterService')
 
-const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
+const mockAuthenticationClient = {
+  getToken: jest.fn().mockResolvedValue('test-system-token'),
+} as unknown as jest.Mocked<AuthenticationClient>
+
+const activitiesApiClient = new ActivitiesApiClient(mockAuthenticationClient) as jest.Mocked<ActivitiesApiClient>
 const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
 const alertsFilterService = new AlertsFilterService() as jest.Mocked<AlertsFilterService>
 

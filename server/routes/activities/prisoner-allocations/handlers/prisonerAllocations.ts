@@ -4,6 +4,7 @@ import { Prisoner } from '../../../../@types/prisonerOffenderSearchImport/types'
 import NonAssociationsService from '../../../../services/nonAssociationsService'
 import ActivitiesService from '../../../../services/activitiesService'
 import { ActivitySummary } from '../../../../@types/activitiesAPI/types'
+import config from '../../../../config'
 
 export default class PrisonerAllocationsHandler {
   constructor(
@@ -15,6 +16,7 @@ export default class PrisonerAllocationsHandler {
   GET = async (req: Request, res: Response) => {
     const { prisonerNumber } = req.params
     const { user } = res.locals
+    const { waitlistWithdrawnEnabled } = config
 
     const prisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
     const prisonerAllocations = await this.activitiesService.getActivePrisonPrisonerAllocations([prisonerNumber], user)
@@ -56,7 +58,7 @@ export default class PrisonerAllocationsHandler {
       approvedApplications,
       rejectedApplications,
       withdrawnApplications,
-      showWithdrawnApplicationsSection: false,
+      waitlistWithdrawnEnabled,
     })
   }
 

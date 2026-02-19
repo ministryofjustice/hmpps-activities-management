@@ -1,5 +1,4 @@
 import { Alert } from '../@types/alertsAPI/types'
-import { ServiceUser } from '../@types/express'
 import AlertsApiClient from '../data/alertsApiClient'
 
 export default class AlertsService {
@@ -45,14 +44,14 @@ export default class AlertsService {
 
   readonly categoriesWithBadges: Set<string> = new Set<string>(['A', 'E', 'H', 'P'])
 
-  async getAlertsUsingPrisonerNumbers(prisonerNumbers: string[], user: ServiceUser): Promise<Alert[]> {
-    return this.alertsApiClient.getAlertsForPrisoners(prisonerNumbers, user).then(alerts => alerts?.content)
+  async getAlertsUsingPrisonerNumbers(prisonerNumbers: string[]): Promise<Alert[]> {
+    return this.alertsApiClient.getAlertsForPrisoners(prisonerNumbers).then(alerts => alerts?.content)
   }
 
-  async getAlertDetails(prisoners: PrisonerDetails[], user: ServiceUser): Promise<PrisonerAlertResults> {
+  async getAlertDetails(prisoners: PrisonerDetails[]): Promise<PrisonerAlertResults> {
     const prisonerNumbers: string[] = prisoners.map(prisoner => prisoner.number)
 
-    const allAlertsForAllPrisoners: Alert[] = await this.getAlertsUsingPrisonerNumbers(prisonerNumbers, user)
+    const allAlertsForAllPrisoners: Alert[] = await this.getAlertsUsingPrisonerNumbers(prisonerNumbers)
 
     const prisonersWithAlerts: PrisonerAlertDetails[] = []
     let numPrisonersWithAlerts = 0

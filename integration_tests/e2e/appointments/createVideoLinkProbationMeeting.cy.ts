@@ -155,6 +155,8 @@ context('Create video link probation appointment', () => {
 
     // Review events for the prisoner page
     const schedulePage = Page.verifyOnPage(VideoLinkSchedulePage)
+    schedulePage.assertPrisonerProfileLink('A8644DY')
+    schedulePage.assertCellLocation('1-3')
     schedulePage.continue()
 
     // Extra information page
