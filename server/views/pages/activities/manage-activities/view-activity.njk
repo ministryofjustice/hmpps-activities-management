@@ -202,6 +202,53 @@
                 ]
             }) }}
 
+            {% set payRows = [] %}
+            {% if schedule.activity.paid %}
+                {% if displayPays | length > 0 %}
+                    {% for displayPay in displayPays %}
+                        {% set payList %}
+                            {% for pay in displayPay.pays %}
+                                <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney if pay.description === undefined else pay.rate | toMoney + pay.description }} </div>
+                            {% endfor %}
+                        {% endset %}
+                        {% set payRows = (payRows.push(
+                            {
+                                key: {
+                                    text: displayPay.incentiveLevel + " incentive level pay"
+                                },
+                                value: {
+                                    html: payList
+                                }
+                            }
+                        ), payRows) %}
+                    {% endfor %}
+                {% else %}
+                    {% set payRows = (payRows.push(
+                        {
+                            key: {
+                                text: "None added yet"
+                            }
+                        }
+                    ), payRows) %}
+                {% endif %}
+            {% else %}
+                {% set payRows = (payRows.push(
+                    {
+                        key: {
+                            text: "People are not paid for this activity."
+                        }
+                    }
+                ), payRows) %}
+                {% if not payEditable %}
+                    {% set payRows = (payRows.push(
+                        {
+                            key: {
+                                text: "You cannot change this while people are allocated to the activity."
+                            }
+                        }
+                    ), payRows) %}
+                {% endif %}
+            {% endif %}
             {{ govukSummaryList({
                 card: {
                     title: {
@@ -219,16 +266,7 @@
                         ]
                     } if not activityEnded and payEditable
                 },
-                rows: [
-                    {
-                        key: {
-                            text: "Pay rates"
-                        },
-                        value: {
-                            html: displayPaySummary(schedule.activity.paid, displayPays, payEditable)
-                        }
-                    }
-                ]
+                rows: payRows
             }) }}
 
             {{ govukInsetText({
@@ -355,57 +393,6 @@
     {% else %}
         None
     {% endif %}
-{% endmacro %}
-
-{% macro paySummary(activityPaid, incentiveLevelPays, payEditable) %}
-    {% if activityPaid %}
-        {% if incentiveLevelPays | length > 0 %}
-            {% for incentiveLevelPay in incentiveLevelPays %}
-                <div class="govuk-!-margin-bottom-2">
-                    <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
-                    {% for pay in incentiveLevelPay.pays %}
-                        <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        {% else %}
-            None added yet
-        {% endif %}
-    {% else %}
-        <p class="govuk-body govuk-!-margin-0">People are not paid for this activity</p>
-        {% if not payEditable %}
-            <div class="govuk-hint">You cannot change this while people are allocated to the activity.</div>
-        {% endif %}
-    {% endif %}
-{% endmacro %}
-
-{% macro displayPaySummary(activityPaid, displayPays, payEditable) %}
-    {% if activityPaid %}
-        {% if displayPays | length > 0 %}
-            {% for displayPay in displayPays %}
-                <div class="govuk-!-margin-bottom-2">
-                    <div class="govuk-!-font-weight-bold">{{ displayPay.incentiveLevel }} incentive level pay</div>
-                    {% for pay in displayPay.pays %}
-                        <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney if pay.description === undefined else pay.rate | toMoney + pay.description }} </div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        {% else %}
-            None added yet
-        {% endif %}
-    {% else %}
-        <p class="govuk-body govuk-!-margin-0">People are not paid for this activity</p>
-        {% if not payEditable %}
-            <div class="govuk-hint">You cannot change this while people are allocated to the activity.</div>
-        {% endif %}
-    {% endif %}
-{% endmacro %}
-
-{% macro activityStartedTag() %}
-    {{ govukTag({
-        text: "Started",
-        classes: "govuk-tag--green"
-    }) }}
 {% endmacro %}
 
 {% macro riskLevel(activity) %}
