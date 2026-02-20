@@ -82,7 +82,7 @@ context('Waitlist - Edit Status', () => {
 
     viewApplicationPage.selectApplicationHistoryTab()
 
-    viewApplicationPage.checkApplicationHistory('Application Logged')
+    viewApplicationPage.checkApplicationHistory('Application logged')
   })
 
   it('Should be able to view an approved application', () => {

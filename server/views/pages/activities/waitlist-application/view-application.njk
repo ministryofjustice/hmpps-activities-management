@@ -178,7 +178,9 @@
                                 timestamp: historyItem.updatedDateTime,
                                 format: 'DD MMMM YYYY HH:mm'
                             },
-                            byLine: historyItem.updatedBy
+                            byline: {
+                                text: historyItem.updatedBy
+                            }
                         }), rows) %}
                     {% endfor %}
                     {{ mojTimeline({
