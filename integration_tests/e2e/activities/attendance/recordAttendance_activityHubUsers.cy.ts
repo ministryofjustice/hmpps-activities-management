@@ -234,6 +234,14 @@ context('Record attendance for activity hub users', () => {
 
     const selectPeopleByResidentialLocationPage = Page.verifyOnPage(SelectPeopleByResidentialLocationPage)
 
+    selectPeopleByResidentialLocationPage.checkAttendanceStats({
+      totalAttendees: 2,
+      totalAttendanceRecords: 2,
+      totalAttended: 0,
+      totalAbsences: 0,
+      totalNotRecorded: 2,
+    })
+
     selectPeopleByResidentialLocationPage.selectPrisoner('Gregs, Stephen')
     selectPeopleByResidentialLocationPage.selectPrisoner('Smith, John')
     selectPeopleByResidentialLocationPage.markAsAttended()

@@ -212,33 +212,42 @@ describe('Route Handlers - Select people by residential location', () => {
     when(prisonService.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
   })
 
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
   describe('GET', () => {
-    it('should render the expected view for a single instance', async () => {
-      const dateString = '2025-09-19'
-      const date = toDate(asString(dateString))
-      const attendanceRows = [
+    const createAttendanceRows = (instance1, instance2, someSelectable = false) =>
+      [
         {
           prisoner: mapPrisonerDetails(prisoners.content[0]),
-          attendances: [scheduledActivity1.attendances[0]],
-          advancedAttendances: [undefined],
+          attendances: [instance1.attendances[0]],
+          advancedAttendances: [],
           attendanceIds: [1001],
           instanceIds: [123456],
-          instances: [updatedInstance1],
+          instances: [instance1],
           otherEventsPerInstance: [[]],
-          someSelectable: false,
+          someSelectable,
         },
         {
           prisoner: mapPrisonerDetails(prisoners.content[1]),
-          attendances: [scheduledActivity2.attendances[0]],
-          advancedAttendances: [undefined],
+          attendances: [instance2.attendances[0]],
+          advancedAttendances: [],
           attendanceIds: [1002],
           instanceIds: [123457],
-          instances: [updatedInstance2],
+          instances: [instance2],
           otherEventsPerInstance: [[]],
-          someSelectable: false,
+          someSelectable,
         },
       ] as unknown as ScheduledInstanceAttendance[]
+
+    it('should render the expected view for a single instance', async () => {
+      const dateString = '2025-09-19'
+      const date = toDate(asString(dateString))
+      const attendanceRows = createAttendanceRows(updatedInstance1, updatedInstance2)
+
       await handler.GET(req, res)
+
       expect(res.render).toHaveBeenCalledWith(
         'pages/activities/record-attendance/attend-all/select-people-by-residential-location',
         {
@@ -250,6 +259,58 @@ describe('Route Handlers - Select people by residential location', () => {
           location: mockLocations[0],
           searchTerm: '',
           subLocationFilters: [],
+          totalAttendees: 2,
+          totalAttendanceRecords: 2,
+          totalAttended: 1,
+          totalAbsences: 0,
+          totalNotRecorded: 1,
+        },
+      )
+    })
+
+    it('should render attended & not recorded stats as "-" when activity date is in the future', async () => {
+      const futureDate = new Date()
+      futureDate.setDate(futureDate.getDate() + 5)
+      const dateString = format(futureDate, 'yyyy-MM-dd')
+      const date = toDate(asString(dateString))
+
+      req.query.date = dateString
+
+      const futureInstance1 = {
+        ...scheduledActivity1,
+        date: dateString,
+        isAmendable: true,
+        isInFuture: true,
+      }
+      const futureInstance2 = {
+        ...scheduledActivity2,
+        date: dateString,
+        isAmendable: true,
+        isInFuture: true,
+      }
+
+      when(activitiesService.getScheduledActivitiesAtPrisonByDateAndSlot)
+        .calledWith(expect.any(Date), res.locals.user, TimeSlot.AM)
+        .mockResolvedValue([futureInstance1, futureInstance2])
+
+      await handler.GET(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/record-attendance/attend-all/select-people-by-residential-location',
+        {
+          activityDate: date,
+          attendanceRows: createAttendanceRows(futureInstance1, futureInstance2, true),
+          instance: futureInstance1,
+          instancesForDateAndSlot: [futureInstance1, futureInstance2],
+          timePeriodFilter: 'AM',
+          location: mockLocations[0],
+          searchTerm: '',
+          subLocationFilters: [],
+          totalAttendees: 2,
+          totalAttendanceRecords: 2,
+          totalAttended: '-',
+          totalAbsences: 0,
+          totalNotRecorded: '-',
         },
       )
     })

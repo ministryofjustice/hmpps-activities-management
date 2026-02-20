@@ -49,4 +49,18 @@ export default class SelectPeopleByResidentialLocationPage extends Page {
   checkSuccessBanner = (text: string) => cy.get('.govuk-notification-banner__content').contains(text)
 
   backLink = (): Cypress.Chainable => cy.get('.govuk-back-link')
+
+  checkAttendanceStats = (stats: {
+    totalAttendees: number
+    totalAttendanceRecords: number
+    totalAttended: number
+    totalAbsences: number
+    totalNotRecorded: number
+  }) => {
+    cy.get('h2').contains(`${stats.totalAttendees} people allocated to activities`)
+    cy.get('p').contains('Sessions people are allocated to:').should('contain', stats.totalAttendanceRecords)
+    cy.get('p').contains('Attended:').should('contain', stats.totalAttended)
+    cy.get('p').contains('Absences:').should('contain', stats.totalAbsences)
+    cy.get('p').contains('Not recorded:').should('contain', stats.totalNotRecorded)
+  }
 }
