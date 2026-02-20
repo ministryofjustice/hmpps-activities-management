@@ -23,10 +23,19 @@
 
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
-                    <h2 class="govuk-heading-m">{{ attendanceRows | length }}
-                        {{ "person" if attendanceRows | length == 1 else "people" }} allocated</h2>
+                  <a href="../attend-all/choose-details-by-residential-location" class="govuk-link govuk-!-font-size-19">Select a different day, time period or location</a>
+                    <h2 class="govuk-heading-m govuk-!-margin-top-4">{{ totalAttendees }}
+                        {{ "person" if totalAttendees | length == 1 else "people" }} allocated to activities</h2>
                 </div>
             </div>
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+              <p class="govuk-!-margin-bottom-0">Sessions people are allocated to: <strong>{{ totalAttendanceRecords }}</strong></p>
+              <p class="govuk-!-margin-bottom-0">Attended: <strong>{{ totalAttended }}</strong></p>
+              <p class="govuk-!-margin-bottom-0">Absences: <strong>{{ totalAbsences }}</strong></p>
+              <p class="govuk-!-margin-bottom-0">Not recorded: <strong>{{ totalNotRecorded }}</strong></p>
+            </div>
+          </div>
             <div class="govuk-grid-row govuk-!-margin-bottom-4">
                 <div class="govuk-grid-column-two-thirds">
                     <div class="search-input search-input--inline-search govuk-!-margin-top-6 govuk-!-display-none-print">

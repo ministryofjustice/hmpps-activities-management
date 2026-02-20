@@ -1,17 +1,19 @@
 import { addDays, startOfDay, startOfToday, toDate } from 'date-fns'
 import { Request, Response } from 'express'
-import { asString, eventClashes, formatName } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import { EventType, SubLocationCellPattern } from '../../../../../@types/activities'
-import applyCancellationDisplayRule from '../../../../../utils/applyCancellationDisplayRule'
+import { AttendanceUpdateRequest } from '../../../../../@types/activitiesAPI/types'
+import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
+import { AttendanceRecordList } from '../../../../../@types/attendanceRecords'
 import AttendanceStatus from '../../../../../enum/attendanceStatus'
 import UserService from '../../../../../services/userService'
 import TimeSlot from '../../../../../enum/timeSlot'
 import AttendanceReason from '../../../../../enum/attendanceReason'
-import { AttendanceUpdateRequest } from '../../../../../@types/activitiesAPI/types'
-import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
+import { asString, eventClashes, formatName } from '../../../../../utils/utils'
+import applyCancellationDisplayRule from '../../../../../utils/applyCancellationDisplayRule'
 import { NameFormatStyle } from '../../../../../utils/helpers/nameFormatStyle'
+import { getResidentialLocationAttendanceStats } from '../../utils/getResidentialLocationAttendanceStats'
 import {
   parseSelectedAttendances,
   getPrisonerNumberFromAttendance,
@@ -127,7 +129,7 @@ export default class SelectPeopleByResidentialLocationRoutes {
       }),
     )
 
-    const prisonersWithActivities = prisonersForLocation?.content?.reduce((result, prisoner) => {
+    const prisonersWithActivities: AttendanceRecordList = prisonersForLocation?.content?.reduce((result, prisoner) => {
       if (attendingPrisonerNumbers.includes(prisoner.prisonerNumber)) {
         if (
           searchTerm &&
@@ -205,8 +207,20 @@ export default class SelectPeopleByResidentialLocationRoutes {
 
     res.locals.recordAttendanceJourney = req.journeyData.recordAttendanceJourney
 
+    const stats = getResidentialLocationAttendanceStats(prisonersWithActivities)
+    const isDateInFuture = startOfDay(activityDate) > startOfDay(startOfToday())
+
+    const { totalAttendees, totalAttendanceRecords, totalAbsences } = stats
+    const totalAttended = isDateInFuture ? '-' : stats.totalAttended
+    const totalNotRecorded = isDateInFuture ? '-' : stats.totalNotRecorded
+
     return res.render('pages/activities/record-attendance/attend-all/select-people-by-residential-location', {
       attendanceRows: prisonersWithActivities,
+      totalAttendees,
+      totalAttendanceRecords,
+      totalAttended,
+      totalAbsences,
+      totalNotRecorded,
       location,
       activityDate,
       timePeriodFilter,
