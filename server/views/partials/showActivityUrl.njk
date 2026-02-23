@@ -1,0 +1,12 @@
+{% macro showActivityUrl(activity) %}
+        {% if activity.id %}
+          <a href="/activities/allocation-dashboard/{{ activity.id }}#waitlist-tab"
+             target="_blank"
+             class="govuk-link govuk-link--no-visited-state"
+             data-qa="activity-waitlist-link">
+            {{ activity.activityName }}
+          </a>
+        {% else %}
+          <p>{{ activity.activityName }}</p>
+        {% endif %}
+{% endmacro %}

@@ -25,6 +25,13 @@ export default class WaitlistDashboardPage extends Page {
       .should('contain.text', activityName)
   }
 
+  checkActivityLink = (activityName: string) => {
+    cy.get('[data-qa="activity-waitlist-link"]')
+      .contains(activityName)
+      .should('have.attr', 'href')
+      .and('include', '1#waitlist-tab')
+  }
+
   checkRequestData = (requestData: string) => {
     cy.get('.govuk-table__body .govuk-table__row')
       .first()
