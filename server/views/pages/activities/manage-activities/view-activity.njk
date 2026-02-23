@@ -18,10 +18,14 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">Edit activity details</h1>
-            <h2 class="govuk-heading-m">Activity details</h2>
 
             {{ govukSummaryList({
-                  rows: [
+                card: {
+                    title: {
+                        text: "Activity details"
+                    }
+                },
+                rows: [
                     {
                         key: {
                             text: "Activity category"
@@ -106,8 +110,12 @@
                 ]
             }) }}
 
-            <h2 class="govuk-heading-m">Location and capacity</h2>
             {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Location and capacity"
+                    }
+                },
                 rows: [
                     {
                         key: {
@@ -148,8 +156,12 @@
                 ]
             }) }}
 
-            <h2 class="govuk-heading-m">Requirements and suitability</h2>
             {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Requirements and suitability"
+                    }
+                },
                 rows: [
                     {
                         key: {
@@ -189,32 +201,74 @@
                     }
                 ]
             }) }}
-            <h2 class="govuk-heading-m">Pay rates</h2>
-            {{ govukSummaryList({
-                rows: [
+
+            {% set payRows = [] %}
+            {% if schedule.activity.paid %}
+                {% if displayPays | length > 0 %}
+                    {% for displayPay in displayPays %}
+                        {% set payList %}
+                            {% for pay in displayPay.pays %}
+                                <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney if pay.description === undefined else pay.rate | toMoney + pay.description }} </div>
+                            {% endfor %}
+                        {% endset %}
+                        {% set payRows = (payRows.push(
+                            {
+                                key: {
+                                    text: displayPay.incentiveLevel + " incentive level pay"
+                                },
+                                value: {
+                                    html: payList
+                                }
+                            }
+                        ), payRows) %}
+                    {% endfor %}
+                {% else %}
+                    {% set payRows = (payRows.push(
+                        {
+                            key: {
+                                text: "None added yet"
+                            }
+                        }
+                    ), payRows) %}
+                {% endif %}
+            {% else %}
+                {% set payRows = (payRows.push(
                     {
                         key: {
-                            text: "Pay rates"
-                        },
-                        value: {
-                            html: displayPaySummary(schedule.activity.paid, displayPays, payEditable)
-                    },
-                        actions: {
-                            items: [
-                                {
-                                    href: "/activities/edit/" + activity.id + "/" + ("check-pay" if schedule.activity.paid else "pay-option") + "?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: " pay",
-                                    classes: "govuk-link--no-visited-state",
-					                attributes: { "data-qa": "change-pay-link" }
-                                }
-                            ]
-                        } if not activityEnded and payEditable
+                            text: "People are not paid for this activity."
+                        }
                     }
-                ]
+                ), payRows) %}
+                {% if not payEditable %}
+                    {% set payRows = (payRows.push(
+                        {
+                            key: {
+                                text: "You cannot change this while people are allocated to the activity."
+                            }
+                        }
+                    ), payRows) %}
+                {% endif %}
+            {% endif %}
+            {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Pay rates"
+                    },
+                    actions: {
+                        items: [
+                            {
+                                href: "/activities/edit/" + activity.id + "/" + ("check-pay" if schedule.activity.paid else "pay-option") + "?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: " pay",
+                                classes: "govuk-link--no-visited-state",
+                                attributes: { "data-qa": "change-pay-link" }
+                            }
+                        ]
+                    } if not activityEnded and payEditable
+                },
+                rows: payRows
             }) }}
 
-            <h2 class="govuk-heading-m">Schedule and dates</h2>
             {{ govukInsetText({
                 text: 'The current week is: Week ' + currentWeek,
                 classes: 'govuk-!-margin-top-0 govuk-!-margin-bottom-0'
@@ -313,6 +367,11 @@
             ), dateAndScheduleRows) %}
 
             {{ govukSummaryList({
+                card: {
+                    title: {
+                        text: "Schedule"
+                    }
+                },
                 rows: dateAndScheduleRows
             }) }}
 
@@ -334,57 +393,6 @@
     {% else %}
         None
     {% endif %}
-{% endmacro %}
-
-{% macro paySummary(activityPaid, incentiveLevelPays, payEditable) %}
-    {% if activityPaid %}
-        {% if incentiveLevelPays | length > 0 %}
-            {% for incentiveLevelPay in incentiveLevelPays %}
-                <div class="govuk-!-margin-bottom-2">
-                    <div class="govuk-!-font-weight-bold">{{ incentiveLevelPay.incentiveLevel }} incentive level pay</div>
-                    {% for pay in incentiveLevelPay.pays %}
-                        <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney }}</div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        {% else %}
-            None added yet
-        {% endif %}
-    {% else %}
-        <p class="govuk-body govuk-!-margin-0">People are not paid for this activity</p>
-        {% if not payEditable %}
-            <div class="govuk-hint">You cannot change this while people are allocated to the activity.</div>
-        {% endif %}
-    {% endif %}
-{% endmacro %}
-
-{% macro displayPaySummary(activityPaid, displayPays, payEditable) %}
-    {% if activityPaid %}
-        {% if displayPays | length > 0 %}
-            {% for displayPay in displayPays %}
-                <div class="govuk-!-margin-bottom-2">
-                    <div class="govuk-!-font-weight-bold">{{ displayPay.incentiveLevel }} incentive level pay</div>
-                    {% for pay in displayPay.pays %}
-                        <div>{{ pay.prisonPayBand.alias }}: {{ pay.rate | toMoney if pay.description === undefined else pay.rate | toMoney + pay.description }} </div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        {% else %}
-            None added yet
-        {% endif %}
-    {% else %}
-        <p class="govuk-body govuk-!-margin-0">People are not paid for this activity</p>
-        {% if not payEditable %}
-            <div class="govuk-hint">You cannot change this while people are allocated to the activity.</div>
-        {% endif %}
-    {% endif %}
-{% endmacro %}
-
-{% macro activityStartedTag() %}
-    {{ govukTag({
-        text: "Started",
-        classes: "govuk-tag--green"
-    }) }}
 {% endmacro %}
 
 {% macro riskLevel(activity) %}
