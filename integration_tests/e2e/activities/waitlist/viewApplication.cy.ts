@@ -64,6 +64,7 @@ context('Waitlist - Edit Status', () => {
 
     waitlistDashboardPage.checkPrisonerDetails('Winchurch, David Bob')
     waitlistDashboardPage.checkActivityName('Maths level 1')
+    waitlistDashboardPage.checkActivityLink('Maths level 1')
     waitlistDashboardPage.checkRequestData('20 June 2025')
     waitlistDashboardPage.checkRequestData('Self-requested')
     waitlistDashboardPage.checkEarliestReleaseDate('25 December 2023')
