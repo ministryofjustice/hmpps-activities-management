@@ -17,12 +17,20 @@ export default class WaitlistDashboardPage extends Page {
       .should('contain.text', activityName)
   }
 
-  checkActivityName = (activityName: string) => {
-    cy.get('.govuk-table__body .govuk-table__row')
-      .first()
-      .find('.govuk-table__cell')
-      .eq(2)
-      .should('contain.text', activityName)
+  checkActivityText = (activityName: string, linkShouldExist: boolean = true) => {
+    if (linkShouldExist) {
+      cy.get('[data-qa="activity-waitlist-link"]')
+        .contains(activityName)
+        .should('have.attr', 'href')
+        .and('include', '1#waitlist-tab')
+    } else {
+      cy.get('[data-qa="activity-waitlist-link"]').should('not.exist')
+      cy.get('.govuk-table__body .govuk-table__row')
+        .first()
+        .find('.govuk-table__cell')
+        .eq(2)
+        .should('contain.text', activityName)
+    }
   }
 
   checkRequestData = (requestData: string) => {
