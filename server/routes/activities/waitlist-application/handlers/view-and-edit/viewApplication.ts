@@ -123,6 +123,10 @@ export default class ViewApplicationRoutes {
       }
     }
 
+    const appHistoryStartDate = new Date('2025-12-01T00:00:00')
+
+    const createdAppPreHistory = new Date(application.creationTime) < appHistoryStartDate
+
     const isMostRecent =
       allApplications.find(
         w =>
@@ -166,6 +170,7 @@ export default class ViewApplicationRoutes {
       isNotAlreadyAllocated,
       journeyEntry,
       history: historyWithChanges,
+      createdAppPreHistory,
     })
   }
 }

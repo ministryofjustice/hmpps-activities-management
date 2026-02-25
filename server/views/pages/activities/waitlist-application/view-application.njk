@@ -186,6 +186,10 @@
                     {{ mojTimeline({
                         items: rows
                     }) }}
+                    {% if createdAppPreHistory == true %}
+                        <h2 class='govuk-heading-m'>About applications logged before December 2025</h2>
+                        <p class="govuk-body">Changes made before December 2025 cannot be shown. This history may not be complete.</p>
+                    {% endif %}    
                 {% endif %}
                 {% endset %}
                 <div class="govuk-!-margin-bottom-6">
