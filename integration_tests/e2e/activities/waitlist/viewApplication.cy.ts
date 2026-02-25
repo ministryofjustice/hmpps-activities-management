@@ -63,8 +63,7 @@ context('Waitlist - Edit Status', () => {
     const waitlistDashboardPage = Page.verifyOnPage(WaitlistDashboardPage)
 
     waitlistDashboardPage.checkPrisonerDetails('Winchurch, David Bob')
-    waitlistDashboardPage.checkActivityName('Maths level 1')
-    waitlistDashboardPage.checkActivityLink('Maths level 1')
+    waitlistDashboardPage.checkActivityText('Maths level 1')
     waitlistDashboardPage.checkRequestData('20 June 2025')
     waitlistDashboardPage.checkRequestData('Self-requested')
     waitlistDashboardPage.checkEarliestReleaseDate('25 December 2023')
@@ -98,7 +97,7 @@ context('Waitlist - Edit Status', () => {
     const waitlistDashboardPage = Page.verifyOnPage(WaitlistDashboardPage)
 
     waitlistDashboardPage.checkPrisonerDetails('Winchurch, David Bob')
-    waitlistDashboardPage.checkActivityName('Maths level 1')
+    waitlistDashboardPage.checkActivityText('Maths level 1')
     waitlistDashboardPage.checkRequestData('20 June 2025')
     waitlistDashboardPage.checkRequestData('Self-requested')
     waitlistDashboardPage.checkEarliestReleaseDate('25 December 2023')
@@ -128,7 +127,7 @@ context('Waitlist - Edit Status', () => {
     const waitlistDashboardPage = Page.verifyOnPage(WaitlistDashboardPage)
 
     waitlistDashboardPage.checkPrisonerDetails('Winchurch, David Bob')
-    waitlistDashboardPage.checkActivityName('Maths level 1')
+    waitlistDashboardPage.checkActivityText('Maths level 1')
     waitlistDashboardPage.checkRequestData('20 June 2025')
     waitlistDashboardPage.checkRequestData('Self-requested')
     waitlistDashboardPage.checkEarliestReleaseDate('25 December 2023')
@@ -158,7 +157,7 @@ context('Waitlist - Edit Status', () => {
     const waitlistDashboardPage = Page.verifyOnPage(WaitlistDashboardPage)
 
     waitlistDashboardPage.checkPrisonerDetails('Winchurch, David Bob')
-    waitlistDashboardPage.checkActivityName('Maths level 1')
+    waitlistDashboardPage.checkActivityText('Maths level 1')
     waitlistDashboardPage.checkRequestData('20 June 2025')
     waitlistDashboardPage.checkRequestData('Self-requested')
     waitlistDashboardPage.checkEarliestReleaseDate('25 December 2023')
@@ -174,5 +173,38 @@ context('Waitlist - Edit Status', () => {
     viewApplicationPage.checkRequester('Self-requested')
     viewApplicationPage.checkDateOfRequest('20th June 2025')
     viewApplicationPage.checkComments('None')
+  })
+})
+
+context('Waitlist - Edit Status - Non Activity Hub User', () => {
+  beforeEach(() => {
+    cy.task('reset')
+    cy.task('stubSignInNonActivityHubUser')
+    cy.signIn()
+
+    cy.stubEndpoint('GET', '/prison/MDI/activities\\?excludeArchived=false', [getMathsActivity] as unknown as JSON)
+    cy.stubEndpoint('POST', '/prisoner-search/prisoner-numbers', [getPrisonerA1350DZ] as unknown as JSON)
+
+    cy.stubEndpoint('GET', '/prisoner/A1350DZ', getPrisonerA1350DZ as unknown as JSON)
+    cy.stubEndpoint('GET', '/activities/1', getActivity as unknown as JSON)
+
+    cy.stubEndpoint('GET', '/waiting-list-applications/1/history', [] as unknown as JSON)
+    cy.stubEndpoint('GET', '/schedules/2/waiting-list-applications\\?includeNonAssociationsCheck=false', [])
+    cy.stubEndpoint('GET', '/activities/1/filtered', getActivity as unknown as JSON)
+  })
+
+  it('Should be able to view a pending application but NOT have a link to the allocation-dashboard waitlist', () => {
+    cy.stubEndpoint('GET', '/waiting-list-applications/1', getWaitlistApplication as unknown as JSON)
+    cy.stubEndpoint(
+      'POST',
+      '/waiting-list-applications/MDI/search\\?page=0&pageSize=20',
+      waitlistSearchResponse as unknown as JSON,
+    )
+    cy.visit('/activities/waitlist-dashboard')
+
+    const waitlistDashboardPage = Page.verifyOnPage(WaitlistDashboardPage)
+
+    waitlistDashboardPage.checkPrisonerDetails('Winchurch, David Bob')
+    waitlistDashboardPage.checkActivityText('Maths level 1', false)
   })
 })
