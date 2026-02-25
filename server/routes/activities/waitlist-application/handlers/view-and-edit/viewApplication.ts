@@ -3,6 +3,7 @@ import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
 import {
   asString,
+  formatDate,
   formatFirstLastName,
   formatStringToTitleCase,
   getScheduleIdFromActivity,
@@ -50,20 +51,24 @@ export default class ViewApplicationRoutes {
         }
         if (item.comments !== previousItem.comments) {
           change.push('Comments changed')
-          note.push(`Previous comment: "${previousItem.comments || ''}"`)
+          note.push(`Previous comment: "${previousItem.comments || 'None'}"`)
         }
         if (item.requestedBy !== previousItem.requestedBy) {
           change.push('Requester changed')
-          note.push(`Changed from ${previousItem.requestedBy} to ${item.requestedBy}`)
+          note.push(
+            `Changed from ${WaitlistRequester.valueOf(previousItem.requestedBy)} to ${WaitlistRequester.valueOf(item.requestedBy)}`,
+          )
         }
         if (item.applicationDate !== previousItem.applicationDate) {
           change.push('Date of request changed')
-          note.push(`Changed from ${previousItem.applicationDate} to ${item.applicationDate}`)
+          note.push(
+            `Changed from ${formatDate(previousItem.applicationDate, 'd MMMM yyyy')} to ${formatDate(item.applicationDate, 'd MMMM yyyy')}`,
+          )
         }
       } else if (application.creationTime === item.updatedDateTime) {
-        change.push('Application Logged')
+        change.push('Application logged')
       } else {
-        change.push('Application Updated')
+        change.push('Application updated')
         note.push(
           'Full details are not available for the first change after December 2025. You can check with who made the change.',
         )
@@ -113,10 +118,14 @@ export default class ViewApplicationRoutes {
           updatedBy: application.createdBy,
           updatedDateTime: application.creationTime,
           note: '',
-          change: 'Application Logged',
+          change: 'Application logged',
         })
       }
     }
+
+    const appHistoryStartDate = new Date('2025-12-01T00:00:00')
+
+    const createdAppPreHistory = new Date(application.creationTime) < appHistoryStartDate
 
     const isMostRecent =
       allApplications.find(
@@ -161,6 +170,7 @@ export default class ViewApplicationRoutes {
       isNotAlreadyAllocated,
       journeyEntry,
       history: historyWithChanges,
+      createdAppPreHistory,
     })
   }
 }
