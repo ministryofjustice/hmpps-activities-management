@@ -51,7 +51,7 @@ export default class ViewApplicationRoutes {
         }
         if (item.comments !== previousItem.comments) {
           change.push('Comments changed')
-          note.push(`Previous comment: "${previousItem.comments || 'None'}"`)
+          note.push(`Previous comment: ${previousItem.comments || 'None'}`)
         }
         if (item.requestedBy !== previousItem.requestedBy) {
           change.push('Requester changed')
