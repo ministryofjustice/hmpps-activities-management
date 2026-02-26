@@ -1,3 +1,4 @@
+import { createDprServices } from '@ministryofjustice/hmpps-digital-prison-reporting-frontend'
 import dataAccess from '../data'
 import UserService from './userService'
 import PrisonService from './prisonService'
@@ -32,11 +33,33 @@ export default function services() {
     nomisMappingClient,
     tokenStore,
     bankHolidaysClient,
+    reportingClient,
+    dashboardClient,
+    reportDataStore,
+    productCollectionClient,
+    missingReportClient,
+    featureFlagService,
   } = dataAccess()
+
+  const dprClients = {
+    reportingClient,
+    dashboardClient,
+    reportDataStore,
+    productCollectionClient,
+    missingReportClient,
+    featureFlagService,
+  }
+
+  const featureConfig = {
+    bookmarking: false,
+    download: false,
+    saveDefaults: false,
+  }
 
   const alertsFilterService = new AlertsFilterService()
   const prisonService = new PrisonService(prisonApiClient, prisonerSearchApiClient, incentivesApiClient)
   const alertsService = new AlertsService(alertsApiClient)
+  const dprServices = createDprServices(dprClients, featureConfig)
 
   return {
     applicationInfo,
@@ -56,6 +79,7 @@ export default function services() {
     locationMappingService: new LocationMappingService(locationsInsidePrisonApiClient, nomisMappingClient),
     locationsService: new LocationsService(locationsInsidePrisonApiClient),
     tokenStore,
+    ...dprServices,
   }
 }
 

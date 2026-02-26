@@ -196,6 +196,14 @@ export default {
       },
       agent: new AgentConfig(Number(get('BANK_HOLIDAYS_API_TIMEOUT_RESPONSE', 30000))),
     },
+    dpr: {
+      url: get('DPR_API_URL', 'http://127.0.0.1:3002', requiredInProduction),
+      timeout: {
+        response: Number(get('DPR_API_TIMEOUT_RESPONSE', 60000)),
+        deadline: Number(get('DPR_API_TIMEOUT_DEADLINE', 60000)),
+      },
+      agent: new AgentConfig(Number(get('DPR_API_TIMEOUT_RESPONSE', 60000))),
+    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   analytics: {
@@ -268,4 +276,7 @@ export default {
   defaultCourtVideoUrl: get('DEFAULT_COURT_VIDEO_URL', 'meet.video.justice.gov.uk'),
   prisonerExtraInformationEnabled: toBoolean(get('PRISONER_EXTRA_INFORMATION_ENABLED', 'false')),
   waitlistWithdrawnEnabled: toBoolean(get('WAITLIST_WITHDRAWN_ENABLED', 'false')),
+  dpr: {
+    dataProductDefinitionsPath: 'definitions/prisons/dps/activities',
+  },
 }

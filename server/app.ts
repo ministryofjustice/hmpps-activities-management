@@ -4,6 +4,7 @@ import express from 'express'
 import flash from 'connect-flash'
 import createHttpError from 'http-errors'
 import { getFrontendComponents, retrieveCaseLoadData } from '@ministryofjustice/hmpps-connect-dps-components'
+import { setupResources } from '@ministryofjustice/hmpps-digital-prison-reporting-frontend/setUpDprResources'
 import nunjucksSetup from './nunjucks/nunjucksSetup'
 import errorHandler from './errorHandler'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
@@ -39,8 +40,9 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpHealthChecks(services))
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
-  app.use(nunjucksSetup(app, services))
   app.use(flash())
+  const env = nunjucksSetup(app, services)
+  app.use(setupResources(services, 'server/views/layout.njk', env, config.dpr))
   app.use(setUpWebRequestParsing())
   app.use(setUpStaticResources())
   app.use(setUpAuthentication())
