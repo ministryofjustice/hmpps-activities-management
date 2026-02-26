@@ -8,12 +8,14 @@ import atLeast from '../../../../../../jest.setup'
 import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import ActivitiesTestData from '../../../../../utils/testData/activitiesTestData'
+import UserService from '../../../../../services/userService'
 
 jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../services/prisonService')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)
+const userService = new UserService(null)
 const fakeWaitlistApplicationJourneyData = {
   prisoner: {
     name: 'Alan Key',
@@ -31,7 +33,7 @@ const fakeWaitlistApplicationJourneyData = {
 }
 
 describe('Route Handlers - Waitlist application - View application', () => {
-  const handler = new ViewApplicationRoutes(activitiesService, prisonService)
+  const handler = new ViewApplicationRoutes(activitiesService, prisonService, userService)
   let req: Request
   let res: Response
   let next: NextFunction

@@ -17,11 +17,14 @@ import {
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import WaitlistRequester from '../../../../../enum/waitlistRequester'
 import config from '../../../../../config'
+import UserService from '../../../../../services/userService'
+import { UserDetails } from '../../../../../@types/manageUsersApiImport/types'
 
 export default class ViewApplicationRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
+    private readonly userService: UserService,
   ) {}
 
   private formatStatus(status: string): string {
@@ -34,7 +37,8 @@ export default class ViewApplicationRoutes {
   private getHistoryWithChanges(
     history: WaitingListApplicationHistory[],
     application: WaitingListApplication,
-  ): (WaitingListApplicationHistory & { change: string; note: string })[] {
+    userMap: UserDetails,
+  ): (WaitingListApplicationHistory & { change: string; note: string; userHistoryDetails: UserDetails })[] {
     const sortedHistory = history.sort((a, b) => {
       return new Date(b.updatedDateTime).getTime() - new Date(a.updatedDateTime).getTime()
     })
@@ -42,6 +46,7 @@ export default class ViewApplicationRoutes {
     return sortedHistory.map((item, index) => {
       const change: string[] = []
       const note: string[] = []
+      const userHistoryDetails = userMap
 
       if (index < sortedHistory.length - 1) {
         const previousItem = sortedHistory[index + 1]
@@ -76,6 +81,7 @@ export default class ViewApplicationRoutes {
 
       return {
         ...item,
+        userHistoryDetails,
         change: change.length > 1 ? 'Status and comments changed' : change[0],
         note: note.join('<br>'),
       }
@@ -102,9 +108,12 @@ export default class ViewApplicationRoutes {
       this.activitiesService.fetchActivityWaitlist(application.scheduleId, false, user),
     ])
 
+    const userMap = await this.userService.getUserMap([application.createdBy], user)
+    const userHistoryDetails = userMap.get(application.createdBy)
+
     if (waitlistWithdrawnEnabled) {
       const history = await this.activitiesService.fetchWaitlistApplicationHistory(+applicationId, user)
-      historyWithChanges = this.getHistoryWithChanges(history, application)
+      historyWithChanges = this.getHistoryWithChanges(history, application, userHistoryDetails)
       if (
         historyWithChanges.length === 0 ||
         historyWithChanges[historyWithChanges.length - 1].updatedDateTime !== application.creationTime
@@ -119,6 +128,7 @@ export default class ViewApplicationRoutes {
           updatedDateTime: application.creationTime,
           note: '',
           change: 'Application logged',
+          userHistoryDetails,
         })
       }
     }
