@@ -304,68 +304,16 @@ context('Create activity', () => {
 
     const plannedEventsPage = Page.verifyOnPage(PlannedEventsPage)
     plannedEventsPage.linkToAttendance().should('exist')
-  })
-})
-
-context('User does not have activity hub role', () => {
-  beforeEach(() => {
-    cy.task('reset')
-    cy.task('stubSignInNonActivityHubUser')
-    cy.signIn()
-    cy.stubEndpoint('GET', '/locations/prison/MDI/location-groups', getLocationGroups)
-    cy.stubEndpoint('GET', '/users/SCH_ACTIVITY', JSON.parse('{"name": "Schedule Activity", "username": "jsmith"}'))
-    cy.stubEndpoint(
-      'GET',
-      '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201',
-      toLocPrefix(locPrefixBlock1),
-    )
-    cy.stubEndpoint(
-      'GET',
-      '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201_A-Wing',
-      toLocPrefix(locPrefixBlock2AWing),
-    )
-    cy.stubEndpoint(
-      'GET',
-      '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201_B-Wing',
-      toLocPrefix(locPrefixBlock2BWing),
-    )
-    cy.stubEndpoint(
-      'GET',
-      '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201_C-Wing',
-      toLocPrefix(locPrefixBlock2CWing),
-    )
-    cy.stubEndpoint(
-      'GET',
-      '/prison/MDI/prisoners\\?page=0&size=1024&cellLocationPrefix=MDI-1-&sort=cellLocation',
-      getPrisonPrisoners,
-    )
-    cy.stubEndpoint('POST', `/scheduled-events/prison/MDI\\?date=${today}&timeSlot=AM`, getScheduledEvents)
-    cy.stubEndpoint('GET', '/activity-categories', getCategories)
-  })
-
-  it('has a link to the residential location attendance page if the user does not have the activity hub role', () => {
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.activitiesCard().click()
-
-    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
-    activitiesIndexPage.unlockAndMovementCard().click()
-
-    const manageActivitiesPage = Page.verifyOnPage(UnlockAndMovementIndexPage)
-    manageActivitiesPage.createUnlockListsCard().should('contain.text', 'Create unlock lists')
-    manageActivitiesPage.createUnlockListsCard().click()
-
-    const chooseDateAndLocationPage = Page.verifyOnPage(ChooseDateAndLocationPage)
-    chooseDateAndLocationPage.selectToday()
-    chooseDateAndLocationPage.selectAM()
-    chooseDateAndLocationPage.selectLocation('Houseblock 1')
-    chooseDateAndLocationPage.continue()
-
-    const plannedEventsPage = Page.verifyOnPage(PlannedEventsPage)
-    plannedEventsPage.linkToAttendance().should('exist')
     plannedEventsPage.linkToAttendance().click()
-    cy.url().should('contain', '/attend-all/select-people-by-residential-location')
-  })
+    cy.location().should(({ pathname, search }) => {
+      expect(pathname).to.contain('/attend-all/select-people-by-residential-location')
 
+      const params = new URLSearchParams(search)
+      expect(params.get('date')).to.equal(today)
+      expect(params.get('sessionFilters')).to.equal('AM')
+      expect(params.get('locationKey')).to.equal('Houseblock 1')
+    })
+  })
   it('should show extra information tag for appointments with comments', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()

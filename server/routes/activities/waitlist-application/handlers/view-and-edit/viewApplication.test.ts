@@ -120,6 +120,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
         isNotAlreadyAllocated: true,
         journeyEntry: undefined,
         history: expect.any(Array),
+        createdAppPreHistory: true,
       })
     })
 

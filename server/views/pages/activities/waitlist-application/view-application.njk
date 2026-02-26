@@ -176,14 +176,20 @@
                             html: historyItem.note,
                             datetime: {
                                 timestamp: historyItem.updatedDateTime,
-                                format: 'DD MMMM YYYY HH:mm'
+                                type: "datetime"
                             },
-                            byLine: historyItem.updatedBy
+                            byline: {
+                                text: historyItem.updatedBy
+                            }
                         }), rows) %}
                     {% endfor %}
                     {{ mojTimeline({
                         items: rows
                     }) }}
+                    {% if createdAppPreHistory == true %}
+                        <h2 class='govuk-heading-m'>About applications logged before December 2025</h2>
+                        <p class="govuk-body">Changes made before December 2025 cannot be shown. This history may not be complete.</p>
+                    {% endif %}    
                 {% endif %}
                 {% endset %}
                 <div class="govuk-!-margin-bottom-6">
