@@ -6,6 +6,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "moj/components/timeline/macro.njk" import mojTimeline %}
+{% from "partials/service-user-name.njk" import serviceUserName %}
 
 {% set pageTitle = "View waitlist application - Activities - DPS" %}
 {% set pageId = 'view-application-page' %}
@@ -179,7 +180,7 @@
                                 type: "datetime"
                             },
                             byline: {
-                                text: historyItem.updatedBy
+                                text: serviceUserName(historyItem.userHistoryDetails)
                             }
                         }), rows) %}
                     {% endfor %}
