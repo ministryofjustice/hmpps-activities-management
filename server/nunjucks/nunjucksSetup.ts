@@ -1,11 +1,10 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { configure, Environment } from 'nunjucks'
-import express, { Router } from 'express'
+import express from 'express'
 import path from 'path'
 import { addDays, addMonths, addWeeks, addYears, getUnixTime, startOfDay, subDays, subMonths, subWeeks } from 'date-fns'
 import { flatMap, flatten, sortBy } from 'lodash'
-import setUpDprNunjucksFilters from '@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/setUpNunjucksFilters'
 import fs from 'fs'
 import mojFilters from '@ministryofjustice/frontend/moj/filters/all'
 import {
@@ -90,7 +89,7 @@ import HowToAddOptions from '../enum/allocations'
 import { toFullCourtLink } from '../routes/appointments/video-link-booking/utils/utils'
 import waitlistRequesterConverter from '../utils/helpers/waitlistRequesterConverter'
 
-export default function nunjucksSetup(app: express.Express, { applicationInfo }: Services): Router {
+export default function nunjucksSetup(app: express.Express, { applicationInfo }: Services): Environment {
   const router = express.Router()
 
   app.set('view engine', 'njk')
@@ -109,9 +108,9 @@ export default function nunjucksSetup(app: express.Express, { applicationInfo }:
     next()
   })
 
-  registerNunjucks(applicationInfo, app)
+  // registerNunjucks(applicationInfo, app)
 
-  return router
+  return registerNunjucks(applicationInfo, app)
 }
 
 export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: express.Express): Environment {
@@ -143,7 +142,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
     },
   )
 
-  setUpDprNunjucksFilters(njkEnv)
+  // setUpDprNunjucksFilters(njkEnv)
 
   // Only register nunjucks helpers/filters here - they should be implemented and unit tested elsewhere
   njkEnv.addFilter('formatName', (name, nameStyle, bold) => {
