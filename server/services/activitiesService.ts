@@ -73,8 +73,12 @@ import TimeSlot from '../enum/timeSlot'
 export default class ActivitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
 
-  async getActivity(activityId: number, user: ServiceUser): Promise<Activity> {
-    return this.activitiesApiClient.getActivity(activityId, user)
+  async getActivity(
+    activityId: number,
+    user: ServiceUser,
+    includeScheduledInstances: boolean = true,
+  ): Promise<Activity> {
+    return this.activitiesApiClient.getActivity(activityId, includeScheduledInstances, user)
   }
 
   async getActivityCategories(user: ServiceUser): Promise<ActivityCategory[]> {
