@@ -90,11 +90,12 @@ export default class ActivitiesApiClient extends RestClient {
     super('Activities Management API', config.apis.activitiesApi, logger, authenticationClient)
   }
 
-  async getActivity(activityId: number, user: ServiceUser): Promise<Activity> {
+  async getActivity(activityId: number, includeScheduledInstances: boolean, user: ServiceUser): Promise<Activity> {
     return this.get(
       {
         path: `/activities/${activityId}/filtered`,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
+        query: { includeScheduledInstances },
       },
       asUser(user.token),
     )
