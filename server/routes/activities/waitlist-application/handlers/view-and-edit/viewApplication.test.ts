@@ -329,7 +329,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
             applicationDate: '2024-01-20',
             change: 'Date of request changed',
             comments: 'Waiting for security',
-            id: 1,
+            id: 2,
             note: 'Changed from 15 January 2024 to 20 January 2024',
             requestedBy: 'PRISONER',
             status: 'PENDING',
@@ -344,7 +344,7 @@ describe('Route Handlers - Waitlist application - View application', () => {
             applicationDate: '2024-01-15',
             change: 'Application updated',
             comments: 'Waiting for security',
-            id: 1,
+            id: 3,
             note: 'Full details are not available for the first change after December 2025. You can check with who made the change.',
             requestedBy: 'PRISONER',
             status: 'PENDING',
@@ -376,6 +376,9 @@ describe('Route Handlers - Waitlist application - View application', () => {
 
       const [, model] = (res.render as jest.Mock).mock.calls[0]
 
+      const ids = model.history.map(h => h.id)
+
+      expect(ids).toEqual([1, 2, 3])
       expect(model.history).toEqual(expect.any(Array))
       expect(model.history.length).toBe(4)
     })
