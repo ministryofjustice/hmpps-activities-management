@@ -90,8 +90,6 @@ import { toFullCourtLink } from '../routes/appointments/video-link-booking/utils
 import waitlistRequesterConverter from '../utils/helpers/waitlistRequesterConverter'
 
 export default function nunjucksSetup(app: express.Express, { applicationInfo }: Services): Environment {
-  const router = express.Router()
-
   app.set('view engine', 'njk')
 
   app.locals.asset_path = '/assets/'
@@ -102,13 +100,6 @@ export default function nunjucksSetup(app: express.Express, { applicationInfo }:
   app.locals.nonAssociationsUrl = config.nonAssociationsUrl
   app.locals.reportAFaultUrl = config.reportAFaultUrl
   app.locals.feedbackUrl = config.feedbackUrl
-
-  router.use((req, res, next) => {
-    res.locals.session = req.session
-    next()
-  })
-
-  // registerNunjucks(applicationInfo, app)
 
   return registerNunjucks(applicationInfo, app)
 }
