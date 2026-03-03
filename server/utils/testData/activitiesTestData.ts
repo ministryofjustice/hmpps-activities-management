@@ -28,7 +28,7 @@ export default class ActivitiesTestData {
       updatedDateTime: '2026-02-01T11:00:00',
     },
     {
-      id: 1,
+      id: 2,
       status: 'PENDING',
       applicationDate: '2024-01-20',
       requestedBy: 'PRISONER',
@@ -37,7 +37,7 @@ export default class ActivitiesTestData {
       updatedDateTime: '2026-01-01T14:00:00',
     },
     {
-      id: 1,
+      id: 3,
       status: 'PENDING',
       applicationDate: '2024-01-15',
       requestedBy: 'PRISONER',
