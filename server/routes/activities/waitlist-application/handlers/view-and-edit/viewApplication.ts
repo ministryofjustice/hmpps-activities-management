@@ -17,11 +17,14 @@ import {
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import WaitlistRequester from '../../../../../enum/waitlistRequester'
 import config from '../../../../../config'
+import UserService from '../../../../../services/userService'
+import { UserDetails } from '../../../../../@types/manageUsersApiImport/types'
 
 export default class ViewApplicationRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
+    private readonly userService: UserService,
   ) {}
 
   private formatStatus(status: string): string {
@@ -31,34 +34,54 @@ export default class ViewApplicationRoutes {
     return formatStringToTitleCase(status)
   }
 
-  private getHistoryWithChanges(
+  private async getHistoryWithChanges(
     history: WaitingListApplicationHistory[],
     application: WaitingListApplication,
-  ): (WaitingListApplicationHistory & { change: string; note: string })[] {
-    const sortedHistory = history.sort((a, b) => {
-      return new Date(b.updatedDateTime).getTime() - new Date(a.updatedDateTime).getTime()
-    })
+    user: UserDetails,
+    userService: UserService,
+  ): Promise<
+    (WaitingListApplicationHistory & {
+      change: string
+      note: string
+      updatedByUser: UserDetails
+    })[]
+  > {
+    // Collate unique updatedBy usernames
+    const updatedByIds = [...new Set(history.map(h => h.updatedBy))]
+
+    // Fetch userService details map
+    const userMap = await userService.getUserMap(updatedByIds, user)
+
+    const sortedHistory = history.sort(
+      (a, b) => new Date(b.updatedDateTime).getTime() - new Date(a.updatedDateTime).getTime(),
+    )
 
     return sortedHistory.map((item, index) => {
       const change: string[] = []
       const note: string[] = []
 
+      const updatedByUser = userMap.get(item.updatedBy)
+
       if (index < sortedHistory.length - 1) {
         const previousItem = sortedHistory[index + 1]
+
         if (item.status !== previousItem.status) {
           change.push('Status changed')
           note.push(`Changed from ${this.formatStatus(previousItem.status)} to ${this.formatStatus(item.status)}`)
         }
+
         if (item.comments !== previousItem.comments) {
           change.push('Comments changed')
           note.push(`Previous comment: ${previousItem.comments || 'None'}`)
         }
+
         if (item.requestedBy !== previousItem.requestedBy) {
           change.push('Requester changed')
           note.push(
             `Changed from ${WaitlistRequester.valueOf(previousItem.requestedBy)} to ${WaitlistRequester.valueOf(item.requestedBy)}`,
           )
         }
+
         if (item.applicationDate !== previousItem.applicationDate) {
           change.push('Date of request changed')
           note.push(
@@ -76,6 +99,7 @@ export default class ViewApplicationRoutes {
 
       return {
         ...item,
+        updatedByUser,
         change: change.length > 1 ? 'Status and comments changed' : change[0],
         note: note.join('<br>'),
       }
@@ -104,11 +128,15 @@ export default class ViewApplicationRoutes {
 
     if (waitlistWithdrawnEnabled) {
       const history = await this.activitiesService.fetchWaitlistApplicationHistory(+applicationId, user)
-      historyWithChanges = this.getHistoryWithChanges(history, application)
+
+      historyWithChanges = await this.getHistoryWithChanges(history, application, user, this.userService)
       if (
         historyWithChanges.length === 0 ||
         historyWithChanges[historyWithChanges.length - 1].updatedDateTime !== application.creationTime
       ) {
+        const creatorMap = await this.userService.getUserMap([application.createdBy], user)
+        const creatorDetails = creatorMap.get(application.createdBy)
+
         historyWithChanges.push({
           id: application.id,
           status: application.status,
@@ -119,6 +147,7 @@ export default class ViewApplicationRoutes {
           updatedDateTime: application.creationTime,
           note: '',
           change: 'Application logged',
+          updatedByUser: creatorDetails,
         })
       }
     }
