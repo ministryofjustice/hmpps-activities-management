@@ -75,15 +75,37 @@ describe('Activities Service', () => {
   const mockedLocationGroups = [{ name: 'Houseblock 1', key: 'Houseblock 1', children: [] }] as LocationGroup[]
 
   describe('getActivity', () => {
-    it('should get the activity from activities API', async () => {
+    it('should get the activity from activities API when includeScheduledInstances is true', async () => {
       const expectedResult = { id: 1, description: 'Induction' } as Activity
 
       when(activitiesApiClient.getActivity).mockResolvedValue(expectedResult)
 
-      const actualResult = await activitiesService.getActivity(1, user)
+      const actualResult = await activitiesService.getActivity(1, user, true)
 
       expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getActivity).toHaveBeenCalledWith(1, user)
+      expect(activitiesApiClient.getActivity).toHaveBeenCalledWith(1, true, user)
+    })
+
+    it('should get the activity from activities API when includeScheduledInstances is false', async () => {
+      const expectedResult = { id: 1, description: 'Induction' } as Activity
+
+      when(activitiesApiClient.getActivity).mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getActivity(1, user, false)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getActivity).toHaveBeenCalledWith(1, false, user)
+    })
+
+    it('should get the activity from activities API when includeScheduledInstances is null', async () => {
+      const expectedResult = { id: 1, description: 'Induction' } as Activity
+
+      when(activitiesApiClient.getActivity).mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getActivity(1, user, null)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getActivity).toHaveBeenCalledWith(1, true, user)
     })
   })
 

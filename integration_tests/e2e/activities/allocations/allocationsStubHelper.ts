@@ -91,8 +91,12 @@ export function resetActivitiesStub({
     firstActivitySchedule.allocations.push(...extraAllocations)
   }
 
+  const filteredActivity = structuredClone(newActivity)
+  filteredActivity.schedules.forEach(schedule => (schedule.instances = []))
+
   const activityNumber = getActivityNumber(subject)
   cy.stubEndpoint('GET', `/activities/${activityNumber}/filtered`, newActivity)
+  cy.stubEndpoint('GET', `/activities/${activityNumber}/filtered\\?includeScheduledInstances=false`, filteredActivity)
 }
 
 export function resetScheduleStub({
