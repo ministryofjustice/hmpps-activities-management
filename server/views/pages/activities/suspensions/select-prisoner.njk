@@ -2,7 +2,6 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "partials/searchInput.njk" import searchInput %}
 
 {% set pageTitle = "Search for someone to manage suspensions - Activities - DPS" %}
@@ -49,10 +48,7 @@
                             {{ ("There is 1 matching person" if prisoners.length == 1 else "Select the correct person from the list (maximum 50 results shown)") }}
                         </h2>
                     {% else %}
-                        {{ govukWarningText({
-                            text: "No people found matching that name or prison number.",
-                            iconFallbackText: "Warning"
-                        }) }}
+                        <p class="govuk-body" id="prisoner-results-text">No people found matching that name or prison number.</p>                      
                     {% endif %}
                 </form>
             </div>
