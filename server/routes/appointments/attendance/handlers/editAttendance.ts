@@ -42,7 +42,7 @@ export default class EditAttendanceRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { appointmentId, prisonerNumber } = req.params
+    const { appointmentId, prisonerNumber } = req.params as { appointmentId: string; prisonerNumber: string }
 
     const appointment = await this.activitiesService.getAppointmentDetails(+appointmentId, user)
 

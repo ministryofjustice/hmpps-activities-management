@@ -12,7 +12,7 @@ export default class ViewAllocationsRoutes {
   ) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { prisonerNumber } = req.params
+    const { prisonerNumber } = req.params as { prisonerNumber: string }
     const { user } = res.locals
 
     const prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)

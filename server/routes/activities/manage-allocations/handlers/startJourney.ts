@@ -20,7 +20,7 @@ export default class StartJourneyRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { scheduleId, source } = req.query
-    const { prisonerNumber } = req.params
+    const { prisonerNumber } = req.params as { prisonerNumber: string }
     const user = res.locals.user as ServiceUser
 
     const [inmate, iepSummary, schedule]: [Prisoner, IepSummary, ActivitySchedule] = await Promise.all([
