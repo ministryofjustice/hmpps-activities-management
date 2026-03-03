@@ -311,11 +311,7 @@
                                 rows: rows
                             }) }}
                             {% elseif unlockListJourney.searchTerm %}
-                                {{ govukWarningText({
-                                text: "There are no matching search results.",
-                                iconFallbackText: "Warning",
-                                classes: "govuk-!-margin-top-4"
-                            }) }}
+                                <p class="govuk-body govuk-!-margin-top-4">There are no matching search results.</p> 
                                 <p class="govuk-body">You can:</p>
                                 <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
                                     <li>try a different search</li>

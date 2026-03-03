@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { jwtDecode } from 'jwt-decode'
 import createHttpError from 'http-errors'
+import { DprUser } from '@ministryofjustice/hmpps-digital-prison-reporting-frontend'
 import auth from '../authentication/auth'
 import tokenVerifier from '../data/tokenVerification'
 import { convertToTitleCase } from '../utils/utils'
@@ -36,6 +37,18 @@ export default function setUpCurrentUser(activitiesService: ActivitiesService) {
         isActivitiesRolledOut: req.session.user?.isActivitiesRolledOut,
         isAppointmentsRolledOut: req.session.user?.isAppointmentsRolledOut,
       }
+
+      const dprUser = new DprUser()
+      // required
+      dprUser.token = res.locals.user.token
+      dprUser.id = res.locals.user.uuid
+      // optional
+      dprUser.activeCaseLoadId = res.locals.user.activeCaseLoad?.caseLoadId
+      dprUser.emailAddress = res.locals.user.email
+      dprUser.displayName = res.locals.user.displayName
+      dprUser.staffId = res.locals.user.staffId
+
+      res.locals.dprUser = dprUser
 
       if (res.locals.user.activeCaseLoad.caseLoadId !== req.session.user?.activeCaseLoadId) {
         logger.debug(
