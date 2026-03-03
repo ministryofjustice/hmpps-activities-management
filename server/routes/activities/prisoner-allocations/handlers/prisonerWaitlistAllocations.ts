@@ -23,7 +23,7 @@ export default class PrisonerWaitlistHandler {
   ) {}
 
   GET = async (req: Request, res: Response) => {
-    const { prisonerNumber } = req.params
+    const { prisonerNumber } = req.params as { prisonerNumber: string }
     const { user } = res.locals
 
     const [activities, prisoner] = await Promise.all([
@@ -65,7 +65,7 @@ export default class PrisonerWaitlistHandler {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { prisonerNumber } = req.params
+    const { prisonerNumber } = req.params as { prisonerNumber: string }
     const { waitlistScheduleId, activityId } = req.body
     const { waitlistApplicationData } = req.body
 

@@ -78,7 +78,7 @@ export default class SummariesRoutes {
   }
 
   SELECT_APPOINTMENT = async (req: Request, res: Response): Promise<void> => {
-    const { date, appointmentId } = req.params
+    const { date, appointmentId } = req.params as { date: string; appointmentId: string }
     req.journeyData.recordAppointmentAttendanceJourney = {
       appointmentIds: [+appointmentId],
       date: formatIsoDate(new Date(date)),

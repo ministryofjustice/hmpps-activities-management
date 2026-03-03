@@ -56,7 +56,7 @@ export default class DaysAndSessionsRoutes {
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { scheduleWeeks, startDate } = req.journeyData.createJourney
-    const { weekNumber } = req.params
+    const { weekNumber } = req.params as { weekNumber: string }
 
     if (!this.validateWeekNumber(weekNumber, scheduleWeeks)) return next(createHttpError.NotFound())
 
@@ -67,7 +67,7 @@ export default class DaysAndSessionsRoutes {
 
   POST = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { scheduleWeeks } = req.journeyData.createJourney
-    const { weekNumber } = req.params
+    const { weekNumber } = req.params as { weekNumber: string }
     const selectedDaysForWeek = req.body.days
     const preserveHistoryBool = req.query.preserveHistory === 'true'
     const fromScheduleFrequencyBool = req.query.fromScheduleFrequency === 'true'

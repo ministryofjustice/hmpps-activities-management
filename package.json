@@ -44,7 +44,7 @@
     "@ministryofjustice/hmpps-connect-dps-components": "5.2.3",
     "@ministryofjustice/hmpps-digital-prison-reporting-frontend": "5.2.4",
     "@ministryofjustice/hmpps-rest-client": "1.0.1",
-    "@types/express-serve-static-core": "5.1.0",
+    "@types/express-serve-static-core": "5.1.1",
     "@types/lodash": "4.17.23",
     "accessible-autocomplete": "^3.0.1",
     "agentkeepalive": "^4.6.0",

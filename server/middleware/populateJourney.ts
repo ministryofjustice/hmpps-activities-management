@@ -30,12 +30,12 @@ export default function populateJourney(): RequestHandler {
       Object.defineProperty(req.session, p, {
         get() {
           // Will return either the found, mapped, non-undefined session data journey or null
-          const journeyId = req.params.journeyId ?? 'default'
+          const journeyId = (req.params.journeyId as string) ?? 'default'
           return req.session.sessionDataMap[journeyId]?.[p] ?? null
         },
         set(value) {
           // Will create a new session datum if one is not mapped, or it is undefined or null
-          const journeyId = req.params.journeyId ?? 'default'
+          const journeyId = (req.params.journeyId as string) ?? 'default'
           req.session.sessionDataMap[journeyId] ??= { instanceUnixEpoch: Date.now() } as SessionDatum
           req.session.sessionDataMap[journeyId][p] = value
 

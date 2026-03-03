@@ -21,7 +21,7 @@ export default class ViewSuspensionsRoutes {
   ) {}
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { prisonerNumber } = req.params
+    const { prisonerNumber } = req.params as { prisonerNumber: string }
     const { user } = res.locals
     const { allocationId } = req.query
 

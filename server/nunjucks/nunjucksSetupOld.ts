@@ -1,0 +1,264 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import path from 'path'
+import nunjucks, { Environment } from 'nunjucks'
+import express from 'express'
+import fs from 'fs'
+import { addDays, addMonths, addWeeks, addYears, getUnixTime, startOfDay, subDays, subMonths, subWeeks } from 'date-fns'
+import { flatMap, flatten, sortBy } from 'lodash'
+import mojFilters from '@ministryofjustice/frontend/moj/filters/all'
+import logger from '../../logger'
+import config from '../config'
+import {
+  buildErrorSummaryList,
+  concatArrays,
+  dateInList,
+  excludeArrayObject,
+  filterNot,
+  filterObjects,
+  findError,
+  firstNameLastName,
+  formatDate,
+  formatName,
+  formatStringToTitleCase,
+  fullName,
+  getSortableItemForAttendee,
+  getSplitTime,
+  initialiseName,
+  padNumber,
+  parseDate,
+  parseISODate,
+  removeUndefined,
+  setAttribute,
+  sliceArray,
+  toDate,
+  toDateString,
+  toFixed,
+  toMoney,
+  toTimeItems,
+} from '../utils/utils'
+import { Services } from '../services'
+import { EventSource, EventType, PayNoPay, YesNo } from '../@types/activities'
+import { AppointmentJourneyMode, AppointmentType } from '../routes/appointments/create-and-edit/appointmentJourney'
+import {
+  AppointmentApplyTo,
+  AppointmentCancellationReason,
+  AppointmentFrequency,
+  AttendanceStatus,
+} from '../@types/appointments'
+import TimeSlot from '../enum/timeSlot'
+import {
+  getAppointmentEditApplyToCta,
+  getAppointmentEditMessage,
+  getAppointmentEditHintMessage,
+  getAppointmentEditHeadingMessage,
+  getConfirmAppointmentEditCta,
+} from '../utils/editAppointmentUtils'
+import ServiceName from '../enum/serviceName'
+import DateOption from '../enum/dateOption'
+import { PrisonerStatus } from '../@types/prisonApiImportCustom'
+import {
+  isoDateToDatePickerDate,
+  isoDateToTimePicker,
+  parseIsoDate,
+  formatDatePickerDate,
+} from '../utils/datePickerUtils'
+import WaitlistRequester from '../enum/waitlistRequester'
+import { SERVICE_AS_USERNAME } from '../services/userService'
+import EventTier from '../enum/eventTiers'
+import EventOrganiser from '../enum/eventOrganisers'
+import AttendanceReason from '../enum/attendanceReason'
+import { absenceReasonCheckboxMatch, absenceReasonDisplayConverter } from '../utils/helpers/absenceReasonConverter'
+import { ScheduleChangeOption } from '../routes/activities/create-an-activity/handlers/customTimesChangeOption'
+import { DefaultOrCustomTimes } from '../routes/activities/create-an-activity/handlers/customTimesChangeDefaultOrCustom'
+import { NameFormatStyle } from '../utils/helpers/nameFormatStyle'
+import {
+  DeallocateAfterAllocationDateOption,
+  PrisonerSuspensionStatus,
+} from '../routes/activities/manage-allocations/journey'
+import { PaidType } from '../routes/activities/suspensions/handlers/viewSuspensions'
+import {
+  WaitingListStatus,
+  WaitingListStatusDescriptions,
+  WaitingListStatusOptions,
+  WaitingListStatusWithWithdrawn,
+} from '../enum/waitingListStatus'
+import LocationType from '../enum/locationType'
+import HowToAddOptions from '../enum/allocations'
+import { toFullCourtLink } from '../routes/appointments/video-link-booking/utils/utils'
+import waitlistRequesterConverter from '../utils/helpers/waitlistRequesterConverter'
+
+export default function nunjucksSetup(app: express.Express, { applicationInfo }: Services): Environment {
+  app.set('view engine', 'njk')
+
+  app.locals.asset_path = '/assets/'
+  app.locals.applicationName = 'Activities and Appointments'
+  app.locals.hmppsAuthUrl = config.apis.hmppsAuth.url
+  app.locals.dpsUrl = config.dpsUrl
+  app.locals.videoConferenceScheduleUrl = config.videoConferenceScheduleUrl
+  app.locals.nonAssociationsUrl = config.nonAssociationsUrl
+  app.locals.reportAFaultUrl = config.reportAFaultUrl
+  app.locals.feedbackUrl = config.feedbackUrl
+
+  let assetManifest: Record<string, string> = {}
+
+  try {
+    const assetMetadataPath = path.resolve(__dirname, '../../assets/manifest.json')
+    assetManifest = JSON.parse(fs.readFileSync(assetMetadataPath, 'utf8'))
+  } catch (e) {
+    if (process.env.NODE_ENV !== 'test') {
+      logger.error(e, 'Could not read asset manifest file')
+    }
+  }
+
+  const njkEnv = nunjucks.configure(
+    [
+      path.join(__dirname, '../views'),
+      'node_modules/govuk-frontend/dist',
+      'node_modules/@ministryofjustice/frontend/',
+      'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/',
+      'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/components/',
+      'node_modules/@ministryofjustice/hmpps-connect-dps-components/dist/assets/',
+    ],
+    {
+      autoescape: true,
+      express: app,
+      noCache: process.env.NODE_ENV !== 'production',
+      watch: process.env.NODE_ENV === 'live-development',
+    },
+  )
+
+  // Only register nunjucks helpers/filters here - they should be implemented and unit tested elsewhere
+  njkEnv.addFilter('formatName', (name, nameStyle, bold) => {
+    const inputName = formatName(name.firstName, name.middleNames, name.lastName, nameStyle, bold)
+    return inputName ? njkEnv.getFilter('safe')(inputName) : null
+  })
+  njkEnv.addFilter('fullName', fullName)
+  njkEnv.addFilter('initialiseName', initialiseName)
+  njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
+  njkEnv.addFilter('possessive', str => {
+    if (!str) return ''
+    return `${str}${str.toLowerCase().endsWith('s') ? '’' : '’s'}`
+  })
+
+  const {
+    analytics: { tagManagerContainerId, tagManagerEnvironment },
+  } = config
+
+  njkEnv.addGlobal('tagManagerContainerId', tagManagerContainerId)
+  njkEnv.addGlobal('tagManagerEnvironment', tagManagerEnvironment)
+
+  njkEnv.addFilter('getSplitTime', getSplitTime)
+  njkEnv.addFilter('toTimeItems', toTimeItems)
+  njkEnv.addFilter('findError', findError)
+  njkEnv.addFilter('buildErrorSummaryList', buildErrorSummaryList)
+  njkEnv.addFilter('formatDate', formatDate)
+  njkEnv.addFilter('dateInList', dateInList)
+  njkEnv.addFilter('subDays', subDays)
+  njkEnv.addFilter('subMonths', subMonths)
+  njkEnv.addFilter('addMonths', addMonths)
+  njkEnv.addFilter('subWeeks', subWeeks)
+  njkEnv.addFilter('getUnixTime', getUnixTime)
+  njkEnv.addFilter('addWeeks', addWeeks)
+  njkEnv.addFilter('toFixed', toFixed)
+  njkEnv.addFilter('padNumber', padNumber)
+  njkEnv.addFilter('toMoney', toMoney)
+  njkEnv.addFilter('toTitleCase', formatStringToTitleCase)
+  njkEnv.addFilter('toDate', toDate)
+  njkEnv.addFilter('parseDate', parseDate)
+  njkEnv.addFilter('parseISODate', parseISODate)
+  njkEnv.addFilter('toDateString', toDateString)
+  njkEnv.addFilter('sliceArray', sliceArray)
+  njkEnv.addFilter('addDays', addDays)
+  njkEnv.addFilter('addWeeks', addWeeks)
+  njkEnv.addFilter('addYears', addYears)
+  njkEnv.addFilter('firstNameLastName', firstNameLastName)
+  njkEnv.addFilter('setAttribute', setAttribute)
+  njkEnv.addFilter('removeUndefined', removeUndefined)
+  njkEnv.addFilter('startOfDay', startOfDay)
+  njkEnv.addFilter('find', (l: any[], iteratee: string, eq: unknown) => l.find(o => o[iteratee] === eq))
+  njkEnv.addFilter('filter', filterObjects)
+  njkEnv.addFilter('filterNot', filterNot)
+  njkEnv.addFilter('flatMap', flatMap)
+  njkEnv.addFilter('flatten', flatten)
+  njkEnv.addFilter('sortBy', sortBy)
+  njkEnv.addFilter('excludeArray', excludeArrayObject)
+  njkEnv.addFilter('absenceReasonDisplayConverter', absenceReasonDisplayConverter)
+  njkEnv.addFilter('absenceReasonCheckboxMatch', absenceReasonCheckboxMatch)
+  njkEnv.addFilter('numberToWord', number => (number === 1 ? 'one' : number))
+  njkEnv.addFilter('getSortableItemForAttendee', getSortableItemForAttendee)
+  njkEnv.addFilter('waitlistRequesterConverter', waitlistRequesterConverter)
+
+  njkEnv.addGlobal('ServiceAsUsername', SERVICE_AS_USERNAME)
+  njkEnv.addGlobal('ServiceName', ServiceName)
+  njkEnv.addGlobal('YesNo', YesNo)
+  njkEnv.addGlobal('EventType', EventType)
+  njkEnv.addGlobal('EventSource', EventSource)
+  njkEnv.addGlobal('DateOption', DateOption)
+  njkEnv.addGlobal('TimeSlot', TimeSlot)
+  njkEnv.addGlobal('WaitlistRequester', WaitlistRequester)
+  njkEnv.addGlobal('PrisonerStatus', PrisonerStatus)
+  njkEnv.addGlobal('AppointmentFrequency', AppointmentFrequency)
+  njkEnv.addGlobal('AppointmentType', AppointmentType)
+  njkEnv.addGlobal('AppointmentJourneyMode', AppointmentJourneyMode)
+  njkEnv.addGlobal('AppointmentApplyTo', AppointmentApplyTo)
+  njkEnv.addGlobal('AppointmentCancellationReason', AppointmentCancellationReason)
+  njkEnv.addGlobal('AttendanceStatus', AttendanceStatus)
+  njkEnv.addGlobal('AttendanceReason', AttendanceReason)
+  njkEnv.addGlobal('EventTier', EventTier)
+  njkEnv.addGlobal('PayNoPay', PayNoPay)
+  njkEnv.addGlobal('EventOrganiser', EventOrganiser)
+  njkEnv.addGlobal('getAppointmentEditMessage', getAppointmentEditMessage)
+  njkEnv.addGlobal('getAppointmentEditHintMessage', getAppointmentEditHintMessage)
+  njkEnv.addGlobal('getAppointmentEditHeadingMessage', getAppointmentEditHeadingMessage)
+  njkEnv.addGlobal('getConfirmAppointmentEditCta', getConfirmAppointmentEditCta)
+  njkEnv.addGlobal('getAppointmentEditApplyToCta', getAppointmentEditApplyToCta)
+  njkEnv.addGlobal('concatArrays', concatArrays)
+  njkEnv.addGlobal('dpsUrl', config.dpsUrl)
+  njkEnv.addGlobal('prisonerUrl', config.prisonerUrl)
+  njkEnv.addGlobal('incentivesUrl', config.incentivesUrl)
+  njkEnv.addGlobal('nonAssociationsUrl', config.nonAssociationsUrl)
+  njkEnv.addGlobal('exampleDate', () => `29 9 ${formatDate(addYears(new Date(), 1), 'yyyy')}`)
+  njkEnv.addGlobal('applicationInsightsConnectionString', process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
+  njkEnv.addGlobal('applicationInsightsRoleName', applicationInfo?.applicationName)
+  njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
+  njkEnv.addGlobal('appointmentMultipleAttendanceToggleEnabled', config.appointmentMultipleAttendanceToggleEnabled)
+  njkEnv.addGlobal('inServiceReportingEnabled', config.inServiceReportingEnabled)
+  njkEnv.addGlobal('attendAllEnabled', config.attendAllEnabled)
+  njkEnv.addGlobal('waitlistWithdrawnEnabled', config.waitlistWithdrawnEnabled)
+  njkEnv.addGlobal('liveIssueOutageBannerEnabled', config.liveIssueOutageBannerEnabled)
+  njkEnv.addGlobal('plannedDowntimeOutageBannerEnabled', config.plannedDowntimeOutageBannerEnabled)
+  njkEnv.addGlobal('plannedDowntimeDate', config.plannedDowntimeDate)
+  njkEnv.addGlobal('plannedDowntimeStartTime', config.plannedDowntimeStartTime)
+  njkEnv.addGlobal('plannedDowntimeEndTime', config.plannedDowntimeEndTime)
+  njkEnv.addGlobal('ScheduleChangeOption', ScheduleChangeOption)
+  njkEnv.addGlobal('DefaultOrCustomTimes', DefaultOrCustomTimes)
+  njkEnv.addGlobal('NameFormatStyle', NameFormatStyle)
+  njkEnv.addGlobal('PrisonerSuspensionStatus', PrisonerSuspensionStatus)
+  njkEnv.addGlobal('PaidType', PaidType)
+  njkEnv.addGlobal('WaitingListStatus', WaitingListStatus)
+  njkEnv.addGlobal('WaitingListStatusOptions', WaitingListStatusOptions)
+  njkEnv.addGlobal('WaitingListStatusWithWithdrawn', WaitingListStatusWithWithdrawn)
+  njkEnv.addGlobal('WaitingListStatusDescriptions', WaitingListStatusDescriptions)
+  njkEnv.addGlobal('LocationType', LocationType)
+  njkEnv.addGlobal('DeallocateAfterAllocationDateOption', DeallocateAfterAllocationDateOption)
+  njkEnv.addGlobal('HowToAddOptions', HowToAddOptions)
+  // Default base URLs for court meeting links
+  njkEnv.addGlobal('defaultCourtVideoUrl', config.defaultCourtVideoUrl)
+  njkEnv.addFilter('toFullCourtLink', toFullCourtLink)
+
+  // Date picker
+  njkEnv.addFilter('parseIsoDate', parseIsoDate)
+  njkEnv.addFilter('isoDateToDatePickerDate', isoDateToDatePickerDate)
+  njkEnv.addFilter('formatDatePickerDate', formatDatePickerDate)
+  njkEnv.addFilter('isoDateToTimePicker', isoDateToTimePicker)
+  njkEnv.addGlobal('exampleDatePickerDate', () => `29/9/${formatDate(addYears(new Date(), 1), 'yyyy')}`)
+
+  njkEnv.addGlobal('prisonerExtraInformationEnabled', config.prisonerExtraInformationEnabled)
+
+  for (const [name, filter] of Object.entries(mojFilters())) {
+    njkEnv.addFilter(name, filter as (...args: any[]) => any)
+  }
+
+  return njkEnv
+}

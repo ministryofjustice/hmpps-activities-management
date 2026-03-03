@@ -25,7 +25,7 @@ export default class PendingWaitlistHandler {
   ) {}
 
   GET = async (req: Request, res: Response) => {
-    const { prisonerNumber } = req.params
+    const { prisonerNumber } = req.params as { prisonerNumber: string }
     const { user } = res.locals
 
     const prisoner: Prisoner = await this.prisonService.getInmateByPrisonerNumber(prisonerNumber, user)
