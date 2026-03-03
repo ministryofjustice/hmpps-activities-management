@@ -3,6 +3,7 @@
  * In particular, applicationinsights automatically collects bunyan logs
  */
 import { AuthenticationClient, RedisTokenStore } from '@ministryofjustice/hmpps-auth-clients'
+import { initDprReportingClients } from '@ministryofjustice/hmpps-digital-prison-reporting-frontend'
 import { buildAppInsightsClient, initialiseAppInsights } from '../utils/azureAppInsights'
 import applicationInfoSupplier from '../applicationInfo'
 import ManageUsersApiClient from './manageUsersApiClient'
@@ -35,6 +36,15 @@ export default function dataAccess() {
     new RedisTokenStore(createRedisClient()),
   )
 
+  const {
+    reportingClient,
+    dashboardClient,
+    reportDataStore,
+    productCollectionClient,
+    missingReportClient,
+    featureFlagService,
+  } = initDprReportingClients(config.apis.dpr, createRedisClient())
+
   return {
     applicationInfo,
     manageUsersApiClient: new ManageUsersApiClient(),
@@ -51,6 +61,12 @@ export default function dataAccess() {
     nomisMappingClient: new NomisMappingClient(),
     bankHolidaysClient: new BankHolidaysClient(),
     tokenStore,
+    reportingClient,
+    dashboardClient,
+    reportDataStore,
+    productCollectionClient,
+    missingReportClient,
+    featureFlagService,
   }
 }
 
