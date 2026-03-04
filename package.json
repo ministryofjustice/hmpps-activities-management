@@ -67,7 +67,7 @@
     "http-errors": "^2.0.1",
     "isbinaryfile": "^6.0.0",
     "jwt-decode": "^4.0.0",
-    "libphonenumber-js": "1.12.35",
+    "libphonenumber-js": "1.12.38",
     "lodash": "4.17.23",
     "multer": "^2.0.2",
     "nocache": "^4.0.0",
