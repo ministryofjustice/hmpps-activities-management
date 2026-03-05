@@ -20,12 +20,14 @@ export default class NameRoutes {
     const { user } = res.locals
     const { type } = req.session.appointmentJourney
 
-    const categories = await this.activitiesService.getAppointmentCategories(user).then(cat => {
-      if (type === AppointmentType.SET) {
-        return cat.filter(c => c.code !== 'VLB' && c.code !== 'VLPM')
-      }
-      return cat
-    })
+    const categories = (
+      await this.activitiesService.getAppointmentCategories(user).then(cat => {
+        if (type === AppointmentType.SET) {
+          return cat.filter(c => c.code !== 'VLB' && c.code !== 'VLPM')
+        }
+        return cat
+      })
+    ).sort((a, b) => a.description.localeCompare(b.description))
 
     res.render(`pages/appointments/create-and-edit/name`, { categories })
   }
