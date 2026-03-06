@@ -1,6 +1,7 @@
 {% extends "layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% set pageTitle = "Confirm when prisoner attends activity - Activities - DPS" %}
 {% set pageId = 'confirm-exclusions-page' %}
@@ -9,32 +10,65 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">Modify someone’s activity schedule</span>
+            <span class="govuk-caption-xl">Modify people in and out</span>
             <h1 class="govuk-heading-l">Check changes to when {{ allocateJourney.inmate.prisonerName }} should attend {{ allocateJourney.activity.name | safe }}</h1>
 
+            {% set excludedSlotsHtml %}
+                {% if excludedSlots | length %}
+                    {{  formatSchedule(excludedSlots) }}
+                {% else %}
+                    None
+                {% endif %}
+            {% endset %}
+
+            {% set addedSlotsHtml %}
+                {% if addedSlots | length %}
+                    {{  formatSchedule(addedSlots) }}
+                {% else %}
+                    None
+                {% endif %}
+            {% endset %}
+
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Sessions you’re adding " + allocateJourney.inmate.prisonerName + " to"
+                        },
+                        value: { html: addedSlotsHtml },
+                        actions: {
+                        items: [{
+                            href: "exclusions?preserveHistory=true",
+                            classes: 'govuk-link--no-visited-state',
+                            text: "Change",
+                            visuallyHiddenText: "Change sessions added"
+                        }]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Sessions you’re excluding " + allocateJourney.inmate.prisonerName + " from"
+                        },
+                        value: { html: excludedSlotsHtml },
+                        actions: {
+                        items: [{
+                            href: "exclusions?preserveHistory=true",
+                            classes: 'govuk-link--no-visited-state',
+                            text: "Change",
+                            visuallyHiddenText: "sessions modified out"
+                        }]
+                        }
+                    }
+                ]
+            }) }}
+
+
             {% if excludedSlots | length %}
-                <h2 class="govuk-heading-l">Sessions you’re excluding {{ allocateJourney.inmate.prisonerName }} from</h2>
-
-                {{  formatSchedule(excludedSlots) }}
-
-                <p class="govuk-body">This means they will not:</p>
-
-                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
-                    <li>be on the attendance list</li>
-                    <li>have this activity on unlock and movement lists</li>
-                </ul>
-
-                <p class="govuk-body">They will stay excluded until this session is added back to their schedule.</p>
-
-                <p class="govuk-body">Changes take effect from tomorrow.</p>
+                <p class="govuk-body">Sessions someone has been modified out of will need to be added back to their schedule before they can attend again.</p>
             {% endif %}
 
-            {% if addedSlots | length %}
-                <h2 class="govuk-heading-l">Sessions you’re adding {{ allocateJourney.inmate.prisonerName }} to</h2>
-
-                {{ formatSchedule(addedSlots) }}
-
-                <p class="govuk-body">This will be on unlock, movement and attendance lists from tomorrow.</p>
+            {% if addedSlots | length or excludedSlots | length %}
+                <p class="govuk-body">Changes take effect on unlock, movement and attendance lists from tomorrow.</p>
             {% endif %}
 
             {% if addedSlots | length == 0 and excludedSlots | length == 0  %}
@@ -60,7 +94,7 @@
             <h3 class="govuk-heading-m">Week {{ weekNumber }}</h3>
         {% endif %}
 
-        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-6">
+        <ul class="govuk-list govuk-!-margin-bottom-6">
             {% for weekDay in weekDays %}
                 {% for slot in weekDay.slots %}
                     <li>{{ weekDay.day | capitalize }} {{ slot.timeSlot }} ({{ slot.startTime }} to {{  slot.endTime }})</li>
