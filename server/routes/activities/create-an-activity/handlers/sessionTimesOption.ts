@@ -25,7 +25,7 @@ export default class SessionTimesOptionRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { weekNumber } = req.params
+    const { weekNumber } = req.params as { weekNumber: string }
     const regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
     const applicableRegimeTimesForActivity = getApplicableDaysAndSlotsInRegime(
       regimeTimes,

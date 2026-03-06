@@ -30,6 +30,7 @@ generic-service:
     LOCATIONS_INSIDE_PRISON_API_URL: "https://locations-inside-prison-api-preprod.hmpps.service.justice.gov.uk"
     NOMIS_MAPPING_API_URL: "https://nomis-sync-prisoner-mapping-preprod.hmpps.service.justice.gov.uk"
     VIDEO_CONFERENCE_SCHEDULE_URL: "https://video-conference-schedule-preprod.prison.service.justice.gov.uk"
+    DPR_API_URL: "https://digital-prison-reporting-mi-ui-preprod.hmpps.service.justice.gov.uk"
     APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED: "true"
     IN_SERVICE_REPORTING_ENABLED: "false"
     ATTEND_ALL_ENABLED: "true"

@@ -19,7 +19,13 @@ import setUpJourneyData from '../../../middleware/setUpJourneyData'
 import ReinstateRoutes, { ReinstateForm } from './handlers/view-and-edit/reinstate'
 import ReinstateReasonRoutes, { ReinstateReasonForm } from './handlers/view-and-edit/reinstateReason'
 
-export default function Index({ prisonService, activitiesService, metricsService, tokenStore }: Services): Router {
+export default function Index({
+  prisonService,
+  activitiesService,
+  userService,
+  metricsService,
+  tokenStore,
+}: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
     router.get(
@@ -39,7 +45,7 @@ export default function Index({ prisonService, activitiesService, metricsService
   const statusHandler = new StatusRoutes()
   const checkAnswersHandler = new CheckAnswersRoutes(activitiesService, metricsService)
   const confirmationHandler = new ConfirmationRoutes(activitiesService)
-  const viewApplicationHandler = new ViewApplicationRoutes(activitiesService, prisonService)
+  const viewApplicationHandler = new ViewApplicationRoutes(activitiesService, prisonService, userService)
   const editStatusHandler = new EditStatusRoutes(activitiesService)
   const editRequesterHandler = new EditRequesterRoutes(activitiesService)
   const editRequestDateHandler = new EditRequestDateRoutes(activitiesService)

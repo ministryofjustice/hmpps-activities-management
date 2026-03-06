@@ -48,7 +48,7 @@ export default class MetricsEvent {
 
   addJourneyStartedMetrics(req: Request) {
     const { journeyMetrics } = req.session
-    const { journeyId } = req.params
+    const { journeyId } = req.params as { journeyId: string }
 
     if (journeyId) this.addProperty('journeyId', journeyId)
     if (journeyMetrics?.source) this.addProperty('journeySource', journeyMetrics?.source)
@@ -58,7 +58,7 @@ export default class MetricsEvent {
   addJourneyCompletedMetrics(req: Request) {
     if (!req.session.journeyMetrics) return this
 
-    const { journeyId } = req.params
+    const { journeyId } = req.params as { journeyId: string }
     const { journeyStartTime, source } = req.session.journeyMetrics
 
     if (journeyId) this.addProperty('journeyId', journeyId)
@@ -184,7 +184,7 @@ export default class MetricsEvent {
     user: ServiceUser,
   ) {
     return new MetricsEvent(MetricsEventType.EDIT_APPOINTMENT_JOURNEY_COMPLETED, user)
-      .addProperty('journeyId', req.params.journeyId)
+      .addProperty('journeyId', req.params.journeyId as string)
       .addJourneyCompletedMetrics(req)
       .addProperties({
         appointmentId,
@@ -211,7 +211,7 @@ export default class MetricsEvent {
     user: ServiceUser,
   ) {
     return new MetricsEvent(MetricsEventType.CANCEL_APPOINTMENT_JOURNEY_COMPLETED, user)
-      .addProperty('journeyId', req.params.journeyId)
+      .addProperty('journeyId', req.params.journeyId as string)
       .addJourneyCompletedMetrics(req)
       .addProperties({
         appointmentId,
@@ -239,7 +239,7 @@ export default class MetricsEvent {
     user: ServiceUser,
   ) {
     return new MetricsEvent(MetricsEventType.UNCANCEL_APPOINTMENT_JOURNEY_COMPLETED, user)
-      .addProperty('journeyId', req.params.journeyId)
+      .addProperty('journeyId', req.params.journeyId as string)
       .addJourneyCompletedMetrics(req)
       .addProperties({
         appointmentId,

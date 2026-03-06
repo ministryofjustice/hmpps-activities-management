@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { routes as dprRoutes } from '@ministryofjustice/hmpps-digital-prison-reporting-frontend/routes'
 import type { Services } from '../services'
 import homeRoutes from './home'
 import activityRoutes from './activities'
@@ -18,6 +19,7 @@ export default function routes(services: Services): Router {
   router.use(successMessageMiddleware())
   router.use(timeNowMiddleware())
   router.use('/', homeRoutes())
+  router.use('/', dprRoutes({ services, layoutPath: 'server/views/layout.njk' }))
   router.use('/profileImage', profileImage(services))
   router.use('/activities', activityRoutes(services))
   router.use('/appointments', appointmentRoutes(services))

@@ -49,10 +49,7 @@
                             {{ ("There is 1 matching person" if prisoners.length == 1 else "Select the correct person from the list (maximum 50 results shown)") }}
                         </p>
                     {% else %}
-                        {{ govukWarningText({
-                            text: "No people found matching that name or prison number.",
-                            iconFallbackText: "Warning"
-                        }) }}
+                        <p class="govuk-body" id="prisoner-results-text">No people found matching that name or prison number.</p> 
                     {% endif %}
                 </form>
             </div>

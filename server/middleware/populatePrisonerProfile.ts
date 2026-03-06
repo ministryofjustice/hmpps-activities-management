@@ -10,7 +10,10 @@ const WORKPLACE_RISK_LEVEL_HIGH = 'RHI'
 // Example use in view: {{ miniProfile(prisonerProfile) }}
 export default function populatePrisonerProfile(prisonService: PrisonService) {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const prisoner: Prisoner = await prisonService.getInmateByPrisonerNumber(req.params.prisonerNumber, res.locals.user)
+    const prisoner: Prisoner = await prisonService.getInmateByPrisonerNumber(
+      req.params.prisonerNumber as string,
+      res.locals.user,
+    )
 
     res.locals.prisonerProfile = {
       ...prisoner,

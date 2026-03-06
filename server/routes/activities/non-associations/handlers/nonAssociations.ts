@@ -14,7 +14,7 @@ export default class NonAssociationsRoutes {
 
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { activityId, prisonerNumber } = req.params
+    const { activityId, prisonerNumber } = req.params as { activityId: string; prisonerNumber: string }
 
     const [activity, prisoner]: [Activity, Prisoner] = await Promise.all([
       this.activitiesService.getActivity(+activityId, user),
