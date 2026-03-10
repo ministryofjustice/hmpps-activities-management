@@ -4,12 +4,7 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import EditStatusRoutes, { EditStatus } from './editStatus'
-import config from '../../../../../config'
-import {
-  WaitingListStatus,
-  WaitingListStatusWithWithdrawn,
-  WaitingListStatusDescriptions,
-} from '../../../../../enum/waitingListStatus'
+import { WaitingListStatus, WaitingListStatusDescriptions } from '../../../../../enum/waitingListStatus'
 
 jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../config')
@@ -40,29 +35,14 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
   })
 
   describe('GET', () => {
-    beforeEach(() => {
-      config.waitlistWithdrawnEnabled = false
-    })
+    beforeEach(() => {})
 
-    it('should render the edit status page template when feature-flag is disabled', async () => {
+    it('should render the edit status page', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-status`, {
         WaitingListStatus,
         WaitingListStatusDescriptions,
         prisonerName: 'Alan Key',
-        waitlistWithdrawnEnabled: false,
-      })
-    })
-
-    it('should render the edit status with withdrawn page template when the feature-flag is enabled', async () => {
-      config.waitlistWithdrawnEnabled = true
-
-      await handler.GET(req, res)
-      expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-status-with-withdrawn`, {
-        WaitingListStatusWithWithdrawn,
-        WaitingListStatusDescriptions,
-        prisonerName: 'Alan Key',
-        waitlistWithdrawnEnabled: true,
       })
     })
   })

@@ -20,8 +20,7 @@ import { sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSl
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import WaitlistRequester from '../../../../enum/waitlistRequester'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
-import config from '../../../../config'
-import { WaitingListStatusOptions } from '../../../../enum/waitingListStatus'
+import { WaitingListAllocationStatusOptions } from '../../../../enum/waitingListStatus'
 
 type Filters = {
   candidateQuery: string
@@ -61,7 +60,6 @@ export default class AllocationDashboardRoutes {
     const { user } = res.locals
     const { activityId } = req.params
     const filters = req.query as Filters
-    const { waitlistWithdrawnEnabled } = config
 
     const [activity, incentiveLevels]: [Activity, IncentiveLevel[]] = await Promise.all([
       this.activitiesService.getActivity(+activityId, user, false),
@@ -125,8 +123,7 @@ export default class AllocationDashboardRoutes {
       currentWeek,
       scheduleWeeks: activitySchedule.scheduleWeeks,
       activeAllocations,
-      WaitingListStatusOptions,
-      waitlistWithdrawnEnabled,
+      WaitingListAllocationStatusOptions,
     })
   }
 
@@ -260,11 +257,11 @@ export default class AllocationDashboardRoutes {
   }
 
   private getWaitlistedPrisoners = async (scheduleId: number, filters: Filters, user: ServiceUser) => {
-    const { waitlistWithdrawnEnabled } = config
     const waitlist = await this.activitiesService.fetchActivityWaitlist(scheduleId, true, user).then(a =>
       a.filter(w => {
-        const baseStatuses = w.status === 'PENDING' || w.status === 'APPROVED' || w.status === 'DECLINED'
-        return waitlistWithdrawnEnabled ? baseStatuses || w.status === 'WITHDRAWN' : baseStatuses
+        const baseStatuses =
+          w.status === 'PENDING' || w.status === 'APPROVED' || w.status === 'DECLINED' || w.status === 'WITHDRAWN'
+        return baseStatuses
       }),
     )
 
@@ -306,12 +303,10 @@ export default class AllocationDashboardRoutes {
         }))
       })
       .filter(inmate => {
-        if (waitlistWithdrawnEnabled) {
-          if (!filters.waitlistStatusFilter || filters.waitlistStatusFilter === 'Any') {
-            return inmate.status !== 'WITHDRAWN'
-          }
-          return inmate.status === filters.waitlistStatusFilter
+        if (!filters.waitlistStatusFilter || filters.waitlistStatusFilter === 'Any') {
+          return inmate.status !== 'WITHDRAWN'
         }
+
         return (
           !filters.waitlistStatusFilter ||
           filters.waitlistStatusFilter === 'Any' ||

@@ -187,7 +187,6 @@ describe('Route Handlers - Prisoner Allocations', () => {
         pendingApplications: mockPendingWaitlist,
         rejectedApplications: [],
         withdrawnApplications: [],
-        waitlistWithdrawnEnabled: false,
       })
     })
   })

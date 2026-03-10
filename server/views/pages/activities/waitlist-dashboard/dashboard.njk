@@ -68,7 +68,7 @@
                 {% for name, status in WaitingListStatus %}
                     {% set statusFilters = (statusFilters.push({
                         value: status,
-                        text: waitingListStatusDescription(status, waitlistWithdrawnEnabled),
+                        text: waitingListStatusDescription(status),
                         checked: status in filters.status
                     }), statusFilters) %}
                 {% endfor %}
@@ -187,7 +187,7 @@
                                     html: earliestReleaseDate(application.earliestReleaseDate)
                                 },
                                 {
-                                    html: waitlistStatusBadge(application.status, waitlistWithdrawnEnabled)
+                                    html: waitlistStatusBadge(application.status)
                                 }
                             ]
                         }), rows) %}
