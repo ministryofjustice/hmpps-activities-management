@@ -249,22 +249,6 @@ const stubUserCaseLoads = () =>
     },
   })
 
-const stubDPRDefinitions = () =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern:
-        '/definitions\\?renderMethod=HTML&dataProductDefinitionsPath=definitions%2Fprisons%2Fdps%2Factivities',
-    },
-    response: {
-      status: 200,
-      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      jsonBody: {
-        activities: [],
-        appointments: [],
-      },
-    },
-  })
 export const stubOffenderImage = (useAltImage = false) => {
   const imagePath = useAltImage
     ? path.join(__dirname, '../fixtures/prisonerAllocations/altDummy.jpg')
@@ -318,7 +302,6 @@ export default {
       stubPrisonInformation(),
       stubRolloutPlan(),
       stubOffenderImage(),
-      stubDPRDefinitions(),
     ]),
   stubSignInNonActivityHubUser: (name = 'john smith') =>
     Promise.all([
@@ -334,6 +317,5 @@ export default {
       stubPrisonInformation(),
       stubRolloutPlan(),
       stubOffenderImage(),
-      stubDPRDefinitions(),
     ]),
 }
