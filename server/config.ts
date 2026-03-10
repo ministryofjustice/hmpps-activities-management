@@ -196,14 +196,6 @@ export default {
       },
       agent: new AgentConfig(Number(get('BANK_HOLIDAYS_API_TIMEOUT_RESPONSE', 30000))),
     },
-    dpr: {
-      url: get('DPR_API_URL', 'http://127.0.0.1:3002', requiredInProduction),
-      timeout: {
-        response: Number(get('DPR_API_TIMEOUT_RESPONSE', 60000)),
-        deadline: Number(get('DPR_API_TIMEOUT_DEADLINE', 60000)),
-      },
-      agent: new AgentConfig(Number(get('DPR_API_TIMEOUT_RESPONSE', 60000))),
-    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   analytics: {
@@ -263,7 +255,6 @@ export default {
   appointmentMultipleAttendanceToggleEnabled: toBoolean(
     get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),
   ),
-  inServiceReportingEnabled: toBoolean(get('IN_SERVICE_REPORTING_ENABLED', 'false')),
   attendAllEnabled: toBoolean(get('ATTEND_ALL_ENABLED', 'false')),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
@@ -275,7 +266,4 @@ export default {
   plannedDowntimeEndTime: get('PLANNED_DOWNTIME_END_TIME', '5pm'),
   defaultCourtVideoUrl: get('DEFAULT_COURT_VIDEO_URL', 'meet.video.justice.gov.uk'),
   prisonerExtraInformationEnabled: toBoolean(get('PRISONER_EXTRA_INFORMATION_ENABLED', 'false')),
-  dpr: {
-    dataProductDefinitionsPath: 'definitions/prisons/dps/activities',
-  },
 }

@@ -120,8 +120,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
       path.join(__dirname, '../views'),
       'node_modules/govuk-frontend/dist',
       'node_modules/@ministryofjustice/frontend/',
-      'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/',
-      'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/components/',
       'node_modules/@ministryofjustice/hmpps-connect-dps-components/dist/assets/',
     ],
     {
@@ -229,7 +227,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('applicationInsightsRoleName', applicationInfo?.applicationName)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('appointmentMultipleAttendanceToggleEnabled', config.appointmentMultipleAttendanceToggleEnabled)
-  njkEnv.addGlobal('inServiceReportingEnabled', config.inServiceReportingEnabled)
   njkEnv.addGlobal('attendAllEnabled', config.attendAllEnabled)
   njkEnv.addGlobal('liveIssueOutageBannerEnabled', config.liveIssueOutageBannerEnabled)
   njkEnv.addGlobal('plannedDowntimeOutageBannerEnabled', config.plannedDowntimeOutageBannerEnabled)
