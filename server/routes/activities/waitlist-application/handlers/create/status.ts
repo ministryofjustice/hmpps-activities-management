@@ -2,12 +2,12 @@ import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
 import { IsIn, Length, ValidateIf } from 'class-validator'
 import { isBlank } from '../../../../../utils/utils'
-import { WaitingListStatusOptions } from '../../../../../enum/waitingListStatus'
+import { WaitingListAllocationStatusOptions } from '../../../../../enum/waitingListStatus'
 
 export class Status {
   @Expose()
-  @IsIn(Object.values(WaitingListStatusOptions), { message: 'Select a status for the application' })
-  status: WaitingListStatusOptions
+  @IsIn(Object.values(WaitingListAllocationStatusOptions), { message: 'Select a status for the application' })
+  status: WaitingListAllocationStatusOptions
 
   @Expose()
   @Transform(({ value }) => (isBlank(value) ? undefined : value.trim().replaceAll('\r', '')))
@@ -18,7 +18,7 @@ export class Status {
 
 export default class StatusRoutes {
   GET = async (req: Request, res: Response): Promise<void> =>
-    res.render(`pages/activities/waitlist-application/status`, { WaitingListStatusOptions })
+    res.render(`pages/activities/waitlist-application/status`, { WaitingListAllocationStatusOptions })
 
   POST = async (req: Request, res: Response): Promise<void> => {
     req.journeyData.waitListApplicationJourney.status = req.body.status
