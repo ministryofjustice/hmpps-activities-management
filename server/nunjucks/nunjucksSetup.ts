@@ -80,8 +80,7 @@ import { PaidType } from '../routes/activities/suspensions/handlers/viewSuspensi
 import {
   WaitingListStatus,
   WaitingListStatusDescriptions,
-  WaitingListStatusOptions,
-  WaitingListStatusWithWithdrawn,
+  WaitingListAllocationStatusOptions,
 } from '../enum/waitingListStatus'
 import logger from '../../logger'
 import LocationType from '../enum/locationType'
@@ -229,7 +228,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('appointmentMultipleAttendanceToggleEnabled', config.appointmentMultipleAttendanceToggleEnabled)
   njkEnv.addGlobal('attendAllEnabled', config.attendAllEnabled)
-  njkEnv.addGlobal('waitlistWithdrawnEnabled', config.waitlistWithdrawnEnabled)
   njkEnv.addGlobal('liveIssueOutageBannerEnabled', config.liveIssueOutageBannerEnabled)
   njkEnv.addGlobal('plannedDowntimeOutageBannerEnabled', config.plannedDowntimeOutageBannerEnabled)
   njkEnv.addGlobal('plannedDowntimeDate', config.plannedDowntimeDate)
@@ -241,8 +239,7 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('PrisonerSuspensionStatus', PrisonerSuspensionStatus)
   njkEnv.addGlobal('PaidType', PaidType)
   njkEnv.addGlobal('WaitingListStatus', WaitingListStatus)
-  njkEnv.addGlobal('WaitingListStatusOptions', WaitingListStatusOptions)
-  njkEnv.addGlobal('WaitingListStatusWithWithdrawn', WaitingListStatusWithWithdrawn)
+  njkEnv.addGlobal('WaitingListAllocationStatusOptions', WaitingListAllocationStatusOptions)
   njkEnv.addGlobal('WaitingListStatusDescriptions', WaitingListStatusDescriptions)
   njkEnv.addGlobal('LocationType', LocationType)
   njkEnv.addGlobal('DeallocateAfterAllocationDateOption', DeallocateAfterAllocationDateOption)

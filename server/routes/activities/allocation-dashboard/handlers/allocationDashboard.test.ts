@@ -847,13 +847,12 @@ describe('Route Handlers - Allocation dashboard', () => {
             riskLevelFilter: 'Any Workplace Risk Assessment',
             incentiveLevelFilter: 'All Incentive Levels',
           }),
-          WaitingListStatusOptions: {
+          WaitingListAllocationStatusOptions: {
             APPROVED: 'APPROVED',
             DECLINED: 'DECLINED',
             PENDING: 'PENDING',
             WITHDRAWN: 'WITHDRAWN',
           },
-          waitlistWithdrawnEnabled: false,
         }),
       )
     })

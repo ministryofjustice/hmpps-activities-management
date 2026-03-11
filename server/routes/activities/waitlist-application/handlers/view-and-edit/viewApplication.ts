@@ -16,7 +16,6 @@ import {
 } from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import WaitlistRequester from '../../../../../enum/waitlistRequester'
-import config from '../../../../../config'
 import UserService from '../../../../../services/userService'
 import { UserDetails } from '../../../../../@types/manageUsersApiImport/types'
 
@@ -109,7 +108,6 @@ export default class ViewApplicationRoutes {
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { applicationId } = req.params
     const { user } = res.locals
-    const { waitlistWithdrawnEnabled } = config
     let historyWithChanges = []
 
     let journeyEntry = req.query.journeyEntry ? asString(req.query.journeyEntry) : null
@@ -126,30 +124,28 @@ export default class ViewApplicationRoutes {
       this.activitiesService.fetchActivityWaitlist(application.scheduleId, false, user),
     ])
 
-    if (waitlistWithdrawnEnabled) {
-      const history = await this.activitiesService.fetchWaitlistApplicationHistory(+applicationId, user)
+    const history = await this.activitiesService.fetchWaitlistApplicationHistory(+applicationId, user)
 
-      historyWithChanges = await this.getHistoryWithChanges(history, application, user, this.userService)
-      if (
-        historyWithChanges.length === 0 ||
-        historyWithChanges[historyWithChanges.length - 1].updatedDateTime !== application.creationTime
-      ) {
-        const creatorMap = await this.userService.getUserMap([application.createdBy], user)
-        const creatorDetails = creatorMap.get(application.createdBy)
+    historyWithChanges = await this.getHistoryWithChanges(history, application, user, this.userService)
+    if (
+      historyWithChanges.length === 0 ||
+      historyWithChanges[historyWithChanges.length - 1].updatedDateTime !== application.creationTime
+    ) {
+      const creatorMap = await this.userService.getUserMap([application.createdBy], user)
+      const creatorDetails = creatorMap.get(application.createdBy)
 
-        historyWithChanges.push({
-          id: application.id,
-          status: application.status,
-          applicationDate: application.requestedDate,
-          requestedBy: application.requestedBy,
-          comments: application.comments || '',
-          updatedBy: application.createdBy,
-          updatedDateTime: application.creationTime,
-          note: '',
-          change: 'Application logged',
-          updatedByUser: creatorDetails,
-        })
-      }
+      historyWithChanges.push({
+        id: application.id,
+        status: application.status,
+        applicationDate: application.requestedDate,
+        requestedBy: application.requestedBy,
+        comments: application.comments || '',
+        updatedBy: application.createdBy,
+        updatedDateTime: application.creationTime,
+        note: '',
+        change: 'Application logged',
+        updatedByUser: creatorDetails,
+      })
     }
 
     const appHistoryStartDate = new Date('2025-12-01T00:00:00')

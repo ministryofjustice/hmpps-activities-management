@@ -3,40 +3,29 @@ import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../../../services/activitiesService'
 import {
-  WaitingListStatusOptions,
-  WaitingListStatusWithWithdrawn,
+  WaitingListAllocationStatusOptions,
   WaitingListStatusDescriptions,
   WaitingListStatus,
 } from '../../../../../enum/waitingListStatus'
-import config from '../../../../../config'
 
 export class EditStatus {
   @Expose()
-  @IsIn(Object.values(WaitingListStatusOptions), { message: 'Select a status for the application' })
-  status: WaitingListStatusOptions
+  @IsIn(Object.values(WaitingListAllocationStatusOptions), { message: 'Select a status for the application' })
+  status: WaitingListAllocationStatusOptions
 }
 
 export default class EditStatusRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
   GET = async (req: Request, res: Response): Promise<void> => {
-    const { waitlistWithdrawnEnabled } = config
-
-    const template = waitlistWithdrawnEnabled
-      ? 'pages/activities/waitlist-application/edit-status-with-withdrawn'
-      : 'pages/activities/waitlist-application/edit-status'
+    const template = 'pages/activities/waitlist-application/edit-status'
 
     const renderData: Record<string, unknown> = {
       WaitingListStatusDescriptions,
       prisonerName: req.journeyData.waitListApplicationJourney.prisoner.name,
-      waitlistWithdrawnEnabled,
     }
 
-    if (waitlistWithdrawnEnabled) {
-      renderData.WaitingListStatusWithWithdrawn = WaitingListStatusWithWithdrawn
-    } else {
-      renderData.WaitingListStatus = WaitingListStatus
-    }
+    renderData.WaitingListStatus = WaitingListStatus
 
     res.render(template, renderData)
   }

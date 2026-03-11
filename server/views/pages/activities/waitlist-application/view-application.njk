@@ -52,7 +52,7 @@
             <h1 class='govuk-heading-l'>Request for {{ prisoner.name }}, {{ prisoner.prisonerNumber }}</h1>
 
             {% set applicationDetailsHtml %}
-                {% if waitlistWithdrawnEnabled and status == 'WITHDRAWN' %}
+                {% if status == 'WITHDRAWN' %}
                     {% set applicationAction = {
                         href: "reinstate?preserveHistory=true",
                         text: "Reinstate",
@@ -72,7 +72,7 @@
                                 text: "Status"
                             },
                             value: {
-                                html:   waitlistStatusBadge(status, waitlistWithdrawnEnabled) +
+                                html:   waitlistStatusBadge(status) +
                                         (('<div class="govuk-!-font-size-16 govuk-hint govuk-!-margin-top-2">Last changed ' + statusUpdatedTime | parseISODate | formatDate('do MMMM yyyy HH:mm') + '</div>') if statusUpdatedTime)
                             },
                             actions: {
@@ -163,8 +163,7 @@
                 </div>
             {% endset %}
 
-            {% if waitlistWithdrawnEnabled %}
-                {% set applicationHistoryHtml %}
+            {% set applicationHistoryHtml %}
                 {% if history.length == 0 %}
                     <p class="govuk-body">There is no history for this application.</p>
                 {% else %}
@@ -192,9 +191,10 @@
                         <p class="govuk-body">Changes made before December 2025 cannot be shown. This history may not be complete.</p>
                     {% endif %}    
                 {% endif %}
-                {% endset %}
-                <div class="govuk-!-margin-bottom-6">
-                    {{ govukTabs({
+            {% endset %}
+
+            <div class="govuk-!-margin-bottom-6">
+                {{ govukTabs({
                     classes: "govuk-tabs--borderless",
                     items: [
                         {
@@ -213,11 +213,7 @@
                         }
                     ]
                 }) }}
-                </div>
-            {% else %}
-                {{ applicationDetailsHtml | safe }}
-            {% endif %}
-
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -10,7 +10,6 @@ import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/typ
 import ActivitiesTestData from '../../../../../utils/testData/activitiesTestData'
 import UserService from '../../../../../services/userService'
 import { UserDetails } from '../../../../../@types/manageUsersApiImport/types'
-import config from '../../../../../config'
 
 jest.mock('../../../../../services/activitiesService')
 jest.mock('../../../../../services/prisonService')
@@ -255,8 +254,6 @@ describe('Route Handlers - Waitlist application - View application', () => {
     })
 
     it('should return correct user history', async () => {
-      config.waitlistWithdrawnEnabled = true
-
       activitiesService.fetchWaitlistApplication = jest.fn().mockResolvedValue({
         status: 'PENDING',
         activityId: 1,
