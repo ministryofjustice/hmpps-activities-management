@@ -38,22 +38,22 @@
                     errorMessage: validationErrors | findError('status'),
                     items: [
                         {
-                            value: WaitingListStatusOptions.APPROVED,
-                            html: waitlistStatusBadgeWithHint(WaitingListStatusOptions.APPROVED, 'Add the applicant to the waitlist. They’re ready to be allocated.'),
-                            checked: waitListApplicationJourney.status == WaitingListStatusOptions.APPROVED
+                            value: WaitingListAllocationStatusOptions.APPROVED,
+                            html: waitlistStatusBadgeWithHint(WaitingListAllocationStatusOptions.APPROVED, 'Add the applicant to the waitlist. They’re ready to be allocated.'),
+                            checked: waitListApplicationJourney.status == WaitingListAllocationStatusOptions.APPROVED
                         },
                         {
-                            value: WaitingListStatusOptions.DECLINED,
-                            html: waitlistStatusBadgeWithHint(WaitingListStatusOptions.DECLINED, 'Reject the application and inform the person concerned.'),
-                            checked: waitListApplicationJourney.status == WaitingListStatusOptions.DECLINED
+                            value: WaitingListAllocationStatusOptions.DECLINED,
+                            html: waitlistStatusBadgeWithHint(WaitingListAllocationStatusOptions.DECLINED, 'Reject the application and inform the person concerned.'),
+                            checked: waitListApplicationJourney.status == WaitingListAllocationStatusOptions.DECLINED
                         },
                         {
                             divider: "or"
                         },
                         {
-                            value: WaitingListStatusOptions.PENDING,
-                            html: waitlistStatusBadgeWithHint(WaitingListStatusOptions.PENDING, 'Add the applicant to the waitlist as ‘Pending’. Follow your usual procedure to check if they can be allocated.'),
-                            checked: waitListApplicationJourney.status == WaitingListStatusOptions.PENDING
+                            value: WaitingListAllocationStatusOptions.PENDING,
+                            html: waitlistStatusBadgeWithHint(WaitingListAllocationStatusOptions.PENDING, 'Add the applicant to the waitlist as ‘Pending’. Follow your usual procedure to check if they can be allocated.'),
+                            checked: waitListApplicationJourney.status == WaitingListAllocationStatusOptions.PENDING
                         }
                     ]
                 }) }}

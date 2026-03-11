@@ -29,7 +29,7 @@ describe('Route Handlers - Waitlist application - Status', () => {
     it('should render the status template', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/status`, {
-        WaitingListStatusOptions: {
+        WaitingListAllocationStatusOptions: {
           APPROVED: 'APPROVED',
           DECLINED: 'DECLINED',
           PENDING: 'PENDING',

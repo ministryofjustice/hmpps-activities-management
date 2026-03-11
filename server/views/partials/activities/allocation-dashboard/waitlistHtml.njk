@@ -105,7 +105,6 @@
                 items: incentiveLevelOptions
             }) }}
 
-          {% if waitlistWithdrawnEnabled%}
             {% set waitlistStatusOptions = [
               {
                 value: 'Any',
@@ -113,39 +112,15 @@
                 selected: filters.waitlistStatusFilter == 'Any'
               }
             ] %}
-            {% for statusKey, statusValue in WaitingListStatusOptions %}
+            {% for statusKey, statusValue in WaitingListAllocationStatusOptions %}
 
-              {% set displayText = waitingListStatusDescription(statusValue, waitlistWithdrawnEnabled) %}
+              {% set displayText = waitingListStatusDescription(statusValue) %}
               {% set waitlistStatusOptions = (waitlistStatusOptions.push({
                 value: statusValue,
                 text: displayText,
                 selected: filters.waitlistStatusFilter == statusValue
               }), waitlistStatusOptions) %}
             {% endfor %}
-          {% else %}
-            {% set waitlistStatusOptions = [
-              {
-                value: 'Any',
-                text: 'Any',
-                selected: filters.waitlistStatusFilter == 'Any'
-              },
-              {
-                value: WaitingListStatus.APPROVED,
-                text: 'Approved',
-                selected: filters.waitlistStatusFilter == WaitingListStatus.APPROVED
-              },
-              {
-                value: WaitingListStatus.DECLINED,
-                text: 'Rejected',
-                selected: filters.waitlistStatusFilter == WaitingListStatus.DECLINED
-              },
-              {
-                value: WaitingListStatus.PENDING,
-                text: 'Pending',
-                selected: filters.waitlistStatusFilter == WaitingListStatus.PENDING
-              }
-            ] %}
-          {% endif %}
 
             {{ govukSelect({
                 id: "waitlistStatusFilter",
@@ -221,7 +196,7 @@
                 html: currentAllocationsHtml
             },
             {
-                text: waitlistStatusBadge(row.status, waitlistWithdrawnEnabled),
+                text: waitlistStatusBadge(row.status),
                 attributes: {
                     "data-sort-value": row.status
                 }
