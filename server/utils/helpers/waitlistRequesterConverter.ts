@@ -10,6 +10,8 @@ export default function waitlistRequesterConverter(requester: string, prisonerNa
       return 'IAG or careers information, advice and guidance staff'
     case WaitlistRequester.MENTAL_HEALTH_STAFF.code:
       return 'Mental health staff'
+    case WaitlistRequester.MULTI_DISCIPLINARY_BOARD.code:
+      return 'Staff in a sequencing or allocation meeting'
     case WaitlistRequester.OMU_STAFF.code:
       return 'Offender Management Unit'
     case WaitlistRequester.OTHER.code:
