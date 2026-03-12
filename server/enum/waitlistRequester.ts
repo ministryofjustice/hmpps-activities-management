@@ -6,6 +6,11 @@ export default class WaitlistRequester {
     'IAG or careers information, advice and guidance staff',
   )
 
+  static readonly MULTI_DISCIPLINARY_BOARD = new WaitlistRequester(
+    'MULTI_DISCIPLINARY_BOARD',
+    'Staff in a sequencing or allocation meeting',
+  )
+
   static readonly EDUCATION_STAFF = new WaitlistRequester('EDUCATION_STAFF', 'Education staff')
 
   static readonly WORKSHOP_STAFF = new WaitlistRequester('WORKSHOP_STAFF', 'Workshop staff')
