@@ -61,6 +61,7 @@ import {
   ActivityPayHistory,
   LocationPrefix,
   RolloutPrisonPlan,
+  LocationPrefixes,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { AttendanceStatus } from '../@types/appointments'
@@ -632,5 +633,14 @@ export default class ActivitiesService {
     user: ServiceUser,
   ): Promise<LocationPrefix> {
     return this.activitiesApiClient.getPrisonLocationPrefixByGroup(prisonCode, locationGroup, user)
+  }
+
+  async getPrisonLocationPrefixesByGroups(
+    prisonCode: string,
+    locationKey: string,
+    locationGroups: string[],
+    user: ServiceUser,
+  ): Promise<LocationPrefixes[]> {
+    return this.activitiesApiClient.getPrisonLocationPrefixesByGroups(prisonCode, locationKey, locationGroups, user)
   }
 }
