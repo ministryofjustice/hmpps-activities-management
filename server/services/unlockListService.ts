@@ -28,16 +28,12 @@ export default class UnlockListService {
     user: ServiceUser,
   ): Promise<UnlockListItem[]> {
     const prison = user.activeCaseLoadId
-
-    // Get the cell-matching regexp for each sub-location of the main location e.g [A-Wing, B-Wing C-Wing]
-    const subLocationCellPatterns = await Promise.all(
-      subLocationFilters.map(async sub => {
-        const locGroup = `${location}_${sub}`
-        const prefix = await this.activitiesApiClient.getPrisonLocationPrefixByGroup(prison, locGroup, user)
-        return { subLocation: sub, locationPrefix: prefix.locationPrefix } as SubLocationCellPattern
-      }),
+    const subLocationCellPatterns = await this.activitiesApiClient.getPrisonLocationPrefixesByGroups(
+      prison,
+      location,
+      subLocationFilters,
+      user,
     )
-
     const { locationPrefix } = await this.activitiesApiClient.getPrisonLocationPrefixByGroup(prison, location, user)
 
     // Get all prisoners located in the main location by cell prefix e.g. MDI-1-.+

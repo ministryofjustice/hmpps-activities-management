@@ -73,6 +73,7 @@ import {
   AdvanceAttendance,
   ActivityPayHistory,
   WaitingListApplicationHistory,
+  LocationPrefixes,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from './activityCategoryEnum'
 import { toDateString } from '../utils/utils'
@@ -422,6 +423,25 @@ export default class ActivitiesApiClient extends RestClient {
         path: `/locations/prison/${prisonCode}/location-prefix`,
         headers: CASELOAD_HEADER(user.activeCaseLoadId),
         query: { groupName: locationGroup },
+      },
+      asUser(user.token),
+    )
+  }
+
+  async getPrisonLocationPrefixesByGroups(
+    prisonCode: string,
+    locationKey: string,
+    locationGroups: string[],
+    user: ServiceUser,
+  ): Promise<LocationPrefixes[]> {
+    return this.post(
+      {
+        path: `/locations/prison/${prisonCode}/location-prefixes`,
+        headers: CASELOAD_HEADER(user.activeCaseLoadId),
+        query: { locationKey },
+        data: {
+          subLocations: locationGroups,
+        },
       },
       asUser(user.token),
     )
