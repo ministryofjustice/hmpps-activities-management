@@ -209,6 +209,10 @@ describe('Route Handlers - Select people by residential location', () => {
       .calledWith(atLeast('MDI', 'A-Wing', res.locals.user))
       .mockResolvedValueOnce({ locationPrefix: 'MDI-1-' })
 
+    when(activitiesService.getPrisonLocationPrefixesByGroups)
+      .calledWith(atLeast('MDI', 'A-Wing', res.locals.user))
+      .mockResolvedValueOnce([{ subLocation: 'A-Wing', locationPrefix: 'MDI-1-' }])
+
     when(prisonService.searchPrisonersByLocationPrefix).mockResolvedValue(prisoners)
   })
 

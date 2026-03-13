@@ -117,16 +117,11 @@ export default class SelectPeopleByResidentialLocationRoutes {
     const searchTerm = req.journeyData.recordAttendanceJourney.searchTerm?.toLowerCase() || ''
     const { subLocationFilters } = req.journeyData.recordAttendanceJourney
 
-    const subLocationCellPatterns = await Promise.all(
-      subLocationFilters.map(async sub => {
-        const locGroup = `${location.key}_${sub}`
-        const prefix = await this.activitiesService.getPrisonLocationPrefixByGroup(
-          user.activeCaseLoadId,
-          locGroup,
-          user,
-        )
-        return { subLocation: sub, locationPrefix: prefix.locationPrefix } as SubLocationCellPattern
-      }),
+    const subLocationCellPatterns = await this.activitiesService.getPrisonLocationPrefixesByGroups(
+      user.activeCaseLoadId,
+      location.key,
+      subLocationFilters,
+      user,
     )
 
     const prisonersWithActivities: AttendanceRecordList = prisonersForLocation?.content?.reduce((result, prisoner) => {
