@@ -19,6 +19,7 @@ const locPrefixBlock2BWing = 'MDI-1-1-0(1[3-9]|2[0-6]),MDI-1-2-0(1[3-9]|2[0-6]),
 const locPrefixBlock2CWing = 'MDI-1-1-0(2[7-9]|3[0-8]),MDI-1-2-0(2[7-9]|3[0-8]),MDI-1-3-0(2[7-9]|3[0-8])'
 
 const toLocPrefix = (prefix: string) => JSON.parse(`{"locationPrefix": "${prefix}"}`)
+const toNewLocPrefix = (prefix: string) => JSON.parse(`{"locationPrefix": "${prefix}", "subLocation": "A-Wing"}`)
 
 getScheduledEvents.courtHearings.push({
   prisonCode: 'MDI',
@@ -80,25 +81,16 @@ context('Create activity', () => {
     cy.signIn()
     cy.stubEndpoint('GET', '/locations/prison/MDI/location-groups', getLocationGroups)
     cy.stubEndpoint('GET', '/users/SCH_ACTIVITY', JSON.parse('{"name": "Schedule Activity", "username": "jsmith"}'))
+    cy.stubEndpoint('POST', '/locations/prison/MDI/location-prefixes\\?locationKey=Houseblock%201', [
+      toNewLocPrefix(locPrefixBlock1),
+      toNewLocPrefix(locPrefixBlock2AWing),
+      toNewLocPrefix(locPrefixBlock2BWing),
+      toNewLocPrefix(locPrefixBlock2CWing),
+    ])
     cy.stubEndpoint(
       'GET',
       '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201',
       toLocPrefix(locPrefixBlock1),
-    )
-    cy.stubEndpoint(
-      'GET',
-      '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201_A-Wing',
-      toLocPrefix(locPrefixBlock2AWing),
-    )
-    cy.stubEndpoint(
-      'GET',
-      '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201_B-Wing',
-      toLocPrefix(locPrefixBlock2BWing),
-    )
-    cy.stubEndpoint(
-      'GET',
-      '/locations/prison/MDI/location-prefix\\?groupName=Houseblock%201_C-Wing',
-      toLocPrefix(locPrefixBlock2CWing),
     )
     cy.stubEndpoint(
       'GET',
