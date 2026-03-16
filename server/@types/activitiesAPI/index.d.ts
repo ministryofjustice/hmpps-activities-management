@@ -793,6 +793,30 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/locations/prison/{prisonCode}/location-prefixes': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Get location prefixes for multiple sub-locations using a location key as query parameter
+     * @description Returns location prefixes for a specified location key and list of sub-locations
+     *
+     *     Requires one of the following roles:
+     *     * PRISON
+     *     * ACTIVITY_ADMIN
+     */
+    post: operations['getLocationPrefixesForGroup']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/job/purposeful-activity-reports': {
     parameters: {
       query?: never
@@ -1585,9 +1609,28 @@ export interface paths {
      *
      *     Requires one of the following roles:
      *     * SAR_DATA_ACCESS
-     *     * SAR_DATA_ACCESS
      */
     get: operations['getSarContentByReference']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/subject-access-request/template': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * @description Requires one of the following roles:
+     *     * SAR_DATA_ACCESS
+     */
+    get: operations['getServiceTemplate']
     put?: never
     post?: never
     delete?: never
@@ -1982,6 +2025,7 @@ export interface paths {
     }
     /**
      * Get the location prefix for a location group supplied as a query parameter
+     * @deprecated
      * @description Get location prefix for a location group name supplied as a query parameter
      *
      *     Requires one of the following roles:
@@ -3647,10 +3691,10 @@ export interface components {
     PageableObject: {
       /** Format: int64 */
       offset?: number
-      paged?: boolean
       sort?: components['schemas']['SortObject']
       /** Format: int32 */
       pageSize?: number
+      paged?: boolean
       /** Format: int32 */
       pageNumber?: number
       unpaged?: boolean
@@ -3665,12 +3709,12 @@ export interface components {
       content?: components['schemas']['WaitingListApplication'][]
       /** Format: int32 */
       number?: number
+      sort?: components['schemas']['SortObject']
       first?: boolean
       last?: boolean
-      pageable?: components['schemas']['PageableObject']
-      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     SortObject: {
@@ -5608,6 +5652,30 @@ export interface components {
        * @example AAA01U
        */
       updatedBy?: string
+    }
+    /** @description List of sub-locations */
+    LocationPrefixesRequest: {
+      /**
+       * @description List of sub-locations to resolve location prefixes
+       * @example [
+       *       "North Landing 1",
+       *       "North All"
+       *     ]
+       */
+      subLocations: string[]
+    }
+    /** @description Sub-locations prefix response */
+    LocationPrefixesDto: {
+      /**
+       * @description Name of the sub-location
+       * @example North Landing 1
+       */
+      subLocation: string
+      /**
+       * @description Location prefix resolved from the sub-location
+       * @example RSI-A-N-1-.+
+       */
+      locationPrefix: string
     }
     /** @description The search parameters to use to filter appointments */
     AppointmentSearchRequest: {
@@ -8242,12 +8310,12 @@ export interface components {
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
+      sort?: components['schemas']['SortObject']
       first?: boolean
       last?: boolean
-      pageable?: components['schemas']['PageableObject']
-      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       numberOfElements?: number
+      pageable?: components['schemas']['PageableObject']
       empty?: boolean
     }
     /** @description Attendance summary details */
@@ -11151,6 +11219,65 @@ export interface operations {
       }
     }
   }
+  getLocationPrefixesForGroup: {
+    parameters: {
+      query: {
+        /**
+         * @description Location key
+         * @example A-Wing
+         */
+        locationKey: string
+      }
+      header?: never
+      path: {
+        prisonCode: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LocationPrefixesRequest']
+      }
+    }
+    responses: {
+      /** @description Successful call - Location prefixes returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['LocationPrefixesDto'][]
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   triggerPurposefulActivityReportsJob: {
     parameters: {
       query?: {
@@ -12746,6 +12873,53 @@ export interface operations {
         }
         content: {
           'application/json': Record<string, never>
+        }
+      }
+      /** @description The client does not have authorisation to make this request */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unexpected error occurred */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getServiceTemplate: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Request successfully processed - return template file content */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'plain/text': string
         }
       }
       /** @description The client does not have authorisation to make this request */
@@ -15166,6 +15340,8 @@ export interface operations {
       query?: {
         /** @description The date of the earliest scheduled instances to include. Defaults to newer than 1 month ago. */
         earliestSessionDate?: string
+        /** @description Whether scheduled instances should be included in the response. Defaults to true. */
+        includeScheduledInstances?: boolean
       }
       header?: never
       path: {
