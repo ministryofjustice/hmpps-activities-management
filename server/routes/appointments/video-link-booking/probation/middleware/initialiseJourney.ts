@@ -65,6 +65,7 @@ export default ({
         status: prisoner.status,
       },
       prisonCode: mainAppointment.prisonCode,
+      probationTeamRequired: booking.probationTeamCode !== 'TEAM_NOT_LISTED',
       probationTeamCode: booking.probationTeamCode,
       meetingTypeCode: booking.probationMeetingType,
       officerDetailsNotKnown: booking.additionalBookingDetails?.contactName === undefined,
