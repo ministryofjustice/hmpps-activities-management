@@ -18,12 +18,18 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {{ activityJourneyCaption(createJourney) }}
-            <h1 class="govuk-heading-l">Select how to set the activity start and end times</h1>
             <form method="POST">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 {{ govukRadios({
                     id: "usePrisonRegimeTime",
                     name: "usePrisonRegimeTime",
+                    fieldset: {
+                        legend: {
+                        text: 'Select how to set the activity start and end times',
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l"
+                    }
+                    },
                     items: [
                         {
                             value: "true",
