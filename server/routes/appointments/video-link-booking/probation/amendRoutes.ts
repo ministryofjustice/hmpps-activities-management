@@ -8,6 +8,8 @@ import DateAndTimeRoutes, { DateAndTime } from './handlers/dateAndTime'
 import ExtraInformationRoutes, { ExtraInformation } from './handlers/extraInformation'
 import ScheduleRoutes from './handlers/schedule'
 import MeetingDetailsRoutes, { MeetingDetails } from './handlers/meetingDetails'
+import config from '../../../../config'
+import ProbationMeetingDetailsRoutes, { ProbationMeetingDetails } from './handlers/probationMeetingDetails'
 
 export default function AmendRoutes({
   bookAVideoLinkService,
@@ -21,7 +23,6 @@ export default function AmendRoutes({
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, validationMiddleware(type), handler)
 
-  const meetingDetails = new MeetingDetailsRoutes(bookAVideoLinkService, probationBookingService)
   const location = new LocationRoutes(bookAVideoLinkService)
   const dateAndTime = new DateAndTimeRoutes(bookAVideoLinkService)
   const schedule = new ScheduleRoutes(activitiesService, prisonService, bookAVideoLinkService, probationBookingService)
@@ -43,8 +44,16 @@ export default function AmendRoutes({
     return next()
   })
 
-  get('/meeting-details', meetingDetails.GET)
-  post('/meeting-details', meetingDetails.POST, MeetingDetails)
+  if (config.probationTeamRadioEnabled) {
+    const probationMeetingDetails = new ProbationMeetingDetailsRoutes(bookAVideoLinkService, probationBookingService)
+    get('/meeting-details', probationMeetingDetails.GET)
+    post('/meeting-details', probationMeetingDetails.POST, ProbationMeetingDetails)
+  } else {
+    const meetingDetails = new MeetingDetailsRoutes(bookAVideoLinkService, probationBookingService)
+    get('/meeting-details', meetingDetails.GET)
+    post('/meeting-details', meetingDetails.POST, MeetingDetails)
+  }
+
   get('/location', location.GET)
   post('/location', location.POST, Location)
   get('/date-and-time', dateAndTime.GET)
