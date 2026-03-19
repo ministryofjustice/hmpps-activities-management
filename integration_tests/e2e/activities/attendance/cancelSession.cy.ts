@@ -111,7 +111,6 @@ context('Cancel an activity session (single)', () => {
   })
 
   it('should show the correct details in the cancelled banner at the top of the page', () => {
-    getScheduledInstanceEnglishLevel1Cancelled.cancelledIssuePayment = null
     cy.stubEndpoint('GET', '/scheduled-instances/93', getScheduledInstanceEnglishLevel1Cancelled as unknown as JSON)
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
@@ -140,6 +139,6 @@ context('Cancel an activity session (single)', () => {
       'This activity session has been cancelled by USER1 - J. Smith on Thursday, 2 February 2023 for the following reason:',
       'Location unavailable - this is a comment',
     )
-    attendanceListPage.getLinkByText('View or edit cancellation').should('not.exist')
+    attendanceListPage.getLinkByText('View or edit cancellation').should('exist')
   })
 })
