@@ -1,0 +1,13 @@
+{% macro showActivityUrl(activity, user) %}
+
+  {% if activity.id and 'ROLE_ACTIVITY_HUB' in user.roles %}
+    <a href="/activities/allocation-dashboard/{{ activity.id }}#waitlist-tab"
+             target="_blank"
+             class="govuk-link govuk-link--no-visited-state"
+             data-qa="activity-waitlist-link">
+            {{ activity.activityName }}
+          </a>
+        {% else %}
+          <span>{{ activity.activityName }}</span>
+        {% endif %}
+{% endmacro %}

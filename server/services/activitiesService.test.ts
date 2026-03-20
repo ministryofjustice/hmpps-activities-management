@@ -1,5 +1,6 @@
 import { when } from 'jest-when'
 import { addDays, subDays } from 'date-fns'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import atLeast from '../../jest.setup'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import ActivitiesService from './activitiesService'
@@ -56,12 +57,17 @@ import EventTier from '../enum/eventTiers'
 import { PrisonerSuspensionStatus } from '../routes/activities/manage-allocations/journey'
 import AttendanceAction from '../enum/attendanceAction'
 import ReasonForDeallocation from '../enum/reasonForDeallocation'
+import ActivitiesTestData from '../utils/testData/activitiesTestData'
 
 jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
 
+const mockAuthenticationClient = {
+  getToken: jest.fn().mockResolvedValue('test-system-token'),
+} as unknown as jest.Mocked<AuthenticationClient>
+
 describe('Activities Service', () => {
-  const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
+  const activitiesApiClient = new ActivitiesApiClient(mockAuthenticationClient) as jest.Mocked<ActivitiesApiClient>
   const activitiesService = new ActivitiesService(activitiesApiClient)
 
   const user = { activeCaseLoadId: 'MDI', username: 'USER1', displayName: 'John Smith' } as ServiceUser
@@ -69,15 +75,37 @@ describe('Activities Service', () => {
   const mockedLocationGroups = [{ name: 'Houseblock 1', key: 'Houseblock 1', children: [] }] as LocationGroup[]
 
   describe('getActivity', () => {
-    it('should get the activity from activities API', async () => {
+    it('should get the activity from activities API when includeScheduledInstances is true', async () => {
       const expectedResult = { id: 1, description: 'Induction' } as Activity
 
       when(activitiesApiClient.getActivity).mockResolvedValue(expectedResult)
 
-      const actualResult = await activitiesService.getActivity(1, user)
+      const actualResult = await activitiesService.getActivity(1, user, true)
 
       expect(actualResult).toEqual(expectedResult)
-      expect(activitiesApiClient.getActivity).toHaveBeenCalledWith(1, user)
+      expect(activitiesApiClient.getActivity).toHaveBeenCalledWith(1, true, user)
+    })
+
+    it('should get the activity from activities API when includeScheduledInstances is false', async () => {
+      const expectedResult = { id: 1, description: 'Induction' } as Activity
+
+      when(activitiesApiClient.getActivity).mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getActivity(1, user, false)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getActivity).toHaveBeenCalledWith(1, false, user)
+    })
+
+    it('should get the activity from activities API when includeScheduledInstances is null', async () => {
+      const expectedResult = { id: 1, description: 'Induction' } as Activity
+
+      when(activitiesApiClient.getActivity).mockResolvedValue(expectedResult)
+
+      const actualResult = await activitiesService.getActivity(1, user, null)
+
+      expect(actualResult).toEqual(expectedResult)
+      expect(activitiesApiClient.getActivity).toHaveBeenCalledWith(1, true, user)
     })
   })
 
@@ -788,6 +816,19 @@ describe('Activities Service', () => {
       const actualResult = await activitiesService.fetchWaitlistApplication(1, user)
 
       expect(actualResult).toEqual(response)
+    })
+  })
+
+  describe('fetchWaitlistApplicationHistory', () => {
+    it('should call the api client to fetch the history of a waitlist application', async () => {
+      const response = ActivitiesTestData.WaitlistApplicationHistory
+
+      when(activitiesApiClient.fetchWaitlistApplicationHistory).calledWith(12345, user).mockResolvedValue(response)
+
+      const actualResult = await activitiesService.fetchWaitlistApplicationHistory(12345, user)
+
+      expect(actualResult).toEqual(response)
+      expect(activitiesApiClient.fetchWaitlistApplicationHistory).toHaveBeenCalledWith(12345, user)
     })
   })
 

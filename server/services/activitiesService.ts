@@ -61,6 +61,7 @@ import {
   ActivityPayHistory,
   LocationPrefix,
   RolloutPrisonPlan,
+  LocationPrefixes,
 } from '../@types/activitiesAPI/types'
 import { ActivityCategoryEnum } from '../data/activityCategoryEnum'
 import { AttendanceStatus } from '../@types/appointments'
@@ -73,8 +74,8 @@ import TimeSlot from '../enum/timeSlot'
 export default class ActivitiesService {
   constructor(private readonly activitiesApiClient: ActivitiesApiClient) {}
 
-  async getActivity(activityId: number, user: ServiceUser): Promise<Activity> {
-    return this.activitiesApiClient.getActivity(activityId, user)
+  async getActivity(activityId: number, user: ServiceUser, includeScheduledInstances?: boolean): Promise<Activity> {
+    return this.activitiesApiClient.getActivity(activityId, includeScheduledInstances, user)
   }
 
   async getActivityCategories(user: ServiceUser): Promise<ActivityCategory[]> {
@@ -406,6 +407,10 @@ export default class ActivitiesService {
     return this.activitiesApiClient.fetchWaitlistApplication(applicationId, user)
   }
 
+  async fetchWaitlistApplicationHistory(applicationId: number, user: ServiceUser) {
+    return this.activitiesApiClient.fetchWaitlistApplicationHistory(applicationId, user)
+  }
+
   async patchWaitlistApplication(
     applicationId: number,
     updateWaitlistRequest: WaitingListApplicationUpdateRequest,
@@ -628,5 +633,14 @@ export default class ActivitiesService {
     user: ServiceUser,
   ): Promise<LocationPrefix> {
     return this.activitiesApiClient.getPrisonLocationPrefixByGroup(prisonCode, locationGroup, user)
+  }
+
+  async getPrisonLocationPrefixesByGroups(
+    prisonCode: string,
+    locationKey: string,
+    locationGroups: string[],
+    user: ServiceUser,
+  ): Promise<LocationPrefixes[]> {
+    return this.activitiesApiClient.getPrisonLocationPrefixesByGroups(prisonCode, locationKey, locationGroups, user)
   }
 }

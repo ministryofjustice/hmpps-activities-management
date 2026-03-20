@@ -1,6 +1,7 @@
 import { when } from 'jest-when'
 import _, { cloneDeep } from 'lodash'
 import { subDays } from 'date-fns'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import ActivitiesApiClient from '../data/activitiesApiClient'
 import PrisonerSearchApiClient from '../data/prisonerSearchApiClient'
 import { ServiceUser } from '../@types/express'
@@ -18,7 +19,11 @@ jest.mock('../data/activitiesApiClient')
 jest.mock('../data/prisonerSearchApiClient')
 jest.mock('../services/alertsFilterService')
 
-const activitiesApiClient = new ActivitiesApiClient() as jest.Mocked<ActivitiesApiClient>
+const mockAuthenticationClient = {
+  getToken: jest.fn().mockResolvedValue('test-system-token'),
+} as unknown as jest.Mocked<AuthenticationClient>
+
+const activitiesApiClient = new ActivitiesApiClient(mockAuthenticationClient) as jest.Mocked<ActivitiesApiClient>
 const prisonerSearchApiClient = new PrisonerSearchApiClient() as jest.Mocked<PrisonerSearchApiClient>
 const alertsFilterService = new AlertsFilterService() as jest.Mocked<AlertsFilterService>
 
@@ -200,17 +205,13 @@ describe('Unlock list service', () => {
       .calledWith(atLeast('MDI', 'HB1'))
       .mockResolvedValueOnce({ locationPrefix: 'MDI-1-' })
 
-    when(activitiesApiClient.getPrisonLocationPrefixByGroup)
-      .calledWith(atLeast('MDI', 'HB1_A-Wing'))
-      .mockResolvedValueOnce({ locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' })
-
-    when(activitiesApiClient.getPrisonLocationPrefixByGroup)
-      .calledWith(atLeast('MDI', 'HB1_B-Wing'))
-      .mockResolvedValueOnce({ locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' })
-
-    when(activitiesApiClient.getPrisonLocationPrefixByGroup)
-      .calledWith(atLeast('MDI', 'HB1_C-Wing'))
-      .mockResolvedValueOnce({ locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' })
+    when(activitiesApiClient.getPrisonLocationPrefixesByGroups)
+      .calledWith(atLeast('MDI'))
+      .mockResolvedValueOnce([
+        { subLocation: 'A-Wing', locationPrefix: 'MDI-1-1-0(0[1-9]|1[0-2]),MDI-1-1-1(0[1-9]|1[0-2])' },
+        { subLocation: 'B-Wing', locationPrefix: 'MDI-1-2-0(0[1-9]|1[0-2]),MDI-1-2-2(0[1-9]|1[0-2])' },
+        { subLocation: 'C-Wing', locationPrefix: 'MDI-1-3-0(0[1-9]|1[0-2]),MDI-1-3-3(0[1-9]|1[0-2])' },
+      ])
 
     when(activitiesApiClient.getActivityCategories)
       .calledWith(atLeast('MDI'))
@@ -243,10 +244,15 @@ describe('Unlock list service', () => {
 
       expect(unlockListItems.length).toBe(4)
 
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(4)
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1_A-Wing', user)
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1_B-Wing', user)
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1_C-Wing', user)
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(1)
+      expect(activitiesApiClient.getPrisonLocationPrefixesByGroups).toHaveBeenCalledWith(
+        'MDI',
+        'HB1',
+        ['A-Wing', 'B-Wing', 'C-Wing'],
+        user,
+      )
+
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledWith('MDI', 'HB1', user)
 
       expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledTimes(1)
       expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledWith(
@@ -287,7 +293,7 @@ describe('Unlock list service', () => {
       )
 
       expect(unlockListItems.length).toBe(0)
-      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(2)
+      expect(activitiesApiClient.getPrisonLocationPrefixByGroup).toHaveBeenCalledTimes(1)
       expect(prisonerSearchApiClient.searchPrisonersByLocationPrefix).toHaveBeenCalledTimes(1)
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledTimes(1)
       expect(activitiesApiClient.getScheduledEventsByPrisonerNumbers).toHaveBeenCalledWith(

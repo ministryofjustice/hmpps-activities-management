@@ -19,6 +19,7 @@ import { associateErrorsWithProperty } from '../../../../utils/utils'
 
 jest.mock('../../../../services/activitiesService')
 jest.mock('../../../../services/prisonService')
+jest.mock('../../../../config')
 
 const activitiesService = new ActivitiesService(null)
 const prisonService = new PrisonService(null, null, null)

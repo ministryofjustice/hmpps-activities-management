@@ -82,7 +82,7 @@ describe('Views - Manage suspensions - Select Prisoner', () => {
     const $ = cheerio.load(compiledTemplate.render(viewContext))
 
     expect($('#prisoner-search-list').length).toBe(0)
-    expect($('.govuk-warning-text').text()).toContain('No people found matching that name or prison number.')
+    expect($('#prisoner-results-text').text().trim()).toEqual('No people found matching that name or prison number.')
     expect($('#prisoner-search-list').length).toBe(0)
     expect($('#continue-button-above-results').length).toBe(0)
     expect($('#continue-button').length).toBe(0)

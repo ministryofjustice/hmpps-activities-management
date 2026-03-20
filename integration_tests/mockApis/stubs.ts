@@ -248,6 +248,7 @@ const stubUserCaseLoads = () =>
       ],
     },
   })
+
 export const stubOffenderImage = (useAltImage = false) => {
   const imagePath = useAltImage
     ? path.join(__dirname, '../fixtures/prisonerAllocations/altDummy.jpg')

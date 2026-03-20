@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { configure, Environment } from 'nunjucks'
-import express, { Router } from 'express'
+import express from 'express'
 import path from 'path'
 import { addDays, addMonths, addWeeks, addYears, getUnixTime, startOfDay, subDays, subMonths, subWeeks } from 'date-fns'
 import { flatMap, flatten, sortBy } from 'lodash'
-import setUpDprNunjucksFilters from '@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/setUpNunjucksFilters'
 import fs from 'fs'
+import mojFilters from '@ministryofjustice/frontend/moj/filters/all'
 import {
   buildErrorSummaryList,
   concatArrays,
@@ -77,16 +77,18 @@ import {
   PrisonerSuspensionStatus,
 } from '../routes/activities/manage-allocations/journey'
 import { PaidType } from '../routes/activities/suspensions/handlers/viewSuspensions'
-import { WaitingListStatus } from '../enum/waitingListStatus'
+import {
+  WaitingListStatus,
+  WaitingListStatusDescriptions,
+  WaitingListAllocationStatusOptions,
+} from '../enum/waitingListStatus'
 import logger from '../../logger'
 import LocationType from '../enum/locationType'
 import HowToAddOptions from '../enum/allocations'
 import { toFullCourtLink } from '../routes/appointments/video-link-booking/utils/utils'
 import waitlistRequesterConverter from '../utils/helpers/waitlistRequesterConverter'
 
-export default function nunjucksSetup(app: express.Express, { applicationInfo }: Services): Router {
-  const router = express.Router()
-
+export default function nunjucksSetup(app: express.Express, { applicationInfo }: Services): Environment {
   app.set('view engine', 'njk')
 
   app.locals.asset_path = '/assets/'
@@ -98,14 +100,7 @@ export default function nunjucksSetup(app: express.Express, { applicationInfo }:
   app.locals.reportAFaultUrl = config.reportAFaultUrl
   app.locals.feedbackUrl = config.feedbackUrl
 
-  router.use((req, res, next) => {
-    res.locals.session = req.session
-    next()
-  })
-
-  registerNunjucks(applicationInfo, app)
-
-  return router
+  return registerNunjucks(applicationInfo, app)
 }
 
 export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: express.Express): Environment {
@@ -125,18 +120,17 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
       path.join(__dirname, '../views'),
       'node_modules/govuk-frontend/dist',
       'node_modules/@ministryofjustice/frontend/',
-      'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/',
-      'node_modules/@ministryofjustice/hmpps-digital-prison-reporting-frontend/dpr/components/',
       'node_modules/@ministryofjustice/hmpps-connect-dps-components/dist/assets/',
     ],
     {
       autoescape: true,
       express: app,
+      noCache: process.env.NODE_ENV !== 'production',
       watch: process.env.NODE_ENV === 'live-development',
     },
   )
 
-  setUpDprNunjucksFilters(njkEnv)
+  // setUpDprNunjucksFilters(njkEnv)
 
   // Only register nunjucks helpers/filters here - they should be implemented and unit tested elsewhere
   njkEnv.addFilter('formatName', (name, nameStyle, bold) => {
@@ -233,7 +227,6 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('applicationInsightsRoleName', applicationInfo?.applicationName)
   njkEnv.addGlobal('isProduction', process.env.NODE_ENV === 'production')
   njkEnv.addGlobal('appointmentMultipleAttendanceToggleEnabled', config.appointmentMultipleAttendanceToggleEnabled)
-  njkEnv.addGlobal('inServiceReportingEnabled', config.inServiceReportingEnabled)
   njkEnv.addGlobal('attendAllEnabled', config.attendAllEnabled)
   njkEnv.addGlobal('liveIssueOutageBannerEnabled', config.liveIssueOutageBannerEnabled)
   njkEnv.addGlobal('plannedDowntimeOutageBannerEnabled', config.plannedDowntimeOutageBannerEnabled)
@@ -246,6 +239,8 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('PrisonerSuspensionStatus', PrisonerSuspensionStatus)
   njkEnv.addGlobal('PaidType', PaidType)
   njkEnv.addGlobal('WaitingListStatus', WaitingListStatus)
+  njkEnv.addGlobal('WaitingListAllocationStatusOptions', WaitingListAllocationStatusOptions)
+  njkEnv.addGlobal('WaitingListStatusDescriptions', WaitingListStatusDescriptions)
   njkEnv.addGlobal('LocationType', LocationType)
   njkEnv.addGlobal('DeallocateAfterAllocationDateOption', DeallocateAfterAllocationDateOption)
   njkEnv.addGlobal('HowToAddOptions', HowToAddOptions)
@@ -261,6 +256,10 @@ export function registerNunjucks(applicationInfo?: ApplicationInfo, app?: expres
   njkEnv.addGlobal('exampleDatePickerDate', () => `29/9/${formatDate(addYears(new Date(), 1), 'yyyy')}`)
 
   njkEnv.addGlobal('prisonerExtraInformationEnabled', config.prisonerExtraInformationEnabled)
+
+  for (const [name, filter] of Object.entries(mojFilters())) {
+    njkEnv.addFilter(name, filter as (...args: any[]) => any)
+  }
 
   return njkEnv
 }

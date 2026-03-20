@@ -7,7 +7,6 @@ import successMessageMiddleware from '../middleware/successMessageMiddleware'
 import timeNowMiddleware from '../middleware/timeNowMiddleware'
 import routeAuthMiddleware from '../middleware/routeAuthMiddleware'
 import appointmentRoutes from './appointments'
-import reportingRoutes from './reporting'
 import profileImage from './profileImage'
 
 export default function routes(services: Services): Router {
@@ -21,7 +20,6 @@ export default function routes(services: Services): Router {
   router.use('/profileImage', profileImage(services))
   router.use('/activities', activityRoutes(services))
   router.use('/appointments', appointmentRoutes(services))
-  router.use('/dpr-reporting', reportingRoutes())
 
   router.use('/page/:page', (req, res) => {
     const referrer = new URL(req.get('Referrer'))

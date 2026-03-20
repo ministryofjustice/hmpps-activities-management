@@ -180,7 +180,7 @@ describe('Edit Appointment Utils', () => {
       ).toEqual('There are 4 appointments left in this series. They run from 2 January 2023 to 4 January 2023.')
       expect(
         getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
-      ).toEqual('This appointment is in a series: select which appointments you want to cancel?')
+      ).toEqual('This appointment is in a series: select which appointments you want to cancel')
       expect(
         getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Confirm')
@@ -200,7 +200,7 @@ describe('Edit Appointment Utils', () => {
       ).toEqual('There are 4 appointments left in this series. They run from 2 January 2023 to 4 January 2023.')
       expect(
         getAppointmentEditHeadingMessage(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
-      ).toEqual('This appointment is in a series: select which appointments you want to delete?')
+      ).toEqual('This appointment is in a series: select which appointments you want to delete')
       expect(
         getConfirmAppointmentEditCta(req.session.appointmentJourney, req.journeyData.editAppointmentJourney),
       ).toEqual('Delete appointment')

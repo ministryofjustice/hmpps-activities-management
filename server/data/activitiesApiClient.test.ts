@@ -1,6 +1,7 @@
 import nock from 'nock'
 
 import { parse } from 'date-fns'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
 import ActivitiesApiClient from './activitiesApiClient'
 import TokenStore from './tokenStore'
@@ -45,11 +46,14 @@ jest.mock('./tokenStore')
 describe('activitiesApiClient', () => {
   let fakeActivitiesApi: nock.Scope
   let activitiesApiClient: ActivitiesApiClient
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('test-system-token'),
+    } as unknown as jest.Mocked<AuthenticationClient>
     fakeActivitiesApi = nock(config.apis.activitiesApi.url)
-    activitiesApiClient = new ActivitiesApiClient()
-
+    activitiesApiClient = new ActivitiesApiClient(mockAuthenticationClient)
     jest.spyOn(TokenStore.prototype, 'getToken').mockResolvedValue('accessToken')
   })
 
@@ -65,8 +69,9 @@ describe('activitiesApiClient', () => {
         .get('/activities/1/filtered')
         .matchHeader('authorization', `Bearer token`)
         .matchHeader('Caseload-Id', 'MDI')
+        .query({ includeScheduledInstances: true })
         .reply(200, response)
-      const output = await activitiesApiClient.getActivity(1, user)
+      const output = await activitiesApiClient.getActivity(1, true, user)
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
     })
@@ -314,7 +319,10 @@ describe('activitiesApiClient', () => {
   describe('getRolloutPrisonPlan', () => {
     it('should return data from api', async () => {
       const response = { data: 'data' }
-      fakeActivitiesApi.get('/rollout/MDI').matchHeader('authorization', `Bearer accessToken`).reply(200, response)
+      fakeActivitiesApi
+        .get('/rollout/MDI')
+        .matchHeader('authorization', `Bearer test-system-token`)
+        .reply(200, response)
       const output = await activitiesApiClient.getPrisonRolloutPlan('MDI')
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
@@ -324,7 +332,7 @@ describe('activitiesApiClient', () => {
   describe('getRolloutPrisons', () => {
     it('should return list of all rolled out prisons from api', async () => {
       const response = { data: 'data' }
-      fakeActivitiesApi.get('/rollout').matchHeader('authorization', `Bearer accessToken`).reply(200, response)
+      fakeActivitiesApi.get('/rollout').matchHeader('authorization', `Bearer test-system-token`).reply(200, response)
       const output = await activitiesApiClient.getRolledOutPrisons()
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)
@@ -915,6 +923,18 @@ describe('activitiesApiClient', () => {
         .matchHeader('Caseload-Id', 'MDI')
         .reply(200)
       await activitiesApiClient.fetchWaitlistApplication(1, user)
+      expect(nock.isDone()).toBe(true)
+    })
+  })
+
+  describe('fetchWaitlistApplicationHistory', () => {
+    it('should call endpoint to fetch the history of a waitlist application', async () => {
+      fakeActivitiesApi
+        .get('/waiting-list-applications/1/history')
+        .matchHeader('authorization', `Bearer token`)
+        .matchHeader('Caseload-Id', 'MDI')
+        .reply(200)
+      await activitiesApiClient.fetchWaitlistApplicationHistory(1, user)
       expect(nock.isDone()).toBe(true)
     })
   })

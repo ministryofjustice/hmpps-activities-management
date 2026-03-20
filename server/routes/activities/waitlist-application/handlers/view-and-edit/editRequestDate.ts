@@ -16,7 +16,7 @@ export class EditRequestDate {
       message: ({ object }) => {
         const { waitListApplicationJourney } = object as { waitListApplicationJourney: WaitListApplicationJourney }
         const createdTime = formatDatePickerDate(parseISO(waitListApplicationJourney?.createdTime))
-        return `The date cannot be after the date that the application was originally recorded, ${createdTime}`
+        return `The date cannot be after ${createdTime}, when the application was first logged.`
       },
     },
   )

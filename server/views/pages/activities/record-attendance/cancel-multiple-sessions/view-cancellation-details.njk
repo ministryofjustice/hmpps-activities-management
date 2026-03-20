@@ -12,8 +12,6 @@
 {% set pageTitle = "View or edit cancellation - Activities - DPS" %}
 {% set pageId = 'view-or-edit-cancellation-page' %}
 
-{# If instance.cancelledIssuePayment is not null, it means that the session was cancelled as part of a mass cancellation,
-and therefore we can allow the user to edit the pay option (if payment has not run yet) #}
 {% if instance.cancelledIssuePayment is defined %}
     {% set cancelledIssuePayment = 'Yes' if instance.cancelledIssuePayment else 'No' %}
 {% else %}

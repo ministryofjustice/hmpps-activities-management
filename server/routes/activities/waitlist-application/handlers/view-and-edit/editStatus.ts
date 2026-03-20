@@ -2,21 +2,33 @@ import { Request, Response } from 'express'
 import { Expose } from 'class-transformer'
 import { IsIn } from 'class-validator'
 import ActivitiesService from '../../../../../services/activitiesService'
-import { WaitingListStatusOptions } from '../../../../../enum/waitingListStatus'
+import {
+  WaitingListAllocationStatusOptions,
+  WaitingListStatusDescriptions,
+  WaitingListStatus,
+} from '../../../../../enum/waitingListStatus'
 
 export class EditStatus {
   @Expose()
-  @IsIn(Object.values(WaitingListStatusOptions), { message: 'Select a status for the application' })
-  status: WaitingListStatusOptions
+  @IsIn(Object.values(WaitingListAllocationStatusOptions), { message: 'Select a status for the application' })
+  status: WaitingListAllocationStatusOptions
 }
 
 export default class EditStatusRoutes {
   constructor(private readonly activitiesService: ActivitiesService) {}
 
-  GET = async (req: Request, res: Response): Promise<void> =>
-    res.render(`pages/activities/waitlist-application/edit-status`, {
-      WaitingListStatusOptions,
-    })
+  GET = async (req: Request, res: Response): Promise<void> => {
+    const template = 'pages/activities/waitlist-application/edit-status'
+
+    const renderData: Record<string, unknown> = {
+      WaitingListStatusDescriptions,
+      prisonerName: req.journeyData.waitListApplicationJourney.prisoner.name,
+    }
+
+    renderData.WaitingListStatus = WaitingListStatus
+
+    res.render(template, renderData)
+  }
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { applicationId } = req.params

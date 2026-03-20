@@ -24,6 +24,12 @@ describe('waitlist requester Display Converter', () => {
     )
   })
 
+  it('Staff in a sequencing or allocation meeting', async () => {
+    expect(waitlistRequesterConverter(WaitlistRequester.MULTI_DISCIPLINARY_BOARD.code, prisonerName)).toBe(
+      'Staff in a sequencing or allocation meeting',
+    )
+  })
+
   it('For OMU staff', async () => {
     expect(waitlistRequesterConverter(WaitlistRequester.OMU_STAFF.code, prisonerName)).toBe('Offender Management Unit')
   })

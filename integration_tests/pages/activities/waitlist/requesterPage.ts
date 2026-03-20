@@ -9,7 +9,7 @@ export default class RequesterPage extends Page {
 
   guidanceStaffRadioClick = (): Cypress.Chainable => cy.get('#requester-2').click()
 
-  someoneElseRadioClick = (): Cypress.Chainable => cy.get('#requester-3').click()
+  someoneElseRadioClick = (): Cypress.Chainable => cy.get('#requester-4').click()
 
   someoneElseSelect = (): Cypress.Chainable => cy.get('#otherRequester')
 }

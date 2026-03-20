@@ -1,22 +1,21 @@
 import nock from 'nock'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
-import TokenStore from './tokenStore'
 import AlertsApiClient from './alertsApiClient'
-import { ServiceUser } from '../@types/express'
-
-const user = {} as ServiceUser
 
 jest.mock('./tokenStore')
 
 describe('alertsApiClient', () => {
   let fakeAlertsApi: nock.Scope
   let alertsApiClient: AlertsApiClient
+  let mockAuthenticationClient: jest.Mocked<AuthenticationClient>
 
   beforeEach(() => {
     fakeAlertsApi = nock(config.apis.alertsApi.url)
-    alertsApiClient = new AlertsApiClient()
-
-    jest.spyOn(TokenStore.prototype, 'getToken').mockResolvedValue('accessToken')
+    mockAuthenticationClient = {
+      getToken: jest.fn().mockResolvedValue('test-system-token'),
+    } as unknown as jest.Mocked<AuthenticationClient>
+    alertsApiClient = new AlertsApiClient(mockAuthenticationClient)
   })
 
   afterEach(() => {
@@ -31,10 +30,10 @@ describe('alertsApiClient', () => {
       fakeAlertsApi
         .post('/search/alerts/prison-numbers')
         .query({ includeInactive: false })
-        .matchHeader('authorization', `Bearer accessToken`)
+        .matchHeader('authorization', `Bearer test-system-token`)
         .reply(200, response)
 
-      const output = await alertsApiClient.getAlertsForPrisoners(['G4793VF', 'G0113GG'], user)
+      const output = await alertsApiClient.getAlertsForPrisoners(['G4793VF', 'G0113GG'])
 
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)

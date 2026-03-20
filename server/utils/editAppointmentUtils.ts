@@ -253,15 +253,15 @@ export const getAppointmentEditHeadingMessage = (
   editAppointmentJourney: EditAppointmentJourney,
 ) => {
   if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CANCELLED) {
-    return 'This appointment is in a series: select which appointments you want to cancel?'
+    return 'This appointment is in a series: select which appointments you want to cancel'
   }
 
   if (editAppointmentJourney.cancellationReason === AppointmentCancellationReason.CREATED_IN_ERROR) {
-    return 'This appointment is in a series: select which appointments you want to delete?'
+    return 'This appointment is in a series: select which appointments you want to delete'
   }
 
   if (editAppointmentJourney.uncancel) {
-    return 'This cancelled appointment is in a series: select which appointments you want to uncancel?'
+    return 'This cancelled appointment is in a series: select which appointments you want to uncancel'
   }
 
   const updateProperties = []

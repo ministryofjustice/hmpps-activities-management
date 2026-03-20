@@ -26,7 +26,7 @@ export default class ActivityAllocationHandler {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { prisonerNumber } = req.params
+    const { prisonerNumber } = req.params as { prisonerNumber: string }
     const { activityId } = req.body
 
     const activity = await this.activitiesService.getActivity(activityId, user)

@@ -34,10 +34,12 @@ const getBuildConfig = () => {
         {
           from: path.join(cwd, 'assets/images/**/*'),
           to: path.join(cwd, 'dist/assets/images'),
+          watch: isWatchMode,
         },
         {
           from: path.join(cwd, 'assets/downloads/**/*'),
           to: path.join(cwd, 'dist/assets/downloads'),
+          watch: isWatchMode,
         },
       ],
       clear: globSync([path.join(cwd, 'dist/assets/{css,js}')]),

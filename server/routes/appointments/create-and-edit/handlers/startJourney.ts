@@ -78,7 +78,7 @@ export default class StartJourneyRoutes {
   }
 
   PRISONER = async (req: Request, res: Response): Promise<void> => {
-    const { prisonNumber } = req.params
+    const { prisonNumber } = req.params as { prisonNumber: string }
     const { user } = res.locals
 
     req.session.appointmentJourney = {
@@ -112,7 +112,7 @@ export default class StartJourneyRoutes {
 
   EDIT = async (req: Request, res: Response): Promise<void> => {
     const { appointment } = req
-    const { property } = req.params
+    const { property } = req.params as { property?: string }
 
     if (!property) return res.redirect(req.get('Referrer') || '/')
 

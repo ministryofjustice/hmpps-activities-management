@@ -50,6 +50,7 @@ describe('Route Handlers - Choose details by activity location', () => {
 
     req = {
       query: {},
+      journeyData: {},
     } as unknown as Request
 
     when(activitiesService.getLocationGroups)
@@ -66,6 +67,18 @@ describe('Route Handlers - Choose details by activity location', () => {
           locationGroups: mockLocations,
         },
       )
+    })
+
+    it('should clear filter values from journeyData', async () => {
+      req.journeyData.recordAttendanceJourney = {
+        searchTerm: 'John Doe',
+        subLocationFilters: ['North All'],
+      }
+
+      await handler.GET(req, res)
+
+      expect(req.journeyData.recordAttendanceJourney.searchTerm).toBeUndefined()
+      expect(req.journeyData.recordAttendanceJourney.subLocationFilters).toBeUndefined()
     })
   })
 

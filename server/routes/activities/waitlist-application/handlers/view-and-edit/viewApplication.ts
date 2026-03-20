@@ -1,20 +1,114 @@
 import { NextFunction, Request, Response } from 'express'
 import ActivitiesService from '../../../../../services/activitiesService'
 import PrisonService from '../../../../../services/prisonService'
-import { asString, formatFirstLastName, getScheduleIdFromActivity, parseDate } from '../../../../../utils/utils'
-import { Activity, WaitingListApplication } from '../../../../../@types/activitiesAPI/types'
+import {
+  asString,
+  formatDate,
+  formatFirstLastName,
+  formatStringToTitleCase,
+  getScheduleIdFromActivity,
+  parseDate,
+} from '../../../../../utils/utils'
+import {
+  Activity,
+  WaitingListApplication,
+  WaitingListApplicationHistory,
+} from '../../../../../@types/activitiesAPI/types'
 import { Prisoner } from '../../../../../@types/prisonerOffenderSearchImport/types'
 import WaitlistRequester from '../../../../../enum/waitlistRequester'
+import UserService from '../../../../../services/userService'
+import { UserDetails } from '../../../../../@types/manageUsersApiImport/types'
 
 export default class ViewApplicationRoutes {
   constructor(
     private readonly activitiesService: ActivitiesService,
     private readonly prisonService: PrisonService,
+    private readonly userService: UserService,
   ) {}
+
+  private formatStatus(status: string): string {
+    if (status === 'DECLINED') {
+      return 'Rejected'
+    }
+    return formatStringToTitleCase(status)
+  }
+
+  private async getHistoryWithChanges(
+    history: WaitingListApplicationHistory[],
+    application: WaitingListApplication,
+    user: UserDetails,
+    userService: UserService,
+  ): Promise<
+    (WaitingListApplicationHistory & {
+      change: string
+      note: string
+      updatedByUser: UserDetails
+    })[]
+  > {
+    // Collate unique updatedBy usernames
+    const updatedByIds = [...new Set(history.map(h => h.updatedBy))]
+
+    // Fetch userService details map
+    const userMap = await userService.getUserMap(updatedByIds, user)
+
+    const sortedHistory = history.sort(
+      (a, b) => new Date(b.updatedDateTime).getTime() - new Date(a.updatedDateTime).getTime(),
+    )
+
+    return sortedHistory.map((item, index) => {
+      const change: string[] = []
+      const note: string[] = []
+
+      const updatedByUser = userMap.get(item.updatedBy)
+
+      if (index < sortedHistory.length - 1) {
+        const previousItem = sortedHistory[index + 1]
+
+        if (item.status !== previousItem.status) {
+          change.push('Status changed')
+          note.push(`Changed from ${this.formatStatus(previousItem.status)} to ${this.formatStatus(item.status)}`)
+        }
+
+        if (item.comments !== previousItem.comments) {
+          change.push('Comments changed')
+          note.push(`Previous comment: ${previousItem.comments || 'None'}`)
+        }
+
+        if (item.requestedBy !== previousItem.requestedBy) {
+          change.push('Requester changed')
+          note.push(
+            `Changed from ${WaitlistRequester.valueOf(previousItem.requestedBy)} to ${WaitlistRequester.valueOf(item.requestedBy)}`,
+          )
+        }
+
+        if (item.applicationDate !== previousItem.applicationDate) {
+          change.push('Date of request changed')
+          note.push(
+            `Changed from ${formatDate(previousItem.applicationDate, 'd MMMM yyyy')} to ${formatDate(item.applicationDate, 'd MMMM yyyy')}`,
+          )
+        }
+      } else if (application.creationTime === item.updatedDateTime) {
+        change.push('Application logged')
+      } else {
+        change.push('Application updated')
+        note.push(
+          'Full details are not available for the first change after December 2025. You can check with who made the change.',
+        )
+      }
+
+      return {
+        ...item,
+        updatedByUser,
+        change: change.length > 1 ? 'Status and comments changed' : change[0],
+        note: note.join('<br>'),
+      }
+    })
+  }
 
   GET = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { applicationId } = req.params
     const { user } = res.locals
+    let historyWithChanges = []
 
     let journeyEntry = req.query.journeyEntry ? asString(req.query.journeyEntry) : null
     journeyEntry ??= req.journeyData?.waitListApplicationJourney?.journeyEntry
@@ -29,6 +123,34 @@ export default class ViewApplicationRoutes {
       this.activitiesService.getActivity(application.activityId, user),
       this.activitiesService.fetchActivityWaitlist(application.scheduleId, false, user),
     ])
+
+    const history = await this.activitiesService.fetchWaitlistApplicationHistory(+applicationId, user)
+
+    historyWithChanges = await this.getHistoryWithChanges(history, application, user, this.userService)
+    if (
+      historyWithChanges.length === 0 ||
+      historyWithChanges[historyWithChanges.length - 1].updatedDateTime !== application.creationTime
+    ) {
+      const creatorMap = await this.userService.getUserMap([application.createdBy], user)
+      const creatorDetails = creatorMap.get(application.createdBy)
+
+      historyWithChanges.push({
+        id: application.id,
+        status: application.status,
+        applicationDate: application.requestedDate,
+        requestedBy: application.requestedBy,
+        comments: application.comments || '',
+        updatedBy: application.createdBy,
+        updatedDateTime: application.creationTime,
+        note: '',
+        change: 'Application logged',
+        updatedByUser: creatorDetails,
+      })
+    }
+
+    const appHistoryStartDate = new Date('2025-12-01T00:00:00')
+
+    const createdAppPreHistory = new Date(application.creationTime) < appHistoryStartDate
 
     const isMostRecent =
       allApplications.find(
@@ -72,6 +194,8 @@ export default class ViewApplicationRoutes {
       isMostRecent,
       isNotAlreadyAllocated,
       journeyEntry,
+      history: historyWithChanges,
+      createdAppPreHistory,
     })
   }
 }

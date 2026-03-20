@@ -20,6 +20,7 @@ import { sessionSlotsToSchedule } from '../../../../utils/helpers/activityTimeSl
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import WaitlistRequester from '../../../../enum/waitlistRequester'
 import { parseIsoDate } from '../../../../utils/datePickerUtils'
+import { WaitingListAllocationStatusOptions } from '../../../../enum/waitingListStatus'
 
 type Filters = {
   candidateQuery: string
@@ -61,10 +62,11 @@ export default class AllocationDashboardRoutes {
     const filters = req.query as Filters
 
     const [activity, incentiveLevels]: [Activity, IncentiveLevel[]] = await Promise.all([
-      this.activitiesService.getActivity(+activityId, user),
+      this.activitiesService.getActivity(+activityId, user, false),
       this.prisonService.getIncentiveLevels(user.activeCaseLoadId, user),
     ])
 
+    const activitySchedule = activity.schedules[0]
     const suitableForIep = this.getSuitableForIep(activity.pay, activity.paid, incentiveLevels)
     const suitableForWra = this.getSuitableForWra(activity.riskLevel)
 
@@ -77,13 +79,13 @@ export default class AllocationDashboardRoutes {
     }
 
     const [currentlyAllocated, { waitlistedPrisoners, waitlistSize }, pagedCandidates] = await Promise.all([
-      this.getCurrentlyAllocated(getScheduleIdFromActivity(activity), user),
-      this.getWaitlistedPrisoners(getScheduleIdFromActivity(activity), filters, user),
-      this.getCandidates(getScheduleIdFromActivity(activity), filters, +req.query.page, user),
+      this.getCurrentlyAllocated(activitySchedule.id, user),
+      this.getWaitlistedPrisoners(activitySchedule.id, filters, user),
+      this.getCandidates(activitySchedule.id, filters, +req.query.page, user),
     ])
 
     const slots: { [weekNumber: string]: Slots } = {}
-    activity.schedules[0].slots.forEach(slot => {
+    activitySchedule.slots.forEach(slot => {
       DAYS_OF_WEEK.forEach(day => {
         const dayLowerCase = day.toLowerCase()
         slots[slot.weekNumber] ??= {
@@ -98,13 +100,13 @@ export default class AllocationDashboardRoutes {
       })
     })
 
-    const dailySlots = sessionSlotsToSchedule(activity.schedules[0].scheduleWeeks, activity.schedules[0].slots)
+    const dailySlots = sessionSlotsToSchedule(activitySchedule.scheduleWeeks, activity.schedules[0].slots)
 
-    const richStartDate = parseDate(activity.schedules[0].startDate)
+    const richStartDate = parseDate(activitySchedule.startDate)
 
-    const activeAllocations = activity.schedules[0].allocations.filter(a => a.status === 'ACTIVE').length
+    const activeAllocations = activitySchedule.allocations.filter(a => a.status === 'ACTIVE').length
 
-    const currentWeek = calcCurrentWeek(richStartDate, activity.schedules[0].scheduleWeeks)
+    const currentWeek = calcCurrentWeek(richStartDate, activitySchedule.scheduleWeeks)
 
     res.render('pages/activities/allocation-dashboard/allocation-dashboard', {
       activity,
@@ -119,8 +121,9 @@ export default class AllocationDashboardRoutes {
       suitableForWra,
       dailySlots,
       currentWeek,
-      scheduleWeeks: activity.schedules[0].scheduleWeeks,
+      scheduleWeeks: activitySchedule.scheduleWeeks,
       activeAllocations,
+      WaitingListAllocationStatusOptions,
     })
   }
 
@@ -138,7 +141,7 @@ export default class AllocationDashboardRoutes {
 
     const [iepSummary, activity]: [IepSummary, Activity] = await Promise.all([
       this.prisonService.getPrisonerIepSummary(prisonerNumber, user),
-      this.activitiesService.getActivity(+req.params.activityId, user),
+      this.activitiesService.getActivity(+req.params.activityId, user, false),
     ])
 
     if (!activity.pay.map(p => p.incentiveLevel).includes(iepSummary.iepLevel) && activity.paid) {
@@ -156,7 +159,7 @@ export default class AllocationDashboardRoutes {
     const { activityId } = req.params
     const { user } = res.locals
     const { selectedAllocations } = req.body
-    const activity = await this.activitiesService.getActivity(+activityId, user)
+    const activity = await this.activitiesService.getActivity(+activityId, user, false)
     const allocationIds = selectedAllocations.toString().split(',')
     const scheduleId = getScheduleIdFromActivity(activity)
     const allocations = (await this.activitiesService.getAllocations(scheduleId, user)).filter(
@@ -254,9 +257,13 @@ export default class AllocationDashboardRoutes {
   }
 
   private getWaitlistedPrisoners = async (scheduleId: number, filters: Filters, user: ServiceUser) => {
-    const waitlist = await this.activitiesService
-      .fetchActivityWaitlist(scheduleId, true, user)
-      .then(a => a.filter(w => w.status === 'PENDING' || w.status === 'APPROVED' || w.status === 'DECLINED'))
+    const waitlist = await this.activitiesService.fetchActivityWaitlist(scheduleId, true, user).then(a =>
+      a.filter(w => {
+        const baseStatuses =
+          w.status === 'PENDING' || w.status === 'APPROVED' || w.status === 'DECLINED' || w.status === 'WITHDRAWN'
+        return baseStatuses
+      }),
+    )
 
     const prisonerNumbers = waitlist.map(application => application.prisonerNumber)
     const [inmateDetails, prisonerAllocations]: [Prisoner[], PrisonerAllocations[]] = await Promise.all([
@@ -295,12 +302,17 @@ export default class AllocationDashboardRoutes {
           activityId: w.activityId,
         }))
       })
-      .filter(
-        inmate =>
+      .filter(inmate => {
+        if (!filters.waitlistStatusFilter || filters.waitlistStatusFilter === 'Any') {
+          return inmate.status !== 'WITHDRAWN'
+        }
+
+        return (
           !filters.waitlistStatusFilter ||
           filters.waitlistStatusFilter === 'Any' ||
-          inmate.status === filters.waitlistStatusFilter,
-      )
+          inmate.status === filters.waitlistStatusFilter
+        )
+      })
       .filter(
         inmate =>
           !filters.employmentFilter ||

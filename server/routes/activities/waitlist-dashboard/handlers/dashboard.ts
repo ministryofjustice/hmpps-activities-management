@@ -32,11 +32,14 @@ export default class DashboardRoutes {
     const startDateFilter = dateFrom ? asString(dateFrom) : undefined
     const endDateFilter = dateTo ? asString(dateTo) : undefined
     const activityFilter = activity ? +activity : null
-    let statusFilter: WaitingListStatus[] = [WaitingListStatus.PENDING, WaitingListStatus.APPROVED]
+
+    const statusEnum = WaitingListStatus
+    let statusFilter = [WaitingListStatus.PENDING, WaitingListStatus.APPROVED]
+
     if (status) {
       statusFilter = asString(status)
         .split(',')
-        .map(s => WaitingListStatus[s])
+        .map(s => statusEnum[s])
     }
 
     let prisoners: Prisoner[] = null
@@ -88,7 +91,7 @@ export default class DashboardRoutes {
       activities,
       query,
       pageInfo,
-      WaitingListStatus,
+      WaitingListStatus: statusEnum,
     })
   }
 

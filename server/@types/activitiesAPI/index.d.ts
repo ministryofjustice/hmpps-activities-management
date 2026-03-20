@@ -793,6 +793,30 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/locations/prison/{prisonCode}/location-prefixes': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Get location prefixes for multiple sub-locations using a location key as query parameter
+     * @description Returns location prefixes for a specified location key and list of sub-locations
+     *
+     *     Requires one of the following roles:
+     *     * PRISON
+     *     * ACTIVITY_ADMIN
+     */
+    post: operations['getLocationPrefixesForGroup']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/job/purposeful-activity-reports': {
     parameters: {
       query?: never
@@ -1436,6 +1460,30 @@ export interface paths {
     patch: operations['update_2']
     trace?: never
   }
+  '/waiting-list-applications/{waitingListId}/history': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get the audit history of a waiting list application by its ID.
+     * @description Returns a list of all changes made to the specified waiting list application.
+     *
+     *     Requires one of the following roles:
+     *     * ACTIVITY_ADMIN
+     *     * PRISON
+     */
+    get: operations['getWaitingListHistoryById']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/utility/invalid-activity-locations': {
     parameters: {
       query?: never
@@ -1561,9 +1609,28 @@ export interface paths {
      *
      *     Requires one of the following roles:
      *     * SAR_DATA_ACCESS
-     *     * SAR_DATA_ACCESS
      */
     get: operations['getSarContentByReference']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/subject-access-request/template': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * @description Requires one of the following roles:
+     *     * SAR_DATA_ACCESS
+     */
+    get: operations['getServiceTemplate']
     put?: never
     post?: never
     delete?: never
@@ -1958,6 +2025,7 @@ export interface paths {
     }
     /**
      * Get the location prefix for a location group supplied as a query parameter
+     * @deprecated
      * @description Get location prefix for a location group name supplied as a query parameter
      *
      *     Requires one of the following roles:
@@ -3641,9 +3709,9 @@ export interface components {
       content?: components['schemas']['WaitingListApplication'][]
       /** Format: int32 */
       number?: number
+      sort?: components['schemas']['SortObject']
       first?: boolean
       last?: boolean
-      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
@@ -5584,6 +5652,30 @@ export interface components {
        * @example AAA01U
        */
       updatedBy?: string
+    }
+    /** @description List of sub-locations */
+    LocationPrefixesRequest: {
+      /**
+       * @description List of sub-locations to resolve location prefixes
+       * @example [
+       *       "North Landing 1",
+       *       "North All"
+       *     ]
+       */
+      subLocations: string[]
+    }
+    /** @description Sub-locations prefix response */
+    LocationPrefixesDto: {
+      /**
+       * @description Name of the sub-location
+       * @example North Landing 1
+       */
+      subLocation: string
+      /**
+       * @description Location prefix resolved from the sub-location
+       * @example RSI-A-N-1-.+
+       */
+      locationPrefix: string
     }
     /** @description The search parameters to use to filter appointments */
     AppointmentSearchRequest: {
@@ -7640,6 +7732,48 @@ export interface components {
        */
       paid?: boolean
     }
+    /** @description Represents a historical snapshot of a waiting list application for a given ID. */
+    WaitingListApplicationHistory: {
+      /**
+       * Format: int64
+       * @description The internally-generated ID for this waiting list
+       * @example 111111
+       */
+      id?: number
+      /**
+       * @description The status of this waiting list
+       * @example PENDING
+       * @enum {string}
+       */
+      status?: 'PENDING' | 'APPROVED' | 'DECLINED' | 'ALLOCATED' | 'REMOVED' | 'WITHDRAWN'
+      /**
+       * Format: date
+       * @description The date of application for this waiting list
+       * @example 2023-06-23
+       */
+      applicationDate?: string
+      /**
+       * @description The person who made the request for this waiting list
+       * @example Fred Bloggs
+       */
+      requestedBy?: string
+      /**
+       * @description Any particular comments related to this waiting list
+       * @example The prisoner has specifically requested to attend this activity
+       */
+      comments?: string
+      /**
+       * @description The person who made the latest changes to the waiting list
+       * @example Jane Doe
+       */
+      updatedBy: string
+      /**
+       * Format: date-time
+       * @description The date and time the waiting list was last updated
+       * @example 2023-00-04T16:30:00
+       */
+      updatedDateTime: string
+    }
     /** @description A list of allocation counts for each booking in the prison */
     AllocationReconciliationResponse: {
       /**
@@ -8176,9 +8310,9 @@ export interface components {
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
+      sort?: components['schemas']['SortObject']
       first?: boolean
       last?: boolean
-      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
@@ -11085,6 +11219,65 @@ export interface operations {
       }
     }
   }
+  getLocationPrefixesForGroup: {
+    parameters: {
+      query: {
+        /**
+         * @description Location key
+         * @example A-Wing
+         */
+        locationKey: string
+      }
+      header?: never
+      path: {
+        prisonCode: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LocationPrefixesRequest']
+      }
+    }
+    responses: {
+      /** @description Successful call - Location prefixes returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['LocationPrefixesDto'][]
+        }
+      }
+      /** @description Invalid request */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   triggerPurposefulActivityReportsJob: {
     parameters: {
       query?: {
@@ -12354,6 +12547,57 @@ export interface operations {
       }
     }
   }
+  getWaitingListHistoryById: {
+    parameters: {
+      query?: never
+      header?: {
+        'Caseload-Id'?: string
+      }
+      path: {
+        waitingListId: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Audit history for a specified waiting list application found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['WaitingListApplicationHistory']
+        }
+      }
+      /** @description Unauthorised, requires a valid Oauth2 token */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description The waiting list application for this ID was not found. */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
   getInvalidActivityLocations: {
     parameters: {
       query?: never
@@ -12629,6 +12873,53 @@ export interface operations {
         }
         content: {
           'application/json': Record<string, never>
+        }
+      }
+      /** @description The client does not have authorisation to make this request */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden, requires an appropriate role */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Unexpected error occurred */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getServiceTemplate: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Request successfully processed - return template file content */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'plain/text': string
         }
       }
       /** @description The client does not have authorisation to make this request */
@@ -14102,7 +14393,9 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['ActivityScheduleLite'][]
+          'application/json':
+            | components['schemas']['ActivityScheduleLite'][]
+            | components['schemas']['ActivityScheduleLite'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */
@@ -14959,7 +15252,9 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['ActivityScheduleLite'][]
+          'application/json':
+            | components['schemas']['ActivityScheduleLite'][]
+            | components['schemas']['ActivityScheduleLite'][]
         }
       }
       /** @description Unauthorised, requires a valid Oauth2 token */
@@ -15045,6 +15340,8 @@ export interface operations {
       query?: {
         /** @description The date of the earliest scheduled instances to include. Defaults to newer than 1 month ago. */
         earliestSessionDate?: string
+        /** @description Whether scheduled instances should be included in the response. Defaults to true. */
+        includeScheduledInstances?: boolean
       }
       header?: never
       path: {

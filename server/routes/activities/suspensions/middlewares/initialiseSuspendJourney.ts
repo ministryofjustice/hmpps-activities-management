@@ -11,7 +11,7 @@ export default (prisonService: PrisonService, activitiesService: ActivitiesServi
     if (req.session.suspendJourney) return next()
 
     const allocationIds = (req.query.allocationIds as string)?.split(',')
-    const { prisonerNumber } = req.params
+    const { prisonerNumber } = req.params as { prisonerNumber: string }
     const { mode } = req.routeContext
     const { user } = res.locals
 

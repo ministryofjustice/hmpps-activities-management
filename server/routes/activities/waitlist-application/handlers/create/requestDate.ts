@@ -1,16 +1,23 @@
 import { Request, Response } from 'express'
 import { Expose, Transform } from 'class-transformer'
-import { startOfToday } from 'date-fns'
+import { startOfToday, subDays } from 'date-fns'
 import { formatIsoDate, parseDatePickerDate } from '../../../../../utils/datePickerUtils'
 import IsValidDate from '../../../../../validators/isValidDate'
 import Validator from '../../../../../validators/validator'
+import { formatDate } from '../../../../../utils/utils'
 
 export class RequestDate {
   @Expose()
   @Transform(({ value }) => parseDatePickerDate(value))
+  @Validator(thisDate => thisDate > subDays(startOfToday(), 30), {
+    message: () => {
+      const thirtyDaysInPast = formatDate(subDays(startOfToday(), 29))
+      return `The date must be between ${thirtyDaysInPast} and today.`
+    },
+  })
   @Validator(date => date <= startOfToday(), { message: 'The request date cannot be in the future' })
   @IsValidDate({ message: 'Enter a valid request date' })
-  requestDate: Date
+  requestDate?: Date
 }
 
 export default class RequestDateRoutes {

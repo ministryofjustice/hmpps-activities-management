@@ -4,8 +4,10 @@ import { validate } from 'class-validator'
 import { associateErrorsWithProperty } from '../../../../../utils/utils'
 import ActivitiesService from '../../../../../services/activitiesService'
 import EditStatusRoutes, { EditStatus } from './editStatus'
+import { WaitingListStatus, WaitingListStatusDescriptions } from '../../../../../enum/waitingListStatus'
 
 jest.mock('../../../../../services/activitiesService')
+jest.mock('../../../../../config')
 
 const activitiesService = new ActivitiesService(null)
 const fakeWaitlistApplicationJourneyData = { prisoner: { name: 'Alan Key' } }
@@ -33,14 +35,14 @@ describe('Route Handlers - Waitlist application - Edit Status', () => {
   })
 
   describe('GET', () => {
-    it('should render the edit status template', async () => {
+    beforeEach(() => {})
+
+    it('should render the edit status page', async () => {
       await handler.GET(req, res)
       expect(res.render).toHaveBeenCalledWith(`pages/activities/waitlist-application/edit-status`, {
-        WaitingListStatusOptions: {
-          APPROVED: 'APPROVED',
-          DECLINED: 'DECLINED',
-          PENDING: 'PENDING',
-        },
+        WaitingListStatus,
+        WaitingListStatusDescriptions,
+        prisonerName: 'Alan Key',
       })
     })
   })

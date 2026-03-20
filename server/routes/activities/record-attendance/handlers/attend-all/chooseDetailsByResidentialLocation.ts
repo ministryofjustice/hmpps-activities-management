@@ -40,6 +40,11 @@ export default class ChooseDetailsByResidentialLocationRoutes {
     const { user } = res.locals
     const locationGroups = await this.activitiesService.getLocationGroups(user)
 
+    if (req.journeyData.recordAttendanceJourney) {
+      req.journeyData.recordAttendanceJourney.searchTerm = undefined
+      req.journeyData.recordAttendanceJourney.subLocationFilters = undefined
+    }
+
     res.render('pages/activities/record-attendance/attend-all/choose-details-by-residential-location', {
       locationGroups,
     })

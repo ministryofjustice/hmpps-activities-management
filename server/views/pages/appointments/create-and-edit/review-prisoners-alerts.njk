@@ -7,7 +7,7 @@
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
-{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "components/alertsList.njk" import alertsList %}
 {% from "moj/components/badge/macro.njk" import mojBadge -%}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
@@ -56,9 +56,8 @@
                 {% if (session.appointmentJourney.mode == AppointmentJourneyMode.EDIT) %}
                     {% if numPrisonersWithAlerts > 0 %}
                         <h1 class="govuk-heading-l">Review attendee alerts</h1>
-                        {{ govukWarningText({
-                            text: "Check an attendee's prisoner profile for full details on alerts",
-                            iconFallbackText: "Warning"
+                        {{ govukInsetText({
+                            text: "Check an attendee's prisoner profile for full details on alerts."
                         }) }}
                         <p class="govuk-body"> You're reviewing {{ numPrisonersWithAlerts }} {% if prisoners.length == 1 %} person {% else %} people {% endif %}with alerts out of a total
                             of {{ prisoners.length }} attendees you're adding.</p>
@@ -69,9 +68,8 @@
                 {% else %}
                     {% if numPrisonersWithAlerts > 0 %}
                         <h1 class="govuk-heading-l">Review attendee alerts</h1>
-                        {{ govukWarningText({
-                            text: "Check an attendee's prisoner profile for full details on alerts",
-                            iconFallbackText: "Warning"
+                        {{ govukInsetText({
+                            text: "Check an attendee's prisoner profile for full details on alerts."
                         }) }}
                         <p class="govuk-body"> You're reviewing {{ numPrisonersWithAlerts }} people with alerts out of a total
                             of {{ prisoners.length }} attendees.</p>

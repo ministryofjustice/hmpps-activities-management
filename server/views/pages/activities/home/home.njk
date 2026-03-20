@@ -53,17 +53,6 @@
                 "data-qa": "view-waitlists"
             }) }}
         </div>
-        {% if inServiceReportingEnabled %}
-            <div class="govuk-grid-column-one-third card-group__item">
-                {{ card({
-                    "href": "/dpr-reporting/activities-list",
-                    "clickable": "true",
-                    "heading": "Reports",
-                    "description": "Get information on activity attendance, management of waitlists, purposeful activity, and people not in work or unemployed.",
-                    "data-qa": "view-reports"
-                }) }}
-            </div>
-        {% endif %}
         {% if 'ROLE_MIGRATE_ACTIVITIES' in user.roles %}
         <div class="govuk-grid-column-one-third card-group__item">
             {{ card({

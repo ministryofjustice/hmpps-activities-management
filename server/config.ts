@@ -255,7 +255,6 @@ export default {
   appointmentMultipleAttendanceToggleEnabled: toBoolean(
     get('APPOINTMENT_MULTIPLE_ATTENDANCE_FEATURE_TOGGLE_ENABLED', 'false'),
   ),
-  inServiceReportingEnabled: toBoolean(get('IN_SERVICE_REPORTING_ENABLED', 'false')),
   attendAllEnabled: toBoolean(get('ATTEND_ALL_ENABLED', 'false')),
   appointmentsConfig: {
     maxAppointmentInstances: Number(get('MAX_APPOINTMENT_INSTANCES', 20000)),
@@ -267,4 +266,5 @@ export default {
   plannedDowntimeEndTime: get('PLANNED_DOWNTIME_END_TIME', '5pm'),
   defaultCourtVideoUrl: get('DEFAULT_COURT_VIDEO_URL', 'meet.video.justice.gov.uk'),
   prisonerExtraInformationEnabled: toBoolean(get('PRISONER_EXTRA_INFORMATION_ENABLED', 'false')),
+  probationTeamRadioEnabled: toBoolean(get('PROBATION_TEAM_RADIO_ENABLED', 'false')),
 }

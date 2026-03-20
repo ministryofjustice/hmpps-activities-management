@@ -40,6 +40,11 @@
                             text: WaitlistRequester.GUIDANCE_STAFF.description,
                             checked: waitListApplicationJourney.requester == WaitlistRequester.GUIDANCE_STAFF.code
                         },
+                         {
+                            value: WaitlistRequester.MULTI_DISCIPLINARY_BOARD.code,
+                            text: WaitlistRequester.MULTI_DISCIPLINARY_BOARD.description,
+                            checked: waitListApplicationJourney.requester == WaitlistRequester.MULTI_DISCIPLINARY_BOARD.code
+                        },
                         {
                             value: WaitlistRequester.SOMEONE_ELSE.code,
                             text:  WaitlistRequester.SOMEONE_ELSE.description,
@@ -47,7 +52,8 @@
                                      (
                                          waitListApplicationJourney.requester and
                                          waitListApplicationJourney.requester != WaitlistRequester.PRISONER.code and
-                                         waitListApplicationJourney.requester != WaitlistRequester.GUIDANCE_STAFF.code
+                                         waitListApplicationJourney.requester != WaitlistRequester.GUIDANCE_STAFF.code and
+                                         waitListApplicationJourney.requester != WaitlistRequester.MULTI_DISCIPLINARY_BOARD.code
                                      ),
                             conditional: {
                                 html: govukSelect({

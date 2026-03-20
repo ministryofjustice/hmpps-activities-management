@@ -1,3 +1,5 @@
+{% from "partials/activities/waitingListStatusDescription.njk" import waitingListStatusDescription %}
+
 <div class='filter'>
     <form method='GET'>
         <div class="filter__items filter__items--quarters" id='waitlist-filter'>
@@ -108,23 +110,18 @@
                 value: 'Any',
                 text: 'Any',
                 selected: filters.waitlistStatusFilter == 'Any'
-              },
-              {
-                value: WaitingListStatus.APPROVED,
-                text: 'Approved',
-                selected: filters.waitlistStatusFilter == WaitingListStatus.APPROVED
-              },
-              {
-                value: WaitingListStatus.DECLINED,
-                text: 'Rejected',
-                selected: filters.waitlistStatusFilter == WaitingListStatus.DECLINED
-              },
-              {
-                value: WaitingListStatus.PENDING,
-                text: 'Pending',
-                selected: filters.waitlistStatusFilter == WaitingListStatus.PENDING
               }
             ] %}
+            {% for statusKey, statusValue in WaitingListAllocationStatusOptions %}
+
+              {% set displayText = waitingListStatusDescription(statusValue) %}
+              {% set waitlistStatusOptions = (waitlistStatusOptions.push({
+                value: statusValue,
+                text: displayText,
+                selected: filters.waitlistStatusFilter == statusValue
+              }), waitlistStatusOptions) %}
+            {% endfor %}
+
             {{ govukSelect({
                 id: "waitlistStatusFilter",
                 name: "waitlistStatusFilter",
@@ -138,6 +135,7 @@
 
         {{ govukButton({
             text: "Apply filters",
+            id: "waitlist-apply-filters",
             name: 'filtersApplied',
             value: 'true'
         }) }}

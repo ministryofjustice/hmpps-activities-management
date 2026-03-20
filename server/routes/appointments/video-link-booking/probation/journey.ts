@@ -7,6 +7,7 @@ export type BookAProbationMeetingJourney = {
   prisoners?: AppointmentPrisonerDetails[]
   prisoner?: AppointmentPrisonerDetails
   prisonCode?: string
+  probationTeamRequired?: boolean
   probationTeamCode?: string
   meetingTypeCode?: string
   officerDetailsNotKnown?: boolean
