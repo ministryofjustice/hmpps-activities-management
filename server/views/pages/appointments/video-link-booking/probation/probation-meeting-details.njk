@@ -59,14 +59,14 @@
                     errorMessage: validationErrors | findError('probationTeamRequired'),
                     fieldset: {
                       legend: {
-                        text: "Do you know the team this meeting is for?",
+                        text: "Which probation team is this booking for?",
                         classes: "govuk-fieldset__legend--s"
                       }
                     },
                     items: [
                       {
                         value: 'YES',
-                        text: "Yes",
+                        text: "Select from the list of probation teams",
                         checked: formResponses.probationTeamRequired == 'YES' or session.bookAProbationMeetingJourney.probationTeamRequired === true,
                         conditional: {
                         html: probationTeamsHtml
@@ -74,7 +74,7 @@
                       },
                       {
                         value: 'NO',
-                        text: "No",
+                        text: "A team that's not in the list",
                         checked: formResponses.probationTeamRequired == 'NO' or (session.bookAProbationMeetingJourney.probationTeamRequired == false and not formResponses)
                       }
                     ]
