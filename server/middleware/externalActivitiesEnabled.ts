@@ -24,6 +24,8 @@ const EXTERNAL_ACTIVITIES_ENABLED_PRISONS = [
   'AGI',
   'WNI',
   'WYI',
+  // TODO: Local dev only
+  'RSI',
 ]
 
 /**
@@ -34,30 +36,19 @@ const EXTERNAL_ACTIVITIES_ENABLED_PRISONS = [
 function externalActivitiesEnabled(): RequestHandler {
   return async (req, res, next) => {
     try {
-      const userCaseLoad = req.session.user?.activeCaseLoadId
+      const userCaseLoad = res.locals.user?.activeCaseLoadId
 
       if (!userCaseLoad) {
-        req.session.user = {
-          ...req.session.user,
-          isExternalActivitiesEnabled: false,
-        }
+        res.locals.isExternalActivitiesEnabled = false
         return next()
       }
 
-      const isEnabled = EXTERNAL_ACTIVITIES_ENABLED_PRISONS.includes(userCaseLoad)
-
-      req.session.user = {
-        ...req.session.user,
-        isExternalActivitiesEnabled: isEnabled,
-      }
+      res.locals.isExternalActivitiesEnabled = EXTERNAL_ACTIVITIES_ENABLED_PRISONS.includes(userCaseLoad)
 
       return next()
     } catch (error) {
       logger.warn('Error determining external activities enabled status, defaulting to false', { error })
-      req.session.user = {
-        ...req.session.user,
-        isExternalActivitiesEnabled: false,
-      }
+      res.locals.isExternalActivitiesEnabled = false
       return next()
     }
   }

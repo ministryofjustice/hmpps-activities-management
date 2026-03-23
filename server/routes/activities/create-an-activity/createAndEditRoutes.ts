@@ -38,6 +38,7 @@ import CustomTimesChangeDefaultOrCustomRoutes, {
   DefaultOrCustomOption,
 } from './handlers/customTimesChangeDefaultOrCustom'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
+import ActivityTypeRoutes, { ActivityType } from './handlers/activityType'
 
 export default function Index({
   activitiesService,
@@ -85,6 +86,10 @@ export default function Index({
   const locationHandler = new LocationRoutes(activitiesService, locationsService)
   const capacityHandler = new CapacityRoutes(activitiesService)
   const confirmCapacityRouteHandler = new ConfirmCapacityRoutes(activitiesService)
+  const activityTypeHandler = new ActivityTypeRoutes()
+
+  get('/activity-type', activityTypeHandler.GET, true)
+  post('/activity-type', activityTypeHandler.POST, ActivityType)
 
   get('/category', categoryHandler.GET, true)
   post('/category', categoryHandler.POST, Category)
