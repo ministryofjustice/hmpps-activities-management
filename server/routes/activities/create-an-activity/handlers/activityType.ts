@@ -5,7 +5,7 @@ import { Request, Response } from 'express'
 export class ActivityType {
   @Expose()
   @Type(() => String)
-  @IsNotEmpty({ message: 'Select an activity type' })
+  @IsNotEmpty({ message: 'Select the type of activity' })
   type: string
 }
 
@@ -15,6 +15,7 @@ export default class ActivityTypeRoutes {
   }
 
   async POST(req: Request, res: Response): Promise<void> {
+    const choice = req.body.type
     res.redirect('/activities/create/activity-details')
   }
 }
