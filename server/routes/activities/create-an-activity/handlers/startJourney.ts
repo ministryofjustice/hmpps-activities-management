@@ -13,6 +13,7 @@ export default class StartJourneyRoutes {
     this.metricsService.trackEvent(
       MetricsEvent.CREATE_ACTIVITY_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
     )
-    res.redirect(`category${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
+    const url = res.locals.isExternalActivitiesEnabled ? 'activity-type' : 'category'
+    res.redirect(`${url}${req.query.preserveHistory ? '?preserveHistory=true' : ''}`)
   }
 }
