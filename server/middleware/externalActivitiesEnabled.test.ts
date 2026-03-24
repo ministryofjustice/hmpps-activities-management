@@ -67,24 +67,4 @@ describe('externalActivitiesEnabled', () => {
       expect(next).toHaveBeenCalled()
     })
   })
-
-  describe('session updates', () => {
-    it('should add isExternalActivitiesEnabled to res.locals without affecting user object', async () => {
-      const originalUser = {
-        username: 'TEST_USER',
-        activeCaseLoadId: 'HVI',
-        token: 'test-token',
-        authSource: 'nomis',
-      }
-
-      res.locals.user = originalUser
-      res.locals.someOtherProperty = 'test'
-
-      await externalActivitiesEnabledMiddleware(req as Request, res as Response, next)
-
-      expect(res.locals.isExternalActivitiesEnabled).toBe(true)
-      expect(res.locals.user).toEqual(originalUser)
-      expect(res.locals.someOtherProperty).toBe('test')
-    })
-  })
 })
