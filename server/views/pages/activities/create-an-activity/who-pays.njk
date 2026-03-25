@@ -1,0 +1,49 @@
+{% extends "layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
+
+{% set pageTitle = "Who pays - Activities - DPS" %}
+{% set pageId = 'who-pays-page' %}
+{% set jsBackLink = true %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="POST">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{ activityJourneyCaption(createJourney) }}
+                {{ govukRadios({
+                    fieldset: {
+                        legend: {
+                            text: "Who pays prisoners for this activity?",
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+                    name: "whoPays",
+                    hint: {
+                        text: "As this activity takes place outside of the prison, select who prisoners are paid by for attending."
+                    },
+                    errorMessage: validationErrors | findError('whoPays'),
+                    items: [
+                        {
+                            value: "prison",
+                            text: "The prison",
+                            checked: formResponses.whoPays == 'prison' or createJourney.whoPays == 'prison'
+                        },
+                        {
+                            value: "external",
+                            text: "An external employer",
+                            checked: formResponses.whoPays == 'external' or createJourney.whoPays == 'external'
+                        }
+                    ]
+                }) }}
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
