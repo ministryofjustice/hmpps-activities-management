@@ -61,21 +61,21 @@ describe('ActivityType Handler', () => {
   })
 
   describe('POST', () => {
-    it('should set isExternal to true when type is external', async () => {
+    it('should set activityOutside to true when type is external', async () => {
       req.body = { type: 'external' }
 
       await handler.POST(req, res)
 
-      expect(req.journeyData.createJourney.isExternal).toBe(true)
+      expect(req.journeyData.createJourney.activityOutside).toBe(true)
       expect(res.redirect).toHaveBeenCalledWith('category')
     })
 
-    it('should set isExternal to false when type is not external', async () => {
+    it('should set activityOutside to false when type is not external', async () => {
       req.body = { type: 'internal' }
 
       await handler.POST(req, res)
 
-      expect(req.journeyData.createJourney.isExternal).toBe(false)
+      expect(req.journeyData.createJourney.activityOutside).toBe(false)
       expect(res.redirect).toHaveBeenCalledWith('category')
     })
   })

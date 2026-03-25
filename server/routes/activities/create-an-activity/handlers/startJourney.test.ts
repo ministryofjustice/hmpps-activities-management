@@ -35,7 +35,9 @@ describe('Route Handlers - Create an activity - Start', () => {
     it('should populate the session with journey data and redirect to the pay band page', async () => {
       await handler.GET(req, res)
 
-      expect(req.journeyData.createJourney).toEqual({})
+      expect(req.journeyData.createJourney).toEqual({
+        activityOutside: false,
+      })
       expect(metricsService.trackEvent).toHaveBeenCalledWith(
         MetricsEvent.CREATE_ACTIVITY_JOURNEY_STARTED(res.locals.user).addJourneyStartedMetrics(req),
       )
