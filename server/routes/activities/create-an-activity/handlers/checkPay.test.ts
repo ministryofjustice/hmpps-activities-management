@@ -182,5 +182,11 @@ describe('Route Handlers - Create an activity - Check pay', () => {
       await handler.POST(req, res)
       expect(res.redirectOrReturn).toHaveBeenCalledWith('qualification')
     })
+
+    it('should redirect to start-date page if activity is outside', async () => {
+      req.journeyData.createJourney.activityOutside = true
+      await handler.POST(req, res)
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('start-date')
+    })
   })
 })
