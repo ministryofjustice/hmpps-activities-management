@@ -84,6 +84,7 @@ describe('Route Handlers - Create an activity - Name', () => {
           },
         ])
     })
+
     it('should save entered name in session and redirect to tier page', async () => {
       req.body = {
         name: 'Maths Level 1',
@@ -93,6 +94,19 @@ describe('Route Handlers - Create an activity - Name', () => {
 
       expect(req.journeyData.createJourney.name).toEqual('Maths Level 1')
       expect(res.redirectOrReturn).toHaveBeenCalledWith('tier')
+    })
+
+    it('should redirect correctly when activity is outside of prison', async () => {
+      req.journeyData.createJourney.activityOutsidePrison = true
+      req.body = {
+        name: 'Maths Level 1',
+      }
+
+      await handler.POST(req, res)
+
+      expect(req.journeyData.createJourney.tierCode).toEqual('TIER_1')
+      expect(req.journeyData.createJourney.riskLevel).toEqual('low')
+      expect(res.redirectOrReturn).toHaveBeenCalledWith('who-pays')
     })
 
     it('should save entered name in session and redirect to risk level page if category "not in work"', async () => {

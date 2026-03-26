@@ -39,6 +39,7 @@ import CustomTimesChangeDefaultOrCustomRoutes, {
 } from './handlers/customTimesChangeDefaultOrCustom'
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
 import ActivityTypeRoutes, { ActivityType } from './handlers/activityType'
+import WhoPaysRoutes, { WhoPays } from './handlers/whoPays'
 
 export default function Index({
   activitiesService,
@@ -86,10 +87,14 @@ export default function Index({
   const locationHandler = new LocationRoutes(activitiesService, locationsService)
   const capacityHandler = new CapacityRoutes(activitiesService)
   const confirmCapacityRouteHandler = new ConfirmCapacityRoutes(activitiesService)
-  const activityTypeHandler = new ActivityTypeRoutes()
 
+  const activityTypeHandler = new ActivityTypeRoutes()
   get('/activity-type', activityTypeHandler.GET, true)
   post('/activity-type', activityTypeHandler.POST, ActivityType)
+
+  const whoPaysHandler = new WhoPaysRoutes()
+  get('/who-pays', whoPaysHandler.GET, true)
+  post('/who-pays', whoPaysHandler.POST, WhoPays)
 
   get('/category', categoryHandler.GET, true)
   post('/category', categoryHandler.POST, Category)
