@@ -3,6 +3,7 @@ import { Expose } from 'class-transformer'
 import { IsNotEmpty, MaxLength } from 'class-validator'
 import { ActivityUpdateRequest } from '../../../../@types/activitiesAPI/types'
 import ActivitiesService from '../../../../services/activitiesService'
+import EventTier from '../../../../enum/eventTiers'
 
 export class Name {
   @Expose()
@@ -51,6 +52,13 @@ export default class NameRoutes {
     if (duplicateCreateName) {
       return res.validationFailed('name', 'Enter a different name. There is already an activity with this name')
     }
+
+    if (req.journeyData.createJourney.activityOutside) {
+      req.journeyData.createJourney.tierCode = EventTier.TIER_1
+      req.journeyData.createJourney.riskLevel = 'low'
+      return res.redirectOrReturn('who-pays')
+    }
+
     // If not in work no need to ask for activity tier
     const nextRoute = category?.code === 'SAA_NOT_IN_WORK' ? 'risk-level' : 'tier'
     return res.redirectOrReturn(nextRoute)
