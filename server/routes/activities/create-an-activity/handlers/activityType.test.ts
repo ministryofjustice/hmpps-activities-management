@@ -61,21 +61,21 @@ describe('ActivityType Handler', () => {
   })
 
   describe('POST', () => {
-    it('should set activityOutside to true when type is external', async () => {
+    it('should set activityOutsidePrison to true when type is external', async () => {
       req.body = { type: 'external' }
 
       await handler.POST(req, res)
 
-      expect(req.journeyData.createJourney.activityOutside).toBe(true)
+      expect(req.journeyData.createJourney.activityOutsidePrison).toBe(true)
       expect(res.redirect).toHaveBeenCalledWith('category')
     })
 
-    it('should set activityOutside to false when type is not external', async () => {
+    it('should set activityOutsidePrison to false when type is not external', async () => {
       req.body = { type: 'internal' }
 
       await handler.POST(req, res)
 
-      expect(req.journeyData.createJourney.activityOutside).toBe(false)
+      expect(req.journeyData.createJourney.activityOutsidePrison).toBe(false)
       expect(res.redirect).toHaveBeenCalledWith('category')
     })
   })

@@ -25,7 +25,7 @@ const EXTERNAL_ACTIVITIES_ENABLED_PRISONS = [
   'WNI',
   'WYI',
   // TODO: Local dev only
-  // 'RSI',
+  'RSI',
 ]
 
 /**

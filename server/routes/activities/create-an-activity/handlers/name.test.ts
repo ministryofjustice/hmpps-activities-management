@@ -97,7 +97,7 @@ describe('Route Handlers - Create an activity - Name', () => {
     })
 
     it('should redirect correctly when activity is outside of prison', async () => {
-      req.journeyData.createJourney.activityOutside = true
+      req.journeyData.createJourney.activityOutsidePrison = true
       req.body = {
         name: 'Maths Level 1',
       }

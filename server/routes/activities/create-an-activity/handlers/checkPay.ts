@@ -55,7 +55,7 @@ export default class CheckPayRoutes {
       return res.validationFailed('', `Add at least one pay rate`)
     }
 
-    if (req.journeyData.createJourney.activityOutside) {
+    if (req.journeyData.createJourney.activityOutsidePrison) {
       return res.redirectOrReturn(`start-date`)
     }
 
