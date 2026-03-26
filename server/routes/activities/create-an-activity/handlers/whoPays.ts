@@ -6,7 +6,7 @@ export class WhoPays {
   @Expose()
   @Type(() => String)
   @IsNotEmpty({ message: 'Select who pays prisoners for this activity' })
-  type: string
+  whoPays: string
 }
 
 export default class WhoPaysRoutes {
