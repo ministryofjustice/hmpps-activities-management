@@ -59,6 +59,23 @@ describe('Route Handlers - Create an activity - Category', () => {
         ],
       })
     })
+
+    it('should remove "Not in work" category when activity is outside prison', async () => {
+      req.journeyData.createJourney.activityOutsidePrison = true
+      when(activitiesService.getActivityCategories).mockResolvedValue([
+        { id: 1, code: 'SAA_SERVICES', name: 'Services' },
+        { id: 2, code: 'SAA_EDUCATION', name: 'Education' },
+        { id: 3, code: 'SAA_NOT_IN_WORK', name: 'Not in work' },
+      ] as ActivityCategory[])
+
+      await handler.GET(req, res)
+      expect(res.render).toHaveBeenCalledWith('pages/activities/create-an-activity/category', {
+        categories: [
+          { id: 1, code: 'SAA_SERVICES', name: 'Services' },
+          { id: 2, code: 'SAA_EDUCATION', name: 'Education' },
+        ],
+      })
+    })
   })
 
   describe('POST', () => {

@@ -19,7 +19,11 @@ export default class CategoryRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
 
-    const categories = await this.activitiesService.getActivityCategories(user)
+    let categories = await this.activitiesService.getActivityCategories(user)
+
+    if (req.journeyData.createJourney.activityOutsidePrison) {
+      categories = categories.filter(category => category.code !== 'SAA_NOT_IN_WORK')
+    }
 
     res.render(`pages/activities/create-an-activity/category`, { categories })
   }
