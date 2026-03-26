@@ -70,7 +70,7 @@ describe('Route Handlers - Create an activity - Who Pays', () => {
       expect(errors).toEqual(
         expect.arrayContaining([
           {
-            property: 'type',
+            property: 'whoPays',
             error: 'Select who pays prisoners for this activity',
           },
         ]),
@@ -79,7 +79,7 @@ describe('Route Handlers - Create an activity - Who Pays', () => {
 
     it('passes validation when type is provided', async () => {
       const body = {
-        type: 'prison',
+        whoPays: 'prison',
       }
 
       const requestObject = plainToInstance(WhoPays, body)

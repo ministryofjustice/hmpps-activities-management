@@ -40,6 +40,7 @@ import CustomTimesChangeDefaultOrCustomRoutes, {
 import setUpJourneyData from '../../../middleware/setUpJourneyData'
 import ActivityTypeRoutes, { ActivityType } from './handlers/activityType'
 import WhoPaysRoutes, { WhoPays } from './handlers/whoPays'
+import externalActivitiesEnabled from '../../../middleware/externalActivitiesEnabled'
 
 export default function Index({
   activitiesService,
@@ -50,7 +51,13 @@ export default function Index({
 }: Services): Router {
   const router = Router({ mergeParams: true })
   const get = (path: string, handler: RequestHandler, stepRequiresSession = false) =>
-    router.get(path, setUpJourneyData(tokenStore), emptyJourneyHandler('createJourney', stepRequiresSession), handler)
+    router.get(
+      path,
+      externalActivitiesEnabled(),
+      setUpJourneyData(tokenStore),
+      emptyJourneyHandler('createJourney', stepRequiresSession),
+      handler,
+    )
   const post = (path: string, handler: RequestHandler, type?: new () => object) =>
     router.post(path, setUpJourneyData(tokenStore), validationMiddleware(type), handler)
 
