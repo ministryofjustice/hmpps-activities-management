@@ -94,7 +94,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: showLocation(createJourney)
+                            text: "Outside" if createJourney.activityOutsidePrison else showLocation(createJourney)
                         },
                         actions: {
                             items: [
@@ -116,7 +116,7 @@
                                 visuallyHiddenText: "Change record attendance option"
                             }] if not (createJourney.paid or (createJourney.attendanceRequired and createJourney.tierCode != 'FOUNDATION'))
                         }
-                    }
+                    } if not createJourney.activityOutsidePrison
                 ]
             }) }}
 
@@ -271,19 +271,21 @@
                     }
                 ), scheduleRows) %}
             {% endfor %}
-            {% set scheduleRows = (scheduleRows.push(
-                {
-                    key: { text: "Runs on bank holidays" },
-                    value: { html: runsOnBankHolidays(createJourney.runsOnBankHoliday, createJourney.hasAtLeastOneValidDay) },
-                    actions: {
-                        items: [{
-                            href: "bank-holiday-option?preserveHistory=true",
-                            text: "Change",
-                            visuallyHiddenText: "Change bank holiday option"
-                        }] if createJourney.hasAtLeastOneValidDay
+            {% if not createJourney.activityOutsidePrison %}
+                {% set scheduleRows = (scheduleRows.push(
+                    {
+                        key: { text: "Runs on bank holidays" },
+                        value: { html: runsOnBankHolidays(createJourney.runsOnBankHoliday, createJourney.hasAtLeastOneValidDay) },
+                        actions: {
+                            items: [{
+                                href: "bank-holiday-option?preserveHistory=true",
+                                text: "Change",
+                                visuallyHiddenText: "Change bank holiday option"
+                            }] if createJourney.hasAtLeastOneValidDay
+                        }
                     }
-                }
-            ), scheduleRows) %}
+                ), scheduleRows) %}
+            {% endif %}
 
             {{ govukSummaryList({
                 rows: scheduleRows
