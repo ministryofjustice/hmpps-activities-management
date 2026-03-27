@@ -94,16 +94,7 @@
                             text: "Location"
                         },
                         value: {
-                            text: "Outside" if createJourney.activityOutsidePrison else showLocation(createJourney)
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "location?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change location"
-                                }
-                            ]
+                            text: "Outside"
                         }
                     } if createJourney.activityOutsidePrison,
                     {
