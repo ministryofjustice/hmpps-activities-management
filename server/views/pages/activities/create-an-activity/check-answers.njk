@@ -71,7 +71,7 @@
                                 }
                             ] if createJourney.category.code != 'SAA_NOT_IN_WORK'
                         }
-                    },
+                    } if not createJourney.activityOutsidePrison,
                     {
                         key: {
                             text: "Organiser"
@@ -90,6 +90,23 @@
                         }
                     } if createJourney.organiserCode,
                     {
+                        key: {
+                            text: "Location"
+                        },
+                        value: {
+                            text: showLocation(createJourney)
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "location?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "change location"
+                                }
+                            ]
+                        }
+                    } if createJourney.activityOutsidePrison,
+                    {
                         key: { text: "Record attendance" },
                         value: { text: "Yes" if createJourney.attendanceRequired else "No"},
                         actions: {
@@ -103,7 +120,11 @@
                 ]
             }) }}
 
-            <h2 class="govuk-heading-m">Requirements and pay</h2>
+            {% if createJourney.activityOutsidePrison %}
+                <h2 class="govuk-heading-m">Pay</h2>
+            {% else %}
+                <h2 class="govuk-heading-m">Requirements and pay</h2>
+            {% endif %}
             {{ govukSummaryList({
                 rows: [
                     {
@@ -124,7 +145,7 @@
                                 }
                             ]
                         }
-                    },
+                    } if not createJourney.activityOutsidePrison,
                     {
                         key: {
                             text: "Education levels"
@@ -141,7 +162,24 @@
                                 }
                             ]
                         }
-                    },
+                    } if not createJourney.activityOutsidePrison,
+                    {
+                        key: {
+                            text: "Paid by"
+                        },
+                        value: {
+                            text: "The prison" if createJourney.whoPays == 'prison' else "An external employer"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "who-pays?preserveHistory=true",
+                                    text: "Change",
+                                    visuallyHiddenText: "who pays for this activity"
+                                }
+                            ]
+                        }
+                    } if createJourney.activityOutsidePrison,
                     {
                         key: {
                             text: "Pay rates"
@@ -158,7 +196,7 @@
                                 }
                             ]
                         }
-                    }
+                    } if not createJourney.activityOutsidePrison or (createJourney.activityOutsidePrison and createJourney.whoPays == 'prison')
                 ]
             }) }}
 
@@ -251,45 +289,71 @@
                 rows: scheduleRows
             }) }}
 
-            <h2 class="govuk-heading-m">Location and capacity</h2>
-            {{ govukSummaryList({
-                rows: [
-                    {
-                        key: {
-                            text: "Location"
-                        },
-                        value: {
-                            text: showLocation(createJourney)
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "location?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change location"
-                                }
-                            ]
+            {% if createJourney.activityOutsidePrison %}
+                <h2 class="govuk-heading-m">Capacity</h2>
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                                text: "Capacity"
+                            },
+                            value: {
+                                text: createJourney.capacity
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "capacity?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change capacity"
+                                    }
+                                ]
+                            }
                         }
-                    },
-                    {
-                        key: {
-                            text: "Capacity"
+                    ]
+                }) }}
+            {% else %}
+                <h2 class="govuk-heading-m">Location and capacity</h2>
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                                text: "Location"
+                            },
+                            value: {
+                                text: showLocation(createJourney)
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "location?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change location"
+                                    }
+                                ]
+                            }
                         },
-                        value: {
-                            text: createJourney.capacity
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "capacity?preserveHistory=true",
-                                    text: "Change",
-                                    visuallyHiddenText: "change capacity"
-                                }
-                            ]
+                        {
+                            key: {
+                                text: "Capacity"
+                            },
+                            value: {
+                                text: createJourney.capacity
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "capacity?preserveHistory=true",
+                                        text: "Change",
+                                        visuallyHiddenText: "change capacity"
+                                    }
+                                ]
+                            }
                         }
-                    }
-                ]
-            }) }}
+                    ]
+                }) }}
+            {% endif %}
+
 
             <form method="POST" data-module="form-spinner" data-loading-text="Creating activity">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
