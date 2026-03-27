@@ -322,6 +322,7 @@ export default class ActivitiesApiClient extends RestClient {
     return this.get(
       {
         path: `/rollout`,
+        query: { prisonsLive: true },
       },
       asSystem(),
     )
