@@ -36,6 +36,7 @@ import ActivityOrganiserPage from '../../pages/createActivity/organiser'
 import PayOptionPage from '../../pages/createActivity/pay-option'
 import SessionTimesOptionPage from '../../pages/createSchedule/sessionTimesOption'
 import ActivityTypePage from '../../pages/createActivity/activityType'
+import WhoPaysPage from '../../pages/createActivity/whoPays'
 
 context('Create externalactivity', () => {
   beforeEach(() => {
@@ -190,6 +191,7 @@ context('Create externalactivity', () => {
   })
 
   xit('should allow external activity journey', () => {
+    // TODO: Set EA flag to true
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -201,17 +203,52 @@ context('Create externalactivity', () => {
     manageActivitiesPage.cardActivityCard().click()
 
     const activityTypePage = Page.verifyOnPage(ActivityTypePage)
-    activityTypePage.selectExternalType()
+    activityTypePage.selectOutsideType()
     activityTypePage.continue()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
-    categoryPage.selectCategory('Gym, sport and fitness')
+    categoryPage.selectCategory('Industies')
     categoryPage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)
-    activityNamePage.enterName('5-a-side Football')
+    activityNamePage.enterName('Workshop')
     activityNamePage.continue()
 
+    const whoPaysPage = Page.verifyOnPage(WhoPaysPage)
+    whoPaysPage.selectExternalPayer()
+    whoPaysPage.continue()
+
+    const startDatePage = Page.verifyOnPage(StartDatePage)
+    const startDate = addMonths(new Date(), 1)
+    startDatePage.selectDatePickerDate(startDate)
+    startDatePage.continue()
+
+    const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)
+    endDateOptionPage.addEndDate('Yes')
+    endDateOptionPage.continue()
+
+    const endDatePage = Page.verifyOnPage(EndDatePage)
+    const endDate = addMonths(new Date(), 8)
+    endDatePage.selectDatePickerDate(endDate)
+    endDatePage.continue()
+
+    const scheduleFrequencyPage = Page.verifyOnPage(ScheduleFrequencyPage)
+    scheduleFrequencyPage.selectScheduleFrequency('Weekly')
+    scheduleFrequencyPage.continue()
+
+    const daysAndSessionsPage = Page.verifyOnPage(DaysAndSessionsPage)
+    daysAndSessionsPage.selectDayTimeCheckboxes([
+      ['Monday', ['AM session']],
+      ['Wednesday', ['AM session', 'PM session']],
+      ['Thursday', ['AM session', 'PM session', 'ED session']],
+    ])
+    daysAndSessionsPage.continue()
+
+    const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
+    sessionTimesOptionPage.useSessionOption("Use the prison's regime times")
+    sessionTimesOptionPage.continue()
+
+    // TODO: Skip bank holiday page for external activities
     // TODO: Journey updates
   })
 })
