@@ -1,0 +1,17 @@
+name: 'Create timings.json'
+description: 'Creates a timings.json file for the current container'
+inputs:
+  timings:
+    description: Contents of timings.json
+    required: true
+  path:
+    description: Directory to create the file in
+    required: false
+    default: .
+runs:
+  using: 'composite'
+  steps:
+    - name: Create timings.json
+      if: ${{ inputs.timings != '' }}
+      shell: bash
+      run: echo '${{ inputs.timings }}' > ${{ inputs.path }}/timings.json
