@@ -24,11 +24,10 @@ export default class CheckAnswersRoutes {
   GET = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
     const { createJourney } = req.journeyData
-    const incentiveLevelPays = await this.helper.getPayGroupedByIncentiveLevel(
-      createJourney.pay,
-      createJourney.allocations,
-      user,
-    )
+    const incentiveLevelPays =
+      req.journeyData.createJourney.activityOutsidePrison && req.journeyData.createJourney.whoPays === 'external'
+        ? undefined
+        : await this.helper.getPayGroupedByIncentiveLevel(createJourney.pay, createJourney.allocations, user)
 
     const getSlots = async () => {
       if (createJourney.customSlots === undefined) {
