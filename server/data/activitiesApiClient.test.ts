@@ -332,7 +332,11 @@ describe('activitiesApiClient', () => {
   describe('getRolloutPrisons', () => {
     it('should return list of all rolled out prisons from api', async () => {
       const response = { data: 'data' }
-      fakeActivitiesApi.get('/rollout').matchHeader('authorization', `Bearer test-system-token`).reply(200, response)
+      fakeActivitiesApi
+        .get('/rollout')
+        .query({ prisonsLive: true })
+        .matchHeader('authorization', `Bearer test-system-token`)
+        .reply(200, response)
       const output = await activitiesApiClient.getRolledOutPrisons()
       expect(output).toEqual(response)
       expect(nock.isDone()).toBe(true)

@@ -5,7 +5,7 @@ export default class ActivityTypePage extends Page {
     super('activity-type-page')
   }
 
-  selectInternalType = () => this.getInputByLabel('In-prison activity').click()
+  selectInsideType = () => this.getInputById('type').click()
 
-  selectExternalType = () => this.getInputByLabel('Outside activity').click()
+  selectOutsideType = () => this.getInputById('type-2').click()
 }

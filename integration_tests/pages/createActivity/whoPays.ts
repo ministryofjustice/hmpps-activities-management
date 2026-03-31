@@ -5,7 +5,7 @@ export default class WhoPaysPage extends Page {
     super('who-pays-page')
   }
 
-  selectInternalType = () => this.getInputByLabel('The prison').click()
+  selectPrison = () => this.getInputById('whoPays').click()
 
-  selectExternalType = () => this.getInputByLabel('An external employer').click()
+  selectExternalPayer = () => this.getInputById('whoPays-2').click()
 }
