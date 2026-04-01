@@ -25,7 +25,11 @@ describe('Route Handlers - Create an activity - Start', () => {
 
     req = {
       params: {},
-      session: {},
+      session: {
+        user: {
+          externalActivitiesRolledOut: false,
+        },
+      },
       journeyData: {},
       query: { preserveHistory: 'true' },
     } as unknown as Request

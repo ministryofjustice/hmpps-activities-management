@@ -44,6 +44,9 @@ export default function setUpCurrentUser(activitiesService: ActivitiesService) {
         const rolloutPlan = await activitiesService.getPrisonRolloutPlan(res.locals.user.activeCaseLoad.caseLoadId)
         res.locals.user.isActivitiesRolledOut = rolloutPlan.activitiesRolledOut
         res.locals.user.isAppointmentsRolledOut = rolloutPlan.appointmentsRolledOut
+        res.locals.user.externalActivitiesRolledOut = rolloutPlan.externalActivitiesRolledOut
+        // Use for local dev
+        // res.locals.user.externalActivitiesRolledOut = true
       }
 
       if (res.locals.user.authSource === 'nomis') {

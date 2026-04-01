@@ -99,5 +99,5 @@ export type ServiceUser = Express.User &
     activeCaseLoadDescription: string
     isActivitiesRolledOut: boolean
     isAppointmentsRolledOut: boolean
-    isExternalActivitiesEnabled: boolean
+    externalActivitiesRolledOut: boolean
   }

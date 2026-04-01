@@ -38,6 +38,7 @@ describe('setUpCurrentUser', () => {
       .mockResolvedValue({
         activitiesRolledOut: true,
         appointmentsRolledOut: false,
+        externalActivitiesRolledOut: false,
       } as RolloutPrisonPlan)
 
     app = express()
@@ -93,6 +94,7 @@ describe('setUpCurrentUser', () => {
       },
       isActivitiesRolledOut: true,
       isAppointmentsRolledOut: false,
+      externalActivitiesRolledOut: false,
     }
 
     expect(testReq.session.user).toEqual(expectedUserDetails)
@@ -112,6 +114,7 @@ describe('setUpCurrentUser', () => {
           activeCaseLoadId: 'RSI',
           isActivitiesRolledOut: false,
           isAppointmentsRolledOut: true,
+          externalActivitiesRolledOut: false,
         },
       } as Session & Partial<SessionData>
       res.locals = {
