@@ -42,7 +42,7 @@ context('Create externalactivity', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.signIn()
+    cy.signInEAEnabled()
     cy.stubEndpoint('GET', '/activity-categories', getCategories)
     cy.stubEndpoint('GET', '/prison/prison-regime/MDI', getPrisonRegime)
     cy.stubEndpoint('GET', '/prison/MDI/prison-pay-bands', moorlandPayBands)
@@ -61,7 +61,7 @@ context('Create externalactivity', () => {
 
   // TODO: Unblock this test when EA data comes from an API that we can mock to match MDI case load
 
-  xit('should remain the same journey for internal activity journey', () => {
+  it('should remain the same journey for internal activity journey', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -73,7 +73,7 @@ context('Create externalactivity', () => {
     manageActivitiesPage.cardActivityCard().click()
 
     const activityTypePage = Page.verifyOnPage(ActivityTypePage)
-    activityTypePage.selectInternalType()
+    activityTypePage.selectInsideType()
     activityTypePage.continue()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
@@ -190,7 +190,7 @@ context('Create externalactivity', () => {
     confirmationPage.payReviewLink().should('exist')
   })
 
-  xit('should allow external activity journey', () => {
+  it('should allow external activity journey', () => {
     // TODO: Set EA flag to true
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
@@ -207,7 +207,7 @@ context('Create externalactivity', () => {
     activityTypePage.continue()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
-    categoryPage.selectCategory('Industies')
+    categoryPage.selectCategory('Industries')
     categoryPage.continue()
 
     const activityNamePage = Page.verifyOnPage(ActivityNamePage)

@@ -7,6 +7,12 @@ declare namespace Cypress {
     signIn(options?: { failOnStatusCode: boolean }): Chainable<AUTWindow>
 
     /**
+     * Custom command to signIn with External Activities enabled. Set failOnStatusCode to false if you expect a non 200 return code
+     * @example cy.signInEAEnabled({ failOnStatusCode: boolean })
+     */
+    signInEAEnabled(options?: { failOnStatusCode: boolean }): Chainable<AUTWindow>
+
+    /**
      * Custom command to stub an endpoint with wiremock.
      * @example cy.stubEndpoint('GET', '/', { "response": "Hello, World!" }, 200)
      */

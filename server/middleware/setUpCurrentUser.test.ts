@@ -155,6 +155,7 @@ describe('setUpCurrentUser', () => {
       },
       isActivitiesRolledOut: false,
       isAppointmentsRolledOut: true,
+      externalActivitiesRolledOut: false,
     }
 
     expect(testReq.session.user).toEqual(expectedUserDetails)

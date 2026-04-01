@@ -35,6 +35,7 @@ export default function setUpCurrentUser(activitiesService: ActivitiesService) {
         roles,
         isActivitiesRolledOut: req.session.user?.isActivitiesRolledOut,
         isAppointmentsRolledOut: req.session.user?.isAppointmentsRolledOut,
+        externalActivitiesRolledOut: req.session.user?.externalActivitiesRolledOut,
       }
 
       if (res.locals.user.activeCaseLoad.caseLoadId !== req.session.user?.activeCaseLoadId) {
