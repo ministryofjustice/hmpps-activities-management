@@ -51,6 +51,11 @@ export default class SessionTimesOptionRoutes {
       }
 
       if (createJourney.hasAtLeastOneValidDay) {
+        if (createJourney.activityOutsidePrison) {
+          createJourney.runsOnBankHoliday = false
+          createJourney.location = null
+          return res.redirectOrReturn('../capacity')
+        }
         return res.redirectOrReturn('../bank-holiday-option')
       }
       createJourney.runsOnBankHoliday = true
