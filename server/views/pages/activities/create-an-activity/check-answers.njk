@@ -105,7 +105,8 @@
                                 href: "attendance-required?preserveHistory=true",
                                 text: "Change",
                                 visuallyHiddenText: "Change record attendance option"
-                            }] if not (createJourney.paid or (createJourney.attendanceRequired and createJourney.tierCode != 'FOUNDATION'))
+                            }] if (not createJourney.paid and (not createJourney.attendanceRequired or createJourney.tierCode == 'FOUNDATION'))
+
                         }
                     } if not createJourney.activityOutsidePrison
                 ]
