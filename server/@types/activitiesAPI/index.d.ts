@@ -3709,9 +3709,9 @@ export interface components {
       content?: components['schemas']['WaitingListApplication'][]
       /** Format: int32 */
       number?: number
-      sort?: components['schemas']['SortObject']
       first?: boolean
       last?: boolean
+      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
@@ -8310,9 +8310,9 @@ export interface components {
       content?: components['schemas']['ActivityCandidate'][]
       /** Format: int32 */
       number?: number
-      sort?: components['schemas']['SortObject']
       first?: boolean
       last?: boolean
+      sort?: components['schemas']['SortObject']
       /** Format: int32 */
       numberOfElements?: number
       pageable?: components['schemas']['PageableObject']
@@ -8461,6 +8461,11 @@ export interface components {
        * @example true
        */
       appointmentsRolledOut: boolean
+      /**
+       * @description Flag to indicate if external activities are enabled
+       * @example true
+       */
+      externalActivitiesRolledOut: boolean
       /**
        * Format: int32
        * @description max days to expire events based on prisoner movement, default is 21
