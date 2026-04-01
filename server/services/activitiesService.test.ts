@@ -273,6 +273,7 @@ describe('Activities Service', () => {
           appointmentsRolledOut: true,
           maxDaysToExpiry: 21,
           prisonLive: true,
+          externalActivitiesRolledOut: false,
         },
         {
           prisonCode: 'LEI',
@@ -280,6 +281,7 @@ describe('Activities Service', () => {
           appointmentsRolledOut: false,
           maxDaysToExpiry: 21,
           prisonLive: true,
+          externalActivitiesRolledOut: false,
         },
       ]
       activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
@@ -308,6 +310,7 @@ describe('Activities Service', () => {
         appointmentsRolledOut: true,
         maxDaysToExpiry: 21,
         prisonLive: true,
+        externalActivitiesRolledOut: false,
       }
       when(activitiesApiClient.getPrisonRolloutPlan).calledWith('MDI').mockResolvedValueOnce(expectedRolloutPlan)
       const result = await activitiesService.getPrisonRolloutPlan('MDI')
@@ -1021,6 +1024,7 @@ describe('Activities Service', () => {
           appointmentsRolledOut: true,
           maxDaysToExpiry: 21,
           prisonLive: true,
+          externalActivitiesRolledOut: false,
         },
         {
           prisonCode: 'LEI',
@@ -1028,6 +1032,7 @@ describe('Activities Service', () => {
           appointmentsRolledOut: false,
           maxDaysToExpiry: 21,
           prisonLive: true,
+          externalActivitiesRolledOut: false,
         },
       ]
       activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
@@ -1045,6 +1050,7 @@ describe('Activities Service', () => {
           appointmentsRolledOut: false,
           maxDaysToExpiry: 21,
           prisonLive: false,
+          externalActivitiesRolledOut: false,
         },
         {
           prisonCode: 'LEI',
@@ -1052,6 +1058,7 @@ describe('Activities Service', () => {
           appointmentsRolledOut: false,
           maxDaysToExpiry: 21,
           prisonLive: false,
+          externalActivitiesRolledOut: false,
         },
       ]
       activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
@@ -1069,6 +1076,7 @@ describe('Activities Service', () => {
           appointmentsRolledOut: true,
           maxDaysToExpiry: 21,
           prisonLive: true,
+          externalActivitiesRolledOut: false,
         },
         {
           prisonCode: 'LPI',
@@ -1076,6 +1084,7 @@ describe('Activities Service', () => {
           appointmentsRolledOut: true,
           maxDaysToExpiry: 21,
           prisonLive: false,
+          externalActivitiesRolledOut: false,
         },
       ]
       activitiesApiClient.getRolledOutPrisons.mockResolvedValue(mockResponse)
