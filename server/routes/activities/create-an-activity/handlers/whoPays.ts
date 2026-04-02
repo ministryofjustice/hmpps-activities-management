@@ -17,11 +17,16 @@ export default class WhoPaysRoutes {
   async POST(req: Request, res: Response): Promise<void> {
     const { whoPays } = req.body
     req.journeyData.createJourney.whoPays = whoPays
+    req.journeyData.createJourney.paid = whoPays === 'prison'
     req.journeyData.createJourney.qualificationOption = 'no'
 
     if (whoPays === 'prison') {
       return res.redirect(`pay-rate-type`)
     }
+
+    req.journeyData.createJourney.pay = []
+    req.journeyData.createJourney.payChange = []
+    req.journeyData.createJourney.flat = []
     return res.redirectOrReturn(`start-date`)
   }
 }
