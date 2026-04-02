@@ -37,6 +37,7 @@ import PayOptionPage from '../../pages/createActivity/pay-option'
 import SessionTimesOptionPage from '../../pages/createSchedule/sessionTimesOption'
 import ActivityTypePage from '../../pages/createActivity/activityType'
 import WhoPaysPage from '../../pages/createActivity/whoPays'
+import SessionTimesPage from '../../pages/createSchedule/sessionTimes'
 
 context('Create externalactivity', () => {
   beforeEach(() => {
@@ -59,9 +60,7 @@ context('Create externalactivity', () => {
     cy.stubEndpoint('POST', '/activities', JSON.parse('{"schedules": [{"id": 1}]}'))
   })
 
-  // TODO: Unblock this test when EA data comes from an API that we can mock to match MDI case load
-
-  it('should remain the same journey for internal activity journey', () => {
+  it('should remain the same journey for internal activity journey for EA enabled prison', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -190,8 +189,7 @@ context('Create externalactivity', () => {
     confirmationPage.payReviewLink().should('exist')
   })
 
-  it('should allow external activity journey', () => {
-    // TODO: Set EA flag to true
+  it('should allow external activity journey with external payer', () => {
     const indexPage = Page.verifyOnPage(IndexPage)
     indexPage.activitiesCard().click()
 
@@ -248,7 +246,112 @@ context('Create externalactivity', () => {
     sessionTimesOptionPage.useSessionOption("Use the prison's regime times")
     sessionTimesOptionPage.continue()
 
-    // TODO: Skip bank holiday page for external activities
-    // TODO: Journey updates
+    const capacityPage = Page.verifyOnPage(CapacityPage)
+    capacityPage.enterCapacity('6')
+    capacityPage.continue()
+
+    Page.verifyOnPage(CheckAnswersPage)
+    // TODO: For EA submission isn't possible. Location has no viable option.
+    // To be updated once a solution is reached.
+
+    // checkAnswersPage.createActivity()
+
+    // const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    // confirmationPage.payReviewLink().should('exist')
+  })
+
+  it('should allow external activity journey with internal payer and custom times', () => {
+    const indexPage = Page.verifyOnPage(IndexPage)
+    indexPage.activitiesCard().click()
+
+    const activitiesIndexPage = Page.verifyOnPage(ActivitiesIndexPage)
+    activitiesIndexPage.allocateToActivitiesCard().click()
+
+    const manageActivitiesPage = Page.verifyOnPage(ManageActivitiesDashboardPage)
+    manageActivitiesPage.cardActivityCard().should('contain.text', 'Create an activity')
+    manageActivitiesPage.cardActivityCard().click()
+
+    const activityTypePage = Page.verifyOnPage(ActivityTypePage)
+    activityTypePage.selectOutsideType()
+    activityTypePage.continue()
+
+    const categoryPage = Page.verifyOnPage(CategoryPage)
+    categoryPage.selectCategory('Industries')
+    categoryPage.continue()
+
+    const activityNamePage = Page.verifyOnPage(ActivityNamePage)
+    activityNamePage.enterName('Workshop')
+    activityNamePage.continue()
+
+    const whoPaysPage = Page.verifyOnPage(WhoPaysPage)
+    whoPaysPage.selectPrison()
+    whoPaysPage.continue()
+
+    const payRateTypePage = Page.verifyOnPage(PayRateTypePage)
+    payRateTypePage.incentiveLevel('Standard')
+    payRateTypePage.continue()
+
+    const payPage = Page.verifyOnPage(PayPage)
+    payPage.enterPayAmount('1.00')
+    payPage.selectPayBand('Low')
+    payPage.futurePayRateDetails().should('exist')
+    payPage.reviewAndAddMoreRates()
+
+    const checkPayPage = Page.verifyOnPage(CheckPayPage)
+    checkPayPage.payRows().should('have.length', 1)
+    checkPayPage.addAnother()
+
+    const payRateTypePage2 = Page.verifyOnPage(PayRateTypePage)
+    payRateTypePage2.incentiveLevel('Enhanced')
+    payRateTypePage2.continue()
+
+    const payPage2 = Page.verifyOnPage(PayPage)
+    payPage2.enterPayAmount('1.50')
+    payPage2.selectPayBand('Medium')
+    payPage2.reviewAndAddMoreRates()
+
+    const checkPayPage2 = Page.verifyOnPage(CheckPayPage)
+    checkPayPage2.payRows().should('have.length', 2)
+    checkPayPage2.continuePayRates()
+
+    const startDatePage = Page.verifyOnPage(StartDatePage)
+    const startDate = addMonths(new Date(), 1)
+    startDatePage.selectDatePickerDate(startDate)
+    startDatePage.continue()
+
+    const endDateOptionPage = Page.verifyOnPage(EndDateOptionPage)
+    endDateOptionPage.addEndDate('Yes')
+    endDateOptionPage.continue()
+
+    const endDatePage = Page.verifyOnPage(EndDatePage)
+    const endDate = addMonths(new Date(), 8)
+    endDatePage.selectDatePickerDate(endDate)
+    endDatePage.continue()
+    const scheduleFrequencyPage = Page.verifyOnPage(ScheduleFrequencyPage)
+    scheduleFrequencyPage.selectScheduleFrequency('Weekly')
+    scheduleFrequencyPage.continue()
+
+    const daysAndSessionsPage = Page.verifyOnPage(DaysAndSessionsPage)
+    daysAndSessionsPage.selectDayTimeCheckboxes([['Monday', ['AM session']]])
+    daysAndSessionsPage.continue()
+
+    const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
+    sessionTimesOptionPage.useSessionOption('Select the start and end times')
+    sessionTimesOptionPage.continue()
+
+    const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
+    sessionTimesPage.selectStartTime(10, 45, '1', 'MONDAY', 'AM')
+    sessionTimesPage.selectEndTime(11, 50, '1', 'MONDAY', 'AM')
+    sessionTimesPage.continue()
+
+    const capacityPage = Page.verifyOnPage(CapacityPage)
+    capacityPage.enterCapacity('6')
+    capacityPage.continue()
+
+    Page.verifyOnPage(CheckAnswersPage)
+    // checkAnswersPage.createActivity()
+
+    // const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+    // confirmationPage.payReviewLink().should('exist')
   })
 })

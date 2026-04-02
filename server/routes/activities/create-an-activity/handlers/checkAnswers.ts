@@ -48,6 +48,7 @@ export default class CheckAnswersRoutes {
   }
 
   POST = async (req: Request, res: Response): Promise<void> => {
+    // TODO: For EA currently no location options are viable
     const { user } = res.locals
     const { createJourney } = req.journeyData
 
