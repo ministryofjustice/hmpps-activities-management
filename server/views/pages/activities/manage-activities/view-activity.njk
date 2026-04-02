@@ -105,7 +105,7 @@
                                 text: "Change",
                                 visuallyHiddenText: " record attendance option"
                             }]
-                        } if (not activityEnded and not schedule.activity.paid and (not activity.attendanceRequired or activity.tier.code == 'FOUNDATION'))
+                        } if not activityEnded and not schedule.activity.paid
                     } if activity.tier.code === 'FOUNDATION'
                 ]
             }) }}
