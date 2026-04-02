@@ -55,7 +55,7 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/actions/cypress/create_timings_file@v1
+      - uses: ministryofjustice/hmpps-assess-risks-and-needs-github-actions/.github/actions/cypress/create_timings_file@bd2ccc17cfc6c285638a4be7bbb280527a30c328 # v1
         with:
           timings: ${{ needs.get-timings.outputs.timings }}
 
