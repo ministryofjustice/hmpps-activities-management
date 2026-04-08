@@ -215,6 +215,7 @@ context('Edit activity', () => {
     viewActivityPage.changeScheduleLink().click()
 
     const customTimesChangeOptionPage = Page.verifyOnPage(CustomTimesChangeOptionPage)
+    customTimesChangeOptionPage.caption().should('contain.text', 'English level 1')
     customTimesChangeOptionPage.changeDaysAndSessions('Activity start and end times')
     customTimesChangeOptionPage.continue()
 

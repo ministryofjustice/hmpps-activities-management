@@ -7,6 +7,8 @@ export default class DaysAndSessionsPage extends Page {
 
   title = () => cy.get('h1')
 
+  caption = (): Cypress.Chainable => cy.get('[data-qa=caption]')
+
   checkboxes = () => cy.get('[data-qa="day-session-checkboxes"]')
 
   selectDayTimeCheckboxes = (checkboxes: [string, string[]][]) =>

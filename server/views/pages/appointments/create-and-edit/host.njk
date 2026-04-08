@@ -4,7 +4,6 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "pages/appointments/partials/appointment-journey-title.njk" import appointmentJourneyTitle %}
 {% from "pages/appointments/partials/appointment-type-caption.njk" import appointmentTypeCaption %}
-{% from "partials/activities/activity-journey-caption.njk" import activityJourneyCaption %}
 
 {% if session.appointmentJourney.mode == AppointmentJourneyMode.EDIT %}
     {% set pageTitle = appointmentJourneyTitle("Change appointment host - Appointments - DPS", session.appointmentJourney) %}
