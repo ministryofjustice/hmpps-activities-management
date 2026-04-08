@@ -110,7 +110,7 @@ context('Create activity', () => {
     daysAndSessionsPage.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
-    sessionTimesOptionPage.useSessionOption("Use the prison's regime times")
+    sessionTimesOptionPage.useSessionOption('Yes')
     sessionTimesOptionPage.continue()
 
     const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)

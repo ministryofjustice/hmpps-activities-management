@@ -156,7 +156,7 @@ context('Create activity with custom times', () => {
     daysAndSessionsPage.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
-    sessionTimesOptionPage.useSessionOption('Select the start and end times')
+    sessionTimesOptionPage.useSessionOption('No, set different start and end times')
     sessionTimesOptionPage.continue()
 
     const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
