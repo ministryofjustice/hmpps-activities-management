@@ -25,7 +25,7 @@
                     name: "usePrisonRegimeTime",
                     fieldset: {
                         legend: {
-                        text: 'Select how to set the activity start and end times',
+                        text: "Do sessions of this activity follow the prison\'s regime times?",
                         isPageHeading: true,
                         classes: "govuk-fieldset__legend--l"
                     }
@@ -33,18 +33,18 @@
                     items: [
                         {
                             value: "true",
-                            text: "Use the prison\'s regime times",
+                            text: "Yes",
                             checked: createJourney.usePrisonRegimeTime == true
                         },
                         {
                             value: "false",
-                            text: "Select the start and end times",
+                            text: "No, set different start and end times",
                             checked: createJourney.usePrisonRegimeTime == false
                         }
                     ],
                     errorMessage: validationErrors | findError('usePrisonRegimeTime'),
-                    hint: {
-                        text: "If the sessions of this activity do not follow the prison\'s regime times, you can set different start and end times."
+                    hint: { 
+                        text: "You can set different start and end times for sessions that people can be out at this activity. For example, for early morning or late night shifts." if createJourney.activityOutsidePrison else "If the sessions of this activity do not follow the prison\'s regime times, you can set different start and end times."
                     }
                 }) }}
                 {{ govukButton({
