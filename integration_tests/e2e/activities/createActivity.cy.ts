@@ -69,6 +69,7 @@ context('Create activity', () => {
     manageActivitiesPage.cardActivityCard().click()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
+    categoryPage.caption().should('contain.text', 'Create an activity')
     categoryPage.selectCategory('Gym, sport and fitness')
     categoryPage.continue()
 

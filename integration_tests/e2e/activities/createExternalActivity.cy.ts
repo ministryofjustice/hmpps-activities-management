@@ -39,7 +39,7 @@ import ActivityTypePage from '../../pages/createActivity/activityType'
 import WhoPaysPage from '../../pages/createActivity/whoPays'
 import SessionTimesPage from '../../pages/createSchedule/sessionTimes'
 
-context('Create externalactivity', () => {
+context('Create external activity', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -76,6 +76,7 @@ context('Create externalactivity', () => {
     activityTypePage.continue()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
+    categoryPage.caption().should('contain.text', 'Create an activity')
     categoryPage.selectCategory('Gym, sport and fitness')
     categoryPage.continue()
 
@@ -205,6 +206,7 @@ context('Create externalactivity', () => {
     activityTypePage.continue()
 
     const categoryPage = Page.verifyOnPage(CategoryPage)
+    categoryPage.caption().should('contain.text', 'Create an outside activity')
     categoryPage.selectCategory('Industries')
     categoryPage.continue()
 
@@ -332,6 +334,7 @@ context('Create externalactivity', () => {
     scheduleFrequencyPage.continue()
 
     const daysAndSessionsPage = Page.verifyOnPage(DaysAndSessionsPage)
+    daysAndSessionsPage.caption().should('contain.text', 'Create an outside activity')
     daysAndSessionsPage.selectDayTimeCheckboxes([['Monday', ['AM session']]])
     daysAndSessionsPage.continue()
 
