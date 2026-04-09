@@ -49,7 +49,7 @@ export default function setUpCurrentUser(activitiesService: ActivitiesService) {
         // Use for local dev
         // res.locals.user.externalActivitiesRolledOut = true
       }
-      // res.locals.user.externalActivitiesRolledOut = true
+
       if (res.locals.user.authSource === 'nomis') {
         res.locals.user.staffId = parseInt(userId, 10) || undefined
       }
