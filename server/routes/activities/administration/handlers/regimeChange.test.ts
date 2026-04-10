@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { SanitisedError } from '@ministryofjustice/hmpps-rest-client'
 import RegimeChangeRoutes, { RegimeTimes } from './regimeChange'
 import ActivitiesService from '../../../../services/activitiesService'
 import { Activity, ActivitySummary, PrisonRegime, Slot } from '../../../../@types/activitiesAPI/types'
@@ -353,7 +354,8 @@ describe('Route Handlers - Change Regime times', () => {
     })
 
     it('should use default regime when getPrisonRegime returns a 404 error', async () => {
-      const error = {
+      const error: SanitisedError = {
+        name: 'SanitisedError',
         message: 'Not Found',
         data: {
           status: 404,
@@ -362,24 +364,30 @@ describe('Route Handlers - Change Regime times', () => {
           developerMessage: 'no regime set for prison',
           moreInfo: null,
         },
-      } as any
+        stack: '',
+      }
 
       activitiesService.getPrisonRegime.mockRejectedValueOnce(error)
 
       await handler.GET(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('pages/activities/administration/regime-times', expect.objectContaining({
-        createMode: true,
-        regimeTimes: expect.arrayContaining([
-          expect.objectContaining({
-            dayOfWeek: 'MONDAY',
-            amStart: '-',
-            amFinish: '-',
-            pmStart: '-',
-            pmFinish: '-',
-          }),
-        ]),
-      }))
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/activities/administration/regime-times',
+        expect.objectContaining({
+          createMode: true,
+          regimeTimes: expect.arrayContaining([
+            expect.objectContaining({
+              dayOfWeek: 'MONDAY',
+              amStart: '-',
+              amFinish: '-',
+              pmStart: '-',
+              pmFinish: '-',
+              edStart: '-',
+              edFinish: '-',
+            }),
+          ]),
+        }),
+      )
     })
   })
 
@@ -3831,7 +3839,8 @@ describe('Route Handlers - Change Regime times', () => {
     })
 
     it('should fall back to default regime when getPrisonRegime returns a 404 error', async () => {
-      const error = {
+      const error: SanitisedError = {
+        name: 'SanitisedError',
         message: 'Not Found',
         data: {
           status: 404,
@@ -3840,7 +3849,8 @@ describe('Route Handlers - Change Regime times', () => {
           developerMessage: 'no regime set for prison',
           moreInfo: null,
         },
-      } as any
+        stack: '',
+      }
 
       activitiesService.getPrisonRegime.mockRejectedValueOnce(error)
       activitiesService.getActivities.mockResolvedValueOnce([])
