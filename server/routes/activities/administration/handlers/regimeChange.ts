@@ -35,7 +35,7 @@ export default class RegimeChangeRoutes {
     try {
       regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
     } catch (error) {
-      if (error.status === 404) regimeTimes = defaultRegime
+      if (error.data.status === 404) regimeTimes = defaultRegime
       createMode = true
     }
 
@@ -70,7 +70,7 @@ export default class RegimeChangeRoutes {
     try {
       regimeTimes = await this.activitiesService.getPrisonRegime(user.activeCaseLoadId, user)
     } catch (error) {
-      if (error.status === 404) regimeTimes = defaultRegime
+      if (error.data.status === 404) regimeTimes = defaultRegime
     }
 
     const updatedRegimeTimes: PrisonRegime[] = getPrisonRegimes(startTimes, endTimes, regimeTimes)
