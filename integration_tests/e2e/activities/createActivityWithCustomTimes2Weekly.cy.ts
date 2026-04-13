@@ -160,7 +160,7 @@ context('Create activity with custom times for a 2 weekly schedule', () => {
     daysAndSessionsPageWeek2.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
-    sessionTimesOptionPage.useSessionOption('Select the start and end times')
+    sessionTimesOptionPage.useSessionOption('No, set different start and end times')
     sessionTimesOptionPage.continue()
 
     const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)

@@ -9,7 +9,7 @@ import ActivityDateValidator from '../../../../utils/helpers/activityDateValidat
 
 export class SessionTimesOption {
   @Expose()
-  @IsNotEmpty({ message: 'Select how to set the activity start and end times' })
+  @IsNotEmpty({ message: 'Select yes if sessions follow the prison’s regime times' })
   usePrisonRegimeTime: string
 }
 
