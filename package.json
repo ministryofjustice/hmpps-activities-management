@@ -137,6 +137,6 @@
     "path-to-regexp": "8.4.2",
     "diff": "^8.0.4",
     "@actions/http-client": "^3.0.2",
-    "undici": "^6.24.1"
+    "undici": "^8.0.2"
   }
 }
