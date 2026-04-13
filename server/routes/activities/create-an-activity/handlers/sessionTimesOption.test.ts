@@ -272,7 +272,7 @@ describe('Route Handlers - Create an activity schedule - activity times option',
       const errors = await validate(requestObject).then(errs => errs.flatMap(associateErrorsWithProperty))
 
       expect(errors).toEqual([
-        { property: 'usePrisonRegimeTime', error: 'Select how to set the activity start and end times' },
+        { property: 'usePrisonRegimeTime', error: 'Select yes if sessions follow the prison’s regime times' },
       ])
     })
   })

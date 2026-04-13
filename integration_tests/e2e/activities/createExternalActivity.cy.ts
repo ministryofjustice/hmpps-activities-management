@@ -167,7 +167,7 @@ context('Create external activity', () => {
     daysAndSessionsPage.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
-    sessionTimesOptionPage.useSessionOption("Use the prison's regime times")
+    sessionTimesOptionPage.useSessionOption('Yes')
     sessionTimesOptionPage.continue()
 
     const bankHolidayPage = Page.verifyOnPage(BankHolidayPage)
@@ -245,7 +245,7 @@ context('Create external activity', () => {
     daysAndSessionsPage.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
-    sessionTimesOptionPage.useSessionOption("Use the prison's regime times")
+    sessionTimesOptionPage.useSessionOption('Yes')
     sessionTimesOptionPage.continue()
 
     const capacityPage = Page.verifyOnPage(CapacityPage)
@@ -339,7 +339,7 @@ context('Create external activity', () => {
     daysAndSessionsPage.continue()
 
     const sessionTimesOptionPage = Page.verifyOnPage(SessionTimesOptionPage)
-    sessionTimesOptionPage.useSessionOption('Select the start and end times')
+    sessionTimesOptionPage.useSessionOption('No, set different start and end times')
     sessionTimesOptionPage.continue()
 
     const sessionTimesPage = Page.verifyOnPage(SessionTimesPage)
