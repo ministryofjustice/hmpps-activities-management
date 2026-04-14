@@ -21,6 +21,8 @@ import {
   getAdvancedAttendanceSummary,
   formatFirstLastName,
   validateUuid,
+  getTodayAsDayOfTheWeek,
+  type DaysOfWeek,
 } from './utils'
 import { AdvanceAttendance, Attendance, ScheduledEvent } from '../@types/activitiesAPI/types'
 import { NameFormatStyle } from './helpers/nameFormatStyle'
@@ -533,5 +535,28 @@ describe('eventClashes', () => {
     it('should return false for an undefined UUID', () => {
       expect(validateUuid(undefined)).toEqual(false)
     })
+  })
+})
+
+describe('getTodayAsDayOfTheWeek', () => {
+  beforeEach(() => {
+    jest.useFakeTimers()
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it.each([
+    [new Date(2024, 0, 7), 'SUNDAY'],
+    [new Date(2024, 0, 8), 'MONDAY'],
+    [new Date(2024, 0, 9), 'TUESDAY'],
+    [new Date(2024, 0, 10), 'WEDNESDAY'],
+    [new Date(2024, 0, 11), 'THURSDAY'],
+    [new Date(2024, 0, 12), 'FRIDAY'],
+    [new Date(2024, 0, 13), 'SATURDAY'],
+  ])('returns system date: %s as correct date of the week: %s', (date: Date, expected: DaysOfWeek) => {
+    jest.setSystemTime(date)
+    expect(getTodayAsDayOfTheWeek()).toBe(expected)
   })
 })
