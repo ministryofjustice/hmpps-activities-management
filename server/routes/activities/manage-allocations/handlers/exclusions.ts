@@ -1,12 +1,14 @@
 import { Request, Response } from 'express'
 import { Expose, Transform, Type } from 'class-transformer'
 import ActivitiesService from '../../../../services/activitiesService'
-import { parseDate } from '../../../../utils/utils'
+import { parseDate, getTodayAsDayOfTheWeek } from '../../../../utils/utils'
+import config from '../../../../config'
 import calcCurrentWeek from '../../../../utils/helpers/currentWeekCalculator'
 import TimeSlot from '../../../../enum/timeSlot'
 import {
   DayOfWeek,
   DayOfWeekEnum,
+  calculateExclusionSlots,
   calculateUniqueSlots,
   mapActivityScheduleSlotsToSlots,
   sessionSlotsToSchedule,
@@ -117,6 +119,7 @@ export default class ExclusionRoutes {
       prisonerName: inmate.prisonerName,
       weeks,
       disabledSlotsExist: disabledSlots.length > 0,
+      sameDayScheduleModificationsEnabled: config.sameDayScheduleModificationsEnabled,
     })
   }
 
@@ -159,14 +162,26 @@ export default class ExclusionRoutes {
 
   POST = async (req: Request, res: Response): Promise<void> => {
     const { user } = res.locals
-    const { activity } = req.journeyData.allocateJourney
+    const { activity, exclusions } = req.journeyData.allocateJourney
 
     const schedule = await this.activitiesService.getActivitySchedule(activity.scheduleId, user)
     const slots = mapActivityScheduleSlotsToSlots(schedule.slots)
     const updatedSlots = this.mapBodyToSlots(req.body)
 
     const updatedExclusions = calculateUniqueSlots(slots, updatedSlots)
+
+    const addedSlots = calculateExclusionSlots(exclusions, updatedExclusions)
+    const todayAsDayOfTheWeek = getTodayAsDayOfTheWeek()
+
     req.journeyData.allocateJourney.updatedExclusions = updatedExclusions
+
+    const addedSlotsIncludeToday = addedSlots.some(slot => slot.daysOfWeek.includes(todayAsDayOfTheWeek))
+
+    if (config.sameDayScheduleModificationsEnabled) {
+      if (addedSlotsIncludeToday) {
+        // TODO: REROUTE to the conditional 'do you want to add x to today's y session' page
+      }
+    }
 
     if (req.routeContext.mode === 'create') {
       return res.redirect('check-answers')

@@ -126,6 +126,7 @@ describe('Route Handlers - Allocation - Exclusions', () => {
       expect(res.render).toHaveBeenCalledWith('pages/activities/manage-allocations/exclusions', {
         prisonerName: 'John Smith',
         disabledSlotsExist: true,
+        sameDayScheduleModificationsEnabled: false,
         weeks: [
           {
             weekNumber: 1,
